@@ -349,12 +349,8 @@ SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID: tuple[SharedFieldDebt, ...] = (
         "(printed line 39 on the 2024 face, 38 on 2023); all four re-measured "
         "as N-options-on-ONE-/Btn against the 2024 blank",
     ),
-    SharedFieldDebt(
-        "states/ky/2023/form740/pack.yaml",
-        5,
-        "filing status plus the taxpayer and spouse political-party-fund designations; "
-        "this pack already uses the DOTTED option spelling but declares no group ids",
-    ),
+    # states/ky/2023/form740 row (5 sets) retired 2026-09-28 (Phase J JS3b): the
+    # 2023 base and its 2024 / 2025 ports all carry the five group ids.
     SharedFieldDebt(
         "states/mi/2023/mi1040/pack.yaml",
         2,

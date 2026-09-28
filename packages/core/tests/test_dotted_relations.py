@@ -79,3 +79,21 @@ def test_js3b_ut_tc40_part_4_total_adds_the_four_rows(year):
     rows = {"contrib_a.amount": 50, "contrib_b.amount": 25, "contrib_d.amount": 10}
     assert _by_relation(pack, {**rows, "contributions_total": 85, "28": 85})[rel] == "PASS"
     assert _by_relation(pack, {**rows, "contributions_total": 75, "28": 75})[rel] == "FAIL"   # row d left out
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2025])
+def test_js3b_ky_740_column_arithmetic(year):
+    # A combined return (filing status 2), demo figures: column A the spouse, column B yourself.
+    pack = load_pack(STATES / f"ky/{year}/form740/pack.yaml")
+    values = {"5.a": 30000, "6.a": 500, "7.a": 30500, "8.a": 1000, "9.a": 29500,
+              "5_b": 40000, "6.b": 0, "7.b": 40000, "8.b": 2500, "9.b": 37500,
+              "12.a": 1100, "13.a": 50, "14.a": 1150, "12.b": 1400, "13.b": 0, "14.b": 1400,
+              "18.a": 1150, "18.b": 1400, "19": 2550}
+    column = ["7.a == 5.a + 6.a", "9.a == 7.a - 8.a", "9.b == 7.b - 8.b", "14.a == 12.a + 13.a",
+              "14.b == 12.b + 13.b", "19 == 18.a + 18.b"]
+    checks = _by_relation(pack, values)
+    assert {r: checks[r] for r in column} == dict.fromkeys(column, "PASS")
+    bad = _by_relation(pack, {**values, "19": 1400})      # the spouse's column-A tax left off line 19
+    assert [r for r in column if bad[r] == "FAIL"] == ["19 == 18.a + 18.b"]
+    single = _by_relation(pack, {"5_b": 40000, "7.b": 40000, "9.b": 40000, "18.b": 1400, "19": 1400})
+    assert single["19 == 18.a + 18.b"] == "PASS"         # the packet: other filers carry column B alone

@@ -60,18 +60,19 @@ def test_list_all_packs():
     # (AR1000F 2024 AND 2025, D-400 / NJ-1040 / IT 1040 / RI-1040 / TC-40 /
     # Form 760 x 2024, OR-40 and PA-40 x 2025) = 57, + the 2026-08-25 near-port
     # tranche (IL-1040 / ND-1 / OR-40 / MO-1040 x 2024) = 61, + UT TC-40 2025, AZ
-    # Form 140 2024/2025 and DC D-40 2024/2025 (Phase J JS3b, 2026-09-28) = 66. So
-    # TY2023 42, TY2024 16, TY2025 8 — state coverage is no longer TY2023-only, and
-    # any claim that it is should be corrected wherever it survives.
+    # Form 140 2024/2025, DC D-40 2024/2025 and KY Form 740 2024/2025 (Phase J
+    # JS3b, 2026-09-28) = 68. So TY2023 42, TY2024 17, TY2025 9 — state coverage is
+    # no longer TY2023-only, and any claim that it is should be corrected wherever
+    # it survives.
     states = [s for s in allf if s.jurisdiction.startswith("states/")]
-    assert len(states) == 66
+    assert len(states) == 68
     assert len({s.tax_year for s in states}) == 3
     assert len([s for s in states if s.tax_year == 2023]) == 42
-    assert len([s for s in states if s.tax_year == 2024]) == 16
-    assert len([s for s in states if s.tax_year == 2025]) == 8
+    assert len([s for s in states if s.tax_year == 2024]) == 17
+    assert len([s for s in states if s.tax_year == 2025]) == 9
     # Every discovered pack is one or the other, so the total is the sum. This
     # catches a pack landing under a third top-level jurisdiction unnoticed.
-    assert len(allf) == 151 + 66 == 217
+    assert len(allf) == 151 + 68 == 219
 
 
 def test_list_filters_by_jurisdiction_and_year():

@@ -1,17 +1,40 @@
-# Form 740, 2023 -- Kentucky Individual Income Tax Return (full-year RESIDENTS ONLY).
+# ===========================================================================
+# TY2024 PORT of formpacks/states/ky/2023/form740/pack.yaml (ported 2026-09-28,
+# Phase J JS3b; triaged PORTABLE by scripts/scaffold_state_year.py — every
+# field the 2023 pack maps is still in the 2024 blank).
 #
-# Provenance: blank downloaded from the official source_url below; page 1 was
-# rendered and READ to confirm the printed title ("KENTUCKY INDIVIDUAL INCOME
-# TAX RETURN -- Residents Only"), the form number "FORM 740", the tax year
-# "2023", and the revision stamp "42A740 (10-23)" before pinning pdf_sha256
-# (freshness protocol). Pages 2 and 3 print "FORM 740 (2023) ... Page 2/3 of 3"
-# and carry the same revision stamp.
+# URL. https://revenue.ky.gov/Forms/740%20(2024).pdf (the 2026-09-12 discovery
+# run; the 2023 name "Form 740 2023.pdf" does not carry forward). Digest
+# 987ef28607dc… — the discovery pair, the JS3a triage and a direct re-download
+# on 2026-09-28 all agree.
+#
+# PRINTED IDENTITY. Page 1 prints "FORM 740", "2024" and the stamp "240001
+# 42A740 (10-24) Page 1 of 3"; pages 2-3 print "FORM 740 (2024)" with stamps
+# 240002 / 240040 42A740 (10-24). printed_year_verified = 2024.
+#
+# AcroForm topology against the 2023 blank. 119 widgets = 108 names (2023: 118
+# / 107). Every 2023 widget keeps its page, /Rect, /MaxLen, /Ff, /FT and /AP
+# states. ONE widget is NEW — "34a check box 2210-K attached" (page 2, /Yes),
+# the box the 2023 face already printed beside line 34a with no widget — and it
+# is MAPPED below as `34a.form_2210k`. The PDF gained a FOURTH page with no
+# widgets and no text; rendered, it is blank. The return is still pages 1-3.
+#
+# FACE DELTAS vs 2023. Line 5's Family Size Tax Credit note "$41,496 or less"
+# (2023: $39,900); line 10 "Enter $3,160" (2023: $2,980); line 12 "Multiply line
+# 11 by 4% (.04)" (2023: 4.5%); the years (31b-31g "2024", line 40 "CREDITED TO
+# YOUR 2025 ESTIMATED TAX"). knowledge/states/ky/2024.yaml already records all
+# three amounts.
+# Form 740, 2024 -- Kentucky Individual Income Tax Return (full-year RESIDENTS ONLY).
+#
+# Provenance: blank downloaded from the official source_url below; see PRINTED
+# IDENTITY in the port banner above.
 #
 # Layout. FLAT AcroForm: acroform_root is empty -- every widget's field name is
 # the raw flat id the form ships with (e.g. "740Name", "740Line5A",
 # "740FilingStatus", "Signature of Taxpayer"). No /Parent name chain.
 # KY 740 is a 3-page return and ALL THREE PAGES ARE THE FILED RETURN
-# (no instructions / tax tables / worksheets are interleaved in this PDF):
+# (no instructions / tax tables / worksheets are interleaved in this PDF;
+# since 2024 the PDF appends a blank, widget-less fourth page):
 #   page 1 -- header (deceased flags, tax-year dates, two SSNs, name, address),
 #             filing status (1-4), Amended flag, Political Party Fund
 #             designations, and income/tax lines 5-19 in two columns
@@ -23,8 +46,8 @@
 #             refund), Sign Here block (taxpayer + spouse), Paid Preparer Use
 #             block, and the Enclose federal-1040 checkbox.
 #
-# Coverage. The blank PDF exposes 118 fillable AcroForm widget entries
-# (introspect skeleton). ALL 118 are mapped here (93 text + 25 checkbox).
+# Coverage. The blank PDF exposes 119 fillable AcroForm widget entries
+# (introspect skeleton). ALL 119 are mapped here (93 text + 26 checkbox).
 # Nothing is intentionally omitted -- this PDF contains no JS pushbuttons,
 # readonly banners, or instructions-only fields.
 #
@@ -73,9 +96,9 @@
 # (5_b == f1040.11), which holds for filing statuses 1/3/4.
 form: "740"
 jurisdiction: states/ky
-tax_year: 2023
-source_url: https://revenue.ky.gov/Forms/Form%20740%202023.pdf
-pdf_sha256: "50341c1bc47312333df034ccca736453bd0866df3755ef5227e728a3d09f36e4"
+tax_year: 2024
+source_url: https://revenue.ky.gov/Forms/740%20(2024).pdf
+pdf_sha256: "987ef28607dc5fa86d92ca8f2f6cd33bc4e5eaa4640120616e0aa50f347aadfd"
 acroform_root: ''
 fields:
   # ============================================ page 1 -- header
@@ -210,7 +233,7 @@ fields:
   - line: 9.b
     field: 740Line9B
     type: money
-  - line: 10.a                           # 10 Itemized / $2,980 nonitemizer deduction -- col A
+  - line: 10.a                           # 10 Itemized / $3,160 nonitemizer deduction -- col A
     field: 740Line10A
     type: money
   - line: 10.b
@@ -226,7 +249,7 @@ fields:
     field: 740SchJCheckbox
     type: checkbox
     on_state: /Yes
-  - line: 12.a                           # 12 Tax (line 11 x 4.5% or Schedule J) -- col A
+  - line: 12.a                           # 12 Tax (line 11 x 4% or Schedule J) -- col A
     field: 740Line12A
     type: money
   - line: 12.b
@@ -350,22 +373,22 @@ fields:
   - line: 31a                            # 31a Kentucky income tax withheld (Schedule KW-2)
     field: 740Line31a
     type: money
-  - line: 31b                            # 31b 2023 Kentucky estimated tax/extension payments
+  - line: 31b                            # 31b 2024 Kentucky estimated tax/extension payments
     field: 740Line31b
     type: money
-  - line: 31c                            # 31c 2023 refundable certified rehabilitation credit
+  - line: 31c                            # 31c 2024 refundable certified rehabilitation credit
     field: 740Line31c
     type: money
-  - line: 31d                            # 31d 2023 refundable entertainment incentive tax credit
+  - line: 31d                            # 31d 2024 refundable entertainment incentive tax credit
     field: 740Line31d
     type: money
-  - line: 31e                            # 31e 2023 refundable development area tax credit
+  - line: 31e                            # 31e 2024 refundable development area tax credit
     field: 740Line31e
     type: money
-  - line: 31f                            # 31f 2023 refundable decontamination tax credit
+  - line: 31f                            # 31f 2024 refundable decontamination tax credit
     field: 740Line31f
     type: money
-  - line: 31g                            # 31g 2023 refundable pass-through entity tax credit (Form PTET-CR, line 9)
+  - line: 31g                            # 31g 2024 refundable pass-through entity tax credit (Form PTET-CR, line 9)
     field: 740Line31g
     type: money
   - line: 31h                            # 31h For amended return: amount paid with original + later payments
@@ -380,6 +403,10 @@ fields:
   - line: 34a                            # 34a Estimated tax penalty
     field: 740Line34a
     type: money
+  - line: 34a.form_2210k                 # 34a "Check if Form 2210-K attached" (a widget since 2024)
+    field: 34a check box 2210-K attached
+    type: checkbox
+    on_state: /Yes
   - line: 34b                            # 34b Interest
     field: 740Line34b
     type: money
@@ -436,7 +463,7 @@ fields:
   - line: "39"                           # 39 Add lines 38(a) through 38(k)
     field: 740Line39
     type: money
-  - line: "40"                           # 40 Amount of line 37 credited to 2024 estimated tax
+  - line: "40"                           # 40 Amount of line 37 credited to 2025 estimated tax
     field: 740Line40
     type: money
   - line: "41"                           # 41 REFUNDED TO YOU (line 37 minus lines 39 and 40)

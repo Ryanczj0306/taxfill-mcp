@@ -1,17 +1,47 @@
-# Form 740, 2023 -- Kentucky Individual Income Tax Return (full-year RESIDENTS ONLY).
+# ===========================================================================
+# TY2025 PORT of formpacks/states/ky/2024/form740/pack.yaml (ported 2026-09-28,
+# Phase J JS3b; triaged NEAR-PORT — 4 fields of the base gone).
 #
-# Provenance: blank downloaded from the official source_url below; page 1 was
-# rendered and READ to confirm the printed title ("KENTUCKY INDIVIDUAL INCOME
-# TAX RETURN -- Residents Only"), the form number "FORM 740", the tax year
-# "2023", and the revision stamp "42A740 (10-23)" before pinning pdf_sha256
-# (freshness protocol). Pages 2 and 3 print "FORM 740 (2023) ... Page 2/3 of 3"
-# and carry the same revision stamp.
+# URL. https://revenue.ky.gov/Forms/740%20(2025).pdf. Digest cb68242eb835… —
+# the discovery pair, the JS3a triage and a direct re-download on 2026-09-28
+# all agree.
+#
+# PRINTED IDENTITY. Page 1 prints "FORM 740", "2025" and the stamp "250001
+# 42A740 (10-25) Page 1 of 3"; pages 2-3 print "FORM 740 (2025)" with stamps
+# 250002 / 250040 42A740 (10-25). printed_year_verified = 2025. As in 2024 the
+# PDF has a blank, widget-less fourth page.
+#
+# AcroForm topology against the 2024 blank. 118 widgets = 107 names. The
+# four fields the triage found gone:
+#   * "740CityStateZip" is SPLIT into "740City", "740State" (/MaxLen 2) and
+#     "740Zip" over the same row — mapped as mailing_address.city / .state /
+#     .zip;
+#   * "Signature of Taxpayer", "Signature of Spouse" and "Signature of
+#     Preparer" are no longer widgets: the three signature boxes are printed
+#     only, signed by hand. Their lines are dropped.
+# 69 other widgets (62 fields) moved /Rect as the captions re-flowed (the
+# text layer is now one fragment per word). The largest edge move is 7.2 pt
+# (740EndingDate's right edge), and the only box that lost more than 2.2 pt is
+# 740EndingDate itself: 68.0 -> 62.8 pt wide, still room for its date. No
+# pack maxlen depends on any of them. Every row was re-read from renders.
+#
+# FACE / LAW DELTAS vs 2024. Line 5 now reads "federal Form 1040 or 1040-SR,
+# line 11a" (the 2025 Form 1040 prints AGI on line 11a), so the cross_form is
+# `5_b == f1040.11a`; the Family Size Tax Credit note "$42,760 or less"; line 10
+# "Enter $3,270"; line 12 still "4% (.04)"; the years (31b-31g "2025", line 40
+# "CREDITED TO YOUR 2026 ESTIMATED TAX"). knowledge/states/ky/2025.yaml
+# already records $3,270, 4% and $42,760.
+# Form 740, 2025 -- Kentucky Individual Income Tax Return (full-year RESIDENTS ONLY).
+#
+# Provenance: blank downloaded from the official source_url below; see PRINTED
+# IDENTITY in the port banner above.
 #
 # Layout. FLAT AcroForm: acroform_root is empty -- every widget's field name is
 # the raw flat id the form ships with (e.g. "740Name", "740Line5A",
-# "740FilingStatus", "Signature of Taxpayer"). No /Parent name chain.
+# "740FilingStatus", "740City"). No /Parent name chain.
 # KY 740 is a 3-page return and ALL THREE PAGES ARE THE FILED RETURN
-# (no instructions / tax tables / worksheets are interleaved in this PDF):
+# (no instructions / tax tables / worksheets are interleaved in this PDF;
+# since 2024 the PDF appends a blank, widget-less fourth page):
 #   page 1 -- header (deceased flags, tax-year dates, two SSNs, name, address),
 #             filing status (1-4), Amended flag, Political Party Fund
 #             designations, and income/tax lines 5-19 in two columns
@@ -20,11 +50,12 @@
 #             decimal + percentage + amount), lines 22-30, withholding/payments
 #             31a-31h, lines 32-37 (additional tax due / overpaid);
 #   page 3 -- Fund Contributions 38a-38k, lines 39-41 (credit-forward /
-#             refund), Sign Here block (taxpayer + spouse), Paid Preparer Use
+#             refund), Sign Here block (taxpayer + spouse; the signatures
+#             themselves are hand-signed, not widgets, since 2025), Paid Preparer Use
 #             block, and the Enclose federal-1040 checkbox.
 #
 # Coverage. The blank PDF exposes 118 fillable AcroForm widget entries
-# (introspect skeleton). ALL 118 are mapped here (93 text + 25 checkbox).
+# (introspect skeleton). ALL 118 are mapped here (92 text + 26 checkbox).
 # Nothing is intentionally omitted -- this PDF contains no JS pushbuttons,
 # readonly banners, or instructions-only fields.
 #
@@ -67,15 +98,16 @@
 # comparison (33, 36, 37) are OMITTED per the conservative house style.
 #
 # Cross_form. Line 5's printed label is "Enter amount from federal Form 1040 or
-# 1040-SR, line 11" (federal AGI). On a combined return that AGI is split
-# across columns A and B, so no single column equals f1040.11 unconditionally;
-# the federal-AGI link is therefore declared on the Yourself/Joint column
-# (5_b == f1040.11), which holds for filing statuses 1/3/4.
+# 1040-SR, line 11a" (federal AGI; the 2025 Form 1040 prints it on line 11a).
+# On a combined return that AGI is split across columns A and B, so no single
+# column equals f1040.11a unconditionally; the federal-AGI link is therefore
+# declared on the Yourself/Joint column (5_b == f1040.11a), which holds for
+# filing statuses 1/3/4.
 form: "740"
 jurisdiction: states/ky
-tax_year: 2023
-source_url: https://revenue.ky.gov/Forms/Form%20740%202023.pdf
-pdf_sha256: "50341c1bc47312333df034ccca736453bd0866df3755ef5227e728a3d09f36e4"
+tax_year: 2025
+source_url: https://revenue.ky.gov/Forms/740%20(2025).pdf
+pdf_sha256: "cb68242eb8351dcd909425cd8edc032ef3169f7eaa86f17fa3ac6c1cb4136ca2"
 acroform_root: ''
 fields:
   # ============================================ page 1 -- header
@@ -112,9 +144,17 @@ fields:
   - line: mailing_address.street         # "Mailing Address (Number and Street incl. Apt or P.O. Box)"
     field: 740StreetAddress2
     type: text
-  - line: mailing_address.city_state_zip # "City, Town or Post Office / State / ZIP Code" (single box)
-    field: 740CityStateZip
+  - line: mailing_address.city           # "City, Town or Post Office" (its own box since 2025)
+    field: 740City
     type: text
+  - line: mailing_address.state          # "State"
+    field: 740State
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip            # "ZIP Code" (no /MaxLen on the widget)
+    field: 740Zip
+    type: text
+    maxlen: 10                           # ZIP+4 "nnnnn-nnnn": 10 x 0.5 x 9 pt = 45 pt fits the 54.7 pt box
 
   # ---- filing status (one /Btn, four mutually exclusive states)
   - line: filing_status.single           # 1 Single
@@ -180,7 +220,7 @@ fields:
 
   # ============================================ page 1 -- income/tax lines 5-19
   # column A = Spouse (filing status 2), column B = Yourself (or Joint)
-  - line: 5.a                            # 5 federal Form 1040/1040-SR line 11 (federal AGI) -- col A
+  - line: 5.a                            # 5 federal Form 1040/1040-SR line 11a (federal AGI) -- col A
     field: 740Line5A
     type: money
   - line: 5_b                            # 5 -- col B
@@ -210,7 +250,7 @@ fields:
   - line: 9.b
     field: 740Line9B
     type: money
-  - line: 10.a                           # 10 Itemized / $2,980 nonitemizer deduction -- col A
+  - line: 10.a                           # 10 Itemized / $3,270 nonitemizer deduction -- col A
     field: 740Line10A
     type: money
   - line: 10.b
@@ -226,7 +266,7 @@ fields:
     field: 740SchJCheckbox
     type: checkbox
     on_state: /Yes
-  - line: 12.a                           # 12 Tax (line 11 x 4.5% or Schedule J) -- col A
+  - line: 12.a                           # 12 Tax (line 11 x 4% or Schedule J) -- col A
     field: 740Line12A
     type: money
   - line: 12.b
@@ -350,22 +390,22 @@ fields:
   - line: 31a                            # 31a Kentucky income tax withheld (Schedule KW-2)
     field: 740Line31a
     type: money
-  - line: 31b                            # 31b 2023 Kentucky estimated tax/extension payments
+  - line: 31b                            # 31b 2025 Kentucky estimated tax/extension payments
     field: 740Line31b
     type: money
-  - line: 31c                            # 31c 2023 refundable certified rehabilitation credit
+  - line: 31c                            # 31c 2025 refundable certified rehabilitation credit
     field: 740Line31c
     type: money
-  - line: 31d                            # 31d 2023 refundable entertainment incentive tax credit
+  - line: 31d                            # 31d 2025 refundable entertainment incentive tax credit
     field: 740Line31d
     type: money
-  - line: 31e                            # 31e 2023 refundable development area tax credit
+  - line: 31e                            # 31e 2025 refundable development area tax credit
     field: 740Line31e
     type: money
-  - line: 31f                            # 31f 2023 refundable decontamination tax credit
+  - line: 31f                            # 31f 2025 refundable decontamination tax credit
     field: 740Line31f
     type: money
-  - line: 31g                            # 31g 2023 refundable pass-through entity tax credit (Form PTET-CR, line 9)
+  - line: 31g                            # 31g 2025 refundable pass-through entity tax credit (Form PTET-CR, line 9)
     field: 740Line31g
     type: money
   - line: 31h                            # 31h For amended return: amount paid with original + later payments
@@ -380,6 +420,10 @@ fields:
   - line: 34a                            # 34a Estimated tax penalty
     field: 740Line34a
     type: money
+  - line: 34a.form_2210k                 # 34a "Check if Form 2210-K attached" (a widget since 2024)
+    field: 34a check box 2210-K attached
+    type: checkbox
+    on_state: /Yes
   - line: 34b                            # 34b Interest
     field: 740Line34b
     type: money
@@ -436,7 +480,7 @@ fields:
   - line: "39"                           # 39 Add lines 38(a) through 38(k)
     field: 740Line39
     type: money
-  - line: "40"                           # 40 Amount of line 37 credited to 2024 estimated tax
+  - line: "40"                           # 40 Amount of line 37 credited to 2026 estimated tax
     field: 740Line40
     type: money
   - line: "41"                           # 41 REFUNDED TO YOU (line 37 minus lines 39 and 40)
@@ -444,9 +488,6 @@ fields:
     type: money
 
   # ============================================ page 3 -- Sign Here / Paid Preparer
-  - line: signature.taxpayer            # Signature of Taxpayer
-    field: Signature of Taxpayer
-    type: text
   - line: signature.taxpayer_drivers_license
     field: 740DriversLic-TP
     type: text
@@ -456,17 +497,11 @@ fields:
   - line: signature.daytime_phone
     field: 740DaytimePhoneNum
     type: text
-  - line: signature.spouse             # Signature of Spouse
-    field: Signature of Spouse
-    type: text
   - line: signature.spouse_drivers_license
     field: 740DriversLic-SP
     type: text
   - line: signature.spouse_date
     field: 740TP2SigDate
-    type: text
-  - line: preparer.signature           # Signature of Preparer
-    field: Signature of Preparer
     type: text
   - line: preparer.date
     field: 740PreparerSigDate
@@ -525,13 +560,15 @@ relations:
   - "35 == 34a + 34b + 34c + 34d"        # 35 "Add lines 34(a) through 34(d)"
   - "39 == 38a + 38b + 38c + 38d + 38e + 38f + 38g + 38h + 38i + 38j + 38k"  # 39 "Add lines 38(a) through 38(k)"
 cross_form:
-  # Line 5 "Enter amount from federal Form 1040 or 1040-SR, line 11" (federal
+  # Line 5 "Enter amount from federal Form 1040 or 1040-SR, line 11a" (federal
   # AGI). Declared on the Yourself/Joint column (holds for filing status 1/3/4).
-  - "5_b == f1040.11"
+  - "5_b == f1040.11a"
 identity_fields:
   - name
   - identifying_number
   - mailing_address.street
-  - mailing_address.city_state_zip
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
 signature: {page: 3}
 mailing: null
