@@ -43,8 +43,10 @@
 #
 # Cross-form: line 1 prints "Enter the amount from Form 1040, 1040-SR, or
 # 1040-NR, line 11b"; line 44 "Enter here and on Form 1040, 1040-SR, or
-# 1040-NR, line 13a" (13a — the 2025 target was 13b). The f1040nr legs join
-# when the 2026 Form 1040-NR pack ships (Wave B, JT5).
+# 1040-NR, line 13a" (13a — the 2025 targets were 1040 13b and 1040-NR 13c).
+# The draft Form 1040-NR (2026) prints the same pair: "11b Amount from line
+# 11a (adjusted gross income)" and "13a Additional deductions from Schedule
+# 1-A, line 44" (JT5c).
 form: "Schedule 1-A (Form 1040)"
 jurisdiction: federal
 tax_year: 2026
@@ -274,7 +276,9 @@ relations:
   - "44 == 15 + 27 + 36 + 43"                   # "Add lines 15, 27, 36, and 43"
 cross_form:
   - "1 == f1040.11b"                  # "Enter the amount from Form 1040, 1040-SR, or 1040-NR, line 11b"
+  - "1 == f1040nr.11b"
   - "44 == f1040.13a"                 # "Enter here and on Form 1040, 1040-SR, or 1040-NR, line 13a"
+  - "44 == f1040nr.13a"
 identity_fields: [name, identifying_number]
 signature: null                       # schedules carry no signature block of their own
 mailing: null                         # mailed inside the parent return's envelope

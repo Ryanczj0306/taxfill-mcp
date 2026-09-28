@@ -1674,7 +1674,7 @@ def test_jt3c_the_2026_schedule_3_reserves_5b_and_adds_13e():
     assert "5b" not in lines and "6e" not in lines and lines["13e"] == "Page1[0].f1_34[0]"
     assert (lines["13z"], lines["14"], lines["15"]) == ("Page1[0].f1_36[0]", "Page1[0].f1_37[0]", "Page1[0].f1_38[0]")
     assert "8 == 1 + 2 + 3 + 4 + 5a + 7" in pack.relations
-    assert pack.cross_form == ["8 == f1040.20", "15 == f1040.31"]
+    assert pack.cross_form == ["8 == f1040.20", "8 == f1040nr.20", "15 == f1040.31", "15 == f1040nr.31"]  # + JT5c
     # With Schedules 1-3 shipped, every 2026 Form 1040 cross_form leg resolves on its own.
     f1040 = _fed_pack(2026, "f1040")
     for rule in f1040.cross_form:
@@ -1768,7 +1768,56 @@ def test_jt5b_the_credit_and_exclusion_ports_read_their_drafts():
     edu = load_pack(REPO_ROOT / "formpacks/federal/2026/f8863/pack.yaml")
     assert {(p.source_status, p.draft_created) for p in (ctc, feie, edu)} == {
         ("draft", "4/24/26"), ("draft", "9/18/26"), ("draft", "4/28/26")}
-    # The 2026 Schedule 8812 reads AGI from Form 1040 line 11b; the 1040-NR legs wait for JT5c's pack.
-    assert set(ctc.cross_form) == {"1 == f1040.11b", "14 == f1040.19", "27 == f1040.28"}
+    # The 2026 Schedule 8812 reads AGI from line 11b of either parent (the 1040-NR legs joined in JT5c).
+    assert set(ctc.cross_form) == {"1 == f1040.11b", "14 == f1040.19", "27 == f1040.28",
+                                   "1 == f1040nr.11b", "14 == f1040nr.19", "27 == f1040nr.28"}
     assert set(edu.cross_form) == {"8 == f1040.29", "19 == sched_3.3"}
     assert "Page2[0].f2_5[0]" in {f.field for f in edu.fields}        # the 2025 "f2-5" typo is fixed
+
+
+# ── Phase J JT5c: the nonresident set (Form 1040-NR, Schedule A (Form 1040-NR), Form 8843) ──
+
+def test_jt5c_the_1040nr_draft_rebinds_the_new_lines():
+    old, new = _fed_pack(2025, "f1040nr"), _fed_pack(2026, "f1040nr")
+    assert (new.source_status, new.draft_created, new.signature.page) == ("draft", "8/19/26", 3)
+    assert new.mailing is None                              # the 2026 instructions (the addresses) are not posted
+    f = {pf.line: pf.field for pf in new.fields}
+    assert {"12", "24", "32", "28.do_not_claim_actc"}.isdisjoint(f)
+    # TRAP: 13a/13b/13c reorder — 13a is Schedule 1-A line 44 now (2025: QBI; 2025 13c was Schedule 1-A line 38).
+    assert (f["12a"], f["12b"], f["13a"], f["13b"], f["13c"]) == tuple(f"Page2[0].f2_0{n}[0]" for n in range(2, 7))
+    assert (f["24a"], f["24b"], f["24c"]) == ("Page2[0].f2_21[0]", "Page2[0].f2_22[0]", "Page2[0].f2_23[0]")
+    assert (f["32a"], f["32b"], f["32c"]) == ("Page2[0].Line31-3a_RedOrder[0].f2_37[0]", "Page2[0].f2_38[0]",
+                                              "Page2[0].f2_39[0]")
+    new_q = [pf for pf in new.fields if pf.group == "citizen_or_work_authorized"]
+    assert [(pf.field, pf.on_state) for pf in new_q] == [("Page1[0].c1_7[0]", "/1"), ("Page1[0].c1_7[1]", "/2")]
+    # Every page-1 TEXT widget keeps its 2025 name; every page-1 checkbox after the new pair moves up one.
+    o = {pf.line: pf.field for pf in old.fields}
+    assert all(f[k] == v for k, v in o.items() if ".f1_" in v)
+    assert (o["dependents.more_than_four"], f["dependents.more_than_four"]) == (
+        "Page1[0].Dependents_ReadOrder[0].c1_7[0]", "Page1[0].Dependents_ReadOrder[0].c1_8[0]")
+    assert {"14 == 12a + 12b + 13a + 13b + 13c", "24c == 24a + 24b", "32c == 32a - 32b",
+            "33 == 25d + 25e + 25f + 25g + 26 + 32c", "34 == max(0, 33 - 24c)", "37 == max(0, 24c - 33)"} <= set(
+        new.relations)
+    assert "13a == sched_1a.44" in new.cross_form and "13c == sched_1a.38" not in new.cross_form
+
+
+def test_jt5c_the_nr_legs_join_the_2026_schedules():
+    legs = {form: set(_fed_pack(2026, form).cross_form) for form in ("sched_1a", "sched_3", "sched_8812", "sched_a_nr")}
+    assert {"1 == f1040nr.11b", "44 == f1040nr.13a"} <= legs["sched_1a"]
+    assert {"8 == f1040nr.20", "15 == f1040nr.31"} <= legs["sched_3"]
+    assert {"1 == f1040nr.11b", "14 == f1040nr.19", "27 == f1040nr.28"} <= legs["sched_8812"]
+    assert legs["sched_a_nr"] == {"9 == f1040nr.12a"}
+
+
+def test_jt5c_the_8843_and_schedule_a_nr_drafts():
+    old, new = _fed_pack(2025, "f8843"), _fed_pack(2026, "f8843")
+    assert (new.source_status, new.draft_created, new.signature.page) == ("draft", "5/11/26", 3)
+    # Line 4a prints "2026 2025 2024" (the same three boxes); lines 7 and 11 ask about the six prior years:
+    # 2020-2025 on the 2026 form (2025: 2019-2024).
+    f4a = {pf.line: pf.field for pf in new.fields if pf.line.startswith("4a.")}
+    assert f4a == {"4a.2026": "Page1[0].f1_14[0]", "4a.2025": "Page1[0].f1_15[0]", "4a.2024": "Page1[0].f1_16[0]"}
+    assert {pf.line for pf in new.fields if pf.line.startswith("7.")} == {f"7.{y}" for y in range(2020, 2026)}
+    assert {pf.line for pf in old.fields if pf.line.startswith("7.")} == {f"7.{y}" for y in range(2019, 2025)}
+    sa = _fed_pack(2026, "sched_a_nr")
+    assert (sa.source_status, sa.draft_created) == ("draft", "5/18/26")
+    assert "1b == min(1a, 40400)" in sa.relations            # the draft's "$40,400" (2025: $40,000)

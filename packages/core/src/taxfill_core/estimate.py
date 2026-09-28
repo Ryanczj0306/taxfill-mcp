@@ -4003,7 +4003,7 @@ def _bottom_line(
     # ── Deduction and taxable income ────────────────────────────────────────
     nonitemizer = 0   # JF9: IRC 170(p), set on the standard-deduction path below
     if nonresident:
-        # Form 1040-NR line 12 is ITEMIZED-ONLY (typically state/local income tax
+        # The Form 1040-NR itemized line (2025 line 12, 2026 12a) is ITEMIZED-ONLY (typically state/local income tax
         # withheld): a nonresident alien cannot take the standard deduction (Pub 519;
         # the India treaty Art. 21(2) student exception is disclosed upstream). The
         # max(itemized, standard) logic must never run here.

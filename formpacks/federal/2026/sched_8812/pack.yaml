@@ -7,7 +7,8 @@
 # 2025 -> 2026: 41 widgets, the same names, types and MaxLens as 2025. This draft has NO cover sheet (two
 # form pages). Line 1 now reads "Enter the amount from line 11b of your Form 1040, 1040-SR, or
 # 1040-NR" (2025: 11a), so the leg is 1 == f1040.11b. Line 22 names the renumbered 2026 Schedule
-# 2 lines (16c and 17c). The 1040-NR legs return with the 2026 f1040nr pack (JT5c).
+# 2 lines (16c and 17c). The 1040-NR legs are back (JT5c): the draft Form 1040-NR (2026) keeps
+# 11b as AGI, 19 as the CTC/ODC and 28 as the ACTC "from Schedule 8812 (Form 1040)".
 # The notes below describe the earlier port.
 #
 # PORTED 2023 -> 2025 (2026-08-16): topology NEAR — 41 widgets both years, but
@@ -269,9 +270,11 @@ relations:
 # dual-parent pattern).
 cross_form:
   - "1 == f1040.11b"             # "Enter the amount from line 11b of your Form 1040, 1040-SR, or 1040-NR" (2026 draft)
+  - "1 == f1040nr.11b"
   - "14 == f1040.19"             # "Enter this amount on Form 1040, 1040-SR, or 1040-NR, line 19"
+  - "14 == f1040nr.19"
   - "27 == f1040.28"             # "Enter this amount on Form 1040, 1040-SR, or 1040-NR, line 28"
-  # The f1040nr legs return with the 2026 Form 1040-NR pack (JT5c).
+  - "27 == f1040nr.28"
 
 identity_fields: [name, identifying_number]
 

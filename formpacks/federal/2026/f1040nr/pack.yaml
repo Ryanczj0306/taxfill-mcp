@@ -1,0 +1,358 @@
+# Form 1040-NR (2026) — U.S. Nonresident Alien Income Tax Return — DRAFTS-FIRST
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040nr--dft.pdf,
+# page-1 footer "Form 1040-NR (2026) Created 8/19/26"). PDF page 1 is the IRS
+# cover sheet, so the form's pages 1 and 2 are PDF pages 2 and 3 (the signature
+# block is on PDF page 3). When the final posts at irs-prior/f1040nr--2026.pdf
+# (scripts/check_finals.py), re-pin: source_url, pdf_sha256, source_status
+# final, drop draft_created, signature page 2, and re-read the face. TY2026 is
+# planning-only, so this pack fills only in REHEARSAL mode.
+#
+# The draft carries 177 AcroForm widgets (2025: 171) and 170 are mapped. The 7
+# unmapped widgets are the "Paid Preparer Use Only" block, which only a
+# preparer fills:
+#   Page2[0].f2_56[0]  preparer's name
+#   Page2[0].f2_57[0]  preparer's PTIN
+#   Page2[0].c2_8[0]   "Check if: Self-employed" checkbox
+#   Page2[0].f2_58[0]  firm's name
+#   Page2[0].f2_59[0]  firm's phone no.
+#   Page2[0].f2_60[0]  firm's address
+#   Page2[0].f2_61[0]  firm's EIN
+# The four ReadOnly widgets are the same "Reserved for future use" lines as
+# 2025 (1i f1_51, 1j f1_52, 6 f1_65, 27 f2_32; /Ff 8388609 re-read on this
+# draft) — mapped, leave blank (P-007; the 2025 pack's adjudication).
+#
+# 2025 -> 2026 changes, read off the draft face and widget tree (every binding
+# re-read — the positional names shift after each new widget):
+# - Page 1: the "Digital Assets" row is now "Other Information" and gains a
+#   NEW question under it: "At the time you file your return, are you a U.S.
+#   citizen, U.S. national, or an alien lawfully authorized to work in the
+#   U.S.? (see instructions)  Yes  No" — one radio, c1_7. Every later page-1
+#   checkbox shifts up by one (the dependents "more than four" box is c1_8,
+#   lived-with-you c1_9-c1_12, the credit radios c1_13-c1_16, 3c-7b
+#   c1_17-c1_26). Every page-1 text widget keeps its 2025 name.
+# - NEW line 12b "Charitable contribution deduction for non-itemizers (see
+#   instructions)"; 2025 line 12 is 12a (same caption).
+# - TRAP — 13a/13b/13c REORDER. 2025: 13a QBI, 13b estate/trust exemptions,
+#   13c "Additional deductions from Schedule 1-A, line 38". 2026: "13a
+#   Additional deductions from Schedule 1-A, line 44", "13b Qualified business
+#   income deduction from Form 8995 or Form 8995-A", "13c Exemptions for
+#   estates and trusts only". "14 Add lines 12a through 13c".
+# - Line 24 splits: "24a Add lines 22 and 23d. This is your total tax", "24b
+#   Enter amount from Form 1062, line 15", "24c Add lines 24a and 24b"; lines
+#   34 and 37 now compare line 33 with 24c.
+# - Line 28 loses its 2025 decline-ACTC checkbox (the draft prints none).
+# - Line 32 splits: "32a Add lines 28, 29, 30, and 31", "32b Amount from
+#   Schedule 3-A", "32c Subtract line 32b from line 32a"; "33 Add lines 25d,
+#   25e, 25f, 25g, 26, and 32c".
+# - Line 36 applies the refund to "your 2027 estimated tax"; line 37 points at
+#   www.irs.gov/ModernPayments.
+#
+# Cross-form references NOT encoded (the 2025 pack's scoping): 19 and 28
+# (Schedule 8812) — the sched_8812 pack carries "14 == f1040nr.19" and "27 ==
+# f1040nr.28"; 12a's either/or (Schedule A (Form 1040-NR) or the India
+# standard deduction) lives on the sched_a_nr pack ("9 == f1040nr.12a"); 23a's
+# Schedule NEC carry waits for the 2026 sched_nec pack (JT5g); 24b (Form
+# 1062), 29 (Form 1040-C), 30 (Form 8839) and 32b (Schedule 3-A) have no form
+# key yet. The 1k leg names Schedule OI, whose 2026 pack also waits for its
+# draft (JT5g) — test_pack_invariants allowlists that one target until then.
+form: 1040-NR
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040nr--dft.pdf
+pdf_sha256: "7c485abc05922620b55f1322089a08e5ab806412e32c26d6f74213e2af6f2642"
+source_status: draft
+draft_created: "8/19/26"
+acroform_root: "topmostSubform[0]"
+fields:
+  # --- header: "or other tax year beginning ..., 2026, ending ..., 20.." ---
+  - { line: "other_tax_year.beginning", field: "Page1[0].f1_01[0]", type: text }
+  - { line: "other_tax_year.ending", field: "Page1[0].f1_02[0]", type: text }
+  - { line: "other_tax_year.ending_year", field: "Page1[0].f1_03[0]", type: text, maxlen: 2 }
+  # --- special-processing row (NEW 2025): late-election/combat-zone/deceased
+  # designations that were handwritten across the top in prior years ---
+  - { line: "special_processing.section_301_9100_2", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "special_processing.combat_zone", field: "Page1[0].c1_2[0]", type: checkbox, on_state: "/1" }
+  # write-in after "Combat zone" (zone/deployment designation per instructions)
+  - { line: "special_processing.combat_zone_entry", field: "Page1[0].f1_04[0]", type: text }
+  - { line: "special_processing.deceased", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1" }
+  # deceased dates print as MM / DD / YYYY (taxpayer, then spouse; the PDF
+  # sets MaxLen 2/2/4 on the parts — plain boxes, not combs)
+  - { line: "special_processing.deceased_month", field: "Page1[0].f1_05[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.deceased_day", field: "Page1[0].f1_06[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.deceased_year", field: "Page1[0].f1_07[0]", type: text, maxlen: 4 }
+  - { line: "special_processing.spouse_deceased_month", field: "Page1[0].f1_08[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.spouse_deceased_day", field: "Page1[0].f1_09[0]", type: text, maxlen: 2 }
+  - { line: "special_processing.spouse_deceased_year", field: "Page1[0].f1_10[0]", type: text, maxlen: 4 }
+  - { line: "special_processing.other", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1" }
+  # "Other" write-in plus two unlabeled continuation segments (dotted
+  # dividers on the printed face) for additional designations
+  - { line: "special_processing.other_text", field: "Page1[0].f1_11[0]", type: text }
+  - { line: "special_processing.other_text_2", field: "Page1[0].f1_12[0]", type: text }
+  - { line: "special_processing.other_text_3", field: "Page1[0].f1_13[0]", type: text }
+  # --- identity ---
+  - { line: "name.first", field: "Page1[0].f1_14[0]", type: text }
+  - { line: "name.last", field: "Page1[0].f1_15[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_16[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  # CURRENT mailing address — where mail is received TODAY (pitfall P-002).
+  # maxlen on apt/state protects the 8pt fixed-font boxes from visual
+  # clipping (pitfall P-001); zip's MaxLen 10 is set by the PDF itself.
+  - { line: "mailing_address.street", field: "Page1[0].f1_17[0]", type: text }
+  - { line: "mailing_address.apt", field: "Page1[0].f1_18[0]", type: text, maxlen: 10 }
+  - { line: "mailing_address.city", field: "Page1[0].f1_19[0]", type: text }
+  # The 2026 draft sets the state box in 9pt (2025: 8pt), so the clipping cap drops 15 -> 13 (as on the 2026 1040).
+  - { line: "mailing_address.state", field: "Page1[0].f1_20[0]", type: text, maxlen: 13 }
+  - { line: "mailing_address.zip", field: "Page1[0].f1_21[0]", type: text, maxlen: 10 }
+  - { line: "mailing_address.foreign_country", field: "Page1[0].f1_22[0]", type: text }
+  - { line: "mailing_address.foreign_province", field: "Page1[0].f1_23[0]", type: text }
+  - { line: "mailing_address.foreign_postal_code", field: "Page1[0].f1_24[0]", type: text }
+  # --- filing status: five option boxes, "Check only one box" (required).
+  # ONE c1_5 radio, kid on-states in printed order (verified from the
+  # blank's /AP states + widget positions, re-confirmed on the audit
+  # render): /1=Single, /2=MFS, /3=QSS, /4=Estate, /5=Trust.
+  - { line: "filing_status.single", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1", group: filing_status, required: true }
+  - { line: "filing_status.married_filing_separately", field: "Page1[0].c1_5[1]", type: checkbox, on_state: "/2", group: filing_status }
+  - { line: "filing_status.qualifying_surviving_spouse", field: "Page1[0].c1_5[2]", type: checkbox, on_state: "/3", group: filing_status }
+  - { line: "filing_status.estate", field: "Page1[0].c1_5[3]", type: checkbox, on_state: "/4", group: filing_status }
+  - { line: "filing_status.trust", field: "Page1[0].c1_5[4]", type: checkbox, on_state: "/5", group: filing_status }
+  # "If you checked the QSS box, enter the child's name if the qualifying
+  # person is a child but not your dependent"
+  - { line: "filing_status.qss_child_name", field: "Page1[0].f1_25[0]", type: text }
+  # --- digital assets yes/no — the form REQUIRES an answer (pitfall P-003) ---
+  - { line: "digital_assets.yes", field: "Page1[0].c1_6[0]", type: checkbox, on_state: "/1", group: digital_assets, required: true }
+  - { line: "digital_assets.no", field: "Page1[0].c1_6[1]", type: checkbox, on_state: "/2", group: digital_assets }
+  # --- NEW 2026: "At the time you file your return, are you a U.S. citizen,
+  # U.S. national, or an alien lawfully authorized to work in the U.S.? (see
+  # instructions)  Yes  No" — one radio (the 1040 asks it per spouse; the
+  # 1040-NR has one filer). Not marked required: the 2026 Form 1040-NR
+  # instructions that would say so are not posted.
+  - { line: "citizen_or_work_authorized.yes", field: "Page1[0].c1_7[0]", type: checkbox, on_state: "/1", group: citizen_or_work_authorized }
+  - { line: "citizen_or_work_authorized.no", field: "Page1[0].c1_7[1]", type: checkbox, on_state: "/2", group: citizen_or_work_authorized }
+  # --- dependents table (TRANSPOSED in 2025: columns = Dependent 1..4,
+  # rows = (1) first name, (2) last name, (3) identifying number,
+  # (4) relationship, (5) lived-with-you check, (6) credits) ---
+  - { line: "dependents.more_than_four", field: "Page1[0].Dependents_ReadOrder[0].c1_8[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.first_name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_26[0]", type: text }
+  - { line: "dependent_2.first_name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_27[0]", type: text }
+  - { line: "dependent_3.first_name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_28[0]", type: text }
+  - { line: "dependent_4.first_name", field: "Page1[0].Table_Dependents[0].Row1[0].f1_29[0]", type: text }
+  - { line: "dependent_1.last_name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_30[0]", type: text }
+  - { line: "dependent_2.last_name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_31[0]", type: text }
+  - { line: "dependent_3.last_name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_32[0]", type: text }
+  - { line: "dependent_4.last_name", field: "Page1[0].Table_Dependents[0].Row2[0].f1_33[0]", type: text }
+  - { line: "dependent_1.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_34[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_2.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_35[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_3.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_36[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_4.ssn", field: "Page1[0].Table_Dependents[0].Row3[0].f1_37[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_1.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_38[0]", type: text }
+  - { line: "dependent_2.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_39[0]", type: text }
+  - { line: "dependent_3.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_40[0]", type: text }
+  - { line: "dependent_4.relationship", field: "Page1[0].Table_Dependents[0].Row4[0].f1_41[0]", type: text }
+  # (5) "Check if lived with you more than half of 2026" — one Yes box per
+  # dependent (NEW 2025; the NR table has no "(b) and in the U.S." row)
+  - { line: "dependent_1.lived_with_you", field: "Page1[0].Table_Dependents[0].Row5[0].c1_9[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.lived_with_you", field: "Page1[0].Table_Dependents[0].Row5[0].c1_10[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.lived_with_you", field: "Page1[0].Table_Dependents[0].Row5[0].c1_11[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.lived_with_you", field: "Page1[0].Table_Dependents[0].Row5[0].c1_12[0]", type: checkbox, on_state: "/1" }
+  # (6) Credits: CTC/ODC is ONE /Btn field per dependent (since 2025)
+  # (kid widgets /1 = child tax credit, /2 = credit for other dependents)
+  - { line: "dependent_1.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent1[0].c1_13[0]", type: checkbox, on_state: "/1", group: dependent_1_credit }
+  - { line: "dependent_1.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent1[0].c1_13[1]", type: checkbox, on_state: "/2", group: dependent_1_credit }
+  - { line: "dependent_2.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent2[0].c1_14[0]", type: checkbox, on_state: "/1", group: dependent_2_credit }
+  - { line: "dependent_2.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent2[0].c1_14[1]", type: checkbox, on_state: "/2", group: dependent_2_credit }
+  - { line: "dependent_3.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent3[0].c1_15[0]", type: checkbox, on_state: "/1", group: dependent_3_credit }
+  - { line: "dependent_3.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent3[0].c1_15[1]", type: checkbox, on_state: "/2", group: dependent_3_credit }
+  - { line: "dependent_4.child_tax_credit", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent4[0].c1_16[0]", type: checkbox, on_state: "/1", group: dependent_4_credit }
+  - { line: "dependent_4.credit_for_other_dependents", field: "Page1[0].Table_Dependents[0].Row6[0].Dependent4[0].c1_16[1]", type: checkbox, on_state: "/2", group: dependent_4_credit }
+  # --- income effectively connected with U.S. trade or business ---
+  - { line: "1a", field: "Page1[0].f1_42[0]", type: money } # Total amount from Form(s) W-2, box 1
+  - { line: "1b", field: "Page1[0].f1_43[0]", type: money } # Household employee wages
+  - { line: "1c", field: "Page1[0].f1_44[0]", type: money } # Tip income
+  - { line: "1d", field: "Page1[0].f1_45[0]", type: money } # Medicaid waiver payments
+  - { line: "1e", field: "Page1[0].f1_46[0]", type: money } # Taxable dependent care benefits (Form 2441, line 26)
+  - { line: "1f", field: "Page1[0].f1_47[0]", type: money } # Employer-provided adoption benefits (Form 8839, line 31)
+  - { line: "1g", field: "Page1[0].f1_48[0]", type: money } # Wages from Form 8919, line 6
+  # 1h prints "Other earned income (see instructions). Enter type and
+  # amount:" — the type write-in is NEW 2025
+  - { line: "1h.type", field: "Page1[0].f1_49[0]", type: text }
+  - { line: "1h", field: "Page1[0].f1_50[0]", type: money }
+  # 1i and 1j print "Reserved for future use" and their widgets are ReadOnly
+  # (/Ff 8388609) + shaded — MUST BE LEFT BLANK. Kept mapped on purpose so
+  # the printed line numbers stay addressable (P-007 reserved-line class,
+  # sched_1 2025 line 22 precedent; adjudication in the header). Do not
+  # write values here.
+  - { line: "1i", field: "Page1[0].f1_51[0]", type: money } # RESERVED — leave blank
+  - { line: "1j", field: "Page1[0].f1_52[0]", type: money } # RESERVED — leave blank
+  # 1k Total income exempt by a treaty (Schedule OI, item L, line 1(e))
+  - { line: "1k", field: "Page1[0].Line1k_ReadOrder[0].f1_53[0]", type: money }
+  - { line: "1z", field: "Page1[0].f1_54[0]", type: money } # Add lines 1a through 1h
+  - { line: "2a", field: "Page1[0].f1_55[0]", type: money } # Tax-exempt interest
+  - { line: "2b", field: "Page1[0].f1_56[0]", type: money } # Taxable interest
+  - { line: "3a", field: "Page1[0].f1_57[0]", type: money } # Qualified dividends
+  - { line: "3b", field: "Page1[0].f1_58[0]", type: money } # Ordinary dividends
+  # NEW 2025 line 3c: "Check if your child's dividends are included in
+  # 1 [ ] Line 3a  2 [ ] Line 3b" — independent boxes
+  - { line: "3c.line_3a", field: "Page1[0].c1_17[0]", type: checkbox, on_state: "/1" }
+  - { line: "3c.line_3b", field: "Page1[0].c1_18[0]", type: checkbox, on_state: "/1" }
+  - { line: "4a", field: "Page1[0].f1_59[0]", type: money } # IRA distributions
+  - { line: "4b", field: "Page1[0].f1_60[0]", type: money } # Taxable amount
+  # NEW 2025 line 4c: "Check if (see instructions) 1 [ ] Rollover
+  # 2 [ ] QCD  3 [ ] ___" — box 3's label IS the write-in (36pt at 8pt font)
+  - { line: "4c.rollover", field: "Page1[0].c1_19[0]", type: checkbox, on_state: "/1" }
+  - { line: "4c.qcd", field: "Page1[0].c1_20[0]", type: checkbox, on_state: "/1" }
+  - { line: "4c.other", field: "Page1[0].c1_21[0]", type: checkbox, on_state: "/1" }
+  - { line: "4c.other_text", field: "Page1[0].f1_61[0]", type: text, maxlen: 8 }
+  - { line: "5a", field: "Page1[0].f1_62[0]", type: money } # Pensions and annuities
+  - { line: "5b", field: "Page1[0].f1_63[0]", type: money } # Taxable amount
+  # NEW 2025 line 5c: "Check if (see instructions) 1 [ ] Rollover
+  # 2 [ ] PSO  3 [ ] ___"
+  - { line: "5c.rollover", field: "Page1[0].c1_22[0]", type: checkbox, on_state: "/1" }
+  - { line: "5c.pso", field: "Page1[0].c1_23[0]", type: checkbox, on_state: "/1" }
+  - { line: "5c.other", field: "Page1[0].c1_24[0]", type: checkbox, on_state: "/1" }
+  - { line: "5c.other_text", field: "Page1[0].f1_64[0]", type: text, maxlen: 8 }
+  # line 6 "Reserved for future use": ReadOnly (/Ff 8388609) + shaded — MUST
+  # BE LEFT BLANK. Kept mapped so the printed line number stays addressable
+  # (P-007 reserved-line class; adjudication in the header). No NR social
+  # security line — SSA benefits are Schedule NEC income.
+  - { line: "6", field: "Page1[0].f1_65[0]", type: money } # RESERVED — leave blank
+  # 2023 line 7 is 2025 line 7a; the "Schedule D not required" box moved
+  # into the new 7b pair
+  - { line: "7a", field: "Page1[0].f1_66[0]", type: money } # Capital gain or (loss)
+  - { line: "7b.schedule_d_not_required", field: "Page1[0].c1_25[0]", type: checkbox, on_state: "/1" }
+  - { line: "7b.includes_childs_capital_gain", field: "Page1[0].c1_26[0]", type: checkbox, on_state: "/1" }
+  # unlabeled write-in after "Includes child's capital gain or (loss)" —
+  # the included child amount per the instructions
+  - { line: "7b.childs_capital_gain_amount", field: "Page1[0].f1_67[0]", type: money }
+  - { line: "8", field: "Page1[0].f1_68[0]", type: money } # Additional income from Schedule 1 (Form 1040), line 10
+  - { line: "9", field: "Page1[0].f1_69[0]", type: money } # Total effectively connected income
+  - { line: "10", field: "Page1[0].f1_70[0]", type: money } # Adjustments to income from Schedule 1 (Form 1040), line 26
+  # 2023 line 11 is 2025 line 11a (AGI closes page 1)
+  - { line: "11a", field: "Page1[0].f1_71[0]", type: money }
+  # --- page 2: tax and credits ---
+  - { line: "11b", field: "Page2[0].f2_01[0]", type: money } # Amount from line 11a (adjusted gross income)
+  # 2025 line 12 is 2026 line 12a (same caption); 12b is NEW
+  - { line: "12a", field: "Page2[0].f2_02[0]", type: money } # Itemized deductions (Schedule A (Form 1040-NR)) or India standard deduction
+  - { line: "12b", field: "Page2[0].f2_03[0]", type: money } # NEW: charitable contribution deduction for non-itemizers
+  # TRAP — 13a/13b/13c REORDER. 2025: 13a QBI, 13b estate/trust exemptions,
+  # 13c Schedule 1-A line 38. 2026: 13a Schedule 1-A line 44, 13b QBI, 13c
+  # estate/trust exemptions.
+  - { line: "13a", field: "Page2[0].f2_04[0]", type: money } # Additional deductions from Schedule 1-A, line 44
+  - { line: "13b", field: "Page2[0].f2_05[0]", type: money } # Qualified business income deduction (Form 8995/8995-A)
+  - { line: "13c", field: "Page2[0].f2_06[0]", type: money } # Exemptions for estates and trusts only
+  - { line: "14", field: "Page2[0].f2_07[0]", type: money } # Add lines 12a through 13c
+  - { line: "15", field: "Page2[0].f2_08[0]", type: money } # Taxable income
+  # Line 16 "Check if any from Form(s)": three independent boxes + form no.
+  # (the 2026 widget sets no MaxLen; the 8-character cap guards the box width)
+  - { line: "16.form_8814", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_4972", field: "Page2[0].c2_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_other", field: "Page2[0].c2_3[0]", type: checkbox, on_state: "/1" }
+  - { line: "16.form_other_number", field: "Page2[0].f2_09[0]", type: text, maxlen: 8 }
+  - { line: "16", field: "Page2[0].f2_10[0]", type: money } # Tax
+  - { line: "17", field: "Page2[0].f2_11[0]", type: money } # Amount from Schedule 2 (Form 1040), line 3
+  - { line: "18", field: "Page2[0].f2_12[0]", type: money } # Add lines 16 and 17
+  - { line: "19", field: "Page2[0].f2_13[0]", type: money } # Child tax credit or credit for other dependents (Schedule 8812)
+  - { line: "20", field: "Page2[0].f2_14[0]", type: money } # Amount from Schedule 3 (Form 1040), line 8
+  - { line: "21", field: "Page2[0].f2_15[0]", type: money } # Add lines 19 and 20
+  - { line: "22", field: "Page2[0].f2_16[0]", type: money } # Subtract line 21 from line 18
+  - { line: "23a", field: "Page2[0].Line23a_ReadOrder[0].f2_17[0]", type: money } # Tax on income not effectively connected (Schedule NEC, line 15)
+  - { line: "23b", field: "Page2[0].f2_18[0]", type: money } # Additional taxes, including self-employment tax, from Schedule 2 (Form 1040), line 21
+  - { line: "23c", field: "Page2[0].f2_19[0]", type: money } # Transportation tax
+  - { line: "23d", field: "Page2[0].f2_20[0]", type: money } # Add lines 23a through 23c
+  # 2025 line 24 splits in three (as on the 2026 Form 1040)
+  - { line: "24a", field: "Page2[0].f2_21[0]", type: money } # Add lines 22 and 23d. This is your total tax
+  - { line: "24b", field: "Page2[0].f2_22[0]", type: money } # NEW: amount from Form 1062, line 15
+  - { line: "24c", field: "Page2[0].f2_23[0]", type: money } # NEW: add lines 24a and 24b
+  # --- payments and refundable credits ---
+  - { line: "25a", field: "Page2[0].Line25_ReadOrder[0].f2_24[0]", type: money } # Federal income tax withheld: Form(s) W-2
+  - { line: "25b", field: "Page2[0].f2_25[0]", type: money } # Form(s) 1099
+  - { line: "25c", field: "Page2[0].f2_26[0]", type: money } # Other forms
+  - { line: "25d", field: "Page2[0].f2_27[0]", type: money } # Add lines 25a through 25c
+  - { line: "25e", field: "Page2[0].f2_28[0]", type: money } # Form(s) 8805
+  - { line: "25f", field: "Page2[0].f2_29[0]", type: money } # Form(s) 8288-A
+  - { line: "25g", field: "Page2[0].f2_30[0]", type: money } # Form(s) 1042-S
+  - { line: "26", field: "Page2[0].f2_31[0]", type: money } # 2026 estimated tax payments and amount applied from 2025 return
+  # line 27 "Reserved for future use": ReadOnly (/Ff 8388609, re-read on the
+  # 2026 draft) + shaded — MUST BE LEFT BLANK (nonresidents cannot claim the
+  # EIC). Kept mapped so the printed line number stays addressable (P-007
+  # reserved-line class). Line 32a is 28+29+30+31 — it never names 27.
+  - { line: "27", field: "Page2[0].f2_32[0]", type: money } # RESERVED — leave blank
+  # Line 28 ACTC: the 2025 decline-ACTC checkbox is GONE (the draft prints none)
+  - { line: "28", field: "Page2[0].f2_33[0]", type: money } # Additional child tax credit (Schedule 8812)
+  - { line: "29", field: "Page2[0].f2_34[0]", type: money } # Credit for amount paid with Form 1040-C
+  - { line: "30", field: "Page2[0].f2_35[0]", type: money } # Refundable adoption credit from Form 8839, line 13
+  - { line: "31", field: "Page2[0].Line31-3a_RedOrder[0].f2_36[0]", type: money } # Amount from Schedule 3 (Form 1040), line 15
+  # 2025 line 32 splits in three; the margin prints "If you entered an amount
+  # on line 28 or 30, attach Sch. 3-A."
+  - { line: "32a", field: "Page2[0].Line31-3a_RedOrder[0].f2_37[0]", type: money } # Add lines 28, 29, 30, and 31
+  - { line: "32b", field: "Page2[0].f2_38[0]", type: money } # NEW: amount from Schedule 3-A
+  - { line: "32c", field: "Page2[0].f2_39[0]", type: money } # NEW: subtract line 32b from line 32a
+  - { line: "33", field: "Page2[0].f2_40[0]", type: money } # Total payments
+  # --- refund ---
+  - { line: "34", field: "Page2[0].f2_41[0]", type: money } # Amount you overpaid
+  - { line: "35a.form_8888", field: "Page2[0].c2_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "35a", field: "Page2[0].f2_42[0]", type: money } # Amount of line 34 you want refunded to you
+  - { line: "35b", field: "Page2[0].RoutingNo[0].f2_43[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "35c.checking", field: "Page2[0].c2_6[0]", type: checkbox, on_state: "/1", group: "35c" }
+  - { line: "35c.savings", field: "Page2[0].c2_6[1]", type: checkbox, on_state: "/2", group: "35c" }
+  - { line: "35d", field: "Page2[0].AccountNo[0].f2_44[0]", type: text, maxlen: 17, comb: true, format: ssn_digits_only }
+  - { line: "35e", field: "Page2[0].f2_45[0]", type: text } # Refund check mailed to an address outside the United States
+  - { line: "36", field: "Page2[0].f2_46[0]", type: money } # Amount of line 34 applied to your 2027 estimated tax
+  # --- amount you owe ---
+  - { line: "37", field: "Page2[0].f2_47[0]", type: money } # Amount you owe (subtract line 33 from line 24c)
+  - { line: "38", field: "Page2[0].f2_48[0]", type: money } # Estimated tax penalty
+  # --- third party designee (optional block) ---
+  - { line: "third_party_designee.yes", field: "Page2[0].c2_7[0]", type: checkbox, on_state: "/1", group: third_party_designee }
+  - { line: "third_party_designee.no", field: "Page2[0].c2_7[1]", type: checkbox, on_state: "/2", group: third_party_designee }
+  - { line: "third_party_designee.name", field: "Page2[0].f2_49[0]", type: text }
+  - { line: "third_party_designee.phone", field: "Page2[0].f2_50[0]", type: text }
+  - { line: "third_party_designee.pin", field: "Page2[0].f2_51[0]", type: text, maxlen: 5, comb: true, format: ssn_digits_only }
+  # --- sign here block (signature and date are handwritten; no PDF fields) ---
+  - { line: "occupation", field: "Page2[0].f2_52[0]", type: text }
+  - { line: "identity_protection_pin", field: "Page2[0].f2_53[0]", type: text, maxlen: 6, comb: true, format: ssn_digits_only }
+  - { line: "phone", field: "Page2[0].f2_54[0]", type: text }
+  - { line: "email", field: "Page2[0].f2_55[0]", type: text }
+relations:
+  # Math printed on the 2026 draft face only (worksheets/tax tables live in calc).
+  - "1z == sum(1a..1h)"                 # "Add lines 1a through 1h"
+  - "9 == 1z + 2b + 3b + 4b + 5b + 7a + 8"   # "Add lines 1z, 2b, 3b, 4b, 5b, 7a, and 8"
+  - "11a == 9 - 10"                     # "Subtract line 10 from line 9. This is your adjusted gross income"
+  - "11b == 11a"                        # "Amount from line 11a (adjusted gross income)"
+  - "14 == 12a + 12b + 13a + 13b + 13c" # "Add lines 12a through 13c"
+  - "15 == max(0, 11b - 14)"            # "Subtract line 14 from line 11b. If zero or less, enter -0-"
+  - "18 == 16 + 17"                     # "Add lines 16 and 17"
+  - "21 == 19 + 20"                     # "Add lines 19 and 20"
+  - "22 == max(0, 18 - 21)"             # "Subtract line 21 from line 18. If zero or less, enter -0-"
+  - "23d == sum(23a..23c)"              # "Add lines 23a through 23c"
+  - "24a == 22 + 23d"                   # "Add lines 22 and 23d. This is your total tax"
+  - "24c == 24a + 24b"                  # "Add lines 24a and 24b"
+  - "25d == sum(25a..25c)"              # "Add lines 25a through 25c"
+  - "32a == 28 + 29 + 30 + 31"          # "Add lines 28, 29, 30, and 31"
+  - "32c == 32a - 32b"                  # "Subtract line 32b from line 32a"
+  - "33 == 25d + 25e + 25f + 25g + 26 + 32c"  # "Add lines 25d, 25e, 25f, 25g, 26, and 32c. These are your total payments"
+  - "34 == max(0, 33 - 24c)"            # "If line 33 is more than line 24c, subtract line 24c from line 33"
+  - "37 == max(0, 24c - 33)"            # "Subtract line 33 from line 24c. This is the amount you owe"
+cross_form:
+  - "1k == sched_oi.1e"                 # "Total income exempt by a treaty from Schedule OI (Form 1040-NR), item L, line 1(e)"
+  - "8 == sched_1.10"                   # "Additional income from Schedule 1 (Form 1040), line 10"
+  - "10 == sched_1.26"                  # "Adjustments to income from Schedule 1 (Form 1040), line 26"
+  - "13a == sched_1a.44"                # "Additional deductions from Schedule 1-A, line 44"
+  - "17 == sched_2.3"                   # "Amount from Schedule 2 (Form 1040), line 3"
+  - "20 == sched_3.8"                   # "Amount from Schedule 3 (Form 1040), line 8"
+  - "23b == sched_2.21"                 # "Additional taxes, including self-employment tax, from Schedule 2 (Form 1040), line 21"
+  - "31 == sched_3.15"                  # "Amount from Schedule 3 (Form 1040), line 15"
+# The form splits name and address; identity checks compare the split parts.
+# state/zip stay out: they are legitimately blank for foreign-address filers.
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+# PDF page 3 of the draft (page 1 is the IRS cover sheet); page 2 on the final.
+signature:
+  page: 3
+  standalone_only: false
+# The 2026 Form 1040-NR instructions (where the addresses print) are not
+# posted, so no address is stated — never carried from 2025 (JT2b; the
+# knowledge pack's f1040nr pair is None for the same reason).
+mailing: null

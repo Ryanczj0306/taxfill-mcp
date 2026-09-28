@@ -311,3 +311,30 @@ def test_t3_a_joint_return_with_overtime_an_hsa_dividends_and_a_covered_loss(tmp
                               direct_deposit=True, attached_forms=["8889"])
     ret = file_and_pay([item]).returns[0]
     assert any("2027-04-15" in d for d in ret.deadlines) and any("BOTH" in s for s in ret.sign)
+
+
+# ── JT5c: a hypothetical nonresident alien on the 2026 Form 1040-NR set ──
+
+def test_jt5c_a_nonresident_return_with_itemized_state_tax_and_form_8843(tmp_path):
+    # Demo facts only: $30,000 of wages, $3,500 withheld, $1,500 of state income tax itemized on Schedule A
+    # (Form 1040-NR); the 8843 rides along. Line 12a takes Schedule A line 9 (the draft's "12a Itemized
+    # deductions"), so the new sched_a_nr leg is exercised.
+    wages, withheld, salt = 30_000, 3_500, 1_500
+    taxable = wages - salt
+    tax = tax_from_taxable_income(taxable, "single", YEAR).tax
+    refund = withheld - tax
+    report = _fill_and_verify(tmp_path, {
+        "f1040nr": {"1a": wages, "1z": wages, "9": wages, "11a": wages, "11b": wages, "12a": salt, "14": salt,
+                    "15": taxable, "16": tax, "18": tax, "22": tax, "24a": tax, "24c": tax, "25a": withheld,
+                    "25d": withheld, "33": withheld, "34": refund, "35a": refund},
+        "sched_a_nr": {"1a": salt, "1b": salt, "9": salt},
+        "f8843": {},
+    }, independent={"f1040nr": {"16": tax}})
+    assert ("sched_a_nr", "9 == f1040nr.12a") in _passed(report)
+    assert [c.status for c in report.recompute] == ["PASS"]
+    item = FilingManifestItem(form="1040-NR", tax_year=YEAR, bottom_line=refund, direct_deposit=True,
+                              attached_forms=["8843"])
+    ret = file_and_pay([item]).returns[0]
+    assert any("2027-04-15" in d for d in ret.deadlines)
+    # The 2026 Form 1040-NR instructions are not posted: the address is withheld, never carried from 2025.
+    assert ret.mailing_address is None and any("not published yet" in n for n in ret.notes)

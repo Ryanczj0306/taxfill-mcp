@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,701 tests** — offline 6,265 + live-.gov 436; derived
+Done and on `main` (**6,755 tests** — offline 6,309 + live-.gov 446; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2318,7 +2318,21 @@ not wait for any of this.
     - Form 2555 (Created 9/18/26): the same 160 widgets; wording only.
     - Form 8863 (Created 4/28/26): the 2025 set with the "f2-5" typo fixed (f2_5), the P-024 SSN notice (no widget), and the line 29 / Schedule 3 line 3 legs re-read and standing.
     - The port rule's grep: every Schedule 8812 / 8863 / 2555 line calc.py prints keeps its 2026 number. test_discovery 133 federal. Tests: `test_jt5b_*` plus the golden round trips and readonly sweeps (drafts cached).
-  - **JT5c** (M–L): f1040nr (new 12b, 13a, 24a–c, 32b), sched_a_nr, f8843. The 2026 sched_1a pack then gains its f1040nr legs (`1 == f1040nr.11b`, `44 == f1040nr.13a` — re-read on the 1040-NR draft), and the 2026 sched_3 pack its `8 == f1040nr.20` / `15 == f1040nr.31`.
+  - **JT5c** (M–L): f1040nr (new 12b, 13a, 24a–c, 32b), sched_a_nr, f8843. **DONE 2026-09-27:**
+    - **Form 1040-NR** (Created 8/19/26): 177 widgets (2025: 171), 170 mapped (the 7 preparer widgets stay unmapped). Everything is re-read off the draft:
+      - Page 1 gains one radio (c1_7, "are you a U.S. citizen, U.S. national, or an alien lawfully authorized to work in the U.S.?", keyed `citizen_or_work_authorized`). Every later page-1 checkbox moves up one; every page-1 text widget keeps its name.
+      - Page 2: new 12b (the non-itemizer charitable deduction), 24a–c (24b = Form 1062 line 15) and 32a–c (32b = Schedule 3-A). The 2025 decline-ACTC box is gone.
+      - TRAP: 13a/13b/13c reorder — 13a is Schedule 1-A line 44, 13b QBI, 13c estate/trust exemptions (2025: QBI, exemptions, Schedule 1-A line 38).
+      - The relations follow the printed arithmetic (14 adds 12a–13c; 33 adds 32c; 34/37 compare with 24c).
+      - The state box is 9pt on the draft, so its clipping cap drops 15 → 13.
+      - `mailing: null`: the 2026 instructions, where the addresses print, are not posted (JT2b).
+      - The 1k leg names Schedule OI, whose 2026 draft has not posted; test_pack_invariants allowlists (2026, sched_oi, 1e) until JT5g.
+    - **Schedule A (Form 1040-NR)** (Created 5/18/26): hand-mapped, 26 widgets; `1b == min(1a, 40400)`, `9 == f1040nr.12a`.
+    - **Form 8843** (Created 5/11/26): 17 text leaves lose their zero padding. Every printed year column moves up one: 4a.2026/2025/2024, and 7.<y>/11.<y> for 2020–2025. The year-offset invariant caught 4a left at 2025–2023 on the first pass.
+    - **Legs:** the 2026 sched_1a gains `1 == f1040nr.11b` / `44 == f1040nr.13a`, sched_3 `8 == f1040nr.20` / `15 == f1040nr.31`, and sched_8812 its three f1040nr legs back.
+    - **Port rule:** the engine's 1040-NR line text already goes through form_lines (f1040nr.itemized 12a, f1040nr.sched_1a 13a, read in JT3a/JF9), so no literal moved.
+    - The filer-address fixture gains the JT5a–c rows, each equal to its 2025 row. test_discovery 136 federal.
+    - **Tests:** `test_jt5c_*` (test_formpacks_federal), and a nonresident dress rehearsal in test_dress_rehearsal_2026 (1040-NR + Schedule A (1040-NR) + 8843; the line 16 recompute; the unposted-address note).
   - **JT5d** (M–L): sched_a, sched_c, sched_e.
   - **JT5e** (M–L): f8962, f2441, f1116, f8938 (Rev. 12-2026).
   - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new).

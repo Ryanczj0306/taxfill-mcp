@@ -173,6 +173,12 @@ RESERVED_LINE_KEEPS: tuple[ReservedKeep, ...] = (
     ReservedKeep("federal/2025/f1040nr/pack.yaml", "1j", "Page1[0].f1_52[0]", "printed row of the 1a-1z wage ladder"),
     ReservedKeep("federal/2025/f1040nr/pack.yaml", "6", "Page1[0].f1_65[0]", "printed row of the income ladder"),
     ReservedKeep("federal/2025/f1040nr/pack.yaml", "27", "Page2[0].f2_29[0]", "printed row of the payments ladder"),
+    # The 2026 draft (Phase J JT5c) prints the same four "Reserved for future use" rows with /Ff 8388609;
+    # line 27's widget moved to f2_32 with the new page-2 lines above it.
+    ReservedKeep("federal/2026/f1040nr/pack.yaml", "1i", "Page1[0].f1_51[0]", "printed row of the 1a-1z wage ladder (2026 draft)"),
+    ReservedKeep("federal/2026/f1040nr/pack.yaml", "1j", "Page1[0].f1_52[0]", "printed row of the 1a-1z wage ladder (2026 draft)"),
+    ReservedKeep("federal/2026/f1040nr/pack.yaml", "6", "Page1[0].f1_65[0]", "printed row of the income ladder (2026 draft)"),
+    ReservedKeep("federal/2026/f1040nr/pack.yaml", "27", "Page2[0].f2_32[0]", "printed row of the payments ladder (2026 draft)"),
     # Schedule 2 2025 line 10 — ENUMERATED by the printed line-21 sum
     # ("Add lines 4, 7 through 16, 18, and 19"), same shape as sched_1 22.
     ReservedKeep("federal/2025/sched_2/pack.yaml", "10", "Page1[0].f1_21[0]", "named by the printed line-21 sum"),

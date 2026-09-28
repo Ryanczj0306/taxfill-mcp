@@ -1,0 +1,94 @@
+# Schedule A (Form 1040-NR) — Itemized Deductions — 2026 DRAFT (Phase J JT5c, read 2026-09-27).
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040nra--dft.pdf, footer "Schedule A (Form
+# 1040-NR) 2026 Created 5/18/26"). PDF page 1 is the IRS cover sheet, so the form is PDF page 2. When the final
+# posts at irs-prior/f1040nra--2026.pdf (scripts/check_finals.py opens the re-pin issue), re-pin source_url,
+# pdf_sha256 and source_status final, drop draft_created, and re-read the face. TY2026 is planning-only, so this
+# pack fills only in REHEARSAL mode.
+#
+# 2025 -> 2026: a RE-MAP (12 -> 26 widgets, every field read off the draft face by its printed designator):
+# - Gifts: 2 cash, 3 other than cash, NEW 4 "Enter the amount from line 6 of the Charitable Contribution
+#   Limitation Worksheet" (the 2026 0.5%-of-contribution-base floor, IRC 170(b)(1)(I), priced in that
+#   worksheet), 5 carryover, 6 "Add lines 4 and 5" (2025: 5 = 2 + 3 + 4).
+# - Casualty and theft moves to line 7 (2025: 6).
+# - Other itemized deductions become a printed list 8a-8k with a total 8z (2025: one line-7 write-in), and 8a
+#   carries the "If you have gambling winnings that you reported on Schedule C or Schedule E, check here" box.
+# - The total moves to line 9 and now asks the IRC 68 screen: "Is the amount on Form 1040-NR, line 11b, minus the
+#   amounts on lines 13a through 13c of that form, more than $384,350?" — No (c1_2 /1): "Add the amounts in far
+#   right column for lines 1b through 8z. Also, enter this amount on Form 1040-NR, line 12a"; Yes (c1_2 /2): the
+#   Itemized Deductions Worksheet in the instructions (not posted).
+# - Line 1b prints the 2026 SALT figures: "Enter the smaller of line 1a or $40,400 ($20,200 if married filing
+#   separately). If Form 1040-NR, line 11b is more than $505,000 ($252,500 if married filing separately), see
+#   instructions".
+# - The 2026 widget names keep zero padding (f1_01 ...) and line 2's wrapper is spelled "Line2_readorder".
+#
+# 26 widgets, all mapped: 2 header + 21 money lines + 1 checkbox (8a) + the line-9 Yes/No pair.
+form: "Schedule A (Form 1040-NR)"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040nra--dft.pdf
+pdf_sha256: "6320da4c3b0a848b7617a3739fd3f58acafd6d63a7279833df0d680c7aea297f"
+source_status: draft
+draft_created: "5/18/26"
+acroform_root: "form1040-NR[0]"
+fields:
+  # ----- header -----
+  - line: "name"                       # Name shown on Form 1040-NR
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: "identifying_number"         # Your identifying number (plain text box, widget /MaxLen 11 — NOT a comb)
+    field: "Page1[0].f1_02[0]"
+    type: text
+    maxlen: 11
+  # ----- Taxes You Paid -----
+  - { line: "1a", field: "Page1[0].Line1a_ReadOrder[0].f1_03[0]", type: money }   # State and local income taxes
+  - { line: "1b", field: "Page1[0].f1_04[0]", type: money }   # smaller of 1a or $40,400 ($20,200 MFS)
+  # ----- Gifts to U.S. Charities -----
+  - { line: "2", field: "Page1[0].Line2_readorder[0].f1_05[0]", type: money }   # gifts by cash or check
+  - { line: "3", field: "Page1[0].f1_06[0]", type: money }    # other than by cash or check (Form 8283 over $500)
+  - { line: "4", field: "Page1[0].f1_07[0]", type: money }    # NEW: line 6 of the Charitable Contribution Limitation Worksheet
+  - { line: "5", field: "Page1[0].f1_08[0]", type: money }    # carryover from prior year
+  - { line: "6", field: "Page1[0].f1_09[0]", type: money }    # add lines 4 and 5
+  # ----- Casualty and Theft Losses -----
+  - { line: "7", field: "Page1[0].f1_10[0]", type: money }    # federally/state declared disaster (Form 4684 line 18)
+  # ----- Other Itemized Deductions -----
+  - { line: "8a", field: "Page1[0].Line8_ReadOrder[0].f1_11[0]", type: money }   # deductible gambling losses
+  - line: "8a.winnings_on_sched_c_or_e"  # "If you have gambling winnings that you reported on Schedule C or Schedule E, check here"
+    field: "Page1[0].IfYouHave_ReadOrder[0].c1_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - { line: "8b", field: "Page1[0].f1_12[0]", type: money }   # net qualified disaster loss
+  - { line: "8c", field: "Page1[0].f1_13[0]", type: money }   # standard deduction claimed with qualified disaster loss
+  - { line: "8d", field: "Page1[0].f1_14[0]", type: money }   # casualty and theft losses of income-producing property
+  - { line: "8e", field: "Page1[0].f1_15[0]", type: money }   # federal estate tax on income in respect of a decedent
+  - { line: "8f", field: "Page1[0].f1_16[0]", type: money }   # amortizable bond premium
+  - { line: "8g", field: "Page1[0].f1_17[0]", type: money }   # ordinary loss, contingent payment / inflation-indexed debt
+  - { line: "8h", field: "Page1[0].f1_18[0]", type: money }   # repayment under a claim of right over $3,000
+  - { line: "8i", field: "Page1[0].f1_19[0]", type: money }   # unrecovered investment in a pension
+  - { line: "8j", field: "Page1[0].f1_20[0]", type: money }   # impairment-related work expenses
+  - { line: "8k", field: "Page1[0].f1_21[0]", type: money }   # educator expenses not on Schedule 1
+  - { line: "8z", field: "Page1[0].f1_22[0]", type: money }   # add lines 8a through 8k
+  # ----- Total Itemized Deductions (the IRC 68 screen) -----
+  - line: "9.not_limited"                # "No. Your deductions are not limited."
+    field: "Page1[0].c1_2[0]"
+    type: checkbox
+    on_state: "/1"
+    group: line9_limited
+  - line: "9.may_be_limited"             # "Yes. Your deductions may be limited. See the Itemized Deductions Worksheet"
+    field: "Page1[0].c1_2[1]"
+    type: checkbox
+    on_state: "/2"
+    group: line9_limited
+  - { line: "9", field: "Page1[0].f1_23[0]", type: money }    # total -> Form 1040-NR line 12a
+relations:
+  # Form-face arithmetic only. The line-1b cap is the unconditional printed $40,400 (the MFS $20,200 and the
+  # $505,000 phase-down cannot branch here — the 2025 pack's caveat). Line 9 is NOT encoded: it is the far-right
+  # sum only when the IRC 68 answer is "No"; on "Yes" it comes from the (unposted) worksheet.
+  - "1b == min(1a, 40400)"
+  - "6 == 4 + 5"                       # "Add lines 4 and 5"
+  - "8z == sum(8a..8k)"                # "Add lines 8a through 8k"
+cross_form:
+  - "9 == f1040nr.12a"                 # "Also, enter this amount on Form 1040-NR, line 12a"
+identity_fields: [name, identifying_number]
+signature: null                        # attachment-only schedule: no signature block of its own
+mailing: null                          # mailed inside the parent Form 1040-NR envelope

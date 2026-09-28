@@ -109,6 +109,10 @@ CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
         (2022, "sched_2", "21"),
         (2022, "sched_3", "8"),
         (2022, "sched_3", "15"),
+        # The 2026 1040-NR draft prints line 1k "Total income exempt by a treaty
+        # from Schedule OI (Form 1040-NR), item L, line 1(e)", but no 2026
+        # Schedule OI draft has posted (JT5g). Remove when the 2026 sched_oi ships.
+        (2026, "sched_oi", "1e"),
     }
 )
 

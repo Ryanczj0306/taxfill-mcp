@@ -162,9 +162,13 @@ relations:
   - "15 == 9 + 10 + 11 + 12 + 14"               # "Add lines 9 through 12 and 14"
 cross_form:
   # Printed: "Enter here and on Form 1040, 1040-SR, or 1040-NR, line 20/31".
-  # The f1040nr legs join when the 2026 Form 1040-NR pack ships (JT5c).
+  # — a filing contains either f1040 or f1040nr; the matching rule applies.
+  # The draft Form 1040-NR (2026) keeps "20 Amount from Schedule 3 (Form
+  # 1040), line 8" and "31 Amount from Schedule 3 (Form 1040), line 15" (JT5c).
   - "8 == f1040.20"
+  - "8 == f1040nr.20"
   - "15 == f1040.31"
+  - "15 == f1040nr.31"
 identity_fields: [name, identifying_number]
 signature: null                       # schedules carry no signature block of their own
 mailing: null                         # mailed inside the parent return's envelope
