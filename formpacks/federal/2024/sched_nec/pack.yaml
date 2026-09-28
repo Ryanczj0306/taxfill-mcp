@@ -46,8 +46,6 @@
 #     be appended to a printed label like "1a";
 #   - the line 16 capital-gains table uses "16.row<n>.<col>" with the PRINTED
 #     column letters (a) kind of property ... (g) GAIN.
-# (2026-09-28, Phase J JP5c: verify's relation grammar now admits dotted ids. Declaring the
-# relations this note leaves out is ROADMAP JEc; until then they stay undeclared.)
 #
 # Excluded widgets (5 of 137 fillable): the blank pre-greys cells that may
 # never carry income and marks them ReadOnly (/Ff bit 1); the filler never
@@ -60,10 +58,11 @@
 # Relations: only unconditional form-face math whose operands are dot-free.
 #   Declared: 14a/14b/14c = 13a/13b/13c x printed column rate; 15 = add the
 #   line 14 columns; 18 = combine line 17 columns (f)/(g).
+#   Declared since Phase J JEc (2026-09-28; the grammar admits dotted ids since
+#   JP5c): 13a-13e = "Add lines 1a through 12 in columns (a) through (d)", each
+#   sub-column summing the rows mapped in it (10c only in (c)/(d), 11 only in
+#   (a), (c) and the first (d) sub-column).
 #   NOT declared (and why):
-#   - "13 == add lines 1a through 12 per column": the line 1-2 operands are
-#     dotted ids (1a.a ...) which the relation grammar cannot reference —
-#     left to the recompute engine + human review (same call as sched_d);
 #   - 14d/14e: the column rate is FILER-SPECIFIED in the d.rate/e.rate header
 #     boxes (text, not a printed constant) — never encode a variable rate;
 #   - per-row line 16 math "(f)/(g) = subtract (d) from (e) / (e) from (d)":
@@ -306,6 +305,11 @@ relations:
   - "14b == 13b * 0.15"              # — (b) 15%
   - "14c == 13c * 0.30"              # — (c) 30%
   - "15 == 14a + 14b + 14c + 14d + 14e"   # "Add columns (a) through (d) of line 14" ((d) spans two sub-columns)
+  - "13a == 1a.a + 1b.a + 1c.a + 2a.a + 2b.a + 2c.a + 3a + 4a + 5a + 6a + 7a + 8a + 9a + 11a + 12a"   # "13 Add lines 1a through 12 in columns (a) through (d)"
+  - "13b == 1a.b + 1b.b + 1c.b + 2a.b + 2b.b + 2c.b + 3b + 4b + 5b + 6b + 7b + 8b + 9b + 12b"
+  - "13c == 1a.c + 1b.c + 1c.c + 2a.c + 2b.c + 2c.c + 3c + 4c + 5c + 6c + 7c + 8c + 9c + 10c.c + 11c + 12c"
+  - "13d == 1a.d + 1b.d + 1c.d + 2a.d + 2b.d + 2c.d + 3d + 4d + 5d + 6d + 7d + 8d + 9d + 10c.d + 11d + 12d"
+  - "13e == 1a.e + 1b.e + 1c.e + 2a.e + 2b.e + 2c.e + 3e + 4e + 5e + 6e + 7e + 8e + 9e + 12e"
   - "18 == max(0, 17g - 17f)"        # "Combine columns (f) and (g) of line 17 ... If a loss, enter -0-" (17f is a positive loss)
 
 # Printed on line 15: "Enter the total here and on Form 1040-NR, line 23a".

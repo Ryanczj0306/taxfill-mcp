@@ -19,13 +19,8 @@
 # election boxes are conditional -> not required.
 #
 # Relations: the only arithmetic printed on the form face is item L line
-# "(e) Total" = sum of column (d) of treaty rows 1-3. It is NOT encoded
-# because the verify relation grammar cannot reference dotted line ids
-# (tokens are \d+[a-z]? or [A-Za-z_][A-Za-z0-9_]* — no '.'); documented as
-# an engine gap for the integrator. Once the tokenizer supports dotted refs:
-#   "1e == treaty_1.exempt_amount + treaty_2.exempt_amount + treaty_3.exempt_amount"
-# (2026-09-28, Phase J JP5c: verify's relation grammar now admits dotted ids. Declaring the
-# relations this note leaves out is ROADMAP JEc; until then they stay undeclared.)
+# "(e) Total" = the sum of column (d) of treaty rows 1-3, declared since
+# Phase J JEc (2026-09-28; verify's grammar admits dotted ids since JP5c).
 #
 # Cross-form: line 1e feeds Form 1040-NR line 1k; per formpacks/CONVENTIONS.md
 # that rule ("1k == sched_oi.1e") lives on the f1040nr pack, not here.
@@ -352,7 +347,8 @@ fields:
     on_state: "/1"
     group: m
 
-relations: []                               # see header comment: the (e)-total sum cannot reference dotted line ids yet
+relations:
+  - "1e == treaty_1.exempt_amount + treaty_2.exempt_amount + treaty_3.exempt_amount"   # item L "(e) Total" of column (d)
 
 cross_form: []                              # "1k == sched_oi.1e" is carried by the f1040nr pack
 

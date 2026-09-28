@@ -551,7 +551,7 @@
 # three lines in the whole file that carried a year at all.
 #
 # ---------------------------------------------------------------------------
-# RELATIONS — deliberately EMPTY, and the reason is the relation GRAMMAR
+# RELATIONS — the two printed identities (declared since Phase J JEc; see the note below)
 # ---------------------------------------------------------------------------
 # Form 8949 prints exactly two pieces of on-face arithmetic, and NEITHER can be
 # expressed in this repo's relation grammar, because every money line on this
@@ -589,8 +589,8 @@
 # rule). Reported as an open issue: this form is the strongest case in the repo
 # for a dotted-key relation grammar, at 36 unexpressible on-face equalities per
 # year.
-# (2026-09-28, Phase J JP5c: verify's relation grammar now admits dotted ids. Declaring the
-# relations this note leaves out is ROADMAP JEc; until then they stay undeclared.)
+# (2026-09-28, Phase J JEc: all of them are now declared under `relations:` — the
+# grammar admits dotted ids since JP5c. The text above records why they were missing.)
 #
 # ---------------------------------------------------------------------------
 # CROSS-FORM — deliberately EMPTY, on two independent grounds
@@ -1487,15 +1487,49 @@ fields:
     field: "Page2[0].f2_119[0]"
     type: money
 
-# Deliberately empty. Both pieces of on-face arithmetic — the per-row
-# (h) = (d) - (e) + (g) identity and the line-2 column totals — are equalities
-# over DOTTED column keys, and verify's relation tokenizer has no '.' token, so
-# neither can be expressed (reproduced: adding one raises "unexpected character
-# '.'"). Left to the recompute engine + human review, exactly as sched_d leaves
-# its own dotted per-row column equality. See the header.
-relations: []
+# Both pieces of on-face arithmetic — the per-row (h) = (d) - (e) + (g) identity
+# and the line-2 column totals — declared since Phase J JEc (2026-09-28; verify's
+# relation grammar admits dotted ids since JP5c): 36 relations, 28 row identities
+# + 8 column totals. See the header.
+relations:
+  - "short_term.1.row01.h == short_term.1.row01.d - short_term.1.row01.e + short_term.1.row01.g"   # column (h): "Subtract column (e) from column (d) and combine the result with column (g)"
+  - "short_term.1.row02.h == short_term.1.row02.d - short_term.1.row02.e + short_term.1.row02.g"
+  - "short_term.1.row03.h == short_term.1.row03.d - short_term.1.row03.e + short_term.1.row03.g"
+  - "short_term.1.row04.h == short_term.1.row04.d - short_term.1.row04.e + short_term.1.row04.g"
+  - "short_term.1.row05.h == short_term.1.row05.d - short_term.1.row05.e + short_term.1.row05.g"
+  - "short_term.1.row06.h == short_term.1.row06.d - short_term.1.row06.e + short_term.1.row06.g"
+  - "short_term.1.row07.h == short_term.1.row07.d - short_term.1.row07.e + short_term.1.row07.g"
+  - "short_term.1.row08.h == short_term.1.row08.d - short_term.1.row08.e + short_term.1.row08.g"
+  - "short_term.1.row09.h == short_term.1.row09.d - short_term.1.row09.e + short_term.1.row09.g"
+  - "short_term.1.row10.h == short_term.1.row10.d - short_term.1.row10.e + short_term.1.row10.g"
+  - "short_term.1.row11.h == short_term.1.row11.d - short_term.1.row11.e + short_term.1.row11.g"
+  - "short_term.1.row12.h == short_term.1.row12.d - short_term.1.row12.e + short_term.1.row12.g"
+  - "short_term.1.row13.h == short_term.1.row13.d - short_term.1.row13.e + short_term.1.row13.g"
+  - "short_term.1.row14.h == short_term.1.row14.d - short_term.1.row14.e + short_term.1.row14.g"
+  - "short_term.2.d == short_term.1.row01.d + short_term.1.row02.d + short_term.1.row03.d + short_term.1.row04.d + short_term.1.row05.d + short_term.1.row06.d + short_term.1.row07.d + short_term.1.row08.d + short_term.1.row09.d + short_term.1.row10.d + short_term.1.row11.d + short_term.1.row12.d + short_term.1.row13.d + short_term.1.row14.d"   # line 2 "Totals. Add the amounts in columns (d), (e), (g), and (h)"
+  - "short_term.2.e == short_term.1.row01.e + short_term.1.row02.e + short_term.1.row03.e + short_term.1.row04.e + short_term.1.row05.e + short_term.1.row06.e + short_term.1.row07.e + short_term.1.row08.e + short_term.1.row09.e + short_term.1.row10.e + short_term.1.row11.e + short_term.1.row12.e + short_term.1.row13.e + short_term.1.row14.e"
+  - "short_term.2.g == short_term.1.row01.g + short_term.1.row02.g + short_term.1.row03.g + short_term.1.row04.g + short_term.1.row05.g + short_term.1.row06.g + short_term.1.row07.g + short_term.1.row08.g + short_term.1.row09.g + short_term.1.row10.g + short_term.1.row11.g + short_term.1.row12.g + short_term.1.row13.g + short_term.1.row14.g"
+  - "short_term.2.h == short_term.1.row01.h + short_term.1.row02.h + short_term.1.row03.h + short_term.1.row04.h + short_term.1.row05.h + short_term.1.row06.h + short_term.1.row07.h + short_term.1.row08.h + short_term.1.row09.h + short_term.1.row10.h + short_term.1.row11.h + short_term.1.row12.h + short_term.1.row13.h + short_term.1.row14.h"
+  - "long_term.1.row01.h == long_term.1.row01.d - long_term.1.row01.e + long_term.1.row01.g"   # column (h): "Subtract column (e) from column (d) and combine the result with column (g)"
+  - "long_term.1.row02.h == long_term.1.row02.d - long_term.1.row02.e + long_term.1.row02.g"
+  - "long_term.1.row03.h == long_term.1.row03.d - long_term.1.row03.e + long_term.1.row03.g"
+  - "long_term.1.row04.h == long_term.1.row04.d - long_term.1.row04.e + long_term.1.row04.g"
+  - "long_term.1.row05.h == long_term.1.row05.d - long_term.1.row05.e + long_term.1.row05.g"
+  - "long_term.1.row06.h == long_term.1.row06.d - long_term.1.row06.e + long_term.1.row06.g"
+  - "long_term.1.row07.h == long_term.1.row07.d - long_term.1.row07.e + long_term.1.row07.g"
+  - "long_term.1.row08.h == long_term.1.row08.d - long_term.1.row08.e + long_term.1.row08.g"
+  - "long_term.1.row09.h == long_term.1.row09.d - long_term.1.row09.e + long_term.1.row09.g"
+  - "long_term.1.row10.h == long_term.1.row10.d - long_term.1.row10.e + long_term.1.row10.g"
+  - "long_term.1.row11.h == long_term.1.row11.d - long_term.1.row11.e + long_term.1.row11.g"
+  - "long_term.1.row12.h == long_term.1.row12.d - long_term.1.row12.e + long_term.1.row12.g"
+  - "long_term.1.row13.h == long_term.1.row13.d - long_term.1.row13.e + long_term.1.row13.g"
+  - "long_term.1.row14.h == long_term.1.row14.d - long_term.1.row14.e + long_term.1.row14.g"
+  - "long_term.2.d == long_term.1.row01.d + long_term.1.row02.d + long_term.1.row03.d + long_term.1.row04.d + long_term.1.row05.d + long_term.1.row06.d + long_term.1.row07.d + long_term.1.row08.d + long_term.1.row09.d + long_term.1.row10.d + long_term.1.row11.d + long_term.1.row12.d + long_term.1.row13.d + long_term.1.row14.d"   # line 2 "Totals. Add the amounts in columns (d), (e), (g), and (h)"
+  - "long_term.2.e == long_term.1.row01.e + long_term.1.row02.e + long_term.1.row03.e + long_term.1.row04.e + long_term.1.row05.e + long_term.1.row06.e + long_term.1.row07.e + long_term.1.row08.e + long_term.1.row09.e + long_term.1.row10.e + long_term.1.row11.e + long_term.1.row12.e + long_term.1.row13.e + long_term.1.row14.e"
+  - "long_term.2.g == long_term.1.row01.g + long_term.1.row02.g + long_term.1.row03.g + long_term.1.row04.g + long_term.1.row05.g + long_term.1.row06.g + long_term.1.row07.g + long_term.1.row08.g + long_term.1.row09.g + long_term.1.row10.g + long_term.1.row11.g + long_term.1.row12.g + long_term.1.row13.g + long_term.1.row14.g"
+  - "long_term.2.h == long_term.1.row01.h + long_term.1.row02.h + long_term.1.row03.h + long_term.1.row04.h + long_term.1.row05.h + long_term.1.row06.h + long_term.1.row07.h + long_term.1.row08.h + long_term.1.row09.h + long_term.1.row10.h + long_term.1.row11.h + long_term.1.row12.h + long_term.1.row13.h + long_term.1.row14.h"
 
-# Deliberately empty. The six printed Schedule D carries are CONDITIONAL on
+# cross_form deliberately empty. The six printed Schedule D carries are CONDITIONAL on
 # which box is checked and ADDITIVE across as many Forms 8949 as the filer
 # needs, and a dotted local ref cannot appear in a cross_form rule anyway
 # (refs split at the first dot). See the header.

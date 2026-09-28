@@ -87,8 +87,9 @@
 # cross_form: []  -- Federal AGI is page-1 line 11, but it is column-split
 # (11.a / 11.b); cross_form refs must be undotted local lines, so no clean
 # federal-AGI reference is expressible.
-# (2026-09-28, Phase J JP5c: verify's relation grammar now admits dotted ids. Declaring the
-# relations this note leaves out is ROADMAP JEc; until then they stay undeclared.)
+# (2026-09-28, Phase J JEc: the grammar admits dotted ids since JP5c, but MT's per-column
+# arithmetic spans ~600 dotted money lines over 11 pages; it is declared with the MT re-map
+# (ROADMAP JS5, which re-reads every line of the 2024/2025 faces), not patched in here.)
 form: "2"
 jurisdiction: states/mt
 tax_year: 2023

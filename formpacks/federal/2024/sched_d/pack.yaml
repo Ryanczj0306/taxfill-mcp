@@ -69,15 +69,14 @@
 # sched_2 2025 line 10, sched_8812 2025 line 15) so the printed line remains
 # addressable and counts blank-as-zero in the sum instructions that name it.
 #
-# Relations: only line 16 ("Combine lines 7 and 15") is declared — it is an
-# unconditional equality whose operands (7, 15, 16) are all mapped. The per-row
-# column equality (h) = (d) − (e) + (g) is NOT declared: the verify relation
-# grammar resolves a line id as a single token and cannot reference dotted
-# column keys, so those checks are left to the recompute engine + human review.
-# The conditional/worksheet-driven subtotals (lines 7, 15, 18–21) are likewise
-# left to recompute + review.
-# (2026-09-28, Phase J JP5c: verify's relation grammar now admits dotted ids. Declaring the
-# relations this note leaves out is ROADMAP JEc; until then they stay undeclared.)
+# Relations: line 16 ("Combine lines 7 and 15") is an unconditional equality
+# whose operands (7, 15, 16) are all mapped, and so is the per-row column
+# identity printed in the column (h) head — "Subtract column (e) from column
+# (d) and combine the result with column (g)" — declared for all eight rows
+# since Phase J JEc (2026-09-28; verify's grammar admits dotted ids since
+# JP5c). Rows 1a and 8a have no (g): their shaded cells are unmapped. The
+# conditional/worksheet-driven subtotals (lines 7, 15, 18–21) are left to
+# recompute + review.
 #
 # Checkbox groups (P-008, fixed 2026-08-24): the four Yes/No questions — the
 # page-1 header QOF question and Part III lines 17, 20 and 22 — are each TWO
@@ -314,6 +313,14 @@ fields:
     group: line22
 relations:
   - "16 == 7 + 15"                   # "Combine lines 7 and 15 and enter the result"
+  - "1a.h == 1a.d - 1a.e"        # the column (h) head: "Subtract column (e) from column (d) and combine the result with column (g)"
+  - "1b.h == 1b.d - 1b.e + 1b.g"
+  - "2.h == 2.d - 2.e + 2.g"
+  - "3.h == 3.d - 3.e + 3.g"
+  - "8a.h == 8a.d - 8a.e"
+  - "8b.h == 8b.d - 8b.e + 8b.g"
+  - "9.h == 9.d - 9.e + 9.g"
+  - "10.h == 10.d - 10.e + 10.g"
 cross_form:
   - "16 == f1040.7"                  # Net capital gain/(loss) → Form 1040, line 7
 identity_fields:

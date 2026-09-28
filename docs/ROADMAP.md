@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,540 tests** — offline 6,779 + live-.gov 761; derived
+Done and on `main` (**7,555 tests** — offline 6,794 + live-.gov 761; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2580,15 +2580,15 @@ not wait for any of this.
     - GA 500's paper / electronic voucher boxes.
   - **Adjudicated — 120 families** in `SEPARATE_OPTION_SETS_ADJUDICATED` (test_pack_invariants.py), keyed (family, stem) so a row covers every year. Each is `INDEPENDENT:` (e.g. "Check applicable boxes", one box per spouse, W-7's "you must also check and complete box h") or `PARTIAL:` (a grouped subset beside independent boxes: filing status + the NRA-spouse election, the dependent credit pair + the lived-with boxes).
   - **Gates:** `test_separate_widget_option_sets_are_adjudicated` over every pack; `test_every_option_set_row_still_describes_an_ungrouped_set` (self-clearing, INDEPENDENT/PARTIAL wording required). P-008 and CONVENTIONS updated; the Phase E box is closed.
-- [ ] **JEc — Declare the relations the dotted-id grammar now allows** (M; deps JP5c; added 2026-09-28 by JP5c, outside the original 62-tranche table)
-  - JP5c let verify's relation grammar reference dotted keys. Eighteen packs and handfills recorded the old wall and left printed arithmetic undeclared:
-    - sched_oi 2022–2025: item L (e) Total, spelled out in the pack;
-    - sched_d 2023–2025: the per-row (h) = (d) − (e) + (g);
-    - f8949 2023–2025: 22 row identities + 8 column totals per pack;
-    - sched_nec 2023–2025: the sub-lettered rows;
-    - MT Form 2 (2023): its per-column arithmetic.
-  - Each candidate must be re-read against its face and proven true on every filing path (the f8606 rule) — e.g. a total that also sums an attached statement's rows is NOT an equality.
-  - **Acceptance:** each declared relation PASSes the pack's golden and has a FAIL-on-wrong test; the dated JP5c notes are replaced by the relations or by the reason one stays out.
+- [x] **JEc — Declare the relations the dotted-id grammar now allows — DONE 2026-09-28** (M; deps JP5c; added 2026-09-28 by JP5c, outside the original 62-tranche table)
+  - *As built:* each candidate re-read against its face.
+    - **sched_d 2023–2026:** the column (h) head, "Subtract column (e) from column (d) and combine the result with column (g)", for all eight rows. Rows 1a/8a have no (g): the shaded cells are unmapped. 9 relations per pack.
+    - **sched_oi 2022–2025:** item L "(e) Total" = the three column (d) rows. The 2025 Instructions for Form 1040-NR (item L) provide no continuation statement, so the total is the three printed rows.
+    - **f8949 2023–2026:** the per-row identity and "2 Totals. Add the amounts in columns (d), (e), (g), and (h)" — 36 relations (14 rows a Part) in 2023/2024, 30 (11 rows) in 2025/2026.
+    - **sched_nec 2023–2025:** 13a–13e, "Add lines 1a through 12 in columns (a) through (d)", each sub-column summing the rows mapped in it.
+    - **MT Form 2 (2023)** stays out, with the reason recorded: its per-column arithmetic spans ~600 dotted money lines over 11 pages and belongs with the JS5 MT re-map. The FinCEN 114 handfills keep their underscore keys (the note states why).
+  - Every dated JP5c note is replaced by the declaration or the reason.
+  - **Tests:** test_dotted_relations.py — per family and year, a consistent fill PASSes and one wrong cell FAILs exactly its relation (Instructions for Form 8949 (2025) Column (h) example: $6,000 − $2,000 + ($1,000) = $3,000).
 - [ ] **JD2 — Process: derived counts, suite speed, branches, ROADMAP shape** (M; deps JD1)
   1. **Derived counts** [G15]. New `scripts/sync_doc_counts.py`, keeping the sync_test_count entrypoint: tools, ops, DocSpecs, packs, hand-fill packs and the ReadOnly total. It rewrites anchors, runs `--check` in CI, and regex-asserts the pyproject descriptions.
   2. **Suite speed** [G25]. About 5.6 min locally and 10.2 min in CI (run 33118033631); two property tests take 48.8 s and 45.3 s; list_forms parses 172 packs per call (~3.1 s; discovery.py:142-147).

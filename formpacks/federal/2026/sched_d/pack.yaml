@@ -227,6 +227,14 @@ fields:
     group: line22
 relations:
   - "16 == 7 + 15"                   # "Combine lines 7 and 15 and enter the result"
+  - "1a.h == 1a.d - 1a.e"        # the column (h) head: "Subtract column (e) from column (d) and combine the result with column (g)"
+  - "1b.h == 1b.d - 1b.e + 1b.g"
+  - "2.h == 2.d - 2.e + 2.g"
+  - "3.h == 3.d - 3.e + 3.g"
+  - "8a.h == 8a.d - 8a.e"
+  - "8b.h == 8b.d - 8b.e + 8b.g"
+  - "9.h == 9.d - 9.e + 9.g"
+  - "10.h == 10.d - 10.e + 10.g"
 cross_form:
   - "16 == f1040.7a"                 # Net capital gain/(loss) → 2025 Form 1040, line 7a (2025 f1040 pack key "7a")
 identity_fields:
