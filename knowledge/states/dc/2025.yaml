@@ -5,8 +5,18 @@
 # (CA/CT/MD/MS-style). Figures the fetch could not independently confirm are in
 # `unverified` — confirm at the cited source.
 #
+# RE-VERIFIED 2026-09-28 (Phase J JS1a): the booklet first cited
+# (2025_D40_Book_Final_wLinks_030526_v1.0.pdf) returned 404 from 2026-08-24, and DC OTR
+# re-issued it as 2025_D40_Book_082026_v1.pdf (105 pages, modified 2026-08-20, sha256
+# 6c1df426c2a6b4cd...). Every quoted booklet passage and figure below was re-found in the
+# re-issue — the OBBBA non-conformity text, DC's own standard deduction ($15,000 / $22,500 /
+# $30,000; additional $1,600 / $2,000), EITC at 100% (childless maximum $649, investment
+# limit $11,950), Schedule H $1,425 ($66,000 / $90,000), Schedule ELC $1,200, the Line 7
+# "Other" additions, the filing deadline, both PO boxes, the rate schedule and the two
+# spot-checked tax-table rows ($1,302, $3,595) — so the pack now cites the re-issue.
+#
 # Two-pass verification: every key figure below was drafted from the 2025 D-40
-# booklet (2025_D40_Book_Final_wLinks_030526_v1.0.pdf, 5,548 extracted lines),
+# booklet (then 2025_D40_Book_Final_wLinks_030526_v1.0.pdf, 5,548 extracted lines),
 # then independently re-derived from a second official source — the live
 # otr.cfo.dc.gov "DC Individual and Fiduciary Income Tax Rates" page for the rate
 # schedule, and a second in-booklet print for every other figure.
@@ -77,7 +87,7 @@ treaty_note: 'DC''s Form D-40 begins from federal adjusted gross income (D-40 Li
   federal AGI and DC has no treaty add-back, it flows through and is NOT re-taxed by DC. Therefore DC conforms (treaty-exempt
   income remains exempt).'
 citation:
-  source: 'DC OTR — 2025 D-40 Individual Income Tax Forms and Instructions (Booklet PDF, 2025_D40_Book_Final_wLinks_030526_v1.0.pdf):
+  source: 'DC OTR — 2025 D-40 Individual Income Tax Forms and Instructions (Booklet PDF, 2025_D40_Book_082026_v1.pdf):
     Federal Tax Changes and the District (OBBBA non-conformity), Tax Year 2025 Changes, New for 2025 Income Tax Returns
     (filing deadline April 15, 2026; DC''s own basic standard deduction $15,000/$22,500/$30,000; DC EITC 100% of federal;
     childless EITC max $649; Schedule H max $1,425; Schedule ELC max $1,200), Who must file plus the 2025 DC Individual
@@ -85,7 +95,7 @@ citation:
     96145 refund/no money due; PO Box 96169 with payment), check payable to DC Treasurer, Reminders Income Tax Rate
     Table + Calculation I/Tax Rate Schedule (p. 20), Schedule I Calculation A additions (no treaty add-back) and Calculation
     B subtractions, D-40 Lines 4/16/17/18/19/20'
-  url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+  url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 starts_from: 'federal AGI (Form D-40 Line 4 is federal adjusted gross income from the federal 1040/1040-SR/1040-NR;
   Schedule I then applies Calculation A additions (D-40 Line 6) and Calculation B subtractions (D-40 Line 14) to arrive
   at DC adjusted gross income on Line 16)'
@@ -139,7 +149,7 @@ credits:
       amount"), "New for 2025 Income Tax Returns" ("For tax year 2025 DC EITC is increased to 100% of the federal
       credit"; investment-income limit increased from $11,600 to $11,950), and the DC Earned Income Tax Credit section
       / Taxpayers with a Qualifying Child instructions'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 - name: 'DC Earned Income Tax Credit (DC EITC) — filers WITHOUT a qualifying child'
   type: refundable
   eligibility: 'DC residents without a qualifying child (ITIN filers eligible) using the DC "EITC Worksheet For Filers
@@ -159,7 +169,7 @@ credits:
     source: 'DC OTR — 2025 D-40 booklet: "New for 2025" (EITC Without Qualifying Children maximum increased from $632
       to $649; investment-income limit increased to $11,950) and the DC EITC Worksheet For Filers Without a Qualifying
       Child, Sections B-C ($8,484 / 0.0765 / $649 / $23,288 / $30,941)'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 - name: 'Schedule H — Homeowner and Renter Property Tax Credit (circuit-breaker)'
   type: refundable
   eligibility: 'DC residents who owned or rented their DC home and were not claimed as a dependent (with an age-70
@@ -175,7 +185,7 @@ credits:
     source: 'DC OTR — 2025 D-40 booklet: "Tax Year 2025 Changes" (maximum credit increases to $1,425; income limits
       increase to $66,000 under 70 and $90,000 for 70 or older) and "New for 2025 — Schedule H, Homeowner and Renter
       Property Tax Credit" plus the Instructions for Schedule H'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 - name: 'Keep Child Care Affordable Tax Credit (Schedule ELC)'
   type: refundable
   eligibility: 'DC taxpayer who paid eligible child-care expenses to a licensed "child development facility" for an
@@ -193,7 +203,7 @@ credits:
       taxable income thresholds changed; maximum credit increased to $1,200 per eligible child) and the Schedule ELC
       line instructions (eligible child under age 4 as of 9/30/25; DC taxable income limits $80,100 single/HoH, $180,100
       MFJ and MFS-same-return, $90,000 MFS)'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 - name: 'Credit for Child and Dependent Care Expenses'
   type: nonrefundable
   eligibility: 'DC full-year or statutory residents who claimed (or were eligible for) the federal child and dependent
@@ -207,7 +217,7 @@ credits:
   citation:
     source: 'DC OTR — 2025 D-40 booklet, Line 21 instructions ("multiply the amount from federal Form 2441, Line 9c
       by .32"), confirmed against the "X .32" printed on the 2025 Form D-40 Line 21 itself'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 filing_requirement:
   note: 'NEW FOR 2025 — DC HAS ITS OWN FILING THRESHOLD. "The District has established its own filing threshold requirements
     for the D-40 Individual Income Tax Return beginning with tax year 2025. This means DC taxpayers may be required
@@ -230,7 +240,7 @@ filing_requirement:
     source: 'DC OTR — 2025 D-40 booklet, "New for 2025 Income Tax Returns — Filing Threshold" and "Who must file a
       DC Income tax return?" with the 2025 DC Individual Income Tax Filing Requirements Chart, p. 7; "Tax Year 2025
       Changes — D-40 Filing Requirement"; OTR Tax Notice 2025-01 summary'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 mailing_addresses:
   refund_or_no_payment: 'Office of Tax and Revenue, PO Box 96145, Washington, DC 20090-6145 (use the PO Box 96145
     mail label from the back flap of the return envelope for a refund-request return or a no-money-due return).'
@@ -241,7 +251,7 @@ mailing_addresses:
     source: 'DC OTR — 2025 D-40 booklet, "Filing your return / By mail" and the Form D-40P voucher instructions ("Detach
       at perforation and mail the voucher, with payment attached, to the Office of Tax and Revenue, PO Box 96169,
       Washington DC 20090-6169"); refund/no-money-due label PO Box 96145'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
   verification: 'Some state facts could not be independently re-confirmed — see the pack''s `unverified` list; confirm
     at the cited DC OTR source before relying on a specific figure/address.'
 payment:
@@ -252,7 +262,7 @@ payment:
   citation:
     source: 'DC OTR — 2025 D-40 booklet, payment instructions ("Include a check or money order (US dollars), payable
       to the DC Treasurer") and the 2025 Form D-40P payment voucher'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 deadlines:
   filing_due_date: '2026-04-15'
   citation:
@@ -260,7 +270,7 @@ deadlines:
       filing deadline is April 15, 2026" and "April 15, 2026 is the deadline for filing your return and paying any
       taxes due." Extension: Form FR-127 for the first 6-month extension is due by April 15, 2026, with an additional
       6 months available if living or traveling outside the U.S.'
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 all_citations:
 - source: 'DC OTR — 2025 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Federal Tax Changes and
     the District (OBBBA items DC will not recognize), Tax Year 2025 Changes (DC EITC 100%; Child Tax Credit repealed;
@@ -271,7 +281,7 @@ all_citations:
     TY2022), 2025 Filing Requirements Chart p. 7, Standard Deduction section, Calculation I/Tax Rate Schedule p. 20,
     Calculation F itemized limitation, Calculation G-1 additional standard deduction, tax tables pp. 93-102, mailing
     addresses, DC Treasurer payee, Schedule I Calculations A/B'
-  url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+  url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 - source: 'DC OTR — 2025 D-40 Booklet publication landing page (the source of the booklet PDF filename/URL)'
   url: 'https://otr.cfo.dc.gov/publication/2025-d-40-booklet'
 - source: 'DC OTR — DC Individual and Fiduciary Income Tax Rates (live page) — INDEPENDENT SECOND-PASS verification
@@ -283,9 +293,6 @@ all_citations:
     filing)'
   url: 'https://mytax.dc.gov'
 unverified:
-- 'STALE SOURCE (recorded 2026-09-24, Phase J J0.6): the 2025 D-40 booklet URL this pack cites has returned 404 since
-  2026-08-24; DC OTR re-issued the booklet as 2025_D40_Book_082026_v1.pdf. The figures below were NOT re-verified
-  against the re-issued booklet — Phase J JS1a re-verifies them.'
 - 'Whether DC''s "Other" addition (Schedule I, Calculation A, Line 7) could in some interpretation capture a specific
   federal treaty exclusion. For 2025 the booklet ENUMERATES the Line 7 items (out-of-state municipal bond interest,
   qualified small business stock capital gains, and the disallowed federal Schedule 1-A tips/overtime/car-loan-interest/senior
@@ -306,7 +313,7 @@ unverified:
   bracket math ($1,300 and $3,593.50). See the tax.notes table mandate.'
 tax:
   citation:
-    source: 'DC Office of Tax and Revenue — 2025 D-40 Individual Income Tax Forms and Instructions booklet (2025_D40_Book_Final_wLinks_030526_v1.0.pdf):
+    source: 'DC Office of Tax and Revenue — 2025 D-40 Individual Income Tax Forms and Instructions booklet (2025_D40_Book_082026_v1.pdf):
       ''Reminders — Income Tax Rate Table - For taxable years beginning January 1, 2022, the DC income tax rate table
       is'' and ''Calculation I/Tax Rate Schedule'' (p. 20): ''Not over $10,000: 4% of the taxable income; Over $10,000
       but not over $40,000: $400, plus 6% of the excess over $10,000; Over $40,000 but not over $60,000: $2,200, plus
@@ -322,7 +329,7 @@ tax:
       prints the identical post-12/31/2021 schedule — all three prints agree. Recorded resolution: the Reminders print
       still carries the 2024-vintage typo ''.8.5%'' for the $60,000-$250,000 row; the Calculation I print and the live
       rates page both read 8.5%, and the printed constants ($19,650 = $3,500 + 8.5% x $190,000) prove 8.5% is correct.'
-    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf
+    url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf
   brackets:
     single:
     - {over: 0, but_not_over: 10000, rate: 0.04}
@@ -483,7 +490,7 @@ effective_law_changes:
   citation:
     source: >-
       DC OTR — 2025 D-40 Individual Income Tax Forms and Instructions (Booklet PDF,
-      2025_D40_Book_Final_wLinks_030526_v1.0.pdf): Federal Tax Changes and the District (OBBBA
+      2025_D40_Book_082026_v1.pdf): Federal Tax Changes and the District (OBBBA
       non-conformity), Tax Year 2025 Changes, New for 2025 Income Tax Returns (filing deadline
       April 15, 2026; DC's own basic standard deduction $15,000/$22,500/$30,000; DC EITC 100% of
       federal; childless EITC max $649; Schedule H max $1,425; Schedule ELC max $1,200), Who must
@@ -492,7 +499,7 @@ effective_law_changes:
       with payment), check payable to DC Treasurer, Reminders Income Tax Rate Table + Calculation
       I/Tax Rate Schedule (p. 20), Schedule I Calculation A additions (no treaty add-back) and
       Calculation B subtractions, D-40 Lines 4/16/17/18/19/20
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 - description: >-
     OBBBA NON-CONFORMITY — DC DECOUPLED FROM FEDERAL LAW: "In July 2025, the U.S. Congress passed
     the One Big Beautiful Bill Act (OBBBA)... In November 2025, the D.C. Council passed a new law
@@ -528,7 +535,7 @@ effective_law_changes:
       Deduction section, Calculation I/Tax Rate Schedule p. 20, Calculation F itemized limitation,
       Calculation G-1 additional standard deduction, tax tables pp. 93-102, mailing addresses, DC
       Treasurer payee, Schedule I Calculations A/B
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'
 - description: >-
     CREDIT CHANGES FOR 2025: the DC Earned Income Tax Credit is NOW 100% of the federal EIC (up
     from 70% for 2024) — "The District EITC is now 100% of the federal EITC amount" — with the
@@ -557,4 +564,4 @@ effective_law_changes:
       Deduction section, Calculation I/Tax Rate Schedule p. 20, Calculation F itemized limitation,
       Calculation G-1 additional standard deduction, tax tables pp. 93-102, mailing addresses, DC
       Treasurer payee, Schedule I Calculations A/B
-    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf'
+    url: 'https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf'

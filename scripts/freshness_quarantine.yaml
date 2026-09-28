@@ -2,7 +2,8 @@
 # (.github/workflows/freshness.yml), each behind an expiry date and the tranche that fixes it.
 #
 # The job was red 6 of 6 weeks from 2026-08-17 (last: run 35621846216, 2026-09-21) on these
-# three items alone, so a NEW red would have been lost in the old one. With them quarantined, the
+# three items alone, so a NEW red would have been lost in the old one. (The DC booklet row retired
+# 2026-09-28: Phase J JS1a re-verified DC 2025 against the re-issued booklet.) With them quarantined, the
 # job is green unless something else breaks, and any red opens a `freshness red` issue.
 #
 # Rules (scripts/freshness_quarantine.py; tests in packages/core/tests/test_freshness_quarantine.py):
@@ -27,11 +28,3 @@ entries:
     expires: "2027-03-31"
     fixed_by: JS1b
     why: The same MA 2023 Form 1 blank, fetched by the read-only widget audit.
-  - kind: drift
-    url: "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_Final_wLinks_030526_v1.0.pdf"
-    added: "2026-09-27"
-    expires: "2027-03-31"
-    fixed_by: JS1a
-    why: >-
-      The DC 2025 D-40 booklet has returned 404 since 2026-08-24; DC OTR re-issued it as
-      2025_D40_Book_082026_v1.pdf. JS1a re-verifies every DC 2025 quote against the re-issue.

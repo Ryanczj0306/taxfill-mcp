@@ -2117,10 +2117,15 @@ line items sum to the headline delta.
 
 ### Block 7 — State (federal-first; starts after the federal lanes)
 
-- [ ] **JS1a — DC 2025 re-verification** (S–M) [G22]
-  - The cited DC 2025 booklet (~20 citations in knowledge/states/dc/2025.yaml, 6 in sources_states.yaml:532-609) has returned 404 since 2026-08-24; DC OTR links a re-issued `2025_D40_Book_082026_v1.pdf`.
-  - Diff every quoted passage (rates, standard deduction, mailing addresses, OBBBA decoupling), update the URLs, regenerate sources_states.yaml (byte-equality test), and remove J0.6's `unverified` line and JT0c's allowlist row.
-  - **Acceptance:** the drift job is green for DC; the allowlist row is gone.
+- [x] **JS1a — DC 2025 re-verification — DONE 2026-09-28** (S–M) [G22]
+  - *As built:* fetched the re-issued `2025_D40_Book_082026_v1.pdf` (105 pages, modified 2026-08-20; the old URL still 404s). Every quoted booklet passage and figure in knowledge/states/dc/2025.yaml was re-found in it:
+    - the OBBBA non-conformity text;
+    - DC's own standard deduction ($15,000 / $22,500 / $30,000; additional $1,600 / $2,000);
+    - EITC at 100% (childless maximum $649, investment limit $11,950);
+    - Schedule H $1,425 and Schedule ELC $1,200;
+    - the Line 7 "Other" additions, the April 15, 2026 deadline and both PO boxes;
+    - the rate schedule and the two spot-checked tax-table rows ($1,302, $3,595).
+  - The 15 citation URLs point at the re-issue, and sources_states.yaml is regenerated. J0.6's STALE SOURCE `unverified` line and JT0c's DC drift quarantine row are removed; the quarantine test now uses a synthetic drift row.
 - [ ] **JS1b — MA mirror and a seed command** (M) [G23]
   - MA Form 1's Wayback cache-seed exists only on the maintainer's disk, and CI and fresh installs get a 403 that says "retry in a minute".
   - Add pack `mirror_urls` with the exact `web.archive.org/web/<ts>id_/<official>` snapshot, tried on 401/403 and ALWAYS digest-verified.
