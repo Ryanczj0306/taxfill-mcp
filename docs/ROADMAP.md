@@ -2201,7 +2201,7 @@ line items sum to the headline delta.
     - **Downloads** use the browser User-Agent `taxfill_core.fetch` uses: CO's host answers 403 to the old agent. An incomplete TLS chain (tax.idaho.gov) is retried through curl. Either way the bytes are classified, and digest-checked for a recorded row.
     - **Acceptance, run 2026-09-28.** Online, 16/16 recorded rows reproduce; offline, from the warmed cache, 8/8 per year. UT 2025 is PORTABLE against UT 2024, and the network test `test_ut_2025_triages_portable_against_ut_2024` pins it. The 2025 newest-base work-list (JS3b's input) is: 5 already shipped (ar1000f, or40, pa40, ny it201/it203); PORTABLE az140, d40 and tc40; NEAR-PORT al40 (34 fields) and ky form740 (4); 16 RE-MAP; the rest URL-DEAD, no-year-token or print-only. In newest mode a form with a target-year pack is reported `shipped` and not triaged; a fixed `--base` keeps the old census.
     - Tests: `test_scaffold_state_year.py` — 12 offline (derivations, revision dates, newest base, shipped forms, rows + cache-first + digest mismatch + offline, the rows file is public data) and 2 network (UT, and all 16 rows reproduce).
-- [ ] **JS3b — Cheap state ports** (M–L, per pack) [G05 + PJ-15 (2)–(3)]
+- [x] **JS3b — Cheap state ports — DONE 2026-09-28** (M–L, per pack) [G05 + PJ-15 (2)–(3)] — 11 pack-years shipped: UT 2025, AZ 24/25, DC 24/25, KY 24/25, LA 2024, ID 2024. AL 40 24/25 moved to JS5 (measured below).
   - UT 2025 TC-40 is PORTABLE and unshipped: files.tax.utah.gov/tax/forms/2025/tc-40.pdf returns 200, sha256 0eac22fb…37cdf, and all 106 mapped UT-2024 fields exist in it.
   - Then the rows marked PORTABLE / NEAR-PORT, TY2025 first: AZ 24/25, DC 24/25, KY 24 (PORTABLE) / 25 (NEAR-PORT, 4 fields), LA 24, AL 24 (NEAR-PORT, 3), ID 24 (NEAR-PORT, 2).
   - **Acceptance, per pack:** re-downloaded with a digest pin, vision-audited, golden round trip.
@@ -2252,7 +2252,10 @@ line items sum to the headline delta.
       - StateAbbrv / PreparerState lost their /MaxLen, and the pack's maxlen 2 still binds (JEa).
       - Face deltas: the years, the $14,600 / $21,900 / $29,200 standard deductions (already in the knowledge pack with the 5.695% rate), and a printed floor on line 19 (already undeclared).
       - Sentinel audit 145/145 with 0 fails, both pages read. The full network gate set (799) passes.
-    - Next: AL 40 2024 / 2025. The triage says NEAR-PORT (3 / 34 fields), but 2024 moved 1,577 of the 2,473 widgets to another page and re-placed 1,039, and 2025 adds four pages. Every mapped row has to be re-placed and read over ~41 pages, so it is re-map scale.
+    - **AL 40 2024 / 2025 → JS5.** The triage calls them NEAR-PORT (3 / 34 fields gone), but the census of the 2,260 mapped fields says partial re-map:
+      - 2024 splits page 15 in two (every later page shifts +1). 166 mapped widgets moved more than 20 pt and 34 more by 5-20 pt. Schedule OC gains carry-forward and limitation columns (40 new widgets), and CHECKOFF18/19 and SCHOCLINE9PR are gone.
+      - 2025 adds four more pages (2,846 widgets) and drops 34 mapped fields.
+      - A 41-45-page sentinel read of a 2,260-line pack is JS5 work, not a cheap port.
 - [x] **JS3c — Courier-aware clipping check — DONE 2026-09-28** (M; added 2026-09-28 by JS3b, outside the original 62-tranche table)
   - *Found by the LA 2024 port.* Its blank moved every text widget from "/HeBo 10" to "/CoBo 12". The audit's renders showed the dependent-name columns clipping "Test Taxpayer 27" at both edges while verify reported 0 fails. The P-001 width estimate used the 0.5-em Helvetica average for every font, but Courier advances exactly 0.6 em a glyph. 31 state packs map Courier text widgets (AL alone 2,074), so verify under-reported clipping on all of them by a sixth.
   - *As built:* `read_text_widgets` resolves each widget's /DA font through the AcroForm /DR /BaseFont, sets `TextWidget.monospace`, and falls back to Acrobat's /Cour /CoBo /CoOb /CoBO aliases when unresolvable. `clipping_scan` uses 0.6 for a Courier face, on the single-line width and the multiline row budget, and names the metric in its message.
@@ -2294,6 +2297,7 @@ line items sum to the headline delta.
     - 2024: 32 (RE-MAP 10, URL-DEAD 11, no-token 7, print-only 4).
     - 2025: 41 (PORTABLE 1, RE-MAP 12, URL-DEAD 17, no-token 7, print-only 4).
   - TY2025 before TY2024. Every CA pack is a full re-map.
+  - **AL 40 2024 and 2025** (from JS3b, measured 2026-09-28; see the JS3b progress note): re-place the Schedule OC rows and map its new carry-forward / limitation columns, re-read all 41 (2024) / 45 (2025) pages, and resolve the 3 / 34 vanished fields.
   - Resume discovery for the 20 never-started states plus OK, MA and NE in resumable pools of 3–4 workers. The remaining TY2024 rows fold into JS7.
   - **MA 2023 Form 1 re-map** (JS1b finding): mass.gov now serves the 2026-05-22 re-issue, a rebuilt 360-field AcroForm. Re-map the pack onto it (its named ovals may also clear the 11 unmappable `Checkcash`/`Checktp1` kids), re-pin `pdf_sha256` and `mirror_urls` to a matching capture, and delete the MA drift row in `scripts/freshness_quarantine.yaml`.
   - **Acceptance, per pack:** digest pin, vision audit, golden round trip, triage row updated.
