@@ -268,7 +268,7 @@ def test_pack_relations_parse_in_verifys_evaluator(pack_path: Path):
 #
 # They were mapped as ordinary money lines through 2026-08-20, so the filler
 # printed digits inside the grey boxes with no warning — and verify's clipping
-# scan skips ReadOnly widgets, so nothing downstream caught it. Keyed by year
+# scan then skipped ReadOnly widgets (until Phase J J0.3), so nothing downstream caught it. Keyed by year
 # because the 2025 revision dropped the "_RO" suffix from the widget NAMES
 # while keeping the flag; a name-only port audit reads that as cosmetic.
 SCHED_D_SHADED_G_WIDGETS: dict[int, tuple[str, ...]] = {

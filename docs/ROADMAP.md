@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,038 tests** — offline 6,561 + live-.gov 477; derived
+Done and on `main` (**7,327 tests** — offline 6,566 + live-.gov 761; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2545,19 +2545,27 @@ not wait for any of this.
     - recruits a non-developer ACCEPTANCE tester;
     - makes any branch-protection change.
   - Then an agent does A6.
-- [ ] **JEa — SSN maxlen and reserved lines** (M; deps J0) [G30 + PJ-13 rest]
-  - `identifying_number` has maxlen 9 on f8606 and f8960 (2023–2025), where the widget /MaxLen is 11 (f8606 2025 `f1_02[0]`; f8960 2025 `f1_2[0]`), against CONVENTIONS.md:228. Set 11, and add a network-marked invariant that pack maxlen == widget /MaxLen.
-  - Add `PackField.reserved`, a fill_form warning, and an audit_pack skip.
-  - Add a CONVENTIONS "ReadOnly and reserved widgets" rule, including "never map DOR instruction banners" (J0.3's root cause).
-  - **J0 verifier follow-ups (2026-09-24):**
-    - run `test_verify_readonly_sweep.py` in the freshness job after the network round trips warm the blank cache (CI's offline job skips all its per-pack cases);
-    - unmap the same-shape class-1 captions AL-40 2023 and MO-1040 2023/2024 still carry (they fit their boxes, so never FAIL): AL `txtMultiScheduleD/E`; MO the 28 `printlid.*` lids, `ProtectBarcode`, `amendedTXT`, `1040_30Text`, `line51txt`, `vendorid` — re-pin STATE_COMPUTED_READONLY;
-    - adjudicate mapped ReadOnly widgets whose blank holds a non-zero number (class 1 printed constant vs class 4 calculator default): GA 500 `TP/SP_S1L4` 4000, `S1L2_P3` 17500, `S1L7_P3` 35000; MO `line32Y/S`, `moa_wks6`, `moa_pt4_4`, `moa_pt3_4`, `moa_pt5_2`; WV `it140_6`;
-    - enforce the bound pack `maxlen` in `clipping_scan` for a ReadOnly widget with no `/MaxLen` (GA 500 `STATE1`, WV `it140_totex5` are filler-enforced only today);
-    - the width heuristic ignores the multiline flag (/Ff bit 13), so a long explanation in an editable multiline box can false-FAIL;
-    - give fetch.py a public `cached_blank_path(url, sha256)` (verify imports the private `_cache_path`);
-    - reword the stale "verify skips ReadOnly widgets" prose in the federal sched_d / sched_e 2023–2025 pack headers, the OH it1040_oh 2023/2024 headers, test_formpacks_federal.py:267 and test_pack_invariants.py:758.
-  - **Acceptance:** the maxlen invariant is green; fill_form warns on a reserved line.
+- [x] **JEa — SSN maxlen and reserved lines — DONE 2026-09-28** (M; deps J0) [G30 + PJ-13 rest]
+  - *As built:*
+    - **maxlen tracks the widget.** 41 federal SSN fields (identifying_number in f8606 / f8960 / f8962 / sched_2 / sched_a / sched_oi / sched_3a, and f8962 30b–33b; 2022–2026) move 9 → 11, their widget /MaxLen. NY IT-203 2025 line 35 moves 10 → 4: its widget holds 4, the one pack that let through more than its box.
+      - New network-marked test_pack_maxlen.py over every pack: a pack maxlen may never exceed the widget's; a tighter one needs a `TIGHTER_THAN_WIDGET` row with the measured box (11 state rows, self-clearing).
+    - **`PackField.reserved`**: set on exactly the 19 RESERVED_LINE_KEEPS rows (a test holds the two equal). fill_form warns when a value lands on one; scripts/audit_pack.py leaves them blank.
+    - **CONVENTIONS** "Reserved, shaded and ReadOnly widgets" gains the `reserved` flag, the "never map a DOR banner or caption" rule (with the J0.3 AL-40 / MO-1040 cases) and the maxlen rule.
+    - **J0 verifier follow-ups:**
+      - freshness.yml runs test_verify_readonly_sweep.py after the network round trips warm the cache;
+      - unmapped the class-1 captions — AL-40 2023 txtMultiScheduleD/E; MO-1040 2023/2024's 28 printlid.* lids, ProtectBarcode, vendorid, amendedTXT, line51txt, 1040_30Text (STATE_COMPUTED_READONLY al40 568→566, mo1040 256→223 / 254→221);
+      - adjudicated the nonzero ReadOnly defaults: GA 500's TP/SP_S1L4 (4000) and TP/SP_S1L2_P3 (17500) are constants → unmapped (193→189). The 17 others are class 4 (JS-assigned, filing-status-dependent, a /C script, a /Ch default), pinned in `NONZERO_READONLY_DEFAULTS` with a network test that fails on any unadjudicated one;
+      - verify enforces a bound pack maxlen on a scanned widget with no /MaxLen of its own (`_bound_maxlen_checks`; blank-owned widgets are dropped first, so J0.3's regression cannot return);
+      - the width heuristic counts wrapped lines for a multiline widget (/Ff bit 13) against the rows its height holds;
+      - `fetch.cached_blank_path(url, sha256)` is public, and verify and the new tests use it;
+      - the stale "verify skips ReadOnly widgets" prose is reworded (sched_d / sched_e 2023–2025, OH IT-1040 2023/2024, test_formpacks_federal, test_pack_invariants), and P-007 records (b) as closed.
+  - **Tests:**
+    - test_pack_maxlen.py (223 network cases);
+    - test_filler reserved warning; the reserved-flag equality;
+    - NONZERO_READONLY_DEFAULTS;
+    - test_verify multiline and bound-maxlen;
+    - test_fetch cached_blank_path;
+    - the two sweep controls re-based on the multiline rule.
 - [ ] **JEb — Checkbox topology** (L, commits per pack family; deps J0) [G31]
   - Option sets on separate single-widget fields whose tokens are not yes/no are invisible to both P-008 gates. Measured 2026-08-26 on 160 packs: 285 such sets across 81 packs, 193 without a shared group id. Re-measure on 172.
   - Add `test_separate_widget_option_sets_are_adjudicated` with a self-clearing table justified from the printed rows.

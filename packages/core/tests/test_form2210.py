@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from taxfill_core.fetch import _cache_path, compute_sha256, default_cache_dir
+from taxfill_core.fetch import cached_blank_path
 from taxfill_core.filler import fill_form, rehearsal_only
 from taxfill_core.penalty import form2210_lines, underpayment_penalty
 from taxfill_core.schemas.formpack import load_pack
@@ -27,8 +27,8 @@ def _pack(year: int):
 
 
 def _cached_blank(pack) -> Path:
-    path = _cache_path(default_cache_dir(), pack.source_url)
-    if not path.is_file() or compute_sha256(path) != pack.pdf_sha256:
+    path = cached_blank_path(pack.source_url, pack.pdf_sha256)
+    if path is None:
         pytest.skip(f"the Form 2210 blank is not cached — warm it with fetch_blank({pack.source_url})")
     return path
 

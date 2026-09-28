@@ -24,7 +24,7 @@
 # units-of-five UI control) - those carry no taxpayer data and are intentionally
 # OMITTED (each such name appears only as an appearance-stream /BBox, never a
 # real /AP /N on-state). Of the remaining 2274 data widgets (2084 text, 190
-# checkboxes), 2262 are mapped. AL marks many running totals ReadOnly, but they
+# checkboxes), 2260 are mapped. AL marks many running totals ReadOnly, but they
 # remain mapped so a filer can carry the computed value (P-007 class 4).
 #
 # The 12 deliberately UNMAPPED text widgets (2026-09-23) are ReadOnly DOR
@@ -41,9 +41,9 @@
 # Pinned by STATE_COMPUTED_READONLY (580 -> 568) in
 # test_readonly_widget_mapping.py and the repo-wide sweep in
 # test_verify_readonly_sweep.py. The two white captions txtMultiScheduleD/E
-# ("Check here if you have more than one Schedule D/E") are the same shape and
-# are still mapped: they fit their boxes, so they never FAIL, and unmapping
-# them waits for the CONVENTIONS banner rule (roadmap JEa).
+# ("Check here if you have more than one Schedule D/E") are the same shape; they
+# fit their boxes, so they never FAILed, and were unmapped on 2026-09-28 under
+# the CONVENTIONS banner rule (Phase J JEa): STATE_COMPUTED_READONLY 568 -> 566.
 #
 # Checkboxes. Every real checkbox/radio in this form uses exactly one of two
 # export values, read verbatim from the blank's /AP /N dictionary: /X (184 of
@@ -8146,9 +8146,6 @@ fields:
     field: "NETPROFITORLOSS#20"
     type: text
     maxlen: 9
-  - line: txtMultiScheduleD
-    field: txtMultiScheduleD
-    type: text
   - line: CHKMULTISCHD
     field: CHKMULTISCHD
     type: checkbox
@@ -8641,9 +8638,6 @@ fields:
     field: TOTALPSHIPSCORPESTATETRUSTINCLOSS
     type: text
     maxlen: 9
-  - line: txtMultiScheduleE
-    field: txtMultiScheduleE
-    type: text
   - line: CHKMULTISCHE
     field: CHKMULTISCHE
     type: checkbox

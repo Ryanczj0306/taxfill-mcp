@@ -197,12 +197,32 @@ verdicts here (a second copy is how the wrong version propagates). In short:
 2. the printed text makes a correct entry IMPOSSIBLE → the line key must not
    exist, so `fill_form` raises;
 3. a printed, numbered line reading "Reserved for future use" → may stay
-   mapped with a leave-blank comment, so the key survives the revision that
-   un-reserves it;
+   mapped with a leave-blank comment and `reserved: true`, so the key survives
+   the revision that un-reserves it (`fill_form` warns when a value lands on a
+   reserved line and `scripts/audit_pack.py` skips it; a test holds the flag
+   equal to the `RESERVED_LINE_KEEPS` table);
 4. the FORM owns the value (a DOR running total, a page-header identity
    mirror, or a cell the form only unlocks on another answer) → it MUST stay
    mapped, because taxfill never runs the propagation and an unmapped one
    ships blank.
+
+**Never map a DOR instruction banner or caption.** A ReadOnly widget whose
+blank already carries printed text (an instruction line or a heading) is
+class 1, whatever its name suggests. AL-40 2023 (`Instructions`,
+`Instructions1`–`11`) and MO-1040 2023/2024 (`Texto7`–`9`, `MOAText`,
+`lblNRI`) mapped banners. Once verify began scanning MAPPED ReadOnly widgets
+(Phase J J0.3), a real one-line fill FAILed P-001 on every one of them. The
+round-trip tests missed it, because their sentinel values overwrote the
+banners.
+
+**`maxlen` tracks the widget's own `/MaxLen`.** A pack `maxlen` is never above
+the widget's: the filler enforces the pack value, so a higher one lets through
+what the PDF then truncates. A pack `maxlen` below the widget's is allowed only
+as an adjudicated budget, when the printed box cannot physically hold the
+widget's count. Each such row is listed with the measured box in
+`TIGHTER_THAN_WIDGET` (`packages/core/tests/test_pack_maxlen.py`, network-
+marked, self-clearing). A text line whose widget carries a `/MaxLen` may omit
+`maxlen`, because verify's hard MaxLen check still guards it.
 
 Two traps worth knowing before you audit a blank: `pdfinfo`'s
 "JavaScript: yes" is satisfied by `AFNumber_Format`-style FORMATTING scripts

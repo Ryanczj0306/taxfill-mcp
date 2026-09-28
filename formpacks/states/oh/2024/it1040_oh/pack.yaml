@@ -363,8 +363,9 @@
 # 19 = 343 land on their own printed rows, the whole ladder shifting cleanly by
 # one sentinel step (14 = 288 ... 18 = 332, 20 = 354, 22 = 376). Nothing else on
 # any page moved, and verify still returns 0 assertion / 0 clipping / 0 checkbox
-# FAILs. Separately, because verify's P-001 clipping scan SKIPS ReadOnly widgets
-# and so cannot see TP_SSN1, a real 9-digit SSN was filled alongside a realistic
+# FAILs. Separately, because verify's P-001 clipping scan then SKIPPED ReadOnly
+# widgets and so could not see TP_SSN1 (it scans a mapped one since Phase J
+# J0.3), a real 9-digit SSN was filled alongside a realistic
 # amended return (amended_return checked; 17 = 98765, 18 = 98765, 19 = 54321,
 # 20 = 44444) and pages 2 and 3 were read directly: "123456789" renders
 # unclipped inside the /MaxLen 9 box on both, and all four amended lines print.

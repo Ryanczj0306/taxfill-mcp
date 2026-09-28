@@ -20,6 +20,7 @@ from taxfill_core.fetch import (
     CACHE_DIR_ENV,
     FetchError,
     OfflineFetchError,
+    cached_blank_path,
     compute_sha256,
     default_cache_dir,
     fetch_blank,
@@ -265,3 +266,18 @@ def test_fetch_blank_downloads_a_real_irs_form(tmp_path: Path):
     assert data.startswith(b"%PDF")
     assert len(data) > 20_000  # a real multi-page IRS form, not an error stub
     assert compute_sha256(path) == hashlib.sha256(data).hexdigest()
+
+
+# --- JEa: the public offline lookup ------------------------------------------------
+
+
+def test_cached_blank_path_finds_only_a_matching_cached_blank_and_never_downloads(source, cache, monkeypatch):
+    url = source.as_uri()
+    digest = hashlib.sha256(PDF_BYTES).hexdigest()
+    assert cached_blank_path(url, digest, cache_dir=cache) is None          # nothing cached yet: no download
+    got = fetch_blank(url, sha256=digest, cache_dir=cache)
+    assert cached_blank_path(url, digest, cache_dir=cache) == got
+    assert cached_blank_path(url, digest.upper(), cache_dir=cache) == got  # the digest's case does not matter
+    assert cached_blank_path(url, hashlib.sha256(PDF_BYTES_V2).hexdigest(), cache_dir=cache) is None  # a stale pin
+    monkeypatch.setenv(CACHE_DIR_ENV, str(cache))
+    assert cached_blank_path(url, digest) == got                            # the default cache honours the env

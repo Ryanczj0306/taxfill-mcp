@@ -100,7 +100,7 @@ fields:
   - line: identifying_number         # "Your social security number"
     field: "Page1[0].f1_2[0]"
     type: text
-    maxlen: 9
+    maxlen: 11
     format: ssn_digits_only   # PDF MaxLen is 11 (fits a dashed SSN), but digits-only keeps cross-form identity values consistent
   # Box A: "You cannot take the PTC if your filing status is married filing
   # separately unless you qualify for an exception ... If you qualify, check
@@ -301,28 +301,28 @@ fields:
   # percentage, (g) advance payment of the PTC percentage. The percentages and
   # months are entries, not dollars — no relations.
   - { line: "30a", field: "Page2[0].f2_1[0]", type: text }
-  - { line: "30b", field: "Page2[0].f2_2[0]", type: text, maxlen: 9, format: ssn_digits_only }   # PDF MaxLen 11; digits-only keeps SSNs consistent
+  - { line: "30b", field: "Page2[0].f2_2[0]", type: text, maxlen: 11, format: ssn_digits_only }   # PDF MaxLen 11; digits-only keeps SSNs consistent
   - { line: "30c", field: "Page2[0].f2_3[0]", type: text }
   - { line: "30d", field: "Page2[0].f2_4[0]", type: text }
   - { line: "30e", field: "Page2[0].Lines30e-g[0].f2_5[0]", type: text }
   - { line: "30f", field: "Page2[0].Lines30e-g[0].f2_6[0]", type: text }
   - { line: "30g", field: "Page2[0].Lines30e-g[0].f2_7[0]", type: text }
   - { line: "31a", field: "Page2[0].f2_8[0]", type: text }
-  - { line: "31b", field: "Page2[0].f2_9[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  - { line: "31b", field: "Page2[0].f2_9[0]", type: text, maxlen: 11, format: ssn_digits_only }
   - { line: "31c", field: "Page2[0].f2_10[0]", type: text }
   - { line: "31d", field: "Page2[0].f2_11[0]", type: text }
   - { line: "31e", field: "Page2[0].Lines31e-g[0].f2_12[0]", type: text }
   - { line: "31f", field: "Page2[0].Lines31e-g[0].f2_13[0]", type: text }
   - { line: "31g", field: "Page2[0].Lines31e-g[0].f2_14[0]", type: text }
   - { line: "32a", field: "Page2[0].f2_15[0]", type: text }
-  - { line: "32b", field: "Page2[0].f2_16[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  - { line: "32b", field: "Page2[0].f2_16[0]", type: text, maxlen: 11, format: ssn_digits_only }
   - { line: "32c", field: "Page2[0].f2_17[0]", type: text }
   - { line: "32d", field: "Page2[0].f2_18[0]", type: text }
   - { line: "32e", field: "Page2[0].Lines32e-g[0].f2_19[0]", type: text }
   - { line: "32f", field: "Page2[0].Lines32e-g[0].f2_20[0]", type: text }
   - { line: "32g", field: "Page2[0].Lines32e-g[0].f2_21[0]", type: text }
   - { line: "33a", field: "Page2[0].f2_22[0]", type: text }
-  - { line: "33b", field: "Page2[0].f2_23[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  - { line: "33b", field: "Page2[0].f2_23[0]", type: text, maxlen: 11, format: ssn_digits_only }
   - { line: "33c", field: "Page2[0].f2_24[0]", type: text }
   - { line: "33d", field: "Page2[0].f2_25[0]", type: text }
   - { line: "33e", field: "Page2[0].Lines33e-g[0].f2_26[0]", type: text }

@@ -916,3 +916,15 @@ def test_an_empty_field_array_is_rebuilt_from_the_page_widgets(tmp_path):
     repaired = PdfWriter(clone_from=str(broken))
     assert _repair_empty_field_array(repaired) >= 1
     assert {"form1[0].Page1[0].f1_01[0]", "form1[0].Page1[0].f1_02[0]"} <= set(repaired.get_fields())
+
+
+# --- JEa: a reserved line (printed "Reserved for future use") ---------------
+
+
+def test_jea_a_reserved_line_warns_when_a_value_lands_and_stays_quiet_when_blank(blank_pdf: Path, tmp_path: Path):
+    pack = mini_pack([{**pf.model_dump(exclude_defaults=True), **({"reserved": True} if pf.line == "25d" else {})}
+                      for pf in PACK.fields])
+    loud = fill_form(pack, {"name": "Test Taxpayer", "25d": 40}, blank_pdf, tmp_path / "loud.pdf")
+    assert any("'25d' is a printed 'Reserved for future use' row" in w for w in loud.warnings)
+    quiet = fill_form(pack, {"name": "Test Taxpayer", "25d": 0}, blank_pdf, tmp_path / "quiet.pdf")
+    assert not [w for w in quiet.warnings if "Reserved for future use" in w]

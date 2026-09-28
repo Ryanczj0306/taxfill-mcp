@@ -1,11 +1,11 @@
 """Repo-wide: a real one-line fill never FAILs P-001 on text the filer did not write.
 
 COVERAGE NOTE: every per-pack case here needs the pack's blank in the local
-cache, so CI (offline, empty cache) SKIPS them and the weekly network job
-deselects this module (it carries no network mark) — it runs only on a
-machine with a warm .cache/blanks. Each half of the fix also has a
-CI-runnable test in test_verify.py / test_verify_readonly_scan.py; wiring
-this sweep into the freshness job is Phase J JEa.
+cache, so CI (offline, empty cache) SKIPS them. The weekly freshness job runs
+this module as its own step right after the network round-trips have warmed
+.cache/blanks (Phase J JEa; `pytest -m network` alone would deselect it, as it
+carries no network mark). Each half of the fix also has a CI-runnable test in
+test_verify.py / test_verify_readonly_scan.py.
 
 The 2026-09-11 fix for P-007(b) widened verify's clipping scan to the
 ReadOnly text widgets a pack MAPS (test_verify_readonly_scan.py). It shipped
@@ -239,11 +239,14 @@ def test_the_verifier_alone_absorbs_remapped_banners_and_the_blank_is_why(
     assert not _clip_fails(verify_filing([FilingItem(form_key="state_return", pack=remapped, pdf_path=filled)]))
 
     # Control — the same PDF with the blank cache emptied: verify can no longer
-    # tell the DOR's text from the filler's, so EXACTLY the banners FAIL (the
-    # widened scan's regression, reproduced), and each one names the fix.
+    # tell the DOR's text from the filler's, so the banners FAIL (the widened
+    # scan's regression, reproduced) and nothing else does, and each one names
+    # the fix. Since Phase J JEa a MULTILINE banner is judged by its wrapped
+    # lines, so one whose baked text fits once wrapped (MO-1040's Texto9 and
+    # lblNRI) no longer FAILs even blind.
     monkeypatch.setenv(CACHE_DIR_ENV, str(tmp_path / "empty-cache"))
     blind = [check for check in verify_form(remapped, filled).clipping if check.status == "FAIL"]
-    assert {check.name for check in blind} == set(banners)
+    assert blind and {check.name for check in blind} <= set(banners)
     assert all("run fetch_blank" in check.detail for check in blind)
 
 
@@ -252,7 +255,8 @@ def test_a_banner_the_fill_did_rewrite_is_still_scanned(tmp_path: Path):
     remapped = _with_banners_remapped(load_pack(FORMPACKS / AL40_2023), _AL_BANNERS)
     blank = _cached_blank(remapped)
     filled = tmp_path / "banner_rewritten.pdf"
-    fill_form(remapped, {"FIRSTNAME": "Pat", "Instructions": "SEE ATTACHED STATEMENT " * 20}, blank, filled)
+    # Long enough to overflow the tall multiline panel even wrapped (JEa counts wrapped lines).
+    fill_form(remapped, {"FIRSTNAME": "Pat", "Instructions": "SEE ATTACHED STATEMENT " * 300}, blank, filled)
     fails = {check.name: check for check in verify_form(remapped, filled).clipping if check.status == "FAIL"}
     assert set(fails) == {"Instructions"}  # the rewritten panel only; the other eleven are the blank's
     assert "ReadOnly widget the pack maps" in fails["Instructions"].detail

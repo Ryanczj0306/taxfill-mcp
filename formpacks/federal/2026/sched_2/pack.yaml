@@ -59,7 +59,7 @@ acroform_root: form1[0]
 fields:
   # ---- header ----
   - { line: "name", field: "Page1[0].f1_01[0]", type: text }
-  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 11, format: ssn_digits_only }
   # ---- Part I — Tax ----
   - { line: "1a", field: "Page1[0].Line1_ReadOrder[0].f1_03[0]", type: money } # excess APTC repayment, Form 8962
   - { line: "1b", field: "Page1[0].f1_04[0]", type: money } # repayment of new clean vehicle credit(s), Schedule A (Form 8936) Part II

@@ -761,7 +761,8 @@ def test_yesno_pair_helper_accepts_every_house_option_spelling():
 #   * mirror and source must agree on `type`, `comb` and `format`, because
 #     those drive how the value is normalised — an SSN mirror written through a
 #     different path is exactly the P-001 shape, and verify's clipping scan
-#     SKIPS ReadOnly widgets, so nothing downstream would catch it.
+#     skipped ReadOnly widgets until Phase J J0.3 (it now scans a MAPPED one
+#     only once a fill changes its value), so this gate is what catches it.
 #
 # What is NOT asserted, and cannot be: that the VALUES agree on a real filing.
 # `relations` is arithmetic over money lines and `identity_fields` drives a

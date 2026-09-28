@@ -68,6 +68,13 @@ class PackField(BaseModel):
             "unanswered-required checkbox audit (pitfall P-003)."
         ),
     )
+    reserved: bool = Field(
+        default=False,
+        description=(
+            "True for a printed 'Reserved for future use' row kept mapped so a relation can name it (the "
+            "RESERVED_LINE_KEEPS table): fill_form warns when a value lands on it and audit_pack skips it (JEa)."
+        ),
+    )
     group: str | None = Field(
         default=None,
         description=(

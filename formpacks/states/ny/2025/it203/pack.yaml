@@ -30,11 +30,10 @@
 #   * Line 35 was "Dependent exemptions (enter the number of dependents listed
 #     in Item I)" with a pre-printed "000.00" tail; for 2025 it reads
 #     "Dependent exemption amount (multiply the number of dependents listed in
-#     Item I by 1,000)" and is a plain dollar box. The mapping below still types
-#     35_dependent_exemptions as `text maxlen:2` (the 2023 count semantics). The
-#     widget has no /MaxLen so nothing clips, but a TY2025 calc layer must write
-#     a DOLLAR AMOUNT here, not a count. Retyping to `money` is likewise a
-#     separate reviewed change.
+#     Item I by 1,000)" and is a plain dollar box. The 2026-08-11 port audit
+#     retyped 35_dependent_exemptions to `money` (see its row); Phase J JEa
+#     (2026-09-28) set its maxlen to the widget's own /MaxLen, 4 — the 2025
+#     box holds up to $9,999 (nine dependents), where the port had left 10.
 #
 # Everything below this banner is the TY2023 map verbatim except tax_year,
 # source_url, pdf_sha256 and the line-69 key. Inline comments that name "2023"
@@ -772,11 +771,12 @@ fields:
   # 2025 CHANGED THIS LINE'S MEANING: a COUNT box through 2024, now a DOLLAR box —
   # "multiply the number of dependents listed in item I by 1,000". Ported as
   # text/maxlen:2 it would have REJECTED every real value (the filler enforces
-  # maxlen), so it is money here. Caught by the 2026-08-11 port audit.
+  # maxlen), so it is money here. Caught by the 2026-08-11 port audit. The widget's /MaxLen is 4 (the
+  # 2023/2024 count box was 2), so the filler refuses a fifth digit rather than the PDF clipping it (JEa).
   - line: 35_dependent_exemptions             # line 35 — Dependent exemption AMOUNT (dependents in item I x $1,000)
     field: 35 dollars
     type: money
-    maxlen: 10
+    maxlen: 4
   - line: 36_nys_taxable_income               # line 36 — New York taxable income (subtract line 35 from line 34)
     field: 36 dollars
     type: money

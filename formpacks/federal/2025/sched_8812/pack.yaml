@@ -161,6 +161,7 @@ fields:
   - line: "15" # printed "Reserved for future use" — leave blank (2023 ACTC opt-out box removed; see header)
     field: "Page2[0].f2_1[0]"
     type: money
+    reserved: true                          # printed "Reserved for future use" (RESERVED_LINE_KEEPS; JEa)
   - line: "16a"                       # Subtract line 14 from line 12; if zero, stop here (cannot take the ACTC)
     field: "Page2[0].f2_2[0]"
     type: money

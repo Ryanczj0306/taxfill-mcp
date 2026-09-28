@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 from taxfill_core.estimate import IncomeSnapshot, RetirementDistribution, estimate_refund, form5329_lines
-from taxfill_core.fetch import _cache_path, compute_sha256, default_cache_dir
+from taxfill_core.fetch import cached_blank_path
 from taxfill_core.filler import fill_form
 from taxfill_core.schemas.formpack import load_pack
 from taxfill_core.schemas.profile import Profile
@@ -32,8 +32,8 @@ def _snapshot(**extra) -> IncomeSnapshot:
 
 
 def _cached_blank(pack) -> Path:
-    path = _cache_path(default_cache_dir(), pack.source_url)
-    if not path.is_file() or compute_sha256(path) != pack.pdf_sha256:
+    path = cached_blank_path(pack.source_url, pack.pdf_sha256)
+    if path is None:
         pytest.skip(f"the Form 5329 blank is not cached — warm it with fetch_blank({pack.source_url})")
     return path
 

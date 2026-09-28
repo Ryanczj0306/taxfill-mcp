@@ -68,8 +68,10 @@
 # 9 values with zero warnings, they survived a re-read of /V, a 240-dpi render
 # of page 2 showed every digit sitting inside its grey cell, and verify_form
 # returned 9 PASSing assertion checks with an EMPTY clipping section — the
-# clipping scan skips ReadOnly widgets on the premise that the filler never
-# writes them, which the mapping made false. Every gate passed the bad
+# clipping scan then skipped ReadOnly widgets on the premise that the filler
+# never writes them, which the mapping made false (until Phase J J0.3,
+# 2026-09-11; it now scans a mapped ReadOnly widget whenever this fill could
+# have written it). Every gate passed the bad
 # artifact. With the bindings dropped, fill_form raises its prescriptive
 # "unknown line key" ValueError on all 9 keys instead.
 #

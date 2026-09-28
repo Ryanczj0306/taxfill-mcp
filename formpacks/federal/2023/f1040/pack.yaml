@@ -184,7 +184,7 @@ fields:
   # (/Ff 8388609) + shaded — MUST BE LEFT BLANK. Kept mapped on purpose so
   # the printed line number stays addressable (P-007 reserved-line class; see
   # the adjudication in the header). Do not write a value here.
-  - { line: "30", field: "Page2[0].f2_19[0]", type: money } # RESERVED — leave blank
+  - { line: "30", field: "Page2[0].f2_19[0]", type: money, reserved: true } # RESERVED — leave blank
   - { line: "31", field: "Page2[0].f2_20[0]", type: money }
   - { line: "32", field: "Page2[0].f2_21[0]", type: money }
   - { line: "33", field: "Page2[0].f2_22[0]", type: money }

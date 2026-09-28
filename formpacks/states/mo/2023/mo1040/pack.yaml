@@ -25,12 +25,13 @@
 #
 # Coverage. The blank PDF has 878 distinct fillable AcroForm field objects
 # (1,017 terminal /Tx and /Btn fields; 1,172 sentinel widgets counting every
-# repeated occurrence). 873 pack lines map every fillable widget but the five
-# label banners and one frame below - 872 of the 878 distinct fields, plus
+# repeated occurrence). 840 pack lines map every fillable widget but the 38
+# label banners, caption strings and frame below - 839 of the 878 distinct
+# fields, plus
 # the single shared CalcOption radio mapped once per option (/X "DO Automatic
 # Calculations" and /N "DON'T DO Automatic Calculations"). A field that
 # prints on several pages (e.g. SSN-1, firstname-1, address, nri_city,
-# mocr_name-1, printlid.12) is ONE AcroForm object and is mapped on ONE line -
+# mocr_name-1) is ONE AcroForm object and is mapped on ONE line -
 # the duplicate sentinel occurrences (SSN-1#2, #3, ...) are the same field and
 # are not re-mapped (a field holds one value).
 #
@@ -52,10 +53,13 @@
 # sentinel in it FAILed the widened scan (8 characters at 12pt in 21pt).
 # STATE_COMPUTED_READONLY 262 -> 256 (test_readonly_widget_mapping.py);
 # the repo-wide sweep is test_verify_readonly_sweep.py. The other helper /
-# label strings listed under "Money vs text" (printlid.*, ProtectBarcode,
-# amendedTXT, 1040_30Text, ...) are the same shape and stay mapped for now:
-# they fit their boxes (or auto-size), so they never FAIL, and unmapping them
-# waits for the CONVENTIONS banner rule (roadmap JEa).
+# label strings are the same shape, DOR text baked into the blank: the 28
+# printlid.* lids ("PLEASE, USE THE PRINT BUTTON ON THE FORM TO PRINT THIS
+# DOCUMENT ..."), ProtectBarcode ("THIS IS A 2-D BARCODE ..."), vendorid
+# ("006"), amendedTXT ("These fields are locked ..."), line51txt ("TRUST
+# FUNDS") and 1040_30Text ("Check boxes to carry amount to MO-1040 ..."). They
+# fit their boxes, so they never FAILed, and were unmapped on 2026-09-28 under
+# the CONVENTIONS banner rule (Phase J JEa): STATE_COMPUTED_READONLY 256 -> 223.
 #
 # Intentionally OMITTED - 140 distinct widgets, none accept taxpayer data,
 # every one a JavaScript pushbutton (/Btn with Ff bit-17 Pushbutton set;
@@ -83,10 +87,10 @@
 # 4-digit fiscal-year and birth-date comb cells, bank routing (9) / account
 # (17), preparer ids, the "Other (description)" and explanation text boxes,
 # the 2-digit trust-fund codes (line51m_tfcd / line51n_tfcd), and the
-# auto-populated helper / label strings (txt01/02, 1040_30Text,
-# 1040_32Text2/3, amendedTXT, vendorid, printlid.*, fdata, ProtectBarcode;
-# Texto7-9, lblNRI, MOAText and Text1 are unmapped - see UNMAPPED LABEL
-# BANNERS AND FRAME).
+# auto-populated helper strings (txt01/02, 1040_32Text2/3, fdata; Texto7-9,
+# lblNRI, MOAText, Text1 and the 33 caption strings printlid.*,
+# ProtectBarcode, vendorid, amendedTXT, line51txt and 1040_30Text are
+# unmapped - see UNMAPPED LABEL BANNERS AND FRAME).
 #
 # Checkboxes. Every real checkbox is its own /Btn with export state /X
 # (verified against the blank). The one multi-option /Btn is CalcOption (a
@@ -108,9 +112,6 @@ source_url: https://dor.mo.gov/forms/MO-1040%20Fillable%20Calculating_2023.pdf
 pdf_sha256: 589940ef12527b44d8a8b262b0c49958c62a1e6a632603390de64b938930428f
 acroform_root: ''
 fields:
-  - line: "printlid.1"
-    field: "printlid.1"
-    type: text
   - line: "fdata"
     field: "fdata"
     type: text
@@ -118,9 +119,6 @@ fields:
     field: "CalcOption"
     type: checkbox
     on_state: "/X"
-  - line: "ProtectBarcode"
-    field: "ProtectBarcode"
-    type: text
   - line: "amended"
     field: "amended"
     type: checkbox
@@ -165,9 +163,6 @@ fields:
     field: "FYEndDateYY"
     type: text
     maxlen: 2
-  - line: "vendorid"
-    field: "vendorid"
-    type: text
   - line: "c.single"
     field: "c.single"
     type: checkbox
@@ -304,9 +299,6 @@ fields:
     field: "CalcOption"
     type: checkbox
     on_state: "/N"
-  - line: "printlid.2"
-    field: "printlid.2"
-    type: text
   - line: "line1-Y"
     field: "line1-Y"
     type: money
@@ -400,9 +392,6 @@ fields:
   - line: "line21c"
     field: "line21c"
     type: money
-  - line: "printlid.3"
-    field: "printlid.3"
-    type: text
   - line: "line22a"
     field: "line22a"
     type: money
@@ -530,9 +519,6 @@ fields:
   - line: "line45"
     field: "line45"
     type: money
-  - line: "printlid.4"
-    field: "printlid.4"
-    type: text
   - line: "line46"
     field: "line46"
     type: money
@@ -587,9 +573,6 @@ fields:
     field: "47dyy"
     type: text
     maxlen: 2
-  - line: "amendedTXT"
-    field: "amendedTXT"
-    type: text
   - line: "line48"
     field: "line48"
     type: money
@@ -649,9 +632,6 @@ fields:
   - line: "line51n"
     field: "line51n"
     type: money
-  - line: "line51txt"
-    field: "line51txt"
-    type: text
   - line: "line51"
     field: "line51"
     type: money
@@ -680,9 +660,6 @@ fields:
     field: "dd_savings"
     type: checkbox
     on_state: "/X"
-  - line: "printlid.5"
-    field: "printlid.5"
-    type: text
   - line: "line54"
     field: "line54"
     type: money
@@ -782,9 +759,6 @@ fields:
     field: "E10"
     type: checkbox
     on_state: "/X"
-  - line: "printlid.6"
-    field: "printlid.6"
-    type: text
   - line: "moa_y1"
     field: "moa_y1"
     type: money
@@ -827,9 +801,6 @@ fields:
   - line: "moa_s7"
     field: "moa_s7"
     type: money
-  - line: "printlid.7"
-    field: "printlid.7"
-    type: text
   - line: "SSN-1"
     field: "SSN-1"
     type: text
@@ -990,9 +961,6 @@ fields:
   - line: "moa_13s"
     field: "moa_13s"
     type: money
-  - line: "printlid.8"
-    field: "printlid.8"
-    type: text
   - line: "moa_13sold"
     field: "moa_13sold"
     type: checkbox
@@ -1099,9 +1067,6 @@ fields:
     field: "UseWS3"
     type: checkbox
     on_state: "/X"
-  - line: "printlid.9"
-    field: "printlid.9"
-    type: text
   - line: "moa_pt3_1"
     field: "moa_pt3_1"
     type: money
@@ -1180,9 +1145,6 @@ fields:
   - line: "moa_pt4_9"
     field: "moa_pt4_9"
     type: money
-  - line: "printlid.10"
-    field: "printlid.10"
-    type: text
   - line: "moa_pt5_1"
     field: "moa_pt5_1"
     type: money
@@ -1219,9 +1181,6 @@ fields:
   - line: "moa_pt5_TE"
     field: "moa_pt5_TE"
     type: money
-  - line: "printlid.11"
-    field: "printlid.11"
-    type: text
   - line: "mocr_name-1"
     field: "mocr_name-1"
     type: text
@@ -1305,9 +1264,6 @@ fields:
   - line: "mocr_11s"
     field: "mocr_11s"
     type: money
-  - line: "printlid.12"
-    field: "printlid.12"
-    type: text
   - line: "mocr_1yb"
     field: "mocr_1yb"
     type: money
@@ -1418,9 +1374,6 @@ fields:
   - line: "mocrsch1_5s"
     field: "mocrsch1_5s"
     type: money
-  - line: "printlid.14"
-    field: "printlid.14"
-    type: text
   - line: "nri_city"
     field: "nri_city"
     type: text
@@ -1541,9 +1494,6 @@ fields:
     field: "nri_line3bSstate3"
     type: text
     maxlen: 2
-  - line: "printlid.15"
-    field: "printlid.15"
-    type: text
   - line: "A-Y"
     field: "A-Y"
     type: money
@@ -1688,9 +1638,6 @@ fields:
   - line: "nri_line2S"
     field: "nri_line2S"
     type: money
-  - line: "1040_30Text"
-    field: "1040_30Text"
-    type: text
   - line: "UseNRI01"
     field: "UseNRI01"
     type: checkbox
@@ -1710,12 +1657,6 @@ fields:
     type: text
   - line: "nri_line3S"
     field: "nri_line3S"
-    type: text
-  - line: "printlid.16"
-    field: "printlid.16"
-    type: text
-  - line: "printlid.18"
-    field: "printlid.18"
     type: text
   - line: "t.tc_name-1"
     field: "t.tc_name-1"
@@ -1910,12 +1851,6 @@ fields:
   - line: "n.tc_c1_13"
     field: "n.tc_c1_13"
     type: money
-  - line: "printlid.20"
-    field: "printlid.20"
-    type: text
-  - line: "printlid.21"
-    field: "printlid.21"
-    type: text
   - line: "1-Y"
     field: "1-Y"
     type: money
@@ -2030,9 +1965,6 @@ fields:
     field: "UseWS2"
     type: checkbox
     on_state: "/X"
-  - line: "printlid.22"
-    field: "printlid.22"
-    type: text
   - line: "d.pts_bd_mm-1"
     field: "d.pts_bd_mm-1"
     type: text
@@ -2100,9 +2032,6 @@ fields:
   - line: "n.pts_5"
     field: "n.pts_5"
     type: money
-  - line: "printlid.23"
-    field: "printlid.23"
-    type: text
   - line: "n.pts_6"
     field: "n.pts_6"
     type: money
@@ -2139,9 +2068,6 @@ fields:
   - line: "n.pts_14"
     field: "n.pts_14"
     type: money
-  - line: "printlid.24"
-    field: "printlid.24"
-    type: text
   - line: "c.crp_relatedYa"
     field: "c.crp_relatedYa"
     type: checkbox
@@ -2263,9 +2189,6 @@ fields:
   - line: "n.crp_9a"
     field: "n.crp_9a"
     type: money
-  - line: "printlid.25"
-    field: "printlid.25"
-    type: text
   - line: "c.crp_relatedYb"
     field: "c.crp_relatedYb"
     type: checkbox
@@ -2387,9 +2310,6 @@ fields:
   - line: "n.crp_9b"
     field: "n.crp_9b"
     type: money
-  - line: "printlid.26"
-    field: "printlid.26"
-    type: text
   - line: "c.crp_relatedYc"
     field: "c.crp_relatedYc"
     type: checkbox
@@ -2511,9 +2431,6 @@ fields:
   - line: "n.crp_9c"
     field: "n.crp_9c"
     type: money
-  - line: "printlid.27"
-    field: "printlid.27"
-    type: text
   - line: "c.crp_relatedYd"
     field: "c.crp_relatedYd"
     type: checkbox
@@ -2635,9 +2552,6 @@ fields:
   - line: "n.crp_9d"
     field: "n.crp_9d"
     type: money
-  - line: "printlid.28"
-    field: "printlid.28"
-    type: text
   - line: "c.crp_relatedYe"
     field: "c.crp_relatedYe"
     type: checkbox
@@ -2759,9 +2673,6 @@ fields:
   - line: "n.crp_9e"
     field: "n.crp_9e"
     type: money
-  - line: "printlid.29"
-    field: "printlid.29"
-    type: text
   - line: "n.pg4ltc_a"
     field: "n.pg4ltc_a"
     type: money
@@ -2783,9 +2694,6 @@ fields:
   - line: "n.pg4ltc_g"
     field: "n.pg4ltc_g"
     type: money
-  - line: "printlid.30"
-    field: "printlid.30"
-    type: text
   - line: "qh1"
     field: "qh1"
     type: money
@@ -2855,9 +2763,6 @@ fields:
   - line: "qh17s"
     field: "qh17s"
     type: money
-  - line: "printlid.31"
-    field: "printlid.31"
-    type: text
   - line: "accountnumber-1"
     field: "accountnumber-1"
     type: text

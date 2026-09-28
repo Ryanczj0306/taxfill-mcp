@@ -221,8 +221,8 @@ fields:
   # the printed line numbers stay addressable (P-007 reserved-line class,
   # sched_1 2025 line 22 precedent; adjudication in the header). Do not
   # write values here.
-  - { line: "1i", field: "Page1[0].f1_51[0]", type: money } # RESERVED — leave blank
-  - { line: "1j", field: "Page1[0].f1_52[0]", type: money } # RESERVED — leave blank
+  - { line: "1i", field: "Page1[0].f1_51[0]", type: money, reserved: true } # RESERVED — leave blank
+  - { line: "1j", field: "Page1[0].f1_52[0]", type: money, reserved: true } # RESERVED — leave blank
   # 1k Total income exempt by a treaty (Schedule OI, item L, line 1(e))
   - { line: "1k", field: "Page1[0].Line1k_ReadOrder[0].f1_53[0]", type: money }
   - { line: "1z", field: "Page1[0].f1_54[0]", type: money } # Add lines 1a through 1h
@@ -254,7 +254,7 @@ fields:
   # BE LEFT BLANK. Kept mapped so the printed line number stays addressable
   # (P-007 reserved-line class; adjudication in the header). No NR social
   # security line — SSA benefits are Schedule NEC income.
-  - { line: "6", field: "Page1[0].f1_65[0]", type: money } # RESERVED — leave blank
+  - { line: "6", field: "Page1[0].f1_65[0]", type: money, reserved: true } # RESERVED — leave blank
   # 2023 line 7 is 2025 line 7a; the "Schedule D not required" box moved
   # into the new 7b pair
   - { line: "7a", field: "Page1[0].f1_66[0]", type: money } # Capital gain or (loss)
@@ -307,7 +307,7 @@ fields:
   # BE LEFT BLANK (nonresidents cannot claim the EIC). Kept mapped so the
   # printed line number stays addressable (P-007 reserved-line class;
   # adjudication in the header). Line 32 is 28+29+30+31 — it never names 27.
-  - { line: "27", field: "Page2[0].f2_29[0]", type: money } # RESERVED — leave blank
+  - { line: "27", field: "Page2[0].f2_29[0]", type: money, reserved: true } # RESERVED — leave blank
   # Line 28 ACTC: NEW decline checkbox + amount
   - { line: "28.do_not_claim_actc", field: "Page2[0].Line28_ReadOrder[0].c2_4[0]", type: checkbox, on_state: "/1" }
   - { line: "28", field: "Page2[0].f2_30[0]", type: money } # Additional child tax credit (Schedule 8812)

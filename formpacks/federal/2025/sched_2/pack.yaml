@@ -33,7 +33,7 @@ fields:
 - line: identifying_number
   field: Page1[0].f1_02[0]
   type: text
-  maxlen: 9
+  maxlen: 11
   format: ssn_digits_only
 - line: 1a
   field: Page1[0].Line1a_ReadOrder[0].f1_03[0]
@@ -149,6 +149,7 @@ fields:
 - line: '10'
   field: Page1[0].f1_21[0]
   type: money
+  reserved: true                          # printed "Reserved for future use" (RESERVED_LINE_KEEPS; JEa)
 - line: '11'
   field: Page1[0].f1_22[0]
   type: money

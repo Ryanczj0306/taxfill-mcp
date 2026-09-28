@@ -48,7 +48,7 @@ acroform_root: form1[0]
 fields:
   - { line: "name", field: "Page1[0].f1_01[0]", type: text }
   # plain box, widget /MaxLen 11; digits-only keeps the cross-form identity values consistent with f1040
-  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 9, format: ssn_digits_only }
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 11, format: ssn_digits_only }
   # ----- Medical and Dental Expenses -----
   - { line: "1", field: "Page1[0].f1_03[0]", type: money }   # Medical and dental expenses
   - { line: "2", field: "Page1[0].f1_04[0]", type: money }   # Enter amount from Form 1040 or 1040-SR, line 11b

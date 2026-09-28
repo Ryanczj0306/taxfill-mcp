@@ -38,7 +38,10 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)  # warm cache, offline OK
-    values = synthetic_values(pack)
+    # A reserved line (PackField.reserved) is printed "Reserved for future use": nothing may land there, so the
+    # sentinel audit leaves it blank rather than proving a placement the filer must never use (JEa).
+    reserved = sorted(pf.line for pf in pack.fields if pf.reserved)
+    values = {line: v for line, v in synthetic_values(pack).items() if line not in reserved}
     filled = out_dir / f"{tag}_filled.pdf"
     result = fill_form(pack, values, blank, filled)
 
@@ -71,6 +74,7 @@ def main() -> int:
         "form": pack.form,
         "tax_year": pack.tax_year,
         "mapped_lines": len(values),
+        "reserved_skipped": reserved,
         "written_fields": len(result.written),
         "pages_rendered": [{"page": p.page, "png": str(p.path), "px": [p.width_px, p.height_px]} for p in pages],
         "verify_fails": fails,

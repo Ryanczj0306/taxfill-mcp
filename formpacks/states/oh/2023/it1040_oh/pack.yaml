@@ -254,7 +254,8 @@
 # printed rows, the whole ladder shifting cleanly by one sentinel step
 # (14 = 288 ... 21 = 365). Nothing else on any page moved and verify still
 # returns 0 assertion / 0 clipping / 0 checkbox FAILs. Separately, because
-# verify's P-001 clipping scan SKIPS ReadOnly widgets and so cannot see TP_SSN1,
+# verify's P-001 clipping scan then SKIPPED ReadOnly widgets and so could not see TP_SSN1
+# (it scans a mapped one since Phase J J0.3),
 # a real 9-digit SSN was filled and pages 2 and 3 read directly: "123456789"
 # renders unclipped inside the /MaxLen 9 box on both.
 # RE-RUN 2026-08-24 after the seven OUPC class-4 mappings, before/after page-13

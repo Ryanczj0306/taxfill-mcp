@@ -40,7 +40,7 @@ acroform_root: "form1[0]"
 fields:
   - { line: "name", field: "Page1[0].f1_01[0]", type: text }
   # plain box, widget /MaxLen 11; digits-only keeps the cross-form identity values consistent with f1040
-  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 11, format: "ssn_digits_only" }
   - { line: "1a", field: "Page1[0].Line1a_ReadOrder[0].f1_03[0]", type: money }   # Form 1040 line 32a (1040-NR/SS: -0-)
   - { line: "1b", field: "Page1[0].f1_04[0]", type: money }                        # Form 1040 line 31 (1040-NR/SS: -0-)
   - { line: "2", field: "Page1[0].f1_05[0]", type: money }                         # 1a - 1b (1040-NR: lines 28 + 30)

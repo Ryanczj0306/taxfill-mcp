@@ -550,7 +550,9 @@ def fill_form(
             )
         target_line.setdefault(qualified, line)
         if is_checkbox:
-            checkbox_lines.setdefault(qualified, []).append((line, _checkbox_state(pf, value)))
+            state = _checkbox_state(pf, value)
+            checkbox_lines.setdefault(qualified, []).append((line, state))
+            landed = state != _OFF_STATE
         else:
             if pf.type == "money":
                 rendered, warning = _render_money(pf, value)
@@ -561,6 +563,12 @@ def fill_form(
             _enforce_length(pf, rendered, pack)
             text_updates[qualified] = rendered
             written[qualified] = rendered
+            landed = rendered.strip() not in ("", "0")
+        if pf.reserved and landed:
+            warnings.append(
+                f"line '{line}' is a printed 'Reserved for future use' row of Form {pack.form} ({pack.tax_year}); the "
+                f"pack keeps it mapped only so a relation can name it. Leave it blank unless the IRS un-reserves it."
+            )
 
     # Resolve each checkbox field to a single state. Multiple lines on one
     # field are radio-group options: at most one may be on; "no" answers for

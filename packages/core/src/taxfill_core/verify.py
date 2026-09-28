@@ -66,10 +66,13 @@ widget's ``/DA`` default-appearance string (``<size> Tf``); ``0 Tf`` means
 auto-size and is safe. Otherwise the estimated text width is
 ``len(value) * 0.5 * font_size`` — 0.5 is the documented average Helvetica
 glyph-width ratio — compared against the widget rectangle width. A missing
-``/DA`` conservatively assumes 10 pt. An empty or whitespace-only value is
-never a clipping candidate, in the widget scan or the pack-maxlen fallback:
-nothing visible prints (WV IT-140's untouched state-picker combos hold five
-spaces under a maxlen-2 hint).
+``/DA`` conservatively assumes 10 pt. A multiline widget (``/Ff`` bit 13)
+wraps, so its wrapped lines are counted against the rows its height holds.
+A pack ``maxlen`` binds a scanned widget that has no ``/MaxLen`` of its own
+(Phase J JEa). An empty or whitespace-only value is never a clipping
+candidate, in the widget scan or the pack-maxlen fallback: nothing visible
+prints (WV IT-140's untouched state-picker combos hold five spaces under a
+maxlen-2 hint).
 
 ReadOnly text widgets (``/Ff`` bit 1) and the clipping scan: the flag does
 NOT mean "the filler never writes it". Packs deliberately keep over a
@@ -115,6 +118,7 @@ fallback cannot FAIL on text the fill did not write.
 
 from __future__ import annotations
 
+import math
 import re
 from collections.abc import Collection, Mapping, Sequence
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP, localcontext
@@ -123,9 +127,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-# _cache_path is fetch's private URL -> cache-file mapping; verify reuses it
-# (rather than restating the naming rule) to FIND a pinned blank, never to fetch.
-from taxfill_core.fetch import _cache_path, compute_sha256, default_cache_dir
+# fetch's own URL -> cache-file lookup (never a download): verify FINDS a pinned blank, it never fetches one.
+from taxfill_core.fetch import cached_blank_path
 from taxfill_core.knowledge import assert_pack_filing_grade
 from taxfill_core.schemas.formpack import FormPack, PackField
 
@@ -172,6 +175,8 @@ SKIPPED: Status = "SKIPPED"
 
 # --- Clipping-scan constants (documented in the module docstring) ----------
 _AVG_CHAR_WIDTH_RATIO = 0.5  # average Helvetica glyph width as a fraction of font size
+_LINE_HEIGHT_RATIO = 1.2  # a wrapped line's height as a multiple of the font size (multiline boxes)
+_MULTILINE_FLAG = 1 << 12  # /Ff bit 13
 _DEFAULT_FONT_SIZE = 10.0  # conservative assumption when a widget carries no /DA
 _FONT_SIZE_RE = re.compile(r"(\d+(?:\.\d+)?)\s+Tf")
 
@@ -527,6 +532,11 @@ class TextWidget(BaseModel):
         description="PDF /DA default-appearance string, e.g. '/Helv 9 Tf 0 g'; '0 Tf' means auto-size.",
     )
     rect_width: float = Field(default=0.0, ge=0.0, description="Widget rectangle width in points; 0 when unknown.")
+    rect_height: float = Field(default=0.0, ge=0.0, description="Widget rectangle height in points; 0 when unknown.")
+    multiline: bool = Field(
+        default=False,
+        description="/Ff bit 13 (Multiline): the viewer WRAPS the text, so the width heuristic counts lines (JEa).",
+    )
     read_only: bool = Field(
         default=False,
         description=(
@@ -701,6 +711,7 @@ def read_text_widgets(
                 continue
             rect = annot.get("/Rect")
             rect_width = abs(float(rect[2]) - float(rect[0])) if rect else 0.0
+            rect_height = abs(float(rect[3]) - float(rect[1])) if rect else 0.0
             value = _inherited(annot, "/V")
             max_len = _inherited(annot, "/MaxLen")
             da = _inherited(annot, "/DA") or default_da
@@ -711,6 +722,8 @@ def read_text_widgets(
                     max_len=int(max_len) if max_len is not None and int(max_len) >= 1 else None,
                     da=_pdf_text(da) if da is not None else None,
                     rect_width=rect_width,
+                    rect_height=rect_height,
+                    multiline=flags is not None and bool(int(flags) & _MULTILINE_FLAG),
                     read_only=read_only,
                 )
             )
@@ -1358,7 +1371,9 @@ def clipping_scan(
     1. ``len(value) > /MaxLen`` — hard clipping; the PDF silently drops the
        overflow (invisible in field dumps; this is the P-001 SSN incident);
     2. width heuristic — ``len(value) * 0.5 * font_size`` vs the widget rect
-       width; ``0 Tf`` auto-size is safe; a missing /DA assumes 10 pt.
+       width; ``0 Tf`` auto-size is safe; a missing /DA assumes 10 pt. A
+       MULTILINE widget (``/Ff`` bit 13) wraps, so its lines are counted
+       against the rows its height holds (1.2 x the font size each) instead.
 
     ``bound_names`` (a path source only) is forwarded to
     :func:`read_text_widgets`: pass :func:`bound_widget_names` of the pack so
@@ -1418,6 +1433,24 @@ def clipping_scan(
             )
             continue
         estimated = length * _AVG_CHAR_WIDTH_RATIO * font_size
+        if widget.multiline and widget.rect_height > 0:
+            # A multiline box wraps: count the lines each paragraph needs against the rows the box height holds
+            # (a row per 1.2 x the font size), instead of one line against the width.
+            per_line = widget.rect_width / (_AVG_CHAR_WIDTH_RATIO * font_size)
+            needed = sum(max(1, math.ceil(len(part) / per_line)) for part in re.split(r"\r\n|\r|\n", widget.value))
+            rows = max(1, int(widget.rect_height // (font_size * _LINE_HEIGHT_RATIO)))
+            checks.append(ClippingCheck(
+                name=widget.name,
+                status=FAIL if needed > rows else PASS,
+                detail=(
+                    f"field '{widget.name}': multiline box — the value needs about {needed} line(s) of "
+                    f"~{per_line:.0f} characters at {font_size:g}pt{assumed}; the {widget.rect_height:.1f}pt-high "
+                    f"box holds {rows}" + (" — text may be visually clipped (pitfall P-001); shorten the "
+                                           "explanation or attach a statement, then re-render" + note
+                                           if needed > rows else "")
+                ),
+            ))
+            continue
         if estimated > widget.rect_width:
             checks.append(
                 ClippingCheck(
@@ -1465,13 +1498,7 @@ def _pinned_blank(pack: FormPack) -> Path | None:
     over what is on disk, and a stale or foreign file under the cache name is
     treated as absent, not trusted.
     """
-    try:
-        path = _cache_path(default_cache_dir(), pack.source_url)
-        if path.is_file() and compute_sha256(path) == pack.pdf_sha256.strip().lower():
-            return path
-    except OSError:
-        pass
-    return None
+    return cached_blank_path(pack.source_url, pack.pdf_sha256)
 
 
 def _drop_blank_owned(pack: FormPack, widgets: Sequence[TextWidget]) -> tuple[list[TextWidget], bool]:
@@ -1515,7 +1542,7 @@ def _widget_clipping_checks(pack: FormPack, widgets: Sequence[TextWidget]) -> li
     widget says so, with the command that fixes it.
     """
     scanned, blank_consulted = _drop_blank_owned(pack, widgets)
-    checks = clipping_scan(scanned)
+    checks = clipping_scan(scanned) + _bound_maxlen_checks(pack, scanned)
     if blank_consulted:
         return checks
     read_only_names = {widget.name for widget in scanned if widget.read_only}
@@ -1525,6 +1552,38 @@ def _widget_clipping_checks(pack: FormPack, widgets: Sequence[TextWidget]) -> li
         else check
         for check in checks
     ]
+
+
+def _bound_maxlen_checks(pack: FormPack, widgets: Sequence[TextWidget]) -> list[ClippingCheck]:
+    """The pack's ``maxlen`` on a scanned widget that carries no /MaxLen of its own (Phase J JEa).
+
+    A scanned widget suppresses :func:`_pack_maxlen_checks` for its line, and :func:`clipping_scan` knows only
+    the widget's own /MaxLen — so a pack maxlen on a widget without one (GA 500's ``STATE1`` picker, WV IT-140's
+    ``it140_totex5``) was enforced by the filler alone. Only widgets this fill wrote reach here: a mapped ReadOnly
+    widget still holding the blank's own text was dropped by :func:`_drop_blank_owned` first.
+    """
+    by_name = {qualified_field_name(pack, pf): pf for pf in pack.fields if pf.type != "checkbox" and pf.maxlen}
+    checks: list[ClippingCheck] = []
+    for widget in widgets:
+        pf = by_name.get(widget.name)
+        if pf is None or widget.max_len is not None or not widget.value.strip():
+            continue
+        length = len(widget.value)
+        if length > pf.maxlen:
+            checks.append(ClippingCheck(
+                name=widget.name, status=FAIL,
+                detail=(f"field '{widget.name}' (line '{pf.line}'): value is {length} characters but the pack's "
+                        f"maxlen is {pf.maxlen} and the widget carries no /MaxLen of its own — the printed box "
+                        f"holds {pf.maxlen} (pitfall P-001); refill line '{pf.line}' with a value that fits"
+                        + (_READ_ONLY_NOTE if widget.read_only else "")),
+            ))
+        else:
+            checks.append(ClippingCheck(
+                name=widget.name, status=PASS,
+                detail=f"field '{widget.name}' (line '{pf.line}'): {length} character(s) within the pack maxlen "
+                       f"{pf.maxlen}",
+            ))
+    return checks
 
 
 def _pack_maxlen_checks(
@@ -2363,7 +2422,8 @@ def verify_form(
     # EVERY widget read, dropped or not, so a dropped banner cannot come back
     # through the dump.
     clipping_checks = (
-        _widget_clipping_checks(pack, widget_models) if widgets_from_disk else clipping_scan(widget_models)
+        _widget_clipping_checks(pack, widget_models) if widgets_from_disk
+        else clipping_scan(widget_models) + _bound_maxlen_checks(pack, widget_models)
     ) + _pack_maxlen_checks(pack, fields, skip_names=frozenset(w.name for w in widget_models))
     checkbox_checks = checkbox_audit(pack, fields)
     identity_checks = (

@@ -80,8 +80,10 @@
 #     "8a.g": 88888}) wrote both values with no warning, they survived a
 #     re-read of /V, and a 300-dpi render showed the digits sitting inside the
 #     grey boxes. Nothing downstream caught it either — verify.py's clipping
-#     scan deliberately SKIPS ReadOnly widgets ("the filler never writes
-#     them"), which this mapping made untrue. Pitfall P-007.
+#     scan then deliberately SKIPPED ReadOnly widgets ("the filler never writes
+#     them"), which this mapping made untrue (until Phase J J0.3, 2026-09-11;
+#     it now scans a mapped ReadOnly widget whenever this fill could have
+#     written it). Pitfall P-007.
 # Discriminator for the next port — do NOT reduce this to "ReadOnly => drop".
 # A shaded ReadOnly cell the printed form makes NECESSARILY blank is excluded
 # (here; sched_nec's 5 grid cells; sched_3 line 6e). A printed LINE that merely

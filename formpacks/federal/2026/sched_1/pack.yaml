@@ -225,6 +225,7 @@ fields:
   - line: "22" # printed "Reserved for future use" — leave blank. ReadOnly (/Ff 8388609) on the draft as in 2025; kept mapped because the printed line-26 sum names it (RESERVED_LINE_KEEPS)
     field: "Page2[0].f2_14[0]"
     type: money
+    reserved: true                          # printed "Reserved for future use" (RESERVED_LINE_KEEPS; JEa)
   - line: "23"
     field: "Page2[0].f2_15[0]"
     type: money

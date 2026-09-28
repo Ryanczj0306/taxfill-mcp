@@ -59,6 +59,11 @@ jobs:
         run: uv sync
       - name: Run network golden round-trips
         run: uv run pytest -m network
+      - name: Run the ReadOnly sweep on the cache the round-trips just warmed
+        # test_verify_readonly_sweep.py carries no network mark and SKIPS every per-pack case on an empty
+        # .cache/blanks, so the offline CI job never exercises it; after the step above every pinned blank
+        # is cached (Phase J JEa).
+        run: uv run pytest packages/core/tests/test_verify_readonly_sweep.py
 
   report:
     # JT0c: any red (a NEW failure, or an expired quarantine row) opens a `freshness red` issue, or

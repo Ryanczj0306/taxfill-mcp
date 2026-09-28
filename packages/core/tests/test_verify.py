@@ -452,6 +452,28 @@ def test_clipping_auto_size_is_safe():
     assert "auto-size" in check.detail
 
 
+def test_jea_a_multiline_box_counts_wrapped_lines_not_one_line_of_width():
+    # /Ff bit 13: the viewer wraps. 100pt at 10pt holds ~20 characters a line; 40pt holds 3 rows of 12pt.
+    base = {"name": "w", "da": "/Helv 10 Tf 0 g", "rect_width": 100.0, "rect_height": 40.0}
+    fits = clipping_scan([TextWidget(value="x" * 50, multiline=True, **base)])[0]
+    assert fits.status == "PASS" and "3 line(s)" in fits.detail
+    assert clipping_scan([TextWidget(value="x" * 70, multiline=True, **base)])[0].status == "FAIL"
+    assert clipping_scan([TextWidget(value="x" * 50, **base)])[0].status == "FAIL"   # a single-line box does clip
+    assert clipping_scan([TextWidget(value="a\nb\nc\nd", multiline=True, **base)])[0].status == "FAIL"
+
+
+def test_jea_a_pack_maxlen_binds_a_widget_without_its_own_maxlen():
+    # GA 500's STATE1 shape: a ReadOnly picker with no /MaxLen whose pack maxlen the filler alone enforced.
+    pack = make_pack([text_field("state", maxlen=2)])
+    widget = {"name": f"{ROOT}.{pack.fields[0].field}", "value": "ABC", "da": "/Helv 10 Tf 0 g",
+              "rect_width": 200.0, "read_only": True}
+    bad = verify_form(pack, disk_fields(pack, {"state": "ABC"}), widgets=[widget])
+    fails = [c.detail for c in bad.clipping if c.status == "FAIL"]
+    assert fails and "the pack's maxlen is 2" in fails[0] and "ABC" not in fails[0]
+    good = verify_form(pack, disk_fields(pack, {"state": "GA"}), widgets=[{**widget, "value": "GA"}])
+    assert not [c for c in good.clipping if c.status == "FAIL"]
+
+
 def test_clipping_width_heuristic_overflow():
     # 20 chars * 0.5 * 12pt = 120pt > 80pt rect.
     widget = TextWidget(name="w", value="x" * 20, da="/Helv 12 Tf 0 g", rect_width=80.0)

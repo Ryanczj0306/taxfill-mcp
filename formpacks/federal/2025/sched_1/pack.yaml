@@ -257,6 +257,7 @@ fields:
   - line: "22" # printed "Reserved for future use" — leave blank (see header note)
     field: "Page2[0].f2_14[0]"
     type: money
+    reserved: true                          # printed "Reserved for future use" (RESERVED_LINE_KEEPS; JEa)
   - line: "23"
     field: "Page2[0].f2_15[0]"
     type: money

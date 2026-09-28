@@ -1074,12 +1074,8 @@ fields:
   - line: s1ret.sp.3
     field: SP_S1L3
     type: money
-  - line: s1ret.tp.4                # Maximum Earned Income
-    field: TP_S1L4
-    type: money
-  - line: s1ret.sp.4
-    field: SP_S1L4
-    type: money
+  # line 4 ("Maximum Earned Income", TP_/SP_ widgets) is NOT mapped: a ReadOnly widget whose
+  # blank already holds the constant 4000 and carries no calculate script — class 1 (Phase J JEa)
   - line: s1ret.tp.5                # Lesser of Line 3 or 4
     field: TP_S1L5
     type: money
@@ -1166,12 +1162,8 @@ fields:
   - line: s1mil.sp.1
     field: SP_S1L1_P3
     type: money
-  - line: s1mil.tp.2                # Base Military Exclusion
-    field: TP_S1L2_P3
-    type: money
-  - line: s1mil.sp.2
-    field: SP_S1L2_P3
-    type: money
+  # line 2 ("Base Military Exclusion", TP_/SP_ widgets) is NOT mapped: a ReadOnly widget whose
+  # blank already holds the constant 17500 and carries no calculate script — class 1 (Phase J JEa)
   - line: s1mil.tp.3                # Lesser of Line 1 or Line 2
     field: TP_S1L3_P3
     type: money

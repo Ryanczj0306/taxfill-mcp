@@ -64,7 +64,7 @@ fields:
   - line: identifying_number         # "Your social security number or EIN"
     field: "Page1[0].f1_2[0]"
     type: text
-    maxlen: 9
+    maxlen: 11
     format: ssn_digits_only   # PDF MaxLen is 11 (fits a dashed SSN), but digits-only keeps cross-form identity values consistent (SSN and EIN are both 9 digits)
 
   # ---- Part I header elections (three independent checkboxes) ---------------

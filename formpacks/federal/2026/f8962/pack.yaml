@@ -33,7 +33,7 @@ draft_created: "4/21/26"
 acroform_root: "topmostSubform[0]"
 fields:
   - { line: "name", field: "Page1[0].f1_1[0]", type: text }
-  - { line: "identifying_number", field: "Page1[0].f1_2[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "identifying_number", field: "Page1[0].f1_2[0]", type: text, maxlen: 11, format: "ssn_digits_only" }
   - { line: "a", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1" }
   - { line: "1", field: "Page1[0].f1_3[0]", type: text }
   - { line: "2a", field: "Page1[0].f1_4[0]", type: money }
@@ -143,28 +143,28 @@ fields:
   # itself. No printed sum names 28 or 29, so the keys do not exist — a caller that still fills the
   # 2025 meaning ("29 = excess APTC repayment") gets an unknown-line error instead of a reserved box.
   - { line: "30a", field: "Page2[0].f2_1[0]", type: text }
-  - { line: "30b", field: "Page2[0].f2_2[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "30b", field: "Page2[0].f2_2[0]", type: text, maxlen: 11, format: "ssn_digits_only" }
   - { line: "30c", field: "Page2[0].f2_3[0]", type: text }
   - { line: "30d", field: "Page2[0].f2_4[0]", type: text }
   - { line: "30e", field: "Page2[0].Lines30e-g[0].Line30e[0].f2_5[0]", type: text }
   - { line: "30f", field: "Page2[0].Lines30e-g[0].Line30f[0].f2_6[0]", type: text }
   - { line: "30g", field: "Page2[0].Lines30e-g[0].f2_7[0]", type: text }
   - { line: "31a", field: "Page2[0].f2_8[0]", type: text }
-  - { line: "31b", field: "Page2[0].f2_9[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "31b", field: "Page2[0].f2_9[0]", type: text, maxlen: 11, format: "ssn_digits_only" }
   - { line: "31c", field: "Page2[0].f2_10[0]", type: text }
   - { line: "31d", field: "Page2[0].f2_11[0]", type: text }
   - { line: "31e", field: "Page2[0].Lines31e-g[0].Line31e[0].f2_12[0]", type: text }
   - { line: "31f", field: "Page2[0].Lines31e-g[0].Line31f[0].f2_13[0]", type: text }
   - { line: "31g", field: "Page2[0].Lines31e-g[0].f2_14[0]", type: text }
   - { line: "32a", field: "Page2[0].f2_15[0]", type: text }
-  - { line: "32b", field: "Page2[0].f2_16[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "32b", field: "Page2[0].f2_16[0]", type: text, maxlen: 11, format: "ssn_digits_only" }
   - { line: "32c", field: "Page2[0].f2_17[0]", type: text }
   - { line: "32d", field: "Page2[0].f2_18[0]", type: text }
   - { line: "32e", field: "Page2[0].Lines32e-g[0].Line32e[0].f2_19[0]", type: text }
   - { line: "32f", field: "Page2[0].Lines32e-g[0].Line32f[0].f2_20[0]", type: text }
   - { line: "32g", field: "Page2[0].Lines32e-g[0].f2_21[0]", type: text }
   - { line: "33a", field: "Page2[0].f2_22[0]", type: text }
-  - { line: "33b", field: "Page2[0].f2_23[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "33b", field: "Page2[0].f2_23[0]", type: text, maxlen: 11, format: "ssn_digits_only" }
   - { line: "33c", field: "Page2[0].f2_24[0]", type: text }
   - { line: "33d", field: "Page2[0].f2_25[0]", type: text }
   - { line: "33e", field: "Page2[0].Lines33e-g[0].Line33e[0].f2_26[0]", type: text }

@@ -446,7 +446,7 @@ class StateComputed(NamedTuple):
 STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
     StateComputed(
         "states/al/2023/al40/pack.yaml",
-        568,
+        566,
         "the pack's own header states it: 'AL marks many running totals ReadOnly, but they "
         "remain mapped so a filer can carry the computed value'. The dominant flag value is "
         "/Ff 12582913 (DoNotScroll|DoNotSpellCheck|ReadOnly). 580 -> 568 on 2026-09-23: the "
@@ -456,8 +456,9 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "calculations...' baked into the blank; the blank has no Instructions6) and the "
         "white NonDriver checkbox caption. Mapped, the baked-in text FAILed verify's P-001 "
         "scan on every real one-line fill; they are unmapped now (class 1: the widget already "
-        "holds the form's own text). Still counted: the two same-shape white captions "
-        "txtMultiScheduleD/E, which fit their boxes — debt for the CONVENTIONS banner rule",
+        "holds the form's own text). 568 -> 566 on 2026-09-28 (Phase J JEa, the CONVENTIONS "
+        "banner rule): the two same-shape white captions txtMultiScheduleD/E ('Check here if "
+        "you have more than one Schedule D/E', baked into the blank) are unmapped too",
     ),
     StateComputed(
         "states/de/2023/pit_res/pack.yaml",
@@ -467,16 +468,19 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
     ),
     StateComputed(
         "states/ga/2023/ga500/pack.yaml",
-        193,
+        189,
         "GA 500's JS-computed totals and mirrors (the ReadOnly SCANLINE voucher barcode and "
-        "SSN_COPY mirror are correctly NOT mapped). 193 fields but 191 widgets: the three "
+        "SSN_COPY mirror are correctly NOT mapped). 193 -> 189 on 2026-09-28 (Phase J JEa): "
+        "the Schedule 1 worksheet constants TP/SP_S1L4 ('Maximum Earned Income', 4000) and "
+        "TP/SP_S1L2_P3 ('Base Military Exclusion', 17500) hold their value in the blank with no "
+        "calculate script — class 1, unmapped. 189 fields but 187 widgets: the three "
         "s3.10_deduction.* option lines share the radio field CB_DEDUCTION_TYPE, which — "
         "like Ohio's two boxes — carries a bare /Ff = 1 on a selector the printed face "
         "requires the filer to answer",
     ),
     StateComputed(
         "states/mo/2023/mo1040/pack.yaml",
-        256,
+        223,
         "MO-1040's JS-computed totals; the ReadOnly 'do calculations' UI toggles and the "
         "CRP2023 banner are correctly NOT mapped. 262 -> 256 on 2026-09-23: five ReadOnly "
         "checkbox/worksheet CAPTIONS, not lines, were unmapped — Texto7 'Carry amount to "
@@ -486,17 +490,20 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "text is baked into the blank), whose text FAILed verify's P-001 scan on every real "
         "fill (class 1) — and so was Text1, an empty ReadOnly 21x22pt /Tx that only draws "
         "the black border (/MK /BC) of the c.ownfullyear checkbox sitting inside it (no "
-        "value can be right; the round trip's sentinel in it FAILed the widened scan). NOT "
-        "all 256 are computed totals: the count still carries the pack's "
-        "33 other mapped ReadOnly helper/label strings (the 28 printlid.* lids, ProtectBarcode, "
-        "amendedTXT, 1040_30Text, line51txt, vendorid), which fit their boxes or auto-size "
-        "— debt for the CONVENTIONS banner rule",
+        "value can be right; the round trip's sentinel in it FAILed the widened scan). 256 -> "
+        "223 on 2026-09-28 (Phase J JEa, the CONVENTIONS banner rule): the 33 other ReadOnly "
+        "helper/label strings, each holding DOR text baked into the blank, are unmapped — the "
+        "28 printlid.* lids ('PLEASE, USE THE PRINT BUTTON ON THE FORM ...'), ProtectBarcode "
+        "('THIS IS A 2-D BARCODE ...'), vendorid ('006'), amendedTXT ('These fields are "
+        "locked ...'), line51txt ('TRUST FUNDS') and 1040_30Text ('Check boxes to carry "
+        "amount to MO-1040 ...')",
     ),
     StateComputed(
         "states/mo/2024/mo1040/pack.yaml",
-        254,
+        221,
         "the 2023 row's JS-computed totals carried over, with the 2024 delta measured "
-        "field by field (then 262 -> 260; 256 -> 254 since the 2026-09-23 unmap below): "
+        "field by field (then 262 -> 260; 256 -> 254 since the 2026-09-23 unmap below; "
+        "254 -> 221 on 2026-09-28 with the 2023 row's 33 caption strings): "
         "MINUS the 20 ReadOnly bindings the re-authored "
         "MO-A Part 3/Part 5 ladder removed with its 25 dead field names; PLUS 2 "
         "survivors newly flagged (/Ff 12582912 -> 12582913, the only /Ff changes on any "
@@ -625,6 +632,31 @@ def _keeps_by_pack() -> dict[str, dict[str, ReservedKeep]]:
     return by_pack
 
 
+# A mapped ReadOnly text widget whose blank already holds a NONZERO value is class 4 only when the form
+# recomputes or re-picks that value (a JS calculate or a filer's selection); a value the blank simply carries
+# is a printed constant, class 1, never mapped (Phase J JEa adjudicated the list below field by field against
+# the printed row and the widget's own /AA scripts). Keyed (pack, line) -> why the default is not a constant.
+NONZERO_READONLY_DEFAULTS: dict[tuple[str, str], str] = {
+    ("states/ga/2023/ga500/pack.yaml", "voucher.type_of_return"): "a /Ch dropdown (TAXTYPE) defaulted to '09'",
+    ("states/ga/2023/ga500/pack.yaml", "voucher.tax_year"): "a /Ch dropdown (YY) defaulted to '2023'",
+    ("states/ga/2023/ga500/pack.yaml", "s1mil.tp.7"):
+        "'Total additional Military Exclusion allowed' — 35000 only with Georgia earned income (line 6)",
+    ("states/ga/2023/ga500/pack.yaml", "s1mil.sp.7"): "the spouse column of s1mil.tp.7",
+    **{(f"states/mo/{y}/mo1040/pack.yaml", line): why for y in (2023, 2024) for line, why in (
+        ("line32Y", "the document JavaScript assigns it (getField('line32Y').value = ...)"),
+        ("line32S", "the document JavaScript assigns it"),
+        ("moa_wks6", "'Enter $10,000 ($5,000 if married filing separately)' — the filing status decides it"),
+        ("moa_pt4_4", "the document JavaScript assigns it"),
+    )},
+    ("states/mo/2023/mo1040/pack.yaml", "moa_pt3_4"): "the document JavaScript assigns it",
+    ("states/mo/2023/mo1040/pack.yaml", "moa_pt5_2"): "the document JavaScript assigns it",
+    ("states/oh/2023/it1040_oh/pack.yaml", "upc_city_state_zip"): "a JS-composed mirror (', ' placeholder)",
+    ("states/oh/2024/it1040_oh/pack.yaml", "upc_city_state_zip"): "a JS-composed mirror (', ' placeholder)",
+    ("states/wv/2023/it140/pack.yaml", "6"):
+        "its /C script: exemptions x 2000, else 500 (the WV zero-exemption amount)",
+}
+
+
 def _state_counts() -> dict[str, StateComputed]:
     return {row.pack: row for row in STATE_COMPUTED_READONLY}
 
@@ -632,6 +664,15 @@ def _state_counts() -> dict[str, StateComputed]:
 # ---------------------------------------------------------------------------
 # Offline layer — the tables pinned against the packs themselves
 # ---------------------------------------------------------------------------
+
+
+def test_the_reserved_flag_marks_exactly_the_kept_reserved_lines():
+    """JEa: PackField.reserved (fill_form warns, audit_pack skips) is set on exactly the RESERVED_LINE_KEEPS rows."""
+    flagged = {(_key(p), f.line) for p in sorted(FORMPACKS.glob("**/pack.yaml")) for f in load_pack(p).fields
+               if f.reserved}
+    kept = {(row.pack, row.line) for row in RESERVED_LINE_KEEPS}
+    assert flagged == kept, (f"reserved: true without a RESERVED_LINE_KEEPS row: {sorted(flagged - kept)}; "
+                             f"a kept reserved line without the flag: {sorted(kept - flagged)}")
 
 
 @pytest.mark.parametrize("row", RESERVED_LINE_KEEPS, ids=lambda row: f"{_pack_id(FORMPACKS / row.pack)}-{row.line}")
@@ -979,3 +1020,38 @@ def _qualified_name(node) -> str:
         node = parent.get_object() if parent is not None else None
         hops += 1
     return ".".join(reversed(parts))
+
+
+def _nonzero_readonly_defaults(pack_path: Path) -> dict[str, str]:
+    """Mapped ReadOnly text lines whose blank carries a value other than blank / zero -> that value."""
+    from pypdf import PdfReader  # noqa: PLC0415
+
+    pack = load_pack(pack_path)
+    try:
+        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+    except OfflineFetchError as exc:
+        pytest.skip(f"cache empty and network unreachable: {exc}")
+    fields = PdfReader(str(blank)).get_fields() or {}
+    prefix = f"{pack.acroform_root}." if pack.acroform_root else ""
+    out = {}
+    for f in pack.fields:
+        field = fields.get(prefix + f.field)
+        if f.type == "checkbox" or field is None or not int(field.get("/Ff", 0) or 0) & 1:
+            continue
+        value = str(field.get("/V") or "").strip()
+        if value and value.lstrip("$").rstrip("%") not in ("0", "0.0", "0.00", ".00"):
+            out[f.line] = value
+    return out
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("pack_path", sorted(FORMPACKS.glob("states/**/pack.yaml")), ids=_pack_id)
+def test_every_nonzero_readonly_default_is_adjudicated_class_4(pack_path: Path):
+    """JEa: a mapped ReadOnly widget whose blank holds a nonzero value is a printed constant unless adjudicated."""
+    found = {line for line in _nonzero_readonly_defaults(pack_path)}
+    adjudicated = {line for (pack, line) in NONZERO_READONLY_DEFAULTS if pack == _key(pack_path)}
+    assert found == adjudicated, (
+        f"{_key(pack_path)}: unadjudicated nonzero ReadOnly defaults {sorted(found - adjudicated)} — read the "
+        f"printed row and the widget's /AA: a constant the blank carries is class 1 (unmap it), a value the form "
+        f"recomputes or the filer picks is class 4 (add a NONZERO_READONLY_DEFAULTS row); stale rows "
+        f"{sorted(adjudicated - found)}")

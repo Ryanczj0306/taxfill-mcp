@@ -36,6 +36,7 @@ from pathlib import Path
 __all__ = [
     "FetchError",
     "OfflineFetchError",
+    "cached_blank_path",
     "compute_sha256",
     "default_cache_dir",
     "fetch_blank",
@@ -140,6 +141,21 @@ def _cache_path(cache_dir: Path, url: str) -> Path:
     url_digest = hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
     basename = Path(urllib.parse.urlparse(url).path).name or "download.pdf"
     return cache_dir / f"{url_digest}_{_UNSAFE_NAME_RE.sub('_', basename)}"
+
+
+def cached_blank_path(url: str, sha256: str, *, cache_dir: str | Path | None = None) -> Path | None:
+    """The blank :func:`fetch_blank` cached for ``url``, if it is on disk and matches ``sha256``; else None.
+
+    Never downloads — the offline lookup verify and the tests use to FIND a pinned blank (Phase J JEa; they had
+    reached into the private ``_cache_path``). A stale or foreign file under the cache name counts as absent.
+    """
+    try:
+        path = _cache_path(Path(cache_dir) if cache_dir is not None else default_cache_dir(), url)
+        if path.is_file() and compute_sha256(path) == sha256.strip().lower():
+            return path
+    except OSError:
+        pass
+    return None
 
 
 def _download(url: str, timeout: float) -> bytes:

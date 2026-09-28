@@ -269,19 +269,18 @@ pitfalls:
       pre-existing false FAIL of the same kind — WV IT-140 2023's seven
       untouched state-picker combos hold five spaces under a maxlen-2 hint —
       so a whitespace-only value is no longer a clipping candidate
-      (test_verify.py). STILL OPEN from (b): fill_form writes ReadOnly
-      widgets with NO warning and audit_pack.py's synthetic_values fills
-      them, so the audit renders print sentinels inside locked boxes. The
-      engine-side fix — a `reserved:` marker on the field, or driving
-      fill_form and synthetic_values off the allowlist, with a warning when
-      a value is supplied for one — is roadmap work (JEa), not a pack edit,
-      as is unmapping the same-shape captions the AL-40 and MO-1040 counts
-      still carry (txtMultiScheduleD/E; the 28 printlid.* lids,
-      ProtectBarcode, amendedTXT, 1040_30Text, line51txt, vendorid), which
-      fit their boxes and so never FAIL. (c) formpacks/CONVENTIONS.md has NO rule about ReadOnly
-      widgets or reserved lines (zero hits for readonly / read-only /
-      reserved), so this discriminator is discoverable only from here and
-      from individual pack headers — plausibly how the sched_a split arose.
+      (test_verify.py). CLOSED from (b) by Phase J JEa (2026-09-28): a
+      kept reserved line now carries `reserved: true` (PackField.reserved,
+      held equal to RESERVED_LINE_KEEPS by a test), fill_form warns when a
+      value lands on one, and audit_pack.py leaves it blank. The same-shape
+      captions the AL-40 and MO-1040 counts still carried are unmapped
+      (txtMultiScheduleD/E; the 28 printlid.* lids, ProtectBarcode,
+      amendedTXT, 1040_30Text, line51txt, vendorid; al40 568 -> 566,
+      mo1040 256 -> 223 and 254 -> 221). A class-4 ReadOnly widget (a DOR
+      total or mirror) is still written without a warning, by design: an
+      unwritten one ships blank. (c) formpacks/CONVENTIONS.md carries the
+      rule in "Reserved, shaded and ReadOnly widgets", with the
+      banner rule and the maxlen rule since JEa.
       THE GENERIC REGRESSION TEST lives in
       packages/core/tests/test_readonly_widget_mapping.py and replaces the
       per-pack audits that kept missing packs: it sweeps EVERY discovered
