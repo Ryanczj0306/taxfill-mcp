@@ -330,12 +330,6 @@ class SharedFieldDebt(NamedTuple):
 # group id. NOT the number of option LINES (120 sets, 321 option lines).
 SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID: tuple[SharedFieldDebt, ...] = (
     SharedFieldDebt(
-        "states/az/2023/az140/pack.yaml",
-        4,
-        "filing status (4 options on 'Filing Status'), the itemized/standard election on "
-        "'Itemized/Standard', and the line-75 political-party designation",
-    ),
-    SharedFieldDebt(
         "states/co/2023/dr0104/pack.yaml",
         2,
         "the direct-deposit account type (checking/savings/CollegeInvest) and the "

@@ -1,4 +1,59 @@
-# Arizona Form 140, 2023 — Resident Personal Income Tax Return.
+# ===========================================================================
+# TY2025 PORT of formpacks/states/az/2024/az140/pack.yaml, itself the TY2024
+# port of the 2023 base (ported 2026-09-28, Phase J JS3b).
+#
+# TOPOLOGY VERDICT: IDENTICAL TO 2024, widget for widget — 430 widgets, 406
+# names, and every page, /Rect, /MaxLen, /Ff, /FT and /AP /N state the same as
+# the 2024 blank. The field map is the 2024 map unchanged. Changed from the
+# 2024 pack: `tax_year`, `source_url`, `pdf_sha256`, the year-bearing prose,
+# and the cross_form target (see Cross_form).
+#
+# URL. https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf
+# (the discovery row; the same "document/" path as 2024). Digest
+# 91722910a79a8ec544b5… — the discovery run's two downloads, the JS3a triage
+# and a direct re-download on 2026-09-28 all agree.
+#
+# PRINTED IDENTITY. Page 1 prints "Arizona Form 140", "Resident Personal Income
+# Tax Return", "2 0 2 5", "ADOR 10413 (25)" and "AZ Form 140 (2025)". /Title
+# "Arizona Form 140", /ModDate 2025-12-11. printed_year_verified = 2025.
+#
+# Against the 2023 base the 2025 blank carries the same 154 moved widgets as
+# 2024 (the 2025 layout IS the 2024 layout), so the 2024 port's row-by-row
+# re-read carries over; the 2025 pages were text-diffed against 2024 and
+# rendered for pages 5-6.
+#
+# AcroForm topology, measured widget by widget against the 2023 base blank.
+# 430 widgets = 406 distinct field names in both files; the set difference is
+# empty both ways, and every widget keeps its page, /MaxLen, /Ff, /FT and /AP
+# /N state set (so every on_state below stands). What MOVED is position: 154
+# fields changed /Rect — pages 1 (43), 2 (63), 3 (7), 5 (22) and 6 (23),
+# vertical shifts of a few points and up to ~20 pt on page 5 where the row
+# captions re-wrap. Only two widgets changed size ("51" and "58_3", each a
+# point TALLER, neither narrower), so every capacity-derived maxlen below still
+# holds. Because a moved widget is exactly where a same-name port can go wrong,
+# every row was RE-READ on the 2025 face rather than assumed: the page 1-2 line
+# numbers and captions extract identically (same numbers, same order; the only
+# caption edits are the years and two Form 301 cross-references in lines 47
+# and 51 — "Part 2, line 31" -> "line 30" and "line 62" -> "line 60"); and
+# pages 5 and 6, which carry no usable text layer for their rows, were RENDERED
+# and compared row by row — page 5 still lists Other Additions A-T and page 6
+# Other Subtractions A-W, each letter the same addition or subtraction as in
+# 2023. The sentinel audit (below) then confirmed every moved widget still
+# lands on its own printed row.
+#
+# FACE / LAW DELTAS vs 2024. Page 3's charitable increase is 34% (.34) —
+# "Multiply line 6C by 34% (.34)" — where 2024 printed 33%; page 6 row V now
+# reads "Other Adjustments .See instructions and MCTCP worksheet"; the rest are
+# years (line 62 "applied to 2026 estimated tax"). knowledge/states/az/2025.yaml
+# carries the 34%.
+#
+# VISION AUDIT PERFORMED. `scripts/audit_pack.py` against the pinned 2025 blank:
+# exit 0, 391 mapped / 391 written, 0 verify fails, 6 pages rendered. Because
+# the widget layout is identical to 2024's (whose six renders were read
+# page by page), the 2025 renders were spot-read (page 3's 34% worksheet and
+# its 1C-7C rows).
+# ===========================================================================
+# Arizona Form 140, 2025 — Resident Personal Income Tax Return.
 #
 # Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
 # every one of the 430 AcroForm widgets rendered with its own field name) ->
@@ -73,13 +128,13 @@
 # (35, 42, 52, 59, 60, 61, 79, 80) are OMITTED per the conservative house style.
 #
 # Cross_form. Line 12's printed label is "Federal adjusted gross income (from
-# your federal return)", so the single cross_form equality 12 == f1040.11
-# (Form 1040, 2023, line 11 = AGI) is declared.
+# your federal return)", so the single cross_form equality is 12 == f1040.11a:
+# the 2025 Form 1040 prints AGI on line 11a (its line 11 split into 11a/11b).
 form: Form 140
 jurisdiction: states/az
-tax_year: 2023
-source_url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf
-pdf_sha256: 6ac62b1984154d2a87393a4a1154b9525e403df56a1717d2a1e39d679e2d81ad
+tax_year: 2025
+source_url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf
+pdf_sha256: 91722910a79a8ec544b5b4aef87a56d2d1d2151fe96039dc02b681408db55778
 acroform_root: ''
 fields:
   # ===================================================== header (page 1)
@@ -318,7 +373,7 @@ fields:
     type: checkbox
     on_state: "/Yes"
   # ===================================================== Qualifying parents/grandparents (Box 11a)
-    # cols: (a) name (b) SSN (c) relationship (d) months in home (e) AGE 65 OR OVER (f) IF DIED IN 2023
+    # cols: (a) name (b) SSN (c) relationship (d) months in home (e) AGE 65 OR OVER (f) IF DIED IN 2025
   - line: "11b_first_name"
     field: "11b First"
     type: text
@@ -1291,7 +1346,7 @@ fields:
     type: checkbox
     on_state: "/Yes"
   # ===================================================== page 4 Part 3 — Other Exemptions (rows 1-10)
-    # cols: (a) name (b) SSN (c) AGE 65 OR OVER C1/C2 (d) STILLBORN CHILD IN 2023
+    # cols: (a) name (b) SSN (c) AGE 65 OR OVER C1/C2 (d) STILLBORN CHILD IN 2025
   - line: "oe_1_first_name"
     field: "3_1 First"
     type: text
@@ -1685,7 +1740,7 @@ relations:
   - "63 == 61 - 62"  # Line 63 'Balance of overpayment: Subtract line 62 from line 61.'
   - "78 == 64 + 65 + 66 + 67 + 68 + 69 + 70 + 71 + 72 + 73 + 74 + 76"  # Line 78 'Add lines 64 through 74 and 76; enter the total.'
 cross_form:
-  - "12 == f1040.11"  # Line 12 'Federal adjusted gross income (from your federal return)' = AGI
+  - "12 == f1040.11a"  # Line 12 'Federal adjusted gross income (from your federal return)' = AGI
 identity_fields:
   - tp_ssn
   - tp_first_name_and_initial

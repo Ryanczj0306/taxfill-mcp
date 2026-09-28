@@ -44,7 +44,21 @@ def counts() -> dict[str, object]:
                           for y in sorted({int(p.parent.parent.name)
                                            for p in (REPO / "formpacks" / "states").glob("*/*/*/pack.yaml")})},
         "handfill": len(list((REPO / "formpacks").glob("**/handfill.yaml"))),
+        **_state_years(),
     }
+
+
+def _state_years() -> dict[str, object]:
+    """Which jurisdictions can fill which post-2023 years — the state lists the docs quote (Phase J JS3b)."""
+    states = REPO / "formpacks" / "states"
+    years: dict[str, set[int]] = {}
+    for pack in states.glob("*/*/*/*.yaml"):
+        if pack.name in ("pack.yaml", "handfill.yaml") and pack.parent.parent.name.isdigit():
+            years.setdefault(pack.parts[-4], set()).add(int(pack.parent.parent.name))
+    post = {st: ys for st, ys in years.items() if any(y > 2023 for y in ys)}
+    both = sorted(st.upper() for st, ys in post.items() if {2024, 2025} <= ys)
+    only24 = sorted(st.upper() for st, ys in post.items() if 2024 in ys and 2025 not in ys)
+    return {"jurisdictions": len(years), "post2023": len(post), "both_years": both, "only_2024": only24}
 
 
 def anchors(c: dict) -> list[tuple[Path, str, str]]:
@@ -78,6 +92,27 @@ def anchors(c: dict) -> list[tuple[Path, str, str]]:
         (skill, r"are \*\*thinner and uneven\*\*: \d+ packs", f"are **thinner and uneven**: {c['state']} packs"),
         (readme, r"38 via fillable AcroForm \(\*\*\d+\*\* state `pack\.yaml` in total\)",
          f"38 via fillable AcroForm (**{c['state']}** state `pack.yaml` in total)"),
+        (skill, r"post-2023 for only \*\*\d+\*\* — \*\*[A-Z, ]+ \(2024 and 2025\)\*\* and\n> \*\*[A-Z, ]+ \(2024\)\*\*\. "
+                r"For the other \d+ jurisdictions",
+         f"post-2023 for only **{c['post2023']}** — **{', '.join(c['both_years'])} (2024 and 2025)** and\n"
+         f"> **{', '.join(c['only_2024'])} (2024)**. For the other {c['jurisdictions'] - c['post2023']} jurisdictions"),
+        (readme, r"took \d+ jurisdictions \([A-Z, ]+\) past TY2023, so the remaining \d+ still fill",
+         f"took {c['post2023']} jurisdictions ({', '.join(sorted(c['both_years'] + c['only_2024']))}) past TY2023, so "
+         f"the remaining {c['jurisdictions'] - c['post2023']} still fill"),
+        (roadmap, r"\*\*State form packs — \d+ across three years\*\* \(TY2023 \d+ / TY2024 \d+ / TY2025 \d+\)",
+         f"**State form packs — {c['state']} across three years** (TY2023 {sy[2023]} / TY2024 {sy[2024]} / "
+         f"TY2025 {sy[2025]})"),
+        (roadmap, r"\*\*\d+ of the 42 jurisdictions fill a post-2023 year\*\*",
+         f"**{c['post2023']} of the 42 jurisdictions fill a post-2023 year**"),
+        (roadmap, r"For the remaining \*\*\d+\*\*, state \*knowledge\*",
+         f"For the remaining **{c['jurisdictions'] - c['post2023']}**, state *knowledge*"),
+        (roadmap, r"That asymmetry is now \d+\n> jurisdictions wide",
+         f"That asymmetry is now {c['jurisdictions'] - c['post2023']}\n> jurisdictions wide"),
+        (roadmap, r"\*\*\d+ of the 42 jurisdictions\*\* can fill a post-2023 year — [A-Z, ]+(?: and [A-Z]+)?\n      for both "
+                  r"2024 and 2025; [A-Z, ]+ for 2024\. For the\n      other \*\*\d+\*\*",
+         f"**{c['post2023']} of the 42 jurisdictions** can fill a post-2023 year — "
+         f"{', '.join(c['both_years'][:-1])} and {c['both_years'][-1]}\n      for both 2024 and 2025; "
+         f"{', '.join(c['only_2024'])} for 2024. For the\n      other **{c['jurisdictions'] - c['post2023']}**"),
         (roadmap, r"\*\*\d+ form packs total\*\* — \d+ `pack\.yaml` \(\d+ federal \+ \d+ state\) \+ \d+",
          f"**{c['federal'] + c['state'] + c['handfill']} form packs total** — {c['federal'] + c['state']} `pack.yaml` "
          f"({c['federal']} federal + {c['state']} state) + {c['handfill']}"),

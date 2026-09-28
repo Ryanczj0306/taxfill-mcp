@@ -1,4 +1,61 @@
-# Arizona Form 140, 2023 — Resident Personal Income Tax Return.
+# ===========================================================================
+# TY2024 PORT of formpacks/states/az/2023/az140/pack.yaml (ported 2026-09-28,
+# Phase J JS3b; triaged PORTABLE by scripts/scaffold_state_year.py).
+#
+# TOPOLOGY VERDICT: SAME FIELD NAMES, MOVED WIDGETS — the field map below is
+# the TY2023 map, field for field; nothing was re-mapped, added or dropped.
+# Changed from the 2023 pack: `tax_year`, `source_url`, `pdf_sha256` and the
+# year-bearing prose.
+#
+# URL. The scaffold's derivation of the 2023 path (…/files/2024-12/FORMS_…)
+# 404s; the 2026-09-12 discovery run found the year's blank on AZDOR's own
+# forms page at
+#   https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2024_140_f.pdf
+# (scripts/state_discovery_rows.json). Digest 3bcbe35485f97d529136… — the
+# discovery run's two downloads, the JS3a triage and a direct re-download on
+# 2026-09-28 all agree.
+#
+# PRINTED IDENTITY. Page 1 prints "Arizona Form 140", "Resident Personal Income
+# Tax Return", the fiscal-year boxes "2 0 2 4", "ADOR 10413 (24)" and "AZ Form
+# 140 (2024)"; every page footer reads "AZ Form 140 (2024)". /Title "Arizona
+# Form 140", /ModDate 2024-10-14. printed_year_verified = 2024.
+#
+# AcroForm topology, measured widget by widget against the 2023 base blank.
+# 430 widgets = 406 distinct field names in both files; the set difference is
+# empty both ways, and every widget keeps its page, /MaxLen, /Ff, /FT and /AP
+# /N state set (so every on_state below stands). What MOVED is position: 154
+# fields changed /Rect — pages 1 (43), 2 (63), 3 (7), 5 (22) and 6 (23),
+# vertical shifts of a few points and up to ~20 pt on page 5 where the row
+# captions re-wrap. Only two widgets changed size ("51" and "58_3", each a
+# point TALLER, neither narrower), so every capacity-derived maxlen below still
+# holds. Because a moved widget is exactly where a same-name port can go wrong,
+# every row was RE-READ on the 2024 face rather than assumed: the page 1-2 line
+# numbers and captions extract identically (same numbers, same order; the only
+# caption edits are the years and two Form 301 cross-references in lines 47
+# and 51 — "Part 2, line 31" -> "line 30" and "line 62" -> "line 60"); and
+# pages 5 and 6, which carry no usable text layer for their rows, were RENDERED
+# and compared row by row — page 5 still lists Other Additions A-T and page 6
+# Other Subtractions A-W, each letter the same addition or subtraction as in
+# 2023. The sentinel audit (below) then confirmed every moved widget still
+# lands on its own printed row.
+#
+# FACE / LAW DELTAS vs 2023. Page 3's charitable standard-deduction increase is
+# 33% (.33) — "Multiply line 6C by 33% (.33)" — where 2023 printed 31%; the
+# rest are years (line 62 "applied to 2025 estimated tax", the page-4 "IF DIED
+# IN 2024" / "STILLBORN CHILD IN 2024" columns). The flat rate is 2.5% both
+# years. knowledge/states/az/2024.yaml carries the 33% (its JS2 law-change
+# entry), so there is no face-vs-knowledge mismatch.
+#
+# VISION AUDIT PERFORMED. `scripts/audit_pack.py` on this pack against the
+# pinned 2024 blank: exit 0, 391 mapped lines, 391 written, 0 verify fails
+# (0 assertion / 0 clipping / 0 checkbox), 6 pages rendered at 170 dpi, and
+# EVERY page was read: page 1 lines 12-35 and the 10c-10e / 11b-11c detail rows,
+# page 2 lines 36-80 with the voluntary gifts, checkboxes and preparer block,
+# page 3 1C-7C, page 4 10f-10p / 11d-11i / Part 3 rows 1-10, page 5 A-T and
+# page 6 A-W — each sentinel on its own printed row, including all 154 moved
+# widgets.
+# ===========================================================================
+# Arizona Form 140, 2024 — Resident Personal Income Tax Return.
 #
 # Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
 # every one of the 430 AcroForm widgets rendered with its own field name) ->
@@ -74,12 +131,12 @@
 #
 # Cross_form. Line 12's printed label is "Federal adjusted gross income (from
 # your federal return)", so the single cross_form equality 12 == f1040.11
-# (Form 1040, 2023, line 11 = AGI) is declared.
+# (Form 1040, 2024, line 11 = AGI) is declared.
 form: Form 140
 jurisdiction: states/az
-tax_year: 2023
-source_url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf
-pdf_sha256: 6ac62b1984154d2a87393a4a1154b9525e403df56a1717d2a1e39d679e2d81ad
+tax_year: 2024
+source_url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2024_140_f.pdf
+pdf_sha256: 3bcbe35485f97d5291363a3c855a4d4df783f12b152ea76704475e846f63d02c
 acroform_root: ''
 fields:
   # ===================================================== header (page 1)
@@ -318,7 +375,7 @@ fields:
     type: checkbox
     on_state: "/Yes"
   # ===================================================== Qualifying parents/grandparents (Box 11a)
-    # cols: (a) name (b) SSN (c) relationship (d) months in home (e) AGE 65 OR OVER (f) IF DIED IN 2023
+    # cols: (a) name (b) SSN (c) relationship (d) months in home (e) AGE 65 OR OVER (f) IF DIED IN 2024
   - line: "11b_first_name"
     field: "11b First"
     type: text
@@ -1291,7 +1348,7 @@ fields:
     type: checkbox
     on_state: "/Yes"
   # ===================================================== page 4 Part 3 — Other Exemptions (rows 1-10)
-    # cols: (a) name (b) SSN (c) AGE 65 OR OVER C1/C2 (d) STILLBORN CHILD IN 2023
+    # cols: (a) name (b) SSN (c) AGE 65 OR OVER C1/C2 (d) STILLBORN CHILD IN 2024
   - line: "oe_1_first_name"
     field: "3_1 First"
     type: text
