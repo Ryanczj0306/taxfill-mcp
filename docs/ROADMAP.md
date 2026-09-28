@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,657 tests** — offline 6,896 + live-.gov 761; derived
+Done and on `main` (**7,827 tests** — offline 7,066 + live-.gov 761; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2161,11 +2161,27 @@ line items sum to the headline delta.
       - WV 2025's three rate notes were a blind year-substitution: 2024's rates and constants, a misquoted statute, and "not TY2025, not TY2025". They now cite §11-21-4i (2024 Second Special Session SB 2033), whose 2025 rates the tax block already carried.
     - **Found, not fixed here → JS2b:** the WV 2024/2025 packs' other source rows were copied from 2023 with only the directory year changed. Four URLs per pack 404 (`…/PIT/2024/it140.2023.pdf` and the like), their labels say "2023", and several line references are 2023's. Examples: 2024 Schedule M's increasing modifications are lines 53-60 (total 61), not 51-58; HEPTC goes to line 19, not 18. The 2025 booklet itself is inconsistent here: IT-140 lines 2/3 cite "line 61 / line 52 of Schedule M" while its Schedule M prints 59/50.
     - SC 2025 records a live question, not an answer: SC conforms to the IRC through December 31, 2024, and its August 2025 instructions predate the July 2025 federal act. Line 1 is federal taxable income, and the booklet does not say how the new federal deductions are treated.
-- [ ] **JS2b — WV 2024/2025 source and line-reference repair** (S) [JS2 finding]
-  - Point each pack's HEPTC-1, IT-140, Schedule M and Schedule A citations at the year's own file: 2024's all exist under `…/PIT/2024/<name>.2024.pdf`; 2025's Schedule M and A exist, and the 2025 IT-140 and HEPTC-1 live inside the booklet. Relabel the sources.
-  - Re-verify every page and line reference against that year's documents: the treaty note, Schedule M line ranges, the RECAP lines for SCTC/HEPTC, and the Family Tax Credit table pages.
-  - Record the 2025 booklet's own line-61/59 inconsistency in the pack.
-  - **Acceptance:** every URL in both packs resolves to a PDF of the pack's year, and each corrected reference quotes the page it came from.
+- [x] **JS2b — Year-currency repair: WV 2024/2025, VT 2024, HI 2024 — DONE 2026-09-28** (S–M) [JS2 finding]
+  - JS2 found packs rolled forward from 2023 with only part of their text updated.
+  - *As built:* each repair re-read the year's own document, fetched 2026-09-28.
+    - **WV 2024 and 2025:**
+      - Four URLs per pack 404'd (`…/PIT/2024/it140.2023.pdf` and the like). 2024 now cites its own `it140.2024.pdf`, `schedule-HEPTC1.2024`, `schedule-M.2024` and `schedule-A.2024`. 2025 cites its Schedule M and A; its IT-140 and HEPTC-1 live only inside the booklet, which is cited instead.
+      - The credit figures were 2023's (3x and 1.5x the 2023 poverty guideline). Now:
+        - Family Tax Credit Table 1: 100% at $15,060 / $20,440 / $25,820 / $31,200 for 2024, and $15,650 / $21,150 / $26,650 / $32,150 for 2025, with the full one-person phase-out;
+        - HEPTC: $45,180-$93,600 (+$16,140) for 2024, and $46,950-$96,450 (+$16,500) for 2025;
+        - SCTC: $22,590-$46,800 (+$8,070) for 2024, and $23,475-$48,225 (+$8,250) for 2025.
+      - Line references: SCTC goes to IT-140 line 18 and HEPTC to line 19 (were 17/18). 2024 Schedule M increasing modifications are lines 53-60, totalled on line 61 (subtractions on 52). Page references: starting point p.24, Who Must File p.17, Schedule A Part II instructions p.32. The treaty note cites the year's own instructions, and the due dates are April 15, 2025 / 2026.
+      - The "payable to WV Tax Division" claim is printed nowhere. `check_payee` keeps the addressee, and a `check_payee_note` quotes the Line 24 instruction.
+      - The 2025 booklet's own inconsistency (IT-140 lines 2/3 cite Schedule M lines 61/52, while the 2025 Schedule M prints 59/50) is recorded in `unverified`.
+    - **VT 2024:**
+      - The credits cited the 2023 IN-112 documents. They now cite the 2024 ones, with birth years 2019-2024 and IN-111 line 26c (the new Child Care Contribution line moved it from 25c). The child tax credit example is fixed ($720 covers $138,001-$139,000 only).
+      - The renter credit now uses the 2024 eligibility and due dates (April 15 / Oct. 15, 2025). The filing requirement is reworded for 2024, the IN-116 voucher and the IN-113 instructions are 2024's, and the Form IN-111 link points at `IN-111-2024.pdf` (was `/document/2023-form-111`).
+    - **HI 2024:** the renter credit's label said "Rev. 2023" and cited the 2023 N-11 instructions; the linked 2024 Schedule X is "(REV. 2024)" and its line 12 names Form N-11 line 29.
+    - **The drift job never probed state citations:** `check_source_urls` read only `knowledge/sources.yaml`. It now also probes the generated `sources_states.yaml`, which is how WV's dead URLs would have surfaced.
+    - **Gate** `test_state_pack_year_currency.py`, on every TY2024+ state pack:
+      - no citation file from an earlier year: WV's pattern (the pack's year in the directory, an earlier year in the file name), or any earlier-year file outside law and bulletin URLs. Three rows are adjudicated: MN's December bracket press releases and SC's TC-60, whose 2024 revision still 404s.
+      - none of the carried-over phrasings found.
+      - It fails on the pre-repair packs (vt24, wv24, wv25) and passes after.
 - [ ] **JS3a — Scaffold starts from the newest base** (M) [G05 + PJ-15 (1)]
   - `scaffold_state_year.py` gains:
     - `--base newest`;

@@ -15,7 +15,8 @@ caught by CI rather than by a user mid-filing:
     behind a bot wall is still caught (MA's 2023 Form 1 was re-issued twice
     unseen before this).
   * **Source registry** — for every URL in ``knowledge/sources.yaml`` (the
-    section-7 "where truth lives" registry), confirm it still resolves. Pages
+    section-7 "where truth lives" registry) and the generated per-state
+    ``knowledge/sources_states.yaml``, confirm it still resolves. Pages
     legitimately change content, so we check reachability, not a checksum.
   * **Mailing addresses / where-to-file** — for every ``mailing_addresses``
     citation URL in the federal and per-state knowledge packs (the "where do you
@@ -223,6 +224,11 @@ def check_source_urls() -> list[str]:
     raw = yaml.safe_load((REPO / "knowledge" / "sources.yaml").read_text())
     urls: list[str] = []
     _collect_source_urls(raw, urls)
+    # JS2b: the state registry (each state's newest pack, generated) too — WV 2025's four dead citation URLs sat in
+    # it unprobed until the Phase J JS2 sweep fetched them by hand.
+    states = REPO / "knowledge" / "sources_states.yaml"
+    if states.is_file():
+        _collect_source_urls(yaml.safe_load(states.read_text()), urls)
     return _probe_urls(sorted(set(urls)), "Source registry")
 
 

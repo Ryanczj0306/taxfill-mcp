@@ -244,3 +244,13 @@ def test_js1b_an_unreadable_archive_leaves_the_refusal_a_warning(monkeypatch, tm
     monkeypatch.setattr(cd.urllib.request, "urlopen", archive_down)
     assert cd.check_form_blanks() == []
     assert "blocked HTTP 403 (not drift)" in capsys.readouterr().out
+
+
+def test_js2b_the_source_probe_covers_the_state_registry(monkeypatch):
+    seen: list[str] = []
+    monkeypatch.setattr(cd, "_probe_urls", lambda urls, label: seen.extend(urls) or [])
+    cd.check_source_urls()
+    states = yaml.safe_load((REPO / "knowledge" / "sources_states.yaml").read_text())
+    wanted: list[str] = []
+    cd._collect_source_urls(states, wanted)
+    assert wanted and set(wanted) <= set(seen)
