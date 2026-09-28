@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,999 tests** — offline 7,200 + live-.gov 799; derived
+Done and on `main` (**8,010 tests** — offline 7,206 + live-.gov 804; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2271,11 +2271,13 @@ line items sum to the headline delta.
     - `fill_form(rehearsal=True)` refuses a hand-fill pack. server.py imports overlay lazily, and a subprocess test pins that.
   - **Tests:** test_overlay.py (12, on a synthetic blank printed in embedded Vera) covers the round trip and every alignment, the PJ-01 negatives, blank-box, wrong-coordinate and beyond-the-page failures, the shrink / overflow / non-WinAnsi / comb warnings, the widths table vs pypdf's Core-14 metrics, `locate_labels` whole-word hits within 1 pt, and the fail-safe. test_overlay_tools.py (5) covers fill_form → verify_form through the tools, the 23-tool count, the no-coordinates refusal, and `taxfill locate`. CONVENTIONS.md gains the overlay-coordinates section.
   - Found for JS4d: the NM PIT-1 manifest's `source_url` is an AWS API-gateway host (NM TRD's file service), which fetch's official-host rule refuses, so the NM blank cannot be fetched or located until it has an official URL or a seeded copy.
-- [ ] **JS4b — verify_filing routing, FBAR "blank", DOR guidance** (M) [PJ-08 + PJ-10]
-  - verify_filing loads only FormPacks, so a stamped CT-1040 raises FileNotFoundError. Route hand-fill items through verify_overlay.
-  - fetch_blank serves the FBAR's *instructions* PDF as a "blank" (fincen114/handfill.yaml:205); refuse e-file-only packs, pointing at the BSA E-Filing System.
-  - Read the CT DRS / SC DOR / NM TRD / HI DoTax guidance on machine-printed entries, record it verbatim in each handfill.yaml, and encode any font-size minimum.
-  - **Acceptance:** verify_filing verifies a manifest with a stamped CT-1040; fetch_blank('fincen114') refuses; the DOR rules are recorded.
+- [x] **JS4b — verify_filing routing, FBAR "blank", DOR guidance — DONE 2026-09-28** (M) [PJ-08 + PJ-10]
+  - *As built:*
+    - **verify_filing** takes a stamped print-only form in the same list, with `expected` (the fill_form values). It gets the OVERLAY verdict under an `overlay` section, and the filing is ok only when every item is. The limits say the stamped forms took no part in the cross-form identity / cross_form checks, since there are no fields to read back. Guards: `independent` keys are split per item kind, and a stray form_key is still refused. A filing with no AcroForm item is refused, pointing at per-form verify_form.
+    - **The FBAR**: a new `efile_only` manifest flag (set on all four fincen114 years, validated to require `instructions` and forbid overlay blocks) makes fetch_blank and fill_form refuse it, pointing at the BSA E-Filing System. hand_fill_worksheet still serves the value-gathering sheet.
+    - **The agencies' printing rules**, read 2026-09-28 and recorded verbatim in a new `printing_guidance` list (quote / source / url). CT: the form face, "Complete return in blue or black ink only." HI: the machine-read N-11, "Enter One Letter Or Number In Each Box" / "Do NOT print outside the boxes", so its overlay stamps combs. NM: "Type or print using blue or black ink.", computer-generated forms must meet "the printing and legibility requirements of the software company", and the comma is the only punctuation allowed. SC: no ink, font or machine-print rule, only the foreign-address line.
+    - None publishes a minimum type size. The new `min_font_size` field (the overlay's shrink floor when set) stays unset on all four. stamp_overlay returns the rules with every stamp.
+  - **Tests:** test_overlay_tools.py (JS4b): a real f8843 filed with a stamped CT-1040-shaped form (ok, a PJ-01-style wrong value FAILs, `expected` required, stray key refused), the FBAR refusals x4 years, the efile_only schema rules. test_overlay.py: the rules and the min_font_size floor in the stamp result, and a network test that re-reads every quote verbatim from its source (the NM booklet sits on the AWS gateway host fetch refuses, so its quotes rest on the 2026-09-28 read).
 - [ ] **JS4c — CT-1040 2023 pilot** (M–L) [PJ-07]
   - Overlay blocks for all 4 pages from `taxfill locate` anchors. The page-1 right column is x=405, w≈132, and ends before the pre-printed ".00" (smoke-verified).
   - Render and vision-check every page (the overlay code itself was merged by JS4a).

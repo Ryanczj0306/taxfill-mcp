@@ -26,6 +26,23 @@ tax_year: 2023
 render_mode: hand_fill
 source_url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/a102aa94-0678-4ddc-a1d6-37061cb001e1/2023pit-1.pdf
 pdf_sha256: "33d114f3084dfeba5ad6ca1cb52e1c0af33d34e3082d160a6cb2f15973e2008a"
+# PRINTING RULES (Phase J JS4b, read 2026-09-28): the 2023 PIT-1 instructions. A computer-generated form must meet
+# "the printing and legibility requirements of the software company" — for an overlay stamp that is this
+# engine's own legibility bar (render and read every stamped page). The only punctuation allowed in an entry is
+# a comma, which is how money stamps render. No minimum type size is published.
+printing_guidance:
+  - quote: "Type or print using blue or black ink."
+    source: "2023 PIT-1 Instructions, general instructions"
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/f1146c5b-ac60-4015-bea4-11b1ea86449d/2023pit-1-ins.pdf
+  - quote: "When using any computer-generated PIT form, you must comply with the printing and legibility requirements of the software company."
+    source: "2023 PIT-1 Instructions, Check the Print Quality"
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/f1146c5b-ac60-4015-bea4-11b1ea86449d/2023pit-1-ins.pdf
+  - quote: "Do not use dollar signs ($), decimal points (.), or any punctuation marks or symbols other than a comma (,)."
+    source: "2023 PIT-1 Instructions, general instructions"
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/f1146c5b-ac60-4015-bea4-11b1ea86449d/2023pit-1-ins.pdf
+  - quote: "Use the boxes on the form as a guide for your handwritten entries."
+    source: "2023 PIT-1 Instructions, general instructions"
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/f1146c5b-ac60-4015-bea4-11b1ea86449d/2023pit-1-ins.pdf
 signature_note: "Sign and date page 2 (BOTH must sign if filing jointly, even if only one had income); each signer also enters driver's license/state ID number (or NONE/DECLINED), state, and expiration date. Submit ORIGINAL forms only — never a photocopy."
 lines:
   # ---- taxpayer / spouse identity (page 1) -----------------------------------

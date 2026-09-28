@@ -70,6 +70,7 @@ __all__ = [
     "OverlayResult",
     "OverlayVerifyReport",
     "StampedLine",
+    "efile_only_refusal",
     "locate_labels",
     "page_geometry",
     "stamp_overlay",
@@ -167,6 +168,10 @@ class OverlayResult(BaseModel):
     )
     blank_lines: list[str] = Field(description="Line ids with nothing to write (blank value), coordinates or not.")
     warnings: list[str] = Field(default_factory=list)
+    printing_guidance: list[str] = Field(
+        default_factory=list,
+        description="The agency's own printing rules for this paper form, verbatim with their source (JS4b).",
+    )
     instructions: str = (
         "The stamped PDF is a review draft: render_form every page and vision-check that each "
         "stamped value sits in its printed box (verify_form gives the text-layer OVERLAY verdict, "
@@ -351,6 +356,7 @@ def _layout(
     defaults = pack.overlay_defaults
     size = box.font_size or (defaults.font_size if defaults else DEFAULT_OVERLAY_FONT_SIZE)
     money_align = defaults.money_align if defaults else DEFAULT_MONEY_ALIGN
+    floor = max(MIN_FONT_SIZE, pack.min_font_size or 0.0)  # the agency's published minimum, when it sets one
     warnings: list[str] = []
     text = _stamp_text(ln, value)
     who = f"line '{ln.line}' ({ln.label!r}) on page {box.page}"
@@ -366,7 +372,7 @@ def _layout(
             )
         widest = max((text_width(ch, size) for ch in text), default=0.0)
         if widest > pitch:
-            shrunk = max(MIN_FONT_SIZE, size * pitch / widest)
+            shrunk = max(floor, size * pitch / widest)
             warnings.append(
                 f"{who}: a {size:g}pt glyph is wider than the {pitch:g}pt comb cell — font shrunk to {shrunk:.1f}pt"
             )
@@ -379,7 +385,7 @@ def _layout(
 
     width = text_width(text, size)
     if width > box.w + 1e-9:
-        shrunk = max(MIN_FONT_SIZE, size * box.w / width)
+        shrunk = max(floor, size * box.w / width)
         if shrunk < size:
             warnings.append(
                 f"{who}: {redact(text)!r} is {width:.1f}pt wide at {size:g}pt but the box is {box.w:g}pt — "
@@ -390,7 +396,7 @@ def _layout(
         if width > box.w + 1e-9:
             warnings.append(
                 f"{who}: {redact(text)!r} still overflows the {box.w:g}pt box by {width - box.w:.1f}pt at the "
-                f"{MIN_FONT_SIZE:g}pt floor — it is stamped in full (never clipped) and WILL spill past the "
+                f"{floor:g}pt floor — it is stamped in full (never clipped) and WILL spill past the "
                 f"box; abbreviate the value or widen w in the pack"
             )
 
@@ -410,6 +416,16 @@ def _layout(
 
 
 # ── stamping ─────────────────────────────────────────────────────────────────
+
+
+def efile_only_refusal(pack: HandFillPack) -> str:
+    """Why an e-file-only manifest (the FBAR) has no blank to fetch, print or stamp (JS4b)."""
+    return (
+        f"{pack.form} ({pack.tax_year}) is filed ELECTRONICALLY ONLY — FinCEN Form 114 goes through FinCEN's BSA "
+        f"E-Filing System (https://bsaefiling.fincen.treas.gov/main.html), and a printed copy is not accepted. Its "
+        f"source_url is FinCEN's line-item filing instructions, not a blank, so there is nothing to fetch, print or "
+        f"stamp: call hand_fill_worksheet for the value-gathering sheet and enter those values in the BSA E-Filing System"
+    )
 
 
 def _check_pages(pack: HandFillPack, n_pages: int, blank_name: str) -> None:
@@ -458,6 +474,8 @@ def stamp_overlay(
     out = Path(out_path)
     values = dict(values or {})
 
+    if pack.efile_only:
+        raise ValueError(efile_only_refusal(pack))
     if not pack.has_overlay_coordinates:
         raise ValueError(
             f"the {pack.form} {pack.tax_year} ({pack.jurisdiction}) hand-fill pack carries no overlay "
@@ -531,6 +549,7 @@ def stamp_overlay(
         out_path=str(out), form=pack.form, jurisdiction=pack.jurisdiction, tax_year=pack.tax_year,
         page_count=n_pages, stamped_lines=stamped, hand_written_lines=hand_written,
         blank_lines=blank_lines, warnings=warnings,
+        printing_guidance=[f"{r.source}: \"{r.quote}\"" for r in pack.printing_guidance],
     )
 
 

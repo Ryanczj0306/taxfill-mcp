@@ -22,6 +22,12 @@ tax_year: 2023
 render_mode: hand_fill
 source_url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2023.pdf
 pdf_sha256: "5038784c88b810059864e2353e9da06546e030398355edfc6ea43ca9a31b2f93"
+# PRINTING RULES (Phase J JS4b, read 2026-09-28): the 2023 SC1040 and its instructions set no ink, font or
+# machine-print rule. The one printing instruction is for a foreign address. No minimum type size is published.
+printing_guidance:
+  - quote: "Print or type the complete foreign address, including postal code."
+    source: "SC1040 Instructions (2023), name and address"
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf
 signature_note: "Sign and date the printed return on page 3 (BOTH spouses must sign if filing jointly); answer the preparer-discussion Yes/No authorization."
 lines:
   # ---- header / identity (page 1) -------------------------------------------

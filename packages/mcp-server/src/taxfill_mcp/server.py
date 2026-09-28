@@ -240,6 +240,10 @@ def fetch_blank(form: str, year: int, jurisdiction: str = "federal") -> dict:
     `taxfill locate <blank.pdf> --page N <label>...` reads overlay anchors from.
     """
     pack = _load_any_pack(form, year, jurisdiction)
+    if isinstance(pack, HandFillPack) and pack.efile_only:
+        from taxfill_core.overlay import efile_only_refusal
+
+        raise ValueError(efile_only_refusal(pack))
     path = _fetch_pack_blank(pack)
     return {"path": str(path), "source_url": pack.source_url, "sha256": pack.pdf_sha256}
 
@@ -264,6 +268,10 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
     hand_fill_worksheet.
     """
     pack = _load_any_pack(form, year, jurisdiction)
+    if isinstance(pack, HandFillPack) and pack.efile_only:
+        from taxfill_core.overlay import efile_only_refusal
+
+        raise ValueError(efile_only_refusal(pack))
     if isinstance(pack, HandFillPack) and not pack.has_overlay_coordinates:
         raise ValueError(
             f"'{form}' ({jurisdiction} {year}) is a print-only HAND-FILL pack with no overlay coordinates, so "
@@ -335,15 +343,63 @@ def verify_filing(items: list[dict], independent: dict[str, dict[str, float]] | 
     {"f1040": {"16": 36036}} — the per-form shape matches verify_form's `independent`. It is the
     no-LLM-arithmetic backstop for table-lookup lines (1040 line 16 etc.); when omitted, the
     recompute does NOT run and the report's recompute section says so.
+
+    A print-only state return stamped by fill_form (CT ct1040, HI n11, NM pit1, SC sc1040 — a
+    `render_mode: "hand_fill_overlay"` result) goes in the same list with one more key,
+    `expected`: the values dict given to fill_form. It gets the OVERLAY verdict (verify_form's,
+    per item, under the `overlay` section) instead of the AcroForm checks; the filing is ok only
+    when every AcroForm item and every stamped item is. A hand-fill form has no fields to read
+    back, so it takes no part in the cross-form identity and cross_form checks (`limits` says so).
     """
-    filing_items = []
+    filing_items, overlay_items = [], []
     for it in items:
-        pack = load_form_pack(it["form"], it["year"], it.get("jurisdiction", "federal"))
-        filing_items.append(
-            FilingItem(form_key=it.get("form_key", it["form"]), pack=pack, pdf_path=Path(it["pdf_path"]))
+        jurisdiction = it.get("jurisdiction", "federal")
+        pack = _load_any_pack(it["form"], it["year"], jurisdiction)
+        form_key = it.get("form_key", it["form"])
+        if isinstance(pack, HandFillPack):
+            if it.get("expected") is None:
+                raise ValueError(
+                    f"verify_filing item '{form_key}' is the print-only '{it['form']}' ({jurisdiction} {it['year']}) — "
+                    f"add `expected`: the values dict you passed to fill_form (a stamped form has no fields to read back)"
+                )
+            overlay_items.append((form_key, pack, it))
+            continue
+        filing_items.append(FilingItem(form_key=form_key, pack=pack, pdf_path=Path(it["pdf_path"])))
+    if not filing_items:
+        raise ValueError(
+            "verify_filing needs at least one fillable (AcroForm) form — for print-only forms alone, call verify_form "
+            "on each stamped PDF"
         )
-    report = _verify_filing(filing_items, independent=independent)
-    return _report_summary(report, recompute_ran=independent is not None)
+    acro_keys = {fi.form_key for fi in filing_items}
+    stray = sorted(set(independent or {}) - acro_keys - {k for k, _, _ in overlay_items})
+    if stray:
+        raise ValueError(
+            f"independent recompute references unknown form_key(s) {stray} — valid keys are this filing's items' "
+            f"form_key values {sorted(acro_keys | {k for k, _, _ in overlay_items})}"
+        )
+    acro_independent = {k: v for k, v in independent.items() if k in acro_keys} if independent is not None else None
+    report = _verify_filing(filing_items, independent=acro_independent)
+    summary = _report_summary(report, recompute_ran=independent is not None)
+    if overlay_items:
+        from taxfill_core.overlay import verify_overlay  # lazy: pypdfium2 text layer only on this path
+
+        checked, fails, limits = 0, [], []
+        for form_key, pack, it in overlay_items:
+            verdict = verify_overlay(pack, it["pdf_path"], it["expected"], independent=(independent or {}).get(form_key))
+            checked += len(verdict.checks) + len(verdict.recompute)
+            fails += [f"{form_key}: {c.detail}" for c in verdict.checks if c.status == "FAIL"]
+            fails += [f"{form_key}: {c.detail}" for c in verdict.recompute if c.status == "FAIL"]
+            limits = verdict.limits
+            summary["form_keys"] = [*summary["form_keys"], form_key]
+        summary["sections"]["overlay"] = {"checked": checked, "failed": len(fails), "failures": fails}
+        summary["ok"] = summary["ok"] and not fails
+        summary["limits"] = [
+            *limits,
+            f"The stamped print-only form(s) {[k for k, _, _ in overlay_items]} took no part in the cross-form identity "
+            f"and cross_form checks: a stamped page has no fields to read back — compare their names, SSNs and "
+            f"carried amounts against the other forms on the rendered pages.",
+        ]
+    return summary
 
 
 @mcp.tool(structured_output=False)

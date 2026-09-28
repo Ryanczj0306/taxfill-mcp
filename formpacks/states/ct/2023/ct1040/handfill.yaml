@@ -23,6 +23,12 @@ tax_year: 2023
 render_mode: hand_fill
 source_url: https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf
 pdf_sha256: "4b6cbca6b349b9bec56e8b718df9c236561aca7e57bda31e6454c5bacbc72a24"
+# PRINTING RULES (Phase J JS4b, read 2026-09-28): the form face is the only place DRS states one. Neither the
+# 2023 CT-1040 nor its instructions address machine-printed entries or set a minimum type size.
+printing_guidance:
+  - quote: "Complete return in blue or black ink only."
+    source: "Form CT-1040 (Rev. 12/23), page 1"
+    url: https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf
 signature_note: "Sign and date the printed return on page 2 (both spouses if filing jointly) in blue or black ink; the declaration covers use-tax reporting. Attach all applicable schedules; send all four pages. Do not use staples; do not send W-2s/1099s."
 lines:
   # ---- header / identity (page 1) -------------------------------------------

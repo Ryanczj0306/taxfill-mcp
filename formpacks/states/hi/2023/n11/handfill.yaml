@@ -20,6 +20,22 @@ tax_year: 2023
 render_mode: hand_fill
 source_url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
 pdf_sha256: "59342c91c292cef5c642735a2c9e6be88c03d866b9a79fb92de13ccda1f248ec"
+# PRINTING RULES (Phase J JS4b, read 2026-09-28): N-11 is a machine-read (scanned) form. The face asks for ONE
+# character per box and the instructions forbid printing outside the boxes, so an overlay for this form
+# stamps numbers and letters as combs (overlay.comb), never as free text. No minimum type size is published.
+printing_guidance:
+  - quote: "Please Write Using a Black Ink Pen. Enter One Letter Or Number In Each Box. Fill In Ovals Completely. Do NOT Submit a Photocopy!!"
+    source: "Form N-11 (2023), page 1"
+    url: https://files.hawaii.gov/tax/forms/2023/n11_i.pdf
+  - quote: "Use only a black or dark blue ink pen. Do not use red ink, pencils, felt tip pens, or erasable pens."
+    source: "Form N-11 Instructions (2023), General Instructions, Guidelines for Filling in Scannable Forms (page 4)"
+    url: https://files.hawaii.gov/tax/forms/2023/n11ins.pdf
+  - quote: "Because this form is read by a machine, print your numbers inside the boxes like this:"
+    source: "Form N-11 Instructions (2023), Guidelines for Filling in Scannable Forms (page 4)"
+    url: https://files.hawaii.gov/tax/forms/2023/n11ins.pdf
+  - quote: "Do NOT print outside the boxes."
+    source: "Form N-11 Instructions (2023), Guidelines for Filling in Scannable Forms (page 4)"
+    url: https://files.hawaii.gov/tax/forms/2023/n11ins.pdf
 signature_note: "Sign and date the printed N-11 in black ink before mailing (both spouses on a joint return)."
 lines:
   # ---- header / identity ----------------------------------------------------

@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from taxfill_core.schemas.formpack import Mailing
 
@@ -82,6 +82,16 @@ class OverlayDefaults(BaseModel):
 
     font_size: float = Field(default=DEFAULT_OVERLAY_FONT_SIZE, gt=0)
     money_align: OverlayAlign = Field(default=DEFAULT_MONEY_ALIGN)
+
+
+class PrintingRule(BaseModel):
+    """One printing or legibility rule the tax agency publishes for this paper form, quoted verbatim (JS4b)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    quote: str = Field(description="The agency's own words, verbatim (whitespace normalised).")
+    source: str = Field(description="Where it is printed, e.g. 'Form CT-1040 (Rev. 12/23), page 1'.")
+    url: str = Field(description="The official document the quote was read from.")
 
 
 class HandFillLine(BaseModel):
@@ -141,10 +151,45 @@ class HandFillPack(BaseModel):
             "gets rejected. Leave unset for a print-only STATE form, where the default is correct."
         ),
     )
+    printing_guidance: list[PrintingRule] = Field(
+        default_factory=list,
+        description=(
+            "The agency's published rules for entries on the paper form (ink colour, one character per box, "
+            "machine-printed entries), quoted verbatim with their source. stamp_overlay returns them with every "
+            "stamp, so the agent checks the printed result against the agency's words (Phase J JS4b)."
+        ),
+    )
+    min_font_size: float | None = Field(
+        default=None, gt=0,
+        description=(
+            "The agency's minimum point size for machine-printed entries, when it publishes one: the overlay never "
+            "shrinks a value below it. None of CT, HI, NM or SC publishes one for 2023 (JS4b)."
+        ),
+    )
+    efile_only: bool = Field(
+        default=False,
+        description=(
+            "The form is filed ONLY electronically — FinCEN Form 114 through the BSA E-Filing System — so its "
+            "source_url is a reference document (FinCEN's line-item filing instructions), NOT a blank to print or "
+            "stamp: fetch_blank and fill_form refuse it (Phase J JS4b). Requires `instructions`, which says where "
+            "to file. Leave false for a print-only state form."
+        ),
+    )
     overlay_defaults: OverlayDefaults | None = Field(
         default=None,
         description="Manifest-wide overlay defaults (font_size, money_align); each line's overlay block may override.",
     )
+
+    @model_validator(mode="after")
+    def _efile_only_says_where_to_file(self) -> "HandFillPack":
+        if self.efile_only and not self.instructions:
+            raise ValueError(
+                f"{self.form} {self.tax_year}: efile_only packs must set `instructions` — the worksheet's default "
+                f"'print the blank and hand-write the values' text is wrong for a form that cannot be printed"
+            )
+        if self.efile_only and self.has_overlay_coordinates:
+            raise ValueError(f"{self.form} {self.tax_year}: an efile_only pack has nothing to stamp — drop its overlay blocks")
+        return self
 
     @property
     def has_overlay_coordinates(self) -> bool:

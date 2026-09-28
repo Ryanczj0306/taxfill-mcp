@@ -221,3 +221,54 @@ def test_locate_labels_finds_whole_words_within_a_point(tmp_path):
     assert (geom["width"], geom["height"], geom["pages"]) == (612, 792, 2)
     with pytest.raises(ValueError, match="out of range"):
         locate_labels(blank, 3, ["5"])
+
+
+# ── Phase J JS4b: the agencies' printing rules ───────────────────────────────
+
+
+def test_js4b_the_stamp_result_carries_the_packs_printing_rules_and_honours_its_minimum_size(tmp_path):
+    blank = _blank(tmp_path / "blank.pdf")
+    rule = {"quote": "Complete return in blue or black ink only.", "source": "Form CT-1040 (Rev. 12/23), page 1",
+            "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"}
+    pack = _pack(printing_guidance=[rule], min_font_size=8,
+                 lines=[{"line": "a", "label": "narrow", "type": "text", "overlay": {"page": 1, "x": 100, "y": 500, "w": 30}}])
+    result = stamp_overlay(blank, pack, {"a": "ABCDEFGHIJ"}, tmp_path / "o.pdf")
+    assert result.printing_guidance == ['Form CT-1040 (Rev. 12/23), page 1: "Complete return in blue or black ink only."']
+    assert result.stamped_lines[0].font_size == 8                       # the agency floor, not the 6 pt default
+    assert "at the 8pt floor" in "\n".join(result.warnings)
+
+
+def _normalised_text(pdf: Path) -> str:
+    import re
+
+    import pypdf
+
+    return re.sub(r"\s+", " ", "\n".join((p.extract_text() or "") for p in pypdf.PdfReader(str(pdf)).pages))
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("state", ["ct", "hi", "nm", "sc"])
+def test_js4b_every_recorded_printing_rule_is_verbatim_in_its_source(state):
+    import re
+
+    from taxfill_core.fetch import FetchError, fetch_blank
+    from taxfill_core.handfill import load_hand_fill_pack
+
+    root = Path(__file__).resolve().parents[3] / "formpacks" / "states"
+    (path,) = root.glob(f"{state}/2023/*/handfill.yaml")
+    pack = load_hand_fill_pack(path)
+    assert pack.printing_guidance, f"{path}: record the agency's printing rules (or the finding that it has none)"
+    assert pack.min_font_size is None                                  # none of the four publishes one for 2023
+    texts: dict[str, str] = {}
+    for rule in pack.printing_guidance:
+        if rule.url not in texts:
+            try:
+                pdf = fetch_blank(rule.url, sha256=pack.pdf_sha256 if rule.url == pack.source_url else None)
+            except (FetchError, ValueError) as exc:  # the official-host rule refuses with ValueError
+                # NM TRD serves its library from an AWS API-gateway host, which fetch refuses as a blank host;
+                # its quotes were read from that document on 2026-09-28 (see the manifest).
+                if "official US government hosts" in str(exc):
+                    continue
+                raise
+            texts[rule.url] = _normalised_text(pdf)
+        assert re.sub(r"\s+", " ", rule.quote) in texts[rule.url], (state, rule.quote)

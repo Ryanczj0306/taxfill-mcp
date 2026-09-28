@@ -367,6 +367,15 @@ every federal year 2023–2026.
 - `instructions` overrides the default "print the blank and hand-write each value" text. Set it
   only when printing is WRONG: the FBAR is e-file only ("IRS will not accept paper filings ... or
   a printed FinCEN Form 114"), so its worksheet gathers values for the BSA E-Filing System instead.
+- `efile_only: true` marks a form that is filed only electronically (the FBAR). Its `source_url` is a
+  reference document, not a blank, so `fetch_blank` and `fill_form` refuse it. It requires
+  `instructions` and forbids `overlay` blocks.
+- `printing_guidance` quotes the agency's own rules for entries on the paper form (ink, one
+  character per box, machine print), each with `quote` (verbatim), `source` and `url`, or records
+  that the agency sets none. `stamp_overlay` returns the rules with every stamp. `min_font_size`
+  holds the agency's minimum point size when it publishes one: the overlay never shrinks below it.
+  For 2023, none of CT, HI, NM or SC publishes one. HI's N-11 is machine-read ("Enter One Letter Or
+  Number In Each Box"), so its overlay entries are combs.
 - Hand-fill packs are NOT returned by `list_forms`; an empty `list_forms` for those four states is
   expected. `fincen114` is a directory name, not a `KNOWN_FORM_KEYS` form key — it has no
   `pack.yaml`.

@@ -204,6 +204,7 @@ form: "FinCEN Form 114"
 jurisdiction: federal
 tax_year: 2025
 render_mode: hand_fill
+efile_only: true                 # BSA E-Filing System only; source_url is the line-item filing instructions, not a blank (JS4b)
 source_url: https://www.fincen.gov/sites/default/files/shared/FBAR%20Line%20Item%20Filing%20Instructions.pdf
 pdf_sha256: "8a92baf0824e117225239aa33cc56b9608f22017fb357c0a8910daea89acb7d4"
 instructions: >-
