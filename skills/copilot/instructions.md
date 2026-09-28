@@ -78,7 +78,7 @@ above `regular_tax` is lost for good. A qualifying surviving spouse gets $300, n
 income-tax jurisdictions (41 states + DC) ship a resident return pack — 38 as
 fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC) via
 `hand_fill_worksheet`; `state_scope` says which returns are required. CT-1040
-also stamps through `fill_form` (overlay coordinates), then `verify_form` with
+and SC1040 also stamp through `fill_form` (overlay coordinates), then `verify_form` with
 `expected=values`; render and read every page, and the filer signs in ink.
 `hand_fill_worksheet` also covers one FEDERAL filing, `fincen114` (the FBAR /
 FinCEN Form 114): e-file only via FinCEN's BSA E-Filing System, no fillable PDF,
