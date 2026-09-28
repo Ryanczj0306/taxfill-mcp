@@ -1110,6 +1110,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS3b: KY 740 2024 equals the reviewed KY 2023 row. KY 740 2025 splits 2023's city_state_zip box into city / state /
     # zip. Reviewed: its selection is exactly street + city + state + zip.
     # JS3b: LA IT-540 2024 (the new email row is not an address line) equals the reviewed LA 2023 row.
+    # JS3b: ID Form 40 2024 (only the direct-deposit cells changed) equals the reviewed ID 2023 row.
     import json
     from pathlib import Path
 
