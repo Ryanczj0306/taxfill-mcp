@@ -24,14 +24,16 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,559 tests** — offline 6,798 + live-.gov 761; derived
+Done and on `main` (**7,571 tests** — offline 6,810 + live-.gov 761; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
 two sources: the MA Form 1 blank returns 403 and the DC 2025 booklet returns 404 (DC
-OTR re-issued it). Since Phase J JT0c (2026-09-27) both sit behind an expiring allowlist
-(`scripts/freshness_quarantine.yaml`, rows expire 2027-03-31), so a NEW red opens a
-`freshness red` issue; JS1a/JS1b fix them:
+OTR re-issued it). Phase J JT0c (2026-09-27) put both behind an expiring allowlist
+(`scripts/freshness_quarantine.yaml`), so a NEW red opens a `freshness red` issue, and
+JS1a/JS1b (2026-09-28) fixed both. The one row left is a new finding: JS1b's newest-capture
+probe shows mass.gov re-issued the 2023 Form 1 in May 2026 as a rebuilt AcroForm (the re-map
+is JS5's).
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (23 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -2126,11 +2128,23 @@ line items sum to the headline delta.
     - the Line 7 "Other" additions, the April 15, 2026 deadline and both PO boxes;
     - the rate schedule and the two spot-checked tax-table rows ($1,302, $3,595).
   - The 15 citation URLs point at the re-issue, and sources_states.yaml is regenerated. J0.6's STALE SOURCE `unverified` line and JT0c's DC drift quarantine row are removed; the quarantine test now uses a synthetic drift row.
-- [ ] **JS1b — MA mirror and a seed command** (M) [G23]
-  - MA Form 1's Wayback cache-seed exists only on the maintainer's disk, and CI and fresh installs get a 403 that says "retry in a minute".
+- [x] **JS1b — MA mirror and a seed command — DONE 2026-09-28** (M) [G23]
+  - MA Form 1's Wayback cache-seed existed only on the maintainer's disk, and CI and fresh installs got a 403 that said "retry in a minute".
   - Add pack `mirror_urls` with the exact `web.archive.org/web/<ts>id_/<official>` snapshot, tried on 401/403 and ALWAYS digest-verified.
   - Add `taxfill seed-blank`, and name both remedies in the 403 message.
   - **Acceptance:** a mocked 403 exercises the fallback; a digest mismatch fails closed; the network layer is green; the allowlist is empty.
+  - *As built:*
+    - **Schema:** `FormPack.mirror_urls`. Each entry must be `https://web.archive.org/web/<14 digits>id_/` + this pack's own `source_url`, and a pack with mirrors needs a real `pdf_sha256`.
+    - **Fetch:** a 401/403 raises `RefusedFetchError`; `fetch_blank(..., mirrors=)` then tries each mirror. Without a digest a mirror is never used. A mirror that serves other bytes fails closed and caches nothing, not even a quarantine copy. Verified bytes are cached under the OFFICIAL URL's cache name. `fetch_pack_blank(pack)` passes a pack's URL, digest and mirrors; the server's `fetch_blank`/`fill_form`, `scripts/audit_pack.py` and every network test that fetches a pack's blank go through it. The 403 message names both remedies.
+    - **CLI:** `taxfill seed-blank <pdf> (--pack <pack.yaml> | --url U --sha256 D) [--cache-dir]` digest-checks a browser-saved blank before caching it (exit 1 on a mismatch or a non-PDF, 2 on missing arguments).
+    - **MA pin:** the id_ redirect (`web/<year>id_/<url>`) names each capture while the CDX API is down. Of the four captures, only 20241214140401 hashes to the pinned `86233c2d…` (DOR's 2024-01-17 revision). A live run from an empty cache: 403, mirror, digest match, cached in 0.7 s.
+    - **Finding → JS5.** The other captures are DOR re-issues of the SAME URL:
+      - 2025-04-14 (`613a1a0d…`): the same 172 fields; only line 39's cross-reference is corrected ("line 51 … line 55" → "line 52 … line 56").
+      - 2026-05-22 (`5cbb5655…`, captured 2026-09-20): a rebuilt AcroForm, 360 fields, every name changed.
+      The 403 hid both from the drift job, which only warned on a refusal. `check_drift` now digest-checks the NEWEST Wayback capture of a refused host that has `mirror_urls` (`_newest_capture`; only a digest comes back, nothing is cached). It reports MA as REVISED, and that is the one quarantine row left: `fixed_by: JS5`, expires 2027-03-31. The pinned revision is still an official TY2023 Form 1 and stays reachable byte-for-byte, so re-pinning to the re-issue is a full re-map, done with MA's JS5 discovery.
+    - **Quarantine:** both MA `network_test` rows are deleted, and a test asserts no `network_test` row remains. The drift row's URL may be cited by a form pack as well as a knowledge pack.
+    - **Docs:** CONVENTIONS "Source URL and checksum" (how to find and pin a snapshot); CONTRIBUTING-PACKS triage table; the README shell section.
+    - Tests: `test_fetch.py` (6: the fallback, fail-closed, no digest / off-URL mirror refused, the 403 message, `fetch_pack_blank`, `seed_blank`), `test_cli_seed_blank.py` (3), `test_formpack.py` (the mirror shape), `test_check_drift.py` (2: the newest-capture probe matches or reports REVISED; an unreadable archive leaves the warning).
 - [ ] **JS2 — State law-change sweep (old J5, re-scoped)** (M) [PJ-17 + G05(c)]
   - 30 of the 84 2024/2025 packs lack `effective_law_changes`; 15 have law-change prose (ar24, ar25, ca24, ct24, mi25, ms24, ms25, nd24, nm24, ny24, sc24, sc25, wi25, wv24, wv25).
   - Adjudicate those 15 from the booklets they cite. Record an explicit empty list with "checked <date>, source <url>" for the other 15.
@@ -2180,6 +2194,7 @@ line items sum to the headline delta.
     - 2025: 41 (PORTABLE 1, RE-MAP 12, URL-DEAD 17, no-token 7, print-only 4).
   - TY2025 before TY2024. Every CA pack is a full re-map.
   - Resume discovery for the 20 never-started states plus OK, MA and NE in resumable pools of 3–4 workers. The remaining TY2024 rows fold into JS7.
+  - **MA 2023 Form 1 re-map** (JS1b finding): mass.gov now serves the 2026-05-22 re-issue, a rebuilt 360-field AcroForm. Re-map the pack onto it (its named ovals may also clear the 11 unmappable `Checkcash`/`Checktp1` kids), re-pin `pdf_sha256` and `mirror_urls` to a matching capture, and delete the MA drift row in `scripts/freshness_quarantine.yaml`.
   - **Acceptance, per pack:** digest pin, vision audit, golden round trip, triage row updated.
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
   - 9 discovery rows were recovered (wf_fe623a11-933).
@@ -2269,7 +2284,7 @@ JT6 pre-empts everything when `check_finals` reports the finals. By the 2025 pre
 
 **No remaining item needs a new heavyweight dependency:**
 * the overlay filler exists (branch `phase-j2-overlay` → JS4a–d);
-* MA's fetch block gets a recorded, digest-verified mirror (JS1b);
+* MA's fetch block has a recorded, digest-verified mirror (JS1b, done 2026-09-28);
 * TY2026 authoring runs on drafts-first packs (JT0a).
 
 **The external gates are:**

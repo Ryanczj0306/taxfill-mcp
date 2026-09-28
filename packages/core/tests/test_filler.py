@@ -850,11 +850,11 @@ def test_nra_on_plain_comb_line_is_refused_too(blank_pdf: Path, tmp_path: Path):
 @pytest.mark.network
 def test_real_f1040_2023_nra_entry_space_roundtrip(tmp_path: Path):
     """P-026 on the REAL f1040 pack + cached official blank."""
-    from taxfill_core.fetch import OfflineFetchError, fetch_blank
+    from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 
     pack = _real_pack(2023)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
 

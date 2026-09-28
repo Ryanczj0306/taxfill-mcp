@@ -4,10 +4,21 @@
 # mass.gov sits behind Akamai and returns 403 to plain (non-browser) fetchers.
 # The blank used to author and audit this pack was recovered from the Wayback
 # Machine's archive of that SAME official URL and is pinned here by sha256
-# (86233c2d…802c4). fetch_blank serves it from the shared cache
-# (.cache/blanks/) and will digest-verify the live download the moment
-# mass.gov unblocks — a mismatch fails closed, so the pinned artifact and the
-# official URL can never silently diverge.
+# (86233c2d…802c4). Since Phase J JS1b (2026-09-28) that capture is recorded
+# as `mirror_urls` — the exact id_ snapshot (20241214140401) whose bytes hash
+# to the pin — so fetch_blank tries it when mass.gov answers 403 and caches it
+# only if the digest matches (a mismatch fails closed). `taxfill seed-blank
+# <saved.pdf> --pack <this file>` is the by-hand route. The pin is DOR's
+# 2024-01-17 revision (/ModDate); the other captures of this URL are:
+#   * 20240114213231 — d5bc73d6…, 2024-01-12: the same 172 fields, an earlier
+#     cut of the page-2 text layer;
+#   * 20250901090115 — 613a1a0d…, re-issued 2025-04-14: the same 172 fields,
+#     only line 39's cross-reference corrected ("2022 Form 1, line 51 or Form
+#     1-NR/PY, line 55" -> "line 52 ... line 56");
+#   * 20260920033523 — 5cbb5655…, re-issued 2026-05-22: a rebuilt AcroForm
+#     (360 fields, every name changed). Re-pinning to it is a full re-map
+#     (ROADMAP JS5); until then check_drift reports it through the newest-
+#     capture probe, quarantined in scripts/freshness_quarantine.yaml.
 #
 # Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep) ->
 # vision-map over all 4 page PNGs + pdftotext -layout of the printed face ->
@@ -64,6 +75,8 @@ form: MA Form 1
 jurisdiction: states/ma
 tax_year: 2023
 source_url: https://www.mass.gov/doc/2023-form-1-massachusetts-resident-income-tax-return/download
+mirror_urls:
+  - https://web.archive.org/web/20241214140401id_/https://www.mass.gov/doc/2023-form-1-massachusetts-resident-income-tax-return/download
 pdf_sha256: 86233c2d989ebac9ef7cca7cc09d6e4c466b1dc0ed069708c5acf97759f802c4
 acroform_root: ''
 fields:

@@ -20,10 +20,13 @@ from taxfill_core.fetch import (
     CACHE_DIR_ENV,
     FetchError,
     OfflineFetchError,
+    RefusedFetchError,
     cached_blank_path,
     compute_sha256,
     default_cache_dir,
     fetch_blank,
+    fetch_pack_blank,
+    seed_blank,
 )
 
 PDF_BYTES = b"%PDF-1.7\n% synthetic taxfill fixture, not a real form\n%%EOF\n"
@@ -281,3 +284,91 @@ def test_cached_blank_path_finds_only_a_matching_cached_blank_and_never_download
     assert cached_blank_path(url, hashlib.sha256(PDF_BYTES_V2).hexdigest(), cache_dir=cache) is None  # a stale pin
     monkeypatch.setenv(CACHE_DIR_ENV, str(cache))
     assert cached_blank_path(url, digest) == got                            # the default cache honours the env
+
+
+# --- JS1b: the 401/403 remedies — a digest-verified Wayback mirror, and a hand-seeded blank ---------------------------
+
+OFFICIAL = "https://www.mass.gov/doc/2099-form-0-demo-return/download"
+MIRROR = f"https://web.archive.org/web/20990101000000id_/{OFFICIAL}"
+
+
+class _Response(io.BytesIO):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def _refusing_host(served: dict[str, bytes], seen: list[str]):
+    """urlopen that answers 403 for the official host and serves ``served`` for anything else."""
+    def urlopen(request, timeout=None):
+        url = request.full_url
+        seen.append(url)
+        if url == OFFICIAL:
+            raise urllib.error.HTTPError(url, 403, "Forbidden", None, io.BytesIO())
+        if url not in served:
+            raise urllib.error.HTTPError(url, 404, "Not Found", None, io.BytesIO())
+        return _Response(served[url])
+    return urlopen
+
+
+def test_js1b_a_403_falls_back_to_the_digest_verified_mirror(cache: Path, monkeypatch):
+    seen: list[str] = []
+    monkeypatch.setattr(urllib.request, "urlopen", _refusing_host({MIRROR: PDF_BYTES}, seen))
+    digest = hashlib.sha256(PDF_BYTES).hexdigest()
+    path = fetch_blank(OFFICIAL, sha256=digest, cache_dir=cache, mirrors=[MIRROR])
+    assert seen == [OFFICIAL, MIRROR]                          # the official host first, the mirror only on its 403
+    assert path.read_bytes() == PDF_BYTES
+    assert cached_blank_path(OFFICIAL, digest, cache_dir=cache) == path   # cached under the OFFICIAL url
+    assert fetch_blank(OFFICIAL, sha256=digest, cache_dir=cache) == path  # later fetches are cache hits
+    assert seen == [OFFICIAL, MIRROR]
+
+
+def test_js1b_a_mirror_serving_other_bytes_fails_closed(cache: Path, monkeypatch):
+    monkeypatch.setattr(urllib.request, "urlopen", _refusing_host({MIRROR: PDF_BYTES_V2}, []))
+    digest = hashlib.sha256(PDF_BYTES).hexdigest()
+    with pytest.raises(FetchError, match="refusing it") as exc:
+        fetch_blank(OFFICIAL, sha256=digest, cache_dir=cache, mirrors=[MIRROR])
+    assert not isinstance(exc.value, OfflineFetchError)
+    assert not cache.exists() or not any(cache.iterdir())      # nothing cached, not even a quarantine copy
+
+
+def test_js1b_a_mirror_is_never_used_without_a_digest_or_off_its_own_url(cache: Path, monkeypatch):
+    seen: list[str] = []
+    monkeypatch.setattr(urllib.request, "urlopen", _refusing_host({MIRROR: PDF_BYTES}, seen))
+    with pytest.raises(FetchError, match="only digest-verified"):
+        fetch_blank(OFFICIAL, cache_dir=cache, mirrors=[MIRROR])
+    other = "https://web.archive.org/web/20990101000000id_/https://www.mass.gov/doc/another/download"
+    with pytest.raises(ValueError, match="refusing mirror"):
+        fetch_blank(OFFICIAL, sha256=hashlib.sha256(PDF_BYTES).hexdigest(), cache_dir=cache, mirrors=[other])
+    assert MIRROR not in seen
+
+
+def test_js1b_the_403_message_names_both_remedies(cache: Path, monkeypatch):
+    monkeypatch.setattr(urllib.request, "urlopen", _refusing_host({}, []))
+    with pytest.raises(RefusedFetchError) as exc:
+        fetch_blank(OFFICIAL, cache_dir=cache)
+    assert "mirror_urls" in str(exc.value) and f"taxfill seed-blank <saved.pdf> --url {OFFICIAL}" in str(exc.value)
+
+
+def test_js1b_fetch_pack_blank_passes_the_packs_mirrors(cache: Path, monkeypatch):
+    from types import SimpleNamespace
+    monkeypatch.setattr(urllib.request, "urlopen", _refusing_host({MIRROR: PDF_BYTES}, []))
+    pack = SimpleNamespace(source_url=OFFICIAL, pdf_sha256=hashlib.sha256(PDF_BYTES).hexdigest(), mirror_urls=[MIRROR])
+    assert fetch_pack_blank(pack, cache_dir=cache).read_bytes() == PDF_BYTES
+
+
+def test_js1b_seed_blank_caches_only_the_pinned_bytes(tmp_path: Path, cache: Path):
+    saved = tmp_path / "saved.pdf"
+    saved.write_bytes(PDF_BYTES)
+    digest = hashlib.sha256(PDF_BYTES).hexdigest()
+    path = seed_blank(saved, OFFICIAL, digest, cache_dir=cache)
+    assert cached_blank_path(OFFICIAL, digest, cache_dir=cache) == path
+    with pytest.raises(FetchError, match="a different revision"):
+        seed_blank(saved, OFFICIAL, hashlib.sha256(PDF_BYTES_V2).hexdigest(), cache_dir=tmp_path / "other")
+    assert not (tmp_path / "other").exists()
+    page = tmp_path / "page.html"
+    page.write_bytes(b"<html>Access denied</html>")
+    with pytest.raises(FetchError, match="not a PDF"):
+        seed_blank(page, OFFICIAL, digest, cache_dir=cache)

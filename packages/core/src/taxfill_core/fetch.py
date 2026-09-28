@@ -31,15 +31,19 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
+from collections.abc import Sequence
 from pathlib import Path
 
 __all__ = [
     "FetchError",
     "OfflineFetchError",
+    "RefusedFetchError",
     "cached_blank_path",
     "compute_sha256",
     "default_cache_dir",
     "fetch_blank",
+    "fetch_pack_blank",
+    "seed_blank",
 ]
 
 # Environment override for the shared cache location (useful in CI and for
@@ -65,6 +69,10 @@ _OFFICIAL_PATTERNS_HINT = (
 
 class FetchError(RuntimeError):
     """A blank-form download failed; the message says what to do next."""
+
+
+class RefusedFetchError(FetchError):
+    """The official host answered 401/403 (a bot wall) — the mirror / seed-blank remedies apply (JS1b)."""
 
 
 class OfflineFetchError(FetchError):
@@ -171,10 +179,13 @@ def _download(url: str, timeout: float) -> bytes:
                 f"name on irs.gov and fix the pack's source_url"
             ) from exc
         if exc.code in (401, 403):
-            raise FetchError(
-                f"HTTP {exc.code} ({exc.reason}) for {url} — the server refused the "
-                f"request; retry in a minute, and confirm the URL opens in a browser "
-                f"(blank forms come only from official .gov URLs)"
+            raise RefusedFetchError(
+                f"HTTP {exc.code} ({exc.reason}) for {url} — the server refused the request; retry in a minute if it is "
+                f"transient. A host that refuses every non-browser fetcher has two remedies: "
+                f"(1) a pack's mirror_urls (an exact, digest-verified Wayback snapshot of this URL) are tried "
+                f"automatically — fetch through the pack (fetch_pack_blank) or pass mirrors=; (2) seed the cache by "
+                f"hand: open the URL in a browser, save the PDF, and run `taxfill seed-blank <saved.pdf> --url {url} "
+                f"--sha256 <the pack's pdf_sha256>` — the file is digest-checked before it is cached"
             ) from exc
         raise FetchError(
             f"HTTP {exc.code} ({exc.reason}) for {url} — retry; if it persists, verify "
@@ -188,6 +199,61 @@ def _download(url: str, timeout: float) -> bytes:
             f"already-verified blank into place (fetch_blank tells you the cache path via "
             f"its return value; default cache: {default_cache_dir()})"
         ) from exc
+
+
+_MIRROR_RE = re.compile(r"https://web\.archive\.org/web/\d{14}id_/(.+)")
+
+
+def _from_mirror(url: str, mirrors, expected_digest: str | None, timeout: float, refused: "RefusedFetchError") -> bytes:
+    """The official host refused (401/403): try each exact Wayback snapshot of ``url``, digest-verified (JS1b)."""
+    if not mirrors:
+        raise refused
+    if expected_digest is None:
+        raise FetchError(f"{refused} — a mirror is used only digest-verified, so pass the pack's pdf_sha256") from refused
+    tried = []
+    for mirror in mirrors:
+        match = _MIRROR_RE.fullmatch(mirror)
+        if match is None or match.group(1) != url:
+            raise ValueError(f"refusing mirror {mirror!r}: it must be https://web.archive.org/web/<ts>id_/{url}")
+        try:
+            data = _download(mirror, timeout)
+        except FetchError as exc:
+            tried.append(f"{mirror}: {exc}")
+            continue
+        actual = hashlib.sha256(data).hexdigest()
+        if actual != expected_digest:
+            raise FetchError(
+                f"mirror {mirror} served sha256 {actual}, not the pinned {expected_digest} — refusing it (a mirror is "
+                f"trusted only byte-for-byte); nothing was cached. {refused}"
+            )
+        return data
+    raise FetchError(f"{refused}. Every mirror failed too: " + "; ".join(tried)) from refused
+
+
+def fetch_pack_blank(pack, cache_dir: str | Path | None = None, force: bool = False, *, timeout: float = 60.0) -> Path:
+    """:func:`fetch_blank` for a form pack: its source_url, its pdf_sha256 and its mirror_urls."""
+    return fetch_blank(pack.source_url, sha256=pack.pdf_sha256, cache_dir=cache_dir, force=force, timeout=timeout,
+                       mirrors=getattr(pack, "mirror_urls", ()) or ())
+
+
+def seed_blank(pdf: str | Path, url: str, sha256: str, *, cache_dir: str | Path | None = None) -> Path:
+    """Copy a hand-downloaded blank into the cache for ``url`` after checking it against ``sha256`` (JS1b).
+
+    The escape hatch for a host that refuses every non-browser fetcher: save the PDF from a browser, then seed it.
+    A digest mismatch raises and caches nothing, exactly like a mismatched download.
+    """
+    expected = _validate_sha256(sha256)
+    data = Path(pdf).read_bytes()
+    if b"%PDF" not in data[:1024]:
+        raise FetchError(f"{pdf} is not a PDF — save the form itself, not the page around it")
+    actual = hashlib.sha256(data).hexdigest()
+    if actual != expected:
+        raise FetchError(f"{pdf} has sha256 {actual}, not the pack's {expected} — a different revision; nothing cached")
+    cache = Path(cache_dir) if cache_dir is not None else default_cache_dir()
+    cache.mkdir(parents=True, exist_ok=True)
+    final_path = _cache_path(cache, url)
+    _atomic_write(final_path, data)
+    return final_path
 
 
 def _atomic_write(final_path: Path, data: bytes) -> None:
@@ -207,6 +273,7 @@ def fetch_blank(
     force: bool = False,
     *,
     timeout: float = 60.0,
+    mirrors: "Sequence[str]" = (),
 ) -> Path:
     """Download a blank official PDF into the shared cache; return its path.
 
@@ -222,6 +289,8 @@ def fetch_blank(
         force: re-download even when a cached copy exists. A cached copy that
             fails the ``sha256`` check is re-downloaded regardless.
         timeout: socket timeout in seconds.
+        mirrors: exact Wayback snapshots of ``url`` (a pack's ``mirror_urls``), tried only when the official host
+            answers 401/403, and only digest-verified — a mismatch fails closed and caches nothing.
 
     Returns:
         Path of the cached PDF (deterministic per URL, shared across agents).
@@ -266,7 +335,10 @@ def fetch_blank(
             return final_path
         # Stale or corrupt cache entry: fall through and re-download.
 
-    data = _download(url, timeout)
+    try:
+        data = _download(url, timeout)
+    except RefusedFetchError as refused:
+        data = _from_mirror(url, mirrors, expected_digest, timeout, refused)
     if b"%PDF" not in data[:1024]:
         head = data[:40]
         raise FetchError(

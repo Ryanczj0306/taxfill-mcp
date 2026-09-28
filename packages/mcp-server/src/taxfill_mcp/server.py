@@ -71,7 +71,7 @@ from taxfill_core import (
 )
 from taxfill_core.discovery import get_form_map as _get_form_map, list_forms as _list_forms, load_form_pack
 from taxfill_core.extract import extract_document as _extract_document, list_document_kinds as _list_document_kinds
-from taxfill_core.fetch import fetch_blank as _fetch_blank
+from taxfill_core.fetch import fetch_pack_blank as _fetch_pack_blank
 from taxfill_core.handfill import hand_fill_worksheet as _hand_fill_worksheet, load_hand_fill_pack_for
 from taxfill_core.knowledge import provisional_marker
 from taxfill_core.estimate import IncomeSnapshot
@@ -182,7 +182,7 @@ def get_form_map(form: str, year: int, jurisdiction: str = "federal") -> dict:
 def fetch_blank(form: str, year: int, jurisdiction: str = "federal") -> dict:
     """Download the official blank PDF (checksum-verified) and return its local path."""
     pack = load_form_pack(form, year, jurisdiction)
-    path = _fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+    path = _fetch_pack_blank(pack)
     return {"path": str(path), "source_url": pack.source_url, "sha256": pack.pdf_sha256}
 
 
@@ -199,7 +199,7 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
     `filing_status.mfs_spouse_name` on 2025 and the 2026 draft — and leaves `spouse.identifying_number` blank.
     """
     pack = load_form_pack(form, year, jurisdiction)
-    blank = _fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+    blank = _fetch_pack_blank(pack)
     result = _fill_form(pack, values, blank, Path(out_path))
     return {"out_path": out_path, "written": result.written, "warnings": result.warnings}
 

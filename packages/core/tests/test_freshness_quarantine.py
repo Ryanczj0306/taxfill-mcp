@@ -37,8 +37,9 @@ DC_BOOKLET = ("https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publicati
 
 def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
     entries = fq.load()
-    assert {e.fixed_by for e in entries} <= {"JS1a", "JS1b"}
+    assert {e.fixed_by for e in entries} <= {"JS5"}     # JS1a/JS1b retired theirs; JS1b's probe found MA's re-issue
     knowledge = "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "knowledge").rglob("*.yaml"))
+    knowledge += "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "formpacks").rglob("pack.yaml"))
     for e in entries:
         assert e.expires <= e.added + dt.timedelta(days=fq.MAX_DAYS)
         if e.kind == "network_test":
@@ -47,6 +48,7 @@ def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
             assert f"def {func}(" in (REPO / path).read_text(encoding="utf-8"), e.target
         else:
             assert e.target in knowledge, f"quarantined URL no longer cited anywhere — delete the row: {e.target}"
+    assert not any(e.kind == "network_test" for e in entries)  # JS1b: every blank fetch is green (acceptance)
 
 
 @pytest.mark.parametrize(("row", "message"), [

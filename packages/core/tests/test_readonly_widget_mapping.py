@@ -95,7 +95,7 @@ from typing import NamedTuple
 import pytest
 
 from pdf_fixtures import make_acroform_pdf
-from taxfill_core.fetch import OfflineFetchError, fetch_blank
+from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.filler import fill_form
 from taxfill_core.schemas.formpack import load_pack
 
@@ -874,7 +874,7 @@ def test_federal_pack_maps_no_readonly_widget_outside_the_allowlist(pack_path: P
     """P-007, repo-wide: mapped ∩ ReadOnly must equal the allowlist exactly."""
     pack = load_pack(pack_path)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
 
@@ -933,7 +933,7 @@ def test_reserved_keep_rows_still_print_reserved_for_future_use(row: ReservedKee
 
     pack = load_pack(FORMPACKS / row.pack)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
 
@@ -977,7 +977,7 @@ def test_state_pack_readonly_mapped_count_matches_the_pinned_audit(pack_path: Pa
     """State packs: the JS-computed ReadOnly bindings are pinned by count."""
     pack = load_pack(pack_path)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
 
@@ -1028,7 +1028,7 @@ def _nonzero_readonly_defaults(pack_path: Path) -> dict[str, str]:
 
     pack = load_pack(pack_path)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
     fields = PdfReader(str(blank)).get_fields() or {}

@@ -35,7 +35,7 @@ base pack's field map, so each row comes with its real cost:
 | `NEAR-PORT` | a handful of fields moved | re-map those fields, then audit |
 | `RE-MAP` | the naming scheme changed (every CA pack, yearly) | full introspect + vision map |
 | `URL-DEAD` | the derived URL 404s | find the year's blank on the DOR forms index |
-| `no-year-token` | no substitutable year in the URL | same, plus MA needs a Wayback cache-seed |
+| `no-year-token` | no substitutable year in the URL | same, plus a digest-verified `mirror_urls` Wayback snapshot where the host 403s (MA) |
 
 **`PORTABLE` is not "done".** Identical field names do NOT prove the state kept
 its line numbering — a form that renumbered lines while keeping positional field

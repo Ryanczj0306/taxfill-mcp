@@ -179,3 +179,68 @@ def test_a_reposted_draft_blank_is_a_reaudit_warning_not_drift(monkeypatch, tmp_
     monkeypatch.setattr(cd, "compute_sha256", lambda p: "0" * 64)
     assert cd.check_form_blanks() == []
     assert "draft re-posted: re-audit" in capsys.readouterr().out
+
+
+def _refused_pack(tmp_path, monkeypatch, digest: str):
+    """A pack whose official host answers 403, with a recorded Wayback mirror (JS1b)."""
+    from taxfill_core.fetch import RefusedFetchError  # noqa: PLC0415
+    url = "https://www.mass.gov/doc/2099-form-0-demo-return/download"
+    pack_dir = tmp_path / "formpacks" / "states" / "ma" / "2099" / "form0"
+    pack_dir.mkdir(parents=True)
+    (pack_dir / "pack.yaml").write_text(yaml.safe_dump({
+        "form": "MA Form 0", "jurisdiction": "states/ma", "tax_year": 2099, "source_url": url,
+        "mirror_urls": [f"https://web.archive.org/web/20990101000000id_/{url}"],
+        "pdf_sha256": digest, "acroform_root": "",
+        "fields": [{"line": "name", "field": "name", "type": "text"}],
+    }))
+    monkeypatch.setattr(cd, "REPO", tmp_path)
+
+    def refused(u, timeout):
+        try:
+            raise urllib.error.HTTPError(u, 403, "Forbidden", {}, None)
+        except urllib.error.HTTPError as exc:
+            raise RefusedFetchError("403") from exc
+    monkeypatch.setattr(cd, "_download", refused)
+    return url
+
+
+class _Capture:
+    def __init__(self, url, data):
+        self._url, self._data = url, data
+    def geturl(self):
+        return self._url
+    def read(self):
+        return self._data
+    def __enter__(self):
+        return self
+    def __exit__(self, *a):
+        return False
+
+
+def test_js1b_a_refused_host_is_checked_through_its_newest_wayback_capture(monkeypatch, tmp_path, capsys):
+    import hashlib  # noqa: PLC0415
+    pinned, reissued = b"%PDF-1.6 pinned", b"%PDF-1.6 re-issued"
+    url = _refused_pack(tmp_path, monkeypatch, hashlib.sha256(pinned).hexdigest())
+    seen = []
+
+    def wayback(request, timeout=None):
+        seen.append(request.full_url)
+        return _Capture(f"https://web.archive.org/web/20990920033523id_/{url}", served)
+    monkeypatch.setattr(cd.urllib.request, "urlopen", wayback)
+    served = pinned
+    assert cd.check_form_blanks() == []
+    assert "the newest Wayback capture (20990920033523) matches the pin" in capsys.readouterr().out
+    assert seen and seen[0].startswith("https://web.archive.org/web/") and seen[0].endswith(f"id_/{url}")
+    served = reissued
+    drift = cd.check_form_blanks()
+    assert len(drift) == 1 and "REVISED" in drift[0] and "20990920033523" in drift[0] and url in drift[0]
+
+
+def test_js1b_an_unreadable_archive_leaves_the_refusal_a_warning(monkeypatch, tmp_path, capsys):
+    _refused_pack(tmp_path, monkeypatch, "a" * 64)
+
+    def archive_down(*a, **k):
+        raise urllib.error.HTTPError("u", 429, "Too Many Requests", {}, None)
+    monkeypatch.setattr(cd.urllib.request, "urlopen", archive_down)
+    assert cd.check_form_blanks() == []
+    assert "blocked HTTP 403 (not drift)" in capsys.readouterr().out

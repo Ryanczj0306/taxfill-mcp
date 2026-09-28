@@ -208,3 +208,19 @@ def test_jd2_load_pack_serves_independent_copies_and_reloads_an_edited_file(tmp_
     edited = src.read_text(encoding="utf-8").replace('tax_year: 2025', 'tax_year: 2024', 1)
     pack_path.write_text(edited, encoding="utf-8")
     assert load_pack(pack_path).tax_year == 2024        # a changed file is parsed again
+
+
+def test_js1b_mirror_urls_must_be_exact_wayback_snapshots_of_the_source_url():
+    data = fixture_dict()
+    data["pdf_sha256"] = "a" * 64
+    official = data["source_url"]
+    data["mirror_urls"] = [f"https://web.archive.org/web/20240101000000id_/{official}"]
+    assert FormPack.model_validate(data).mirror_urls == data["mirror_urls"]
+    for bad in (f"https://web.archive.org/web/2024id_/{official}",                 # not a 14-digit timestamp
+                f"https://web.archive.org/web/20240101000000/{official}",          # the framed page, not id_ bytes
+                "https://web.archive.org/web/20240101000000id_/https://www.irs.gov/other.pdf",  # another url
+                f"https://mirror.example.com/{official}"):
+        with pytest.raises(ValidationError, match="exact Wayback snapshot"):
+            FormPack.model_validate({**data, "mirror_urls": [bad]})
+    with pytest.raises(ValidationError, match="need a real pdf_sha256"):
+        FormPack.model_validate({**data, "pdf_sha256": "..."})

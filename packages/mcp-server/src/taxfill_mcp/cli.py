@@ -6,6 +6,7 @@ Subcommands:
     taxfill reconcile <year>     regenerate RECONCILIATION.md + CHECKLIST.md
     taxfill purge <year>         securely wipe a year's workspace (overwrite + delete)
     taxfill introspect <pdf>     emit a skeleton pack.yaml from a blank AcroForm PDF
+    taxfill seed-blank <pdf>     cache a browser-saved blank, digest-checked (for a host that refuses fetchers)
     taxfill tools                list the callable MCP tools (name, description, args)
     taxfill call <name> [json]   invoke one MCP tool and print its JSON result
 
@@ -137,6 +138,27 @@ def _cmd_introspect(args) -> int:
     return 0
 
 
+def _cmd_seed_blank(args) -> int:
+    from taxfill_core.fetch import FetchError, seed_blank
+
+    url, sha256 = args.url, args.sha256
+    if args.pack:
+        from taxfill_core.schemas.formpack import load_pack
+
+        pack = load_pack(args.pack)
+        url, sha256 = url or pack.source_url, sha256 or pack.pdf_sha256
+    if not url or not sha256:
+        print("seed-blank needs --pack <pack.yaml>, or both --url and --sha256", file=sys.stderr)
+        return 2
+    try:
+        path = seed_blank(args.pdf, url, sha256, cache_dir=args.cache_dir)
+    except (FetchError, OSError, ValueError) as exc:
+        print(f"not seeded: {exc}", file=sys.stderr)
+        return 1
+    print(f"seeded {path} (sha256 {sha256.strip().lower()} verified) for {url}")
+    return 0
+
+
 def _server_mcp():
     """Lazily import the FastMCP server object (keeps status/purge/introspect light)."""
     from taxfill_mcp.server import mcp
@@ -263,6 +285,14 @@ def main(argv: list[str] | None = None) -> int:
     ip.add_argument("--out", help="output dir (default: alongside the PDF)")
     ip.add_argument("--render", action="store_true", help="also render the sentinel sweep for vision mapping")
     ip.set_defaults(_fn=_cmd_introspect)
+
+    sb = sub.add_parser("seed-blank", help="cache a browser-saved blank PDF after checking its sha256")
+    sb.add_argument("pdf", help="the blank PDF saved from the official URL in a browser")
+    sb.add_argument("--pack", help="a pack.yaml: take the URL and the digest from it")
+    sb.add_argument("--url", help="the official URL the blank was saved from (a pack's source_url)")
+    sb.add_argument("--sha256", help="the digest it must match (a pack's pdf_sha256)")
+    sb.add_argument("--cache-dir", dest="cache_dir", help="blank cache (default: the workspace's .cache/blanks)")
+    sb.set_defaults(_fn=_cmd_seed_blank)
 
     tp = sub.add_parser("tools", help="list the callable MCP tools (name, description, args)")
     tp.add_argument("--json", action="store_true", help="emit the full tool list + JSON input schemas")

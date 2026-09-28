@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from taxfill_core.fetch import OfflineFetchError, fetch_blank
+from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.filler import fill_form
 from taxfill_core.render import render_pdf
 from taxfill_core.schemas.formpack import load_pack
@@ -57,7 +57,7 @@ if STATE_PACK_PATHS:
     def test_state_pack_golden_roundtrip(pack_path: Path, tmp_path: Path):
         pack = load_pack(pack_path)
         try:
-            blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+            blank = fetch_pack_blank(pack)
         except OfflineFetchError as exc:
             pytest.skip(f"cache empty and network unreachable: {exc}")
         values = synthetic_values(pack)

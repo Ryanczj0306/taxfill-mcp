@@ -6,10 +6,10 @@
 ![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
 ![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 7,559 passing](https://img.shields.io/badge/tests-7%2C559%20passing-brightgreen)
+![Tests: 7,571 passing](https://img.shields.io/badge/tests-7%2C571%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 7,559 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 7,571 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
 
 > ### ⚠️ Disclaimer
 > taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
@@ -214,6 +214,12 @@ taxfill call render_form '{"pdf_path": "filled.pdf", "pages": [1], "dpi": 150}' 
 images are written to files (their paths returned under `"images"`). A tool that
 raises exits non-zero with a JSON error on stderr — so shell agents can branch on
 the exit code.
+
+If a state host refuses every non-browser fetcher (HTTP 403), `fetch_blank` first tries the
+pack's `mirror_urls` — an exact Wayback snapshot of the official URL, used only when its
+bytes hash to the pinned digest. Failing that, save the PDF from a browser and seed it:
+`taxfill seed-blank saved.pdf --pack formpacks/states/ma/2023/form1/pack.yaml` (or
+`--url <source_url> --sha256 <pdf_sha256>`). The file is digest-checked before it is cached.
 
 ---
 

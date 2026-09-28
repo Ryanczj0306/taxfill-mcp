@@ -9,7 +9,11 @@ caught by CI rather than by a user mid-filing:
   * **Form blanks** — for every ``formpacks/**/pack.yaml`` with a real
     ``pdf_sha256``, download ``source_url`` and recompute the digest. A mismatch
     means the official blank was revised (the field map may no longer line up);
-    an unreachable URL means it moved.
+    an unreachable URL means it moved. A host that refuses bots (403/429) is only
+    a warning — unless the pack records ``mirror_urls`` (JS1b): then the NEWEST
+    Wayback capture of the official URL is digest-checked instead, so a revision
+    behind a bot wall is still caught (MA's 2023 Form 1 was re-issued twice
+    unseen before this).
   * **Source registry** — for every URL in ``knowledge/sources.yaml`` (the
     section-7 "where truth lives" registry), confirm it still resolves. Pages
     legitimately change content, so we check reachability, not a checksum.
@@ -32,6 +36,8 @@ scheduled job, not part of the offline unit suite. Run:
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
+import re
 import ssl
 import sys
 import urllib.error
@@ -112,6 +118,26 @@ def _not_drift_reason(exc: BaseException) -> str | None:
     return None
 
 
+def _newest_capture(url: str, today: dt.date | None = None) -> tuple[str, str] | None:
+    """(capture timestamp, sha256) of the Wayback capture of ``url`` nearest ``today``; None when none is readable.
+
+    The drift signal for a host that refuses bots (JS1b). Only a DIGEST comes back: nothing here is ever cached or
+    filled from — a mismatch is a re-audit prompt, exactly like a revised live download.
+    """
+    stamp = (today or dt.date.today()).strftime("%Y%m%d") + "235959"
+    request = urllib.request.Request(f"https://web.archive.org/web/{stamp}id_/{url}",
+                                     headers={"User-Agent": _USER_AGENT})
+    try:
+        with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+            final, data = response.geturl(), response.read()
+    except (urllib.error.URLError, TimeoutError, ConnectionError, OSError):
+        return None
+    match = re.search(r"/web/(\d{14})id_/", final)
+    if match is None or b"%PDF" not in data[:1024]:
+        return None
+    return match.group(1), hashlib.sha256(data).hexdigest()
+
+
 def _probe_urls(urls: list[str], label: str) -> list[str]:
     """Confirm each URL still resolves. TLS-chain and 403/429 failures are warn-only
     (transport/trust, not a move); any other failure is drift. Returns the drift list."""
@@ -165,6 +191,16 @@ def check_form_blanks() -> list[str]:
             # move (404/DNS/refused) counts as drift. (Fixes the recurring nightly-CI red
             # from state hosts like www.dor.ms.gov serving an incomplete cert chain.)
             reason = _not_drift_reason(exc)
+            capture = _newest_capture(pack.source_url) if reason is not None and pack.mirror_urls else None
+            if capture is not None:
+                stamp, archived = capture
+                if archived == pack.pdf_sha256.lower():
+                    print(f"  ok     {rel}: {reason}; the newest Wayback capture ({stamp}) matches the pin")
+                else:
+                    drift.append(f"{rel}: blank REVISED — {pack.source_url} is {reason}, but its newest Wayback "
+                                 f"capture ({stamp}) is {archived[:12]}…, not the recorded {pack.pdf_sha256[:12]}…")
+                    print(f"  DRIFT  {rel}: REVISED per the newest Wayback capture ({stamp})")
+                continue
             if reason is not None:
                 print(f"  warn   {rel}: {reason} (not drift) {pack.source_url}")
                 continue

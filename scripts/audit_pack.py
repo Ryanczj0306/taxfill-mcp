@@ -20,7 +20,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
 sys.path.insert(0, str(REPO / "packages" / "core" / "tests"))
 
-from taxfill_core.fetch import fetch_blank  # noqa: E402
+from taxfill_core.fetch import fetch_pack_blank  # noqa: E402
 from taxfill_core.filler import fill_form  # noqa: E402
 from taxfill_core.render import render_pdf  # noqa: E402
 from taxfill_core.schemas.formpack import load_pack  # noqa: E402
@@ -37,7 +37,7 @@ def main() -> int:
     out_dir = Path(sys.argv[2]) if len(sys.argv) > 2 else REPO / ".cache" / "audit" / tag
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)  # warm cache, offline OK
+    blank = fetch_pack_blank(pack)  # warm cache, offline OK
     # A reserved line (PackField.reserved) is printed "Reserved for future use": nothing may land there, so the
     # sentinel audit leaves it blank rather than proving a placement the filer must never use (JEa).
     reserved = sorted(pf.line for pf in pack.fields if pf.reserved)

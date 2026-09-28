@@ -24,7 +24,7 @@ from pathlib import Path
 import pytest
 
 from taxfill_core.calc import tax_from_taxable_income
-from taxfill_core.fetch import OfflineFetchError, fetch_blank
+from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.filler import fill_form
 from taxfill_core.schemas.formpack import FormPack, load_pack
 from taxfill_core.verify import FilingItem, verify_filing
@@ -187,7 +187,7 @@ def test_filing_verifies_clean(scenario: str, tmp_path: Path):
     for key, rel_pack in forms.items():
         pack = load_pack(REPO_ROOT / rel_pack)
         try:
-            blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+            blank = fetch_pack_blank(pack)
         except OfflineFetchError as exc:
             pytest.skip(f"cache empty and network unreachable: {exc}")
         filled = tmp_path / f"{key}.pdf"

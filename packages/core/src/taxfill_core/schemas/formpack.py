@@ -162,6 +162,14 @@ class FormPack(BaseModel):
     jurisdiction: str = Field(description="'federal' or 'states/<two-letter code>', e.g. 'states/ca'.")
     tax_year: int = Field(ge=1990, le=2100)
     source_url: str = Field(description="Official URL of the blank PDF (downloaded at runtime, never vendored).")
+    mirror_urls: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Exact Wayback Machine snapshots of source_url (https://web.archive.org/web/<14-digit ts>id_/<source_url>), "
+            "tried ONLY when the official host answers 401/403 and ALWAYS digest-verified against pdf_sha256 (Phase J "
+            "JS1b: mass.gov refuses non-browser fetchers)."
+        ),
+    )
     pdf_sha256: str = Field(
         description="SHA-256 of the blank PDF for checksum verification; '...' is allowed only as an authoring placeholder."
     )
@@ -266,6 +274,19 @@ class FormPack(BaseModel):
                 "compute it with: shasum -a 256 blank.pdf"
             )
         return value.lower()
+
+    @model_validator(mode="after")
+    def _check_mirror_urls(self) -> "FormPack":
+        for mirror in self.mirror_urls:
+            match = re.fullmatch(r"https://web\.archive\.org/web/(\d{14})id_/(.+)", mirror)
+            if match is None or match.group(2) != self.source_url:
+                raise ValueError(
+                    f"mirror_urls entry {mirror!r} must be an exact Wayback snapshot of THIS pack's source_url — "
+                    f"https://web.archive.org/web/<14-digit timestamp>id_/{self.source_url}"
+                )
+        if self.mirror_urls and self.pdf_sha256 == _SHA256_PLACEHOLDER:
+            raise ValueError("mirror_urls need a real pdf_sha256: a mirror is only ever used digest-verified")
+        return self
 
     @model_validator(mode="after")
     def _check_draft_source(self) -> "FormPack":

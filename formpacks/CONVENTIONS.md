@@ -325,6 +325,16 @@ use reads as zeros), or it is not declared.
   than no pack (freshness protocol, dev plan section 7).
 - Blank PDFs are NEVER committed. `fetch_blank` downloads them into the
   gitignored shared cache `.cache/blanks/`.
+- `mirror_urls` (optional) is for a host that refuses non-browser fetchers
+  (mass.gov answers 403). Each entry is the EXACT Wayback snapshot
+  `https://web.archive.org/web/<14-digit timestamp>id_/<source_url>` whose
+  bytes hash to `pdf_sha256` (the schema enforces the shape). `fetch_blank`
+  tries it only on a 401/403, and caches it only when the digest matches.
+  A mismatch fails closed. Find the snapshot by fetching
+  `web.archive.org/web/<year>id_/<source_url>` and reading the redirect's
+  timestamp; hash each capture and pin the one that matches. The drift job
+  digest-checks the NEWEST capture of a refused host, so a re-issue behind
+  the bot wall still shows up.
 
 ## Signature and mailing
 

@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from taxfill_core.fetch import OfflineFetchError, fetch_blank
+from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.schemas.formpack import load_pack
 from taxfill_core.verify import read_text_widgets
 
@@ -44,7 +44,7 @@ def _key(pack_path: Path) -> str:
 def _widget_maxlens(pack_path: Path) -> tuple[object, dict[str, int]]:
     pack = load_pack(pack_path)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
     return pack, {w.name: w.max_len for w in read_text_widgets(Path(blank)) if w.max_len}

@@ -37,7 +37,7 @@ from pathlib import Path
 import pytest
 
 from pdf_fixtures import make_acroform_pdf
-from taxfill_core.fetch import OfflineFetchError, fetch_blank
+from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.filler import fill_form
 from taxfill_core.render import render_pdf
 from taxfill_core.schemas.formpack import FormPack, PackField, load_pack
@@ -383,7 +383,7 @@ def test_sched_d_shaded_g_cells_are_the_only_readonly_widgets_and_unmapped(pack_
     """P-007 against the official blank: prove the flags, then prove nothing maps them."""
     pack = load_pack(pack_path)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
 
@@ -869,7 +869,7 @@ def test_f1116_blank_has_no_readonly_widgets_and_the_states_are_real(pack_path: 
 
     pack = load_pack(pack_path)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
 
@@ -1078,7 +1078,7 @@ def test_f8833_blank_is_the_rev_12_2022_layout_it_was_mapped_against(pack_path: 
 
     pack = load_pack(pack_path)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
 
@@ -1211,7 +1211,7 @@ def test_pack_golden_roundtrip(pack_path: Path, tmp_path: Path):
     """fetch -> fill every line -> verify -> render EVERY page, per pack."""
     pack = load_pack(pack_path)
     try:
-        blank = fetch_blank(pack.source_url, sha256=pack.pdf_sha256)
+        blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
 
@@ -1436,7 +1436,7 @@ def test_jt0a_mcp_fill_form_still_refuses_the_draft_year(tmp_path: Path, monkeyp
     from taxfill_mcp import server  # noqa: PLC0415
     blank = _harness_blank(tmp_path)
     monkeypatch.setattr(server, "load_form_pack", lambda form, year, jurisdiction: _draft_pack())
-    monkeypatch.setattr(server, "_fetch_blank", lambda url, sha256=None: blank)
+    monkeypatch.setattr(server, "_fetch_pack_blank", lambda pack: blank)
     with pytest.raises(ProvisionalPackError):
         server.fill_form("TEST-HARNESS", 2026, synthetic_values(_draft_pack()), str(tmp_path / "out.pdf"))
 
