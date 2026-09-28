@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,466 tests** — offline 6,057 + live-.gov 409; derived
+Done and on `main` (**6,475 tests** — offline 6,066 + live-.gov 409; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2205,28 +2205,18 @@ not wait for any of this.
   - **Why.** The draft i2441 line 8 table's second phase-down leg depends on filing status: joint from $150,000 in $4,000 steps, others from $75,000 in $2,000 steps. The rate "ranges from 50% to 20%", and line 21 is $7,500 ($3,750 MFS). DependentCarePhaseDown (knowledge.py:908-950) and calc.py:2697-2714 have no status key.
   - **Build:** `applies_to: all | joint | non_joint`, then author 2026.
   - **Acceptance:** goldens for every row of the draft table.
-- [ ] **JT1c — The Schedule 3-A gate (federal public benefit)** (M; deps JT0b) [TY26-18] — pitfall *public-benefit-qualified-alien*
-  - **Why.** The draft Schedule 3-A (Created 6/24/26) moves the refunded EIC / ACTC / refundable AOTC / adoption credit to 1040 line 32b unless the filer or spouse is "a U.S. citizen, U.S. national, or qualified alien".
-  - **Definition, read now.** 8 U.S.C. 1641(b) (uscode.house.gov, read 2026-09-23) defines "qualified alien" as:
-    - (1) lawfully admitted for permanent residence;
-    - (2) asylee;
-    - (3) refugee;
-    - (4) parolee for at least 1 year;
-    - (5) deportation withheld;
-    - (6) conditional entrant;
-    - (7) Cuban/Haitian entrant;
-    - (8) Compact of Free Association resident.
-    
-    (c) adds certain battered aliens. No nonimmigrant category is listed. Whether the Schedule 3-A instructions adopt §1641 is UNVERIFIED (not posted).
-  - **Build.**
-    - A `federal_public_benefit` block: the form flow plus the §1641(b)–(c) list, with the mapping labeled "provisional — Schedule 3-A instructions not posted".
-    - Profile fact `identity.qualified_alien_status`.
-    - F / J / M / H / L / O and similar nonimmigrant statuses map to "not listed in 1641(b) (provisional)".
-    - The estimator prices the forfeited refunded portion as the LOW end of the range, not a blanket NOT ESTIMATED.
-  - **Acceptance.**
-    - An H-1B household with ACTC → the low end drops the refunded portion; an LPR household → unchanged.
-    - A test refuses a 2026 credits block that has no `federal_public_benefit` block.
-    - The pitfall has citing tests; re-verified at JT6.
+- [x] **JT1c — The Schedule 3-A gate (federal public benefit) — DONE 2026-09-27** (M; deps JT0b) [TY26-18] — pitfall *public-benefit-qualified-alien* = **P-023**
+  - *As built:*
+    - **Sources read 2026-09-27:**
+      - the draft Schedule 3-A (Created 6/24/26): lines 1a-8, and its caution — the schedule is completed "only if you are claiming the earned income credit (EIC), additional child tax credit (ACTC), refundable American opportunity credit, or refundable adoption credit";
+      - the rule behind it, **REG-119882-25** (91 FR 53812, Aug. 20, 2026; comments closed 2026-10-05, hearing 2026-10-14), a PROPOSED rule, every quote checked against the published Federal Register text: proposed Treas. Reg. 1.23-2, 1.24-3, 1.25A-7 and 1.32-4 — the refunded portion is the SUM of the four credits over "the tax imposed on the taxpayer by subtitle A of the Code (reduced by credits allowable under subparts A, B, D, and G …)"; status is judged "on the date the taxpayer files the taxpayer's return"; one qualifying spouse is enough on a joint return; withholding stays refundable (1.23-2(f)(8)); it is "proposed to apply for taxable years ending on or after the date these regulations are published as final regulations";
+      - 8 U.S.C. 1641(b)-(c). **Correction to the spec above:** 1641(c)(4) DOES name a nonimmigrant status — "an alien who has been granted nonimmigrant status under section 101(a)(15)(T)" — so the sources.yaml answer that said no nonimmigrant category is listed was wrong and is fixed. The proposed definition cites 1641(b) only, while 1641(c) says "For purposes of this chapter, the term 'qualified alien' includes" its categories: kept as an open reading.
+      - The Schedule 3-A instructions are not posted (irs-dft/i1040s3a--dft.pdf 404; the posted i1040gi draft is still the 2025 one).
+    - **Knowledge:** a top-level `federal_public_benefit` 2026 block (typed FederalPublicBenefitParams): rule_status (only `proposed` validates — a final rule belongs in the point), the applicability, the four credits by ledger slot, the refunded-portion, joint-return, filing-date and definition quotes, the schedule's lines, the eight 1641(b) categories and the two 1641(c) ones apart. A federal pack from 2026 with a credits block and no federal_public_benefit block is refused at load. It maps to the federal_public_benefit sources topic, which gains the Federal Register entry.
+    - **Profile:** `identity.qualified_alien_status` and `household.spouse.qualified_alien_status` — us_citizen, us_national, the 1641(b) ids, battered_alien, t_nonimmigrant, none_of_these.
+    - **Estimator:** each return's Schedule 3-A figure (BottomLineResult.federal_public_benefit; the two-return MFS pair keeps the spouse's own) is the affected credits over the total tax less the Section B wage part of the Additional Medicare Tax. Each person's answer: the recorded status, else us_person True (a citizen or green-card holder), else the latest visa status (T → 1641(c)(4), a reading; any other nonimmigrant class → on neither list), else unknown. With no one on the return qualifying, the LOW end holds the amount back and the point keeps it; the note quotes the rule, and an unrecorded answer adds a what-would-change item. Server docs and SKILL.md carry it. No intake question: the estimator asks only when the amount is non-zero.
+    - **Tests** (test_public_benefit `test_p023_*`, on a knowledge copy whose 2026 pack borrows the 2025 credits block until JT1d): the block's quotes and the profile ids; the load refusal and the rule_status gate; an H-1B household with ACTC + EIC (the low end drops exactly the refunded portion and keeps the withholding refund); an LPR household and a recorded refugee unchanged; the 1641(c) readings; one qualifying spouse on a joint return; the unrecorded answer; the Section B wage tax left out of the liability; nothing before 2026.
+  - **Left for JT6:** re-read the final Schedule 3-A and its instructions (the qualified-alien definition they adopt), and the final rule if it publishes — a final rule moves the forfeiture into the point.
 - [ ] **JT1d — Credits 2026** (M; deps JT1c) [TY26-08]
   - From Rev. Proc. 2025-32 §§4.05–4.06:
     - CTC $2,200, refundable portion $1,700;

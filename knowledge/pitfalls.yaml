@@ -1782,6 +1782,47 @@ pitfalls:
       the capped charitable_cash_nonitemizer only when the standard deduction
       wins (slot nonitemizer_charitable_deduction). Tests: test_p022_* in
       packages/core/tests/test_charitable_deduction.py.
+  - id: P-023
+    incident: >-
+      A REFUND PRICED AS IF TAX RESIDENCY SETTLED WHO MAY RECEIVE IT. From 2026
+      the draft Schedule 3-A (Form 1040), "Federal Public Benefit" (Created
+      6/24/26), takes the refunded portion of the EIC, the ACTC, the refundable
+      AOTC and the refundable adoption credit off the refund (Form 1040 line
+      32b) unless the answer to "Are you or your spouse a U.S. citizen, U.S.
+      national, or qualified alien?" is Yes. The rule behind it, REG-119882-25
+      (91 FR 53812, Aug. 20, 2026), is proposed: the refunded portion "is a
+      Federal public benefit", a qualified alien is 8 U.S.C. 1641(b)'s list,
+      status is judged "on the date the taxpayer files the taxpayer's return",
+      and on a joint return "if one spouse is a U.S. citizen, U.S. national,
+      or qualified alien, then the other spouse will be treated as a qualified
+      alien". The estimator priced every refundable credit into the refund for
+      any resident. The mistake the question exists to catch: a resident alien
+      for tax — an H-1B or F-1 holder who meets the substantial presence test,
+      files Form 1040 and qualifies for the credits — read as eligible to
+      receive them, when neither status is on 1641(b)'s list (lawful permanent
+      residents, asylees, refugees, parolees for at least 1 year, deportation
+      withheld, conditional entrants, Cuban and Haitian entrants, Compact of
+      Free Association residents). Two readings stay open: 1641(c) adds
+      battered aliens and T nonimmigrants "For purposes of this chapter", but
+      the proposed definition cites 1641(b) only; and the rule is "proposed to
+      apply for taxable years ending on or after the date these regulations
+      are published as final regulations". Found by the 2026-09-23 TY2026
+      review (TY26-18).
+    countermeasure: >-
+      The 2026 knowledge pack's federal_public_benefit block (JT1c) carries the
+      rule, quoted: the four credits, the subtitle A measure, the joint-return
+      and filing-date rules, the 1641(b) categories and the 1641(c) ones kept
+      apart. A federal credits block from 2026 without it is refused at load,
+      and rule_status admits only 'proposed' until the estimator prices a final
+      rule in the point. The estimator computes Schedule 3-A lines 1a-6 per
+      return (the affected credits over the total tax less the Section B wage
+      part of the Additional Medicare Tax) and reads each person's answer:
+      identity.qualified_alien_status (and the spouse's), else us_person True
+      (a citizen or green-card holder), else the latest visa status (T is
+      1641(c)(4); any other nonimmigrant class is on neither list). With no one
+      on the return qualifying, the LOW end holds the amount back and the point
+      keeps it, with the rule's words; an unrecorded answer asks for the fact.
+      Tests: test_p023_* in packages/core/tests/test_public_benefit.py.
   - id: P-026
     incident: >-
       The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer

@@ -820,6 +820,104 @@ charitable_contributions:
   written_acknowledgment_at: 250
 
 # ─────────────────────────────────────────────────────────────────────────────
+# federal_public_benefit (Phase J JT1c, pitfall P-023). The draft Schedule 3-A
+# (Form 1040) 2026 (Created 6/24/26) and the PROPOSED rule behind it,
+# REG-119882-25 (91 FR 53812, Aug. 20, 2026; comments closed 2026-10-05, hearing
+# 2026-10-14), both read 2026-09-27. The refunded portion of four refundable
+# credits is a "Federal public benefit" (8 U.S.C. 1611(c)) that an alien who is
+# not a qualified alien (8 U.S.C. 1641) may not receive. The rule is proposed "to
+# apply for taxable years ending on or after the date these regulations are
+# published as final regulations", so it reaches TY2026 only if the final rule
+# publishes by 2026-12-31: the estimator puts the forfeiture on the LOW end of
+# its range, never the point. The Schedule 3-A instructions are not posted
+# (irs-dft/i1040s3a--dft.pdf answered 404 on 2026-09-27). Two open readings,
+# kept apart below: the proposed definition cites 1641(b) only, while 1641(c)
+# says "For purposes of this chapter, the term 'qualified alien' includes" the
+# battered-alien and T-status categories.
+federal_public_benefit:
+  citation:
+    source: >-
+      REG-119882-25, Application of the Personal Responsibility and Work Opportunity
+      Reconciliation Act of 1996 to the Refunded Portion of Certain Federal Refundable Tax
+      Credits, 91 FR 53812 (Aug. 20, 2026) — proposed Treas. Reg. 1.23-2, 1.24-3, 1.25A-7 and
+      1.32-4; 8 U.S.C. 1641(b)-(c); checked against the draft Schedule 3-A (Form 1040) 2026
+      (Created 6/24/26)
+    url: "https://www.federalregister.gov/documents/2026/08/20/2026-16985/application-of-the-personal-responsibility-and-work-opportunity-reconciliation-act-of-1996-to-the"
+  rule_status: proposed
+  applicability: >-
+    These proposed regulations are proposed to apply for taxable years ending on or after the
+    date these regulations are published as final regulations in the Federal Register.
+  affected_credits: [eitc, actc_refundable, aotc_refundable, adoption_refundable]
+  refunded_portion: >-
+    Proposed 1.32-4(c)(2): "the taxpayer must first sum all such refundable credits claimed,
+    and then calculate the portion of the sum of these credits that exceeds the tax imposed on
+    the taxpayer by subtitle A of the Code (reduced by credits allowable under subparts A, B, D,
+    and G of part IV of subchapter A of chapter 1 of the Code)." Withholding is outside it
+    (1.23-2(f)(8)): "The $250 withholding credit is not included in the calculation of a
+    Federal public benefit".
+  form_flow: >-
+    Draft Schedule 3-A: line 1a "Enter the amount from Form 1040 or 1040-SR, line 32a", line 1b
+    "Enter the amount from Form 1040 or 1040-SR, line 31", line 2 "Subtract line 1b from line
+    1a"; line 3 "Enter the amount from Form 1040, 1040-SR, or 1040-NR, line 24a", line 4 "Enter
+    the amount from Schedule 2 (Form 1040), line 20", line 5 "Subtract line 4 from line 3"; line
+    6 "Is line 2 more than line 5? Yes. Subtract line 5 from line 2. This is your federal public
+    benefit." Line 8 "Are you or your spouse a U.S. citizen, U.S. national, or qualified alien?
+    See instructions." — "No. Enter the amount from line 6 here and on Form 1040, 1040-SR, or
+    1040-NR, line 32b."
+  qualified_alien_definition: >-
+    Proposed 1.32-4(b)(4): "The term qualified alien has the same meaning as provided in section
+    431 of PRWORA, 8 U.S.C. 1641(b)."
+  joint_return_rule: >-
+    Proposed 1.32-4(b)(4): "In case of married individuals filing a joint return, if one spouse
+    is a U.S. citizen, U.S. national, or qualified alien, then the other spouse will be treated
+    as a qualified alien for this purpose."
+  status_date_rule: >-
+    Proposed 1.32-4(e): "a taxpayer's status as a U.S. citizen, U.S. national, or qualified
+    alien is determined on the date the taxpayer files the taxpayer's return for the taxable
+    year that first claims the section 32 credit (without regard to whether the return is
+    deemed by the Code to be filed on another date)."
+  qualified_categories:
+    - id: lpr
+      cite: "8 U.S.C. 1641(b)(1)"
+      text: "an alien who is lawfully admitted for permanent residence under the Immigration and Nationality Act"
+    - id: asylee
+      cite: "8 U.S.C. 1641(b)(2)"
+      text: "an alien who is granted asylum under section 208 of such Act"
+    - id: refugee
+      cite: "8 U.S.C. 1641(b)(3)"
+      text: "a refugee who is admitted to the United States under section 207 of such Act"
+    - id: parolee_1yr
+      cite: "8 U.S.C. 1641(b)(4)"
+      text: "an alien who is paroled into the United States under section 212(d)(5) of such Act for a period of at least 1 year"
+    - id: deportation_withheld
+      cite: "8 U.S.C. 1641(b)(5)"
+      text: "an alien whose deportation is being withheld under section 243(h) of such Act"
+    - id: conditional_entrant
+      cite: "8 U.S.C. 1641(b)(6)"
+      text: "an alien who is granted conditional entry pursuant to section 203(a)(7) of such Act as in effect prior to April 1, 1980"
+    - id: cuban_haitian_entrant
+      cite: "8 U.S.C. 1641(b)(7)"
+      text: "an alien who is a Cuban and Haitian entrant (as defined in section 501(e) of the Refugee Education Assistance Act of 1980)"
+    - id: cofa_resident
+      cite: "8 U.S.C. 1641(b)(8)"
+      text: "an individual who lawfully resides in the United States in accordance with a Compact of Free Association"
+  statute_also_includes:
+    - id: battered_alien
+      cite: "8 U.S.C. 1641(c)(1)-(3)"
+      text: >-
+        an alien who "has been battered or subjected to extreme cruelty in the United States by a
+        spouse or a parent" (or whose child or parent has been), with an approved or prima facie
+        petition, "but only if (in the opinion of the agency providing such benefits) there is a
+        substantial connection between such battery or cruelty and the need for the benefits to be
+        provided"
+    - id: t_nonimmigrant
+      cite: "8 U.S.C. 1641(c)(4)"
+      text: >-
+        an alien who has been granted nonimmigrant status under section 101(a)(15)(T) of the
+        Immigration and Nationality Act (8 U.S.C. 1101(a)(15)(T)) or who has a pending application
+        that sets forth a prima facie case for eligibility for such nonimmigrant status
+
+# ─────────────────────────────────────────────────────────────────────────────
 # DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own
 # prose (the Pub 15 (2026) What's New quote carried in tax.supplemental_withholding's
 # citation, the standard_deduction block's OBBBA note, and the

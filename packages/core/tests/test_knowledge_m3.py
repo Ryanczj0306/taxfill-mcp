@@ -59,6 +59,8 @@ BLOCK_TO_REQUIRED_TOPICS = {
     # Phase J item JF9: the 2026 charitable rules. JF2's charitable_nonitemizer topic already
     # carries IRC 170(p), the W-4 (2026) worksheet lines and the TEOS codes.
     "charitable_contributions": ("charitable_nonitemizer",),
+    # Phase J item JT1c: Schedule 3-A (2026) and REG-119882-25, on the topic JT0a opened for them.
+    "federal_public_benefit": ("federal_public_benefit",),
 }
 
 

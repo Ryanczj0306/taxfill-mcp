@@ -1283,6 +1283,57 @@ class CharitableContributionsParams(BaseModel):
     _exact_floor = field_validator("itemizer_floor_rate", mode="before")(_as_exact_decimal)
 
 
+class QualifiedAlienCategory(BaseModel):
+    """One 8 U.S.C. 1641 category (JT1c): its paragraph and the statute's words."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(description="The profile's identity.qualified_alien_status value for this category.")
+    cite: str = Field(description="The paragraph, e.g. '8 U.S.C. 1641(b)(1)'.")
+    text: str = Field(description="The statute's words, quoted.")
+
+
+class FederalPublicBenefitParams(BaseModel):
+    """The ``federal_public_benefit`` block (JT1c, P-023): Schedule 3-A (2026) and the PRWORA rule behind it.
+
+    The refunded portion of four refundable credits is a "Federal public benefit" (8 U.S.C. 1611(c)) that an alien
+    who is not a qualified alien (8 U.S.C. 1641) may not receive. Top-level for the sources-coverage meta-test. The
+    rule is PROPOSED (REG-119882-25): the estimator prices the forfeiture on the LOW end of its range, never the
+    point, which is why ``rule_status`` admits only 'proposed' — a final rule belongs in the point (a ledger slot),
+    so widening the Literal is where that change starts.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    rule_status: Literal["proposed"]
+    applicability: str = Field(description="When the rule applies, quoted.")
+    affected_credits: list[Literal["eitc", "actc_refundable", "aotc_refundable", "adoption_refundable"]] = Field(
+        min_length=1,
+        description="The credits whose refunded portion is the benefit, by the estimator's ledger slot names "
+                    "(adoption_refundable has no slot: the estimator does not model the adoption credit).",
+    )
+    refunded_portion: str = Field(description="How the refunded portion is measured, quoted.")
+    form_flow: str = Field(description="The schedule's own lines, quoted.")
+    qualified_alien_definition: str = Field(description="The proposed rule's definition, quoted.")
+    joint_return_rule: str = Field(description="One qualifying spouse on a joint return, quoted.")
+    status_date_rule: str = Field(description="The date status is judged on, quoted.")
+    qualified_categories: list[QualifiedAlienCategory] = Field(
+        min_length=1, description="8 U.S.C. 1641(b)(1)-(8), the list the proposed definition cites.")
+    statute_also_includes: list[QualifiedAlienCategory] = Field(
+        default_factory=list,
+        description="8 U.S.C. 1641(c): 'For purposes of this chapter, the term \"qualified alien\" includes' these "
+                    "— categories the proposed definition's 1641(b) citation does not name.",
+    )
+
+    @model_validator(mode="after")
+    def _ids_unique(self) -> "FederalPublicBenefitParams":
+        ids = [c.id for c in (*self.qualified_categories, *self.statute_also_includes)]
+        if len(ids) != len(set(ids)):
+            raise ValueError(f"federal_public_benefit category ids must be unique, got {ids}")
+        return self
+
+
 class EstimatedTaxSafeHarborParams(BaseModel):
     """IRC 6654(d) required-annual-payment parameters (Form 1040-ES, 'General Rule').
 
@@ -2329,6 +2380,9 @@ class KnowledgePack(BaseModel):
     # Phase J item JF9: the 2026 charitable rules (IRC 170(p), the 0.5% floor, the characterization
     # thresholds). Top-level for the sources-coverage meta-test, like contribution_limits.
     charitable_contributions: CharitableContributionsParams | None = None
+    # Phase J item JT1c: Schedule 3-A (2026) — the refunded portion of four refundable credits as a
+    # PRWORA federal public benefit. Top-level for the sources-coverage meta-test.
+    federal_public_benefit: FederalPublicBenefitParams | None = None
     # Phase J item JF6a: printed line numbers, per key, read off this year's
     # faces. Engine text reaches them only through form_line() (P-015).
     form_lines: dict[str, FormLineEntry] | None = None
@@ -2343,6 +2397,21 @@ class KnowledgePack(BaseModel):
                 f"(e.g. 'states/ca'), got {value!r}"
             )
         return value
+
+    @model_validator(mode="after")
+    def _public_benefit_rides_with_credits(self) -> "KnowledgePack":
+        # JT1c (P-023): from 2026 a refundable credit's refunded portion may be a federal public benefit
+        # (Schedule 3-A), so a federal credits block without the block that says so would price the refund
+        # without the question the schedule asks.
+        if (self.jurisdiction == "federal" and self.tax_year >= 2026 and self.credits is not None
+                and self.federal_public_benefit is None):
+            raise ValueError(
+                f"the federal {self.tax_year} pack carries a credits block but no federal_public_benefit block — "
+                f"from 2026 Schedule 3-A asks whether the refunded portion of the EIC, the ACTC, the refundable "
+                f"AOTC and the refundable adoption credit is a federal public benefit (REG-119882-25; 8 U.S.C. "
+                f"1611, 1641): author the block (knowledge/federal/2026.yaml is the template) before the credits"
+            )
+        return self
 
     @model_validator(mode="after")
     def _check_form_lines(self) -> "KnowledgePack":

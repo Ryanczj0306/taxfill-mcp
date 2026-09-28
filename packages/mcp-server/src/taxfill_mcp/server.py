@@ -1025,6 +1025,14 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     - spouse: nested income object with the spouse's OWN amounts (same fields; enables a true
       two-return MFS comparison — otherwise amounts are couple-combined)
 
+    Schedule 3-A (JT1c, 2026 onward, P-023): the refunded portion of the EIC, the ACTC and the refundable
+    AOTC — the part over the subtitle A tax — is a PRWORA "Federal public benefit" under the PROPOSED rule
+    REG-119882-25. When no one on the return is recorded as a U.S. citizen, U.S. national or qualified
+    alien (8 U.S.C. 1641 — not tax residency: an H-1B or F-1 resident alien is not one), the LOW end of
+    the range holds it back and the point keeps it while the rule is proposed. Record
+    profile identity.qualified_alien_status (and household.spouse's): a joint return needs one spouse
+    who qualifies, and the answer is the one on the date the return is filed.
+
     Residency (P-018): record the §6013(g)/(h) election as profile residency_facts.section_6013_election
     (true = elected or still in effect) — it makes both spouses residents for the whole year, so the
     standard deduction, preferential rates and NIIT apply and the deposit exclusion is off, while

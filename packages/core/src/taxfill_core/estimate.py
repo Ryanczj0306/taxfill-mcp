@@ -57,6 +57,7 @@ not amounts).
 """
 from __future__ import annotations
 
+import re
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
@@ -822,6 +823,11 @@ class BottomLineResult(BaseModel):
     bottom: int = Field(description="Signed bottom line (+ refund, - owed).")
     lines: list[CompositionLine]
     citations: list[Citation]
+    federal_public_benefit: int = Field(
+        default=0, ge=0,
+        description="JT1c: Schedule 3-A's federal public benefit on this return (0 in a year without the block).")
+    spouse_federal_public_benefit: int = Field(
+        default=0, ge=0, description="JT1c: the same on the spouse's separate return of a two-return MFS pair.")
 
 
 class MissingBlock(BaseModel):
@@ -4136,6 +4142,7 @@ def _bottom_line(
         comp.append(_line("se_tax", label="Plus: self-employment tax", amount=se_amount))
 
     addmed_amount = 0
+    addmed_wage = 0   # JT1c: the wage part, Schedule 2 Section B (outside subtitle A) from 2026
     # JF3 (P-019): Form 8959 prices W-2 box 5, never box 1 when box 5 is known — an exempt F/J
     # student's box 5 is $0, and a 401(k) deferrer's box 5 is above box 1.
     medicare_wages = income.wages if income.medicare_wages is None else income.medicare_wages
@@ -4147,6 +4154,7 @@ def _bottom_line(
             if married_7703 and notes is not None:
                 notes.add("m7703_addmed")
             addmed_amount = addmed.additional_medicare_tax
+            addmed_wage = irs_round(addmed.wage_portion)
             citations.append(addmed.citation)
             comp.append(
                 _line("additional_medicare_tax", 
@@ -4354,10 +4362,104 @@ def _bottom_line(
         payments += net_ptc
         comp.append(_line("net_ptc", label="Less: net premium tax credit (Form 8962)", amount=-net_ptc))
 
+    # JT1c (P-023): Schedule 3-A (2026 draft) — the affected refundable credits over the total tax less
+    # Schedule 2 Section B, the employment taxes outside subtitle A (here, the wage part of the Additional
+    # Medicare Tax). Proposed Treas. Reg. 1.32-4(c)(2) sums the credits first, then takes the excess.
+    fpb = 0
+    fpb_cfg = pack.federal_public_benefit
+    if fpb_cfg is not None:
+        affected = -sum(ln.amount for ln in comp if ln.slot in fpb_cfg.affected_credits)
+        fpb = max(0, affected - max(0, total_tax - addmed_wage))
+
     bottom = payments - total_tax
     comp.append(_line("bottom_line", label=_BOTTOM_LINE_LABEL, amount=bottom))
     _reconcile(bottom, comp)
-    return BottomLineResult(bottom=bottom, lines=comp, citations=citations)
+    return BottomLineResult(bottom=bottom, lines=comp, citations=citations, federal_public_benefit=fpb)
+
+
+# JT1c (P-023): the status answer, read off the profile. A recorded qualified_alien_status decides; otherwise
+# us_person True (a citizen or green-card holder, its own definition) is a Yes, and the latest visa-timeline
+# status is read against 8 U.S.C. 1641 — a T status is 1641(c)(4), any other nonimmigrant class is on neither list.
+_PRWORA_QUALIFIED = frozenset({
+    "us_citizen", "us_national", "lpr", "asylee", "refugee", "parolee_1yr", "deportation_withheld",
+    "conditional_entrant", "cuban_haitian_entrant", "cofa_resident"})
+_PRWORA_1641C = frozenset({"battered_alien", "t_nonimmigrant"})
+_T_STATUS_RE = re.compile(r"^T-?[1-6]\b")
+_NONIMMIGRANT_RE = re.compile(r"^(?:[A-SUV]-?\d|TN\b|TD\b)")
+_LPR_STATUS_RE = re.compile(r"^(?:LPR\b|GREEN[ _-]?CARD|(?:LAWFUL[ _])?PERMANENT[ _]RESIDENT)")
+
+
+class _Prwora(BaseModel):
+    """One person's Schedule 3-A answer as the profile reads (JT1c). kind: qualified / c_only (a 1641(c)
+    category) / not_listed (a status on neither list) / unknown."""
+
+    kind: Literal["qualified", "c_only", "not_listed", "unknown"]
+    why: str
+
+
+def _prwora_person(answer, us_person, immigration, pos: str) -> _Prwora:
+    """``pos`` is the possessive the disclosure uses ('your' / "your spouse's")."""
+    if answer is not None and answer.value is not None:
+        value = str(answer.value)
+        if value in _PRWORA_QUALIFIED:
+            return _Prwora(kind="qualified", why=f"{pos} qualified_alien_status is '{value}'")
+        if value in _PRWORA_1641C:
+            return _Prwora(kind="c_only", why=(
+                f"{pos} qualified_alien_status is '{value}', an 8 U.S.C. 1641(c) category — the statute counts it "
+                f"(\"For purposes of this chapter, the term 'qualified alien' includes\"), but the proposed rule's "
+                f"definition cites 1641(b) only, and the Schedule 3-A instructions are not posted"))
+        return _Prwora(kind="not_listed", why=f"{pos} qualified_alien_status is 'none_of_these'")
+    if us_person is not None and us_person.value is True:
+        return _Prwora(kind="qualified", why=f"{pos} us_person answer is True (a U.S. citizen or green-card holder)")
+    periods = list(immigration.visa_timeline) if immigration is not None else []
+    if periods:
+        latest = max(periods, key=lambda p: p.start).status.strip().upper()
+        if _LPR_STATUS_RE.match(latest):
+            return _Prwora(kind="qualified", why=f"{pos} latest recorded status is '{latest}' (8 U.S.C. 1641(b)(1))")
+        if _T_STATUS_RE.match(latest):
+            return _Prwora(kind="c_only", why=(
+                f"{pos} latest recorded status is '{latest}', T nonimmigrant status — 8 U.S.C. 1641(c)(4) counts it, "
+                f"but the proposed rule's definition cites 1641(b) only"))
+        if _NONIMMIGRANT_RE.match(latest):
+            return _Prwora(kind="not_listed", why=(
+                f"{pos} latest recorded status is '{latest}', a nonimmigrant status on neither 8 U.S.C. 1641(b) "
+                f"nor (c) — unless it changes before you file"))
+    return _Prwora(kind="unknown", why=f"{pos} status as a U.S. citizen, U.S. national or qualified alien is not recorded")
+
+
+def _prwora_view(profile: Profile) -> tuple[_Prwora, _Prwora | None]:
+    """(taxpayer, spouse) — the spouse only when the profile records one."""
+    ident = profile.identity
+    tp = _prwora_person(
+        ident.qualified_alien_status if ident is not None else None,
+        ident.us_person if ident is not None else None, profile.immigration, "your")
+    spouse = profile.household.spouse if profile.household is not None else None
+    sp = None if spouse is None else _prwora_person(
+        spouse.qualified_alien_status, spouse.us_person, spouse.immigration, "your spouse's")
+    return tp, sp
+
+
+def _public_benefit_lost(status: str, result: BottomLineResult, tp: _Prwora, sp: _Prwora | None) -> tuple[int, str]:
+    """(the Schedule 3-A amount this reading of the profile forfeits on one candidate, the answer it rests on)
+    (JT1c). A joint return keeps it when EITHER spouse qualifies (proposed 1.32-4(b)(4)); a separate return is
+    its own filer's; the two-return MFS pair adds the spouse's separate return with the spouse's own answer.
+    The answer is 'unknown' when any forfeiting person is unrecorded, else 'c_only', else 'not_listed'."""
+    if status == _MFJ:
+        people = [p for p in (tp, sp) if p is not None]
+        if any(p.kind == "qualified" for p in people):
+            return 0, "qualified"
+        forfeiting = [(result.federal_public_benefit, people)]
+    else:
+        forfeiting = [(result.federal_public_benefit, [tp])]
+        if sp is not None:
+            forfeiting.append((result.spouse_federal_public_benefit, [sp]))
+    lost, kinds = 0, set()
+    for amount, people in forfeiting:
+        if amount and all(p.kind != "qualified" for p in people):
+            lost += amount
+            kinds.update(p.kind for p in people)
+    kind = next((k for k in ("unknown", "c_only", "not_listed") if k in kinds), "qualified")
+    return lost, kind
 
 
 def estimate_refund(
@@ -4607,7 +4709,11 @@ def estimate_refund(
             _line("bottom_line", label=_BOTTOM_LINE_LABEL, amount=total),
         ]
         _reconcile(total, comp)
-        result = BottomLineResult(bottom=total, lines=comp, citations=[*res_self.citations, *res_spouse.citations])
+        result = BottomLineResult(
+            bottom=total, lines=comp, citations=[*res_self.citations, *res_spouse.citations],
+            federal_public_benefit=res_self.federal_public_benefit,
+            spouse_federal_public_benefit=res_spouse.federal_public_benefit,
+        )
         return result, method, local
 
     def _outcome(
@@ -4842,6 +4948,16 @@ def estimate_refund(
         # NIIT default (route (ii) is its own figure).
         values.extend(_outcome(s, self_dual=False, record=False).bottom for s in statuses
                       if s != primary and not (s == _MFJ and election_candidate))
+    # JT1c (P-023): Schedule 3-A — the refunded portion a household that is not a U.S. citizen, U.S. national or
+    # qualified alien may not receive bounds the LOW end: the rule is proposed, and the answer is the one on the
+    # date the return is filed.
+    prwora_tp, prwora_sp = _prwora_view(profile)
+    public_benefit: dict[str, tuple[int, str]] = {}
+    for s, res in priced.items():
+        if res.federal_public_benefit or res.spouse_federal_public_benefit:
+            public_benefit[s] = _public_benefit_lost(s, res, prwora_tp, prwora_sp)
+    public_benefit_bracketed = any(lost for lost, _ in public_benefit.values())
+    values.extend(priced[s].bottom - lost for s, (lost, _) in public_benefit.items() if lost)
     low, high = min(values), max(values)
 
     comparison = _build_comparison(priced)
@@ -4869,15 +4985,15 @@ def estimate_refund(
     # JF5b part 3a: so does a reading of the §6013 NIIT default (its own note names it).
     niit_bracketed = any(v != outcomes[s].bottom for s, v in niit_alternatives)
     if status_assumed:
-        kept = (
-            "the residency reading named in these notes"
-            + (" and the NIIT default under the §6013 election (its note)" if niit_bracketed else "")
-            if residency_bracketed else "the NIIT default under the §6013 election (its note)"
-        )
+        kept = " and ".join(part for part, on in (
+            ("the residency reading named in these notes", residency_bracketed),
+            ("the NIIT default under the §6013 election (its note)", niit_bracketed),
+            ("the Schedule 3-A federal public benefit (its note)", public_benefit_bracketed),
+        ) if on)
         assumptions.append(
             f"Filing status not confirmed — showing the range across {', '.join(statuses)}. "
             + (f"Confirming your status narrows it; {kept} may keep a range of its own."
-               if residency_bracketed or niit_bracketed else "Confirm your status to get a single number.")
+               if kept else "Confirm your status to get a single number.")
         )
     elif state.joint_blocked:
         assumptions.append(
@@ -5419,6 +5535,30 @@ def estimate_refund(
         assumptions.append(
             "The 6% excise on an IRA excess contribution was charged on the whole excess: IRC 4973(a) caps it at 6% of "
             "the account's value at year end — pass traditional_ira_dec31_value / roth_ira_dec31_value for the cap.")
+    # JT1c (P-023): Schedule 3-A, disclosed on the headline status.
+    if primary in public_benefit:
+        lost, kind = public_benefit[primary]
+        fpb_cfg = load_knowledge("federal", year, base_dir=knowledge_dir).federal_public_benefit
+        figure = outcomes[primary].federal_public_benefit + outcomes[primary].spouse_federal_public_benefit
+        rule = (
+            f"Schedule 3-A (the draft {year} schedule) and proposed Treas. Reg. 1.32-4 (REG-119882-25): the refunded "
+            f"portion of the EIC, the additional child tax credit and the refundable AOTC — the part over the "
+            f"subtitle A tax, ${figure:,} here — is a \"Federal public benefit\" that an alien who is not a qualified "
+            f"alien (8 U.S.C. 1641) may not receive. Status counts on the date the return is filed, and on a joint "
+            f"return one spouse who is a U.S. citizen, U.S. national or qualified alien is enough. Tax residency is "
+            f"not the test: a resident alien on a visa is not on 1641(b)'s list."
+        )
+        answers = "; ".join(p.why for p in (prwora_tp, prwora_sp) if p is not None)
+        if not lost:
+            assumptions.append(f"{rule} Nothing is held back here — {answers}.")
+        else:
+            assumptions.append(
+                f"{rule} {answers[0].upper() + answers[1:]}. The LOW end of the range holds the ${lost:,} back; the "
+                f"point keeps it because the rule is {fpb_cfg.rule_status if fpb_cfg is not None else 'proposed'}: "
+                f"\"proposed to apply for taxable years ending on or after the date these regulations are "
+                f"published as final regulations\"."
+                + (" The adoption credit is not modeled." if fpb_cfg is not None
+                   and "adoption_refundable" in fpb_cfg.affected_credits else ""))
     retirement_view = income.combined_with_spouse()
     for item in retirement_view.retirement_distributions:
         name = item.label or f"the 1099-R with box 7 {item.codes or '(blank)'}"
@@ -6003,8 +6143,15 @@ def estimate_refund(
     if status_assumed:
         changes.append(
             "Confirming your filing status narrows the range (the residency reading keeps a range of its own)."
-            if residency_bracketed else "Confirming your filing status collapses the range to one number."
+            if residency_bracketed else
+            "Confirming your filing status narrows the range (the Schedule 3-A reading keeps a range of its own)."
+            if public_benefit_bracketed else "Confirming your filing status collapses the range to one number."
         )
+    if public_benefit.get(primary, (0, ""))[1] == "unknown" and public_benefit[primary][0]:
+        changes.append(
+            f"Record identity.qualified_alien_status (and the spouse's): on the date you file, a U.S. citizen, U.S. "
+            f"national or qualified alien keeps the ${public_benefit[primary][0]:,} Schedule 3-A would otherwise "
+            f"hold back — the low end of this range assumes it is held back.")
 
     def _phrase(v: int) -> str:
         return f"a refund of about ${v:,}" if v > 0 else (f"owing about ${-v:,}" if v < 0 else "breaking even")

@@ -104,6 +104,26 @@ class DateRange(BaseModel):
 VisaSubStatus = Literal["student", "opt", "stem_opt", "cap_gap", "employment", "dependent", "other"]
 
 
+# JT1c (P-023): the question Schedule 3-A (2026) asks, answered by 8 U.S.C. 1641's own categories.
+QualifiedAlienStatus = Literal[
+    "us_citizen", "us_national",
+    # 8 U.S.C. 1641(b)(1)-(8)
+    "lpr", "asylee", "refugee", "parolee_1yr", "deportation_withheld", "conditional_entrant",
+    "cuban_haitian_entrant", "cofa_resident",
+    # 8 U.S.C. 1641(c)(1)-(3) and (c)(4)
+    "battered_alien", "t_nonimmigrant",
+    "none_of_these",
+]
+_QUALIFIED_ALIEN_DOC = (
+    "JT1c (P-023): the answer to Schedule 3-A (2026) — 'Are you or your spouse a U.S. citizen, U.S. national, or "
+    "qualified alien?' — as of the DATE THE RETURN IS FILED (proposed Treas. Reg. 1.32-4(e)). A qualified alien is "
+    "on 8 U.S.C. 1641's list: lpr, asylee, refugee, parolee_1yr (paroled for at least 1 year), "
+    "deportation_withheld, conditional_entrant, cuban_haitian_entrant and cofa_resident are 1641(b)(1)-(8); "
+    "battered_alien and t_nonimmigrant are 1641(c). Tax residency is NOT the test: an H-1B or F-1 resident alien "
+    "is none_of_these. None = not asked (us_person True answers it: a citizen or green-card holder)."
+)
+
+
 class VisaPeriod(DateRange):
     """One period of the visa status timeline (eligibility is per-period, not per-year).
 
@@ -244,6 +264,7 @@ class Identity(BaseModel):
             "the user when the two differ. None means not yet asked."
         ),
     )
+    qualified_alien_status: Answer[QualifiedAlienStatus] | None = Field(default=None, description=_QUALIFIED_ALIEN_DOC)
     mailing_address: Answer[str] | None = Field(
         default=None,
         description=(
@@ -321,6 +342,9 @@ class Spouse(BaseModel):
     )
     immigration: Immigration | None = Field(
         default=None, description="Spouse's visa timeline — drives the NRA-spouse §6013(g)/(h) decision."
+    )
+    qualified_alien_status: Answer[QualifiedAlienStatus] | None = Field(
+        default=None, description="The spouse's own answer; mirrors Identity.qualified_alien_status. " + _QUALIFIED_ALIEN_DOC
     )
     residency_facts: ResidencyFacts | None = None
 
