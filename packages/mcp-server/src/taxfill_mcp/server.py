@@ -396,8 +396,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       car loan $200 per $1,000 rounded UP, senior 6% of excess per person); qualifying surviving spouse
       takes the OTHER thresholds (each statute keys on 'a joint return'). qualified_overtime is the FLSA
       premium HALF only, never the whole overtime wage. Eligibility stays YOUR judgment, quoted in the
-      work: tipped-occupation list, new-vehicle/US-assembly/VIN rules, valid SSNs, seniors born before
-      1961-01-02)
+      work: tipped-occupation list, new-vehicle/US-assembly/VIN rules, valid SSNs, seniors 65 by year end
+      (the year's senior_deduction.born_before: born before January 2 of year - 64). 2025 and 2026 ship)
     - employee_fica: args {wage_segments: [{wages, fica_exempt, label?, employer?, visa_status?,
       exempt_basis?}...], year?, residency_classification?, filing_status?} (JP1a: two layers —
       WITHHOLDING per employer (each applies its own wage base and IRC 3102(f)(1)'s 0.9% on "wages from

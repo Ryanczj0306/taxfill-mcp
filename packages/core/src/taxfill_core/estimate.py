@@ -3505,7 +3505,9 @@ def _schedule_1a_engaged(income: IncomeSnapshot, seniors: int) -> bool:
 
 def _senior(dob_answer, tax_id_answer, year: int) -> bool | None:
     """Schedule 1-A Part V for one person: 65 or older at the end of ``year`` (born before January 2 of year - 64,
-    the 2025 form's "born before January 2, 1961") with a valid SSN. None when the date of birth is unknown."""
+    IRC 151(d)(5)(C)(ii)'s "attained age 65 before the close of the taxable year" — the knowledge pack's
+    senior_deduction.born_before, test-pinned to this rule) with a valid SSN. None when the date of birth
+    is unknown."""
     dob = getattr(dob_answer, "value", None)
     if dob is None:
         return None

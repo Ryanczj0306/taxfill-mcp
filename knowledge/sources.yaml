@@ -1407,6 +1407,15 @@ federal:
           Schedule 1-A 2026 Part IV takes the interest from box 1 of that
           statement.
         cadence: draft; the final statement posts for calendar year 2026 reporting
+      - url: https://www.irs.gov/pub/irs-pdf/f1098vli.pdf
+        answers: >-
+          The FINAL statement (Rev. December 2026), Copy B: box 1 vehicle loan
+          interest received by lender, 2a-2d year / make / model / VIN, 3a/3b
+          origination and acquisition dates, 4 outstanding principal, 5
+          overpaid interest paid back ("Do not deduct this amount"), 6 original
+          use began with the payer of record, 7 final assembly within the United
+          States; extract_document reads each box.
+        cadence: final revision (reissued when the IRS revises the form)
     # Planned as w2_2026_tips_overtime: those key tokens took "tips", "overtime" and
     # "tips deduction" from obbba_schedule_1a_deductions, where the deduction law is.
     w2_2026_codes_tp_tt:

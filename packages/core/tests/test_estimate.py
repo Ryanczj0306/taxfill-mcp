@@ -5081,12 +5081,22 @@ def test_jf7_the_mfs_candidate_forfeits_tips_overtime_and_senior_but_not_car_loa
     assert any("FORFEITED" in a and "car-loan interest is not" in a for a in est.assumptions)
 
 
-def test_jf7_a_planning_year_without_the_block_names_it_missing(planning_year):
-    est = estimate_refund(Profile(), planning_year, _s1a(qualified_tips=5_000))
+def test_jf7_a_planning_year_without_the_block_names_it_missing(planning_year, synthetic_provisional_pack):
+    # JT0b: a scratch planning pack that declares the block absent (2026 itself ships it since JF8).
+    kdir = synthetic_provisional_pack(["obbba_schedule_1a"])
+    est = estimate_refund(Profile(), planning_year, _s1a(qualified_tips=5_000), knowledge_dir=kdir)
     assert [(m.block, m.direction) for m in est.missing_blocks if m.block == "tax.obbba_schedule_1a"] == [
         ("tax.obbba_schedule_1a", "understates_refund")]
     assert any("NOT ESTIMATED" in a and "Schedule 1-A" in a for a in est.assumptions)
     assert _slot(est, "schedule_1a_deductions") is None
+
+
+def test_jf8_the_2026_estimate_prices_schedule_1a_and_names_nothing_missing():
+    est = estimate_refund(Profile(), 2026, _s1a(qualified_tips=5_000, car_loan_interest=1_200))
+    assert _slot(est, "schedule_1a_deductions") == -6_200
+    assert not [m for m in est.missing_blocks if m.block == "tax.obbba_schedule_1a"]
+    label = next(ln.label for ln in est.composition if ln.slot == "schedule_1a_deductions")
+    assert "line 13a" in label   # the 2026 draft Form 1040 line (13b in 2025)
 
 
 def test_jf7_a_year_before_the_law_takes_none_and_says_why():

@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
+from datetime import date
 from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
@@ -1153,7 +1154,12 @@ class Sched1aSeniorParams(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     amount_per_qualifying_individual: int = Field(gt=0)
-    birth_date_requirement: str = Field(description="'born before January 2, 1961' — age 65 by year end.")
+    birth_date_requirement: str = Field(description="The form's printed text, e.g. 'born before January 2, 1962'.")
+    born_before: date = Field(
+        description="JF8: the same rule as a date — IRC 151(d)(5)(C)(ii) 'attained age 65 before the close of the "
+                    "taxable year', i.e. January 2 of tax_year - 64 (test-pinned to the pack's year and to "
+                    "birth_date_requirement). 1961-01-02 for 2025, 1962-01-02 for 2026."
+    )
     phaseout: Sched1aRatePhaseout
     mfs_allowed: bool = Field(description="False: a married filer must file JOINTLY to claim it (forfeited on MFS).")
 
@@ -1161,9 +1167,10 @@ class Sched1aSeniorParams(BaseModel):
 class ObbbaSchedule1aParams(BaseModel):
     """The ``tax.obbba_schedule_1a`` block: the four OBBBA Schedule 1-A deductions.
 
-    Consumed by :func:`taxfill_core.calc.schedule_1a_deductions`. The line 38
-    total flows to Form 1040 line 13b / Form 1040-NR line 13c and reduces
-    taxable income whether the filer itemizes or takes the standard deduction.
+    Consumed by :func:`taxfill_core.calc.schedule_1a_deductions`. The Part VI
+    total (form_lines sched1a.total) flows to the Form 1040 / 1040-NR line named
+    by form_lines f1040.sched_1a / f1040nr.sched_1a, and reduces taxable income
+    whether the filer itemizes or takes the standard deduction.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -2167,6 +2174,8 @@ class Provisional(BaseModel):
     def _alias_second_pass(self) -> "Provisional":
         if self.second_pass is not None and not self.second_passes:
             self.second_passes = [self.second_pass]
+        elif self.second_pass is None and self.second_passes:
+            self.second_pass = self.second_passes[0]
         return self
 
     def draft_only_blocks(self) -> list[str]:

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,430 tests** — offline 6,021 + live-.gov 409; derived
+Done and on `main` (**6,440 tests** — offline 6,031 + live-.gov 409; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -45,7 +45,7 @@ OTR re-issued it). Since Phase J JT0c (2026-09-27) both sit behind an expiring a
   states). The `calc` tool carries **35** deterministic ops (`packages/mcp-server/tests/test_skills_sync.py` pins the count; Phase J adds 8 → 40 without adding an MCP tool): the 25 of Phase H (tax, tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, state_tax) plus Phase I's ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election and foreign_asset_reporting.
 - **Phase B — single-user completeness: DONE.** `extract_document` (W-2,
   1099-NEC/MISC/INT/DIV/G/B/R, SSA-1099, 1095-A, 1098-T/E, 1042-S, and — since
-  2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance — and, since Phases I2/I3/I5, 1099-SA, 5498-SA, 3921, 3922, 1099-K, 1099-Q, W-2G, 1095-B, 1095-C, 5498, K-1 (1120-S) and K-1 (1041), and since JR2c the IRA custodian statement: **27 kinds** per `list_document_kinds()`) and the resumable
+  2026-08-10 — **Schedule K-1 (Form 1065)**, with per-field provenance — and, since Phases I2/I3/I5, 1099-SA, 5498-SA, 3921, 3922, 1099-K, 1099-Q, W-2G, 1095-B, 1095-C, 5498, K-1 (1120-S) and K-1 (1041), since JR2c the IRA custodian statement, and since JF8 Form 1098-VLI: **28 kinds** per `list_document_kinds()`) and the resumable
   workspace (`workspace_*` tools + `taxfill purge` CLI, generated RECONCILIATION.md
   / CHECKLIST.md) are implemented, merged, and tested.
 - **Federal form packs — priority set DONE.** **111 packs across 2019–2025**
@@ -2080,7 +2080,26 @@ not wait for any of this.
     - The MFS candidate forfeits tips, overtime and senior but not car-loan interest.
     - 2026 with an input → the MissingBlock (until JF8).
     - The 240-profile property suite and the compare_scenarios tests are extended and green.
-- [ ] **JF8 — Schedule 1-A for 2026, and Form 1098-VLI** (M; deps JT0b, JF6c, JF7)
+- [x] **JF8 — Schedule 1-A for 2026, and Form 1098-VLI — DONE 2026-09-27** (M; deps JT0b, JF6c, JF7)
+  - *As built:*
+    - **tax.obbba_schedule_1a for 2026:**
+      - Pass 1 is the statute (IRC 224(b)/(h), 225(b)/(g), 163(h)(4)(A)-(D), 151(d)(5)(C), quoted in the block header, read 2026-09-27 at uscode.house.gov). Every figure is unindexed and equals 2025's (test-pinned).
+      - Pass 2 is two `second_passes` entries: the FINAL W-4 (2026) Step 4(b) worksheet, and the DRAFT Schedule 1-A (Created 6/16/26) for the slopes, the rounding and "born before January 2, 1962". The pack's singular `second_pass` became the list.
+      - Dropped from blocks_deliberately_absent and the 2026 header's outstanding list. Its effective_law_changes entry now cites the statute with `modeled: true`, fixing G28: it had carried a copy of the Pub 15 supplemental-wage citation.
+      - A new invariant: no two FEDERAL law-change entries share a citation. State booklets are the declared exception, since one What's New page lists several changes.
+    - **`senior_deduction.born_before`** (a date: 1961-01-02 for 2025, 1962-01-02 for 2026) is test-pinned to IRC 151(d)(5)(C)(ii)'s age-65 rule and to the printed requirement. The op's error, docstring, estimator note and server doc no longer carry a 1961 literal.
+    - **Found and fixed:** schedule_1a_deductions' work printed the 2025 Part ranges ("lines 4-13", "14-21", "22-30", "31-37") and "VIN on line 22" for every year.
+      - Both now derive from the year's form_lines Part totals: 2026 prints 4-15 / 16-27 / 28-36 / 37-43, VIN on 28. The loan date comes from the block too.
+      - The JF6a guard missed these because "Schedule 1-A" was not within 15 characters of "line".
+    - **Form 1098-VLI DocSpec** (28 kinds): source irs-pdf/f1098vli.pdf, the final Rev. December 2026 (the About page and irs.gov/Form1098VLI 404).
+      - Boxes 1, 2a-2d, 3a/3b, 4, 5, 6, 7 plus the lender/payer TINs and the account number.
+      - The status note quotes 163(h)(4)(B)(i)/(iii) and (D) for boxes 3a/2d/6/7, and box 5's "Do not deduct this amount".
+      - Checks: V19 (a 17-character VIN), V20 (box 6/7 unchecked → not qualified), V21 (loan on/before 2024-12-31).
+      - The form_1098vli sources topic gains the final form; route sweep 0/258 changed.
+    - **Tests:**
+      - test_schedule_1a `test_jf8_*`: statute = block = 2025; the born-before rule for 2025/2026; 2026 goldens for all four parts (including line 34's round-up); car-loan interest above the phase-out → $0 with the work; the 2025 work unchanged.
+      - test_extract `test_jf8_1098vli_*`; test_knowledge's citation invariant.
+      - test_estimate: the JF7 missing-block test moves to a synthetic planning pack, and 2026 now prices Schedule 1-A with no MissingBlock (line 13a in the label).
   1. **The 2026 block** [LD-08 + TY26-06 + G28].
      - `tax.obbba_schedule_1a` is declared absent for 2026 (2026.yaml:81), yet the figures are statutory and unindexed:
        - 163(h)(4)(C): $10,000 / $100,000 ($200,000 joint) / $200 per $1,000;
@@ -2230,6 +2249,7 @@ not wait for any of this.
   - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new).
   - **JT5g** (external): sched_nec and sched_oi, once their 2026 drafts post. The f1040nrn/nro drafts are still 2025; they are on the check_finals watchlist.
   - **Acceptance:** as JT3.
+  - **Port rule (found in JF8):** calc.py prints ~330 worksheet and form line literals for forms outside the form_lines registry (Schedule SE, Form 8962, Form 8863, the QDCG and Social Security worksheets, ...), each true for the year it was read. Each Wave B port greps calc.py for its form's literals and moves any that differ onto form_lines.
 
 ### Block 5 — Remaining decision ops
 
@@ -2382,6 +2402,7 @@ not wait for any of this.
   - **Per flagged form.** Diff its AcroForm names against the draft pack (the IRS says they are identical), re-render and re-audit, re-pin source_url and sha, and set `source_status: final`.
   - **Knowledge.**
     - Re-verify every draft-backed block against the final instructions, flipping its second_passes entries.
+      - Including tax.obbba_schedule_1a (JF8): re-read the final Schedule 1-A and its instructions (the statutory figures cannot move; the face's slopes, rounding and birth date can).
     - Settle the 2026 total-tax line (24a vs 24c).
     - Re-verify the Schedule 3-A qualified-alien mapping.
     - Author filing_thresholds and the no-payment addresses from i1040gi / Pub 501 (2026).

@@ -579,6 +579,7 @@ tax:
     senior_deduction:
       amount_per_qualifying_individual: 6000
       birth_date_requirement: "born before January 2, 1961"
+      born_before: 1961-01-02   # IRC 151(d)(5)(C)(ii): age 65 before the close of 2025
       phaseout:
         magi_threshold: { married_filing_jointly: 150000, other: 75000 }
         rate: 0.06   # Schedule 1-A line 34: 6% of MAGI over the threshold, per person

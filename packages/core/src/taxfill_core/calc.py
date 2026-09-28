@@ -3082,7 +3082,8 @@ def schedule_1a_deductions(
     overtime wage; car-loan interest requires a personal-use NEW vehicle,
     US final assembly, a post-2024-12-31 loan secured by the vehicle, and the VIN
     on the return, net of amounts deducted on Schedule C/E/F; a senior qualifies
-    when born before January 2, 1961 with a valid SSN.
+    when 65 by the end of the year (born before the pack's ``senior_deduction.born_before`` date) with a
+    valid SSN.
 
     What the op DOES enforce, because they are form math, not judgment:
 
@@ -3106,8 +3107,8 @@ def schedule_1a_deductions(
     on a joint return where both spouses qualify).
 
     Raises a prescriptive ValueError for a year without the block: the deduction
-    family exists for 2025-2028 only, and the 2026 planning pack declares it
-    deliberately absent until the 2026 Schedule 1-A publishes.
+    family exists for 2025-2028 only, and a planning pack may declare it deliberately absent until it
+    is two-pass verified.
     """
     if filing_status not in FILING_STATUSES and filing_status != _QSS:
         raise ValueError(
@@ -3122,7 +3123,7 @@ def schedule_1a_deductions(
         if val < 0:
             raise ValueError(f"{name} must be >= 0 — pass the qualified dollar amount, got {val}")
     if not isinstance(seniors_qualifying, int) or isinstance(seniors_qualifying, bool) or seniors_qualifying < 0:
-        raise ValueError("seniors_qualifying must be a whole count >= 0 (people born before January 2, 1961)")
+        raise ValueError("seniors_qualifying must be a whole count >= 0 (people 65 or older by year end with a valid SSN)")
     if seniors_qualifying > 2:
         raise ValueError("seniors_qualifying cannot exceed 2 — only the taxpayer and a spouse can qualify")
     if seniors_qualifying == 2 and filing_status != "married_filing_jointly":
@@ -3137,14 +3138,23 @@ def schedule_1a_deductions(
         raise ValueError(
             f"knowledge pack for federal {year} has no tax.obbba_schedule_1a block. The Schedule 1-A "
             f"deductions (tips / overtime / car-loan interest / senior) exist for tax years 2025-2028 "
-            f"only (P.L. 119-21) — for an earlier year there is nothing to compute; for 2026+ the block "
-            f"ships once that year's Schedule 1-A publishes and is two-pass verified (the 2026 planning "
-            f"pack declares it deliberately absent rather than carrying forward unverified figures)."
+            f"only (P.L. 119-21) — for an earlier year there is nothing to compute; for a later year the "
+            f"block ships once it is two-pass verified (a planning pack declares it deliberately absent "
+            f"rather than carrying forward unverified figures)."
         )
 
     mfs = filing_status == "married_filing_separately"
     magi_whole = irs_round(magi_d)
     parts: list[Schedule1APart] = []
+    # JF8: each Part's printed line range, and the VIN line, come from the year's face (form_lines:
+    # the Part totals), never a 2025 literal — 2025 prints Parts II-V on lines 4-13 / 14-21 / 22-30 /
+    # 31-37 with the VIN on line 22, the 2026 draft on 4-15 / 16-27 / 28-36 / 37-43 with the VIN on 28.
+    # Part II opens right after Part I's MAGI lines 1-3 on both faces.
+    ends = {k: int(form_line_entry(pack, f"sched1a.{k}").line) for k in ("tips", "overtime", "car_loan", "senior")}
+    part_lines = {"tips": f"lines 4-{ends['tips']}", "overtime": f"lines {ends['tips'] + 1}-{ends['overtime']}",
+                  "car_loan": f"lines {ends['overtime'] + 1}-{ends['car_loan']}",
+                  "senior": f"lines {ends['car_loan'] + 1}-{ends['senior']}"}
+    vin_line = ends["overtime"] + 1
     work_lines = [
         f"Schedule 1-A ({year}) — MAGI (Part I) = ${magi_whole:,}; filing status {filing_status}.",
     ]
@@ -3204,11 +3214,11 @@ def schedule_1a_deductions(
     if tips_d > 0:
         cap_note = " — per RETURN; a joint return does NOT double it" if params.tips.cap_is_per_return else ""
         _step_part("II", form_line_entry(pack, "sched1a.tips").line, "No Tax on Tips", tips_d, params.tips.deduction_cap, params.tips.phaseout,
-                   forfeit_on_mfs=not params.tips.mfs_allowed, lines_note="lines 4-13", cap_note=cap_note)
+                   forfeit_on_mfs=not params.tips.mfs_allowed, lines_note=part_lines["tips"], cap_note=cap_note)
     if overtime_d > 0:
         _step_part("III", form_line_entry(pack, "sched1a.overtime").line, "No Tax on Overtime", overtime_d,
                    params.overtime.deduction_cap.for_status(filing_status), params.overtime.phaseout,
-                   forfeit_on_mfs=not params.overtime.mfs_allowed, lines_note="lines 14-21")
+                   forfeit_on_mfs=not params.overtime.mfs_allowed, lines_note=part_lines["overtime"])
         # N-14 push-back: the marketing name invites a wrong conclusion ("no tax
         # on overtime ⇒ overtime is untaxed") — state the distinction unprompted,
         # in the work the user actually reads.
@@ -3221,7 +3231,7 @@ def schedule_1a_deductions(
     if car_d > 0:
         _step_part("IV", form_line_entry(pack, "sched1a.car_loan").line, "Qualified passenger vehicle loan interest", car_d,
                    params.car_loan_interest.deduction_cap, params.car_loan_interest.phaseout,
-                   forfeit_on_mfs=False, lines_note="lines 22-30")
+                   forfeit_on_mfs=False, lines_note=part_lines["car_loan"])
     if seniors_qualifying > 0:
         sd = params.senior_deduction
         per_person = sd.amount_per_qualifying_individual
@@ -3246,7 +3256,7 @@ def schedule_1a_deductions(
                 deduction=deduction,
             ))
             work_lines.append(
-                f"Part V (Senior deduction, lines 31-37): {seniors_qualifying} qualifying individual(s) "
+                f"Part V (Senior deduction, {part_lines['senior']}): {seniors_qualifying} qualifying individual(s) "
                 f"({sd.birth_date_requirement}, valid SSN) x ${per_person:,}; MAGI excess over "
                 f"${threshold:,} = ${irs_round(excess):,} x {sd.phaseout.rate} = ${reduction_pp:,} "
                 f"reduction PER PERSON -> ${per_person_ded:,} each -> deduction ${deduction:,}."
@@ -3262,8 +3272,8 @@ def schedule_1a_deductions(
     work_lines.append(
         "Caller-judgment requirements NOT verified here: tipped-occupation list (IRS.gov/TippedOccupations, "
         "voluntary tips only, no SSTB tips); overtime = the FLSA premium HALF only; car loan = personal-use "
-        "NEW vehicle, US final assembly, loan after 2024-12-31 secured by the vehicle, VIN on line 22, net "
-        "of Schedule C/E/F amounts; valid SSNs where required."
+        f"NEW vehicle, US final assembly, loan after {params.car_loan_interest.loan_originated_after} secured "
+        f"by the vehicle, VIN on line {vin_line}, net of Schedule C/E/F amounts; valid SSNs where required."
     )
 
     return Schedule1AResult(

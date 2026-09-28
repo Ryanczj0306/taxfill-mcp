@@ -254,6 +254,41 @@ _SPECS: list[DocSpec] = [
         ],
     ),
     DocSpec(
+        kind="1098-VLI",
+        title="Vehicle Loan Interest Statement (Rev. December 2026)",
+        source_url="https://www.irs.gov/pub/irs-pdf/f1098vli.pdf",  # the About page and irs.gov/Form1098VLI 404 (2026-09-27)
+        status_note=(
+            "Box 1 is the interest the LENDER received; Copy B cautions \"The amount shown may not be fully deductible "
+            "by you. Limits based on the amount of interest paid, your income, and the passenger vehicle may apply.\" "
+            "It feeds calc op schedule_1a_deductions (car_loan_interest), net of any amount deducted on Schedule C, E or "
+            "F (Schedule 1-A column (ii)); the op applies the $10,000 cap and the MAGI phase-out. The boxes carry three "
+            "of IRC 163(h)(4)'s conditions: box 6 = \"the original use of which commences with the taxpayer\" "
+            "(163(h)(4)(D)(i)); box 7 = final assembly in the United States (163(h)(4)(D): the term \"shall not include "
+            "any vehicle the final assembly of which did not occur within the United States\"); box 3a = \"indebtedness "
+            "incurred by the taxpayer after December 31, 2024\" (163(h)(4)(B)(i)). Box 2d is the VIN the return must "
+            "carry (163(h)(4)(B)(iii)). Box 5 is a refund of prior-year interest: \"Do not deduct this amount\" "
+            "(Instructions for Payer of Record). Personal use, a first lien, and the exceptions (fleet, commercial, "
+            "lease, salvage title, scrap) stay the filer's judgment."
+        ),
+        boxes=[
+            _b("lender_name", "RECIPIENT'S/LENDER'S name", "text"),
+            _b("lender_tin", "RECIPIENT'S/LENDER'S TIN", "tin"),
+            _b("payer_tin", "PAYER OF RECORD'S TIN (may show only the last 4 digits)", "tin"),
+            _b("1", "Box 1 — Vehicle loan interest received by lender", "money", required=True),
+            _b("2a", "Box 2a — Year (of the vehicle)", "int"),
+            _b("2b", "Box 2b — Make", "text"),
+            _b("2c", "Box 2c — Model", "text"),
+            _b("2d", "Box 2d — VIN", "text", required=True),
+            _b("3a", "Box 3a — Loan origination date (YYYY-MM-DD)", "text"),
+            _b("3b", "Box 3b — Loan acquisition date (YYYY-MM-DD)", "text"),
+            _b("4", "Box 4 — Outstanding principal", "money"),
+            _b("5", "Box 5 — Refund of overpaid interest", "money"),
+            _b("6", "Box 6 — Check if original use of the vehicle began with the payer of record", "checkbox"),
+            _b("7", "Box 7 — Check if final assembly of the vehicle occurred within the United States", "checkbox"),
+            _b("account_number", "Account number", "text"),
+        ],
+    ),
+    DocSpec(
         # NRA-critical: how treaty-exempt income and its withholding are reported.
         kind="1042-S",
         title="Foreign Person's U.S. Source Income Subject to Withholding",
@@ -1575,8 +1610,40 @@ def _validate_custodian_statement(fields: dict[str, ExtractedField], tax_year: i
     return found, None
 
 
+def _validate_1098vli(fields: dict[str, ExtractedField], tax_year: int | None):
+    """Form 1098-VLI (JF8): the VIN the return must carry, and the IRC 163(h)(4) conditions boxes 3a, 6 and 7 show."""
+    import re as _re  # noqa: PLC0415
+
+    found: list[Finding] = []
+
+    def add(severity, rule_id, boxes, message, cite):
+        found.append(Finding(severity=severity, rule_id=rule_id, boxes=boxes, message=message, citation=cite))
+
+    vin_field = fields.get("2d")
+    vin = str(vin_field.value).strip().upper() if vin_field is not None and vin_field.value is not None else ""
+    if vin and not _re.fullmatch(r"[A-Z0-9]{17}", vin):
+        add("error", "V19", ["2d"], f"box 2d reads {vin!r}: a VIN is 17 letters and digits, and Schedule 1-A prints a "
+            "17-cell VIN box (Part IV, column (i)) — re-read the statement.",
+            "IRC 163(h)(4)(B)(iii); Schedule 1-A Part IV")
+    for box, what, cite in (("6", "the original use of the vehicle began with you", "IRC 163(h)(4)(D)(i)"),
+                            ("7", "the vehicle's final assembly occurred within the United States",
+                             "IRC 163(h)(4)(D), flush language")):
+        f = fields.get(box)
+        if f is not None and f.status == "ok" and f.value is False:
+            add("warning", "V20", [box], f"box {box} is not checked, so the statement does not show that {what}: "
+                "without it the interest is not qualified passenger vehicle loan interest — confirm before claiming it "
+                "on Schedule 1-A.", cite)
+    origin = _iso_or_none(fields, "3a")
+    if origin == "invalid":
+        add("error", "V21", ["3a"], "box 3a is not an ISO date (YYYY-MM-DD).", "IRC 163(h)(4)(B)(i)")
+    elif origin is not None and origin.isoformat() <= "2024-12-31":
+        add("warning", "V21", ["3a"], f"box 3a dates the loan {origin.isoformat()}: only \"indebtedness incurred by the "
+            "taxpayer after December 31, 2024\" qualifies.", "IRC 163(h)(4)(B)(i)")
+    return found, None
+
+
 _VALIDATORS = {"1099-R": _validate_1099r, "5498": _validate_5498,
-               "IRA custodian statement": _validate_custodian_statement}
+               "IRA custodian statement": _validate_custodian_statement, "1098-VLI": _validate_1098vli}
 
 
 class Dec31Value(BaseModel):

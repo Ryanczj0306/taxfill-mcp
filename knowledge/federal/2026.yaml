@@ -38,8 +38,8 @@
 #   and opens the `ty2026-finals: re-pin now` issue when one posts.
 #
 # WHAT IS OUTSTANDING before this pack can back a filed return
-#   1. The absent blocks (provisional.blocks_deliberately_absent): obbba_schedule_1a,
-#      ptc, taxable_social_security, student_loan_interest, education_credits,
+#   1. The absent blocks (provisional.blocks_deliberately_absent): ptc,
+#      taxable_social_security, student_loan_interest, education_credits,
 #      dependent_care, filing_thresholds, credits, payment_options, mailing_addresses
 #      and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
 #   2. tax_table.row_bands still rests on a carried-forward STRUCTURE
@@ -77,12 +77,34 @@ tax_year: 2026
 provisional:
   status: planning_only
   authored: "2026-08-04"
-  second_pass:
-    date: "2026-08-04"
-    source: "Form 1040-ES (2026), Cat. No. 11340T (Feb 12, 2026) — 2026 Tax Rate Schedules + standard-deduction chart + SE worksheet line 5"
-    url: "https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf"
-    verified_blocks: [rate_schedules, standard_deduction, se_tax.ss_wage_base, employee_social_security.ss_wage_base]
-    result: "all figures matched the Rev. Proc. 2025-32 / Pub 15 (2026) transcription exactly; zero discrepancies"
+  second_passes:
+    - date: "2026-08-04"
+      source: "Form 1040-ES (2026), Cat. No. 11340T (Feb 12, 2026) — 2026 Tax Rate Schedules + standard-deduction chart + SE worksheet line 5"
+      url: "https://www.irs.gov/pub/irs-prior/f1040es--2026.pdf"
+      verified_blocks: [rate_schedules, standard_deduction, se_tax.ss_wage_base, employee_social_security.ss_wage_base]
+      result: "all figures matched the Rev. Proc. 2025-32 / Pub 15 (2026) transcription exactly; zero discrepancies"
+    # JF8: tax.obbba_schedule_1a (pass 1 = the statute, see the block).
+    - date: "2026-09-27"
+      source: "Form W-4 (2026), Cat. No. 10220Q (Created 12/8/25) — Step 4(b) Deductions Worksheet lines 1a, 1b, 1c, 3a and 3b"
+      url: "https://www.irs.gov/pub/irs-pdf/fw4.pdf"
+      verified_blocks: [obbba_schedule_1a.tips, obbba_schedule_1a.overtime, obbba_schedule_1a.car_loan_interest, obbba_schedule_1a.senior_deduction]
+      result: >-
+        the caps and MAGI thresholds match the statute: tips "up to $25,000" under $150,000
+        ($300,000 MFJ); overtime "up to $12,500 ($25,000 if married filing jointly)"; vehicle loan
+        interest "up to $10,000" under $100,000 ($200,000 MFJ); seniors "$6,000" under $75,000
+        ($150,000 MFJ). The worksheet prints no phase-out slopes or rounding.
+    - date: "2026-09-27"
+      source: "Draft Schedule 1-A (Form 1040) 2026, Created 6/16/26 — Parts I-VI"
+      url: "https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf"
+      source_status: draft
+      draft_created: "6/16/26"
+      verified_blocks: [obbba_schedule_1a]
+      result: >-
+        every figure, slope and rounding direction matches the statute and the 2025 block: $25,000
+        (line 9), $150,000/$300,000 and x $100 (lines 11/14, round down on 13); $12,500/$25,000
+        (21), the same phase-out (23-26); $10,000 (30), $100,000/$200,000 (32), round UP (34),
+        x $200 (35); $75,000/$150,000 (38), 6% (40), $6,000 (41), "born before January 2, 1962"
+        (42a/42b); married must file jointly for Parts II, III and V only.
   still_assumed: "tax_table.row_bands (the final 2026 Publication 1040 is not posted; a draft, dated Aug 28, 2026, is)"
   reason: >-
     The 2026 return forms and the Tax Table booklet exist only as drafts, and the
@@ -96,7 +118,6 @@ provisional:
     unestimated (the estimator emits 'NOT ESTIMATED' assumptions for them).
     Insufficient for filing in every case.
   blocks_deliberately_absent:
-    - obbba_schedule_1a   # statutory caps are fixed by P.L. 119-21 but the 2026 Schedule 1-A is unpublished; ships after two-pass verification
     - ptc
     - taxable_social_security
     - student_loan_interest
@@ -435,6 +456,81 @@ tax:
       head_of_household: 579600
       qualifying_surviving_spouse: 613700
 
+  # ── OBBBA Schedule 1-A additional deductions (TY2026) — Phase J JF8 ────────
+  # PASS 1, THE STATUTE (P.L. 119-21), read 2026-09-27 at uscode.house.gov. None of
+  # the four is indexed, so 2026 carries the 2025 figures (test-pinned):
+  #   IRC 224(b)(1) "shall not exceed $25,000"; 224(b)(2)(A) "reduced (but not below
+  #     zero) by $100 for each $1,000 by which the taxpayer's modified adjusted gross
+  #     income exceeds $150,000 ($300,000 in the case of a joint return)"; 224(h) no
+  #     deduction "for any taxable year beginning after December 31, 2028".
+  #   IRC 225(b)(1) "shall not exceed $12,500 ($25,000 in the case of a joint
+  #     return)"; 225(b)(2)(A) the same $100-per-$1,000 phase-out; 225(g) the same end.
+  #   IRC 163(h)(4)(C)(i) "shall not exceed $10,000"; (C)(ii) "reduced (but not below
+  #     zero) by $200 for each $1,000 (or portion thereof) by which the modified
+  #     adjusted gross income of the taxpayer for the taxable year exceeds $100,000
+  #     ($200,000 in the case of a joint return)" — "or portion thereof" is the
+  #     round-UP; (A) years "beginning after December 31, 2024, and before January 1,
+  #     2029"; (B) "indebtedness incurred by the taxpayer after December 31, 2024".
+  #   IRC 151(d)(5)(C)(i) "$6,000 for each qualified individual"; (ii) "attained age
+  #     65 before the close of the taxable year"; (iii) "reduced (but not below zero)
+  #     by 6 percent of so much of the taxpayer's modified adjusted gross income as
+  #     exceeds $75,000 ($150,000 in the case of a joint return)".
+  # PASS 2 (provisional.second_passes): the FINAL Form W-4 (2026), Step 4(b)
+  # Deductions Worksheet lines 1a-1c and 3a/3b ($150,000/$300,000 and $25,000;
+  # $12,500 ($25,000 MFJ); $100,000/$200,000 and $10,000; $75,000/$150,000 and
+  # $6,000), and the DRAFT 2026 Schedule 1-A (Created 6/16/26): lines 9, 11, 13
+  # (round down), 14; 21, 23, 25, 26; 30, 32, 34 ("increase the result to the next
+  # higher whole number"), 35; 38, 40 (6%), 41 ($6,000), 42a "born before January 2,
+  # 1962"; and the married-must-file-jointly cautions on Parts II, III and V only.
+  obbba_schedule_1a:
+    citation:
+      source: >-
+        IRC 224(b) (qualified tips), 225(b) (qualified overtime compensation), 163(h)(4)
+        (qualified passenger vehicle loan interest) and 151(d)(5)(C) (deduction for seniors), as
+        added by P.L. 119-21 — statutory, not inflation-indexed; checked against the final Form
+        W-4 (2026) Step 4(b) Deductions Worksheet and the draft 2026 Schedule 1-A (Form 1040),
+        Created 6/16/26
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section224&num=0&edition=prelim"
+    effective_years: "2025 through 2028 (OBBBA, P.L. 119-21, enacted 2025-07-04)"
+    magi_definition: >-
+      Form 1040/1040-SR/1040-NR line 11b (AGI) + excluded Puerto Rico income +
+      Form 2555 lines 45 and 50 + Form 4563 line 15 (the draft 2026 Schedule 1-A
+      Part I, lines 1-3; IRC 224(b)(2)(B): AGI increased by amounts excluded under
+      sections 911, 931 or 933).
+    tips:
+      deduction_cap: 25000
+      cap_is_per_return: true
+      phaseout:
+        magi_threshold: { married_filing_jointly: 300000, other: 150000 }
+        reduction_per_1000_of_excess: 100
+        excess_rounding: down   # draft 2026 Schedule 1-A line 13: decrease to the next LOWER whole number
+      mfs_allowed: false
+    overtime:
+      deduction_cap: { married_filing_jointly: 25000, other: 12500 }
+      phaseout:
+        magi_threshold: { married_filing_jointly: 300000, other: 150000 }
+        reduction_per_1000_of_excess: 100
+        excess_rounding: down   # draft 2026 Schedule 1-A line 25
+      mfs_allowed: false
+    car_loan_interest:
+      deduction_cap: 10000
+      phaseout:
+        magi_threshold: { married_filing_jointly: 200000, other: 100000 }
+        reduction_per_1000_of_excess: 200
+        excess_rounding: up   # 163(h)(4)(C)(ii) "(or portion thereof)"; draft 2026 Schedule 1-A line 34
+      loan_originated_after: "2024-12-31"
+      new_vehicle_only: true
+      us_final_assembly_required: true
+      vin_required_on_return: true
+    senior_deduction:
+      amount_per_qualifying_individual: 6000
+      birth_date_requirement: "born before January 2, 1962"
+      born_before: 1962-01-02   # IRC 151(d)(5)(C)(ii): age 65 before the close of 2026
+      phaseout:
+        magi_threshold: { married_filing_jointly: 150000, other: 75000 }
+        rate: 0.06
+      mfs_allowed: false
+
 # ── Tax-advantaged account contribution limits (Phase H, H8) ──────────────────
 # Same shape as the 2025 block; see its header for the scoping rationale.
 # SOURCE WARNING baked into the citation: the irs-drop copy of Notice 2025-67
@@ -580,32 +676,23 @@ effective_law_changes:
       - tax.supplemental_withholding
     modeled: true
   - description: >-
-      P.L. 119-21's Schedule 1-A additional deductions are NOT available from this pack
-      for 2026: their statutory caps are fixed by P.L. 119-21, but the 2026 Schedule 1-A
-      is unpublished, so obbba_schedule_1a is listed in
-      provisional.blocks_deliberately_absent ("ships after two-pass verification") rather
-      than guessed. A 2026 projection built on this pack therefore OMITS those deductions
-      — calc raises its prescriptive "no block for this year" error instead of returning a
-      fabricated figure, and any consumer must surface the omission (see provisional.reason).
+      P.L. 119-21's Schedule 1-A additional deductions (IRC 224 qualified tips, 225 qualified
+      overtime compensation, 163(h)(4) qualified passenger vehicle loan interest, 151(d)(5)(C)
+      the deduction for seniors) apply for taxable years 2025 through 2028. Their figures are
+      statutory and not inflation-indexed, so tax.obbba_schedule_1a carries the 2025 figures
+      for 2026, read off the statute and checked against the final Form W-4 (2026) and the
+      draft 2026 Schedule 1-A (Phase J JF8, 2026-09-27; until then this entry declared the
+      block absent and — the G28 defect — cited Pub 15's supplemental-wage text). Only the
+      senior birth-date rule moves with the year: "born before January 2, 1962".
     citation:
       source: >-
-        Pub 15 (2026) ("For use in 2026", Dec 15, 2025), Section 7 Supplemental Wages, p. 24: the
-        optional flat 22% rate for separately-identified supplemental wages, and the mandatory rate on
-        the excess over $1 million ("the excess is subject to withholding at 37% (or the highest rate
-        of income tax for the year)"), applied without regard to Form W-4; What's New, p. 2: "The
-        withholding rate on supplemental wages remains 22% (37% if supplemental wages paid to an
-        employee during the calendar year exceed $1 million) because P.L. 119-21 permanently extended
-        the individual income tax rates."
-      url: "https://www.irs.gov/pub/irs-pdf/p15.pdf"
+        IRC 224(b)(1)-(2) and (h), 225(b)(1)-(2) and (g), 163(h)(4)(A)-(C) and 151(d)(5)(C), as
+        added by P.L. 119-21 (uscode.house.gov, read 2026-09-27)
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section224&num=0&edition=prelim"
     status: enacted
     affects:
-      - provisional.blocks_deliberately_absent (obbba_schedule_1a)
-      - 2026 Schedule 1-A (Form 1040) — unpublished
-    modeled: false
-    lookup_path: >-
-      Resolve the 2026 amounts from the 2026 Schedule 1-A (Form 1040) and its instructions
-      when they publish (the block ships only after the DEV_PLAN §7 two-pass verification);
-      the shipped TY2025 parameters live in knowledge/federal/2025.yaml tax.obbba_schedule_1a.
+      - tax.obbba_schedule_1a
+    modeled: true
 
 
 # ── Foreign-account and foreign-asset REPORTING duties (Phase I4) ─────────────

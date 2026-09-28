@@ -1090,8 +1090,8 @@ def test_i5_kinds_are_all_registered_and_cited():
               "1098-E", "1042-S", "SSA-1099", "1099-R", "1099-B", "1099-SA", "5498-SA",
               "3922", "3921", "1095-A", "K-1"}
     assert len(pre_i5) == 18 and pre_i5 <= set(kinds)
-    assert set(kinds) == pre_i5 | set(I5_KINDS) | {"IRA custodian statement"}   # + JR2c
-    assert len(kinds) == 27
+    assert set(kinds) == pre_i5 | set(I5_KINDS) | {"IRA custodian statement", "1098-VLI"}   # + JR2c, JF8
+    assert len(kinds) == 28
 
 
 @pytest.mark.parametrize("kind", sorted(I5_KINDS))
@@ -1173,3 +1173,35 @@ def test_jf2_a_money_market_payout_is_a_dividend_and_871k_is_its_own_exemption()
     from taxfill_core.estimate import IncomeSnapshot  # noqa: PLC0415
     assert "money market" in IncomeSnapshot.model_fields["interest"].description
     assert "871(k)(1)(A)" in IncomeSnapshot.model_fields["dividends"].description
+
+
+# ── JF8: Form 1098-VLI (Rev. December 2026) ──────────────────────────────────
+
+
+def _vli(**over):
+    reading = {"lender_name": "Demo Auto Credit", "1": "1,480.00", "2a": "2026", "2b": "Demo", "2c": "Wagon",
+               "2d": "1DEMO00000VIN0001", "3a": "2026-02-10", "4": "31,000.00", "5": "0", "6": True, "7": True}
+    reading.update(over)
+    return extract_document("docs/demo-1098vli.pdf", "1098-VLI", reading, tax_year=2026)
+
+
+def test_jf8_1098vli_round_trip_every_box():
+    doc = _vli()
+    fields = {f.key: f for f in doc.fields}
+    assert not doc.gaps and not doc.unexpected and not doc.findings
+    assert str(fields["1"].value) == "1480.00" and fields["6"].value is True and fields["7"].value is True
+    assert fields["2d"].value == "1DEMO00000VIN0001"
+    spec = {k["kind"]: k for k in list_document_kinds()}["1098-VLI"]
+    assert {b["key"] for b in spec["boxes"]} >= {"1", "2a", "2b", "2c", "2d", "3a", "3b", "4", "5", "6", "7"}
+    note = DOC_SPECS["1098-VLI"].status_note
+    assert "163(h)(4)" in note and "schedule_1a_deductions" in note and note in doc.caveat
+
+
+def test_jf8_1098vli_checks_the_vin_and_the_163h4_conditions():
+    assert [f.rule_id for f in _vli(**{"2d": "12345"}).findings] == ["V19"]
+    unchecked = _vli(**{"6": False, "7": False}).findings
+    assert [(f.rule_id, f.boxes) for f in unchecked] == [("V20", ["6"]), ("V20", ["7"])]
+    assert all(f.severity == "warning" for f in unchecked)
+    old_loan = _vli(**{"3a": "2024-11-30"}).findings
+    assert [f.rule_id for f in old_loan] == ["V21"] and "after December 31, 2024" in old_loan[0].message
+    assert [f.rule_id for f in _vli(**{"3a": "Feb 2026"}).findings] == ["V21"]

@@ -450,3 +450,19 @@ def test_deadlines_citation_is_form_family_aware(year):
     assert isinstance(nr, dict), f"{year}: deadlines.citation_1040nr missing"
     assert "1040-NR" in nr["source"]
     assert nr["url"].startswith("https://www.irs.gov/") and "i1040nr" in nr["url"]
+
+
+def test_jf8_federal_effective_law_changes_never_share_a_citation():
+    # G28: the 2026 pack's Schedule 1-A entry once carried a COPY of the Pub 15 supplemental-wage
+    # citation of the entry above it — a citation that says nothing about Schedule 1-A. A federal
+    # law-change entry cites its own law. (State packs are the declared exception: one booklet's
+    # "What's New" page legitimately lists several changes, so their entries share its citation.)
+    import yaml as _yaml  # noqa: PLC0415
+
+    root = Path(__file__).resolve().parents[3] / "knowledge" / "federal"
+    offenders = []
+    for path in sorted(root.glob("*.yaml")):
+        entries = (_yaml.safe_load(path.read_text()) or {}).get("effective_law_changes") or []
+        sources = [((e.get("citation") or {}).get("source") or "").strip() for e in entries]
+        offenders += [f"{path.name}: {s[:60]}" for s in set(sources) if s and sources.count(s) > 1]
+    assert not offenders, offenders

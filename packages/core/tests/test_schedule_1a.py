@@ -224,3 +224,82 @@ def test_overtime_work_pushes_back_on_the_marketing_name():
     # No overtime input -> no push-back noise.
     r2 = schedule_1a_deductions(80_000, "single", 2025, qualified_tips=1_000)
     assert "PREMIUM HALF" not in r2.work
+
+
+# ── JF8: the 2026 block — statutory, unindexed, and read off the 2026 face ────
+
+
+def test_jf8_the_2026_block_equals_the_statute_and_the_2025_block():
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    b25, b26 = (load_knowledge("federal", y).tax.obbba_schedule_1a for y in (2025, 2026))
+    # IRC 224(b), 225(b), 163(h)(4)(C) and 151(d)(5)(C): none is inflation-indexed.
+    assert (b26.tips.deduction_cap, b26.tips.phaseout.magi_threshold.for_status("single"),
+            b26.tips.phaseout.magi_threshold.for_status("married_filing_jointly"),
+            b26.tips.phaseout.reduction_per_1000_of_excess) == (25_000, 150_000, 300_000, 100)
+    assert (b26.overtime.deduction_cap.for_status("single"),
+            b26.overtime.deduction_cap.for_status("married_filing_jointly")) == (12_500, 25_000)
+    assert (b26.car_loan_interest.deduction_cap, b26.car_loan_interest.phaseout.magi_threshold.for_status("single"),
+            b26.car_loan_interest.phaseout.magi_threshold.for_status("married_filing_jointly"),
+            b26.car_loan_interest.phaseout.reduction_per_1000_of_excess,
+            b26.car_loan_interest.phaseout.excess_rounding) == (10_000, 100_000, 200_000, 200, "up")
+    assert (b26.senior_deduction.amount_per_qualifying_individual, str(b26.senior_deduction.phaseout.rate),
+            b26.senior_deduction.phaseout.magi_threshold.for_status("single"),
+            b26.senior_deduction.phaseout.magi_threshold.for_status("married_filing_jointly")) == (
+        6_000, "0.06", 75_000, 150_000)
+    # ...so every part equals 2025's, the senior birth-date rule aside.
+    for part in ("tips", "overtime", "car_loan_interest"):
+        assert getattr(b25, part) == getattr(b26, part), part
+    s25, s26 = b25.senior_deduction, b26.senior_deduction
+    assert (s25.amount_per_qualifying_individual, s25.phaseout, s25.mfs_allowed) == (
+        s26.amount_per_qualifying_individual, s26.phaseout, s26.mfs_allowed)
+
+
+@pytest.mark.parametrize("year", [2025, 2026])
+def test_jf8_born_before_is_the_age_65_rule_for_its_year(year):
+    # IRC 151(d)(5)(C)(ii): "attained age 65 before the close of the taxable year".
+    from datetime import date  # noqa: PLC0415
+
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    sd = load_knowledge("federal", year).tax.obbba_schedule_1a.senior_deduction
+    assert sd.born_before == date(year - 64, 1, 2)
+    assert sd.birth_date_requirement == f"born before January 2, {year - 64}"
+
+
+def test_jf8_2026_goldens_for_all_four_parts():
+    # P-015: the Part line ranges and the VIN line come from the 2026 face, not the 2025 literals.
+    # Hypothetical demo figures. Tips: single, MAGI $160,500 -> $10,500 over, 10 whole units (DOWN) x $100.
+    tips = schedule_1a_deductions(160_500, "single", 2026, qualified_tips=30_000)
+    assert [(p.part, p.form_line, p.tentative, p.reduction, p.deduction) for p in tips.parts] == [
+        ("II", "15", 25_000, 1_000, 24_000)]
+    assert "lines 4-15" in tips.work
+    # Overtime: MFJ, MAGI $305,999 -> 5 units x $100 off the $25,000 joint cap.
+    ot = schedule_1a_deductions(305_999, "married_filing_jointly", 2026, qualified_overtime=30_000)
+    assert [(p.form_line, p.tentative, p.reduction, p.deduction) for p in ot.parts] == [("27", 25_000, 500, 24_500)]
+    assert "lines 16-27" in ot.work
+    # Car loan: MAGI $1 over -> draft line 34 "increase the result to the next higher whole number" = 1 unit x $200.
+    car = schedule_1a_deductions(100_001, "single", 2026, car_loan_interest=12_000)
+    assert [(p.form_line, p.tentative, p.reduction, p.deduction) for p in car.parts] == [("36", 10_000, 200, 9_800)]
+    assert "UP to the next higher" in car.work and "lines 28-36" in car.work and "VIN on line 28" in car.work
+    # Seniors: MFJ, both 65+, MAGI $160,500 -> 6% of $10,500 = $630 off EACH $6,000.
+    sr = schedule_1a_deductions(160_500, "married_filing_jointly", 2026, seniors_qualifying=2)
+    assert [(p.form_line, p.deduction) for p in sr.parts] == [("43", 10_740)]
+    assert "lines 37-43" in sr.work and "born before January 2, 1962" in sr.work
+    # The Part VI total goes to the 2026 draft's Form 1040 line 13a.
+    assert "line 13a" in sr.work
+
+
+def test_jf8_car_loan_interest_above_the_phaseout_is_zero_with_the_work_shown():
+    r = schedule_1a_deductions(150_000, "single", 2026, car_loan_interest=4_000)   # $50,000 over -> 50 x $200
+    (part,) = r.parts
+    assert (part.tentative, part.reduction, part.deduction, r.total_deduction) == (4_000, 4_000, 0, 0)
+    assert "$50,000" in r.work and "deduction $0" in r.work
+
+
+def test_jf8_the_2025_work_keeps_the_2025_face():
+    # P-015: the same derivation still prints the 2025 face for 2025.
+    r = schedule_1a_deductions(90_000, "single", 2025, qualified_tips=1_000, car_loan_interest=1_000,
+                               seniors_qualifying=1)
+    assert "lines 4-13" in r.work and "lines 22-30" in r.work and "lines 31-37" in r.work
+    assert "VIN on line 22" in r.work and "born before January 2, 1961" in r.work

@@ -1083,7 +1083,15 @@ pitfalls:
       fails on the 2019 Schedule 1 line recorded as 8z, the 2020 Form 1040-NR
       line recorded as 1k and the 2020 Form 1040 line recorded as 25b, with
       the words unchanged. A network-marked test runs it on every entry's
-      face.
+      face. JF8 (2026-09-27) found one more of the unenforced prefix-less
+      shapes: calc.schedule_1a_deductions printed the 2025 Part ranges
+      ("lines 4-13", "lines 14-21", "lines 22-30", "lines 31-37") and "VIN on
+      line 22" in its work for every year, while the 2026 draft prints Parts
+      II-V on lines 4-15 / 16-27 / 28-36 / 37-43 with the VIN on line 28. They
+      now derive from the year's Part totals in form_lines; P-015-tagged tests
+      test_jf8_2026_goldens_for_all_four_parts and
+      test_jf8_the_2025_work_keeps_the_2025_face in test_schedule_1a.py pin
+      both years.
   - id: P-016
     incident: >-
       Every treaty text in the engine sent the filer to Schedule OI item L and
