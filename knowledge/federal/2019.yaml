@@ -1384,3 +1384,10 @@ form_lines:
     url: https://www.irs.gov/pub/irs-prior/f5329--2019.pdf
     read: '2026-09-27'
     printed: 25 2020). Include this amount on Schedule 2 (Form 1040 or 1040-SR), line 6, or Form 1040-NR, line 57
+  f1040.charitable_nonitemizer:
+    line: null
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2019.pdf
+    read: '2026-09-27'
+    absent: "no line takes a charitable gift with the standard deduction on this face; a gift counts only on Schedule A, via the deduction line"
+    printed: "Standard deduction or itemized deductions (from Schedule A)"

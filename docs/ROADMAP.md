@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,440 tests** — offline 6,031 + live-.gov 409; derived
+Done and on `main` (**6,452 tests** — offline 6,043 + live-.gov 409; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2121,7 +2121,27 @@ not wait for any of this.
     - Car-loan interest above the phase-out → $0 with the work shown, not a refusal.
     - JF7's MissingBlock disappears for 2026; eval i2 passes via the planning_year fixture.
     - A 1098-VLI round trip.
-- [ ] **JF9 — The 2026 charitable deduction and its characterization rules** (M; deps JT0b, JF7, JF2) [LD-06 + DEF-18 + TY26-17 + LD-07] — pitfall *charitable-characterization*
+- [x] **JF9 — The 2026 charitable deduction and its characterization rules — DONE 2026-09-27** (M; deps JT0b, JF7, JF2) [LD-06 + DEF-18 + TY26-17 + LD-07] — pitfall *charitable-characterization* = **P-022**
+  - *As built:*
+    - **Sources read 2026-09-27:**
+      - IRC 170(p) and 170(b)(1)(I) (uscode.house.gov, with the §70424(b)/§70425(c) "after December 31, 2025" notes; its prelim text drops 170(p)'s "$" before 1,000);
+      - the TEOS deductibility-code table; Rev. Proc. 2025-32 §4.33(2) ($13.90 / $69.50 / $139);
+      - Pub 526 (2025)'s "$75 or less" membership text; IRC 6115(a); 170(f)(8)(A)/(C); 170(f)(17);
+      - IRS INFO 2010-0172 (the plaque sentence; an information letter, labeled not a ruling);
+      - the final W-4 (2026) lines 12 and 6d; the draft 1040 line 12f and 1040-NR line 12b.
+    - **Knowledge:**
+      - A top-level `charitable_contributions` 2026 block (typed CharitableContributionsParams): the cap by status, cash only, eligible TEOS PC/POF/FED, excluded SO/SONFI/SOUNK and DAFs, the 0.005 floor, the three Rev. Proc. figures (quoted so the cents survive YAML), $75 / $75 / $250.
+      - It maps to JF2's charitable_nonitemizer topic in the sources-coverage rule, and its effective_law_changes entry is `modeled: true`.
+      - form_lines `f1040.charitable_nonitemizer` in EVERY year, as the resolve rule requires: 10b in 2020 (the CARES Act adjustment) and 12b in 2021 (the CAA 2021 deduction), neither IRC 170(p); absent in 2019 and 2022-2025; 12f on the 2026 draft.
+      - `f1040nr.charitable_nonitemizer` 12b for 2026 only.
+    - **Op `calc.charitable_deduction`** (36 ops):
+      - Per-gift deductible amounts under the P-022 rules. Recognition only keeps the full amount; a membership of $75 or less is disregarded; token items and benefits within 2% or $139 are insubstantial; otherwise the benefit's value comes off, and a payment over $75 whose benefit value is not stated is refused (the 6115 statement).
+      - The 170(f)(8) and 170(f)(17) duties; 170(p) payee eligibility (a "depends" TEOS code needs `donee_170b1a`); the cap; the 0.5% floor; the better path.
+      - Refuses a year before 2026. Server docs and all three skills carry it.
+    - **Estimator:** `charitable_cash_nonitemizer` (summed on the joint view) and slot `nonitemizer_charitable_deduction`.
+      - The method choice is itemized vs standard + the capped 170(p) amount, and taxable income drops by it (Form 1040 line from form_lines).
+      - Disclosures: itemizing won (the input is unused, and the itemized figure must already net the floor); 2025 ignored; a planning pack without the block → MissingBlock + NOT ESTIMATED; a 1040-NR / dual-status return → NOT ESTIMATED.
+    - **Tests** (test_charitable_deduction `test_p022_*`): the block's figures, the pre-2026 refusal, the cap and payee exclusions, the "depends" determination, every characterization rule, the membership refusal, the substantiation duties, the floor and the better path, the estimator's $600 / $1,400→$1,000 / itemize-wins / 2025 / planning-pack cases.
   1. **The deduction.**
      - Nothing models IRC 170(p) (P.L. 119-21 §70424, "taxable years beginning after December 31, 2025"): "not in excess of $1,000 ($2,000 in the case of a joint return)", cash "to an organization described in section 170(b)(1)(A) and not- (1) … 509(a)(3), or (2) … donor advised fund". Draft 2026 Form 1040 line 12f; draft 1040-NR line 12b.
      - Nor the 0.5% itemizer floor (170(b)(1)(I)).

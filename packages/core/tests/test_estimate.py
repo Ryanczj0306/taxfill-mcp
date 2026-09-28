@@ -3891,6 +3891,7 @@ _SPOUSE_SUMMED = frozenset({
     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
     "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
     "qualified_tips", "qualified_overtime_premium", "car_loan_interest",   # JF7
+    "charitable_cash_nonitemizer",   # JF9: capped per RETURN after the sum
 })
 # JF7: each person's Schedule 1-A senior flag — the joint view takes the taxpayer's as its own and the
 # spouse snapshot's own flag as senior_spouse (never summed).

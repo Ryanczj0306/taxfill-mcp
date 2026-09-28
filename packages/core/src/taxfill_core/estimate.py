@@ -391,6 +391,14 @@ class IncomeSnapshot(BaseModel):
         description="Qualified passenger vehicle loan interest (Schedule 1-A Part IV): a new, US-assembled vehicle for "
                     "personal use, the loan made after 2024 and secured by it, the VIN on the return.",
     )
+    # JF9: IRC 170(p) (P.L. 119-21, taxable years beginning after December 31, 2025).
+    charitable_cash_nonitemizer: int = Field(
+        default=0, ge=0,
+        description="Cash gifts that count for the non-itemizer deduction (IRC 170(p)): to a 170(b)(1)(A) "
+                    "organization, not a 509(a)(3) supporting organization and not a donor advised fund — calc op "
+                    "charitable_deduction checks each gift. Capped per return and used only when the standard "
+                    "deduction wins; 2026 onward.",
+    )
     senior_taxpayer: bool | None = Field(
         default=None,
         description="Schedule 1-A Part V: this snapshot's filer is 65 or older at year end with a valid SSN. None = "
@@ -528,7 +536,7 @@ class IncomeSnapshot(BaseModel):
                     "social_security_benefits", "other_income",
                     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
                     "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
-                    "qualified_tips", "qualified_overtime_premium", "car_loan_interest",
+                    "qualified_tips", "qualified_overtime_premium", "car_loan_interest", "charitable_cash_nonitemizer",
                 )
             },
             **_joint_retirement(self, s),
@@ -732,6 +740,7 @@ _LEDGER_SLOTS: dict[str, str] = {
     "other_adjustments": _EXPLANATORY,
     "deduction": _EXPLANATORY,
     "schedule_1a_deductions": _EXPLANATORY,
+    "nonitemizer_charitable_deduction": _EXPLANATORY,
     "total_income": _SUBTOTAL,
     "agi": _SUBTOTAL,
     "taxable_income": _SUBTOTAL,
@@ -3838,6 +3847,7 @@ def _bottom_line(
     comp.append(_line("agi", label="Adjusted gross income (AGI)", amount=agi))
 
     # ── Deduction and taxable income ────────────────────────────────────────
+    nonitemizer = 0   # JF9: IRC 170(p), set on the standard-deduction path below
     if nonresident:
         # Form 1040-NR line 12 is ITEMIZED-ONLY (typically state/local income tax
         # withheld): a nonresident alien cannot take the standard deduction (Pub 519;
@@ -3870,6 +3880,11 @@ def _bottom_line(
     else:
         sd = standard_deduction(status, year, knowledge_dir=knowledge_dir)
         citations.append(sd.citation)
+        # JF9: IRC 170(p) rides with the standard deduction, so the method comparison is itemized vs
+        # standard + the capped non-itemizer amount.
+        cc = pack.charitable_contributions
+        nonitemizer_cap = (min(income.charitable_cash_nonitemizer, cc.nonitemizer.cap.for_status(status))
+                           if cc is not None and income.charitable_cash_nonitemizer else 0)
         if deduction_mode == "itemize":
             deduction = income.itemized_deductions or 0
             label = (
@@ -3880,12 +3895,24 @@ def _bottom_line(
             )
         elif deduction_mode == "standard":
             deduction, label = sd.amount, "Less: standard deduction"
+            nonitemizer = nonitemizer_cap
         elif income.itemized_deductions is not None:
-            deduction = max(income.itemized_deductions, sd.amount)
-            label = "Less: itemized deductions" if deduction == income.itemized_deductions else "Less: standard deduction"
+            if income.itemized_deductions > sd.amount + nonitemizer_cap:
+                deduction, label = income.itemized_deductions, "Less: itemized deductions"
+            else:
+                deduction, label = sd.amount, "Less: standard deduction"
+                nonitemizer = nonitemizer_cap
         else:
             deduction, label = sd.amount, "Less: standard deduction"
+            nonitemizer = nonitemizer_cap
+        if notes is not None and income.charitable_cash_nonitemizer and cc is not None:
+            notes.add("charitable_nonitemizer" if nonitemizer else "charitable_itemized_won")
     comp.append(_line("deduction", label=label, amount=-deduction))
+    if nonitemizer:
+        comp.append(_line(
+            "nonitemizer_charitable_deduction", amount=-nonitemizer,
+            label=f"Less: charitable contribution deduction for non-itemizers (Form 1040 line "
+                  f"{form_line(year, 'f1040.charitable_nonitemizer', base_dir=knowledge_dir)}; IRC 170(p))"))
 
     # JF7: the Schedule 1-A deductions, below AGI and after the deduction (P.L. 119-21). MAGI is AGI: the
     # estimator models none of Schedule 1-A Part I's add-backs (Puerto Rico, Form 2555, Form 4563).
@@ -3909,7 +3936,7 @@ def _bottom_line(
             comp.append(_line("schedule_1a_deductions", label=f"Less: Schedule 1-A deductions ({where})",
                               amount=-sched1a_total))
 
-    taxable = max(0, agi - deduction - sched1a_total)
+    taxable = max(0, agi - deduction - sched1a_total - nonitemizer)
     comp.append(_line("taxable_income", label="Taxable income", amount=taxable))
 
     # ── Income tax (preferential rates when QD / net capital gain present) ──
@@ -5416,6 +5443,47 @@ def estimate_refund(
         elif key == "roth_j":
             assumptions.append(f"{name}: code J, an early Roth IRA distribution — its taxable part turns on your "
                                f"Roth contribution and conversion basis (Form 8606 Part III); box 2a is used.")
+    charity_view = income.combined_with_spouse()
+    if charity_view.charitable_cash_nonitemizer:
+        cc_pack = load_knowledge("federal", year, base_dir=knowledge_dir)
+        if cc_pack.charitable_contributions is None:
+            if year >= 2026:
+                missing_blocks.append(MissingBlock(
+                    block="charitable_contributions",
+                    item="the non-itemizer charitable deduction (IRC 170(p))",
+                    direction="understates_refund",
+                ))
+                assumptions.append(
+                    f"The non-itemizer charitable deduction is NOT ESTIMATED for {year}: the {year} knowledge pack "
+                    f"has no charitable_contributions block yet — this estimate OVERSTATES the tax by up to its value."
+                )
+            else:
+                assumptions.append(
+                    f"charitable_cash_nonitemizer is ignored for {year}: IRC 170(p) applies to taxable years "
+                    f"beginning after December 31, 2025 (P.L. 119-21 §70424). For {year} a charitable gift counts "
+                    f"only on Schedule A."
+                )
+        elif "charitable_nonitemizer" in notes:
+            assumptions.append(
+                "IRC 170(p) was taken with the standard deduction: charitable_cash_nonitemizer, capped at $1,000 "
+                "($2,000 on a joint return), is taken as your cash gifts to 170(b)(1)(A) organizations — not a "
+                "509(a)(3) supporting organization (TEOS SO, SONFI, SOUNK) and not a donor advised fund. calc op "
+                "charitable_deduction checks each gift and its substantiation."
+            )
+        elif "charitable_itemized_won" in notes:
+            assumptions.append(
+                "Itemizing won, so charitable_cash_nonitemizer is not used: IRC 170(p) applies only \"if the "
+                "individual does not elect to itemize deductions\". Your itemized_deductions figure must already "
+                "count only the gifts above 0.5% of AGI (IRC 170(b)(1)(I), 2026 onward)."
+            )
+        else:
+            # Only the resident path prices it; a 1040-NR or dual-status return never reached it.
+            assumptions.append(
+                "The non-itemizer charitable deduction is NOT ESTIMATED on this return: the draft 2026 Form 1040-NR "
+                "adds a \"Charitable contribution deduction for non-itemizers\" line, but who may take it on a "
+                "nonresident or dual-status return awaits the 2026 instructions (IRC 873, a nonresident's "
+                "deductions, not read) — this estimate may OVERSTATE the tax by up to its value."
+            )
     s1a_view = income.combined_with_spouse()
     if _schedule_1a_engaged(s1a_view, int(bool(s1a_view.senior_taxpayer)) + int(bool(s1a_view.senior_spouse))):
         s1a_pack = load_knowledge("federal", year, base_dir=knowledge_dir)

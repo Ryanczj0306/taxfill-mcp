@@ -1184,6 +1184,68 @@ class ObbbaSchedule1aParams(BaseModel):
     senior_deduction: Sched1aSeniorParams
 
 
+class CharitableNonitemizerParams(BaseModel):
+    """IRC 170(p) — the deduction for an individual who does not itemize (P.L. 119-21 §70424, JF9)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    cap: Sched1aAmountByStatus = Field(description="'not in excess of $1,000 ($2,000 in the case of a joint return)'.")
+    cash_only: bool = Field(description="Only 'contributions made in cash during such taxable year' count.")
+    eligible_teos_codes: list[str] = Field(
+        description="TEOS deductibility codes of 170(b)(1)(A) organizations 170(p) does not exclude: the '50% (60% "
+                    "for cash contributions)' rows other than the supporting organizations.",
+    )
+    excluded_teos_codes: list[str] = Field(
+        description="170(p)(1): an organization described in section 509(a)(3) — TEOS SO, SONFI and SOUNK.",
+    )
+    excludes_donor_advised_funds: bool = Field(description="170(p)(2): a gift to a donor advised fund never counts.")
+
+
+class CharitableInsubstantialBenefitParams(BaseModel):
+    """Rev. Proc. 2025-32 §4.33(2): the Rev. Proc. 90-12 $5 / $25 / $50 guidelines, as adjusted for 2026."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    token_item_cost_max: Decimal = Field(description="The $5 guideline: a token item's cost ($13.90 for 2026).")
+    token_item_minimum_payment: Decimal = Field(description="The $25 guideline: the payment a token item needs ($69.50).")
+    two_percent_rate: Decimal = Field(description="Benefits worth not more than 2% of the payment ...")
+    two_percent_dollar_cap: Decimal = Field(description="... or the $50 guideline, whichever is less ($139).")
+
+    _exact = field_validator(
+        "token_item_cost_max", "token_item_minimum_payment", "two_percent_rate", "two_percent_dollar_cap", mode="before"
+    )(_as_exact_decimal)
+
+
+class CharitableContributionsParams(BaseModel):
+    """The ``charitable_contributions`` block (JF9): the 2026 charitable rules calc op charitable_deduction reads.
+
+    Top-level on purpose (the contribution_limits precedent): the sources-coverage meta-test walks top-level keys.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    effective: str
+    nonitemizer: CharitableNonitemizerParams
+    itemizer_floor_rate: Decimal = Field(
+        description="170(b)(1)(I): a gift is 'allowed only to the extent that the aggregate of such contributions "
+                    "exceeds 0.5 percent of the taxpayer's contribution base'.",
+    )
+    insubstantial_benefit: CharitableInsubstantialBenefitParams
+    membership_disregard_max_annual_payment: int = Field(
+        gt=0, description="Pub 526: membership benefits 'in return for an annual payment of $75 or less'.",
+    )
+    quid_pro_quo_statement_over: int = Field(
+        gt=0, description="IRC 6115(a): the donee's written statement for 'a quid pro quo contribution in excess of $75'.",
+    )
+    written_acknowledgment_at: int = Field(
+        gt=0, description="IRC 170(f)(8)(A): 'any contribution of $250 or more' needs a contemporaneous written "
+                          "acknowledgment.",
+    )
+
+    _exact_floor = field_validator("itemizer_floor_rate", mode="before")(_as_exact_decimal)
+
+
 class EstimatedTaxSafeHarborParams(BaseModel):
     """IRC 6654(d) required-annual-payment parameters (Form 1040-ES, 'General Rule').
 
@@ -2227,6 +2289,9 @@ class KnowledgePack(BaseModel):
     # same reason (a nested block evades the sources-coverage meta-test) and
     # because neither is tax math — both exist even when no tax is owed.
     foreign_account_reporting: ForeignAccountReportingParams | None = None
+    # Phase J item JF9: the 2026 charitable rules (IRC 170(p), the 0.5% floor, the characterization
+    # thresholds). Top-level for the sources-coverage meta-test, like contribution_limits.
+    charitable_contributions: CharitableContributionsParams | None = None
     # Phase J item JF6a: printed line numbers, per key, read off this year's
     # faces. Engine text reaches them only through form_line() (P-015).
     form_lines: dict[str, FormLineEntry] | None = None

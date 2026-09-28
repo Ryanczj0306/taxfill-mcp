@@ -636,6 +636,74 @@ contribution_limits:
     transit_monthly: 340
     parking_monthly: 340
 
+# ── Charitable contributions for 2026 (Phase J JF9) ────────────────────────────
+# TOP-LEVEL on purpose (the contribution_limits precedent: the sources-coverage
+# meta-test walks top-level keys). Every figure read 2026-09-27 off its primary
+# source:
+#   IRC 170(p) (P.L. 119-21 §70424(a)): "if the individual does not elect to
+#     itemize deductions for such taxable year, the deduction under this section
+#     shall be equal to the deduction, not in excess of 1,000 ($2,000 in the case
+#     of a joint return), which would be determined under this section if the only
+#     charitable contributions taken into account in determining such deduction
+#     were contributions made in cash during such taxable year (determined without
+#     regard to subsections (b)(1)(G)(ii), (b)(1)(I), and (d)(1)) to an
+#     organization described in section 170(b)(1)(A) and not- (1) to an
+#     organization described in section 509(a)(3), or (2) for the establishment of
+#     a new, or maintenance of an existing, donor advised fund". (uscode.house.gov's
+#     prelim text prints "1,000" without its dollar sign; the W-4 below prints
+#     "$1,000".)
+#   IRC 170(b)(1)(I) (§70425(a)(1)), the 0.5-percent floor: "allowed only to the
+#     extent that the aggregate of such contributions exceeds 0.5 percent of the
+#     taxpayer's contribution base for the taxable year"; contribution base is AGI
+#     "computed without regard to any net operating loss carryback" (170(b)(1)(H)).
+#   Both apply "to taxable years beginning after December 31, 2025" (§§70424(b),
+#     70425(c)).
+#   TEOS deductibility codes (irs.gov): PC "A public charity", POF "A private
+#     operating foundation" and FED (a federal governmental unit) carry "50% (60% for
+#     cash contributions)"; so do SO / SONFI / SOUNK, the supporting organizations
+#     170(p)(1) excludes. PF "30% (generally)", LODGE "30%"; GROUP, UNKWN, EO and
+#     FORGN "Depends on various factors" — the op needs the caller's own
+#     determination for those.
+#   Rev. Proc. 2025-32 §4.33(2): the Rev. Proc. 90-12 "$5, $25, and $50 guidelines
+#     ... are $13.90, $69.50 and $139" for 2026. Their shape (a benefit worth "not
+#     more than 2 percent of the payment" or the $50 figure, "whichever is less";
+#     token items for a payment of at least the $25 figure costing no more than the
+#     $5 figure) as IRS INFO 2010-0172 states it.
+#   Pub 526 (2025): "membership benefits if you get them in return for an annual
+#     payment of $75 or less"; IRC 6115(a): "a quid pro quo contribution in excess of
+#     $75"; IRC 170(f)(8)(A): "any contribution of $250 or more".
+# PASS 2: the FINAL Form W-4 (2026) Step 4(b) Deductions Worksheet — line 12 "Cash
+# gifts to charities. If you take the standard deduction, enter cash contributions
+# up to $1,000 ($2,000 if married filing jointly)" and line 6d "Enter contributions
+# in excess of 0.5% (0.005) of your total income" — and the draft 2026 Form 1040
+# line 12f / Form 1040-NR line 12b "Charitable contribution deduction for
+# non-itemizers" (form_lines below). Not recorded in provisional.second_passes:
+# those paths name blocks under `tax`, and this block is top-level.
+charitable_contributions:
+  citation:
+    source: >-
+      IRC 170(p) (P.L. 119-21 §70424) and 170(b)(1)(I) (§70425), taxable years beginning after
+      December 31, 2025; Rev. Proc. 2025-32 §4.33(2); Pub 526 (2025), Membership fees or dues;
+      IRC 6115(a); IRC 170(f)(8)(A) and (C); checked against Form W-4 (2026) Step 4(b) lines 12
+      and 6d
+    url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section170&num=0&edition=prelim"
+  effective: "taxable years beginning after December 31, 2025 (P.L. 119-21 §§70424(b), 70425(c))"
+  nonitemizer:
+    cap: { married_filing_jointly: 2000, other: 1000 }
+    cash_only: true
+    eligible_teos_codes: [PC, POF, FED]
+    excluded_teos_codes: [SO, SONFI, SOUNK]
+    excludes_donor_advised_funds: true
+  itemizer_floor_rate: 0.005
+  insubstantial_benefit:   # quoted so the exact cents survive YAML (13.90, not 13.9)
+    token_item_cost_max: "13.90"
+    token_item_minimum_payment: "69.50"
+    two_percent_rate: "0.02"
+    two_percent_dollar_cap: "139"
+  membership_disregard_max_annual_payment: 75
+  quid_pro_quo_statement_over: 75
+  written_acknowledgment_at: 250
+
 # ─────────────────────────────────────────────────────────────────────────────
 # DEV_PLAN §7.2 effective_law_changes — PROMOTED 2026-08-11 from this pack's own
 # prose (the Pub 15 (2026) What's New quote carried in tax.supplemental_withholding's
@@ -694,6 +762,24 @@ effective_law_changes:
       - tax.obbba_schedule_1a
     modeled: true
 
+  - description: >-
+      P.L. 119-21 adds a charitable deduction for an individual who does not itemize, IRC 170(p)
+      (§70424): cash gifts to a 170(b)(1)(A) organization, not a 509(a)(3) supporting organization
+      and not a donor advised fund, up to $1,000 ($2,000 on a joint return), taken on the draft
+      2026 Form 1040 line 12f. It also adds a floor for itemizers, IRC 170(b)(1)(I) (§70425):
+      contributions count only above 0.5 percent of the contribution base (AGI). Both apply to
+      taxable years beginning after December 31, 2025. Modeled by calc op charitable_deduction and
+      the estimator's nonitemizer_charitable_deduction slot (Phase J JF9).
+    citation:
+      source: >-
+        IRC 170(p) and 170(b)(1)(I), with the §70424(b) and §70425(c) effective-date notes
+        (uscode.house.gov, read 2026-09-27)
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section170&num=0&edition=prelim"
+    status: enacted
+    affects:
+      - charitable_contributions
+      - form_lines (f1040.charitable_nonitemizer, f1040nr.charitable_nonitemizer)
+    modeled: true
 
 # ── Foreign-account and foreign-asset REPORTING duties (Phase I4) ─────────────
 # TOP-LEVEL on purpose, for two reasons. (1) Nesting a block under `tax` or
@@ -1497,3 +1583,17 @@ form_lines:
     read: '2026-09-27'
     printed: 25 31, 2026 (including 2026 contributions made in 2027). Include this amount on Schedule 2 (Form 1040),
       line 18
+  f1040.charitable_nonitemizer:
+    line: 12f
+    line_source: draft Created 8/19/26
+    url: https://www.irs.gov/pub/irs-dft/f1040--dft.pdf
+    read: '2026-09-27'
+    printed: Charitable contribution deduction for non-itemizers (see instructions) 12f
+    note: NEW 2026 (IRC 170(p)); JF9. Line 14 adds it with 12e, 13a and 13b.
+  f1040nr.charitable_nonitemizer:
+    line: 12b
+    line_source: draft Created 8/19/26
+    url: https://www.irs.gov/pub/irs-dft/f1040nr--dft.pdf
+    read: '2026-09-27'
+    printed: Charitable contribution deduction for non-itemizers (see instructions) 12b
+    note: NEW 2026 (IRC 170(p)); JF9. Who may take it on a 1040-NR awaits the 2026 instructions.

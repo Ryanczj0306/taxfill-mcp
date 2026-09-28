@@ -1732,6 +1732,56 @@ pitfalls:
       statute and the conflicting i8606 sentence, so a re-read of i8606 cannot
       undo it. Tests: test_p021_* in
       packages/core/tests/test_ira_recharacterization.py.
+  - id: P-022
+    incident: >-
+      A CHARITABLE GIFT PRICED BY ITS AMOUNT ALONE. Nothing modeled IRC 170(p),
+      the 2026 deduction for an individual who does not itemize (P.L. 119-21
+      §70424), nor the 0.5% floor 170(b)(1)(I) puts under an itemizer's gifts
+      (§70425), and nothing drew the lines that decide what a gift is worth. The
+      mistakes those lines exist to stop: a membership deducted in full because
+      "it is a donation" when its benefits are worth more than the $75 disregard
+      allows; a gala ticket deducted without subtracting the dinner, with no
+      statement of the dinner's value in hand; a plaque or a donor-wall listing
+      treated as a quid pro quo that cuts the deduction; a $250 gift claimed with
+      no contemporaneous written acknowledgment; a gift to a supporting
+      organization or a donor advised fund counted toward the non-itemizer
+      deduction. Each rule, verbatim: Pub 526 (2025), "Both you and the
+      organization can disregard the following membership benefits if you get
+      them in return for an annual payment of $75 or less"; IRC 6115(a), an
+      organization that "receives a quid pro quo contribution in excess of $75"
+      must "provide a written statement" with "a good faith estimate of the value
+      of such goods or services"; IRC 170(f)(8)(A), "No deduction shall be
+      allowed under subsection (a) for any contribution of $250 or more unless the
+      taxpayer substantiates the contribution by a contemporaneous written
+      acknowledgment"; IRS INFO 2010-0172 (an information letter, not a ruling):
+      "privileges such as being associated with or being known as a benefactor of
+      an organization (for example, being memorialized on a plaque or similar
+      commemorative item) are not significant return benefits that have a
+      monetary value"; Rev. Proc. 2025-32 §4.33(2), the insubstantial-benefit
+      figures for 2026 are "$13.90, $69.50 and $139"; IRC 170(p), cash "to an
+      organization described in section 170(b)(1)(A) and not- (1) to an
+      organization described in section 509(a)(3), or (2) for the establishment of
+      a new, or maintenance of an existing, donor advised fund"; the payee check
+      is the organization's Tax Exempt Organization Search code (SO, SONFI and
+      SOUNK are the supporting organizations). Found by the 2026-09-23 review
+      (LD-06, DEF-18, LD-07).
+    countermeasure: >-
+      calc op charitable_deduction (JF9) reads the 2026 charitable_contributions
+      block and applies each rule per gift: recognition only keeps the full
+      amount; a membership for $75 or less is disregarded; token items (a $69.50
+      payment, items costing no more than $13.90) and a benefit worth not more
+      than 2% of the payment or $139 are insubstantial; otherwise the benefit's
+      value comes off, and a payment over $75 whose benefit value is not stated
+      is REFUSED, prescribing the organization's IRC 6115 statement. It lists the
+      170(f)(8) acknowledgment duty for a gift of $250 or more and the 170(f)(17)
+      record for cash, counts only cash to TEOS PC / POF / FED donees (or the
+      caller's own determination for a code whose limit depends on various
+      factors) toward 170(p), never SO / SONFI / SOUNK or a donor advised fund,
+      applies the $1,000 / $2,000 cap and, for an itemizer, the 0.5% floor, and
+      names the better path. It refuses a year before 2026. The estimator takes
+      the capped charitable_cash_nonitemizer only when the standard deduction
+      wins (slot nonitemizer_charitable_deduction). Tests: test_p022_* in
+      packages/core/tests/test_charitable_deduction.py.
   - id: P-026
     incident: >-
       The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer

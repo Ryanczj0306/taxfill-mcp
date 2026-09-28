@@ -56,6 +56,9 @@ BLOCK_TO_REQUIRED_TOPICS = {
     # "prior year": the first draft had it, and every "prior year ..." query
     # (the safe-harbor ones included) moved onto this topic.
     "form_lines": ("form_line_numbers",),
+    # Phase J item JF9: the 2026 charitable rules. JF2's charitable_nonitemizer topic already
+    # carries IRC 170(p), the W-4 (2026) worksheet lines and the TEOS codes.
+    "charitable_contributions": ("charitable_nonitemizer",),
 }
 
 

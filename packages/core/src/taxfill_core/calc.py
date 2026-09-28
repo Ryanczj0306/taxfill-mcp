@@ -11427,3 +11427,250 @@ def foreign_asset_reporting(
         work="\n".join(work_lines),
         citation=params.citation,
     )
+
+
+# ── JF9: the 2026 charitable deduction and its characterization rules (P-022) ──
+
+_CHARITABLE_BENEFITS = ("none", "membership", "token_items", "recognition_only", "goods_or_services")
+_TEOS_DEPENDS = ("GROUP", "UNKWN", "EO", "FORGN")   # TEOS: "Depends on various factors"
+
+
+class CharitableGift(BaseModel):
+    """One charitable gift as the donor knows it (JF9). Whether a benefit is a membership, a token item or
+    only recognition is the caller's characterization; the op applies the rule each one draws."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    amount: Decimal = Field(gt=0, description="What the donor paid (for property, its fair market value).")
+    cash: bool = Field(default=True, description="Cash, check, card or other monetary gift. 170(p) takes cash only.")
+    donee: str = Field(default="", description="The organization, for the work.")
+    teos_code: str | None = Field(
+        default=None,
+        description="The donee's Tax Exempt Organization Search deductibility code (PC, POF, PF, FED, SO, SONFI, "
+                    "SOUNK, LODGE, GROUP, UNKWN, EO, FORGN); None when not looked up.",
+    )
+    donee_170b1a: bool | None = Field(
+        default=None,
+        description="Your own determination that the donee is a 170(b)(1)(A) organization — used only when its "
+                    "TEOS code is one whose limit 'Depends on various factors' (GROUP, UNKWN, EO, FORGN) or unknown.",
+    )
+    donor_advised_fund: bool = Field(default=False, description="Paid into a donor advised fund (170(p)(2)).")
+    benefit: Literal["none", "membership", "token_items", "recognition_only", "goods_or_services"] = Field(
+        default="none", description="What you received in return, if anything.",
+    )
+    benefit_value: Decimal | None = Field(
+        default=None, ge=0,
+        description="The value of what you received: the organization's good-faith estimate (its IRC 6115 statement "
+                    "or 170(f)(8) acknowledgment), or a token item's cost to the organization.",
+    )
+    written_acknowledgment: bool = Field(
+        default=False, description="You hold the donee's contemporaneous written acknowledgment (IRC 170(f)(8)).",
+    )
+
+
+class CharitableGiftResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    donee: str
+    amount: int
+    deductible: int = Field(description="The contribution after any benefit that is not disregarded.")
+    benefit_rule: str
+    nonitemizer_eligible: bool
+    nonitemizer_reason: str
+    duties: list[str]
+
+
+class CharitableDeductionResult(BaseModel):
+    """Result of :func:`charitable_deduction` (JF9): each gift, both paths, and which one wins."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    gifts: list[CharitableGiftResult]
+    nonitemizer_deduction: int = Field(description="IRC 170(p): the eligible cash gifts, capped (form_lines f1040.charitable_nonitemizer).")
+    itemized_charitable_before_floor: int
+    floor: int = Field(description="170(b)(1)(I): 0.5% of the contribution base (AGI).")
+    itemized_charitable_after_floor: int
+    standard_deduction: int
+    other_itemized: int
+    standard_path_total: int = Field(description="The standard deduction plus the 170(p) amount.")
+    itemized_path_total: int = Field(description="Other itemized deductions plus the floor-reduced charitable amount.")
+    better_path: Literal["standard", "itemize"]
+    substantiation: list[str]
+    work: str
+    citation: Citation
+
+
+def charitable_deduction(
+    year: int,
+    filing_status: str,
+    gifts: Sequence[CharitableGift | Mapping[str, Any]],
+    agi: int | float | Decimal | str,
+    other_itemized: int | float | Decimal | str = 0,
+    standard_deduction_amount: int | None = None,
+    knowledge_dir: str | Path | None = None,
+) -> CharitableDeductionResult:
+    """The 2026 charitable deduction (P.L. 119-21): IRC 170(p) for a non-itemizer, the 170(b)(1)(I) 0.5% floor
+    for an itemizer, and the characterization rules that decide what each gift is worth (pitfall P-022).
+
+    Per gift: a benefit is disregarded when it is recognition only (IRS INFO 2010-0172), a membership benefit for
+    an annual payment of $75 or less (Pub 526), token items (a payment of at least $69.50, items costing no more
+    than $13.90) or worth not more than 2% of the payment or $139, whichever is less (Rev. Proc. 2025-32 §4.33 —
+    the 2026 figures; the knowledge pack's charitable_contributions block). Otherwise its value comes off the
+    deduction, and a payment over $75 with a benefit whose value you do not state is REFUSED: IRC 6115 requires
+    the organization's written statement of that value. A gift of $250 or more needs the contemporaneous written
+    acknowledgment of 170(f)(8).
+
+    170(p) counts cash gifts to a 170(b)(1)(A) organization (TEOS PC, POF, FED, or your determination for a code
+    whose limit depends on various factors) — never a 509(a)(3) supporting organization (TEOS SO, SONFI, SOUNK) or
+    a donor advised fund — up to $1,000 ($2,000 on a joint return), with no 0.5% floor. The itemized path takes
+    every deductible gift above 0.5% of AGI. The better path is the larger of the standard deduction plus the
+    170(p) amount and the other itemized deductions plus the floor-reduced charitable amount.
+
+    Not modeled (disclosed in the work): the AGI percentage limits of 170(b)(1) and carryovers; property-gift
+    valuation and appraisals; whether a fund-raising campaign told you the deductible amount. Refuses a year
+    without the block (the rules begin with taxable years after December 31, 2025).
+    """
+    if filing_status not in FILING_STATUSES and filing_status != _QSS:
+        raise ValueError(
+            f"unknown filing_status {filing_status!r} — use one of: single, married_filing_jointly, "
+            f"married_filing_separately, head_of_household, qualifying_surviving_spouse"
+        )
+    pack = _load_federal(year, knowledge_dir)
+    params = pack.charitable_contributions
+    if params is None:
+        raise ValueError(
+            f"knowledge pack for federal {year} has no charitable_contributions block: IRC 170(p) (the non-itemizer "
+            f"deduction) and the 0.5% itemizer floor apply to taxable years beginning after December 31, 2025 "
+            f"(P.L. 119-21 §§70424, 70425). For {year} use the year's own Schedule A rules."
+        )
+    agi_d = _to_decimal(agi, "agi")
+    other_d = _to_decimal(other_itemized, "other_itemized")
+    if agi_d < 0 or other_d < 0:
+        raise ValueError("agi and other_itemized must be >= 0")
+    parsed = [g if isinstance(g, CharitableGift) else CharitableGift.model_validate(g) for g in gifts]
+    ib = params.insubstantial_benefit
+    ni = params.nonitemizer
+    work: list[str] = [f"Charitable deduction ({year}, {filing_status}); contribution base (AGI) ${irs_round(agi_d):,}."]
+    results: list[CharitableGiftResult] = []
+    substantiation: list[str] = []
+    for n, g in enumerate(parsed, 1):
+        name = g.donee or f"gift {n}"
+        amount = g.amount
+        duties: list[str] = []
+        value = g.benefit_value
+        if g.benefit == "none":
+            deductible, rule = amount, "no benefit received"
+        elif g.benefit == "recognition_only":
+            deductible = amount
+            rule = ("recognition only — being listed or memorialized as a benefactor is not a return benefit with a "
+                    "monetary value (IRS INFO 2010-0172: \"privileges such as being associated with or being known as "
+                    "a benefactor of an organization (for example, being memorialized on a plaque or similar "
+                    "commemorative item) are not significant return benefits that have a monetary value\"; an "
+                    "information letter, not a ruling)")
+        elif g.benefit == "membership" and amount <= params.membership_disregard_max_annual_payment:
+            deductible = amount
+            rule = (f"membership benefits disregarded: Pub 526, \"Both you and the organization can disregard the "
+                    f"following membership benefits if you get them in return for an annual payment of "
+                    f"${params.membership_disregard_max_annual_payment} or less\": rights or privileges you can "
+                    f"use frequently while a member, and members-only events whose projected cost per person is "
+                    f"low — the first excludes college athletic-seating rights)")
+        else:
+            if value is None:
+                if amount > params.quid_pro_quo_statement_over:
+                    raise ValueError(
+                        f"{name}: a ${irs_round(amount):,} payment with a {g.benefit.replace('_', ' ')} benefit needs the "
+                        f"benefit's value — IRC 6115(a): an organization that \"receives a quid pro quo contribution "
+                        f"in excess of ${params.quid_pro_quo_statement_over}\" must \"provide a written statement\" "
+                        f"with \"a good faith estimate of the value of such goods or services\". Ask the organization "
+                        f"for that statement and pass its figure as benefit_value."
+                    )
+                raise ValueError(f"{name}: pass benefit_value — the value of the {g.benefit.replace('_', ' ')} you received")
+            if g.benefit == "token_items" and amount >= ib.token_item_minimum_payment and value <= ib.token_item_cost_max:
+                deductible = amount
+                rule = (f"token items disregarded: a payment of at least ${ib.token_item_minimum_payment} and items "
+                        f"costing no more than ${ib.token_item_cost_max} (Rev. Proc. 2025-32 §4.33(2), the 2026 "
+                        f"Rev. Proc. 90-12 figures)")
+            elif value <= min(ib.two_percent_rate * amount, ib.two_percent_dollar_cap):
+                deductible = amount
+                rule = (f"insubstantial benefit disregarded: ${value} is not more than 2% of the payment or "
+                        f"${ib.two_percent_dollar_cap}, whichever is less (Rev. Proc. 2025-32 §4.33(2))")
+            else:
+                deductible = max(Decimal(0), amount - value)
+                rule = f"the benefit's value ${value} comes off: ${amount} - ${value} = ${deductible}"
+                if amount > params.quid_pro_quo_statement_over:
+                    duties.append(f"keep the organization's IRC 6115 statement (a quid pro quo contribution in excess "
+                                  f"of ${params.quid_pro_quo_statement_over})")
+        if amount >= params.written_acknowledgment_at:
+            if g.written_acknowledgment:
+                duties.append("the contemporaneous written acknowledgment (170(f)(8)) is in hand")
+            else:
+                duties.append(
+                    f"OBTAIN the donee's contemporaneous written acknowledgment: 170(f)(8)(A) allows no deduction \"for "
+                    f"any contribution of ${params.written_acknowledgment_at} or more\" without it, and it is "
+                    f"contemporaneous if obtained \"on or before the earlier of\" the filing date or \"the due date "
+                    f"(including extensions)\" (170(f)(8)(C))")
+        if g.cash:
+            duties.append("keep a bank record or the donee's written communication showing its name, the date and the "
+                          "amount (IRC 170(f)(17))")
+        code = (g.teos_code or "").strip().upper()
+        if not g.cash:
+            eligible, why = False, "170(p) counts only \"contributions made in cash\""
+        elif g.donor_advised_fund and ni.excludes_donor_advised_funds:
+            eligible, why = False, "170(p)(2) excludes a gift \"for the establishment of a new, or maintenance of an existing, donor advised fund\""
+        elif code in ni.excluded_teos_codes:
+            eligible, why = False, f"TEOS {code} is a supporting organization — 170(p)(1) excludes \"an organization described in section 509(a)(3)\""
+        elif code in ni.eligible_teos_codes:
+            eligible, why = True, f"TEOS {code}: a 170(b)(1)(A) organization"
+        elif code in ("PF", "LODGE"):
+            eligible, why = False, f"TEOS {code} carries the 30% limit — not a 170(b)(1)(A) organization as the code reads"
+        elif g.donee_170b1a is not None:
+            eligible = bool(g.donee_170b1a)
+            why = f"your determination that the donee {'is' if eligible else 'is not'} a 170(b)(1)(A) organization"
+        else:
+            eligible = False
+            why = ("the donee's status is unknown" if not code else f"TEOS {code}'s limit \"Depends on various factors\"") + \
+                  " — pass donee_170b1a with your own determination"
+        results.append(CharitableGiftResult(
+            donee=name, amount=irs_round(amount), deductible=irs_round(deductible), benefit_rule=rule,
+            nonitemizer_eligible=eligible, nonitemizer_reason=why, duties=duties,
+        ))
+        substantiation += [f"{name}: {d}" for d in duties]
+        work.append(f"{name}: ${irs_round(amount):,} -> deductible ${irs_round(deductible):,} ({rule}); 170(p): "
+                    f"{'counts' if eligible else 'does not count'} ({why}).")
+
+    cap = ni.cap.for_status(filing_status)
+    eligible_total = sum((r.deductible for r in results if r.nonitemizer_eligible), 0)
+    nonitemizer = min(eligible_total, cap)
+    gross = sum((r.deductible for r in results), 0)
+    floor = irs_round(params.itemizer_floor_rate * agi_d)
+    after_floor = max(0, gross - floor)
+    if standard_deduction_amount is None:
+        sd_amount = standard_deduction(filing_status, year, knowledge_dir=knowledge_dir).amount
+    else:
+        sd_amount = int(standard_deduction_amount)
+    std_total = sd_amount + nonitemizer
+    item_total = irs_round(other_d) + after_floor
+    better = "itemize" if item_total > std_total else "standard"
+    work.append(
+        f"Non-itemizer (IRC 170(p)): eligible cash ${eligible_total:,}, capped at ${cap:,} -> ${nonitemizer:,} "
+        f"(Form 1040 line {form_line(pack, 'f1040.charitable_nonitemizer')}), with no 0.5% floor (170(p) is \"determined without regard to "
+        f"subsections (b)(1)(G)(ii), (b)(1)(I), and (d)(1)\")."
+    )
+    work.append(
+        f"Itemizer (170(b)(1)(I)): deductible gifts ${gross:,} less the floor {params.itemizer_floor_rate} x AGI = "
+        f"${floor:,} -> ${after_floor:,}."
+    )
+    work.append(
+        f"Standard path ${sd_amount:,} + ${nonitemizer:,} = ${std_total:,}; itemized path ${irs_round(other_d):,} + "
+        f"${after_floor:,} = ${item_total:,} -> {better.upper()}."
+    )
+    work.append(
+        "Not modeled: the AGI percentage limits of 170(b)(1) and carryovers, property valuation and appraisals, and "
+        "whether a fund-raising campaign stated the deductible amount; each gift's characterization is yours."
+    )
+    return CharitableDeductionResult(
+        gifts=results, nonitemizer_deduction=nonitemizer, itemized_charitable_before_floor=gross, floor=floor,
+        itemized_charitable_after_floor=after_floor, standard_deduction=sd_amount, other_itemized=irs_round(other_d),
+        standard_path_total=std_total, itemized_path_total=item_total, better_path=better,
+        substantiation=substantiation, work="\n".join(work), citation=params.citation,
+    )

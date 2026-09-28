@@ -42,6 +42,7 @@ from taxfill_core import (
     standard_deduction as _standard_deduction,
     state_scope as _state_scope,
     annualize_ytd as _annualize_ytd,
+    charitable_deduction as _charitable_deduction,
     contribution_limits as _contribution_limits,
     elective_deferral_room as _elective_deferral_room,
     ira_net_income_attributable as _ira_net_income_attributable,
@@ -311,7 +312,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     """Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
     additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
     education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
-    treaty_benefit, schedule_1a_deductions, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
+    treaty_benefit, schedule_1a_deductions, charitable_deduction, employee_fica, estimated_tax_safe_harbor, annualize_ytd,
     contribution_limits, elective_deferral_room, ira_net_income_attributable, ira_recharacterization,
     ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
     ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
@@ -398,6 +399,17 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       premium HALF only, never the whole overtime wage. Eligibility stays YOUR judgment, quoted in the
       work: tipped-occupation list, new-vehicle/US-assembly/VIN rules, valid SSNs, seniors 65 by year end
       (the year's senior_deduction.born_before: born before January 2 of year - 64). 2025 and 2026 ship)
+    - charitable_deduction: args {year, filing_status, gifts: [{amount, cash?, donee?, teos_code?,
+      donee_170b1a?, donor_advised_fund?, benefit? (none|membership|token_items|recognition_only|goods_or_services),
+      benefit_value?, written_acknowledgment?}...], agi, other_itemized?, standard_deduction_amount?} (JF9, 2026
+      onward: IRC 170(p) for a non-itemizer — cash to a 170(b)(1)(A) organization (TEOS PC/POF/FED), never a
+      509(a)(3) supporting organization (SO/SONFI/SOUNK) or a donor advised fund, capped $1,000 / $2,000 joint, no
+      floor — and the 170(b)(1)(I) 0.5%-of-AGI floor for an itemizer; returns each gift's deductible amount, the
+      substantiation duties (the 170(f)(8) acknowledgment at $250, the 170(f)(17) record) and the better path.
+      P-022 characterization: recognition only is no benefit; a membership for $75 or less is disregarded; token
+      items and benefits within 2% or $139 are insubstantial; otherwise the benefit's value comes off, and a
+      payment over $75 whose benefit value you do not state is REFUSED — ask for the organization's IRC 6115
+      statement)
     - employee_fica: args {wage_segments: [{wages, fica_exempt, label?, employer?, visa_status?,
       exempt_basis?}...], year?, residency_classification?, filing_status?} (JP1a: two layers —
       WITHHOLDING per employer (each applies its own wage base and IRC 3102(f)(1)'s 0.9% on "wages from
@@ -753,6 +765,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_treaty_benefit(**args)), args)
     if op == "schedule_1a_deductions":
         return _stamp_provisional(_dump(_schedule_1a_deductions(**args)), args)
+    if op == "charitable_deduction":
+        return _stamp_provisional(_dump(_charitable_deduction(**args)), args)
     if op == "employee_fica":
         return _stamp_provisional(_dump(_employee_fica(**args)), args)
     if op == "estimated_tax_safe_harbor":
@@ -794,7 +808,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
         f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
-        f"employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, "
+        f"charitable_deduction, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, "
         f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, "
         f"roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, "
         f"foreign_tax_credit_election, foreign_asset_reporting, state_tax"
