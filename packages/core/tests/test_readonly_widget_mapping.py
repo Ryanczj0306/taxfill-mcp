@@ -185,6 +185,14 @@ RESERVED_LINE_KEEPS: tuple[ReservedKeep, ...] = (
         "Page2[0].f2_1[0]",
         "printed numbered line of Part II-A, reserved in this revision only",
     ),
+    # The 2026 draft (Phase J JT5b) keeps the same face: "15 Reserved for future use . . . 15", the same
+    # widget, /Ff 8388609.
+    ReservedKeep(
+        "federal/2026/sched_8812/pack.yaml",
+        "15",
+        "Page2[0].f2_1[0]",
+        "printed numbered line of Part II-A, still reserved on the 2026 draft",
+    ),
     # Schedule A 2025 line 8d — printed LETTERED line of the line-8
     # mortgage-interest ladder. Note the 2023/2024 packs EXCLUDE the same
     # line: that split is recorded in RESERVED_LINES_UNMAPPED below.

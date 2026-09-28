@@ -1011,6 +1011,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # selection is exactly the reviewed f1040 set (street, apt, city, state, zip; foreign_* excluded).
     # JT3d: sched_b, sched_d, f8949, f8833 and f1040es 2026 each equal their 2025 rows.
     # JT5a: sched_se, f4868, f8960 and the f843 / fw7 / f8316 copies 2026 each equal their 2025 rows.
+    # JT5b: sched_8812, f2555 and f8863 2026 each equal their 2025 rows.
     import json
     from pathlib import Path
 

@@ -1760,3 +1760,15 @@ def test_jt5a_the_2026_fbar_worksheet_loads():
 
     pack = load_hand_fill_pack_for("fincen114", 2026, "federal")
     assert pack.tax_year == 2026
+
+
+def test_jt5b_the_credit_and_exclusion_ports_read_their_drafts():
+    ctc = load_pack(REPO_ROOT / "formpacks/federal/2026/sched_8812/pack.yaml")
+    feie = load_pack(REPO_ROOT / "formpacks/federal/2026/f2555/pack.yaml")
+    edu = load_pack(REPO_ROOT / "formpacks/federal/2026/f8863/pack.yaml")
+    assert {(p.source_status, p.draft_created) for p in (ctc, feie, edu)} == {
+        ("draft", "4/24/26"), ("draft", "9/18/26"), ("draft", "4/28/26")}
+    # The 2026 Schedule 8812 reads AGI from Form 1040 line 11b; the 1040-NR legs wait for JT5c's pack.
+    assert set(ctc.cross_form) == {"1 == f1040.11b", "14 == f1040.19", "27 == f1040.28"}
+    assert set(edu.cross_form) == {"8 == f1040.29", "19 == sched_3.3"}
+    assert "Page2[0].f2_5[0]" in {f.field for f in edu.fields}        # the 2025 "f2-5" typo is fixed
