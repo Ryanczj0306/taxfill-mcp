@@ -1,0 +1,186 @@
+# Form 1116 (2026) — Foreign Tax Credit (Individual, Estate, or Trust) — DRAFTS-FIRST (Phase J JT5e,
+# read 2026-09-28).
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1116--dft.pdf, footer "Form 1116 (2026)
+# Created 7/1/26"). PDF page 1 is the IRS cover sheet, so the form's pages 1 and 2 are PDF pages 2 and 3.
+# When the final posts at irs-prior/f1116--2026.pdf, re-pin source_url, pdf_sha256 and source_status final,
+# drop draft_created, and re-read the face. TY2026 is planning-only (rehearsal mode only). No signature block.
+#
+# 130 widgets (2025: 118), all mapped; every binding re-read off the draft's own containers.
+# 2025 -> 2026, read off the draft face:
+# - Part I keeps its lines (i, 1a, 1b, 2-7); the text leaves renumber down by 2-3 because 1a's three column
+#   boxes are f1_08-f1_10 now. "7 Subtract line 6 from line 1a. Enter the result here and on page 2, line 15".
+# - Part II MOVES to page 2 and GROWS two PTEP columns in each half. Foreign currency: (l) date paid or
+#   accrued, (m) dividends, (n) rents and royalties, (o) interest, NEW "(p)(1) Distributions of previously
+#   taxed earnings and profits (PTEP)", NEW "(p)(2) PTEP group (see instructions)", (q) other foreign taxes
+#   paid or accrued. U.S. dollars: (r) dividends, (s) rents and royalties, (t) interest, NEW (u)(1)
+#   distributions of PTEP, NEW (u)(2) PTEP group, (v) other, "(w) Total foreign taxes paid or accrued (add
+#   cols. (r) through (v))". TRAP — the letters SHIFT: the 2025 keys line_<row>.q-.u (the U.S.-dollar
+#   columns) are 2026 .r-.w, and 2026 .q is the foreign-currency "other" column (2025 .p). Keys follow the
+#   2026 print: line_<row>.l/.m/.n/.o/.p1/.p2/.q/.r/.s/.t/.u1/.u2/.v/.w. The two "PTEP group" columns are
+#   typed text (a group designation until the unposted instructions say otherwise); every other
+#   foreign-currency cell stays text, as in 2025. "8 Add lines A through C, column (w). Enter the total here
+#   and on Part III, line 9".
+# - Part III/IV keep lines 9-35. Line 18 now reads "Subtract Form 1040, 1040-SR, or 1040-NR, line 14, from
+#   ... line 11b. Increase the result by the amount from Schedule 1-A (Form 1040), line 43" (2025: line 37).
+#   The line-10 "don't need to attach Schedule B" box's on-state is /1 (2025: /Accrued).
+#
+# Relations: the 2025 set, each re-read (9 == 8; 11 "Add lines 9 and 10"; 14 "Combine lines 11, 12, and 13"
+# with 12 printed in parentheses; 15 == 7; 17; 23; 24 "the smaller of line 14 or line 23"; 32; 33; 35).
+# Column (w) is not encoded (a total of per-row columns the relation grammar cannot name). Cross-form:
+# "35 ... on Schedule 3 (Form 1040), line 1".
+form: "1116"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1116--dft.pdf
+pdf_sha256: "9899d7fbd5401ca26d5677cbc87e221c983c86f8f43130347e8f2329cc6c9779"
+source_status: draft
+draft_created: "7/1/26"
+acroform_root: "topmostSubform[0]"
+fields:
+  - { line: "name", field: "Page1[0].f1_01[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 11 }
+  - { line: "category.section_951a", field: "Page1[0].LineA-B_ReadOrder[0].c1_1[0]", type: checkbox, on_state: "/1", group: "category", required: true }
+  - { line: "category.foreign_branch", field: "Page1[0].LineA-B_ReadOrder[0].c1_1[1]", type: checkbox, on_state: "/2", group: "category" }
+  - { line: "category.passive", field: "Page1[0].LineC-D_ReadOrder[0].c1_1[0]", type: checkbox, on_state: "/3", group: "category" }
+  - { line: "category.general", field: "Page1[0].LineC-D_ReadOrder[0].c1_1[1]", type: checkbox, on_state: "/4", group: "category" }
+  - { line: "category.section_901j", field: "Page1[0].LineE-F_ReadOrder[0].c1_1[0]", type: checkbox, on_state: "/5", group: "category" }
+  - { line: "category.resourced_by_treaty", field: "Page1[0].LineE-F_ReadOrder[0].c1_1[1]", type: checkbox, on_state: "/6", group: "category" }
+  - { line: "category.lump_sum", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/7", group: "category" }
+  - { line: "h", field: "Page1[0].f1_03[0]", type: text }
+  - { line: "i.col_a", field: "Page1[0].Table_Part1_LinesI-1a[0].Rowi[0].f1_04[0]", type: text }
+  - { line: "i.col_b", field: "Page1[0].Table_Part1_LinesI-1a[0].Rowi[0].f1_05[0]", type: text }
+  - { line: "i.col_c", field: "Page1[0].Table_Part1_LinesI-1a[0].Rowi[0].f1_06[0]", type: text }
+  - { line: "1a.income_type", field: "Page1[0].Table_Part1_LinesI-1a[0].Line1a[0].Line1a_Text[0].f1_07[0]", type: text }
+  - { line: "1a.col_a", field: "Page1[0].Table_Part1_LinesI-1a[0].Line1a[0].ColA[0].f1_08[0]", type: money }
+  - { line: "1a.col_b", field: "Page1[0].Table_Part1_LinesI-1a[0].Line1a[0].ColB[0].f1_09[0]", type: money }
+  - { line: "1a.col_c", field: "Page1[0].Table_Part1_LinesI-1a[0].Line1a[0].ColC[0].f1_10[0]", type: money }
+  - { line: "1a.total", field: "Page1[0].f1_11[0]", type: money }
+  - { line: "1b", field: "Page1[0].Line1b_ReadOrder[0].c1_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "2.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_12[0]", type: money }
+  - { line: "2.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_13[0]", type: money }
+  - { line: "2.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_14[0]", type: money }
+  - { line: "3a.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3a[0].f1_15[0]", type: money }
+  - { line: "3a.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3a[0].f1_16[0]", type: money }
+  - { line: "3a.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3a[0].f1_17[0]", type: money }
+  - { line: "3b.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3b[0].f1_18[0]", type: money }
+  - { line: "3b.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3b[0].f1_19[0]", type: money }
+  - { line: "3b.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3b[0].f1_20[0]", type: money }
+  - { line: "3c.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3c[0].f1_21[0]", type: money }
+  - { line: "3c.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3c[0].f1_22[0]", type: money }
+  - { line: "3c.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3c[0].f1_23[0]", type: money }
+  - { line: "3d.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3d[0].f1_24[0]", type: money }
+  - { line: "3d.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3d[0].f1_25[0]", type: money }
+  - { line: "3d.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3d[0].f1_26[0]", type: money }
+  - { line: "3e.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3e[0].f1_27[0]", type: money }
+  - { line: "3e.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3e[0].f1_28[0]", type: money }
+  - { line: "3e.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3e[0].f1_29[0]", type: money }
+  - { line: "3f.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3f[0].f1_30[0]", type: text }
+  - { line: "3f.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3f[0].f1_31[0]", type: text }
+  - { line: "3f.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3f[0].f1_32[0]", type: text }
+  - { line: "3g.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line3g[0].f1_33[0]", type: money }
+  - { line: "3g.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line3g[0].f1_34[0]", type: money }
+  - { line: "3g.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line3g[0].f1_35[0]", type: money }
+  - { line: "4a.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_36[0]", type: money }
+  - { line: "4a.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_37[0]", type: money }
+  - { line: "4a.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_38[0]", type: money }
+  - { line: "4b.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line4b[0].f1_39[0]", type: money }
+  - { line: "4b.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line4b[0].f1_40[0]", type: money }
+  - { line: "4b.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line4b[0].f1_41[0]", type: money }
+  - { line: "5.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line5[0].f1_42[0]", type: money }
+  - { line: "5.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line5[0].f1_43[0]", type: money }
+  - { line: "5.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line5[0].f1_44[0]", type: money }
+  - { line: "6.col_a", field: "Page1[0].Table_Part1_Lines2-6[0].Line6[0].f1_45[0]", type: money }
+  - { line: "6.col_b", field: "Page1[0].Table_Part1_Lines2-6[0].Line6[0].f1_46[0]", type: money }
+  - { line: "6.col_c", field: "Page1[0].Table_Part1_Lines2-6[0].Line6[0].f1_47[0]", type: money }
+  - { line: "6.total", field: "Page1[0].f1_48[0]", type: money }
+  - { line: "7", field: "Page1[0].f1_49[0]", type: money }
+  - { line: "credit_claimed.paid", field: "Page2[0].Credit_ReadOrder[0].c2_1[0]", type: checkbox, on_state: "/1", group: "credit_claimed", required: true }
+  - { line: "credit_claimed.accrued", field: "Page2[0].Credit_ReadOrder[0].c2_1[1]", type: checkbox, on_state: "/2", group: "credit_claimed" }
+  - { line: "line_a.l", field: "Page2[0].Table_Part2_ColsL-Q[0].RowA[0].f2_01[0]", type: text, maxlen: 10 }
+  - { line: "line_a.m", field: "Page2[0].Table_Part2_ColsL-Q[0].RowA[0].f2_02[0]", type: text }
+  - { line: "line_a.n", field: "Page2[0].Table_Part2_ColsL-Q[0].RowA[0].f2_03[0]", type: text }
+  - { line: "line_a.o", field: "Page2[0].Table_Part2_ColsL-Q[0].RowA[0].f2_04[0]", type: text }
+  - { line: "line_a.p1", field: "Page2[0].Table_Part2_ColsL-Q[0].RowA[0].f2_05[0]", type: text }
+  - { line: "line_a.p2", field: "Page2[0].Table_Part2_ColsL-Q[0].RowA[0].f2_06[0]", type: text }
+  - { line: "line_a.q", field: "Page2[0].Table_Part2_ColsL-Q[0].RowA[0].f2_07[0]", type: text }
+  - { line: "line_b.l", field: "Page2[0].Table_Part2_ColsL-Q[0].RowB[0].f2_08[0]", type: text, maxlen: 10 }
+  - { line: "line_b.m", field: "Page2[0].Table_Part2_ColsL-Q[0].RowB[0].f2_09[0]", type: text }
+  - { line: "line_b.n", field: "Page2[0].Table_Part2_ColsL-Q[0].RowB[0].f2_10[0]", type: text }
+  - { line: "line_b.o", field: "Page2[0].Table_Part2_ColsL-Q[0].RowB[0].f2_11[0]", type: text }
+  - { line: "line_b.p1", field: "Page2[0].Table_Part2_ColsL-Q[0].RowB[0].f2_12[0]", type: text }
+  - { line: "line_b.p2", field: "Page2[0].Table_Part2_ColsL-Q[0].RowB[0].f2_13[0]", type: text }
+  - { line: "line_b.q", field: "Page2[0].Table_Part2_ColsL-Q[0].RowB[0].f2_14[0]", type: text }
+  - { line: "line_c.l", field: "Page2[0].Table_Part2_ColsL-Q[0].RowC[0].f2_15[0]", type: text, maxlen: 10 }
+  - { line: "line_c.m", field: "Page2[0].Table_Part2_ColsL-Q[0].RowC[0].f2_16[0]", type: text }
+  - { line: "line_c.n", field: "Page2[0].Table_Part2_ColsL-Q[0].RowC[0].f2_17[0]", type: text }
+  - { line: "line_c.o", field: "Page2[0].Table_Part2_ColsL-Q[0].RowC[0].f2_18[0]", type: text }
+  - { line: "line_c.p1", field: "Page2[0].Table_Part2_ColsL-Q[0].RowC[0].f2_19[0]", type: text }
+  - { line: "line_c.p2", field: "Page2[0].Table_Part2_ColsL-Q[0].RowC[0].f2_20[0]", type: text }
+  - { line: "line_c.q", field: "Page2[0].Table_Part2_ColsL-Q[0].RowC[0].f2_21[0]", type: text }
+  - { line: "line_a.r", field: "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_22[0]", type: money }
+  - { line: "line_a.s", field: "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_23[0]", type: money }
+  - { line: "line_a.t", field: "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_24[0]", type: money }
+  - { line: "line_a.u1", field: "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_25[0]", type: money }
+  - { line: "line_a.u2", field: "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_26[0]", type: text }
+  - { line: "line_a.v", field: "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_27[0]", type: money }
+  - { line: "line_a.w", field: "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_28[0]", type: money }
+  - { line: "line_b.r", field: "Page2[0].Table_Part2_ColsR-W[0].RowB[0].f2_29[0]", type: money }
+  - { line: "line_b.s", field: "Page2[0].Table_Part2_ColsR-W[0].RowB[0].f2_30[0]", type: money }
+  - { line: "line_b.t", field: "Page2[0].Table_Part2_ColsR-W[0].RowB[0].f2_31[0]", type: money }
+  - { line: "line_b.u1", field: "Page2[0].Table_Part2_ColsR-W[0].RowB[0].f2_32[0]", type: money }
+  - { line: "line_b.u2", field: "Page2[0].Table_Part2_ColsR-W[0].RowB[0].f2_33[0]", type: text }
+  - { line: "line_b.v", field: "Page2[0].Table_Part2_ColsR-W[0].RowB[0].f2_34[0]", type: money }
+  - { line: "line_b.w", field: "Page2[0].Table_Part2_ColsR-W[0].RowB[0].f2_35[0]", type: money }
+  - { line: "line_c.r", field: "Page2[0].Table_Part2_ColsR-W[0].RowC[0].f2_36[0]", type: money }
+  - { line: "line_c.s", field: "Page2[0].Table_Part2_ColsR-W[0].RowC[0].f2_37[0]", type: money }
+  - { line: "line_c.t", field: "Page2[0].Table_Part2_ColsR-W[0].RowC[0].f2_38[0]", type: money }
+  - { line: "line_c.u1", field: "Page2[0].Table_Part2_ColsR-W[0].RowC[0].f2_39[0]", type: money }
+  - { line: "line_c.u2", field: "Page2[0].Table_Part2_ColsR-W[0].RowC[0].f2_40[0]", type: text }
+  - { line: "line_c.v", field: "Page2[0].Table_Part2_ColsR-W[0].RowC[0].f2_41[0]", type: money }
+  - { line: "line_c.w", field: "Page2[0].Table_Part2_ColsR-W[0].RowC[0].f2_42[0]", type: money }
+  - { line: "8", field: "Page2[0].f2_43[0]", type: money }
+  - { line: "9", field: "Page2[0].Line9_ReadOrder[0].f2_44[0]", type: money }
+  - { line: "10", field: "Page2[0].f2_45[0]", type: money }
+  - { line: "10.no_schedule_b", field: "Page2[0].Line10_ReadOrder[0].c2_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "11", field: "Page2[0].f2_46[0]", type: money }
+  - { line: "12", field: "Page2[0].f2_47[0]", type: money }
+  - { line: "13", field: "Page2[0].f2_48[0]", type: money }
+  - { line: "14", field: "Page2[0].f2_49[0]", type: money }
+  - { line: "15", field: "Page2[0].Line15_ReadOrder[0].f2_50[0]", type: money }
+  - { line: "16", field: "Page2[0].f2_51[0]", type: money }
+  - { line: "17", field: "Page2[0].f2_52[0]", type: money }
+  - { line: "18", field: "Page2[0].f2_53[0]", type: money }
+  - { line: "19", field: "Page2[0].f2_54[0]", type: text }
+  - { line: "20", field: "Page2[0].f2_55[0]", type: money }
+  - { line: "21", field: "Page2[0].f2_56[0]", type: money }
+  - { line: "22", field: "Page2[0].f2_57[0]", type: money }
+  - { line: "23", field: "Page2[0].f2_58[0]", type: money }
+  - { line: "24", field: "Page2[0].f2_59[0]", type: money }
+  - { line: "25", field: "Page2[0].f2_60[0]", type: money }
+  - { line: "26", field: "Page2[0].f2_61[0]", type: money }
+  - { line: "27", field: "Page2[0].f2_62[0]", type: money }
+  - { line: "28", field: "Page2[0].f2_63[0]", type: money }
+  - { line: "29", field: "Page2[0].f2_64[0]", type: money }
+  - { line: "30", field: "Page2[0].f2_65[0]", type: money }
+  - { line: "31", field: "Page2[0].f2_66[0]", type: money }
+  - { line: "32", field: "Page2[0].f2_67[0]", type: money }
+  - { line: "33", field: "Page2[0].f2_68[0]", type: money }
+  - { line: "34", field: "Page2[0].f2_69[0]", type: money }
+  - { line: "35", field: "Page2[0].f2_70[0]", type: money }
+relations:
+  - "9 == 8"
+  - "11 == 9 + 10"
+  - "14 == 11 - 12 + 13"
+  - "15 == 7"
+  - "17 == 15 + 16"
+  - "23 == 21 + 22"
+  - "24 == min(14, 23)"
+  - "32 == 25 + 26 + 27 + 28 + 29 + 30 + 31"
+  - "33 == min(20, 32)"
+  - "35 == 33 - 34"
+cross_form:
+  - "35 == sched_3.1"                 # "Enter here and on Schedule 3 (Form 1040), line 1"
+identity_fields: [name, identifying_number]
+signature: null
+mailing: null

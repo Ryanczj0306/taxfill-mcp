@@ -9608,7 +9608,7 @@ class ForeignTaxCreditElectionResult(BaseModel):
         default=None,
         description=(
             "The form pack that files the credit the long way, for the year asked about — or None "
-            "when that year ships no f1116 pack (2023-2025 only today), because naming a path that "
+            "when that year ships no f1116 pack (2023-2025, plus the 2026 draft), because naming a path that "
             "does not exist sends the caller into a FileNotFoundError."
         ),
     )
@@ -10071,7 +10071,7 @@ def foreign_tax_credit_election(
         election_costs=costs,
         form_1116_category_box=None if election_made else category_box,
         # None rather than a path that does not exist: f1116 ships for 2023-2025
-        # only, and a caller following an invented key hits FileNotFoundError
+        # and the 2026 draft (JT5e), and a caller following an invented key hits FileNotFoundError
         # (found 2026-08-27 by the adversarial review, which walked 2019-2022).
         form_1116_pack_key=(
             f"formpacks/federal/{year}/f1116"

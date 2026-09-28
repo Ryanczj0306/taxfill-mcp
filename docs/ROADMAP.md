@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,803 tests** — offline 6,351 + live-.gov 452; derived
+Done and on `main` (**6,870 tests** — offline 6,409 + live-.gov 461; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2349,7 +2349,19 @@ not wait for any of this.
       - The 12 unmapped widgets are all ReadOnly: the nine Totals cells, as in 2025, plus the 13 header row.
     - **The designator sweep** (every numeric key's widget vs the printed label beside it, 2023–2026) found ONE real defect, fixed in its own commit: the 2025 Schedule C bound 27a/27b to each other's box. The 2025 revision swapped the printed order, the name-diff template carried the 2024 keys, and the relation read `27a == 48` although line 48 prints "Enter here and on line 27b". Every other hit is a table column (row "11" vs key "11a") or the f8833 right-column box.
     - The K-1 (1041) note now says the estate-tax line is 17e on the 2026 draft. test_discovery 139 federal. Tests: `test_jt5d_*`.
-  - **JT5e** (M–L): f8962, f2441, f1116, f8938 (Rev. 12-2026).
+  - **JT5e** (M–L): f8962, f2441, f1116, f8938 (Rev. 12-2026). **DONE 2026-09-28:**
+    - **Form 8962** (Created 4/21/26): 143 widgets, 141 mapped.
+      - NEW line-6 radio ("Did you enter 401% on line 5?", the cliff is back).
+      - TRAP: lines 28/29 print "Reserved for future use" (the repayment cap is gone), so their keys do not exist (RESERVED_LINES_UNMAPPED), and the Schedule 2 line 1a leg moves from 29 to 27.
+    - **Form 2441** (Created 4/30/26): 72 widgets, all mapped.
+      - TRAP: the Part I provider table is transposed (providers are columns, rows 1a–1e); the keys survive and every other widget keeps its 2025 name.
+      - Line 8's decimal table is gone from the face; line 21 prints $7,500 / $3,750.
+    - **Form 1116** (Created 7/1/26): 130 widgets (2025: 118), all mapped.
+      - Part II moves to page 2 and gains (p)(1)/(p)(2) and (u)(1)/(u)(2) PTEP columns.
+      - TRAP: the column letters shift. The U.S.-dollar columns are (r)–(w) (2025: (q)–(u)), and the keys follow the print.
+      - Line 18 adds Schedule 1-A line 43. foreign_tax_credit_election now returns the 2026 pack path.
+    - **Form 8938** (Rev. 12-2026, Created 9/2/26): the same 131 widgets in the same reading order (checked position by position); 18 names lose their zero padding; wording only.
+    - The designator sweep over the four is clean. The filer-address fixture gains the rows (each equals its 2025 row); test_discovery 143. The Schedule E 2026 line-13 header cells from JT5d gain their RESERVED_LINES_UNMAPPED row. Tests: `test_jt5e_*`.
   - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new).
   - **JT5g** (external): sched_nec and sched_oi, once their 2026 drafts post. The f1040nrn/nro drafts are still 2025; they are on the check_finals watchlist.
   - **Acceptance:** as JT3.

@@ -296,6 +296,26 @@ RESERVED_LINES_UNMAPPED: tuple[ReservedUnmapped, ...] = (
     # the 2026 draft reserves ("5b Reserved for future use"; 2025's energy efficient home
     # improvement credit) and drops from the printed line-8 sum ("Add lines 1 through
     # 4, 5a, and 7"). Neither is named by a printed sum, so neither key exists.
+    # Form 8962 2026 (the draft, Phase J JT5e): lines 28 and 29 print "Reserved for future use" on ReadOnly
+    # widgets (f1_94 / f1_95) — OBBBA §71305 removed the repayment limitation, and line 27 carries to
+    # Schedule 2 line 1a itself. No printed sum names either line, and the 2025 keys meant something else
+    # (28 the Table 5 cap, 29 the repayment), so the keys do not exist and a stale caller gets an error.
+    ReservedUnmapped(
+        "federal/2026/f8962/pack.yaml",
+        ("28", "29"),
+        ("26", "27"),
+        None,
+        "28/29 print 'Reserved for future use'; line 27 carries to Schedule 2 line 1a directly",
+    ),
+    # Schedule E 2026 (the draft, Phase J JT5d): the new "13 Interest (see instructions)" header row's three
+    # shaded ReadOnly cells (f1_58-f1_60) — its amounts go on 13a (vehicle loan) / 13b (other).
+    ReservedUnmapped(
+        "federal/2026/sched_e/pack.yaml",
+        ("13.a", "13.b", "13.c"),
+        ("12.a", "13a.a", "13b.a", "13b.c", "14.a"),
+        None,
+        "the line-13 header row is shaded; 13a/13b take the amounts",
+    ),
     ReservedUnmapped(
         "federal/2026/sched_3/pack.yaml",
         ("5b", "6e"),

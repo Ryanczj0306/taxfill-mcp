@@ -594,6 +594,16 @@ F1116_CATEGORY_BOXES_BY_YEAR: dict[int, tuple[tuple[str, str, str], ...]] = {
         ("category.resourced_by_treaty", "Page1[0].LineE-F_ReadOrder[0].c1_1[1]", "/6"), # f Certain income re-sourced by treaty
         ("category.lump_sum", "Page1[0].c1_1[0]", "/7"),                                 # g Lump-sum distributions <- 2023's box a
     ),
+    # The 2026 draft (Created 7/1/26) keeps the 2025 category widgets and states exactly (dumped off the draft).
+    2026: (
+        ("category.section_951a", "Page1[0].LineA-B_ReadOrder[0].c1_1[0]", "/1"),
+        ("category.foreign_branch", "Page1[0].LineA-B_ReadOrder[0].c1_1[1]", "/2"),
+        ("category.passive", "Page1[0].LineC-D_ReadOrder[0].c1_1[0]", "/3"),
+        ("category.general", "Page1[0].LineC-D_ReadOrder[0].c1_1[1]", "/4"),
+        ("category.section_901j", "Page1[0].LineE-F_ReadOrder[0].c1_1[0]", "/5"),
+        ("category.resourced_by_treaty", "Page1[0].LineE-F_ReadOrder[0].c1_1[1]", "/6"),
+        ("category.lump_sum", "Page1[0].c1_1[0]", "/7"),
+    ),
 }
 
 _F1116_CREDIT_CLAIMED_BY_YEAR: dict[int, tuple[tuple[str, str, str], ...]] = {
@@ -614,6 +624,11 @@ _F1116_CREDIT_CLAIMED_BY_YEAR: dict[int, tuple[tuple[str, str, str], ...]] = {
     2025: (
         ("credit_claimed.paid", "Page1[0].Part2[0].ActiveHeaderElements[0].c1_3[0]", "/1"),
         ("credit_claimed.accrued", "Page1[0].Part2[0].ActiveHeaderElements[0].c1_3[1]", "/2"),
+    ),
+    # 2026: Part II moved to page 2, so the pair is Page2[0].Credit_ReadOrder[0].c2_1 (same /1 /2 states).
+    2026: (
+        ("credit_claimed.paid", "Page2[0].Credit_ReadOrder[0].c2_1[0]", "/1"),
+        ("credit_claimed.accrued", "Page2[0].Credit_ReadOrder[0].c2_1[1]", "/2"),
     ),
 }
 
@@ -638,6 +653,11 @@ _F1116_STANDALONE_BOXES_BY_YEAR: dict[int, tuple[tuple[str, str, str], ...]] = {
         ("1b", "Page1[0].Line1b_ReadOrder[0].c1_2[0]", "/1"),
         ("10.no_schedule_b", "Page2[0].Line10_ReadOrder[0].c2_1[0]", "/Accrued"),
     ),
+    # 2026: the line-10 box finally exports /1 — and it is c2_2 now (c2_1 is the Paid/Accrued pair).
+    2026: (
+        ("1b", "Page1[0].Line1b_ReadOrder[0].c1_2[0]", "/1"),
+        ("10.no_schedule_b", "Page2[0].Line10_ReadOrder[0].c2_2[0]", "/1"),
+    ),
 }
 
 # Line 1a's printed LABEL column carries three dashed rules for the description
@@ -656,6 +676,7 @@ _F1116_INCOME_TYPE_KEYS_BY_YEAR: dict[int, tuple[str, ...]] = {
     # year keeps the base's three keys. Measured on the 2024 blank.
     2024: ("1a.income_type_1", "1a.income_type_2", "1a.income_type_3"),
     2025: ("1a.income_type",),
+    2026: ("1a.income_type",),   # the draft keeps the one Multiline box (f1_07)
 }
 
 F1116_PACK_PATHS = [path for path in PACK_PATHS if path.parent.name == "f1116"]
@@ -777,13 +798,20 @@ def test_f1116_column_grid_keys_are_unambiguous_and_complete(pack_path: Path):
             f"widget at all"
         )
     # Part II: three lines x ten printed columns (l)..(u), and (m)-(p) are
-    # "In foreign currency" so they are TEXT, not dollars.
+    # "In foreign currency" so they are TEXT, not dollars. The 2026 draft inserts the
+    # (p)(1)/(p)(2) and (u)(1)/(u)(2) PTEP columns, so its letters run (l)..(w) and the
+    # U.S.-dollar block is (r)-(w); the two "PTEP group" columns are text.
     by_line = {pf.line: pf for pf in pack.fields}
+    if pack.tax_year >= 2026:
+        columns = ("l", "m", "n", "o", "p1", "p2", "q", "r", "s", "t", "u1", "u2", "v", "w")
+        text_cols = {"l", "m", "n", "o", "p1", "p2", "q", "u2"}
+    else:
+        columns, text_cols = tuple("lmnopqrstu"), set("lmnop")
     for row in ("line_a", "line_b", "line_c"):
-        for col in "lmnopqrstu":
+        for col in columns:
             key = f"{row}.{col}"
             assert key in lines, f"{pack.tax_year} f1116 is missing '{key}'"
-            expected = "text" if col in "lmnop" else "money"
+            expected = "text" if col in text_cols else "money"
             assert by_line[key].type == expected, (
                 f"{key} is {by_line[key].type}, expected {expected} — the masthead prints 'Report "
                 f"all amounts in U.S. dollars EXCEPT where specified in Part II below', and "
@@ -855,6 +883,8 @@ def test_f1116_blank_has_no_readonly_widgets_and_the_states_are_real(pack_path: 
     for page in reader.pages:
         for annot_ref in page.get("/Annots") or []:
             annot = annot_ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue   # a draft's IRS cover sheet carries /Link annotations (no /T): not form widgets
             parts, node, hops = [], annot, 0
             while node is not None and hops < 32:
                 title = node.get("/T")
@@ -1884,3 +1914,57 @@ def test_jt5d_schedule_e_splits_the_address_and_line_13():
     # Part V moved to a new page 3, which repeats the header.
     assert (f["41"], f["name_page3"]) == ("Page3[0].f3_4[0]", "Page3[0].f3_1[0]")
     assert new.cross_form == ["41 == sched_1.5"]
+
+
+# ── Phase J JT5e: Forms 8962, 2441, 1116 and 8938 on their 2026 drafts ──
+
+def test_jt5e_form_8962_brings_back_line_6_and_drops_the_repayment_cap():
+    new = _fed_pack(2026, "f8962")
+    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "4/21/26", 141)
+    f = {pf.line: pf for pf in new.fields}
+    assert [(k, f[k].field, f[k].on_state) for k in ("6.no", "6.yes")] == [
+        ("6.no", "Page1[0].c1_3[0]", "/1"), ("6.yes", "Page1[0].c1_3[1]", "/2")]
+    assert {"28", "29"}.isdisjoint(f)                       # reserved on the 2026 draft
+    assert "27 == sched_2.1a" in new.cross_form and "29 == sched_2.1a" not in new.cross_form
+    assert f["23f"].field == "Page1[0].Part2_Table2[0].BodyRow12[0].f1_89[0]"
+
+
+def test_jt5e_form_2441_transposes_the_provider_table():
+    old, new = _fed_pack(2025, "f2441"), _fed_pack(2026, "f2441")
+    assert (new.source_status, new.draft_created) == ("draft", "4/30/26")
+    assert [pf.line for pf in old.fields] == [pf.line for pf in new.fields]      # the keys survive
+    f = {pf.line: pf.field for pf in new.fields}
+    assert f["care_provider_2.address"] == "Page1[0].PartITable[0].Row1b[0].Provider2[0].f1_7[0]"
+    assert f["care_provider_3.household_employee.no"] == "Page1[0].PartITable[0].Row1d[0].Provider3[0].c1_6[1]"
+    # Everything below Part I keeps its 2025 widget.
+    o = {pf.line: pf.field for pf in old.fields}
+    assert all(f[k] == o[k] for k in o if not k.startswith("care_provider_"))
+
+
+def test_jt5e_form_1116_moves_part_ii_and_re_letters_its_columns():
+    new = _fed_pack(2026, "f1116")
+    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "7/1/26", 130)
+    f = {pf.line: pf for pf in new.fields}
+    # TRAP: the U.S.-dollar dividends column is (r) now (2025: q); (q) is the foreign-currency "other".
+    assert f["line_a.r"].field == "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_22[0]" and f["line_a.r"].type == "money"
+    assert f["line_a.q"].field == "Page2[0].Table_Part2_ColsL-Q[0].RowA[0].f2_07[0]" and f["line_a.q"].type == "text"
+    assert {"line_a.p1", "line_a.p2", "line_a.u1", "line_a.u2", "line_a.w"} <= set(f)
+    assert (f["9"].field, f["35"].field) == ("Page2[0].Line9_ReadOrder[0].f2_44[0]", "Page2[0].f2_70[0]")
+    assert new.cross_form == ["35 == sched_3.1"]
+
+
+def test_jt5e_form_8938_rev_12_2026_keeps_the_map_with_unpadded_names():
+    old, new = _fed_pack(2025, "f8938"), _fed_pack(2026, "f8938")
+    assert (new.source_status, new.draft_created) == ("draft", "9/2/26")
+    import re  # noqa: PLC0415
+    assert [(pf.line, re.sub(r"_0(\d)\[", r"_\1[", pf.field), pf.on_state) for pf in old.fields] == [
+        (pf.line, pf.field, pf.on_state) for pf in new.fields]
+
+
+def test_jt5e_the_foreign_tax_credit_op_points_at_the_2026_pack():
+    from taxfill_core.calc import foreign_tax_credit_election  # noqa: PLC0415
+
+    r = foreign_tax_credit_election(
+        creditable_foreign_taxes=250, all_foreign_income_passive=True, all_reported_on_payee_statement=True,
+        year=2026)
+    assert r.form_1116_pack_key == "formpacks/federal/2026/f1116"

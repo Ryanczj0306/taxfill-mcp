@@ -1,0 +1,221 @@
+# Form 8962 (2026) — Premium Tax Credit (PTC) — DRAFTS-FIRST (Phase J JT5e, read 2026-09-28).
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f8962--dft.pdf, footer "Form 8962 (2026)
+# Created 4/21/26"). PDF page 1 is the IRS cover sheet, so the form's pages 1 and 2 are PDF pages 2 and 3.
+# When the final posts at irs-prior/f8962--2026.pdf, re-pin source_url, pdf_sha256 and source_status final,
+# drop draft_created, and re-read the face. TY2026 is planning-only, so this pack fills only in REHEARSAL
+# mode. Attachment-only (no signature block).
+#
+# 143 widgets (2025: 141); 141 mapped. The two unmapped widgets are the ReadOnly reserved lines 28/29.
+# 2025 -> 2026, read off the draft face and widget tree (every binding re-read; the text leaves renumber
+# after the new line-6 radio and the table containers are renamed Part2_Table1/Part2_Table2):
+# - NEW line 6 radio — the 400% cliff is back (OBBBA; JT1a): "Did you enter 401% on line 5?" No/Yes
+#   (c1_3; /1 No prints first). In 2021-2025 line 6 was "Reserved for future use" with no widget.
+# - Line 4's three poverty-table boxes move under Line4_ReadOrder (same c1_2 kids /1 /2 /3).
+# - TRAP — Part III shrinks: "27 Excess advance payment of PTC. If line 25 is greater than line 24,
+#   subtract line 24 from line 25. Enter the difference here and on Schedule 2 (Form 1040), line 1a"; lines
+#   28 and 29 print "Reserved for future use" (2025: 28 the Table 5 repayment limitation, 29 the smaller of
+#   27 or 28 -> Schedule 2 line 1a). The Schedule 2 leg moves from line 29 to line 27.
+# - Parts IV-V keep their layout; the 30e-33f boxes gain Line<N>e/Line<N>f wrappers.
+#
+# Relations: the 2025 set, unchanged — the form-face math of lines 3, 8b, the 11-23 (d)/(e) columns, 24,
+# 25, 26 and 27 prints identically. "8a == 3 * 7" stays undeclared (line 7 is a decimal text line; the 2025
+# pack's reasoning), as do the method-conditional column (c) copies.
+# Cross-form: "26 ... on Schedule 3 (Form 1040), line 9" and "27 ... on Schedule 2 (Form 1040), line 1a"
+# (the 2026 sched_2 pack's line 1a is the excess APTC repayment). SKIPPED when the other schedule is absent.
+form: "8962"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f8962--dft.pdf
+pdf_sha256: "5b692171ee43a4596eabfcaad83bea920e6356c492656a1648f2aaf018cd1d35"
+source_status: draft
+draft_created: "4/21/26"
+acroform_root: "topmostSubform[0]"
+fields:
+  - { line: "name", field: "Page1[0].f1_1[0]", type: text }
+  - { line: "identifying_number", field: "Page1[0].f1_2[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "a", field: "Page1[0].c1_1[0]", type: checkbox, on_state: "/1" }
+  - { line: "1", field: "Page1[0].f1_3[0]", type: text }
+  - { line: "2a", field: "Page1[0].f1_4[0]", type: money }
+  - { line: "2b", field: "Page1[0].f1_5[0]", type: money }
+  - { line: "3", field: "Page1[0].f1_6[0]", type: money }
+  - { line: "4.alaska", field: "Page1[0].Line4_ReadOrder[0].c1_2[0]", type: checkbox, on_state: "/1", group: "fpl_table", required: true }
+  - { line: "4.hawaii", field: "Page1[0].Line4_ReadOrder[0].c1_2[1]", type: checkbox, on_state: "/2", group: "fpl_table" }
+  - { line: "4.other_48_states", field: "Page1[0].Line4_ReadOrder[0].c1_2[2]", type: checkbox, on_state: "/3", group: "fpl_table" }
+  - { line: "4", field: "Page1[0].f1_7[0]", type: money }
+  - { line: "5", field: "Page1[0].f1_8[0]", type: text }
+  # NEW 2026 line 6 (2021-2025 "Reserved for future use", no widget): "Did you enter 401% on line 5?
+  # (See instructions if you entered less than 100%.)" — "No. Continue to line 7." prints first (/1),
+  # "Yes. You are not eligible to take the PTC." second (/2). One radio, answered by every Part I filer.
+  - { line: "6.no", field: "Page1[0].c1_3[0]", type: checkbox, on_state: "/1", group: "line6", required: true }
+  - { line: "6.yes", field: "Page1[0].c1_3[1]", type: checkbox, on_state: "/2", group: "line6" }
+  - { line: "7", field: "Page1[0].f1_9[0]", type: text }
+  - { line: "8a", field: "Page1[0].f1_10[0]", type: money }
+  - { line: "8b", field: "Page1[0].f1_11[0]", type: money }
+  - { line: "9.yes", field: "Page1[0].c1_4[0]", type: checkbox, on_state: "/1", group: "line9", required: true }
+  - { line: "9.no", field: "Page1[0].c1_4[1]", type: checkbox, on_state: "/2", group: "line9" }
+  - { line: "10.yes", field: "Page1[0].c1_5[0]", type: checkbox, on_state: "/1", group: "line10" }
+  - { line: "10.no", field: "Page1[0].c1_5[1]", type: checkbox, on_state: "/2", group: "line10" }
+  - { line: "11a", field: "Page1[0].Part2_Table1[0].BodyRow1[0].f1_12[0]", type: money }
+  - { line: "11b", field: "Page1[0].Part2_Table1[0].BodyRow1[0].f1_13[0]", type: money }
+  - { line: "11c", field: "Page1[0].Part2_Table1[0].BodyRow1[0].f1_14[0]", type: money }
+  - { line: "11d", field: "Page1[0].Part2_Table1[0].BodyRow1[0].f1_15[0]", type: money }
+  - { line: "11e", field: "Page1[0].Part2_Table1[0].BodyRow1[0].f1_16[0]", type: money }
+  - { line: "11f", field: "Page1[0].Part2_Table1[0].BodyRow1[0].f1_17[0]", type: money }
+  - { line: "12a", field: "Page1[0].Part2_Table2[0].BodyRow1[0].f1_18[0]", type: money }
+  - { line: "12b", field: "Page1[0].Part2_Table2[0].BodyRow1[0].f1_19[0]", type: money }
+  - { line: "12c", field: "Page1[0].Part2_Table2[0].BodyRow1[0].f1_20[0]", type: money }
+  - { line: "12d", field: "Page1[0].Part2_Table2[0].BodyRow1[0].f1_21[0]", type: money }
+  - { line: "12e", field: "Page1[0].Part2_Table2[0].BodyRow1[0].f1_22[0]", type: money }
+  - { line: "12f", field: "Page1[0].Part2_Table2[0].BodyRow1[0].f1_23[0]", type: money }
+  - { line: "13a", field: "Page1[0].Part2_Table2[0].BodyRow2[0].f1_24[0]", type: money }
+  - { line: "13b", field: "Page1[0].Part2_Table2[0].BodyRow2[0].f1_25[0]", type: money }
+  - { line: "13c", field: "Page1[0].Part2_Table2[0].BodyRow2[0].f1_26[0]", type: money }
+  - { line: "13d", field: "Page1[0].Part2_Table2[0].BodyRow2[0].f1_27[0]", type: money }
+  - { line: "13e", field: "Page1[0].Part2_Table2[0].BodyRow2[0].f1_28[0]", type: money }
+  - { line: "13f", field: "Page1[0].Part2_Table2[0].BodyRow2[0].f1_29[0]", type: money }
+  - { line: "14a", field: "Page1[0].Part2_Table2[0].BodyRow3[0].f1_30[0]", type: money }
+  - { line: "14b", field: "Page1[0].Part2_Table2[0].BodyRow3[0].f1_31[0]", type: money }
+  - { line: "14c", field: "Page1[0].Part2_Table2[0].BodyRow3[0].f1_32[0]", type: money }
+  - { line: "14d", field: "Page1[0].Part2_Table2[0].BodyRow3[0].f1_33[0]", type: money }
+  - { line: "14e", field: "Page1[0].Part2_Table2[0].BodyRow3[0].f1_34[0]", type: money }
+  - { line: "14f", field: "Page1[0].Part2_Table2[0].BodyRow3[0].f1_35[0]", type: money }
+  - { line: "15a", field: "Page1[0].Part2_Table2[0].BodyRow4[0].f1_36[0]", type: money }
+  - { line: "15b", field: "Page1[0].Part2_Table2[0].BodyRow4[0].f1_37[0]", type: money }
+  - { line: "15c", field: "Page1[0].Part2_Table2[0].BodyRow4[0].f1_38[0]", type: money }
+  - { line: "15d", field: "Page1[0].Part2_Table2[0].BodyRow4[0].f1_39[0]", type: money }
+  - { line: "15e", field: "Page1[0].Part2_Table2[0].BodyRow4[0].f1_40[0]", type: money }
+  - { line: "15f", field: "Page1[0].Part2_Table2[0].BodyRow4[0].f1_41[0]", type: money }
+  - { line: "16a", field: "Page1[0].Part2_Table2[0].BodyRow5[0].f1_42[0]", type: money }
+  - { line: "16b", field: "Page1[0].Part2_Table2[0].BodyRow5[0].f1_43[0]", type: money }
+  - { line: "16c", field: "Page1[0].Part2_Table2[0].BodyRow5[0].f1_44[0]", type: money }
+  - { line: "16d", field: "Page1[0].Part2_Table2[0].BodyRow5[0].f1_45[0]", type: money }
+  - { line: "16e", field: "Page1[0].Part2_Table2[0].BodyRow5[0].f1_46[0]", type: money }
+  - { line: "16f", field: "Page1[0].Part2_Table2[0].BodyRow5[0].f1_47[0]", type: money }
+  - { line: "17a", field: "Page1[0].Part2_Table2[0].BodyRow6[0].f1_48[0]", type: money }
+  - { line: "17b", field: "Page1[0].Part2_Table2[0].BodyRow6[0].f1_49[0]", type: money }
+  - { line: "17c", field: "Page1[0].Part2_Table2[0].BodyRow6[0].f1_50[0]", type: money }
+  - { line: "17d", field: "Page1[0].Part2_Table2[0].BodyRow6[0].f1_51[0]", type: money }
+  - { line: "17e", field: "Page1[0].Part2_Table2[0].BodyRow6[0].f1_52[0]", type: money }
+  - { line: "17f", field: "Page1[0].Part2_Table2[0].BodyRow6[0].f1_53[0]", type: money }
+  - { line: "18a", field: "Page1[0].Part2_Table2[0].BodyRow7[0].f1_54[0]", type: money }
+  - { line: "18b", field: "Page1[0].Part2_Table2[0].BodyRow7[0].f1_55[0]", type: money }
+  - { line: "18c", field: "Page1[0].Part2_Table2[0].BodyRow7[0].f1_56[0]", type: money }
+  - { line: "18d", field: "Page1[0].Part2_Table2[0].BodyRow7[0].f1_57[0]", type: money }
+  - { line: "18e", field: "Page1[0].Part2_Table2[0].BodyRow7[0].f1_58[0]", type: money }
+  - { line: "18f", field: "Page1[0].Part2_Table2[0].BodyRow7[0].f1_59[0]", type: money }
+  - { line: "19a", field: "Page1[0].Part2_Table2[0].BodyRow8[0].f1_60[0]", type: money }
+  - { line: "19b", field: "Page1[0].Part2_Table2[0].BodyRow8[0].f1_61[0]", type: money }
+  - { line: "19c", field: "Page1[0].Part2_Table2[0].BodyRow8[0].f1_62[0]", type: money }
+  - { line: "19d", field: "Page1[0].Part2_Table2[0].BodyRow8[0].f1_63[0]", type: money }
+  - { line: "19e", field: "Page1[0].Part2_Table2[0].BodyRow8[0].f1_64[0]", type: money }
+  - { line: "19f", field: "Page1[0].Part2_Table2[0].BodyRow8[0].f1_65[0]", type: money }
+  - { line: "20a", field: "Page1[0].Part2_Table2[0].BodyRow9[0].f1_66[0]", type: money }
+  - { line: "20b", field: "Page1[0].Part2_Table2[0].BodyRow9[0].f1_67[0]", type: money }
+  - { line: "20c", field: "Page1[0].Part2_Table2[0].BodyRow9[0].f1_68[0]", type: money }
+  - { line: "20d", field: "Page1[0].Part2_Table2[0].BodyRow9[0].f1_69[0]", type: money }
+  - { line: "20e", field: "Page1[0].Part2_Table2[0].BodyRow9[0].f1_70[0]", type: money }
+  - { line: "20f", field: "Page1[0].Part2_Table2[0].BodyRow9[0].f1_71[0]", type: money }
+  - { line: "21a", field: "Page1[0].Part2_Table2[0].BodyRow10[0].f1_72[0]", type: money }
+  - { line: "21b", field: "Page1[0].Part2_Table2[0].BodyRow10[0].f1_73[0]", type: money }
+  - { line: "21c", field: "Page1[0].Part2_Table2[0].BodyRow10[0].f1_74[0]", type: money }
+  - { line: "21d", field: "Page1[0].Part2_Table2[0].BodyRow10[0].f1_75[0]", type: money }
+  - { line: "21e", field: "Page1[0].Part2_Table2[0].BodyRow10[0].f1_76[0]", type: money }
+  - { line: "21f", field: "Page1[0].Part2_Table2[0].BodyRow10[0].f1_77[0]", type: money }
+  - { line: "22a", field: "Page1[0].Part2_Table2[0].BodyRow11[0].f1_78[0]", type: money }
+  - { line: "22b", field: "Page1[0].Part2_Table2[0].BodyRow11[0].f1_79[0]", type: money }
+  - { line: "22c", field: "Page1[0].Part2_Table2[0].BodyRow11[0].f1_80[0]", type: money }
+  - { line: "22d", field: "Page1[0].Part2_Table2[0].BodyRow11[0].f1_81[0]", type: money }
+  - { line: "22e", field: "Page1[0].Part2_Table2[0].BodyRow11[0].f1_82[0]", type: money }
+  - { line: "22f", field: "Page1[0].Part2_Table2[0].BodyRow11[0].f1_83[0]", type: money }
+  - { line: "23a", field: "Page1[0].Part2_Table2[0].BodyRow12[0].f1_84[0]", type: money }
+  - { line: "23b", field: "Page1[0].Part2_Table2[0].BodyRow12[0].f1_85[0]", type: money }
+  - { line: "23c", field: "Page1[0].Part2_Table2[0].BodyRow12[0].f1_86[0]", type: money }
+  - { line: "23d", field: "Page1[0].Part2_Table2[0].BodyRow12[0].f1_87[0]", type: money }
+  - { line: "23e", field: "Page1[0].Part2_Table2[0].BodyRow12[0].f1_88[0]", type: money }
+  - { line: "23f", field: "Page1[0].Part2_Table2[0].BodyRow12[0].f1_89[0]", type: money }
+  - { line: "24", field: "Page1[0].f1_90[0]", type: money }
+  - { line: "25", field: "Page1[0].f1_91[0]", type: money }
+  - { line: "26", field: "Page1[0].f1_92[0]", type: money }
+  - { line: "27", field: "Page1[0].f1_93[0]", type: money }
+  # Lines 28 and 29 print "Reserved for future use" on ReadOnly widgets (f1_94 / f1_95, /Ff 8388609):
+  # OBBBA §71305 removed the repayment limitation, and line 27 now carries to Schedule 2 line 1a
+  # itself. No printed sum names 28 or 29, so the keys do not exist — a caller that still fills the
+  # 2025 meaning ("29 = excess APTC repayment") gets an unknown-line error instead of a reserved box.
+  - { line: "30a", field: "Page2[0].f2_1[0]", type: text }
+  - { line: "30b", field: "Page2[0].f2_2[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "30c", field: "Page2[0].f2_3[0]", type: text }
+  - { line: "30d", field: "Page2[0].f2_4[0]", type: text }
+  - { line: "30e", field: "Page2[0].Lines30e-g[0].Line30e[0].f2_5[0]", type: text }
+  - { line: "30f", field: "Page2[0].Lines30e-g[0].Line30f[0].f2_6[0]", type: text }
+  - { line: "30g", field: "Page2[0].Lines30e-g[0].f2_7[0]", type: text }
+  - { line: "31a", field: "Page2[0].f2_8[0]", type: text }
+  - { line: "31b", field: "Page2[0].f2_9[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "31c", field: "Page2[0].f2_10[0]", type: text }
+  - { line: "31d", field: "Page2[0].f2_11[0]", type: text }
+  - { line: "31e", field: "Page2[0].Lines31e-g[0].Line31e[0].f2_12[0]", type: text }
+  - { line: "31f", field: "Page2[0].Lines31e-g[0].Line31f[0].f2_13[0]", type: text }
+  - { line: "31g", field: "Page2[0].Lines31e-g[0].f2_14[0]", type: text }
+  - { line: "32a", field: "Page2[0].f2_15[0]", type: text }
+  - { line: "32b", field: "Page2[0].f2_16[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "32c", field: "Page2[0].f2_17[0]", type: text }
+  - { line: "32d", field: "Page2[0].f2_18[0]", type: text }
+  - { line: "32e", field: "Page2[0].Lines32e-g[0].Line32e[0].f2_19[0]", type: text }
+  - { line: "32f", field: "Page2[0].Lines32e-g[0].Line32f[0].f2_20[0]", type: text }
+  - { line: "32g", field: "Page2[0].Lines32e-g[0].f2_21[0]", type: text }
+  - { line: "33a", field: "Page2[0].f2_22[0]", type: text }
+  - { line: "33b", field: "Page2[0].f2_23[0]", type: text, maxlen: 9, format: "ssn_digits_only" }
+  - { line: "33c", field: "Page2[0].f2_24[0]", type: text }
+  - { line: "33d", field: "Page2[0].f2_25[0]", type: text }
+  - { line: "33e", field: "Page2[0].Lines33e-g[0].Line33e[0].f2_26[0]", type: text }
+  - { line: "33f", field: "Page2[0].Lines33e-g[0].Line33f[0].f2_27[0]", type: text }
+  - { line: "33g", field: "Page2[0].Lines33e-g[0].f2_28[0]", type: text }
+  - { line: "34.yes", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/1", group: "line34" }
+  - { line: "34.no", field: "Page2[0].c2_1[1]", type: checkbox, on_state: "/2", group: "line34" }
+  - { line: "35a", field: "Page2[0].f2_29[0]", type: text }
+  - { line: "35b", field: "Page2[0].f2_30[0]", type: money }
+  - { line: "35c", field: "Page2[0].f2_31[0]", type: text }
+  - { line: "35d", field: "Page2[0].f2_32[0]", type: text }
+  - { line: "36a", field: "Page2[0].f2_33[0]", type: text }
+  - { line: "36b", field: "Page2[0].f2_34[0]", type: money }
+  - { line: "36c", field: "Page2[0].f2_35[0]", type: text }
+  - { line: "36d", field: "Page2[0].f2_36[0]", type: text }
+relations:
+  - "3 == 2a + 2b"
+  - "8b == 8a / 12"
+  - "11d == max(0, 11b - 11c)"
+  - "11e == min(11a, 11d)"
+  - "12d == max(0, 12b - 12c)"
+  - "12e == min(12a, 12d)"
+  - "13d == max(0, 13b - 13c)"
+  - "13e == min(13a, 13d)"
+  - "14d == max(0, 14b - 14c)"
+  - "14e == min(14a, 14d)"
+  - "15d == max(0, 15b - 15c)"
+  - "15e == min(15a, 15d)"
+  - "16d == max(0, 16b - 16c)"
+  - "16e == min(16a, 16d)"
+  - "17d == max(0, 17b - 17c)"
+  - "17e == min(17a, 17d)"
+  - "18d == max(0, 18b - 18c)"
+  - "18e == min(18a, 18d)"
+  - "19d == max(0, 19b - 19c)"
+  - "19e == min(19a, 19d)"
+  - "20d == max(0, 20b - 20c)"
+  - "20e == min(20a, 20d)"
+  - "21d == max(0, 21b - 21c)"
+  - "21e == min(21a, 21d)"
+  - "22d == max(0, 22b - 22c)"
+  - "22e == min(22a, 22d)"
+  - "23d == max(0, 23b - 23c)"
+  - "23e == min(23a, 23d)"
+  - "24 == 11e + 12e + 13e + 14e + 15e + 16e + 17e + 18e + 19e + 20e + 21e + 22e + 23e"
+  - "25 == 11f + 12f + 13f + 14f + 15f + 16f + 17f + 18f + 19f + 20f + 21f + 22f + 23f"
+  - "26 == max(0, 24 - 25)"
+  - "27 == max(0, 25 - 24)"
+cross_form:
+  - "26 == sched_3.9"                 # "Enter the difference here and on Schedule 3 (Form 1040), line 9"
+  - "27 == sched_2.1a"                # "Enter the difference here and on Schedule 2 (Form 1040), line 1a" (2025: line 29)
+identity_fields: [name, identifying_number]
+signature: null
+mailing: null
