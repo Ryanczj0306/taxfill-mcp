@@ -2635,8 +2635,45 @@ def child_tax_credit(
 # ---------------------------------------------------------------------------
 
 
+def eic_table_amount(amount: Decimal, row: dict, mfj: bool, table: dict) -> int:
+    """The EIC Table's credit for the band holding ``amount`` — every cell of the 2019-2026 tables reproduces.
+
+    The table prices each ``band_width`` band at its midpoint (the first band starts at $1) with the IRC 32(b)(1)
+    percentages: the credit rate times the midpoint, capped at the printed maximum, and past the phase-out
+    threshold the phase-out rate times the midpoint's excess taken from the maximum — the printed one or, in the
+    2019-2023 tables, the unrounded one (credit rate x earned income amount): ``phaseout_from``. A band that holds
+    the earned income amount or the threshold prints the maximum. Rounded to whole dollars.
+    """
+    width = Decimal(table["band_width"])
+    maximum = Decimal(row["max_credit"])
+    ei_amount = Decimal(row["earned_income_amount"])
+    begin = Decimal(row["phaseout_begins_mfj" if mfj else "phaseout_begins_other"])
+    credit_rate, phaseout_rate = Decimal(str(row["credit_rate"])), Decimal(str(row["phaseout_rate"]))
+    lo = (amount // width) * width
+    hi = lo + width
+    if lo < ei_amount < hi or lo < begin < hi:
+        return int(maximum)
+    mid = (max(lo, Decimal(1)) + hi) / 2
+    credit = min(credit_rate * mid, maximum)
+    if mid > begin:
+        top = maximum if table["phaseout_from"] == "rounded_maximum" else credit_rate * ei_amount
+        credit = min(credit, max(Decimal(0), top - phaseout_rate * (mid - begin)))
+    return irs_round(credit)
+
+
+def eic_table_credit(earned: Decimal, agi: Decimal, row: dict, mfj: bool, table: dict) -> tuple[int, int | None]:
+    """EIC Worksheet A: the table on earned income, and — when AGI differs and is at or over the phase-out
+    threshold — the smaller of that and the table on AGI. Returns (credit, the AGI lookup or None)."""
+    credit = eic_table_amount(earned, row, mfj, table)
+    begin = Decimal(row["phaseout_begins_mfj" if mfj else "phaseout_begins_other"])
+    if agi != earned and agi >= begin:
+        on_agi = eic_table_amount(agi, row, mfj, table)
+        return min(credit, on_agi), on_agi
+    return credit, None
+
+
 class EitcResult(BaseModel):
-    """Result of :func:`eitc`: the earned income credit by the Rev. Proc. formula."""
+    """Result of :func:`eitc`: the earned income credit — the EIC Table's figure."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -2667,7 +2704,7 @@ def eitc(
     investment_income: int | float | Decimal | str = 0,
     knowledge_dir: str | Path | None = None,
 ) -> EitcResult:
-    """Earned income tax credit (the Form 1040 EIC line) by the Rev. Proc. formula.
+    """Earned income tax credit (the Form 1040 EIC line) — the EIC Table's figure.
 
     ``qualifying_children`` counts the EITC qualifying children (relationship /
     age / residency / joint-return tests met, each with a valid SSN) — those
@@ -2683,13 +2720,17 @@ def eitc(
       net capital gain, and net passive/rental income); married filing
       separately is denied by rule (see below); and the credit needs positive
       earned income.
-    * phase-in: max_credit / earned_income_amount x earned income, capped at
-      the maximum credit (the plateau).
-    * phase-out: on the GREATER of AGI or earned income above the phase-out
-      threshold (the MFJ column's thresholds are higher than every other
-      status's — a qualifying surviving spouse uses the OTHER column, unlike
-      most MFJ aliasing), at max_credit / (complete - begin) per dollar, to
-      zero at the completion point. Floor 0, then IRS-rounded.
+    * the EIC Table (:func:`eic_table_amount`), the figure a filer copies: each
+      $50 band priced at its midpoint with the IRC 32(b)(1) percentages, a
+      kink band printing the maximum, and each year's phase-out base
+      (``eic_table.phaseout_from``) — every cell of the 2019-2026 tables
+      reproduces. EIC Worksheet A: the table on earned income, and the smaller
+      of that and the table on AGI when AGI differs and is at or over the
+      phase-out threshold (the MFJ column's thresholds are higher than every
+      other status's — a qualifying surviving spouse uses the OTHER column).
+    * a pack without ``eic_table`` falls back to the ratio approximation
+      (max_credit / earned_income_amount in, max_credit / (complete - begin)
+      out, on the greater of AGI or earned income), disclosed in ``work``.
 
     MFS: generally NOT eligible (IRC 32(d)). Since 2021 (ARPA section 9622)
     there is a NARROW exception — an MFS filer who lived with their qualifying
@@ -2698,10 +2739,8 @@ def eitc(
     apart at year end. This op conservatively returns $0 for MFS and spells the
     exception out in ``work``; a filer meeting it should be worked from Pub 596.
 
-    Approximation, same disclosure as the estimator: the official EIC table
-    uses $50 income bands (the formula evaluated at each band's midpoint), so a
-    printed-table lookup can differ from this exact-formula value by roughly
-    +/-$27 — re-derive from the printed table at filing time.
+    Before 2026-09-27 every year used that ratio, which missed 1.6% to 10.4% of
+    each printed table's cells by $1.
     """
     earned = _to_decimal(earned_income, "earned_income")
     agi_d = _to_decimal(agi, "agi")
@@ -2762,6 +2801,10 @@ def eitc(
     ei_amount = Decimal(row["earned_income_amount"])
     phase_in_amount = min(max_credit, max_credit / ei_amount * earned)
     mfj = status == "married_filing_jointly"
+    table = cfg.get("eic_table")
+    if table is not None and "credit_rate" in row:
+        return _eitc_from_table(earned, agi_d, row, mfj, table, year=year, status=status, key=key, inv=inv,
+                                inv_limit=inv_limit, pack=pack, inputs=inputs, citation=citation)
     begin = Decimal(row["phaseout_begins_mfj" if mfj else "phaseout_begins_other"])
     complete = Decimal(row["phaseout_complete_mfj" if mfj else "phaseout_complete_other"])
     phase_base = max(agi_d, earned)
@@ -2791,8 +2834,8 @@ def eitc(
         f"{_dollars(max_credit)}/{_dollars(ei_amount)} x earned income {_money(earned)}) = "
         f"{_money(phase_in_amount)}; {phase_text}; credit = {_dollars(credit)} (Form 1040 line "
         f"{form_line(pack, 'f1040.eic')}), "
-        f"'{phase}' region. The official EIC table uses $50 income bands, so a printed-table lookup can "
-        f"differ from this exact formula by roughly +/-$27 — re-derive from the table at filing time. "
+        f"'{phase}' region. This pack carries no eic_table, so this is the ratio approximation — the printed EIC "
+        f"Table prices $50 bands and can differ by a few dollars; take the table's figure at filing time. "
         f"Qualifying-child and taxpayer-level eligibility tests are caller judgment."
     )
     return EitcResult(
@@ -2803,6 +2846,38 @@ def eitc(
         work=work,
         citation=citation,
     )
+
+
+def _eitc_from_table(earned, agi_d, row, mfj, table, *, year, status, key, inv, inv_limit, pack, inputs,
+                     citation) -> EitcResult:
+    """The eitc op on the EIC Table (see :func:`eic_table_amount`)."""
+    credit, on_agi = eic_table_credit(earned, agi_d, row, mfj, table)
+    maximum = int(row["max_credit"])
+    begin = Decimal(row["phaseout_begins_mfj" if mfj else "phaseout_begins_other"])
+    on_earned = eic_table_amount(earned, row, mfj, table)
+    phase: Literal["in", "plateau", "out"]
+    if credit < maximum and (earned > begin or (on_agi is not None and on_agi < on_earned)):
+        phase = "out"
+    else:
+        phase = "plateau" if credit == maximum else "in"
+    width = int(table["band_width"])
+    lo = int((earned // width) * width)
+    column = "married filing jointly" if mfj else "single, head of household or qualifying surviving spouse"
+    agi_text = (
+        f"; AGI {_money(agi_d)} differs and is at or over the {_dollars(begin)} threshold, so the table on AGI "
+        f"({_dollars(on_agi)}) is also read and the smaller kept (EIC Worksheet A)"
+        if on_agi is not None else ""
+    )
+    work = (
+        f"EITC ({year}, {status}, {key} qualifying children): investment income {_money(inv)} is within the "
+        f"{_dollars(inv_limit)} limit. The EIC Table's {column} column, the ${lo:,}-${lo + width:,} band holding "
+        f"earned income {_money(earned)}: {_dollars(on_earned)}{agi_text}; credit = {_dollars(credit)} (Form 1040 "
+        f"line {form_line(pack, 'f1040.eic')}), '{phase}' region. The table prices each ${width} band at its "
+        f"midpoint with the IRC 32(b)(1) percentages (credit {row['credit_rate']}, phase-out {row['phaseout_rate']}; "
+        f"maximum {_dollars(maximum)}, threshold {_dollars(begin)}); {table['verified']}. Qualifying-child and "
+        f"taxpayer-level eligibility tests are caller judgment."
+    )
+    return EitcResult(eitc=credit, phase=phase, disqualified_reason=None, inputs=inputs, work=work, citation=citation)
 
 
 # ---------------------------------------------------------------------------

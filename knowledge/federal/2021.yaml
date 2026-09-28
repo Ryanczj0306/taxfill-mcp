@@ -472,10 +472,20 @@ credits:
     investment_income_limit: 10000          # ARPA raised this from the Rev. Proc. $3,650 to $10,000 for 2021
     # keyed by number of qualifying children: 0, 1, 2, 3+ (3+ shares the 2-child earned-income amount)
     by_qualifying_children:
-      "0": { earned_income_amount: 9820, max_credit: 1502, phaseout_begins_other: 11610, phaseout_begins_mfj: 17560, phaseout_complete_other: 21430, phaseout_complete_mfj: 27380 }
-      "1": { earned_income_amount: 10640, max_credit: 3618, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 42158, phaseout_complete_mfj: 48108 }
-      "2": { earned_income_amount: 14950, max_credit: 5980, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 47915, phaseout_complete_mfj: 53865 }
-      "3+": { earned_income_amount: 14950, max_credit: 6728, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 51464, phaseout_complete_mfj: 57414 }
+      "0": { earned_income_amount: 9820, max_credit: 1502, phaseout_begins_other: 11610, phaseout_begins_mfj: 17560, phaseout_complete_other: 21430, phaseout_complete_mfj: 27380, credit_rate: "0.153", phaseout_rate: "0.153" }
+      "1": { earned_income_amount: 10640, max_credit: 3618, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 42158, phaseout_complete_mfj: 48108, credit_rate: "0.34", phaseout_rate: "0.1598" }
+      "2": { earned_income_amount: 14950, max_credit: 5980, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 47915, phaseout_complete_mfj: 53865, credit_rate: "0.40", phaseout_rate: "0.2106" }
+      "3+": { earned_income_amount: 14950, max_credit: 6728, phaseout_begins_other: 19520, phaseout_begins_mfj: 25470, phaseout_complete_other: 51464, phaseout_complete_mfj: 57414, credit_rate: "0.45", phaseout_rate: "0.2106" }
+    # The EIC Table (fixed 2026-09-27): each $50 band is priced at its midpoint with the IRC
+    # 32(b)(1) percentages (2021: IRC 32(n)(3), 15.3% with no qualifying child), the phase-in capped at the
+    # printed maximum and the phase-out taken from the unrounded maximum (credit rate x earned income amount);
+    # a band that holds the earned income amount or the phase-out threshold prints the
+    # maximum. All 9,120 cells of Instructions for Form 1040 (2021)'s EIC Table reproduce.
+    eic_table:
+      band_width: 50
+      phaseout_from: unrounded_maximum
+      verified: "9120 cells, Instructions for Form 1040 (2021), 2026-09-27"
+      source_url: "https://www.irs.gov/pub/irs-prior/i1040gi--2021.pdf"
 
 # ARPA temporarily expanded the 2021 CTC and childless EITC; both expansions
 # are final and citeable for 2021 (figures encoded in credits above), so the

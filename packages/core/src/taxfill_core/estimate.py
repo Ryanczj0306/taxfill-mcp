@@ -3478,8 +3478,8 @@ def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "eit
 
 # ---------------------------------------------------------------------------
 # Credit helpers (parameters come from the knowledge pack's cited credits block;
-# no calc op exists for CTC/EITC yet, so the worksheet arithmetic lives here —
-# deterministic, data-driven, and disclosed as formula approximations).
+# the CTC worksheet arithmetic lives here — deterministic and data-driven; the EITC is the EIC Table,
+# calc.eic_table_credit).
 # ---------------------------------------------------------------------------
 
 
@@ -3515,11 +3515,15 @@ def _earned_income_proxy(income: IncomeSnapshot) -> Decimal:
 
 
 def _eitc_amount(cfg: dict, status: str, agi: int, earned: Decimal, n_qc: int) -> int:
-    """EITC by the Rev. Proc. formula: phase-in at max_credit/earned_income_amount,
-    phase-out (on the GREATER of AGI or earned income) at max_credit/(complete-begin).
-    The official EIC table uses $50 income bands, so this can differ by ~±$27."""
+    """EITC: the EIC Table's figure (calc.eic_table_credit) when the pack carries its eic_table; otherwise the
+    ratio approximation — phase-in at max_credit/earned_income_amount, phase-out (on the GREATER of AGI or earned
+    income) at max_credit/(complete-begin)."""
     key = "3+" if n_qc >= 3 else str(n_qc)
     row = cfg["by_qualifying_children"][key]
+    if cfg.get("eic_table") is not None and "credit_rate" in row:
+        from taxfill_core.calc import eic_table_credit  # noqa: PLC0415
+
+        return eic_table_credit(Decimal(earned), Decimal(agi), row, status == _MFJ, cfg["eic_table"])[0]
     max_credit = Decimal(row["max_credit"])
     credit = min(max_credit, max_credit / Decimal(row["earned_income_amount"]) * earned)
     mfj = status == _MFJ
@@ -4419,8 +4423,9 @@ def _bottom_line(
                 payments += eitc
                 citations.append(Citation(**eitc_cfg["citation"]))
                 comp.append(
-                    _line("eitc", 
-                        label="Less: earned income tax credit (refundable, formula approximation)",
+                    _line("eitc",
+                        label=("Less: earned income tax credit (refundable, EIC Table)" if eitc_cfg.get("eic_table")
+                               else "Less: earned income tax credit (refundable, formula approximation)"),
                         amount=-eitc,
                     )
                 )
@@ -5522,10 +5527,10 @@ def estimate_refund(
             "self-employment profit; the official worksheets subtract the ½-SE-tax deduction and "
             "handle more categories."
         )
-    if "earned income tax credit" in labels:
+    if "earned income tax credit (refundable, formula approximation)" in labels:
         assumptions.append(
-            "EITC approximated by the formula; the official EIC table uses $50 income bands, so the "
-            "filed amount can differ by roughly ±$27."
+            "EITC approximated by the formula (this year's pack carries no EIC Table rule); the official EIC "
+            "table uses $50 income bands, so the filed amount can differ by a few dollars."
         )
         assumptions.append(
             "EITC qualifying children counted from dates of birth (under 19 at year end, with an SSN); "
@@ -6015,7 +6020,7 @@ def estimate_refund(
         ))
     assumptions.append(
         "Not modeled in this estimate: AMT, LLC (available via the calc tool), itemized-deduction "
-        "sub-limits, EITC official-table $50 banding (formula used), capital-loss carryovers, and "
+        "sub-limits, capital-loss carryovers, and "
         "the retirement-savers credit — each could change the number. (The dependent-care credit IS "
         "estimated when dependent_care_expenses/persons are supplied.)"
     )

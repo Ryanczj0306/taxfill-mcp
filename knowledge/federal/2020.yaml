@@ -403,10 +403,20 @@ credits:
     investment_income_limit: 3650
     # keyed by number of qualifying children: 0, 1, 2, 3+ (3+ shares the 2-child earned-income amount)
     by_qualifying_children:
-      "0": { earned_income_amount: 7030, max_credit: 538, phaseout_begins_other: 8790, phaseout_begins_mfj: 14680, phaseout_complete_other: 15820, phaseout_complete_mfj: 21710 }
-      "1": { earned_income_amount: 10540, max_credit: 3584, phaseout_begins_other: 19330, phaseout_begins_mfj: 25220, phaseout_complete_other: 41756, phaseout_complete_mfj: 47646 }
-      "2": { earned_income_amount: 14800, max_credit: 5920, phaseout_begins_other: 19330, phaseout_begins_mfj: 25220, phaseout_complete_other: 47440, phaseout_complete_mfj: 53330 }
-      "3+": { earned_income_amount: 14800, max_credit: 6660, phaseout_begins_other: 19330, phaseout_begins_mfj: 25220, phaseout_complete_other: 50954, phaseout_complete_mfj: 56844 }
+      "0": { earned_income_amount: 7030, max_credit: 538, phaseout_begins_other: 8790, phaseout_begins_mfj: 14680, phaseout_complete_other: 15820, phaseout_complete_mfj: 21710, credit_rate: "0.0765", phaseout_rate: "0.0765" }
+      "1": { earned_income_amount: 10540, max_credit: 3584, phaseout_begins_other: 19330, phaseout_begins_mfj: 25220, phaseout_complete_other: 41756, phaseout_complete_mfj: 47646, credit_rate: "0.34", phaseout_rate: "0.1598" }
+      "2": { earned_income_amount: 14800, max_credit: 5920, phaseout_begins_other: 19330, phaseout_begins_mfj: 25220, phaseout_complete_other: 47440, phaseout_complete_mfj: 53330, credit_rate: "0.40", phaseout_rate: "0.2106" }
+      "3+": { earned_income_amount: 14800, max_credit: 6660, phaseout_begins_other: 19330, phaseout_begins_mfj: 25220, phaseout_complete_other: 50954, phaseout_complete_mfj: 56844, credit_rate: "0.45", phaseout_rate: "0.2106" }
+    # The EIC Table (fixed 2026-09-27): each $50 band is priced at its midpoint with the IRC
+    # 32(b)(1) percentages, the phase-in capped at the
+    # printed maximum and the phase-out taken from the unrounded maximum (credit rate x earned income amount);
+    # a band that holds the earned income amount or the phase-out threshold prints the
+    # maximum. All 9,024 cells of Instructions for Form 1040 (2020)'s EIC Table reproduce.
+    eic_table:
+      band_width: 50
+      phaseout_from: unrounded_maximum
+      verified: "9024 cells, Instructions for Form 1040 (2020), 2026-09-27"
+      source_url: "https://www.irs.gov/pub/irs-prior/i1040gi--2020.pdf"
 
 effective_law_changes: []
 

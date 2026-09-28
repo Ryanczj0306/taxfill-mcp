@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,491 tests** — offline 6,082 + live-.gov 409; derived
+Done and on `main` (**6,517 tests** — offline 6,100 + live-.gov 417; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2234,6 +2234,24 @@ not wait for any of this.
     - **Estimator:** `education_ssn_taxpayer` / `education_ssn_spouse` (derived from the profile's tax IDs: an SSN, an ITIN (starts with 9), or not recorded) and `aotc_students_ssn_ok` per student. No credit on an ITIN (both spouses' on a joint return) or to an ITIN-only dependent student; NOT ESTIMATED when the filer's or a student's answer is not recorded. The joint view pads the per-student answers and keeps each person's flag, like the senior flags; the field-coverage test classifies all three.
     - **Tests** (test_education_2026 `test_p024_*`): the block's quotes; the load refusal; the op's 2026 phase-out and rule text; an SSN vs an ITIN filer; an ITIN-only student → no AOTC; an unknown status → NOT ESTIMATED; one spouse's SSN is enough on a joint return; 2025 keeps no gate.
     - "Valid for employment" is not on the profile (an SSN card's legend), so it is disclosed, not tested.
+- [x] **JT1d+ — The EITC is the EIC Table (2019-2026) — DONE 2026-09-27** (found by the JT1d second pass)
+  - **Why.** calc op `eitc` and the estimator priced the credit by a ratio (maximum / earned income amount in, maximum / phase-out range out). A filer copies the printed EIC Table's figure, and the ratio missed 1.6% to 10.4% of each year's cells by $1 (2025: 647 of 10,928).
+  - **The table's construction, read off ~80,000 printed cells (2026-09-27):**
+    - each $50 band is priced at its midpoint with the IRC 32(b)(1) percentages (2021: IRC 32(n)(3), 15.3% with no qualifying child);
+    - the phase-in is capped at the printed maximum;
+    - past the threshold, the phase-out is taken from the printed maximum in the 2024-2026 tables and from the unrounded one (credit rate x earned income amount) in the 2019-2023 tables;
+    - a band that holds the earned income amount or the threshold prints the maximum.
+    
+    With that, every cell of the 2019-2025 final tables (Instructions for Form 1040) and of the draft 2026 table (Pub 1040 (2026), Aug 28, 2026) reproduces.
+  - **Built:**
+    - Each year's EITC rows carry credit_rate / phaseout_rate, with an `eic_table` block (band width, phase-out base, what was verified, the table's URL).
+    - `calc.eic_table_amount` / `eic_table_credit` implement EIC Worksheet A: the table on earned income, and the smaller of that and the table on AGI when AGI differs and is at or over the threshold. The op and the estimator use them; the label reads "EIC Table". A pack without the rule keeps the ratio, disclosed.
+  - **Tests:**
+    - test_tax_calc `test_the_eitc_is_the_eic_table` (printed cells the ratio missed, and the kink bands);
+    - `test_every_year_carries_the_eic_table_rule`;
+    - `test_worksheet_a_takes_the_smaller_of_the_two_lookups`;
+    - the network `test_every_cell_of_the_printed_eic_table`, all eight years (it re-downloads the 2026 draft, so the final's table is checked the day it posts).
+    - The old tests now pin the printed values.
 - [ ] **JT2a — Tax Table, SALT/itemized, student loan, Social Security** (M; deps JT0b) [TY26-05, TY26-07, TY26-09, TY26-13]
   - **Tax Table.** The draft Pub 1040 (2026) (Aug 28, 2026) matches the engine on all 8,240 cells. Record it as a draft second pass, and add goldens at the 25/50 band edges.
   - **SALT.** salt_cap is missing and NOT declared absent (2025.yaml:557 ships it). The draft Schedule A line 5e: $40,400 ($20,200 MFS), threshold $505,000 ($252,500). Add an absent-list discipline test.

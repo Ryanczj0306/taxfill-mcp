@@ -489,11 +489,9 @@ def test_estimate_skips_surtaxes_when_knowledge_pack_predates_the_blocks(tmp_pat
 # knowledge-pack parameters (no magic numbers).
 # ---------------------------------------------------------------------------
 
-from decimal import Decimal  # noqa: E402
 
 from taxfill_core.calc import (  # noqa: E402
     excess_ss,
-    irs_round,
     ptc_annual,
     student_loan_interest_deduction,
     tax_with_preferential_rates,
@@ -584,7 +582,7 @@ def test_dependent_without_dob_excluded_with_assumption():
     assert any("date of birth" in a for a in est.assumptions)  # the user is told how to fix it
 
 
-_EITC_LABEL = "Less: earned income tax credit (refundable, formula approximation)"
+_EITC_LABEL = "Less: earned income tax credit (refundable, EIC Table)"
 
 
 def test_eitc_single_one_child_phase_in_plateau_and_phase_out():
@@ -598,16 +596,12 @@ def test_eitc_single_one_child_phase_in_plateau_and_phase_out():
     est = estimate_refund(profile, 2023, IncomeSnapshot(wages=20_000))
     assert _labels(est)[_EITC_LABEL] == -row["max_credit"]
 
-    # Earned $30,000: in the phase-out band -> the hand formula from the cited
-    # Rev. Proc. parameters (rate = max_credit / (complete - begin)).
-    max_credit = Decimal(row["max_credit"])
-    rate = max_credit / Decimal(row["phaseout_complete_other"] - row["phaseout_begins_other"])
-    expected = irs_round(max_credit - rate * Decimal(30_000 - row["phaseout_begins_other"]))
+    # Earned $30,000: in the phase-out band -> the printed 2023 EIC Table, row $30,000-$30,050, single with
+    # one child: $2,642 (Instructions for Form 1040 (2023)).
     est2 = estimate_refund(profile, 2023, IncomeSnapshot(wages=30_000))
-    assert _labels(est2)[_EITC_LABEL] == -expected
-    assert 0 < expected < row["max_credit"]
-    # The formula approximation and the $50-band caveat are disclosed.
-    assert any("$50 income bands" in a for a in est2.assumptions)
+    assert _labels(est2)[_EITC_LABEL] == -2_642
+    # The table's figure needs no $50-band caveat.
+    assert not any("$50 income bands" in a for a in est2.assumptions)
 
 
 def test_eitc_blocked_by_investment_income():
@@ -748,10 +742,7 @@ def test_arpa_2021_ctc_fully_refundable_3600_under_6():
     taxable = 30_000 - standard_deduction("single", 2021).amount
     tax = tax_from_taxable_income(taxable, "single", 2021).tax
     eitc = -labels[_EITC_LABEL]
-    row = load_knowledge("federal", 2021).credits.earned_income_tax_credit["by_qualifying_children"]["1"]
-    max_credit = Decimal(row["max_credit"])
-    rate = max_credit / Decimal(row["phaseout_complete_other"] - row["phaseout_begins_other"])
-    assert eitc == irs_round(max_credit - rate * Decimal(30_000 - row["phaseout_begins_other"]))
+    assert eitc == 1_939   # the printed 2021 EIC Table, $30,000-$30,050, single, one child
     assert est.point == 2_000 + 3_600 + eitc - tax
     # Advance-payment reconciliation honesty (Letter 6419).
     assert any("Letter 6419" in a for a in est.assumptions)

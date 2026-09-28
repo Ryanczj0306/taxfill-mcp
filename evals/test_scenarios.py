@@ -561,18 +561,16 @@ def test_eval_n_family_with_children_ctc_and_eitc():
     )
     assert labels["Less: additional child tax credit (refundable)"] == -expected_actc
 
-    # EITC (2 qualifying children, non-MFJ column) by the Rev. Proc. formula.
-    row = load_knowledge("federal", 2023).credits.earned_income_tax_credit["by_qualifying_children"]["2"]
-    max_credit = Decimal(row["max_credit"])
-    phaseout_rate = max_credit / Decimal(row["phaseout_complete_other"] - row["phaseout_begins_other"])
-    expected_eitc = irs_round(max_credit - phaseout_rate * Decimal(wages - row["phaseout_begins_other"]))
-    assert labels["Less: earned income tax credit (refundable, formula approximation)"] == -expected_eitc
+    # EITC (2 qualifying children, non-MFJ column): the printed 2023 EIC Table, row $28,000-$28,050.
+    expected_eitc = 5_242
+    assert labels["Less: earned income tax credit (refundable, EIC Table)"] == -expected_eitc
 
     # Bottom line = withholding + refundable credits (income tax fully offset).
     assert est.point == withholding + expected_actc + expected_eitc
     assert est.point > 0
-    # Honesty: the approximations are disclosed, never silent.
-    assert any("$50 income bands" in a for a in est.assumptions)
+    # Honesty: the approximations are disclosed, never silent — and the EITC is the printed table's figure, so
+    # it carries no $50-band caveat.
+    assert not any("$50 income bands" in a for a in est.assumptions)
     assert any("92.35%" in a for a in est.assumptions)
 
 

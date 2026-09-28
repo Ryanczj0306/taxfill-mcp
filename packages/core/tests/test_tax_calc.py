@@ -1737,33 +1737,35 @@ def test_ctc_input_validation():
 
 
 def test_eitc_one_child_phase_in_plateau_phase_out():
-    # Phase-in: 3,995/11,750 = 0.34 exactly -> 0.34 x 6,000 = 2,040.
+    # The printed 2023 EIC Table, single with one child. Phase-in: the $6,000-$6,050 row, 0.34 x the $6,025
+    # midpoint = 2,048.50 -> $2,049.
     lo = eitc(6_000, 6_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
-    assert lo.eitc == 2_040 and lo.phase == "in" and lo.disqualified_reason is None
+    assert lo.eitc == 2_049 and lo.phase == "in" and lo.disqualified_reason is None
     # Plateau: earned past 11,750, AGI below the 21,560 phase-out start.
     mid = eitc(15_000, 15_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
     assert mid.eitc == 3_995 and mid.phase == "plateau"
-    # Phase-out: 3,995 - 3,995/25,000 x (30,000 - 21,560) = 2,646.29 -> 2,646.
+    # Phase-out: the $30,000-$30,050 row prints $2,642 — the 2023 table phases out from 0.34 x 11,750 = 3,995.00
+    # less 0.1598 x (30,025 - 21,560) (the old ratio, 3,995/25,000 per dollar, gave 2,646).
     hi = eitc(30_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
-    assert hi.eitc == 2_646 and hi.phase == "out"
+    assert hi.eitc == 2_642 and hi.phase == "out"
     assert hi.citation.url.startswith("https://www.irs.gov/")
 
 
 def test_eitc_phases_out_on_the_greater_of_agi_or_earned_income():
-    # Same 2,646 whichever side is higher — the phase-out base is max(AGI, earned).
-    assert eitc(15_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 2_646
-    assert eitc(30_000, 15_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 2_646
+    # Same 2,642 whichever side is higher — EIC Worksheet A keeps the smaller of the two table lookups.
+    assert eitc(15_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 2_642
+    assert eitc(30_000, 15_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR).eitc == 2_642
     assert eitc(15_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR).phase == "out"
 
 
 def test_eitc_mfj_uses_the_higher_thresholds_and_qss_does_not():
-    # MFJ phase-out starts at 28,120: 3,995 - 0.1598 x 1,880 = 3,694.58 -> 3,695.
+    # MFJ phase-out starts at 28,120: the printed MFJ column, $30,000-$30,050, is $3,691.
     mfj = eitc(30_000, 30_000, 1, "married_filing_jointly", knowledge_dir=KNOWLEDGE_DIR)
-    assert mfj.eitc == 3_695
+    assert mfj.eitc == 3_691
     # A qualifying surviving spouse uses the OTHER column (the EIC table groups
     # single/HoH/QSS), NOT the MFJ column — no aliasing here.
     qss = eitc(30_000, 30_000, 1, "qualifying_surviving_spouse", knowledge_dir=KNOWLEDGE_DIR)
-    assert qss.eitc == 2_646
+    assert qss.eitc == 2_642
 
 
 def test_eitc_zero_children_and_three_plus_share_columns():
@@ -1806,9 +1808,9 @@ def test_eitc_requires_positive_earned_income():
     assert "earned income" in r.disqualified_reason
 
 
-def test_eitc_work_discloses_the_50_dollar_band_approximation():
+def test_eitc_work_names_the_eic_table_band():
     r = eitc(30_000, 30_000, 1, "single", knowledge_dir=KNOWLEDGE_DIR)
-    assert "$50 income bands" in r.work
+    assert "The EIC Table's" in r.work and "$30,000-$30,050 band" in r.work and "cells" in r.work
 
 
 @pytest.mark.parametrize(
@@ -1901,8 +1903,8 @@ def test_ctc_and_eitc_match_estimate_refund_low_income_family():
     assert labels["Less: child tax credit / credit for other dependents (nonrefundable)"] == -r.nonrefundable_used
     assert labels["Less: additional child tax credit (refundable)"] == -r.actc_refundable
     e = eitc(wages, wages, 2, "head_of_household", knowledge_dir=KNOWLEDGE_DIR)
-    assert labels["Less: earned income tax credit (refundable, formula approximation)"] == -e.eitc
-    assert e.eitc == 6_511  # 6,604 - 6,604/31,358 x (22,000 - 21,560), rounded
+    assert labels["Less: earned income tax credit (refundable, EIC Table)"] == -e.eitc
+    assert e.eitc == 6_506  # the 2023 EIC Table, $22,000-$22,050, two children (the old ratio gave 6,511)
 
 
 def test_ctc_2021_arpa_matches_estimate_refund():
@@ -4780,3 +4782,84 @@ def test_jt1d_the_2026_ops_price_the_credits():
     assert eitc(20_000, 20_000, 0, "single", 2026).eitc == 0                    # past 19,540
     over = eitc(20_000, 20_000, 1, "single", 2026, investment_income=12_201)
     assert over.eitc == 0 and "$12,200" in over.disqualified_reason
+
+
+# ── The EITC is the EIC Table (2019-2026; found by the JT1d second pass, 2026-09-27) ──
+# Cells read off each year's printed EIC Table — (year, band start, children key, MFJ column?, printed credit) —
+# chosen where the old ratio approximation missed by $1, plus the kink bands that print the maximum.
+_EIC_TABLE_CELLS = [
+    (2019, 8_700, "0", False, 524), (2021, 11_650, "0", False, 1_493), (2021, 30_000, "1", False, 1_939),
+    (2023, 22_000, "2", False, 6_506), (2023, 30_000, "1", False, 2_642), (2023, 28_000, "2", False, 5_242),
+    (2025, 6_400, "0", False, 492), (2025, 10_850, "0", False, 629), (2025, 10_850, "0", True, 649),
+    (2025, 30_450, "1", False, 3_189),
+    (2026, 6_400, "0", True, 492), (2026, 10_850, "0", False, 664), (2026, 18_250, "2", False, 7_316),
+    (2026, 18_250, "3+", True, 8_231), (2026, 31_150, "1", True, 4_427), (2026, 31_150, "2", False, 5_782),
+]
+
+
+@pytest.mark.parametrize(("year", "lo", "key", "mfj", "printed"), _EIC_TABLE_CELLS)
+def test_the_eitc_is_the_eic_table(year, lo, key, mfj, printed):
+    n = {"0": 0, "1": 1, "2": 2, "3+": 3}[key]
+    status = "married_filing_jointly" if mfj else "single"
+    for amount in (lo, lo + 25, lo + 49):                     # anywhere in the $50 band
+        assert eitc(amount, amount, n, status, year).eitc == printed, (year, lo, key, mfj, amount)
+
+
+def test_every_year_carries_the_eic_table_rule():
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    for year in range(2019, 2027):
+        cfg = load_knowledge("federal", year).credits.earned_income_tax_credit
+        table = cfg["eic_table"]
+        assert table["band_width"] == 50 and table["phaseout_from"] in ("rounded_maximum", "unrounded_maximum")
+        assert table["phaseout_from"] == ("unrounded_maximum" if year <= 2023 else "rounded_maximum")
+        assert "cells" in table["verified"] and table["source_url"].startswith("https://www.irs.gov/pub/")
+        for key, row in cfg["by_qualifying_children"].items():
+            expected = {"0": ("0.153" if year == 2021 else "0.0765",) * 2, "1": ("0.34", "0.1598"),
+                        "2": ("0.40", "0.2106"), "3+": ("0.45", "0.2106")}[key]
+            assert (row["credit_rate"], row["phaseout_rate"]) == expected, (year, key)
+            # The printed maximum is the credit rate times the earned income amount, rounded (IRC 32(b)).
+            assert irs_round(Decimal(row["credit_rate"]) * row["earned_income_amount"]) == row["max_credit"], (year, key)
+
+
+def test_worksheet_a_takes_the_smaller_of_the_two_lookups():
+    # AGI over the threshold and above earned income: the table on AGI is the smaller (EIC Worksheet A).
+    r = eitc(20_000, 30_000, 1, "single", 2026)
+    assert r.eitc == eitc(30_000, 30_000, 1, "single", 2026).eitc < eitc(20_000, 20_000, 1, "single", 2026).eitc
+    assert r.phase == "out" and "EIC Worksheet A" in r.work
+    # AGI below the threshold is never looked up.
+    assert eitc(20_000, 21_000, 1, "single", 2026).eitc == 4_427
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("year", list(range(2019, 2027)))
+def test_every_cell_of_the_printed_eic_table(year):
+    """Re-read the year's printed EIC Table and price every cell (the 2026 row re-downloads the draft, so a newer
+    draft or the final i1040gi's table is checked the day it posts)."""
+    import re  # noqa: PLC0415
+
+    from pypdf import PdfReader  # noqa: PLC0415
+
+    from taxfill_core.fetch import OfflineFetchError, fetch_blank  # noqa: PLC0415
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    cfg = load_knowledge("federal", year).credits.earned_income_tax_credit
+    url = cfg["eic_table"]["source_url"]
+    try:
+        pdf = fetch_blank(url, force="irs-dft" in url)
+    except OfflineFetchError as exc:
+        pytest.skip(str(exc))
+    text = "\n".join(page.extract_text() or "" for page in PdfReader(str(pdf)).pages)
+    text = text[text.index(f"{year} Earned Income Credit (EIC)"):]
+    num = r"(\d{1,3}(?:,\d{3})*|0)"
+    rows = [[int(x.replace(",", "")) for x in m.groups()]
+            for m in (re.fullmatch(r"\s*" + r"\s+".join([num] * 10) + r"\s*", line) for line in text.splitlines()) if m]
+    assert len(rows) > 1_000
+    from taxfill_core.calc import eic_table_amount  # noqa: PLC0415
+
+    columns = [(key, mfj) for mfj in (False, True) for key in ("0", "1", "2", "3+")]
+    bad = [(lo, key, mfj, printed)
+           for lo, _hi, *cells in rows
+           for (key, mfj), printed in zip(columns, cells)
+           if eic_table_amount(Decimal(lo), cfg["by_qualifying_children"][key], mfj, cfg["eic_table"]) != printed]
+    assert bad == [], f"{len(bad)} cells differ, e.g. {bad[:5]}"

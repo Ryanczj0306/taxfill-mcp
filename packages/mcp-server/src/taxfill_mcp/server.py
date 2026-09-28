@@ -356,6 +356,7 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       amount, i.e. line 18 tax minus earlier Schedule 3 credits; 2021 uses the ARPA expanded
       fully-refundable rules with children_under_6 driving the $3,600 tier)
     - eitc: args {earned_income, agi, qualifying_children, filing_status, year, investment_income?}
+      (the EIC Table's figure: every cell of the printed 2019-2026 tables reproduces)
       (earned income credit for 1040 line 27 by the Rev. Proc. formula; investment-income and MFS
       gates; phases out on the GREATER of AGI or earned income; the printed EIC table's $50 bands can
       differ by ~$27)
