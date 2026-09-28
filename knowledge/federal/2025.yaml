@@ -291,6 +291,27 @@ tax:
       - {start: '2025-07-01', end: '2025-09-30', rate: 0.07, source: "Rate Period 2: July 1, 2025-September 30, 2025 (x 0.07)"}
       - {start: '2025-10-01', end: '2025-12-31', rate: 0.07, source: "Rate Period 3: October 1, 2025-December 31, 2025 (x 0.07)"}
       - {start: '2026-01-01', end: '2026-04-15', rate: 0.07, source: "Rate Period 4: January 1, 2026-April 15, 2026 (x 0.07); IRC 6621(b)(2)(B)"}
+    # JP5b: Schedule AI (Form 2210 (2025), page 3, read 2026-09-28): the column
+    # headings "1/1/25-3/31/25 ... 1/1/25-12/31/25", lines 2/5 "4 2.4 1.5 1", line
+    # 20 "22.5% 45% 67.5% 90%", line 29 "$44,025 $73,375 $117,400 $176,100", line
+    # 32 "0.496 0.2976 0.186 0.124", line 34 "0.116 0.0696 0.0435 0.029". The 2025
+    # face has no Schedule 1-A line; the instructions for line 14: "You may adjust
+    # your 2025 taxable income here for any provision you did not account for
+    # elsewhere on Form 2210 before calculating your 2025 tax".
+    schedule_ai:
+      citation:
+        source: >-
+          Form 2210 (2025), Schedule AI—Annualized Income Installment Method, Parts I and II; Instructions
+          for Form 2210 (2025), Schedule AI, Line 14.
+        url: "https://www.irs.gov/pub/irs-prior/f2210--2025.pdf"
+      source_status: final
+      period_ends: ['2025-03-31', '2025-05-31', '2025-08-31', '2025-12-31']
+      annualization: [4, 2.4, 1.5, 1]
+      applicable_percentages: [0.225, 0.45, 0.675, 0.90]
+      se_ss_limits: [44025, 73375, 117400, 176100]
+      se_factors_ss: [0.496, 0.2976, 0.186, 0.124]
+      se_factors_medicare: [0.116, 0.0696, 0.0435, 0.029]
+      additional_deductions: line_14_adjustment
 
   # ── H4 projection parameters ──────────────────────────────────────────────
   # The IRC 6654(d) safe harbor, transcribed from Form 1040-ES (2025) page 1

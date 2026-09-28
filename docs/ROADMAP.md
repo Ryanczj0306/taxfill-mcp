@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,911 tests** — offline 6,446 + live-.gov 465; derived
+Done and on `main` (**6,914 tests** — offline 6,449 + live-.gov 465; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2422,10 +2422,12 @@ not wait for any of this.
     - Table 2's Chart of Total Days (76/92/92/105; 15/92/92/105; 15/92/105; 90);
     - the 2026 6% quarter and the Q1-2027 refusal; the exceptions.
   - Op count 38.
-- [ ] **JP5b — The annualized income installment method (Schedule AI)** (M; deps JP5a)
-  - IRC 6654(d)(2)(A): "if the individual establishes that the annualized income installment is less than the amount determined under paragraph (1)- (i) the amount of such required installment shall be the annualized income installment".
-  - Implement the draft Form 2210 (2026) Schedule AI periods and factors, read off the draft face, labeled draft.
-  - **Acceptance:** a Q4-weighted income case has a lower penalty under AI than under the regular method, and the op reports both.
+- [x] **JP5b — The annualized income installment method (Schedule AI) — DONE 2026-09-28** (M; deps JP5a)
+  - *As built:* `underpayment_penalty(..., annualized={...})` computes Schedule AI Parts I and II column by column. The constants are a new `estimated_tax_penalty.schedule_ai` block, read off each face:
+    - Form 2210 (2025) final: 4 / 2.4 / 1.5 / 1; 22.5 / 45 / 67.5 / 90%; line 29 $44,025–$176,100; lines 32/34.
+    - Draft Form 2210 (2026) (Created 4/16/26), labeled draft: the same factors, line 29 $46,125–$184,500, and the NEW line 9b "Additional deductions". The 2025 face has no such line, so the Schedule 1-A deductions come off line 13 per the 2025 line-14 instruction.
+  - Line 27 = min(line 23, line 26) feeds line 10. The same payments are priced against the regular 25% installments too (`regular_method_penalty`).
+  - **Tests:** a Q4-weighted demo year pays less under Schedule AI and the op reports both; the SE factors against each year's prorated base; the input guards.
 - [ ] **JP3a — Employment schema and paystub DocSpec** (M; deps JP1c) [LD-04, part 1]
   - `Profile.employment`, per year: employer label, start/end, pay frequency, first pay date, W-4, per-period pre-tax amounts (401(k), §125, HSA cafeteria, FSA, §132(f)) and post-tax amounts (Roth, after-tax, loan).
   - A `paystub` DocSpec. source_url = iw2w3.pdf; the note says it is not an IRS form and YTD figures are authoritative only through the pay date.

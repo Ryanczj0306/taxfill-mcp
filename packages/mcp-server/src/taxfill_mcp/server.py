@@ -473,7 +473,11 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       the balance paid with the return), withholding? (deemed paid in equal parts on the four due dates,
       IRC 6654(g)(1)) | withholding_dates?: [{date, amount}] (the actual-dates election, all amounts),
       tax_after_withholding? (under $1,000 = the 6654(e)(1) exception), return_filed?,
-      paid_in_full_with_return? (by January 31 = no 4th-installment penalty, 6654(h)), year} (JP5a: Form
+      paid_in_full_with_return? (by January 31 = no 4th-installment penalty, 6654(h)), annualized? (JP5b,
+      Schedule AI: {filing_status, agi: [4 cumulative periods], standard_deduction, itemized?, qbi?,
+      additional_deductions? (Schedule 1-A), se_net_earnings? (line 28), ss_wages?, other_taxes?, credits?,
+      period_tax?} — with required_annual_payment; prices both methods and reports regular_method_penalty),
+      year} (JP5a: Form
       2210 Part III regular method — payments credited to the earliest unpaid installment (6654(b)(3)),
       each late portion priced per day to the payment date or April 15 at the rate period's IRC 6621
       underpayment rate over 365 (the year's knowledge calendar; April 1-15 keeps the Q1 rate, 6621(b)(2)(B));

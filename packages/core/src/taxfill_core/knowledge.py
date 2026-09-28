@@ -1425,6 +1425,27 @@ class PenaltyRatePeriod(BaseModel):
     _exact = field_validator("rate", mode="before")(_as_exact_decimal)
 
 
+class ScheduleAiParams(BaseModel):
+    """Form 2210 Schedule AI's printed constants for one year (JP5b), read off that year's face."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    source_status: Literal["final", "draft"] = Field(description="draft: read off the early-release draft face.")
+    period_ends: list[date] = Field(min_length=4, max_length=4, description="The column headings' period ends.")
+    annualization: list[Decimal] = Field(min_length=4, max_length=4, description="Lines 2 and 5: 4, 2.4, 1.5, 1.")
+    applicable_percentages: list[Decimal] = Field(min_length=4, max_length=4, description="Line 20: 22.5% ... 90%.")
+    se_ss_limits: list[int] = Field(min_length=4, max_length=4, description="Line 29: the prorated wage base.")
+    se_factors_ss: list[Decimal] = Field(min_length=4, max_length=4, description="Line 32.")
+    se_factors_medicare: list[Decimal] = Field(min_length=4, max_length=4, description="Line 34.")
+    additional_deductions: Literal["line_9b", "line_14_adjustment"] = Field(
+        description="Where the Schedule 1-A deductions enter: 2026 prints line 9b 'Additional deductions'; the 2025 "
+                    "instructions for line 14 say 'You may adjust your 2025 taxable income here'.")
+
+    _exact = field_validator("annualization", "applicable_percentages", "se_factors_ss", "se_factors_medicare",
+                             mode="before")(lambda v: [_as_exact_decimal(x) for x in v] if isinstance(v, list) else v)
+
+
 class EstimatedTaxPenaltyParams(BaseModel):
     """The IRC 6654 underpayment penalty's calendar for one taxable year (JP5a): the four installment due dates,
     the end of the period of underpayment and the rate periods (Form 2210 Part III Section B's worksheet)."""
@@ -1440,6 +1461,7 @@ class EstimatedTaxPenaltyParams(BaseModel):
         description="IRC 6654(b)(2)(A): 'the 15th day of the 4th month following the close of the taxable year'.")
     day_count: int = Field(gt=0, description="The worksheet's divisor ('Number of days ... / 365').")
     rate_periods: list[PenaltyRatePeriod] = Field(min_length=1)
+    schedule_ai: ScheduleAiParams | None = Field(default=None, description="JP5b: Schedule AI's constants.")
 
     @model_validator(mode="after")
     def _periods_tile_the_window(self) -> "EstimatedTaxPenaltyParams":

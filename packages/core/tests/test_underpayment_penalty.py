@@ -120,3 +120,44 @@ def test_jp5a_the_rate_table_routes_to_the_penalty_topic():
     res = get_sources("quarterly interest rates", 2025)
     assert {s.topic for s in res.sources} == {"underpayment_penalty"}   # was a miss onto nonresident_fdap
     assert "https://www.irs.gov/payments/quarterly-interest-rates" in {s.url for s in res.sources}
+
+
+# ── JP5b: Schedule AI ──
+
+Q4_HEAVY = {"filing_status": "single", "agi": [5000, 8000, 12000, 80000], "standard_deduction": 15750}
+Q4_PAYMENTS = [{"date": "2025-04-15", "amount": 500}, {"date": "2025-06-15", "amount": 500},
+               {"date": "2025-09-15", "amount": 500}, {"date": "2026-01-15", "amount": 9000}]
+
+
+def test_jp5b_a_q4_weighted_year_pays_less_under_schedule_ai_and_reports_both():
+    r = underpayment_penalty(required_annual_payment=12000, payments=Q4_PAYMENTS, year=2025, annualized=Q4_HEAVY)
+    assert r.method == "annualized" and r.penalty < r.regular_method_penalty
+    regular = underpayment_penalty(required_annual_payment=12000, payments=Q4_PAYMENTS, year=2025)
+    assert r.regular_method_penalty == regular.penalty
+    cols = {c.column: c for c in r.schedule_ai}
+    # Line 3 = line 1 x line 2 (4, 2.4, 1.5, 1); line 20's 22.5% / 45% / 67.5% / 90%.
+    assert [c.line_3_annualized_income for c in r.schedule_ai] == [20000, 19200, 18000, 80000]
+    assert cols["d"].line_21 == round(cols["d"].line_19_net_tax * 0.9)
+    # Line 27 is never above line 26 (the regular installment plus earlier savings) — 6654(d)(2)(A)'s "less than".
+    assert all(c.line_27_installment <= c.line_26 for c in r.schedule_ai)
+    assert [row.required for row in r.installments] == [c.line_27_installment for c in r.schedule_ai]
+
+
+def test_jp5b_schedule_ai_se_tax_uses_the_years_prorated_wage_base():
+    # 2025 column (a): line 29 $44,025; line 32 0.496; line 34 0.116 (net earnings 10,000, no wages).
+    r = underpayment_penalty(required_annual_payment=8000, year=2025,
+                             annualized={**Q4_HEAVY, "se_net_earnings": [10000, 20000, 30000, 40000]})
+    assert r.schedule_ai[0].line_15_se_tax == round(0.496 * 10000 + 0.116 * 10000)
+    # 2026 (the DRAFT face): line 29 prints $46,125 in column (a) — wages above it leave no social security part.
+    r26 = underpayment_penalty(required_annual_payment=8000, year=2026, payments=[{"date": "2026-04-15", "amount": 8000}],
+                               annualized={"filing_status": "single", "agi": [60000] * 4, "standard_deduction": 16100,
+                                           "se_net_earnings": [10000] * 4, "ss_wages": [46125] * 4})
+    assert r26.schedule_ai[0].line_15_se_tax == round(0.116 * 10000)
+    assert "DRAFT face" in r26.work
+
+
+def test_jp5b_schedule_ai_needs_the_required_annual_payment():
+    with pytest.raises(ValueError, match="needs required_annual_payment"):
+        underpayment_penalty([3000] * 4, year=2025, annualized=Q4_HEAVY)
+    with pytest.raises(ValueError, match="unknown key"):
+        underpayment_penalty(required_annual_payment=12000, year=2025, annualized={**Q4_HEAVY, "wages": [1, 2, 3, 4]})

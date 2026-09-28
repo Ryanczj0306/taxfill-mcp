@@ -360,6 +360,24 @@ tax:
       - {start: '2026-07-01', end: '2026-09-30', rate: 0.07, source: "3rd quarter (Jul-Sep) 2026 underpayment rate 7% (IRB 2026-22)"}
       - {start: '2026-10-01', end: '2026-12-31', rate: 0.07, source: "4th quarter (Oct-Dec) 2026 underpayment rate 7% (IRB 2026-36)"}
       - {start: '2027-01-01', end: '2027-04-15', rate: null, source: "the 1st quarter 2027 rate, not announced as of 2026-09-28 (IRC 6621(b)(2)(B) carries it to April 15, 2027)"}
+    # JP5b: Schedule AI on the DRAFT Form 2210 (2026) (Created 4/16/26), read
+    # 2026-09-28: the same factors as 2025, a NEW "9b Additional deductions (see
+    # instructions)" with "10 Add lines 8, 9a, and 9b", and line 29 "$46,125
+    # $76,875 $123,000 $184,500" (the $184,500 wage base prorated).
+    schedule_ai:
+      citation:
+        source: >-
+          Draft Form 2210 (2026) (Created 4/16/26), Schedule AI—Annualized Income Installment Method, Parts I
+          and II.
+        url: "https://www.irs.gov/pub/irs-dft/f2210--dft.pdf"
+      source_status: draft
+      period_ends: ['2026-03-31', '2026-05-31', '2026-08-31', '2026-12-31']
+      annualization: [4, 2.4, 1.5, 1]
+      applicable_percentages: [0.225, 0.45, 0.675, 0.90]
+      se_ss_limits: [46125, 76875, 123000, 184500]
+      se_factors_ss: [0.496, 0.2976, 0.186, 0.124]
+      se_factors_medicare: [0.116, 0.0696, 0.0435, 0.029]
+      additional_deductions: line_9b
 
   # ── H4 projection parameters (statutory, both citable to PUBLISHED 2026
   # documents — the same class as rate_schedules, NOT carried forward) ──────
