@@ -156,6 +156,7 @@ RESERVED_LINE_KEEPS: tuple[ReservedKeep, ...] = (
     ReservedKeep("federal/2023/sched_1/pack.yaml", "22", "Page2[0].f2_14[0]", "named by the printed line-26 sum"),
     ReservedKeep("federal/2024/sched_1/pack.yaml", "22", "Page2[0].f2_14[0]", "named by the printed line-26 sum"),
     ReservedKeep("federal/2025/sched_1/pack.yaml", "22", "Page2[0].f2_14[0]", "named by the printed line-26 sum"),
+    ReservedKeep("federal/2026/sched_1/pack.yaml", "22", "Page2[0].f2_14[0]", "named by the printed line-26 sum (2026 draft)"),
     # Form 1040 line 30 — the load-bearing proof of the keep rationale: the
     # 2025 revision un-reserved this exact line ("Refundable adoption credit
     # from Form 8839, line 13"), cleared the ReadOnly bit, and named it in
@@ -276,6 +277,18 @@ RESERVED_LINES_UNMAPPED: tuple[ReservedUnmapped, ...] = (
             "header is still the overturned flag-only one and needs rewording",
         )
         for year in (2023, 2024, 2025)
+    ),
+    # Schedule 3 2026 (the draft, Phase J JT3c): 6e as in every year, plus 5b, which
+    # the 2026 draft reserves ("5b Reserved for future use"; 2025's energy efficient home
+    # improvement credit) and drops from the printed line-8 sum ("Add lines 1 through
+    # 4, 5a, and 7"). Neither is named by a printed sum, so neither key exists.
+    ReservedUnmapped(
+        "federal/2026/sched_3/pack.yaml",
+        ("5b", "6e"),
+        ("5a", "6a", "6d", "6f", "7", "8"),
+        None,
+        "5b and 6e print 'Reserved for future use'; line 8 no longer lists 5b and the line-7 "
+        "range 'Add lines 6a through 6z' tolerates the 6e gap",
     ),
     # Schedule 2 2023 line 19 — reserved and excluded. contested_with stays
     # None because that field means strictly "another year keeps THIS line",
@@ -636,9 +649,12 @@ def test_reserved_unmapped_row_stays_unmapped_and_the_filler_refuses_it(row: Res
         )
     # The keys are hard errors now, not silent writes into a locked box.
     # fill_form validates line keys before it opens the blank, so no PDF needed.
+    # A draft pack (JT0a) fills only in rehearsal mode; without it the planning-only year is
+    # refused before any key is read.
+    rehearsal = pack.source_status == "draft"
     for line in row.lines:
         with pytest.raises(ValueError, match=r"unknown line key"):
-            fill_form(pack, {line: 99999}, tmp_path / "absent-blank.pdf", tmp_path / "out.pdf")
+            fill_form(pack, {line: 99999}, tmp_path / "absent-blank.pdf", tmp_path / "out.pdf", rehearsal=rehearsal)
 
 
 def test_reserved_line_tables_agree_about_every_contested_line():

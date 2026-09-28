@@ -1623,3 +1623,50 @@ def test_jt3b_every_form_lines_entry_names_a_line_its_years_pack_maps(year: int)
         if entry.line not in {f.line for f in load_pack(path).fields}:
             missing.append(f"{key} -> {form_key} line {entry.line}")
     assert not missing, missing
+
+
+# ── JT3c: the 2026 Wave A draft packs — Form 8606, Schedule 1, Schedule 3 ────
+
+
+def test_jt3c_the_2026_f8606_rebinds_every_widget_and_swaps_the_preparer_pair():
+    old, new = _fed_pack(2025, "f8606"), _fed_pack(2026, "f8606")
+    assert (new.source_status, new.draft_created) == ("draft", "4/21/26")
+    o, n = ({f.line: f.field for f in p.fields} for p in (old, new))
+    # One city/state/ZIP box became three, so lines 1-14 moved +2 (and the zero padding went).
+    assert "mailing_address.city_state_zip" in o and "mailing_address.city_state_zip" not in n
+    assert [n[k] for k in ("mailing_address.city", "mailing_address.state", "mailing_address.zip")] == [
+        "Page1[0].f1_5[0]", "Page1[0].f1_6[0]", "Page1[0].f1_7[0]"]
+    assert (o["1"], n["1"], o["14"], n["14"]) == ("Page1[0].f1_09[0]", "Page1[0].f1_11[0]",
+                                                "Page1[0].f1_23[0]", "Page1[0].f1_25[0]")
+    # TRAP: the preparer block's f2_19/f2_20 trade meanings between the two revisions.
+    assert (o["preparer.firm_ein"], o["preparer.firm_address"]) == ("Page2[0].f2_19[0]", "Page2[0].f2_20[0]")
+    assert (n["preparer.firm_ein"], n["preparer.firm_address"]) == ("Page2[0].f2_20[0]", "Page2[0].f2_19[0]")
+    # No printed line moved, so the face math and the empty cross_form carry over.
+    assert old.relations == new.relations and new.cross_form == []
+    assert set(o) - {"mailing_address.city_state_zip"} <= set(n)
+
+
+def test_jt3c_the_2026_schedule_1_is_the_2025_map_with_two_rebinds():
+    old, new = _fed_pack(2025, "sched_1"), _fed_pack(2026, "sched_1")
+    assert (new.source_status, new.draft_created) == ("draft", "4/24/26")
+    o, n = ({f.line: (f.field, f.type) for f in p.fields} for p in (old, new))
+    assert set(o) == set(n) and old.relations == new.relations
+    moved = {k for k in o if o[k] != n[k]}
+    assert moved == {"24a"} and n["24a"][0] == "Page2[0].Line24_ReadOrder[0].f2_16[0]"
+    # The draft's 9pt /DA makes the two-row write-ins' clipping budget 70 characters (2025, 8pt: 79).
+    assert {f.line: f.maxlen for f in new.fields if f.line in ("8z.type", "24z.type")} == {"8z.type": 70, "24z.type": 70}
+
+
+def test_jt3c_the_2026_schedule_3_reserves_5b_and_adds_13e():
+    pack = _fed_pack(2026, "sched_3")
+    assert (pack.source_status, pack.draft_created) == ("draft", "4/27/26")
+    lines = {f.line: f.field for f in pack.fields}
+    assert "5b" not in lines and "6e" not in lines and lines["13e"] == "Page1[0].f1_34[0]"
+    assert (lines["13z"], lines["14"], lines["15"]) == ("Page1[0].f1_36[0]", "Page1[0].f1_37[0]", "Page1[0].f1_38[0]")
+    assert "8 == 1 + 2 + 3 + 4 + 5a + 7" in pack.relations
+    assert pack.cross_form == ["8 == f1040.20", "15 == f1040.31"]
+    # With Schedules 1-3 shipped, every 2026 Form 1040 cross_form leg resolves on its own.
+    f1040 = _fed_pack(2026, "f1040")
+    for rule in f1040.cross_form:
+        form_key, _, target = rule.split("==")[1].strip().partition(".")
+        assert target in {f.line for f in _fed_pack(2026, form_key).fields}, rule

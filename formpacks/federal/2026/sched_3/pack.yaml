@@ -1,0 +1,170 @@
+# Schedule 3 (Form 1040) — Additional Credits and Payments — 2026 DRAFT.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040s3--dft.pdf,
+# footer "Schedule 3 (Form 1040) 2026 Created 4/27/26"). Its cover sheet:
+# "there are never any changes to the last posted draft of the form and the
+# final revision of the form". PDF page 1 is that cover sheet; the form is PDF
+# page 2 (one page, Parts I and II). When the final posts at
+# irs-prior/f1040s3--2026.pdf, re-pin source_url, pdf_sha256, source_status
+# final, drop draft_created, and re-read the face. TY2026 is planning-only, so
+# this pack fills only in REHEARSAL mode. No signature block; mailed in the
+# parent return's envelope. Phase J JT3c.
+#
+# PORTED 2026-09-27 from formpacks/federal/2025/sched_3/pack.yaml. 2025 final
+# -> 2026 draft (37 -> 38 terminal fields):
+#   - 5a "Residential clean energy credit from Form 5695, line 3" (2025: line
+#     15); 5b is now "Reserved for future use" (2025: the energy efficient home
+#     improvement credit) and its box is ReadOnly (/Ff 8388609).
+#   - Line 8 prints "Add lines 1 through 4, 5a, and 7" — 5b left the sum.
+#   - NEW 13e "Total section 1062 applicable net tax liability. Enter amount
+#     from Form 1062, line 14" (f1_34). The 13z write-in moved down a row and
+#     every field after 13d renumbered +1: 13z.type = Line13z_ReadOrder f1_35,
+#     13z = f1_36, 14 = f1_37, 15 = f1_38.
+#   - The sub-lines print their full designators (6a..6z, 13a..13z).
+#
+# Excluded fields (2 of 38), both printed "Reserved for future use" with
+# ReadOnly boxes, and neither named by a printed sum (the line-7 RANGE
+# "Add lines 6a through 6z" tolerates the 6e gap; line 8 no longer lists 5b):
+#   - Page1[0].f1_08[0] — line 5b;
+#   - Page1[0].f1_13[0] — line 6e (as in every shipped year).
+# Recorded in test_readonly_widget_mapping RESERVED_LINES_UNMAPPED. Field-name
+# quirk carried from 2025: the 6z write-in is named "f2_22" on page 1.
+
+form: "Schedule 3 (Form 1040)"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f1040s3--dft.pdf
+pdf_sha256: "5feb6f8d0f08191a2da153573d195fc354f385e26915b99b57d4588893b7cef0"
+source_status: draft
+draft_created: "4/27/26"
+acroform_root: "topmostSubform[0]"
+fields:
+  # ---- header ----
+  - line: name
+    field: "Page1[0].f1_01[0]"
+    type: text
+  - line: identifying_number          # "Your social security number" — plain
+    field: "Page1[0].f1_02[0]"        # text box (not a comb field); the widget
+    type: text                        # carries /MaxLen=11, so a dashed SSN
+    maxlen: 11                        # ("000-00-0000") fits exactly
+  # ---- Part I — Nonrefundable Credits ----
+  - line: "1"                         # Foreign tax credit (Form 1116)
+    field: "Page1[0].f1_03[0]"
+    type: money
+  - line: "2"                         # Child and dependent care credit (Form 2441, line 11)
+    field: "Page1[0].f1_04[0]"
+    type: money
+  - line: "3"                         # Education credits (Form 8863, line 19)
+    field: "Page1[0].f1_05[0]"
+    type: money
+  - line: "4"                         # Retirement savings contributions credit (Form 8880)
+    field: "Page1[0].f1_06[0]"
+    type: money
+  - line: 5a                          # Residential clean energy credit (Form 5695, line 3 on the 2026 draft; 2025: line 15)
+    field: "Page1[0].f1_07[0]"
+    type: money
+  # (5b "Reserved for future use" in 2026 — excluded, see the header)
+  - line: 6a                          # General business credit (Form 3800)
+    field: "Page1[0].Line6a_ReadOrder[0].f1_09[0]"
+    type: money
+  - line: 6b                          # Credit for prior year minimum tax (Form 8801)
+    field: "Page1[0].f1_10[0]"
+    type: money
+  - line: 6c                          # Adoption credit (Form 8839)
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: 6d                          # Credit for the elderly or disabled (Schedule R)
+    field: "Page1[0].f1_12[0]"
+    type: money
+  # (6e reserved for future use — excluded, see header comment)
+  - line: 6f                          # Clean vehicle credit (Form 8936)
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: 6g                          # Mortgage interest credit (Form 8396)
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: 6h                          # DC first-time homebuyer credit (Form 8859)
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: 6i                          # Qualified electric vehicle credit (Form 8834)
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: 6j                          # Alternative fuel vehicle refueling property credit (Form 8911)
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: 6k                          # Credit to holders of tax credit bonds (Form 8912)
+    field: "Page1[0].f1_19[0]"
+    type: money
+  - line: 6l                          # Amount on Form 8978, line 14
+    field: "Page1[0].f1_20[0]"
+    type: money
+  - line: 6m                          # Credit for previously owned clean vehicles (Form 8936)
+    field: "Page1[0].f1_21[0]"
+    type: money
+  - line: 6z.type                     # "List type and amount:" — single multiline
+    field: "Page1[0].Line6z_ReadOrder[0].f2_22[0]"   # write-in (two rows in 2024)
+    type: text
+  - line: 6z                          # other nonrefundable credits — amount
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "7"                         # total other nonrefundable credits (6a-6z)
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: "8"                         # total -> Form 1040/1040-SR/1040-NR, line 20
+    field: "Page1[0].f1_25[0]"
+    type: money
+  # ---- Part II — Other Payments and Refundable Credits ----
+  - line: "9"                         # Net premium tax credit (Form 8962)
+    field: "Page1[0].f1_26[0]"
+    type: money
+  - line: "10"                        # Amount paid with extension request
+    field: "Page1[0].f1_27[0]"
+    type: money
+  - line: "11"                        # Excess social security and tier 1 RRTA tax withheld
+    field: "Page1[0].f1_28[0]"
+    type: money
+  - line: "12"                        # Credit for federal tax on fuels (Form 4136)
+    field: "Page1[0].f1_29[0]"
+    type: money
+  - line: 13a                         # Form 2439
+    field: "Page1[0].Line13_ReadOrder[0].f1_30[0]"
+    type: money
+  - line: 13b                         # Section 1341 credit for repayment of amounts included in income from earlier years
+    field: "Page1[0].f1_31[0]"
+    type: money
+  - line: 13c                         # Net elective payment election amount (Form 3800, Part III, line 6, column (j))
+    field: "Page1[0].f1_32[0]"
+    type: money
+  - line: 13d                         # Deferred amount of net 965 tax liability
+    field: "Page1[0].f1_33[0]"
+    type: money
+  - line: 13e                         # NEW 2026: "Total section 1062 applicable net tax liability. Enter amount from Form 1062, line 14"
+    field: "Page1[0].f1_34[0]"
+    type: money
+  - line: 13z.type                    # "Other refundable credits (see instructions):" — single
+    field: "Page1[0].Line13z_ReadOrder[0].f1_35[0]"  # two-row multiline write-in
+    type: text
+  - line: 13z                         # other refundable credits — amount
+    field: "Page1[0].f1_36[0]"
+    type: money
+  - line: "14"                        # total other payments/refundable credits (13a-13z)
+    field: "Page1[0].f1_37[0]"
+    type: money
+  - line: "15"                        # total -> Form 1040/1040-SR/1040-NR, line 31
+    field: "Page1[0].f1_38[0]"
+    type: money
+relations:
+  # Form-face math only. Unmapped letters inside the printed a..z ranges
+  # (6e reserved + the unprinted 6n-6y / 13f-13y) evaluate blank-as-zero.
+  - "7 == sum(6a..6z)"                          # "Add lines 6a through 6z"
+  - "8 == 1 + 2 + 3 + 4 + 5a + 7"               # "Add lines 1 through 4, 5a, and 7" (2025 also added 5b)
+  - "14 == sum(13a..13z)"                       # "Add lines 13a through 13z"
+  - "15 == 9 + 10 + 11 + 12 + 14"               # "Add lines 9 through 12 and 14"
+cross_form:
+  # Printed: "Enter here and on Form 1040, 1040-SR, or 1040-NR, line 20/31".
+  # The f1040nr legs join when the 2026 Form 1040-NR pack ships (JT5c).
+  - "8 == f1040.20"
+  - "15 == f1040.31"
+identity_fields: [name, identifying_number]
+signature: null                       # schedules carry no signature block of their own
+mailing: null                         # mailed inside the parent return's envelope

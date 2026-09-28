@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,302 tests** — offline 5,912 + live-.gov 390; derived
+Done and on `main` (**6,350 tests** — offline 5,953 + live-.gov 397; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1930,7 +1930,28 @@ not wait for any of this.
         - NEW invariant: every form_lines registry entry names a line its same-year pack maps (220 entries over 2022-2026, 43 for 2026).
         - test_discovery 116; the filer-address fixture gains 3 empty rows.
       - **Vision audit:** all four pages, each synthetic value against its printed line. It caught nothing; the 8959 trap was caught from the face before the render.
-    - **JT3c** (M): f8606 (18/45), sched_1 (1/73), sched_3 (2/36).
+    - **JT3c** (M): f8606 (18/45), sched_1 (1/73), sched_3 (2/36). **DONE 2026-09-27** — *as built:*
+      - **Every 2026 draft's widget /DA is 9pt (2025: 8pt)**, and verify's clipping scan reads it, so each 2025 write-in budget shrinks by 1/9:
+        - the 8z/24z two-row boxes take maxlen 70 (2025: 79);
+        - Form 8606's 10.dec box (26.8pt) takes maxlen 5 — the round trip's clipping scan caught it.
+      - **formpacks/federal/2026/f8606** (draft Created 4/21/26, sha 4d7e8fe4…): all 47 widgets, EVERY name changed.
+        - The zero padding is gone (f1_01 → f1_1).
+        - The one city/state/ZIP box is three boxes, keyed as on Form 1040, so lines 1–14 moved +2.
+        - TRAP: the preparer block's f2_19/f2_20 swap meaning (2026: firm address, then firm EIN).
+        - The umbrella Note now excludes Trump accounts. `signature.page` 3.
+        - The relations and the dropped-relation decisions carry over.
+      - **formpacks/federal/2026/sched_1** (draft Created 4/24/26, sha a017a1b7…): the 2025 map, with two changes:
+        - line 14's storage-fees box moved (the row adds "and the intelligence community");
+        - 24a sits under Line24_ReadOrder.
+        - Line 22 (reserved, ReadOnly) stays mapped under a new RESERVED_LINE_KEEPS row.
+      - **formpacks/federal/2026/sched_3** (draft Created 4/27/26, sha 5feb6f8d…):
+        - 5a now cites "Form 5695, line 3"; 5b is reserved and ReadOnly and leaves line 8's sum. Both 5b and 6e stay unmapped under a new RESERVED_LINES_UNMAPPED row.
+        - NEW 13e (Form 1062, line 14); 13z..15 rebind +1.
+      - **With Schedules 1–3 shipped**, the last 2026 CROSS_FORM_TARGET_ALLOWLIST rows are gone: every 2026 Form 1040 leg resolves.
+      - **Harness fix:** the reserved-line refusal test fills a draft in rehearsal mode.
+      - **Tests:** test_jt3c_* (the 8606 rebind + preparer swap, Schedule 1's two rebinds + budgets, the Schedule 3 reserve/13e + the 1040's legs resolving); test_discovery 119; the filer-address fixture gains 3 rows.
+        - The f8606 row differs from 2025 (the split box). Reviewed: it equals the Form 1040's reviewed set.
+      - **Vision audit:** every page of the three, each value against its printed line. Nothing beyond the 10.dec width.
     - **JT3d** (M):
       - sched_b, sched_d and f8949 (0 missing each);
       - f8833: the current final is byte-identical to the 2025 pin → copy, source_status final;
@@ -2190,7 +2211,7 @@ not wait for any of this.
 - [ ] **JT5a–g — Wave B: the rest of the federal set for 2026** (JT5a **latest start 2026-11-16**; deps JT3a; each sub-tranche commits per pack) [TY26-21]
   - **JT5a** (M): copies f843, fw7, f8316 (current finals byte-identical to their 2025 pins) and fincen114; near-ports sched_se, f4868, f8960.
   - **JT5b** (M): sched_8812, f2555, f8863.
-  - **JT5c** (M–L): f1040nr (new 12b, 13a, 24a–c, 32b), sched_a_nr, f8843. The 2026 sched_1a pack then gains its f1040nr legs (`1 == f1040nr.11b`, `44 == f1040nr.13a` — re-read on the 1040-NR draft).
+  - **JT5c** (M–L): f1040nr (new 12b, 13a, 24a–c, 32b), sched_a_nr, f8843. The 2026 sched_1a pack then gains its f1040nr legs (`1 == f1040nr.11b`, `44 == f1040nr.13a` — re-read on the 1040-NR draft), and the 2026 sched_3 pack its `8 == f1040nr.20` / `15 == f1040nr.31`.
   - **JT5d** (M–L): sched_a, sched_c, sched_e.
   - **JT5e** (M–L): f8962, f2441, f1116, f8938 (Rev. 12-2026).
   - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new).

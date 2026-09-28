@@ -1006,6 +1006,9 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # Phase J JT3a (2026-09-27) did the same for the 2026 f1040 and sched_1a drafts: each equals its
     # 2025 row (the five mailing_address lines; none), so 2 ADDED rows.
     # JT3b added the 2026 sched_2, f8959 and f8889 drafts the same way (each empty, as in 2025).
+    # JT3c: sched_1/sched_3 2026 equal their (empty) 2025 rows; f8606 2026 does NOT equal its 2025
+    # row, because the draft splits 2025's one city_state_zip box into city/state/zip. Reviewed: its
+    # selection is exactly the reviewed f1040 set (street, apt, city, state, zip; foreign_* excluded).
     import json
     from pathlib import Path
 

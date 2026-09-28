@@ -1,0 +1,296 @@
+# Form 8606 (2026) — Nondeductible IRAs — DRAFTS-FIRST.
+#
+# Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f8606--dft.pdf,
+# footer "Form 8606 (2026) Created 4/21/26"). Its cover sheet: "there are never
+# any changes to the last posted draft of the form and the final revision of the
+# form". PDF page 1 is that cover sheet; the form's two pages are PDF pages 2-3.
+# When the final posts at irs-prior/f8606--2026.pdf, re-pin source_url,
+# pdf_sha256, source_status final, drop draft_created, signature page 2, and
+# re-read the face. TY2026 is planning-only, so this pack fills only in
+# REHEARSAL mode. Phase J JT3c.
+#
+# PORTED 2026-09-27 from formpacks/federal/2025/f8606/pack.yaml (read that
+# pack's header for the form's logic, the dropped relations and the worked
+# examples). MECHANICAL TOPOLOGY DIFF, 2025 final -> 2026 draft (45 -> 47
+# widgets): EVERY name changed, so every binding was re-read from its rect:
+#   - the zero padding is gone (f1_01 -> f1_1, f2_01 -> f2_1);
+#   - the address block's one "City, town or post office, state, and ZIP code"
+#     box is now THREE boxes — city (f1_5), state (f1_6), ZIP code (f1_7,
+#     /MaxLen 10) — keyed like the Form 1040's; so lines 1-14 moved +2
+#     (line 1 = f1_11 ... line 14 = f1_25);
+#   - TRAP: the preparer block's f2_19/f2_20 swap meaning (2026: f2_19 firm
+#     address, f2_20 firm EIN; 2025 the reverse).
+# The printed face otherwise differs only by the year (2025 -> 2026, and the
+# January 1 - April 15 window 2026 -> 2027), the full 15b/15c/25b/25c
+# designators, and the umbrella Note, which now reads "'traditional IRA'
+# includes traditional SEP IRAs and traditional SIMPLE IRAs but does not
+# include Trump accounts". No line was renumbered, so the relations and the
+# dropped-relation decisions carry over unchanged. Quotes from the Instructions
+# for Form 8606 below are the 2025 instructions; the 2026 ones are not posted.
+
+form: "8606"
+jurisdiction: federal
+tax_year: 2026
+source_url: https://www.irs.gov/pub/irs-dft/f8606--dft.pdf
+pdf_sha256: "4d7e8fe466cf0534817d78bc5e6e84d78971b59cbbed0523eaa6448a20c2f2a6"
+source_status: draft
+draft_created: "4/21/26"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header (page 1) ------------------------------------------------------
+  # The 2026 draft drops 2025's zero padding again (f1_1[0], not f1_01[0]).
+  - line: "name"                            # "Name. If married, file a separate form for each spouse required to file 2026 Form 8606. See instructions."
+    field: "Page1[0].f1_1[0]"
+    type: text
+  - line: "identifying_number"              # "Your social security number" — plain box, NOT a comb; widget /MaxLen 11 (fits a dashed SSN)
+    field: "Page1[0].f1_2[0]"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only                 # digits only keeps cross-form identity values consistent (f8960/sched_oi house style)
+
+  # ---- address block: printed "Fill in Your Address Only if You Are Filing
+  # ---- This Form by Itself and Not With Your Tax Return" (blank when attached)
+  - line: "mailing_address.street"          # "Home address (number and street, or P.O. box if mail is not delivered to your home)"
+    field: "Page1[0].f1_3[0]"
+    type: text
+  - line: "mailing_address.apt"             # "Apt. no."
+    field: "Page1[0].f1_4[0]"
+    type: text
+  # 2026 SPLITS 2025's one "City, town or post office, state, and ZIP code"
+  # box into three: "City, town, or post office. If you have a foreign address,
+  # also complete spaces below." / "State" / "ZIP code" (the Form 1040 keys).
+  - line: "mailing_address.city"            # "City, town, or post office. If you have a foreign address, also complete spaces below."
+    field: "Page1[0].f1_5[0]"
+    type: text
+  - line: "mailing_address.state"           # "State"
+    field: "Page1[0].f1_6[0]"
+    type: text
+  - line: "mailing_address.zip"             # "ZIP code"
+    field: "Page1[0].f1_7[0]"
+    type: text
+    maxlen: 10                              # the widget's own /MaxLen
+  - line: "mailing_address.foreign_country" # "Foreign country name"
+    field: "Page1[0].f1_8[0]"
+    type: text
+  - line: "mailing_address.foreign_province"        # "Foreign province/state/county"
+    field: "Page1[0].f1_9[0]"
+    type: text
+  - line: "mailing_address.foreign_postal_code"     # "Foreign postal code"
+    field: "Page1[0].f1_10[0]"
+    type: text
+
+  # ---- Part I: Nondeductible Contributions to Traditional IRAs and
+  # ---- Distributions From Traditional IRAs (page 1, printed lines 1-14;
+  # ---- 15a-15c continue on PAGE 2 in this revision). The heading dropped
+  # ---- "Traditional, Traditional SEP, and Traditional SIMPLE" because of the
+  # ---- new umbrella Note above Part I (see the header block).
+  - line: "1"                               # "Enter your nondeductible contributions to traditional IRAs for 2026, including those made for 2026 from January 1, 2027, through April 15, 2027. See instructions"
+    field: "Page1[0].f1_11[0]"
+    type: money
+  - line: "2"                               # "Enter your total basis in traditional IRAs. See instructions." (Total Basis Chart—Line 2 lookup — worksheet, no relation)
+    field: "Page1[0].f1_12[0]"
+    type: money
+  - line: "3"                               # "Add lines 1 and 2"
+    field: "Page1[0].f1_13[0]"
+    type: money
+  # Printed routing box sits here (between lines 3 and 4): "In 2026, did you
+  # take a distribution from a traditional IRA, or make a Roth IRA conversion?"
+  # No -> line 3 goes on line 14 and the rest of Part I is left blank;
+  # Yes -> go to line 4.  It has NO AcroForm widget, so it has no line key.
+  - line: "4"                               # "Enter those contributions included on line 1 that were made from January 1, 2027, through April 15, 2027"
+    field: "Page1[0].f1_14[0]"
+    type: money
+  - line: "5"                               # "Subtract line 4 from line 3" — relation NOT declared: blank on the printed No branch (see header)
+    field: "Page1[0].f1_15[0]"
+    type: money
+  - line: "6"                               # "Enter the value of all your traditional IRAs as of December 31, 2026, plus any outstanding rollovers. Subtract certain 2026 retirement plan distribution repayments treated as rollovers, if any. See instructions" (the repayment sentence is NEW vs 2023)
+    field: "Page1[0].f1_16[0]"
+    type: money
+  - line: "7"                               # "Enter your distributions from traditional IRAs in 2026. Do not include rollovers (but do include certain 2026 retirement plan distribution repayments treated as rollovers (see instructions)). Also, do not include qualified charitable distributions; a one-time distribution to fund an HSA; conversions to a Roth IRA; certain returned contributions; or recharacterizations of traditional IRA contributions. See instructions"
+    field: "Page1[0].f1_17[0]"
+    type: money
+  - line: "8"                               # "Enter the net amount you converted from traditional IRAs to Roth IRAs in 2026. Also, enter this amount on line 16"
+    field: "Page1[0].f1_18[0]"
+    type: money
+  - line: "9"                               # "Add lines 6, 7, and 8" — inset column box
+    field: "Page1[0].f1_19[0]"
+    type: money
+  # Line 10 is a DECIMAL RATIO printed as "x __ . ___": two widgets straddling
+  # the form's own decimal point. f1_20 (2025: f1_18) is the single cell BEFORE it (widget
+  # /MaxLen 1 — the "1" of the printed "If the result is 1.000 or more, enter
+  # '1.000'" cap) and f1_21 (2025: f1_19) the places AFTER it. Typed text, not money, and no
+  # relation: same shape and the same key convention as f2555 35.whole/35.dec.
+  - line: "10.whole"                        # 10 "Divide line 5 by line 9. Enter the result as a decimal rounded to at least 3 places. If the result is 1.000 or more, enter '1.000'" — integer part
+    field: "Page1[0].f1_20[0]"
+    type: text
+    maxlen: 1                               # the widget's own /MaxLen
+  - line: "10.dec"                          # ... the decimal places after the printed "." (the widget declares NO /MaxLen; the cap below is the clipping budget, not the form's — "at least 3 places" is not a hard cap)
+    field: "Page1[0].f1_21[0]"
+    type: text
+    maxlen: 5                               # the widget has no /MaxLen; 26.8pt at the draft's 9pt DA is the clipping scan's 5-character budget (2025: 28pt at 8pt, 7). Five places cover "at least 3"
+  - line: "11"                              # "Multiply line 8 by line 10. This is the nontaxable portion of the amount you converted to Roth IRAs. Also, enter this amount on line 17" — inset column box
+    field: "Page1[0].f1_22[0]"
+    type: money
+  - line: "12"                              # "Multiply line 7 by line 10. This is the nontaxable portion of your distributions that you did not convert to a Roth IRA" — inset column box
+    field: "Page1[0].f1_23[0]"
+    type: money
+  - line: "13"                              # "Add lines 11 and 12. This is the nontaxable portion of all your distributions"
+    field: "Page1[0].f1_24[0]"
+    type: money
+  - line: "14"                              # "Subtract line 13 from line 3. This is your total basis in traditional IRAs for 2026 and earlier years" — the line the NEXT year's line 2 comes from
+    field: "Page1[0].f1_25[0]"
+    type: money
+
+  # ---- Part I (continued), PAGE 2 in this revision -------------------------
+  # Printed lines 15a/15b/15c stay on page 2 under the "Part I ... (continued)"
+  # banner, as in 2025; the draft prints their full designators.
+  - line: "15a"                             # "Subtract line 12 from line 7"
+    field: "Page2[0].f2_1[0]"
+    type: money
+  - line: "15b"                             # "Enter the amount on line 15a attributable to qualified disaster distributions, if any, from 2026 Form(s) 8915-F. See instructions. Also, enter this amount on 2026 Form(s) 8915-F, line 18, as applicable. See instructions"
+    field: "Page2[0].f2_2[0]"
+    type: money
+  - line: "15c"                             # "Taxable amount. Subtract line 15b from line 15a. Reduce that amount by certain 2026 retirement plan distribution repayments (other than those reported on Form 8915-F) that are treated as rollovers. See instructions. If more than zero, also include this amount on 2026 Form 1040, 1040-SR, or 1040-NR, line 4b" — the reduction sentence is NEW vs 2023, which is why no relation is declared
+    field: "Page2[0].f2_3[0]"
+    type: money
+  # The grey block beside the printed "Note: You may be subject to an
+  # additional 10% tax on the amount on line 15c if you were under age 59 1/2
+  # at the time of the distribution. See instructions." holds no widget.
+
+  # ---- Part II: 2026 Conversions From Traditional IRAs to Roth IRAs
+  # ---- (page 2, printed lines 16-18)
+  - line: "16"                              # "If you completed Part I, enter the amount from line 8. Otherwise, enter the net amount you converted from traditional IRAs to Roth IRAs in 2026" (conditional copy — no relation)
+    field: "Page2[0].f2_4[0]"
+    type: money
+  - line: "17"                              # "If you completed Part I, enter the amount from line 11. Otherwise, enter your basis in the amount on line 16. See instructions" (conditional copy — no relation)
+    field: "Page2[0].f2_5[0]"
+    type: money
+  - line: "18"                              # "Taxable amount. Subtract line 17 from line 16. If more than zero, also include this amount on 2026 Form 1040, 1040-SR, or 1040-NR, line 4b" — NO reduction sentence, so the relation survives the port
+    field: "Page2[0].f2_6[0]"
+    type: money
+
+  # ---- Part III: Distributions From Roth IRAs (page 2, printed lines 19-25c)
+  # ---- Heading shortened from 2023's "Distributions From Roth, Roth SEP, or
+  # ---- Roth SIMPLE IRAs" by the new umbrella Note.
+  - line: "19"                              # "Enter your total nonqualified distributions from Roth IRAs in 2026, including any qualified first-time homebuyer distributions, and any 2026 retirement plan distributions whose repayments are treated as rollovers. See instructions"
+    field: "Page2[0].f2_7[0]"
+    type: money
+  - line: "20"                              # "Qualified first-time homebuyer expenses (see instructions). Do not enter more than $10,000 reduced by the total of all your prior qualified first-time homebuyer distributions" (the $10,000 is printed in the ROW TEXT, not inside the widget)
+    field: "Page2[0].f2_8[0]"
+    type: money
+  - line: "21"                              # "Subtract line 20 from line 19. If zero or less, enter -0-"
+    field: "Page2[0].f2_9[0]"
+    type: money
+  - line: "22"                              # "Enter your basis in Roth IRA contributions. See instructions. If line 21 is zero, stop here" (instructions worksheet — no relation)
+    field: "Page2[0].f2_10[0]"
+    type: money
+  - line: "23"                              # "Subtract line 22 from line 21. If zero or less, enter -0- and skip lines 24 and 25. If more than zero, you may be subject to an additional tax. See instructions"
+    field: "Page2[0].f2_11[0]"
+    type: money
+  - line: "24"                              # "Enter your basis in conversions from traditional IRAs and rollovers from qualified retirement plans to a Roth IRA. See instructions" (instructions worksheet — no relation)
+    field: "Page2[0].f2_12[0]"
+    type: money
+  - line: "25a"                             # "Subtract line 24 from line 23. If zero or less, enter -0- and skip lines 25b and 25c"
+    field: "Page2[0].f2_13[0]"
+    type: money
+  - line: "25b"                             # "Enter the amount on line 25a attributable to qualified disaster distributions, if any, from 2026 Form(s) 8915-F. See instructions. Also, enter this amount on 2026 Form(s) 8915-F, line 19, as applicable. See instructions"
+    field: "Page2[0].f2_14[0]"
+    type: money
+  - line: "25c"                             # "Taxable amount. Subtract line 25b from line 25a. Reduce that amount by certain 2026 retirement plan distribution repayments (other than those reported on Form 8915-F) that are treated as rollovers. See instructions. If more than zero, also include this amount on 2026 Form 1040, 1040-SR, or 1040-NR, line 4b" — reduction sentence NEW vs 2023, so no relation
+    field: "Page2[0].f2_15[0]"
+    type: money
+
+  # ---- Paid Preparer Use Only (page 2) --------------------------------------
+  # Same block and the same key spellings as f843 and f1040x. "Your signature",
+  # its "Date", "Preparer's signature" and the preparer's "Date" are printed
+  # rules with no widgets, so they have no keys.
+  # WIDGET ORDER CHANGED AGAIN (TRAP): the 2026 draft numbers this block by
+  # COLUMN — f2_18 firm name, f2_19 firm ADDRESS, f2_20 firm EIN (/MaxLen 10),
+  # f2_21 phone — so f2_19/f2_20 SWAP meaning vs 2025 (f2_19 EIN, f2_20
+  # address). Re-read from each widget's rect and /MaxLen.
+  - line: "preparer.name"                   # "Print/Type preparer's name"
+    field: "Page2[0].f2_16[0]"
+    type: text
+  - line: "preparer.self_employed"          # "Check [ ] if self-employed" — the form's ONLY /Btn; /AP /N holds one state, "/1"
+    field: "Page2[0].c2_1[0]"
+    type: checkbox
+    on_state: "/1"
+  - line: "preparer.ptin"                   # "PTIN"
+    field: "Page2[0].f2_17[0]"
+    type: text
+    maxlen: 11                              # the widget's own /MaxLen (2023 carried this /MaxLen on f2_14)
+  - line: "preparer.firm_name"              # "Firm's name"
+    field: "Page2[0].f2_18[0]"
+    type: text
+  - line: "preparer.firm_ein"               # "Firm's EIN"
+    field: "Page2[0].f2_20[0]"
+    type: text
+    maxlen: 10                              # the widget's own /MaxLen (XX-XXXXXXX)
+  - line: "preparer.firm_address"           # "Firm's address"
+    field: "Page2[0].f2_19[0]"
+    type: text
+  - line: "preparer.firm_phone"             # "Phone no."
+    field: "Page2[0].f2_21[0]"
+    type: text
+
+relations:
+  # Part I
+  - "3 == 1 + 2"                    # "3 Add lines 1 and 2"
+  - "9 == 6 + 7 + 8"                # "9 Add lines 6, 7, and 8"
+  - "13 == 11 + 12"                 # "13 Add lines 11 and 12. This is the nontaxable portion of all your distributions"
+  # NO "14 == 3 - 13": DROPPED 2026-08-26 by integrator decision, the same call the
+  # missing "15c == 15a - 15b" rule above/below makes. The printed row does read
+  # "14 Subtract line 13 from line 3", but Instructions for Form 8606 (2025), Line
+  # 14, adds a path on which that is FALSE: "If you are completing Part I of 2025
+  # Form 8606 (and the last time you filed a Form 8606 with a completed Part I
+  # before 2025, you completed a Line 15c Worksheet on which the amount on line 6
+  # was greater than zero), enter on line 14 ... the amount on 2025 Form 8606, line
+  # 3, reduced by the amount on line 13" PLUS that carried worksheet amount. The
+  # adjustment comes from a PRIOR year's worksheet, so nothing on this year's face
+  # can derive it, and a filer who repaid a qualified birth-or-adoption, emergency
+  # personal expense, domestic-abuse or terminal-illness distribution would get a
+  # FALSE verification FAIL on a correct return. House rule applies (see sched_d:
+  # "the conditional/worksheet-driven subtotals ... are likewise left to recompute
+  # + review"): a relation that FAILs a legitimate filing path is worse than no
+  # relation, because it teaches the operator to ignore FAILs. Line 14 is left to
+  # verify's independent recompute + human review. The 2023 pack KEEPS this rule:
+  # the Line 15c Worksheet is new in 2024 and the 2023 instructions never mention
+  # it, so there the identity is unconditional (checked, not assumed).
+  - "15a == 7 - 12"                 # "15a Subtract line 12 from line 7"
+  # NO "15c == 15a - 15b": the 2026 row, like 2025, adds "Reduce that amount by certain 2026
+  # retirement plan distribution repayments ... that are treated as rollovers"
+  # (see the header; the 2023 pack declares this rule and its face had no such
+  # sentence).
+  # Part II
+  - "18 == 16 - 17"                 # "18 Taxable amount. Subtract line 17 from line 16." No floor and no reduction printed
+  # Part III
+  - "21 == max(0, 19 - 20)"         # "21 Subtract line 20 from line 19. If zero or less, enter -0-"
+  - "23 == max(0, 21 - 22)"         # "23 Subtract line 22 from line 21. If zero or less, enter -0- and skip lines 24 and 25"
+  - "25a == max(0, 23 - 24)"        # "25a Subtract line 24 from line 23. If zero or less, enter -0- and skip lines 25b and 25c"
+  # NO "25c == 25a - 25b": same new reduction sentence as 15c.
+
+# Deliberately empty — 15c/18/25c each "also include this amount on 2026 Form
+# 1040, 1040-SR, or 1040-NR, line 4b", which is additive and conditional, not
+# an equality (see the header).
+cross_form: []
+
+identity_fields: [name, identifying_number]
+# identifying_number is PER PERSON on this form, not per filing: Form 8606's header is "If married, file a separate form for each spouse required to file",
+# so on a joint return it legitimately carries the SPOUSE's SSN while the 1040
+# carries the primary filer's. Declared 2026-08-26 after verify_filing was
+# reproduced FAILing that correct arrangement; verify now reports a difference
+# as SKIPPED with both values printed instead of rejecting the return.
+identity_per_person: [identifying_number]
+
+# "Sign Here Only if You Are Filing This Form by Itself and Not With Your Tax
+# Return" (printed, page 2) — the f8843 standalone_only shape.
+signature:
+  page: 3                                   # PDF page 3 of the draft (page 1 is the IRS cover sheet); page 2 on the final
+  standalone_only: true
+
+# Filed by itself, it goes to "the same time and place you would otherwise file
+# 2026 Form 1040, 1040-SR, or 1040-NR" (Instructions, "When and Where To File")
+# — the state-dependent 1040 table, which the knowledge layer owns (the f1040
+# pack ships mailing: null for the same reason).
+mailing: null

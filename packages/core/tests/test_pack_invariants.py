@@ -109,14 +109,6 @@ CROSS_FORM_TARGET_ALLOWLIST: frozenset[tuple[int, str, str]] = frozenset(
         (2022, "sched_2", "21"),
         (2022, "sched_3", "8"),
         (2022, "sched_3", "15"),
-        # The 2026 Form 1040 draft pack (Phase J JT3a) keeps the Schedule 1/3 legs printed
-        # on its face ("Additional income from Schedule 1, line 10", "Amount from Schedule
-        # 3, line 8", ...) while those 2026 draft packs land in JT3c. Remove each row as its
-        # pack ships (the sched_2 rows went with JT3b's 2026 Schedule 2).
-        (2026, "sched_1", "10"),
-        (2026, "sched_1", "26"),
-        (2026, "sched_3", "8"),
-        (2026, "sched_3", "15"),
     }
 )
 
