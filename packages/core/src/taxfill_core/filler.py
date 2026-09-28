@@ -44,6 +44,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation, localcontext
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
@@ -52,6 +53,10 @@ from pypdf.generic import ArrayObject, NameObject
 from taxfill_core.knowledge import assert_pack_filing_grade, provisional_marker
 from taxfill_core.redact import redact
 from taxfill_core.schemas.formpack import FormPack, PackField
+from taxfill_core.schemas.handfill import HandFillPack
+
+if TYPE_CHECKING:  # pragma: no cover - typing only; the runtime import is local (see fill_form)
+    from taxfill_core.overlay import OverlayResult
 
 # The one input-normalization format the filler understands today.
 # Add new formats here AND in the docstring of PackField.format.
@@ -460,17 +465,24 @@ def _require_rehearsable(pack: FormPack) -> None:
 
 
 def fill_form(
-    pack: FormPack,
+    pack: FormPack | HandFillPack,
     values: Mapping[str, object],
     blank_pdf: str | Path,
     out_path: str | Path,
     *,
     rehearsal: bool = False,
-) -> FillResult:
+) -> FillResult | OverlayResult:
     """Fill ``blank_pdf`` with ``values`` per the pack's field map; write ``out_path``.
 
+    DISPATCH: a print-only :class:`HandFillPack` (``render_mode: hand_fill``) has no
+    AcroForm to write into, so it is routed to :func:`taxfill_core.overlay.stamp_overlay`,
+    which stamps the worksheet values at the pack's ``overlay`` coordinates and returns an
+    :class:`~taxfill_core.overlay.OverlayResult` instead of a :class:`FillResult`. A
+    hand-fill pack with NO coordinates raises there, pointing at ``hand_fill_worksheet``.
+    Everything below this paragraph is the AcroForm path and is untouched by the dispatch.
+
     Args:
-        pack: the validated form pack (line -> AcroForm field map).
+        pack: the validated form pack (line -> AcroForm field map), or a hand-fill pack.
         values: logical line id -> value. Text lines take strings, money
             lines take int/float/Decimal (IRS whole-dollar rounding is
             applied; rendered as a plain integer string), checkbox lines
@@ -502,6 +514,16 @@ def fill_form(
     "REHEARSAL — DRAFT FORM — NOT FOR FILING". JT3d: so may a FINAL pack whose year is planning-only
     (:func:`rehearsal_only`). It never unlocks a filing-grade fill, and a pack that fills normally refuses it.
     """
+    if isinstance(pack, HandFillPack):
+        if rehearsal:
+            raise ValueError(
+                f"rehearsal fills are AcroForm-only (a DRAFT pack.yaml in a provisional year); the "
+                f"{pack.form} {pack.tax_year} hand-fill pack stamps a print blank — call fill_form without rehearsal"
+            )
+        # Local import: the overlay module pulls in pypdfium2, which the AcroForm path never needs.
+        from taxfill_core.overlay import stamp_overlay
+
+        return stamp_overlay(blank_pdf, pack, values, out_path)
     if rehearsal:
         _require_rehearsable(pack)
     else:

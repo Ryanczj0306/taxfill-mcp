@@ -371,6 +371,32 @@ every federal year 2023–2026.
   expected. `fincen114` is a directory name, not a `KNOWN_FORM_KEYS` form key — it has no
   `pack.yaml`.
 
+### Overlay coordinates (`overlay:`)
+
+A hand-fill line may also carry an `overlay` block; then `fill_form` STAMPS the worksheet value onto
+the print blank (`taxfill_core.overlay.stamp_overlay`, base-14 Helvetica merged over the flat page)
+instead of leaving it to be hand-written, and `verify_form` returns the OVERLAY verdict. Lines
+without a block stay hand-written rows (`hand_written_lines`).
+
+- **Frame.** PDF points in the page's USER space, origin bottom-left, the frame a content
+  stream's `x y Td` uses. `x` is the entry box's left edge, `y` the text BASELINE, `w` its width;
+  `page` is 1-based and is checked against the blank's page count at fill time. `h` is an
+  optional authoring note for the vision check and never sizes text.
+- **Anchor, don't guess.** `taxfill locate <blank.pdf> --page N <label>...` prints each printed
+  label's tight box from the blank's text layer, in this same frame. A label's `y0` is its
+  baseline when it has no descender (a line number); a caption's `y0` is its descender. Start
+  the box right of the label and END it before any pre-printed cents box (`.00`), because the
+  verdict reads the whole declared box.
+- **Alignment and size.** Money is right-aligned (ending at `x + w`), text and checkboxes left /
+  centred. `align: left|right` and `font_size` override per line, and `overlay_defaults` per
+  pack (9 pt, money right). A value wider than `w` shrinks toward a 6 pt floor and warns, and
+  past the floor it spills and warns — it is never clipped silently. `comb: <pitch>` centres one
+  character per cell and drops separators (a comb has no cell for a dash, P-001).
+- **The OVERLAY verdict** keeps only glyphs drawn in the stamp font (unembedded Helvetica; the
+  CT, HI and SC blanks embed every font they print). It requires the declared box to hold
+  exactly the value, read left to right, and a blank line's box to hold nothing. It trusts the
+  coordinates and cannot see printed art, so render every stamped page and vision-check it.
+
 ## Validating your pack (the harness)
 
 Every module parametrizes over the packs its glob discovers — adding a

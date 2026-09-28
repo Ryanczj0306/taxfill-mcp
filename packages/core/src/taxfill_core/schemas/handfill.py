@@ -9,6 +9,18 @@ relations). The engine (:func:`taxfill_core.handfill.hand_fill_worksheet`) compu
 derivable line from the taxpayer's confirmed inputs and emits a line->value worksheet the
 filer transcribes onto the printed blank. No new dependency, and it never touches the
 AcroForm pipeline (a hand-fill pack lives in its own ``handfill.yaml`` file).
+
+OVERLAY COORDINATES (the ROADMAP C3 "positioned overlay filler", 2026-09). A line may
+additionally carry an ``overlay`` block giving the printed entry box's position on the
+blank. With coordinates, :func:`taxfill_core.overlay.stamp_overlay` draws the worksheet
+value straight onto the page (base-14 Helvetica, merged over the flat blank); without
+them the line stays a hand-written worksheet row. Coordinates are **PDF points in the
+page's user space, origin bottom-left** — exactly the frame a content stream's ``Td``
+uses and the frame ``taxfill locate`` reports label positions in (pdfium char boxes are
+already in that space, unrotated even on a ``/Rotate`` page). They are authored from
+``taxfill locate`` anchors and then vision-verified by rendering the stamped output;
+``page`` is validated against the blank's page count at FILL time, not load time,
+because the blank may not be cached when the pack loads.
 """
 from __future__ import annotations
 
@@ -19,6 +31,57 @@ from pydantic import BaseModel, ConfigDict, Field
 from taxfill_core.schemas.formpack import Mailing
 
 HandFillType = Literal["money", "text", "checkbox"]
+OverlayAlign = Literal["left", "right"]
+
+# Overlay rendering defaults (the values the CONVENTIONS document quotes).
+DEFAULT_OVERLAY_FONT_SIZE = 9.0
+DEFAULT_MONEY_ALIGN: OverlayAlign = "right"
+
+
+class OverlayBox(BaseModel):
+    """Where one line's value is stamped on the print blank (PDF points, origin bottom-left)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    page: int = Field(ge=1, description="1-based page of the blank. Checked against the blank's page count at fill time.")
+    x: float = Field(description="Left edge of the entry box, in PDF points from the page's left edge (user space).")
+    y: float = Field(
+        description=(
+            "Text BASELINE, in PDF points from the page's bottom edge (user space, origin bottom-left — "
+            "the same y a content stream's 'x y Td' takes). For a printed line label, 'taxfill locate' "
+            "reports the label's tight box; its bottom (y0) IS the baseline for glyphs without descenders."
+        )
+    )
+    w: float = Field(gt=0, description="Width of the entry box in points; right-aligned values end at x + w.")
+    h: float | None = Field(
+        default=None, gt=0,
+        description="Optional box height in points (authoring aid for the vision check; not used to size text).",
+    )
+    align: OverlayAlign | None = Field(
+        default=None,
+        description="left|right. Default: money lines use the manifest's overlay_defaults.money_align (right); text/checkbox left.",
+    )
+    font_size: float | None = Field(
+        default=None, gt=0,
+        description="Point size (default: overlay_defaults.font_size, else 9). Shrinks toward a 6pt floor when the value is wider than w.",
+    )
+    comb: float | None = Field(
+        default=None, gt=0,
+        description=(
+            "Cell pitch in points for per-character boxes (SSN/EIN/ZIP combs): character i is centred in "
+            "[x + i*comb, x + (i+1)*comb]. Separators (spaces, hyphens) are dropped — a comb has no cell for "
+            "them (pitfall P-001) — and a value with more characters than w/comb cells warns."
+        ),
+    )
+
+
+class OverlayDefaults(BaseModel):
+    """Manifest-level overlay defaults (every OverlayBox may override them)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    font_size: float = Field(default=DEFAULT_OVERLAY_FONT_SIZE, gt=0)
+    money_align: OverlayAlign = Field(default=DEFAULT_MONEY_ALIGN)
 
 
 class HandFillLine(BaseModel):
@@ -39,6 +102,13 @@ class HandFillLine(BaseModel):
         ),
     )
     note: str | None = Field(default=None, description="Optional guidance shown next to the line on the worksheet.")
+    overlay: OverlayBox | None = Field(
+        default=None,
+        description=(
+            "Where to stamp this line's value on the print blank (see OverlayBox). None = the line is "
+            "hand-written from the worksheet; stamp_overlay lists it under hand_written_lines."
+        ),
+    )
 
 
 class HandFillPack(BaseModel):
@@ -71,3 +141,17 @@ class HandFillPack(BaseModel):
             "gets rejected. Leave unset for a print-only STATE form, where the default is correct."
         ),
     )
+    overlay_defaults: OverlayDefaults | None = Field(
+        default=None,
+        description="Manifest-wide overlay defaults (font_size, money_align); each line's overlay block may override.",
+    )
+
+    @property
+    def has_overlay_coordinates(self) -> bool:
+        """True when at least one line carries an ``overlay`` block (the fill_form routing test)."""
+        return any(ln.overlay is not None for ln in self.lines)
+
+    @property
+    def overlay_lines(self) -> list[HandFillLine]:
+        """The lines that will be stamped (those carrying coordinates), in printed order."""
+        return [ln for ln in self.lines if ln.overlay is not None]

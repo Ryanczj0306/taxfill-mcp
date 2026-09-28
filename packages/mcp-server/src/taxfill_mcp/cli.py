@@ -7,6 +7,8 @@ Subcommands:
     taxfill purge <year>         securely wipe a year's workspace (overwrite + delete)
     taxfill introspect <pdf>     emit a skeleton pack.yaml from a blank AcroForm PDF
     taxfill seed-blank <pdf>     cache a browser-saved blank, digest-checked (for a host that refuses fetchers)
+    taxfill locate <pdf> --page N <needle>...
+                                 print where labels sit on a print-only blank (overlay anchors)
     taxfill tools                list the callable MCP tools (name, description, args)
     taxfill call <name> [json]   invoke one MCP tool and print its JSON result
 
@@ -20,7 +22,15 @@ through the live registry, so it always covers all tools with no per-tool code:
     taxfill call render_form '{"form": "1040", "year": 2023, ...}' --out-dir ./pages
 
 `call` prints the tool's structured JSON on stdout (image output — `render_form`
-— is written to files and their paths returned). The workspace lives under
+— is written to files and their paths returned).
+
+`locate` is the AUTHORING helper for hand-fill packs' ``overlay`` coordinates: it
+searches the blank's text layer (pypdfium2) for each needle — a printed line number
+such as ``5`` or a caption — and prints the tight box of every hit in PDF points,
+user space, origin bottom-left (the frame ``overlay.x/y`` use; see
+formpacks/CONVENTIONS.md). No OCR: the print-only blanks carry a text layer.
+
+The workspace lives under
 ``./taxfill-workspace`` by default (``--root`` to override). `purge` is
 destructive and PII-bearing, so it confirms interactively unless ``--yes`` is given.
 """
@@ -159,6 +169,56 @@ def _cmd_seed_blank(args) -> int:
     return 0
 
 
+def _cmd_locate(args) -> int:
+    from taxfill_core.overlay import locate_labels, page_geometry
+
+    pdf = Path(args.pdf)
+    if not pdf.is_file():
+        print(f"No such PDF: {pdf}", file=sys.stderr)
+        return 1
+    try:
+        geom = page_geometry(pdf, args.page)
+        hits = locate_labels(
+            pdf, args.page, args.needles, match_case=args.match_case, whole_word=not args.substring
+        )
+    except ValueError as e:
+        print(json.dumps({"error": "locate failed", "detail": _redact(str(e))}), file=sys.stderr)
+        return 1
+    total = sum(len(v) for v in hits.values())
+    if args.json:
+        payload = {
+            "pdf": str(pdf),
+            "page": geom,
+            "frame": "PDF points, page user space, origin bottom-left (overlay.x / overlay.y frame)",
+            "hits": {needle: [b.model_dump() for b in boxes] for needle, boxes in hits.items()},
+        }
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
+    else:
+        print(
+            f"{pdf.name} page {args.page}/{geom['pages']}: MediaBox {geom['width']:g} x {geom['height']:g} pt "
+            f"(x0={geom['x0']:g}, y0={geom['y0']:g}), /Rotate {geom['rotation']}"
+        )
+        print("frame: PDF points, user space, origin bottom-left — y0 of a label is its baseline")
+        print(f"{'needle':<24} {'x0':>8} {'y0':>8} {'x1':>8} {'y1':>8}  text")
+        for needle, boxes in hits.items():
+            if not boxes:
+                print(f"{needle:<24} {'(no match)':>8}")
+            for b in boxes:
+                print(f"{needle:<24} {b.x0:>8.2f} {b.y0:>8.2f} {b.x1:>8.2f} {b.y1:>8.2f}  {b.text!r}")
+        print(
+            "\nauthor:  overlay: {page: N, x: <box left>, y: <label y0>, w: <box width>}  "
+            "then fill_form -> render_form and vision-check the stamped page"
+        )
+    if total == 0:
+        print(
+            "no needle matched — check spelling/case (--match-case, --substring), or the page; a blank with NO "
+            "text layer (scanned image) cannot be located and its coordinates must be estimated from a render",
+            file=sys.stderr,
+        )
+        return 1
+    return 0
+
+
 def _server_mcp():
     """Lazily import the FastMCP server object (keeps status/purge/introspect light)."""
     from taxfill_mcp.server import mcp
@@ -293,6 +353,15 @@ def main(argv: list[str] | None = None) -> int:
     sb.add_argument("--sha256", help="the digest it must match (a pack's pdf_sha256)")
     sb.add_argument("--cache-dir", dest="cache_dir", help="blank cache (default: the workspace's .cache/blanks)")
     sb.set_defaults(_fn=_cmd_seed_blank)
+
+    lp = sub.add_parser("locate", help="find printed labels on a print-only blank (hand-fill overlay anchors)")
+    lp.add_argument("pdf", help="path to the blank PDF (fetch_blank's path)")
+    lp.add_argument("--page", type=int, required=True, help="1-based page to search")
+    lp.add_argument("needles", nargs="+", help="printed label text to find, e.g. 5 17 'Federal adjusted gross income'")
+    lp.add_argument("--substring", action="store_true", help="match inside words too (default: whole words only)")
+    lp.add_argument("--match-case", action="store_true", dest="match_case", help="case-sensitive search")
+    lp.add_argument("--json", action="store_true", help="emit JSON (page geometry + hits)")
+    lp.set_defaults(_fn=_cmd_locate)
 
     tp = sub.add_parser("tools", help="list the callable MCP tools (name, description, args)")
     tp.add_argument("--json", action="store_true", help="emit the full tool list + JSON input schemas")

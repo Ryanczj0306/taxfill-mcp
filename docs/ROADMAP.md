@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,982 tests** — offline 7,183 + live-.gov 799; derived
+Done and on `main` (**7,999 tests** — offline 7,200 + live-.gov 799; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -749,7 +749,7 @@ line items sum to the headline delta.
 |---|---|
 | J1(a) verify scans mapped ReadOnly widgets | J0 commit A, **with** the regression fix it needs (J0.3) |
 | J1(b) N-8 §871(i)(2)(A) deposit-interest exclusion | J0 commit B plus its missing tests; the dual-status corner goes to JF5b.3 |
-| J2 overlay filler (CT/HI/NM/SC) | parked on branch `phase-j2-overlay` at J0; ships as JS4a–d |
+| J2 overlay filler (CT/HI/NM/SC) | merged onto main by JS4a (2026-09-28, verifier fixed); the per-state packs ship as JS4c–d |
 | J3 state 2024/2025 remainder (73 pack-years, not ~66) | JS3a/b (scaffold + cheap ports incl. UT 2025) + JS5 (re-maps / URL-dead); TY2024 leftovers fold into JS7 |
 | J4 C2 nonresident / part-year | JS6 |
 | J5 effective_law_changes sweep | JS2, re-scoped from 84 to 30 packs (15 adjudications) |
@@ -2264,22 +2264,13 @@ line items sum to the headline delta.
     - **Unrealistic test data, fixed in the generator.** `synthetic_values` put 16-character "Test Taxpayer N" into first-name boxes, "Test N" into suffix, count and code boxes, and a 10-character date into boxes the pack caps shorter. It now writes realistic lengths: suffix "JR", unit type "APT", first-four-letters "TEST", names "Tess N", free text "TN", and a two-digit year under a date cap.
   - *Also fixed:* two JS3a network tests went red when JS3b shipped UT 2025 (newest mode stops triaging a shipped form), because the per-state gates never ran them. They now replay the recorded base (2023; UT against a fixed 2024) and pin the newest-mode "shipped" report.
   - **Tests:** `test_js3c_*` in test_verify.py — Courier vs Helvetica on the same value, the multiline budget, /DR resolution where a resolved /BaseFont beats the alias name. Every network gate passes.
-- [ ] **JS4a — Overlay verifier fixed and tested** (M; on `phase-j2-overlay`) [PJ-01 + PJ-06]
-  - **FILING-WRONG once merged.** verify_overlay substring-matches over the expected text's layout (overlay.py:596-610), so a PDF stamped 14,000 / 10 / 1,200 verifies ok against expected 4,000 / 0 / 200.
-    - Look up text in the DECLARED box.
-    - Isolate the stamped glyphs (font filter, or subtract the pinned blank's own text).
-    - Require exact equality.
-    - A blank line's box must hold no stamped glyphs; unknown keys are refused.
-  - **Tests.** The 721 lines have zero tests. test_overlay.py on a synthetic flat PDF:
-    - the round trip and every alignment;
-    - the shrink / overflow / non-WinAnsi warnings;
-    - bad page / key / coordinates;
-    - the widths table vs the pypdf metrics;
-    - locate_labels within ±1 pt, and whole-word matching;
-    - the PJ-01 negatives.
-    
-    Plus CLI and server tests (tool count 23), a CONVENTIONS overlay section, and a lazy import in server.py.
-  - **Acceptance:** the PJ-01 negatives FAIL; test_overlay is green.
+- [x] **JS4a — Overlay verifier fixed and tested — DONE 2026-09-28** (M; was on `phase-j2-overlay`) [PJ-01 + PJ-06]
+  - *As built:* the parked branch's overlay filler (overlay.py, the `overlay:` schema, `taxfill locate`, and the fill_form / verify_form / fetch_blank routing — still 23 tools) is merged onto main by hand; filler, cli and server had moved on for a month.
+    - **verify_overlay now reads the DECLARED box.** It keeps only glyphs drawn in the stamp font (unembedded base-14 Helvetica, found through each character's pdfium text object; the CT, HI and SC blanks embed every font they print). It requires exact equality, left to right, and a blank line's box must hold nothing. Unknown keys are refused.
+    - The PJ-01 negatives (stamped 14,000 / 10 / 1,200 against expected 4,000 / 0 / 200) FAIL, and the failure names the value that is actually stamped. The fail-safe limit is recorded: a blank's own unembedded-Helvetica text inside a box reads as stamped.
+    - `fill_form(rehearsal=True)` refuses a hand-fill pack. server.py imports overlay lazily, and a subprocess test pins that.
+  - **Tests:** test_overlay.py (12, on a synthetic blank printed in embedded Vera) covers the round trip and every alignment, the PJ-01 negatives, blank-box, wrong-coordinate and beyond-the-page failures, the shrink / overflow / non-WinAnsi / comb warnings, the widths table vs pypdf's Core-14 metrics, `locate_labels` whole-word hits within 1 pt, and the fail-safe. test_overlay_tools.py (5) covers fill_form → verify_form through the tools, the 23-tool count, the no-coordinates refusal, and `taxfill locate`. CONVENTIONS.md gains the overlay-coordinates section.
+  - Found for JS4d: the NM PIT-1 manifest's `source_url` is an AWS API-gateway host (NM TRD's file service), which fetch's official-host rule refuses, so the NM blank cannot be fetched or located until it has an official URL or a seeded copy.
 - [ ] **JS4b — verify_filing routing, FBAR "blank", DOR guidance** (M) [PJ-08 + PJ-10]
   - verify_filing loads only FormPacks, so a stamped CT-1040 raises FileNotFoundError. Route hand-fill items through verify_overlay.
   - fetch_blank serves the FBAR's *instructions* PDF as a "blank" (fincen114/handfill.yaml:205); refuse e-file-only packs, pointing at the BSA E-Filing System.
@@ -2287,7 +2278,7 @@ line items sum to the headline delta.
   - **Acceptance:** verify_filing verifies a manifest with a stamped CT-1040; fetch_blank('fincen114') refuses; the DOR rules are recorded.
 - [ ] **JS4c — CT-1040 2023 pilot** (M–L) [PJ-07]
   - Overlay blocks for all 4 pages from `taxfill locate` anchors. The page-1 right column is x=405, w≈132, and ends before the pre-printed ".00" (smoke-verified).
-  - Render and vision-check every page; merge the branch once JS4a–b are green.
+  - Render and vision-check every page (the overlay code itself was merged by JS4a).
   - **Acceptance:** golden stamp → verify_overlay ok → render.
 - [ ] **JS4d — SC, NM, HI overlays** (L, per pack)
   - SC line numbers are not isolated words in the text layer, so anchor on captions.
