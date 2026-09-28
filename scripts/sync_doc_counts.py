@@ -96,6 +96,11 @@ def anchors(c: dict) -> list[tuple[Path, str, str]]:
                 r"For the other \d+ jurisdictions",
          f"post-2023 for only **{c['post2023']}** — **{', '.join(c['both_years'])} (2024 and 2025)** and\n"
          f"> **{', '.join(c['only_2024'])} (2024)**. For the other {c['jurisdictions'] - c['post2023']} jurisdictions"),
+        (readme, r"\*\*TY2024 \d+\*\* \(", f"**TY2024 {sy[2024]}** ("),
+        (readme, r"\*\*TY2025 \d+\*\* \(", f"**TY2025 {sy[2025]}** ("),
+        (readme, r"\*\*\d+ of the 42 jurisdictions now fill a post-2023 year\*\* \([A-Z, ]+\); for the other \d+,",
+         f"**{c['post2023']} of the 42 jurisdictions now fill a post-2023 year** "
+         f"({', '.join(sorted(c['both_years'] + c['only_2024']))}); for the other {c['jurisdictions'] - c['post2023']},"),
         (readme, r"took \d+ jurisdictions \([A-Z, ]+\) past TY2023, so the remaining \d+ still fill",
          f"took {c['post2023']} jurisdictions ({', '.join(sorted(c['both_years'] + c['only_2024']))}) past TY2023, so "
          f"the remaining {c['jurisdictions'] - c['post2023']} still fill"),
@@ -104,6 +109,9 @@ def anchors(c: dict) -> list[tuple[Path, str, str]]:
          f"TY2025 {sy[2025]})"),
         (roadmap, r"\*\*\d+ of the 42 jurisdictions fill a post-2023 year\*\*",
          f"**{c['post2023']} of the 42 jurisdictions fill a post-2023 year**"),
+        (roadmap, r"fill a post-2023 year\*\* — [A-Z, ]+\n> and [A-Z]+ \(2024\+2025\), and [A-Z/]+ \(2024\) — after",
+         f"fill a post-2023 year** — {', '.join(c['both_years'][:-1])}\n> and {c['both_years'][-1]} (2024+2025), "
+         f"and {'/'.join(c['only_2024'])} (2024) — after"),
         (roadmap, r"For the remaining \*\*\d+\*\*, state \*knowledge\*",
          f"For the remaining **{c['jurisdictions'] - c['post2023']}**, state *knowledge*"),
         (roadmap, r"That asymmetry is now \d+\n> jurisdictions wide",
