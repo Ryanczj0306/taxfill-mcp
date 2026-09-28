@@ -196,6 +196,10 @@ all_citations:
   url: https://www.tax.ny.gov/pdf/2024/inc/it216i_2024.pdf
 - source: New York State 2024 legislative changes summary (the IT-201-I 'What's new for 2024' pointer target)
   url: https://www.tax.ny.gov/legal/2024/
+- source: >-
+    New York State Department of Taxation and Finance, '2024 legislative changes' — Personal income tax and corporation
+    tax changes (the detail page the /legal/2024/ summary links to; updated December 17, 2024)
+  url: https://www.tax.ny.gov/legal/2024/pit-corp-changes.htm
 unverified:
 - The treaty-conformity conclusion relies on the parsed contents of the 2024 IT-201-I additions section and the 2024
   IT-225-I addition-modification chart (codes A-101 through A-222, zero occurrences of 'treaty'); no NY .gov page
@@ -361,3 +365,78 @@ convenience_rule:
       to Telecommuters and Others", quoting 20 NYCRR 132.18(a) and setting the primary /
       secondary / other bona-fide-employer-office factor test.
     url: https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    ADDITIONAL EMPIRE STATE CHILD CREDIT PAYMENTS (beginning August 2024) — a resident who filed a timely 2023 return
+    and received a 2023 Empire State child credit of at least $100 received an additional payment. It is NOT reported
+    on the 2024 New York return.
+  status: final_form_published
+  affects:
+  - IT-201 income lines (nothing to report — the payment is not New York income)
+  modeled: false
+  lookup_path: >-
+    The Department's 2024 legislative changes page, 'Additional payments for Empire State child credit (Article 22)'
+    (Part BBB of Chapter 56 of the Laws of 2024; Tax Law § 606(c-1)).
+  citation:
+    source: >-
+      NYS Department of Taxation and Finance, 2024 legislative changes — Additional payments for Empire State child
+      credit (Article 22): 'Resident taxpayers received an additional payment (beginning in August 2024)' — 'Taxpayers
+      are not required to report these payments on their 2024 New York State income tax return.'
+    url: https://www.tax.ny.gov/legal/2024/pit-corp-changes.htm
+- description: >-
+    MCTMT RATES FOR SELF-EMPLOYED INDIVIDUALS — for tax years beginning on or after January 1, 2024, the metropolitan
+    commuter transportation mobility tax on net earnings from self-employment in the MCTD is .60% in Zone 1 and .34%
+    in Zone 2, each owed only when that zone's earnings exceed $50,000, and the $50,000 threshold is computed per
+    individual even on a joint return.
+  status: final_form_published
+  affects:
+  - IT-201 MCTMT lines / Form IT-201-ATT (self-employed MCTMT)
+  modeled: false
+  lookup_path: >-
+    The Department's 2024 legislative changes page, 'Metropolitan commuter transportation mobility tax (MCTMT) rates
+    for self-employed individuals (Article 23)' (Part C of Chapter 59 of the Laws of 2024; Tax Law § 801(a)); calc.state_tax
+    computes the income tax only.
+  citation:
+    source: >-
+      NYS Department of Taxation and Finance, 2024 legislative changes — MCTMT rates for self-employed individuals
+      (Article 23): '.60% (.0060) of the net earnings attributable to the MCTD within Zone 1, if such earnings exceed
+      $50,000 for the tax year' — 'The $50,000 thresholds are computed on an individual basis for each zone, even
+      if you file a joint income tax return.'
+    url: https://www.tax.ny.gov/legal/2024/pit-corp-changes.htm
+- description: >-
+    NEW YORK 529 PROGRAM — qualified withdrawals now include, from September 5, 2024, payments of principal and interest
+    on a qualified education loan (IRC 529(c)(9)) and rollovers to a Roth IRA (IRC 529(c)(3)(E)). A withdrawal that
+    is qualified is not a nonqualified withdrawal the New York return adds back.
+  status: final_form_published
+  affects:
+  - IT-201 additions (nonqualified NY 529 withdrawals)
+  modeled: false
+  lookup_path: >-
+    The Department's 2024 legislative changes page, 'New York's 529 college saving program (Article 22)' (Chapter
+    310 of the Laws of 2024; Education Law § 695-b).
+  citation:
+    source: >-
+      NYS Department of Taxation and Finance, 2024 legislative changes — New York's 529 college saving program (Article
+      22): 'The definition of a qualified withdrawal has been expanded to include withdrawals made on or after September
+      5, 2024' — 'make a rollover to a Roth Individual Retirement Account, as provided for in Section 529(c)(3)(E)
+      of the Internal Revenue Code.'
+    url: https://www.tax.ny.gov/legal/2024/pit-corp-changes.htm
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    The IT-201-I's What's new for 2024 section points to the Department's 2024 legislative changes; its personal income
+    tax list (/legal/2024/income.htm, detail page cited here) was read in full. Three items reach a resident's 2024
+    return and are recorded above. Not entries: 'The New York itemized deduction limitation for taxpayers whose New
+    York adjusted gross income is over $10 million has been extended through tax year 2029' (a continuation, not a
+    2024 change); the Servicemembers Civil Relief Act election ('For tax years 2023 and after'); and the business
+    or procedural items — Division of Tax Appeals representation, the e-file mandate extension, the commercial security
+    tax credit (businesses with 50 or fewer employees), Department action on amended returns, the insurance guaranty
+    credit and the tax shelter disclosure extension.
+  citation:
+    source: >-
+      NYS Department of Taxation and Finance, 2024 legislative changes — Personal income tax (every item)
+    url: https://www.tax.ny.gov/legal/2024/pit-corp-changes.htm

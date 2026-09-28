@@ -219,8 +219,9 @@ tax:
         if eligible.'
   notes:
   - 'TY2024 verification (2026-08-01): the 2024 booklet prints the SAME rate schedules and constants as TY2023 — the
-    further across-the-board reduction applies beginning TY2025, not TY2024. Constants re-derived: 236.00/708.50/1,239.50/2,183.50
-    equal exact cumulative marginal sums; Schedule II constants are exactly half-boundary equivalents.'
+    further across-the-board reduction (W. Va. Code §11-21-4i) applies beginning TY2025, not TY2024. Constants
+    re-derived: 236.00/708.50/1,239.50/2,183.50 equal exact cumulative marginal sums; Schedule II constants are exactly
+    half-boundary equivalents.'
   - 'Base guidance: Supply Form IT-140 line 4, West Virginia Adjusted Gross Income = line 1 federal adjusted gross
     income (''Enter your federal adjusted gross income as shown on Federal Form 1040'') plus line 2 additions to income
     (Schedule M line 59) minus line 3 subtractions from income (Schedule M line 50). If the filer has no Schedule
@@ -231,11 +232,12 @@ tax:
     nor itemized deductions on Form IT-140 (the only base reductions are the $2,000-per-exemption line 6 amounts,
     shipped as personal/dependent). Rate-schedule constants re-verified against the 2024 IT-140 booklet (236.00 /
     708.50 / 1,239.50 / 2,183.50).'
-  - 'RETROACTIVE 2024 RATE CUT: the shipped rates (2.36%/3.15%/3.54%/4.72%/5.12%) are the FINAL 2024 filing-season
-    schedule printed in the official 2024 IT-140 booklet (p.35). They were enacted mid-year by 2024 legislation (HB
-    2526) codified at W. Va. Code §11-21-4g, which states the rates ''shall apply retroactively for all taxable years
-    beginning on and after January 1, 2024, and shall be in lieu of the rates of tax specified in §11-21-4e'' (the
-    prior higher schedule). Do not use pre-2024 or early-2024 withholding-era rate tables.'
+  - 'THE 2023 RATES CONTINUE (corrected 2026-09-28, Phase J JS2 — this note had misdated the statute): the shipped
+    rates (2.36%/3.15%/3.54%/4.72%/5.12%) are the schedule printed in the official 2024 IT-140 booklet (p.35), and
+    they are the 2023 rates unchanged. They were enacted by 2023 HB 2526, codified at W. Va. Code §11-21-4g, which
+    states the rates ''shall apply retroactively for all taxable years beginning on and after January 1, 2023, and
+    shall be in lieu of the rates of tax specified in §11-21-4e of this code'' (https://code.wvlegislature.gov/11-21-4G/,
+    fetched 2026-09-28). There was no 2024 rate cut; do not use a pre-2023 rate table.'
   - 'TWO RATE SCHEDULES: Rate Schedule I applies ''if you checked 1 (Single), 2 (Head of household), 3 (Married filing
     joint), or 5 (Widow[er] with dependent child)''; it is duplicated here for single, married_filing_jointly, and
     head_of_household. Rate Schedule II applies only to filing status 4 (Married filing separately); its bracket bounds
@@ -279,3 +281,71 @@ tax:
     may be lower.'
   - No county or municipal income tax is collected through Form IT-140 — the return computes only the West Virginia
     state personal income tax.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    SOCIAL SECURITY PHASE-OUT BEGINS — for 2024, a filer above the income limits (federal AGI over $100,000 joint,
+    $50,000 otherwise) may subtract 35% of the social security benefits included in federal AGI; below the limits
+    benefits stay fully exempt. A Schedule M decreasing modification.
+  status: final_form_published
+  affects:
+  - Schedule M decreasing modifications (IT-140 line 3)
+  - calc.state_tax taxable_base (caller-supplied — must already net the modification)
+  modeled: false
+  lookup_path: >-
+    2024 IT-140 booklet, Important Information for 2024, and the Schedule M social security benefits line.
+  citation:
+    source: >-
+      2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024: 'For
+      taxable year 2024, 35% of social security benefits received and included in the federal adjusted gross income
+      shall be allowed as a decreasing modification when determining West Virginia taxable income.'
+    url: https://tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf
+- description: >-
+    NEW CHILD AND DEPENDENT CARE CREDIT — 50% of the credit taken on federal Form 2441, claimed on line 18 of the
+    Tax Credit Recap Schedule; paper filers attach federal Form 2441 or the credit is denied.
+  status: final_form_published
+  affects:
+  - Tax Credit Recap Schedule line 18 (IT-140 line 9 credits)
+  modeled: false
+  lookup_path: >-
+    2024 IT-140 booklet, Important Information for 2024, and the Tax Credit Recap Schedule instructions (line 18).
+  citation:
+    source: >-
+      2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024: 'The
+      Child and Dependent Care Credit can be claimed on Line 18 of Tax Credit Recap Schedule (RECAP). The allowable
+      credit is 50% of the credit taken on Form 2441 for the federal return.'
+    url: https://tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf
+- description: >-
+    NEW REFUNDABLE PROPERTY TAX CREDITS against the income tax — the Disabled Veterans Real Property Tax Credit (homestead
+    property tax of a disabled veteran), the Motor Vehicle Tax Credit (personal property tax on qualified vehicles)
+    and the Small Business Property Tax Credit (50% of a small business's personal property tax); an excess over the
+    income tax is refunded.
+  status: final_form_published
+  affects:
+  - Tax Credit Recap Schedule (refundable property tax credits)
+  modeled: false
+  lookup_path: >-
+    2024 IT-140 booklet, Property Tax Credits (p.19), and TSD 454 (motor vehicle), TSD 455 (disabled veterans), TSD
+    456 (small business) at tax.wv.gov.
+  citation:
+    source: >-
+      2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024: 'New
+      property tax credits are available this year.' Property Tax Credits (p.19) — Motor Vehicle Tax Credit: 'A credit
+      may be claimed for timely paid personal property taxes on qualified motor vehicles.'
+    url: https://tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'IMPORTANT INFORMATION FOR 2024' (IT-140 booklet p.15), read in full and compared with the 2023 booklet's list:
+    the social security modification, the child and dependent care credit and the property tax credits are not in
+    2023's and are recorded above. The rest carry over or are administrative (the EK-1 pass-through credit line, withholding
+    documents, the Municipal Use Tax, MyTaxes; 'The IT-120 will be used this year'). The rate schedules are unchanged
+    from 2023 — W. Va. Code §11-21-4g, in force from TY2023; the next cut (§11-21-4i) starts with TY2025. This pack's
+    former retroactive-2024-rate-cut note misdated that statute and is corrected.
+  citation:
+    source: >-
+      2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024 (p.15)
+    url: https://tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf

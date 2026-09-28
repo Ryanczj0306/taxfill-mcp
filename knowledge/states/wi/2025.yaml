@@ -236,3 +236,64 @@ tax:
     separately); the tuition and fee expenses subtraction increased to $7,649 per student with a wider phase-out;
     and the adoption expenses subtraction increased to $15,000 per child. Compute these on Schedule SB / Schedule
     CS before supplying Line 11.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    4.4% BRACKET EXPANDED — 2025 Wisconsin Act 15 (the 2025-27 budget) raised the top of the second bracket and the
+    bottom of the third for every filing status: single and head of household 4.4% now runs to $50,480 (2024: $28,640),
+    joint to $67,300, separate to $33,650. The four rates are unchanged. The shipped brackets carry the Act 15 schedule.
+  status: final_form_published
+  affects:
+  - tax (brackets — the 4.4% band)
+  - Form 1 line 12 (tax table / Tax Computation Worksheet)
+  modeled: true
+  citation:
+    source: >-
+      2025 Form 1-ES Instructions, Instruction Updates: '2025 Wisconsin Act 15 increased the income threshold for
+      the top of the second and bottom of the third tax brackets for each filing status. The 2025 Tax Rate Schedules
+      on page 3 have been updated to reflect that change.'
+    url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1-ES-inst.pdf
+- description: >-
+    NEW RETIREMENT INCOME SUBTRACTION — an individual at least 67 at the end of 2025 may subtract up to $24,000 of
+    retirement income (Schedule SB).
+  status: final_form_published
+  affects:
+  - Schedule SB subtractions (Form 1 line 7)
+  - calc.state_tax taxable_base (caller-supplied — must already net the subtraction)
+  modeled: false
+  lookup_path: >-
+    2025 Form 1 Instructions, New in 2025, and the Schedule SB instructions (retirement income subtraction).
+  citation:
+    source: >-
+      2025 Wisconsin Income Tax Form 1 Instructions (I-111), New in 2025: 'New Retirement Income Subtraction – Individuals
+      who are at least 67 years old at the end of 2025 may subtract up to $24,000 of retirement income. See the Schedule
+      SB instructions.'
+    url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf
+- description: >-
+    ADOPTION EXPENSES SUBTRACTION RAISED — the maximum subtraction for expenses paid for a qualifying adoption is
+    now $15,000 per child (Schedule SB).
+  status: final_form_published
+  affects:
+  - Schedule SB subtractions (Form 1 line 7)
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    2025 Form 1 Instructions, New in 2025, and the Schedule SB instructions (adoption expenses).
+  citation:
+    source: >-
+      2025 Wisconsin Income Tax Form 1 Instructions (I-111), New in 2025: 'Adoption Expenses Subtraction – The maximum
+      subtraction for expenses paid for a qualifying adoption is now $15,000 per child.'
+    url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'New in 2025' (Form 1 Instructions p.1), read in full, with the Form 1-ES Instruction Updates banner (the Act
+    15 bracket change is on the 1-ES instructions only; the Form 1 booklet's New in 2025 does not mention it). Not
+    entries: the college savings subtraction ('increased to $5,130 per beneficiary') and the tuition and fee subtraction
+    ('increased to $7,649 per student') are indexed amounts.
+  citation:
+    source: 2025 Wisconsin Income Tax Form 1 Instructions (I-111), New in 2025
+    url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf

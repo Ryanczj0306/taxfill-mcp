@@ -374,3 +374,22 @@ tax:
   - 'Round all amounts to the nearest whole dollar on the return (2025 booklet: ''Round all amounts to the nearest
     dollar. For example, if your Form W-2 shows $10,897.50, round to $10,898. If your Form W-2 shows $10,897.49, round
     to $10,897.'') — half-up, matching the engine.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes: []
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    Special Information for Tax Year 2025 (p.6) carries no law change new for 2025. The rate item restates the 2024
+    cut — 'Marginal Income Tax rates for 2025 are 3.9%, as amended in 2024.' — which the 2024 pack records and this
+    pack's brackets already carry. The one new item is a form change: 'Withholding will now be reported on separate
+    lines. Line 39A will be where W-2 withholding is reported. Line 39B will be where 1099/K-1 withholding is reported.'
+    The Pass-Through Entity Tax, the Additional Tax Credit for Qualified Individuals (now 'net income up to $27,600',
+    an indexed threshold), the Act 191 Developmentally Disabled credit, Act 1019 Remote Work and the Act 171 teacher
+    death benefits all carry over from 2024.
+  citation:
+    source: >-
+      2025 AR1000F and AR1000NR Instructions (Arkansas DFA), Special Information for Tax Year 2025 (p.6)
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf

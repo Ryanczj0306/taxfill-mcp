@@ -441,3 +441,21 @@ convenience_rule:
   citation:
     source: 2025 Delaware Schedule W — Apportionment Worksheet (Form PIT-SCW, Revision 20250515), page 1 apportionment instructions + page 2 days-worked-outside-Delaware log.
     url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-SCW_2025-01_PaperInteractiveIPM.pdf
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes: []
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    No law change reaches a 2025 Delaware resident return. The 2025 PIT-RES instructions print no What's New section;
+    the 2025 form's line list is identical to 2024's (the labor union dues line, new in 2024, stays at line 16), and
+    the rate schedule, the $3,250 / $6,500 standard deduction and the personal credit are unchanged from 2024 (this
+    pack's tax block, re-verified against the 2025 tax table). A keyword pass over the instructions for effective
+    dates, increases and repeals found none for 2025.
+  citation:
+    source: >-
+      2025 Delaware Resident Individual Income Tax Return Instructions (PIT-RES), with the 2024 and 2025 PIT-RES forms
+    url: >-
+      https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf

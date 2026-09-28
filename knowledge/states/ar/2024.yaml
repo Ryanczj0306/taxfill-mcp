@@ -323,3 +323,36 @@ tax:
     to reach Line 33 total tax on the form.'
   - 'Round all amounts to the nearest whole dollar on the return (booklet: ''Round all amounts to the nearest dollar.
     For example, if your Form W-2 shows $10,897.50, round to $10,898'') — half-up, matching the engine.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    TOP RATE CUT TO 3.9%, retroactive to January 1, 2024 — Act 1 of the Second Extraordinary Session of 2024 (the
+    June 2024 special session) amended the marginal rates (2023's top rate was 4.7%). The shipped brackets, the 2024
+    Indexed Tax Brackets and the booklet's tax tables all carry the 3.9% top rate.
+  status: final_form_published
+  affects:
+  - tax (brackets — the 3.9% top rate and the re-indexed schedule)
+  - AR1000F Line 29 (tax from the 2024 tax tables)
+  modeled: true
+  citation:
+    source: >-
+      2024 AR1000F and AR1000NR Instructions (Arkansas DFA), Special Information for Tax Year 2024 (p.6): 'Individual
+      Income Tax Rate Reduction (Act 1 of the Second Extraordinary Session of 2024)' — 'Marginal Income Tax rates
+      for 2024 have been amended, and the top rate will be reduced to 3.9%.'
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2024_AR1000F_and_AR1000NR_Instructions.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    Special Information for Tax Year 2024 (p.6) carries one law change new for 2024, the Act 1 rate cut above. Every
+    other item on it is already on the 2023 booklet's list: the Pass-Through Entity Tax, the 'Additional Tax Credit
+    for Qualified Individuals (Act 1 of the Second Extraordinary Session of 2021)', the 'DEVELOPMENTALLY DISABLED
+    CREDIT (Act 191 of the General Session of 2023)', 'Remote Work (Act 1019 of the General Session of 2021)' and
+    'Teacher and Retired Teacher Death Benefits (Act 171 of the General Session of 2023)'. The 2023 one-time Inflationary
+    Relief credit (Act 6 of 2023) is not on the 2024 list.
+  citation:
+    source: >-
+      2024 AR1000F and AR1000NR Instructions (Arkansas DFA), Special Information for Tax Year 2024 (p.6)
+    url: https://www.dfa.arkansas.gov/wp-content/uploads/2024_AR1000F_and_AR1000NR_Instructions.pdf

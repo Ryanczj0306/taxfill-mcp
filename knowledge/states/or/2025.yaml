@@ -336,3 +336,65 @@ tax:
     Rev. 12-30-25) p.21, whose own worked examples corroborate the constants (''Tax on the first $22,200 $1,323 (from
     the chart)'' for a joint filer with $76,200 of taxable income; ''Tax on the first $11,100 $661'' for a single
     filer with $41,100).'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    KICKER CREDIT ON 2025 RETURNS — Oregon's surplus credit (the kicker) is claimed on the 2025 return, line 32 (none
+    on 2024 returns).
+  status: final_form_published
+  affects:
+  - Form OR-40 line 32 (surplus credit)
+  modeled: false
+  lookup_path: >-
+    2025 Form OR-40 Instructions, New information — Oregon surplus (kicker), and the line 32 instructions (the credit
+    percentage and its base).
+  citation:
+    source: >-
+      2025 Form OR-40 Instructions, New information: 'Oregon surplus (kicker). Oregon's surplus, known as the "kicker,"
+      will be claimed as a credit on your 2025 tax return. See the instructions for line 32.'
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+- description: >-
+    FEDERAL TIP, OVERTIME AND CAR-LOAN INTEREST DEDUCTIONS CARRY OVER — a filer may claim on the Oregon return the
+    same deductions for tip income, overtime wages and passenger vehicle loan interest claimed on the 2025 federal
+    return (Publication OR-17, Other items).
+  status: final_form_published
+  affects:
+  - Form OR-40 deductions (Publication OR-17, Other items)
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    2025 Form OR-40 Instructions, New information — New federal deductions; Publication OR-17, Other items.
+  citation:
+    source: >-
+      2025 Form OR-40 Instructions, New information: 'New federal deductions. You may be able to claim the same deductions
+      for tip income, overtime wages, and passenger vehicle loan interest that you're claiming on your federal return.'
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+- description: >-
+    FIRST-TIME HOME BUYER SAVINGS ACCOUNTS FOR A DESIGNATED BENEFICIARY — from January 1, 2025 an FTHBSA may be opened
+    to save for a designated beneficiary; every new account also requires Form OR-HOME.
+  status: final_form_published
+  affects:
+  - Schedule OR-ASC subtractions (FTHBSA)
+  modeled: false
+  lookup_path: >-
+    2025 Form OR-40 Instructions, New information — First-time home buyer savings account (FTHBSA) subtraction; Form
+    OR-HOME Instructions.
+  citation:
+    source: >-
+      2025 Form OR-40 Instructions, New information: 'Beginning January 1, 2025, FTHBSAs can be opened to save for
+      a designated beneficiary.'
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'New information' (2025 Form OR-40 Instructions p.4) read in full, both columns, with the Federal tax law page.
+    Three changes are recorded above. Not entries: the federal tax liability subtraction limit ('The 2025 federal
+    tax subtraction limit is $8,500') is indexed; the voluntary self-identification, transit tax and statewide transit
+    tax items are reminders. The federal connection is unchanged in form: a rolling tie to the definition of federal
+    taxable income, and otherwise federal law 'as amended and in effect on December 31, 2023'.
+  citation:
+    source: 2025 Form OR-40 Instructions, Federal tax law and New information (p.4)
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf

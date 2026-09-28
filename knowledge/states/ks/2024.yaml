@@ -333,3 +333,66 @@ tax:
     by the Schedule S line B23 nonresident allocation percentage (K-40 Lines 9-10) to get nonresident tax.'
   - All K-40 money entries are whole dollars ('ENTER AMOUNTS IN WHOLE DOLLARS ONLY' printed on the 2024 form); the
     engine's round-half-up to whole dollars matches the form's presentation.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    INCOME TAX RESTRUCTURED (SB 1, 2024 Special Session) — two brackets replace 2023's three: 5.2% up to $23,000 ($46,000
+    joint) and 5.58% above (2023: 3.1% / 5.25% / 5.7%); the standard deduction rose to $3,605 single / $8,240 joint
+    / $6,180 head of household / $4,120 separate; and the $2,250 per-person exemption became a filing-status allowance
+    ($18,320 joint, $9,160 otherwise) plus $2,320 per dependent. The shipped tax block carries all three.
+  status: final_form_published
+  affects:
+  - tax (brackets, standard_deduction, exemptions)
+  - K-40 lines 4, 5 and 8
+  modeled: true
+  citation:
+    source: >-
+      2024 Kansas Individual Income Tax booklet, Important Information: 'Exemptions and Dependents - For tax year
+      2024 and all tax years thereafter, if your filing status is married filing joint the exemption allowance is
+      $18,320.' — Kansas Standard Deduction (Single $3,605; Married Filing Joint $8,240); Tax Computation Worksheet:
+      5.2% (.052) and 5.58% (.0558).
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+- description: >-
+    SOCIAL SECURITY BENEFITS FULLY SUBTRACTED — for 2024 every social security benefit included in federal AGI is
+    subtracted on Schedule S line A9; 2023's subtraction applied only when federal AGI was $75,000 or less.
+  status: final_form_published
+  affects:
+  - Schedule S line A9 (subtractions from federal AGI)
+  - calc.state_tax taxable_base (caller-supplied — must already net the subtraction)
+  modeled: false
+  lookup_path: 2024 Kansas booklet, Schedule S instructions, LINE A9.
+  citation:
+    source: >-
+      2024 Kansas Individual Income Tax booklet, Schedule S instructions: 'LINE A9: Enter from Line 1 of Form K-40
+      the amount of social security benefits received in 2024 under the Social Security Act (including SSI) to the
+      extent these benefits are included in your federal AGI.'
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+- description: >-
+    NEW CREDITS — the Workforce Retention Credit (K-93) for a Kansas Adult Learner Grant recipient who graduates and
+    stays to live and work in Kansas, and the Pregnancy Resource Act Credit (K-94), 70% of contributions to an eligible
+    charitable organization.
+  status: final_form_published
+  affects:
+  - K-40 line 15 nonrefundable credits (Schedules K-93, K-94)
+  modeled: false
+  lookup_path: 2024 Kansas booklet, Important Information — New Tax Credits; Schedules K-93 and K-94.
+  citation:
+    source: >-
+      2024 Kansas Individual Income Tax booklet, Important Information: 'New Tax Credits - Workforce Retention Credit
+      (K-93) and Pregnancy Resource Act Credit (K-94).' — 'For tax years commencing after December 31, 2023, a credit
+      shall be allowed in the amount equal to 70% of the total amount contributed to an eligible charitable organization
+      during the taxable year.'
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'Important Information' (2024 booklet p.2) read in full, and the Schedule S lines compared with the 2023 booklet
+    (whose line A9 applied only when K-40 line 1 was $75,000 or less). Three changes are recorded above. The disabled
+    veteran exemption stays $2,250.
+  citation:
+    source: >-
+      2024 Kansas Individual Income Tax booklet (ip24), Important Information and the Schedule S instructions
+    url: https://www.ksrevenue.gov/pdf/ip24.pdf

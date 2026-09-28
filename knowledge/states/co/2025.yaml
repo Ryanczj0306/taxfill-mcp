@@ -268,3 +268,58 @@ tax:
     Line 17 nonrefundable credits (DR 0104CR line 65) and Line 31 refundable credits (DR 0104CR line 26), and the
     TABOR State Sales Tax Refund on Lines 34-38 (Modified AGI is computed there solely to size the refund and does
     not affect the tax).'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    RATE BACK TO 4.4% — 2024's 4.25% was a one-year reduction; for 2025 the flat rate is 4.4% again. The shipped flat
+    rate is 4.4%.
+  status: final_form_published
+  affects:
+  - tax (flat_rate)
+  - DR 0104 line 13 (Colorado Tax)
+  modeled: true
+  citation:
+    source: >-
+      Colorado DOR — 2025 Book 104, Colorado Individual Income Tax Filing Guide (10/29/25), Line 13 Colorado Tax:
+      'The income tax rate is currently 4.4%. Full-year residents should refer to the tax table in this booklet.'
+    url: https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf
+- description: >-
+    NEW INDIVIDUAL CREDITS on the 2025 DR 0104CR — the Colorado Promise Tuition and Fee Credit (full reimbursement
+    of out-of-pocket tuition and fees for an eligible student at a Colorado public institution, family income $90,000
+    or less, certificate required); the Disability Assistance Credit (a full-year resident disabled for all of 2025,
+    federal AGI at most $20,000 single or $32,000 joint); and the Qualified Care Worker Credit (form DR 1217).
+  status: final_form_published
+  affects:
+  - DR 0104CR credits (Colorado Promise, Disability Assistance, Qualified Care Worker)
+  modeled: false
+  lookup_path: >-
+    2025 Book 104, Instructions for Select Credits from the DR 0104CR (lines 21, 24 and 25); form DR 1217.
+  citation:
+    source: >-
+      Colorado DOR — 2025 Book 104, DR 0104CR instructions: Line 21 Colorado Promise Tuition and Fee Credit — 'Eligible
+      students who attend Colorado public institutions of higher education with family incomes of $90,000 or less
+      are eligible for complete reimbursement of any out-of-pocket tuition and fees they pay for postsecondary education.'
+      Line 24 Disability Assistance Credit — 'Your federal adjusted gross income cannot exceed $20,000 if you are
+      a single filer.' Line 25 Qualified Care Worker Credit — 'Complete form DR 1217, Qualified Care Worker Tax Credit,
+      and enter the amount from line 7 on this line 25.'
+    url: https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    Book 104 (2025, revised 10/29/25) prints no What's New section, so its line headings were compared with the 2024
+    Book 104's. Recorded above: the rate and three new individual credits. Not entries: the other new DR 0104CR credits
+    are business credits (aircraft modification for unleaded fuel, apprenticeship, aircraft manufacturer new employee,
+    employer child care facility investment, enterprise zone contribution, a refundable CHIPS zone credit); DR 0104
+    line 8 is now 'Reserved for future use' and a 'Repayment of Credit' line (form DR 0619) was added. The Colorado
+    EITC stays 'Multiply line 4 by 50% (0.50)'. Three 2024 DR 0104AD subtractions have no line in 2025 — the first-time
+    home buyer savings account interest deduction, the nonresident disaster relief worker subtraction and the wildfire
+    mitigation measures subtraction (the wildfire mitigation credit remains). The booklet does not say why, so they
+    are recorded here, not as entries.
+  citation:
+    source: >-
+      Colorado DOR — 2025 Book 104, Colorado Individual Income Tax Filing Guide (10/29/25), compared with the 2024
+      Book 104
+    url: https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf

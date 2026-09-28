@@ -242,3 +242,51 @@ convenience_rule:
   citation:
     source: 61 Pa. Code § 109.8 (Compensation of nonresidents) — operative allowance sentence transcribed verbatim.
     url: https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/061/chapter109/s109.8.html
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    DEPLETION DEDUCTION ALLOWED — under Act 56 of 2024 a person may deduct depletion of a mine, an oil and gas well
+    or another natural deposit (PA-40 Schedule E, rents and royalties).
+  status: final_form_published
+  affects:
+  - PA-40 Schedule E (rents, royalties, patents and copyrights) and PA-40 line 6
+  modeled: false
+  lookup_path: >-
+    2024 PA-40 Instructions, 2024 State Tax Change, and the PA-40 Schedule E instructions (the Act 56 of 2024 note).
+  citation:
+    source: >-
+      2024 PA-40 Personal Income Tax Return Instructions, 2024 State Tax Change: 'A person may claim a deduction for
+      depletion of a mine, oil and gas well, and other natural deposits.' Schedule E: 'IMPORTANT: Per Act 56 of 2024,
+      a person may claim a deduction for depletion of a mine, oil and gas well, and other natural deposits.'
+    url: >-
+      https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2024/2024_pa-40in.pdf
+- description: >-
+    ESTIMATED-PAYMENT THRESHOLD — the income above which estimated payments are required is $9,500, listed among the
+    2024 state tax changes.
+  status: final_form_published
+  affects:
+  - PA-40 ES estimated payments / REV-1630 underpayment penalty
+  modeled: false
+  lookup_path: >-
+    2024 PA-40 Instructions, 2024 State Tax Change, and the estimated tax instructions (REV-1630).
+  citation:
+    source: >-
+      2024 PA-40 Personal Income Tax Return Instructions, 2024 State Tax Change: 'The income threshold for when estimated
+      payments are required to be made is $9,500.'
+    url: >-
+      https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2024/2024_pa-40in.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    '2024 STATE TAX CHANGE' (PA-40 Instructions p.1) read in full. Two law changes are recorded above. The third item
+    is the IRS Direct File partnership ('The Commonwealth of Pennsylvania has partnered with the IRS this year to
+    give you a new option for filing'), not a law change. The rate stays 3.07%. Schedule DC's What's New describes
+    the 2023 expense caps (its text begins with tax year 2023), not a 2024 change. The Property Tax/Rent Rebate expansion
+    this pack cites is a PA-1000 program, not a PA-40 line.
+  citation:
+    source: 2024 PA-40 Personal Income Tax Return Instructions, 2024 State Tax Change (p.1)
+    url: >-
+      https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2024/2024_pa-40in.pdf

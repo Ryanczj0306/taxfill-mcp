@@ -273,3 +273,52 @@ tax:
   - Connecticut has no county or municipal income taxes and no standard deduction; the Table A personal exemption
     and the personal credit are the only general-relief mechanisms, both income-dependent, both computed on the Tax
     Calculation Schedule.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    BOTTOM TWO RATES CUT for 2024 — 2% on the first $10,000 of Connecticut taxable income (single / married filing
+    separately; $20,000 joint, $16,000 head of household) and 4.5% on the next band, replacing 2023's 3% and 5%. The
+    upper five rates and every bracket bound are unchanged. The shipped brackets carry the 2024 schedule.
+  status: final_form_published
+  affects:
+  - tax (brackets — the 2% and 4.5% bands)
+  - Tax Calculation Schedule Line 4 (Tax Tables / Table B)
+  modeled: true
+  citation:
+    source: >-
+      2024 Form CT-1040 Instructions (Rev. 01/25), Table B - Initial Tax Calculation, Single or Married Filing Separately:
+      'More than $10,000, but less than or equal to' $50,000 — '$200 plus 4.5% of the excess over $10,000' (the first
+      $10,000 at 2.00%).
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+- description: >-
+    TABLE C RENAMED AND RE-SET, TABLE D RESTRUCTURED — with the rate cut, Table C is the '2% Phase-Out Add-Back' (it
+    phases the benefit of the 2% bracket back out as Connecticut AGI rises), and Table D tax recapture begins at much
+    lower Connecticut AGI than in 2023. Both run on Connecticut AGI (Tax Calculation Schedule Line 1), not taxable
+    income, so the shipped brackets understate the tax of a filer inside either phase-out.
+  status: final_form_published
+  affects:
+  - Tax Calculation Schedule Line 5 (Table C) and Line 6 (Table D)
+  - calc.state_tax (brackets only — the add-back and the recapture are not computed)
+  modeled: false
+  lookup_path: >-
+    2024 Form CT-1040 Instructions, Table C - 2% Phase-Out Add-Back and Table D - Tax Recapture (the citation URL);
+    both are read by Connecticut AGI and filing status.
+  citation:
+    source: >-
+      2024 Form CT-1040 Instructions (Rev. 01/25), Tax Calculation Schedule Line 5: 'Enter amount from Table C, 2%
+      Tax Rate Phase-Out Add-Back.' Table C - 2% Phase-Out Add-Back: 'Enter the phase-out amount on the Tax Calculation
+      Schedule, Line 5 and continue to Line 6.'
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    The 2024 Form CT-1040 Instructions (Rev. 01/25) print no What's New or legislative-changes section; the 'Legislative
+    Changes' hits are pointers to old Special Notices (2006, 2012, 2022). The two entries above come from comparing
+    the 2024 Table B and Tables C and D with the 2023 instructions (this repo's CT 2023 pack). DRS's resident tax-information
+    page (also cited) now describes 2025, so it is not a 2024 source.
+  citation:
+    source: 2024 Form CT-1040 Instructions (Rev. 01/25), Tables A-E and the Tax Calculation Schedule
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf

@@ -314,3 +314,36 @@ tax:
   - 'No mid-year 2024 rate change: HB 531 (2022 session) set the 4.7% rate for all of tax year 2024; the booklet''s
     TAX RATES section and Schedule of Tax Computation both print 4.7% and there was no special-session amendment for
     2024.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    RATE STEP-DOWN TO 4.7% — House Bill 531 (2022 session) schedules the rate on taxable income above $10,000 at 4.7%
+    for 2024 (5% in 2023), 4.4% for 2025 and 4% for 2026; the first $10,000 stays untaxed. The shipped brackets carry
+    0% / 4.7%.
+  status: final_form_published
+  affects:
+  - tax (brackets — the 4.7% rate above $10,000)
+  modeled: true
+  citation:
+    source: >-
+      2024 Mississippi Resident Individual Income Tax Instructions (Form 80-100), Legislative Changes (p.3) — House
+      Bill 531 (2022 Legislative Session): 'where all individual taxable income in excess of $10,000 shall be taxed
+      at the following rates' — Tax Year 2024 'Excess of $10,000 @ 4.7%'; Tax Rates: 'Income Tax: 0% on the first
+      $10,000.00 of taxable income and 4.7% on taxable income in excess of $10,000.00.'
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    Legislative Changes (Form 80-100 instructions p.3), read in full. One change reaches a resident individual's tax,
+    the House Bill 531 rate step above. The rest are business, charity or procedure: House Bill 624 extends the railroad
+    expenditure credit; House Bill 845 concerns a charitable organization's annual financial statement; House Bill
+    1638 sets off a debt owed to the Department of Human Services against a refund; Senate Bill 2476 removes the repealer
+    for the charitable and foster-care contribution credits (no change in amount); Senate Bill 3099 authorizes a credit
+    for employers who sponsor skills training.
+  citation:
+    source: >-
+      2024 Mississippi Resident Individual Income Tax Instructions (Form 80-100), Legislative Changes (p.3)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf

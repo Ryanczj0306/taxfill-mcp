@@ -221,9 +221,6 @@ tax:
     were re-derived and equal EXACT cumulative marginal sums (222.00 = 2.22%x10,000; 666.00 = 222 + 2.96%x15,000;
     1,165.50 = 666 + 3.33%x15,000; 2,053.50 = 1,165.50 + 4.44%x20,000; Schedule II mirrors at half boundaries), so
     there is no printed-constant divergence to disclose for either schedule.'
-  - 'TY2025 verification (2026-08-01): the 2025 booklet prints the SAME rate schedules and constants as TY2023 — the
-    further across-the-board reduction applies beginning TY2025, not TY2025. Constants re-derived: 236.00/708.50/1,239.50/2,183.50
-    equal exact cumulative marginal sums; Schedule II constants are exactly half-boundary equivalents.'
   - 'Base guidance: Supply Form IT-140 line 4, West Virginia Adjusted Gross Income = line 1 federal adjusted gross
     income (''Enter your federal adjusted gross income as shown on Federal Form 1040'') plus line 2 additions to income
     (Schedule M line 59) minus line 3 subtractions from income (Schedule M line 50). If the filer has no Schedule
@@ -232,13 +229,16 @@ tax:
     Income Exclusion, only available when federal AGI is $10,000 or less / $5,000 MFS) is zero.'
   - 'Adjudication note (two-pass): standard_deduction is null — West Virginia allows neither a standard deduction
     nor itemized deductions on Form IT-140 (the only base reductions are the $2,000-per-exemption line 6 amounts,
-    shipped as personal/dependent). Rate-schedule constants re-verified against the 2025 IT-140 booklet (236.00 /
-    708.50 / 1,239.50 / 2,183.50).'
-  - 'RETROACTIVE 2025 RATE CUT: the shipped rates (2.36%/3.15%/3.54%/4.72%/5.12%) are the FINAL 2025 filing-season
-    schedule printed in the official 2025 IT-140 booklet (p.35). They were enacted mid-year by 2025 legislation (HB
-    2526) codified at W. Va. Code §11-21-4g, which states the rates ''shall apply retroactively for all taxable years
-    beginning on and after January 1, 2025, and shall be in lieu of the rates of tax specified in §11-21-4e'' (the
-    prior higher schedule). Do not use pre-2025 or early-2025 withholding-era rate tables.'
+    shipped as personal/dependent). Rate-schedule constants re-verified against the 2025 IT-140 booklet (222.00 /
+    666.00 / 1,165.50 / 2,053.50).'
+  - 'THE 2025 RATE CUT (corrected 2026-09-28, Phase J JS2 — this note had quoted the 2023 statute and 2024''s rates):
+    the shipped rates (2.22%/2.96%/3.33%/4.44%/4.82%) are W. Va. Code §11-21-4i, ''Rate of tax — Taxable years
+    beginning on and after January 1, 2025'' (2024 Second Special Session SB 2033), which ''shall apply for all
+    taxable years beginning on and after January 1, 2025, and shall be in lieu of the rates of tax specified in
+    §11-21-4g of this code and as those rates were modified by the application of §11-21-4h of this code in 2024''
+    (https://code.wvlegislature.gov/11-21-4I/, fetched 2026-09-28) — it supersedes the Tax Commissioner''s August
+    2024 administrative notice under the §11-21-4h trigger. Do not use the 2023-2024 §11-21-4g rates
+    (2.36%-5.12%).'
   - 'TWO RATE SCHEDULES: Rate Schedule I applies ''if you checked 1 (Single), 2 (Head of household), 3 (Married filing
     joint), or 5 (Widow[er] with dependent child)''; it is duplicated here for single, married_filing_jointly, and
     head_of_household. Rate Schedule II applies only to filing status 4 (Married filing separately); its bracket bounds
@@ -282,3 +282,67 @@ tax:
     may be lower.'
   - No county or municipal income tax is collected through Form IT-140 — the return computes only the West Virginia
     state personal income tax.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    RATE CUT for 2025 — every rate falls about 6%, to 2.22% / 2.96% / 3.33% / 4.44% / 4.82% (2023-2024: 2.36% / 3.15%
+    / 3.54% / 4.72% / 5.12%), under W. Va. Code §11-21-4i (2024 Second Special Session SB 2033), which supersedes
+    the Tax Commissioner's August 2024 trigger notice under §11-21-4h. The shipped brackets carry the 2025 schedule.
+  status: final_form_published
+  affects:
+  - tax (brackets — all five rates)
+  - IT-140 line 8 (Rate Schedule I / II)
+  modeled: true
+  citation:
+    source: >-
+      2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Rate Schedule I: 'Less than $10,000'
+      — '2.22% of the taxable income' (Rate Schedule II the same at half the bounds).
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+- description: >-
+    SOCIAL SECURITY PHASE-OUT, SECOND STEP — for 2025, a filer above the income limits (federal AGI over $100,000
+    joint, $50,000 otherwise) may subtract 65% of the social security benefits included in federal AGI (35% in 2024);
+    below the limits benefits stay fully exempt. A Schedule M decreasing modification.
+  status: final_form_published
+  affects:
+  - Schedule M decreasing modifications (IT-140 line 3)
+  - calc.state_tax taxable_base (caller-supplied — must already net the modification)
+  modeled: false
+  lookup_path: >-
+    2025 IT-140 booklet, Important Information for 2025, and the Schedule M social security benefits line.
+  citation:
+    source: >-
+      2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025: 'For
+      taxable year 2025, when the federal adjusted gross income of a married couple filing jointly exceeds $100,000
+      or $50,000 in the case of a single, head of household, widow(er), or married individual filing a separate return,
+      65% of social benefits received and included in the federal adjusted gross income shall be allowed as a decreasing
+      modification.'
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+- description: >-
+    DISABLED VETERAN'S PROPERTY TAX CREDIT EXTENDED TO A WIDOWED SPOUSE — a widowed spouse may now claim the credit
+    if the deceased disabled veteran claimed it in the prior year (exceptions apply).
+  status: final_form_published
+  affects:
+  - Tax Credit Recap Schedule (the Disabled Veterans Real Property Tax Credit)
+  modeled: false
+  lookup_path: >-
+    2025 IT-140 booklet, Important Information for 2025, and the Property Tax Credits page (p.20); TSD 455.
+  citation:
+    source: >-
+      2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025: 'Widowed
+      spouses may now claim Disabled Veteran's Property Tax Credit if the deceased disabled veteran claimed'
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'IMPORTANT INFORMATION FOR 2025' (IT-140 booklet p.15), read in full, plus the rate schedules. Three changes are
+    recorded above. The rest carry over from 2024 (the child and dependent care credit at 50% of the federal credit,
+    the EK-1 pass-through credit line, withholding documents, the Municipal Use Tax, MyTaxes). This pack's former
+    retroactive-2025-rate-cut note quoted the 2023 statute and 2024's rates, and its second verification and adjudication
+    notes carried 2024's constants; all three are corrected.
+  citation:
+    source: >-
+      2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025 (p.15)
+    url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf

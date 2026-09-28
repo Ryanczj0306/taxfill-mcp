@@ -260,3 +260,144 @@ tax:
   - '2024 filing-season schedule confirmed final: California had no mid-year 2024 rate change; these are the inflation-indexed
     schedules printed in the final 2024 booklet used for the 2025 filing season (and republished unchanged in the
     standalone 2024 Tax Rate Schedules PDF).'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    FEDERAL WILDFIRE RELIEF PAYMENT EXCLUSION — California does NOT conform. The federal Disaster Tax Relief Act of
+    2023 excludes qualified wildfire relief payments (taxable years 2020-2025); a payment excluded federally is added
+    back on Schedule CA (540) unless California provides its own exclusion.
+  status: final_form_published
+  affects:
+  - Schedule CA (540) income additions
+  - calc.state_tax taxable_base (caller-supplied — must include the added-back payment)
+  modeled: false
+  lookup_path: >-
+    2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Wildfire Relief Payment, and the Schedule CA (540) instructions
+    (the specific wildfire payments California does exclude).
+  citation:
+    source: >-
+      2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Wildfire Relief Payment: 'Generally,
+      California law does not conform. If any qualified amount was excluded from income for federal purposes and California
+      law provides no similar exclusion, include that amount in income for California purposes.'
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html
+- description: >-
+    NOL CARRYOVER SUSPENDED for taxable years 2024-2026 when net business income or modified AGI is $1,000,000 or
+    more (R&TC Section 17276.24); the carryover period of a suspended loss is extended.
+  status: final_form_published
+  affects:
+  - Schedule CA (540) / form FTB 3805V NOL deduction
+  - calc.state_tax taxable_base (caller-supplied — no NOL deduction while suspended)
+  modeled: false
+  lookup_path: >-
+    2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Net Operating Loss Suspension; form FTB 3805V.
+  citation:
+    source: >-
+      2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Net Operating Loss Suspension:
+      'For taxable years beginning on or after January 1, 2024, and before January 1, 2027, California has suspended
+      the net operating loss (NOL) carryover deduction.' — 'However, taxpayers with net business income or modified
+      adjusted gross income of less than $1,000,000 or with disaster loss carryovers are not affected by the NOL suspension
+      rules.'
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html
+- description: >-
+    BUSINESS CREDITS CAPPED AT $5,000,000 for taxable years 2024-2026 (R&TC Sections 17039.4 and 17039.5): business
+    credits, carryovers included, may not reduce net tax by more than $5,000,000; the Low-Income Housing Credit and
+    the Pass-Through Entity Elective Tax Credit are outside the cap, and form FTB 3870 elects a future refundable
+    credit for the disallowed amount.
+  status: final_form_published
+  affects:
+  - Form 540 business credits (lines 40-46, Schedule P (540))
+  modeled: false
+  lookup_path: >-
+    2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Business Credit Limitation; form FTB 3870.
+  citation:
+    source: >-
+      2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Business Credit Limitation: 'The
+      total of all business credits including the carryover of any credit for the taxable year may not reduce the
+      "net tax" by more than $5,000,000.'
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html
+- description: >-
+    529-TO-ROTH ROLLOVERS — California does NOT conform to the federal CAA, 2023 rule: a rollover from an IRC Section
+    529 plan to a Roth IRA is California taxable income and subject to an additional 2.5% tax (form FTB 3805P).
+  status: final_form_published
+  affects:
+  - Schedule CA (540) income additions
+  - form FTB 3805P additional tax
+  modeled: false
+  lookup_path: >-
+    2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Special Rules for Certain Distributions from Qualified
+    IRC Section 529 Tuition Plans; Schedule CA (540) instructions; form FTB 3805P.
+  citation:
+    source: >-
+      2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Special Rules for Certain Distributions
+      from Qualified IRC Section 529 Tuition Plans: 'California law does not conform to this federal provision. Rollover
+      distribution from an IRC Section 529 plan to a Roth IRA is includible in California taxable income and subject
+      to an additional tax of'
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html
+- description: >-
+    CATCH-UP CONTRIBUTIONS — California does NOT conform to the federal CAA, 2023 indexing of the $1,000 IRA catch-up
+    or to its increased catch-up amounts: a contribution above the California limit may be California income, and
+    a later distribution of the excess may be taxable.
+  status: final_form_published
+  affects:
+  - Schedule CA (540) retirement-contribution adjustments
+  modeled: false
+  lookup_path: >-
+    2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Catch-Up Contributions for Certain Individuals; FTB Pub.
+    1005.
+  citation:
+    source: >-
+      2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Catch-Up Contributions for Certain
+      Individuals: 'California law does not conform to these federal provisions. Any amount contributed that exceeds
+      the contribution amount allowed for California may need to be included in income for California purposes.'
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html
+- description: >-
+    NEW CALIFORNIA EXCLUSION — wildfire loss mitigation payments received through the California Wildfire Mitigation
+    Financial Assistance Program are excluded from gross income for taxable years 2024-2028 (R&TC Section 17138.8);
+    form FTB 4197 reports the benefit.
+  status: final_form_published
+  affects:
+  - Schedule CA (540) income subtractions
+  - calc.state_tax taxable_base (caller-supplied — must already exclude the payment)
+  modeled: false
+  lookup_path: >-
+    2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Wildfire Mitigation Payment; Schedule CA (540) instructions.
+  citation:
+    source: >-
+      2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Wildfire Mitigation Payment:
+      'For taxable years beginning on or after January 1, 2024, and before January 1, 2029, California law allows
+      a qualified taxpayer an exclusion from gross income for any amount received as a California qualified wildfire
+      loss mitigation payment through the California Wildfire Mitigation Financial Assistance Program.'
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html
+- description: >-
+    SDI WAGE LIMIT REMOVED — from 2024 every wage is subject to the State Disability Insurance contribution, so there
+    is no excess SDI (or VPDI) credit: the Form 540 line that claimed it is now 'reserved for future use'. A filer
+    with two employers can no longer recover over-withheld SDI on the return.
+  status: final_form_published
+  affects:
+  - Form 540 excess SDI line (reserved from 2024)
+  modeled: false
+  lookup_path: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — State Disability Insurance.
+  citation:
+    source: >-
+      2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — State Disability Insurance: 'For
+      taxable years beginning on or after January 1, 2024, California removes the taxable wage limit and maximum withholdings
+      for each employee subject to State Disability Insurance (SDI) contributions.' — 'As a result, the excess SDI
+      (or VPDI) withheld line has been removed from the personal income tax return by updating the line as "reserved
+      for future use."'
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    The 2024 Form 540 booklet's '2024 Tax Law Changes/What's New' section, read in full. Seven changes that reach
+    a resident individual are recorded above. Left out as business-only or procedural: the oil and gas items ('Intangible
+    Drilling and Development Costs', 'Percentage Depletion', 'Enhanced Oil Recovery Credit Repeal'), the Director
+    of Finance's deadline-postponement rule ('Postponement of Certain Tax-Related Deadlines'), the two new voluntary
+    contribution funds and the form FTB 4197 reporting requirement.
+  citation:
+    source: >-
+      2024 Personal Income Tax Booklet (Form 540), What's New and Other Important Information for 2024 — 2024 Tax
+      Law Changes/What's New
+    url: https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html

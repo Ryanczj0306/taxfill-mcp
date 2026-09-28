@@ -266,3 +266,33 @@ tax:
     and over) - identical to the engine''s round-half-up.'
   - Nonresidents and part-year residents file Form 80-205 (taxable income line 19, tax line 20) and must PRORATE deductions
     and exemptions by the MS-income ratio - this pack models only the full-year resident Form 80-105.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    RATE STEP-DOWN TO 4.4% — the House Bill 531 (2022 session) schedule reaches 4.4% on taxable income above $10,000
+    for 2025 (4.7% in 2024); the first $10,000 stays untaxed. The shipped brackets carry 0% / 4.4%.
+  status: final_form_published
+  affects:
+  - tax (brackets — the 4.4% rate above $10,000)
+  modeled: true
+  citation:
+    source: >-
+      2025 Mississippi Resident Individual Income Tax Instructions (Form 80-100), Tax Rates: 'Income Tax: 0% on the
+      first $10,000.00 of taxable income and 4.4% on taxable income in excess of $10,000.00.'
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    Legislative Changes (Form 80-100 instructions p.3), read in full. None of its bills changes a 2025 resident individual's
+    tax. House Bill 1 cuts the rate above $10,000 from 2027 on ('Tax Year 2027 Excess of $10,000 @ 3.75%', then 3.5%
+    and 3.25%, and 3% from 2030), with further trigger-based cuts from 2031 — a future-year change, recorded here
+    and not as a 2025 entry. House Bills 961, 972, 1201 and 1644 extend or define business credits and incentives
+    (port and airport cargo, inland water transportation jobs, blighted property, broadband equipment). The 2025 rate
+    itself (4.4%) is the House Bill 531 step recorded above.
+  citation:
+    source: >-
+      2025 Mississippi Resident Individual Income Tax Instructions (Form 80-100), Legislative Changes (p.3)
+    url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf

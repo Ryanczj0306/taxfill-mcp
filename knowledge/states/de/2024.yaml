@@ -350,3 +350,38 @@ tax:
   - No local income tax is collected on Form PIT-RES (the return has no local/county tax line). Part-year residents
     may elect to file either PIT-RES (full-year resident treatment) or PIT-NON, whichever is more advantageous; this
     pack models the resident form PIT-RES.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    NEW ITEMIZED ADDITION FOR LABOR UNION DUES — an active union member who itemizes may add the dues paid to stay
+    in the union, up to $500, to federal itemized deductions (new Form PIT-RES line 16), except dues already in the
+    federal total or used for benefits, lobbying or political activity, or legal costs.
+  status: final_form_published
+  affects:
+  - Form PIT-RES line 16 (Active Labor Organization Dues) and the itemized deduction total
+  - calc.state_tax taxable_base (the shipped standard deduction path is unaffected)
+  modeled: false
+  lookup_path: 2024 PIT-RES Instructions, Line 16 — Active Labor Organization Dues Instructions (p.7).
+  citation:
+    source: >-
+      2024 Delaware Resident Individual Income Tax Return Instructions (PIT-RES, revised 11/01/24), Line 16 — Active
+      Labor Organization Dues Instructions: 'may add up to $500 or the actual amount paid, which ever is less, to
+      stay in the union to your federal itemized deductions to calculate your allowable Delaware itemized deductions.'
+    url: >-
+      https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/PIT_Instructions/PIT-RES_TY24_2024-01_Instructions.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    The 2024 PIT-RES instructions print no What's New section, so the 2024 form was compared line by line with the
+    2023 form and the tax blocks were compared year to year. The one new line is 16, 'ACTIVE LABOR ORGANIZATION DUES',
+    recorded above; every later line shifts down by one. The rate schedule, the $3,250 / $6,500 standard deduction
+    and the $110 personal credit are unchanged from 2023.
+  citation:
+    source: >-
+      2024 Delaware Resident Individual Income Tax Return Instructions (PIT-RES, revised 11/01/24), with the 2023
+      and 2024 PIT-RES forms
+    url: >-
+      https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/PIT_Instructions/PIT-RES_TY24_2024-01_Instructions.pdf

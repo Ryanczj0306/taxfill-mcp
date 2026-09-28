@@ -276,3 +276,38 @@ tax:
     from tax on Line 14, not an income deduction.'
   - 'Part-year residents and nonresidents: Line 15 income adjustment percentage (Schedule IN-113, Line 35) multiplies
     Line 14 to get Line 16 Adjusted Vermont Income Tax — not modeled; full-year residents use 100%.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    NEW CHILD CARE CONTRIBUTION (Act 76 of 2023) — from July 1, 2024 an individual with Vermont self-employment income
+    owes a 0.11% child care contribution on it (new Form IN-111 line 21). For 2024 only the part earned on or after
+    July 1 counts: the worksheet takes half of Schedule SE line 6 net of out-of-state work, unless an alternate method
+    is attached.
+  status: final_form_published
+  affects:
+  - Form IN-111 line 21 (Child Care Contributions) and line 23 total Vermont taxes
+  modeled: false
+  lookup_path: >-
+    2024 Form IN-111 Instructions, Line 21 and its Child Care Contribution Worksheet; the Department's guide GB-1326
+    (www.tax.vermont.gov/sites/tax/files/documents/GB-1326.pdf).
+  citation:
+    source: >-
+      2024 Form IN-111 Instructions, Line 21 — Child Care Contributions: 'Act 76 of 2023, an act relating to child
+      care, early education, workers' compensation, and unemployment insurance, created a child care contribution
+      (CCC) in Vermont. Per the statutory directive, collection of the CCC commenced on July 1, 2024.' Worksheet line
+      6: 'Multiply Line 5 by 0.11% (0.0011).'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    The 2024 IN-111 instructions print no What's New section, so their line headings were compared with 2023's: the
+    one new line is 21, Child Care Contributions, recorded above; later lines shift down by one, and the voluntary
+    contribution funds on line 24 changed. The rates are 2023's, with the bracket bounds, the standard deduction and
+    the $5,100 personal exemption indexed (this pack's tax block against the 2023 pack's).
+  citation:
+    source: >-
+      2024 Form IN-111 Instructions, line instructions (compared with the 2023 IN-111 Instructions)
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf

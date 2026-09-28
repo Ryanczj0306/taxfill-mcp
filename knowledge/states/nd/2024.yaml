@@ -276,3 +276,23 @@ tax:
     into the base via a Pro Forma 1040NR that disregards treaty provisions, whose line 15 becomes ND-1 line 1b.'
   - 'No mid-year 2024 rate change: the three-bracket system enacted effective tax year 2023 (0%/1.95%/2.5%) simply
     carried into 2024 with indexed boundaries; the 2024 booklet prints one set of schedules for the whole year.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes: []
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'Changes affecting you and your income tax' (2024 booklet p.2), read in full: it lists no law change new for 2024.
+    Each change it names dates from 2023 — the rate item: 'Effective beginning with tax year 2023, the existing five-bracket
+    system for individuals, estates, and trusts was replaced with a three-bracket system, including a substantial
+    first bracket with a 0% rate'; the peace officer retirement benefits exclusion ('Beginning with tax year 2023,
+    an individual income tax deduction is provided for certain peace officer retirement benefits'); the military pay
+    exclusion. The rest are reminders (the qualified endowment and nonprofit private school credits, amended returns,
+    payment options, Form 1099-G). The 2024 brackets are the 2023 system re-indexed.
+  citation:
+    source: >-
+      2024 North Dakota Individual Income Tax booklet (Forms ND-EZ and ND-1), Changes for 2024 (p.2)
+    url: >-
+      https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2024-iit/2024-individual-income-tax-booklet.pdf

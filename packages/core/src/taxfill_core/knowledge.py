@@ -2404,6 +2404,21 @@ class EffectiveLawChange(BaseModel):
     )
 
 
+class LawChangesChecked(BaseModel):
+    """The record that a state year's law-change sweep read the year's own booklet (Phase J JS2).
+
+    An empty ``effective_law_changes`` list alone cannot tell "nobody looked" from "somebody read the What's New
+    section and found no delta", so a TY2024+ state pack whose list is empty must carry this record (gate:
+    packages/core/tests/test_state_law_change_sweep.py). The citation is a document the pack already cites.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    checked: date = Field(description="The date the section was read.")
+    finding: str = Field(description="What the section says, quoted — and why no entry (or no further entry) applies.")
+    citation: Citation
+
+
 class ProvisionalSecondPass(BaseModel):
     """The independent second source a provisional pack was checked against.
 
@@ -2538,7 +2553,6 @@ class KnowledgePack(BaseModel):
     # Phase J item JF6a: printed line numbers, per key, read off this year's
     # faces. Engine text reaches them only through form_line() (P-015).
     form_lines: dict[str, FormLineEntry] | None = None
-    effective_law_changes: list[EffectiveLawChange] = Field(default_factory=list)
 
     @field_validator("jurisdiction")
     @classmethod
@@ -3104,6 +3118,11 @@ class StateKnowledge(BaseModel):
     effective_law_changes: list[EffectiveLawChange] = Field(
         default_factory=list,
         description="Enacted-law deltas relevant to this filing year (DEV_PLAN §7.2), each cited with status.",
+    )
+    law_changes_checked: LawChangesChecked | None = Field(
+        default=None,
+        description="JS2: which section of which booklet the law-change sweep read, and when; required when the "
+        "list above is empty on a TY2024+ pack.",
     )
     convenience_rule: ConvenienceRule | None = Field(
         default=None,

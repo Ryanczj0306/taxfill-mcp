@@ -291,3 +291,22 @@ tax:
   - New Mexico has no state-defined standard deduction or personal exemption of its own — the federal deduction flows
     through on line 12 (federal Form 1040 line 12 amount), which is why the caller supplies the form's own taxable-income
     line.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes: []
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    No law change reaches a 2024 New Mexico resident return. The 2024 PIT-1 instructions (the Department's public-files
+    copy in this pack's all_citations; its host is not a .gov, so it cannot be this citation) print no What's New
+    or law-changes section; a keyword pass over them, the 2024 PIT-ADJ instructions and the 2024 PIT-RC found only
+    pre-2024 effective dates (2018, 2019). The 2024 rate schedules are the 2019 House Bill 6 schedules in force since
+    TY2021, digit-identical to 2023 (this pack's two-pass note). The 2024 omnibus tax act's new six-bracket schedule
+    starts with TY2025, so it is a 2025 change, not a 2024 one.
+  citation:
+    source: >-
+      Section 7-2-7 NMSA 1978 as enacted by 2019 House Bill 6 (Laws 2019, ch. 270) — the rate schedules still in force
+      for 2024 — read with the 2024 PIT-1, PIT-ADJ and PIT-RC instructions
+    url: https://www.nmlegis.gov/Sessions/19%20Regular/final/HB0006.pdf

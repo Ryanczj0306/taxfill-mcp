@@ -183,6 +183,11 @@ all_citations:
   url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/ptrr/documents/2025_pa-1000_inst.pdf
 - source: PA DOR - Make a Personal Income Tax Payment (myPATH online portal)
   url: https://mypath.pa.gov
+- source: >-
+    Pennsylvania Department of Revenue, 'Working Pennsylvanians Tax Credit' (personal income tax page; the credit
+    created in the 2025-26 budget signed November 12, 2025)
+  url: >-
+    https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax/working-pennsylvanians-tax-credit
 unverified:
 - 'Exact treatment of FEDERAL TAX TREATY-EXEMPT income: PA does not start from federal AGI and has no documented
   treaty add-back or pass-through (zero ''treaty'' occurrences in the 2025 PA-40 instructions or the 2025 PA-40 form),
@@ -240,3 +245,72 @@ convenience_rule:
   citation:
     source: 61 Pa. Code § 109.8 (Compensation of nonresidents) — operative allowance sentence transcribed verbatim.
     url: https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/061/chapter109/s109.8.html
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    NEW STUDENT LOAN INTEREST DEDUCTION — up to $2,500 of student loan interest may be deducted from Pennsylvania
+    taxable income, on PA-40 Schedule O.
+  status: final_form_published
+  affects:
+  - PA-40 Schedule O (deductions) / PA-40 line 10
+  - calc.state_tax taxable_base (caller-supplied — must already net the deduction)
+  modeled: false
+  lookup_path: 2025 PA-40 Instructions, 2025 State Tax Change, and the PA-40 Schedule O instructions.
+  citation:
+    source: >-
+      2025 PA-40 Personal Income Tax Return Instructions (PA-40 IN 04-25), 2025 State Tax Change: 'Student Loan Interest,
+      up to $2,500, may be deducted from PA taxable income. The deduction is reported on the Schedule O.'
+    url: >-
+      https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf
+- description: >-
+    GRANTOR TRUST INCOME TAXED TO THE GRANTOR — under Act 64 of 2023 (SB 815), income of a resident trust (and Pennsylvania-source
+    income of a nonresident trust) is taxable to the grantor or other person treated as its owner under the Internal
+    Revenue Code, distributed or not.
+  status: final_form_published
+  affects:
+  - PA-40 income classes (grantor trust income) and the PA-41 filing method
+  modeled: false
+  lookup_path: 2025 PA-40 Instructions, Grantor Trust (p.19), and the PA-41 instructions.
+  citation:
+    source: >-
+      2025 PA-40 Personal Income Tax Return Instructions (PA-40 IN 04-25), 2025 State Tax Change: 'The rules regarding
+      grantor trusts have changed.' Grantor Trust: 'Act 64 of 2023 (SB 815) provides that personal income received
+      by a resident trust, and the classes of income received by a nonresident trust from sources within this Commonwealth,
+      shall be taxable to the grantor of the trust or another person to the extent the grantor or other person is
+      treated as the owner of the trust'
+    url: >-
+      https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf
+- description: >-
+    NEW WORKING PENNSYLVANIANS TAX CREDIT (WPTC) — created in the 2025-26 budget (signed November 12, 2025), after
+    the April 2025 instructions were printed: 10 percent of the federal earned income tax credit, at most $805, for
+    a filer with Pennsylvania earned income who qualifies for the federal EITC and files both returns. The Department
+    computes it from the PA-40.
+  status: final_form_published
+  affects:
+  - PA-40 credits (the Working Pennsylvanians Tax Credit)
+  modeled: false
+  lookup_path: >-
+    The Department of Revenue's Working Pennsylvanians Tax Credit page (the citation URL, pa.gov/wptc) and its calculator;
+    the credit follows the federal EITC (this repo's federal EITC tables).
+  citation:
+    source: >-
+      Pennsylvania Department of Revenue, Working Pennsylvanians Tax Credit: 'Working Pennsylvanians may be eligible
+      to receive up to $805 through a new state tax credit created in the 2025-26 budget, which was signed by Governor
+      Josh Shapiro on November 12, 2025.' — 'The state credit equals 10 percent of your federal credit.'
+    url: >-
+      https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax/working-pennsylvanians-tax-credit
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    '2025 STATE TAX CHANGE' (PA-40 Instructions, PA-40 IN 04-25, p.1) read in full: the student loan interest deduction
+    and the grantor trust rules are recorded above. The Schedule D update (a digital asset question and like-kind
+    exchanges) and the Schedule OC redesign are form changes. The rate stays 3.07%. The instructions predate the 2025-26
+    budget, so the Working Pennsylvanians Tax Credit comes from the Department's own page, added to this pack's citations.
+  citation:
+    source: >-
+      2025 PA-40 Personal Income Tax Return Instructions (PA-40 IN 04-25), 2025 State Tax Change (p.1)
+    url: >-
+      https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf

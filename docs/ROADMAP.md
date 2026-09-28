@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,571 tests** — offline 6,810 + live-.gov 761; derived
+Done and on `main` (**7,657 tests** — offline 6,896 + live-.gov 761; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2145,10 +2145,27 @@ line items sum to the headline delta.
     - **Quarantine:** both MA `network_test` rows are deleted, and a test asserts no `network_test` row remains. The drift row's URL may be cited by a form pack as well as a knowledge pack.
     - **Docs:** CONVENTIONS "Source URL and checksum" (how to find and pin a snapshot); CONTRIBUTING-PACKS triage table; the README shell section.
     - Tests: `test_fetch.py` (6: the fallback, fail-closed, no digest / off-URL mirror refused, the 403 message, `fetch_pack_blank`, `seed_blank`), `test_cli_seed_blank.py` (3), `test_formpack.py` (the mirror shape), `test_check_drift.py` (2: the newest-capture probe matches or reports REVISED; an unreadable archive leaves the warning).
-- [ ] **JS2 — State law-change sweep (old J5, re-scoped)** (M) [PJ-17 + G05(c)]
-  - 30 of the 84 2024/2025 packs lack `effective_law_changes`; 15 have law-change prose (ar24, ar25, ca24, ct24, mi25, ms24, ms25, nd24, nm24, ny24, sc24, sc25, wi25, wv24, wv25).
+- [x] **JS2 — State law-change sweep (old J5, re-scoped) — DONE 2026-09-28** (M) [PJ-17 + G05(c)]
+  - 30 of the 84 2024/2025 packs lacked `effective_law_changes`; 15 had law-change prose (ar24, ar25, ca24, ct24, mi25, ms24, ms25, nd24, nm24, ny24, sc24, sc25, wi25, wv24, wv25).
   - Adjudicate those 15 from the booklets they cite. Record an explicit empty list with "checked <date>, source <url>" for the other 15.
   - **Acceptance:** a gate test that the key is present on all 84 packs (and on every future state year pack).
+  - *As built:*
+    - **Schema:** `StateKnowledge.law_changes_checked` (`LawChangesChecked`: `checked` date, `finding`, a .gov `citation`). The gate `test_state_law_change_sweep.py` requires the key on every TY2024+ state pack, requires a checked record when the list is empty, and requires the record's URL to be one the pack cites elsewhere. `KnowledgePack` had declared `effective_law_changes` twice (the second, undescribed, won); the duplicate is gone. `assemble_state_sources.py` maps the new block to `law_changes`.
+    - **Method.** Every document each pack cites was fetched. Each quoted run in an entry, and in a checked record, was re-found in the fetched text by a normalizing quote checker; 0 misses on all 30. Where the year's booklet has a What's New / Special Information / Legislative Changes section, it was read in full and compared with the prior year's list, so carry-overs are not recorded as new. Where it has none (CT, DE, NJ, NM, SC, VT, CO), the form's line list and the instruction headings were diffed against the prior year, and the tax blocks compared.
+    - **Result: 30 packs, 52 entries; 7 packs carry an empty list** (ar25, de25, nd24, nj24, nj25, nm24, ri24). All 30 carry a checked record. Rate changes are `modeled: true` (ar24, ct24's bottom two bands, ks24's SB 1 restructure, mi24's return to 4.25%, ms24/ms25, sc24/sc25, wi25's Act 15 bracket, wv25's §11-21-4i cut, co25's return to 4.4%); everything the engine does not compute is `modeled: false`, so `state_scope` warns.
+    - **Two sources the packs lacked were added, fetched and verified:**
+      - NY's personal-income-tax detail page for 2024 (`/legal/2024/pit-corp-changes.htm`; the pack cited only the index);
+      - PA's Working Pennsylvanians Tax Credit page. The credit came in the November 2025 budget, after the April 2025 PA-40 instructions were printed.
+    - **Defects found and fixed in the prose:**
+      - WV 2024 claimed a "retroactive 2024 rate cut" and quoted §11-21-4g as applying from January 1, 2024. The statute (fetched) says 2023, and the 2024 rates are 2023's.
+      - WV 2025's three rate notes were a blind year-substitution: 2024's rates and constants, a misquoted statute, and "not TY2025, not TY2025". They now cite §11-21-4i (2024 Second Special Session SB 2033), whose 2025 rates the tax block already carried.
+    - **Found, not fixed here → JS2b:** the WV 2024/2025 packs' other source rows were copied from 2023 with only the directory year changed. Four URLs per pack 404 (`…/PIT/2024/it140.2023.pdf` and the like), their labels say "2023", and several line references are 2023's. Examples: 2024 Schedule M's increasing modifications are lines 53-60 (total 61), not 51-58; HEPTC goes to line 19, not 18. The 2025 booklet itself is inconsistent here: IT-140 lines 2/3 cite "line 61 / line 52 of Schedule M" while its Schedule M prints 59/50.
+    - SC 2025 records a live question, not an answer: SC conforms to the IRC through December 31, 2024, and its August 2025 instructions predate the July 2025 federal act. Line 1 is federal taxable income, and the booklet does not say how the new federal deductions are treated.
+- [ ] **JS2b — WV 2024/2025 source and line-reference repair** (S) [JS2 finding]
+  - Point each pack's HEPTC-1, IT-140, Schedule M and Schedule A citations at the year's own file: 2024's all exist under `…/PIT/2024/<name>.2024.pdf`; 2025's Schedule M and A exist, and the 2025 IT-140 and HEPTC-1 live inside the booklet. Relabel the sources.
+  - Re-verify every page and line reference against that year's documents: the treaty note, Schedule M line ranges, the RECAP lines for SCTC/HEPTC, and the Family Tax Credit table pages.
+  - Record the 2025 booklet's own line-61/59 inconsistency in the pack.
+  - **Acceptance:** every URL in both packs resolves to a PDF of the pack's year, and each corrected reference quotes the page it came from.
 - [ ] **JS3a — Scaffold starts from the newest base** (M) [G05 + PJ-15 (1)]
   - `scaffold_state_year.py` gains:
     - `--base newest`;
@@ -2227,7 +2244,7 @@ line items sum to the headline delta.
 
 2. **Phase J (re-planned 2026-09-23) is the whole forward plan.** Execution order:
 
-   J0 → JF6a → JF1a → JF5a → JF5b → JF1b → JF2 → JF3 → JF4 → JP1a → JP2 → JR1 → JR2a → JT0a → JT0b → JT0c → JR2b → JR2c → JF6b → JF6c → JF7 → JR3a → JR3b → JR3c → JT3a → JT3b → JT3c → JT3d → JF8 → JF9 → JT1a → JT1b → JT1c → JT1d → JT1e → JT2a → JT2b → JT4a → JT4b → JT4c → JP1b → JP1c → JT5a … JT5f → JP5a → JP5b → JD1 → JA1 → JP3a → JP3b → JP4 → JR4a → JR4b → JP5c → JEa → JEb → JD2 → *(JT6 when its trigger fires)* → JS1a → JS1b → JS2 → JS3a → JS3b → JS4a … JS4d → JS5 → JS6 → JS7.
+   J0 → JF6a → JF1a → JF5a → JF5b → JF1b → JF2 → JF3 → JF4 → JP1a → JP2 → JR1 → JR2a → JT0a → JT0b → JT0c → JR2b → JR2c → JF6b → JF6c → JF7 → JR3a → JR3b → JR3c → JT3a → JT3b → JT3c → JT3d → JF8 → JF9 → JT1a → JT1b → JT1c → JT1d → JT1e → JT2a → JT2b → JT4a → JT4b → JT4c → JP1b → JP1c → JT5a … JT5f → JP5a → JP5b → JD1 → JA1 → JP3a → JP3b → JP4 → JR4a → JR4b → JP5c → JEa → JEb → JD2 → *(JT6 when its trigger fires)* → JS1a → JS1b → JS2 → JS2b → JS3a → JS3b → JS4a … JS4d → JS5 → JS6 → JS7.
 
    **Hard dates** (latest start; a dated tranche takes the next free slot and never interrupts one in progress):
 

@@ -210,3 +210,73 @@ tax:
     (2025 instructions). The flat rate has no per-status schedule, so this mapping never changes the math here.
   - Michigan CITY income taxes (Detroit and other cities; City of Detroit returns are processed by Treasury) are NOT
     modeled — calc.state_tax computes the state 4.25% line only.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    RETIREMENT AND PENSION DEDUCTION EXPANDED — the Lowering MI Costs Plan phase-in reaches a new birth-year group
+    for 2025: 'Individuals born prior to January 1, 1967 may now qualify for a retirement and pension benefits deduction'
+    (Form 4884). The deduction is taken on Schedule 1 before MI-1040 line 16.
+  status: final_form_published
+  affects:
+  - Schedule 1 subtractions / Form 4884 (Michigan Retirement and Pension Schedule)
+  - calc.state_tax taxable_base (caller-supplied — must already net the deduction)
+  modeled: false
+  lookup_path: >-
+    2025 MI-1040 Instructions, New for 2025 — Expanded Deduction for Retirement and Pension Benefits (p.2), and Form
+    4884; Treasury's retirement and pension benefits deduction estimator at www.michigan.gov/iit.
+  citation:
+    source: >-
+      2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2) — Expanded Deduction for Retirement
+      and Pension Benefits: 'The Lowering MI Costs Plan provides more options for taxpayers when selecting the best
+      taxing situation for their retirement benefits. Individuals born prior to January 1, 1967 may now qualify for
+      a retirement and pension benefits deduction.'
+    url: >-
+      https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+- description: >-
+    NEW CREDIT — a one-time nonrefundable credit for unreimbursed live organ donation expenses incurred during the
+    tax year, up to $10,000 (MI-1040 line 20).
+  status: final_form_published
+  affects:
+  - MI-1040 line 20 nonrefundable credits
+  modeled: false
+  lookup_path: >-
+    2025 MI-1040 Instructions, New for 2025 — Credit for Organ Donation Expenses, and the line 20 instructions.
+  citation:
+    source: >-
+      2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2) — Credit for Organ Donation Expenses:
+      'You may claim a one-time nonrefundable credit for unreimbursed live organ donation expenses incurred during
+      the tax year or $10,000, whichever is less.'
+    url: >-
+      https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+- description: >-
+    IRC DECOUPLING FOR BUSINESS INCOME — P.A. 24 of 2025 separates Michigan from the Internal Revenue Code for certain
+    items, and the resulting adjustments to business income or loss go on Schedule 1, line 8.
+  status: final_form_published
+  affects:
+  - Schedule 1 line 8 (business income adjustments)
+  - calc.state_tax taxable_base (caller-supplied)
+  modeled: false
+  lookup_path: >-
+    2025 MI-1040 Instructions, New for 2025 (the P.A. 24 of 2025 note), and the Schedule 1 line 8 instructions.
+  citation:
+    source: >-
+      2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2): 'NOTE: P.A. 24 of 2025 requires
+      new adjustments to business income or loss due to separation from the Internal Revenue Code for certain items.
+      See Schedule 1, line 8 for more information.'
+    url: >-
+      https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'New for 2025' (MI-1040 Instructions p.2), read in full. Three law changes are recorded above. Not entries: the
+    Homestead Property Tax Credit updates ('The maximum taxable value increases to $165,400', the $71,500 resources
+    limit, the $62,500 phase-out start, 'The maximum homestead property tax credit increases to $1,900') are indexed
+    amounts, already in this pack's credits block; 'For tax year 2025, the Michigan income tax rate is 4.25%' is the
+    2024 rate unchanged; the penalty and interest relief request is procedural.
+  citation:
+    source: 2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2)
+    url: >-
+      https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf

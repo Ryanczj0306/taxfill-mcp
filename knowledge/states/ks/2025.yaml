@@ -400,3 +400,49 @@ tax:
   - 'Nonresidents and part-year residents are not modeled: they compute the full-year tax on Line 8, then multiply
     by the Schedule S line B23 nonresident allocation percentage (K-40 Lines 9-10) to get nonresident tax.'
   - All K-40 money entries are whole dollars; the engine's round-half-up to whole dollars matches the form's presentation.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    NEW EXEMPTIONS FOR A BIRTH IN THE YEAR — an additional $2,320 exemption for each child born in the tax year, and
+    a $2,320 exemption for a birth that does not result in a live birth (stillbirth). Both flow into the K-40 total
+    exemption amount (line 5).
+  status: final_form_published
+  affects:
+  - K-40 line 5 (Total Kansas exemption amount)
+  - >-
+    calc.state_tax exemptions (capture each by adding 1 to dependents_count — the amounts equal the $2,320 dependent
+    allowance)
+  modeled: false
+  lookup_path: >-
+    2025 Kansas booklet, Important Information — Additional Exemptions (p.2), and the Exemptions and Dependents instructions.
+  citation:
+    source: >-
+      2025 Kansas Individual Income Tax booklet, Important Information — Additional Exemptions: 'An additional personal
+      exemption of $2,320 will be allowed for each child born in this tax year.' — 'A personal exemption of $2,320
+      will be allowed for the birth of a child in this tax year that does not result in a live birth (known as stillbirth).'
+    url: https://www.ksrevenue.gov/pdf/ip25.pdf
+- description: >-
+    DISABLED VETERAN EXEMPTION RAISED to $2,320 (from $2,250) for 2025 and later, for an honorably discharged veteran
+    with a permanent service-connected disability compensated at the 100% rate.
+  status: final_form_published
+  affects:
+  - K-40 line 5 (the disabled veteran box)
+  modeled: false
+  lookup_path: 2025 Kansas booklet, Exemptions and Dependents (disabled veteran personal exemption).
+  citation:
+    source: >-
+      2025 Kansas Individual Income Tax booklet, Exemptions and Dependents: 'such individual shall be allowed an additional
+      Kansas exemption of $2,320 for tax year 2025 and all tax years thereafter.'
+    url: https://www.ksrevenue.gov/pdf/ip25.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'Important Information' (2025 booklet p.2) read in full. Two changes are recorded above. The brackets, the standard
+    deduction (Single $3,605; Married Filing Joint $8,240) and the $18,320 / $9,160 / $2,320 exemption allowances
+    are 2024's, unchanged.
+  citation:
+    source: 2025 Kansas Individual Income Tax booklet (ip25), Important Information
+    url: https://www.ksrevenue.gov/pdf/ip25.pdf

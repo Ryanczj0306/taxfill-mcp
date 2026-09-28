@@ -254,3 +254,32 @@ tax:
   - 'Out of scope on the same return: TAX on Lump-Sum Distribution (line 7, SC4972) is a separate additional tax;
     Active Trade or Business income electing the flat 3% rate (Form I-335) is excluded from this schedule; both are
     computed on their own forms.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    TOP RATE STEP-DOWN TO 6.2% for 2024 (6.4% in 2023) — the scheduled annual reduction toward 6%; the bracket bounds
+    are indexed for inflation. The shipped brackets carry 0% / 3% / 6.2%.
+  status: final_form_published
+  affects:
+  - tax (brackets — the 6.2% top rate)
+  - SC1040 line 6 (Tax Tables / Tax Rate Schedule)
+  modeled: true
+  citation:
+    source: >-
+      SCDOR, Individual Income Tax (dor.sc.gov/iit) — 'Individual Income Tax rates': '0 to a top rate of 6.2% for
+      tax year 2024'; '0 to a top rate of 6.4% for tax year 2023'; 'Tax brackets are adjusted annually for inflation.'
+    url: https://dor.sc.gov/iit
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    The 2024 SC1040 instructions (September 2024) print no What's New section. Their Before You Begin page carries
+    the annual conformity statement — 'South Carolina conforms to the Internal Revenue Code as amended through December
+    31, 2023, except as otherwise provided' — a routine one-year advance that brings no 2024 federal change into the
+    SC base. SCDOR's Individual Income Tax page (cited) lists the rate by year; the 2024 step-down is the entry above;
+    the page's current New for tax year 2025 block is a 2025 source.
+  citation:
+    source: 2024 SC1040 Individual Income Tax Instructions (September 2024), Before You Begin
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf

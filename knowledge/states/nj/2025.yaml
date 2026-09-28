@@ -381,3 +381,19 @@ tax:
   - 'Whole-dollar rounding: the 2025 booklet permits (and the tax table presumes) whole-dollar entries — ''Instead
     of making dollars-and-cents entries on your return'' you may round, dropping amounts under 50 cents and increasing
     50 cents or more to the next dollar, which matches this op''s irs_round half-up tie behavior.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes: []
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    No law change reaches a 2025 New Jersey resident return. The 2025 NJ-1040 instructions print no What's New section;
+    their line-by-line headings are identical to 2024's, and the Child Tax Credit table is unchanged. The Director's
+    letter names one reporting change, a new digital-asset question: 'Income from digital assets is reportable on
+    the New Jersey Income Tax Return.' Such income was already taxable, so this is a form change, not a law change.
+  citation:
+    source: >-
+      2025 NJ-1040 Resident Return Instructions, the Director's letter and the line instructions (compared with 2024's)
+    url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf

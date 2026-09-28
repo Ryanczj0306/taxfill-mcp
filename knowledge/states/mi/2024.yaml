@@ -224,3 +224,54 @@ tax:
     here.
   - Michigan CITY income taxes (Detroit and other cities; City of Detroit returns are processed by Treasury and may
     be filed with the Michigan return) are NOT modeled — calc.state_tax computes the state 4.25% line only.
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    RATE BACK TO 4.25% — 2023's 4.05% was a one-year reduction; for 2024 the Michigan rate is 4.25% again. The shipped
+    flat rate is 4.25%.
+  status: final_form_published
+  affects:
+  - tax (flat_rate)
+  - MI-1040 line 17
+  modeled: true
+  citation:
+    source: >-
+      2024 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2024 (p.2): 'For tax year 2024, the Michigan
+      income tax rate is 4.25%.'
+    url: >-
+      https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040-Instructions.pdf
+- description: >-
+    RETIREMENT AND PENSION DEDUCTION EXPANDED — the Lowering MI Costs Plan phase-in reaches a new birth-year group
+    for 2024: 'Individuals born prior to January 1, 1963 may now qualify for a retirement and pension benefits deduction'
+    (Form 4884). The deduction is taken on Schedule 1 before MI-1040 line 16.
+  status: final_form_published
+  affects:
+  - Schedule 1 subtractions / Form 4884 (Michigan Pension Schedule)
+  - calc.state_tax taxable_base (caller-supplied — must already net the deduction)
+  modeled: false
+  lookup_path: >-
+    2024 MI-1040 Instructions, New for 2024 — Expanded Deduction for Retirement and Pension Benefits (p.2), and Form
+    4884; Treasury's retirement and pension benefits deduction estimator at www.michigan.gov/iit.
+  citation:
+    source: >-
+      2024 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2024 (p.2) — Expanded Deduction for Retirement
+      and Pension Benefits: 'The recent Lowering MI Costs Plan provides more options for taxpayers when selecting
+      the best taxing situation for their retirement benefits. Individuals born prior to January 1, 1963 may now qualify
+      for a retirement and pension benefits deduction.'
+    url: >-
+      https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040-Instructions.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    'New for 2024' (MI-1040 Instructions p.2), read in full. Two law changes are recorded above. Not entries: the
+    Homestead Property Tax Credit updates ('The maximum taxable value increases to $160,700', the $69,700 resources
+    limit, the $60,700 phase-out start, the $1,800 maximum credit) are indexed amounts; the adjacent-and-contiguous-property
+    notice corrects Treasury's FAQs ('Previously, Treasury's FAQs provided incorrect information and have been corrected'),
+    not the law.
+  citation:
+    source: 2024 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2024 (p.2)
+    url: >-
+      https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2024/MI-1040-Instructions.pdf

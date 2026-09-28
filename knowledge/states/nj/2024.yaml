@@ -317,3 +317,21 @@ tax:
   - 'No 2024 rate change: the 2024 schedules (top rate 10.75% over $1,000,000) are the statutory schedules in force
     since tax year 2020, republished unchanged in the final 2024 booklet used for the 2025 filing season; New Jersey
     had no mid-year retroactive rate legislation for 2024.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes: []
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    No law change reaches a 2024 New Jersey resident return. The 2024 NJ-1040 instructions print no What's New section.
+    Their line-by-line headings are identical to 2023's (84 'Line N –' headings, compared by diff), and the credit
+    and exclusion amounts read are unchanged — the Child Tax Credit table still runs '$30,000 or less' to $80,000
+    at $1,000 down to $200, as increased for 2023. The Director's letter names only clarifications: 'we have modified
+    the 1040 instructions for the 2024 tax year to clarify taxable income vs. nontaxable income' — Difficulty of Care
+    payments under a State Medicaid program and the ITIN Direct Assistance Program's one-time payment are not income.
+  citation:
+    source: >-
+      2024 NJ-1040 Resident Return Instructions, the Director's letter and the line instructions (compared with 2023's)
+    url: https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf

@@ -184,3 +184,49 @@ tax:
     Active Trade or Business income electing the flat rate (Form I-335, line 8) is excluded from this schedule; the
     2.5% additional tax on excess catastrophe-savings withdrawals (line 9) is separate too — all are computed on their
     own forms.'
+
+# Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
+# booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
+# empty list means the section was read and carries no law change for this year.
+effective_law_changes:
+- description: >-
+    TOP RATE STEP-DOWN TO 6% for 2025 (6.2% in 2024); the bracket bounds are indexed for inflation. The shipped brackets
+    carry 0% / 3% / 6%.
+  status: final_form_published
+  affects:
+  - tax (brackets — the 6% top rate)
+  - SC1040 line 6 (Tax Tables / Tax Rate Schedule)
+  modeled: true
+  citation:
+    source: >-
+      2025 SC1040TT, South Carolina Tax Tables — Tax Rate Schedule for SC1040 line 5 of $100,000 or more: 'Multiply
+      the amount on line 5 by 6%;' then 'Subtract $642'.
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2025.pdf
+- description: >-
+    IRC CONFORMITY ADVANCED TO DECEMBER 31, 2024 — and no further. The 2025 SC1040 instructions reflect the law as
+    of the end of the 2025 South Carolina session, before the federal act of July 4, 2025 (P.L. 119-21) that created
+    the 2025 deductions for tips, overtime, car-loan interest and seniors. SC1040 line 1 starts from federal taxable
+    income, and the instructions do not say how those deductions are treated. Confirm with SCDOR before relying on
+    a federal taxable income that includes them.
+  status: final_form_published
+  affects:
+  - SC1040 line 1 (federal taxable income starting point) and the additions/subtractions lines
+  modeled: false
+  lookup_path: >-
+    2025 SC1040 Instructions, Before You Begin (the conformity statement), and SCDOR guidance on the 2025 federal
+    changes (the New for tax year 2025 block of dor.sc.gov/iit names Information Letter 25-11).
+  citation:
+    source: >-
+      2025 SC1040 Individual Income Tax Instructions (August 2025), Before You Begin: 'South Carolina conforms to
+      the Internal Revenue Code as amended through December 31, 2024, except as otherwise provided.' — 'These instructions
+      reflect the law as of the end of the 2025 South Carolina legislative session.'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
+law_changes_checked:
+  checked: 2026-09-28
+  finding: >-
+    The 2025 SC1040 instructions (August 2025) print no What's New section; their Before You Begin page and the SC1040TT
+    tax rate schedule were read for the two entries above. No other 2025 change reaches a resident's line 1-6 computation
+    in these documents; the dependent exemption rose with indexing (this pack's tax block).
+  citation:
+    source: 2025 SC1040 Individual Income Tax Instructions (August 2025), Before You Begin
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
