@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,827 tests** — offline 7,066 + live-.gov 761; derived
+Done and on `main` (**7,841 tests** — offline 7,078 + live-.gov 763; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2182,13 +2182,25 @@ line items sum to the headline delta.
       - no citation file from an earlier year: WV's pattern (the pack's year in the directory, an earlier year in the file name), or any earlier-year file outside law and bulletin URLs. Three rows are adjudicated: MN's December bracket press releases and SC's TC-60, whose 2024 revision still 404s.
       - none of the carried-over phrasings found.
       - It fails on the pre-repair packs (vt24, wv24, wv25) and passes after.
-- [ ] **JS3a — Scaffold starts from the newest base** (M) [G05 + PJ-15 (1)]
+- [x] **JS3a — Scaffold starts from the newest base — DONE 2026-09-28** (M) [G05 + PJ-15 (1)]
   - `scaffold_state_year.py` gains:
     - `--base newest`;
     - `--rows <json>`, seeded from the 16 recovered discovery rows (url + sha256 in the wf_babce8da-141 journal);
     - a cache-first triage (today network-only, :72-101);
     - year+1 upload-folder and revision-token derivation (AL, CT and DC tokens are stale today).
   - **Acceptance:** the offline triage reproduces the recorded rows; UT 2025 triages PORTABLE against UT 2024.
+  - *As built:*
+    - **Base and rows.** `--base newest` gives each form its newest shipped year below the target (UT 2025 → UT 2024). `scripts/state_discovery_rows.json` holds the 16 journal rows (AL, AZ, CO, DC, DE, ID, KY, LA × 2024/2025) with their pinned digests, public fields only. `--rows` substitutes a row's URL for the derivation and reports `recorded_verdict` / `reproduces`.
+    - **Triage.** It is cache-first: the triage cache, then the shared blank cache for a pinned digest. A cached or downloaded file that is not the pin is `DIGEST-MISMATCH`, never trusted. `--offline` never opens a URL; an uncached candidate is `NOT-CACHED`.
+    - **Derivation rules:**
+      - 4-digit years move with their base+1 upload folder in one pass, so AL's `uploads/2024/01/23f40.pdf` → `uploads/2026/01/25f40.pdf`;
+      - CT's MMYY suffix `_1223` → `_1224`;
+      - `%20` separates a year rather than joining its digits (KY's `Form%20740%202023.pdf`);
+      - a revision date in the file name (DC `01222024` / `011525`, ID `08-23-2023`; month and day range-checked, so `SC1040_2023` is not one) makes the row `revision-dated (needs a recorded row)` instead of a wrong candidate.
+      - An underscore rule for MD/ME (`23_forms`) derived only dead URLs and was dropped.
+    - **Downloads** use the browser User-Agent `taxfill_core.fetch` uses: CO's host answers 403 to the old agent. An incomplete TLS chain (tax.idaho.gov) is retried through curl. Either way the bytes are classified, and digest-checked for a recorded row.
+    - **Acceptance, run 2026-09-28.** Online, 16/16 recorded rows reproduce; offline, from the warmed cache, 8/8 per year. UT 2025 is PORTABLE against UT 2024, and the network test `test_ut_2025_triages_portable_against_ut_2024` pins it. The 2025 newest-base work-list (JS3b's input) is: 5 already shipped (ar1000f, or40, pa40, ny it201/it203); PORTABLE az140, d40 and tc40; NEAR-PORT al40 (34 fields) and ky form740 (4); 16 RE-MAP; the rest URL-DEAD, no-year-token or print-only. In newest mode a form with a target-year pack is reported `shipped` and not triaged; a fixed `--base` keeps the old census.
+    - Tests: `test_scaffold_state_year.py` — 12 offline (derivations, revision dates, newest base, shipped forms, rows + cache-first + digest mismatch + offline, the rows file is public data) and 2 network (UT, and all 16 rows reproduce).
 - [ ] **JS3b — Cheap state ports** (M–L, per pack) [G05 + PJ-15 (2)–(3)]
   - UT 2025 TC-40 is PORTABLE and unshipped: files.tax.utah.gov/tax/forms/2025/tc-40.pdf returns 200, sha256 0eac22fb…37cdf, and all 106 mapped UT-2024 fields exist in it.
   - Then the rows marked PORTABLE / NEAR-PORT, TY2025 first: AZ 24/25, DC 24/25, KY 24 (PORTABLE) / 25 (NEAR-PORT, 4 fields), LA 24, AL 24 (NEAR-PORT, 3), ID 24 (NEAR-PORT, 2).

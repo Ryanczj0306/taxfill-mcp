@@ -23,11 +23,17 @@ wrong number reaches a real return.
 For a year tranche, generate the work-list first:
 
 ```bash
-python scripts/scaffold_state_year.py --base-year 2023 --target-year 2025 --triage
+python scripts/scaffold_state_year.py --base newest --target-year 2025 --triage \
+    --rows scripts/state_discovery_rows.json
 ```
 
-`--triage` downloads each derived candidate and diffs its AcroForm against the
-base pack's field map, so each row comes with its real cost:
+`--base newest` triages each form against its newest shipped year below the
+target, not a fixed base year. `--rows` supplies URLs found by hand on a DOR's
+forms index (with the digest that was pinned), for states whose file names
+cannot be derived (a renamed folder, a revision date in the name). `--triage`
+looks in the cache first, downloads only what is missing, and diffs each
+candidate's AcroForm against the base pack's field map, so each row comes with
+its real cost; add `--offline` to classify only what is already cached:
 
 | verdict | what it means | work |
 |---|---|---|
