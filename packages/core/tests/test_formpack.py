@@ -194,3 +194,17 @@ def test_load_pack_rejects_non_mapping(tmp_path):
     bad.write_text("- this\n- is\n- a list\n", encoding="utf-8")
     with pytest.raises(ValueError, match="YAML mapping"):
         load_pack(bad)
+
+
+
+def test_jd2_load_pack_serves_independent_copies_and_reloads_an_edited_file(tmp_path):
+    src = Path(__file__).resolve().parents[3] / "formpacks" / "federal" / "2025" / "f8889" / "pack.yaml"
+    pack_path = tmp_path / "pack.yaml"
+    pack_path.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+    first, second = load_pack(pack_path), load_pack(pack_path)
+    assert first == second and first is not second
+    first.fields.clear()                                # a caller mutating its copy ...
+    assert load_pack(pack_path).fields                  # ... never reaches the next caller
+    edited = src.read_text(encoding="utf-8").replace('tax_year: 2025', 'tax_year: 2024', 1)
+    pack_path.write_text(edited, encoding="utf-8")
+    assert load_pack(pack_path).tax_year == 2024        # a changed file is parsed again

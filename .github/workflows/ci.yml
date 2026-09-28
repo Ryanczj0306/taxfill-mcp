@@ -19,7 +19,9 @@ jobs:
       - name: Sync workspace
         run: uv sync
       - name: Run tests (offline — live-.gov round-trips run in the network-tests job)
-        run: uv run pytest -m "not network"
+        # pytest-xdist (Phase J JD2): the offline suite in parallel; the property tests seed their own
+        # random.Random, so a worker split cannot change what they draw.
+        run: uv run pytest -m "not network" -n auto
 
   lint:
     if: github.event_name != 'schedule'
@@ -51,6 +53,8 @@ jobs:
         run: uv sync
       - name: Quoted test counts match reality
         run: uv run python scripts/sync_test_count.py --check
+      - name: Quoted tool / op / DocSpec / pack counts match reality
+        run: uv run python scripts/sync_doc_counts.py --check
 
   packaging:
     # Guards the v0.1 ship invariant: the published wheel must be self-contained —

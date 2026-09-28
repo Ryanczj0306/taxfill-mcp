@@ -353,17 +353,31 @@ class FormPack(BaseModel):
         return self
 
 
+# (resolved path, mtime_ns, size) -> the validated pack. A pack is parsed and validated ONCE per file version
+# (Phase J JD2: the suite and list_forms re-parsed every pack.yaml on every call — 3 s per list_forms); every
+# caller gets its own deep copy, so no caller can mutate another's pack.
+_PACK_CACHE: dict[tuple[str, int, int], FormPack] = {}
+
+
 def load_pack(path: str | Path) -> FormPack:
     """Parse and validate a ``pack.yaml`` file, returning a :class:`FormPack`.
 
     Raises :class:`ValueError` when the file is not a YAML mapping and
     :class:`pydantic.ValidationError` when the mapping violates the schema.
+    A file whose path, modification time and size are unchanged is served from a cache — as a deep copy.
     """
     path = Path(path)
+    stat = path.stat()
+    key = (str(path.resolve()), stat.st_mtime_ns, stat.st_size)
+    cached = _PACK_CACHE.get(key)
+    if cached is not None:
+        return cached.model_copy(deep=True)
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError(
             f"{path}: a form pack must be a YAML mapping (key: value pairs), "
             f"got {type(raw).__name__} — see docs/DEV_PLAN.md section 5 for the schema"
         )
-    return FormPack.model_validate(raw)
+    pack = FormPack.model_validate(raw)
+    _PACK_CACHE[key] = pack
+    return pack.model_copy(deep=True)

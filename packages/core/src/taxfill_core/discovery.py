@@ -152,7 +152,13 @@ def list_forms(
             f"(the default only works from a source checkout)"
         )
     out: list[FormSummary] = []
-    for path in sorted(base.glob("**/pack.yaml")):
+    # The layout is <jurisdiction>/<year>/<form_key>/pack.yaml (a test holds every pack to it), so a filter narrows
+    # the glob instead of parsing all 212 packs to keep a few (Phase J JD2); the pack's own fields still decide.
+    scope = base / jurisdiction if jurisdiction is not None else base
+    pattern = f"{year}/*/pack.yaml" if jurisdiction is not None and year is not None else "**/pack.yaml"
+    for path in sorted(scope.glob(pattern)):
+        if jurisdiction is None and year is not None and path.parent.parent.name != str(year):
+            continue
         pack = load_pack(path)
         if jurisdiction is not None and pack.jurisdiction != jurisdiction:
             continue

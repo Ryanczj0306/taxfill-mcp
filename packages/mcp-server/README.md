@@ -13,7 +13,7 @@ official `.gov` URLs. Every output is a review draft: you review, sign, and file
 `intake_checklist` · `list_document_kinds` · `extract_document` · `residency` ·
 `state_scope` · `estimate_refund` · `compare_scenarios` · `list_forms` · `get_form_map` · `fetch_blank` ·
 `fill_form` · `verify_form` · `verify_filing` · `render_form` (returns page
-images) · `hand_fill_worksheet` (print-only state forms) · `calc` (21
+images) · `hand_fill_worksheet` (print-only state forms) · `calc` (40
 deterministic ops over cited per-year data) · `get_sources` · `workspace_save` ·
 `workspace_load` · `workspace_record_position` · `workspace_reconcile` ·
 `filing_summary` · `file_and_pay`

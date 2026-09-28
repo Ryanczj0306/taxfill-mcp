@@ -106,3 +106,13 @@ def test_get_form_map_unknown_lists_available_keys():
 def test_get_form_map_unknown_year():
     with pytest.raises(FileNotFoundError):
         get_form_map("f1040", 1999)
+
+
+
+def test_jd2_list_forms_for_one_year_is_fast_once_warm():
+    import time
+
+    list_forms("federal", 2025)                         # the first call parses the 2025 packs once
+    started = time.perf_counter()
+    forms = list_forms("federal", 2025)
+    assert time.perf_counter() - started < 0.3 and len(forms) >= 37

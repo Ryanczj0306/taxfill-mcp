@@ -77,3 +77,36 @@ def test_the_bundle_manifest_lists_the_runtime_tools_and_ops():
     ops = _runtime_calc_ops()
     listed = set(calc.split(": ", 1)[1].split(", "))
     assert listed == ops and f"{len(ops)} ops" in calc, "run scripts/sync_bundle_manifest.py --write"
+
+
+
+def test_the_quoted_doc_counts_are_current():
+    """JD2: tools, ops, DocSpec kinds and pack counts in README / SKILL / DEV_PLAN / pyproject are derived."""
+    import subprocess
+    import sys
+
+    proc = subprocess.run([sys.executable, str(REPO / "scripts" / "sync_doc_counts.py"), "--check"],
+                          capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_every_open_roadmap_box_names_its_tranche():
+    """JD2: an open box ("- [ ]" or a partial "- [~]") names the Phase J tranche that carries it, so no open item
+    hides outside the plan; the completed phases live in docs/HISTORY.md, which holds no open box at all."""
+    tranche = re.compile(r"\bJ[A-Z]{1,2}(?:\d+[a-z]?|[a-z])\b")
+    lines = (REPO / "docs" / "ROADMAP.md").read_text(encoding="utf-8").splitlines()
+    unnamed = []
+    for i, line in enumerate(lines):
+        m = re.match(r"^(\s*)- \[[ ~]\]", line)
+        if not m:
+            continue
+        block = [line]
+        for nxt in lines[i + 1:]:
+            if not nxt.strip() or len(nxt) - len(nxt.lstrip()) <= len(m.group(1)):
+                break
+            block.append(nxt)
+        if not tranche.search(" ".join(block)):
+            unnamed.append(f"ROADMAP.md:{i + 1}: {line.strip()[:90]}")
+    assert not unnamed, "open box(es) with no Phase J tranche named:\n" + "\n".join(unnamed)
+    history = (REPO / "docs" / "HISTORY.md").read_text(encoding="utf-8")
+    assert not re.search(r"(?m)^\s*- \[[ ~]\]", history), "docs/HISTORY.md holds only completed work"
