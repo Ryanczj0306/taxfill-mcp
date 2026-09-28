@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,010 tests** — offline 7,206 + live-.gov 804; derived
+Done and on `main` (**8,016 tests** — offline 7,210 + live-.gov 806; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2084,9 +2084,9 @@ line items sum to the headline delta.
       - pytest-xdist is a dev dependency, and CI runs the offline suite with `-n auto`: locally 9.5 min on `-n 10`, beside another suite (single-process ~25 min).
     - **(5)** the completed phases (0, E, F, G, I) moved verbatim to docs/HISTORY.md, and every open box names its Phase J tranche (26 boxes, test_every_open_roadmap_box_names_its_tranche). Closed on the way: Phase E's SSN-maxlen box (JEa); A2–A6 now point at JA1/JA2.
     - **(4, local half)** the 17 merged local branches are pruned (`git branch -d`).
+    - **(4) done 2026-09-28.** The parked `phase-j2-overlay` is recorded as merged (8945e30, `-s ours`; its code landed by hand in JS4a) and deleted, with the user's OK. `git fetch --prune` shows the 10 remote duplicates are already gone, so `git branch -r --no-merged origin/main` is empty. No stray worktree is left.
   - **Waiting on the user:**
-    - (3) the real merge gate / branch protection;
-    - (4) the 10 remote duplicate branches, whose deletion needs the user's OK — until then `git branch -r --no-merged origin/main` is not empty.
+    - (3) the real merge gate / branch protection.
   1. **Derived counts** [G15]. New `scripts/sync_doc_counts.py`, keeping the sync_test_count entrypoint: tools, ops, DocSpecs, packs, hand-fill packs and the ReadOnly total. It rewrites anchors, runs `--check` in CI, and regex-asserts the pyproject descriptions.
   2. **Suite speed** [G25]. About 5.6 min locally and 10.2 min in CI (run 33118033631); two property tests take 48.8 s and 45.3 s; list_forms parses 172 packs per call (~3.1 s; discovery.py:142-147).
      - Pre-filter by path and memoize load_pack on (path, mtime).
@@ -2278,10 +2278,18 @@ line items sum to the headline delta.
     - **The agencies' printing rules**, read 2026-09-28 and recorded verbatim in a new `printing_guidance` list (quote / source / url). CT: the form face, "Complete return in blue or black ink only." HI: the machine-read N-11, "Enter One Letter Or Number In Each Box" / "Do NOT print outside the boxes", so its overlay stamps combs. NM: "Type or print using blue or black ink.", computer-generated forms must meet "the printing and legibility requirements of the software company", and the comma is the only punctuation allowed. SC: no ink, font or machine-print rule, only the foreign-address line.
     - None publishes a minimum type size. The new `min_font_size` field (the overlay's shrink floor when set) stays unset on all four. stamp_overlay returns the rules with every stamp.
   - **Tests:** test_overlay_tools.py (JS4b): a real f8843 filed with a stamped CT-1040-shaped form (ok, a PJ-01-style wrong value FAILs, `expected` required, stray key refused), the FBAR refusals x4 years, the efile_only schema rules. test_overlay.py: the rules and the min_font_size floor in the stamp result, and a network test that re-reads every quote verbatim from its source (the NM booklet sits on the AWS gateway host fetch refuses, so its quotes rest on the 2026-09-28 read).
-- [ ] **JS4c — CT-1040 2023 pilot** (M–L) [PJ-07]
-  - Overlay blocks for all 4 pages from `taxfill locate` anchors. The page-1 right column is x=405, w≈132, and ends before the pre-printed ".00" (smoke-verified).
-  - Render and vision-check every page (the overlay code itself was merged by JS4a).
-  - **Acceptance:** golden stamp → verify_overlay ok → render.
+- [x] **JS4c — CT-1040 2023 pilot — DONE 2026-09-28** (M–L) [PJ-07]
+  - *As built:* every line of formpacks/states/ct/2023/ct1040/handfill.yaml carries an `overlay` block, so fill_form stamps the whole return (181 lines, 184 placements).
+    - Each box was measured from the blank's own vector rectangles and, for per-character cells, its underline strokes. A workflow did the first pass: 4 page authors and 4 adversarial verifiers, each stamping sentinels, verifying and reading its page at scale 3, plus a second 2+2 pass for the added lines. The main loop then re-extracted every cell edge, re-stamped and read all four pages.
+    - **Engine, found by the pilot:** CT prints uneven per-character cells (the SSN 3-2-4 around printed dashes, MM-DD-YYYY dates, phones 3-3-4, Line 54's digits either side of a pre-printed point). A uniform `comb` missed them by up to 5 pt. `OverlayBox.cells` + `cell_w` now centre each character in its measured cell and drop separators, validated to sit inside the declared box.
+    - `overlay` may also be a list, so the SSN is stamped, and verified, in all four page headers.
+    - **Manifest, found by the pilot:**
+      - Line 52's name and two-letter code are separate boxes (52a / 52a.code).
+      - Each property row has two date boxes (60-62 .date_1 / .date_2).
+      - Line 66 stamps only the digits after its pre-printed point.
+      - The read found 25 printed entries the manifest had never listed: the fiscal-year dates, the deceased boxes, suffixes, country code, residence town and ZIP, the MFS spouse name, and page 2's signature dates, phones, email, paid-preparer block and third-party designee. All are lines now; the signatures stay hand-written.
+      - The verifiers' two catches were fixed: tax_year.begin's box stops before the pre-printed "2023", so a full date FAILs instead of overprinting, and the preparer FEIN cells sit inside their white box.
+  - **Tests:** test_ct1040_overlay.py covers every line's coordinates, the SSN on all four pages, and a demo return plus a full fiscal-year / preparer / designee return stamping on the real blank with no warning. Both pass the OVERLAY verdict on all 184 placements, a wrong line 1 FAILs exactly lines 1, 3 and 5, and all four pages render. test_overlay.py covers cells layout / validation and repeated placements (a missing header copy FAILs). test_overlay_tools.py covers the real ct1040 through fill_form → verify_form.
 - [ ] **JS4d — SC, NM, HI overlays** (L, per pack)
   - SC line numbers are not isolated words in the text layer, so anchor on captions.
   - **Acceptance, per pack:** as JS4c.

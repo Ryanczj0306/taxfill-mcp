@@ -117,6 +117,9 @@ State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
 All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
 38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)
 via `hand_fill_worksheet`; `state_scope` tells you which returns are required.
+The CT-1040 manifest also carries overlay coordinates: `fill_form('ct1040', ...,
+'states/ct')` stamps it onto the print blank, `verify_form(..., expected=values)`
+checks every box, and you render and read each page; the filer signs in ink.
 `hand_fill_worksheet` also serves one FEDERAL filing — `fincen114`, the FBAR
 (FinCEN Form 114): e-file only through FinCEN's BSA E-Filing System, no fillable
 PDF exists, a printed Form 114 is NOT accepted, and it is filed with FinCEN

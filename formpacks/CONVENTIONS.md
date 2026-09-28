@@ -401,6 +401,15 @@ without a block stay hand-written rows (`hand_written_lines`).
   pack (9 pt, money right). A value wider than `w` shrinks toward a 6 pt floor and warns, and
   past the floor it spills and warns — it is never clipped silently. `comb: <pitch>` centres one
   character per cell and drops separators (a comb has no cell for a dash, P-001).
+- **Uneven cells and repeated placements (JS4c).** When a form prints per-character cells at
+  uneven spacing — an SSN split 3-2-4 around printed dashes, an MM-DD-YYYY date, digits either
+  side of a pre-printed decimal point, a scanned form's one-character boxes — give
+  `cells: [left edge of each cell]` and `cell_w`. Each character is centred in its cell, and
+  separators (space, `-`, `/`, `.`) are dropped because the form prints its own. `x`/`w` stay the
+  declared white box, and every cell must lie inside it. Measure the cells from the blank's
+  underline strokes (pypdfium2 path objects under the box), never by eye. When the form prints
+  the SAME value in several places (the CT-1040's SSN in every page header), `overlay` may be a
+  list of boxes: the value is stamped in each, and each is verified.
 - **The OVERLAY verdict** keeps only glyphs drawn in the stamp font (unembedded Helvetica; the
   CT, HI and SC blanks embed every font they print). It requires the declared box to hold
   exactly the value, read left to right, and a blank line's box to hold nothing. It trusts the

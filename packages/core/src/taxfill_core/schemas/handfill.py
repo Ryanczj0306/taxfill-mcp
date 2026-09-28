@@ -73,6 +73,37 @@ class OverlayBox(BaseModel):
             "them (pitfall P-001) — and a value with more characters than w/comb cells warns."
         ),
     )
+    cells: list[float] | None = Field(
+        default=None, min_length=1,
+        description=(
+            "Left edges (points) of per-character cells whose spacing is NOT uniform — an SSN printed 3-2-4 "
+            "around pre-printed dashes, an MM-DD-YYYY date, digits either side of a pre-printed decimal point, "
+            "a scanned form's one-character boxes: character i is centred in [cells[i], cells[i] + cell_w]. "
+            "Separators (spaces, hyphens, slashes, points) are dropped — the form prints its own — and a value "
+            "with more characters than cells warns. Needs cell_w; excludes comb; every cell lies in x .. x + w "
+            "(Phase J JS4c)."
+        ),
+    )
+    cell_w: float | None = Field(default=None, gt=0, description="Width of each `cells` cell, in points.")
+
+    @model_validator(mode="after")
+    def _cells_are_well_formed(self) -> "OverlayBox":
+        if self.cells is None:
+            if self.cell_w is not None:
+                raise ValueError("overlay: cell_w is set without cells — give the cell left edges too")
+            return self
+        if self.comb is not None:
+            raise ValueError("overlay: cells and comb are exclusive — cells lists uneven cells, comb a uniform pitch")
+        if self.cell_w is None:
+            raise ValueError("overlay: cells needs cell_w, the width of each cell")
+        if any(b <= a for a, b in zip(self.cells, self.cells[1:])):
+            raise ValueError(f"overlay: cells must be strictly increasing left edges, got {self.cells}")
+        if self.cells[0] < self.x - 1e-6 or self.cells[-1] + self.cell_w > self.x + self.w + 1e-6:
+            raise ValueError(
+                f"overlay: the cells [{self.cells[0]:g} .. {self.cells[-1] + self.cell_w:g}] must lie inside the "
+                f"declared box [{self.x:g} .. {self.x + self.w:g}] — the verdict reads that box"
+            )
+        return self
 
 
 class OverlayDefaults(BaseModel):
@@ -112,13 +143,23 @@ class HandFillLine(BaseModel):
         ),
     )
     note: str | None = Field(default=None, description="Optional guidance shown next to the line on the worksheet.")
-    overlay: OverlayBox | None = Field(
+    overlay: OverlayBox | list[OverlayBox] | None = Field(
         default=None,
         description=(
-            "Where to stamp this line's value on the print blank (see OverlayBox). None = the line is "
-            "hand-written from the worksheet; stamp_overlay lists it under hand_written_lines."
+            "Where to stamp this line's value on the print blank (see OverlayBox) — or a LIST of boxes when the "
+            "form prints the same value in several places (the CT-1040's SSN in every page header): the value "
+            "is stamped, and verified, in each. None = the line is hand-written from the worksheet; "
+            "stamp_overlay lists it under hand_written_lines."
         ),
     )
+
+
+    @property
+    def boxes(self) -> list[OverlayBox]:
+        """Every placement of this line (empty when it is hand-written)."""
+        if self.overlay is None:
+            return []
+        return list(self.overlay) if isinstance(self.overlay, list) else [self.overlay]
 
 
 class HandFillPack(BaseModel):

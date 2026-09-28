@@ -17,6 +17,20 @@
 # other-state credit 51-59, Schedule 3 property-tax credit 60-68, Schedule 4
 # use tax 69, Schedule 5 charity 70). CT-mandated table lookups (tax tables /
 # Tax Calculation Schedule, Property Tax Credit Table) stay manual notes.
+#
+# OVERLAY COORDINATES (Phase J JS4c, 2026-09-28): every line carries an `overlay` block, so
+# fill_form STAMPS the worksheet onto this blank. Each box was measured from the blank's own
+# vector rectangles (and, for per-character cells, its underline strokes), never estimated, then
+# stamped with sentinel values, verified, rendered and read page by page. Money is right-aligned
+# and ends before the pre-printed ".00". The SSN (3-2-4 around printed dashes), the MM-DD-YYYY
+# property-tax dates and the Line 54 decimals use `cells` (the cells are uneven). Your SSN is
+# stamped four times, on page 1 and in the page 2-4 headers. Line 52's name and two-letter code
+# are separate boxes (52a / 52a.code), and each property row has two date boxes (date_1 / date_2).
+# The read also found 25 printed entries the manifest had never listed: the fiscal-year dates,
+# both "Check if deceased" boxes, both suffixes, the country code, the residence town and ZIP,
+# the Married-filing-separately spouse name, and on page 2 the signature dates, phones, email,
+# the paid-preparer block and the third-party designee. They are all lines now. The signatures
+# themselves stay hand-written.
 form: "CT-1040"
 jurisdiction: states/ct
 tax_year: 2023
@@ -32,183 +46,396 @@ printing_guidance:
 signature_note: "Sign and date the printed return on page 2 (both spouses if filing jointly) in blue or black ink; the declaration covers use-tax reporting. Attach all applicable schedules; send all four pages. Do not use staples; do not send W-2s/1099s."
 lines:
   # ---- header / identity (page 1) -------------------------------------------
-  - { line: "identifying_number", label: "Your Social Security Number", type: text }
-  - { line: "spouse.identifying_number", label: "Spouse's Social Security Number", type: text }
-  - { line: "name.first", label: "Your first name", type: text }
-  - { line: "name.mi", label: "Your middle initial", type: text }
-  - { line: "name.last", label: "Your last name (if two last names, insert a space between)", type: text }
-  - { line: "spouse.first_name", label: "If joint return, spouse's first name", type: text }
-  - { line: "spouse.mi", label: "Spouse's middle initial", type: text }
-  - { line: "spouse.last_name", label: "Spouse's last name", type: text }
-  - { line: "mailing_address.street", label: "Mailing address (number and street)", type: text }
-  - { line: "mailing_address.street2", label: "Mailing address 2 (apartment number, PO Box)", type: text }
-  - { line: "mailing_address.city", label: "City, town, or post office (two-word towns keep the space)", type: text }
-  - { line: "mailing_address.state", label: "State", type: text }
-  - { line: "mailing_address.zip", label: "ZIP code", type: text }
+  - { line: "tax_year.begin", label: "Other tax year beginning — month and day (MM-DD; the form prints the year 2023)", type: text,
+      overlay: {page: 1, x: 286.68, y: 674.6, w: 54.82, cells: [288.38, 298.38, 314.52, 324.89], cell_w: 8.57} }
+  - { line: "tax_year.end", label: "Other tax year ending (MM-DD-YYYY)", type: text,
+      overlay: {page: 1, x: 444.68, y: 674.6, w: 92.81, cells: [446.38, 456.38, 472.52, 482.89, 499.77, 508.96, 518.17, 527.38], cell_w: 8.57} }
+  - { line: "identifying_number", label: "Your Social Security Number", type: text,
+      overlay: [{page: 1, x: 54, y: 605.9, w: 156.9, cells: [57.93, 72.71, 87.49, 112.07, 126.85, 151.42, 166.2, 180.98, 195.76], cell_w: 11.35}, {page: 2, x: 376.44, y: 733.6, w: 148.68, cells: [380.15, 394.16, 408.17, 431.46, 445.47, 468.77, 482.78, 496.79, 510.8], cell_w: 10.78}, {page: 3, x: 376.44, y: 733.6, w: 148.68, cells: [380.15, 394.16, 408.17, 431.46, 445.47, 468.77, 482.78, 496.79, 510.8], cell_w: 10.78}, {page: 4, x: 376.44, y: 733.6, w: 148.68, cells: [380.15, 394.16, 408.17, 431.46, 445.47, 468.77, 482.78, 496.79, 510.8], cell_w: 10.78}] }
+  - { line: "deceased.taxpayer", label: "Check if deceased (you)", type: checkbox,
+      overlay: {page: 1, x: 227.7, y: 605.2, w: 12.8} }
+  - { line: "spouse.identifying_number", label: "Spouse's Social Security Number", type: text,
+      overlay: {page: 1, x: 320.5, y: 606, w: 156.9, cells: [324.43, 339.21, 353.99, 378.57, 393.35, 417.92, 432.7, 447.48, 462.26], cell_w: 11.35} }
+  - { line: "deceased.spouse", label: "Check if deceased (spouse)", type: checkbox,
+      overlay: {page: 1, x: 493.9, y: 605.2, w: 12.8} }
+  - { line: "name.first", label: "Your first name", type: text,
+      overlay: {page: 1, x: 56, y: 576, w: 144.7} }
+  - { line: "name.mi", label: "Your middle initial", type: text,
+      overlay: {page: 1, x: 229.6, y: 575.9, w: 14} }
+  - { line: "name.last", label: "Your last name (if two last names, insert a space between)", type: text,
+      overlay: {page: 1, x: 272.7, y: 576, w: 216.5} }
+  - { line: "name.suffix", label: "Your suffix (Jr./Sr.)", type: text,
+      overlay: {page: 1, x: 508.4, y: 576, w: 23.7} }
+  - { line: "spouse.first_name", label: "If joint return, spouse's first name", type: text,
+      overlay: {page: 1, x: 56, y: 546.5, w: 144.7} }
+  - { line: "spouse.mi", label: "Spouse's middle initial", type: text,
+      overlay: {page: 1, x: 229.7, y: 546.5, w: 14} }
+  - { line: "spouse.last_name", label: "Spouse's last name", type: text,
+      overlay: {page: 1, x: 272.7, y: 546.5, w: 216.5} }
+  - { line: "spouse.suffix", label: "Spouse's suffix (Jr./Sr.)", type: text,
+      overlay: {page: 1, x: 508.2, y: 546.6, w: 23.7} }
+  - { line: "mailing_address.street", label: "Mailing address (number and street)", type: text,
+      overlay: {page: 1, x: 56, y: 517, w: 249.1} }
+  - { line: "mailing_address.street2", label: "Mailing address 2 (apartment number, PO Box)", type: text,
+      overlay: {page: 1, x: 323.4, y: 517, w: 168.9} }
+  - { line: "mailing_address.city", label: "City, town, or post office (two-word towns keep the space)", type: text,
+      overlay: {page: 1, x: 56, y: 488, w: 249.1} }
+  - { line: "mailing_address.state", label: "State", type: text,
+      overlay: {page: 1, x: 323.4, y: 488, w: 39.7} }
+  - { line: "mailing_address.zip", label: "ZIP code", type: text,
+      overlay: {page: 1, x: 381.4, y: 488, w: 100.5} }
+  - { line: "mailing_address.country_code", label: "Country code (a foreign mailing address only)", type: text,
+      overlay: {page: 1, x: 506.16, y: 488, w: 42.24, cells: [511.51, 522.86, 534.22], cell_w: 8.83} }
+  - { line: "residence.city", label: "City or town of residence, if different from the mailing address", type: text,
+      overlay: {page: 1, x: 56, y: 458.5, w: 249.1} }
+  - { line: "residence.zip", label: "ZIP code of the residence, if different", type: text,
+      overlay: {page: 1, x: 323.4, y: 458.6, w: 100.5} }
   # ---- filing status (check only one box) -----------------------------------
-  - { line: "filing_status.single", label: "Single", type: checkbox }
-  - { line: "filing_status.mfj", label: "Married filing jointly", type: checkbox }
-  - { line: "filing_status.mfs", label: "Married filing separately (enter spouse's name and SSN)", type: checkbox }
-  - { line: "filing_status.hoh", label: "Head of household", type: checkbox }
-  - { line: "filing_status.qss", label: "Qualifying surviving spouse", type: checkbox }
+  - { line: "filing_status.single", label: "Single", type: checkbox,
+      overlay: {page: 1, x: 54.3, y: 648.2, w: 10.1} }
+  - { line: "filing_status.mfj", label: "Married filing jointly", type: checkbox,
+      overlay: {page: 1, x: 54.3, y: 632.5, w: 10.1} }
+  - { line: "filing_status.mfs", label: "Married filing separately (enter spouse's name and SSN)", type: checkbox,
+      overlay: {page: 1, x: 293.4, y: 648.2, w: 10.1} }
+  - { line: "filing_status.mfs_spouse_name", label: "Married filing separately: enter spouse's name here (the box beside the Married filing separately choice)", type: text,
+      overlay: {page: 1, x: 415.4, y: 642.4, w: 137.9} }
+  - { line: "filing_status.hoh", label: "Head of household", type: checkbox,
+      overlay: {page: 1, x: 173.8, y: 648.2, w: 10.1} }
+  - { line: "filing_status.qss", label: "Qualifying surviving spouse", type: checkbox,
+      overlay: {page: 1, x: 173.8, y: 632.5, w: 10.1} }
   # ---- attachment checkboxes -------------------------------------------------
-  - { line: "attach.ct2210", label: "Attaching Form CT-2210 (underpayment of estimated tax)", type: checkbox }
-  - { line: "attach.ct_dependent", label: "Attaching Schedule CT-Dependent (dependents claimed on federal 1040)", type: checkbox }
-  - { line: "attach.f1310", label: "Attaching federal Form 1310 (refund due a deceased taxpayer)", type: checkbox }
-  - { line: "attach.ct19it", label: "Attaching Form CT-19IT (Title 19 status release)", type: checkbox }
-  - { line: "attach.ct1040crc", label: "Attaching Form CT-1040 CRC (claim of right credit)", type: checkbox }
-  - { line: "attach.ct8379", label: "Attaching Form CT-8379 (nonobligated spouse claim)", type: checkbox }
+  - { line: "attach.ct2210", label: "Attaching Form CT-2210 (underpayment of estimated tax)", type: checkbox,
+      overlay: {page: 1, x: 88, y: 440.8, w: 10.1} }
+  - { line: "attach.ct_dependent", label: "Attaching Schedule CT-Dependent (dependents claimed on federal 1040)", type: checkbox,
+      overlay: {page: 1, x: 88, y: 422.5, w: 10.1} }
+  - { line: "attach.f1310", label: "Attaching federal Form 1310 (refund due a deceased taxpayer)", type: checkbox,
+      overlay: {page: 1, x: 88, y: 404.8, w: 10.1} }
+  - { line: "attach.ct19it", label: "Attaching Form CT-19IT (Title 19 status release)", type: checkbox,
+      overlay: {page: 1, x: 385.6, y: 440.8, w: 10.1} }
+  - { line: "attach.ct1040crc", label: "Attaching Form CT-1040 CRC (claim of right credit)", type: checkbox,
+      overlay: {page: 1, x: 385.6, y: 422.6, w: 10.1} }
+  - { line: "attach.ct8379", label: "Attaching Form CT-8379 (nonobligated spouse claim)", type: checkbox,
+      overlay: {page: 1, x: 385.6, y: 404.8, w: 10.1} }
   # ---- main computation (page 1, whole dollars only) -------------------------
-  - { line: "1", label: "Federal adjusted gross income from federal Form 1040, Line 11", type: money }
-  - { line: "2", label: "Additions to federal AGI from Schedule 1, Line 38", type: money }
-  - { line: "3", label: "Add Line 1 and Line 2", type: money, compute: "1 + 2" }
-  - { line: "4", label: "Subtractions from federal AGI from Schedule 1, Line 50", type: money }
-  - { line: "5", label: "Connecticut adjusted gross income: Subtract Line 4 from Line 3", type: money, compute: "3 - 4" }
+  - { line: "1", label: "Federal adjusted gross income from federal Form 1040, Line 11", type: money,
+      overlay: {page: 1, x: 406.6, y: 370.8, w: 131} }
+  - { line: "2", label: "Additions to federal AGI from Schedule 1, Line 38", type: money,
+      overlay: {page: 1, x: 406.6, y: 350.8, w: 131} }
+  - { line: "3", label: "Add Line 1 and Line 2", type: money, compute: "1 + 2",
+      overlay: {page: 1, x: 406.6, y: 330.8, w: 131} }
+  - { line: "4", label: "Subtractions from federal AGI from Schedule 1, Line 50", type: money,
+      overlay: {page: 1, x: 406.6, y: 310.9, w: 131} }
+  - { line: "5", label: "Connecticut adjusted gross income: Subtract Line 4 from Line 3", type: money, compute: "3 - 4",
+      overlay: {page: 1, x: 406.6, y: 290.7, w: 131} }
   - { line: "6", label: "Income tax from tax tables or Tax Calculation Schedule", type: money,
-      note: "MANDATED lookup: take the tax from the 2023 CT tax tables or the Tax Calculation Schedule per the instructions (CT's 3%/5% brackets carry AGI-based phase-out add-backs the schedule computes) — never plain bracket arithmetic." }
-  - { line: "7", label: "Credit for income taxes paid to qualifying jurisdictions from Schedule 2, Line 59", type: money }
-  - { line: "8", label: "Subtract Line 7 from Line 6 (not less than zero)", type: money, compute: "max(0, 6 - 7)" }
-  - { line: "9", label: "Connecticut alternative minimum tax from Form CT-6251", type: money }
-  - { line: "10", label: "Add Line 8 and Line 9", type: money, compute: "8 + 9" }
-  - { line: "11", label: "Credit for property taxes paid (attach Schedule 3, from Line 68)", type: money }
-  - { line: "12", label: "Subtract Line 11 from Line 10 (if less than zero, enter 0)", type: money, compute: "max(0, 10 - 11)" }
-  - { line: "13", label: "Total allowable credits from Schedule CT-IT Credit, Part 1, Line 11", type: money }
-  - { line: "14", label: "Connecticut income tax: Subtract Line 13 from Line 12 (if less than zero, enter 0)", type: money, compute: "max(0, 12 - 13)" }
-  - { line: "15", label: "Individual use tax from Schedule 4, Line 69 (enter 0 if none due)", type: money }
-  - { line: "16", label: "Add Line 14 and Line 15", type: money, compute: "14 + 15" }
+      note: "MANDATED lookup: take the tax from the 2023 CT tax tables or the Tax Calculation Schedule per the instructions (CT's 3%/5% brackets carry AGI-based phase-out add-backs the schedule computes) — never plain bracket arithmetic.",
+      overlay: {page: 1, x: 406.6, y: 270.4, w: 131} }
+  - { line: "7", label: "Credit for income taxes paid to qualifying jurisdictions from Schedule 2, Line 59", type: money,
+      overlay: {page: 1, x: 406.6, y: 250.5, w: 131} }
+  - { line: "8", label: "Subtract Line 7 from Line 6 (not less than zero)", type: money, compute: "max(0, 6 - 7)",
+      overlay: {page: 1, x: 406.6, y: 230.6, w: 131} }
+  - { line: "9", label: "Connecticut alternative minimum tax from Form CT-6251", type: money,
+      overlay: {page: 1, x: 406.6, y: 210.5, w: 131} }
+  - { line: "10", label: "Add Line 8 and Line 9", type: money, compute: "8 + 9",
+      overlay: {page: 1, x: 406.6, y: 190.5, w: 131} }
+  - { line: "11", label: "Credit for property taxes paid (attach Schedule 3, from Line 68)", type: money,
+      overlay: {page: 1, x: 406.6, y: 170.3, w: 131} }
+  - { line: "12", label: "Subtract Line 11 from Line 10 (if less than zero, enter 0)", type: money, compute: "max(0, 10 - 11)",
+      overlay: {page: 1, x: 406.6, y: 150.2, w: 131} }
+  - { line: "13", label: "Total allowable credits from Schedule CT-IT Credit, Part 1, Line 11", type: money,
+      overlay: {page: 1, x: 406.6, y: 130, w: 131} }
+  - { line: "14", label: "Connecticut income tax: Subtract Line 13 from Line 12 (if less than zero, enter 0)", type: money, compute: "max(0, 12 - 13)",
+      overlay: {page: 1, x: 406.6, y: 110.2, w: 131} }
+  - { line: "15", label: "Individual use tax from Schedule 4, Line 69 (enter 0 if none due)", type: money,
+      overlay: {page: 1, x: 406.6, y: 90.1, w: 131} }
+  - { line: "16", label: "Add Line 14 and Line 15", type: money, compute: "14 + 15",
+      overlay: {page: 1, x: 406.6, y: 70, w: 131} }
   # ---- page 2 ----------------------------------------------------------------
-  - { line: "17", label: "Enter amount from Line 16", type: money, compute: "16" }
-  - { line: "18a.fein", label: "W-2/1099 row a — employer/payer federal ID (only if CT tax withheld)", type: text }
-  - { line: "18a.wages", label: "W-2/1099 row a — Connecticut wages, tips, etc.", type: money }
-  - { line: "18a", label: "W-2/1099 row a — Connecticut income tax withheld (Column C)", type: money }
-  - { line: "18b.fein", label: "W-2/1099 row b — employer/payer federal ID", type: text }
-  - { line: "18b.wages", label: "W-2/1099 row b — Connecticut wages, tips, etc.", type: money }
-  - { line: "18b", label: "W-2/1099 row b — Connecticut income tax withheld (Column C)", type: money }
-  - { line: "18c.fein", label: "W-2/1099 row c — employer/payer federal ID", type: text }
-  - { line: "18c.wages", label: "W-2/1099 row c — Connecticut wages, tips, etc.", type: money }
-  - { line: "18c", label: "W-2/1099 row c — Connecticut income tax withheld (Column C)", type: money }
-  - { line: "18d.fein", label: "W-2/1099 row d — employer/payer federal ID", type: text }
-  - { line: "18d.wages", label: "W-2/1099 row d — Connecticut wages, tips, etc.", type: money }
-  - { line: "18d", label: "W-2/1099 row d — Connecticut income tax withheld (Column C)", type: money }
-  - { line: "18e.fein", label: "W-2/1099 row e — employer/payer federal ID", type: text }
-  - { line: "18e.wages", label: "W-2/1099 row e — Connecticut wages, tips, etc.", type: money }
-  - { line: "18e", label: "W-2/1099 row e — Connecticut income tax withheld (Column C)", type: money }
-  - { line: "18f", label: "Additional CT withholding from Supplemental Schedule CT-1040WH (Column C)", type: money }
+  - { line: "17", label: "Enter amount from Line 16", type: money, compute: "16",
+      overlay: {page: 2, x: 411, y: 696.8, w: 131} }
+  - { line: "18a.fein", label: "W-2/1099 row a — employer/payer federal ID (only if CT tax withheld)", type: text,
+      overlay: {page: 2, x: 101.43, y: 652.7, w: 154.98, comb: 17.22} }
+  - { line: "18a.wages", label: "W-2/1099 row a — Connecticut wages, tips, etc.", type: money,
+      overlay: {page: 2, x: 276.7, y: 652.7, w: 102.6} }
+  - { line: "18a", label: "W-2/1099 row a — Connecticut income tax withheld (Column C)", type: money,
+      overlay: {page: 2, x: 410.9, y: 652.7, w: 131} }
+  - { line: "18b.fein", label: "W-2/1099 row b — employer/payer federal ID", type: text,
+      overlay: {page: 2, x: 101.43, y: 637.6, w: 154.98, comb: 17.22} }
+  - { line: "18b.wages", label: "W-2/1099 row b — Connecticut wages, tips, etc.", type: money,
+      overlay: {page: 2, x: 276.7, y: 637.6, w: 102.6} }
+  - { line: "18b", label: "W-2/1099 row b — Connecticut income tax withheld (Column C)", type: money,
+      overlay: {page: 2, x: 410.9, y: 637.6, w: 131} }
+  - { line: "18c.fein", label: "W-2/1099 row c — employer/payer federal ID", type: text,
+      overlay: {page: 2, x: 101.43, y: 622.1, w: 154.98, comb: 17.22} }
+  - { line: "18c.wages", label: "W-2/1099 row c — Connecticut wages, tips, etc.", type: money,
+      overlay: {page: 2, x: 276.7, y: 622.1, w: 102.6} }
+  - { line: "18c", label: "W-2/1099 row c — Connecticut income tax withheld (Column C)", type: money,
+      overlay: {page: 2, x: 410.9, y: 622.1, w: 131} }
+  - { line: "18d.fein", label: "W-2/1099 row d — employer/payer federal ID", type: text,
+      overlay: {page: 2, x: 101.43, y: 607, w: 154.98, comb: 17.22} }
+  - { line: "18d.wages", label: "W-2/1099 row d — Connecticut wages, tips, etc.", type: money,
+      overlay: {page: 2, x: 276.7, y: 607, w: 102.6} }
+  - { line: "18d", label: "W-2/1099 row d — Connecticut income tax withheld (Column C)", type: money,
+      overlay: {page: 2, x: 410.9, y: 607, w: 131} }
+  - { line: "18e.fein", label: "W-2/1099 row e — employer/payer federal ID", type: text,
+      overlay: {page: 2, x: 101.43, y: 591.8, w: 154.98, comb: 17.22} }
+  - { line: "18e.wages", label: "W-2/1099 row e — Connecticut wages, tips, etc.", type: money,
+      overlay: {page: 2, x: 276.7, y: 591.8, w: 102.6} }
+  - { line: "18e", label: "W-2/1099 row e — Connecticut income tax withheld (Column C)", type: money,
+      overlay: {page: 2, x: 410.9, y: 591.8, w: 131} }
+  - { line: "18f", label: "Additional CT withholding from Supplemental Schedule CT-1040WH (Column C)", type: money,
+      overlay: {page: 2, x: 410.9, y: 575.4, w: 131} }
   - { line: "18", label: "Total Connecticut income tax withheld: add Column C, Lines 18a-18f",
-      type: money, compute: "18a + 18b + 18c + 18d + 18e + 18f" }
-  - { line: "19", label: "All 2023 estimated tax payments and prior-year overpayments applied", type: money }
-  - { line: "20", label: "Payments made with Form CT-1040 EXT", type: money }
-  - { line: "20a", label: "Connecticut earned income tax credit from Schedule CT-EITC, Line 16", type: money }
-  - { line: "20b", label: "Claim of right credit from Form CT-1040 CRC, Line 6", type: money }
-  - { line: "20c", label: "Pass-Through Entity Tax Credit from Schedule CT-PE, Line 1 (attach)", type: money }
+      type: money, compute: "18a + 18b + 18c + 18d + 18e + 18f",
+      overlay: {page: 2, x: 410.9, y: 560.3, w: 131} }
+  - { line: "19", label: "All 2023 estimated tax payments and prior-year overpayments applied", type: money,
+      overlay: {page: 2, x: 410.9, y: 538.5, w: 131} }
+  - { line: "20", label: "Payments made with Form CT-1040 EXT", type: money,
+      overlay: {page: 2, x: 410.9, y: 523.8, w: 131} }
+  - { line: "20a", label: "Connecticut earned income tax credit from Schedule CT-EITC, Line 16", type: money,
+      overlay: {page: 2, x: 410.9, y: 509.2, w: 131} }
+  - { line: "20b", label: "Claim of right credit from Form CT-1040 CRC, Line 6", type: money,
+      overlay: {page: 2, x: 410.9, y: 494.4, w: 131} }
+  - { line: "20c", label: "Pass-Through Entity Tax Credit from Schedule CT-PE, Line 1 (attach)", type: money,
+      overlay: {page: 2, x: 410.9, y: 479.8, w: 131} }
   - { line: "21", label: "Total payments and refundable credits: add Lines 18, 19, 20, 20a, 20b, 20c",
-      type: money, compute: "18 + 19 + 20 + 20a + 20b + 20c" }
-  - { line: "22", label: "Overpayment: if Line 21 exceeds Line 17, Line 21 minus Line 17", type: money, compute: "max(0, 21 - 17)" }
-  - { line: "23", label: "Amount of Line 22 applied to 2024 estimated tax", type: money }
-  - { line: "24", label: "Amount of Line 22 applied as CHET contribution (Schedule CT-CHET, Line 4)", type: money }
-  - { line: "24a", label: "Total refund contributions to designated charities (Schedule 5, Line 70)", type: money }
-  - { line: "25", label: "Refund: Line 22 minus Lines 23, 24, and 24a", type: money, compute: "22 - 23 - 24 - 24a" }
-  - { line: "25a.checking", label: "Direct deposit — Checking", type: checkbox }
-  - { line: "25a.savings", label: "Direct deposit — Savings", type: checkbox }
-  - { line: "25b", label: "Routing number", type: text }
-  - { line: "25c", label: "Account number", type: text }
-  - { line: "25d", label: "Refund going to a bank account outside the U.S. (check if yes)", type: checkbox }
-  - { line: "26", label: "Tax due: if Line 17 exceeds Line 21, Line 17 minus Line 21", type: money, compute: "max(0, 17 - 21)" }
+      type: money, compute: "18 + 19 + 20 + 20a + 20b + 20c",
+      overlay: {page: 2, x: 410.9, y: 465.1, w: 131} }
+  - { line: "22", label: "Overpayment: if Line 21 exceeds Line 17, Line 21 minus Line 17", type: money, compute: "max(0, 21 - 17)",
+      overlay: {page: 2, x: 410.9, y: 450.5, w: 131} }
+  - { line: "23", label: "Amount of Line 22 applied to 2024 estimated tax", type: money,
+      overlay: {page: 2, x: 410.9, y: 435.7, w: 131} }
+  - { line: "24", label: "Amount of Line 22 applied as CHET contribution (Schedule CT-CHET, Line 4)", type: money,
+      overlay: {page: 2, x: 410.9, y: 416.5, w: 131} }
+  - { line: "24a", label: "Total refund contributions to designated charities (Schedule 5, Line 70)", type: money,
+      overlay: {page: 2, x: 410.9, y: 401.8, w: 131} }
+  - { line: "25", label: "Refund: Line 22 minus Lines 23, 24, and 24a", type: money, compute: "22 - 23 - 24 - 24a",
+      overlay: {page: 2, x: 410.9, y: 384.2, w: 131} }
+  - { line: "25a.checking", label: "Direct deposit — Checking", type: checkbox,
+      overlay: {page: 2, x: 104.7, y: 367, w: 14} }
+  - { line: "25a.savings", label: "Direct deposit — Savings", type: checkbox,
+      overlay: {page: 2, x: 174.4, y: 367, w: 14} }
+  - { line: "25b", label: "Routing number", type: text,
+      overlay: {page: 2, x: 124.27, y: 353.2, w: 143.55, comb: 15.95} }
+  - { line: "25c", label: "Account number", type: text,
+      overlay: {page: 2, x: 301.86, y: 367.3, w: 251.28, comb: 13.96} }
+  - { line: "25d", label: "Refund going to a bank account outside the U.S. (check if yes)", type: checkbox,
+      overlay: {page: 2, x: 502, y: 351.7, w: 18} }
+  - { line: "26", label: "Tax due: if Line 17 exceeds Line 21, Line 17 minus Line 21", type: money, compute: "max(0, 17 - 21)",
+      overlay: {page: 2, x: 410.9, y: 326.1, w: 131} }
   - { line: "27", label: "If late: penalty — multiply Line 26 by 10% (.10)", type: money,
-      note: "Only when filing/paying late: Line 26 x 0.10 (left manual — applies only to late returns)." }
+      note: "Only when filing/paying late: Line 26 x 0.10 (left manual — applies only to late returns).",
+      overlay: {page: 2, x: 410.9, y: 310, w: 131} }
   - { line: "28", label: "If late: interest — Line 26 x 1% per month or fraction of a month late", type: money,
-      note: "Only when late: Line 26 x months-late x 0.01 (left manual)." }
-  - { line: "29", label: "Interest on underpayment of estimated tax from Form CT-2210", type: money }
-  - { line: "30", label: "Total amount due: add Lines 26 through 29", type: money, compute: "26 + 27 + 28 + 29" }
+      note: "Only when late: Line 26 x months-late x 0.01 (left manual).",
+      overlay: {page: 2, x: 410.9, y: 290.9, w: 131} }
+  - { line: "29", label: "Interest on underpayment of estimated tax from Form CT-2210", type: money,
+      overlay: {page: 2, x: 410.9, y: 274.8, w: 131} }
+  - { line: "30", label: "Total amount due: add Lines 26 through 29", type: money, compute: "26 + 27 + 28 + 29",
+      overlay: {page: 2, x: 410.9, y: 258, w: 131} }
+  # ---- declaration: dates, phones, email, paid preparer, third-party designee (page 2) --
+  # The signatures themselves are hand-written in ink (signature_note); the rest may be stamped.
+  - { line: "signature.date", label: "Date you signed (MMDDYYYY)", type: text,
+      overlay: {page: 2, x: 306.02, y: 197, w: 104.74, cells: [307.97, 319.26, 337.47, 349.17, 368.22, 378.59, 388.98, 399.38], cell_w: 9.61} }
+  - { line: "signature.phone", label: "Home/cell telephone number", type: text,
+      overlay: {page: 2, x: 422.96, y: 196.3, w: 135.72, cells: [426.71, 439.02, 451.33, 467.94, 480.25, 491.86, 508.46, 520.77, 533.08, 545.39], cell_w: 9.53} }
+  - { line: "spouse.signature_date", label: "Date your spouse signed, if a joint return (MMDDYYYY)", type: text,
+      overlay: {page: 2, x: 306.02, y: 174.3, w: 104.74, cells: [307.97, 319.26, 337.47, 349.17, 368.22, 378.59, 388.98, 399.38], cell_w: 9.61} }
+  - { line: "signature.daytime_phone", label: "Daytime telephone number", type: text,
+      overlay: {page: 2, x: 422.96, y: 173.6, w: 135.72, cells: [426.71, 439.02, 451.33, 467.94, 480.25, 491.86, 508.46, 520.77, 533.08, 545.39], cell_w: 9.53} }
+  - { line: "signature.email", label: "Your email address", type: text,
+      overlay: {page: 2, x: 75.9, y: 152.3, w: 216.4} }
+  - { line: "preparer.date", label: "Paid preparer's signature date (MMDDYYYY)", type: text,
+      overlay: {page: 2, x: 306.17, y: 132.3, w: 104.74, cells: [308.12, 319.4, 337.61, 349.31, 368.37, 378.74, 389.13, 399.53], cell_w: 9.61} }
+  - { line: "preparer.phone", label: "Paid preparer's telephone number", type: text,
+      overlay: {page: 2, x: 422.67, y: 131.6, w: 135.72, cells: [426.42, 438.73, 451.05, 467.65, 479.96, 491.57, 508.17, 520.48, 532.79, 545.11], cell_w: 9.53} }
+  - { line: "preparer.name", label: "Type or print paid preparer's name", type: text,
+      overlay: {page: 2, x: 75.9, y: 106.4, w: 217} }
+  - { line: "preparer.fein", label: "Paid preparer's firm FEIN", type: text,
+      overlay: {page: 2, x: 303.88, y: 107.3, w: 152.85, cells: [303.88, 321.38, 338.88, 356.38, 373.88, 391.38, 408.88, 426.38, 443.88], cell_w: 12.84} }
+  - { line: "preparer.self_employed", label: "Paid preparer: check if self-employed", type: checkbox,
+      overlay: {page: 2, x: 529.7, y: 106, w: 10.1} }
+  - { line: "preparer.firm", label: "Paid preparer's firm name, address, and ZIP code", type: text,
+      overlay: {page: 2, x: 75.4, y: 82.1, w: 319.7} }
+  - { line: "preparer.ptin", label: "Paid preparer's PTIN", type: text,
+      overlay: {page: 2, x: 405.8, y: 82.1, w: 151} }
+  - { line: "designee.name", label: "Third party designee's name", type: text,
+      overlay: {page: 2, x: 76.4, y: 42.4, w: 162.6} }
+  - { line: "designee.phone", label: "Third party designee's telephone number", type: text,
+      overlay: {page: 2, x: 260.28, y: 42.3, w: 133.92, cells: [263.98, 276.13, 288.27, 304.66, 316.81, 328.26, 344.64, 356.79, 368.94, 381.09], cell_w: 9.41} }
+  - { line: "designee.pin", label: "Third party designee's personal identification number (PIN)", type: text,
+      overlay: {page: 2, x: 410.76, y: 42.3, w: 106.56, cells: [412.31, 434.21, 456.11, 478.01, 499.91], cell_w: 16.57} }
   # ---- Schedule 1 — modifications (page 3; enter all items as positive) ------
-  - { line: "31", label: "Interest on non-Connecticut state/local government obligations", type: money }
-  - { line: "32", label: "Exempt-interest dividends from non-CT state/municipal obligations", type: money }
-  - { line: "33", label: "Taxable lump-sum distributions not included in federal AGI", type: money }
-  - { line: "34", label: "Beneficiary's share of CT fiduciary adjustment (only if > 0)", type: money }
-  - { line: "35", label: "Loss on sale of Connecticut state/local government bonds", type: money }
-  - { line: "36", label: "Section 168(k) federal bonus depreciation deduction this year", type: money }
-  - { line: "36a", label: "80% of Section 179 federal deduction", type: money }
-  - { line: "37", label: "Other additions — amount (specify on the form)", type: money }
+  - { line: "31", label: "Interest on non-Connecticut state/local government obligations", type: money,
+      overlay: {page: 3, x: 421, y: 664, w: 121} }
+  - { line: "32", label: "Exempt-interest dividends from non-CT state/municipal obligations", type: money,
+      overlay: {page: 3, x: 421, y: 644.2, w: 121} }
+  - { line: "33", label: "Taxable lump-sum distributions not included in federal AGI", type: money,
+      overlay: {page: 3, x: 421, y: 624.5, w: 121} }
+  - { line: "34", label: "Beneficiary's share of CT fiduciary adjustment (only if > 0)", type: money,
+      overlay: {page: 3, x: 421, y: 609.3, w: 121} }
+  - { line: "35", label: "Loss on sale of Connecticut state/local government bonds", type: money,
+      overlay: {page: 3, x: 421, y: 594.1, w: 121} }
+  - { line: "36", label: "Section 168(k) federal bonus depreciation deduction this year", type: money,
+      overlay: {page: 3, x: 421, y: 574.2, w: 121} }
+  - { line: "36a", label: "80% of Section 179 federal deduction", type: money,
+      overlay: {page: 3, x: 421, y: 559.1, w: 121} }
+  - { line: "37", label: "Other additions — amount (specify on the form)", type: money,
+      overlay: {page: 3, x: 421, y: 543.9, w: 121} }
   - { line: "38", label: "Total additions: add Lines 31 through 37 (to Line 2)",
-      type: money, compute: "31 + 32 + 33 + 34 + 35 + 36 + 36a + 37" }
-  - { line: "39", label: "Interest on U.S. government obligations", type: money }
-  - { line: "40", label: "Exempt dividends from qualifying mutual funds (U.S. obligations)", type: money }
-  - { line: "41", label: "Social Security benefit adjustment (worksheet)", type: money }
-  - { line: "42", label: "Refunds of state and local income taxes", type: money }
-  - { line: "43", label: "Tier 1/Tier 2 railroad retirement benefits and supplemental annuities", type: money }
-  - { line: "44", label: "Military retirement pay", type: money }
-  - { line: "45", label: "50% of Connecticut Teachers' Retirement System income", type: money }
-  - { line: "46", label: "Beneficiary's share of CT fiduciary adjustment (only if < 0)", type: money }
-  - { line: "47", label: "Gain on sale of Connecticut state/local government bonds", type: money }
-  - { line: "48", label: "CHET contributions made in 2023 (or excess carryforward)", type: money }
-  - { line: "48.account", label: "CHET account number (no spaces or dashes)", type: text }
-  - { line: "48a", label: "25% of Sec. 168(k) bonus depreciation added back in preceding 4 years", type: money }
-  - { line: "48b", label: "Pension or annuity income subtraction", type: money }
-  - { line: "48c", label: "Ch. 420f/420h licensee business expenses not claimed federally", type: money }
-  - { line: "49", label: "Other subtractions — amount (no out-of-state income; specify on the form)", type: money }
+      type: money, compute: "31 + 32 + 33 + 34 + 35 + 36 + 36a + 37",
+      overlay: {page: 3, x: 421, y: 528.7, w: 121} }
+  - { line: "39", label: "Interest on U.S. government obligations", type: money,
+      overlay: {page: 3, x: 421, y: 513.5, w: 121} }
+  - { line: "40", label: "Exempt dividends from qualifying mutual funds (U.S. obligations)", type: money,
+      overlay: {page: 3, x: 421, y: 498.3, w: 121} }
+  - { line: "41", label: "Social Security benefit adjustment (worksheet)", type: money,
+      overlay: {page: 3, x: 421, y: 483.3, w: 121} }
+  - { line: "42", label: "Refunds of state and local income taxes", type: money,
+      overlay: {page: 3, x: 421, y: 468.1, w: 121} }
+  - { line: "43", label: "Tier 1/Tier 2 railroad retirement benefits and supplemental annuities", type: money,
+      overlay: {page: 3, x: 421, y: 452.9, w: 121} }
+  - { line: "44", label: "Military retirement pay", type: money,
+      overlay: {page: 3, x: 421, y: 437.7, w: 121} }
+  - { line: "45", label: "50% of Connecticut Teachers' Retirement System income", type: money,
+      overlay: {page: 3, x: 421, y: 422.4, w: 121} }
+  - { line: "46", label: "Beneficiary's share of CT fiduciary adjustment (only if < 0)", type: money,
+      overlay: {page: 3, x: 421, y: 407.3, w: 121} }
+  - { line: "47", label: "Gain on sale of Connecticut state/local government bonds", type: money,
+      overlay: {page: 3, x: 421, y: 392.2, w: 121} }
+  - { line: "48", label: "CHET contributions made in 2023 (or excess carryforward)", type: money,
+      overlay: {page: 3, x: 421, y: 372.6, w: 121} }
+  - { line: "48.account", label: "CHET account number (no spaces or dashes)", type: text,
+      overlay: {page: 3, x: 161, y: 360.5, w: 235.5} }
+  - { line: "48a", label: "25% of Sec. 168(k) bonus depreciation added back in preceding 4 years", type: money,
+      overlay: {page: 3, x: 421, y: 340.5, w: 121} }
+  - { line: "48b", label: "Pension or annuity income subtraction", type: money,
+      overlay: {page: 3, x: 421, y: 325.3, w: 121} }
+  - { line: "48c", label: "Ch. 420f/420h licensee business expenses not claimed federally", type: money,
+      overlay: {page: 3, x: 421, y: 310, w: 121} }
+  - { line: "49", label: "Other subtractions — amount (no out-of-state income; specify on the form)", type: money,
+      overlay: {page: 3, x: 421, y: 294.8, w: 121} }
   - { line: "50", label: "Total subtractions: add Lines 39 through 49 (to Line 4)",
-      type: money, compute: "39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 48a + 48b + 48c + 49" }
+      type: money, compute: "39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 48a + 48b + 48c + 49",
+      overlay: {page: 3, x: 421, y: 278, w: 121} }
   # ---- Schedule 2 — credit for taxes paid to qualifying jurisdictions --------
-  - { line: "51", label: "Modified Connecticut adjusted gross income", type: money }
-  - { line: "52a", label: "Column A — qualifying jurisdiction name and two-letter code", type: text }
-  - { line: "52b", label: "Column B — qualifying jurisdiction name and two-letter code", type: text }
-  - { line: "53a", label: "Column A — non-CT income included on Line 51 (Schedule 2 Worksheet)", type: money }
-  - { line: "53b", label: "Column B — non-CT income included on Line 51", type: money }
+  - { line: "51", label: "Modified Connecticut adjusted gross income", type: money,
+      overlay: {page: 3, x: 387.7, y: 228.7, w: 81.2} }
+  - { line: "52a", label: "Column A — qualifying jurisdiction name", type: text,
+      overlay: {page: 3, x: 324.6, y: 189.7, w: 59.1} }
+  - { line: "52a.code", label: "Column A — qualifying jurisdiction two-letter code (its own box)", type: text,
+      overlay: {page: 3, x: 401.1, y: 189.7, w: 16.2} }
+  - { line: "52b", label: "Column B — qualifying jurisdiction name", type: text,
+      overlay: {page: 3, x: 442.3, y: 189.7, w: 59.2} }
+  - { line: "52b.code", label: "Column B — qualifying jurisdiction two-letter code (its own box)", type: text,
+      overlay: {page: 3, x: 516.8, y: 189.7, w: 16.2} }
+  - { line: "53a", label: "Column A — non-CT income included on Line 51 (Schedule 2 Worksheet)", type: money,
+      overlay: {page: 3, x: 324.2, y: 161.3, w: 81.2} }
+  - { line: "53b", label: "Column B — non-CT income included on Line 51", type: money,
+      overlay: {page: 3, x: 442, y: 161.3, w: 81.2} }
   - { line: "54a", label: "Column A — Line 53 / Line 51 (decimal, max 1.0000)", type: text,
-      note: "Decimal ratio to 4 places — compute manually: Line 53 Column A divided by Line 51." }
+      note: "Decimal ratio to 4 places — compute manually: Line 53 Column A divided by Line 51. Enter it as a decimal (e.g. 0.4523); the form pre-prints the point, so the integer digit and the four decimals are stamped in their cells.",
+      overlay: {page: 3, x: 322.27, y: 142.4, w: 85.18, cells: [323.93, 345.49, 361.48, 377.47, 393.46], cell_w: 12.23} }
   - { line: "54b", label: "Column B — Line 53 / Line 51 (decimal, max 1.0000)", type: text,
-      note: "Decimal ratio to 4 places." }
-  - { line: "55a", label: "Column A — income tax liability: Line 6 minus Line 11", type: money, compute: "6 - 11" }
-  - { line: "55b", label: "Column B — income tax liability: Line 6 minus Line 11", type: money, compute: "6 - 11" }
+      note: "Decimal ratio to 4 places, entered as for 54a (e.g. 0.4523).",
+      overlay: {page: 3, x: 440, y: 142.4, w: 85.18, cells: [441.93, 463.49, 479.48, 495.47, 511.46], cell_w: 12.23} }
+  - { line: "55a", label: "Column A — income tax liability: Line 6 minus Line 11", type: money, compute: "6 - 11",
+      overlay: {page: 3, x: 324.3, y: 121.9, w: 81.2} }
+  - { line: "55b", label: "Column B — income tax liability: Line 6 minus Line 11", type: money, compute: "6 - 11",
+      overlay: {page: 3, x: 442.1, y: 121.9, w: 81.2} }
   - { line: "56a", label: "Column A — Line 54 x Line 55", type: money,
-      note: "Multiply the Column A decimal by Line 55 (manual: decimal x money)." }
+      note: "Multiply the Column A decimal by Line 55 (manual: decimal x money).",
+      overlay: {page: 3, x: 324.3, y: 104.8, w: 81.2} }
   - { line: "56b", label: "Column B — Line 54 x Line 55", type: money,
-      note: "Multiply the Column B decimal by Line 55 (manual)." }
-  - { line: "57a", label: "Column A — income tax paid to the qualifying jurisdiction", type: money }
-  - { line: "57b", label: "Column B — income tax paid to the qualifying jurisdiction", type: money }
-  - { line: "58a", label: "Column A — lesser of Line 56 or Line 57", type: money, compute: "min(56a, 57a)" }
-  - { line: "58b", label: "Column B — lesser of Line 56 or Line 57", type: money, compute: "min(56b, 57b)" }
-  - { line: "59", label: "Total credit: add Line 58, all columns (to Line 7)", type: money, compute: "58a + 58b" }
+      note: "Multiply the Column B decimal by Line 55 (manual).",
+      overlay: {page: 3, x: 442.1, y: 104.8, w: 81.2} }
+  - { line: "57a", label: "Column A — income tax paid to the qualifying jurisdiction", type: money,
+      overlay: {page: 3, x: 324.2, y: 87.4, w: 81.2} }
+  - { line: "57b", label: "Column B — income tax paid to the qualifying jurisdiction", type: money,
+      overlay: {page: 3, x: 442, y: 87.4, w: 81.2} }
+  - { line: "58a", label: "Column A — lesser of Line 56 or Line 57", type: money, compute: "min(56a, 57a)",
+      overlay: {page: 3, x: 324.2, y: 70.3, w: 81.2} }
+  - { line: "58b", label: "Column B — lesser of Line 56 or Line 57", type: money, compute: "min(56b, 57b)",
+      overlay: {page: 3, x: 442, y: 70.3, w: 81.2} }
+  - { line: "59", label: "Total credit: add Line 58, all columns (to Line 7)", type: money, compute: "58a + 58b",
+      overlay: {page: 3, x: 387.7, y: 50.7, w: 81.2} }
   # ---- Schedule 3 — property tax credit (page 4) ------------------------------
-  - { line: "60.town", label: "Primary residence — CT tax town or district", type: text }
-  - { line: "60.description", label: "Primary residence — street address", type: text }
-  - { line: "60.dates", label: "Primary residence — date(s) paid (MMDDYYYY)", type: text }
-  - { line: "60.amount", label: "Primary residence — amount paid", type: money }
-  - { line: "61.town", label: "Auto 1 — CT tax town or district", type: text }
-  - { line: "61.description", label: "Auto 1 — year, make, and model", type: text }
-  - { line: "61.dates", label: "Auto 1 — date(s) paid (MMDDYYYY)", type: text }
-  - { line: "61.amount", label: "Auto 1 — amount paid", type: money }
-  - { line: "62.town", label: "Auto 2 (MFJ/QSS only) — CT tax town or district", type: text }
-  - { line: "62.description", label: "Auto 2 — year, make, and model", type: text }
-  - { line: "62.dates", label: "Auto 2 — date(s) paid (MMDDYYYY)", type: text }
-  - { line: "62.amount", label: "Auto 2 — amount paid", type: money }
+  - { line: "60.town", label: "Primary residence — CT tax town or district", type: text,
+      overlay: {page: 4, x: 129.1, y: 644.2, w: 54.7} }
+  - { line: "60.description", label: "Primary residence — street address", type: text,
+      overlay: {page: 4, x: 198.2, y: 644.2, w: 146.2} }
+  - { line: "60.date_1", label: "Primary residence — date paid (MMDDYYYY; the first of the two printed date boxes)", type: text,
+      overlay: {page: 4, x: 356.57, y: 652.2, w: 97.68, cells: [358.37, 368.9, 385.88, 396.79, 414.56, 424.23, 433.92, 443.62], cell_w: 9} }
+  - { line: "60.date_2", label: "Primary residence — second date paid, if paid in two installments (MMDDYYYY)", type: text,
+      overlay: {page: 4, x: 356.64, y: 637.9, w: 97.68, cells: [358.44, 368.97, 385.95, 396.86, 414.63, 424.3, 433.99, 443.69], cell_w: 9} }
+  - { line: "60.amount", label: "Primary residence — amount paid", type: money,
+      overlay: {page: 4, x: 475.8, y: 644.2, w: 68.4} }
+  - { line: "61.town", label: "Auto 1 — CT tax town or district", type: text,
+      overlay: {page: 4, x: 129.1, y: 613.9, w: 54.7} }
+  - { line: "61.description", label: "Auto 1 — year, make, and model", type: text,
+      overlay: {page: 4, x: 198.2, y: 613.9, w: 146.2} }
+  - { line: "61.date_1", label: "Auto 1 — date paid (MMDDYYYY; the first of the two printed date boxes)", type: text,
+      overlay: {page: 4, x: 356.64, y: 621.9, w: 97.68, cells: [358.44, 368.97, 385.95, 396.86, 414.63, 424.3, 433.99, 443.69], cell_w: 9} }
+  - { line: "61.date_2", label: "Auto 1 — second date paid, if paid in two installments (MMDDYYYY)", type: text,
+      overlay: {page: 4, x: 356.64, y: 607.6, w: 97.68, cells: [358.44, 368.97, 385.95, 396.86, 414.63, 424.3, 433.99, 443.69], cell_w: 9} }
+  - { line: "61.amount", label: "Auto 1 — amount paid", type: money,
+      overlay: {page: 4, x: 475.8, y: 613.9, w: 68.4} }
+  - { line: "62.town", label: "Auto 2 (MFJ/QSS only) — CT tax town or district", type: text,
+      overlay: {page: 4, x: 129.1, y: 583.6, w: 54.7} }
+  - { line: "62.description", label: "Auto 2 — year, make, and model", type: text,
+      overlay: {page: 4, x: 198.2, y: 583.6, w: 146.2} }
+  - { line: "62.date_1", label: "Auto 2 — date paid (MMDDYYYY; the first of the two printed date boxes)", type: text,
+      overlay: {page: 4, x: 356.64, y: 591.6, w: 97.68, cells: [358.44, 368.97, 385.95, 396.86, 414.63, 424.3, 433.99, 443.69], cell_w: 9} }
+  - { line: "62.date_2", label: "Auto 2 — second date paid, if paid in two installments (MMDDYYYY)", type: text,
+      overlay: {page: 4, x: 356.57, y: 577.5, w: 97.68, cells: [358.37, 368.9, 385.88, 396.79, 414.56, 424.23, 433.92, 443.62], cell_w: 9} }
+  - { line: "62.amount", label: "Auto 2 — amount paid", type: money,
+      overlay: {page: 4, x: 475.8, y: 583.6, w: 68.4} }
   - { line: "63", label: "Total property tax paid: add Lines 60, 61, and 62", type: money,
-      note: "Add the three Amount Paid entries (60/61/62)." }
+      note: "Add the three Amount Paid entries (60/61/62).",
+      overlay: {page: 4, x: 475.8, y: 554, w: 68.4} }
   - { line: "65", label: "Lesser of Line 63 or the preprinted $300 maximum (Line 64)", type: money,
-      note: "Line 64 is PREPRINTED $300 on the form (no entry). Enter min(Line 63, 300)." }
+      note: "Line 64 is PREPRINTED $300 on the form (no entry). Enter min(Line 63, 300).",
+      overlay: {page: 4, x: 485.5, y: 518.8, w: 58.7} }
   - { line: "66", label: "Decimal from the Property Tax Credit Table for your status and CT AGI", type: text,
-      note: "Table lookup (phase-out decimal); if zero, carry Line 65 to Line 68." }
+      note: "Table lookup (phase-out decimal); if zero, carry Line 65 to Line 68. Enter it as the table prints it (e.g. .15): the form pre-prints the point, so only the two digits after it are stamped — a leading 0 ('0.15') has no cell and is refused by a warning.",
+      overlay: {page: 4, x: 498.76, y: 488.5, w: 46.55, cells: [516.6, 521.9], cell_w: 5.3} }
   - { line: "67", label: "Line 65 x Line 66", type: money,
-      note: "Multiply Line 65 by the Line 66 decimal (manual: decimal x money)." }
-  - { line: "68", label: "Line 65 minus Line 67 (to Line 11; attach Schedule 3)", type: money, compute: "65 - 67" }
+      note: "Multiply Line 65 by the Line 66 decimal (manual: decimal x money).",
+      overlay: {page: 4, x: 485.5, y: 472.7, w: 58.7} }
+  - { line: "68", label: "Line 65 minus Line 67 (to Line 11; attach Schedule 3)", type: money, compute: "65 - 67",
+      overlay: {page: 4, x: 485.5, y: 444.6, w: 58.7} }
   # ---- Schedule 4 — individual use tax ----------------------------------------
-  - { line: "69a", label: "Use tax due at 1% (worksheet Section A, Column 7)", type: money }
-  - { line: "69b", label: "Use tax due at 6.35% (worksheet Section B, Column 7)", type: money }
-  - { line: "69c", label: "Use tax due at 7.75% (worksheet Section C, Column 7)", type: money }
-  - { line: "69d", label: "Use tax due at 2.99% (worksheet Section D, Column 7)", type: money }
+  - { line: "69a", label: "Use tax due at 1% (worksheet Section A, Column 7)", type: money,
+      overlay: {page: 4, x: 479.1, y: 378.2, w: 65} }
+  - { line: "69b", label: "Use tax due at 6.35% (worksheet Section B, Column 7)", type: money,
+      overlay: {page: 4, x: 479, y: 361.2, w: 65} }
+  - { line: "69c", label: "Use tax due at 7.75% (worksheet Section C, Column 7)", type: money,
+      overlay: {page: 4, x: 479, y: 344.2, w: 65} }
+  - { line: "69d", label: "Use tax due at 2.99% (worksheet Section D, Column 7)", type: money,
+      overlay: {page: 4, x: 479, y: 327.2, w: 65} }
   - { line: "69", label: "Individual use tax: add Lines 69a-69d (enter 0 if none; to Line 15)",
-      type: money, compute: "69a + 69b + 69c + 69d" }
+      type: money, compute: "69a + 69b + 69c + 69d",
+      overlay: {page: 4, x: 479, y: 301.1, w: 65} }
   # ---- Schedule 5 — contributions to designated charities ---------------------
-  - { line: "70a", label: "AIDS Research", type: money }
-  - { line: "70b", label: "Organ Transplant", type: money }
-  - { line: "70c", label: "Endangered Species/Wildlife", type: money }
-  - { line: "70d", label: "Breast Cancer Research", type: money }
-  - { line: "70e", label: "Safety Net Services", type: money }
-  - { line: "70f", label: "Military Relief", type: money }
-  - { line: "70g", label: "CHET Baby Scholars", type: money }
-  - { line: "70h", label: "Mental Health Community Investment Account", type: money }
+  - { line: "70a", label: "AIDS Research", type: money,
+      overlay: {page: 4, x: 479, y: 273.6, w: 65} }
+  - { line: "70b", label: "Organ Transplant", type: money,
+      overlay: {page: 4, x: 479, y: 255.9, w: 65} }
+  - { line: "70c", label: "Endangered Species/Wildlife", type: money,
+      overlay: {page: 4, x: 479, y: 238.2, w: 65} }
+  - { line: "70d", label: "Breast Cancer Research", type: money,
+      overlay: {page: 4, x: 479, y: 220.5, w: 65} }
+  - { line: "70e", label: "Safety Net Services", type: money,
+      overlay: {page: 4, x: 479, y: 202.8, w: 65} }
+  - { line: "70f", label: "Military Relief", type: money,
+      overlay: {page: 4, x: 479, y: 185.2, w: 65} }
+  - { line: "70g", label: "CHET Baby Scholars", type: money,
+      overlay: {page: 4, x: 479, y: 167.5, w: 65} }
+  - { line: "70h", label: "Mental Health Community Investment Account", type: money,
+      overlay: {page: 4, x: 479, y: 149.8, w: 65} }
   - { line: "70", label: "Total contributions: add Lines 70a-70h (to Line 24a)",
-      type: money, compute: "70a + 70b + 70c + 70d + 70e + 70f + 70g + 70h" }
+      type: money, compute: "70a + 70b + 70c + 70d + 70e + 70f + 70g + 70h",
+      overlay: {page: 4, x: 479, y: 131.8, w: 65} }
 mailing:
   with_payment: "Department of Revenue Services, PO Box 2977, Hartford CT 06104-2977 (check payable to Commissioner of Revenue Services; write your SSN(s) and '2023 Form CT-1040' on it; clip, don't staple)"
   no_payment: "Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976"

@@ -88,7 +88,7 @@ _BASE_FONT = "/Helvetica"
 _ENCODING = "/WinAnsiEncoding"
 _CODEC = "cp1252"
 
-StampAlign = Literal["left", "right", "center", "comb"]
+StampAlign = Literal["left", "right", "center", "comb", "cells"]
 
 # Helvetica advance widths in 1/1000 em for printable ASCII — copied from the Adobe Core
 # 14 AFM (Helvetica.afm) as shipped in pypdf 6.13's ``_codecs/core_font_metrics.py``, and
@@ -335,13 +335,19 @@ class _Segment(BaseModel):
 
 
 _COMB_SEPARATORS = re.compile(r"[\s\-]")
+# Uneven cells (JS4c) sit around the form's OWN separators — the printed dashes of an SSN, the
+# dashes of an MM-DD-YYYY date, a pre-printed decimal point — so every separator is dropped.
+_CELL_SEPARATORS = re.compile(r"[\s\-/.]")
 
 
-def _stamp_text(ln: HandFillLine, value: str) -> str:
-    """The characters that go on the page for a worksheet value."""
+def _stamp_text(ln: HandFillLine, value: str, box: OverlayBox | None = None) -> str:
+    """The characters that go on the page for a worksheet value, in ``box`` (default: the line's first)."""
     if ln.type == "checkbox":
         return "X"
-    if ln.overlay is not None and ln.overlay.comb is not None:
+    box = box if box is not None else (ln.boxes[0] if ln.boxes else None)
+    if box is not None and box.cells is not None:
+        return _CELL_SEPARATORS.sub("", value)
+    if box is not None and box.comb is not None:
         # A comb has one cell per character and no cell for a separator: writing the
         # dash of '123-45-6789' into a digit cell is the P-001 clipping class.
         return _COMB_SEPARATORS.sub("", value)
@@ -358,8 +364,28 @@ def _layout(
     money_align = defaults.money_align if defaults else DEFAULT_MONEY_ALIGN
     floor = max(MIN_FONT_SIZE, pack.min_font_size or 0.0)  # the agency's published minimum, when it sets one
     warnings: list[str] = []
-    text = _stamp_text(ln, value)
+    text = _stamp_text(ln, value, box)
     who = f"line '{ln.line}' ({ln.label!r}) on page {box.page}"
+
+    if box.cells is not None:
+        cells, cw = box.cells, box.cell_w
+        if len(text) > len(cells):
+            warnings.append(
+                f"{who}: {redact(text)!r} has {len(text)} characters but the box has {len(cells)} cells — the extra "
+                f"characters are stamped past the last cell, NOT clipped; check the value's format against the "
+                f"printed cells"
+            )
+        widest = max((text_width(ch, size) for ch in text), default=0.0)
+        if widest > cw:
+            shrunk = max(floor, size * cw / widest)
+            warnings.append(f"{who}: a {size:g}pt glyph is wider than the {cw:g}pt cell — font shrunk to {shrunk:.1f}pt")
+            size = shrunk
+        lefts = list(cells) + [cells[-1] + cw * (k + 1) for k in range(max(0, len(text) - len(cells)))]
+        segments = [
+            _Segment(x=lefts[i] + (cw - text_width(ch, size)) / 2, y=box.y, size=size, text=ch)
+            for i, ch in enumerate(text)
+        ]
+        return segments, size, "cells", warnings
 
     if box.comb is not None:
         pitch = box.comb
@@ -429,7 +455,7 @@ def efile_only_refusal(pack: HandFillPack) -> str:
 
 
 def _check_pages(pack: HandFillPack, n_pages: int, blank_name: str) -> None:
-    bad = [(ln.line, ln.overlay.page) for ln in pack.overlay_lines if ln.overlay is not None and ln.overlay.page > n_pages]
+    bad = [(ln.line, box.page) for ln in pack.overlay_lines for box in ln.boxes if box.page > n_pages]
     if bad:
         shown = ", ".join(f"'{line}' -> page {page}" for line, page in bad[:8])
         raise ValueError(
@@ -519,24 +545,25 @@ def stamp_overlay(
         if wl.value == "":
             blank_lines.append(wl.line)
             continue
-        box = ln.overlay
-        if box is None:
+        if not ln.boxes:
             hand_written.append(wl)
             continue
-        segments, size, align, warns = _layout(ln, box, pack, wl.value)
-        warnings.extend(warns)
-        chunk = per_page.setdefault(box.page, bytearray())
-        for seg in segments:
-            op, enc_warning = _text_op(seg.x, seg.y, seg.size, seg.text)
-            if enc_warning:
-                warnings.append(f"line '{ln.line}' on page {box.page}: {enc_warning}")
-            chunk += op
-        stamped.append(
-            StampedLine(
-                line=wl.line, label=wl.label, type=wl.type, value=_stamp_text(ln, wl.value), source=wl.source,
-                page=box.page, x=round(segments[0].x, 3), y=round(box.y, 3), font_size=round(size, 3), align=align,
+        for box in ln.boxes:  # one placement per box: a header SSN repeats on every page
+            segments, size, align, warns = _layout(ln, box, pack, wl.value)
+            warnings.extend(warns)
+            chunk = per_page.setdefault(box.page, bytearray())
+            for seg in segments:
+                op, enc_warning = _text_op(seg.x, seg.y, seg.size, seg.text)
+                if enc_warning:
+                    warnings.append(f"line '{ln.line}' on page {box.page}: {enc_warning}")
+                chunk += op
+            stamped.append(
+                StampedLine(
+                    line=wl.line, label=wl.label, type=wl.type, value=_stamp_text(ln, wl.value, box),
+                    source=wl.source, page=box.page, x=round(segments[0].x, 3), y=round(box.y, 3),
+                    font_size=round(size, 3), align=align,
+                )
             )
-        )
 
     for page_no, content in sorted(per_page.items()):
         base = writer.pages[page_no - 1]
@@ -609,6 +636,59 @@ def _in_box(glyphs: Sequence[tuple[float, float, float, str]], box: OverlayBox, 
     return "".join(ch for _, ch in sorted((x, ch) for x, y, _, ch in glyphs if left <= x <= right and bottom <= y <= top))
 
 
+def _check_box(ln, wl, box: OverlayBox, pack: HandFillPack, doc, n_pages: int, glyphs_by_page: dict,
+               default_size: float, path: Path) -> OverlayCheck:
+    """The OVERLAY verdict for ONE placement of one worksheet line (see :func:`verify_overlay`)."""
+    if box.page > n_pages:
+        return OverlayCheck(
+            line=wl.line, label=wl.label, value=wl.value, page=box.page, status=FAIL,
+            detail=f"line '{wl.line}' is placed on page {box.page} but {path.name} has {n_pages} page(s) — "
+                   f"fix the pack's overlay.page or re-fetch the blank",
+        )
+    if box.page not in glyphs_by_page:
+        tp = doc[box.page - 1].get_textpage()
+        try:
+            glyphs_by_page[box.page] = _stamped_glyphs(tp)
+        finally:
+            tp.close()
+    glyphs = glyphs_by_page[box.page]
+    if wl.value == "":
+        found = _in_box(glyphs, box, box.font_size or default_size)
+        where = f"[{box.x:.1f}, {box.y:.1f}] w={box.w:g} on page {box.page}"
+        return OverlayCheck(
+            line=wl.line, label=wl.label, value="", page=box.page, status=FAIL if found else PASS,
+            detail=(f"line '{wl.line}' is blank but its box {where} holds stamped {redact(found)!r} — a stale "
+                    f"or misplaced stamp; re-run fill_form from these values and verify that output"
+                    if found else f"line '{wl.line}' is blank and its box {where} holds no stamped glyphs"),
+        )
+    expected = _WS.sub("", _stamp_text(ln, wl.value, box))
+    _, size, _, _ = _layout(ln, box, pack, wl.value)
+    found = _in_box(glyphs, box, size)
+    where = f"box [{box.x:.1f}, {box.y:.1f}] w={box.w:g} on page {box.page}"
+    if found == expected:
+        return OverlayCheck(
+            line=wl.line, label=wl.label, value=expected, page=box.page, status=PASS,
+            detail=f"line '{wl.line}': {redact(expected)!r} is exactly what is stamped in its {where}",
+        )
+    if not found:
+        elsewhere = expected in "".join(ch for _, _, _, ch in glyphs)
+        hint = (
+            "the value IS stamped elsewhere on the page — the stamp or the pack's coordinates moved; re-run "
+            "fill_form from the current pack"
+            if elsewhere
+            else "nothing is stamped there — this PDF was not stamped from these values (or the blank was "
+            "re-rendered without the overlay); re-run fill_form and verify that output"
+        )
+    else:
+        hint = ("the box holds a DIFFERENT stamped value — the PDF was stamped from other values, or a "
+                "neighbouring stamp spills into this box; re-run fill_form from these values")
+    return OverlayCheck(
+        line=wl.line, label=wl.label, value=expected, page=box.page, status=FAIL,
+        detail=f"line '{wl.line}': expected exactly {redact(expected)!r} in its {where}, found stamped "
+               f"{redact(found)!r}; {hint}",
+    )
+
+
 def verify_overlay(
     pack: HandFillPack,
     pdf_path: str | Path,
@@ -660,63 +740,12 @@ def verify_overlay(
         glyphs_by_page: dict[int, list[tuple[float, float, float, str]]] = {}
         for wl in worksheet.lines:
             ln = by_line[wl.line]
-            box = ln.overlay
-            if box is None:
+            if not ln.boxes:
                 if wl.value != "":
                     hand_written.append(wl)
                 continue
-            if box.page > n_pages:
-                checks.append(OverlayCheck(
-                    line=wl.line, label=wl.label, value=wl.value, page=box.page, status=FAIL,
-                    detail=f"line '{wl.line}' is placed on page {box.page} but {path.name} has {n_pages} page(s) — "
-                           f"fix the pack's overlay.page or re-fetch the blank",
-                ))
-                continue
-            if box.page not in glyphs_by_page:
-                tp = doc[box.page - 1].get_textpage()
-                try:
-                    glyphs_by_page[box.page] = _stamped_glyphs(tp)
-                finally:
-                    tp.close()
-            glyphs = glyphs_by_page[box.page]
-            if wl.value == "":
-                size = box.font_size or default_size
-                found = _in_box(glyphs, box, size)
-                where = f"[{box.x:.1f}, {box.y:.1f}] w={box.w:g} on page {box.page}"
-                checks.append(OverlayCheck(
-                    line=wl.line, label=wl.label, value="", page=box.page, status=FAIL if found else PASS,
-                    detail=(f"line '{wl.line}' is blank but its box {where} holds stamped {redact(found)!r} — a stale "
-                            f"or misplaced stamp; re-run fill_form from these values and verify that output"
-                            if found else f"line '{wl.line}' is blank and its box {where} holds no stamped glyphs"),
-                ))
-                continue
-            expected = _WS.sub("", _stamp_text(ln, wl.value))
-            _, size, _, _ = _layout(ln, box, pack, wl.value)
-            found = _in_box(glyphs, box, size)
-            where = f"box [{box.x:.1f}, {box.y:.1f}] w={box.w:g} on page {box.page}"
-            if found == expected:
-                checks.append(OverlayCheck(
-                    line=wl.line, label=wl.label, value=expected, page=box.page, status=PASS,
-                    detail=f"line '{wl.line}': {redact(expected)!r} is exactly what is stamped in its {where}",
-                ))
-                continue
-            if not found:
-                elsewhere = expected in "".join(ch for _, _, _, ch in glyphs)
-                hint = (
-                    "the value IS stamped elsewhere on the page — the stamp or the pack's coordinates moved; re-run "
-                    "fill_form from the current pack"
-                    if elsewhere
-                    else "nothing is stamped there — this PDF was not stamped from these values (or the blank was "
-                    "re-rendered without the overlay); re-run fill_form and verify that output"
-                )
-            else:
-                hint = ("the box holds a DIFFERENT stamped value — the PDF was stamped from other values, or a "
-                        "neighbouring stamp spills into this box; re-run fill_form from these values")
-            checks.append(OverlayCheck(
-                line=wl.line, label=wl.label, value=expected, page=box.page, status=FAIL,
-                detail=f"line '{wl.line}': expected exactly {redact(expected)!r} in its {where}, found stamped "
-                       f"{redact(found)!r}; {hint}",
-            ))
+            for box in ln.boxes:  # every placement is checked: a repeated header SSN must be in each
+                checks.append(_check_box(ln, wl, box, pack, doc, n_pages, glyphs_by_page, default_size, path))
     finally:
         doc.close()
 

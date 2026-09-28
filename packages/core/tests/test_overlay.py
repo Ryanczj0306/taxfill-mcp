@@ -272,3 +272,53 @@ def test_js4b_every_recorded_printing_rule_is_verbatim_in_its_source(state):
                 raise
             texts[rule.url] = _normalised_text(pdf)
         assert re.sub(r"\s+", " ", rule.quote) in texts[rule.url], (state, rule.quote)
+
+
+# ── Phase J JS4c: uneven cells and repeated placements ───────────────────────
+
+
+def test_js4c_cells_centre_each_character_in_its_own_uneven_cell_and_drop_separators(tmp_path):
+    blank = _blank(tmp_path / "blank.pdf")
+    # an SSN printed 3-2-4 around pre-printed dashes: 14 pt pitch inside a group, 24 pt across a dash
+    lefts = [100, 114, 128, 152, 166, 190, 204, 218, 232]
+    pack = _pack(lines=[{"line": "ssn", "label": "SSN", "type": "text",
+                         "overlay": {"page": 1, "x": 98, "y": 500, "w": 148, "cells": lefts, "cell_w": 11}}])
+    result = stamp_overlay(blank, pack, {"ssn": "123-45-6789"}, tmp_path / "o.pdf")
+    (s,) = result.stamped_lines
+    assert s.value == "123456789" and s.align == "cells" and not result.warnings
+    assert s.x == pytest.approx(100 + (11 - text_width("1", 9)) / 2, abs=1e-3)
+    assert verify_overlay(pack, Path(result.out_path), {"ssn": "123-45-6789"}).ok
+    # a decimal around a pre-printed point: the point is the form's, only the digits are stamped
+    dec = _pack(lines=[{"line": "d", "label": "decimal", "type": "text",
+                        "overlay": {"page": 1, "x": 98, "y": 480, "w": 90, "cells": [100, 120, 135, 150, 165], "cell_w": 12}}])
+    r2 = stamp_overlay(blank, dec, {"d": "0.4523"}, tmp_path / "d.pdf")
+    assert r2.stamped_lines[0].value == "04523" and not r2.warnings
+    r3 = stamp_overlay(blank, dec, {"d": "10.45235"}, tmp_path / "e.pdf")   # 7 characters for 5 cells
+    assert "has 7 characters but the box has 5 cells" in "\n".join(r3.warnings)
+
+
+def test_js4c_cells_are_validated(tmp_path):
+    base = {"page": 1, "x": 98, "y": 500, "w": 148}
+    for bad, msg in [({"cells": [100, 114]}, "needs cell_w"), ({"cell_w": 11}, "without cells"),
+                     ({"cells": [100, 114], "cell_w": 11, "comb": 14}, "exclusive"),
+                     ({"cells": [114, 100], "cell_w": 11}, "strictly increasing"),
+                     ({"cells": [100, 240], "cell_w": 11}, "must lie inside")]:
+        with pytest.raises(ValueError, match=msg):
+            _pack(lines=[{"line": "ssn", "label": "SSN", "type": "text", "overlay": {**base, **bad}}])
+
+
+def test_js4c_a_value_printed_in_several_places_is_stamped_and_verified_in_each(tmp_path):
+    blank = _blank(tmp_path / "blank.pdf")
+    boxes = [{"page": 1, "x": 200, "y": ROW["name"], "w": 150}, {"page": 2, "x": 300, "y": 740, "w": 150}]
+    both = _pack(lines=[{"line": "name", "label": "Name", "type": "text", "overlay": boxes}])
+    out = Path(stamp_overlay(blank, both, {"name": "Tess Q"}, tmp_path / "o.pdf").out_path)
+    report = verify_overlay(both, out, {"name": "Tess Q"})
+    assert report.ok and [c.page for c in report.checks] == [1, 2]
+    # a PDF stamped from the first placement only: the page-2 header copy is missing, and that FAILS
+    first = _pack(lines=[{"line": "name", "label": "Name", "type": "text", "overlay": boxes[0]}])
+    partial = Path(stamp_overlay(blank, first, {"name": "Tess Q"}, tmp_path / "p.pdf").out_path)
+    checks = verify_overlay(both, partial, {"name": "Tess Q"}).checks
+    assert [(c.page, c.status) for c in checks] == [(1, "PASS"), (2, "FAIL")]
+    with pytest.raises(ValueError, match="has 2 page"):
+        stamp_overlay(blank, _pack(lines=[{"line": "name", "label": "Name", "type": "text",
+                                           "overlay": [boxes[0], {**boxes[1], "page": 3}]}]), {"name": "x"}, tmp_path / "q.pdf")

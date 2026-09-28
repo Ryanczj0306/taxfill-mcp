@@ -82,9 +82,9 @@ def test_fill_form_stamps_and_verify_form_gives_the_overlay_verdict(overlay_pack
 
 
 def test_a_hand_fill_pack_without_coordinates_points_at_the_worksheet(tmp_path):
-    # The shipped CT-1040 2023 manifest has no overlay blocks yet (JS4c authors them).
+    # The shipped HI N-11 2023 manifest has no overlay blocks yet (JS4d authors them; CT got its own in JS4c).
     with pytest.raises(ValueError, match=r"no overlay coordinates.*hand_fill_worksheet"):
-        server.fill_form("ct1040", 2023, {}, str(tmp_path / "o.pdf"), jurisdiction="states/ct")
+        server.fill_form("n11", 2023, {}, str(tmp_path / "o.pdf"), jurisdiction="states/hi")
 
 
 def test_taxfill_locate_prints_label_boxes(tmp_path, capsys):
@@ -159,3 +159,20 @@ def test_js4b_efile_only_needs_instructions_and_no_coordinates():
     root = Path(__file__).resolve().parents[3] / "formpacks"
     assert all(load_hand_fill_pack(p).efile_only for p in root.glob("federal/*/fincen114/handfill.yaml"))
     assert not any(load_hand_fill_pack(p).efile_only for p in root.glob("states/*/*/*/handfill.yaml"))
+
+
+@pytest.mark.network
+def test_js4c_the_real_ct1040_stamps_and_verifies_through_the_tools(tmp_path):
+    try:
+        server.fetch_blank("ct1040", 2023, "states/ct")
+    except Exception as exc:  # offline + cold cache
+        pytest.skip(f"cannot fetch blank: {exc}")
+    values = {"identifying_number": "123-45-6789", "name.first": "TESS", "name.last": "TAXPAYER",
+              "filing_status.single": "yes", "1": 52000, "6": 1800, "15": 0, "18a.fein": "12-3456789",
+              "18a.wages": 52000, "18a": 2100, "signature.date": "04012024"}
+    filled = server.fill_form("ct1040", 2023, values, str(tmp_path / "ct.pdf"), jurisdiction="states/ct")
+    assert filled["render_mode"] == "hand_fill_overlay" and not filled["warnings"] and not filled["hand_written_lines"]
+    assert {s["page"] for s in filled["stamped_lines"] if s["line"] == "identifying_number"} == {1, 2, 3, 4}
+    assert any("blue or black ink" in rule for rule in filled["printing_guidance"])
+    report = server.verify_form("ct1040", 2023, filled["out_path"], expected=values, jurisdiction="states/ct")
+    assert report["ok"] and report["sections"]["overlay"]["failed"] == 0
