@@ -4863,3 +4863,63 @@ def test_every_cell_of_the_printed_eic_table(year):
            for (key, mfj), printed in zip(columns, cells)
            if eic_table_amount(Decimal(lo), cfg["by_qualifying_children"][key], mfj, cfg["eic_table"]) != printed]
     assert bad == [], f"{len(bad)} cells differ, e.g. {bad[:5]}"
+
+
+# ── Phase J JT2a: the 2026 Tax Table pass, SALT, the §68 screen, student loan interest, taxable Social Security ──
+
+# Cells of the DRAFT Pub 1040 (2026) Tax Table (Aug 28, 2026) at the row-width edges: (at least, single, MFJ, MFS,
+# HOH). All 8,248 of its cells agreed with the engine on 2026-09-27.
+_JT2A_TAX_TABLE = [
+    (0, 0, 0, 0, 0), (5, 1, 1, 1, 1), (15, 2, 2, 2, 2), (25, 4, 4, 4, 4), (50, 6, 6, 6, 6),
+    (2_975, 299, 299, 299, 299), (3_000, 303, 303, 303, 303), (12_450, 1_249, 1_248, 1_249, 1_248),
+    (24_800, 2_731, 2_483, 2_731, 2_625), (50_400, 5_806, 5_555, 5_806, 5_697),
+    (99_950, 16_707, 11_501, 16_707, 14_896),
+]
+
+
+@pytest.mark.parametrize("row", _JT2A_TAX_TABLE)
+def test_jt2a_the_2026_tax_table_edges(row):
+    lo, *cells = row
+    for status, printed in zip(("single", "married_filing_jointly", "married_filing_separately",
+                                "head_of_household"), cells):
+        assert tax_from_taxable_income(lo, status, 2026).tax == printed, (lo, status)
+
+
+def test_jt2a_the_2026_blocks_and_their_passes():
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    pack = load_knowledge("federal", 2026)
+    assert pack.tax.salt_cap == {**pack.tax.salt_cap, "cap": 40_400, "cap_mfs": 20_200}
+    assert pack.tax.salt_cap["phase_down"]["magi_threshold"] == 505_000
+    lim = pack.tax.itemized_limitation
+    assert (lim["reduction_numerator"], lim["reduction_denominator"], lim["schedule_a_screen_over"]) == (2, 37, 384_350)
+    passes = {b for p in pack.provisional.second_passes for b in p.verified_blocks}
+    assert {"tax_table.row_bands", "taxable_social_security", "salt_cap"} <= passes
+    assert not {"taxable_social_security", "student_loan_interest"} & set(pack.provisional.blocks_deliberately_absent)
+
+
+def test_jt2a_every_prior_year_block_is_present_or_declared_absent(planning_year):
+    # The discipline: a planning pack either carries each block the year before carried, or declares it absent —
+    # the 2026 pack once shipped without salt_cap and said nothing.
+    import yaml  # noqa: PLC0415
+
+    from taxfill_core.datadir import knowledge_dir  # noqa: PLC0415
+
+    base = knowledge_dir() / "federal"
+    prev = yaml.safe_load((base / f"{planning_year - 1}.yaml").read_text(encoding="utf-8"))
+    cur = yaml.safe_load((base / f"{planning_year}.yaml").read_text(encoding="utf-8"))
+    absent = set(cur["provisional"].get("blocks_deliberately_absent", []))
+    skip = {"jurisdiction", "tax_year", "provisional", "effective_law_changes", "form_lines"}
+    missing = [k for k in prev if k not in skip and k not in cur and k not in absent]
+    missing += [f"tax.{k}" for k in prev["tax"] if k not in cur["tax"] and k not in absent]
+    assert missing == [], f"{planning_year} neither carries nor declares absent: {missing}"
+
+
+def test_jt2a_2026_student_loan_interest_and_social_security():
+    assert student_loan_interest_deduction(2_500, 85_000, "single", 2026).deduction == 2_500
+    assert student_loan_interest_deduction(2_500, 92_500, "single", 2026).deduction == 1_250      # halfway
+    assert student_loan_interest_deduction(2_500, 190_000, "married_filing_jointly", 2026).deduction == 1_250
+    assert student_loan_interest_deduction(2_500, 205_000, "married_filing_jointly", 2026).deduction == 0
+    # IRC 86: $24,000 of benefits, $20,000 of other income -> provisional income $32,000, $7,000 over $25,000,
+    # half of it: $3,500.
+    assert taxable_social_security(24_000, 20_000, filing_status="single", year=2026).taxable_benefits == 3_500

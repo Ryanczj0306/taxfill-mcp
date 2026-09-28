@@ -39,7 +39,6 @@
 #
 # WHAT IS OUTSTANDING before this pack can back a filed return
 #   1. The absent blocks (provisional.blocks_deliberately_absent):
-#      taxable_social_security, student_loan_interest,
 #      filing_thresholds, payment_options, mailing_addresses and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
 #   2. tax_table.row_bands still rests on a carried-forward STRUCTURE
 #      (provisional.still_assumed). The draft Pub 1040 (2026) now prints the 2026 Tax
@@ -109,6 +108,22 @@ provisional:
       source_status: draft
       draft_created: "6/16/26"
       verified_blocks: [obbba_schedule_1a]
+    - date: "2026-09-27"
+      source: "Pub 1040 (2026), Tax and Earned Income Credit Tables, DRAFT dated Aug 28, 2026 — the 2026 Tax Table, all 8,248 cells"
+      url: "https://www.irs.gov/pub/irs-dft/p1040--dft.pdf"
+      source_status: draft
+      verified_blocks: [tax_table.row_bands]
+    - date: "2026-09-27"
+      source: "Pub 915 (2026), DRAFT dated Aug 17, 2026 — the base amounts and Worksheet 1"
+      url: "https://www.irs.gov/pub/irs-dft/p915--dft.pdf"
+      source_status: draft
+      verified_blocks: [taxable_social_security]
+    - date: "2026-09-27"
+      source: "Draft Schedule A (Form 1040) 2026, Created 5/12/26 — lines 5e and 18"
+      url: "https://www.irs.gov/pub/irs-dft/f1040sa--dft.pdf"
+      source_status: draft
+      draft_created: "5/12/26"
+      verified_blocks: [salt_cap, itemized_limitation.schedule_a_screen_over]
       result: >-
         every figure, slope and rounding direction matches the statute and the 2025 block: $25,000
         (line 9), $150,000/$300,000 and x $100 (lines 11/14, round down on 13); $12,500/$25,000
@@ -123,13 +138,11 @@ provisional:
     numbers that ARE here are citable and projection-grade (what will I owe /
     what should I set aside / married-vs-separate comparisons), but the absent
     blocks mean a bottom line built on this pack can OMIT real items — e.g. a
-    retiree's taxable Social Security is not priced until the 2026
-    taxable_social_security block publishes — so any consumer must surface which engaged inputs went
+    household's filing requirement and the mailing addresses are not
+    stated until those 2026 blocks publish — so any consumer must surface which engaged inputs went
     unestimated (the estimator emits 'NOT ESTIMATED' assumptions for them).
     Insufficient for filing in every case.
   blocks_deliberately_absent:
-    - taxable_social_security
-    - student_loan_interest
     - filing_thresholds
     - payment_options
     - mailing_addresses
@@ -217,11 +230,12 @@ tax:
   tax_table:
     citation:
       source: >-
-        PROVISIONAL (authored 2026-08-04): the 2026 Tax Table (Publication 1040)
-        is not yet published. Underlying tax authority is Rev. Proc. 2025-32,
-        Section 4.01; the row-band structure is carried forward unchanged from
-        the published 2019-2025 tables, which the engine reproduces exactly.
-        MUST be re-verified against Publication 1040 (2026) before any 2026
+        PROVISIONAL (authored 2026-08-04): the final 2026 Tax Table (Publication
+        1040) is not yet published. Underlying tax authority is Rev. Proc.
+        2025-32, Section 4.01; the row-band structure is carried forward from the
+        published 2019-2025 tables. The DRAFT Pub 1040 (2026) (Aug 28, 2026)
+        agrees on all 8,248 cells of its 2026 Tax Table (Phase J JT2a,
+        2026-09-27). MUST be re-verified against the final before any 2026
         return is filed.
       url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
     applies_below: 100000
@@ -517,6 +531,94 @@ tax:
     dependent_care_benefits:
       exclusion_max: 7500
       exclusion_max_mfs: 3750
+
+  # ── Phase J JT2a (read 2026-09-27) ────────────────────────────────────────
+  # Taxable Social Security: IRC 86(c)'s base amounts are statutory and not indexed.
+  # The draft Pub 915 (2026) (Aug 17, 2026) prints them: "$25,000 if you are single,
+  # head of household, or qualifying surviving spouse; $25,000 if you are married
+  # filing separately and lived apart from your spouse for all of 2026; $32,000 if
+  # you are married filing jointly; or $0 if you are married filing separately and
+  # lived with your spouse at any time during 2026", and the 85% tier above "$34,000
+  # ($44,000 if you are married filing jointly)".
+  taxable_social_security:
+    citation:
+      source: "IRC 86(c); checked against the draft Pub 915 (2026) (Aug 17, 2026), Base amount and Worksheet 1"
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section86&num=0&edition=prelim"
+    base_amount:
+      single: 25000
+      married_filing_jointly: 32000
+      head_of_household: 25000
+      qualifying_surviving_spouse: 25000
+      married_filing_separately_lived_apart_all_year: 25000
+    adjusted_base_amount:
+      single: 34000
+      married_filing_jointly: 44000
+      head_of_household: 34000
+      qualifying_surviving_spouse: 34000
+      married_filing_separately_lived_apart_all_year: 34000
+    mfs_living_with_spouse_base: 0
+    inclusion_rate_tier1: 0.50
+    inclusion_rate_tier2: 0.85
+    max_taxable_share_of_benefits: 0.85
+
+  # Student loan interest: Rev. Proc. 2025-32 §4.29: "For taxable years beginning in
+  # 2026, the $2,500 maximum deduction for interest paid on qualified education loans
+  # under § 221 begins to phase out ... for taxpayers with modified adjusted gross
+  # income in excess of $85,000 ($175,000 for joint returns), and is completely phased
+  # out for taxpayers with modified adjusted gross income of $100,000 or more ($205,000
+  # or more for joint returns)."
+  student_loan_interest:
+    citation:
+      source: "Rev. Proc. 2025-32, Section 4.29 (Interest on Education Loans)"
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    max_deduction: 2500
+    phaseout:
+      single: { start: 85000, end: 100000 }
+      head_of_household: { start: 85000, end: 100000 }
+      qualifying_surviving_spouse: { start: 85000, end: 100000 }
+      married_filing_jointly: { start: 175000, end: 205000 }
+
+  # SALT (Schedule A line 5e): IRC 164(b)(7)(A)(ii), "in the case of any taxable year
+  # beginning in calendar year 2026, $40,400", and (B)(ii)(II), a threshold of
+  # "$505,000", reduced "by 30 percent of the excess (if any) of the taxpayer's modified
+  # adjusted gross income over the threshold amount (half the threshold amount in the
+  # case of a married individual filing a separate return)", but (B)(iii) "not ... less
+  # than $10,000". The draft Schedule A (2026) (Created 5/12/26) line 5e: "Enter the
+  # smaller of line 5d or $40,400 ($20,200 if married filing separately). If Form 1040
+  # or 1040-SR, line 11b, is more than $505,000 ($252,500 if married filing
+  # separately) ... see instructions". Data (no calc op reads it; the 2025 precedent).
+  salt_cap:
+    citation:
+      source: "IRC 164(b)(6)-(7) as amended by P.L. 119-21 §70120; checked against the draft Schedule A (Form 1040) 2026 (Created 5/12/26) line 5e"
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section164&num=0&edition=prelim"
+    cap: 40400
+    cap_mfs: 20200
+    phase_down:
+      magi_threshold: 505000
+      magi_threshold_mfs: 252500
+      reduction_rate: 0.30
+      floor: 10000
+      floor_mfs: 5000
+
+  # The overall limitation on itemized deductions, NEW for 2026: IRC 68 as rewritten by
+  # P.L. 119-21 §70111 — the deductions "shall be reduced by 2/37 of the lesser of" those
+  # deductions or so much of the taxable income (figured without the reduction and
+  # increased by those deductions) "as exceeds the dollar amount at which the 37 percent
+  # rate bracket under section 1 begins"; it "shall be applied after the application of
+  # any other limitation". The draft Schedule A (2026) line 18 screens on "$384,350":
+  # "Is the amount on Form 1040 or 1040-SR, line 11b, minus the amounts on lines 13a and
+  # 13b of that form, more than $384,350? ... Yes. Your deductions may be limited. See
+  # the Itemized Deductions Worksheet in the instructions". That worksheet is not posted
+  # (irs-dft/i1040sa--dft.pdf: 404 on 2026-09-23), so its mechanics stay a lookup path
+  # and the estimator discloses the screen rather than pricing the reduction.
+  itemized_limitation:
+    citation:
+      source: "IRC 68 as rewritten by P.L. 119-21 §70111; the draft Schedule A (Form 1040) 2026 (Created 5/12/26) line 18"
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section68&num=0&edition=prelim"
+    reduction_numerator: 2
+    reduction_denominator: 37
+    schedule_a_screen_over: 384350
+    worksheet_lookup_path: "sources.yaml by_topic itemized_limitation_2026 — the Itemized Deductions Worksheet in the 2026 Instructions for Schedule A (not posted)"
 
   # Education credits (Form 8863) — Phase J JT1e, pitfall P-024. Read 2026-09-27:
   # IRC 25A(b)(1), (c)(1), (d)(1), (g)(1) and (i) (uscode.house.gov) and the draft
@@ -1078,6 +1180,31 @@ federal_public_benefit:
 # breakpoints, the $184,500 wage base, the account limits) — those are annual
 # indexation, not law changes.
 effective_law_changes:
+  - description: >-
+      The SALT deduction cap is $40,400 for 2026 ($20,200 married filing separately), reduced
+      by 30% of modified AGI over $505,000 ($252,500) but not below $10,000 (P.L. 119-21 §70120,
+      IRC 164(b)(7)); after 2029 it returns to $10,000. Carried in tax.salt_cap as data (Phase J
+      JT2a) — the estimator takes itemized_deductions as the caller's total.
+    citation:
+      source: "IRC 164(b)(6)-(7) (uscode.house.gov, read 2026-09-27)"
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section164&num=0&edition=prelim"
+    status: enacted
+    affects:
+      - tax.salt_cap
+    modeled: true
+  - description: >-
+      From 2026 itemized deductions are reduced by 2/37 of the lesser of the deductions or the
+      taxable income over the start of the 37% bracket (IRC 68 as rewritten by P.L. 119-21
+      §70111). The draft Schedule A line 18 screens at $384,350; the worksheet that prices the
+      reduction is not posted, so the estimator discloses the screen and does not price it.
+    citation:
+      source: "IRC 68 (uscode.house.gov, read 2026-09-27)"
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section68&num=0&edition=prelim"
+    status: irs_guidance_pending
+    lookup_path: "sources.yaml by_topic itemized_limitation_2026"
+    affects:
+      - tax.itemized_limitation
+    modeled: false
   - description: >-
       The child tax credit stays at $2,200 per qualifying child for 2026 with a $1,700
       refundable portion: P.L. 119-21 made IRC 24(h) permanent ("$2,200" for "$1,000",

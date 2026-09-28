@@ -5836,6 +5836,21 @@ def estimate_refund(
             + ("The full-year-resident figure in the range likely UNDERSTATES your refund (the dual-status point "
                "cannot claim the credit)." if dual else "This bottom line likely UNDERSTATES your refund.")
         )
+    # JT2a: the 2026 overall limitation on itemized deductions (IRC 68), disclosed at the Schedule A screen.
+    limitation = getattr(pack_for_gaps.tax, "itemized_limitation", None)
+    if isinstance(limitation, dict) and income.itemized_deductions:
+        slots = {ln.slot: ln.amount for ln in outcomes[primary].lines}
+        screen_income = slots.get("agi", 0) - abs(slots.get("schedule_1a_deductions", 0))
+        itemizing = any(ln.slot == "deduction" and ln.label.startswith("Less: itemized deductions")
+                        for ln in outcomes[primary].lines)
+        if itemizing and screen_income > int(limitation["schedule_a_screen_over"]):
+            assumptions.append(
+                f"Your itemized deductions may be LIMITED: from {year} IRC 68 reduces them \"by 2/37 of the lesser "
+                f"of\" the deductions or the taxable income over the start of the 37% bracket, and Schedule A "
+                f"(the draft {year} form) asks whether AGI less the Schedule 1-A and QBI deductions is \"more than "
+                f"${int(limitation['schedule_a_screen_over']):,}\" (${screen_income:,} here). Its worksheet is not "
+                f"posted, so this estimate takes the itemized deductions in full — it OVERSTATES them if the "
+                f"reduction applies.")
     # JT1e (P-024): the 2026 SSN rule, disclosed from the candidates' notes.
     edu_rule = pack_for_gaps.tax.education_credits.ssn_requirement if pack_for_gaps.tax.education_credits else None
     if edu_rule is not None:

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,517 tests** — offline 6,100 + live-.gov 417; derived
+Done and on `main` (**6,532 tests** — offline 6,115 + live-.gov 417; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2252,13 +2252,16 @@ not wait for any of this.
     - `test_worksheet_a_takes_the_smaller_of_the_two_lookups`;
     - the network `test_every_cell_of_the_printed_eic_table`, all eight years (it re-downloads the 2026 draft, so the final's table is checked the day it posts).
     - The old tests now pin the printed values.
-- [ ] **JT2a — Tax Table, SALT/itemized, student loan, Social Security** (M; deps JT0b) [TY26-05, TY26-07, TY26-09, TY26-13]
-  - **Tax Table.** The draft Pub 1040 (2026) (Aug 28, 2026) matches the engine on all 8,240 cells. Record it as a draft second pass, and add goldens at the 25/50 band edges.
-  - **SALT.** salt_cap is missing and NOT declared absent (2025.yaml:557 ships it). The draft Schedule A line 5e: $40,400 ($20,200 MFS), threshold $505,000 ($252,500). Add an absent-list discipline test.
-  - **Itemized 2026.** `itemized_2026` with the 0.5% floor and the §68 threshold (draft line 18: $384,350). Its worksheet mechanics stay a lookup_path until i1040sa (2026) posts (404 on 2026-09-23).
-  - **Student loan interest.** Rev. Proc. 2025-32 §4.29: $85,000 / $175,000 → $100,000 / $205,000.
-  - **Taxable Social Security.** IRC 86(c) plus the draft Pub 915.
-  - **Acceptance:** the goldens and the discipline test pass.
+- [x] **JT2a — Tax Table, SALT/itemized, student loan, Social Security — DONE 2026-09-27** (M; deps JT0b) [TY26-05, TY26-07, TY26-09, TY26-13]
+  - *As built (sources read 2026-09-27):*
+    - **Tax Table.** The draft Pub 1040 (2026) (Aug 28, 2026) agrees with the engine on all 8,248 cells (2,062 rows x 4; the spec's 8,240 was a miscount). Recorded as a draft second pass on tax_table.row_bands, with its citation updated. Goldens at every row-width edge ($5 / $10 / $25 / $50) and at $99,950.
+    - **SALT.** tax.salt_cap from IRC 164(b)(7) (P.L. 119-21 §70120): $40,400 / $20,200 MFS, over $505,000 / $252,500 reduced 30%, floor $10,000 ($5,000 MFS). Checked against the draft Schedule A (Created 5/12/26) line 5e. Data, as in 2025; a law entry.
+    - **The discipline test** (test_jt2a_every_prior_year_block_is_present_or_declared_absent): a planning pack carries each block the year before carried, or declares it absent. It found only salt_cap.
+    - **Itemized 2026.** tax.itemized_limitation from IRC 68 as rewritten by P.L. 119-21 §70111 (2/37 of the lesser of the deductions or the taxable income over the 37% bracket start), with the draft line 18 screen, "$384,350". The worksheet stays a lookup path (i1040sa (2026) not posted). The estimator DISCLOSES the screen when an itemizer's AGI less the Schedule 1-A deductions is over it, and does not price the reduction. Its law entry is irs_guidance_pending, modeled false. The 0.5% floor rides in charitable_contributions (JF9). The block is named `itemized_limitation`, not `itemized_2026`: a key does not carry its year.
+    - **Student loan interest.** Rev. Proc. 2025-32 §4.29: $85,000-$100,000 / $175,000-$205,000 (the joint range is $30,000 wide).
+    - **Taxable Social Security.** IRC 86(c)'s statutory amounts, checked against the draft Pub 915 (2026) (Aug 17, 2026). Recorded as a draft pass.
+    - taxable_social_security and student_loan_interest leave blocks_deliberately_absent; what remains is filing_thresholds, payment_options, mailing_addresses and deadlines (JT2b, JT6).
+  - **Tests:** test_tax_calc `test_jt2a_*` (the Tax Table edges, the blocks and passes, the discipline test, the 2026 student-loan and Social Security ops); test_estimate `test_jt2a_the_2026_itemized_limitation_is_disclosed_at_the_screen`.
 - [ ] **JT2b — Deadlines, payment options, with-payment addresses** (S–M; deps JT0b) [TY26-14 + the rest of TY26-15]
   - Deadlines from the draft 4868 (2026): "April 15, 2027 … June 15, 2027 … October 15, 2027". JR2a's helper then reads the block.
   - Payment options and with-payment addresses from the draft 1040-V (2026), one per state group (e.g. "P.O. Box 1214 Charlotte, NC 28201-1214", shared by several states).

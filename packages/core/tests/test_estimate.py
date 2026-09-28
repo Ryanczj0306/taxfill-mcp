@@ -5286,3 +5286,17 @@ def test_jt1d_the_2026_estimate_prices_the_family_credits():
     assert slots.get("ctc_odc_nonrefundable", 0) < 0 and slots.get("eitc", 0) < 0
     assert not [m for m in est.missing_blocks if m.block.startswith("credits")]
     assert est.provisional is not None           # still a projection: the year is planning-only
+
+
+def test_jt2a_the_2026_itemized_limitation_is_disclosed_at_the_screen():
+    # A hypothetical high earner who itemizes: AGI over the draft Schedule A line 18 screen ($384,350) — the IRC 68
+    # reduction is named, not priced (its worksheet is not posted). Under the screen, or not itemizing: silent.
+    profile = _single()
+    high = estimate_refund(profile, 2026, IncomeSnapshot(wages=450_000, federal_withholding=120_000,
+                                                          itemized_deductions=60_000))
+    assert any("may be LIMITED" in a and "$384,350" in a for a in high.assumptions)
+    low = estimate_refund(profile, 2026, IncomeSnapshot(wages=150_000, federal_withholding=30_000,
+                                                         itemized_deductions=60_000))
+    assert not any("may be LIMITED" in a for a in low.assumptions)
+    standard = estimate_refund(profile, 2026, IncomeSnapshot(wages=450_000, federal_withholding=120_000))
+    assert not any("may be LIMITED" in a for a in standard.assumptions)
