@@ -1351,6 +1351,65 @@ class FederalPublicBenefitParams(BaseModel):
         return self
 
 
+class WithholdingRow(BaseModel):
+    """One row of a Pub 15-T Annual Percentage Method table: at least A, less than B -> C plus D% of the excess over E."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    at_least: int = Field(ge=0, description="Column A.")
+    below: int | None = Field(description="Column B; None on the open top row.")
+    tentative: Decimal = Field(description="Column C, the tentative amount to withhold (exact cents).")
+    rate: Decimal = Field(description="Column D as a decimal fraction (0.12 = 12%).")
+    over: int = Field(ge=0, description="Column E, the amount the Adjusted Annual Wage exceeds.")
+
+    _exact = field_validator("tentative", "rate", mode="before")(_as_exact_decimal)
+
+
+class WithholdingTables(BaseModel):
+    """One Pub 15-T table set: a status's rows (single_or_mfs is ONE table for both)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    married_filing_jointly: list[WithholdingRow] = Field(min_length=2)
+    single_or_mfs: list[WithholdingRow] = Field(min_length=2)
+    head_of_household: list[WithholdingRow] = Field(min_length=2)
+
+    @model_validator(mode="after")
+    def _contiguous(self) -> "WithholdingTables":
+        for name in ("married_filing_jointly", "single_or_mfs", "head_of_household"):
+            rows = getattr(self, name)
+            if rows[0].at_least != 0 or rows[-1].below is not None:
+                raise ValueError(f"withholding table {name} must start at $0 and end with an open row")
+            for a, b in zip(rows, rows[1:]):
+                if a.below != b.at_least or a.over != a.at_least:
+                    raise ValueError(f"withholding table {name}: row {a.at_least} must end where {b.at_least} begins "
+                                     f"(column B = the next column A) and take the excess over its own column A")
+        return self
+
+
+class PayrollWithholdingParams(BaseModel):
+    """The ``payroll_withholding`` block (JP1b): Pub 15-T's percentage method for automated payroll (Worksheet 1A),
+    transcribed — the tables are data, never computed from the rate schedules (the test derives them as a check).
+    Top-level for the sources-coverage meta-test."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    worksheet_1a_line_1g: dict[Literal["married_filing_jointly", "other"], int] = Field(
+        description="Line 1g, when the Step 2 box is NOT checked: '$12,900 if the taxpayer is married filing jointly or "
+                    "$8,600 otherwise' (2026); 0 when it is checked.")
+    allowance_value: int = Field(gt=0, description="Line 1k: each allowance on a 2019 or earlier Form W-4.")
+    pay_periods: dict[str, int] = Field(description="Worksheet 1A Table 3: pay periods per year.")
+    standard: WithholdingTables = Field(
+        description="STANDARD Withholding Rate Schedules — a 2019-or-earlier W-4, or a 2020+ W-4 without the Step 2 box.")
+    step2_checkbox: WithholdingTables = Field(
+        description="Form W-4, Step 2, Checkbox, Withholding Rate Schedules — a 2020+ W-4 with the Step 2 box checked.")
+    nonresident_alien_addon: dict[Literal["w4_2020_or_later", "pre_2020"], dict[str, Decimal]] = Field(
+        description="Tables 1 and 2 of 'Withholding Adjustment for Nonresident Alien Employees': added to wages per "
+                    "payroll period for the withholding computation only.")
+    rounding: str = Field(description="The rounding rule, quoted.")
+
+
 class EstimatedTaxSafeHarborParams(BaseModel):
     """IRC 6654(d) required-annual-payment parameters (Form 1040-ES, 'General Rule').
 
@@ -2402,6 +2461,8 @@ class KnowledgePack(BaseModel):
     # Phase J item JT1c: Schedule 3-A (2026) — the refunded portion of four refundable credits as a
     # PRWORA federal public benefit. Top-level for the sources-coverage meta-test.
     federal_public_benefit: FederalPublicBenefitParams | None = None
+    # Phase J item JP1b: Pub 15-T's percentage method (Worksheet 1A) — the paycheck side of withholding.
+    payroll_withholding: PayrollWithholdingParams | None = None
     # Phase J item JF6a: printed line numbers, per key, read off this year's
     # faces. Engine text reaches them only through form_line() (P-015).
     form_lines: dict[str, FormLineEntry] | None = None

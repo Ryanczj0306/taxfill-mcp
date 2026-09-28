@@ -1163,6 +1163,87 @@ credits:
       source_url: "https://www.irs.gov/pub/irs-dft/p1040--dft.pdf"
 
 # ─────────────────────────────────────────────────────────────────────────────
+# payroll_withholding (Phase J JP1b) — Publication 15-T (2026), Federal Income Tax
+# Withholding Methods (irs-prior/p15t--2026.pdf, 71 pages), read 2026-09-27:
+# Worksheet 1A and "2026 Percentage Method Tables for Automated Payroll Systems"
+# (page 12), and "Withholding Adjustment for Nonresident Alien Employees" (pages
+# 6-7). The tables are TRANSCRIBED. test_jp1b_* derives every STANDARD row from the
+# rate schedules shifted by (standard deduction - line 1g) and every checkbox row
+# from the half-width brackets, as a second pass — never as the source.
+payroll_withholding:
+  citation:
+    source: "Publication 15-T (2026), Worksheet 1A, the 2026 Percentage Method Tables for Automated Payroll Systems, and the Withholding Adjustment for Nonresident Alien Employees (Tables 1 and 2)"
+    url: "https://www.irs.gov/pub/irs-prior/p15t--2026.pdf"
+  worksheet_1a_line_1g: { married_filing_jointly: 12900, other: 8600 }   # "enter $12,900 if the taxpayer is married filing jointly or $8,600 otherwise"
+  allowance_value: 4300   # line 1k: "Multiply line 1j by $4,300"
+  pay_periods: { annually: 1, semiannually: 2, quarterly: 4, monthly: 12, semimonthly: 24, biweekly: 26, weekly: 52, daily: 260 }
+  standard:
+    married_filing_jointly:
+      - { at_least: 0, below: 19300, tentative: "0.00", rate: "0", over: 0 }
+      - { at_least: 19300, below: 44100, tentative: "0.00", rate: "0.1", over: 19300 }
+      - { at_least: 44100, below: 120100, tentative: "2480.00", rate: "0.12", over: 44100 }
+      - { at_least: 120100, below: 230700, tentative: "11600.00", rate: "0.22", over: 120100 }
+      - { at_least: 230700, below: 422850, tentative: "35932.00", rate: "0.24", over: 230700 }
+      - { at_least: 422850, below: 531750, tentative: "82048.00", rate: "0.32", over: 422850 }
+      - { at_least: 531750, below: 788000, tentative: "116896.00", rate: "0.35", over: 531750 }
+      - { at_least: 788000, below: null, tentative: "206583.50", rate: "0.37", over: 788000 }
+    single_or_mfs:
+      - { at_least: 0, below: 7500, tentative: "0.00", rate: "0", over: 0 }
+      - { at_least: 7500, below: 19900, tentative: "0.00", rate: "0.1", over: 7500 }
+      - { at_least: 19900, below: 57900, tentative: "1240.00", rate: "0.12", over: 19900 }
+      - { at_least: 57900, below: 113200, tentative: "5800.00", rate: "0.22", over: 57900 }
+      - { at_least: 113200, below: 209275, tentative: "17966.00", rate: "0.24", over: 113200 }
+      - { at_least: 209275, below: 263725, tentative: "41024.00", rate: "0.32", over: 209275 }
+      - { at_least: 263725, below: 648100, tentative: "58448.00", rate: "0.35", over: 263725 }
+      - { at_least: 648100, below: null, tentative: "192979.25", rate: "0.37", over: 648100 }
+    head_of_household:
+      - { at_least: 0, below: 15550, tentative: "0.00", rate: "0", over: 0 }
+      - { at_least: 15550, below: 33250, tentative: "0.00", rate: "0.1", over: 15550 }
+      - { at_least: 33250, below: 83000, tentative: "1770.00", rate: "0.12", over: 33250 }
+      - { at_least: 83000, below: 121250, tentative: "7740.00", rate: "0.22", over: 83000 }
+      - { at_least: 121250, below: 217300, tentative: "16155.00", rate: "0.24", over: 121250 }
+      - { at_least: 217300, below: 271750, tentative: "39207.00", rate: "0.32", over: 217300 }
+      - { at_least: 271750, below: 656150, tentative: "56631.00", rate: "0.35", over: 271750 }
+      - { at_least: 656150, below: null, tentative: "191171.00", rate: "0.37", over: 656150 }
+  step2_checkbox:
+    married_filing_jointly:
+      - { at_least: 0, below: 16100, tentative: "0.00", rate: "0", over: 0 }
+      - { at_least: 16100, below: 28500, tentative: "0.00", rate: "0.1", over: 16100 }
+      - { at_least: 28500, below: 66500, tentative: "1240.00", rate: "0.12", over: 28500 }
+      - { at_least: 66500, below: 121800, tentative: "5800.00", rate: "0.22", over: 66500 }
+      - { at_least: 121800, below: 217875, tentative: "17966.00", rate: "0.24", over: 121800 }
+      - { at_least: 217875, below: 272325, tentative: "41024.00", rate: "0.32", over: 217875 }
+      - { at_least: 272325, below: 400450, tentative: "58448.00", rate: "0.35", over: 272325 }
+      - { at_least: 400450, below: null, tentative: "103291.75", rate: "0.37", over: 400450 }
+    single_or_mfs:
+      - { at_least: 0, below: 8050, tentative: "0.00", rate: "0", over: 0 }
+      - { at_least: 8050, below: 14250, tentative: "0.00", rate: "0.1", over: 8050 }
+      - { at_least: 14250, below: 33250, tentative: "620.00", rate: "0.12", over: 14250 }
+      - { at_least: 33250, below: 60900, tentative: "2900.00", rate: "0.22", over: 33250 }
+      - { at_least: 60900, below: 108938, tentative: "8983.00", rate: "0.24", over: 60900 }
+      - { at_least: 108938, below: 136163, tentative: "20512.00", rate: "0.32", over: 108938 }
+      - { at_least: 136163, below: 328350, tentative: "29224.00", rate: "0.35", over: 136163 }
+      - { at_least: 328350, below: null, tentative: "96489.63", rate: "0.37", over: 328350 }
+    head_of_household:
+      - { at_least: 0, below: 12075, tentative: "0.00", rate: "0", over: 0 }
+      - { at_least: 12075, below: 20925, tentative: "0.00", rate: "0.1", over: 12075 }
+      - { at_least: 20925, below: 45800, tentative: "885.00", rate: "0.12", over: 20925 }
+      - { at_least: 45800, below: 64925, tentative: "3870.00", rate: "0.22", over: 45800 }
+      - { at_least: 64925, below: 112950, tentative: "8077.50", rate: "0.24", over: 64925 }
+      - { at_least: 112950, below: 140175, tentative: "19603.50", rate: "0.32", over: 112950 }
+      - { at_least: 140175, below: 332375, tentative: "28315.50", rate: "0.35", over: 140175 }
+      - { at_least: 332375, below: null, tentative: "95585.50", rate: "0.37", over: 332375 }
+  nonresident_alien_addon:
+    # Table 2: "If the nonresident alien employee has submitted a Form W-4 for 2020 or later or was first paid
+    # wages in 2020 or later"; Table 1: first paid before 2020 and no 2020-or-later Form W-4.
+    w4_2020_or_later: { weekly: "309.60", biweekly: "619.20", semimonthly: "670.80", monthly: "1341.70", quarterly: "4025.00", semiannually: "8050.00", annually: "16100.00", daily: "61.90" }
+    pre_2020: { weekly: "226.90", biweekly: "453.80", semimonthly: "491.70", monthly: "983.30", quarterly: "2950.00", semiannually: "5900.00", annually: "11800.00", daily: "45.40" }
+  rounding: >-
+    "To figure the income tax to withhold, you may reduce the last digit of the wages to zero, or figure the
+    wages to the nearest dollar. You may also round the tax for the pay period to the nearest dollar. If
+    rounding is used, it must be used consistently."
+
+# ─────────────────────────────────────────────────────────────────────────────
 # federal_public_benefit (Phase J JT1c, pitfall P-023). The draft Schedule 3-A
 # (Form 1040) 2026 (Created 6/24/26) and the PROPOSED rule behind it,
 # REG-119882-25 (91 FR 53812, Aug. 20, 2026; comments closed 2026-10-05, hearing

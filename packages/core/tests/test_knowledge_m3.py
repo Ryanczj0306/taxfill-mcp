@@ -61,6 +61,8 @@ BLOCK_TO_REQUIRED_TOPICS = {
     "charitable_contributions": ("charitable_nonitemizer",),
     # Phase J item JT1c: Schedule 3-A (2026) and REG-119882-25, on the topic JT0a opened for them.
     "federal_public_benefit": ("federal_public_benefit",),
+    # Phase J item JP1b: Pub 15-T's percentage method, on the topic that already routes Pub 15-T.
+    "payroll_withholding": ("payroll_withholding",),
 }
 
 

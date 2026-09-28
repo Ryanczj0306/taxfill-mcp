@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,545 tests** — offline 6,128 + live-.gov 417; derived
+Done and on `main` (**6,553 tests** — offline 6,136 + live-.gov 417; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2318,16 +2318,15 @@ not wait for any of this.
 
 ### Block 5 — Remaining decision ops
 
-- [ ] **JP1b — Pub 15-T 2026 knowledge** (M; deps JF1a) [LD-02, knowledge half]
-  - **Why.** There is no Pub 15-T knowledge; `federal_withholding` is a single integer (estimate.py:101).
-  - **Build.** A top-level `payroll_withholding` 2026 block, typed `PayrollWithholdingParams` and transcribed from Pub 15-T (2026):
-    - Worksheet 1A line 1g: $12,900 MFJ / $8,600 otherwise; $4,300 per pre-2020 allowance;
-    - pay periods;
-    - the STANDARD and Step-2-checkbox annual tables for MFJ, single/MFS and HoH;
-    - the NRA add-on: $16,100, or $11,800 on a pre-2020 W-4;
-    - the partial-period rule (Pub 15 §8) and the rounding rule.
-  - **Second-pass test:** every STANDARD row equals the pack's rate_schedules shifted by (standard deduction − line 1g), and every checkbox row equals the half-width brackets. The table itself is transcribed, not computed.
-  - **Acceptance:** the derivation test passes for all three statuses and both tables.
+- [x] **JP1b — Pub 15-T 2026 knowledge — DONE 2026-09-27** (M; deps JF1a) [LD-02, knowledge half]
+  - *As built:* a top-level 2026 `payroll_withholding` block (typed PayrollWithholdingParams) transcribed from Publication 15-T (2026) (irs-prior/p15t--2026.pdf, read 2026-09-27):
+    - Worksheet 1A line 1g ($12,900 MFJ / $8,600 otherwise; 0 with the Step 2 box) and line 1k's $4,300 per pre-2020 allowance;
+    - Table 3's pay periods;
+    - the STANDARD and Step 2 checkbox annual tables for MFJ, single-or-MFS (one table, built on the single schedule) and HoH — each row has columns A-E, exact cents, rows validated contiguous;
+    - the nonresident alien add-ons (Table 2 for a 2020-or-later W-4: $16,100 a year; Table 1 before 2020: $11,800), per payroll period;
+    - the rounding rule, quoted.
+  - **Second-pass tests** (test_payroll_withholding `test_jp1b_*`): every STANDARD row equals the pack's rate schedule shifted by (standard deduction - line 1g), carrying the tax to its floor; every checkbox row equals the half-width bracket shifted by half the standard deduction, carrying half the tax (rounded half up). All three statuses x both tables pass. A gap in a table is refused.
+  - **Left for JP1c:** Pub 15's partial-period rule, applied where pay dates are counted.
 - [ ] **JP1c — The withholding projection op** (M–L; deps JP1a, JP1b) [LD-02, op half + missing Pub 15-T §6 + the rest of LD-12]
   - **Build** `calc.withholding_projection`, per employer:
     - inputs: W-4 facts, pay frequency and dates (counted by PAY DATE), employment end, and supplemental events carrying the reg's two facts (paid concurrently / separately stated; income tax withheld on regular wages this or last year);
