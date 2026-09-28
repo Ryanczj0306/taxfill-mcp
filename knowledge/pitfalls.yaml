@@ -1208,8 +1208,9 @@ pitfalls:
       31.3402(g)-1(a)(7)(i) with both conditions quoted, the aggregate
       fallback, the $1,000,000 mandatory rate, "hire status is not the test",
       and the instruction to project bonus withholding by the method the
-      employer actually uses (the pay stub). No op computes the aggregate
-      figure until JP1c ships one, and the work says so. The same rule reaches
+      employer actually uses (the pay stub). Calc op withholding_projection
+      (JP1c) computes both methods from the W-4 and the pay dates, with the
+      same two conditions deciding, and the work points at it. The same rule reaches
       the op docstring, the calc module docstring, the params docstring, the
       server doc and SKILL.md; the unconditional "withheld at the FLAT 22%
       regardless of your marginal rate" sentence and "Project

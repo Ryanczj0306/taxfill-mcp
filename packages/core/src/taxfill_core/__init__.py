@@ -130,6 +130,7 @@ from taxfill_core.schemas.formpack import FormPack, PackField, load_pack
 from taxfill_core.schemas.profile import Answer, Profile, Provenance
 from taxfill_core.sources import Source, SourcesResult, get_sources
 from taxfill_core.statescope import StateFiling, StateScopeResult, state_scope
+from taxfill_core.withholding import WithholdingProjectionResult, withholding_projection
 from taxfill_core.verify import (
     FilingItem,
     TextWidget,
@@ -229,6 +230,8 @@ __all__ = [
     "capital_loss_limitation",
     "dependent_care_credit",
     "employee_fica",
+    "withholding_projection",
+    "WithholdingProjectionResult",
     "espp_disposition",
     "estimated_tax_safe_harbor",
     "foreign_asset_reporting",

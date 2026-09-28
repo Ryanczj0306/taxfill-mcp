@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,557 tests** — offline 6,140 + live-.gov 417; derived
+Done and on `main` (**6,566 tests** — offline 6,149 + live-.gov 417; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2327,24 +2327,23 @@ not wait for any of this.
     - the rounding rule, quoted.
   - **Second-pass tests** (test_payroll_withholding `test_jp1b_*`): every STANDARD row equals the pack's rate schedule shifted by (standard deduction - line 1g), carrying the tax to its floor; every checkbox row equals the half-width bracket shifted by half the standard deduction, carrying half the tax (rounded half up). All three statuses x both tables pass. A gap in a table is refused.
   - **Left for JP1c:** Pub 15's partial-period rule, applied where pay dates are counted.
-- [ ] **JP1c — The withholding projection op** (M–L; deps JP1a, JP1b) [LD-02, op half + missing Pub 15-T §6 + the rest of LD-12]
-  - **Build** `calc.withholding_projection`, per employer:
-    - inputs: W-4 facts, pay frequency and dates (counted by PAY DATE), employment end, and supplemental events carrying the reg's two facts (paid concurrently / separately stated; income tax withheld on regular wages this or last year);
-    - flat rate REFUSED when either condition fails; both methods returned as a range when a fact is unknown;
-    - 37% over $1M;
-    - 0.9% per employer;
-    - residency_classification auto-filled into employee_fica.
-  - **Employee-requestable methods** (Pub 15-T (2026) §6), each with its gate:
-    - "cumulative wages" (a written request; same payroll period since Jan 1);
-    - "part-year employment" (written, under penalties of perjury, calendar-year basis, and "no more than 245 days in all terms of continuous employment").
-  - **Outputs:** projected W-2 boxes 2 / 4 / 6, inputs ready for estimate_refund, and a projected-withholding figure that feeds JP1a's 4(c) solve. JF1a's use sites gain the op pointer.
-  - **Acceptance.** Tests keyed on facts, not hire status:
-    - (i) bonus before any withheld regular check this or last year → aggregate forced;
-    - (ii) bonus after a withheld regular check, separately stated → both methods, as a range;
+- [x] **JP1c — The withholding projection op — DONE 2026-09-27** (M–L; deps JP1a, JP1b) [LD-02, op half + missing Pub 15-T §6 + the rest of LD-12]
+  - *As built:* `calc.withholding_projection` (taxfill_core/withholding.py; op 37; server docs, dispatch, all three skills), per employer:
+    - **Regular checks:** Pub 15-T (2026) Worksheet 1A from the knowledge block (JP1b), counted by PAY DATE through employment_end — explicit dates, or weekly / biweekly / semimonthly / monthly schedules. A pre-2020 W-4 takes $4,300 per allowance and no head-of-household table. The nonresident alien add-on uses Table 2 (or Table 1 for a pre-2020 W-4 first paid before 2020), noted as never on the W-2. A partial first period's wages are withheld as a full payroll period. The dollar rounding (Pub 15-T's option) is used consistently.
+    - **Supplemental wages** (the pack's P-017 block, Treas. Reg. 31.3402(g)-1): the excess of the year's supplemental wages over $1,000,000 is withheld at 37%. The flat 22% is open only when (a)(7)(i)(B) and (C) both hold. It is FORCED aggregate when either fails, both methods as a range when both hold (the employer's option) or a fact is unknown, and an INTERPRETIVE choice when the bonus rides the first withheld regular check. The aggregate procedure withholds on (the concurrent or most recent regular wages + the bonus) less the regular withholding.
+    - **Employee-requested methods** (Pub 15-T section 6): cumulative wages — refused without the written request and the same payroll period since January. Part-year employment — refused without the written request under penalties of perjury, the calendar-year basis and the anticipated days, and refused over "no more than 245 days". The divisor counts the idle periods since the last employment.
+    - **FICA per employer:** box 4 at 6.2% to the employer's own wage base, and box 6 at 1.45% plus 0.9% over the employer's own $200,000 (IRC 3102(f)(1)). employee_fica reconciles the person.
+    - **Outputs:** per-check rows, box 2 low/high, boxes 3-6, and `w2s` that feed estimate_refund's IncomeSnapshot.w2s (JT4a). JF1a's P-017 text now points at the op instead of "no op computes it yet".
+  - **Tests** (test_withholding_projection `test_jp1c_*`):
+    - Pub 15 (2026) Example 2's wage-bracket figures ($65 / $179 / $419) reproduced within $1, and Example 3's 22% x $1,000 = $220;
+    - (i) a bonus before any withheld regular check this or last year → aggregate forced;
+    - (ii) after a withheld check and separately stated → the range;
     - (iii) concurrent and not separately stated → aggregate;
-    - (iv) concurrent with the FIRST regular check and separately stated → labeled interpretive choice.
-    
-    Also: sampled Pub 15-T (2026) wage-bracket rows reproduced within $1; Pub 15 §7 Example 3 (22% × $1,000 = $220); the NRA add-on; a partial first period; the part-year method refused at more than 245 days. Op count +1.
+    - (iv) with the first check → interpretive;
+    - an unknown fact → a range; 37% over $1M; the NRA add-on; a partial first period; employment_end;
+    - the part-year refusal at 246 days, and its lower total; the cumulative gate;
+    - per-employer box 4 / box 6, and the w2s feeding IncomeSnapshot.
+  - **Not built:** the wage bracket method's own tables (the percentage method is what automated payroll uses; the examples show the difference stays within $1), and the residency_classification auto-fill into employee_fica (fica_exempt stays the caller's per-employer judgment, as in employee_fica).
 - [ ] **JP5a — Underpayment penalty, regular method** (M; deps JF4) [critic: missing]
   - **Why.** No op or knowledge covers Form 2210 (grep of calc.py and knowledge/federal 2025–2026). It is the only way to price the choice between accepting the penalty, bumping the W-4, and paying 1040-ES.
   - **Law.** IRC 6654(a) adds an amount "determined by applying (1) the underpayment rate established under section 6621 … (2) to the amount of the underpayment, (3) for the period of the underpayment". The draft Form 2210 (2026) was Created 4/16/26; the draft Pub 505 (2026) is posted.

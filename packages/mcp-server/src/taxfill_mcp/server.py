@@ -413,6 +413,16 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       items and benefits within 2% or $139 are insubstantial; otherwise the benefit's value comes off, and a
       payment over $75 whose benefit value you do not state is REFUSED — ask for the organization's IRC 6115
       statement)
+    - withholding_projection: args {employers: [{label, pay_frequency, wages_per_period, pay_dates? |
+      first_pay_date?, employment_end?, first_period_wages?, fica_wages_per_period?, w4?: {form (2020_or_later |
+      pre_2020), filing_status, step2_checkbox, step3_credits, step4a_other_income, step4b_deductions,
+      step4c_extra_per_period, allowances, marital_pre_2020, additional_pre_2020, exempt}, nonresident_alien?,
+      withheld_prior_year?, supplemental?: [{date, amount, concurrent_with_regular?, separately_stated?}],
+      fica_exempt?, method? (percentage | cumulative | part_year), written_request?, ...}], year} (JP1c, 2026:
+      Pub 15-T Worksheet 1A check by check, counted by PAY DATE; a bonus under Treas. Reg. 31.3402(g)-1 — the flat
+      22% only when not concurrent-or-separately-stated AND tax was withheld on regular wages this year or last,
+      else the aggregate procedure; both as a range when a fact is unknown or the reading is interpretive; 37%
+      over $1,000,000; box 4 / box 6 per employer. Returns w2s ready for estimate_refund's IncomeSnapshot.w2s)
     - employee_fica: args {wage_segments: [{wages, fica_exempt, label?, employer?, visa_status?,
       exempt_basis?}...], year?, residency_classification?, filing_status?} (JP1a: two layers —
       WITHHOLDING per employer (each applies its own wage base and IRC 3102(f)(1)'s 0.9% on "wages from
@@ -772,6 +782,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_charitable_deduction(**args)), args)
     if op == "employee_fica":
         return _stamp_provisional(_dump(_employee_fica(**args)), args)
+    if op == "withholding_projection":
+        from taxfill_core.withholding import withholding_projection as _withholding_projection  # noqa: PLC0415
+
+        return _stamp_provisional(_dump(_withholding_projection(**args)), args)
     if op == "estimated_tax_safe_harbor":
         return _stamp_provisional(_dump(_estimated_tax_safe_harbor(**args)), args)
     if op == "annualize_ytd":
@@ -811,7 +825,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
         f"se_tax, additional_medicare_tax, niit, taxable_social_security, excess_ss, "
         f"student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, "
         f"child_tax_credit, eitc, dependent_care_credit, treaty_benefit, schedule_1a_deductions, "
-        f"charitable_deduction, employee_fica, estimated_tax_safe_harbor, annualize_ytd, contribution_limits, "
+        f"charitable_deduction, employee_fica, withholding_projection, estimated_tax_safe_harbor, annualize_ytd, "
+        f"contribution_limits, "
         f"ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, "
         f"roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation, "
         f"foreign_tax_credit_election, foreign_asset_reporting, state_tax"

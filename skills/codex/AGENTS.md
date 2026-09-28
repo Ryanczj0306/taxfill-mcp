@@ -45,6 +45,8 @@ contract, and the ratio's DENOMINATOR (line 9) adds the converted amount back, s
 traditional IRA holding pretax money makes every backdoor Roth mostly taxable. And
 `calc("ira_recharacterization", …)` fixes a Roth contribution over the MAGI limit (move it with its net
 income to a traditional IRA by the due date including extensions; conversions cannot be recharacterized).
+`calc("withholding_projection", …)` projects 2026 paycheck withholding per employer by pay date (Pub 15-T
+Worksheet 1A; a bonus's flat 22% only when Treas. Reg. 31.3402(g)-1's conditions hold, else aggregate).
 `calc("charitable_deduction", …)` prices 2026 gifts: IRC 170(p) for a non-itemizer (cash to a
 170(b)(1)(A) donee, capped $1,000 / $2,000 joint) and the itemizer's 0.5%-of-AGI floor; a payment over $75
 whose benefit you cannot value is refused (ask for the IRC 6115 statement).

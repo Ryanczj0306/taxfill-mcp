@@ -3886,8 +3886,10 @@ def _supplemental_withholding_note(sw: SupplementalWithholdingParams) -> str:
         f"can differ by thousands of dollars on a large bonus, so project expected_withholding by the "
         f"method the employer actually uses (the pay stub shows it): at the flat {sw.flat_rate:%}, a filer "
         f"whose marginal rate is higher under-withholds on every bonus and the gap lands in this "
-        f"shortfall; the aggregate figure depends on the W-4 and the pay period, and no op computes it "
-        f"yet — take it from the pay stub. Sources: {sw.citation.url}; {sw.conditions_citation.url}."
+        f"shortfall; the aggregate figure depends on the W-4 and the pay period — calc op "
+        f"withholding_projection computes both from the W-4 and the pay dates where the year's pack carries "
+        f"Pub 15-T (2026 onward), otherwise take it from the pay stub. Sources: {sw.citation.url}; "
+        f"{sw.conditions_citation.url}."
     )
 
 
@@ -3938,7 +3940,7 @@ def estimated_tax_safe_harbor(
     mandatorily withheld at the top rate ((a)(2)). Hire status is not the test,
     and the two methods can differ by thousands of dollars on a large bonus, so
     ``expected_withholding`` must follow the method the employer actually uses
-    (the pay stub shows it) — no op computes the aggregate figure yet.
+    (the pay stub shows it) — calc op withholding_projection computes both (JP1c).
 
     JF4 — the statute's own inputs (26 U.S.C. 31 and 6654, read 2026-09-27):
     ``excess_ss_credit`` is withholding — IRC 31(b)(1): such a credit "shall, for purposes of
