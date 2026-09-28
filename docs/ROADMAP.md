@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,475 tests** — offline 6,066 + live-.gov 409; derived
+Done and on `main` (**6,483 tests** — offline 6,074 + live-.gov 409; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2217,13 +2217,14 @@ not wait for any of this.
     - **Estimator:** each return's Schedule 3-A figure (BottomLineResult.federal_public_benefit; the two-return MFS pair keeps the spouse's own) is the affected credits over the total tax less the Section B wage part of the Additional Medicare Tax. Each person's answer: the recorded status, else us_person True (a citizen or green-card holder), else the latest visa status (T → 1641(c)(4), a reading; any other nonimmigrant class → on neither list), else unknown. With no one on the return qualifying, the LOW end holds the amount back and the point keeps it; the note quotes the rule, and an unrecorded answer adds a what-would-change item. Server docs and SKILL.md carry it. No intake question: the estimator asks only when the amount is non-zero.
     - **Tests** (test_public_benefit `test_p023_*`, on a knowledge copy whose 2026 pack borrows the 2025 credits block until JT1d): the block's quotes and the profile ids; the load refusal and the rule_status gate; an H-1B household with ACTC + EIC (the low end drops exactly the refunded portion and keeps the withholding refund); an LPR household and a recorded refugee unchanged; the 1641(c) readings; one qualifying spouse on a joint return; the unrecorded answer; the Section B wage tax left out of the liability; nothing before 2026.
   - **Left for JT6:** re-read the final Schedule 3-A and its instructions (the qualified-alien definition they adopt), and the final rule if it publishes — a final rule moves the forfeiture into the point.
-- [ ] **JT1d — Credits 2026** (M; deps JT1c) [TY26-08]
-  - From Rev. Proc. 2025-32 §§4.05–4.06:
-    - CTC $2,200, refundable portion $1,700;
-    - the EITC table, including the $664 no-child maximum and the $12,200 investment-income limit;
-    - the FTC de minimis $300/$600 (IRC 904(j)).
-  - Pass 2: the draft i1040s8 and the draft Pub 1040 (2026).
-  - **Acceptance:** eval i5 and the ledger tests pass through the JT0b fixtures.
+- [x] **JT1d — Credits 2026 — DONE 2026-09-27** (M; deps JT1c) [TY26-08]
+  - *As built:*
+    - **Sources read 2026-09-27:** Rev. Proc. 2025-32 §4.05 ($2,200; the refundable $1,700) and §4.06 (the EITC table, the $12,200 investment-income limit); IRC 24(h)(2)-(7) and the new 24(i) (the $2,200 indexed after 2025, increases "rounded to the next lowest multiple of $100"); IRC 32(b)(1); the draft Schedule 8812 (Form 1040) 2026 (Created 4/24/26) and its draft instructions, which print the same CTC figures, the $2,500 earned-income floor and the joint-return SSN rule.
+    - **Knowledge:** a top-level 2026 `credits` block — child_tax_credit (2,200 / 1,700 / the $500 ODC, the $400,000 / $200,000 thresholds, the 24(h)(7) SSN rule quoted), foreign_tax_credit (the 904(j) $300 / $600, cited to the statute since the 2026 Form 1116 instructions are not posted) and earned_income_tax_credit (the §4.06 table). `credits` leaves blocks_deliberately_absent; a law entry cites IRC 24 (modeled). The JT1c rule holds: the pack carries federal_public_benefit beside it.
+    - **Second pass:** the CTC figures match the draft Schedule 8812 (a draft pass). The EITC figures match the draft Pub 1040 (2026), Tax and Earned Income Credit Tables (Aug 28, 2026): every one of its 11,176 EIC Table cells reproduces from the block with the IRC 32(b)(1) percentages. The tests also check IRC 32(b)(1)'s own arithmetic (each maximum = earned income amount x credit percentage; each completed phaseout = threshold + maximum / phaseout percentage, within $1). JT6 re-reads the final table.
+    - **Found doing that pass:** the engine's `eitc` op prices by a ratio (maximum / earned income amount), not the table's percentages, and misses 327 of the 2026 cells by $1 — and 1.6% to 10.4% of each final 2019-2025 table's cells (2025: 647 of 10,928). Fixed in its own commit after JT1e ("the EITC is the EIC Table").
+    - **Tests:** test_tax_calc `test_jt1d_*` (every figure, the 32(b) arithmetic per row, the 2026 child_tax_credit and eitc ops); test_estimate `test_jt1d_the_2026_estimate_prices_the_family_credits`. test_public_benefit now runs on the shipped 2026 pack (its borrowed-credits fixture is gone).
+    - eval i5 and the ledger tests keep stripping the block through the JT0b fixture (synthetic_provisional_pack(["credits"])), so they test the absent-block path whatever ships.
 - [ ] **JT1e — Education credits 2026** (M; deps JT1c) [TY26-10] — pitfall *education-ssn-deadline*
   - MAGI limits $180,000 / $90,000 (draft i8863).
   - The new rule: filer and student "must have been issued valid SSNs before the due date of your 2026 return, including extensions". Add `ssn_requirement`.

@@ -1,16 +1,12 @@
 """Schedule 3-A (2026): the refunded portion of four refundable credits as a PRWORA federal public benefit
 (Phase J JT1c, pitfall P-023). All data synthetic: hypothetical demo households, demo figures.
 
-The 2026 pack has no credits block until JT1d, so the estimator cases run on a scratch copy of the knowledge
-tree whose 2026 pack borrows the 2025 credits block — the rule under test is Schedule 3-A's, not the credit
-figures.
+The estimator cases run on the shipped 2026 pack (its credits block landed in JT1d).
 """
 from __future__ import annotations
 
-import shutil
 import typing
 from datetime import date
-from pathlib import Path
 
 import pytest
 import yaml
@@ -38,25 +34,6 @@ US = Provenance.user_stated()
 
 def _ans(v):
     return Answer(value=v, provenance=US)
-
-
-@pytest.fixture(scope="module")
-def kdir(tmp_path_factory) -> Path:
-    """A knowledge tree whose 2026 pack carries the 2025 credits block (a stand-in until JT1d)."""
-    source = knowledge_dir()
-    base = tmp_path_factory.mktemp("jt1c") / "knowledge"
-    for part in ("federal", "treaties", "forms"):
-        if (source / part).is_dir():
-            shutil.copytree(source / part, base / part)
-    for name in ("sources.yaml", "pitfalls.yaml"):
-        shutil.copy(source / name, base / name)
-    path = base / "federal" / "2026.yaml"
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    data["credits"] = yaml.safe_load((source / "federal" / "2025.yaml").read_text(encoding="utf-8"))["credits"]
-    absent = data["provisional"].get("blocks_deliberately_absent", [])
-    data["provisional"]["blocks_deliberately_absent"] = [b for b in absent if b != "credits"]
-    path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding="utf-8")
-    return base
 
 
 def _kids():
@@ -123,8 +100,8 @@ def test_p023_the_2026_block_reads_its_sources():
 def test_p023_a_2026_credits_block_needs_the_public_benefit_block():
     base = knowledge_dir() / "federal"
     data = yaml.safe_load((base / "2026.yaml").read_text(encoding="utf-8"))
-    data["credits"] = yaml.safe_load((base / "2025.yaml").read_text(encoding="utf-8"))["credits"]
-    KnowledgePack.model_validate(data)                       # with the block: fine
+    assert data["credits"]                                   # the shipped pack: credits AND the block
+    KnowledgePack.model_validate(data)
     data.pop("federal_public_benefit")
     with pytest.raises(ValidationError, match="no federal_public_benefit block"):
         KnowledgePack.model_validate(data)
@@ -135,8 +112,8 @@ def test_p023_a_2026_credits_block_needs_the_public_benefit_block():
         KnowledgePack.model_validate(data)
 
 
-def test_p023_an_h1b_household_loses_the_refunded_portion_on_the_low_end(kdir):
-    est = estimate_refund(_single_parent(), 2026, _INCOME, knowledge_dir=kdir)
+def test_p023_an_h1b_household_loses_the_refunded_portion_on_the_low_end():
+    est = estimate_refund(_single_parent(), 2026, _INCOME)
     lost = _benefit(est)
     assert lost > 0 and _amount(est, "actc_refundable") < 0
     assert est.point == est.high and est.low == est.point - lost
@@ -146,25 +123,25 @@ def test_p023_an_h1b_household_loses_the_refunded_portion_on_the_low_end(kdir):
     assert "Tax residency is not the test" in note
 
 
-def test_p023_an_lpr_household_is_unchanged(kdir):
-    est = estimate_refund(_single_parent(us_person=True), 2026, _INCOME, knowledge_dir=kdir)
+def test_p023_an_lpr_household_is_unchanged():
+    est = estimate_refund(_single_parent(us_person=True), 2026, _INCOME)
     assert _benefit(est) > 0
     assert est.low == est.point == est.high
     note = _schedule_3a_note(est)
     assert "Nothing is held back" in note and "us_person answer is True" in note
     # A recorded answer decides, whatever the visa timeline says.
-    est = estimate_refund(_single_parent(answer="refugee"), 2026, _INCOME, knowledge_dir=kdir)
+    est = estimate_refund(_single_parent(answer="refugee"), 2026, _INCOME)
     assert est.low == est.point == est.high and "'refugee'" in _schedule_3a_note(est)
 
 
-def test_p023_the_1641c_categories_are_a_reading_not_a_yes(kdir):
+def test_p023_the_1641c_categories_are_a_reading_not_a_yes():
     for profile in (_single_parent(answer="t_nonimmigrant"), _single_parent(status="T-1")):
-        est = estimate_refund(profile, 2026, _INCOME, knowledge_dir=kdir)
+        est = estimate_refund(profile, 2026, _INCOME)
         assert est.low == est.point - _benefit(est) < est.point
         assert "cites 1641(b) only" in _schedule_3a_note(est)
 
 
-def test_p023_a_joint_return_needs_only_one_qualifying_spouse(kdir):
+def test_p023_a_joint_return_needs_only_one_qualifying_spouse():
     imm, rf = _resident_visa()
 
     def couple(spouse: Spouse) -> Profile:
@@ -173,30 +150,30 @@ def test_p023_a_joint_return_needs_only_one_qualifying_spouse(kdir):
                                 dependents=_kids(), spouse=spouse),
             identity=Identity(us_person=_ans(False)), immigration=imm, residency_facts=rf)
 
-    one = estimate_refund(couple(Spouse(us_person=_ans(True))), 2026, _INCOME, knowledge_dir=kdir)
+    one = estimate_refund(couple(Spouse(us_person=_ans(True))), 2026, _INCOME)
     assert _benefit(one) > 0 and one.low == one.point == one.high
     assert "your spouse's us_person answer is True" in _schedule_3a_note(one)
     neither = estimate_refund(couple(Spouse(us_person=_ans(False), immigration=imm, residency_facts=None)), 2026,
-                              _INCOME, knowledge_dir=kdir)
+                              _INCOME)
     lost = _benefit(neither)
     assert lost > 0 and neither.low <= neither.point - lost
 
 
-def test_p023_an_unrecorded_answer_asks_for_it(kdir):
+def test_p023_an_unrecorded_answer_asks_for_it():
     profile = Profile(household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single"),
                                           dependents=_kids()))
-    est = estimate_refund(profile, 2026, _INCOME, knowledge_dir=kdir)
+    est = estimate_refund(profile, 2026, _INCOME)
     lost = _benefit(est)
     assert lost > 0 and est.low == est.point - lost
     assert "is not recorded" in _schedule_3a_note(est)
     assert any("identity.qualified_alien_status" in c and f"${lost:,}" in c for c in est.what_would_change_it)
 
 
-def test_p023_the_liability_leaves_out_the_section_b_wage_tax(kdir):
+def test_p023_the_liability_leaves_out_the_section_b_wage_tax():
     # Hypothetical demo figures: box 5 Medicare wages far above box 1 put 0.9% of them in the Additional Medicare
     # Tax, which Schedule 2 files in Section B — outside subtitle A, so it does not absorb the credits.
     income = IncomeSnapshot(wages=30_000, medicare_wages=230_000, federal_withholding=1_500)
-    est = estimate_refund(_single_parent(), 2026, income, knowledge_dir=kdir)
+    est = estimate_refund(_single_parent(), 2026, income)
     addmed = _amount(est, "additional_medicare_tax")
     assert addmed == 270                                   # 0.9% x (230,000 - 200,000)
     affected = -sum(_amount(est, s) for s in ("eitc", "actc_refundable", "aotc_refundable"))

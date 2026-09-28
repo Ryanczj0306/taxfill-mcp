@@ -4425,6 +4425,13 @@ def test_the_two_judgment_facts_are_refused_rather_than_guessed():
         assert "6724(d)(2)" in str(exc) and "1099-DIV" in str(exc)
 
 
+def test_a_year_without_the_ftc_block_says_what_to_add(planning_year, synthetic_provisional_pack):
+    # JT0b: the block stripped from a scratch copy, whatever the planning pack ships (2026 gained it in JT1d).
+    with pytest.raises(ValueError, match=r"credits\.foreign_tax_credit\.de_minimis_election"):
+        foreign_tax_credit_election(100, all_foreign_income_passive=True, all_reported_on_payee_statement=True,
+                                    year=planning_year, knowledge_dir=synthetic_provisional_pack(["credits"]))
+
+
 def test_bad_amounts_and_statuses_are_refused_prescriptively():
     with pytest.raises(ValueError, match="creditable_foreign_taxes must be zero or more"):
         foreign_tax_credit_election(-5, **_INDEX_FUND)
@@ -4432,10 +4439,6 @@ def test_bad_amounts_and_statuses_are_refused_prescriptively():
         foreign_tax_credit_election(100, filing_status="mfj", **_INDEX_FUND)
     with pytest.raises(ValueError, match="regular_tax must be zero or more"):
         foreign_tax_credit_election(100, regular_tax=-1, **_INDEX_FUND)
-    # A year with no credits.foreign_tax_credit block must say what to add.
-    with pytest.raises(ValueError, match=r"credits\.foreign_tax_credit\.de_minimis_election"):
-        foreign_tax_credit_election(100, all_foreign_income_passive=True,
-                                    all_reported_on_payee_statement=True, year=2026)
 
 
 def test_the_work_string_carries_every_condition_and_the_statute():
@@ -4720,3 +4723,60 @@ def test_jt1b_a_joint_and_a_single_return_part_at_75000():
     single = dependent_care_credit(6_000, 2, 200_000, agi=90_000, filing_status="single", year=2026)
     assert (joint.applicable_percentage, joint.credit) == (Decimal("0.35"), 2_100)
     assert (single.applicable_percentage, single.credit) == (Decimal("0.27"), 1_620)
+
+
+# ── Phase J JT1d: the 2026 credits block (Rev. Proc. 2025-32 §§4.05-4.06) ──
+
+# Rev. Proc. 2025-32 §4.06(1), transcribed: (earned income amount, maximum credit, threshold phaseout MFJ, completed
+# MFJ, threshold other, completed other) for none / one / two / three or more qualifying children.
+_JT1D_EITC = {
+    "0": (8_680, 664, 18_140, 26_820, 10_860, 19_540),
+    "1": (13_020, 4_427, 31_160, 58_863, 23_890, 51_593),
+    "2": (18_290, 7_316, 31_160, 65_899, 23_890, 58_629),
+    "3+": (18_290, 8_231, 31_160, 70_244, 23_890, 62_974),
+}
+# IRC 32(b)(1): (credit percentage, phaseout percentage).
+_JT1D_PCT = {"0": ("0.0765", "0.0765"), "1": ("0.34", "0.1598"), "2": ("0.40", "0.2106"), "3+": ("0.45", "0.2106")}
+
+
+def test_jt1d_the_2026_credits_block_is_rev_proc_2025_32():
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    pack = load_knowledge("federal", 2026)
+    ctc = pack.credits.child_tax_credit
+    assert (ctc["per_qualifying_child"], ctc["additional_ctc_refundable_cap_per_child"],
+            ctc["credit_for_other_dependents"]) == (2_200, 1_700, 500)
+    assert ctc["magi_phaseout_threshold"]["married_filing_jointly"] == 400_000
+    assert {v for k, v in ctc["magi_phaseout_threshold"].items() if k != "married_filing_jointly"} == {200_000}
+    assert ctc["qualifying_child_age_test"] == "under age 17 at the end of 2026"
+    eitc_cfg = pack.credits.earned_income_tax_credit
+    assert eitc_cfg["investment_income_limit"] == 12_200
+    for n, row in _JT1D_EITC.items():
+        got = eitc_cfg["by_qualifying_children"][n]
+        assert (got["earned_income_amount"], got["max_credit"], got["phaseout_begins_mfj"], got["phaseout_complete_mfj"],
+                got["phaseout_begins_other"], got["phaseout_complete_other"]) == row, n
+    ftc = pack.credits.foreign_tax_credit["de_minimis_election"]["creditable_foreign_taxes_limit"]
+    assert (ftc["joint_return"], ftc["other"]) == (600, 300)       # IRC 904(j)(2)(B), not indexed
+    assert "credits" not in pack.provisional.blocks_deliberately_absent
+
+
+@pytest.mark.parametrize("n", sorted(_JT1D_EITC))
+def test_jt1d_the_eitc_table_agrees_with_irc_32b(n):
+    # The only 2026 EITC source is the revenue procedure, so the table is checked against the statute's own
+    # arithmetic: maximum = earned income amount x credit percentage; completed = threshold + maximum / phaseout %.
+    earned, maximum, begins_mfj, complete_mfj, begins, complete = _JT1D_EITC[n]
+    credit_pct, phaseout_pct = (Decimal(x) for x in _JT1D_PCT[n])
+    assert irs_round(earned * credit_pct) == maximum
+    for b, c in ((begins, complete), (begins_mfj, complete_mfj)):
+        assert abs(b + Decimal(maximum) / phaseout_pct - c) <= 1, (n, b, c)
+
+
+def test_jt1d_the_2026_ops_price_the_credits():
+    ctc = child_tax_credit(2, 1, 90_000, 3_000, 90_000, "married_filing_jointly", 2026)
+    assert (ctc.ctc_odc_total, ctc.nonrefundable_used, ctc.actc_refundable, ctc.actc_cap_per_child) == (4_900, 3_000, 1_900, 1_700)
+    # Phase-out: $50 per $1,000 or fraction over $200,000 (single) — $200,001 is one step.
+    assert child_tax_credit(1, 0, 200_001, 10_000, 200_001, "single", 2026).phaseout_reduction == 50
+    assert eitc(18_290, 18_290, 2, "single", 2026).eitc == 7_316               # the plateau
+    assert eitc(20_000, 20_000, 0, "single", 2026).eitc == 0                    # past 19,540
+    over = eitc(20_000, 20_000, 1, "single", 2026, investment_income=12_201)
+    assert over.eitc == 0 and "$12,200" in over.disqualified_reason

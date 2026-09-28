@@ -40,7 +40,7 @@
 # WHAT IS OUTSTANDING before this pack can back a filed return
 #   1. The absent blocks (provisional.blocks_deliberately_absent):
 #      taxable_social_security, student_loan_interest, education_credits,
-#      filing_thresholds, credits, payment_options, mailing_addresses and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
+#      filing_thresholds, payment_options, mailing_addresses and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
 #   2. tax_table.row_bands still rests on a carried-forward STRUCTURE
 #      (provisional.still_assumed). The draft Pub 1040 (2026) now prints the 2026 Tax
 #      Table, so its rows are a projection-grade check; the final booklet decides.
@@ -123,7 +123,7 @@ provisional:
     numbers that ARE here are citable and projection-grade (what will I owe /
     what should I set aside / married-vs-separate comparisons), but the absent
     blocks mean a bottom line built on this pack can OMIT real items — e.g. a
-    family's child tax credit and EITC price at $0 until the 2026 credits
+    student's education credits price at $0 until the 2026 education_credits
     block publishes — so any consumer must surface which engaged inputs went
     unestimated (the estimator emits 'NOT ESTIMATED' assumptions for them).
     Insufficient for filing in every case.
@@ -132,7 +132,6 @@ provisional:
     - student_loan_interest
     - education_credits
     - filing_thresholds
-    - credits
     - payment_options
     - mailing_addresses
     - deadlines
@@ -820,6 +819,92 @@ charitable_contributions:
   written_acknowledgment_at: 250
 
 # ─────────────────────────────────────────────────────────────────────────────
+# credits (Phase J JT1d). Read 2026-09-27: Rev. Proc. 2025-32 §4.05 (the child
+# tax credit) and §4.06 (the earned income credit); IRC 24(h)(2)-(7) and 24(i)
+# and IRC 32(b)(1) (uscode.house.gov); the draft Schedule 8812 (Form 1040) 2026
+# (Created 4/24/26) and its draft instructions, which print the same CTC figures
+# ("Multiply line 4 by $2,200", "x $1,700", "$400,000" / "$200,000", "more than
+# $2,500"). The EITC figures' second source is the draft Pub 1040 (2026), Tax
+# and Earned Income Credit Tables (Aug 28, 2026): all 11,176 cells of its 2026 EIC
+# Table reproduce from this block's figures with the IRC 32(b)(1) percentages
+# (checked 2026-09-27). Each maximum credit also equals its earned income amount
+# times the credit percentage, rounded, and each completed phaseout amount the
+# threshold plus the maximum over the phaseout percentage (test_jt1d_*).
+# Not recorded in provisional.second_passes: those paths name blocks under
+# `tax`, and this block is top-level.
+credits:
+  citation:
+    source: "Rev. Proc. 2025-32 §4.05 (Child Tax Credit) and §4.06 (Earned Income Credit), taxable years beginning in 2026"
+    url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+  child_tax_credit:
+    citation:
+      source: >-
+        Rev. Proc. 2025-32 §4.05: "For taxable years beginning in 2026, the maximum amount of
+        the credit allowed under § 24(a) is $2,200" and "the amount used in § 24(d)(1)(A) to
+        determine the amount of the credit under § 24 that may be refundable is $1,700";
+        checked against the draft Schedule 8812 (Form 1040) 2026 (Created 4/24/26) lines 5,
+        9 and 16b
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    # IRC 24(i) (P.L. 119-21): after 2025 the $2,200 is indexed, "rounded to the
+    # next lowest multiple of $100" — so 2026 stays $2,200.
+    per_qualifying_child: 2200
+    additional_ctc_refundable_cap_per_child: 1700
+    credit_for_other_dependents: 500   # IRC 24(h)(4)(A): "increased by $500 for each dependent" — not indexed
+    qualifying_child_age_test: "under age 17 at the end of 2026"
+    magi_phaseout_threshold:            # IRC 24(h)(3): "$400,000 in the case of a joint return ($200,000 in any other case)"
+      married_filing_jointly: 400000
+      single: 200000
+      married_filing_separately: 200000
+      head_of_household: 200000
+      qualifying_surviving_spouse: 200000
+    phaseout_step: "reduced $50 for each $1,000 (or fraction) of MAGI above the threshold (IRC 24(b)(1); draft Schedule 8812 (2026) lines 10-11: the excess raised to the next multiple of $1,000, then x 5%)"
+    taxpayer_ssn_requirement: >-
+      IRC 24(h)(7)(A): no credit "unless the taxpayer includes on the return of tax for the
+      taxable year- (i) the taxpayer's social security number (or, in the case of a joint
+      return, the social security number of at least 1 spouse), and (ii) the social security
+      number of such qualifying child." The draft 2026 Schedule 8812 instructions: "If you are
+      filing a joint return, only one filer must have a valid SSN. The other filer must have
+      either an SSN or an individual taxpayer identification number (ITIN), and it must have
+      been issued on or before the due date of your return." A child with only an ITIN/ATIN
+      can qualify for the $500 ODC instead.
+  # ── Foreign tax credit (Form 1116): the IRC 904(j) de minimis election only ──
+  # Statutory and NOT indexed (P.L. 105-34 added 904(j) with no inflation
+  # adjustment), so the figures are the 2025 pack's; the 2026 Form 1116
+  # instructions are not posted, so the citation is the statute itself.
+  foreign_tax_credit:
+    citation:
+      source: >-
+        IRC 904(j)(2)(B) verbatim: "the amount of the creditable foreign taxes paid or accrued
+        by the individual during the taxable year does not exceed $300 ($600 in the case of a
+        joint return)". Estates and trusts are excluded by IRC 904(j)(3)(D) ("This subsection
+        shall not apply to any estate or trust").
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim"
+    de_minimis_election:
+      # "in the case of a joint return" is LITERAL: only married filing jointly
+      # takes $600; a qualifying surviving spouse and MFS take $300.
+      creditable_foreign_taxes_limit:
+        joint_return: 600
+        other: 300
+      statute: "IRC 904(j)"
+      statute_url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim"
+      added_by: "P.L. 105-34 (Taxpayer Relief Act of 1997), enacted 1997-08-05"
+      inflation_indexed: false
+      excluded_entities: [estate, trust]
+      forfeits_carryback_and_carryforward: true
+      claimed_on: "Schedule 3 (Form 1040), Part I, line 1"
+  earned_income_tax_credit:
+    citation:
+      source: "Rev. Proc. 2025-32 §4.06 (2026 Earned Income Credit): the §4.06(1) table and §4.06(2), investment income over $12,200"
+      url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    investment_income_limit: 12200
+    # keyed by number of qualifying children: 0, 1, 2, 3+ (3+ shares the 2-child earned-income amount)
+    by_qualifying_children:
+      "0": { earned_income_amount: 8680, max_credit: 664, phaseout_begins_other: 10860, phaseout_begins_mfj: 18140, phaseout_complete_other: 19540, phaseout_complete_mfj: 26820 }
+      "1": { earned_income_amount: 13020, max_credit: 4427, phaseout_begins_other: 23890, phaseout_begins_mfj: 31160, phaseout_complete_other: 51593, phaseout_complete_mfj: 58863 }
+      "2": { earned_income_amount: 18290, max_credit: 7316, phaseout_begins_other: 23890, phaseout_begins_mfj: 31160, phaseout_complete_other: 58629, phaseout_complete_mfj: 65899 }
+      "3+": { earned_income_amount: 18290, max_credit: 8231, phaseout_begins_other: 23890, phaseout_begins_mfj: 31160, phaseout_complete_other: 62974, phaseout_complete_mfj: 70244 }
+
+# ─────────────────────────────────────────────────────────────────────────────
 # federal_public_benefit (Phase J JT1c, pitfall P-023). The draft Schedule 3-A
 # (Form 1040) 2026 (Created 6/24/26) and the PROPOSED rule behind it,
 # REG-119882-25 (91 FR 53812, Aug. 20, 2026; comments closed 2026-10-05, hearing
@@ -930,6 +1015,20 @@ federal_public_benefit:
 # breakpoints, the $184,500 wage base, the account limits) — those are annual
 # indexation, not law changes.
 effective_law_changes:
+  - description: >-
+      The child tax credit stays at $2,200 per qualifying child for 2026 with a $1,700
+      refundable portion: P.L. 119-21 made IRC 24(h) permanent ("$2,200" for "$1,000",
+      the $400,000 / $200,000 threshold, the $500 other-dependent credit, the SSN rule) and
+      added IRC 24(i), indexing the $2,200 after 2025 with any increase "rounded to the next
+      lowest multiple of $100" — Rev. Proc. 2025-32 §4.05 prints $2,200 and $1,700 for 2026.
+      Modeled in credits.child_tax_credit (Phase J JT1d).
+    citation:
+      source: "IRC 24(h)(2)-(7) and 24(i) (uscode.house.gov, read 2026-09-27)"
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section24&num=0&edition=prelim"
+    status: enacted
+    affects:
+      - credits.child_tax_credit
+    modeled: true
   - description: >-
       P.L. 119-21 PERMANENTLY EXTENDED the individual income tax rates, so 2026 keeps
       the seven-rate section 1(j)(2) structure rather than reverting: Pub 15 (2026)

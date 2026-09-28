@@ -5273,3 +5273,15 @@ def test_jr3c_the_joint_view_caps_each_persons_excess_before_summing():
     joint = IncomeSnapshot(roth_ira_excess=7_000, roth_ira_dec31_value=1_000,
                            spouse=IncomeSnapshot(roth_ira_excess=2_000)).combined_with_spouse()
     assert joint.roth_ira_excess == 3_000 and joint.roth_ira_dec31_value is None
+
+
+def test_jt1d_the_2026_estimate_prices_the_family_credits():
+    # A hypothetical married couple, both U.S. citizens, two children with SSNs: the 2026 credits block prices the
+    # CTC and the EITC instead of reporting them missing.
+    profile = _mfj_family(_kid("A", date(2018, 5, 1)), _kid("B", date(2021, 9, 1)))
+    profile = profile.model_copy(update={"identity": Identity(us_person=_ans(True))})
+    est = estimate_refund(profile, 2026, IncomeSnapshot(wages=45_000, federal_withholding=1_200))
+    slots = {c.slot: c.amount for c in est.composition}
+    assert slots.get("ctc_odc_nonrefundable", 0) < 0 and slots.get("eitc", 0) < 0
+    assert not [m for m in est.missing_blocks if m.block.startswith("credits")]
+    assert est.provisional is not None           # still a projection: the year is planning-only
