@@ -1749,6 +1749,13 @@ def education_credits(
         f"Education credits ({year}, {status}, MAGI {_money(magi_d)}): {aotc_text}. {llc_text}. "
         f"Total = {_dollars(total)}. Each credit rounded to whole dollars individually."
     )
+    if params.ssn_requirement is not None:
+        # JT1e (P-024): eligibility stays the caller's judgment, but the new rule is named with the figure.
+        work += (
+            " ELIGIBILITY (P-024): from 2026 a credit needs a valid SSN — "
+            + params.ssn_requirement.instructions.removeprefix("Draft Instructions for Form 8863 (2026): ")
+            + " An ITIN is not one; pass only the students who meet it."
+        )
     return EducationCreditsResult(
         total_credit=total,
         aotc_total=aotc_total,

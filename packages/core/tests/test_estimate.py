@@ -3896,6 +3896,9 @@ _SPOUSE_SUMMED = frozenset({
 # JF7: each person's Schedule 1-A senior flag — the joint view takes the taxpayer's as its own and the
 # spouse snapshot's own flag as senior_spouse (never summed).
 _SPOUSE_PERSON_FLAGS = frozenset({"senior_taxpayer", "senior_spouse"})
+# JT1e: each person's education-credit SSN fact, the same shape as the senior flags; and the per-student SSN
+# answers, padded to one per student before they are concatenated (they ride with aotc_qualified_expenses).
+_SPOUSE_EDUCATION_SSN = frozenset({"education_ssn_taxpayer", "education_ssn_spouse", "aotc_students_ssn_ok"})
 # JR3b: each person's IRA pool is priced on their own snapshot and never reaches the joint view.
 _SPOUSE_NEVER_MERGED = frozenset({"ira_pool", "traditional_ira_dec31_value", "roth_ira_dec31_value"})
 # JR3c: each person's IRA excess, capped at that person's Dec 31 value, then summed.
@@ -3958,6 +3961,12 @@ def _spouse_coverage_gaps(combine) -> list[str]:
     if (flagged.senior_taxpayer, flagged.senior_spouse, flagged2.senior_taxpayer, flagged2.senior_spouse) != (
             True, False, False, True):
         gaps += sorted(_SPOUSE_PERSON_FLAGS)
+    edu = combine(primary.model_copy(update={
+        "education_ssn_taxpayer": True, "aotc_students_ssn_ok": [],
+        "spouse": spouse.model_copy(update={"education_ssn_taxpayer": False, "aotc_students_ssn_ok": [True]})}))
+    if (edu.education_ssn_taxpayer, edu.education_ssn_spouse, edu.aotc_students_ssn_ok) != (
+            True, False, [None, True, None]):
+        gaps += sorted(_SPOUSE_EDUCATION_SSN)
     # The W-2 boxes (JF3): summed, a spouse's missing box standing in as their box 1; None when neither.
     if joint.medicare_wages != primary.medicare_wages + spouse.medicare_wages:
         gaps.append("medicare_wages")
@@ -3978,7 +3987,8 @@ def _spouse_coverage_gaps(combine) -> list[str]:
 
 def test_jf1b5_every_income_snapshot_field_is_classified_for_the_joint_view():
     classes = (_SPOUSE_SUMMED, _SPOUSE_CONCATENATED, _SPOUSE_OPTIONAL_SUMMED, _HOUSEHOLD_LEVEL, _SPOUSE_FIELD,
-               _SPOUSE_BOX_SUMMED, _SPOUSE_PERSON_FLAGS, _SPOUSE_NEVER_MERGED, _SPOUSE_CAPPED_SUMMED)
+               _SPOUSE_BOX_SUMMED, _SPOUSE_PERSON_FLAGS, _SPOUSE_NEVER_MERGED, _SPOUSE_CAPPED_SUMMED,
+               _SPOUSE_EDUCATION_SSN)
     classified = frozenset().union(*classes)
     assert sum(len(c) for c in classes) == len(classified), "a field is in two classes"
     fields = set(IncomeSnapshot.model_fields)

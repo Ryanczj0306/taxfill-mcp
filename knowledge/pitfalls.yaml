@@ -1823,6 +1823,37 @@ pitfalls:
       on the return qualifying, the LOW end holds the amount back and the point
       keeps it, with the rule's words; an unrecorded answer asks for the fact.
       Tests: test_p023_* in packages/core/tests/test_public_benefit.py.
+  - id: P-024
+    incident: >-
+      AN EDUCATION CREDIT PRICED FOR A FILER WHO HAS NO SSN. From 2026 IRC
+      25A(g)(1), as amended by P.L. 119-21 §70606 ("shall apply to taxable
+      years beginning after December 31, 2025"), reads "No credit shall be
+      allowed under subsection (a) to an individual unless the individual
+      includes on the return of tax for the taxable year- (i) such
+      individual's social security number", with the meaning of IRC
+      24(h)(7): an SSN issued to a citizen or for employment, so an ITIN is
+      not one. The draft Instructions for Form 8863 (2026): the SSN must be
+      "valid for employment" and "issued by the Social Security
+      Administration before the due date of your 2026 return (including
+      extensions)"; "If you are filing a joint return, only one spouse is
+      required to have a valid SSN"; a dependent student "must also have a
+      valid SSN". The estimator priced the AOTC from the expenses alone, and
+      the 2025 shape of the rule (a TIN on the return) let an ITIN filer —
+      a resident alien on a visa without work authorization, or a spouse who
+      came as a dependent — read the credit as theirs. Found by the
+      2026-09-23 TY2026 review (TY26-10).
+    countermeasure: >-
+      The 2026 tax.education_credits block (JT1e) carries ssn_requirement:
+      the statute, the effective date and the instructions quoted, one spouse
+      enough on a joint return, a dependent student included. A federal
+      education block from 2026 without it is refused at load. calc op
+      education_credits names the rule in its work. The estimator reads the
+      filer's SSN from the profile's tax_id (an ITIN starts with 9; one
+      spouse's on a joint return) and each student's from
+      aotc_students_ssn_ok. It gives no credit on an ITIN or to an
+      ITIN-only dependent student, and leaves the credit NOT ESTIMATED when
+      the answer is not recorded. Tests: test_p024_* in
+      packages/core/tests/test_education_2026.py.
   - id: P-026
     incident: >-
       The filler wrote the literal 'NRA' into the spouse-SSN comb. An MFS filer

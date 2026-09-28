@@ -444,6 +444,21 @@ class IncomeSnapshot(BaseModel):
         default_factory=list,
         description="AOTC-qualified education expenses, one entry per eligible student (1098-T-informed).",
     )
+    aotc_students_ssn_ok: list[bool | None] = Field(
+        default_factory=list,
+        description="JT1e (2026 onward, P-024): one entry per aotc_qualified_expenses entry — True when the student is "
+                    "you or your spouse, or a dependent issued a valid SSN (valid for employment) before the return's "
+                    "due date including extensions; False for a dependent with only an ITIN/ATIN; missing or None = "
+                    "not known, and that student's credit is NOT ESTIMATED.",
+    )
+    education_ssn_taxpayer: bool | None = Field(
+        default=None,
+        description="JT1e: this snapshot's filer holds a valid SSN issued before the due date. None = derived by "
+                    "estimate_refund from the profile's tax ID (an ITIN starts with 9); still None = not known.",
+    )
+    education_ssn_spouse: bool | None = Field(
+        default=None, description="The same for the spouse, counted on a joint return only. None = derived.",
+    )
     dependent_care_expenses: int = Field(
         default=0, ge=0,
         description=(
@@ -547,6 +562,9 @@ class IncomeSnapshot(BaseModel):
             senior_spouse=s.senior_taxpayer,
             ss_withheld_by_employer=[*self.ss_withheld_by_employer, *s.ss_withheld_by_employer],
             aotc_qualified_expenses=[*self.aotc_qualified_expenses, *s.aotc_qualified_expenses],
+            aotc_students_ssn_ok=[*_ssn_oks(self), *_ssn_oks(s)],
+            education_ssn_taxpayer=self.education_ssn_taxpayer,
+            education_ssn_spouse=s.education_ssn_taxpayer,
             medicare_tax_withheld=[*self.medicare_tax_withheld, *s.medicare_tax_withheld],
             # JF3: a W-2 box summed across the couple; a spouse who did not give it contributes box 1 (the
             # stand-in, disclosed by the caller), and neither giving it keeps it None.
@@ -3532,6 +3550,38 @@ def _senior(dob_answer, tax_id_answer, year: int) -> bool | None:
     return bool(tax_id) and len(tax_id) == 9 and tax_id.isdigit() and not tax_id.startswith("9")   # an ITIN starts with 9
 
 
+def _valid_ssn(tax_id_answer) -> bool | None:
+    """A recorded tax ID read as the SSN the 2026 education-credit rule needs: True for an SSN, False for an ITIN
+    (it starts with 9), None when none is recorded (JT1e). Whether an SSN is 'valid for employment' is not on the
+    profile — disclosed."""
+    tax_id = str(getattr(tax_id_answer, "value", "") or "").replace("-", "").strip()
+    if not tax_id:
+        return None
+    return len(tax_id) == 9 and tax_id.isdigit() and not tax_id.startswith("9")
+
+
+def _ssn_oks(snap: "IncomeSnapshot") -> list[bool | None]:
+    """aotc_students_ssn_ok padded to one entry per student (JT1e)."""
+    n = len(snap.aotc_qualified_expenses)
+    return [*snap.aotc_students_ssn_ok, *[None] * n][:n]
+
+
+def _with_education_ssn(profile: Profile, income: IncomeSnapshot) -> IncomeSnapshot:
+    """JT1e: fill each snapshot's education SSN facts from the profile's tax IDs when the caller left them None."""
+    ident = profile.identity
+    spouse = profile.household.spouse if profile.household is not None else None
+    tp = _valid_ssn(getattr(ident, "tax_id", None)) if ident is not None else None
+    sp = _valid_ssn(getattr(spouse, "tax_id", None)) if spouse is not None else None
+    update: dict[str, Any] = {}
+    if income.education_ssn_taxpayer is None and tp is not None:
+        update["education_ssn_taxpayer"] = tp
+    if income.education_ssn_spouse is None and sp is not None:
+        update["education_ssn_spouse"] = sp
+    if income.spouse is not None and income.spouse.education_ssn_taxpayer is None and sp is not None:
+        update["spouse"] = income.spouse.model_copy(update={"education_ssn_taxpayer": sp, "education_ssn_spouse": tp})
+    return income.model_copy(update=update) if update else income
+
+
 def _with_senior_flags(profile: Profile, year: int, income: IncomeSnapshot) -> IncomeSnapshot:
     """JF7: fill each snapshot's Schedule 1-A senior flags from the profile when the caller left them None."""
     ident = profile.identity
@@ -3984,12 +4034,34 @@ def _bottom_line(
     # if such individual is treated as a resident alien ... by reason of an election under subsection
     # (g) or (h) of section 6013."
     aotc_refundable = 0
+    edu_expenses = list(income.aotc_qualified_expenses)
+    edu_rule = pack_tax.education_credits.ssn_requirement if pack_tax.education_credits is not None else None
+    if edu_expenses and edu_rule is not None and not nonresident and not dual_status and status != _MFS:
+        # JT1e (P-024): IRC 25A(g)(1) as amended — the filer's valid SSN (one spouse's on a joint return, the Form
+        # 8863 instructions) and, for a dependent student, the student's. A student not known to meet it is left
+        # out and NOT ESTIMATED; one known not to is left out.
+        filer = income.education_ssn_taxpayer
+        if status == _MFJ and edu_rule.one_spouse_suffices_on_joint_return:
+            pair = (income.education_ssn_taxpayer, income.education_ssn_spouse)
+            filer = True if True in pair else (None if None in pair else False)
+        oks = _ssn_oks(income)
+        if notes is not None:
+            if filer is False:
+                notes.add("edu_ssn_filer_missing")
+            elif filer is None:
+                notes.add("edu_ssn_filer_unknown")
+            else:
+                if False in oks:
+                    notes.add("edu_ssn_student_missing")
+                if None in oks:
+                    notes.add("edu_ssn_student_unknown")
+        edu_expenses = [e for e, ok in zip(edu_expenses, oks) if filer is True and ok is True]
     if (
-        income.aotc_qualified_expenses and not nonresident and not dual_status
+        edu_expenses and not nonresident and not dual_status
         and pack_tax.education_credits is not None
     ):
         edu = education_credits(
-            income.aotc_qualified_expenses, 0, magi=agi, filing_status=sep_status, year=year,
+            edu_expenses, 0, magi=agi, filing_status=sep_status, year=year,
             knowledge_dir=knowledge_dir,
         )
         if married_7703 and notes is not None:
@@ -4550,6 +4622,7 @@ def estimate_refund(
         statuses = [_MFS]
     deps = _dependent_infos(profile, year)
     income = _with_senior_flags(profile, year, income)   # JF7: Schedule 1-A Part V, from DOB and tax ID
+    income = _with_education_ssn(profile, income)        # JT1e: the 2026 education-credit SSN rule
     # JR3b: each person's 2b-checked IRA items priced through Form 8606 Part I with THEIR OWN pool, before any
     # joint view can concatenate them.
     income = _resolve_ira_pool(income, year, knowledge_dir, "taxpayer")
@@ -5758,6 +5831,26 @@ def estimate_refund(
             + ("The full-year-resident figure in the range likely UNDERSTATES your refund (the dual-status point "
                "cannot claim the credit)." if dual else "This bottom line likely UNDERSTATES your refund.")
         )
+    # JT1e (P-024): the 2026 SSN rule, disclosed from the candidates' notes.
+    edu_rule = pack_for_gaps.tax.education_credits.ssn_requirement if pack_for_gaps.tax.education_credits else None
+    if edu_rule is not None:
+        rule = (f"from {year} IRC 25A(g)(1) (P.L. 119-21 §70606) allows the American opportunity and lifetime "
+                f"learning credits only with a valid SSN — \"valid for employment\" and issued \"before the due date "
+                f"of your {year} return (including extensions)\"; on a joint return one spouse's is enough, and a "
+                f"dependent student needs one too (draft Instructions for Form 8863 ({year})). An ITIN is not one.")
+        if "edu_ssn_filer_missing" in notes:
+            assumptions.append(f"No education credit: {rule} The tax ID on file is an ITIN (on a joint return, "
+                               f"both spouses').")
+        if "edu_ssn_filer_unknown" in notes:
+            assumptions.append(f"NOT ESTIMATED — education credits: {rule} No tax ID is recorded "
+                               f"(identity.tax_id, and household.spouse.tax_id on a joint return), so the credit is "
+                               f"left out; with a valid SSN it likely UNDERSTATES your refund.")
+        if "edu_ssn_student_missing" in notes:
+            assumptions.append(f"No education credit for a dependent student without a valid SSN: {rule}")
+        if "edu_ssn_student_unknown" in notes:
+            assumptions.append(f"NOT ESTIMATED — education credits for a student whose SSN status is not recorded: "
+                               f"{rule} Pass aotc_students_ssn_ok (one entry per student: True for you, your spouse "
+                               f"or a dependent with a valid SSN) — the credit is left out until then.")
     if (
         income.student_loan_interest_paid + (income.spouse.student_loan_interest_paid if income.spouse else 0)
     ) > 0 and pack_for_gaps.tax.student_loan_interest is None:

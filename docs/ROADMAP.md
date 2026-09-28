@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,483 tests** — offline 6,074 + live-.gov 409; derived
+Done and on `main` (**6,491 tests** — offline 6,082 + live-.gov 409; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2225,11 +2225,15 @@ not wait for any of this.
     - **Found doing that pass:** the engine's `eitc` op prices by a ratio (maximum / earned income amount), not the table's percentages, and misses 327 of the 2026 cells by $1 — and 1.6% to 10.4% of each final 2019-2025 table's cells (2025: 647 of 10,928). Fixed in its own commit after JT1e ("the EITC is the EIC Table").
     - **Tests:** test_tax_calc `test_jt1d_*` (every figure, the 32(b) arithmetic per row, the 2026 child_tax_credit and eitc ops); test_estimate `test_jt1d_the_2026_estimate_prices_the_family_credits`. test_public_benefit now runs on the shipped 2026 pack (its borrowed-credits fixture is gone).
     - eval i5 and the ledger tests keep stripping the block through the JT0b fixture (synthetic_provisional_pack(["credits"])), so they test the absent-block path whatever ships.
-- [ ] **JT1e — Education credits 2026** (M; deps JT1c) [TY26-10] — pitfall *education-ssn-deadline*
-  - MAGI limits $180,000 / $90,000 (draft i8863).
-  - The new rule: filer and student "must have been issued valid SSNs before the due date of your 2026 return, including extensions". Add `ssn_requirement`.
-  - The estimator gates AOTC/LLC on SSN-vs-ITIN facts, NOT ESTIMATED when unknown.
-  - **Acceptance:** an ITIN-only student → no AOTC; an unknown status → NOT ESTIMATED; the pitfall has citing tests.
+- [x] **JT1e — Education credits 2026 — DONE 2026-09-27** (M; deps JT1c) [TY26-10] — pitfall *education-ssn-deadline* = **P-024**
+  - *As built:*
+    - **Sources read 2026-09-27:** IRC 25A(b)(1), (c)(1), (d)(1), (g)(1) and (i) (uscode.house.gov), with P.L. 119-21 §70606(c) ("shall apply to taxable years beginning after December 31, 2025"); the draft Form 8863 (2026) (Created 4/28/26) — "A valid social security number (SSN) is now required to claim an education credit", lines 2 and 13 "$180,000 … $90,000" — and its draft instructions (What's New, Table 1, the identification requirement).
+    - **Two readings recorded:** the statute says "such individual's social security number"; the draft instructions say "only one spouse is required to have a valid SSN" on a joint return. The block records the instructions' reading (`one_spouse_suffices_on_joint_return: true`) with both quoted; JT6 re-reads the final instructions.
+    - **Knowledge:** the 2026 `tax.education_credits` block (the statutory, unindexed amounts and MAGI range, cited to IRC 25A) with the new `ssn_requirement` (EducationSsnRequirement). A federal education block from 2026 without it is refused at load. education_credits leaves blocks_deliberately_absent.
+    - **Calc:** op education_credits names the rule in its work for a year that carries it (eligibility stays the caller's judgment).
+    - **Estimator:** `education_ssn_taxpayer` / `education_ssn_spouse` (derived from the profile's tax IDs: an SSN, an ITIN (starts with 9), or not recorded) and `aotc_students_ssn_ok` per student. No credit on an ITIN (both spouses' on a joint return) or to an ITIN-only dependent student; NOT ESTIMATED when the filer's or a student's answer is not recorded. The joint view pads the per-student answers and keeps each person's flag, like the senior flags; the field-coverage test classifies all three.
+    - **Tests** (test_education_2026 `test_p024_*`): the block's quotes; the load refusal; the op's 2026 phase-out and rule text; an SSN vs an ITIN filer; an ITIN-only student → no AOTC; an unknown status → NOT ESTIMATED; one spouse's SSN is enough on a joint return; 2025 keeps no gate.
+    - "Valid for employment" is not on the profile (an SSN card's legend), so it is disclosed, not tested.
 - [ ] **JT2a — Tax Table, SALT/itemized, student loan, Social Security** (M; deps JT0b) [TY26-05, TY26-07, TY26-09, TY26-13]
   - **Tax Table.** The draft Pub 1040 (2026) (Aug 28, 2026) matches the engine on all 8,240 cells. Record it as a draft second pass, and add goldens at the 25/50 band edges.
   - **SALT.** salt_cap is missing and NOT declared absent (2025.yaml:557 ships it). The draft Schedule A line 5e: $40,400 ($20,200 MFS), threshold $505,000 ($252,500). Add an absent-list discipline test.

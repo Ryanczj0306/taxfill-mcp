@@ -704,6 +704,21 @@ class LlcParams(BaseModel):
         return self
 
 
+class EducationSsnRequirement(BaseModel):
+    """IRC 25A(g)(1) as amended by P.L. 119-21 §70606 (taxable years beginning after December 31, 2025) — JT1e,
+    P-024: an education credit needs a valid SSN, issued before the return's due date including extensions."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    statute: str = Field(description="IRC 25A(g)(1)(A) and (C), quoted.")
+    effective: str = Field(description="P.L. 119-21 §70606(c), quoted.")
+    instructions: str = Field(description="The Form 8863 instructions' reading (valid SSN, due date, joint return), quoted.")
+    one_spouse_suffices_on_joint_return: bool = Field(
+        description="The instructions: 'only one spouse is required to have a valid SSN'.")
+    dependent_student_needs_ssn: bool = Field(
+        description="The instructions: a dependent student 'must also have a valid SSN'.")
+
+
 class EducationCreditsParams(BaseModel):
     """Form 8863 education credits (AOTC + LLC).
 
@@ -716,6 +731,8 @@ class EducationCreditsParams(BaseModel):
     citation: Citation
     aotc: AotcParams
     llc: LlcParams
+    ssn_requirement: EducationSsnRequirement | None = Field(
+        default=None, description="JT1e: the 2026-onward SSN rule; a federal pack from 2026 must carry it.")
 
 
 class PtcApplicablePercentageBand(BaseModel):
@@ -2397,6 +2414,20 @@ class KnowledgePack(BaseModel):
                 f"(e.g. 'states/ca'), got {value!r}"
             )
         return value
+
+    @model_validator(mode="after")
+    def _education_ssn_rule_from_2026(self) -> "KnowledgePack":
+        # JT1e (P-024): IRC 25A(g)(1) as amended by P.L. 119-21 §70606 applies "to taxable years beginning after
+        # December 31, 2025" — a federal education-credit block from 2026 without the rule would price a credit
+        # an ITIN filer cannot take.
+        edu = self.tax.education_credits
+        if self.jurisdiction == "federal" and self.tax_year >= 2026 and edu is not None and edu.ssn_requirement is None:
+            raise ValueError(
+                f"the federal {self.tax_year} tax.education_credits block has no ssn_requirement — from 2026 IRC "
+                f"25A(g)(1) (P.L. 119-21 §70606) allows the AOTC and the LLC only with a valid SSN issued before the "
+                f"return's due date: author it (knowledge/federal/2026.yaml is the template)"
+            )
+        return self
 
     @model_validator(mode="after")
     def _public_benefit_rides_with_credits(self) -> "KnowledgePack":

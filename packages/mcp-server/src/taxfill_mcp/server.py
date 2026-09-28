@@ -1019,7 +1019,10 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       medicare_tax_withheld [box 6 per employer — the excess over 1.45% of box 5 is credited; needs
       medicare_wages; never also in federal_withholding]
     - credit inputs: ss_withheld_by_employer [W-2 box 4 per employer], aotc_qualified_expenses
-      [per eligible student], dependent_care_expenses + dependent_care_persons (Form 2441 —
+      [per eligible student] with aotc_students_ssn_ok [per student, 2026 onward (P-024): True for you, your
+      spouse or a dependent issued a valid SSN before the due date; False for an ITIN/ATIN-only dependent; a
+      missing answer leaves that student's credit NOT ESTIMATED — the filer's own SSN comes from the profile's
+      tax_id, one spouse's enough on a joint return], dependent_care_expenses + dependent_care_persons (Form 2441 —
       qualified care expenses paid so you/both spouses could work, and how many qualifying persons)
     - ACA (Form 1095-A line 33): aca_premiums, aca_slcsp, aca_aptc
     - spouse: nested income object with the spouse's OWN amounts (same fields; enables a true

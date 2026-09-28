@@ -39,7 +39,7 @@
 #
 # WHAT IS OUTSTANDING before this pack can back a filed return
 #   1. The absent blocks (provisional.blocks_deliberately_absent):
-#      taxable_social_security, student_loan_interest, education_credits,
+#      taxable_social_security, student_loan_interest,
 #      filing_thresholds, payment_options, mailing_addresses and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
 #   2. tax_table.row_bands still rests on a carried-forward STRUCTURE
 #      (provisional.still_assumed). The draft Pub 1040 (2026) now prints the 2026 Tax
@@ -123,14 +123,13 @@ provisional:
     numbers that ARE here are citable and projection-grade (what will I owe /
     what should I set aside / married-vs-separate comparisons), but the absent
     blocks mean a bottom line built on this pack can OMIT real items — e.g. a
-    student's education credits price at $0 until the 2026 education_credits
-    block publishes — so any consumer must surface which engaged inputs went
+    retiree's taxable Social Security is not priced until the 2026
+    taxable_social_security block publishes — so any consumer must surface which engaged inputs went
     unestimated (the estimator emits 'NOT ESTIMATED' assumptions for them).
     Insufficient for filing in every case.
   blocks_deliberately_absent:
     - taxable_social_security
     - student_loan_interest
-    - education_credits
     - filing_thresholds
     - payment_options
     - mailing_addresses
@@ -518,6 +517,60 @@ tax:
     dependent_care_benefits:
       exclusion_max: 7500
       exclusion_max_mfs: 3750
+
+  # Education credits (Form 8863) — Phase J JT1e, pitfall P-024. Read 2026-09-27:
+  # IRC 25A(b)(1), (c)(1), (d)(1), (g)(1) and (i) (uscode.house.gov) and the draft
+  # Form 8863 (2026) (Created 4/28/26) with its draft instructions. The amounts and
+  # the MAGI range are statutory and not indexed (25A(b)(1): "100 percent of so
+  # much of the qualified tuition and related expenses ... as does not exceed
+  # $2,000, plus (B) 25 percent of such expenses so paid as exceeds $2,000 but does
+  # not exceed $4,000"; 25A(i): "Forty percent" refundable; 25A(c)(1): "20 percent
+  # ... as does not exceed $10,000"; 25A(d)(1): over "$80,000 ($160,000 in the case
+  # of a joint return)" across "$10,000 ($20,000 in the case of a joint return)"),
+  # and the draft instructions print the same ends: "The lifetime learning credit
+  # and the American opportunity credit MAGI limits are $180,000 if you're married
+  # filing jointly ($90,000 if you're filing single, head of household, or
+  # qualifying surviving spouse)". NEW for 2026: the SSN rule below.
+  education_credits:
+    citation:
+      source: "IRC 25A(b)-(d), (g)(1) and (i) as amended by P.L. 119-21 §70606; checked against the draft Form 8863 (2026) (Created 4/28/26) lines 2 and 13 and its draft instructions"
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section25A&num=0&edition=prelim"
+    aotc:
+      per_student_cap: 2500
+      first_dollar_cap: 2000
+      second_rate: 0.25
+      refundable_fraction: 0.40
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+    llc:
+      per_return_expense_cap: 10000
+      rate: 0.20
+      phaseout:
+        married_filing_jointly: { start: 160000, end: 180000 }
+        other: { start: 80000, end: 90000 }
+    ssn_requirement:
+      statute: >-
+        IRC 25A(g)(1)(A): "No credit shall be allowed under subsection (a) to an individual
+        unless the individual includes on the return of tax for the taxable year- (i) such
+        individual's social security number, and (ii) in the case of a credit with respect to
+        the qualified tuition and related expenses of an individual other than the taxpayer or
+        the taxpayer's spouse, the name and social security number of such individual." (C):
+        "the term "social security number" shall have the meaning given such term in section
+        24(h)(7)."
+      effective: >-
+        P.L. 119-21 §70606(c): "The amendments made by this section ... shall apply to taxable
+        years beginning after December 31, 2025."
+      instructions: >-
+        Draft Instructions for Form 8863 (2026): "If you are filing a joint return, only one
+        spouse is required to have a valid SSN to be eligible to claim an education credit. A
+        valid SSN to claim an education credit is one that is valid for employment and that is
+        issued by the Social Security Administration before the due date of your 2026 return
+        (including extensions). If the student for whom expenses were paid is a dependent (not
+        you or your spouse), the student must also have a valid SSN issued before the due date
+        of your 2026 return (including extensions)."
+      one_spouse_suffices_on_joint_return: true
+      dependent_student_needs_ssn: true
 
   # ── Premium Tax Credit (Form 8962) for 2026 — Phase J JT1a: THE CLIFF RETURNS ──
   # The ARPA table as extended by IRA section 12001(a) ended with 2025. Rev. Proc.
