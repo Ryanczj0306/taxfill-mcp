@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,553 tests** — offline 6,136 + live-.gov 417; derived
+Done and on `main` (**6,557 tests** — offline 6,140 + live-.gov 417; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2288,23 +2288,23 @@ not wait for any of this.
     - Validator V26 (info) routes each reading. Box 12 and box 2 give Form 8949 box A/D (basis reported to the IRS) or B/E (not reported, or box 12 unchecked). Exception 1's direct entry on Schedule D line 1a / 8a applies when basis was reported, box 1f/1g shows no adjustment, and neither Ordinary nor box 3 is checked — quoted.
     - V27 flags both term boxes checked, box 12 with box 5, box 12 without a term box, box 7's loss bar, and a printed applicable checkbox that disagrees with boxes 2 and 12.
   - **Tests** (test_extract `test_jt4b_*`): a box-12 reading carries the routing note; unreported basis goes to B/E; an adjustment, Ordinary or a collectible forces Form 8949; the V27 contradictions.
-- [ ] **JT4c — Dress-rehearsal evals, scenarios t–t4** (M; deps JT3a–d, JT4a, JT4b, JF1a, JF8, JF9, JR2c, JR3c, JT2b) [TY26-29]
-  - SYNTHETIC TY2026 dress rehearsals with demo amounts. Each fixture is built only from its own stated facts, and together they cover the Wave A form scope (JT3a–d):
-    - **t = a hypothetical U.S. citizen with two CONCURRENT employers all year** (a full-time job plus a part-time one):
-      - two W-2s, code D at each plus DD, so the per-person cross-employer items run end to end: the deferrals summed against the one §402(g) limit (JT4a), the per-person excess-SS credit and the per-employer box-6 list (JF3 / JP1a);
-      - a 1098-VLI (Schedule 1-A Part IV) and a 1099-INT.
-    - **t2 = a hypothetical J-1 researcher who is a resident alien for TY2026:**
-      - one W-2 (code DD);
-      - a treaty teacher/researcher exemption surviving the saving clause on the Schedule 1 other-income line.
-    - **t3 = a hypothetical married couple filing jointly** (no visa history):
-      - one W-2 per spouse: one with box 12 code TT (Schedule 1-A Part III, which a married filer can claim only on a joint return), one with code W plus a 5498-SA (family HSA coverage, Form 8889);
-      - an index-fund 1099-DIV (qualified and non-qualified) and a covered 1099-B loss with box 12.
-    - **t4 = a hypothetical head-of-household filer with a qualifying child** (the JR2c what-if fixture):
-      - one W-2;
-      - a code-N and a code-2 1099-R (recharacterize, then convert; Form 8606);
-      - a 170(p) gift.
-  - Path, for each: extract → calc → fill (rehearsal) → verify_filing → filing_summary → file_and_pay (2027-04-15 plus the with-payment address). All four flip to final mode at JT6.
-  - **Acceptance:** green in rehearsal mode.
+- [x] **JT4c — Dress-rehearsal evals, scenarios t–t4 — DONE 2026-09-27** (M; deps JT3a–d, JT4a, JT4b, JF1a, JF8, JF9, JR2c, JR3c, JT2b) [TY26-29]
+  - *As built:* packages/core/tests/test_dress_rehearsal_2026.py. Four SYNTHETIC TY2026 households with demo amounts, each run extract -> calc -> fill (rehearsal, the 2026 draft packs) -> verify_filing(rehearsal=True) -> filing_summary -> file_and_pay. The blanks come from the local cache; an empty cache SKIPS, like the readonly sweeps.
+    - **t — two concurrent employers:**
+      - two 2026 W-2 readings, each routing code D to the one 402(g) limit (V25), with elective_deferral_room across both;
+      - a 1098-VLI (V19-V21 clean) through Schedule 1-A Part IV, and a 1099-INT;
+      - estimate_refund from the structured W-2s equals the return. f1040 + sched_1a verify, with 13a == sched_1a.44 and 1 == f1040.11b PASS;
+      - file_and_pay gives 2027-04-15 and the Louisville with-payment address.
+    - **t2 — a resident J-1 researcher:** "J-1 researcher" classifies resident for 2026 (2 exempt years). China Art. 19 survives the saving clause. The exemption goes negative on Schedule 1 line 8z ("Exempt income, China, Art. 19") with 8 == sched_1.10 PASS; direct deposit.
+    - **t3 — a joint return:**
+      - one spouse's code TT (Schedule 1-A Part III), the other's code W beside a 5498-SA (Form 8889 family coverage, hsa_deduction) with the code-W guard firing;
+      - an index-fund 1099-DIV (Schedule B, QDCG tax);
+      - a covered long-term 1099-B loss routed by box 12 to Schedule D line 8a (Exception 1);
+      - f1040 + sched_1 + sched_1a + f8889 + sched_b + sched_d verify, with four cross-form chains PASS; BOTH spouses sign.
+    - **t4 — head of household with a child:** the code N and code 2 1099-Rs, ira_recharacterization then convert (Form 8606 lines 1-18, an exact 0.875 on line 10), a $600 170(p) gift on line 12f, the CTC on line 19. The recharacterization statement is in the assembly, and the unpublished 2026 refund address note appears.
+  - **Engine change:** verify_filing gains `rehearsal` (core only), mirroring verify_form — every pack must be rehearsable (draft or planning-year final).
+  - **Found for JT6:** a negative money entry renders as "-60000"; Pub 519's resident treaty exemption asks for the amount "in parentheses" on Schedule 1's other-income line. The packs' convention (a negative value) holds for the math. Whether the printed field should read "(60,000)" needs the final 2026 face and instructions.
+  - All four flip to final mode at JT6.
 - [ ] **JT5a–g — Wave B: the rest of the federal set for 2026** (JT5a **latest start 2026-11-16**; deps JT3a; each sub-tranche commits per pack) [TY26-21]
   - **JT5a** (M): copies f843, fw7, f8316 (current finals byte-identical to their 2025 pins) and fincen114; near-ports sched_se, f4868, f8960.
   - **JT5b** (M): sched_8812, f2555, f8863.

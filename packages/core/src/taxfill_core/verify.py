@@ -2401,6 +2401,7 @@ def verify_filing(
     *,
     independent: Mapping[str, Mapping[str, float | int]] | None = None,
     confirmed_current_address: str | None = None,
+    rehearsal: bool = False,
 ) -> VerifyReport:
     """Verify a whole filing: identity consistency + cross-form relations.
 
@@ -2419,9 +2420,12 @@ def verify_filing(
     historical address lands consistently on every form. ``pitfall_checks``
     reports P-001, P-002 (the address used across the filing), and P-003.
 
+    ``rehearsal`` (core only, never the MCP tool) verifies a rehearsal filing of draft / planning-year packs, as
+    :func:`verify_form` does (JT4c).
+
     Raises:
         ProvisionalPackError: any item's year ships a planning-only knowledge
-            pack. verify_filing does NOT route through :func:`verify_form`, so
+            pack (unless ``rehearsal``). verify_filing does NOT route through :func:`verify_form`, so
             it needs its own call to the guard — without it, the multi-form
             gate (the one a real return actually passes through) would green-
             light a filing built on projection-grade numbers while the
@@ -2433,8 +2437,17 @@ def verify_filing(
             "verify_filing needs at least one filing item — pass "
             "[{form_key, pack, fields|pdf_path, values}] for every form in the filing"
         )
-    for item in filing_items:
-        assert_pack_filing_grade(item.pack, action="verify a filing")
+    # JT4c: `rehearsal` (core-only) verifies a rehearsal filing — every pack a DRAFT or a final in a planning-only
+    # year (filler.rehearsal_only), exactly as verify_form(rehearsal=True); it never lifts the guard for a
+    # filing-grade pack.
+    if rehearsal:
+        from taxfill_core.filler import _require_rehearsable  # noqa: PLC0415
+
+        for item in filing_items:
+            _require_rehearsable(item.pack)
+    else:
+        for item in filing_items:
+            assert_pack_filing_grade(item.pack, action="verify a filing")
     items_by_key: dict[str, FilingItem] = {}
     for item in filing_items:
         if item.form_key in items_by_key:
