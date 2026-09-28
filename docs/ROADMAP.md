@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**7,003 tests** — offline 6,530 + live-.gov 473; derived
+Done and on `main` (**7,038 tests** — offline 6,561 + live-.gov 477; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2495,9 +2495,22 @@ not wait for any of this.
   - **Tests** (test_form5329.py, `test_jr4b_*`):
     - the 2024 swap; the 2023 Part IX shape; the 2026 renumbering and the Trump-account relations;
     - a per-pack golden with exception 21 for each of 2023, 2024 and 2026 (the draft in rehearsal mode), every recomputed line PASSing.
-- [ ] **JP5c — Form 2210 packs** (M–L; deps JP5b, JT0a)
-  - New form key f2210: a 2025 pack, plus the 2026 draft pack (Created 4/16/26) in draft mode.
-  - **Acceptance:** per-pack goldens; the verify recompute matches JP5a/b.
+- [x] **JP5c — Form 2210 packs — DONE 2026-09-28** (M–L; deps JP5b, JT0a)
+  - *As built:* new form key f2210 (38 keys), two packs, each bound from its widget groups and checked on a sentinel render of every page.
+    - **2025:** 167 of 199 widgets. The 32 ReadOnly cells are the six shaded Section A cells, 22(a)/25(a), and the 1-point dummies on Schedule AI's printed rows 2, 5, 20, 29, 32 and 34.
+    - **2026 draft** (Created 4/16/26, 171 of 203): Schedule AI line 9 becomes 9a plus a NEW 9b "Additional deductions" (every widget below moves +4), and line 29's limits move to the $184,500 wage base.
+    - Keys: Part I bare; Part III `10.a`–`18.c` and `19`; Schedule AI `ai.<line>.<column>`.
+  - **The relation grammar now admits dotted ids** (verify `_TOKEN_RE`: a LINE may carry `.segment`s; floats still match first, and `1a..1h` still splits). That is what lets Form 2210 declare 104 printed relations. The printed factors are float literals (`* 4.0`), so a bare `4` never reads as line 4.
+    - Not declared: line 10 (box C), and Schedule AI 24 and 31 — true only when Schedule AI is used, while a regular-method filing leaves it blank.
+    - Cross-form: only `1 == f1040nr.22`. The Form 1040 leg is false on the section 965 exclusion; `19 -> line 38` is false when only page 1 is filed.
+  - **The recompute:** `penalty.form2210_lines(result)` works Section A the way the face prints it (line 11 per payment window) and raises if a line 17 disagrees with the 6654(b)(3) ledger. Line 19 is the whole-dollar penalty, and with Schedule AI it adds every face line.
+    - JP5b's Schedule AI columns gain `face_lines`, and lines 33 and 35 are now rounded as lines of their own (36 = 33 + 35, as printed).
+  - The 18 packs / handfills that recorded the old grammar wall carry a dated note → **JEc**.
+  - **Tests** (test_form2210.py, `test_jp5c_*`):
+    - Section A vs the ledger (Instructions Example 3);
+    - goldens for the regular method, Schedule AI (box C, SE tax) and the 2026 draft with 9b in rehearsal mode, every relation and recomputed line PASSing;
+    - non-compounding arrears caught only by the recompute; the shaded cells unmapped;
+    - test_verify: dotted ids, floats and ranges.
 
 ### Block 6 — Docs, release, debt
 
@@ -2549,6 +2562,15 @@ not wait for any of this.
   - Option sets on separate single-widget fields whose tokens are not yes/no are invisible to both P-008 gates. Measured 2026-08-26 on 160 packs: 285 such sets across 81 packs, 193 without a shared group id. Re-measure on 172.
   - Add `test_separate_widget_option_sets_are_adjudicated` with a self-clearing table justified from the printed rows.
   - **Acceptance:** green, with every exemption adjudicated; closes the Phase E box.
+- [ ] **JEc — Declare the relations the dotted-id grammar now allows** (M; deps JP5c; added 2026-09-28 by JP5c, outside the original 62-tranche table)
+  - JP5c let verify's relation grammar reference dotted keys. Eighteen packs and handfills recorded the old wall and left printed arithmetic undeclared:
+    - sched_oi 2022–2025: item L (e) Total, spelled out in the pack;
+    - sched_d 2023–2025: the per-row (h) = (d) − (e) + (g);
+    - f8949 2023–2025: 22 row identities + 8 column totals per pack;
+    - sched_nec 2023–2025: the sub-lettered rows;
+    - MT Form 2 (2023): its per-column arithmetic.
+  - Each candidate must be re-read against its face and proven true on every filing path (the f8606 rule) — e.g. a total that also sums an attached statement's rows is NOT an equality.
+  - **Acceptance:** each declared relation PASSes the pack's golden and has a FAIL-on-wrong test; the dated JP5c notes are replaced by the relations or by the reason one stays out.
 - [ ] **JD2 — Process: derived counts, suite speed, branches, ROADMAP shape** (M; deps JD1)
   1. **Derived counts** [G15]. New `scripts/sync_doc_counts.py`, keeping the sync_test_count entrypoint: tools, ops, DocSpecs, packs, hand-fill packs and the ReadOnly total. It rewrites anchors, runs `--check` in CI, and regex-asserts the pyproject descriptions.
   2. **Suite speed** [G25]. About 5.6 min locally and 10.2 min in CI (run 33118033631); two property tests take 48.8 s and 45.3 s; list_forms parses 172 packs per call (~3.1 s; discovery.py:142-147).

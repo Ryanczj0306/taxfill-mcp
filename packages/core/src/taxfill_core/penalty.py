@@ -84,6 +84,10 @@ class ScheduleAiColumn(BaseModel):
     line_23: int
     line_26: int
     line_27_installment: int
+    face_lines: dict[str, int] = Field(
+        default_factory=dict,
+        description="Every Schedule AI line this column fills, keyed by the printed line ('1' ... '36'; '9a'/'9b' on "
+                    "the 2026 draft) — what form2210_lines hands verify's independent recompute (JP5c).")
 
 
 class UnderpaymentPenaltyResult(BaseModel):
@@ -331,6 +335,50 @@ def underpayment_penalty(
     )
 
 
+def form2210_lines(result: UnderpaymentPenaltyResult) -> dict[str, int]:
+    """Form 2210 Part III lines 10-19 and Schedule AI, recomputed from an underpayment_penalty result (Phase J JP5c).
+
+    The independent recompute for a filled Form 2210 pack: pass it as ``verify_form(..., independent=...)``. Section
+    A is worked the way the face prints it — line 11 holds each column's own payments ("Column (b)—payments made
+    after April 15 ... through June 15"; withholding on the due dates unless the actual dates were elected), 12 is
+    the previous column's 18, 14 the previous 16 + 17, 15 = max(0, 13 - 14) (column (a): line 11), and 17 / 18 the
+    under- / overpayment against line 10 — and each column's line 17 is checked against the ledger's own
+    underpayment, so the face arithmetic and the 6654(b)(3) FIFO ledger can never silently disagree. Line 19 is the
+    penalty in whole dollars. With Schedule AI (the annualized method), its face lines are keyed ``ai.<line>.<col>``.
+    Keys follow the pack: ``10.a``, ``ai.27.d``. Payments after the last due date price Section B only."""
+    dues = [row.due_date for row in result.installments]
+    credits = [(date.fromisoformat(when), amount) for when, amount, _kind in result.inputs["payments"]]
+    out: dict[str, int] = {}
+    prev16 = prev17 = prev18 = 0
+    for k, (col, row) in enumerate(zip(_COLUMNS, result.installments)):
+        low = dues[k - 1] if k else date.min
+        l10, l11 = row.required, sum(amount for when, amount in credits if low < when <= dues[k])
+        out |= {f"10.{col}": l10, f"11.{col}": l11}
+        if k == 0:
+            l13 = l14 = 0
+            l15 = l11
+        else:
+            l13, l14 = l11 + prev18, prev16 + prev17
+            l15 = max(0, l13 - l14)
+            out |= {f"12.{col}": prev18, f"13.{col}": l13, f"14.{col}": l14}
+        l16 = max(0, l14 - l13) if k else 0
+        l17, l18 = max(0, l10 - l15), max(0, l15 - l10)
+        if l17 != row.underpayment:
+            raise ValueError(f"Form 2210 line 17({col}) works out to {l17:,} but the ledger's underpayment is "
+                             f"{row.underpayment:,} — the payments and the installments disagree; re-run "
+                             f"underpayment_penalty")
+        out |= {f"15.{col}": l15, f"17.{col}": l17}
+        if col in ("b", "c"):
+            out[f"16.{col}"] = l16
+        if col != "d":
+            out[f"18.{col}"] = l18
+        prev16, prev17, prev18 = l16, l17, l18
+    out["19"] = result.penalty_whole_dollars
+    for ai_col in result.schedule_ai or []:
+        out |= {f"ai.{line}.{ai_col.column}": value for line, value in ai_col.face_lines.items()}
+    return out
+
+
 def _per_period(values: Any, what: str, default: int = 0) -> list[int]:
     if values is None:
         return [default] * 4
@@ -389,16 +437,30 @@ def _schedule_ai(ai, a: dict[str, Any], annual: int, year: int, knowledge_dir) -
         l14 = override[k] if override is not None else tax_from_taxable_income(base, a["filing_status"], year,
                                                                                 knowledge_dir=knowledge_dir).tax
         l31 = max(0, ai.se_ss_limits[k] - wages[k])
-        l36 = r(ai.se_factors_ss[k] * min(se[k], l31) + se[k] * ai.se_factors_medicare[k]) if se[k] >= 400 else 0
+        # "If your self-employment income for the applicable periods is less than $400, enter zero in Part II, line
+        # 28"; lines 33 and 35 are whole-dollar lines of their own, and 36 "Add lines 33 and 35".
+        l28 = se[k] if se[k] >= 400 else 0
+        l33 = r(ai.se_factors_ss[k] * min(l28, l31))
+        l35 = r(l28 * ai.se_factors_medicare[k])
+        l36 = l33 + l35
         l19 = max(0, l14 + l36 + other[k] - credits[k])
         l21 = r(l19 * ai.applicable_percentages[k])
         l23 = max(0, l21 - prev27_total)
         l25 = (prev26 - prev27) if k else 0
         l26 = line24 + l25
         l27 = min(l23, l26)
+        qbi_line = "9a" if ai.additional_deductions == "line_9b" else "9"
+        face = {"1": agi[k], "3": l3, "4": itemized[k], "6": l6, "7": std, "8": l8, qbi_line: qbi[k], "10": l10,
+                "11": l3 - l10, "12": 0, "13": l13, "14": int(l14), "15": l36, "16": other[k],
+                "17": int(l14) + l36 + other[k], "18": credits[k], "19": l19, "21": l21, "23": l23, "24": line24,
+                "26": l26, "27": l27, "28": l28, "30": wages[k], "31": l31, "33": l33, "35": l35, "36": l36}
+        if ai.additional_deductions == "line_9b":
+            face["9b"] = l9b
+        if k:
+            face |= {"22": prev27_total, "25": l25}
         cols.append(ScheduleAiColumn(column=_COLUMNS[k], period_end=ai.period_ends[k], line_3_annualized_income=l3,
                                      line_13_taxable=l13, line_14_tax=int(l14), line_15_se_tax=l36, line_19_net_tax=l19,
-                                     line_21=l21, line_23=l23, line_26=l26, line_27_installment=l27))
+                                     line_21=l21, line_23=l23, line_26=l26, line_27_installment=l27, face_lines=face))
         prev27_total += l27
         prev26, prev27 = l26, l27
     return cols

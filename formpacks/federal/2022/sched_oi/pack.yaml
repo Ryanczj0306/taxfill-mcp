@@ -21,6 +21,8 @@
 # (tokens are \d+[a-z]? or [A-Za-z_][A-Za-z0-9_]* — no '.'); documented as
 # an engine gap for the integrator. Once the tokenizer supports dotted refs:
 #   "1e == treaty_1.exempt_amount + treaty_2.exempt_amount + treaty_3.exempt_amount"
+# (2026-09-28, Phase J JP5c: verify's relation grammar now admits dotted ids. Declaring the
+# relations this note leaves out is ROADMAP JEc; until then they stay undeclared.)
 #
 # Cross-form: line 1e feeds Form 1040-NR line 1k; per formpacks/CONVENTIONS.md
 # that rule ("1k == sched_oi.1e") lives on the f1040nr pack, not here.

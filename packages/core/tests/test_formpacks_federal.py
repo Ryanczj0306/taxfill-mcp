@@ -71,6 +71,7 @@ KNOWN_FORM_KEYS = frozenset(
         "f843",
         "f8316",
         "f5329",   # NEW (additional taxes on IRAs and tax-favored accounts; Phase J JR4a)
+        "f2210",   # NEW (underpayment of estimated tax; Phase J JP5c)
         "sched_a_nr",
         "sched_nec",
         "f1040nr",

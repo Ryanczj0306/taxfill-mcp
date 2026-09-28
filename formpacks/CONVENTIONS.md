@@ -30,9 +30,9 @@ formpacks/states/<st>/<tax_year>/<form_key>/pack.yaml
 
 - `<tax_year>` is the 4-digit filing year and MUST equal the pack's
   `tax_year` field.
-- `<form_key>` MUST be one of these 37 federal keys (forms, then schedules):
+- `<form_key>` MUST be one of these 38 federal keys (forms, then schedules):
 
-  `f1040`, `f1040es`, `f1040nr`, `f1040x`, `f1116`, `f2441`, `f2555`, `f4868`, `f5329`, `f8316`, `f843`, `f8606`, `f8833`, `f8843`, `f8863`, `f8889`, `f8938`, `f8949`, `f8959`, `f8960`, `f8962`, `fw7`
+  `f1040`, `f1040es`, `f1040nr`, `f1040x`, `f1116`, `f2210`, `f2441`, `f2555`, `f4868`, `f5329`, `f8316`, `f843`, `f8606`, `f8833`, `f8843`, `f8863`, `f8889`, `f8938`, `f8949`, `f8959`, `f8960`, `f8962`, `fw7`
 
   `sched_1`, `sched_1a`, `sched_2`, `sched_3`, `sched_3a`, `sched_8812`, `sched_a`, `sched_a_nr`, `sched_b`, `sched_c`, `sched_d`, `sched_e`, `sched_nec`, `sched_oi`, `sched_se`
 
@@ -280,7 +280,11 @@ Only math that is **printed on the form face** ("add lines 1a through 1h",
 worksheets, and instruction-only math belong to `calc` and the knowledge
 packs, never here. Grammar: `<expr> == <expr>` with `+ - * /`,
 parentheses, `max()`, `min()`, `sum(1a..1h)` (see the `verify` module
-docstring).
+docstring). A line id may be dotted (`10.a`, `ai.27.d`; since Phase J JP5c).
+Write a printed factor as a float (`* 4.0`, `* 0.25`): a bare integer is a
+LINE reference whenever the pack maps that key. A relation must hold on every
+filing path, including a legitimately BLANK part (a schedule the filer does not
+use reads as zeros), or it is not declared.
 
 ## Source URL and checksum
 

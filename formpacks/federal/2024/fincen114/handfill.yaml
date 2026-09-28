@@ -169,6 +169,8 @@
 # character '.' at position 5", while the underscore spelling evaluates. The
 # whole point of this worksheet is the `aggregate_maximum_value` compute, so
 # the keys have to be reachable from it.
+# (2026-09-28, Phase J JP5c: verify's grammar now admits dotted ids, so a compute can reach a dotted
+# key; these keys keep their underscores.)
 #
 #   account1_* .. account3_*  Part II, accounts owned SEPARATELY. THREE slots,
 #                             and the count is this worksheet's, not the

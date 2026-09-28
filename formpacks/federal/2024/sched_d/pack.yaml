@@ -74,6 +74,8 @@
 # column keys, so those checks are left to the recompute engine + human review.
 # The conditional/worksheet-driven subtotals (lines 7, 15, 18–21) are likewise
 # left to recompute + review.
+# (2026-09-28, Phase J JP5c: verify's relation grammar now admits dotted ids. Declaring the
+# relations this note leaves out is ROADMAP JEc; until then they stay undeclared.)
 #
 # Checkbox groups (P-008, fixed 2026-08-24): the four Yes/No questions — the
 # page-1 header QOF question and Part III lines 17, 20 and 22 — are each TWO

@@ -30,6 +30,7 @@ Relation grammar (``pack.relations``)::
               | 'sum' '(' LINE '..' LINE ')'
     LINE     := [0-9]+[a-z]?          e.g. '9', '24', '1a'
               | word id               e.g. 'L1e' (letter-led identifier)
+              | either, then ('.' segment)*   e.g. '10.a', 'ai.27.d' (dotted keys)
 
 Disambiguation rule: a bare integer token (e.g. ``24``) is a LINE REFERENCE
 when the pack's field map or the supplied values contain that line key;
@@ -804,11 +805,14 @@ def assertion_diff(
 # Relation math — safe mini-evaluator (no eval()), grammar in module docstring
 # ---------------------------------------------------------------------------
 
+# A LINE may carry dot-separated segments ('10.a', 'ai.27.d' — a column of a table, formpacks/CONVENTIONS.md's
+# dotted keys; Phase J JP5c). Floats match first ('0.10' stays a number), and a segment needs a character after
+# its dot, so the range operator in 'sum(1a..1h)' still splits.
 _TOKEN_RE = re.compile(
     r"(?P<ws>\s+)"
     r"|(?P<float>\d+\.\d+)"
-    r"|(?P<lineid>\d+[a-z]?)"
-    r"|(?P<name>[A-Za-z_][A-Za-z0-9_]*)"
+    r"|(?P<lineid>\d+[a-z]?(?:\.[a-z0-9_]+)*)"
+    r"|(?P<name>[A-Za-z_][A-Za-z0-9_]*(?:\.[a-z0-9_]+)*)"
     r"|(?P<op>==|\.\.|[+\-*/(),])"
 )
 

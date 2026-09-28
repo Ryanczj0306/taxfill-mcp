@@ -228,6 +228,15 @@ def test_relation_word_line_ids_resolve():
     assert check.status == "PASS"
 
 
+def test_relation_dotted_line_ids_resolve_and_floats_and_ranges_still_tokenize():
+    # Phase J JP5c: a LINE may carry dot-separated segments (a table column, "10.a"; a namespaced schedule,
+    # "ai.3.b"). "2.4" stays a float, and "1a..1c" still splits at the range operator.
+    pack = make_pack([money_field(k) for k in ("10.a", "ai.1.b", "ai.3.b", "1a", "1b", "1c", "4")],
+                     relations=["ai.3.b == ai.1.b * 2.4", "10.a == sum(1a..1c)", "ai.3.b == ai.1.b * 4"])
+    checks = relations(pack, {"ai.1.b": 1000, "ai.3.b": 2400, "10.a": 6, "1a": 1, "1b": 2, "1c": 3, "4": 2.4})
+    assert [c.status for c in checks] == ["PASS", "PASS", "PASS"]   # the bare '4' is line 4 (a mapped key) here
+
+
 @pytest.mark.parametrize(
     ("relation", "match"),
     [
@@ -1023,6 +1032,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # are rejected, as on 8606.
     # JR4b: f5329 2023 and 2024 equal the reviewed 2025 row; the 2026 draft splits the city box into
     # city/state/zip, and its selection is exactly the reviewed 2026 f8606 set (foreign_* excluded).
+    # JP5c: the NEW f2210 (2025 and the 2026 draft) has no address block at all (reviewed: name and SSN only).
     import json
     from pathlib import Path
 
