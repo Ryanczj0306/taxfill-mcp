@@ -126,6 +126,91 @@ INCOME_LINKED_FIELDS: tuple[frozenset[str], ...] = (
 )
 
 
+class RetirementDistribution(BaseModel):
+    """One Form 1099-R as read (JR3a): the estimator decides its taxable amount from the box 7 codes.
+
+    Instructions for Forms 1099-R and 5498 (2026): a recharacterization carries "-0- (zero) in box 2a" with code
+    N or R; a direct rollover is code G (box 2a -0- except a Roth-bound rollover of pre-tax money); code Q is a
+    qualified Roth distribution; code P marks an excess contribution "taxable in" the PRIOR year. A traditional
+    IRA's box 2a is the GROSS amount with box 2b 'Taxable amount not determined' checked, so an IRA with basis
+    needs its own taxable figure (calc op ira_pro_rata) in ``taxable_override``."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    gross: int = Field(ge=0, description="Box 1 — gross distribution.")
+    taxable_amount: int | None = Field(default=None, ge=0, description="Box 2a — taxable amount; None when blank.")
+    taxable_not_determined: bool = Field(default=False, description="Box 2b, 'Taxable amount not determined'.")
+    total_distribution: bool = Field(default=False, description="Box 2b, 'Total distribution'.")
+    codes: str = Field(default="", description="Box 7 (7a from 2026) distribution code(s), e.g. '7', 'G', '1B', 'JP'.")
+    ira_sep_simple: bool = Field(default=False, description="Box 7 (7b from 2026) IRA/SEP/SIMPLE checkbox.")
+    rolled_over: int = Field(
+        default=0, ge=0,
+        description="The recipient's disposition: what they rolled over within 60 days (not on the form).",
+    )
+    taxable_override: int | None = Field(
+        default=None, ge=0,
+        description="The recipient's own taxable figure (e.g. calc op ira_pro_rata's for an IRA with basis); wins "
+                    "over box 2a.",
+    )
+    early_exception_amount: int = Field(
+        default=0, ge=0, description="The part that meets an IRC 72(t)(2) exception (the additional tax: JR3c).",
+    )
+    federal_withholding: int = Field(
+        default=0, ge=0,
+        description="Box 4 — informational only: include it in the snapshot's federal_withholding as well.",
+    )
+    converted_to_roth: bool = Field(
+        default=False,
+        description="JR3b: this traditional/SEP/SIMPLE IRA distribution was converted to a Roth IRA (Form 8606 line "
+                    "8), not kept (line 7).",
+    )
+    label: str = Field(default="", description="Which 1099-R (payer / account), for the assumptions.")
+
+
+class IraPoolFacts(BaseModel):
+    """One person's traditional/SEP/SIMPLE IRA pool for Form 8606 Part I (JR3b). IRC 408(d)(2) treats all of a
+    person's such IRAs as one contract, and Form 8606 is filed per person, so a spouse's pool never merges."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    basis_carryforward: int = Field(
+        ge=0, description="Form 8606 line 2: nondeductible basis from earlier years. 0 is the explicit no-basis answer.",
+    )
+    nondeductible_contributions_this_year: int = Field(default=0, ge=0, description="Form 8606 line 1.")
+    contributions_made_after_year_end: int = Field(
+        default=0, ge=0, description="Form 8606 line 4: the part of line 1 made January 1 - April 15 of the next year.",
+    )
+    dec31_total_value: int | None = Field(
+        default=None, ge=0,
+        description="Form 8606 line 6: the December 31 value of ALL the person's traditional/SEP/SIMPLE IRAs "
+                    "(extract.dec31_total_value_from_statements sums the year-end statements). Needed when there "
+                    "is basis.",
+    )
+
+
+# Box 7 codes the estimator prices at $0 whatever box 2a says, and the one it moves to the prior year.
+_RETIREMENT_ZERO_CODES = {"N": "a recharacterization", "R": "a recharacterization", "Q": "a qualified Roth distribution"}
+
+
+def _retirement_taxable(item: RetirementDistribution) -> tuple[int, str | None]:
+    """(taxable amount, the disclosure key or None) for one 1099-R, from its box 7 codes (JR3a)."""
+    from taxfill_core.distribution_codes import parse_box7  # noqa: PLC0415
+
+    codes = parse_box7(item.codes)
+    if item.taxable_override is not None:
+        return max(0, item.taxable_override - item.rolled_over), None
+    if "P" in codes:
+        return 0, "prior_year"
+    if set(codes) & set(_RETIREMENT_ZERO_CODES):
+        return 0, None
+    if item.taxable_amount is None:
+        if set(codes) & {"G", "H"}:
+            return 0, None
+        return max(0, item.gross - item.rolled_over), "blank_2a"
+    note = "ira_gross" if item.taxable_not_determined and item.ira_sep_simple else ("roth_j" if "J" in codes else None)
+    return max(0, item.taxable_amount - item.rolled_over), note
+
+
 class IncomeSnapshot(BaseModel):
     """Confirmed dollar amounts so far (whole dollars).
 
@@ -217,6 +302,17 @@ class IncomeSnapshot(BaseModel):
     self_employment_net: int = Field(
         default=0,
         description="Net profit (+) or loss (-) from self-employment (Schedule C line 31). Signed.",
+    )
+    retirement_distributions: list[RetirementDistribution] = Field(
+        default_factory=list,
+        description="JR3a: each Form 1099-R as read — the estimator prices each from its box 7 codes (Q/N/R $0, "
+                    "G/H box 2a, P moved to the prior year, an IRA's 2b-checked gross flagged for ira_pro_rata). "
+                    "Mutually exclusive with retirement_income_taxable, the manual figure.",
+    )
+    ira_pool: IraPoolFacts | None = Field(
+        default=None,
+        description="JR3b: THIS person's IRA pool — required when a traditional-IRA 1099-R has box 2b 'Taxable amount "
+                    "not determined' (Form 8606 Part I prices it). Per person: the joint view never merges pools.",
     )
     retirement_income_taxable: int = Field(
         default=0, ge=0,
@@ -385,6 +481,12 @@ class IncomeSnapshot(BaseModel):
             )
         if self.spouse is not None and self.spouse.spouse is not None:
             raise ValueError("spouse.spouse must be None — one nesting level only")
+        if self.retirement_distributions and self.retirement_income_taxable:
+            raise ValueError(
+                "pass retirement_distributions (each 1099-R, interpreted per box 7 code) OR "
+                "retirement_income_taxable (your own taxable total), not both — the same distributions "
+                "would be counted twice"
+            )
         return self
 
     def total_income(self) -> int:
@@ -393,6 +495,7 @@ class IncomeSnapshot(BaseModel):
         return (
             self.wages + self.interest + self.dividends + self.self_employment_net
             + self.retirement_income_taxable + self.other_income
+            + sum(_retirement_taxable(item)[0] for item in self.retirement_distributions)
         )
 
     def combined_with_spouse(self) -> "IncomeSnapshot":
@@ -410,12 +513,13 @@ class IncomeSnapshot(BaseModel):
                     "wages", "federal_withholding", "interest", "bank_deposit_interest",
                     "bank_deposit_interest_nonresident_period", "dividends", "qualified_dividends",
                     "capital_gain_long", "capital_gain_short", "self_employment_net",
-                    "retirement_income_taxable", "social_security_benefits", "other_income",
+                    "social_security_benefits", "other_income",
                     "treaty_exempt_income", "student_loan_interest_paid", "pre_agi_adjustments",
                     "dependent_care_expenses", "aca_premiums", "aca_slcsp", "aca_aptc",
                     "qualified_tips", "qualified_overtime_premium", "car_loan_interest",
                 )
             },
+            **_joint_retirement(self, s),
             senior_taxpayer=self.senior_taxpayer,
             senior_spouse=s.senior_taxpayer,
             ss_withheld_by_employer=[*self.ss_withheld_by_employer, *s.ss_withheld_by_employer],
@@ -432,6 +536,84 @@ class IncomeSnapshot(BaseModel):
                 else (self.itemized_deductions or 0) + (s.itemized_deductions or 0)
             ),
         )
+
+
+def _pooled(item: RetirementDistribution) -> bool:
+    """A traditional/SEP/SIMPLE IRA item whose taxable part Form 8606 Part I decides (JR3b)."""
+    from taxfill_core.distribution_codes import parse_box7  # noqa: PLC0415
+
+    codes = set(parse_box7(item.codes))
+    return (item.ira_sep_simple and item.taxable_not_determined and item.taxable_override is None
+            and not codes & (set(_RETIREMENT_ZERO_CODES) | {"P", "G", "H"}))
+
+
+def _resolve_ira_pool(snap: "IncomeSnapshot", year: int, knowledge_dir, who: str) -> "IncomeSnapshot":
+    """Price one person's 2b-checked IRA items through calc op ira_pro_rata with THEIR pool (JR3b); the result
+    rides on each item as taxable_override, so the joint view can concatenate without merging pools."""
+    items = snap.retirement_distributions
+    pooled = [i for i in items if _pooled(i)]
+    if not pooled:
+        return snap
+    pool = snap.ira_pool
+    if pool is None:
+        raise ValueError(
+            f"the {who}'s traditional-IRA 1099-R has box 2b 'Taxable amount not determined', so Form 8606 Part I "
+            f"decides the taxable part (IRC 408(d)(2) pro-rata) — pass ira_pool for the {who}: "
+            f"{{basis_carryforward: <Form 8606 line 2>, nondeductible_contributions_this_year: <line 1>, "
+            f"dec31_total_value: <line 6>}}, or {{basis_carryforward: 0}} when there is no nondeductible basis")
+    conv = [i for i in pooled if i.converted_to_roth]
+    kept = [i for i in pooled if not i.converted_to_roth]
+    basis = pool.basis_carryforward + pool.nondeductible_contributions_this_year
+    if basis == 0:
+        taxable_conv = sum(i.gross for i in conv)
+        taxable_kept = sum(max(0, i.gross - i.rolled_over) for i in kept)
+    else:
+        if pool.dec31_total_value is None:
+            raise ValueError(
+                f"the {who}'s IRA pool carries basis, so Form 8606 line 6 is needed: pass ira_pool.dec31_total_value "
+                f"(the December 31 value of every traditional/SEP/SIMPLE IRA — the year-end statements, "
+                f"extract.dec31_total_value_from_statements)")
+        from taxfill_core.calc import ira_pro_rata  # noqa: PLC0415
+
+        pr = ira_pro_rata(
+            dec31_total_value=pool.dec31_total_value, amount_converted=sum(i.gross for i in conv),
+            other_distributions=sum(max(0, i.gross - i.rolled_over) for i in kept),
+            nondeductible_basis_carryforward=pool.basis_carryforward,
+            nondeductible_contributions_this_year=pool.nondeductible_contributions_this_year,
+            contributions_made_after_year_end=pool.contributions_made_after_year_end, year=year,
+            knowledge_dir=knowledge_dir)
+        taxable_conv, taxable_kept = pr.taxable_conversion, pr.taxable_other_distributions
+
+    def share(group: list[RetirementDistribution], total: int, base) -> dict[int, int]:
+        weights = [base(i) for i in group]
+        whole = sum(weights)
+        out, given = {}, 0
+        for n, (i, w) in enumerate(zip(group, weights)):
+            part = total - given if n == len(group) - 1 else (total * w // whole if whole else 0)
+            out[id(i)] = part
+            given += part
+        return out
+
+    parts = {**share(conv, taxable_conv, lambda i: i.gross), **share(kept, taxable_kept, lambda i: max(0, i.gross - i.rolled_over))}
+    resolved = [i.model_copy(update={"taxable_override": parts[id(i)], "rolled_over": 0,
+                                     "label": (i.label or f"box 7 {i.codes or '(blank)'}") + f" ({who}'s Form 8606)"})
+                if id(i) in parts else i for i in items]
+    return snap.model_copy(update={"retirement_distributions": resolved})
+
+
+def _joint_retirement(a: "IncomeSnapshot", b: "IncomeSnapshot") -> dict[str, Any]:
+    """The joint view of retirement income (JR3a): the manual figures summed when neither spouse lists 1099-Rs;
+    otherwise the lists concatenated, a spouse's manual figure riding along as an override item."""
+    if not a.retirement_distributions and not b.retirement_distributions:
+        return {"retirement_income_taxable": a.retirement_income_taxable + b.retirement_income_taxable}
+    items = []
+    for snap, who in ((a, "taxpayer"), (b, "spouse")):
+        items += snap.retirement_distributions
+        if snap.retirement_income_taxable:
+            items.append(RetirementDistribution(gross=snap.retirement_income_taxable,
+                                                taxable_override=snap.retirement_income_taxable,
+                                                label=f"{who}'s retirement_income_taxable"))
+    return {"retirement_distributions": items}
 
 
 def _box_or_wages_sum(a: "IncomeSnapshot", b: "IncomeSnapshot", field: str) -> int | None:
@@ -4161,6 +4343,11 @@ def estimate_refund(
         statuses = [_MFS]
     deps = _dependent_infos(profile, year)
     income = _with_senior_flags(profile, year, income)   # JF7: Schedule 1-A Part V, from DOB and tax ID
+    # JR3b: each person's 2b-checked IRA items priced through Form 8606 Part I with THEIR OWN pool, before any
+    # joint view can concatenate them.
+    income = _resolve_ira_pool(income, year, knowledge_dir, "taxpayer")
+    if income.spouse is not None:
+        income = income.model_copy(update={"spouse": _resolve_ira_pool(income.spouse, year, knowledge_dir, "spouse")})
     spouse_split = income.spouse is not None and married
     # P-018 (the J0 re-verify follow-up) and P-013 rule (e): each spouse's SEPARATE
     # return follows that spouse's OWN classification — never the taxpayer's. A US
@@ -5114,6 +5301,30 @@ def estimate_refund(
             "disabled, the deemed $250/$500-per-month income rule can restore the credit (agent "
             "judgment; recompute with calc op dependent_care_credit using the deemed amount)."
         )
+    retirement_view = income.combined_with_spouse()
+    for item in retirement_view.retirement_distributions:
+        name = item.label or f"the 1099-R with box 7 {item.codes or '(blank)'}"
+        _t, key = _retirement_taxable(item)
+        if key == "prior_year":
+            from taxfill_core.distribution_codes import codes_for  # noqa: PLC0415
+            title = codes_for(year).get("P", {}).get("title", "taxable in a previous year")
+            assumptions.append(
+                f"{name}: code P, \"{title}\" (the year's Table 1 of the Instructions for Forms 1099-R and 5498), so "
+                f"it is EXCLUDED here — report it on that year's return (amend it if it is filed).")
+        elif key == "ira_gross":
+            assumptions.append(
+                f"{name}: box 2b 'Taxable amount not determined' on an IRA — box 2a is the GROSS amount, used here "
+                f"as taxable; with nondeductible basis run calc op ira_pro_rata and pass its figure as "
+                f"taxable_override.")
+        elif key == "blank_2a":
+            assumptions.append(f"{name}: box 2a is blank, so the gross {item.gross:,} is used as taxable — confirm "
+                               f"the taxable part (the Simplified Method for a pension with after-tax basis).")
+        elif item.label.endswith("'s Form 8606)"):
+            assumptions.append(f"{name}: priced through Form 8606 Part I (calc op ira_pro_rata) with that person's own "
+                               f"IRA pool — IRC 408(d)(2) pools only one person's IRAs, so a spouse's never mixes in.")
+        elif key == "roth_j":
+            assumptions.append(f"{name}: code J, an early Roth IRA distribution — its taxable part turns on your "
+                               f"Roth contribution and conversion basis (Form 8606 Part III); box 2a is used.")
     s1a_view = income.combined_with_spouse()
     if _schedule_1a_engaged(s1a_view, int(bool(s1a_view.senior_taxpayer)) + int(bool(s1a_view.senior_spouse))):
         s1a_pack = load_knowledge("federal", year, base_dir=knowledge_dir)

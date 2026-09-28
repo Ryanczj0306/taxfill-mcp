@@ -971,7 +971,16 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       the GROSS amount in 2a with 2b checked, so a filer with basis runs calc op ira_pro_rata and
       enters its taxable figure; box 7 codes N/R and H are $0, code G is $0 except a Roth-bound
       direct rollover from a pre-tax plan (to a Roth IRA, or an in-plan Roth rollover) and designated
-      Roth employer contributions, where box 2a is the taxable amount), social_security_benefits (SSA-1099 box 5), other_income
+      Roth employer contributions, where box 2a is the taxable amount) — OR, instead of that figure,
+      retirement_distributions (JR3a): each 1099-R as read {gross, taxable_amount (2a), taxable_not_determined,
+      total_distribution, codes (box 7 / 7a), ira_sep_simple, rolled_over?, taxable_override?,
+      early_exception_amount?, federal_withholding? (informational), label?}, priced per code (Q/N/R $0, G/H
+      box 2a, P excluded as a prior-year item); never both. A traditional-IRA 1099-R with box 2b checked
+      (JR3b) is priced through Form 8606 Part I with THAT PERSON's ira_pool {basis_carryforward (line 2; 0 =
+      the explicit no-basis answer), nondeductible_contributions_this_year?, contributions_made_after_year_end?,
+      dec31_total_value (line 6, needed with basis)} — required then, and a spouse's pool never merges;
+      mark each conversion converted_to_roth,
+      social_security_benefits (SSA-1099 box 5), other_income
     - adjustments: student_loan_interest_paid (1098-E), pre_agi_adjustments (confirmed-eligible
       above-the-line), treaty_exempt_income (1042-S box 2 — agent-confirmed treaty amount; the
       assumption names where it is reported for the profile's residency: Schedule OI for a

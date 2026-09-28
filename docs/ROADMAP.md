@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,204 tests** — offline 5,824 + live-.gov 380; derived
+Done and on `main` (**6,211 tests** — offline 5,831 + live-.gov 380; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1764,13 +1764,38 @@ not wait for any of this.
     - A confirmation round trip, and an FMV statement feeding `dec31_total_value` with provenance.
     - The manifest lists "recharacterization statement".
     - test_skills_sync matches the runtime op list.
-- [ ] **JR3a — Retirement distributions in the estimator** (M; deps JR1, JR2b) [RC-07, part 1]
+- [x] **JR3a — Retirement distributions in the estimator — DONE 2026-09-27** (M; deps JR1, JR2b) [RC-07, part 1]
+  - *As built:* `IncomeSnapshot.retirement_distributions: list[RetirementDistribution]`.
+    - **Fields:** gross, taxable_amount (2a), the two 2b flags, codes, ira_sep_simple, rolled_over (the disposition), taxable_override, early_exception_amount, federal_withholding (informational), label.
+    - **Pricing:** `_retirement_taxable` decides each item from its box 7 codes (`distribution_codes.parse_box7`).
+      - The override wins, less any rollover.
+      - P is excluded; the assumption quotes the year's own Table 1 title.
+      - N, R and Q are $0. G and H take box 2a, $0 when blank.
+      - Otherwise box 2a, less any rollover. An IRA's 2b-checked gross is flagged for ira_pro_rata, J for Roth basis, and a blank 2a uses the gross with a disclosure.
+    - **Exclusivity:** `retirement_income_taxable` stays the manual figure, and both together is a ValueError.
+    - **Joint view:** the lists are concatenated. A spouse's manual figure beside a list rides as an override item; two manual figures are summed.
+    - **Docs:** server.py documents the list.
+    - **Tests:**
+      - test_estimate `test_jr3a_*`: Q/G/H/R/JP → 0; 7 with a rollover; the override; P's assumption; the refusal; the joint view;
+      - `retirement_distributions` is classified as concatenated in the JF1b.5 spouse-field test.
   - Today IncomeSnapshot has one hand-fed integer (estimate.py:87-192, :228).
   - Add `retirement_distributions: list[RetirementDistribution]`: gross, 2a, the 2b flags, codes, IRA box, disposition, override, early_exception_amount, and withheld (informational).
   - Route each item through `distribution_codes.interpret`.
   - `retirement_income_taxable` stays as a manual override, refused when the list is also set.
   - **Acceptance:** Q → 0; G/H rollover → 0; J+P → excluded with an assumption; both inputs set → ValueError; the spouse-field test covers the new list.
-- [ ] **JR3b — Per-person IRA pool and pro-rata** (M; deps JR3a) [RC-07, part 2]
+- [x] **JR3b — Per-person IRA pool and pro-rata — DONE 2026-09-27** (M; deps JR3a) [RC-07, part 2]
+  - *As built:* `IncomeSnapshot.ira_pool: IraPoolFacts` holds basis_carryforward (line 2, required; 0 = no basis), nondeductible_contributions_this_year (line 1), contributions_made_after_year_end (line 4) and dec31_total_value (line 6, required with basis).
+    - **New field:** `RetirementDistribution.converted_to_roth`, which sends an item to Form 8606 line 8 rather than line 7.
+    - **Pricing:** estimate_refund resolves EACH person's 2b-checked IRA items first (`_resolve_ira_pool`). Those are items with the IRA box and box 2b checked, no override, and no Q/N/R/P/G/H code.
+      - The op is calc.ira_pro_rata. Zero basis means the items are fully taxable.
+      - The result is split across the items and rides on each as `taxable_override` with a "(<who>'s Form 8606)" label, so the joint view concatenates without merging pools.
+      - The joint view drops `ira_pool`; the JF1b.5 class is `_SPOUSE_NEVER_MERGED`.
+    - **Refusals:** no pool gets a prescriptive ValueError naming the `{basis_carryforward: 0}` answer; basis without line 6 names `dec31_total_value`.
+    - **Disclosure:** an assumption names each item priced through the person's own Form 8606.
+    - **Tests** (test_estimate `test_jr3b_*`):
+      - the illustrative recharacterize-then-convert case, taxable $250 = NIA + growth, not the $7,250 gross;
+      - the required pool and the explicit zero;
+      - an MFJ couple's pools priced apart.
   - Add `ira_pool: IraPoolFacts` per person.
   - Traditional-IRA items with 2b checked go through ira_pro_rata. `ira_pool` is then REQUIRED, with a prescriptive refusal; `{basis_carryforward: 0}` is the explicit no-basis answer.
   - Spouses' pools never merge (Form 8606 is filed per spouse).

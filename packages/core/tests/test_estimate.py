@@ -3895,7 +3895,10 @@ _SPOUSE_SUMMED = frozenset({
 # JF7: each person's Schedule 1-A senior flag — the joint view takes the taxpayer's as its own and the
 # spouse snapshot's own flag as senior_spouse (never summed).
 _SPOUSE_PERSON_FLAGS = frozenset({"senior_taxpayer", "senior_spouse"})
-_SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses", "medicare_tax_withheld"})
+# JR3b: each person's IRA pool is priced on their own snapshot and never reaches the joint view.
+_SPOUSE_NEVER_MERGED = frozenset({"ira_pool"})
+_SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses", "medicare_tax_withheld",
+                                  "retirement_distributions"})   # JR3a (test_jr3a_the_joint_view_keeps_each_spouses_1099rs)
 _SPOUSE_BOX_SUMMED = frozenset({"medicare_wages", "ss_wages"})  # summed, box 1 standing in for a missing one (JF3)
 _SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions"})  # None unless either spouse itemizes
 _HOUSEHOLD_LEVEL = frozenset({"dependent_care_persons"})  # the same persons: the MAX, never doubled
@@ -3933,6 +3936,10 @@ def _spouse_coverage_gaps(combine) -> list[str]:
         gaps.append("dependent_care_persons")
     if joint.spouse is not None:
         gaps.append("spouse")
+    pooled = combine(primary.model_copy(update={"ira_pool": IraPoolFacts(basis_carryforward=1),
+                                                "spouse": spouse.model_copy(update={"ira_pool": IraPoolFacts(basis_carryforward=2)})}))
+    if pooled.ira_pool is not None:
+        gaps.append("ira_pool")
     flagged = combine(primary.model_copy(update={"senior_taxpayer": True,
                                                  "spouse": spouse.model_copy(update={"senior_taxpayer": False})}))
     flagged2 = combine(primary.model_copy(update={"senior_taxpayer": False,
@@ -3960,7 +3967,7 @@ def _spouse_coverage_gaps(combine) -> list[str]:
 
 def test_jf1b5_every_income_snapshot_field_is_classified_for_the_joint_view():
     classes = (_SPOUSE_SUMMED, _SPOUSE_CONCATENATED, _SPOUSE_OPTIONAL_SUMMED, _HOUSEHOLD_LEVEL, _SPOUSE_FIELD,
-               _SPOUSE_BOX_SUMMED, _SPOUSE_PERSON_FLAGS)
+               _SPOUSE_BOX_SUMMED, _SPOUSE_PERSON_FLAGS, _SPOUSE_NEVER_MERGED)
     classified = frozenset().union(*classes)
     assert sum(len(c) for c in classes) == len(classified), "a field is in two classes"
     fields = set(IncomeSnapshot.model_fields)
@@ -5089,3 +5096,106 @@ def test_jf7_the_senior_deduction_comes_from_the_profiles_birth_date_and_ssn():
                     who(date(1958, 3, 1), None)):                                # no tax ID recorded
         assert _slot(estimate_refund(profile, 2025, _s1a()), "schedule_1a_deductions") is None
     assert _slot(estimate_refund(who(date(1961, 1, 1), "123-45-6789"), 2025, _s1a()), "schedule_1a_deductions") == -6_000
+
+
+# ── JR3a (RC-07 part 1): each 1099-R priced from its box 7 codes ─────────────
+
+from taxfill_core.estimate import RetirementDistribution  # noqa: E402
+
+
+def _with_1099r(*items, **kw) -> IncomeSnapshot:
+    return IncomeSnapshot(wages=50_000, federal_withholding=5_000, retirement_distributions=list(items), **kw)
+
+
+def test_jr3a_the_codes_price_each_1099r():
+    cases = [
+        (RetirementDistribution(gross=5_000, taxable_amount=5_000, codes="Q"), 0),         # qualified Roth
+        (RetirementDistribution(gross=20_000, taxable_amount=0, codes="G"), 0),            # direct rollover
+        (RetirementDistribution(gross=20_000, taxable_amount=0, codes="H"), 0),            # Roth plan -> Roth IRA
+        (RetirementDistribution(gross=3_300, taxable_amount=0, codes="R"), 0),             # recharacterization
+        (RetirementDistribution(gross=900, taxable_amount=150, codes="JP"), 0),            # taxable in the PRIOR year
+        (RetirementDistribution(gross=8_000, taxable_amount=8_000, codes="7"), 8_000),
+        (RetirementDistribution(gross=8_000, taxable_amount=8_000, codes="7", rolled_over=3_000), 5_000),
+        (RetirementDistribution(gross=8_000, taxable_amount=8_000, codes="7", ira_sep_simple=True,
+                                taxable_not_determined=True, taxable_override=1_200), 1_200),
+    ]
+    for item, taxable in cases:
+        assert _with_1099r(item).total_income() - 50_000 == taxable, item.codes
+
+
+def test_jr3a_prior_year_code_p_is_excluded_with_an_assumption():
+    est = estimate_refund(Profile(), 2025, _with_1099r(
+        RetirementDistribution(gross=900, taxable_amount=150, codes="JP", label="Roth IRA at a demo custodian")))
+    note = next(a for a in est.assumptions if "code P" in a)
+    assert "Roth IRA at a demo custodian" in note and "EXCLUDED" in note
+    assert "taxable in 2024 or a previous year" in note                                 # the 2025 Table 1 title
+    # An IRA's 2b-checked gross is priced through its owner's Form 8606 (JR3b) — and said so.
+    ira = estimate_refund(Profile(), 2025, _with_1099r(RetirementDistribution(
+        gross=6_000, taxable_amount=6_000, codes="7", ira_sep_simple=True, taxable_not_determined=True),
+        ira_pool=IraPoolFacts(basis_carryforward=0)))
+    assert any("Form 8606 Part I" in a and "own IRA pool" in a for a in ira.assumptions)
+
+
+def test_jr3a_the_list_and_the_manual_figure_are_one_or_the_other():
+    with pytest.raises(ValueError, match="not both"):
+        IncomeSnapshot(retirement_income_taxable=1_000,
+                       retirement_distributions=[RetirementDistribution(gross=1_000, taxable_amount=1_000, codes="7")])
+
+
+def test_jr3a_the_joint_view_keeps_each_spouses_1099rs():
+    mine = RetirementDistribution(gross=4_000, taxable_amount=4_000, codes="7")
+    theirs = RetirementDistribution(gross=9_000, taxable_amount=0, codes="G")
+    joint = IncomeSnapshot(retirement_distributions=[mine],
+                           spouse=IncomeSnapshot(retirement_distributions=[theirs])).combined_with_spouse()
+    assert joint.retirement_distributions == [mine, theirs] and joint.total_income() == 4_000
+    mixed = IncomeSnapshot(retirement_distributions=[mine],
+                           spouse=IncomeSnapshot(retirement_income_taxable=2_500)).combined_with_spouse()
+    assert mixed.retirement_income_taxable == 0 and mixed.total_income() == 6_500     # the manual figure rides along
+    manual = IncomeSnapshot(retirement_income_taxable=1_000,
+                            spouse=IncomeSnapshot(retirement_income_taxable=2_500)).combined_with_spouse()
+    assert manual.retirement_income_taxable == 3_500 and manual.retirement_distributions == []
+
+
+# ── JR3b (RC-07 part 2): the per-person IRA pool ─────────────────────────────
+
+from taxfill_core.estimate import IraPoolFacts  # noqa: E402
+
+
+def _conversion(gross: int, label: str = "") -> RetirementDistribution:
+    return RetirementDistribution(gross=gross, taxable_amount=gross, codes="2", ira_sep_simple=True,
+                                  taxable_not_determined=True, converted_to_roth=True, label=label)
+
+
+def _total_income(est) -> int:
+    return next(ln.amount for ln in est.composition if ln.slot == "total_income")
+
+
+def test_jr3b_recharacterize_then_convert_is_taxed_on_the_earnings_not_the_gross():
+    """Illustrative: a Roth contribution recharacterized to a traditional IRA (code N, $7,000 of line-1 basis)
+    and then converted ($7,250) — the taxable conversion is the $250 of net income and growth."""
+    income = _with_1099r(
+        RetirementDistribution(gross=7_100, taxable_amount=0, codes="N", label="recharacterization"),
+        _conversion(7_250, "conversion"),
+        ira_pool=IraPoolFacts(basis_carryforward=0, nondeductible_contributions_this_year=7_000, dec31_total_value=0))
+    assert _total_income(estimate_refund(Profile(), 2025, income)) == 50_250
+
+
+def test_jr3b_the_pool_is_required_and_zero_basis_is_the_explicit_answer():
+    bare = _with_1099r(_conversion(6_000))
+    with pytest.raises(ValueError, match="pass ira_pool for the taxpayer"):
+        estimate_refund(Profile(), 2025, bare)
+    no_basis = bare.model_copy(update={"ira_pool": IraPoolFacts(basis_carryforward=0)})
+    assert _total_income(estimate_refund(Profile(), 2025, no_basis)) == 56_000
+    with pytest.raises(ValueError, match="dec31_total_value"):
+        estimate_refund(Profile(), 2025, bare.model_copy(update={"ira_pool": IraPoolFacts(basis_carryforward=500)}))
+
+
+def test_jr3b_a_couples_pools_never_merge():
+    mine = _with_1099r(_conversion(10_000), ira_pool=IraPoolFacts(basis_carryforward=10_000, dec31_total_value=0))
+    theirs = IncomeSnapshot(retirement_distributions=[_conversion(10_000)], ira_pool=IraPoolFacts(basis_carryforward=0))
+    married = Profile(household=Household(marital_status=_ans("married"), filing_status=_ans("married_filing_jointly")))
+    est = estimate_refund(married, 2025, mine.model_copy(update={"spouse": theirs}))
+    # The taxpayer's $10,000 is all basis (0 taxable); the spouse's is all pretax (10,000 taxable). A merged
+    # pool would have taxed half of each.
+    assert _total_income(est) == 50_000 + 10_000
+    assert mine.model_copy(update={"spouse": theirs}).combined_with_spouse().ira_pool is None
