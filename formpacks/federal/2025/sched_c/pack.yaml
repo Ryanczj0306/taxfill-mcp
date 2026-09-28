@@ -5,6 +5,17 @@
 # line-1 statutory-employee checkbox moving into a Line1_ReadOrder container
 # (same widget id c1_6). All bindings re-verified by the sentinel audit
 # render (both pages read line-by-line).
+#
+# CORRECTED 2026-09-27 (Phase J JT5d's designator sweep): the 2025 revision
+# SWAPPED the printed order of 27a and 27b — "27a Energy efficient commercial
+# bldgs deduction (attach Form 7205)" now prints above "b Other expenses (from
+# line 48)", and line 48 reads "Enter here and on line 27b" (2024: 27a Other
+# expenses, 27b energy, "Enter here and on line 27a"). The widget NAMES kept
+# their meaning and swapped position: f1_40 (rect y 252-264, the printed 27a
+# row) is the energy box, f1_39 (y 240-252, the 27b row) the other-expenses
+# box. The name-diff template carried the 2024 keys, so "27a" wrote the
+# other-expenses box and the relation read "27a == 48". Now 27a -> f1_40,
+# 27b -> f1_39, and "27b == 48" follows the print.
 form: Schedule C (Form 1040)
 jurisdiction: federal
 tax_year: 2025
@@ -189,11 +200,11 @@ fields:
 - line: '26'
   field: Page1[0].Lines18-27[0].f1_38[0]
   type: money
-- line: 27a
-  field: Page1[0].Lines18-27[0].f1_39[0]
-  type: money
-- line: 27b
+- line: 27a   # Energy efficient commercial bldgs deduction (Form 7205) — the upper row
   field: Page1[0].Lines18-27[0].f1_40[0]
+  type: money
+- line: 27b   # Other expenses (from line 48) — the lower row
+  field: Page1[0].Lines18-27[0].f1_39[0]
   type: money
 - line: '28'
   field: Page1[0].f1_41[0]
@@ -395,7 +406,7 @@ relations:
 - 4 == 42
 - 5 == 3 - 4
 - 7 == 5 + 6
-- 27a == 48
+- 27b == 48
 - 28 == 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16a + 16b + 17 + 18 + 19 + 20a + 20b + 21 + 22 + 23 + 24a + 24b +
   25 + 26 + 27a + 27b
 - 29 == 7 - 28

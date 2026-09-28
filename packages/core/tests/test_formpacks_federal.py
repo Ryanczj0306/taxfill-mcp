@@ -1821,3 +1821,17 @@ def test_jt5c_the_8843_and_schedule_a_nr_drafts():
     sa = _fed_pack(2026, "sched_a_nr")
     assert (sa.source_status, sa.draft_created) == ("draft", "5/18/26")
     assert "1b == min(1a, 40400)" in sa.relations            # the draft's "$40,400" (2025: $40,000)
+
+
+def test_the_2025_schedule_c_27a_27b_keys_follow_the_printed_rows():
+    """The 2025 revision swapped 27a/27b's printed order; the widget names swapped position with them.
+
+    27a (Form 7205's energy deduction) is the upper row and takes f1_40; 27b (other expenses, from line 48)
+    is the lower row and takes f1_39; line 48 is "Enter here and on line 27b". 2024 is the opposite shape.
+    """
+    new, old = _fed_pack(2025, "sched_c"), _fed_pack(2024, "sched_c")
+    f25, f24 = ({f.line: f.field for f in p.fields} for p in (new, old))
+    assert (f25["27a"], f25["27b"]) == ("Page1[0].Lines18-27[0].f1_40[0]", "Page1[0].Lines18-27[0].f1_39[0]")
+    assert (f24["27a"], f24["27b"]) == ("Page1[0].Lines18-27[0].f1_39[0]", "Page1[0].Lines18-27[0].f1_40[0]")
+    assert "27b == 48" in new.relations and "27a == 48" not in new.relations
+    assert "27a == 48" in old.relations
