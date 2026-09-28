@@ -4669,3 +4669,54 @@ def test_jt1a_the_schema_pairs_the_cliff_with_the_top_band():
         PtcParams.model_validate({**open_2025, "applicable_percentage_table": [
             *open_2025["applicable_percentage_table"][:-1],
             {**open_2025["applicable_percentage_table"][-1], "fpl_pct_less_than": 500}]})
+
+
+# ── JT1b: dependent care 2026 — the status-keyed second leg (IRC 21(a)(2) as amended) ──
+
+# The draft 2026 Instructions for Form 2441, "2026 Phaseout Schedule": (over, but not over, decimal) per column.
+_JT1B_JOINT = [(0, 15_000, "0.50")] + [(15_000 + 2_000 * k, 17_000 + 2_000 * k, f"0.{49 - k}") for k in range(14)] + [
+    (43_000, 150_000, "0.35")] + [(150_000 + 4_000 * k, 154_000 + 4_000 * k, f"0.{34 - k}") for k in range(14)] + [
+    (206_000, None, "0.20")]
+_JT1B_OTHER = [(0, 15_000, "0.50")] + [(15_000 + 2_000 * k, 17_000 + 2_000 * k, f"0.{49 - k}") for k in range(14)] + [
+    (43_000, 75_000, "0.35")] + [(75_000 + 2_000 * k, 77_000 + 2_000 * k, f"0.{34 - k}") for k in range(14)] + [
+    (103_000, None, "0.20")]
+
+
+def test_jt1b_the_goldens_are_the_drafts_rows():
+    # A few rows read straight off the printed schedule, so the generated lists cannot drift from it.
+    assert _JT1B_JOINT[15] == (43_000, 150_000, "0.35") and _JT1B_JOINT[16] == (150_000, 154_000, "0.34")
+    assert _JT1B_JOINT[-2] == (202_000, 206_000, "0.21") and _JT1B_OTHER[-2] == (101_000, 103_000, "0.21")
+    assert _JT1B_OTHER[16] == (75_000, 77_000, "0.34")
+
+
+@pytest.mark.parametrize("status, rows", [("married_filing_jointly", _JT1B_JOINT), ("head_of_household", _JT1B_OTHER),
+                                          ("single", _JT1B_OTHER)])
+def test_jt1b_every_row_of_the_2026_phaseout_schedule(status, rows):
+    for over, not_over, decimal in rows:
+        for agi in ([over + 1] if not_over is None else [over + 1, not_over]):
+            r = dependent_care_credit(3_000, 1, 200_000, spouse_earned_income=200_000, agi=agi,
+                                      filing_status=status, year=2026)
+            assert r.applicable_percentage == Decimal(decimal), (status, agi, r.applicable_percentage, decimal)
+
+
+def test_jt1b_the_2026_block_and_the_exclusion():
+    from taxfill_core.knowledge import load_knowledge  # noqa: PLC0415
+
+    dc = load_knowledge("federal", 2026).tax.dependent_care
+    assert [(leg.starts_above_agi, str(leg.from_rate), str(leg.to_rate), leg.per_agi_step, leg.applies_to)
+            for leg in dc.phase_downs] == [(15_000, "0.50", "0.35", 2_000, "all"),
+                                           (150_000, "0.35", "0.20", 4_000, "joint"),
+                                           (75_000, "0.35", "0.20", 2_000, "non_joint")]
+    assert (dc.dependent_care_benefits.exclusion_max, dc.dependent_care_benefits.exclusion_max_mfs) == (7_500, 3_750)
+    assert (dc.expense_cap.one_qualifying_person, dc.expense_cap.two_or_more_qualifying_persons) == (3_000, 6_000)
+    # 2025 keeps its one leg and $5,000: no year borrows the other's slide.
+    d25 = load_knowledge("federal", 2025).tax.dependent_care
+    assert [leg.applies_to for leg in d25.phase_downs] == ["all"] and d25.dependent_care_benefits.exclusion_max == 5_000
+
+
+def test_jt1b_a_joint_and_a_single_return_part_at_75000():
+    joint = dependent_care_credit(6_000, 2, 200_000, spouse_earned_income=200_000, agi=90_000,
+                                  filing_status="married_filing_jointly", year=2026)
+    single = dependent_care_credit(6_000, 2, 200_000, agi=90_000, filing_status="single", year=2026)
+    assert (joint.applicable_percentage, joint.credit) == (Decimal("0.35"), 2_100)
+    assert (single.applicable_percentage, single.credit) == (Decimal("0.27"), 1_620)

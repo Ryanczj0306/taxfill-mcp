@@ -40,8 +40,7 @@
 # WHAT IS OUTSTANDING before this pack can back a filed return
 #   1. The absent blocks (provisional.blocks_deliberately_absent):
 #      taxable_social_security, student_loan_interest, education_credits,
-#      dependent_care, filing_thresholds, credits, payment_options, mailing_addresses
-#      and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
+#      filing_thresholds, credits, payment_options, mailing_addresses and deadlines. Each needs its 2026 source and two-pass verification (JT1, JT2).
 #   2. tax_table.row_bands still rests on a carried-forward STRUCTURE
 #      (provisional.still_assumed). The draft Pub 1040 (2026) now prints the 2026 Tax
 #      Table, so its rows are a projection-grade check; the final booklet decides.
@@ -132,7 +131,6 @@ provisional:
     - taxable_social_security
     - student_loan_interest
     - education_credits
-    - dependent_care
     - filing_thresholds
     - credits
     - payment_options
@@ -465,6 +463,62 @@ tax:
       married_filing_separately: 306850
       head_of_household: 579600
       qualifying_surviving_spouse: 613700
+
+  # ── Form 2441 child & dependent care credit for 2026 — Phase J JT1b ─────────
+  # IRC 21(a)(2) as amended by P.L. 119-21 §70405 ("taxable years beginning after
+  # December 31, 2025"; uscode.house.gov, read 2026-09-27): "50 percent- (A)
+  # reduced (but not below 35 percent) by 1 percentage point for each $2,000 or
+  # fraction thereof by which the taxpayer's adjusted gross income for the
+  # taxable year exceeds $15,000, and (B) further reduced (but not below 20
+  # percent) by 1 percentage point for each $2,000 ($4,000 in the case of a joint
+  # return) or fraction thereof by which the taxpayer's adjusted gross income for
+  # the taxable year exceeds $75,000 ($150,000 in the case of a joint return)".
+  # The draft 2026 Instructions for Form 2441's "2026 Phaseout Schedule" prints
+  # both columns row for row (.50 up to $15,000; .35 over $43,000 up to $150,000
+  # joint / $75,000 other; .20 over $206,000 joint / $103,000 other) — every row
+  # is a test golden. IRC 21(c) keeps the $3,000 / $6,000 caps and 21(d)(2) the
+  # $250 / $500 deemed income. IRC 129(a)(2)(A) as amended by §70404: the
+  # exclusion "shall not exceed $7,500 ($3,750 in the case of a separate return by
+  # a married individual)" — the draft Form 2441 (Created 4/30/26) line 21.
+  dependent_care:
+    citation:
+      source: >-
+        IRC 21(a)(2) (P.L. 119-21 §70405), 21(c), 21(d)(2) and 129(a)(2)(A) (§70404), taxable years
+        beginning after December 31, 2025; draft 2026 Instructions for Form 2441 (2026 Phaseout
+        Schedule) and draft Form 2441 (Created 4/30/26) line 21
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section21&num=0&edition=prelim"
+    expense_cap:
+      one_qualifying_person: 3000
+      two_or_more_qualifying_persons: 6000
+    phase_downs:
+      - { starts_above_agi: 15000, from_rate: "0.50", to_rate: "0.35" }
+      - { starts_above_agi: 150000, from_rate: "0.35", to_rate: "0.20", per_agi_step: 4000, applies_to: joint }
+      - { starts_above_agi: 75000, from_rate: "0.35", to_rate: "0.20", per_agi_step: 2000, applies_to: non_joint }
+    refundable_if_us_abode: false
+    earned_income_limitation: >-
+      Form 2441 line 6: the credit base is the SMALLEST of the capped qualified
+      expenses (line 3), your earned income (line 4), and — married filing
+      jointly — your spouse's earned income (line 5; all others enter the
+      line 4 amount).
+    deemed_income_per_month:
+      one_qualifying_person: 250
+      two_or_more_qualifying_persons: 500
+    student_spouse_rule: >-
+      A spouse (or the taxpayer) who was a full-time student during some part
+      of each of 5 calendar months of 2026, or was physically or mentally
+      incapable of self-care, is DEEMED to have earned income of $250 per month
+      ($500 with two or more qualifying persons) for each such month (IRC
+      21(d)(2)); only one spouse may use the deemed amount for any month.
+    married_filing_separately_note: >-
+      Generally, married persons must file a joint return to claim the credit.
+      A married-filing-separately filer is treated as unmarried ONLY if they
+      lived apart from the spouse during the last 6 months of 2026, their home
+      was the qualifying person's main home for more than half the year, and
+      they paid more than half the cost of keeping up that home (IRC 21(e)(4));
+      the 2026 instructions are still a draft.
+    dependent_care_benefits:
+      exclusion_max: 7500
+      exclusion_max_mfs: 3750
 
   # ── Premium Tax Credit (Form 8962) for 2026 — Phase J JT1a: THE CLIFF RETURNS ──
   # The ARPA table as extended by IRA section 12001(a) ended with 2025. Rev. Proc.
@@ -855,6 +909,22 @@ effective_law_changes:
     status: enacted
     affects:
       - tax.ptc
+    modeled: true
+  - description: >-
+      The child and dependent care credit is enlarged for 2026 (P.L. 119-21 §70405): the rate
+      starts at 50% and falls 1 point per $2,000 over $15,000 to 35%, then (IRC 21(a)(2)(B)) 1
+      point per $2,000 ($4,000 joint) over $75,000 ($150,000 joint) to 20%; and the dependent care
+      assistance exclusion rises to $7,500 ($3,750 married filing separately) under IRC
+      129(a)(2)(A) (§70404). Modeled in tax.dependent_care with a filing-status key on the second
+      leg (Phase J JT1b).
+    citation:
+      source: >-
+        IRC 21(a)(2) and 129(a)(2)(A) with the §70405(b) and §70404(b) effective-date notes
+        (uscode.house.gov, read 2026-09-27)
+      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section21&num=0&edition=prelim"
+    status: enacted
+    affects:
+      - tax.dependent_care
     modeled: true
 
 # ── Foreign-account and foreign-asset REPORTING duties (Phase I4) ─────────────

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,460 tests** — offline 6,051 + live-.gov 409; derived
+Done and on `main` (**6,466 tests** — offline 6,057 + live-.gov 409; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2193,7 +2193,15 @@ not wait for any of this.
     - `repayment_limitation: []` means no limitation at any FPL.
     - Author 2026 `ptc`: Rev. Proc. 2025-25 plus the 2025 HHS guidelines, with the draft 8962 as pass 2.
   - **Acceptance:** tests at 399 / 400 / 401% FPL, plus an uncapped repayment.
-- [ ] **JT1b — Dependent care 2026** (M; deps JT0b) [TY26-11]
+- [x] **JT1b — Dependent care 2026 — DONE 2026-09-27** (M; deps JT0b) [TY26-11]
+  - *As built:*
+    - **Schema:** `DependentCarePhaseDown.applies_to` (all | joint | non_joint) and `DependentCareParams.legs_for(status)`. The contiguity and no-overlap checks run separately over the joint and the non-joint slide; the op filters the legs by filing status.
+    - **tax.dependent_care for 2026:**
+      - Read off IRC 21(a)(2) as amended by P.L. 119-21 §70405 (quoted in the block): .50 → .35 over $15,000 per $2,000; then .35 → .20 over $150,000 per $4,000 joint / over $75,000 per $2,000 otherwise.
+      - IRC 21(c)'s $3,000 / $6,000 and 21(d)(2)'s $250 / $500 are unchanged. IRC 129(a)(2)(A) (§70404) gives $7,500 ($3,750 MFS), the draft Form 2441 (Created 4/30/26) line 21.
+      - Pass 2 is the draft 2026 i2441's "2026 Phaseout Schedule". dependent_care leaves blocks_deliberately_absent, with a modeled effective_law_changes entry.
+    - **Docs:** the op docstrings and the server doc now carry the 2026 slide.
+    - **Tests** (test_tax_calc `test_jt1b_*`): EVERY row of the draft schedule, both columns, at each row's "over + 1" and "not over" AGI (joint, HoH, single); the block and exclusion; 2025 unchanged; joint .35 vs single .27 at $90,000.
   - **Why.** The draft i2441 line 8 table's second phase-down leg depends on filing status: joint from $150,000 in $4,000 steps, others from $75,000 in $2,000 steps. The rate "ranges from 50% to 20%", and line 21 is $7,500 ($3,750 MFS). DependentCarePhaseDown (knowledge.py:908-950) and calc.py:2697-2714 have no status key.
   - **Build:** `applies_to: all | joint | non_joint`, then author 2026.
   - **Acceptance:** goldens for every row of the draft table.

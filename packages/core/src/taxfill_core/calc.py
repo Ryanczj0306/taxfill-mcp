@@ -41,7 +41,8 @@ Contents:
   person count, the employer-benefit (W-2 box 10) cap offset, the earned-
   income smallest-of limitation (spouse required for MFJ), the AGI-driven
   applicable-percentage slide (35%->20%; 2021 ARPA: 50%->20%->0% with the
-  $438,000 zero point), the MFS generally-ineligible gate, and the 2021
+  $438,000 zero point; 2026: 50%->35%->20% with a joint / non-joint second
+  leg), the MFS generally-ineligible gate, and the 2021
   refundable-if-US-abode flag.
 * ``treaty_benefit`` (Phase G) — validates/computes a treaty exemption from
   the per-country ``knowledge/treaties/<country>.yaml`` packs (China, India,
@@ -2802,7 +2803,7 @@ def eitc(
 # ---------------------------------------------------------------------------
 
 
-def _dependent_care_percentage(agi: Decimal, params: DependentCareParams) -> Decimal:
+def _dependent_care_percentage(agi: Decimal, params: DependentCareParams, filing_status: str = "single") -> Decimal:
     """The Form 2441 line 8 applicable percentage for an AGI, from the pack's slide.
 
     Each leg reduces its ``from_rate`` by ``points_per_step`` per ``per_agi_step``
@@ -2812,8 +2813,9 @@ def _dependent_care_percentage(agi: Decimal, params: DependentCareParams) -> Dec
     (exactly $15,000 -> 0.35; exactly $43,000 -> 0.21; 2021: exactly $438,000 ->
     0.01, over it -> 0.00 — the zero point follows from the fraction rule).
     """
-    rate = params.phase_downs[0].from_rate
-    for leg in params.phase_downs:
+    legs = params.legs_for(filing_status)   # JT1b: 2026's second leg depends on the filing status
+    rate = legs[0].from_rate
+    for leg in legs:
         if agi > leg.starts_above_agi:
             steps = int(
                 ((agi - leg.starts_above_agi) / leg.per_agi_step).to_integral_value(rounding=ROUND_CEILING)
@@ -2832,7 +2834,7 @@ class DependentCareResult(BaseModel):
         "earned-income figures — the credit base."
     )
     applicable_percentage: Decimal = Field(
-        description="Form 2441 line 8 decimal from the AGI slide (0.20-0.35; 2021: 0.00-0.50)."
+        description="Form 2441 line 8 decimal from the AGI slide (0.20-0.35; 2021: 0.00-0.50; 2026: 0.20-0.50)."
     )
     credit: int = Field(
         description="Line 9a-style credit = percentage x allowed expenses, whole dollars — BEFORE the "
@@ -2883,7 +2885,10 @@ def dependent_care_credit(
       benefits were all excluded, which the work discloses.
     * ``agi``: the Form 1040/1040-NR AGI — drives the line 8 percentage slide
       (35% down to 20% above $15,000; 2021: 50% -> 20% above $125,000, then
-      20% -> 0% above $400,000, zero for AGI over $438,000).
+      20% -> 0% above $400,000, zero for AGI over $438,000; 2026: 50% -> 35% above
+      $15,000, then 35% -> 20% above $75,000 in $2,000 steps — joint: above
+      $150,000 in $4,000 steps — IRC 21(a)(2) as amended, the legs keyed by filing
+      status).
 
     Line flow: line 3 = min(cap - benefits, expenses - benefits); line 6 =
     smallest of line 3 and the earned-income figures; credit = line 8
@@ -2987,7 +2992,7 @@ def dependent_care_credit(
         earned_text = f"line 4 earned income {_money(earned)} (line 5 = line 4 for non-MFJ statuses)"
     line6 = max(Decimal(0), min(candidates))
     allowed = irs_round(line6)
-    pct = _dependent_care_percentage(agi_d, params)
+    pct = _dependent_care_percentage(agi_d, params, filing_status)
     credit = irs_round(pct * allowed)
     refundable = bool(params.refundable_if_us_abode and credit)
 

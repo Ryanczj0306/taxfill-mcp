@@ -952,6 +952,13 @@ class DependentCarePhaseDown(BaseModel):
     points_per_step: Decimal = Field(
         default=Decimal("0.01"), description="Rate reduction per step (1 percentage point = 0.01)."
     )
+    applies_to: Literal["all", "joint", "non_joint"] = Field(
+        default="all",
+        description="JT1b: which returns the leg applies to. 2026's second leg depends on the filing status: IRC "
+                    "21(a)(2)(B) reduces the rate 'by 1 percentage point for each $2,000 ($4,000 in the case of a "
+                    "joint return) or fraction thereof by which the taxpayer's adjusted gross income for the taxable "
+                    "year exceeds $75,000 ($150,000 in the case of a joint return)'.",
+    )
 
     _coerce_rates = field_validator("from_rate", "to_rate", "points_per_step", mode="before")(_as_exact_decimal)
 
@@ -1041,9 +1048,27 @@ class DependentCareParams(BaseModel):
     )
     dependent_care_benefits: DependentCareBenefitsExclusion
 
+    def legs_for(self, filing_status: str) -> list["DependentCarePhaseDown"]:
+        """The legs one return uses (JT1b): the 'all' legs plus the joint or the non-joint leg."""
+        view = "joint" if filing_status == "married_filing_jointly" else "non_joint"
+        return [leg for leg in self.phase_downs if leg.applies_to in ("all", view)]
+
     @model_validator(mode="after")
     def _check_legs_and_refundability(self) -> "DependentCareParams":
-        legs = self.phase_downs
+        for status in ("married_filing_jointly", "single"):
+            self._check_one_slide(self.legs_for(status))
+        if self.refundable_if_us_abode and not self.refundable_condition:
+            raise ValueError(
+                "dependent_care.refundable_if_us_abode: true requires refundable_condition — quote the "
+                "IRC 21(g)(1) principal-place-of-abode test (Form 2441 line B) so the caller judgment "
+                "carries its authority"
+            )
+        return self
+
+    @staticmethod
+    def _check_one_slide(legs: list["DependentCarePhaseDown"]) -> None:
+        if not legs:
+            raise ValueError("dependent_care.phase_downs: every return (joint and non-joint) needs at least one leg")
         for i in range(1, len(legs)):
             prev, cur = legs[i - 1], legs[i]
             if cur.from_rate != prev.to_rate:
@@ -1059,13 +1084,6 @@ class DependentCareParams(BaseModel):
                     f"must not overlap (the 2021 second leg starts at $400,000, well past the first "
                     f"leg's $183,000 floor point)"
                 )
-        if self.refundable_if_us_abode and not self.refundable_condition:
-            raise ValueError(
-                "dependent_care.refundable_if_us_abode: true requires refundable_condition — quote the "
-                "IRC 21(g)(1) principal-place-of-abode test (Form 2441 line B) so the caller judgment "
-                "carries its authority"
-            )
-        return self
 
 
 # ── OBBBA Schedule 1-A "Additional Deductions" (P.L. 119-21, TY2025-2028) ─────

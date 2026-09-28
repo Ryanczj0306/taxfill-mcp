@@ -363,7 +363,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       agi, filing_status, year, employer_benefits?} (Form 2441 -> Schedule 3's dependent-care line: caps
       $3,000/$6,000 by persons count (2021: $8,000/$16,000), minus employer benefits (W-2 box 10),
       limited by the LOWER earned income — spouse_earned_income REQUIRED for MFJ; the AGI slide
-      35%->20% (2021: 50%->20%->0%, zero over $438,000); MFS gets $0 by rule; refundable for 2021
+      35%->20% (2021: 50%->20%->0%, zero over $438,000; 2026: 50%->35%->20%, the second leg over $150,000
+      in $4,000 steps joint / over $75,000 in $2,000 steps otherwise); MFS gets $0 by rule; refundable for 2021
       only if the US-abode test is met — that test and the deemed $250/$500 student/disabled-spouse
       income are YOUR judgment, per the work string)
     - treaty_benefit: args {country, income_class, amount, visa_periods?, year?, years_in_status?,
