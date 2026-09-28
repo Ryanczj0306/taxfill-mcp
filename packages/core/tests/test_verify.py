@@ -1018,6 +1018,9 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JT5e: f8962, f2441, f1116 and f8938 2026 each equal their 2025 rows.
     # JT5f: f1040x 2026 (Rev. 12-2026) equals its 2025 row (the reviewed five mailing_address lines);
     # the NEW sched_3a has no address line at all (reviewed: name and SSN only).
+    # JR4a: the NEW 2025 f5329 (no base year). Reviewed: its standalone-only address block selects exactly
+    # the f8606 2025 set (street, apt, city_state_zip); the three foreign_* boxes and the preparer.* lines
+    # are rejected, as on 8606.
     import json
     from pathlib import Path
 

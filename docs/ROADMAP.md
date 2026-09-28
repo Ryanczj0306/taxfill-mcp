@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**6,935 tests** — offline 6,470 + live-.gov 465; derived
+Done and on `main` (**6,955 tests** — offline 6,488 + live-.gov 467; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2467,9 +2467,21 @@ not wait for any of this.
     - The same from the Tax Table ($5,159 vs $5,341) — the example's 2025 taxes are not the 2025 table's.
     - $3,000 or less; the credit winning when last year's rate was higher; business routing and payroll notes; the lines per year.
   - Op count 40.
-- [ ] **JR4a — Form 5329, 2025 pack** (M–L; deps JR3c) [RC-14]
-  - New form key f5329 (added to KNOWN_FORM_KEYS). Built by the standard vision-audited process, with verify recomputing from JR3c's rules.
-  - **Acceptance:** golden round trip; the Part I line 2 exception-21 entry exercised.
+- [x] **JR4a — Form 5329, 2025 pack — DONE 2026-09-28** (M–L; deps JR3c) [RC-14]
+  - *As built:* formpacks/federal/2025/f5329 — all 75 widgets of f5329--2025.pdf (Created 6/12/25, 3 pages, no ReadOnly), bound by y-coordinate and checked on a sentinel render of every page.
+    - The line-2 exception-number box is its own text key, `2.exception_number` ("01–23 ... If more than one exception applies, enter 99").
+    - 19 relations: every printed Add/Subtract row, the Part II 10%, and line 55.
+    - Deliberately NOT declared, with the reason on each row: line 4 (the printed SIMPLE-IRA 25% Caution); the six 6% lines (the Dec-31 value is off-form); 54a/54b (the "RC" reasonable-cause waiver changes the entry).
+    - No cross_form: Schedule 2 line 8 is "the combined tax" of a separate form per spouse. The address block and signature apply only when the form is filed by itself (the f8606 shape).
+  - **The recompute from JR3c's rules:** `taxfill_core.estimate.form5329_lines(snapshot, year)` returns one person's lines 1–4 and 16–17 / 24–25 from the estimator's own code. Pass it to `verify_form(..., independent=...)`.
+    - The corrective earnings (box 7 code 8 with J/1) go on line 1 AND line 2, per the i5329 Line 15/23 instructions ("Report this amount on line 2 and enter exception number 21").
+    - Its tax lines are keyed by the bare designator (`form_line_entry(...).line`): `form_line` renders a draft year's line with its marker text, which is no key a pack maps.
+  - New key `f5329` in KNOWN_FORM_KEYS and CONVENTIONS (37 keys); the filer-address fixture row equals f8606 2025's; federal packs 146.
+  - **Tests** (test_form5329.py, `test_jr4a_*`):
+    - the helper vs the estimator's slots; the SIMPLE rate, the exception amount and the cap;
+    - the golden round trip with "21" on line 2 (verify ok, and every recomputed line PASSes);
+    - a line 4 that taxed the corrective earnings, caught only by the recompute;
+    - the per-person / standalone-signature shape; the bare keys on a draft year.
 - [ ] **JR4b — Form 5329: 2023/2024 ports and the 2026 draft pack** (M; deps JR4a, JT0a)
   - The 2026 draft (Created 7/31/26) routes to Schedule 2 lines 5 and 18. Ship it as `source_status: draft`, re-pinned at JT6.
   - **Acceptance:** per-pack goldens (the 2026 one in rehearsal mode).

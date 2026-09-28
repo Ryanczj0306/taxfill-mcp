@@ -164,8 +164,8 @@ name/address/TIN — the credit can be denied without them). MFS is generally
 ineligible; 2021 used the ARPA $8,000/$16,000 caps and was refundable with a US abode.
 
 > ⚠️ **Federal year coverage — check before promising a fill, but the old holes
-> are CLOSED.** The federal set is **145 packs**: TY2023 and TY2024 carry 34
-> forms each, TY2025 35 (it adds `sched_1a`), and TY2026 34 packs mapped from the
+> are CLOSED.** The federal set is **146 packs**: TY2023 and TY2024 carry 34
+> forms each, TY2025 36 (it adds `sched_1a` and `f5329`), and TY2026 34 packs mapped from the
 > IRS early-release drafts — those fill only in rehearsal mode until the finals
 > post (JT6), and `sched_nec` / `sched_oi` wait for their 2026 drafts; TY2026 also
 > adds the new `sched_3a`. Specifically: `f1040nr` and its chain (`sched_oi`, `sched_nec`,

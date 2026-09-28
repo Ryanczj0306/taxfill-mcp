@@ -96,6 +96,7 @@ __all__ = [
     "Roadmap",
     "RefundEstimate",
     "estimate_refund",
+    "form5329_lines",
     "safe_harbor_inputs_from_estimate",
 ]
 
@@ -770,6 +771,47 @@ def _early_distribution_tax(items: list[RetirementDistribution]) -> tuple[int, s
         else:
             base10 += part
     return irs_round(_EARLY_RATE * base10 + _EARLY_RATE_SIMPLE * base25), keys
+
+
+def form5329_lines(income: "IncomeSnapshot", year: int, *, knowledge_dir: str | Path | None = None) -> dict[str, int]:
+    """ONE person's Form 5329 lines 1-4 and 16-17 / 24-25, recomputed from the JR3c rules (Phase J JR4a).
+
+    The independent recompute for a filled Form 5329: pass the result as ``verify_form(..., independent=...)``.
+    Form 5329 is per person ("complete a separate form for each of you"), so pass the taxpayer's own snapshot
+    or ``income.spouse`` — never a joint merge. Line 1 carries every code 1 / J / S taxable part, a code 8
+    corrective distribution's earnings included ("include the earnings as an early distribution on line 1 of
+    Form 5329 ... Report this amount on line 2 and enter exception number 21"); line 2 is those earnings plus
+    each item's early_exception_amount; line 4 is the estimator's own 10% / 25%. Lines 16 / 24 are the snapshot's
+    excess and 17 / 25 its 6% on the smaller of the excess or the December 31 value. Parts with nothing to
+    report are left out, as the filer leaves them blank."""
+    from taxfill_core.distribution_codes import parse_box7  # noqa: PLC0415
+    from taxfill_core.knowledge import form_line_entry  # noqa: PLC0415
+
+    def line(key: str) -> str:   # the bare designator: form_line() carries a draft year's marker text
+        return str(form_line_entry(year, key, base_dir=knowledge_dir).line)
+
+    snap = _resolve_ira_pool(income, year, knowledge_dir, "taxpayer")
+    line1 = line2 = 0
+    for item in snap.retirement_distributions:
+        codes = set(parse_box7(item.codes))
+        taxable, key = _retirement_taxable(item)
+        if key == "prior_year" or not codes & {"1", "J", "S"}:
+            continue
+        line1 += taxable
+        line2 += taxable if "8" in codes else min(taxable, item.early_exception_amount)
+    out: dict[str, int] = {}
+    if line1:
+        early_tax, _ = _early_distribution_tax(snap.retirement_distributions)
+        out |= {"1": line1, "2": line2, "3": line1 - line2,
+                line("f5329.early_distribution_tax"): early_tax}
+    for kind, total_line, key in (("traditional", "16", "f5329.traditional_excess_tax"),
+                                  ("roth", "24", "f5329.roth_excess_tax")):
+        excess = getattr(snap, f"{kind}_ira_excess")
+        if excess:
+            out[total_line] = excess
+            out[line(key)] = irs_round(
+                _EXCESS_EXCISE_RATE * _capped_excess(snap, kind))
+    return out
 
 
 def _joint_retirement(a: "IncomeSnapshot", b: "IncomeSnapshot") -> dict[str, Any]:
