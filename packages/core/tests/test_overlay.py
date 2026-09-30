@@ -247,19 +247,22 @@ def _normalised_text(pdf: Path) -> str:
     return re.sub(r"\s+", " ", "\n".join((p.extract_text() or "") for p in pypdf.PdfReader(str(pdf)).pages))
 
 
+_STATE_HANDFILLS = sorted((Path(__file__).resolve().parents[3] / "formpacks" / "states").glob("*/*/*/handfill.yaml"))
+
+
 @pytest.mark.network
-@pytest.mark.parametrize("state", ["ct", "hi", "nm", "sc"])
-def test_js4b_every_recorded_printing_rule_is_verbatim_in_its_source(state):
+@pytest.mark.parametrize("path", _STATE_HANDFILLS, ids=lambda p: f"{p.parts[-4]}_{p.parts[-3]}")
+def test_js4b_every_recorded_printing_rule_is_verbatim_in_its_source(path):
+    # Every year's manifest, not only 2023's: a port re-reads its year's face and Instructions (JS5).
     import re
 
     from taxfill_core.fetch import FetchError, fetch_blank
     from taxfill_core.handfill import load_hand_fill_pack
 
-    root = Path(__file__).resolve().parents[3] / "formpacks" / "states"
-    (path,) = root.glob(f"{state}/2023/*/handfill.yaml")
+    state = path.parts[-4]
     pack = load_hand_fill_pack(path)
     assert pack.printing_guidance, f"{path}: record the agency's printing rules (or the finding that it has none)"
-    assert pack.min_font_size is None                                  # none of the four publishes one for 2023
+    assert pack.min_font_size is None                                  # none of the four publishes one (2023, 2024)
     texts: dict[str, str] = {}
     for rule in pack.printing_guidance:
         if rule.url not in texts:

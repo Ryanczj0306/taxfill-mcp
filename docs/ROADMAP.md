@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,030 tests** — offline 7,221 + live-.gov 809; derived
+Done and on `main` (**8,036 tests** — offline 7,225 + live-.gov 811; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -97,15 +97,15 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**229 form packs total** — 221 `pack.yaml` (151 federal + 70 state) + 8
+**230 form packs total** — 221 `pack.yaml` (151 federal + 70 state) + 9
 `handfill.yaml`. The state 70 breaks down **TY2023 42 / TY2024 19 / TY2025 9**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **18 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, KY, NY, OR, PA
-> and UT (2024+2025), and ID/IL/LA/MO/NC/ND/NJ/OH/RI/VA (2024) — after the 2026-08-21
+> **19 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, KY, NY, OR, PA
+> and UT (2024+2025), and HI/ID/IL/LA/MO/NC/ND/NJ/OH/RI/VA (2024) — after the 2026-08-21
 > ten-pack and 2026-08-25 four-pack tranches and the JS3b ports (UT 2025,
-> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **24**, state *knowledge*
+> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **23**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
-> still computes years those packs cannot fill. That asymmetry is now 24
+> still computes years those packs cannot fill. That asymmetry is now 23
 > jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
@@ -326,9 +326,9 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
       TY2023-only**: 70 packs across TY2023 (42) / TY2024 (19) / TY2025 (9), so
-      **18 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, KY, NY, OR, PA and UT
-      for both 2024 and 2025; ID, IL, LA, MO, NC, ND, NJ, OH, RI, VA for 2024. For the
-      other **24**, a 2024/2025 return still computes but cannot be filled.
+      **19 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, KY, NY, OR, PA and UT
+      for both 2024 and 2025; HI, ID, IL, LA, MO, NC, ND, NJ, OH, RI, VA for 2024. For the
+      other **23**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
@@ -2317,6 +2317,10 @@ line items sum to the headline delta.
   - Resume discovery for the 20 never-started states plus OK, MA and NE in resumable pools of 3–4 workers. The remaining TY2024 rows fold into JS7.
   - **MA 2023 Form 1 re-map** (JS1b finding): mass.gov now serves the 2026-05-22 re-issue, a rebuilt 360-field AcroForm. Re-map the pack onto it (its named ovals may also clear the 11 unmappable `Checkcash`/`Checktp1` kids), re-pin `pdf_sha256` and `mirror_urls` to a matching capture, and delete the MA drift row in `scripts/freshness_quarantine.yaml`.
   - **Acceptance, per pack:** digest pin, vision audit, golden round trip, triage row updated.
+  - *Progress (2026-09-30):*
+    - **Re-triage** (`--base newest`, cached candidates re-hashed): TY2025 has 37 open pack-years, TY2024 27. The triage now reports `SAME-AS-BASE` when a derived URL serves the base year's own blank: NM TRD's gateway names a file by the GUID in its path, so the derived "2024pit-1.pdf" / "2025pit-1.pdf" were the 2023 PIT-1. NM's real files come from its own library search: the 2024 PIT-1 has its own GUID, and 2025 posts only inside the 136-page "2025 PIT Packet".
+    - **Print-only layouts vs 2023** (word positions and a render diff): HI N-11 2024 is unchanged; HI 2025 drops the two amended-return lines on page 4 (51/52), renumbers 53-55 to 51-53 and rebuilds the preparer block; SC1040 changes page 1; CT-1040 shifts pages 1-2; NM PIT-1 2024 moves page 2.
+    - **HI N-11 2024 — DONE 2026-09-30.** The 2024 blank keeps every printed word within 0.5 pt of 2023, and a render diff differs only where text changed, so all 177 overlay boxes carry over (test_n11_2024_overlay.py pins box-for-box equality). Face deltas: line 15 $8,082, line 23's standard deduction $4,400 / $8,800 / $6,424 (Act 45 SLH 2024, already in the 2024 knowledge pack), N-325 on line 27, and the line 38 / 39 / 46 years. The printing rules were re-read verbatim in the 2024 face and Instructions; test_overlay.py's quote re-read now covers every year's manifest, not only 2023's.
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
   - 9 discovery rows were recovered (wf_fe623a11-933).
   - Pack the AcroForm rows at TY2023 first, each re-checked against its recorded sha256: AL 40NR, AR1000NR, AZ 140NR, AZ 140PY, CO DR 0104PN, DE PIT-NON.
