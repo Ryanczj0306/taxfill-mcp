@@ -100,6 +100,33 @@ def test_probe_urls_404_is_drift_but_403_is_only_a_warning(monkeypatch):
     assert cd._probe_urls([url], "x") == []  # 403 = blocked bot, not drift
 
 
+def test_js5_a_cookie_token_redirect_loop_is_retried_with_a_cookie_jar(monkeypatch, capsys):
+    # PA myPATH / AR ATAP answer a cookieless first visit with "302 ./GetWlbToken" -> back to the portal, so plain
+    # urllib gives up with HTTP 302 (the 2026-09-28 freshness red). With a cookie jar the handshake completes.
+    url = "https://portal.example.gov"
+
+    def loop_302(*a, **k):
+        raise urllib.error.HTTPError(url, 302, "redirect loop", {}, None)
+    monkeypatch.setattr(cd.urllib.request, "urlopen", loop_302)
+    monkeypatch.setattr(cd, "_open_with_cookies", lambda req: _Resp(200))
+    assert cd._probe_urls([url], "x") == []
+    assert "after a cookie handshake" in capsys.readouterr().out
+
+    # Still looping with cookies -> a real redirect failure -> drift, as before.
+    monkeypatch.setattr(cd, "_open_with_cookies", loop_302)
+    assert cd._probe_urls([url], "x")
+
+    # A non-redirect error never takes the cookie path.
+    def raise_404(*a, **k):
+        raise urllib.error.HTTPError(url, 404, "gone", {}, None)
+
+    def must_not_retry(req):
+        raise AssertionError("a 404 is not retried")
+    monkeypatch.setattr(cd.urllib.request, "urlopen", raise_404)
+    monkeypatch.setattr(cd, "_open_with_cookies", must_not_retry)
+    assert cd._probe_urls([url], "x")
+
+
 def test_probe_urls_ssl_cert_error_is_a_warning_not_drift(monkeypatch):
     # State .gov sites (e.g. dor.ms.gov) often serve an incomplete cert chain;
     # urllib (stricter than browsers) raises SSLCertVerificationError. The page

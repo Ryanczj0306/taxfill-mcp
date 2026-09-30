@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import datetime as dt
 import hashlib
+import http.cookiejar
 import re
 import ssl
 import sys
@@ -139,6 +140,33 @@ def _newest_capture(url: str, today: dt.date | None = None) -> tuple[str, str] |
     return match.group(1), hashlib.sha256(data).hexdigest()
 
 
+def _open_with_cookies(req: urllib.request.Request):
+    """Open ``req`` through a fresh cookie jar, so a cookie handshake can complete."""
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    return opener.open(req, timeout=TIMEOUT)
+
+
+def _resolve(url: str) -> tuple[int, str]:
+    """(HTTP status, note) of ``url``.
+
+    A redirect loop is retried once through a cookie jar. The PA myPATH and AR ATAP payment portals
+    answer a first visit with a token redirect ("./GetWlbToken") that sets a cookie and sends the
+    browser back. Without cookies urllib loops until it gives up with HTTP 302, which read as drift
+    on 2026-09-28 although both portals still serve their home pages (Phase J JS5).
+    """
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": _USER_AGENT}),
+                                    timeout=TIMEOUT) as resp:
+            return resp.getcode(), ""
+    except urllib.error.HTTPError as exc:
+        if not 300 <= exc.code < 400:
+            raise
+    # A FRESH Request: urllib's redirect handler leaves its visit counts on the one it followed, so reusing it
+    # would trip the loop guard at once.
+    with _open_with_cookies(urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})) as resp:
+        return resp.getcode(), " (after a cookie handshake)"
+
+
 def _probe_urls(urls: list[str], label: str) -> list[str]:
     """Confirm each URL still resolves. TLS-chain and 403/429 failures are warn-only
     (transport/trust, not a move); any other failure is drift. Returns the drift list."""
@@ -146,10 +174,8 @@ def _probe_urls(urls: list[str], label: str) -> list[str]:
     print(f"\n=== {label} ({len(urls)} URLs) ===")
     for url in urls:
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
-            with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
-                code = resp.getcode()
-            print(f"  ok     {code} {url}")
+            code, note = _resolve(url)
+            print(f"  ok     {code} {url}{note}")
         except urllib.error.HTTPError as exc:
             if exc.code in (403, 429):  # blocked/throttled bot, not a move — warn only
                 print(f"  warn   {exc.code} (blocked, not drift) {url}")
