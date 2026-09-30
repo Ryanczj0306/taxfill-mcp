@@ -92,6 +92,21 @@ def test_recorded_rows_replace_the_derivation_and_the_triage_is_cache_first(tmp_
     assert row["status"] == "NOT-CACHED (offline)"
 
 
+def test_js5_a_candidate_that_is_the_base_blank_is_same_as_base(tmp_path: Path):
+    # NM TRD's gateway serves a file by the GUID in its path: "2024pit-1.pdf" / "2025pit-1.pdf" were the 2023 blank.
+    states = _mini_states(tmp_path, "https://tax.example.gov/forms/2024/zz-f1.pdf")
+    cache = tmp_path / "cache"
+    blank = make_acroform_pdf(cache / "zz-f1-2025.pdf", [{"name": "Page1.a"}, {"name": "Page1.b"}])
+    pack = states / "zz" / "2024" / "f1" / "pack.yaml"
+    raw = yaml.safe_load(pack.read_text())
+    pack.write_text(yaml.safe_dump({**raw, "pdf_sha256": hashlib.sha256(blank.read_bytes()).hexdigest()}))
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["status"].startswith("SAME-AS-BASE")
+    blank.write_bytes(blank.read_bytes() + b"\n% the next year's revision\n")
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["status"].startswith("PORTABLE")
+
+
 def test_offline_never_downloads(tmp_path: Path, monkeypatch):
     states = _mini_states(tmp_path, "https://tax.example.gov/forms/2024/zz-f1.pdf")
     monkeypatch.setattr(sc.urllib.request, "urlopen", lambda *a, **k: pytest.fail("offline triage opened a URL"))

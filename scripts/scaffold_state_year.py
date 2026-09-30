@@ -128,7 +128,7 @@ def _cached_blank(url: str, cache: Path, sha256: str | None) -> tuple[bytes | No
 
 
 def _triage(url: str, mapped: set[str], cache: Path, timeout: float = 45.0, *, sha256: str | None = None,
-            offline: bool = False) -> tuple[str, dict]:
+            offline: bool = False, base_sha256: str | None = None) -> tuple[str, dict]:
     """Classify the port cost of the candidate blank against the base pack — cache first, digest-checked.
 
     This is the measurement that string-derivation alone CANNOT give (and whose
@@ -155,6 +155,10 @@ def _triage(url: str, mapped: set[str], cache: Path, timeout: float = 45.0, *, s
         cache.write_bytes(data)
     elif not data.startswith(b"%PDF"):
         return "URL-DEAD (not a PDF)", {}
+    if base_sha256 and hashlib.sha256(data).hexdigest() == base_sha256:
+        # JS5: NM TRD's gateway names a file by the GUID in its path, so a year swapped into the file name still
+        # serves the BASE year's blank — once triaged as a print-only candidate for 2024 and 2025.
+        return "SAME-AS-BASE (the candidate URL serves the base year's own blank)", {}
     try:
         from pypdf import PdfReader
 
@@ -262,7 +266,8 @@ def scaffold(target_year: int, base: str, *, rows_path: Path | None = None, prob
         if changed and triage:
             mapped = {e["field"] for e in (raw.get("fields") or []) if isinstance(e, dict) and "field" in e}
             status, detail = _triage(candidate, mapped, cache_dir / f"{state}-{form}-{target_year}.pdf",
-                                     sha256=(recorded or {}).get("sha256"), offline=offline)
+                                     sha256=(recorded or {}).get("sha256"), offline=offline,
+                                     base_sha256=raw.get("pdf_sha256"))
         elif changed and probe and not offline:
             status = _probe(candidate)
         if recorded:
