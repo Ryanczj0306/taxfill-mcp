@@ -19,6 +19,7 @@ from reportlab.pdfgen import canvas
 from taxfill_core.overlay import (
     MIN_FONT_SIZE,
     _HELVETICA_WIDTHS_COMPACT,
+    _darkness,
     locate_labels,
     page_geometry,
     stamp_overlay,
@@ -322,3 +323,68 @@ def test_js4c_a_value_printed_in_several_places_is_stamped_and_verified_in_each(
     with pytest.raises(ValueError, match="has 2 page"):
         stamp_overlay(blank, _pack(lines=[{"line": "name", "label": "Name", "type": "text",
                                            "overlay": [boxes[0], {**boxes[1], "page": 3}]}]), {"name": "x"}, tmp_path / "q.pdf")
+
+
+# ── Phase J JS4d: machine-read forms (HI N-11) — painted ovals, digit cells, the minus box ──
+
+
+def _hi_pack(**over):
+    lines = [
+        {"line": "yes", "label": "Oval", "type": "checkbox",
+         "overlay": {"page": 1, "x": 300, "y": 500, "w": 16, "h": 8, "mark": "fill"}},
+        {"line": "amt", "label": "Amount", "type": "money",
+         "overlay": {"page": 1, "x": 300, "y": 470, "w": 115, "cells": [302, 315, 334, 347, 360, 379, 392, 402], "cell_w": 10,
+                     "minus": {"x": 280, "y": 468, "w": 12, "h": 10}}},
+    ]
+    return _pack(lines=over.pop("lines", lines), **over)
+
+
+def test_js4d_a_fill_mark_paints_the_oval_and_the_verdict_reads_the_paint(tmp_path):
+    blank = _blank(tmp_path / "blank.pdf")
+    pack = _hi_pack()
+    out = Path(stamp_overlay(blank, pack, {"yes": "yes"}, tmp_path / "o.pdf").out_path)
+    report = verify_overlay(pack, out, {"yes": "yes"})
+    assert report.ok, [c.detail for c in report.checks]
+    assert next(c for c in report.checks if c.line == "yes").detail.count("painted") == 1
+    # the painted shape is the printed oval — straight sides, round ends — not an ellipse inscribed in the box
+    import pypdfium2 as pdfium
+
+    doc = pdfium.PdfDocument(str(out))
+    try:
+        dark = _darkness(doc, 1, (300, 500, 16, 8), {}, inset=0)
+    finally:
+        doc.close()
+    oval, ellipse = (64 + 3.14159 * 16) / 128, 3.14159 / 4
+    assert abs(dark - oval) < 0.04 and dark - ellipse > 0.06
+    empty = Path(stamp_overlay(blank, pack, {"amt": 5}, tmp_path / "e.pdf").out_path)
+    bad = next(c for c in verify_overlay(pack, empty, {"yes": "yes", "amt": 5}).checks if c.line == "yes")
+    assert bad.status == "FAIL" and "expected the oval" in bad.detail
+
+
+def test_js4d_money_in_digit_cells_fills_from_the_right_and_a_loss_shades_the_minus_box(tmp_path):
+    blank = _blank(tmp_path / "blank.pdf")
+    pack = _hi_pack()
+    gain = stamp_overlay(blank, pack, {"amt": 1234}, tmp_path / "g.pdf")
+    (s,) = gain.stamped_lines
+    assert s.value == "1234"                                      # the grouping is printed; no comma cell
+    assert s.x == pytest.approx(360 + (10 - text_width("1", 9)) / 2, abs=1e-3)   # ones digit in the LAST cell
+    assert verify_overlay(pack, Path(gain.out_path), {"amt": 1234}).ok
+    loss = stamp_overlay(blank, pack, {"amt": -1234}, tmp_path / "l.pdf")
+    assert loss.stamped_lines[0].value == "1234"                  # digits unsigned, the minus box shaded
+    assert verify_overlay(pack, Path(loss.out_path), {"amt": -1234}).ok
+    wrong = next(c for c in verify_overlay(pack, Path(loss.out_path), {"amt": 1234}).checks if c.line == "amt")
+    assert wrong.status == "FAIL" and "minus box" in wrong.detail  # a shaded minus where no loss is expected
+    no_minus = _pack(lines=[{"line": "amt", "label": "Amount", "type": "money",
+                             "overlay": {"page": 1, "x": 300, "y": 470, "w": 110, "cells": [302, 315, 334], "cell_w": 10}}])
+    with pytest.raises(ValueError, match="sign would silently vanish"):
+        stamp_overlay(blank, no_minus, {"amt": -12}, tmp_path / "n.pdf")
+
+
+def test_js4d_marks_are_validated():
+    with pytest.raises(ValueError, match="needs h"):
+        _pack(lines=[{"line": "c", "label": "c", "type": "checkbox", "overlay": {"page": 1, "x": 1, "y": 1, "w": 5, "mark": "fill"}}])
+    with pytest.raises(ValueError, match="checkbox lines only"):
+        _pack(lines=[{"line": "t", "label": "t", "type": "text", "overlay": {"page": 1, "x": 1, "y": 1, "w": 5, "h": 5, "mark": "fill"}}])
+    with pytest.raises(ValueError, match="money lines only"):
+        _pack(lines=[{"line": "t", "label": "t", "type": "text",
+                      "overlay": {"page": 1, "x": 1, "y": 1, "w": 5, "minus": {"x": 0, "y": 0, "w": 3, "h": 3}}}])

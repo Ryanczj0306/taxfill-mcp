@@ -81,10 +81,12 @@ def test_fill_form_stamps_and_verify_form_gives_the_overlay_verdict(overlay_pack
         server.verify_form("ct1040", 2023, filled["out_path"], jurisdiction="states/ct")
 
 
-def test_a_hand_fill_pack_without_coordinates_points_at_the_worksheet(tmp_path):
-    # The shipped HI N-11 2023 manifest has no overlay blocks yet (JS4d authors them; CT got its own in JS4c).
+def test_a_hand_fill_pack_without_coordinates_points_at_the_worksheet(tmp_path, monkeypatch):
+    # Since JS4d every shipped print-only state manifest carries coordinates, so a new pack without any stands in.
+    bare = _pack().model_copy(update={"lines": [ln.model_copy(update={"overlay": None}) for ln in _pack().lines]})
+    monkeypatch.setattr(server, "_load_any_pack", lambda form, year, jurisdiction: bare)
     with pytest.raises(ValueError, match=r"no overlay coordinates.*hand_fill_worksheet"):
-        server.fill_form("n11", 2023, {}, str(tmp_path / "o.pdf"), jurisdiction="states/hi")
+        server.fill_form("ct1040", 2023, {}, str(tmp_path / "o.pdf"), jurisdiction="states/ct")
 
 
 def test_taxfill_locate_prints_label_boxes(tmp_path, capsys):

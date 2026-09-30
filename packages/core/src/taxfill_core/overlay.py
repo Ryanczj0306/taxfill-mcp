@@ -287,6 +287,41 @@ def _text_op(x: float, y: float, size: float, text: str) -> tuple[bytes, str | N
     ), warning
 
 
+# Bezier constant for a quarter circle.
+_KAPPA = 0.5522847498
+
+
+def _fill_op(kind: str, x: float, y: float, w: float, h: float) -> bytes:
+    """A solid black shape filling (x, y, w, h) as content-stream operators (JS4d).
+
+    ``"rect"`` is the rectangle itself; ``"oval"`` is the oval a scannable form prints — straight sides with round
+    ends of radius min(w, h) / 2, so a circle when w == h — which fills the printed oval to its edge where an
+    inscribed ellipse would leave its four shoulders unpainted.
+    """
+    if kind == "rect":
+        return b"q 0 g " + b" ".join(_num(v) for v in (x, y, w, h)) + b" re f Q\n"
+    r = min(w, h) / 2
+    k = r * _KAPPA
+    x1, y1 = x + w, y + h
+    pts = [
+        (b"m", (x + r, y)),
+        (b"l", (x1 - r, y)),
+        (b"c", (x1 - r + k, y, x1, y + r - k, x1, y + r)),
+        (b"l", (x1, y1 - r)),
+        (b"c", (x1, y1 - r + k, x1 - r + k, y1, x1 - r, y1)),
+        (b"l", (x + r, y1)),
+        (b"c", (x + r - k, y1, x, y1 - r + k, x, y1 - r)),
+        (b"l", (x, y + r)),
+        (b"c", (x, y + r - k, x + r - k, y, x + r, y)),
+    ]
+    return b"q 0 g " + b" ".join(b" ".join(_num(v) for v in args) + b" " + op for op, args in pts) + b" h f Q\n"
+
+
+def _mark_rect(box: OverlayBox) -> tuple[float, float, float, float]:
+    """The area a 'fill' mark paints: the declared box itself (x, bottom y, w, h)."""
+    return box.x, box.y, box.w, float(box.h or 0)
+
+
 def _overlay_page(base: PageObject, content: bytes) -> PageObject:
     """A one-off page carrying ``content`` + the Helvetica resource, sized to ``base``'s MediaBox.
 
@@ -345,7 +380,12 @@ def _stamp_text(ln: HandFillLine, value: str, box: OverlayBox | None = None) -> 
     if ln.type == "checkbox":
         return "X"
     box = box if box is not None else (ln.boxes[0] if ln.boxes else None)
+    if ln.type == "money" and box is not None and box.minus is not None:
+        value = value.lstrip("-")  # the loss is shown by shading the minus box, not by a sign
     if box is not None and box.cells is not None:
+        if ln.type == "money":
+            # digit boxes print their own grouping; a loss is shown by the minus box, never by a cell
+            return _CELL_SEPARATORS.sub("", value.replace(",", "").lstrip("-"))
         return _CELL_SEPARATORS.sub("", value)
     if box is not None and box.comb is not None:
         # A comb has one cell per character and no cell for a separator: writing the
@@ -381,6 +421,9 @@ def _layout(
             warnings.append(f"{who}: a {size:g}pt glyph is wider than the {cw:g}pt cell — font shrunk to {shrunk:.1f}pt")
             size = shrunk
         lefts = list(cells) + [cells[-1] + cw * (k + 1) for k in range(max(0, len(text) - len(cells)))]
+        right = box.align == "right" or (box.align is None and ln.type == "money" and money_align == "right")
+        if right and len(text) <= len(cells):
+            lefts = lefts[len(cells) - len(text):]  # a number fills the LAST cells, ones digit in the last one
         segments = [
             _Segment(x=lefts[i] + (cw - text_width(ch, size)) / 2, y=box.y, size=size, text=ch)
             for i, ch in enumerate(text)
@@ -549,9 +592,26 @@ def stamp_overlay(
             hand_written.append(wl)
             continue
         for box in ln.boxes:  # one placement per box: a header SSN repeats on every page
+            chunk = per_page.setdefault(box.page, bytearray())
+            if ln.type == "checkbox" and box.mark == "fill":
+                chunk += _fill_op("oval", *_mark_rect(box))  # 'Fill in ovals completely' (HI N-11)
+                stamped.append(StampedLine(
+                    line=wl.line, label=wl.label, type=wl.type, value="(filled)", source=wl.source, page=box.page,
+                    x=round(box.x, 3), y=round(box.y, 3), font_size=0.0, align="center",
+                ))
+                continue
+            negative = ln.type == "money" and wl.value.startswith("-")
+            if negative and box.cells is not None and box.minus is None:
+                raise ValueError(
+                    f"line '{ln.line}' is a loss ({redact(wl.value)}) but its box on page {box.page} is digit cells with "
+                    f"no minus box — the sign would silently vanish; add overlay.minus (the printed box the form "
+                    f"shades for a loss) to the pack, or hand-write this line"
+                )
+            if negative and box.minus is not None:
+                m = box.minus
+                chunk += _fill_op("rect", m.x, m.y, m.w, m.h)
             segments, size, align, warns = _layout(ln, box, pack, wl.value)
             warnings.extend(warns)
-            chunk = per_page.setdefault(box.page, bytearray())
             for seg in segments:
                 op, enc_warning = _text_op(seg.x, seg.y, seg.size, seg.text)
                 if enc_warning:
@@ -636,9 +696,52 @@ def _in_box(glyphs: Sequence[tuple[float, float, float, str]], box: OverlayBox, 
     return "".join(ch for _, ch in sorted((x, ch) for x, y, _, ch in glyphs if left <= x <= right and bottom <= y <= top))
 
 
+# A painted mark reads as present when at least this share of its inner area is dark, absent below the second.
+_FILLED_AT, _EMPTY_BELOW = 0.6, 0.2
+
+
+def _darkness(doc, page_no: int, rect: tuple[float, float, float, float], cache: dict, *, inset: float = 0.2) -> float:
+    """Share of dark pixels (< 128 grey) in the inner part of ``rect`` (x, bottom y, w, h) on a render of the page."""
+    if page_no not in cache:
+        page = doc[page_no - 1]
+        left, bottom, right, top = page.get_mediabox()
+        cache[page_no] = (page.render(scale=3, grayscale=True).to_pil().convert("L"), left, top)
+    img, left, top = cache[page_no]
+    x, y, w, h = rect
+    x0, x1 = (x + w * inset - left) * 3, (x + w * (1 - inset) - left) * 3
+    y0, y1 = (top - (y + h * (1 - inset))) * 3, (top - (y + h * inset)) * 3
+    crop = img.crop((int(x0), int(y0), max(int(x1), int(x0) + 1), max(int(y1), int(y0) + 1)))
+    hist = crop.histogram()  # 256 grey levels
+    return sum(hist[:128]) / max(1, sum(hist))
+
+
 def _check_box(ln, wl, box: OverlayBox, pack: HandFillPack, doc, n_pages: int, glyphs_by_page: dict,
-               default_size: float, path: Path) -> OverlayCheck:
+               default_size: float, path: Path, renders: dict | None = None) -> OverlayCheck:
     """The OVERLAY verdict for ONE placement of one worksheet line (see :func:`verify_overlay`)."""
+    renders = {} if renders is None else renders
+    if box.page <= n_pages and ln.type == "checkbox" and box.mark == "fill":
+        dark = _darkness(doc, box.page, _mark_rect(box), renders)
+        want = wl.value != ""
+        ok = dark >= _FILLED_AT if want else dark < _EMPTY_BELOW
+        state = "painted" if dark >= _FILLED_AT else "empty" if dark < _EMPTY_BELOW else "partly painted"
+        return OverlayCheck(
+            line=wl.line, label=wl.label, value="(filled)" if want else "", page=box.page, status=PASS if ok else FAIL,
+            detail=(f"line '{wl.line}': its oval on page {box.page} is {state} ({dark:.0%} dark), as the value says"
+                    if ok else f"line '{wl.line}': expected the oval on page {box.page} to be "
+                    f"{'painted' if want else 'empty'}, but it is {state} ({dark:.0%} dark) — re-run fill_form from "
+                    f"these values"),
+        )
+    if box.page <= n_pages and ln.type == "money" and box.minus is not None:
+        m = box.minus
+        dark = _darkness(doc, box.page, (m.x, m.y, m.w, m.h), renders)
+        want = wl.value.startswith("-")
+        if (dark >= _FILLED_AT) != want or (not want and dark >= _EMPTY_BELOW):
+            return OverlayCheck(
+                line=wl.line, label=wl.label, value=wl.value, page=box.page, status=FAIL,
+                detail=(f"line '{wl.line}': the minus box on page {box.page} is {dark:.0%} dark but the value "
+                        f"{'IS' if want else 'is NOT'} a loss — the sign on the page disagrees with the worksheet; "
+                        f"re-run fill_form from these values"),
+            )
     if box.page > n_pages:
         return OverlayCheck(
             line=wl.line, label=wl.label, value=wl.value, page=box.page, status=FAIL,
@@ -738,6 +841,7 @@ def verify_overlay(
     try:
         n_pages = len(doc)
         glyphs_by_page: dict[int, list[tuple[float, float, float, str]]] = {}
+        renders: dict = {}
         for wl in worksheet.lines:
             ln = by_line[wl.line]
             if not ln.boxes:
@@ -745,7 +849,7 @@ def verify_overlay(
                     hand_written.append(wl)
                 continue
             for box in ln.boxes:  # every placement is checked: a repeated header SSN must be in each
-                checks.append(_check_box(ln, wl, box, pack, doc, n_pages, glyphs_by_page, default_size, path))
+                checks.append(_check_box(ln, wl, box, pack, doc, n_pages, glyphs_by_page, default_size, path, renders))
     finally:
         doc.close()
 

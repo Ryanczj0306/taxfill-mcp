@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,022 tests** — offline 7,214 + live-.gov 808; derived
+Done and on `main` (**8,028 tests** — offline 7,219 + live-.gov 809; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2290,7 +2290,7 @@ line items sum to the headline delta.
       - The read found 25 printed entries the manifest had never listed: the fiscal-year dates, the deceased boxes, suffixes, country code, residence town and ZIP, the MFS spouse name, and page 2's signature dates, phones, email, paid-preparer block and third-party designee. All are lines now; the signatures stay hand-written.
       - The verifiers' two catches were fixed: tax_year.begin's box stops before the pre-printed "2023", so a full date FAILs instead of overprinting, and the preparer FEIN cells sit inside their white box.
   - **Tests:** test_ct1040_overlay.py covers every line's coordinates, the SSN on all four pages, and a demo return plus a full fiscal-year / preparer / designee return stamping on the real blank with no warning. Both pass the OVERLAY verdict on all 184 placements, a wrong line 1 FAILs exactly lines 1, 3 and 5, and all four pages render. test_overlay.py covers cells layout / validation and repeated placements (a missing header copy FAILs). test_overlay_tools.py covers the real ct1040 through fill_form → verify_form.
-- [ ] **JS4d — SC, NM, HI overlays** (L, per pack)
+- [x] **JS4d — SC, NM, HI overlays — DONE 2026-09-28** (L, per pack) — all four print-only state returns now stamp.
   - SC line numbers are not isolated words in the text layer, so anchor on captions.
   - **Acceptance, per pack:** as JS4c.
   - *Progress:*
@@ -2302,6 +2302,12 @@ line items sum to the headline delta.
       - NM TRD serves the blank from an AWS API-gateway host, which fetch's official-host rule refused, so the pack could not even fetch its blank. Verified from the source: tax.newmexico.gov/forms-publications/ loads its forms table through prod.realfile.rtsclients.com/js/rf-tables.js, which fetches from that host. fetch now takes it, and ONLY with a pinned sha256, via `fetch.PINNED_ONLY_BLANK_HOSTS` (one entry, with that provenance). A look-alike gateway host is still refused.
       - The read found 20 unlisted entries, and 3c / 3d were combined labels over separate City / State / ZIP and Country / Province cells.
       - test_pit1_overlay.py: the demo and full returns (including a loss on line 9) stamp clean and verify on all 118 placements. test_fetch covers the pinned-only rule.
+    - **HI N-11 2023 — DONE 2026-09-28.** 169 lines (was 38), 177 placements, from a 4-author / 4-verifier workflow plus the main-loop read of every page.
+      - The manifest stopped at line 24. The read listed the other 131 printed entries: the fiscal-year and date-of-death cells, the four return-type ovals, M.I. / suffix / first-four-letters boxes, care-of and foreign address, the exemption ovals and counts, the six-row dependents table, lines 25-55 with their ovals, the designee, election fund, signature and paid-preparer blocks. The name line and both SSNs repeat in the page 2-4 headers.
+      - N-11 is machine-read, so the engine learned three things (CONVENTIONS "Machine-read forms"). `mark: fill` paints an oval in the printed shape: straight sides and round ends, because an inscribed ellipse left the four shoulders pink. `minus` shades the printed minus for a loss, and a negative in digit cells without one is refused. Money in `cells` fills from the right. The verdict reads painted marks from a render.
+      - Verifier catches, all fixed: pdfium's stroked-path bounds carry the full 0.75pt stroke on each side, so 28 painted ovals spilled about 0.35pt past the outline. The main loop found the other 13 the verifiers missed, and all 41 now use the outline's outer edge measured from the path points. The minus boxes painted the whole pink square, where the face's Example darkens only the minus glyph. The DHS count filled from the left. The preparer's self-employed X touched its frame, four activity / product entries started against their caption's colon, and dependent row 6 was needlessly indented.
+      - Computes: line 22 no longer sums 21a-21f. Its face points to the itemized-deduction limitation (Instructions page 19), and a standard-deduction filer must leave it blank, where the sum stamped "0". Line 42 now computes max(0, 41 - 36), which covers a negative line 36 the way the Instructions (page 22) do.
+      - test_n11_overlay.py: every line's coordinates, the 41 painted ovals and the 8 minus boxes, the computes, and a demo return plus a full loss-year return stamping clean and verifying on all 177 placements. A wrong sign and an unpainted oval FAIL. test_overlay.py covers the oval shape, right-filled cells, the minus box and the mark validation.
 - [ ] **JS5 — State 2024/2025 re-maps and URL discovery (rest of old J3)** (XL, per pack) [PJ-15 (4)–(5)]
   - Open at the 2026-09-11 count: 73 pack-years, minus JS3b.
     - 2024: 32 (RE-MAP 10, URL-DEAD 11, no-token 7, print-only 4).

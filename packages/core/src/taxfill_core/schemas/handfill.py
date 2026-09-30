@@ -38,6 +38,17 @@ DEFAULT_OVERLAY_FONT_SIZE = 9.0
 DEFAULT_MONEY_ALIGN: OverlayAlign = "right"
 
 
+class MinusBox(BaseModel):
+    """A printed minus box a form asks you to SHADE for a loss (HI N-11), same page as its amount."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    x: float = Field(description="Left edge, PDF points.")
+    y: float = Field(description="Bottom edge, PDF points.")
+    w: float = Field(gt=0)
+    h: float = Field(gt=0)
+
+
 class OverlayBox(BaseModel):
     """Where one line's value is stamped on the print blank (PDF points, origin bottom-left)."""
 
@@ -85,9 +96,30 @@ class OverlayBox(BaseModel):
         ),
     )
     cell_w: float | None = Field(default=None, gt=0, description="Width of each `cells` cell, in points.")
+    mark: Literal["x", "fill"] | None = Field(
+        default=None,
+        description=(
+            "Checkbox lines only: 'x' (the default) stamps a centred X; 'fill' PAINTS the box solid in the shape "
+            "a scannable form prints its ovals — straight sides, round ends of radius min(w, h) / 2 — filling "
+            "x .. x + w and y .. y + h, where y is the box's BOTTOM edge, not a baseline. Declare the printed "
+            "outline's OUTER edge (a stroked path's bounds from pdfium include the stroke width on each side: "
+            "take half of it back off), for a machine-read form that says 'Fill in ovals completely' "
+            "(HI N-11). Needs h (Phase J JS4d)."
+        ),
+    )
+    minus: MinusBox | None = Field(
+        default=None,
+        description=(
+            "Money lines only: where the form shows a loss by SHADING a minus box instead of printing a sign "
+            "(HI N-11). A negative value paints this rectangle solid and stamps the digits unsigned. Without it, "
+            "a negative value in a `cells` box is refused — the sign would silently vanish (JS4d)."
+        ),
+    )
 
     @model_validator(mode="after")
     def _cells_are_well_formed(self) -> "OverlayBox":
+        if self.mark == "fill" and self.h is None:
+            raise ValueError("overlay: mark 'fill' needs h — the painted oval fills the w x h box")
         if self.cells is None:
             if self.cell_w is not None:
                 raise ValueError("overlay: cell_w is set without cells — give the cell left edges too")
@@ -153,6 +185,15 @@ class HandFillLine(BaseModel):
         ),
     )
 
+
+    @model_validator(mode="after")
+    def _marks_fit_the_line_type(self) -> "HandFillLine":
+        for box in self.boxes:
+            if box.mark is not None and self.type != "checkbox":
+                raise ValueError(f"line '{self.line}': overlay.mark applies to checkbox lines only")
+            if box.minus is not None and self.type != "money":
+                raise ValueError(f"line '{self.line}': overlay.minus applies to money lines only")
+        return self
 
     @property
     def boxes(self) -> list[OverlayBox]:

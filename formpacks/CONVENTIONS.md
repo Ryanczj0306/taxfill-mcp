@@ -415,6 +415,19 @@ without a block stay hand-written rows (`hand_written_lines`).
   underline strokes (pypdfium2 path objects under the box), never by eye. When the form prints
   the SAME value in several places (the CT-1040's SSN in every page header), `overlay` may be a
   list of boxes: the value is stamped in each, and each is verified.
+- **Machine-read forms: painted ovals, minus boxes, digit cells (JS4d, HI N-11).** A form that
+  says "Fill in ovals completely" gets `mark: fill` on each checkbox box. The mark paints the box
+  solid in the shape scannable forms print — straight sides, round ends of radius min(w, h) / 2 —
+  so here `y` is the box's BOTTOM edge and `h` is required. Declare the printed outline's OUTER
+  edge: pdfium's bounds for a stroked path include the whole stroke width on each side, so take
+  half of it back off, or the paint spills past the outline. A form that shows a loss by shading
+  a printed minus gets `minus: {x, y, w, h}` on the money box. A negative value paints that
+  rectangle and stamps the digits unsigned. Declare exactly what the form's own example darkens:
+  on N-11, the minus glyph inside the pink square, not the square. Money in `cells` fills from
+  the RIGHT (the ones digit in the last cell) and drops commas, and a negative value in cells
+  with no `minus` is refused, because the sign would silently vanish. The verdict reads both
+  kinds of mark from a render: a painted box must be at least 60% dark and an unpainted one
+  under 20%.
 - **The OVERLAY verdict** keeps only glyphs drawn in the stamp font (unembedded Helvetica; the
   CT, HI and SC blanks embed every font they print). It requires the declared box to hold
   exactly the value, read left to right, and a blank line's box to hold nothing. It trusts the
