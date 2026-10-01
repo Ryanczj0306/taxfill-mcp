@@ -158,6 +158,23 @@ credits:
     source: 'CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 7 / Schedule 2 Credit for Income Taxes Paid
       to Qualifying Jurisdictions'
     url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf'
+- name: 'Historic Homes Rehabilitation Tax Credit (Line 20d)'
+  type: refundable
+  eligibility: 'The 2025 Instructions, Line 20d: "All tax credit vouchers shall be issued by The Department of Economic and
+    Community Development to those eligible that are (1) owners rehabilitating historic homes; or (2) taxpayers making
+    contributions to qualified rehabilitation expenditures on historic homes." The booklet prints no statute, no cap and
+    no computation — the credit is whatever the DECD voucher shows. The form face captions the line "20d. Historic Home
+    Rehabilitation Credit"; the Instructions call it the "Historic Homes Rehabilitation Tax Credit".'
+  amount: 'The voucher amount: "Enter the amount received from your Historic Homes Rehabilitation Tax Credit Voucher and
+    submit a copy of the voucher you received from the Department of Economic and Community Development with your
+    Connecticut income tax return." Refundable by placement — Line 21 "Total Payments and Refundable Credits" reads
+    "Add Lines 18, 19, 20, 20a, 20b, 20c, and 20d" (the Line 20d text itself never uses the word refundable).'
+  income_limit_2025: 'None printed.'
+  claimed_on: 'Form CT-1040, Line 20d (new on the 2025 face), summed into Line 21 — a copy of the DECD voucher is attached'
+  citation:
+    source: 'CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), p. 4 Line 20d Historic Homes Rehabilitation Tax Credit
+      and Line 21 Total Payments and Refundable Credits; the 2025 Form CT-1040 face, Lines 20d and 21'
+    url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf'
 filing_requirement:
   note: 'Connecticut uses a "Gross Income Test." Per the DRS Tax-Information page, stated for 2025: "You must file
     a Connecticut income tax return if your gross income for the 2025 taxable year exceeds: $12,000 and you are married
@@ -203,7 +220,10 @@ all_citations:
     any treaty income reported on federal Form 1040NR if a nonresident alien"); Line 6 no-tax floors and optional
     DRS tax tables at CT AGI $102,000 or less; Tax Calculation Schedule (p. 19) and Tables A-E (pp. 19-23); Line 20a
     CT EITC 40% plus the new $250 qualifying-child supplement and the $11,950 investment-income limit; Line 11 / Schedule
-    3 Property Tax Credit and Property Tax Credit Table (p. 27)'
+    3 Property Tax Credit and Property Tax Credit Table (p. 27); Line 20d Historic Homes Rehabilitation Tax Credit
+    (p. 4, the DECD voucher amount); Line 48d ABLE subtraction (p. 10, lesser of contributions or $5,000 / $10,000
+    joint); the Access Health CT authorization (p. 2); Line 1 federal Form 1040 Line 11a; Line 13 Schedule CT-IT
+    Credit Part 1 Line 10'
   url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf'
 - source: '2025 Form CT-1040NR/PY Instructions (Rev. 12/25, 28 pages) — Schedule 1 "Other" additions ("1. Add back
     any treaty income reported on federal Form 1040NR if a nonresident alien"); INDEPENDENT SECOND-PASS source for
@@ -340,6 +360,23 @@ tax:
     the Tax Calculation Schedule. The CT EITC (Line 20a) was expanded for 2025 — still 40% of the federal EIC, plus
     an additional $250 for a taxpayer with at least one federal qualifying child — but it is a refundable payment/credit
     applied after Line 6 and is not part of this block.
+  - 'Schedule 1 subtractions are the caller''s, not this block''s — the 2025 face adds Line 48d "Achieving Better Life
+    Experience (ABLE)", summed into Line 50 and Line 4. 2025 Instructions p. 10, Line 48d ABLE (Achieving a Better Life
+    Experience) Account: "Subtract the amount of your contributions made to an ABLE (Achieving a Better Life Experience)
+    account. The modification cannot exceed the maximum allowable contribution. The maximum ABLE contribution that may
+    be subtracted is the lesser of (1) the amount of contributions to all ABLE accounts during the taxable year; or
+    (2)(A) $5,000 for each individual taxpayer, including individuals whose filing status on their Connecticut income
+    tax return is single, head of household, filing separately, or (B) $10,000 for individuals whose filing status on
+    their Connecticut income tax return is filing jointly or qualifying surviving spouse." The booklet prints no
+    statute, effective year, carryforward or beneficiary rule, and is silent on whether the account must be
+    Connecticut''s. (Schedule CT-IT Credit Line 3 "ABLE Account Tax Credit" is a different item — an employer credit.)'
+  - 'Line 1 of the 2025 face cites "federal Form 1040, Line 11a, or federal Form 1040-SR, Line 11a" (the TY2025 Form 1040
+    prints AGI on 11a); Line 13 "Total allowable credits from Schedule CT-IT Credit, Part 1, Line 10" (2023: Line 11).
+    The page-1 "Do you need health coverage?" box has no tax effect: 2025 Instructions p. 2, "By checking the box on
+    Form CT-1040, Connecticut Resident Income Tax Return, you authorize the Department of Revenue Services to transmit
+    certain demographic information about you and your household to Access Health CT. This election authorizes Access
+    Health CT to contact you with information about health coverage options and financial assistance that may be
+    available to you." — an authorization, so it is checked only when the filer asks for it.'
 # Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the single "2025 CHANGE FOUND"
 # in this pack's header comment (the CT EITC expansion), also recorded in the credits block and
 # tax.notes. modeled: false — the CT EITC is a refundable credit applied after Form CT-1040 Line 6, and
