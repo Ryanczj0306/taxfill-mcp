@@ -1,0 +1,734 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/nc/2024/d400/pack.yaml (ported 2026-10-01,
+# Phase J JS5; triaged PORTABLE by the 2026-09-30 discovery census — all 92
+# mapped widgets SAME, 0 GONE, 0 NEW).
+#
+# URL. NCDOR renamed the landing slug: 2024 linked
+# /2024-d-400-web-fill-version/open, the 2025 landing page
+# (https://www.ncdor.gov/taxes-forms/individual-income-tax/individual-income-tax-forms-instructions/2025-d-400-individual-income-tax-return)
+# links /2025-d-400-web-filled-version/open. That URL answered 200
+# application/pdf, 2,110,647 bytes, magic %PDF-1.7, content-disposition
+# "2025 D-400 Web-Fill Version.pdf", last-modified 2025-12-31. Digest
+# 2bf6e0b44e628a05cc401d22f7cf6f8c7b39db529d345f4bcf7d93ccfe170d63 — two
+# separate curl downloads (2026-09-30) and the discovery copy all agree. The
+# 2024 blank fetched through the base pack digests to its pinned
+# e84809dd…1f217, so both sides of every diff below are the served blanks.
+#
+# PRINTED IDENTITY (the PDF's own text layer, not its URL). PDF page 2 (form
+# page 1) prints "D-400", "Individual Income Tax Return", "2025", the revision
+# stamp "Web-Fill 9-25", "For calendar year 2025, or fiscal year beginning
+# (MM-DD) 2 5 and ending (MM-DD-YY)" and "Were you granted an automatic
+# extension to file your 2025 federal income tax return, e.g., Form 1040?";
+# PDF page 3 (form page 2) prints "D-400 Page 2", "Tax Year 2025", "D-400
+# Web-Fill 9-25", "21. Other Tax Payments a. 2025 estimated tax" and "29.
+# Amount of Line 28 to be applied to 2026 Estimated Income Tax". PDF page 1
+# is the widgetless NCDOR "Instructions for Web Fill-In Forms" sheet ("Do Not
+# Include This Page"); unlike 2024 it now carries a text layer (27 lines of
+# instructions, no taxpayer data). printed_year_verified = 2025. 3 PDF pages,
+# 612x792, as in 2024.
+#
+# AcroForm TOPOLOGY against the 2024 blank: IDENTICAL. 97 widgets = 95 field
+# names in both years (y_d400wf_ssn1 has a widget on each form page; PRINT
+# has two, both on form page 1); page annotation counts 0 / 59 / 38. No XFA,
+# no /CO calculation order, AcroForm keys exactly /DA /DR /Fields. A
+# field-level diff of all 97 widgets (flags resolved up /Parent) found /FT,
+# /Ff, /MaxLen, /DA, /V, /Rect and the /AP /N on-state keys byte-identical
+# for every widget — including y_d400wf_Ex_good, whose 2024 5-pt shift is
+# unchanged. The only content diff: y_d400wf_dead3's /Opt list rolled
+# [' ', '2022', '2023 '] -> [' ', '2023 ', '2024'] (the DOR's trailing space
+# on '2023 ' kept verbatim). The two /Ch combos' appearance streams and the
+# PRINT/CLEAR pushbutton icons were re-encoded (a /Filter key, a new image
+# XObject) — presentation only. The printed-word layout of both form pages
+# has median shift (0.00, 0.00) with 99-100% of words within 0.5 pt.
+#
+# FACE DELTAS vs 2024 (pdftotext -layout diff, every line): the year
+# strings (2024 -> 2025 on the calendar-year and federal-extension lines,
+# the page-2 "Tax Year" stamp and line 21a; 2025 -> 2026 on line 29 and on
+# the out-of-country date "April 15, 2026"), the revision stamp (9-24 ->
+# 9-25) and header digits (2 4 -> 2 5), and the line-15 RATE: "Multiply
+# Line 14 by 4.25% (0.0425). If zero or less, enter a zero." (2024: "4.5%
+# (0.0450)"). NO LINE RENUMBERING: form page 1 keeps 6, 7, 8, 9, 10a, 10b,
+# 11, 12a, 12b, 13, 14, 15 and form page 2 keeps 16-34 with 20a/20b, 21a-21d
+# and 26a-26e; every printed sum/subtract instruction the relations below
+# quote is unchanged on this face ("8. Add Lines 6 and 7", "12. a. Add Lines
+# 9, 10b, and 11", "12b. Subtract Line 12a from Line 8", "17. Subtract Line
+# 16 from Line 15", "19. Add Lines 17 and 18", "23. Add Lines 20a through
+# 22", "(Add Lines 26b and 26c ...)", "33. Add Lines 29 through 32"). The
+# source citations are unchanged too: line 7 "(From Form D-400 Schedule S,
+# Part A, Line 16)", line 9 "(... Part B, Line 41)", line 13 "(From Form
+# D-400 Schedule PN, Line 24. Enter amount as decimal.)", line 16 "(From
+# Form D-400TC, Part 3, Line 20)". Line 6 prints only "Federal Adjusted Gross
+# Income" — no federal line citation on the face, in either year.
+#
+# KNOWLEDGE CROSS-CHECK (knowledge/states/nc/2025.yaml, not edited): the
+# face's 4.25% / 0.0425 rate, the "April 15, 2026" out-of-country date
+# (filing_due_date '2026-04-15') and the two mailing addresses printed on
+# form page 2 ("If REFUND ... P.O. BOX R, RALEIGH, NC 27634-0001"; "If you
+# ARE NOT due a refund ... P.O. BOX 25000, RALEIGH, NC 27640-0640") all
+# agree with the knowledge pack. The blank prints no statutory dollar figure
+# (the Education Endowment sentence leaves "$ ____" blank). No mismatch.
+#
+# CROSS_FORM. The 2025 Form 1040 prints AGI on line 11a (federal/2025/f1040
+# maps "11a"; 2024 printed it on line 11), so the single leg is re-pointed
+# per year: 6 == f1040.11a.
+#
+# READONLY ADJUDICATION (knowledge/pitfalls.yaml P-007), re-dumped from the
+# 2025 blank: exactly ONE ReadOnly field, "PRINT" (/Tx, /Ff 1, two widgets
+# at /Rect [0, 0.9, 33.6, 792] and [577.4, 0.9, 611.0, 792] — the full-height
+# left and right margin bars of form page 1), whose /V and /DV read "OTHER
+# THAN YOUR SIGNATURE, DO NOT HANDWRITE ON THIS FORM". Class 1 (a DOR
+# constant) — stays UNMAPPED. Class 4 is empty: no /CO and no /C action in
+# the file, so every dollar box and the page-2 header echoes are ordinary
+# /Ff 0 widgets. Zero mapped ReadOnly widgets, so no STATE_COMPUTED_READONLY
+# row. z_d400wf_print / z_d400wf_clear are /Btn pushbuttons (/Ff 65536) —
+# form actions, unmapped.
+#
+# CHECKBOX GROUPS (pitfalls P-003 + P-008), unchanged from 2024 and re-read
+# off this face: the 21 fill-in circles (/MK /CA 'l') and the one square
+# "Check here" box (y_d400wf_check, /MK /CA '4') are 22 single-widget /Btn
+# fields, each with the one on-state /Yes (dumped from this blank). SEVEN
+# groups, 17 members:
+# filing_status (5, "(Fill in one circle only)", the one `required` group),
+# line11 (2, "(Fill in one circle only. See Form D-400 Schedule A.)"),
+# residency_taxpayer (2), residency_spouse (2), veteran_taxpayer (2),
+# veteran_spouse (2), federal_extension (2). FIVE lone widgets — four "Fill
+# in circle if ..." circles and the one "Check here if ..." square box — stay
+# ungrouped: amended_return,
+# out_of_country, deceased_signed_by_representative,
+# 18_no_consumer_use_tax_due, authorize_preparer_discussion. RESIDENCY /
+# VETERAN note: the spouse pairs are blank on every no-spouse return and the
+# taxpayer residency pair is an attachment trigger ("If No, complete and
+# attach Form D-400 Schedule PN."), so none of those is `required`.
+#
+# CHOICE LISTS dumped from this blank: y_d400wf_state 53 entries (unchanged);
+# y_d400wf_dead3 [' ', '2023 ', '2024'] — the two years preceding the tax
+# year; y_d400wf_Ex_good [' ', 'E'] with /Ff 131072 (Combo, not Edit) —
+# unchanged from 2024, so "E" is still the only letter the form offers and
+# the face still says only "(See instructions and enter letter in box, if
+# applicable.)". Which D-422 exception letters NCDOR intends remains
+# unresolved from the blank alone, as in 2024. All three are Combo boxes
+# WITHOUT the Edit flag (/Ff 655360 = Combo+Sort on state and dead3, 131072
+# = Combo on Ex_good), so callers must pass one of the dumped /Opt values
+# (a state abbreviation; '2023 ' or '2024'; 'E'): fill_form and verify_form
+# accept any text (they write and read /V), but a poppler-based renderer
+# (pdftoppm) regenerates the appearance from the /Opt list and prints an
+# off-list value as an EMPTY box, while pdfium draws the text. Measured on this blank: the sentinel audit's T13 / T21 / T25 are
+# invisible under pdftoppm and visible under pdfium; NC / 2024 / E render in
+# the right boxes under both. Audit these three lines on a pdfium render.
+#
+# MAXLEN. 55 widgets carry a /MaxLen (the table is byte-identical to 2024)
+# and every pack maxlen on one of them equals it. Three mapped widgets carry
+# NO /MaxLen: y_d400wf_ssn1 and y_d400wf_ssn2 (pack maxlen 11, carried from
+# 2024, for an NNN-NN-NNNN entry; "/Cour 14 Tf" boxes 158.66 pt (ssn1, form
+# page 1), 143.00 pt (ssn1 echo, form page 2) and 164.33 pt (ssn2) wide, so
+# 11 glyphs at 0.6 em = 92.4 pt fit the narrowest with room to spare) and
+# y_d400wf_ppsigdate, whose maxlen 8 is the measured Courier-9 budget of a
+# 50.99-pt box (see the binding), re-proved on this blank.
+#
+# AUDIT + VISION. scripts/audit_pack.py on the 2025 blank: 82 sentinel lines
+# (one member per checkbox group), 82 fields written, 0 verify FAILs outside
+# the relations section (whose 8 FAILs are the sentinel values failing the
+# printed sums, by design), 3 pages rendered. All three rendered pages were
+# READ: every dollar sentinel sits in the box of its own printed line number
+# (6-15 on form page 1, 16-34 with 20a/20b, 21a-21d, 26a-26e on form page
+# 2), every header sentinel under its own caption, the page-2 last-name echo
+# and the shared-field SSN echo are filled, and both yellow margin bars still
+# read the DOR's own text. A second one-per-group fill of the non-default
+# options (No / No / No / Yes / Head of Household / Itemized / use-tax
+# circle) confirmed the asymmetric veteran names (v1yes + v2no, sv1yes +
+# sv1no) hit the circles their keys claim.
+# ===========================================================================
+# Form D-400, 2025 — North Carolina Individual Income Tax Return.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) -> vision-map workflow (the
+# instruction page plus both form pages, with zoomed crops, read to place each
+# field on its printed line / column) -> this map.
+#
+# Layout. Flat AcroForm (acroform_root empty). The field names are the raw
+# Web-Fill sentinel ids the NCDOR PDF ships with: header/demographic widgets
+# carry "y_d400wf_<thing>" descriptive names (y_d400wf_fname1, y_d400wf_add,
+# y_d400wf_ssn1, …) and every numbered dollar line is a "y_d400wf_li<NN>…_good"
+# box, so the line key is the printed step/line number ("y_d400wf_li6_good" ->
+# line "6", etc.). The PDF the sentinel sweep renders is 3 images: image 1 is
+# the NCDOR "Instructions for Web Fill-In Forms" cover (DO NOT MAIL THIS PAGE)
+# which carries no taxpayer data, image 2 is form Page 1 (header through line
+# 15), image 3 is form Page 2 (lines 16-34 + signatures).
+#
+# Coverage. The blank PDF has 95 distinct AcroForm field objects and 97
+# widgets (pypdf get_fields dedupes the two repeated fields: "y_d400wf_ssn1"
+# has one widget per form page, and the "PRINT" margin banner has two widgets,
+# both on form Page 1). 92 fillable widgets are mapped here. Three widgets are
+# intentionally OMITTED — none accept taxpayer data:
+#   * "PRINT"  — a read-only (/Tx, Ff bit 1 ReadOnly) field that already HOLDS
+#     a DOR-printed constant: its /V and /DV read "OTHER THAN YOUR SIGNATURE,
+#     DO NOT HANDWRITE ON THIS FORM", drawn rotated 90° on the yellow left and
+#     right margin bars of form Page 1. Mapping it would overwrite the form's
+#     own instruction text (pitfalls P-007 class 1); it cannot be filled.
+#   * "z_d400wf_print" and "z_d400wf_clear" — push-buttons (/Btn, Ff bit 17
+#     Pushbutton; their AP sentinel state is the appearance-stream dict key
+#     "/BBox", not a selectable value) — the PRINT and CLEAR buttons at the top
+#     of Page 1. Form actions, not data fields.
+#
+# Money vs text. Every "y_d400wf_li<NN>…_good" dollar box (and the N.C.
+# Education Endowment Fund "$" box, y_d400wf_NCEDU_good) is mapped `money`:
+# each prints a ".00" cents suffix and the filler renders whole dollars.
+# Exceptions kept as `text`: y_d400wf_li10a_good (line 10a is a COUNT of
+# qualifying children, not dollars) and y_d400wf_li13_page1_good (line 13 is a
+# taxable PERCENTAGE "entered as a decimal", which whole-dollar money rounding
+# would corrupt). Genuine text widgets stay text: names, middle initials,
+# address/apt/city/ZIP/country/county, the fiscal-year begin/end date boxes,
+# SSN boxes (maxlen 11), spouse name/SSN, the date-of-death boxes, signature
+# and preparer dates, contact phone, preparer FEIN/SSN/PTIN and phone, the
+# page-2 last-name echo, and the three /Ch dropdown widgets (State, Year-
+# spouse-died, and the line-26e underpayment-Exception letter box) which are
+# free-form choice fields written as text.
+#
+# Checkboxes / fill-in circles. NC uses single-widget /Btn fields rather than
+# shared radio fields, so each of the 21 circles and the one square check box
+# is its OWN AcroForm field, mapped one line per option with on_state copied
+# verbatim from the skeleton
+# (/Yes throughout — dumped from the 2025 blank, unchanged since 2023). That topology is why
+# exclusivity has to come from `group`: no two of these lines share a field,
+# so every same-field guard in the engine and the gates is silent here. See
+# the CHECKBOX GROUPS block in the banner above for the seven groups and the
+# per-group `required` reasoning. The Residency-Status, Veteran-Information and
+# Federal-Extension blocks each pair a "yes" field and a "no" field (rs1/rs2
+# taxpayer/spouse residency, v1yes+v2no / sv1yes+sv1no taxpayer/spouse veteran
+# — the names are asymmetric, the geometry is not, fedex1 federal extension),
+# and line 11 pairs the NC Standard and NC Itemized deduction circles; all
+# seven of those sets are grouped. Amended Return, Out of Country,
+# Deceased-Taxpayer signed-by-representative, the line-18 "no Consumer Use Tax
+# is due" certification circle and the preparer-discussion authorization
+# (a square "Check here" box, not a circle) are LONE widgets with no printed
+# partner, so they are ungrouped by adjudication.
+#
+# Relations. Only unconditional add/subtract equalities with every operand
+# mapped are declared (8=6+7; 12a=9+10b+11; 12b=8-12a; 17=15-16; 19=17+18;
+# 23=20a+20b+21a+21b+21c+21d+22; 26d=26b+26c; 33=29+30+31+32). Lines whose
+# printed instruction is conditional, floored, rate-scaled or a refund/owe
+# branch — 14 (full-year vs part-year), 15 (× 4.25%), 25 ("if less than zero,
+# see instructions"), 26a/26e (tax-due branch + exception), 27 (amount due),
+# 28 (overpayment branch), 34 ("Amount To Be Refunded") — are OMITTED per the
+# conservative house style.
+#
+# Cross_form. Line 6's printed label is "Federal Adjusted Gross Income", the
+# federal AGI, so the single cross_form equality 6 == f1040.11a (Form 1040, 2025,
+# line 11a = AGI — the 2025 Form 1040 split line 11 into 11a/11b) is declared.
+form: Form D-400
+jurisdiction: states/nc
+tax_year: 2025
+source_url: https://www.ncdor.gov/2025-d-400-web-filled-version/open
+pdf_sha256: "2bf6e0b44e628a05cc401d22f7cf6f8c7b39db529d345f4bcf7d93ccfe170d63"
+acroform_root: ''
+fields:
+  # ============================================ Page 1 — header (calendar/fiscal year)
+  # OMITTED: "PRINT" (read-only field holding the DOR's own margin constant
+  #          "OTHER THAN YOUR SIGNATURE, DO NOT HANDWRITE ON THIS FORM" — never map);
+  #          "z_d400wf_print", "z_d400wf_clear" (Page 1 PRINT/CLEAR push-buttons).
+  # UNGROUPED single: a lone "AMENDED RETURN / Fill in circle  (See
+  # instructions)" circle with no partner option. Not `required` — the
+  # overwhelming majority of returns are not amended.
+  - line: amended_return
+    field: y_d400wf_amendedreturn
+    type: checkbox
+    on_state: /Yes
+  - line: fiscal_year_beginning
+    field: y_d400wf_datebeg
+    type: text
+  - line: fiscal_year_ending
+    field: y_d400wf_dateend
+    type: text
+
+  # ---- names & SSNs
+  - line: tp_ssn
+    field: y_d400wf_ssn1
+    type: text
+    maxlen: 11
+  - line: spouse_ssn
+    field: y_d400wf_ssn2
+    type: text
+    maxlen: 11
+  - line: tp_first_name
+    field: y_d400wf_fname1
+    type: text
+    maxlen: 25
+  - line: tp_middle_initial
+    field: y_d400wf_mi1
+    type: text
+    maxlen: 1
+  - line: tp_last_name
+    field: y_d400wf_lname1
+    type: text
+    maxlen: 25
+  - line: spouse_first_name
+    field: y_d400wf_fname2
+    type: text
+    maxlen: 25
+  - line: spouse_middle_initial
+    field: y_d400wf_mi2
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: y_d400wf_lname2
+    type: text
+    maxlen: 25
+
+  # ---- mailing address
+  - line: mailing_address
+    field: y_d400wf_add
+    type: text
+    maxlen: 50
+  - line: apartment_number
+    field: y_d400wf_apartment number
+    type: text
+    maxlen: 5
+  - line: city
+    field: y_d400wf_city
+    type: text
+    maxlen: 27
+  - line: state
+    field: y_d400wf_state
+    type: text
+  - line: zip_code
+    field: y_d400wf_zip
+    type: text
+    maxlen: 10
+  - line: country_if_not_us
+    field: y_d400wf_country
+    type: text
+    maxlen: 9
+  - line: county_first_five_letters
+    field: y_d400wf_county
+    type: text
+    maxlen: 5
+
+  # ---- N.C. Education Endowment Fund contribution amount ($ box)
+  - line: nc_education_endowment_fund_contribution
+    field: y_d400wf_NCEDU_good
+    type: money
+    maxlen: 9
+
+  # ---- Out of Country (fill in circle if you/spouse out of country on filing date)
+  # UNGROUPED single: "Fill in circle if you, or if married filing jointly,
+  # your spouse were out of the country on April 15, 2026, and a U.S.
+  # citizen or resident." One circle, no partner. Not `required`.
+  - line: out_of_country
+    field: y_d400wf_Out of Country
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Deceased Taxpayer Information
+  # UNGROUPED single: "Fill in circle if return is filed and signed by
+  # Executor, Administrator, or Court-Appointed Personal Representative."
+  # One circle, no partner. Not `required`.
+  - line: deceased_signed_by_representative
+    field: y_d400wf_Signed by Executor or Administrator
+    type: checkbox
+    on_state: /Yes
+  - line: deceased_date_of_death_taxpayer
+    field: y_d400wf_dead1
+    type: text
+  - line: deceased_date_of_death_spouse
+    field: y_d400wf_dead2
+    type: text
+
+  # ---- Residency Status (were YOU / your SPOUSE a resident the entire year?)
+  # Two SEPARATE printed questions, each with its own Yes/No circle pair, so
+  # each pair gets its own group (proved by widget geometry, not by name: the
+  # printed "Were you a resident of N.C. for the entire year?" sits at y=409.2
+  # and its Yes/No circles are rs1yes x=362.7 / rs1no x=390.9 at y=405.2;
+  # "Was your spouse a resident for the entire year?" at y=398.5 over
+  # rs2yes/rs2no at y=393.6). NOT `required`: see the RESIDENCY/VETERAN note
+  # in the banner — a Single/HOH/QW filer has no spouse, so the SPOUSE pair is
+  # legitimately blank on honest returns, and the taxpayer pair is an
+  # attachment trigger ("If No, complete and attach Form D-400 Schedule PN"),
+  # not a universally mandatory entry. The at-most-one guard applies anyway.
+  - line: residency_taxpayer::yes
+    field: y_d400wf_rs1yes
+    type: checkbox
+    on_state: /Yes
+    group: residency_taxpayer
+  - line: residency_taxpayer::no
+    field: y_d400wf_rs1no
+    type: checkbox
+    on_state: /Yes
+    group: residency_taxpayer
+  - line: residency_spouse::yes
+    field: y_d400wf_rs2yes
+    type: checkbox
+    on_state: /Yes
+    group: residency_spouse
+  - line: residency_spouse::no
+    field: y_d400wf_rs2no
+    type: checkbox
+    on_state: /Yes
+    group: residency_spouse
+
+  # ---- Veteran Information (are YOU / is your SPOUSE a veteran?)
+  # The field NAMES are asymmetric (v1yes pairs with v2no, not v1no), so the
+  # pairing here is taken from widget geometry: "Are you a veteran?" (printed
+  # y=380.4) is served by v1yes x=239.6 and v2no x=268.1 on ONE row
+  # (y=377.3/377.6, 28.5pt apart — the same circle pitch as every other
+  # Yes/No pair on this face), and the spouse question by sv1yes x=449.3 /
+  # sv1no x=477.4 at y=376.7. NOT `required`: the veteran question is NCDOR
+  # demographic data — no printed line or schedule is conditioned on it — so a
+  # filer may decline both circles, and the spouse pair is inapplicable
+  # whenever there is no spouse on the return.
+  - line: veteran_taxpayer::yes
+    field: y_d400wf_v1yes
+    type: checkbox
+    on_state: /Yes
+    group: veteran_taxpayer
+  - line: veteran_taxpayer::no
+    field: y_d400wf_v2no
+    type: checkbox
+    on_state: /Yes
+    group: veteran_taxpayer
+  - line: veteran_spouse::yes
+    field: y_d400wf_sv1yes
+    type: checkbox
+    on_state: /Yes
+    group: veteran_spouse
+  - line: veteran_spouse::no
+    field: y_d400wf_sv1no
+    type: checkbox
+    on_state: /Yes
+    group: veteran_spouse
+
+  # ---- Federal Extension (granted an automatic extension for 2025 federal return?)
+  # One printed question, one Yes/No pair (fedex1yes x=519.3 / fedex1no
+  # x=547.4 at y=359.6, under the printed question at y=363.2). NOT
+  # `required`: the question names a FEDERAL return ("to file your 2025
+  # federal income tax return, e.g., Form 1040?"), and a D-400 filer who owes
+  # no federal return — or who simply filed on time — has nothing to assert
+  # here, so both circles are legitimately blank on honest returns.
+  - line: federal_extension::yes
+    field: y_d400wf_fedex1yes
+    type: checkbox
+    on_state: /Yes
+    group: federal_extension
+  - line: federal_extension::no
+    field: y_d400wf_fedex1no
+    type: checkbox
+    on_state: /Yes
+    group: federal_extension
+
+  # ---- Filing Status (fill in one circle only)
+  # The face prints the directive "(Fill in one circle only)" under the five
+  # numbered options (Single 1 .. Qualifying Widow(er) 5, printed y=344.6 down
+  # to 294.1 over fstat1..fstat5 at y=341.6 down to 289.9). This is the ONE
+  # group on this form that carries `required: true`: no D-400 can be filed
+  # or processed without a filing status, every one of the five options is a
+  # complete-return status, and there is no legitimate D-400 with all five
+  # circles empty. That matches the house treatment of the same block in
+  # states/ca/2023/form540, states/ca/2023/form540nr, states/ma/2023/form1 and
+  # federal/*/f1040. `required` goes on ONE member by convention —
+  # verify.checkbox_audit makes the whole group required when ANY member has
+  # it (formpacks/CONVENTIONS.md).
+  - line: filing_status::single
+    field: y_d400wf_fstat1
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+    required: true
+  - line: filing_status::mfj
+    field: y_d400wf_fstat2
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+  - line: filing_status::mfs
+    field: y_d400wf_fstat3
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+  - line: filing_status::hoh
+    field: y_d400wf_fstat4
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+  - line: filing_status::qualifying_widow
+    field: y_d400wf_fstat5
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+  # MFS / Qualifying-widow auxiliary inputs
+  - line: spouse_full_name
+    field: y_d400wf_sname2
+    type: text
+    maxlen: 36
+  - line: spouse_ssn_filing_status
+    field: y_d400wf_sssn2
+    type: text
+  # The 2025 blank's /Opt list for this dropdown is [' ', '2023 ', '2024'] —
+  # the two years preceding the tax year (2024 blank: [' ', '2022', '2023 ']);
+  # the trailing space on '2023 ' is the DOR's own, kept verbatim.
+  - line: qualifying_widow_year_spouse_died
+    field: y_d400wf_dead3
+    type: text
+
+  # ============================================ Page 1 — income & deductions (lines 6-15)
+  - line: "6"        # Federal Adjusted Gross Income (the face cites no federal line; 2025 Form 1040 line 11a)
+    field: y_d400wf_li6_good
+    type: money
+    maxlen: 9
+  - line: "7"        # Additions to Federal Adjusted Gross Income (D-400 Schedule S, Part A, Line 16)
+    field: y_d400wf_li7_good
+    type: money
+    maxlen: 8
+  - line: "8"        # Add Lines 6 and 7
+    field: y_d400wf_li8_good
+    type: money
+    maxlen: 9
+  - line: "9"        # Deductions From Federal Adjusted Gross Income (D-400 Schedule S, Part B, Line 41)
+    field: y_d400wf_li9_good
+    type: money
+    maxlen: 8
+  - line: 10a        # Child Deduction — number of qualifying children (a COUNT, not dollars)
+    field: y_d400wf_li10a_good
+    type: text
+    maxlen: 2
+  - line: 10b        # Child Deduction — amount of the child deduction
+    field: y_d400wf_li10b_good
+    type: money
+    maxlen: 5
+  # Line 11 deduction METHOD. The face prints "11. N.C. Standard Deduction
+  # OR N.C. Itemized Deductions" with its own directive "(Fill in one circle
+  # only.  See Form D-400 Schedule A.)", and the two circles sit on ONE
+  # printed row (ncstandarddeduction x=74.6, ncitemizeddeduction x=208.4, both
+  # y=156.9). Group id follows sched_8812's numeric "line<N>" form. NOT
+  # `required`: line 11 is a dollar amount that can legitimately be zero with
+  # NEITHER circle filled — a filer barred from the N.C. standard deduction
+  # who also claims no N.C. itemized deductions enters 0 on line 11 and has no
+  # method circle to mark — so requiring it would FAIL verification on an
+  # honest return. The at-most-one guard applies regardless of `required`,
+  # which is the point: "Standard" and "Itemized" can never both be true.
+  - line: 11_nc_standard_deduction
+    field: y_d400wf_ncstandarddeduction
+    type: checkbox
+    on_state: /Yes
+    group: line11
+  - line: 11_nc_itemized_deductions
+    field: y_d400wf_ncitemizeddeduction
+    type: checkbox
+    on_state: /Yes
+    group: line11
+  - line: "11"       # N.C. Standard Deduction OR N.C. Itemized Deductions amount
+    field: y_d400wf_li11_page1_good
+    type: money
+    maxlen: 8
+  - line: 12a        # Add Lines 9, 10b, and 11
+    field: y_d400wf_li12a_pg1_good
+    type: money
+    maxlen: 9
+  - line: 12b        # Subtract Line 12a from Line 8
+    field: y_d400wf_li12b_pg1_good
+    type: money
+    maxlen: 9
+  - line: "13"       # Part-year Residents / Nonresidents Taxable Percentage (decimal — text, not money)
+    field: y_d400wf_li13_page1_good
+    type: text
+    maxlen: 6
+  - line: "14"       # North Carolina Taxable Income
+    field: y_d400wf_li14_pg1_good
+    type: money
+    maxlen: 9
+  - line: "15"       # North Carolina Income Tax (multiply Line 14 by 4.25% (0.0425) — printed on the 2025 face)
+    field: y_d400wf_li15_pg1_good
+    type: money
+    maxlen: 8
+
+  # ============================================ Page 2 — header echo
+  - line: tp_last_name_page2
+    field: y_d400wf_lname2_PG2
+    type: text
+    maxlen: 10
+  # NOTE: the Page-2 "Your Social Security Number" box is the SAME AcroForm
+  # field as the Page-1 SSN (y_d400wf_ssn1, mapped above as tp_ssn); it is not
+  # remapped here (one field, one value).
+
+  # ============================================ Page 2 — tax & payments (lines 16-34)
+  - line: "16"       # Tax Credits (Form D-400TC, Part 3, Line 20)
+    field: y_d400wf_li16_pg2_good
+    type: money
+    maxlen: 8
+  - line: "17"       # Subtract Line 16 from Line 15
+    field: y_d400wf_li17_pg2_good
+    type: money
+    maxlen: 8
+  # UNGROUPED single: "If you certify that no Consumer Use Tax is due, fill
+  # in circle." One circle, no partner. Not `required` — a filer who DOES
+  # owe use tax leaves it blank and enters the amount on line 18.
+  - line: 18_no_consumer_use_tax_due   # certify no Consumer Use Tax is due — fill in circle
+    field: y_d400wf_Consumer Use Tax
+    type: checkbox
+    on_state: /Yes
+  - line: "18"       # Consumer Use Tax
+    field: y_d400wf_li18_pg2_good
+    type: money
+    maxlen: 8
+  - line: "19"       # Add Lines 17 and 18
+    field: y_d400wf_li19_pg2_good
+    type: money
+    maxlen: 8
+  - line: 20a        # North Carolina Income Tax Withheld — Your tax withheld
+    field: y_d400wf_li20a_pg2_good
+    type: money
+    maxlen: 8
+  - line: 20b        # North Carolina Income Tax Withheld — Spouse's tax withheld
+    field: y_d400wf_li20b_pg2_good
+    type: money
+    maxlen: 8
+  - line: 21a        # Other Tax Payments — 2025 estimated tax
+    field: y_d400wf_li21a_pg2_good
+    type: money
+    maxlen: 8
+  - line: 21b        # Other Tax Payments — Paid with extension
+    field: y_d400wf_li21b_pg2_good
+    type: money
+    maxlen: 8
+  - line: 21c        # Other Tax Payments — Partnership
+    field: y_d400wf_li21c_pg2_good
+    type: money
+    maxlen: 8
+  - line: 21d        # Other Tax Payments — S Corporation
+    field: y_d400wf_li21d_pg2_good
+    type: money
+    maxlen: 8
+  - line: "22"       # Additional Payments (Amended Returns Only)
+    field: y_d400wf_li22_pg2_good
+    type: money
+    maxlen: 8
+  - line: "23"       # Add Lines 20a through 22
+    field: y_d400wf_li23_pg2_good
+    type: money
+    maxlen: 8
+  - line: "24"       # Previous Refunds (Amended Returns Only)
+    field: y_d400wf_li24_pg2_good
+    type: money
+    maxlen: 8
+  - line: "25"       # Subtract Line 24 from Line 23
+    field: y_d400wf_li25_pg2_good
+    type: money
+    maxlen: 9
+  - line: 26a        # Tax Due — if Line 25 < Line 19, subtract Line 25 from Line 19
+    field: y_d400wf_li26a_pg2_good
+    type: money
+    maxlen: 8
+  - line: 26b        # Penalties
+    field: y_d400wf_li26b_pg2_good
+    type: money
+    maxlen: 6
+  - line: 26c        # Interest
+    field: y_d400wf_li26c_pg2_good
+    type: money
+    maxlen: 6
+  - line: 26d        # Add Lines 26b and 26c
+    field: y_d400wf_li26d_pg2_good
+    type: money
+    maxlen: 8
+  # The 2025 blank's /Opt list for this letter box is [' ', 'E'] — unchanged
+  # from 2024 (2023 blank: [' ', 'A', 'F']); /Ff = 131072 is Combo WITHOUT Edit,
+  # so "E" is the only letter the 2025 form itself offers.
+  - line: 26e_exception   # Exception to Underpayment of Estimated Tax — letter box (/Ch dropdown)
+    field: y_d400wf_Ex_good
+    type: text
+  - line: 26e        # Interest on the Underpayment of Estimated Income Tax
+    field: y_d400wf_li26e_pg2_good
+    type: money
+    maxlen: 8
+  - line: "27"       # Amount Due — Add Lines 26a, 26d, and 26e
+    field: y_d400wf_li27_pg2_good
+    type: money
+    maxlen: 8
+  - line: "28"       # Overpayment — if Line 25 > Line 19, subtract Line 19 from Line 25
+    field: y_d400wf_li28_pg2_good
+    type: money
+    maxlen: 8
+  - line: "29"       # Amount of Line 28 to be applied to 2026 Estimated Income Tax
+    field: y_d400wf_li29_pg2_good
+    type: money
+    maxlen: 8
+  - line: "30"       # Contribution to the N.C. Nongame and Endangered Wildlife Fund
+    field: y_d400wf_li30_pg2_good
+    type: money
+    maxlen: 8
+  - line: "31"       # Contribution to the N.C. Education Endowment Fund
+    field: y_d400wf_li31_pg2_good
+    type: money
+    maxlen: 8
+  - line: "32"       # Contribution to the N.C. Breast and Cervical Cancer Control Program
+    field: y_d400wf_li32_pg2_good
+    type: money
+    maxlen: 8
+  - line: "33"       # Add Lines 29 through 32
+    field: y_d400wf_li33_pg2_good
+    type: money
+    maxlen: 8
+  - line: "34"       # Subtract Line 33 from Line 28 — Amount To Be Refunded
+    field: y_d400wf_li34_pg2_good
+    type: money
+    maxlen: 8
+
+  # ============================================ Page 2 — signatures & preparer
+  - line: your_signature_date
+    field: y_d400wf_sigdate
+    type: text
+  - line: spouse_signature_date
+    field: y_d400wf_sigdate2
+    type: text
+  - line: contact_phone_number
+    field: y_d400wf_dayphone
+    type: text
+  # UNGROUPED single: "Check here if you authorize the North Carolina
+  # Department of Revenue to discuss this return and attachments with the
+  # paid preparer below." One square check box (the face prints a box and
+  # says "Check here", and the widget's /MK /CA is '4', the ZapfDingbats
+  # check mark, where the 21 fill-in circles carry 'l'), no partner. Not
+  # `required`.
+  - line: authorize_preparer_discussion
+    field: y_d400wf_check
+    type: checkbox
+    on_state: /Yes
+  # maxlen 8 is MECHANICAL, not cosmetic (was prose-only until 2026-08-21).
+  # y_d400wf_ppsigdate is 50.99pt wide (2025 blank, byte-identical to 2024) with a FIXED "/Cour 9 Tf" — Courier is
+  # monospace at 0.6em, so 5.4pt per character: 8 chars = 43.2pt (fits), 10
+  # chars = 54.0pt (overflows by 3pt). PROVED by a 400-dpi render read at 3x:
+  # "12/31/2025" printed with its leading "1" shaved to a bare stem AND its
+  # trailing "5" cut mid-glyph (the widget is /Q 1 centered, so it clips at
+  # BOTH ends), while "12-31-25" printed fully with clear margins — MM-DD-YY
+  # being the date format this form prints beside every other date box.
+  # verify's width heuristic cannot catch it: the widget carries no /MaxLen,
+  # and the scan models Helvetica at 0.5em (10 x 0.5 x 9 = 45.0pt < 50.99pt
+  # -> PASS), which UNDERSTATES monospace Courier. So the cap has to come
+  # from the pack; with it, fill_form raises at write time instead.
+  # Deliberately NOT applied to the two sibling signature dates: the same
+  # render shows y_d400wf_sigdate2 (54.31pt) printing all 10 characters of
+  # "12/31/2025" cleanly, and y_d400wf_sigdate is wider still at 65.05pt, so
+  # capping either would reject values that demonstrably render correctly.
+  - line: preparer_signature_date
+    field: y_d400wf_ppsigdate
+    type: text
+    maxlen: 8
+  - line: preparer_fein_ssn_ptin
+    field: y_d400wf_ppssn
+    type: text
+    maxlen: 9
+  - line: preparer_contact_phone_number
+    field: y_d400wf_ppphoneno
+    type: text
+relations:
+  - "8 == 6 + 7"                                   # Line 8 "Add Lines 6 and 7."
+  - "12a == 9 + 10b + 11"                          # Line 12a "Add Lines 9, 10b, and 11."
+  - "12b == 8 - 12a"                               # Line 12b "Subtract Line 12a from Line 8."
+  - "17 == 15 - 16"                                # Line 17 "Subtract Line 16 from Line 15."
+  - "19 == 17 + 18"                                # Line 19 "Add Lines 17 and 18."
+  - "23 == 20a + 20b + 21a + 21b + 21c + 21d + 22" # Line 23 "Add Lines 20a through 22."
+  - "26d == 26b + 26c"                             # Line 26d "Add Lines 26b and 26c."
+  - "33 == 29 + 30 + 31 + 32"                      # Line 33 "Add Lines 29 through 32."
+cross_form:
+  - "6 == f1040.11a"                               # Line 6 "Federal Adjusted Gross Income" (2025 Form 1040 line 11a)
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name

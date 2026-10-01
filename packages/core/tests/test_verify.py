@@ -1113,6 +1113,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS3b: ID Form 40 2024 (only the direct-deposit cells changed) equals the reviewed ID 2023 row.
     # JS5: GA Form 500 2025 (a RE-MAP port of GA 2023; the page-1 address block kept its widgets) equals the reviewed GA 2023 row.
     # JS5: MO-1040 2025 (a RE-MAP of MO 2024) equals the reviewed MO 2024 row (address, city, state, d.zipcode/zipext).
+    # JS5: NC D-400 2025 (a PORTABLE port of NC 2024, every widget name and /Rect kept) equals the reviewed NC 2024 row
+    # (mailing_address, city, state, zip_code; county_first_five_letters still rejected).
     import json
     from pathlib import Path
 

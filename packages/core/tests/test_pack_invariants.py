@@ -904,6 +904,9 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     "federal/2026/sched_e/pack.yaml": 4,
     "states/nc/2023/d400/pack.yaml": 1,
     "states/nc/2024/d400/pack.yaml": 1,
+    # 2025 keeps the page-2 "Last Name (First 10 Characters)" box on its own widget (y_d400wf_lname2_PG2); the SSN
+    # echo is the same field as page 1 and so is not a mirror (Phase J JS5).
+    "states/nc/2025/d400/pack.yaml": 1,
     "states/ri/2023/ri1040/pack.yaml": 12,
     "states/ri/2024/ri1040/pack.yaml": 12,
     "states/va/2023/va760/pack.yaml": 1,
