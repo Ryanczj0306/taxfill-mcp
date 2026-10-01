@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,043 tests** — offline 7,230 + live-.gov 813; derived
+Done and on `main` (**8,045 tests** — offline 7,232 + live-.gov 813; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2079,6 +2079,7 @@ line items sum to the headline delta.
   - *Found.* OH IT 1040's MFS spouse SSN widget ships with the annotation Hidden flag and is shown only by the form's JavaScript, so a filled MFS return carried the SSN in the file and nowhere on paper. A sweep of every cached blank then found 141 mapped widgets flagged Hidden or NoView across AL 40 (72, every page-1 data widget), DE PIT-RES (28, the amended-return lines), GA 500 (21, the voucher), MO-1040 (8-9), NY IT-201 (1) and OH (1) — and two viewer guards: AL 40's page-covering yellow "WARNING: PLEASE USE A DIFFERENT PDF VIEWER" pushbutton (viewable and printable, hidden only by the script, so `render_form` of a filled AL 40 had only ever shown that warning) and the white NoView + Print "print lids" on every page of AL 40 (42) and MO-1040 (31), which a viewer that honours the flags prints over the return.
   - *As built.* `fill_form` runs a flag pass after writing: every written widget gets Hidden and NoView cleared and Print set; every viewer guard (a widget covering ≥ 85% of its page that is a pushbutton or a ReadOnly text panel, `filler.is_viewer_guard`) is set Hidden and listed in `FillResult.guards_hidden` (the MCP tool returns it). `verify_form` reads the filled PDF's flags back as pitfall check P-027 (`verify.widget_flag_problems`): a written widget still Hidden / NoView / without Print, or a guard still viewable or printable, FAILs the report. The golden round trips assert P-027 on every pack. CONVENTIONS "Viewer guards and hidden widgets".
   - **Tests:** test_viewer_guards.py (synthetic hidden widgets and guards through fill → flags → verify, the negative on a re-hidden widget; network: AL 40 hides 41 guards and its page 1 renders the form, MO-1040 hides 32, OH's spouse SSN prints).
+  - **P-028 (same tranche, found by the GA 500 2025 placement verify):** GA 500's voucher ships "Paper Return" pre-checked, and the return-medium boxes are separate fields sharing a `group`; selecting "Electronically Filed" left both ticked. `fill_form` now writes `/Off` to the separate-field siblings of a selected group member (an unanswered group stays as shipped). The 2026-10-01 sweep found 21 pre-checked mapped checkbox widgets (GA, KY 740 ×3, MO-1040 ×2, WV IT-140); GA's is the only one on a separate-field group.
 - [~] **JD2 — Process: derived counts, suite speed, branches, ROADMAP shape — AGENT HALF DONE 2026-09-28** (M; deps JD1)
   - *As built:*
     - **(1)** scripts/sync_doc_counts.py derives the tool / op / DocSpec / pack counts and rewrites 16 anchors: README, SKILL.md, DEV_PLAN, both package READMEs, PUBLISHING.md's smoke assert, and the two PyPI descriptions. It found the descriptions still at "21 calculation ops" / "22 tools" and the server README at "21 deterministic ops" (JA1.1's list).

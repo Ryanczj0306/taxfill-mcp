@@ -195,3 +195,60 @@ def test_p027_mo1040_hides_its_print_lids_and_oh_prints_the_mfs_spouse_ssn(tmp_p
     assert not flags & (F_HIDDEN | F_NOVIEW) and flags & F_PRINT
     assert [c for c in verify_form(oh, tmp_path / "oh.pdf", expected={line: "123456780"}).pitfall_checks
             if c.id == "P-027"][0].status == "PASS"
+
+
+# ---------------------------------------------------------------------------
+# P-028: a selected group member clears its separate-field siblings
+# ---------------------------------------------------------------------------
+
+GROUP_PACK = FormPack.model_validate({
+    "form": "GROUPED-1", "jurisdiction": "federal", "tax_year": 2023,
+    "source_url": "https://www.irs.gov/pub/irs-pdf/grouped1.pdf", "pdf_sha256": "...", "acroform_root": "",
+    "fields": [
+        {"line": "medium.paper", "field": "Paper Return", "type": "checkbox", "on_state": "/1", "group": "medium"},
+        {"line": "medium.efile", "field": "Electronically Filed", "type": "checkbox", "on_state": "/1", "group": "medium"},
+        {"line": "amended", "field": "Amended", "type": "checkbox", "on_state": "/1"},
+    ],
+})
+
+
+@pytest.fixture
+def prechecked_blank(tmp_path: Path) -> Path:
+    """GA 500's voucher shape: the blank ships 'Paper Return' already ticked."""
+    plain = make_acroform_pdf(tmp_path / "plain.pdf", [
+        {"name": "Paper Return", "kind": "checkbox", "on_value": "/1"},
+        {"name": "Electronically Filed", "kind": "checkbox", "on_value": "/1"},
+        {"name": "Amended", "kind": "checkbox", "on_value": "/1"},
+    ])
+    writer = PdfWriter(clone_from=str(plain))
+    paper = _widget(writer, "Paper Return")
+    paper[NameObject("/AS")] = NameObject("/1")
+    paper[NameObject("/V")] = NameObject("/1")
+    out = tmp_path / "prechecked.pdf"
+    writer.write(out)
+    return out
+
+
+def _states(pdf: Path) -> dict[str, str]:
+    reader = PdfReader(str(pdf))
+    return {str(a.get_object()["/T"]): str(a.get_object().get("/AS", "")) for page in reader.pages
+            for a in page.get("/Annots", []) if a.get_object().get("/T") is not None}
+
+
+def test_p028_selecting_a_group_member_clears_a_prechecked_sibling(prechecked_blank: Path, tmp_path: Path):
+    assert _states(prechecked_blank)["Paper Return"] == "/1"
+    result = fill_form(GROUP_PACK, {"medium.efile": "yes"}, prechecked_blank, tmp_path / "filled.pdf")
+    assert result.written == {"Electronically Filed": "/1", "Paper Return": "/Off"}
+    states = _states(tmp_path / "filled.pdf")
+    assert states["Electronically Filed"] == "/1" and states["Paper Return"] == "/Off"
+    assert states["Amended"] == "/Off"                       # not in the group, not touched
+    # verify reads one tick on the question
+    report = verify_form(GROUP_PACK, tmp_path / "filled.pdf", expected={"medium.efile": "yes"})
+    assert report.ok
+
+
+def test_p028_an_unanswered_group_keeps_the_blank_as_shipped(prechecked_blank: Path, tmp_path: Path):
+    # the filler never invents an answer: no member named, nothing written to the group
+    result = fill_form(GROUP_PACK, {"amended": "yes"}, prechecked_blank, tmp_path / "filled.pdf")
+    assert result.written == {"Amended": "/1"}
+    assert _states(tmp_path / "filled.pdf")["Paper Return"] == "/1"

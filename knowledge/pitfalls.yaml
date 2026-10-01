@@ -1977,3 +1977,26 @@ pitfalls:
       PASS. CONVENTIONS.md "Viewer guards and hidden widgets" records the
       rule for pack authors: a page-covering guard is never mapped, and a
       Hidden mapped widget is still mapped — the filler shows it.
+
+  - id: P-028
+    incident: >-
+      Two boxes ticked on a one-answer question. GA Form 500's payment
+      voucher ships its "Paper Return" box pre-checked in the blank (/V and
+      /AS /1, 2023 and 2025 alike), and the three return-medium boxes are
+      separate AcroForm fields that share only a pack `group` id. A caller
+      who selected "Electronically Filed" alone got both ticked: the filler
+      wrote the chosen box and, never inventing a value for a line it was not
+      given, left its siblings as the blank had them. Found by the JS5 GA 500
+      2025 port's placement verify (2026-10-01); the 2026-10-01 sweep found
+      21 mapped checkbox widgets pre-checked on their blanks (GA, KY 740's
+      political-party fund, MO-1040's CalcOption, WV IT-140), the GA voucher
+      the only one on a separate-field group.
+    countermeasure: >-
+      fill_form clears the separate-field siblings of a selected group
+      member: for every checkbox group with an on-member in the fill, each
+      other member the caller did not name is written /Off (same-field radio
+      kids were already set /Off by _set_checkboxes). An unanswered group is
+      still left untouched — the filler never invents an answer. Tests,
+      P-028-tagged, in packages/core/tests/test_viewer_guards.py
+      (test_p028_selecting_a_group_member_clears_a_prechecked_sibling,
+      test_p028_an_unanswered_group_keeps_the_blank_as_shipped).

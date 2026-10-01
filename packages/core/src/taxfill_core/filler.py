@@ -569,7 +569,10 @@ def fill_form(
             take yes/no/true/false/bool. Radio-group options (several
             checkbox lines mapping to ONE field, each with its own
             on_state) take at most one yes. **Only lines present here are
-            touched** — the filler never invents a value.
+            touched** — the filler never invents a value — with one
+            consequence of a yes: the other members of that line's checkbox
+            ``group`` are written /Off (P-028), since the question has one
+            answer and a blank may ship a sibling pre-checked.
         blank_pdf: path to the blank official PDF (fetched and
             checksum-verified upstream).
         out_path: where to write the filled PDF (parents are created).
@@ -736,6 +739,20 @@ def fill_form(
             f"like {sample}; check the pack's acroform_root ('{pack.acroform_root}') "
             f"and field names, or re-introspect the blank PDF"
         )
+
+    # P-028: the selected member of a checkbox group clears its separate-field siblings. A blank may
+    # ship one of them pre-checked (GA 500's voucher "Paper Return"), and a sibling the caller did not
+    # name is otherwise left as the blank had it — two ticks on a one-answer question. The on-member's
+    # own field is skipped (its radio kids go /Off in _set_checkboxes), and so is a sibling the PDF lacks.
+    for group in on_lines_by_group:
+        for pf in pack.fields:
+            if pf.type != "checkbox" or pf.group != group:
+                continue
+            sibling = f"{pack.acroform_root}.{pf.field}" if pack.acroform_root else pf.field
+            if sibling in checkbox_updates or sibling not in available:
+                continue
+            checkbox_updates[sibling] = (pf.line, _OFF_STATE)
+            written[sibling] = _OFF_STATE
 
     if text_updates:
         # auto_regenerate=False: do not let pypdf toggle NeedAppearances per

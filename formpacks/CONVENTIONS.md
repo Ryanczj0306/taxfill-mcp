@@ -496,3 +496,7 @@ run time; taxfill never runs it (P-007 class 4), so the filler does the viewer's
 - **The vision audit needs the pass.** `scripts/audit_pack.py` fills through `fill_form`, so its renders
   show the form; a render of the raw blank (or of a file filled any other way) shows AL 40's warning page
   and nothing else — that is what every earlier AL 40 audit was looking at.
+- **A selected group member clears its siblings (P-028).** When a fill turns on one member of a checkbox
+  `group` whose members are separate fields, `fill_form` writes `/Off` to every other member the caller
+  did not name, so a blank that ships one option pre-checked (GA 500's voucher "Paper Return") cannot
+  leave two ticks on a one-answer question. An unanswered group is left as the blank had it.
