@@ -14,8 +14,10 @@
 # after 1/1/2025 the rate is a FLAT 3% (IT-540 Line 11 = Line 10 x .03). The standard
 # deduction is now a real Line 8 subtraction: $12,500 single/MFS, $25,000 MFJ/QSS/HOH
 # (nearly tripled from $4,500/$9,000). The additional $1,000 exemptions for dependents,
-# 65-or-older, and blind (old Lines 6A/6B/6D/6E/6F) were ALL REPEALED and the lines
-# removed from the form. Do NOT carry 2024 graduated figures forward.
+# 65-or-older, and blind were ALL REPEALED: the $1,000 amounts and old lines 6, 6C-6F are
+# gone from the form; 6A survives as an age designation (taxpayer / spouse 65 or older,
+# two boxes, no amount) and 6B as a dependents count. Do NOT carry 2024 graduated figures
+# forward.
 jurisdiction: states/la
 tax_year: 2025
 income_tax: true
@@ -106,7 +108,8 @@ credits:
   income_limit_2025: Federal adjusted gross income must be greater than $25,000 to claim on this line; for AGI over
     $60,000 the credit is capped at $25 (or 10% of the federal credit, whichever is less).
   claimed_on: Form IT-540, Schedule J – Nonrefundable Priority 3 Credits (from the 2025 Louisiana Nonrefundable Child
-    Care Credit Worksheet); carried to Line 20.
+    Care Credit Worksheet); carried to Line 21, NONREFUNDABLE PRIORITY 3 CREDITS (the 2025 face; 2024 printed it on
+    Line 20 — every line after 7 moved +1 for the new standard-deduction line 8).
   citation:
     source: Louisiana Department of Revenue – 2025 IT-540 instructions (Louisiana Nonrefundable Child Care Credit
       Worksheet; Schedule J)
@@ -274,7 +277,8 @@ effective_law_changes:
     jointly, qualifying surviving spouse and head of household ("If your filing status is 1 or 3,
     enter $12,500; 2, 4, or 5, enter $25,000"), with an annual CPI-U inflation adjustment starting
     after 2025. In the same act the additional $1,000 exemptions for dependents, persons 65 or older,
-    and blind persons were ALL REPEALED and old Lines 6A/6B/6D/6E/6F were removed from the form.
+    and blind persons were ALL REPEALED; the $1,000 amounts and old lines 6, 6C-6F are gone from the
+    form, while 6A survives as an age designation and 6B as a dependents count (2025 IT-540 face).
   status: final_form_published
   affects:
   - tax.standard_deduction
