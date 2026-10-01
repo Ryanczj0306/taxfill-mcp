@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,311 tests** — offline 7,405 + live-.gov 906; derived
+Done and on `main` (**8,320 tests** — offline 7,412 + live-.gov 908; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -97,15 +97,15 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**250 form packs total** — 234 `pack.yaml` (151 federal + 83 state) + 16
+**251 form packs total** — 234 `pack.yaml` (151 federal + 83 state) + 17
 `handfill.yaml`. The state 83 breaks down **TY2023 42 / TY2024 19 / TY2025 22**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **29 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, CT, DC, HI, KY, LA, MO, NC, NM, NY, OH, OR, PA, SC, UT
+> **30 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, CT, DC, HI, KY, LA, MO, NC, NM, NY, OH, OR, PA, SC, UT
 > and VA (2024+2025), and ID/IL/ND/NJ/RI (2024) — after the 2026-08-21
 > ten-pack and 2026-08-25 four-pack tranches and the JS3b ports (UT 2025,
-> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **13**, state *knowledge*
+> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **12**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
-> still computes years those packs cannot fill. That asymmetry is now 13
+> still computes years those packs cannot fill. That asymmetry is now 12
 > jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
@@ -326,9 +326,9 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
       TY2023-only**: 83 packs across TY2023 (42) / TY2024 (19) / TY2025 (22), so
-      **29 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, CT, DC, HI, KY, LA, MO, NC, NM, NY, OH, OR, PA, SC, UT and VA
+      **30 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, CT, DC, HI, KY, LA, MO, NC, NM, NY, OH, OR, PA, SC, UT and VA
       for both 2024 and 2025; ID, IL, ND, NJ, RI for 2024. For the
-      other **13**, a 2024/2025 return still computes but cannot be filled.
+      other **12**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;

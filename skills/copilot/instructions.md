@@ -76,7 +76,7 @@ above `regular_tax` is lost for good. A qualifying surviving spouse gets $300, n
 
 **State returns** use the same pipeline with `jurisdiction="states/<xx>"`. All 42
 income-tax jurisdictions (41 states + DC) ship a resident return pack — 38 as
-fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC) via
+fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC — and WV for TY2025, whose return is a booklet page) via
 `hand_fill_worksheet`; `state_scope` says which returns are required. All four 2023
 returns (CT-1040, HI N-11, NM PIT-1, SC1040) and their 2024 and 2025 manifests also stamp through `fill_form` (overlay coordinates), then `verify_form` with
 `expected=values`; render and read every page, and the filer signs in ink.

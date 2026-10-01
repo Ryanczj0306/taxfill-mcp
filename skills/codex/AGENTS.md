@@ -115,7 +115,7 @@ exactly one of boxes a-g ticked above Part I (box c, passive, is the 1099-DIV bo
 
 State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
 All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
-38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)
+38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC — and WV for TY2025, whose return is a booklet page)
 via `hand_fill_worksheet`; `state_scope` tells you which returns are required.
 All twelve manifests (CT-1040, HI N-11, NM PIT-1, SC1040 for 2023, 2024 and 2025) also carry overlay coordinates:
 `fill_form('ct1040' | 'n11' | 'pit1' | 'sc1040', ...)` stamps them onto the print blank, `verify_form(..., expected=values)`
