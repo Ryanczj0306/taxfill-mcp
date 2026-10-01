@@ -684,6 +684,14 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "(test_verify_readonly_scan.py)",
     ),
     StateComputed(
+        "states/wi/2025/wi_form1/pack.yaml",
+        17,
+        "the same 15 page-2/3/4 name + SSN header mirrors as 2023 plus the NEW page 5's "
+        "lnamepg5 / fnamepg5 (the 2025 Form 1 adds a fifth page, Schedule 3); the page-5 SSN "
+        "cells are second widgets of ss3pg4 / ss2pg4 / ss4pg4, not new fields. Measured "
+        "2026-10-01 against the sha-pinned 2025 blank (Phase J JS5)",
+    ),
+    StateComputed(
         "states/wv/2023/it140/pack.yaml",
         51,
         "IT-140's JS-computed totals and read-only header repeaters; the validate/timestamp "

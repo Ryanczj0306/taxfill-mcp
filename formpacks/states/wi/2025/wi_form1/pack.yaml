@@ -1,0 +1,1025 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/wi/2023/wi_form1/pack.yaml (ported 2026-10-01,
+# Phase J JS5; triaged RE-MAP — 27 of the 170 mapped fields gone).
+#
+# URL. https://www.revenue.wi.gov/TaxForms2025/2025-Form1f.pdf (the same
+# TaxForms<year>/<year>-Form1f.pdf path as 2023). Digest a9b0d9b75bcb55ec…
+# ae14e — three separate curl downloads (two on 2026-09-30, one on
+# 2026-10-01) and the JS5 triage copy all agree. %PDF-1.7, AcroForm, 5 pages
+# (2023: 4).
+#
+# PRINTED IDENTITY. Page 1 prints "Wisconsin income tax", "1", "For the year
+# Jan. 1-Dec. 31, 2025, or other tax year beginning ..., 2025 ending ...,
+# 20..." and "lived at the end of 2025" with the stamp "I-010i"; pages 2-5
+# print "2025 Form 1 ... Page N of 5"; page 5 carries the stamp "I-010bi".
+# printed_year_verified = 2025.
+#
+# AcroForm topology against the 2023 blank. 209 widgets = 197 field names
+# (2023: 181 / 174). Of the 177 lines the 2023 pack mapped (170 fields):
+# 88 widgets SAME, 53 MOVED (page 2 re-flowed, median -3.1 pt; page 3 +9.6
+# pt), 2 changed PAGE ("33", "34": page 3 -> page 2), 27 GONE; 52 NEW
+# widgets. Pages 1 and 4 are unchanged in LAYOUT: layoutdiff matched 820 of
+# 824 page-1 words and 891 of 894 page-4 words, every MATCHED word within 2
+# pt (median shift 0.00, 0.00), and every widget on both pages is SAME; the
+# unmatched tokens are the rolled text (page 1: the four "2023" -> "2025"
+# year tokens; page 4: "2023" -> "2025", Schedule 2's "line 17" -> "line 18"
+# and "see page 21" -> "see page 20" citations, "Page 4 of 4" -> "of 5").
+# What happened on pages 2-3 is a RENUMBERING, and the
+# DOR renamed most widgets to the new line numbers while keeping a few old
+# names on new rows — so 25 surviving names now sit on a DIFFERENT printed
+# line than in 2023 (P-001: the name proves nothing): 15a, 15b, 18, 19, 20,
+# 21, 22, 24, 25, 26, line28, line29, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+# 43, 44, 45. Every one was re-bound by position + printed label and
+# confirmed on the sentinel renders.
+# The 27 GONE fields and what replaced them:
+#   * 14a (2023 "Federal credit from Form 2441 x 50% = 14") — line 14 is now
+#     ONE box "Additional child and dependent care tax credit. Include
+#     Schedule WI-2441" (widget 14, /MaxLen 4); no replacement.
+#   * 15aa / Line15aaa / 15bb (2023 line 15 school property tax credit) ->
+#     16aa / Line16aaa / 16bb on the renumbered line 16; the 2023 rent and
+#     property-tax inputs 15a / 15b -> NEW 16a / 16b. The surviving NAMES 15a
+#     and 15b now bind the NEW line 15 "Blind worker transportation services
+#     credit" (15a = "Qualifying expenses", 15b = "x 50% = 15"; both /MaxLen
+#     5 -> 4).
+#   * 16 (2023 line 16 Working families tax credit) -> NOTHING: 2025 line 17
+#     "Working families tax credit (see page 20) ... 17 .00" prints a box
+#     but carries NO widget. The line cannot be filled; no key.
+#   * 17 (married couple credit) -> 18 (/MaxLen none -> 3, the $480 cap).
+#   * 19-StateAbb -> 20-StateAbb; 22-checkbox -> 23-checkbox (same /Yes).
+#   * 23a..23h + line23i (the page-2 donations block) -> sch3-1a..sch3-1h +
+#     sch3-2 on the NEW page 5, "Schedule 3 – Financial Donations"; Form 1
+#     line 24 ("Donations. Complete Part I of Schedule 3 on page 5", widget
+#     24, /MaxLen 8) receives the Schedule 3 line 2 total.
+#   * 24penalties -> 25penalties (widget 25 gains /MaxLen 8).
+#   * 29 / 29a / 29percent (earned income credit inputs) -> 30 / 30a /
+#     30percent; line27 (withheld) -> line28; line28 (estimated) -> line29
+#     (/MaxLen 4 -> none); line29 (EIC result) -> line30; line30a / line30b
+#     (farmland) -> line31a / line31b; line31 (repayment) -> line32.
+#   * 32 (homestead) -> 33, now on PAGE 2 (with 34 = veterans credit); 43code
+#     -> 44code; the page-3 chain 33..45 -> 34..46 (46 NEW = "Interest").
+# The 52 NEW widgets, all MAPPED: the 19 on pages 2-3 listed above (16a,
+# 16aa, Line16aaa, 16b, 16bb, 20-StateAbb, 23, 23-checkbox, 25penalties, 27,
+# 30, 30a, 30percent, line30, line31a, line31b, line32, 44code, 46) and 33 on
+# page 5: lnamepg5 / fnamepg5 (ReadOnly name mirrors, class 4), sch3-1a..1h
+# and sch3-2, and the Anatomical Gift block — "pg5-a Filer checkbox" and
+# "pg5-b Spouse checkbox" (/Yes), "Sex" and "Sex1" (one /Btn each with two
+# kid widgets /Male, /Female), and the 8 + 8 one-character date-of-birth
+# cells m1 m2 d1 d2 y1 y2 y3 y4 / m1a m2b d1a d2b y1a y2b y3c y4d. The page-5
+# SSN header cells are NOT new fields: they are second widgets of ss3pg4 /
+# ss2pg4 / ss4pg4, so page4_your_ssn_* fills pages 4 and 5 together.
+# Flags: no /Ff, /FT or /DA change on any surviving name; /DA fonts are the
+# same Courier 12 (157 -> 179 widgets) with the six new page-5 checkboxes at
+# ZaDb 10. ReadOnly widgets: the Purpose banner (unmapped) and 20 header
+# mirrors (2023: 15) — the 17 mapped mirror FIELDS are pinned in
+# STATE_COMPUTED_READONLY / IDENTITY_MIRROR_COUNTS. Pushbuttons SaveAs /
+# Print / Clear unchanged, unmapped.
+#
+# FACE DELTAS vs 2023 (this blank's text layer). Years 2023 -> 2025 (header,
+# "lived at the end of 2025", line 16 "Rent paid in 2025", "Property taxes
+# paid on home in 2025", line 29 "2025 estimated tax payments and amount
+# applied from 2024 return", line 42 "APPLIED TO YOUR 2026 ESTIMATED TAX").
+# NEW line 15 "Blind worker transportation services credit / Qualifying
+# expenses .00 x 50% = 15"; line 14 reads "Include Schedule WI-2441" (2023:
+# "Federal credit from Form 2441 ... x 50%"); lines 15-31 of 2023 are 16-32,
+# lines 32-45 are 33-46, and 33 / 34 moved up to page 2. Line 13 "Complete
+# Schedule 1 on page 4" and line 18 "Complete Schedule 2 on page 4" (2023:
+# "Include ..."); line 21 "Add lines 13 through 20"; line 22 "Subtract line
+# 21 from line 12"; line 24 "Donations. Complete Part I of Schedule 3 on page
+# 5"; line 25 "(see page 24)"; line 27 "Add lines 22 through 26"; line 30
+# "Federal credit (see instructions)"; line 37 "Add lines 28 through 36";
+# line 39 "Subtract line 38 from line 37"; lines 40 / 43 compare line 39 with
+# line 27; line 45 "Add lines 43 and 44"; line 46 "(see page 33)". Schedule
+# 2 "(see page 20)" and its line 8 "Fill in here and on line 18". Schedule 3
+# donation captions: e "Military family relief fund", f "Second
+# Harvest/Feeding America", g "American Red Cross Badger Chapter" (2023: "Red
+# Cross WI Disaster Relief"). Mailing captions "If payment enclosed" / "If
+# refund or no payment enclosed" (addresses unchanged); "Assemble your return
+# (pages 1-5)". Printed figures unchanged: $700 / $250 (line 10), x .33
+# (line 25), .05 (Schedule 1), .03 / $16,000 / $480 (Schedule 2) — all agree
+# with knowledge/states/wi/2025.yaml, which also lists line 15 (blind worker
+# transportation), line 14 (Schedule WI-2441) and the 13-18 / 30 / 33 credit
+# numbering. Line 1 still prints "Form 1040, line 11" although the TY2025
+# Form 1040 prints AGI on line 11a (federal/2025/f1040 keys it 11a), so the
+# cross_form leg targets f1040.11a per CONVENTIONS.
+#
+# STALE WIDGET TOOLTIPS (/TU) — NOT evidence. The DOR rolled the printed face
+# but left several widget /TU strings at their prior-year wording, so a
+# name- or tooltip-based audit must not read them as the line's meaning.
+# Measured on this blank (work/tooltips.txt): 16a / 16aa "Rent paid in
+# 2024", Line16aaa / 16bb "property taxes paid in 2024", 16b "Property taxes
+# paid on home in 2024" (face: 2025); line29 "2024 estimated tax payments and
+# amount applied from 2023 return" (face: "2025 ... from 2024 return"); 22
+# "Subtract line 20 from line 12" (face: "Subtract line 21 from line 12");
+# 25penalties "(see page 25)" (face: "(see page 24)"); schdist "(see page
+# 44)" (face: "See page 45"). Every caption quoted in this pack was taken
+# from the PRINTED face (this blank's text layer), never from a /TU.
+#
+# Unresolved: none. The only unfillable printed row is line 17 (no widget).
+# Form 1, 2025 — Wisconsin Income Tax (resident return).
+#
+# Authored via the taxfill pipeline: the 2023 map (`taxfill introspect`
+# sentinel sweep -> vision-map workflow) ported by work/port.py: pages 1 and 4
+# kept, pages 2-3 re-bound line by line from widget position + printed label
+# on the 2025 blank, page 5 mapped new, and every line confirmed on the
+# sentinel renders (scripts/audit_pack.py).
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw sentinel
+# ids the form ships with, e.g. "lname", "11" .. "46", "sch1-5", "ss3"). The
+# multi-option button fields (status, district, allow, Sex, Sex1) are single
+# /Btn fields whose kid widgets each carry one appearance state; they are
+# mapped as one checkbox line per state on the SHARED field, each carrying the
+# exact on_state read from the blank and one group id per question. WI Form 1
+# is a FIVE-page return in 2025:
+#   page 1 — header (name/SSN, address, filing status, tax district, special
+#            conditions), income lines 1-10c;
+#   page 2 — header name/SSN repeat, lines 11-34 (tax, credits incl. the new
+#            line 15, net tax, sales/use tax, donations total, penalties,
+#            payments, EIC, farmland, repayment, homestead, veterans);
+#   page 3 — header name/SSN repeat, lines 35-46 (refundable credits,
+#            amended-return lines, refund/owe), Third Party Designee block,
+#            Sign Here block;
+#   page 4 — Schedule 1 (Itemized Deduction Credit) and Schedule 2 (Married
+#            Couple Credit When Both Spouses Are Employed);
+#   page 5 — Schedule 3 Part I (Financial Donations, 1a-1h + total 2) and
+#            Part II (Anatomical Gift registration: filer and spouse).
+#
+# Coverage. The blank PDF has 209 fillable AcroForm widget entries (197 field
+# names). 205 widgets / 193 fields are mapped here as 202 lines. FOUR are
+# intentionally omitted:
+#   - SaveAs, Print, Clear — JS PUSHBUTTONS (/Btn, Ff bit-17 = 65536, no real
+#     export value). The grey Save / Print / Clear buttons at the top of the
+#     form; not data fields.
+#   - Purpose — READONLY tooltip text field (/Tx, Ff = 4097, bit-1 readonly
+#     set); the yellow "Purpose" banner (P-007 class 1), not a data field.
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix and is
+# mapped `money`. Genuine text widgets stay text: names, address,
+# city/state/ZIP, the SSN comb cells (ss3/ss2/ss4 = 3/2/4 digits, repeated per
+# page), tax-district / county / school-district / special-condition / reason
+# strings, signature dates, phone area+number cells, the PIN comb cells, the
+# line-20 state abbreviation and the page-5 one-character date-of-birth
+# cells. Boxes that hold a COUNT (not dollars) are also `text` (the schema has
+# no int type): line 10a exemptions allowed, line 10b 65-or-older count, line
+# 30 number of qualifying children. CRITICAL: line 30's "%" box (30percent)
+# holds a PERCENTAGE and is `text`, never money (money would round the
+# fraction).
+# The preprinted constant multipliers "x 50%" (line 15), ".33" (line 25), ".05"
+# (Schedule 1 line 8), ".03" (Schedule 2 line 7) are NOT widgets — not fields.
+#
+# Worksheet sub-boxes. Several lines carry a worksheet input plus a looked-up
+# result, each a distinct widget:
+#   line 15 blind worker transportation: 15a = qualifying expenses, 15b = the
+#     x 50% credit.
+#   line 16a/b school property tax credit: 16a = rent (heat included), 16aa =
+#     rent (heat NOT included), Line16aaa = the line-16a credit (table p.19);
+#     16b = property taxes paid, 16bb = the line-16b credit (table p.20).
+#   line 10: 10a = exemptions count, line10a = 10a x $700 result; 10b = 65+
+#     count, line10b = 10b x $250 result; 10c = add 10a + 10b.
+#   line 25: 25penalties = penalty base, 25 = base x .33 result.
+#   line 30: 30 = qualifying children, 30a = federal credit, 30percent = %,
+#     line30 = result.
+#   line 44: 44code = underpayment-interest exception code, 44 = the interest.
+#
+# Relations. Only unconditional printed arithmetic with every operand mapped
+# to a single line is declared. OMITTED: lines whose printed instruction
+# floors at zero ("If line X is larger than line Y, fill in 0": lines 9, 11,
+# 22, Sch1 line 7, Sch2 line 5), lines that branch on a comparison (40, 43),
+# line 21 "Add lines 13 through 20" (its range includes the widget-less line
+# 17, so no operand set reproduces the printed sum), and Schedule 2 line 8
+# (line 6 x .03 prints its own cap "Do not fill in more than $480." and the
+# line-8 cell is mapped `text` with maxlen 3 — relations are arithmetic over
+# money lines). DECLARED: 37 "Add lines 28 through 36" — ten mapped
+# money operands 28, 29, 30, 31a, 31b, 32, 33, 34, 35, 36 (the line-30
+# count / federal-credit / percent sub-boxes are inputs, not addends); 27
+# "Add lines 22 through 26"; 39 "Subtract line 38 from line 37"; 45 "Add
+# lines 43 and 44"; Schedule 3 line 2 "add lines 1a through 1h" and line 24
+# = that total ("Fill in here and on line 24 on page 2"); and the three
+# printed constant factors, written as floats per CONVENTIONS: 15 ==
+# line15_qualifying_expenses * 0.5 (face "Qualifying expenses .00 x 50% =
+# 15"; the 2025 instructions cap the INPUT — "Do not enter more than $3,000
+# of expenses paid per qualifying person" — so the credit is always 50% of
+# the capped 15a), 25 == line25_penalty_base * 0.33 (face ".00 x .33 = 25"),
+# sch1_9 == sch1_7 * 0.05 (Schedule 1 line 8 "Rate of credit is .05 (5%)",
+# line 9 "Multiply line 7 by line 8"). Half-dollar products are not a
+# tolerance problem: the 2025 instructions' "Rounding Off to Whole Dollars"
+# ("increase amounts from 50¢ to 99¢ to the next whole dollar ... $236.50
+# becomes $237") is the checker's own ROUND_HALF_UP.
+#
+# Cross_form. Line 1's printed label is "Federal adjusted gross income from
+# Form 1040, line 11"; the TY2025 Form 1040 defines AGI on line 11a, so the
+# leg is 1 == f1040.11a (CONVENTIONS: target the defining line of the SAME
+# tax year).
+form: Form 1
+jurisdiction: states/wi
+tax_year: 2025
+source_url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1f.pdf
+pdf_sha256: a9b0d9b75bcb55ec0e20984c28872a893765fea66e0f1edd9a7c47b60ceae14e
+acroform_root: ''
+fields:
+  # ============================================ page 1 — header / amended
+  # SaveAs / Print / Clear pushbuttons (Ff bit-17) and Purpose readonly banner
+  # (Ff bit-1) intentionally omitted — see header comment.
+  - line: amended_return::yes          # "Check here if an amended return"
+    field: amended
+    type: checkbox
+    on_state: /Yes
+  - line: tax_year_begin_date          # "For the year Jan. 1-Dec. 31, 2025, or other tax year beginning [date], 2025"
+    field: date
+    type: text
+  - line: tax_year_end_date            # "... ending [date2]"
+    field: date2
+    type: text
+  - line: tax_year_end_day             # "... ending [date2], 20[date3] ." — the two trailing digits of the ending YEAR after the preprinted "20" (/TU "Last 2 digits of the year for the other tax year ending date"; /MaxLen 2). Key name kept for 2023 API continuity; it is not a day.
+    field: date3
+    type: text
+    maxlen: 2
+
+  # ---- your name / SSN
+  - line: your_last_name
+    field: lname
+    type: text
+  - line: your_first_name
+    field: fname
+    type: text
+  - line: your_middle_initial
+    field: mi
+    type: text
+    maxlen: 1
+  - line: your_ssn_first3
+    field: ss3
+    type: text
+    maxlen: 3
+  - line: your_ssn_mid2
+    field: ss2
+    type: text
+    maxlen: 2
+  - line: your_ssn_last4
+    field: ss4
+    type: text
+    maxlen: 4
+  # ---- spouse name / SSN (joint return)
+  - line: spouse_last_name
+    field: splname
+    type: text
+  - line: spouse_first_name
+    field: sfname
+    type: text
+  - line: spouse_middle_initial
+    field: smi
+    type: text
+    maxlen: 1
+  - line: spouse_ssn_first3
+    field: sss3
+    type: text
+    maxlen: 3
+  - line: spouse_ssn_mid2
+    field: sss2
+    type: text
+    maxlen: 2
+  - line: spouse_ssn_last4
+    field: sss4
+    type: text
+    maxlen: 4
+  # ---- address
+  - line: home_address
+    field: address
+    type: text
+  - line: apartment_number
+    field: apt
+    type: text
+  - line: city_or_post_office
+    field: city
+    type: text
+  - line: state
+    field: state
+    type: text
+    maxlen: 2
+  - line: zip_code
+    field: zip
+    type: text
+    maxlen: 10
+
+  # ---- filing status (one /Btn, five mutually exclusive states)
+  - line: filing_status::single
+    field: status
+    type: checkbox
+    on_state: /Single
+    group: filing_status
+  - line: filing_status::married_filing_joint
+    field: status
+    type: checkbox
+    on_state: /Joint
+    group: filing_status
+  - line: filing_status::married_filing_separate
+    field: status
+    type: checkbox
+    on_state: /Married Separate
+    group: filing_status
+  # spouse name for married-filing-separate
+  - line: married_separate_spouse_last_name
+    field: lastname
+    type: text
+  - line: married_separate_spouse_first_name
+    field: firstname
+    type: text
+  - line: married_separate_spouse_middle_initial
+    field: mi2
+    type: text
+    maxlen: 1
+  - line: filing_status::head_of_household_not_married
+    field: status
+    type: checkbox
+    on_state: /Head Household NOT Married
+    group: filing_status
+  - line: filing_status::head_of_household_married
+    field: status
+    type: checkbox
+    on_state: /Head Household Married
+    group: filing_status
+
+  # ---- tax district (one /Btn, three mutually exclusive states)
+  - line: tax_district::city
+    field: district
+    type: checkbox
+    on_state: /city
+    group: tax_district
+  - line: tax_district::village
+    field: district
+    type: checkbox
+    on_state: /village
+    group: tax_district
+  - line: tax_district::town
+    field: district
+    type: checkbox
+    on_state: /town
+    group: tax_district
+  - line: tax_district_name           # "City, village, or town" name
+    field: reside99
+    type: text
+  - line: county_name
+    field: county
+    type: text
+  - line: school_district_number
+    field: schdist
+    type: text
+    maxlen: 4
+  - line: special_conditions_code
+    field: sccode
+    type: text
+    maxlen: 2
+  - line: special_conditions_text
+    field: speccond
+    type: text
+  - line: form_804_filed_with_return::city   # "Form 804 filed with return"
+    field: form804
+    type: checkbox
+    on_state: /city
+
+  # ============================================ page 1 — income lines 1-10c
+  - line: "1"                          # "Federal adjusted gross income from Form 1040, line 11" (the 2025 face still
+                                       # prints "line 11"; the TY2025 Form 1040 prints AGI on 11a — see cross_form)
+    field: line1
+    type: money
+  - line: "2"                          # Adjustments to federal AGI from Schedule I, line 3
+    field: "2"
+    type: money
+  - line: "3"                          # Add lines 1 and 2 (federal AGI for Wisconsin)
+    field: "3"
+    type: money
+  - line: line3_w2_wages_included     # "Form W-2 wages included in line 3"
+    field: 3wages
+    type: money
+  - line: "4"                          # Total additions to income from Schedule AD, line 33
+    field: "4"
+    type: money
+  - line: "5"                          # Add lines 3 and 4
+    field: "5"
+    type: money
+  - line: "6"                          # Total subtractions from income from Schedule SB, line 50
+    field: "6"
+    type: money
+  - line: "7"                          # Subtract line 6 from line 5 (Wisconsin income)
+    field: "7"
+    type: money
+  - line: "8"                          # Standard deduction. See table on page 35
+    field: "8"
+    type: money
+  - line: line8_dependent_check::yes  # "If someone else can claim you ... check here"
+    field: 8a
+    type: checkbox
+    on_state: /Yes
+  - line: "9"                          # Subtract line 8 from line 7
+    field: "9"
+    type: money
+  - line: line10a_exemptions_count    # 10a "Fill in exemptions allowed" (count, not dollars)
+    field: 10a
+    type: text
+    maxlen: 2
+  - line: 10a                          # 10a count x $700 (dollar result)
+    field: line10a
+    type: money
+  - line: line10b_you_65::yes         # 10b "Check if 65 or older — You"
+    field: you
+    type: checkbox
+    on_state: /Yes
+  - line: line10b_spouse_65::yes      # 10b "Check if 65 or older — Spouse"
+    field: spouse
+    type: checkbox
+    on_state: /Yes
+  - line: line10b_count               # 10b 65-or-older count (not dollars)
+    field: 10b
+    type: text
+    maxlen: 1
+  - line: 10b                          # 10b count x $250 (dollar result)
+    field: line10b
+    type: money
+  - line: 10c                          # Add lines 10a and 10b
+    field: 10c
+    type: money
+
+  # ============================================ page 2 — header name/SSN repeat (ReadOnly mirrors)
+  - line: page2_your_last_name
+    field: lnamepg2
+    type: text
+  - line: page2_your_first_name
+    field: fnamepg2
+    type: text
+  - line: page2_your_ssn_first3
+    field: ss3pg2
+    type: text
+    maxlen: 3
+  - line: page2_your_ssn_mid2
+    field: ss2pg2
+    type: text
+    maxlen: 2
+  - line: page2_your_ssn_last4
+    field: ss4pg2
+    type: text
+    maxlen: 4
+
+  # ============================================ page 2 — lines 11-34
+  - line: "11"                         # Subtract line 10c from line 9 ... This is taxable income
+    field: "11"
+    type: money
+  - line: "12"                         # Tax (see table on page 38)
+    field: "12"
+    type: money
+  - line: "13"                         # Itemized deduction credit. Complete Schedule 1 on page 4
+    field: "13"
+    type: money
+  - line: "14"                         # Additional child and dependent care tax credit. Include Schedule WI-2441
+    field: "14"                        # (one box in 2025; the 2023 "Federal credit x 50%" pair is gone)
+    type: money
+  # ---- line 15 (NEW in 2025) "Blind worker transportation services credit".
+  # The widgets are NAMED 15a / 15b — the 2023 names of the school-property
+  # rent / property-tax inputs — but sit on this new row (render-confirmed).
+  - line: line15_qualifying_expenses   # "Qualifying expenses" (the base; /MaxLen 4)
+    field: 15a
+    type: money
+  - line: "15"                         # "x 50% = 15" (the credit; /MaxLen 4)
+    field: 15b
+    type: money
+  # ---- line 16 School property tax credit (2023 line 15)
+  - line: line16a_rent_heat_included      # 16a worksheet: "Rent paid in 2025 – heat included"
+    field: 16a
+    type: money
+  - line: line16a_rent_heat_not_included  # 16a worksheet: "Rent paid in 2025 – heat not included"
+    field: 16aa
+    type: money
+  - line: 16a                          # "Find credit from table page 19 . . 16a"
+    field: Line16aaa
+    type: money
+  - line: line16b_property_taxes_paid     # 16b worksheet: "Property taxes paid on home in 2025"
+    field: 16b
+    type: money
+  - line: 16b                          # "Find credit from table page 20 . . 16b"
+    field: 16bb
+    type: money
+  # Line 17 "Working families tax credit (see page 20) ... 17 .00" prints a
+  # dollar box but the 2025 blank carries NO widget on that row (the 2023
+  # widget "16" is gone, nothing replaced it) — no line key; fill_form raises.
+  - line: "18"                         # Married couple credit. Complete Schedule 2 on page 4 (/MaxLen 3 = the $480 cap)
+    field: "18"
+    type: money
+  - line: "19"                         # Nonrefundable credits from line 34 of Schedule CR
+    field: "19"
+    type: money
+  - line: line20_other_state_abbreviation  # state abbreviation box inside line 20
+    field: 20-StateAbb
+    type: text
+    maxlen: 2
+  - line: "20"                         # Net income tax paid to another state. Include Schedule OS
+    field: "20"
+    type: money
+  - line: "21"                         # Add lines 13 through 20
+    field: "21"
+    type: money
+  - line: "22"                         # Subtract line 21 from line 12 ... This is your net tax
+    field: "22"
+    type: money
+  - line: "23"                         # Sales and use tax due on internet, mail order, or other out-of-state purchases (see page 23)
+    field: "23"
+    type: money
+  - line: line23_no_tax_due::yes      # "If you certify that no sales or use tax is due, check here"
+    field: 23-checkbox
+    type: checkbox
+    on_state: /Yes
+  - line: "24"                         # Donations. Complete Part I of Schedule 3 on page 5 (= Schedule 3 line 2)
+    field: "24"
+    type: money
+  - line: line25_penalty_base         # Penalties on IRAs, retirement plans, MSAs, etc. (see page 24) — the base
+    field: 25penalties
+    type: money
+  - line: "25"                         # base "x .33 = 25"
+    field: "25"
+    type: money
+  - line: "26"                         # Other penalties (see page 25)
+    field: "26"
+    type: money
+  - line: "27"                         # Add lines 22 through 26
+    field: "27"
+    type: money
+  - line: "28"                         # Wisconsin tax withheld. Include withholding statements
+    field: line28
+    type: money
+  - line: "29"                         # 2025 estimated tax payments and amount applied from 2024 return
+    field: line29
+    type: money
+  - line: line30_qualifying_children  # Earned income credit. Number of qualifying children (count, not dollars)
+    field: "30"
+    type: text
+    maxlen: 1
+  - line: line30_federal_credit       # "Federal credit (see instructions)" — the base
+    field: 30a
+    type: money
+  - line: line30_percent              # the "x __ %" box (NOT money — preserves the fraction)
+    field: 30percent
+    type: text
+    maxlen: 2
+  - line: "30"                         # Earned income credit result
+    field: line30
+    type: money
+  - line: 31a                          # Farmland preservation credit — a Schedule FC, line 17
+    field: line31a
+    type: money
+  - line: 31b                          # b Schedule FC-A, line 13
+    field: line31b
+    type: money
+  - line: "32"                         # Repayment credit (see page 27)
+    field: line32
+    type: money
+  - line: "33"                         # Homestead credit. Include Schedule H or H-EZ (on page 2 since 2025)
+    field: "33"
+    type: money
+  - line: "34"                         # Eligible veterans and surviving spouses property tax credit (on page 2 since 2025)
+    field: "34"
+    type: money
+
+  # ============================================ page 3 — header name/SSN repeat (ReadOnly mirrors)
+  - line: page3_your_last_name
+    field: lnamepg3
+    type: text
+  - line: page3_your_first_name
+    field: fnamepg3
+    type: text
+  - line: page3_your_ssn_first3
+    field: ss3pg3
+    type: text
+    maxlen: 3
+  - line: page3_your_ssn_mid2
+    field: ss2pg3
+    type: text
+    maxlen: 2
+  - line: page3_your_ssn_last4
+    field: ss4pg3
+    type: text
+    maxlen: 4
+
+  # ============================================ page 3 — lines 35-46
+  - line: "35"                         # Refundable credits from Schedule CR, line 40. Include Schedule CR
+    field: "35"
+    type: money
+  - line: "36"                         # AMENDED RETURN ONLY – Amounts previously paid (see page 31)
+    field: "36"
+    type: money
+  - line: "37"                         # Add lines 28 through 36
+    field: "37"
+    type: money
+  - line: "38"                         # AMENDED RETURN ONLY – Amounts previously refunded (see page 31)
+    field: "38"
+    type: money
+  - line: "39"                         # Subtract line 38 from line 37
+    field: "39"
+    type: money
+  - line: "40"                         # If line 39 is larger than line 27 ... AMOUNT YOU OVERPAID
+    field: "40"
+    type: money
+  - line: "41"                         # Amount of line 40 you want REFUNDED TO YOU
+    field: "41"
+    type: money
+  - line: "42"                         # Amount of line 40 you want APPLIED TO YOUR 2026 ESTIMATED TAX
+    field: "42"
+    type: money
+  - line: "43"                         # If line 39 is smaller than line 27 ... AMOUNT YOU UNDERPAID
+    field: "43"
+    type: money
+  - line: line44_exception_code       # Underpayment interest. Fill in exception code - See Sch. U
+    field: 44code
+    type: text
+    maxlen: 2
+  - line: "44"                         # Underpayment interest
+    field: "44"
+    type: money
+  - line: "45"                         # Add lines 43 and 44. This is the AMOUNT YOU OWE
+    field: "45"
+    type: money
+  - line: "46"                         # Interest (see page 33)
+    field: "46"
+    type: money
+
+  # ============================================ page 3 — Third Party Designee
+  - line: third_party_designee::yes   # "Do you want to allow another person to discuss this return"
+    field: allow
+    type: checkbox
+    on_state: /Yes
+    group: third_party_designee
+  - line: third_party_designee::no
+    field: allow
+    type: checkbox
+    on_state: /no
+    group: third_party_designee
+  - line: designee_name
+    field: designeename
+    type: text
+    maxlen: 20
+  - line: designee_phone_area_code
+    field: area1
+    type: text
+    maxlen: 3
+  - line: designee_phone_number
+    field: phone1
+    type: text
+    maxlen: 8
+  - line: designee_pin_1
+    field: pin1
+    type: text
+    maxlen: 1
+  - line: designee_pin_2
+    field: pin2
+    type: text
+    maxlen: 1
+  - line: designee_pin_3
+    field: pin3
+    type: text
+    maxlen: 1
+  - line: designee_pin_4
+    field: pin4
+    type: text
+    maxlen: 1
+  - line: designee_pin_5
+    field: pin5
+    type: text
+    maxlen: 1
+
+  # ============================================ page 3 — Sign Here (you)
+  - line: your_signature_date
+    field: todaysdate
+    type: text
+  - line: your_daytime_phone_area_code
+    field: area2
+    type: text
+    maxlen: 3
+  - line: your_daytime_phone_number
+    field: phone2
+    type: text
+    maxlen: 8
+  - line: your_wi_identity_protection_pin_1
+    field: wipp1
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_2
+    field: wipp2
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_3
+    field: wipp3
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_4
+    field: wipp4
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_5
+    field: wipp5
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_6
+    field: wipp6
+    type: text
+    maxlen: 1
+  - line: your_wi_identity_protection_pin_7
+    field: wipp7
+    type: text
+    maxlen: 1
+  # ---- Sign Here (spouse)
+  - line: spouse_signature_date
+    field: todaysdate2
+    type: text
+  - line: spouse_daytime_phone_area_code
+    field: area3
+    type: text
+    maxlen: 3
+  - line: spouse_daytime_phone_number
+    field: phone3
+    type: text
+    maxlen: 8
+  - line: spouse_wi_identity_protection_pin_1
+    field: wipp1a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_2
+    field: wipp2a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_3
+    field: wipp3a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_4
+    field: wipp4a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_5
+    field: wipp5a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_6
+    field: wipp6a
+    type: text
+    maxlen: 1
+  - line: spouse_wi_identity_protection_pin_7
+    field: wipp7a
+    type: text
+    maxlen: 1
+
+  # ============================================ page 4 — header name/SSN repeat (ReadOnly mirrors; the SSN
+  # fields ss3pg4 / ss2pg4 / ss4pg4 each carry a second widget on page 5)
+  - line: page4_your_last_name
+    field: lnamepg4
+    type: text
+  - line: page4_your_first_name
+    field: fnamepg4
+    type: text
+  - line: page4_your_ssn_first3
+    field: ss3pg4
+    type: text
+    maxlen: 3
+  - line: page4_your_ssn_mid2
+    field: ss2pg4
+    type: text
+    maxlen: 2
+  - line: page4_your_ssn_last4
+    field: ss4pg4
+    type: text
+    maxlen: 4
+
+  # ---- Schedule 1 — Itemized Deduction Credit (see page 16)
+  - line: sch1_1                       # Medical and dental expenses (federal Schedule A)
+    field: sch1-1
+    type: money
+  - line: sch1_2                       # Interest paid (federal Schedule A)
+    field: sch1-2
+    type: money
+  - line: sch1_3                       # Gifts to charity (federal Schedule A)
+    field: sch1-3
+    type: money
+  - line: sch1_4                       # Casualty losses (federal Schedule A)
+    field: sch1-4
+    type: money
+  - line: sch1_5                       # Add lines 1 through 4
+    field: sch1-5
+    type: money
+  - line: sch1_6                       # Standard deduction from line 8 on page 1 of Form 1
+    field: sch1-6
+    type: money
+  - line: sch1_7                       # Subtract line 6 from line 5
+    field: sch1-7
+    type: money
+  # Schedule 1 line 8 ("Rate of credit is .05 (5%)") is a preprinted constant,
+  # not a widget — no field.
+  - line: sch1_9                       # Multiply line 7 by line 8. Fill in here and on line 13 on page 2 of Form 1
+    field: sch1-9
+    type: money
+
+  # ---- Schedule 2 — Married Couple Credit When Both Spouses Are Employed (see page 20)
+  - line: sch2_1_yourself             # Taxable wages, salaries, tips, etc. — column A
+    field: sch2a-1
+    type: money
+  - line: sch2_1_spouse              # column B
+    field: sch2b-1
+    type: money
+  - line: sch2_2_yourself            # Net profit/loss from self-employment — column A
+    field: sch2a-2
+    type: money
+  - line: sch2_2_spouse             # column B
+    field: sch2b-2
+    type: money
+  - line: sch2_3_yourself            # Combine lines 1 and 2 (earned income) — column A
+    field: sch2a-3
+    type: money
+  - line: sch2_3_spouse             # column B
+    field: sch2b-3
+    type: money
+  - line: sch2_4_yourself            # Add adjustments from federal Schedule 1 — column A
+    field: sch2a-4
+    type: money
+  - line: sch2_4_spouse             # column B
+    field: sch2b-4
+    type: money
+  - line: sch2_5_yourself            # Subtract line 4 from line 3 (qualified earned income) — column A
+    field: sch2a-5
+    type: money
+  - line: sch2_5_spouse             # column B
+    field: sch2b-5
+    type: money
+  - line: sch2_6                       # Smaller of columns A and B of line 5 (max $16,000)
+    field: sch2-6
+    type: money
+  # Schedule 2 line 7 ("Rate of credit is .03 (3%)") is a preprinted constant,
+  # not a widget — no field.
+  # Schedule 2 line 8 is a dollar box, but its widget hard-caps at MaxLen 3
+  # (the form's "Do not fill in more than $480" => at most 3 digits, no cents:
+  # the ".00" suffix is preprinted). It is mapped `text` with maxlen 3 so the
+  # clipping scan honors that 3-character cap; mapping it `money` cannot satisfy
+  # the cap (whole-dollar money values up to $480 are <= 3 chars in practice,
+  # but the type carries no width ceiling the verifier can enforce against the
+  # 3-cell widget).
+  - line: sch2_8                       # Multiply line 6 by line 7. Fill in here and on line 18 on page 2 of Form 1; max $480
+    field: sch2-8
+    type: text
+    maxlen: 3
+
+  # ============================================ page 5 — header name mirrors (NEW page)
+  # The page-5 header prints "2025 Form 1  Name  SSN  Page 5 of 5". Its name
+  # cells are NEW ReadOnly mirrors (lnamepg5 / fnamepg5, P-007 class 4). Its
+  # three SSN cells are second WIDGETS of the page-4 fields ss3pg4 / ss2pg4 /
+  # ss4pg4, so page4_your_ssn_* fills pages 4 and 5 and no page-5 SSN key
+  # exists.
+  - line: page5_your_last_name
+    field: lnamepg5
+    type: text
+  - line: page5_your_first_name
+    field: fnamepg5
+    type: text
+
+  # ---- Schedule 3, Part I – Financial Donations (the 2023 page-2 line 23 block)
+  - line: sch3_1a                      # a Endangered resources
+    field: sch3-1a
+    type: money
+  - line: sch3_1b                      # b Cancer research
+    field: sch3-1b
+    type: money
+  - line: sch3_1c                      # c Veterans trust fund
+    field: sch3-1c
+    type: money
+  - line: sch3_1d                      # d Multiple sclerosis
+    field: sch3-1d
+    type: money
+  - line: sch3_1e                      # e Military family relief fund
+    field: sch3-1e
+    type: money
+  - line: sch3_1f                      # f Second Harvest/Feeding America
+    field: sch3-1f
+    type: money
+  - line: sch3_1g                      # g American Red Cross Badger Chapter
+    field: sch3-1g
+    type: money
+  - line: sch3_1h                      # h Special Olympics Wisconsin
+    field: sch3-1h
+    type: money
+  - line: sch3_2                       # 2 Total Donations (add lines 1a through 1h). Fill in here and on line 24 on page 2 of Form 1
+    field: sch3-2
+    type: money
+
+  # ---- Schedule 3, Part II – Anatomical Gift (Organ & Tissue Donor) Registration
+  # Optional ("You are not required to complete this part in order to file").
+  # Per person: one Yes box, a Sex pair (one /Btn, kid states /Male /Female)
+  # and an eight-cell "M M D D Y Y Y Y" date of birth (mm-dd-yyyy), one
+  # character per widget (/MaxLen 1), no separators.
+  - line: anatomical_gift_filer::yes   # a Filer: "Yes, I wish to be included in the registry of potential donors."
+    field: pg5-a Filer checkbox
+    type: checkbox
+    on_state: /Yes
+  - line: anatomical_gift_filer_sex::male     # Filer Sex — M
+    field: Sex
+    type: checkbox
+    on_state: /Male
+    group: anatomical_gift_filer_sex
+  - line: anatomical_gift_filer_sex::female   # Filer Sex — F
+    field: Sex
+    type: checkbox
+    on_state: /Female
+    group: anatomical_gift_filer_sex
+  - line: anatomical_gift_filer_birth_month_1   # Filer's Date of Birth — M
+    field: m1
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_filer_birth_month_2   # M
+    field: m2
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_filer_birth_day_1     # D
+    field: d1
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_filer_birth_day_2     # D
+    field: d2
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_filer_birth_year_1    # Y
+    field: y1
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_filer_birth_year_2    # Y
+    field: y2
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_filer_birth_year_3    # Y
+    field: y3
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_filer_birth_year_4    # Y
+    field: y4
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_spouse::yes  # b Spouse (Only if joint return): "Yes, I wish to be included ..."
+    field: pg5-b Spouse checkbox
+    type: checkbox
+    on_state: /Yes
+  - line: anatomical_gift_spouse_sex::male    # Spouse Sex — M
+    field: Sex1
+    type: checkbox
+    on_state: /Male
+    group: anatomical_gift_spouse_sex
+  - line: anatomical_gift_spouse_sex::female  # Spouse Sex — F
+    field: Sex1
+    type: checkbox
+    on_state: /Female
+    group: anatomical_gift_spouse_sex
+  - line: anatomical_gift_spouse_birth_month_1  # Spouse's Date of Birth — M
+    field: m1a
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_spouse_birth_month_2  # M
+    field: m2b
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_spouse_birth_day_1    # D
+    field: d1a
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_spouse_birth_day_2    # D
+    field: d2b
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_spouse_birth_year_1   # Y
+    field: y1a
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_spouse_birth_year_2   # Y
+    field: y2b
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_spouse_birth_year_3   # Y
+    field: y3c
+    type: text
+    maxlen: 1
+  - line: anatomical_gift_spouse_birth_year_4   # Y
+    field: y4d
+    type: text
+    maxlen: 1
+relations:
+  - "3 == 1 + 2"                       # Line 3 "Add lines 1 and 2."
+  - "5 == 3 + 4"                       # Line 5 "Add lines 3 and 4."
+  - "7 == 5 - 6"                       # Line 7 "Subtract line 6 from line 5."
+  - "10c == 10a + 10b"                 # Line 10c "Add lines 10a and 10b."
+  - "15 == line15_qualifying_expenses * 0.5"   # Line 15 "Qualifying expenses .00 x 50% = 15" (the instructions cap the input at $3,000 per qualifying person, so the result is always 50% of 15a).
+  - "25 == line25_penalty_base * 0.33"         # Line 25 "Penalties on IRAs, retirement plans, MSAs, etc. ... .00 x .33 = 25"
+  - "27 == 22 + 23 + 24 + 25 + 26"     # Line 27 "Add lines 22 through 26."
+  - "37 == 28 + 29 + 30 + 31a + 31b + 32 + 33 + 34 + 35 + 36"   # Line 37 "Add lines 28 through 36." (30 = the earned income credit result; 31a/31b are the two farmland boxes)
+  - "39 == 37 - 38"                    # Line 39 "Subtract line 38 from line 37."
+  - "45 == 43 + 44"                    # Line 45 "Add lines 43 and 44."
+  - "sch1_5 == sch1_1 + sch1_2 + sch1_3 + sch1_4"   # Schedule 1 line 5 "Add lines 1 through 4."
+  - "sch1_9 == sch1_7 * 0.05"          # Schedule 1 line 8 "Rate of credit is .05 (5%)", line 9 "Multiply line 7 by line 8."
+  - "sch2_3_yourself == sch2_1_yourself + sch2_2_yourself"  # Schedule 2 line 3 (col A) "Combine lines 1 and 2."
+  - "sch2_3_spouse == sch2_1_spouse + sch2_2_spouse"        # Schedule 2 line 3 (col B) "Combine lines 1 and 2."
+  - "sch3_2 == sch3_1a + sch3_1b + sch3_1c + sch3_1d + sch3_1e + sch3_1f + sch3_1g + sch3_1h"  # Schedule 3 line 2 "Total Donations (add lines 1a through 1h)."
+  - "24 == sch3_2"                     # Schedule 3 line 2 "Fill in here and on line 24 on page 2 of Form 1."
+cross_form:
+  - "1 == f1040.11a"                   # Line 1 "Federal adjusted gross income from Form 1040, line 11" — the TY2025 Form 1040 defines AGI on line 11a.
+identity_fields:
+  - your_last_name
+  - your_first_name
+  - your_ssn_first3
+  - your_ssn_mid2
+  - your_ssn_last4
