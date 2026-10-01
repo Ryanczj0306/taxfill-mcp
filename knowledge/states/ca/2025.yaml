@@ -340,6 +340,13 @@ tax:
     are unchanged from 2024 and only the bounds were indexed (3.0%). These are the schedules printed in the final
     2025 booklet used for the 2026 filing season and republished unchanged in the standalone 2025 Tax Rate Schedules
     PDF.'
+  - 'Schedule CA (540) 2025 Part II prints the itemized-deduction mechanics this block never models (Form 540 line 18 is
+    the caller''s): line 3 ''Multiply line 2 by 7.5% (0.075)'' (the medical floor); line 5e ''Enter the smaller of line 5d
+    or $40,000 ($20,000 if married filing separately) in column A'' (the federal state-and-local-tax cap as the 2025
+    face prints it; the 2023 face printed $10,000 / $5,000); line 24 ''Multiply line 23 by 2% (0.02). If less than
+    zero, enter 0.'' (the 2% miscellaneous floor); and Part II lines 2 and 23 cite ''federal Form 1040 or 1040-SR,
+    line 11b'' (the TY2025 Form 1040 prints AGI on line 11a; 11b is its restatement). Lines 29 ($252,203 / $378,310 /
+    $504,411) and 30 ($5,706 / $11,412) equal the figures above.'
 # Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the ONE non-inflation 2025
 # delta in this pack's header comment and tax.notes — the statutory renaming of the Mental Health
 # Services Act (and its 1% millionaire surcharge) to the Behavioral Health Services Act for taxable
