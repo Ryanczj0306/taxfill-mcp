@@ -507,6 +507,10 @@ def _form_pages(blank: Path, pack: HandFillPack) -> PdfWriter:
     from pypdf import PdfReader  # noqa: PLC0415
 
     reader = PdfReader(str(blank))
+    if reader.is_encrypted:
+        # WV's booklet is AES-encrypted with an empty user password (change and annotation "disallowed"):
+        # the pages read and copy; the stamped output is a plain PDF.
+        reader.decrypt("")
     total = len(reader.pages)
     beyond = [p for p in (pack.source_pages or []) if p > total]
     if beyond:
