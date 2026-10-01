@@ -350,3 +350,92 @@ def test_hi_n11_income_chain_computes():
     assert by["12"] == ("82,000", "computed")  # 7 + 11
     assert by["19"] == ("8,000", "computed")   # 13 + 14 + ... = 8000
     assert by["20"] == ("74,000", "computed")  # 12 - 19
+
+
+# ── P-029: a scanned form's own filing tips (no commas, no zero-filled lines) ─────────────────────────────
+
+
+def _tips_pack(lines: list[dict], **extra) -> HandFillPack:
+    data = {
+        "form": "TEST", "jurisdiction": "states/zz", "tax_year": 2025,
+        "source_url": "https://example.gov/blank.pdf", "pdf_sha256": "a" * 64, "lines": lines,
+    }
+    data.update(extra)
+    return HandFillPack.model_validate(data)
+
+
+_TIPS_LINES = [
+    {"line": "1", "label": "Wages", "type": "money"},
+    {"line": "2", "label": "Interest", "type": "money"},
+    {"line": "3", "label": "Total", "type": "money", "compute": "1 + 2"},
+    {"line": "21a", "label": "Credit A", "type": "money"},
+    {"line": "21b", "label": "Credit B", "type": "money"},
+    {"line": "21c", "label": "Credit C", "type": "money"},
+    {"line": "21", "label": "Total credits", "type": "money", "compute": "sum(21a..21c)"},
+    {"line": "22", "label": "Tax after credits", "type": "money", "compute": "max(0, 3 - 21)"},
+    {"line": "23", "label": "Other", "type": "money"},
+    {"line": "24", "label": "Balance", "type": "money", "compute": "22 + 23"},
+]
+
+
+def test_p029_plain_money_style_prints_digits_only():
+    """money_style: plain — 'NEVER USE COMMAS when filling in dollar amounts' (WV IT-140 tips)."""
+    pack = _tips_pack(_TIPS_LINES, money_style="plain")
+    ws = hand_fill_worksheet(pack, {"1": 98500, "2": -8300.4})
+    got = _by_line(ws)
+    assert got["1"] == ("98500", "entered")
+    assert got["2"] == ("-8300", "entered")
+    assert got["3"] == ("90200", "computed")
+    assert "WITHOUT commas" in ws.instructions
+    # the default stays grouped, so every shipped manifest prints as before
+    grouped = hand_fill_worksheet(_tips_pack(_TIPS_LINES), {"1": 98500, "2": -8300.4})
+    assert _by_line(grouped)["3"] == ("90,200", "computed")
+    assert "WITHOUT commas" not in grouped.instructions
+
+
+def test_p029_blank_zero_computes_leaves_an_all_blank_sum_blank():
+    """blank_zero_computes — 'Lines where no entry is required should be left blank. Do not fill in with zeros.'"""
+    pack = _tips_pack(_TIPS_LINES, blank_zero_computes=True)
+    ws = hand_fill_worksheet(pack, {"1": 1000, "2": 200})
+    got = _by_line(ws)
+    assert got["21"] == ("", "blank"), "a sum() range whose members are all blank stays blank"
+    assert got["22"] == ("1,200", "computed"), "line 3 is an operand, so 22 computes (the blank 21 counts as 0)"
+    assert got["24"] == ("1,200", "computed"), "22 is non-blank, so 24 prints even though 23 is blank"
+    # any non-blank member prints the sum, including an entered 0
+    assert _by_line(hand_fill_worksheet(pack, {"1": 1000, "21b": 0}))["21"] == ("0", "computed")
+    assert _by_line(hand_fill_worksheet(pack, {"1": 1000, "21c": 50}))["21"] == ("50", "computed")
+    # a blanked compute stays blank for the lines after it: nothing entered at all leaves every total blank
+    empty = _by_line(hand_fill_worksheet(pack, {}))
+    assert empty["3"] == ("", "blank") and empty["21"] == ("", "blank") and empty["22"] == ("", "blank")
+    assert empty["24"] == ("", "blank")
+    assert "left blank, not 0" in ws.instructions
+    # the independent recompute sees the blank-by-rule compute as 0 (so a recompute of 0 agrees) and still
+    # ignores an entered-only blank line (P-029, verifier finding M2)
+    from taxfill_core.handfill import worksheet_money_values
+    money = worksheet_money_values(ws, pack)
+    assert money["21"] == 0 and "23" not in money and money["24"] == 1200
+    assert "21" not in worksheet_money_values(ws)  # without the pack: non-blank lines only, as before
+    # the default (False) still prints the IRS-style 0
+    assert _by_line(hand_fill_worksheet(_tips_pack(_TIPS_LINES), {}))["21"] == ("0", "computed")
+
+
+def test_p029_blank_zero_computes_evaluates_first_and_keeps_a_nonzero_result():
+    """The compute is always evaluated (a malformed one still raises on an empty build), and only a 0 result with
+    every referenced line blank is blanked — a literal term's non-zero result prints (verifier findings M1/M2)."""
+    lines = _TIPS_LINES + [
+        {"line": "30", "label": "Literal plus blank", "type": "money", "compute": "23 + 100"},
+        {"line": "31", "label": "Literal only", "type": "money", "compute": "500"},
+    ]
+    pack = _tips_pack(lines, blank_zero_computes=True)
+    got = _by_line(hand_fill_worksheet(pack, {}))
+    assert got["30"] == ("100", "computed") and got["31"] == ("500", "computed")
+    assert got["21"] == ("", "blank") and got["3"] == ("", "blank")
+    bad = _tips_pack(_TIPS_LINES + [{"line": "40", "label": "Bad", "type": "money", "compute": "1 + + 2"}],
+                     blank_zero_computes=True)
+    with pytest.raises(ValueError):
+        hand_fill_worksheet(bad, {})
+    # a line named like a function or a decimal-looking id is resolved by the evaluator itself, not a second tokenizer
+    odd = _tips_pack([{"line": "sum", "label": "S", "type": "money"},
+                      {"line": "t", "label": "T", "type": "money", "compute": "sum + 0"}], blank_zero_computes=True)
+    assert _by_line(hand_fill_worksheet(odd, {"sum": 7}))["t"] == ("7", "computed")
+    assert _by_line(hand_fill_worksheet(odd, {}))["t"] == ("", "blank")

@@ -181,7 +181,8 @@ def _overlay_report_summary(report, *, recompute_ran: bool = True) -> dict:
 def _load_any_pack(form: str, year: int, jurisdiction: str):
     """An AcroForm pack, or — when only a ``handfill.yaml`` ships for the key — the hand-fill pack.
 
-    The four print-only states (CT ct1040, HI n11, NM pit1, SC sc1040) and the FBAR carry no
+    The print-only manifests (CT ct1040, HI n11, NM pit1, SC sc1040, and WV it140 for TY2025,
+    whose return is a flat booklet page) and the FBAR carry no
     ``pack.yaml``; routing them here lets fetch_blank / fill_form / verify_form serve a
     hand-fill pack that carries overlay coordinates without a 24th tool.
     """
@@ -1477,12 +1478,14 @@ def file_and_pay(manifest: list[dict]) -> dict:
 
 @mcp.tool()
 def hand_fill_worksheet(form: str, year: int, jurisdiction: str, values: dict[str, Any] | None = None) -> dict:
-    """Print-only state forms (no fillable AcroForm fields) — the four such jurisdictions are
-    CT (ct1040), HI (n11), NM (pit1) and SC (sc1040). These packs are NOT returned by
+    """Print-only state forms (no fillable AcroForm fields) — CT (ct1040), HI (n11), NM (pit1),
+    SC (sc1040), and WV (it140) for TY2025 only. These packs are NOT returned by
     list_forms, so an empty list_forms for those states is expected, not an error: compute a
     line->value worksheet to hand-write onto the printed blank. `values` maps line ids to
     entered amounts/text/checkbox; lines with a compute expression are derived from earlier
-    lines. Returns the ordered worksheet (line, label, value, source) + the print_url of the
+    lines (a pack whose form's tips forbid zero-filled lines leaves an all-blank compute blank
+    and may print money without commas — read the worksheet's instructions, P-029). Returns
+    the ordered worksheet (line, label, value, source) + the print_url of the
     official blank. Only for jurisdictions that ship a print-only pack; use fill_form otherwise."""
     pack = load_hand_fill_pack_for(form, year, jurisdiction)
     return _dump(_hand_fill_worksheet(pack, values or {}))

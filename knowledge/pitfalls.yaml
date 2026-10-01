@@ -2000,3 +2000,24 @@ pitfalls:
       P-028-tagged, in packages/core/tests/test_viewer_guards.py
       (test_p028_selecting_a_group_member_clears_a_prechecked_sibling,
       test_p028_an_unanswered_group_keeps_the_blank_as_shipped).
+  - id: P-029
+    incident: >-
+      A scanned form's own filing tips were violated by the engine's defaults.
+      WV's 2025 IT-140 booklet (Tips on Filing a Paper Return, printed page
+      16) says "NEVER USE COMMAS when filling in dollar amounts" and "Lines
+      where no entry is required should be left blank. Do not fill in with
+      zeros."; the hand-fill worksheet printed "98,500" and stamped a computed
+      "0" on the credit-total line of a return claiming no credit. Found by
+      the JS5 WV IT-140 2025 manifest's verifier (2026-10-01); the manifest's
+      own printing_guidance already quoted the tip.
+    countermeasure: >-
+      HandFillPack.money_style ('plain' prints digits only; the default
+      'grouped' keeps "98,500") and HandFillPack.blank_zero_computes (True
+      leaves a compute blank when every line the evaluator resolved for it is
+      blank and the result is 0; the blank stays blank for later computes) —
+      declared per
+      manifest, quoted from the form's tips, and named in the worksheet's
+      instructions. Tests, P-029-tagged, in packages/core/tests/test_handfill.py
+      (test_p029_plain_money_style_prints_digits_only,
+      test_p029_blank_zero_computes_leaves_an_all_blank_sum_blank,
+      test_p029_blank_zero_computes_evaluates_first_and_keeps_a_nonzero_result).

@@ -510,3 +510,23 @@ The manifest then pins the booklet (`source_url`, `pdf_sha256`) and names the fo
 counts within them (1 = the first listed page), `verify_form` reads that output, and the worksheet tells
 the filer which pages to print. A listed page beyond the booklet's count is refused — the agency
 re-paginated, so re-read the booklet and fix `source_pages` (and the digest if the file changed).
+
+## A scanned form's own filing tips (`money_style`, `blank_zero_computes`)
+
+Some print-only forms tell the filer how the scanner wants the digits. WV's IT-140 booklet (Tips on
+Filing a Paper Return) says **"NEVER USE COMMAS when filling in dollar amounts"** and **"Lines where no
+entry is required should be left blank. Do not fill in with zeros."** The engine's defaults (comma-grouped
+money, a `compute` that prints `0` when every input is blank) break both, so a manifest declares the
+form's own style:
+
+- `money_style: plain` prints money as digits only (`98500`, `-8300`) on the worksheet and the stamp;
+  the default `grouped` prints `98,500`. Digit `cells` drop the separators under either style.
+- `blank_zero_computes: true` leaves a computed money line **blank** when every line its `compute`
+  resolved is blank (a `sum(21a..21c)` range counts each member) and the result is `0`; the blank line is
+  blank for the computes after it too. The compute is still evaluated (a malformed one raises on the empty
+  build as before), an entered `0` still prints, a compute with any non-blank operand prints its result
+  (`0` included), and so does a non-zero result from a literal term — the IRS-style default (`false`)
+  prints `0` as before.
+
+The worksheet's instructions say which of the two the pack set, so nobody "corrects" the output by hand
+(P-029). Quote the form's own tip in the manifest banner and in `printing_guidance`.

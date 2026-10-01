@@ -381,6 +381,11 @@ def test_js4d_money_in_digit_cells_fills_from_the_right_and_a_loss_shades_the_mi
                              "overlay": {"page": 1, "x": 300, "y": 470, "w": 110, "cells": [302, 315, 334], "cell_w": 10}}])
     with pytest.raises(ValueError, match="sign would silently vanish"):
         stamp_overlay(blank, no_minus, {"amt": -12}, tmp_path / "n.pdf")
+    # a comb drops the sign just the same (its separators regex strips '-'), so it is refused too (P-029 review)
+    comb = _pack(lines=[{"line": "amt", "label": "Amount", "type": "money",
+                         "overlay": {"page": 1, "x": 300, "y": 470, "w": 110, "comb": 10}}])
+    with pytest.raises(ValueError, match="a comb with no minus box"):
+        stamp_overlay(blank, comb, {"amt": -12}, tmp_path / "c.pdf")
 
 
 def test_js4d_marks_are_validated():

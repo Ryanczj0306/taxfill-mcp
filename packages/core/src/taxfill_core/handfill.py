@@ -103,12 +103,25 @@ def load_hand_fill_pack_for(
     return load_hand_fill_pack(path)
 
 
-def _fmt_money(value: Decimal) -> str:
-    """Whole-dollar, comma-grouped (IRS lines round to whole dollars)."""
+def _fmt_money(value: Decimal, *, grouped: bool = True) -> str:
+    """Whole dollars (IRS lines round to whole dollars), comma-grouped unless the pack's money_style is plain."""
     whole = value.quantize(Decimal(1), rounding=ROUND_HALF_UP)
     if whole == 0:
         whole = abs(whole)  # Decimal('-0') would print as '-0'
-    return f"{whole:,}"
+    return f"{whole:,}" if grouped else f"{whole}"
+
+
+class _OperandRecorder(dict):
+    """The values mapping a compute is evaluated against, recording every line the evaluator resolved —
+    the operands come from the evaluator's own lookups, never from a second tokenizer (P-029)."""
+
+    def __init__(self, values: Mapping[str, Decimal]) -> None:
+        super().__init__(values)
+        self.seen: set[str] = set()
+
+    def get(self, key, default=None):  # noqa: ANN001 - Mapping.get signature
+        self.seen.add(key)
+        return super().get(key, default)
 
 
 def _checkbox_checked(ln: HandFillLine, provided: object) -> bool:
@@ -129,12 +142,19 @@ def _checkbox_checked(ln: HandFillLine, provided: object) -> bool:
     )
 
 
-def worksheet_money_values(ws: Worksheet) -> dict[str, Decimal]:
-    """The worksheet's non-blank money lines as Decimals (for the independent recompute)."""
+def worksheet_money_values(ws: Worksheet, pack: HandFillPack | None = None) -> dict[str, Decimal]:
+    """The worksheet's non-blank money lines as Decimals (for the independent recompute).
+
+    With a ``pack`` whose ``blank_zero_computes`` is set, a computed money line the worksheet left
+    blank (every operand blank — the form's tips forbid a 0 there) is reported as 0, so an
+    independent recompute of 0 agrees with it instead of asking the caller to stamp the 0."""
     out: dict[str, Decimal] = {}
+    computed = {ln.line for ln in pack.lines if ln.compute} if pack is not None and pack.blank_zero_computes else set()
     for ln in ws.lines:
         if ln.type == "money" and ln.value != "":
             out[ln.line] = Decimal(ln.value.replace(",", ""))
+        elif ln.type == "money" and ln.line in computed:
+            out[ln.line] = Decimal(0)  # blank by the form's rule, which means 0
     return out
 
 
@@ -147,7 +167,9 @@ def hand_fill_worksheet(
     checkbox as yes/no — a bool, 0/1, or one of the filler's yes/no words; 'no' leaves
     the box empty and anything unrecognised raises, never truthiness). A line that is
     omitted or None is left blank. Money lines with a ``compute`` expression and no
-    entered value are derived from earlier lines (blank refs count as 0, IRS-style).
+    entered value are derived from earlier lines (blank refs count as 0, IRS-style; with the pack's
+    ``blank_zero_computes`` a compute whose referenced lines are all blank and whose result is 0
+    stays blank, and ``money_style: plain`` drops the thousands separators — P-029).
     Lines are emitted in the pack's printed order; a ``compute`` may reference any
     earlier resolved line.
     """
@@ -155,6 +177,7 @@ def hand_fill_worksheet(
     line_names = frozenset(ln.line for ln in pack.lines)
     resolved: dict[str, Decimal] = {}  # money values available to compute exprs
     out: list[WorksheetLine] = []
+    grouped = pack.money_style == "grouped"
 
     for ln in pack.lines:
         provided = values.get(ln.line)
@@ -170,12 +193,21 @@ def hand_fill_worksheet(
                     )
                 resolved[ln.line] = num
                 out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
-                                         value=_fmt_money(num), source="entered", note=ln.note))
+                                         value=_fmt_money(num, grouped=grouped), source="entered", note=ln.note))
             elif ln.compute:
-                num = evaluate_expression(ln.compute, resolved, line_names=line_names)
-                resolved[ln.line] = num
-                out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
-                                         value=_fmt_money(num), source="computed", note=ln.note))
+                # Always evaluated (a malformed compute must raise when the worksheet is built from {}).
+                probe = _OperandRecorder(resolved)
+                num = evaluate_expression(ln.compute, probe, line_names=line_names)
+                if pack.blank_zero_computes and num == 0 and not (probe.seen & resolved.keys()):
+                    # Every line the compute looked at is blank and the result is 0: the form's tips want the
+                    # line left blank, not a 0 (WV IT-140). Not added to `resolved`, so a later compute sees
+                    # this line as blank too; a non-zero result (a literal term) still prints.
+                    out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
+                                             value="", source="blank", note=ln.note))
+                else:
+                    resolved[ln.line] = num
+                    out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
+                                             value=_fmt_money(num, grouped=grouped), source="computed", note=ln.note))
             else:
                 out.append(WorksheetLine(line=ln.line, label=ln.label, type=ln.type,
                                          value="", source="blank", note=ln.note))
@@ -205,6 +237,18 @@ def hand_fill_worksheet(
         kwargs["instructions"] = (
             f"The form is page(s) {pages} of the PDF at print_url (a booklet); print only those pages — "
             f"fill_form's stamped output holds just them. " + str(kwargs.get("instructions", Worksheet.model_fields["instructions"].default))
+        )
+    if pack.money_style == "plain" or pack.blank_zero_computes:
+        # The form's own filing tips shape the worksheet: say so, so nobody "corrects" it by hand.
+        tips = []
+        if pack.money_style == "plain":
+            tips.append("dollar amounts are printed WITHOUT commas")
+        if pack.blank_zero_computes:
+            tips.append("a computed line whose inputs are all blank is left blank, not 0 (leave out a line with no "
+                        "amount rather than entering 0)")
+        kwargs["instructions"] = (
+            "As this form's filing tips require, " + " and ".join(tips) + ". "
+            + str(kwargs.get("instructions", Worksheet.model_fields["instructions"].default))
         )
     return Worksheet(
         form=pack.form, jurisdiction=pack.jurisdiction, tax_year=pack.tax_year,

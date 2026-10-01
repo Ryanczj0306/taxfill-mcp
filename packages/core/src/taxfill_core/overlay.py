@@ -631,9 +631,10 @@ def stamp_overlay(
                 ))
                 continue
             negative = ln.type == "money" and wl.value.startswith("-")
-            if negative and box.cells is not None and box.minus is None:
+            if negative and (box.cells is not None or box.comb is not None) and box.minus is None:
+                kind = "digit cells" if box.cells is not None else "a comb"
                 raise ValueError(
-                    f"line '{ln.line}' is a loss ({redact(wl.value)}) but its box on page {box.page} is digit cells with "
+                    f"line '{ln.line}' is a loss ({redact(wl.value)}) but its box on page {box.page} is {kind} with "
                     f"no minus box — the sign would silently vanish; add overlay.minus (the printed box the form "
                     f"shades for a loss) to the pack, or hand-write this line"
                 )
@@ -884,7 +885,7 @@ def verify_overlay(
         doc.close()
 
     recompute = (
-        independent_recompute(worksheet_money_values(worksheet), independent) if independent is not None else []
+        independent_recompute(worksheet_money_values(worksheet, pack), independent) if independent is not None else []
     )
     ok = all(c.status == PASS for c in checks) and all(r.status == PASS for r in recompute)
     return OverlayVerifyReport(

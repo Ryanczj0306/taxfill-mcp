@@ -171,7 +171,9 @@ class HandFillLine(BaseModel):
             "Arithmetic expression over OTHER line ids in the relation grammar "
             "(+ - * /, parentheses, max()/min()/sum(1a..1h)), e.g. 'max(0, 4 - 5)'. "
             "When set, the engine derives this line's value from earlier lines; when "
-            "None, it is a value the taxpayer enters. Money lines only."
+            "None, it is a value the taxpayer enters. Money lines only. Under the pack's "
+            "blank_zero_computes the line stays blank when every line it resolves is blank "
+            "and the result is 0."
         ),
     )
     note: str | None = Field(default=None, description="Optional guidance shown next to the line on the worksheet.")
@@ -260,6 +262,21 @@ class HandFillPack(BaseModel):
     overlay_defaults: OverlayDefaults | None = Field(
         default=None,
         description="Manifest-wide overlay defaults (font_size, money_align); each line's overlay block may override.",
+    )
+    money_style: Literal["grouped", "plain"] = Field(
+        default="grouped",
+        description="How a money value prints on the worksheet and the stamp: 'grouped' is whole dollars with "
+                    "thousands separators ('98,500'); 'plain' is the digits alone ('98500') for a scanned form "
+                    "whose own filing tips forbid commas (WV IT-140: 'NEVER USE COMMAS when filling in dollar "
+                    "amounts'). Digit cells drop the separators either way.",
+    )
+    blank_zero_computes: bool = Field(
+        default=False,
+        description="True leaves a computed money line BLANK when every line its compute references is blank AND "
+                    "the result is 0, instead of printing that 0 — for a form whose tips say 'Lines where no entry "
+                    "is required should be left blank. Do not fill in with zeros.' (WV IT-140). An entered 0 still "
+                    "prints, a compute with any non-blank operand prints its result (0 included), and so does a "
+                    "non-zero result from a literal term.",
     )
     source_pages: list[int] | None = Field(
         default=None, min_length=1,
