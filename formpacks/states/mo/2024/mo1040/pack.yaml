@@ -260,7 +260,9 @@
 # the 2-digit trust-fund codes (line51m_tfcd / line51n_tfcd), the MO-WFTC
 # qualifying-child table (QCName-1..3, QCSSN-1..3 at maxlen 9 like the other
 # schedule SSNs, QCDOB-1..3 MM/DD/YYYY), and the auto-populated helper strings
-# (txt01/02, 1040_32Text2/3, fdata; Texto7-9, lblNRI, MOAText, Text1 and the 33
+# (txt01/02, fdata; 1040_32Text2/3 — the writable "CHECK to fill Line 32Y/32S"
+# caption cells — are unmapped since 2026-10-01, as in the 2025 pack; Texto7-9,
+# lblNRI, MOAText, Text1 and the 33
 # caption strings printlid.*, ProtectBarcode, vendorid, amendedTXT, line51txt
 # and 1040_30Text are unmapped - see UNMAPPED LABEL BANNERS AND FRAME).
 #
@@ -1891,16 +1893,13 @@ fields:
     field: "UseNRI01"
     type: checkbox
     on_state: "/X"
-  - line: "1040_32Text2"
-    field: "1040_32Text2"
-    type: text
+  # 1040_32Text2 is NOT mapped (2026-10-01, as in the 2025 pack): a writable 6 pt red caption cell whose
+  # blank /V reads " CHECK to fill Line 32Y" — DOR text beside UseNRI01, never a taxpayer line (CONVENTIONS).
   - line: "UseNRI02"
     field: "UseNRI02"
     type: checkbox
     on_state: "/X"
-  - line: "1040_32Text3"
-    field: "1040_32Text3"
-    type: text
+  # 1040_32Text3 is NOT mapped — the same shape, blank /V " CHECK to fill Line 32S", beside UseNRI02.
   - line: "nri_line3Y"
     field: "nri_line3Y"
     type: text
