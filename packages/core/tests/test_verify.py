@@ -1115,6 +1115,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: MO-1040 2025 (a RE-MAP of MO 2024) equals the reviewed MO 2024 row (address, city, state, d.zipcode/zipext).
     # JS5: NC D-400 2025 (a PORTABLE port of NC 2024, every widget name and /Rect kept) equals the reviewed NC 2024 row
     # (mailing_address, city, state, zip_code; county_first_five_letters still rejected).
+    # JS5: MN M1 2025 (a NEAR-PORT of MN 2023; the new County box is not a selector line) equals the reviewed MN 2023 row.
     import json
     from pathlib import Path
 
