@@ -225,11 +225,19 @@ tax:
     standard deduction and exemptions must be prorated by the same ratio.'
   - 'Credits taken after Line 12 are NOT modeled (they are subtracted from tax, not from income): itemized deduction
     credit (Line 13, Schedule 1), additional child and dependent care credit (Line 14, Schedule WI-2441), blind worker
-    transportation services credit (Line 15), school property tax credit (Line 16, max $300 / $150), Working Families
+    transportation services credit (Line 15 — the 2025 face prints ''Qualifying expenses .00 x 50% = 15'' and the
+    instructions a ''credit for 50% of the expenses paid. The credit may not exceed $1,500 ($3,000 of expenses) per
+    qualifying person''), school property tax credit (Line 16, max $300 / $150), Working Families
     Tax Credit (Line 17 — the 2025 instructions say ''Do not enter any amount on this line. No credit is allowable
     for any individual or couple filing this form, since any taxpayer(s) who would qualify will not have a tax to
     offset.''), married couple credit (Line 18, Schedule 2, 3% of up to $16,000, max $480), earned income credit (Line
     30, 4% / 11% / 34% of the federal EIC), homestead credit (Line 33, Schedule H), and the other Form 1 credits.'
+  - 'Line 25 ''Penalties on IRAs, retirement plans, MSAs, etc.'' adds 33% of the federal penalty to the tax: the 2025 face
+    prints ''.00 x .33 = 25'' and the instructions say ''Multiply the amount filled in by .33 (33%)'' — not modeled (it
+    is added after Line 12, like the credits above).'
+  - 'The 2025 Form 1 face and instructions cite federal AGI as ''line 11 of federal Form 1040 or 1040-SR''; the TY2025
+    federal Form 1040 prints AGI on line 11a (formpacks/federal/2025/f1040 keys it 11a and the WI pack''s cross_form
+    binds f1040.11a) — the DOR''s wording lags the federal form, the amount is the same.'
   - '2025 subtraction changes affect the BASE the caller supplies, not this schedule (2025 Form 1 instructions, ''New
     in 2025''): a new retirement-income subtraction of up to $24,000 for individuals at least 67 years old at the
     end of 2025; the college savings account subtraction increased to $5,130 per beneficiary ($2,560 if married filing
