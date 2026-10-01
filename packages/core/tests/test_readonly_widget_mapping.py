@@ -544,6 +544,26 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "as debt",
     ),
     StateComputed(
+        "states/mo/2025/mo1040/pack.yaml",
+        227,
+        "the 2024 row's 221 re-measured field by field on the 2025 blank (Phase J JS5; the bundle "
+        "re-ordered its pages, so bindings were compared after the page map): MINUS 2 for line22a/"
+        "line22b, gone with the First time home buyers deduction (line 22 now prints '22. Reserved "
+        "A. B.'); MINUS 3 survivors that LOST the bit (/Ff 12582913 -> 12582912) because their "
+        "printed rows became filer entries — moa_18y/moa_18s ('18. Capital Gain', 2024's line-18 "
+        "total) and moa_wks6 ('6. Enter the amount from Federal Schedule A, Line 5e', 2024's "
+        "$10,000 cap); PLUS 1 survivor that GAINED it, line23, printed '23. Reserved' and /F "
+        "Hidden like line20 and line22 (mapped but leave-blank; line 25's printed sum still names "
+        "all three); PLUS 10 new fields, all mapped and each assigned by quoted getField name in "
+        "the 2025 document JS (class 4): moa_19y/moa_19s (MO-A '19. Total Subtractions', the sum of "
+        "moa_8..moa_18, also written to line4-Y/S) and mocrsch1-2_1y/1s, 3y/3s, 4y/4s, 5y/5s on the "
+        "new second MO-CR Schedule 1 (page 21; copies of line5-Y/S and line30Y/S, the Line 2 / "
+        "Line 1 percentage and Line 4 x Line 3). Class 1 ruled out for every new cell (blank /V "
+        "'0' or empty). The six AGI-worksheet keys re-keyed 16/17/18 -> 9/10/11 bind the same "
+        "fields, so they do not move the count. The same 39 captions, lids and the Text1 frame "
+        "stay unmapped, and the CRP banner (CRP2025) stays correctly NOT mapped",
+    ),
+    StateComputed(
         "states/oh/2023/it1040_oh/pack.yaml",
         12,
         "TWELVE widgets, none of them a computed total: the five below plus the SEVEN "
@@ -674,6 +694,14 @@ NONZERO_READONLY_DEFAULTS: dict[tuple[str, str], str] = {
     )},
     ("states/mo/2023/mo1040/pack.yaml", "moa_pt3_4"): "the document JavaScript assigns it",
     ("states/mo/2023/mo1040/pack.yaml", "moa_pt5_2"): "the document JavaScript assigns it",
+    # 2025 (Phase J JS5): the same three minus moa_wks6, which the 2025 blank turned into a filer entry
+    # ('6. Enter the amount from Federal Schedule A, Line 5e': no ReadOnly bit, no default).
+    ("states/mo/2025/mo1040/pack.yaml", "line32Y"):
+        "the 2025 document JavaScript sets it to 100, or to nri_line3Y when UseNRI01 is checked",
+    ("states/mo/2025/mo1040/pack.yaml", "line32S"):
+        "the 2025 document JavaScript sets it to 100, or to nri_line3S when UseNRI02 is checked",
+    ("states/mo/2025/mo1040/pack.yaml", "moa_pt4_4"):
+        "the 2025 document JavaScript picks 32000 / 16000 / 25000 from the c.married / c.marrfilingsep boxes",
     ("states/oh/2023/it1040_oh/pack.yaml", "upc_city_state_zip"): "a JS-composed mirror (', ' placeholder)",
     ("states/oh/2024/it1040_oh/pack.yaml", "upc_city_state_zip"): "a JS-composed mirror (', ' placeholder)",
     ("states/wv/2023/it140/pack.yaml", "6"):

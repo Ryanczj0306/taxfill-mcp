@@ -1,0 +1,3331 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/mo/2024/mo1040/pack.yaml (ported 2026-09-30,
+# Phase J JS5; triaged RE-MAP — 59 of the 850 fields the 2024 pack maps are
+# gone from the 2025 blank, and the bundle's pages were reordered).
+#
+# URL AND DIGEST. https://dor.mo.gov/forms/MO-1040%20Fillable%20Calculating_2025.pdf
+# (the 2024 file name with the year rolled). Downloaded twice with curl, as two
+# separate runs, on 2026-09-30 (server Date 18:10:32Z and 18:10:33Z; HTTP 200,
+# application/pdf, 2,371,179 bytes each, Last-Modified Tue, 13 Jan 2026
+# 12:59:19 GMT, ETag "696641a7-242e6b"): both copies and the JS5 triage copy
+# hash to 912b43015ea273d93b0c25fe6268d1415496fbadbb048a97783849c5dd2a8c91.
+# %PDF-1.7, an AcroForm (687 top-level /Fields, no XFA), document JavaScript
+# present, encrypted /V 5 /R 6 AESV3 (AES-256) with an empty user password and
+# /P -1084 (print allowed) — the same encryption as the 2024 blank.
+#
+# PRINTED IDENTITY. Page 1 prints "Form MO-1040 2025 Individual Income Tax
+# Return - Long Form", "For Calendar Year January 1 - December 31, 2025",
+# "Deceased in 2025" and the scanline 25322010006 (2024: 24322010006); page 5
+# prints "Form MO-1040 (Revised 12-2025)". The bundled forms print their own
+# 2025 identities: "Form MO-A 2025 Individual Income Tax Adjustments",
+# "MO-PTS 2025 Property Tax Credit Schedule", "MO-CRP 2025 Certification of
+# Rent Paid" (Revised 12-2025), "MO-TC 2025 Miscellaneous Income Tax Credits"
+# (Revised 12-2025), "2025 Credit for Income Taxes Paid to Other States or
+# Political Subdivisions" (Form MO-CR, Revised 12-2025), "MO-NRI 2025 Missouri
+# Income Percentage", Form 5695 (Revised 12-2025), "MO-WFTC 2025 Missouri
+# Working Family Tax Credit" (Revised 12-2025), "2025 Tax Chart" and "Form
+# 5632 2025 MOST" (Revised 12-2025). 32 pages. It is the TY2025 resident
+# return, not a re-issued 2024.
+#
+# BUNDLE ORDER CHANGED. The 2025 PDF keeps 32 pages but reorders them, so 596
+# of the 850 base-mapped fields changed page with their names intact (2024
+# page -> 2025 page): MO-1040 1-5 -> 1-5; MO-A 7-9 -> 6-8; MO-PTS 22-23 ->
+# 9-10; MO-CRP x5 24-28 -> 11-15; MO-TC 19-20 -> 16-17; MO-CR copy 1 11 -> 18;
+# MO-CR Schedule 1 13 -> 19; MO-CR copy 2 12 -> 20; MO-CR instructions 14-15
+# -> 22-23; MO-NRI 16-18 -> 24-26; Form 5695 worksheet 30 -> 27; MO-WFTC 10 ->
+# 28; Tax Chart 6 -> 29; Line 1 AGI worksheet 21 -> 30; Form 5632 31 -> 31;
+# long-term-care worksheet 29 -> 32. Page 21 is NEW (a second MO-CR Schedule
+# 1, below) and the 2024 page 32 (Form 5766) is gone.
+#
+# TOPOLOGY CENSUS (field level, /Ff and /MaxLen resolved up /Parent). 2025
+# blank: 1,148 widget annotations, 981 distinct fields (843 fillable + 138
+# pushbuttons). 2024 blank: 1,191 / 1,028 (889 + 139). Fates of the 850 fields
+# the 2024 pack maps: 185 SAME, 596 PAGE, 9 MOVED, 1 CHANGED, 59 GONE.
+#   * GONE (59, every one's line key dropped):
+#     - line22a, line22b: the A/B cells of MO-1040 line 22, which now prints
+#       "22. Reserved A. B." (2024: "First time home buyers deduction"); the
+#       A. and B. boxes are still drawn on the page but hold no widget. Both
+#       were ReadOnly. The btnGoto1040WSFTHB pushbutton ("First Time Home
+#       Buyers Worksheet") went with them.
+#     - mocr_other1, mocr_other1b: the "Describe nature ____" boxes of MO-CR
+#       line 4 (both copies). 2025 line 4 reads "Claimant's total Missouri
+#       additions from the other state" and has no description box.
+#     - 9-Y/9-S .. 15-Y/15-S (14): the Line 1 AGI worksheet was cut from 18
+#       printed lines to 11 (see RE-KEYED below).
+#     - the 41 Form 5766 fields (First-Time Home Buyers Bank Worksheet, 2024
+#       page 32): fthb_name-1/-2, ahaddress/ahcity/ahstate/ahzipcode,
+#       resaddress/rescity/resstate/reszipcode, beneficiaryname/-ssn,
+#       benaddress/bencity/benstate/benzipcode, finstname,
+#       finstaccountnumber, totaccdep, totaccwith, intearned, accbaljan1,
+#       accbaldec31, milservmember, expdate1-3 mm/dd/yy, expdesc1-3,
+#       expamount1-3, contributionded, accruedint. The 2025 bundle has no Form
+#       5766 page (btnGoto1040pg3 went with it).
+#   * NEW fillable fields (13), all MAPPED:
+#     - moa_19y, moa_19s (MO-A page 2): printed "19. Total Subtractions - Add
+#       Lines 8 through 18. Enter here and on Form MO-1040, Line 4". ReadOnly;
+#       the document JavaScript sets getField("moa_19y").value = b+...+l over
+#       moa_8y..moa_18y, and the same sum into line4-Y (P-007 class 4).
+#     - stateabbreviations_2 and mocrsch1-2_1y/1s .. 5y/5s (page 21): a
+#       SECOND "Form MO-CR Schedule 1" (Resident Credit For Tax on Pro Rata
+#       Share of S Corporation Income Earned From a Non-Taxed Jurisdiction),
+#       laid out like the first copy on page 19 (the same five printed lines,
+#       every /Rect within 0.05 pt of its copy-1 twin, same /Ff and /DA
+#       /TiRo 10). Its header reuses mocr_name-1/-2 and SSN-1/-2
+#       (mocr_name-1/-2 grew from 3 to 4 widgets). 1y/1s, 3y/3s, 4y/4s and
+#       5y/5s are ReadOnly and the JavaScript computes each (1 = line5-Y/S,
+#       4 = line30Y/S, 3 = 2 / 1 x 100, 5 = round(4 x 3 / 100)): class 4.
+#       2y/2s and stateabbreviations_2 are filer entry cells.
+#   * NEW pushbuttons (2), unmapped like the base's: "MO-A Line 19" (the
+#     line-19 calculate button) and CRP2025 (10 widgets, two on each MO-CRP
+#     page, /Ff 65537 — the CRP2024 banner button renamed).
+#   * MOVED (9): the Form 5632 block (accountnumber-1..4, amount-1..4,
+#     totaldeposit) shifted -3.0 pt in x and y; same printed rows.
+#   * IN-PAGE SHIFTS under PAGE (the census compares /Rect only when the page
+#     number is unchanged). With the page map above applied, 631 of the 791
+#     surviving mapped fields keep /Rect (within 0.5 pt), /Ff, /MaxLen, /DA
+#     and /V; the other 160 are the 9 Form 5632 cells, 12 multi-widget
+#     identity fields (firstname/min/lastname/SSN-1/-2 and title-1/-2: their
+#     repeats re-ordered with the pages and moved -3 pt on Form 5632;
+#     mocr_name-1/-2 gained the page-21 widget), line22/line23 (flags, and
+#     line22's blank /V "0" -> empty; below), and rows the 2025 face
+#     re-spaced: Tax Calculation Worksheet moa_y2..7 / moa_s2..7 (-11 pt);
+#     MO-A page 2 Part 2 moa_pt2_1..12, moa_wks1..5,
+#     P1040_L14, UseWS3, txtItemError (-23 pt), moa_wks6 (-35), moa_wks7
+#     (-24), moa_18y/18s (+13, the new line-18 row); MO-A page 3 Section A
+#     (-2) and Section B (-5); both MO-CR copies (+1.0 pt x, -0.7 pt y; lines
+#     6-7 +10.3 to +11.3 pt); MO-CR Schedule 1 lines 2-5 (-15.6 to -28.6 pt)
+#     and its stateabbreviations cell, narrowed from 539 to 90 pt wide; the
+#     AGI worksheet (rows 1-8 -75.5 pt, the 16-18 rows +15 to +16 pt, the
+#     Yourself column +15.9 pt in x). Every one was re-read on the render.
+#   * CHANGED (1): line23 gained the ReadOnly bit (/Ff 12582912 -> 12582913).
+#   * Other flag changes on surviving mapped fields (reported under PAGE by
+#     the census): moa_18y, moa_18s and moa_wks6 LOST the ReadOnly bit
+#     (12582913 -> 12582912), and line22/line23 gained the annotation Hidden
+#     flag (/F 4 -> 6). No surviving mapped field changed /MaxLen, /DA or its
+#     checkbox /AP states; every on_state below was re-read from this blank's
+#     /AP /N (each checkbox /X; CalcOption /N and /X).
+#
+# SAME NAME, NEW PRINTED ROW (read on the renders, not assumed from names):
+#   * moa_18y/moa_18s: 2024 MO-A line 18 was "Total Subtractions" (ReadOnly,
+#     JS-computed); 2025 line 18 is "18. Capital Gain", a filer entry cell
+#     that the line-19 sum includes. The key still names printed line 18.
+#   * moa_wks6: the Part 2 net-state-income-tax worksheet line 6 was "Enter
+#     $10,000 ($5,000 if married filing separately)" (ReadOnly, blank /V
+#     10000); 2025 prints "6. Enter the amount from Federal Schedule A, Line
+#     5e" and the cell is a filer entry with no default value.
+#   * 4-Y/4-S .. 8-Y/8-S (Line 1 AGI worksheet, page 30): the rows were
+#     re-cut; 2025 prints 4 Taxable IRA distributions (4b), 5 Taxable pensions
+#     and annuities (5b), 6 Taxable social security benefits (6b), 7 Capital
+#     gain or (loss) (7a), 8 Federal additional income (8). The keys still
+#     name the printed line numbers.
+#   * mocr_* / mocr_*b (MO-CR, both copies): same line numbers 1-11, new
+#     captions — 1 "Claimant's Missouri adjusted gross income (Form MO-1040,
+#     Line 5Y and Line 5S)", 3 "Claimant's federal adjusted gross income from
+#     the other state", 4 "Claimant's total Missouri additions from the other
+#     state", 6 "Claimant's total Missouri subtractions from the other state",
+#     8 "Percentage of Missouri adjusted gross income from the other state".
+#   * mocrsch1_*: line 1 now "Claimant's Missouri adjusted gross income
+#     (MO-1040, Line 5Y and Line 5S)", line 2 "Claimant's share of S
+#     corporation income derived from the non-taxed jurisdiction and included
+#     in Missouri adjusted gross income".
+#
+# RE-KEYED (six keys renamed so each names the 2025 printed line; the fields
+# are unchanged). The Line 1 AGI worksheet total, adjustments and AGI rows
+# kept their 2024 field names 16-*, 17-* and 18-* but now print as lines 9,
+# 10 and 11: "9. Total (add Lines 1 through 8)", "10. Subtract federal
+# adjustments to income" and "11. Federal adjusted gross income (Line 9 minus
+# Line 10) Enter amounts here and on Lines 1Y and 1S, Form MO-1040" (federal
+# line reference 11a). The 2025 JavaScript agrees: it sums fields 1-*..8-*
+# into 16-* and sets 18-* = 16-* - 17-*. Keys 16-Y/16-S/17-Y/17-S/18-Y/18-S
+# are therefore 9-Y/9-S/10-Y/10-S/11-Y/11-S here (the 2024 keys 9-* .. 11-*
+# meant 2024's IRA / pension / rents rows, whose fields are gone). A grep of
+# the repo finds no calc op, extractor, fixture, test or cross_form rule that
+# names any of the six keys (the shared test tables name only line32Y/S,
+# moa_pt4_4, moa_wks6 and the address lines), so the rename touches this
+# pack only.
+#
+# GROUP IDS ADDED IN THIS PORT (20 ids over 79 checkbox lines whose options
+# are alternatives on the 2025 face; the 2024 pack carried none of these):
+#   * filing_status: c.single, c.dependent, c.married, c.marrfilingsep,
+#     c.headofhousehold, c.widower — six SEPARATE /Btn fields under the page-1
+#     "Filing Status" heading; the blank's own MultiCB_01 script turns the
+#     other five Off when one is checked, which taxfill never runs.
+#   * pts_qualification: c.pts_65, c.pts_100disvet, c.pts_100disabled,
+#     c.pts_60orolder — MO-PTS prints "Select only one qualification." over
+#     boxes A-D (four separate fields; MultiCB_06).
+#   * pts_filing_status: c.pts_single, c.pts_married, c.pts_marrlivsep —
+#     MO-PTS prints "Select only one filing status." (MultiCB_07).
+#   * preparer_may_discuss: YES / NO — "I authorize the Director of Revenue or
+#     delegate to discuss my return and attachments with the preparer ... Yes
+#     No" (two fields; MultiCB_10).
+#   * preparer_failed_to_sign: failtosignYES / failtosignNO — "Did you pay a
+#     tax return preparer to complete your return, but the preparer failed to
+#     sign the return ...? Yes No" (MultiCB_12).
+#   * calc_option: CalcOption-X / CalcOption-N — one /Btn field (/Ff 49152)
+#     with two page-1 widgets (/X "DO Automatic Calculations", /N "DON'T DO").
+#     The group id replaces the SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID debt row
+#     the 2023/2024 packs carry for this set.
+#   * age.yourself / age.spouse: 62-Y + 65-Y and 62-S + 65-S — page 1 prints
+#     "Age 62 through 64" and "Age 65 or Older", one Yourself and one Spouse
+#     box under each: two ranges of one person's age, so at most one applies.
+#     The blank's script does not clear the other box; it reads 62-*/65-* to
+#     unlock moa_pt5_1y/1s and counts 65-* in the standard deduction.
+#   * nri_status.yourself / nri_status.spouse: nri_line1_Ybx, nri_line2_Ybx,
+#     nri_line3_Ybx (and the *_Sbx column) — MO-NRI Part A prints
+#     "Resident/Nonresident Status - Select your status in the appropriate box
+#     below." over "1. Nonresident of Missouri", "2. Part-Year Missouri
+#     Resident" and "3. Military/Nonresident Tax Status", one column per
+#     person; the MO-NRI instructions (page 26) route each to its own Part A
+#     line. The Remote Work sub-boxes stay ungrouped.
+#   * crp_line7_type.<copy> and crp_line7_sharing.<copy>, copies a-e: MO-CRP
+#     line 7 prints "Select the appropriate box below and enter the
+#     corresponding percentage on Line 7" over A-G (7a..7g: one rental type,
+#     one percentage), and G prints "select the appropriate box based on the
+#     additional person(s) sharing rent: 1 (50%) 2 (33%) 3 (25%)" (7i/7j/7k).
+#     The blank's MultiCB_CRP script enforces the same partition: checking
+#     any box turns the rest Off, except that 7i/7j/7k also check 7g and 7h
+#     also checks 7e. So 7h (E's "if meals are included - 50%") stays
+#     ungrouped as E's modifier, and the two groups admit exactly the
+#     script's states (one type; 7e + 7h; 7g + one of 7i/7j/7k).
+#   No `required` is set on any of them, as for the WFTC groups. Left
+#   ungrouped, as in 2024: the MO-A line 2 and line 11 source boxes, the
+#   line-47 amended-return reasons (each with its own date cells; the script
+#   writes all four to the barcode), and the other per-person page-1 boxes
+#   (blind, 100% disabled, non-obligated spouse, deceased), none of which
+#   prints "select one".
+#
+# RESERVED LINES 20, 22, 23. The 2025 MO-1040 prints "20. Reserved", "22.
+# Reserved A. B." and "23. Reserved" (2024: 20 Reserved, 22 First time home
+# buyers deduction, 23 Long term dignity savings account deduction). The three
+# widgets are ReadOnly and /F Hidden (6) on this blank, so nothing written
+# there prints; the 2025 JavaScript leaves line 22's calculation block empty,
+# no longer writes 22a/22b/22/23 into the 2-D barcode string, and only the
+# line-25 sum list still names 20, 22 and 23 (a blank reads as 0). The
+# printed line 25 reads "Total deductions - Add Lines 8 and 13 through 24".
+# All three stay MAPPED with leave-blank comments (P-007 class 3), the
+# treatment the 2024 pack gave line 20, so the revision that un-reserves a
+# line is a widget swap rather than a key change. They carry no `reserved:
+# true`: that flag is tied to RESERVED_LINE_KEEPS, which admits federal packs
+# only (test_readonly_widget_mapping.py), so fill_form writes a value there
+# without a warning.
+#
+# READONLY RE-ADJUDICATION (knowledge/pitfalls.yaml P-007), mapped fields
+# whose widget carries /Ff bit 1, measured on this blank: 227 (the 2024 pack
+# on the 2024 blank: 221). The delta: -2 line22a/line22b (gone), -3 moa_18y,
+# moa_18s, moa_wks6 (the bit was cleared: each is now a filer entry row),
+# +1 line23 (reserved and hidden, above), +10 new class-4 fields (moa_19y,
+# moa_19s and the eight computed mocrsch1-2_* cells). No new ReadOnly binding
+# holds a printed constant: each new cell's blank /V is "0" or empty. The
+# mapped ReadOnly cells whose blank /V is nonzero are the same three the 2024
+# row adjudicated minus moa_wks6: line32Y and line32S ("100"; the 2025 JS sets
+# 100 or the MO-NRI percentage) and moa_pt4_4 ("25000"; the JS picks 32000,
+# 16000 or 25000 from the filing status box) — class 4, not constants. This
+# port adds the pack's STATE_COMPUTED_READONLY row (227) and those three
+# NONZERO_READONLY_DEFAULTS rows (test_readonly_widget_mapping.py).
+#
+# FACE DELTAS vs 2024 (all 32 pages text-diffed page against paired page):
+#   * MO-1040 line 1 now cites "(see instructions and worksheet on pages 6 and
+#     7"; line 4 "Total subtractions (from Form MO-A, Part 1, Line 19)" (2024:
+#     Line 18); line 14 standard deductions "$15,750" single / married filing
+#     separate, "$23,625" head of household, "$31,500" married filing combined
+#     or qualifying widow(er) (2024: $14,600 / $21,900 / $29,200); lines 22
+#     and 23 reserved (above); line 30 "see tax chart on page 21 of the
+#     instructions" (2024: page 26); line 38 "2025 Missouri estimated tax
+#     payments - Include overpayment from 2024 applied to 2025"; line 50
+#     "applied to your 2026 estimated tax" (the key "line50" is the printed
+#     line number); page 5's refund address ZIP+4 now reads "65105-3222"
+#     (2024 printed "65105-322"). Lines 42 (MO-TC), 43 (MO-PTS), 44 (MO-WFTC)
+#     and 45 are numbered as in 2024.
+#   * MO-A Part 1: new line 18 "Capital Gain" and total line 19 (above); line
+#     17 now "Business Income Deduction - see worksheet on page 16 of MO-1040
+#     Instructions". Part 2: line 1 cites "Line 12e" (2024: Line 12) and line
+#     9 "Federal Schedule A, Line 5a" (2024: Line 5); the net state income
+#     taxes worksheet now applies when state and local taxes "exceeded $40,000
+#     ($20,000 if married filing separately) or you were required to complete
+#     a federal worksheet to calculate Federal Schedule A, Line 5e" (2024:
+#     Line 5d over $10,000 / $5,000), with line 6 "Enter the amount from
+#     Federal Schedule A, Line 5e". Part 3 Section A line 2 caps at "$47,633
+#     (maximum social security benefit)" (2024: $46,381); Section B keeps
+#     $32,000 / $25,000 / $16,000 and $6,000; Section C keeps lines 1-4.
+#   * Tax Chart (page 29): brackets re-indexed — "$0 to $1,313 ... $0" up to
+#     "Over $9,191 ... $256 plus 4.7% of the excess over $9,191" (2024: $1,273
+#     steps, top 4.8% over $8,911).
+#   * MO-CR and MO-CR Schedule 1: the captions quoted above; both now print
+#     "(Revised 12-2025)".
+#   * MO-WFTC: question 3 now "Do you have investment income greater than
+#     $4,400 (see instructions)?" (2024: "equal to or greater than $4,300");
+#     "your claim may be denied" (2024: "will be denied"); line 6 still
+#     "Multiply Line 5 by 20%"; line 5 still cites "Federal Form 1040 or
+#     1040-SR, Line 27" (see UNRESOLVED).
+#   * MO-A page 1 "See information beginning on page 12" (2024: 13); Part 2
+#     lines 2-7 roll "2024" -> "2025" and lines 6-7 now read "(see page 16 of
+#     MO-1040 Instructions)"; Part 3 "Instructions for Part 3 begin on page
+#     17" (2024: 16), and Section A line 3 now reads "complete Form MO-A, Part
+#     3, Section C, Lines 1 - 3" (2024: "Lines 1 through 4 of Section C").
+#   * MO-CR line 10 "Income tax imposed by the other state" (2024: "another
+#     state"); line 2 still "Lines 30Y and 30S".
+#   * AGI worksheet (page 30): the split instructions now cite "each spouse's
+#     2024 Missouri tax withheld" (2024 face: 2023) and "transfer the amounts
+#     from Line 11" (2024: Line 18), but the Note under them still reads "the
+#     incomes listed separately on Line 18 of this worksheet must equal your
+#     total federal adjusted gross income" — text left from the 18-line 2024
+#     worksheet; the AGI row is printed line 11 (key 11-Y / 11-S).
+#   * MO-TC page 17's credit-code table (62 alpha codes; 2024 page 20 printed
+#     59) adds HDC (Homestead Disaster Tax Credit, Form 5926), IAA (Intern and
+#     Apprentice Recruitment), RCD (Rural Access to Capital) and SMS (Show-Me
+#     Sports Investment) and drops SCH (School Children Health and Hunger,
+#     "Certificate*" on the 2024 face). The code cells (t.tc_bn*, t.tc.ac*)
+#     are free text, so no binding changes.
+#   * MO-PTS line 14 now cites the chart "pages 50-52" (2024: 49-51); MO-NRI,
+#     MO-CRP, MO-PTS, Form 5632 and MO-TC roll their years; the
+#     veterans-survey paragraph was added to several pages. No widget effect.
+#   * Cross-checked against knowledge/states/mo/2025.yaml: the standard
+#     deductions, the Tax Chart steps and rates, reserved lines 20/22/23, the
+#     MO-A line 18/19 capital-gain change, credit lines 42/43/44, the WFTC
+#     20% rate and the MO-PTS chart pages 50-52 all agree with this face.
+#
+# UNRESOLVED / FOR THE INTEGRATOR.
+#   * Eleven mapped widgets are /F Hidden on this blank (the reserved line20,
+#     line22, line23 and the JS helpers 33_YS, 33_SP, adjLine14, bankaccttype,
+#     fdata, txt01, txt02, txtItemError); the sentinel audit proved them from
+#     the filled PDF's /V, not on the page images. RESOLVED at integration
+#     (2026-10-01, P-027): fill_form clears the Hidden bit on every widget it
+#     writes and sets the 28 printlid.* lids Hidden, so a written value prints
+#     in any viewer; verify's P-027 check reads the flags back.
+#   * MO-WFTC line 5 prints "Federal Form 1040 or 1040-SR, Line 27", but the
+#     TY2025 Form 1040 prints the EIC on line 27a (formpacks/federal/2025/
+#     f1040 keys it "27a"). The comment quotes the DOR face; the pack has no
+#     cross_form leg that depends on it.
+#   * relations and cross_form stay empty, as in 2024 (see the narrative).
+#
+# The narrative below re-states the base pack's description for the 2025
+# blank; every count in it was re-measured here.
+# ===========================================================================
+# Form MO-1040, 2025 - Missouri Individual Income Tax Return (Long Form),
+# together with every schedule and worksheet bundled in the official
+# "MO-1040 Fillable Calculating" PDF (2025 page order): the 5-page MO-1040
+# return (pages 1-5); Form MO-A (Individual Income Tax Adjustments, Parts 1-3
+# with the Part 2 net-state-income-taxes worksheet, pages 6-8); Form MO-PTS
+# (Property Tax Credit Schedule, pages 9-10); Form MO-CRP (Certification of
+# Rent Paid - five copies, pages 11-15); Form MO-TC (Miscellaneous Income Tax
+# Credits, pages 16-17); Form MO-CR (resident credit for tax paid to other
+# states) and MO-CR Schedule 1, two copies each (pages 18-21) with their
+# instructions (pages 22-23); Form MO-NRI (Missouri Income Percentage, pages
+# 24-26); Form 5695 (Qualified Health Insurance Premiums Worksheet, page 27);
+# Form MO-WFTC (Missouri Working Family Tax Credit, page 28); the 2025 Tax
+# Chart and Tax Calculation Worksheet (page 29); the Line 1 Adjusted Gross
+# Income Worksheet for a combined return (page 30); Form 5632 (MOST 529
+# direct deposit, page 31); and the Long-Term Care Insurance Deduction
+# worksheet (page 32).
+#
+# Layout. Hierarchical AcroForm (acroform_root empty; field paths are the
+# fully-qualified names the PDF ships with - flat ids like "line1-Y", dotted
+# parent/child ids like "c.single" or "d.zipcode", and the column-split
+# "<line>-Y" / "<line>-S" pairs the form uses wherever a married couple files
+# a combined return with a Yourself and a Spouse column). Line keys are the
+# field names, except CalcOption's two options and the six re-keyed AGI
+# worksheet rows above.
+#
+# Coverage (2025 counts). The blank has 843 distinct fillable AcroForm fields
+# (981 counting the 138 pushbuttons; 1,148 widgets counting every repeated
+# occurrence). 803 pack lines map 802 of the 843 fields, the shared
+# CalcOption radio being mapped once per option. A field that prints on
+# several pages (SSN-1, firstname-1, mocr_name-1, nri_city, ...) is ONE
+# AcroForm object and is mapped on ONE line (a field holds one value). The 41
+# fillable fields left unmapped are the 39 names the 2024 pack leaves
+# unmapped — all ReadOnly, each DOR text baked into the blank or (Text1) a
+# checkbox frame — plus the two WRITABLE caption cells 1040_32Text2 and
+# 1040_32Text3 (MO-NRI page 25, beside UseNRI01 / UseNRI02), which the 2024
+# pack mapped as text lines: on this blank each holds a DOR caption as its
+# /V (" CHECK to fill Line 32Y" / " CHECK to fill Line 32S", /DA "/HeBo 6
+# Tf 1 0 0 rg", /Ff 12582912 = DoNotSpellCheck|DoNotScroll, not ReadOnly),
+# so a fill replaced the printed caption with the caller's text (seen on
+# the sentinel render). They are dropped here so fill_form raises on the
+# two keys (P-007 class 1 — the widget already holds the DOR's own text).
+# Never a line:
+#   * UNMAPPED LABEL BANNERS AND FRAME: Texto7 "Carry amount to 1040 Line 14"
+#     (page 7), MOAText "Use data from worksheet" (page 7), lblNRI "Use
+#     worksheet values in NRI, Part C, Line 1" (page 25), Texto8 "Carry
+#     amounts to MO-1040, Line 1Y and 1S." (page 30) and Texto9 "Check if you
+#     owned and occupied your home for the entire year" (page 10) — the same
+#     /V strings as 2024, none with a /TU — plus Text1 (page 10), an empty
+#     ReadOnly /Tx that only draws the border of the c.ownfullyear checkbox
+#     beside Texto9. Mapped, a caption lets the filler overwrite DOR text and
+#     FAILs verify's P-001 scan on a real fill (P-007 class 1).
+#   * the 28 printlid.* lids ("PLEASE, USE THE PRINT BUTTON ON THE FORM TO
+#     PRINT THIS DOCUMENT. THANK YOU."), ProtectBarcode ("THIS IS A 2-D
+#     BARCODE. DO NOT ERASE IT OR WRITE ON IT."), vendorid ("006"),
+#     amendedTXT ("These fields are locked. To unlock them, Click on the
+#     "amended" check box ..."), line51txt ("TRUST FUNDS") and 1040_30Text ("
+#     Check boxes to carry amount to MO-1040 with values below") — the same
+#     /V strings as 2024.
+#
+# Intentionally OMITTED - 138 distinct pushbuttons (/Btn with /Ff bit 17
+# Pushbutton), none a data input: the per-line calculate buttons ("Line 1"
+# .. "Line 56", "MO-A Line 1" .. "MO-A Line 19", "MO-CR Line 1" .. ,
+# "MO-NRI Line 1" .., "MO-PTS Line 2" .., "MO-CRP Lines 1-5" .., "UF_L1" ..),
+# the navigation / action buttons (btnGoto*, btnP1, btnCalculate, btnPrint,
+# btnreset, btnRstWSNRI, RstWorksheetMOA, finish, the image buttons), the
+# repeated "Privacy Notice" link and the CRP2025 banner.
+#
+# Money vs text. Dollar boxes (every numbered income/tax/credit line and
+# computed total, the MO-A/MO-CR/MO-PTS/MO-CRP/MO-TC amount columns, the 529
+# amounts, and the percentage cells the form computes) are `money`. Genuine
+# text widgets stay text: names / initials / suffixes, SSN boxes (maxlen 11
+# for the page-1 comb SSN_1/SSN_2, 9 for the schedule SSN-1/SSN-2 and the
+# MO-WFTC QCSSN-1..3), addresses / city / state / ZIP / county, the 2- and
+# 4-digit fiscal-year and birth-date cells, bank routing (9) / account (17),
+# preparer ids, the "Other (description)" and explanation text boxes, the
+# 2-digit trust-fund codes (line51m_tfcd / line51n_tfcd), the MO-WFTC
+# qualifying-child table (QCDOB-1..3 MM/DD/YYYY), the MO-CR Schedule 1
+# percentage cells (mocrsch1_3y/3s, mocrsch1-2_3y/3s) and the JS helper
+# strings (txt01/02, fdata). Every pack maxlen equals its widget's /MaxLen
+# on this blank or sits on a widget with no /MaxLen.
+#
+# Combs. 76 mapped text widgets carry the AcroForm comb flag (/Ff bit 25,
+# e.g. /Ff 29360128). `comb: true` in this repo means DIGITS ONLY (the
+# filler refuses letters and dashes, verify reads the cells digit-stripped),
+# so it is set only where the printed cells take digits: the 9-cell
+# schedule SSNs SSN-1 / SSN-2 and the MO-WFTC QCSSN-1..3 (printed as 3-2-4
+# boxes with the dashes pre-printed between them; `format:
+# ssn_digits_only` strips a dashed value), every 2-cell MM / DD / YY date
+# cell (FYBegDate* / FYEndDate*, date1* / date2* / prepdate*, the MO-CRP
+# d.crp_5fr_* / d.crp_5to_* rental-period cells — each captioned "(MM/DD/YY)"
+# on its page), the ZIP cells (d.zipcode 5 / d.zipext 4, t.crp_zip1* and
+# t.crp_llzip1* 5), the bank routing (9) and account (17) cells (as the
+# federal f1040 35b / 35d combs), the Form 5632 accountnumber-1..4 ("Enter
+# the 11-digit MOST 529 account number") and the MO-TC t.tc_bn1 ("The number
+# is the last six (6) digits of the number ... enter 123456"; its rows 2-10
+# are plain /Tx widgets without the flag). Comb widgets that stay plain
+# text, each with a row comment: the page-1 SSN_1 / SSN_2 (11 cells whose
+# cells 4 and 7 sit on the two printed dashes of the 3-2-4 boxes, so the
+# value is written WITH its dashes, "123-45-6789"; digits only would land
+# digits on the dashes), FEIN ("Preparer's FEIN, SSN, or PTIN" — a PTIN
+# starts with a letter), the two-letter state cells t.crp_state1* /
+# t.crp_llstate1*, the trust-fund code cells line51m_tfcd / line51n_tfcd
+# (the face only says "See instructions for additional trust fund codes"),
+# and the MO-TC d.tc_charterno / d.tc_mitsno (no character set printed).
+#
+# Checkboxes. Every real checkbox is its own /Btn with export state /X
+# (verified against this blank). The one multi-option /Btn is CalcOption (a
+# radio with /X and /N appearance states), mapped as two lines on the shared
+# field carrying each on_state. Separate-field alternatives carry group ids:
+# the twenty added in this port (above), dd_account_type (dd_checking /
+# dd_savings), the per-person MO-NRI line-3 home-of-record pairs
+# (nri_line3.yourself / nri_line3.spouse) and the three MO-WFTC Yes/No
+# questions (EIC_*, MFJ_*, INV_*: two independent single-widget /Btn fields
+# each, /Ff 49152, one /X state each; the blank's MultiCB_13-15 scripts make
+# each pair exclusive in a viewer).
+#
+# Relations / cross_form. OMITTED. MO-1040 splits nearly every income/tax
+# line into Yourself ("<n>-Y") and Spouse ("<n>-S") columns whose keys carry
+# a hyphen, and the verifier's relation tokenizer reads "-" as the minus
+# operator, so these column lines cannot be relation operands. Per the
+# conservative house style every relation is omitted rather than a partial
+# set. The federal-AGI link (line 1Y + line 1S, and the AGI worksheet's line
+# 11, which cites federal line 11a) is a two-column sum that the one-ref-per-
+# side cross_form grammar cannot express, so cross_form stays empty too.
+form: Form MO-1040
+jurisdiction: states/mo
+tax_year: 2025
+source_url: https://dor.mo.gov/forms/MO-1040%20Fillable%20Calculating_2025.pdf
+pdf_sha256: 912b43015ea273d93b0c25fe6268d1415496fbadbb048a97783849c5dd2a8c91
+acroform_root: ''
+fields:
+  - line: "fdata"
+    field: "fdata"
+    type: text
+  - line: "CalcOption-X"  # "DO Automatic Calculations" — one /Btn (/Ff 49152), two page-1 widgets
+    field: "CalcOption"
+    type: checkbox
+    on_state: "/X"
+    group: calc_option
+  - line: "amended"
+    field: "amended"
+    type: checkbox
+    on_state: "/X"
+  - line: "composite"
+    field: "composite"
+    type: checkbox
+    on_state: "/X"
+  - line: "fedextension"
+    field: "fedextension"
+    type: checkbox
+    on_state: "/X"
+  - line: "socialservices"
+    field: "socialservices"
+    type: checkbox
+    on_state: "/X"
+  - line: "federalreturn"
+    field: "federalreturn"
+    type: checkbox
+    on_state: "/X"
+  - line: "FYBegDateMM"
+    field: "FYBegDateMM"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "FYBegDateDD"
+    field: "FYBegDateDD"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "FYBegDateYY"
+    field: "FYBegDateYY"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "FYEndDateMM"
+    field: "FYEndDateMM"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "FYEndDateDD"
+    field: "FYEndDateDD"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "FYEndDateYY"
+    field: "FYEndDateYY"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "c.single"  # Filing Status (page 1): six separate /Btn fields, one answer — the blank's MultiCB_01 clears the rest
+    field: "c.single"
+    type: checkbox
+    on_state: "/X"
+    group: filing_status
+  - line: "c.dependent"
+    field: "c.dependent"
+    type: checkbox
+    on_state: "/X"
+    group: filing_status
+  - line: "c.married"
+    field: "c.married"
+    type: checkbox
+    on_state: "/X"
+    group: filing_status
+  - line: "c.marrfilingsep"
+    field: "c.marrfilingsep"
+    type: checkbox
+    on_state: "/X"
+    group: filing_status
+  - line: "c.headofhousehold"
+    field: "c.headofhousehold"
+    type: checkbox
+    on_state: "/X"
+    group: filing_status
+  - line: "c.widower"
+    field: "c.widower"
+    type: checkbox
+    on_state: "/X"
+    group: filing_status
+  - line: "62-Y"  # Yourself "Age 62 through 64" — one age range per person: grouped with 65-Y
+    field: "62-Y"
+    type: checkbox
+    on_state: "/X"
+    group: age.yourself
+  - line: "62-S"  # Spouse "Age 62 through 64" — grouped with 65-S
+    field: "62-S"
+    type: checkbox
+    on_state: "/X"
+    group: age.spouse
+  - line: "65-Y"  # Yourself "Age 65 or Older"
+    field: "65-Y"
+    type: checkbox
+    on_state: "/X"
+    group: age.yourself
+  - line: "65-S"  # Spouse "Age 65 or Older"
+    field: "65-S"
+    type: checkbox
+    on_state: "/X"
+    group: age.spouse
+  - line: "blind-Y"
+    field: "blind-Y"
+    type: checkbox
+    on_state: "/X"
+  - line: "blind-S"
+    field: "blind-S"
+    type: checkbox
+    on_state: "/X"
+  - line: "disabled-Y"
+    field: "disabled-Y"
+    type: checkbox
+    on_state: "/X"
+  - line: "disabled-S"
+    field: "disabled-S"
+    type: checkbox
+    on_state: "/X"
+  - line: "nonobl-Y"
+    field: "nonobl-Y"
+    type: checkbox
+    on_state: "/X"
+  - line: "nonoblig-S"
+    field: "nonoblig-S"
+    type: checkbox
+    on_state: "/X"
+  - line: "SSN_1"  # 11-cell comb whose cells 4 and 7 sit on the printed dashes of the 3-2-4 boxes — write it WITH dashes (123-45-6789); not comb: true (digits only would misplace)
+    field: "SSN_1"
+    type: text
+    maxlen: 11
+  - line: "decease-1"
+    field: "decease-1"
+    type: checkbox
+    on_state: "/X"
+  - line: "SSN_2"  # spouse — same 11-cell dashed comb as SSN_1; write it WITH dashes
+    field: "SSN_2"
+    type: text
+    maxlen: 11
+  - line: "decease2"
+    field: "decease2"
+    type: checkbox
+    on_state: "/X"
+  - line: "firstname-1"
+    field: "firstname-1"
+    type: text
+  - line: "min-1"
+    field: "min-1"
+    type: text
+    maxlen: 1
+  - line: "lastname-1"
+    field: "lastname-1"
+    type: text
+  - line: "title-1"
+    field: "title-1"
+    type: text
+    maxlen: 3
+  - line: "firstname-2"
+    field: "firstname-2"
+    type: text
+  - line: "min-2"
+    field: "min-2"
+    type: text
+    maxlen: 1
+  - line: "lastname-2"
+    field: "lastname-2"
+    type: text
+  - line: "title-2"
+    field: "title-2"
+    type: text
+    maxlen: 3
+  - line: "incareof"
+    field: "incareof"
+    type: text
+  - line: "address"
+    field: "address"
+    type: text
+  - line: "city"
+    field: "city"
+    type: text
+  - line: "state"
+    field: "state"
+    type: text
+    maxlen: 2
+  - line: "d.zipcode"
+    field: "d.zipcode"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "d.zipext"
+    field: "d.zipext"
+    type: text
+    maxlen: 4
+    comb: true
+  - line: "COUNTY CODE"
+    field: "COUNTY CODE"
+    type: text
+  - line: "CalcOption-N"  # "DON'T DO Automatic Calculations"
+    field: "CalcOption"
+    type: checkbox
+    on_state: "/N"
+    group: calc_option
+  - line: "line1-Y"
+    field: "line1-Y"
+    type: money
+  - line: "line1-S"
+    field: "line1-S"
+    type: money
+  - line: "line2-Y"
+    field: "line2-Y"
+    type: money
+  - line: "line2-S"
+    field: "line2-S"
+    type: money
+  - line: "line3-Y"
+    field: "line3-Y"
+    type: money
+  - line: "line3-S"
+    field: "line3-S"
+    type: money
+  - line: "line4-Y"  # 4 Total subtractions (from Form MO-A, Part 1, Line 19) — 2024 cited Line 18
+    field: "line4-Y"
+    type: money
+  - line: "line4-S"
+    field: "line4-S"
+    type: money
+  - line: "line5-Y"
+    field: "line5-Y"
+    type: money
+  - line: "line5-S"
+    field: "line5-S"
+    type: money
+  - line: "line6"
+    field: "line6"
+    type: money
+  - line: "line7-Y"
+    field: "line7-Y"
+    type: text
+  - line: "line7-S"
+    field: "line7-S"
+    type: text
+  - line: "line8"
+    field: "line8"
+    type: money
+  - line: "line9"
+    field: "line9"
+    type: money
+  - line: "line10"
+    field: "line10"
+    type: money
+  - line: "line11"
+    field: "line11"
+    type: money
+  - line: "line12"
+    field: "line12"
+    type: text
+  - line: "line13"
+    field: "line13"
+    type: money
+  - line: "adjLine14"
+    field: "adjLine14"
+    type: money
+  - line: "line14"
+    field: "line14"
+    type: money
+  - line: "line15"
+    field: "line15"
+    type: money
+  - line: "line16"
+    field: "line16"
+    type: money
+  - line: "line17"
+    field: "line17"
+    type: money
+  - line: "line18"
+    field: "line18"
+    type: money
+  - line: "line19"
+    field: "line19"
+    type: money
+  - line: "line20"  # 2025 printed line 20 reads "20. Reserved" (as in 2024); the widget is /Ff ReadOnly
+    field: "line20"  # and its annotation /F Hidden (6), so a value can never print.
+    type: money      # LEAVE BLANK (P-007 class 3): the key stays addressable so the revision that
+                     # un-reserves it is a widget swap, not an API change.
+  - line: "line21"
+    field: "line21"
+    type: money
+  - line: "line21a"
+    field: "line21a"
+    type: money
+  - line: "line21b"
+    field: "line21b"
+    type: money
+  - line: "line21c"
+    field: "line21c"
+    type: money
+  # line22a / line22b are gone from the 2025 blank with the First time home buyers deduction (printed
+  # line 22 now reads "22. Reserved A. B."; the A. and B. boxes are still drawn but hold no widget).
+  - line: "line22"  # 2025 prints "22. Reserved" (2024: "First time home buyers deduction"); ReadOnly and,
+    field: "line22"  # new in 2025, /F Hidden (6); the JavaScript no longer computes it.
+    type: money      # LEAVE BLANK (P-007 class 3), the line20 treatment.
+  - line: "line23"  # 2025 prints "23. Reserved" (2024: "Long term dignity savings account deduction");
+    field: "line23"  # newly /Ff ReadOnly and /F Hidden (6) on the 2025 blank.
+    type: money      # LEAVE BLANK (P-007 class 3), the line20 treatment.
+  - line: "line24"
+    field: "line24"
+    type: money
+  - line: "line25"
+    field: "line25"
+    type: money
+  - line: "line26"
+    field: "line26"
+    type: money
+  - line: "line27Y"
+    field: "line27Y"
+    type: money
+  - line: "line27S"
+    field: "line27S"
+    type: money
+  - line: "line28Y"
+    field: "line28Y"
+    type: money
+  - line: "line28S"
+    field: "line28S"
+    type: money
+  - line: "line29Y"
+    field: "line29Y"
+    type: money
+  - line: "line29S"
+    field: "line29S"
+    type: money
+  - line: "line30Y"
+    field: "line30Y"
+    type: money
+  - line: "line30S"
+    field: "line30S"
+    type: money
+  - line: "line31Y"
+    field: "line31Y"
+    type: money
+  - line: "line31S"
+    field: "line31S"
+    type: money
+  - line: "line32Y"
+    field: "line32Y"
+    type: text
+  - line: "line32S"
+    field: "line32S"
+    type: text
+  - line: "txt01"
+    field: "txt01"
+    type: text
+  - line: "txt02"
+    field: "txt02"
+    type: text
+  - line: "33_YS"
+    field: "33_YS"
+    type: checkbox
+    on_state: "/X"
+  - line: "33_SP"
+    field: "33_SP"
+    type: checkbox
+    on_state: "/X"
+  - line: "line33Y"
+    field: "line33Y"
+    type: money
+  - line: "line33S"
+    field: "line33S"
+    type: money
+  - line: "34_lump"
+    field: "34_lump"
+    type: checkbox
+    on_state: "/X"
+  - line: "34_recapture"
+    field: "34_recapture"
+    type: checkbox
+    on_state: "/X"
+  - line: "line34Y"
+    field: "line34Y"
+    type: money
+  - line: "line34S"
+    field: "line34S"
+    type: money
+  - line: "line35Y"
+    field: "line35Y"
+    type: money
+  - line: "line35S"
+    field: "line35S"
+    type: money
+  - line: "line36"
+    field: "line36"
+    type: money
+  - line: "line37"
+    field: "line37"
+    type: money
+  - line: "line38"
+    field: "line38"
+    type: money
+  - line: "line39"
+    field: "line39"
+    type: money
+  - line: "line40"
+    field: "line40"
+    type: money
+  - line: "line41"
+    field: "line41"
+    type: money
+  - line: "line42"
+    field: "line42"
+    type: money
+  - line: "line43"
+    field: "line43"
+    type: money
+  - line: "line44"  # 44 Missouri Working Family Tax Credit (Attach Form MO-WFTC and federal return) — /Ff ReadOnly:
+    field: "line44"  # the bundled MO-WFTC's JS copies wftc_line10 here (P-007 class 4 — taxfill must write it or the credit files blank)
+    type: money
+  - line: "line45"
+    field: "line45"
+    type: money
+  - line: "line46"
+    field: "line46"
+    type: money
+  - line: "line47"
+    field: "line47"
+    type: money
+  - line: "line47a"
+    field: "line47a"
+    type: checkbox
+    on_state: "/X"
+  - line: "47mm"
+    field: "47mm"
+    type: text
+    maxlen: 2
+  - line: "47dd"
+    field: "47dd"
+    type: text
+    maxlen: 2
+  - line: "47yy"
+    field: "47yy"
+    type: text
+    maxlen: 2
+  - line: "line47b"
+    field: "line47b"
+    type: checkbox
+    on_state: "/X"
+  - line: "47byy"
+    field: "47byy"
+    type: text
+    maxlen: 2
+  - line: "line47c"
+    field: "line47c"
+    type: checkbox
+    on_state: "/X"
+  - line: "47cyy"
+    field: "47cyy"
+    type: text
+    maxlen: 2
+  - line: "line47d"
+    field: "line47d"
+    type: checkbox
+    on_state: "/X"
+  - line: "47dmm"
+    field: "47dmm"
+    type: text
+    maxlen: 2
+  - line: "47ddd"
+    field: "47ddd"
+    type: text
+    maxlen: 2
+  - line: "47dyy"
+    field: "47dyy"
+    type: text
+    maxlen: 2
+  - line: "line48"
+    field: "line48"
+    type: money
+  - line: "line49"
+    field: "line49"
+    type: money
+  - line: "line50"
+    field: "line50"
+    type: money
+  - line: "line51a"
+    field: "line51a"
+    type: money
+  - line: "line51b"
+    field: "line51b"
+    type: money
+  - line: "line51c"
+    field: "line51c"
+    type: money
+  - line: "line51d"
+    field: "line51d"
+    type: money
+  - line: "line51e"
+    field: "line51e"
+    type: money
+  - line: "line51f"
+    field: "line51f"
+    type: money
+  - line: "line51g"
+    field: "line51g"
+    type: money
+  - line: "line51h"
+    field: "line51h"
+    type: money
+  - line: "line51i"
+    field: "line51i"
+    type: money
+  - line: "line51j"
+    field: "line51j"
+    type: money
+  - line: "line51k"
+    field: "line51k"
+    type: money
+  - line: "line51l"
+    field: "line51l"
+    type: money
+  - line: "line51m_tfcd"  # 2-cell comb left text — face: "See instructions for additional trust fund codes"
+    field: "line51m_tfcd"
+    type: text
+    maxlen: 2
+  - line: "line51m"
+    field: "line51m"
+    type: money
+  - line: "line51n_tfcd"  # 2-cell comb left text — face: "See instructions for additional trust fund codes"
+    field: "line51n_tfcd"
+    type: text
+    maxlen: 2
+  - line: "line51n"
+    field: "line51n"
+    type: money
+  - line: "line51"
+    field: "line51"
+    type: money
+  - line: "line52"
+    field: "line52"
+    type: money
+  - line: "line53"
+    field: "line53"
+    type: money
+  - line: "bankaccttype"
+    field: "bankaccttype"
+    type: text
+  - line: "dd_routingno"  # 9-cell comb, digits only (as federal f1040 35b)
+    field: "dd_routingno"
+    type: text
+    maxlen: 9
+    comb: true
+  - line: "dd_acctno"  # 17-cell comb, digits only (as federal f1040 35d)
+    field: "dd_acctno"
+    type: text
+    maxlen: 17
+    comb: true
+  - line: "dd_checking"
+    field: "dd_checking"
+    type: checkbox
+    group: dd_account_type
+    on_state: "/X"
+  - line: "dd_savings"
+    field: "dd_savings"
+    type: checkbox
+    group: dd_account_type
+    on_state: "/X"
+  - line: "line54"
+    field: "line54"
+    type: money
+  - line: "line55"
+    field: "line55"
+    type: money
+  - line: "c.55"
+    field: "c.55"
+    type: checkbox
+    on_state: "/X"
+  - line: "line56"
+    field: "line56"
+    type: money
+  - line: "t.signature"
+    field: "t.signature"
+    type: text
+  - line: "date1mm"
+    field: "date1mm"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "date1dd"
+    field: "date1dd"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "date1yy"
+    field: "date1yy"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "t.spousesignature"
+    field: "t.spousesignature"
+    type: text
+  - line: "date2mm"
+    field: "date2mm"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "date2dd"
+    field: "date2dd"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "date2yy"
+    field: "date2yy"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "Emailaddress"
+    field: "Emailaddress"
+    type: text
+  - line: "dayphone"
+    field: "dayphone"
+    type: text
+  - line: "prepdatemm"
+    field: "prepdatemm"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "prepdatedd"
+    field: "prepdatedd"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "prepdateyy"
+    field: "prepdateyy"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "FEIN"  # 9-cell comb left text — face: "Preparer's FEIN, SSN, or PTIN" (a PTIN starts with P)
+    field: "FEIN"
+    type: text
+    maxlen: 9
+  - line: "prepphone"
+    field: "prepphone"
+    type: text
+  - line: "prepaddress"
+    field: "prepaddress"
+    type: text
+  - line: "prepstate"
+    field: "prepstate"
+    type: text
+    maxlen: 2
+  - line: "prepzipcode"
+    field: "prepzipcode"
+    type: text
+    maxlen: 5
+  - line: "YES"  # "I authorize the Director of Revenue or delegate to discuss my return ... with the preparer" Yes
+    field: "YES"
+    type: checkbox
+    on_state: "/X"
+    group: preparer_may_discuss
+  - line: "NO"  # ... No
+    field: "NO"
+    type: checkbox
+    on_state: "/X"
+    group: preparer_may_discuss
+  - line: "failtosignYES"  # "Did you pay a tax return preparer ... but the preparer failed to sign the return ...?" Yes
+    field: "failtosignYES"
+    type: checkbox
+    on_state: "/X"
+    group: preparer_failed_to_sign
+  - line: "failtosignNO"  # ... No
+    field: "failtosignNO"
+    type: checkbox
+    on_state: "/X"
+    group: preparer_failed_to_sign
+  - line: "E10"  # DOR "Department Use Only" extension code — the blank's JS sets it readonly and copies fedextension (X when fedextension is X, else empty); taxfill runs no JS, so set E10 whenever fedextension is checked (P-007 class 4)
+    field: "E10"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_y1"
+    field: "moa_y1"
+    type: money
+  - line: "moa_s1"
+    field: "moa_s1"
+    type: money
+  - line: "moa_y2"
+    field: "moa_y2"
+    type: money
+  - line: "moa_s2"
+    field: "moa_s2"
+    type: money
+  - line: "moa_y3"
+    field: "moa_y3"
+    type: money
+  - line: "moa_s3"
+    field: "moa_s3"
+    type: money
+  - line: "moa_y4"
+    field: "moa_y4"
+    type: text
+  - line: "moa_s4"
+    field: "moa_s4"
+    type: text
+  - line: "moa_y5"
+    field: "moa_y5"
+    type: money
+  - line: "moa_s5"
+    field: "moa_s5"
+    type: money
+  - line: "moa_y6"
+    field: "moa_y6"
+    type: money
+  - line: "moa_s6"
+    field: "moa_s6"
+    type: money
+  - line: "moa_y7"
+    field: "moa_y7"
+    type: money
+  - line: "moa_s7"
+    field: "moa_s7"
+    type: money
+  - line: "SSN-1"  # 9-cell comb printed as 3-2-4 boxes with the dashes pre-printed — digits only
+    field: "SSN-1"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: "SSN-2"  # 9-cell comb printed as 3-2-4 boxes with the dashes pre-printed — digits only
+    field: "SSN-2"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: "moa_1y"
+    field: "moa_1y"
+    type: money
+  - line: "moa_1s"
+    field: "moa_1s"
+    type: money
+  - line: "moa_2p"
+    field: "moa_2p"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2f"
+    field: "moa_2f"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2scorp"
+    field: "moa_2scorp"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2busint"
+    field: "moa_2busint"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2n"
+    field: "moa_2n"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2o"
+    field: "moa_2o"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_2other"
+    field: "moa_2other"
+    type: text
+  - line: "moa_2y"
+    field: "moa_2y"
+    type: money
+  - line: "moa_2s"
+    field: "moa_2s"
+    type: money
+  - line: "moa_3y"
+    field: "moa_3y"
+    type: money
+  - line: "moa_3s"
+    field: "moa_3s"
+    type: money
+  - line: "moa_4y"
+    field: "moa_4y"
+    type: money
+  - line: "moa_4s"
+    field: "moa_4s"
+    type: money
+  - line: "moa_5y"
+    field: "moa_5y"
+    type: money
+  - line: "moa_5s"
+    field: "moa_5s"
+    type: money
+  - line: "moa_6y"
+    field: "moa_6y"
+    type: money
+  - line: "moa_6s"
+    field: "moa_6s"
+    type: money
+  - line: "moa_7y"
+    field: "moa_7y"
+    type: money
+  - line: "moa_7s"
+    field: "moa_7s"
+    type: money
+  - line: "moa_8y"
+    field: "moa_8y"
+    type: money
+  - line: "moa_8s"
+    field: "moa_8s"
+    type: money
+  - line: "moa_9y"
+    field: "moa_9y"
+    type: money
+  - line: "moa_9s"
+    field: "moa_9s"
+    type: money
+  - line: "moa_10y"
+    field: "moa_10y"
+    type: money
+  - line: "moa_10s"
+    field: "moa_10s"
+    type: money
+  - line: "moa_11p"
+    field: "moa_11p"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11f"
+    field: "moa_11f"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11scorp"
+    field: "moa_11scorp"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11r"
+    field: "moa_11r"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11mil"
+    field: "moa_11mil"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11com"
+    field: "moa_11com"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11ba"
+    field: "moa_11ba"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11moPPTA"
+    field: "moa_11moPPTA"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11netop"
+    field: "moa_11netop"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11busint"
+    field: "moa_11busint"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11o"
+    field: "moa_11o"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_11other"
+    field: "moa_11other"
+    type: text
+  - line: "moa_11y"
+    field: "moa_11y"
+    type: money
+  - line: "moa_11s"
+    field: "moa_11s"
+    type: money
+  - line: "moa_12y"
+    field: "moa_12y"
+    type: money
+  - line: "moa_12s"
+    field: "moa_12s"
+    type: money
+  - line: "moa_13y"
+    field: "moa_13y"
+    type: money
+  - line: "moa_13s"
+    field: "moa_13s"
+    type: money
+  - line: "moa_13sold"
+    field: "moa_13sold"
+    type: checkbox
+    on_state: "/X"
+  - line: "moa_14y"
+    field: "moa_14y"
+    type: money
+  - line: "moa_14s"
+    field: "moa_14s"
+    type: money
+  - line: "moa_15y"
+    field: "moa_15y"
+    type: money
+  - line: "moa_15s"
+    field: "moa_15s"
+    type: money
+  - line: "moa_16y"
+    field: "moa_16y"
+    type: money
+  - line: "moa_16s"
+    field: "moa_16s"
+    type: money
+  - line: "moa_17y"
+    field: "moa_17y"
+    type: money
+  - line: "moa_17s"
+    field: "moa_17s"
+    type: money
+  - line: "moa_18y"  # 18Y Capital Gain — NEW 2025 printed row on the old field (2024 line 18 was the
+    field: "moa_18y"  # ReadOnly Total Subtractions); a filer entry cell now, the ReadOnly bit cleared
+    type: money
+  - line: "moa_18s"  # 18S Capital Gain, Spouse
+    field: "moa_18s"
+    type: money
+  - line: "moa_19y"  # 19Y Total Subtractions - Add Lines 8 through 18; carries to MO-1040 Line 4 — NEW 2025
+    field: "moa_19y"  # field, ReadOnly, JS-computed (P-007 class 4)
+    type: money
+  - line: "moa_19s"  # 19S same, Spouse
+    field: "moa_19s"
+    type: money
+  - line: "txtItemError"
+    field: "txtItemError"
+    type: text
+  - line: "moa_pt2_1"
+    field: "moa_pt2_1"
+    type: money
+  - line: "moa_pt2_2"
+    field: "moa_pt2_2"
+    type: money
+  - line: "moa_pt2_3"
+    field: "moa_pt2_3"
+    type: money
+  - line: "moa_pt2_4"
+    field: "moa_pt2_4"
+    type: money
+  - line: "moa_pt2_5"
+    field: "moa_pt2_5"
+    type: money
+  - line: "moa_pt2_6"
+    field: "moa_pt2_6"
+    type: money
+  - line: "moa_pt2_7"
+    field: "moa_pt2_7"
+    type: money
+  - line: "moa_pt2_8"
+    field: "moa_pt2_8"
+    type: money
+  - line: "moa_pt2_9"
+    field: "moa_pt2_9"
+    type: money
+  - line: "moa_pt2_10"
+    field: "moa_pt2_10"
+    type: money
+  - line: "moa_pt2_11"
+    field: "moa_pt2_11"
+    type: money
+  - line: "moa_pt2_12"
+    field: "moa_pt2_12"
+    type: money
+  - line: "P1040_L14"
+    field: "P1040_L14"
+    type: checkbox
+    on_state: "/X"
+  # Texto7 is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
+  - line: "moa_wks1"
+    field: "moa_wks1"
+    type: money
+  - line: "moa_wks2"
+    field: "moa_wks2"
+    type: money
+  - line: "moa_wks3"
+    field: "moa_wks3"
+    type: money
+  - line: "moa_wks4"
+    field: "moa_wks4"
+    type: money
+  - line: "moa_wks5"
+    field: "moa_wks5"
+    type: text
+  - line: "moa_wks6"  # Part 2 worksheet 6 "Enter the amount from Federal Schedule A, Line 5e" — 2025 re-cut the
+    field: "moa_wks6"  # row (2024: "Enter $10,000 ($5,000 if married filing separately)"); no longer ReadOnly
+    type: money
+  - line: "moa_wks7"
+    field: "moa_wks7"
+    type: money
+  # MOAText is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
+  - line: "UseWS3"
+    field: "UseWS3"
+    type: checkbox
+    on_state: "/X"
+  # MO-A Part 3 Section A (Public Pension Calculation), document page 8:
+  # printed lines 1-5 on Y/S-split fields, laid out as in 2024. Captions
+  # below are the 2025 printed rows.
+  - line: "moa_pt3_1y"  # 1Y Taxable pension from public sources (fed 1040/1040-SR line 5b), Yourself
+    field: "moa_pt3_1y"
+    type: money
+  - line: "moa_pt3_1s"  # 1S same, Spouse
+    field: "moa_pt3_1s"
+    type: money
+  - line: "moa_pt3_2y"  # 2Y Amount from Line 1 or $47,633 (maximum social security benefit), whichever is less — JS-computed, ReadOnly
+    field: "moa_pt3_2y"
+    type: money
+  - line: "moa_pt3_2s"  # 2S same, Spouse — JS-computed, ReadOnly
+    field: "moa_pt3_2s"
+    type: money
+  - line: "moa_pt3_3y"  # 3Y amount from Section C Line 3Y ("complete Form MO-A, Part 3, Section C, Lines 1 - 3") — JS-computed, ReadOnly
+    field: "moa_pt3_3y"
+    type: money
+  - line: "moa_pt3_3s"  # 3S amount carried from Section C Line 3S — JS-computed, ReadOnly
+    field: "moa_pt3_3s"
+    type: money
+  - line: "moa_pt3_4y"  # 4Y Subtract Line 3 from Line 2 (enter $0 if Line 3 > Line 2) — JS-computed, ReadOnly
+    field: "moa_pt3_4y"
+    type: money
+  - line: "moa_pt3_4s"  # 4S same, Spouse — JS-computed, ReadOnly
+    field: "moa_pt3_4s"
+    type: money
+  - line: "moa_pt3_5"  # 5 Total public pension. Add amounts on Lines 4Y and 4S — JS-computed, ReadOnly
+    field: "moa_pt3_5"
+    type: money
+  - line: "moa_pt4_1"
+    field: "moa_pt4_1"
+    type: money
+  - line: "moa_pt4_2"
+    field: "moa_pt4_2"
+    type: money
+  - line: "moa_pt4_3"
+    field: "moa_pt4_3"
+    type: money
+  - line: "moa_pt4_4"
+    field: "moa_pt4_4"
+    type: money
+  - line: "moa_pt4_5"
+    field: "moa_pt4_5"
+    type: money
+  - line: "moa_pt4_6y"
+    field: "moa_pt4_6y"
+    type: money
+  - line: "moa_pt4_6s"
+    field: "moa_pt4_6s"
+    type: money
+  - line: "moa_pt4_7y"
+    field: "moa_pt4_7y"
+    type: money
+  - line: "moa_pt4_7s"
+    field: "moa_pt4_7s"
+    type: money
+  - line: "moa_pt4_8"
+    field: "moa_pt4_8"
+    type: money
+  - line: "moa_pt4_9"
+    field: "moa_pt4_9"
+    type: money
+  # MO-A Part 3 Section C (Social Security or Social Security Disability
+  # Calculation), printed lines 1-4, and Section D, document page 8.
+  - line: "moa_pt5_1y"  # 1Y Taxable social security benefits (fed 1040/1040-SR line 6b), Yourself —
+    field: "moa_pt5_1y"  # JS-gated: the 2025 script still unlocks this cell only while age box 62-Y or 65-Y is checked (ReadOnly is the locked default)
+    type: money
+  - line: "moa_pt5_1s"  # 1S same, Spouse — unlocked by 62-S or 65-S
+    field: "moa_pt5_1s"
+    type: money
+  - line: "moa_pt5_2y"  # 2Y Taxable social security disability benefits (fed 1040/1040-SR line 6b), Yourself
+    field: "moa_pt5_2y"
+    type: money
+  - line: "moa_pt5_2s"  # 2S same, Spouse
+    field: "moa_pt5_2s"
+    type: money
+  - line: "moa_pt5_3y"  # 3Y "Amount from Line(s) 1Y or 2Y, and 1S or 2S" — JS-computed, ReadOnly
+    field: "moa_pt5_3y"
+    type: money
+  - line: "moa_pt5_3s"  # 3S same, Spouse — JS-computed, ReadOnly
+    field: "moa_pt5_3s"
+    type: money
+  - line: "moa_pt5_4"  # 4 Total social security/social security disability. Add Lines 3Y and 3S — JS-computed, ReadOnly
+    field: "moa_pt5_4"
+    type: money
+  - line: "moa_pt5_TE"  # Section D: Add Line 5 (Sec A), Line 9 (Sec B), Line 4 (Sec C); carries to MO-1040 Line 8 — JS-computed, ReadOnly
+    field: "moa_pt5_TE"
+    type: money
+  # Form MO-WFTC - 2025 Missouri Working Family Tax Credit (Revised 12-2025),
+  # document page 28 (2024: page 10). Its header name/SSN cells are
+  # extra widgets of the page-1 identity fields (SSN-1/SSN-2, firstname/min/
+  # lastname-1/-2) and are not re-mapped. The three qualification questions are
+  # each TWO independent single-widget /Btn fields (P-008 shape): the blank's
+  # own MultiCB JavaScript makes them exclusive in a viewer, taxfill never runs
+  # it, so each pair carries a group id. `required` is left off — MO-WFTC is an
+  # optional credit form. NOTE: the DOR named question 2's fields "MFJ_*" but
+  # its printed text asks about married-filing-SEPARATELY / claimed-as-a-
+  # dependent status; the mapping follows the printed face, not the name.
+  - line: "EIC_YES"  # Q1 Did you qualify for the Federal EIC on Federal Form 1040 or 1040SR? Yes - Continue
+    field: "EIC_YES"
+    type: checkbox
+    on_state: "/X"
+    group: "wftc_q1_eic"
+  - line: "EIC_NO"  # Q1 No - STOP. You do not qualify
+    field: "EIC_NO"
+    type: checkbox
+    on_state: "/X"
+    group: "wftc_q1_eic"
+  - line: "MFJ_YES"  # Q2 Filing status married filing separately or claimed as a dependent? Yes - STOP
+    field: "MFJ_YES"
+    type: checkbox
+    on_state: "/X"
+    group: "wftc_q2_mfs_or_dependent"
+  - line: "MFJ_NO"  # Q2 No - Continue
+    field: "MFJ_NO"
+    type: checkbox
+    on_state: "/X"
+    group: "wftc_q2_mfs_or_dependent"
+  - line: "INV_YES"  # Q3 "Do you have investment income greater than $4,400 (see instructions)?" Yes - STOP (2024: equal to or greater than $4,300)
+    field: "INV_YES"
+    type: checkbox
+    on_state: "/X"
+    group: "wftc_q3_investment_income"
+  - line: "INV_NO"  # Q3 No - Continue
+    field: "INV_NO"
+    type: checkbox
+    on_state: "/X"
+    group: "wftc_q3_investment_income"
+  - line: "QCName-1"  # Q4 Qualifying Children from Federal Schedule EIC, row 1: name
+    field: "QCName-1"
+    type: text
+  - line: "QCSSN-1"  # row 1: child's social security number
+    field: "QCSSN-1"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: "QCDOB-1"  # row 1: child's date of birth (MM/DD/YYYY)
+    field: "QCDOB-1"
+    type: text
+  - line: "QCName-2"
+    field: "QCName-2"
+    type: text
+  - line: "QCSSN-2"
+    field: "QCSSN-2"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: "QCDOB-2"
+    field: "QCDOB-2"
+    type: text
+  - line: "QCName-3"
+    field: "QCName-3"
+    type: text
+  - line: "QCSSN-3"
+    field: "QCSSN-3"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: "QCDOB-3"
+    field: "QCDOB-3"
+    type: text
+  - line: "wftc_line5"  # 5 Federal EIC from Federal Form 1040 or 1040-SR, Line 27
+    field: "wftc_line5"
+    type: money
+  - line: "wftc_line6"  # 6 Multiply Line 5 by 20% — JS-computed, ReadOnly
+    field: "wftc_line6"
+    type: money
+  - line: "wftc_line7"  # 7 Total Tax from Form MO-1040, Line 36 — JS-computed, ReadOnly
+    field: "wftc_line7"
+    type: money
+  - line: "wftc_line8"  # 8 Add Line 42 and Line 43 from Form MO-1040 — JS-computed, ReadOnly
+    field: "wftc_line8"
+    type: money
+  - line: "wftc_line9"  # 9 Subtract Line 8 from Line 7, if less than 0 enter 0 — JS-computed, ReadOnly
+    field: "wftc_line9"
+    type: money
+  - line: "wftc_line10"  # 10 Smaller of Line 6 or Line 9; carries to MO-1040 Line 44 — JS-computed, ReadOnly
+    field: "wftc_line10"
+    type: money
+  - line: "mocr_name-1"
+    field: "mocr_name-1"
+    type: text
+  - line: "mocr_name-2"
+    field: "mocr_name-2"
+    type: text
+  - line: "mocr_1y"  # MO-CR (document page 18) 1Y "Claimant's Missouri adjusted gross income (Form MO-1040, Line 5Y and Line 5S)"
+    field: "mocr_1y"
+    type: money
+  - line: "mocr_1s"
+    field: "mocr_1s"
+    type: money
+  - line: "mocr_2y"
+    field: "mocr_2y"
+    type: money
+  - line: "mocr_2s"
+    field: "mocr_2s"
+    type: money
+  - line: "mocr_st-1"
+    field: "mocr_st-1"
+    type: text
+    maxlen: 2
+  - line: "mocr_st-2"
+    field: "mocr_st-2"
+    type: text
+    maxlen: 2
+  - line: "mocr_3y"  # 3Y "Claimant's federal adjusted gross income from the other state" (2024: Wages and commissions)
+    field: "mocr_3y"
+    type: money
+  - line: "mocr_3s"
+    field: "mocr_3s"
+    type: money
+  # mocr_other1 (line 4 "Describe nature") is gone from the 2025 blank; line 4 now reads
+  # "Claimant's total Missouri additions from the other state".
+  - line: "mocr_4y"  # 4Y "Claimant's total Missouri additions from the other state" (2024: Other income)
+    field: "mocr_4y"
+    type: money
+  - line: "mocr_4s"
+    field: "mocr_4s"
+    type: money
+  - line: "mocr_5y"
+    field: "mocr_5y"
+    type: money
+  - line: "mocr_5s"
+    field: "mocr_5s"
+    type: money
+  - line: "mocr_6y"  # 6Y "Claimant's total Missouri subtractions from the other state" (2024: related adjustments)
+    field: "mocr_6y"
+    type: money
+  - line: "mocr_6s"
+    field: "mocr_6s"
+    type: money
+  - line: "mocr_7y"
+    field: "mocr_7y"
+    type: money
+  - line: "mocr_7s"
+    field: "mocr_7s"
+    type: money
+  - line: "mocr_8y"
+    field: "mocr_8y"
+    type: text
+  - line: "mocr_8s"
+    field: "mocr_8s"
+    type: text
+  - line: "mocr_9y"
+    field: "mocr_9y"
+    type: money
+  - line: "mocr_9s"
+    field: "mocr_9s"
+    type: money
+  - line: "mocr_10y"
+    field: "mocr_10y"
+    type: money
+  - line: "mocr_10s"
+    field: "mocr_10s"
+    type: money
+  - line: "mocr_11y"
+    field: "mocr_11y"
+    type: money
+  - line: "mocr_11s"
+    field: "mocr_11s"
+    type: money
+  - line: "mocr_1yb"  # MO-CR copy 2 (document page 20), the same lines 1-11 as copy 1
+    field: "mocr_1yb"
+    type: money
+  - line: "mocr_1sb"
+    field: "mocr_1sb"
+    type: money
+  - line: "mocr_2yb"
+    field: "mocr_2yb"
+    type: money
+  - line: "mocr_2sb"
+    field: "mocr_2sb"
+    type: money
+  - line: "mocr_st-1b"
+    field: "mocr_st-1b"
+    type: text
+    maxlen: 2
+  - line: "mocr_st-2b"
+    field: "mocr_st-2b"
+    type: text
+    maxlen: 2
+  - line: "mocr_3yb"
+    field: "mocr_3yb"
+    type: money
+  - line: "mocr_3sb"
+    field: "mocr_3sb"
+    type: money
+  # mocr_other1b is gone likewise (copy 2).
+  - line: "mocr_4yb"
+    field: "mocr_4yb"
+    type: money
+  - line: "mocr_4sb"
+    field: "mocr_4sb"
+    type: money
+  - line: "mocr_5yb"
+    field: "mocr_5yb"
+    type: money
+  - line: "mocr_5sb"
+    field: "mocr_5sb"
+    type: money
+  - line: "mocr_6yb"
+    field: "mocr_6yb"
+    type: money
+  - line: "mocr_6sb"
+    field: "mocr_6sb"
+    type: money
+  - line: "mocr_7yb"
+    field: "mocr_7yb"
+    type: money
+  - line: "mocr_7sb"
+    field: "mocr_7sb"
+    type: money
+  - line: "mocr_8yb"
+    field: "mocr_8yb"
+    type: text
+  - line: "mocr_8sb"
+    field: "mocr_8sb"
+    type: text
+  - line: "mocr_9yb"
+    field: "mocr_9yb"
+    type: money
+  - line: "mocr_9sb"
+    field: "mocr_9sb"
+    type: money
+  - line: "mocr_10yb"
+    field: "mocr_10yb"
+    type: money
+  - line: "mocr_10sb"
+    field: "mocr_10sb"
+    type: money
+  - line: "mocr_11yb"
+    field: "mocr_11yb"
+    type: money
+  - line: "mocr_11sb"
+    field: "mocr_11sb"
+    type: money
+  - line: "stateabbreviations"
+    field: "stateabbreviations"
+    type: text
+  - line: "mocrsch1_1y"  # MO-CR Schedule 1 (document page 19) 1Y "Claimant's Missouri adjusted gross income (MO-1040, Line 5Y and Line 5S)"
+    field: "mocrsch1_1y"
+    type: money
+  - line: "mocrsch1_1s"
+    field: "mocrsch1_1s"
+    type: money
+  - line: "mocrsch1_2y"
+    field: "mocrsch1_2y"
+    type: money
+  - line: "mocrsch1_2s"
+    field: "mocrsch1_2s"
+    type: money
+  - line: "mocrsch1_3y"
+    field: "mocrsch1_3y"
+    type: text
+  - line: "mocrsch1_3s"
+    field: "mocrsch1_3s"
+    type: text
+  - line: "mocrsch1_4y"
+    field: "mocrsch1_4y"
+    type: money
+  - line: "mocrsch1_4s"
+    field: "mocrsch1_4s"
+    type: money
+  - line: "mocrsch1_5y"
+    field: "mocrsch1_5y"
+    type: money
+  - line: "mocrsch1_5s"
+    field: "mocrsch1_5s"
+    type: money
+  # MO-CR Schedule 1, second copy (document page 21) — NEW in the 2025 bundle,
+  # after MO-CR copy 2. The same five printed lines as the first copy; its
+  # header reuses mocr_name-1/-2 and SSN-1/-2 (not re-mapped).
+  - line: "stateabbreviations_2"  # "State abbreviation - List the state from which the non-taxed S corporation income is sourced"
+    field: "stateabbreviations_2"
+    type: text
+  - line: "mocrsch1-2_1y"  # 1Y Claimant's Missouri adjusted gross income (MO-1040, Line 5Y) — JS copies line5-Y, ReadOnly
+    field: "mocrsch1-2_1y"
+    type: money
+  - line: "mocrsch1-2_1s"  # 1S same, Spouse (line5-S) — ReadOnly
+    field: "mocrsch1-2_1s"
+    type: money
+  - line: "mocrsch1-2_2y"  # 2Y Claimant's share of S corporation income derived from the non-taxed jurisdiction ...
+    field: "mocrsch1-2_2y"
+    type: money
+  - line: "mocrsch1-2_2s"  # 2S same, Spouse
+    field: "mocrsch1-2_2s"
+    type: money
+  - line: "mocrsch1-2_3y"  # 3Y percentage (Line 2 / Line 1; 100% if greater) — JS-computed, ReadOnly
+    field: "mocrsch1-2_3y"
+    type: text
+  - line: "mocrsch1-2_3s"  # 3S same, Spouse — JS-computed, ReadOnly
+    field: "mocrsch1-2_3s"
+    type: text
+  - line: "mocrsch1-2_4y"  # 4Y Claimant's Missouri income tax (Form MO-1040, Lines 30Y and 30S) — JS copies line30Y, ReadOnly
+    field: "mocrsch1-2_4y"
+    type: money
+  - line: "mocrsch1-2_4s"  # 4S same, Spouse (line30S) — ReadOnly
+    field: "mocrsch1-2_4s"
+    type: money
+  - line: "mocrsch1-2_5y"  # 5Y Multiply Line 4 by the percentage on Line 3 — JS-computed, ReadOnly
+    field: "mocrsch1-2_5y"
+    type: money
+  - line: "mocrsch1-2_5s"  # 5S same, Spouse — JS-computed, ReadOnly
+    field: "mocrsch1-2_5s"
+    type: money
+  - line: "nri_city"
+    field: "nri_city"
+    type: text
+  - line: "nri_line1_Ybx"  # MO-NRI "Select your status in the appropriate box below." Yourself 1. Nonresident of Missouri
+    field: "nri_line1_Ybx"
+    type: checkbox
+    on_state: "/X"
+    group: nri_status.yourself
+  - line: "nri_resid_Y"
+    field: "nri_resid_Y"
+    type: text
+    maxlen: 2
+  - line: "nri_line1_Sbx"  # Spouse 1. Nonresident of Missouri
+    field: "nri_line1_Sbx"
+    type: checkbox
+    on_state: "/X"
+    group: nri_status.spouse
+  - line: "nri_resid_S"
+    field: "nri_resid_S"
+    type: text
+    maxlen: 2
+  - line: "nri_line1_Yrwbx"
+    field: "nri_line1_Yrwbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line1_Srwbx"
+    field: "nri_line1_Srwbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line2_Ybx"  # Yourself 2. Part-Year Missouri Resident
+    field: "nri_line2_Ybx"
+    type: checkbox
+    on_state: "/X"
+    group: nri_status.yourself
+  - line: "nri_line2_Sbx"  # Spouse 2. Part-Year Missouri Resident
+    field: "nri_line2_Sbx"
+    type: checkbox
+    on_state: "/X"
+    group: nri_status.spouse
+  - line: "nri_line2_Yrwbx"
+    field: "nri_line2_Yrwbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line2_Srwbx"
+    field: "nri_line2_Srwbx"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line2a1"
+    field: "nri_line2a1"
+    type: text
+  - line: "nri_line2a2"
+    field: "nri_line2a2"
+    type: text
+  - line: "nri_line2Sa1"
+    field: "nri_line2Sa1"
+    type: text
+  - line: "nri_line2Sa2"
+    field: "nri_line2Sa2"
+    type: text
+  - line: "nri_line2bstate"
+    field: "nri_line2bstate"
+    type: text
+    maxlen: 2
+  - line: "nri_line2Sbstate"
+    field: "nri_line2Sbstate"
+    type: text
+    maxlen: 2
+  - line: "nri_line2b1"
+    field: "nri_line2b1"
+    type: text
+  - line: "nri_line2b2"
+    field: "nri_line2b2"
+    type: text
+  - line: "nri_line2Sb1"
+    field: "nri_line2Sb1"
+    type: text
+  - line: "nri_line2Sb2"
+    field: "nri_line2Sb2"
+    type: text
+  - line: "nri_line3_Ybx"  # Yourself 3. Military/Nonresident Tax Status
+    field: "nri_line3_Ybx"
+    type: checkbox
+    on_state: "/X"
+    group: nri_status.yourself
+  - line: "nri_line3_Sbx"  # Spouse 3. Military/Nonresident Tax Status
+    field: "nri_line3_Sbx"
+    type: checkbox
+    on_state: "/X"
+    group: nri_status.spouse
+  - line: "nri_line3Ya"
+    field: "nri_line3Ya"
+    type: checkbox
+    group: nri_line3.yourself
+    on_state: "/X"
+  - line: "nri_3aYstate2"
+    field: "nri_3aYstate2"
+    type: text
+    maxlen: 2
+  - line: "nri_line3aS"
+    field: "nri_line3aS"
+    type: checkbox
+    group: nri_line3.spouse
+    on_state: "/X"
+  - line: "nri_line3aSstate2"
+    field: "nri_line3aSstate2"
+    type: text
+  - line: "nri_3Ya"
+    field: "nri_3Ya"
+    type: checkbox
+    group: nri_line3.yourself
+    on_state: "/X"
+  - line: "nri_3Ystate2"
+    field: "nri_3Ystate2"
+    type: text
+  - line: "nri_line3bS"
+    field: "nri_line3bS"
+    type: checkbox
+    group: nri_line3.spouse
+    on_state: "/X"
+  - line: "nri_line3bSstate2"
+    field: "nri_line3bSstate2"
+    type: text
+  - line: "nri_3bYstate3"
+    field: "nri_3bYstate3"
+    type: text
+    maxlen: 2
+  - line: "nri_line3bSstate3"
+    field: "nri_line3bSstate3"
+    type: text
+    maxlen: 2
+  - line: "A-Y"
+    field: "A-Y"
+    type: money
+  - line: "A-S"
+    field: "A-S"
+    type: money
+  - line: "B-Y"
+    field: "B-Y"
+    type: money
+  - line: "B-S"
+    field: "B-S"
+    type: money
+  - line: "C-Y"
+    field: "C-Y"
+    type: money
+  - line: "C-S"
+    field: "C-S"
+    type: money
+  - line: "D-Y"
+    field: "D-Y"
+    type: money
+  - line: "D-S"
+    field: "D-S"
+    type: money
+  - line: "E-Y"
+    field: "E-Y"
+    type: money
+  - line: "E-S"
+    field: "E-S"
+    type: money
+  - line: "F-Y"
+    field: "F-Y"
+    type: money
+  - line: "F-S"
+    field: "F-S"
+    type: money
+  - line: "G-Y"
+    field: "G-Y"
+    type: money
+  - line: "G-S"
+    field: "G-S"
+    type: money
+  - line: "H-Y"
+    field: "H-Y"
+    type: money
+  - line: "H-S"
+    field: "H-S"
+    type: money
+  - line: "I-Y"
+    field: "I-Y"
+    type: money
+  - line: "I-S"
+    field: "I-S"
+    type: money
+  - line: "J-Y"
+    field: "J-Y"
+    type: money
+  - line: "J-S"
+    field: "J-S"
+    type: money
+  - line: "K-Y"
+    field: "K-Y"
+    type: money
+  - line: "K-S"
+    field: "K-S"
+    type: money
+  - line: "L-Y"
+    field: "L-Y"
+    type: money
+  - line: "L-S"
+    field: "L-S"
+    type: money
+  - line: "M-Y"
+    field: "M-Y"
+    type: money
+  - line: "M-S"
+    field: "M-S"
+    type: money
+  - line: "N-Y"
+    field: "N-Y"
+    type: money
+  - line: "N-S"
+    field: "N-S"
+    type: money
+  - line: "O-Y"
+    field: "O-Y"
+    type: money
+  - line: "O-S"
+    field: "O-S"
+    type: money
+  - line: "P-Y"
+    field: "P-Y"
+    type: money
+  - line: "P-S"
+    field: "P-S"
+    type: money
+  - line: "Q-Y"
+    field: "Q-Y"
+    type: money
+  - line: "Q-S"
+    field: "Q-S"
+    type: money
+  - line: "R-Y"
+    field: "R-Y"
+    type: money
+  - line: "R-S"
+    field: "R-S"
+    type: money
+  - line: "S-Y"
+    field: "S-Y"
+    type: money
+  - line: "S-S"
+    field: "S-S"
+    type: money
+  - line: "T-Y"
+    field: "T-Y"
+    type: money
+  - line: "T-S"
+    field: "T-S"
+    type: money
+  - line: "U-Y"
+    field: "U-Y"
+    type: money
+  - line: "U-S"
+    field: "U-S"
+    type: money
+  # lblNRI is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
+  - line: "UseWS1"
+    field: "UseWS1"
+    type: checkbox
+    on_state: "/X"
+  - line: "nri_line1Y"
+    field: "nri_line1Y"
+    type: money
+  - line: "nri_line1S"
+    field: "nri_line1S"
+    type: money
+  - line: "nri_line2Y"
+    field: "nri_line2Y"
+    type: money
+  - line: "nri_line2S"
+    field: "nri_line2S"
+    type: money
+  - line: "UseNRI01"
+    field: "UseNRI01"
+    type: checkbox
+    on_state: "/X"
+  # 1040_32Text2 is NOT mapped — a writable 6 pt red caption cell whose blank /V
+  # is " CHECK to fill Line 32Y" (the label of UseNRI01); a fill overwrites it.
+  - line: "UseNRI02"
+    field: "UseNRI02"
+    type: checkbox
+    on_state: "/X"
+  # 1040_32Text3 is NOT mapped — same shape, blank /V " CHECK to fill Line 32S"
+  # (the label of UseNRI02).
+  - line: "nri_line3Y"
+    field: "nri_line3Y"
+    type: text
+  - line: "nri_line3S"
+    field: "nri_line3S"
+    type: text
+  - line: "t.tc_name-1"
+    field: "t.tc_name-1"
+    type: text
+  - line: "t.tc_name-2"
+    field: "t.tc_name-2"
+    type: text
+  - line: "t.tc_corpname"
+    field: "t.tc_corpname"
+    type: text
+  - line: "d.tc_charterno"  # 11-cell comb left text — no character set printed on the face
+    field: "d.tc_charterno"
+    type: text
+    maxlen: 11
+  - line: "d.tc_mitsno"  # 8-cell comb left text — no character set printed on the face
+    field: "d.tc_mitsno"
+    type: text
+    maxlen: 8
+  - line: "t.tc_bn1"  # 6-cell comb — face: "The number is the last six (6) digits of the number"; rows 2-10 are plain /Tx
+    field: "t.tc_bn1"
+    type: text
+    maxlen: 6
+    comb: true
+  - line: "t.tc.ac1"
+    field: "t.tc.ac1"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn1"
+    field: "t.tc_cn1"
+    type: text
+  - line: "n.tc_c1_1"
+    field: "n.tc_c1_1"
+    type: money
+  - line: "n.tc_c2_1"
+    field: "n.tc_c2_1"
+    type: money
+  - line: "t.tc_bn2"
+    field: "t.tc_bn2"
+    type: text
+  - line: "t.tc.ac2"
+    field: "t.tc.ac2"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn2"
+    field: "t.tc_cn2"
+    type: text
+  - line: "n.tc_c1_2"
+    field: "n.tc_c1_2"
+    type: money
+  - line: "n.tc_c2_2"
+    field: "n.tc_c2_2"
+    type: money
+  - line: "t.tc_bn3"
+    field: "t.tc_bn3"
+    type: text
+  - line: "t.tc.ac3"
+    field: "t.tc.ac3"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn3"
+    field: "t.tc_cn3"
+    type: text
+  - line: "n.tc_c1_3"
+    field: "n.tc_c1_3"
+    type: money
+  - line: "n.tc_c2_3"
+    field: "n.tc_c2_3"
+    type: money
+  - line: "t.tc_bn4"
+    field: "t.tc_bn4"
+    type: text
+  - line: "t.tc.ac4"
+    field: "t.tc.ac4"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn4"
+    field: "t.tc_cn4"
+    type: text
+  - line: "n.tc_c1_4"
+    field: "n.tc_c1_4"
+    type: money
+  - line: "n.tc_c2_4"
+    field: "n.tc_c2_4"
+    type: money
+  - line: "t.tc_bn5"
+    field: "t.tc_bn5"
+    type: text
+  - line: "t.tc.ac5"
+    field: "t.tc.ac5"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn5"
+    field: "t.tc_cn5"
+    type: text
+  - line: "n.tc_c1_5"
+    field: "n.tc_c1_5"
+    type: money
+  - line: "n.tc_c2_5"
+    field: "n.tc_c2_5"
+    type: money
+  - line: "t.tc_bn6"
+    field: "t.tc_bn6"
+    type: text
+  - line: "t.tc.ac6"
+    field: "t.tc.ac6"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn6"
+    field: "t.tc_cn6"
+    type: text
+  - line: "n.tc_c1_6"
+    field: "n.tc_c1_6"
+    type: money
+  - line: "n.tc_c2_6"
+    field: "n.tc_c2_6"
+    type: money
+  - line: "t.tc_bn7"
+    field: "t.tc_bn7"
+    type: text
+  - line: "t.tc.ac7"
+    field: "t.tc.ac7"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn7"
+    field: "t.tc_cn7"
+    type: text
+  - line: "n.tc_c1_7"
+    field: "n.tc_c1_7"
+    type: money
+  - line: "n.tc_c2_7"
+    field: "n.tc_c2_7"
+    type: money
+  - line: "t.tc_bn8"
+    field: "t.tc_bn8"
+    type: text
+  - line: "t.tc.ac8"
+    field: "t.tc.ac8"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn8"
+    field: "t.tc_cn8"
+    type: text
+  - line: "n.tc_c1_8"
+    field: "n.tc_c1_8"
+    type: money
+  - line: "n.tc_c2_8"
+    field: "n.tc_c2_8"
+    type: money
+  - line: "t.tc_bn9"
+    field: "t.tc_bn9"
+    type: text
+  - line: "t.tc.ac9"
+    field: "t.tc.ac9"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn9"
+    field: "t.tc_cn9"
+    type: text
+  - line: "n.tc_c1_9"
+    field: "n.tc_c1_9"
+    type: money
+  - line: "n.tc_c2_9"
+    field: "n.tc_c2_9"
+    type: money
+  - line: "t.tc_bn10"
+    field: "t.tc_bn10"
+    type: text
+  - line: "t.tc.ac10"
+    field: "t.tc.ac10"
+    type: text
+    maxlen: 3
+  - line: "t.tc_cn10"
+    field: "t.tc_cn10"
+    type: text
+  - line: "n.tc_c1_10"
+    field: "n.tc_c1_10"
+    type: money
+  - line: "n.tc_c2_10"
+    field: "n.tc_c2_10"
+    type: money
+  - line: "n.tc_c1_11"
+    field: "n.tc_c1_11"
+    type: money
+  - line: "n.tc_c2_11"
+    field: "n.tc_c2_11"
+    type: money
+  - line: "n.tc_c1_12"
+    field: "n.tc_c1_12"
+    type: money
+  - line: "n.tc_c2_12"
+    field: "n.tc_c2_12"
+    type: money
+  - line: "n.tc_c1_13"
+    field: "n.tc_c1_13"
+    type: money
+  # Line 1 Adjusted Gross Income Worksheet for Combined Return (document page 30).
+  # 2025 prints 11 lines (2024: 18); the keys name the 2025 printed line, so the
+  # total / adjustments / AGI rows bind fields 16-*, 17-* and 18-* (see RE-KEYED).
+  - line: "1-Y"  # 1 Wages, salaries, tips, etc. (Federal Form 1040 or 1040-SR line 1z), Yourself
+    field: "1-Y"
+    type: money
+  - line: "1-S"  # 1 Spouse
+    field: "1-S"
+    type: money
+  - line: "2-Y"  # 2 Taxable interest income (2b), Yourself
+    field: "2-Y"
+    type: money
+  - line: "2-S"  # 2 Spouse
+    field: "2-S"
+    type: money
+  - line: "3-Y"  # 3 Dividend income (3b), Yourself
+    field: "3-Y"
+    type: money
+  - line: "3-S"  # 3 Spouse
+    field: "3-S"
+    type: money
+  - line: "4-Y"  # 4 Taxable IRA distributions (4b) — 2024 line 4 was state and local income tax refunds, Yourself
+    field: "4-Y"
+    type: money
+  - line: "4-S"  # 4 Spouse
+    field: "4-S"
+    type: money
+  - line: "5-Y"  # 5 Taxable pensions and annuities (5b) — 2024: alimony received, Yourself
+    field: "5-Y"
+    type: money
+  - line: "5-S"  # 5 Spouse
+    field: "5-S"
+    type: money
+  - line: "6-Y"  # 6 Taxable social security benefits (6b) — 2024: business income or loss, Yourself
+    field: "6-Y"
+    type: money
+  - line: "6-S"  # 6 Spouse
+    field: "6-S"
+    type: money
+  - line: "7-Y"  # 7 Capital gain or (loss) (7a), Yourself
+    field: "7-Y"
+    type: money
+  - line: "7-S"  # 7 Spouse
+    field: "7-S"
+    type: money
+  - line: "8-Y"  # 8 Federal additional income (8) — 2024: other gains or losses, Yourself
+    field: "8-Y"
+    type: money
+  - line: "8-S"  # 8 Spouse
+    field: "8-S"
+    type: money
+  - line: "9-Y"  # 9 Total (add Lines 1 through 8) — JS-computed, ReadOnly; field 16-* (2024's line-16 total), Yourself
+    field: "16-Y"
+    type: money
+  - line: "9-S"  # 9 Spouse
+    field: "16-S"
+    type: money
+  - line: "10-Y"  # 10 Subtract federal adjustments to income (10); field 17-*, Yourself
+    field: "17-Y"
+    type: money
+  - line: "10-S"  # 10 Spouse
+    field: "17-S"
+    type: money
+  - line: "11-Y"  # 11 Federal adjusted gross income (Line 9 minus Line 10), to MO-1040 Lines 1Y and 1S (federal 11a) — JS-computed, ReadOnly; field 18-*, Yourself
+    field: "18-Y"
+    type: money
+  - line: "11-S"  # 11 Spouse
+    field: "18-S"
+    type: money
+  # Texto8 is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
+  - line: "UseWS2"
+    field: "UseWS2"
+    type: checkbox
+    on_state: "/X"
+  - line: "d.pts_bd_mm-1"
+    field: "d.pts_bd_mm-1"
+    type: text
+    maxlen: 2
+  - line: "d.pts_bd_dd-1"
+    field: "d.pts_bd_dd-1"
+    type: text
+    maxlen: 2
+  - line: "d.pts_bd_yy-1"
+    field: "d.pts_bd_yy-1"
+    type: text
+    maxlen: 4
+  - line: "d.pts_bd_mm-2"
+    field: "d.pts_bd_mm-2"
+    type: text
+    maxlen: 2
+  - line: "d.pts_bd_dd-2"
+    field: "d.pts_bd_dd-2"
+    type: text
+    maxlen: 2
+  - line: "d.pts_bd_yy-2"
+    field: "d.pts_bd_yy-2"
+    type: text
+    maxlen: 4
+  - line: "c.pts_65"  # MO-PTS "Select only one qualification." A. 65 years of age or older
+    field: "c.pts_65"
+    type: checkbox
+    on_state: "/X"
+    group: pts_qualification
+  - line: "c.pts_100disvet"  # B. 100% Disabled Veteran
+    field: "c.pts_100disvet"
+    type: checkbox
+    on_state: "/X"
+    group: pts_qualification
+  - line: "c.pts_100disabled"  # C. 100% Disabled
+    field: "c.pts_100disabled"
+    type: checkbox
+    on_state: "/X"
+    group: pts_qualification
+  - line: "c.pts_60orolder"  # D. 60 years of age or older and received surviving spouse benefits
+    field: "c.pts_60orolder"
+    type: checkbox
+    on_state: "/X"
+    group: pts_qualification
+  - line: "c.pts_single"  # MO-PTS "Select only one filing status." Single
+    field: "c.pts_single"
+    type: checkbox
+    on_state: "/X"
+    group: pts_filing_status
+  - line: "c.pts_married"  # Married - Filing Combined
+    field: "c.pts_married"
+    type: checkbox
+    on_state: "/X"
+    group: pts_filing_status
+  - line: "c.pts_marrlivsep"  # Married - Living Separate for Entire Year
+    field: "c.pts_marrlivsep"
+    type: checkbox
+    on_state: "/X"
+    group: pts_filing_status
+  - line: "n.pts_1"
+    field: "n.pts_1"
+    type: money
+  - line: "n.pts_2"
+    field: "n.pts_2"
+    type: money
+  - line: "n.pts_3"
+    field: "n.pts_3"
+    type: money
+  - line: "n.pts_4"
+    field: "n.pts_4"
+    type: money
+  - line: "n.pts_5"
+    field: "n.pts_5"
+    type: money
+  - line: "n.pts_6"
+    field: "n.pts_6"
+    type: money
+  - line: "n.pts_7"
+    field: "n.pts_7"
+    type: money
+  - line: "n.pts_8"
+    field: "n.pts_8"
+    type: money
+  - line: "n.pts_9"
+    field: "n.pts_9"
+    type: money
+  # Text1 is NOT mapped (2026-09-23): an empty ReadOnly /Tx whose only job is
+  # the black border (/MK /BC) framing the c.ownfullyear checkbox 1pt inside
+  # it - see the header's UNMAPPED LABEL BANNERS AND FRAME note.
+  - line: "c.ownfullyear"
+    field: "c.ownfullyear"
+    type: checkbox
+    on_state: "/X"
+  # Texto9 is NOT mapped (2026-09-23): a ReadOnly DOR caption, not a line -
+  # see the header's UNMAPPED LABEL BANNERS AND FRAME note.
+  - line: "n.pts_10"
+    field: "n.pts_10"
+    type: money
+  - line: "n.pts_11"
+    field: "n.pts_11"
+    type: money
+  - line: "n.pts_12"
+    field: "n.pts_12"
+    type: money
+  - line: "n.pts_13"
+    field: "n.pts_13"
+    type: money
+  - line: "n.pts_14"
+    field: "n.pts_14"
+    type: money
+  - line: "c.crp_relatedYa"
+    field: "c.crp_relatedYa"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explain"
+    field: "t.crp_explain"
+    type: text
+  - line: "t.crp_address1"
+    field: "t.crp_address1"
+    type: text
+  - line: "t.crp_apt1"
+    field: "t.crp_apt1"
+    type: text
+    maxlen: 4
+  - line: "t.crp_city1"
+    field: "t.crp_city1"
+    type: text
+  - line: "t.crp_state1"  # 2-cell comb left text — two-letter state
+    field: "t.crp_state1"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1"
+    field: "t.crp_zip1"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "t.crp_llname1"
+    field: "t.crp_llname1"
+    type: text
+  - line: "t.crp_lladdress1"
+    field: "t.crp_lladdress1"
+    type: text
+  - line: "t.crp_llapt1"
+    field: "t.crp_llapt1"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1"
+    field: "t.crp_llcity1"
+    type: text
+  - line: "t.crp_llstate1"  # 2-cell comb left text — two-letter state
+    field: "t.crp_llstate1"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1"
+    field: "t.crp_llzip1"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "d.crp_llphone1"
+    field: "d.crp_llphone1"
+    type: text
+  - line: "d.crp_5fr_mm-1"
+    field: "d.crp_5fr_mm-1"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5fr_dd-1"
+    field: "d.crp_5fr_dd-1"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_mm-1"
+    field: "d.crp_5to_mm-1"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_dd-1"
+    field: "d.crp_5to_dd-1"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "n.crp_6a"
+    field: "n.crp_6a"
+    type: money
+  - line: "n.crp_7a"
+    field: "n.crp_7a"
+    type: text
+  - line: "c.crp_7aa"  # MO-CRP copy a line 7 "Select the appropriate box below" — one type: A. Apartment, House, Mobile Home, or Duplex - 100%
+    field: "c.crp_7aa"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.a
+  - line: "c.crp_7ba"  # B. Mobile Home Lot - 100%
+    field: "c.crp_7ba"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.a
+  - line: "c.crp_7ca"  # C. Boarding Home or Residential Care - 50%
+    field: "c.crp_7ca"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.a
+  - line: "c.crp_7da"  # D. Skilled or Intermediate Care Nursing Home - 45%
+    field: "c.crp_7da"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.a
+  - line: "c.crp_7ea"  # E. Hotel - 100%
+    field: "c.crp_7ea"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.a
+  - line: "c.crp_7ha"  # E: "if meals are included - 50%" — a modifier of E (the JS checks 7e with it), no group
+    field: "c.crp_7ha"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fa"  # F. Low Income Housing - 100%
+    field: "c.crp_7fa"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.a
+  - line: "c.crp_7ga"  # G. Shared Residence
+    field: "c.crp_7ga"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.a
+  - line: "c.crp_7ia"  # "select the appropriate box based on the additional person(s) sharing rent" — G: 1 (50%)
+    field: "c.crp_7ia"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.a
+  - line: "c.crp_7ja"  # G: 2 (33%)
+    field: "c.crp_7ja"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.a
+  - line: "c.crp_7ka"  # G: 3 (25%)
+    field: "c.crp_7ka"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.a
+  - line: "n.crp_8a"
+    field: "n.crp_8a"
+    type: money
+  - line: "n.crp_9a"
+    field: "n.crp_9a"
+    type: money
+  - line: "c.crp_relatedYb"
+    field: "c.crp_relatedYb"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explainb"
+    field: "t.crp_explainb"
+    type: text
+  - line: "t.crp_address1b"
+    field: "t.crp_address1b"
+    type: text
+  - line: "t.crp_apt1b"
+    field: "t.crp_apt1b"
+    type: text
+    maxlen: 4
+  - line: "t.crp_citystate1b"
+    field: "t.crp_citystate1b"
+    type: text
+  - line: "t.crp_state1b"  # 2-cell comb left text — two-letter state
+    field: "t.crp_state1b"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1b"
+    field: "t.crp_zip1b"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "t.crp_llname1b"
+    field: "t.crp_llname1b"
+    type: text
+  - line: "t.crp_lladdress1b"
+    field: "t.crp_lladdress1b"
+    type: text
+  - line: "t.crp_llapt1b"
+    field: "t.crp_llapt1b"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1b"
+    field: "t.crp_llcity1b"
+    type: text
+  - line: "t.crp_llstate1b"  # 2-cell comb left text — two-letter state
+    field: "t.crp_llstate1b"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1b"
+    field: "t.crp_llzip1b"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "d.crp_llphone1b"
+    field: "d.crp_llphone1b"
+    type: text
+  - line: "d.crp_5fr_mm-2"
+    field: "d.crp_5fr_mm-2"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5fr_dd-2"
+    field: "d.crp_5fr_dd-2"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_mm-2"
+    field: "d.crp_5to_mm-2"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_dd-2"
+    field: "d.crp_5to_dd-2"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "n.crp_6b"
+    field: "n.crp_6b"
+    type: money
+  - line: "n.crp_7b"
+    field: "n.crp_7b"
+    type: text
+  - line: "c.crp_7ab"  # MO-CRP copy b line 7 "Select the appropriate box below" — one type: A. Apartment, House, Mobile Home, or Duplex - 100%
+    field: "c.crp_7ab"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.b
+  - line: "c.crp_7bb"  # B. Mobile Home Lot - 100%
+    field: "c.crp_7bb"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.b
+  - line: "c.crp_7cb"  # C. Boarding Home or Residential Care - 50%
+    field: "c.crp_7cb"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.b
+  - line: "c.crp_7db"  # D. Skilled or Intermediate Care Nursing Home - 45%
+    field: "c.crp_7db"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.b
+  - line: "c.crp_7eb"  # E. Hotel - 100%
+    field: "c.crp_7eb"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.b
+  - line: "c.crp_7hb"  # E: "if meals are included - 50%" — a modifier of E (the JS checks 7e with it), no group
+    field: "c.crp_7hb"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fb"  # F. Low Income Housing - 100%
+    field: "c.crp_7fb"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.b
+  - line: "c.crp_7gb"  # G. Shared Residence
+    field: "c.crp_7gb"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.b
+  - line: "c.crp_7ib"  # "select the appropriate box based on the additional person(s) sharing rent" — G: 1 (50%)
+    field: "c.crp_7ib"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.b
+  - line: "c.crp_7jb"  # G: 2 (33%)
+    field: "c.crp_7jb"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.b
+  - line: "c.crp_7kb"  # G: 3 (25%)
+    field: "c.crp_7kb"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.b
+  - line: "n.crp_8b"
+    field: "n.crp_8b"
+    type: money
+  - line: "n.crp_9b"
+    field: "n.crp_9b"
+    type: money
+  - line: "c.crp_relatedYc"
+    field: "c.crp_relatedYc"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explainc"
+    field: "t.crp_explainc"
+    type: text
+  - line: "t.crp_address1c"
+    field: "t.crp_address1c"
+    type: text
+  - line: "t.crp_apt1c"
+    field: "t.crp_apt1c"
+    type: text
+    maxlen: 4
+  - line: "t.crp_citystate1c"
+    field: "t.crp_citystate1c"
+    type: text
+  - line: "t.crp_state1c"  # 2-cell comb left text — two-letter state
+    field: "t.crp_state1c"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1c"
+    field: "t.crp_zip1c"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "t.crp_llname1c"
+    field: "t.crp_llname1c"
+    type: text
+  - line: "t.crp_lladdress1c"
+    field: "t.crp_lladdress1c"
+    type: text
+  - line: "t.crp_llapt1c"
+    field: "t.crp_llapt1c"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1c"
+    field: "t.crp_llcity1c"
+    type: text
+  - line: "t.crp_llstate1c"  # 2-cell comb left text — two-letter state
+    field: "t.crp_llstate1c"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1c"
+    field: "t.crp_llzip1c"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "d.crp_llphone1c"
+    field: "d.crp_llphone1c"
+    type: text
+  - line: "d.crp_5fr_mm-3"
+    field: "d.crp_5fr_mm-3"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5fr_dd-3"
+    field: "d.crp_5fr_dd-3"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_mm-3"
+    field: "d.crp_5to_mm-3"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_dd-3"
+    field: "d.crp_5to_dd-3"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "n.crp_6c"
+    field: "n.crp_6c"
+    type: money
+  - line: "n.crp_7c"
+    field: "n.crp_7c"
+    type: text
+  - line: "c.crp_7ac"  # MO-CRP copy c line 7 "Select the appropriate box below" — one type: A. Apartment, House, Mobile Home, or Duplex - 100%
+    field: "c.crp_7ac"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.c
+  - line: "c.crp_7bc"  # B. Mobile Home Lot - 100%
+    field: "c.crp_7bc"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.c
+  - line: "c.crp_7cc"  # C. Boarding Home or Residential Care - 50%
+    field: "c.crp_7cc"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.c
+  - line: "c.crp_7dc"  # D. Skilled or Intermediate Care Nursing Home - 45%
+    field: "c.crp_7dc"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.c
+  - line: "c.crp_7ec"  # E. Hotel - 100%
+    field: "c.crp_7ec"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.c
+  - line: "c.crp_7hc"  # E: "if meals are included - 50%" — a modifier of E (the JS checks 7e with it), no group
+    field: "c.crp_7hc"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fc"  # F. Low Income Housing - 100%
+    field: "c.crp_7fc"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.c
+  - line: "c.crp_7gc"  # G. Shared Residence
+    field: "c.crp_7gc"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.c
+  - line: "c.crp_7ic"  # "select the appropriate box based on the additional person(s) sharing rent" — G: 1 (50%)
+    field: "c.crp_7ic"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.c
+  - line: "c.crp_7jc"  # G: 2 (33%)
+    field: "c.crp_7jc"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.c
+  - line: "c.crp_7kc"  # G: 3 (25%)
+    field: "c.crp_7kc"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.c
+  - line: "n.crp_8c"
+    field: "n.crp_8c"
+    type: money
+  - line: "n.crp_9c"
+    field: "n.crp_9c"
+    type: money
+  - line: "c.crp_relatedYd"
+    field: "c.crp_relatedYd"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explaind"
+    field: "t.crp_explaind"
+    type: text
+  - line: "t.crp_address1d"
+    field: "t.crp_address1d"
+    type: text
+  - line: "t.crp_apt1d"
+    field: "t.crp_apt1d"
+    type: text
+    maxlen: 4
+  - line: "t.crp_citystate1d"
+    field: "t.crp_citystate1d"
+    type: text
+  - line: "t.crp_state1d"  # 2-cell comb left text — two-letter state
+    field: "t.crp_state1d"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1d"
+    field: "t.crp_zip1d"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "t.crp_llname1d"
+    field: "t.crp_llname1d"
+    type: text
+  - line: "t.crp_lladdress1d"
+    field: "t.crp_lladdress1d"
+    type: text
+  - line: "t.crp_llapt1d"
+    field: "t.crp_llapt1d"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1d"
+    field: "t.crp_llcity1d"
+    type: text
+  - line: "t.crp_llstate1d"  # 2-cell comb left text — two-letter state
+    field: "t.crp_llstate1d"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1d"
+    field: "t.crp_llzip1d"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "d.crp_llphone1d"
+    field: "d.crp_llphone1d"
+    type: text
+  - line: "d.crp_5fr_mm-4"
+    field: "d.crp_5fr_mm-4"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5fr_dd-4"
+    field: "d.crp_5fr_dd-4"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_mm-4"
+    field: "d.crp_5to_mm-4"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_dd-4"
+    field: "d.crp_5to_dd-4"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "n.crp_6d"
+    field: "n.crp_6d"
+    type: money
+  - line: "n.crp_7d"
+    field: "n.crp_7d"
+    type: text
+  - line: "c.crp_7ad"  # MO-CRP copy d line 7 "Select the appropriate box below" — one type: A. Apartment, House, Mobile Home, or Duplex - 100%
+    field: "c.crp_7ad"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.d
+  - line: "c.crp_7bd"  # B. Mobile Home Lot - 100%
+    field: "c.crp_7bd"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.d
+  - line: "c.crp_7cd"  # C. Boarding Home or Residential Care - 50%
+    field: "c.crp_7cd"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.d
+  - line: "c.crp_7dd"  # D. Skilled or Intermediate Care Nursing Home - 45%
+    field: "c.crp_7dd"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.d
+  - line: "c.crp_7ed"  # E. Hotel - 100%
+    field: "c.crp_7ed"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.d
+  - line: "c.crp_7hd"  # E: "if meals are included - 50%" — a modifier of E (the JS checks 7e with it), no group
+    field: "c.crp_7hd"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fd"  # F. Low Income Housing - 100%
+    field: "c.crp_7fd"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.d
+  - line: "c.crp_7gd"  # G. Shared Residence
+    field: "c.crp_7gd"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.d
+  - line: "c.crp_7id"  # "select the appropriate box based on the additional person(s) sharing rent" — G: 1 (50%)
+    field: "c.crp_7id"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.d
+  - line: "c.crp_7jd"  # G: 2 (33%)
+    field: "c.crp_7jd"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.d
+  - line: "c.crp_7kd"  # G: 3 (25%)
+    field: "c.crp_7kd"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.d
+  - line: "n.crp_8d"
+    field: "n.crp_8d"
+    type: money
+  - line: "n.crp_9d"
+    field: "n.crp_9d"
+    type: money
+  - line: "c.crp_relatedYe"
+    field: "c.crp_relatedYe"
+    type: checkbox
+    on_state: "/X"
+  - line: "t.crp_explaine"
+    field: "t.crp_explaine"
+    type: text
+  - line: "t.crp_address1e"
+    field: "t.crp_address1e"
+    type: text
+  - line: "t.crp_address1c_apt"
+    field: "t.crp_address1c_apt"
+    type: text
+    maxlen: 4
+  - line: "t.crp_citystate1e"
+    field: "t.crp_citystate1e"
+    type: text
+  - line: "t.crp_state1e"  # 2-cell comb left text — two-letter state
+    field: "t.crp_state1e"
+    type: text
+    maxlen: 2
+  - line: "t.crp_zip1e"
+    field: "t.crp_zip1e"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "t.crp_llname1e"
+    field: "t.crp_llname1e"
+    type: text
+  - line: "t.crp_lladdress1e"
+    field: "t.crp_lladdress1e"
+    type: text
+  - line: "t.crp_llapt1e"
+    field: "t.crp_llapt1e"
+    type: text
+    maxlen: 4
+  - line: "t.crp_llcity1e"
+    field: "t.crp_llcity1e"
+    type: text
+  - line: "t.crp_llstate1e"  # 2-cell comb left text — two-letter state
+    field: "t.crp_llstate1e"
+    type: text
+    maxlen: 2
+  - line: "t.crp_llzip1e"
+    field: "t.crp_llzip1e"
+    type: text
+    maxlen: 5
+    comb: true
+  - line: "d.crp_llphone1e"
+    field: "d.crp_llphone1e"
+    type: text
+  - line: "d.crp_5fr_mm-5"
+    field: "d.crp_5fr_mm-5"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5fr_dd-5"
+    field: "d.crp_5fr_dd-5"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_mm-5"
+    field: "d.crp_5to_mm-5"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "d.crp_5to_dd-5"
+    field: "d.crp_5to_dd-5"
+    type: text
+    maxlen: 2
+    comb: true
+  - line: "n.crp_6e"
+    field: "n.crp_6e"
+    type: money
+  - line: "n.crp_7e"
+    field: "n.crp_7e"
+    type: text
+  - line: "c.crp_7ae"  # MO-CRP copy e line 7 "Select the appropriate box below" — one type: A. Apartment, House, Mobile Home, or Duplex - 100%
+    field: "c.crp_7ae"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.e
+  - line: "c.crp_7be"  # B. Mobile Home Lot - 100%
+    field: "c.crp_7be"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.e
+  - line: "c.crp_7ce"  # C. Boarding Home or Residential Care - 50%
+    field: "c.crp_7ce"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.e
+  - line: "c.crp_7de"  # D. Skilled or Intermediate Care Nursing Home - 45%
+    field: "c.crp_7de"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.e
+  - line: "c.crp_7ee"  # E. Hotel - 100%
+    field: "c.crp_7ee"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.e
+  - line: "c.crp_7he"  # E: "if meals are included - 50%" — a modifier of E (the JS checks 7e with it), no group
+    field: "c.crp_7he"
+    type: checkbox
+    on_state: "/X"
+  - line: "c.crp_7fe"  # F. Low Income Housing - 100%
+    field: "c.crp_7fe"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.e
+  - line: "c.crp_7ge"  # G. Shared Residence
+    field: "c.crp_7ge"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_type.e
+  - line: "c.crp_7ie"  # "select the appropriate box based on the additional person(s) sharing rent" — G: 1 (50%)
+    field: "c.crp_7ie"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.e
+  - line: "c.crp_7je"  # G: 2 (33%)
+    field: "c.crp_7je"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.e
+  - line: "c.crp_7ke"  # G: 3 (25%)
+    field: "c.crp_7ke"
+    type: checkbox
+    on_state: "/X"
+    group: crp_line7_sharing.e
+  - line: "n.crp_8e"
+    field: "n.crp_8e"
+    type: money
+  - line: "n.crp_9e"
+    field: "n.crp_9e"
+    type: money
+  - line: "n.pg4ltc_a"
+    field: "n.pg4ltc_a"
+    type: money
+  - line: "n.pg4ltc_b"
+    field: "n.pg4ltc_b"
+    type: money
+  - line: "n.pg4ltc_c"
+    field: "n.pg4ltc_c"
+    type: money
+  - line: "n.pg4ltc_d"
+    field: "n.pg4ltc_d"
+    type: money
+  - line: "n.pg4ltc_e"
+    field: "n.pg4ltc_e"
+    type: money
+  - line: "n.pg4ltc_f"
+    field: "n.pg4ltc_f"
+    type: money
+  - line: "n.pg4ltc_g"
+    field: "n.pg4ltc_g"
+    type: money
+  - line: "qh1"
+    field: "qh1"
+    type: money
+  - line: "qh2"
+    field: "qh2"
+    type: money
+  - line: "qh3"
+    field: "qh3"
+    type: text
+  - line: "qh4y"
+    field: "qh4y"
+    type: money
+  - line: "qh4s"
+    field: "qh4s"
+    type: money
+  - line: "qh5y"
+    field: "qh5y"
+    type: money
+  - line: "qh5s"
+    field: "qh5s"
+    type: money
+  - line: "qh6y"
+    field: "qh6y"
+    type: money
+  - line: "qh6s"
+    field: "qh6s"
+    type: money
+  - line: "qh7y"
+    field: "qh7y"
+    type: money
+  - line: "qh7s"
+    field: "qh7s"
+    type: money
+  - line: "qh8"
+    field: "qh8"
+    type: money
+  - line: "qh9y"
+    field: "qh9y"
+    type: text
+  - line: "qh9s"
+    field: "qh9s"
+    type: text
+  - line: "qh10"
+    field: "qh10"
+    type: money
+  - line: "qh11"
+    field: "qh11"
+    type: money
+  - line: "qh12"
+    field: "qh12"
+    type: text
+  - line: "qh13"
+    field: "qh13"
+    type: money
+  - line: "qh14"
+    field: "qh14"
+    type: money
+  - line: "qh15"
+    field: "qh15"
+    type: money
+  - line: "qh16"
+    field: "qh16"
+    type: money
+  - line: "qh17y"
+    field: "qh17y"
+    type: money
+  - line: "qh17s"
+    field: "qh17s"
+    type: money
+  - line: "accountnumber-1"  # 11-cell comb — face: "Enter the 11-digit MOST 529 account number"
+    field: "accountnumber-1"
+    type: text
+    maxlen: 11
+    comb: true
+  - line: "amount-1"
+    field: "amount-1"
+    type: money
+  - line: "accountnumber-2"
+    field: "accountnumber-2"
+    type: text
+    maxlen: 11
+    comb: true
+  - line: "amount-2"
+    field: "amount-2"
+    type: money
+  - line: "accountnumber-3"
+    field: "accountnumber-3"
+    type: text
+    maxlen: 11
+    comb: true
+  - line: "amount-3"
+    field: "amount-3"
+    type: money
+  - line: "accountnumber-4"
+    field: "accountnumber-4"
+    type: text
+    maxlen: 11
+    comb: true
+  - line: "amount-4"
+    field: "amount-4"
+    type: money
+  - line: "totaldeposit"
+    field: "totaldeposit"
+    type: money
+  # Form 5766 (First-Time Home Buyers Bank Worksheet, 2024 document page 32) is not in the
+  # 2025 bundle: its 41 fields are gone, with the line-22 deduction it fed.
+relations: []
+cross_form: []
+identity_fields:
+  - SSN_1
+  - firstname-1
+  - lastname-1
