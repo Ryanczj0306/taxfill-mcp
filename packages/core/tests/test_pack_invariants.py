@@ -805,6 +805,13 @@ EXTRA_IDENTITY_MIRRORS: tuple[MirrorPair, ...] = (
         "tp_ssn",
         "same field topology as the 2023 base, ported unchanged",
     ),
+    MirrorPair(
+        "states/oh/2025/it1040_oh/pack.yaml",
+        "tp_ssn_page_header",
+        "tp_ssn",
+        "same field topology as 2024 on the 2025 blank (TP_SSN1: one field, 12 widget kids, "
+        "11 on pages 2-12 under an SSN caption), re-read on the Phase J JS5 port renders",
+    ),
 )
 
 

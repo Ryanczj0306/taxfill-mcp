@@ -1,0 +1,2264 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/oh/2024/it1040_oh/pack.yaml (ported
+# 2026-09-30, Phase J JS5; triaged RE-MAP — 24 of the 442 fields the 2024
+# pack maps are gone from the 2025 blank).
+#
+# This is a RE-MAP, not a roll-forward. For 2025 Ohio RENUMBERED IT 1040
+# page 2, RENUMBERED both long schedules again, and re-cut page 2 of the
+# withholding schedule. Every binding below was re-derived from the 2025
+# blank's own printed line labels and proved on a render (VISION AUDIT). Read
+# the TOPOLOGY CENSUS, FACE DELTAS and LINE-KEY DELTAS notes before touching
+# anything: the surviving widget names L17..L24, SchedA_L25..L46 and
+# SchedC_L24..L46 now sit on DIFFERENT printed lines than in 2024.
+#
+# URL AND DIGEST PROVENANCE. source_url was fetched four times with curl on
+#   2026-09-30, each a separate run with a desktop User-Agent (15:28:40Z,
+#   15:28:51Z, 18:34:50Z, 18:35:02Z): HTTP 200 every time, 3,248,126 bytes,
+#   ETag "fb34b45d0d13e94b096aa61c5bba4634", Last-Modified Tue, 16 Dec 2025
+#   13:48:43 GMT, magic %PDF-1.7, an AcroForm with 588 /Fields entries, and all
+#   four copies hash to the pdf_sha256 pinned below (4e6432e23df3...f57c), the
+#   digest of the JS5 triage copy too. /Info /ModDate is
+#   D:20251216084801-05'00' (/CreationDate still reads 2020-12-29). The bundle
+#   URL knowledge/states/oh/2025.yaml cites
+#   (https://tax.ohio.gov/static/forms/ohio_individual/individual/2025/
+#   1040-bundle-original-fi.pdf) answers HTTP 301 with Location = this
+#   source_url (HEAD, 2026-09-30).
+#
+# PRINTED IDENTITY. Page 1 prints "2025 Ohio IT 1040 / Individual Income Tax
+#   Return", the barcode stamp 25000189 and the footer "2025 IT 1040 – page 1
+#   of 2"; /Info /Title is "2025 1040 Bundle". Every page's barcode stamp
+#   carries the 25 prefix: 25000189, 25000289 (IT 1040), 25000389, 25000489
+#   (Schedule of Adjustments), 25260189, 25260289 (Schedule of Business
+#   Income), 25280189, 25280289 (Schedule of Credits), 25230189, 25230289
+#   (Schedule of Dependents), 25350189, 25350289 (Schedule of Withholding), and
+#   the page-13 coupon prints "Tax Year 2025". 13 pages, the same bundle
+#   composition as 2024. printed_year_verified = 2025.
+#
+# TOPOLOGY CENSUS (the JS5 census over the 442 fields the 2024 pack maps,
+# plus a field-level dump of both blanks walking /Parent for the inherited
+# /FT, /Ff, /MaxLen, /DA, /Q, /TU and the /AA scripts).
+#   * 588 terminal AcroForm fields (2024: 594): 517 have a widget on the 13
+#     pages (2024: 523) and 71 have widgets in no page's /Annots (the same 71
+#     names as 2024 — the ITRE_*, OH40P_*, Voucher* and related blocks). 534
+#     widget annotations on the pages (2024: 540).
+#   * The 442 mapped fields: 346 SAME, 54 MOVED, 18 CHANGED, 24 GONE. 18
+#     fields are NEW.
+#   * GONE, and what took each one's place:
+#       L20_NEG -> L19_NEG, the "-" box of printed line 19 (same x, 25 pt
+#         higher, /MaxLen 1, /DA /Arial 12, /K keystroke("negative"));
+#       L25 -> no new widget: the carryforward is printed line 24, which the
+#         surviving L24 now holds;
+#       L26A..L26F and L26G -> L25A..L25F and L25G: the donation row is printed
+#         line 25 (same x columns, /MaxLen 4 / 9);
+#       L27 -> L26: REFUND is printed line 26;
+#       SchedW_D_L3_PS/FEDID/WIN/FITW/OHID/OHWIN/OHTW -> nothing: Part D prints
+#         two W-2G rows (2024: three);
+#       SchedW_E_L2_PS/TIN/COMP/FITW/OHID/OHINC/OHTW -> nothing: Part E prints
+#         one 1099-NEC row (2024: two).
+#   * NEW, 17 of the 18 MAPPED: L19_NEG, L25A-L25G and L26 (above); SchedA_L47
+#     ("47. Total deductions (add lines 13 through 46 ONLY)", /MaxLen 11);
+#     SchedC_L47 ("47. Total refundable credits (add lines 41 through 46 ...)",
+#     /MaxLen 9); and the six Part F 1099-G cells SchedW_F_L1_PS/TIN/COMP/FITW/
+#     OHID/OHTW (/MaxLen 1/9/9/8/8/8). The 18th, Date_Gen on page 1, is
+#     deliberately NOT mapped — see READONLY ADJUDICATION.
+#   * MOVED (every row re-read on the render): page 1 FRGN_ZIP widened 11.8 pt;
+#     page 2 L18-L24 shifted under 2 pt with the re-flowed rows, PHONE_NUM
+#     5 pt down, PREPARER_PHONE_NUM and PREPARER_PRINTED_NAME 2-3 pt up (the
+#     phone box also 12.4 pt narrower); page 4 SchedA_L26-L46 each
+#     11.6-16.2 pt down (L46 11.6, L42 12.1, L44 16.2), except L31, L36 and
+#     L41 (under 1 pt), because the new line 25 pushed every row down one
+#     slot and the group headers absorbed it at those three; page 8 SchedC_L25-L45 under 2.1 pt except L37 (+10 pt) and
+#     L40 (+25 pt); page 11 SchedW_A widened 10.5 pt; page 12 the seven
+#     SchedW_E_L1_* cells moved up 72 pt into the space the third W-2G row left.
+#   * CHANGED. /Ff: L17 1 -> 0, L18 0 -> 1, L19 1 -> 0, SchedC_L12 1 -> 0 and
+#     SchedC_L12_JFC 1 -> 0 (all adjudicated under READONLY ADJUDICATION), and
+#     SchedW_E_L1_TIN 4194304 -> 12582912 (DoNotScroll added; not ReadOnly).
+#     /MaxLen: SchedA_L25 9 -> 4, L36 6 -> 9, L38 3 -> 6, L39 5 -> 3, L40 4 -> 5,
+#     L41 9 -> 4, L45 5 -> 9, L46 11 -> 5 — the renumbering carrying each
+#     printed line's own box to its new name (the 2024 educator-expenses box,
+#     /MaxLen 3, is now SchedA_L39; the 2024 total-deductions box, /MaxLen 11,
+#     is the new SchedA_L47), which independently corroborates the positional
+#     re-map; SchedC_L14 3 -> 4 (Home school expenses credit); SchedC_L17-L25
+#     and L27-L34 7 -> 9; SchedC_L40-L45 8 -> 9; SchedW_A 8 -> 9.
+#     /DA: unchanged on every field present in both blanks. /FT: unchanged
+#     everywhere. /Q: PHONE_NUM and PREPARER_PHONE_NUM 2 -> 0 (right- to
+#     left-aligned). /AA: L22 gained and L23 lost the /Bl voucherAmount()
+#     trigger (the function is byte-identical to 2024: it still reads
+#     getField("L23"), on this face the Overpayment line, and only sets
+#     UPC_Payment to 0 or ""); TP_SSN gained a /Bl that calls the new
+#     setToday() (see Date_Gen); COUNTY and PREPARER_PHONE_NUM gained /V
+#     validators; PRIM_NON_RES_STATE gained a /K. Validator ranges: SchedA_L13
+#     now stops at 250000 (2024: 1000000000); SchedC_L17 and L19-L25 widened
+#     9999999 -> 999999999 (SchedC_L18 did not).
+#   * The DOR's own DS_Print barcode builder (document-level JavaScript) was
+#     re-pointed with the renumbering: it gathers L9-L18, L19_NEG, L19-L24,
+#     L25A-L25G, L26 and SchedA_L1-L47 and adds SchedC_L47 (2024: L9-L19,
+#     L20_NEG, L20-L25, L26A-L26G, L27, SchedA_L1-L46) — the file's own
+#     confirmation that each renamed widget holds its new printed line.
+#   * The DOR's /TU tooltips were used for nothing; three kinds disagree with
+#     the face. UNCHANGED from 2024, so one line off wherever a line moved: L17
+#     (still "Amended return only - amount previously paid with original
+#     and/or amended return") and every SchedA_L1-L46 and SchedC_L1-L46
+#     tooltip (SchedA_L25 "Federal interest and dividends exempt from state
+#     taxation" sits on the new pregnancy-resource-center line, SchedC_L24
+#     "Credit for sale/rental of agricultural assets to beginning farmers" on
+#     the new transformational mixed-use line). SHIFTED one name but not
+#     renumbered: L18-L24 and L26 each carry the text 2024's next-higher widget
+#     had — the right line, with 2024 line numbers (L19 "Line 18 minus line
+#     19", L24 "... Portion of line 24 carried forward to 2022 tax liability"),
+#     and the new L19_NEG and L25G read "line 18 minus line 19" and "lines 26a
+#     through 26f". COPIED from another part: L25A-L25F name the 2023 fund
+#     order (L25A "Wishes for Sick Children"), SchedW_E_L1_COMP/OHINC/TIN read
+#     W-2G captions ("Box 1 - Reportable winnings", "Box 14 - Ohio state
+#     winnings", "Box b - EIN"), and the six new SchedW_F_L1_* cells carry
+#     1099-NEC captions ("Box 1 - Non-employee Compensation", "Box 6 - Payer’s
+#     Ohio number", "Box 5 - Ohio tax withheld").
+#
+# FACE DELTAS vs 2024 (both blanks' text layers diffed page by page).
+#   * IT 1040 page 1: the year and barcode; "Check if deceased" (2024 "If
+#     deceased"); line 1 "(federal 1040 or 1040-SR, line 11a)" (2024: line 11);
+#     line 2b "Ohio Schedule of Adjustments, line 47" (2024: 46). Lines 1-7
+#     keep their numbers.
+#   * IT 1040 page 2 — RENUMBERED. Line 9 cites Schedule of Credits line 40
+#     (2024: 39) and line 16 line 47 (2024: 46). Line 15 now reads "Estimated
+#     and extension payments, credit carryforward from the 2024 return, and
+#     amounts previously paid with an original and/or amended 2025 return": the
+#     2024 line 17 ("Amended return only – amount previously paid with original
+#     and/or amended return") was folded into it and deleted, so 2024 lines
+#     18-27 are 2025 lines 17-26, each with its printed cross-references
+#     rewritten — 17 "Total Ohio tax payments (add lines 14, 15, and 16)", 18
+#     "Amended return only – overpayment previously requested on original
+#     and/or amended 2025 return", 19 "Line 17 minus line 18", the skip note
+#     "If line 19 is MORE THAN line 13, skip to line 23. OTHERWISE, continue to
+#     line 20.", 20 "Tax due (line 13 minus line 19) ...", 21 interest due, 22
+#     "TOTAL AMOUNT DUE (line 20 plus line 21) ... with your check" (2024 "and
+#     your check"), 23 "Overpayment (line 19 minus line 13)", 24 "Original
+#     return only – portion of line 23 carried forward to next year’s tax
+#     liability", 25 the donations with "Total ... 25g", 26 "REFUND (line 23
+#     minus lines 24 and 25g)". Line 13 gained a serial comma. The six fund
+#     labels ROTATED one position again: a. Nature Preserves/Scenic Rivers,
+#     b. Breast/Cervical Cancer, c. Wishes for Sick Children, d. Wildlife
+#     Species, e. Military Injury Relief, f. Ohio History Fund (2024 began
+#     a. Breast/Cervical Cancer and ended f. Nature Preserves/Scenic Rivers).
+#     The preparer row now prints "PTIN: P", the P left of the PTIN box.
+#     THE P-001 TRAP: the page-2 widget names are POSITIONAL (L<n> sits on
+#     printed line n — paired by /Rect against the printed labels and proved
+#     on the render), so a name-only port would have put total payments on
+#     printed line 18 (the amended-overpayment line), the amended overpayment
+#     on 19, the difference on 20, and so on down the page.
+#   * Schedule of Adjustments — RENUMBERED. Lines 1-24 unchanged (punctuation
+#     only). NEW line 25 "Deduction for contributions to a pregnancy resource
+#     center"; 2024 lines 25-46 are 26-47; the total reads "47. Total
+#     deductions (add lines 13 through 46 ONLY). Enter here and on Ohio IT
+#     1040, line 2b."
+#   * Schedule of Business Income: lines 1-16 and the 8 business-source rows
+#     unchanged; the intro reads "you and your spouse (if filing jointly)", and
+#     Part 4's instructions add "Use one entry per business source" and a
+#     sentence on listing each spouse's ownership percentage separately.
+#   * Schedule of Credits — RENUMBERED. Lines 1-23 unchanged; NEW line 24
+#     "Credit for transformational mixed-use development (include a copy of
+#     the credit certificate)"; 2024 lines 24-46 are 25-47, with the printed
+#     arithmetic rewritten: 36 "Total (add lines 12 through 35)", 37 "Tax less
+#     additional credits (line 11 minus line 36; if negative, enter zero)", 40
+#     "Total nonrefundable credits (add lines 10, 36, 38, and 39; enter here
+#     and on Ohio IT 1040, line 9)", 47 "Total refundable credits (add lines 41
+#     through 46; enter here and on Ohio IT 1040, line 16)".
+#   * Schedule of Dependents (15 rows) and Schedule of Withholding page 1 (Part
+#     A and 7 W-2 rows): the year and barcode only.
+#   * Schedule of Withholding page 2: Part C (4 1099-R rows) unchanged; Part D
+#     two W-2G rows (2024: three); "Part E - 1099-NEC", one row (2024 "Part E -
+#     1099-NECs", two rows); NEW "Part F - 1099-G", one row "P/S, Payer’s TIN,
+#     Box 1 - Unemployment compensation, Box 4 - Federal income tax withheld,
+#     Box 11b - Payer’s Ohio ID number, Box 12 - Ohio income tax withheld".
+#   * Ohio Universal Payment Coupon (page 13): "Tax Year 2025"; the `today`
+#     cell ships no /V on this blank (2024: "05 08 26"), so no date prints
+#     there. Everything else on the page reads as in 2024.
+#   * Printed figures: NONE changed — $1.00 (the page-2 refund/payment de
+#     minimis), 20% (IT BUS line 5, "a 20% or greater direct or indirect
+#     owner"), $250,000 / $125,000 (IT BUS line 12), 3% (.03) (IT BUS line
+#     16), $650 (Credits line 12). Printed years: line 15 "the 2024 return" and
+#     "amended 2025 return", line 18 "amended 2025 return".
+#
+# LINE-KEY DELTAS vs the 2024 pack (keys follow each year's PRINTED line
+# numbers, so the same key can mean a different line in the two packs —
+# carry nothing forward by key). 448 lines on 442 fields -> 441 lines on 435.
+#   * REMOVED (24): 20_neg, 25, 26a-26g, 27, schedW_d_w2g_3_* (7),
+#     schedW_e_1099nec_2_* (7).
+#   * ADDED (17): 19_neg, 25a-25g, 26, schedA_47, schedC_47 and
+#     schedW_f_1099g_1_ps / _tin / _box1_unemployment_comp /
+#     _box4_fed_withheld / _box11b_oh_id / _box12_oh_withheld.
+#   * SAME KEY AND WIDGET, NEW PRINTED LINE: "17"-"24" (L17-L24: 2024 "18"
+#     total payments is 2025 "17", 2024 "25" carryforward is 2025 "24");
+#     schedA_25-schedA_46 (schedA_25 is the new pregnancy resource center
+#     line); schedC_24-schedC_46 (schedC_24 is the new transformational
+#     mixed-use development credit). Typing moved with the boxes: schedA_39
+#     (educator expenses) is now `text maxlen: 3` and schedA_38 (Pell/OCOG)
+#     `money`; schedC_14 keeps `text` at its widget's new /MaxLen 4.
+#
+# READONLY ADJUDICATION (knowledge/pitfalls.yaml P-007), per widget, from this
+# blank's own JavaScript. Method: the JavaScript was collected by source — the
+# 17-entry document-level name tree (108,937 characters), the catalog
+# /OpenAction (18,428 characters, byte-identical to 2024), and every page,
+# field and widget /AA and annotation /A — and every string of all 20,475
+# objects in the file (decompressed streams and string objects) was scanned
+# as well, so a claim that a name "occurs nowhere" below means nowhere in the
+# file.
+# On the 13 pages, 88 fields carry ReadOnly (/Ff bit 1, resolved up /Parent),
+# 24 of them the UF_L1A..UF_L4H "include schedule" pushbuttons, leaving 64
+# non-pushbutton ReadOnly fields: 60 on the page-13 coupon (next block) and
+# FOUR on pages 1-12 — CHK_AMD, TP_SSN1, L18 and Date_Gen. The mapped-
+# intersect-ReadOnly set is exactly TEN: CHK_AMD, TP_SSN1, L18 and the seven
+# coupon filer-data cells.
+#   * CHK_AMD — /Btn, /Ff = 1, page 1, /AP /N {/Off, /Yes}. Printed "AMENDED
+#     RETURN - Check here and include Ohio IT RE." The face tells the filer to
+#     check it, and its sibling CHK_NOL carries no /Ff. Class 4: MAPPED, as in
+#     2023 and 2024. (Its /A calls checkamended(), which nothing in the file
+#     defines.)
+#   * TP_SSN1 — /Tx, /Ff = 1, /MaxLen 9, ONE field with 12 widget kids (11 on
+#     pages 2-12, the 12th in no page), /V two spaces; its /C is
+#     `var ssNumber = this.getField("TP_SSN").valueAsString; event.value =
+#     util.printx("XXX XX XXXX",ssNumber)`. Each of pages 2-12 prints an SSN
+#     caption over it. The page-header SSN mirror, class 4: MAPPED
+#     (tp_ssn_page_header), unchanged from 2024.
+#   * L18 — /Tx, /Ff = 1 (2024: 0), /MaxLen 9, page 2, printed line 18
+#     "Amended return only – overpayment previously requested on original
+#     and/or amended 2025 return": a line the face tells an amended filer to
+#     complete. MAPPED, class 4. No script can clear the bit: every readonly
+#     assignment in the file's JavaScript was resolved to its target (literal
+#     getField() names, the SchedITBUS_L<i> spouse-percentage loops, and the
+#     helper and variable forms, which reach only spouse and residency fields)
+#     and none is L18; the one script that touches L18 at all is DS_Print's
+#     barcode gather (GVS("L"+i) for i = 9..18), which reads it. The
+#     `case "CHK_AMD"` branch of
+#     DS_SetRequired() (run by TP_SSN's /C) is byte-identical to 2024 (1,862
+#     characters from `case "CHK_AMD"` through its `break`): on "Yes" it sets
+#     L17/L19 readonly = false and L25/L26A..L26G readonly = true, otherwise
+#     the reverse, and both paths resetForm() all ten names. On this face L17
+#     and L19 are total payments and "Line 17 minus line 18" (both /Ff 0) and
+#     L25/L26A-L26G do not exist, so in a viewer toggling the amended box
+#     empties lines 17 and 19 (and locks them on an original return) while
+#     line 18 can never be unlocked — the 2024 SchedC_L12 shape, a ReadOnly bit
+#     on a filer-entry cell that nothing clears. L18's /AA is identical to
+#     unflagged L17/L19 (/C dsRound(), /F + /K AFNumber_Format/Keystroke(0, 1,
+#     0, 0, "", true), /V AFRange_Validate(true, 0, true, 999999999)) and its
+#     /V is absent: nothing computes it and nothing is overwritten.
+#   * L17 and L19 LEFT the ReadOnly set (/Ff 1 -> 0), and so did SchedC_L12
+#     and SchedC_L12_JFC (/Ff 1 -> 0: Ohio cleared the bit it set for 2024;
+#     no script writes either cell or its readonly property — the only
+#     script that reaches either is DS_Print's GVS('SchedC_L'+i) barcode
+#     gather, which reads SchedC_L12). All four stay mapped as ordinary
+#     filer-entry lines.
+#   * Date_Gen — NEW; /Tx, /Ff = 12582913 (ReadOnly|DoNotSpellCheck|
+#     DoNotScroll), /MaxLen 9, page 1 /Rect [35.15 718.57 96.84 732.25],
+#     annotation /F = 36 (Print|NoView: never shown on screen, printed); no /V,
+#     no /AA, no printed caption (the text layer holds no word in or beside the
+#     box, which sits blank under the Ohio logo on the render). The one script
+#     that names it is the new document-level `function setToday()
+#     { this.getField("Date_Gen").value = util.printd("mm dd yy", new Date()); }`,
+#     called by TP_SSN's new /Bl whenever the SSN is non-empty and by
+#     UPC_TaxType's /Bl; nothing reads it back. It is the viewer's CURRENT DATE
+#     stamped at data entry — the page-1 twin of the coupon's `today` cell —
+#     not return data: NOT MAPPED, so fill_form raises its unknown-line-key
+#     error on it. Read literally, P-007 class 4 ("a STATE DOR field whose
+#     value the form's own JavaScript owns ... MUST stay mapped") would keep
+#     it; this pack departs from that wording on purpose. The class names
+#     running totals, carried subtotals and header mirrors — values DERIVED
+#     FROM RETURN DATA that a caller can supply — whereas Date_Gen holds the
+#     viewer's wall-clock date, for which taxfill has no truthful source,
+#     and the coupon's `today` cell (the same mechanism, unmapped by the
+#     2023 and 2024 packs) is the precedent followed. Consequence, stated
+#     plainly: a return taxfill fills prints NO date in that cell, where a
+#     viewer-filled one prints the entry date; whether DOR intake reads the
+#     stamp cannot be known from the file.
+#   No mapped widget is P-007 class 1 (holds a DOR-printed constant) or class 2
+#   (an entry the printed text makes impossible); the DOR figures on this
+#   bundle (20%, $250,000 / $125,000, 3%, $650) are printed in captions, not
+#   held in widgets. Deliberately NOT mapped: the 28 on-page pushbuttons (the 24 UF_*
+#   uploaders plus Print Form, Reset Form, Print Blank Form and RESET),
+#   Date_Gen, and 53 of the coupon's 60 ReadOnly fields.
+#
+# OUPC PAGE-13 ADJUDICATION, re-verified against the 2025 blank (the fuller
+# mechanism record is the 2023 base pack's block of the same name; each claim
+# below was re-measured on this file). The 60 ReadOnly non-pushbutton fields
+# are the same names with the same /FT, /Ff, /MaxLen, /DA, /AA key sets and
+# annotation /F as in 2024; the only deltas are /V — UPC_TaxYear "2025",
+# UPC_ScanDate "1225", and `today`, which now ships no /V and no appearance.
+#   * MAPPED, class 4 — the seven filer-data cells UPC_FName (/MaxLen 15),
+#     40P_MI (1), UPC_LName (14), UPC_address1 (34), UPC_CityStateZip (34),
+#     UPC_1st3LName (3) and UPC_Identifier (9, printed caption "Taxpayer’s
+#     SSN"). Their /C scripts copy TP_FN, TP_MI, TP_LN, ADDRESS1,
+#     `city + ", " + state + " " + zip`, the first three letters of UPC_LName,
+#     and TP_SSN; taxfill never runs them, so unmapped they would mail a coupon
+#     with a blank name, address and SSN. UPC_CityStateZip's factory /V is
+#     still ",  " (it prints an orphan comma when left unfilled). UPC_Payment
+#     ("Amount of Payment", /MaxLen 9, not ReadOnly) stays mapped.
+#   * NOT MAPPED — the 37 scan-line / check-digit cells of the OCR strip (/Rect
+#     y 43.3-55.5): sdnum1-3, Scan4, ScanID1-3, ScanPH1-5, ScanSSN1-9,
+#     ScanDate1-4, checkdigit1, Scan_Reason1/2, checkdigit2, sd1-4,
+#     checkdigitSD, fc1-3. sd1-4 and checkdigitSD ship /V "0" and print
+#     "0000 0". taxfill implements neither the check digits nor the field
+#     codes, and a wrong digit corrupts DOR intake scanning.
+#   * NOT MAPPED — the 12 hidden carriers (/F = 6, no appearance stream; a
+#     hidden annotation never prints): UPC_TaxType ("440"), UPC_IDType ("01"),
+#     UPC_Reason ("54"), UPC_ScanDate ("1225"), TaxTypeDisplay, TaxTypeDisplay2,
+#     IDDisplay, ReasonDisplay, UPC_Payable, UPC_MailTo1, UPC_MailTo2 (still
+#     /V "P.O. Box 2057, Columbus, OH 43270-2057" — the return's payment box,
+#     not the coupon's printed P.O. Box 182131) and UPC_SDN.
+#   * NOT MAPPED — 4 visible DOR-owned cells: UPC_TaxYear (/V "2025" prints
+#     under "Tax Year" — class 1), VendorID (/V "89" prints — class 1), today
+#     (DS_Init writes the viewer's current date into it; no /V on this blank)
+#     and UPC_SDHide (no /V, no /AA, white /MK border and background, named by
+#     no script — an empty mask over the school-district area).
+#
+# EMBEDDED FACTS RE-VERIFIED against the 2025 blank's own printed text, and
+# cross-checked against knowledge/states/oh/2025.yaml (read, not edited).
+#   * Page 2 mailing addresses: "NO Payment Included – Mail to: Ohio Department
+#     of Taxation, P.O. Box 2679, Columbus, OH 43270-2679" and "Payment
+#     Included – Mail to: Ohio Department of Taxation, P.O. Box 2057, Columbus,
+#     OH 43270-2057". Page 13: "Mail to: Ohio Department of Taxation, P.O. Box
+#     182131, Columbus, OH 43218-2131", "Make payment payable to: Ohio Treasurer
+#     of State", "Individual Income Tax 440", "ID Type 01 Coupon Type 54".
+#     Unchanged from 2024; all match the knowledge file.
+#   * De minimis (page 2): "If your refund is $1.00 or less, no refund will be
+#     issued. If you owe $1.00 or less, no payment is necessary." Unchanged.
+#   * Printed statutory figures: $250,000 / $125,000 (IT BUS line 12), 3% (.03)
+#     (IT BUS line 16), $650 (Credits line 12) — unchanged, and all present in
+#     the knowledge file, which also cites this face's 2025 line numbers (IT
+#     1040 line 1 "line 11a", Schedule of Adjustments lines 12 and 47, "Line 22
+#     Total Amount Due"): they agree. The face prints no figure for the two
+#     amounts that file records as changed for 2025 (the Ohio educator expense
+#     deduction, $300 per taxpayer; the home school expenses credit, $250 per
+#     qualifying student); their boxes are SchedA_L39 (/MaxLen 3) and
+#     SchedC_L14 (/MaxLen 3 -> 4).
+#   * ONE face/knowledge MISMATCH (reported, not edited): the knowledge file
+#     says that for 2025 the irrebuttable-nonresident presumption moved from
+#     form IT NRS to a NEW Ohio Nonresident Statement checkbox on the IT 1040;
+#     this face prints that row ("Ohio Nonresident Statement – See instructions
+#     for required criteria", with the "Primary ..." and "Spouse meets the five
+#     criteria for irrebuttable presumption as nonresident." boxes), but the
+#     2024 and 2023 IT 1040 blanks printed the identical row, and all three
+#     packs map both boxes (CHK_PRIM_NON_RES_STMT / CHK_SP_NON_RES_STMT).
+#   * Checkbox export values, re-dumped from /AP /N: /Yes for CHK_AMD,
+#     CHK_PRIM_DEC, CHK_SP_DEC and SchedW_C_L1-L4_CHK; /1 for CHK_NOL,
+#     CHK_CLAIM_DEP, CHK_FED_EXT_FILTER, CHK_PRIM_NON_RES_STMT,
+#     CHK_SP_NON_RES_STMT, SpeakPrep and NonPaidPrep; /1 /2 /3 on the three kids
+#     of each of CHK_PRIM_RES, CHK_SP_RES and CHK_FILING_STATUS (/Ff 2,
+#     Required). Identical to 2024. CHK_SP_DEC, CHK_SP_NON_RES_STMT and
+#     CHK_SP_RES's kids still ship no explicit /Off appearance; only the "on"
+#     states this pack writes matter, and all are present.
+#   * GROUPS: the three shared-field option sets now carry one group id each —
+#     residency_primary, residency_spouse and filing_status, the stem before
+#     "::" — where the 2023/2024 packs carried them as
+#     SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID debt. The two Ohio Nonresident
+#     Statement boxes (one per person) stay ungrouped under the family's
+#     INDEPENDENT row in SEPARATE_OPTION_SETS_ADJUDICATED.
+#
+# VISION AUDIT. scripts/audit_pack.py filled the sha-pinned blank with one
+# distinct sentinel per mapped line (435 lines: every key except the six
+# alternate options of the three radio groups); verify returned 0 assertion /
+# 0 clipping / 0 checkbox FAILs; all 13 pages were rendered at 170 dpi and
+# READ in half-page crops. Every sentinel sits in the box of the printed line
+# its key names: the renumbered page-2 ladder (17 = 321 on "Total Ohio tax
+# payments", 18 = 332 on the amended overpayment, 19 = 343 with its "-" box,
+# 22 = 376 on AMOUNT DUE, 24 = 398 on the carryforward, 26 = 486 on YOUR
+# REFUND); the six donation boxes under the rotated labels (25a = 409 Nature
+# Preserves/Scenic Rivers ... 25f = 464 Ohio History Fund; 25g = 475);
+# schedA_25 = 761 on the new pregnancy-resource-center line, schedA_39 = T30
+# on educator expenses, schedA_47 = 992 on "Total deductions"; schedC_24 =
+# 1366 on the new transformational mixed-use line, schedC_40 = 1542 and
+# schedC_47 = 1619 on the two totals; the two W-2G rows, the single 1099-NEC
+# row in its moved position and the new 1099-G row under their own box
+# captions; the SSN header T23 on each of pages 2-12; and the coupon cells,
+# with the DOR's Tax Year 2025 / 440 / 01 / 54 / 89 / "0000 0" intact, no date
+# in `today` and no orphan comma. The six alternate radio options were then
+# filled separately (primary part-year and nonresident, spouse nonresident
+# and part-year, married filing jointly, married filing separately) and each
+# ticks its own box. ONE sentinel does not print: filing_status_mfs_spouse_ssn
+# (SP_SSN_SEP) — verify passes and its value and appearance are written, but
+# the blank's own annotation flag hides the widget (see OPEN); a diagnostic
+# render of the filled file with only that Hidden bit cleared puts the
+# sentinel under "Spouse’s SSN" beside "Married filing separately", so the
+# binding itself is right. 441/441 line keys proven: 440 on the production
+# renders, 1 on the diagnostic render.
+#
+# UNVERIFIED / OPEN (nothing here is asserted by this pack).
+#   * SP_SSN_SEP (filing_status_mfs_spouse_ssn) ships with annotation /F = 6
+#     (Hidden|Print) — on the 2024 blank too, recorded by neither earlier pack.
+#     Only the form's JavaScript reveals it: the CHK_FILING_STATUS "3" (married
+#     filing separately) branch of DS_SetRequired calls
+#     showEditable("SP_SSN_SEP", true), i.e. display = visible. taxfill runs no
+#     JavaScript and the pack schema cannot clear an annotation flag, so a
+#     married-filing-separately return filled through taxfill prints NO
+#     spouse's SSN in that box, and verify_form reports the line ok because
+#     it reads /V, not the annotation flag. The binding is kept — the key,
+#     the widget and the written /V are right, and an engine-side unhide
+#     would make it print — but until then an MFS filer must hand-write the
+#     spouse's SSN there. Engine follow-up (not a pack change): clear the
+#     Hidden bit when the filler writes a non-empty value to a Hidden widget,
+#     and have verify FAIL a mapped, non-empty widget whose /F keeps Hidden
+#     or NoView set. Two adversarial verifiers reproduced the blank box
+#     independently (their /F 6 -> 4 copies print the SSN in the right place).
+#     RESOLVED at integration (2026-10-01, Phase J JEd, P-027): that engine
+#     follow-up shipped — fill_form clears Hidden and NoView and sets Print on
+#     every widget it writes, and verify's P-027 check FAILs a written widget
+#     whose flags still hide it — so an MFS fill through taxfill now prints
+#     the spouse's SSN in this box.
+#   * No filing due date is printed on the blank; knowledge/states/oh/2025.yaml
+#     carries April 15, 2026 from the booklet. This pack asserts none.
+#   * Whether Ohio will repair the CHK_AMD branch (so a viewer can unlock line
+#     18 and stops emptying lines 17 and 19) cannot be known from the file. If
+#     a re-issued 2025 blank clears L18's ReadOnly bit, the binding does not
+#     change, only the ReadOnly count.
+#   * Date_Gen prints blank on every return taxfill fills; nothing on the face
+#     names or requires that cell.
+# ===========================================================================
+# Form IT 1040, 2025 — Ohio Individual Income Tax Return (the full 1040
+# bundle: IT 1040 + Schedule of Adjustments + Schedule of Business Income
+# (IT BUS) + Schedule of Credits + Schedule of Dependents + Schedule of
+# Withholding + the Ohio Universal Payment Coupon (OUPC)). 13 pages.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw opaque
+# sentinel ids the form ships with, e.g. "TP_FN", "L1", "SchedA_L12",
+# "SchedW_B_L1_WAGE"). Ohio's IT 1040 is a single-column return, so income /
+# credit lines carry no _A/_B/_C column suffix. Because the SAME line number
+# repeats across the bundled schedules, main-form line keys are bare numbers
+# ("1".."26") while each schedule's lines are prefixed (schedA_, schedITbus_,
+# schedC_, schedJ_, schedW_) to keep every key unique. Schedule keys are the
+# schedule's own 2025 PRINTED line numbers.
+#
+# Coverage. Every taxpayer-fillable widget on pages 1-12 is mapped (SP_SSN_SEP
+# included, though the blank hides it — see OPEN), and so are three of the
+# four ReadOnly non-pushbutton fields there (CHK_AMD, TP_SSN1 and L18, all
+# P-007 class 4); the fourth, Date_Gen, is the DOR's data-entry date stamp. On
+# page 13, UPC_Payment plus the seven class-4 coupon cells (upc_*) are mapped.
+# What is intentionally left unmapped is exactly: the 28 pushbuttons,
+# Date_Gen, and the 53 adjudicated-unmappable OUPC widgets (37 scan-line/
+# check-digit cells, 12 hidden data carriers, UPC_TaxYear, VendorID, today,
+# UPC_SDHide). 441 lines on 435 fields.
+#
+# Money vs text. Dollar boxes are typed `money`; the narrow "-" sign boxes
+# that precede some negative-capable lines (L1_NEG, L3_NEG, L19_NEG and the
+# IT BUS _NEG boxes) stay `text maxlen: 1`. Genuine text widgets — names,
+# addresses, SSN/EIN/TIN boxes, dates, school-district / county codes,
+# two-character state codes, ownership-percentage boxes, distribution codes,
+# the P/S source flag, the exemption count box and the joint-filing-credit
+# percentage box — stay `text` with the blank's own /MaxLen.
+#   Six page-1 address widgets — ADDRESS2, STATE, ZIP, COUNTY, FRGN_COUNTRY
+#   and FRGN_ZIP (/MaxLen 35/2/5/4/20/7) — carry the DOR's Comb bit (/Ff
+#   29360128 = Comb|DoNotScroll|DoNotSpellCheck; the same on the 2024 blank)
+#   although the printed face draws no character cells there. The pack leaves
+#   `comb` unset, so taxfill's own appearance streams print them as plain
+#   text (what the audit renders show); a viewer that regenerates appearances
+#   (the filled file carries NeedAppearances true; the blank does not) may
+#   space the glyphs across the box instead. Informational, not a binding.
+#   The split between the tiny fixed-credit boxes typed `text` (schedC_2,
+#   schedC_4, schedC_8, schedC_9, schedC_12, schedC_14, schedA_39; PDF
+#   /MaxLen 2-4) and the `money` lines is SEMANTIC, not a "/MaxLen < N"
+#   threshold: several `money` lines also carry a small /MaxLen on the 2025
+#   blank (L4 = 5, L8B = 7; donations L25A-F = 4; schedA_25 = 4,
+#   schedA_4/13/37/38 = 6, schedA_40 = 5, schedA_41 = 4, schedA_46 = 5;
+#   schedC_3 = 6, schedC_5/6/7/13/15/16 = 4, schedC_26 = 7; schedITbus_12/13 = 6,
+#   schedITbus_16 = 7; the withholding schedule's withheld-tax cells = 8, the
+#   four 1099-R Box 4 cells = 9). Those stay `money` — they are whole-dollar
+#   amount lines that need IRS rounding and feed the sum relations, and any
+#   overlong value is caught post-fill by verify's P-001 clipping_scan, which
+#   reads the PDF /MaxLen directly.
+#
+# Relations / cross_form. IT 1040 line 1 is explicitly "Federal adjusted
+# gross income (federal 1040 or 1040-SR, line 11a)", and the 2025 Form 1040
+# prints AGI on line 11a, so cross_form 1 == f1040.11a is declared. Only
+# unconditional sums whose operands are ALL mapped money lines and carry no
+# sign-box ambiguity are declared; see the `relations` block for what was
+# omitted and why.
+form: Form IT 1040
+jurisdiction: states/oh
+tax_year: 2025
+source_url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/1040-bundle-original-fi.pdf
+pdf_sha256: "4e6432e23df3bf181a8e9d7ee5d5bb7e2e96a6a21dd65fa39c625fb8a7e2f57c"
+acroform_root: ''
+fields:
+  # =========================================================== IT 1040 page 1
+  # ---- Top checkboxes
+  - line: amended_return            # "AMENDED RETURN - Check here and include Ohio IT RE."
+    field: CHK_AMD
+    type: checkbox
+    on_state: /Yes
+  - line: nol_carryback             # "NOL CARRYBACK - Check here and include Schedule IT NOL."
+    field: CHK_NOL
+    type: checkbox
+    on_state: /1
+  # ---- Taxpayer / spouse identity
+  - line: tp_ssn                    # Primary taxpayer's SSN (required)
+    field: TP_SSN
+    type: text
+    maxlen: 9
+  - line: tp_deceased               # primary taxpayer "Check if deceased" (2024 printed "If deceased")
+    field: CHK_PRIM_DEC
+    type: checkbox
+    on_state: /Yes
+  - line: spouse_ssn                # Spouse's SSN (if filing jointly)
+    field: SP_SSN
+    type: text
+    maxlen: 9
+  - line: spouse_deceased           # spouse "Check if deceased"
+    field: CHK_SP_DEC
+    type: checkbox
+    on_state: /Yes
+  - line: school_district_number    # School district #
+    field: SD_NUM
+    type: text
+    maxlen: 4
+  - line: tp_first_name
+    field: TP_FN
+    type: text
+    maxlen: 15
+  - line: tp_mi
+    field: TP_MI
+    type: text
+    maxlen: 1
+  - line: tp_last_name
+    field: TP_LN
+    type: text
+    maxlen: 22
+  - line: spouse_first_name
+    field: SP_FN
+    type: text
+    maxlen: 15
+  - line: spouse_mi
+    field: SP_MI
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: SP_LN
+    type: text
+    maxlen: 22
+  - line: address_line_1            # Address line 1 (number and street) or P.O. Box
+    field: ADDRESS1
+    type: text
+    maxlen: 35
+  - line: address_line_2            # Address line 2 (apartment number, suite number, etc.)
+    field: ADDRESS2
+    type: text
+    maxlen: 35
+  - line: city
+    field: CITY
+    type: text
+    maxlen: 20
+  - line: state
+    field: STATE
+    type: text
+    maxlen: 2
+  - line: zip_code
+    field: ZIP
+    type: text
+    maxlen: 5
+  - line: ohio_county              # Ohio county (first four letters)
+    field: COUNTY
+    type: text
+    maxlen: 4
+  - line: foreign_country          # Foreign country (if the mailing address is outside the U.S.)
+    field: FRGN_COUNTRY
+    type: text
+    maxlen: 20
+  - line: foreign_postal_code
+    field: FRGN_ZIP
+    type: text
+    maxlen: 7
+  # ---- Residency Status — primary (check one) + indicate state
+  - line: residency_primary::resident
+    field: CHK_PRIM_RES
+    type: checkbox
+    on_state: /1
+    group: residency_primary
+  - line: residency_primary::part_year
+    field: CHK_PRIM_RES
+    type: checkbox
+    on_state: /2
+    group: residency_primary
+  - line: residency_primary::nonresident
+    field: CHK_PRIM_RES
+    type: checkbox
+    on_state: /3
+    group: residency_primary
+  - line: residency_primary_indicate_state   # *Indicate state (primary nonresident/part-year)
+    field: PRIM_NON_RES_STATE
+    type: text
+    maxlen: 2
+  # ---- Residency Status — spouse (check one if filing jointly) + indicate state
+  - line: residency_spouse::resident
+    field: CHK_SP_RES
+    type: checkbox
+    on_state: /1
+    group: residency_spouse
+  - line: residency_spouse::part_year
+    field: CHK_SP_RES
+    type: checkbox
+    on_state: /2
+    group: residency_spouse
+  - line: residency_spouse::nonresident
+    field: CHK_SP_RES
+    type: checkbox
+    on_state: /3
+    group: residency_spouse
+  - line: residency_spouse_indicate_state    # *Indicate state (spouse)
+    field: SP_NON_RES_STATE
+    type: text
+    maxlen: 2
+  # ---- Filing Status (check one, as reported on federal return)
+  - line: filing_status::single_hoh_qss   # Single, head of household or qualifying surviving spouse
+    field: CHK_FILING_STATUS
+    type: checkbox
+    on_state: /1
+    group: filing_status
+  - line: filing_status::mfj              # Married filing jointly
+    field: CHK_FILING_STATUS
+    type: checkbox
+    on_state: /2
+    group: filing_status
+  - line: filing_status::mfs              # Married filing separately
+    field: CHK_FILING_STATUS
+    type: checkbox
+    on_state: /3
+    group: filing_status
+  - line: filing_status_mfs_spouse_ssn    # Spouse's SSN (married filing separately). The blank HIDES this
+                                          # widget (annotation /F 6) and only its own JavaScript shows it on
+                                          # MFS; taxfill runs none, so the value is written but does not
+                                          # print — see UNVERIFIED / OPEN in the header.
+    field: SP_SSN_SEP
+    type: text
+    maxlen: 9
+  # ---- Ohio Nonresident Statement (irrebuttable-presumption criteria)
+  - line: nonresident_statement_primary   # Primary meets the five criteria for irrebuttable presumption as nonresident
+    field: CHK_PRIM_NON_RES_STMT
+    type: checkbox
+    on_state: /1
+  - line: nonresident_statement_spouse    # Spouse meets the five criteria for irrebuttable presumption as nonresident
+    field: CHK_SP_NON_RES_STMT
+    type: checkbox
+    on_state: /1
+  # ---- Federal extension / dependent-of-another
+  - line: federal_extension_filer         # Federal extension filers - check here
+    field: CHK_FED_EXT_FILTER
+    type: checkbox
+    on_state: /1
+  - line: can_be_claimed_dependent        # "If someone can claim you (or your spouse if filing jointly) as a dependent, check here."
+    field: CHK_CLAIM_DEP
+    type: checkbox
+    on_state: /1
+
+  # ---- Lines 1-7
+  - line: 1_neg                  # line 1 "-" sign box (place a "-" if negative)
+    field: L1_NEG
+    type: text
+    maxlen: 1
+  - line: "1"                    # Federal adjusted gross income (federal 1040 or 1040-SR, line 11a; 2024 printed line 11)
+    field: L1
+    type: money
+  - line: 2a                     # Additions — Ohio Schedule of Adjustments, line 12
+    field: L2A
+    type: money
+  - line: 2b                     # Deductions — Ohio Schedule of Adjustments, line 47 (2024: line 46)
+    field: L2B
+    type: money
+  - line: 3_neg                  # line 3 "-" sign box
+    field: L3_NEG
+    type: text
+    maxlen: 1
+  - line: "3"                    # Ohio adjusted gross income (line 1 plus line 2a minus line 2b)
+    field: L3
+    type: money
+  - line: 4_number_of_exemptions # "Number of exemptions including you and your spouse/dependents, if applicable"
+    field: L4_EXEMPT
+    type: text
+    maxlen: 2
+  - line: "4"                    # Exemption amount (include Schedule of Dependents if applicable)
+    field: L4
+    type: money
+  - line: "5"                    # Ohio income tax base (line 3 minus line 4; if negative, enter zero)
+    field: L5
+    type: money
+  - line: "6"                    # Taxable business income — Ohio Schedule of Business Income, line 15
+    field: L6
+    type: money
+  - line: "7"                    # Taxable nonbusiness income (line 5 minus line 6; if negative, enter zero)
+    field: L7
+    type: money
+
+  # =========================================================== IT 1040 page 2
+  # TP_SSN1 is the per-page identity header. It is a SEPARATE AcroForm field
+  # from TP_SSN (page 1), not a widget copy of it: one field, 12 widget kids —
+  # 11 on document pages 2-12, the 12th parented to a /Type /Template object
+  # that is not in the page tree. Every one of pages 2-12 prints an SSN caption
+  # over it ("SSN:" on 2/4/6/8/10/12, "Primary taxpayer's SSN" on 3/5/7/9/11).
+  # Its own /AA /C is `var ssNumber = this.getField("TP_SSN").valueAsString;
+  # event.value = util.printx("XXX XX XXXX",ssNumber)` — the exact page-header
+  # SSN mirror P-007 names as class 4. taxfill never executes that JavaScript,
+  # so writing tp_ssn CANNOT populate it and it must be written directly, with
+  # the SAME nine digits as tp_ssn (see the READONLY ADJUDICATION header note).
+  - line: tp_ssn_page_header     # pages 2-12 header SSN mirror — write the same 9 digits as tp_ssn
+    field: TP_SSN1
+    type: text
+    maxlen: 9
+  - line: 7a                     # Amount from line 7 on page 1
+    field: L7a
+    type: money
+  - line: 8a                     # Nonbusiness income tax liability on line 7a (see tax.ohio.gov/taxcalculator or see the instructions for the tax brackets)
+    field: L8A
+    type: money
+  - line: 8b                     # Business income tax liability — Ohio Schedule of Business Income, line 16
+    field: L8B
+    type: money
+  - line: 8c                     # Income tax liability before credits (line 8a plus line 8b)
+    field: L8C
+    type: money
+  - line: "9"                    # Ohio nonrefundable credits — Ohio Schedule of Credits, line 40 (2024: line 39)
+    field: L9
+    type: money
+  - line: "10"                   # Tax liability after nonrefundable credits (line 8c minus line 9; if negative, enter zero)
+    field: L10
+    type: money
+  - line: "11"                   # Interest penalty on underpayment of estimated tax (include Ohio IT/SD 2210)
+    field: L11
+    type: money
+  - line: "12"                   # Unpaid use tax
+    field: L12
+    type: money
+  - line: "13"                   # Total Ohio tax liability before withholding or estimated payments (add lines 10, 11, and 12)
+    field: L13
+    type: money
+  - line: "14"                   # Ohio income tax withheld — Schedule of Ohio Withholding, part A, line 1
+    field: L14
+    type: money
+  - line: "15"                   # Estimated and extension payments, credit carryforward from the 2024 return, and amounts
+                                 # previously paid with an original and/or amended 2025 return (2025 folded the
+                                 # 2024 line 17 "amount previously paid" into this line)
+    field: L15
+    type: money
+  - line: "16"                   # Refundable credits — Ohio Schedule of Credits, line 47 (2024: line 46)
+    field: L16
+    type: money
+  - line: "17"                   # Total Ohio tax payments (add lines 14, 15, and 16) (2024 line 18)
+    field: L17
+    type: money
+  # Line 18 is the ONE "Amended return only" cell left on the 2025 face. Its
+  # widget L18 carries /Ff = 1 (ReadOnly) on the 2025 blank (2024: 0, when L18
+  # was total payments), and NOTHING in the file ever clears it: no readonly
+  # assignment in the file's JavaScript targets L18 (every one was resolved to
+  # its field), and the only script that touches L18 at all is DS_Print's
+  # barcode gather, which reads it. The document script's `case "CHK_AMD"`
+  # branch is byte-identical to 2024's and still toggles L17/L19 and
+  # L25/L26A-L26G — but on this face L17 and L19 are the ordinary
+  # total-payments and "Line 17 minus line 18" lines (both /Ff 0), and
+  # L25/L26A-L26G no longer exist. So the bit sits on a line the face tells an
+  # amended filer to complete, and no script can clear it — the 2024
+  # SchedC_L12 shape: P-007 class 4, MAPPED. L18's /AA is identical to its
+  # unflagged neighbours L17/L19 (/F + /K AFNumber_Format/Keystroke(0,1,0,0,
+  # "",true), /V AFRange_Validate(true, 0, true, 999999999), /C dsRound())
+  # and its /V is absent, so nothing computes it and nothing is overwritten.
+  # Unmapped, an amended return filed through taxfill would print a blank
+  # line 18 while line 19 ("Line 17 minus line 18") printed a difference.
+  # CALLER NOTE: 18 is filled only with amended_return checked; 24 and 25a-g
+  # read "Original return only", so fill them only without it.
+  - line: "18"                   # Amended return only — overpayment previously requested on original and/or amended 2025 return (2024 line 19)
+    field: L18
+    type: money
+  - line: 19_neg                 # line 19 "-" sign box (place a "-" if negative); 2024: L20_NEG on line 20
+    field: L19_NEG
+    type: text
+    maxlen: 1
+  - line: "19"                   # Line 17 minus line 18 (2024 line 20)
+    field: L19
+    type: money
+  - line: "20"                   # Tax due (line 13 minus line 19) (2024 line 21)
+    field: L20
+    type: money
+  - line: "21"                   # Interest due on late payment of tax (2024 line 22)
+    field: L21
+    type: money
+  - line: "22"                   # TOTAL AMOUNT DUE (line 20 plus line 21) — pay at tax.ohio.gov/pay or include the OUPC with your check (2024 line 23)
+    field: L22
+    type: money
+  - line: "23"                   # Overpayment (line 19 minus line 13) (2024 line 24)
+    field: L23
+    type: money
+  - line: "24"                   # Original return only — portion of line 23 carried forward to next year’s tax liability (2024 line 25, widget L25)
+    field: L24
+    type: money
+  # ---- line 25 — Original return only — portion of line 23 you wish to donate (a-f) and total (g).
+  # 2025 ROTATED THE FUND LABELS AGAIN by one position, over NEW widget names
+  # L25A..L25G (2024: L26A..L26G on line 26). The DOR's own /TU tooltips on
+  # L25A..L25F still read the 2023 order (L25A "Wishes for Sick Children"), so
+  # each letter below was read off the printed label above its box.
+  - line: 25a                    # a. Nature Preserves/Scenic Rivers  (2024 a. was Breast/Cervical Cancer)
+    field: L25A
+    type: money
+  - line: 25b                    # b. Breast/Cervical Cancer  (2024 b. was Wishes for Sick Children)
+    field: L25B
+    type: money
+  - line: 25c                    # c. Wishes for Sick Children  (2024 c. was Wildlife Species)
+    field: L25C
+    type: money
+  - line: 25d                    # d. Wildlife Species  (2024 d. was Military Injury Relief)
+    field: L25D
+    type: money
+  - line: 25e                    # e. Military Injury Relief  (2024 e. was Ohio History Fund)
+    field: L25E
+    type: money
+  - line: 25f                    # f. Ohio History Fund  (2024 f. was Nature Preserves/Scenic Rivers)
+    field: L25F
+    type: money
+  - line: 25g                    # Total (25a through 25f)
+    field: L25G
+    type: money
+  - line: "26"                   # REFUND (line 23 minus lines 24 and 25g) (2024 line 27, widget L27)
+    field: L26
+    type: money
+  # ---- Sign Here / preparer block (page 2)
+  - line: primary_signature_phone   # Primary signature — Phone number
+    field: PHONE_NUM
+    type: text
+    maxlen: 10
+  - line: signature_date            # Date (spouse signature line)
+    field: SIGN_DATE
+    type: text
+    maxlen: 8
+  - line: preparer_printed_name     # Preparer's printed name — the widget has no /MaxLen; its box is
+                                    # 153.6 pt wide (/Rect x 113.25-266.85) at CourierNew,Bold 12 =
+                                    # 7.2 pt per glyph, so 21 glyphs fit (the 2024 pack's 25 let
+                                    # 22-25 characters through to a verify P-001 width FAIL)
+    field: PREPARER_PRINTED_NAME
+    type: text
+    maxlen: 21
+  - line: preparer_phone            # Preparer — Phone number
+    field: PREPARER_PHONE_NUM
+    type: text
+    maxlen: 10
+  - line: preparer_ptin             # Preparer PTIN — the 2025 face prints "PTIN: P" with the P left of this
+                                    # box (new for 2025); enter the eight characters after the P
+    field: PREPARER_TIN
+    type: text
+    maxlen: 8
+  - line: authorize_preparer_discuss   # "Authorize your preparer to discuss this return"
+    field: SpeakPrep
+    type: checkbox
+    on_state: /1
+  - line: non_paid_preparer            # "Non-paid preparer"
+    field: NonPaidPrep
+    type: checkbox
+    on_state: /1
+
+  # =============================== Ohio Schedule of Adjustments (pages 3-4)
+  # 2025 RENUMBERED THIS SCHEDULE AGAIN. Additions are still printed lines 1-11
+  # totalling on line 12; deductions are now printed lines 13-46 (2024: 13-45)
+  # and total on line 47 (2024: 46). One printed line is NEW: line 25
+  # "Deduction for contributions to a pregnancy resource center", so every
+  # 2024 line from 25 on moved down one number. The AcroForm names are
+  # POSITIONAL - SchedA_L<n> sits on printed line <n> (verified by widget /Rect
+  # vs the printed line-number labels, and by the sentinel audit) - so every
+  # key below is the 2025 printed line number and the '(2024 line n)' notes
+  # record the shift. Lines 1-24 kept their 2024 numbers and captions.
+  # Additions (lines 1-11)
+  - line: schedA_1          # Non-Ohio state or local government interest and dividends
+    field: SchedA_L1
+    type: money
+  - line: schedA_2          # Ohio pass-through entity taxes excluded from federal adjusted gross income
+    field: SchedA_L2
+    type: money
+  - line: schedA_3          # Taxes paid to another state or District of Columbia related to IRS notice 2020-75
+    field: SchedA_L3
+    type: money
+  - line: schedA_4          # 529 plan funds used for non-qualified expenses
+    field: SchedA_L4
+    type: money
+  - line: schedA_5          # Losses from sale or disposition of Ohio public obligations
+    field: SchedA_L5
+    type: money
+  - line: schedA_6          # Nonmedical withdrawals from a medical savings account
+    field: SchedA_L6
+    type: money
+  - line: schedA_7          # Reimbursement of expenses previously deducted on an Ohio income tax return
+    field: SchedA_L7
+    type: money
+  - line: schedA_8          # Ineligible withdrawals from an Ohio Homebuyer Plus account
+    field: SchedA_L8
+    type: money
+  - line: schedA_9          # Internal Revenue Code 168(k) and 179 depreciation expense add-back
+    field: SchedA_L9
+    type: money
+  - line: schedA_10         # Exempt federal interest and dividends subject to state taxation
+    field: SchedA_L10
+    type: money
+  - line: schedA_11         # Federal conformity additions
+    field: SchedA_L11
+    type: money
+  - line: schedA_12         # Total additions (add lines 1 through 11 ONLY) - Ohio IT 1040, line 2a
+    field: SchedA_L12
+    type: money
+  # Deductions (lines 13-46) and their total (line 47)
+  - line: schedA_13         # Business income deduction - Ohio Schedule of Business Income, line 13
+    field: SchedA_L13
+    type: money
+  - line: schedA_14         # Employee compensation earned in Ohio by residents of neighboring states
+    field: SchedA_L14
+    type: money
+  - line: schedA_15         # Taxable refunds, credits, or offsets of state and local income taxes (federal 1040,
+                            # Schedule 1, line 1)
+    field: SchedA_L15
+    type: money
+  - line: schedA_16         # Taxable Social Security benefits (federal 1040 and 1040-SR, line 6b)
+    field: SchedA_L16
+    type: money
+  - line: schedA_17         # Certain railroad benefits
+    field: SchedA_L17
+    type: money
+  - line: schedA_18         # Interest income from Ohio public obligations and purchase obligations; gains from the
+                            # disposition of Ohio public obligations; or income from a transfer agreement
+    field: SchedA_L18
+    type: money
+  - line: schedA_19         # Amounts contributed to an Ohio county's individual development account program
+    field: SchedA_L19
+    type: money
+  - line: schedA_20         # Amounts contributed to a STABLE account: Ohio's ABLE plan
+    field: SchedA_L20
+    type: money
+  - line: schedA_21         # Income earned in Ohio by a qualifying out-of-state business or employee for disaster
+                            # work conducted during a disaster response period
+    field: SchedA_L21
+    type: money
+  - line: schedA_22         # Certain payments related to the East Palestine train derailment
+    field: SchedA_L22
+    type: money
+  - line: schedA_23         # Ohio adoption grant program payments received from the Ohio Department of Children and
+                            # Youth (ODCY)
+    field: SchedA_L23
+    type: money
+  - line: schedA_24         # Amounts contributed to and interest earned on an Ohio Homebuyer Plus account
+    field: SchedA_L24
+    type: money
+  - line: schedA_25         # NEW for 2025: Deduction for contributions to a pregnancy resource center (/MaxLen 4)
+    field: SchedA_L25
+    type: money
+  - line: schedA_26         # Federal interest and dividends exempt from state taxation (2024 line 25)
+    field: SchedA_L26
+    type: money
+  - line: schedA_27         # Deduction of prior year 168(k) and 179 depreciation add-backs (2024 line 26)
+    field: SchedA_L27
+    type: money
+  - line: schedA_28         # Refund or reimbursements from the federal 1040, Schedule 1, line 8z for federal
+                            # itemized deductions claimed on a prior year return (2024 line 27)
+    field: SchedA_L28
+    type: money
+  - line: schedA_29         # Repayment of income reported in a prior year (2024 line 28)
+    field: SchedA_L29
+    type: money
+  - line: schedA_30         # Wage expense not deducted based on the federal work opportunity tax credit (2024 line 29)
+    field: SchedA_L30
+    type: money
+  - line: schedA_31         # Federal conformity deductions (2024 line 30)
+    field: SchedA_L31
+    type: money
+  - line: schedA_32         # Military pay received by Ohio residents while stationed outside Ohio (2024 line 31)
+    field: SchedA_L32
+    type: money
+  - line: schedA_33         # Compensation earned by nonresident military servicemembers and their civilian spouses
+                            # (2024 line 32)
+    field: SchedA_L33
+    type: money
+  - line: schedA_34         # Uniformed services retirement income (2024 line 33)
+    field: SchedA_L34
+    type: money
+  - line: schedA_35         # Military injury relief fund grants and veteran's disability severance payments
+                            # (2024 line 34)
+    field: SchedA_L35
+    type: money
+  - line: schedA_36         # Certain Ohio National Guard reimbursements and benefits (2024 line 35)
+    field: SchedA_L36
+    type: money
+  - line: schedA_37         # Amounts contributed to a 529 Plan (2024 line 36)
+    field: SchedA_L37
+    type: money
+  - line: schedA_38         # Pell/Ohio College Opportunity taxable grant amounts used to pay room and board
+                            # (2024 line 37)
+    field: SchedA_L38
+    type: money
+  - line: schedA_39         # Ohio educator expenses in excess of federal deduction (2024 line 38; narrow box,
+                            # /MaxLen 3)
+    field: SchedA_L39
+    type: text
+    maxlen: 3
+  - line: schedA_40         # Income attributable to loan repayments by the Ohio Department of Higher Education
+                            # under the rural practice incentive program (2024 line 39)
+    field: SchedA_L40
+    type: money
+  - line: schedA_41         # Grant program payments made by the Ohio Department of Higher Education on behalf of
+                            # adopted students (2024 line 40)
+    field: SchedA_L41
+    type: money
+  - line: schedA_42         # Disability benefits (2024 line 41)
+    field: SchedA_L42
+    type: money
+  - line: schedA_43         # Survivor benefits (2024 line 42)
+    field: SchedA_L43
+    type: money
+  - line: schedA_44         # Unreimbursed medical and health care expenses (see instructions for worksheet;
+                            # include a copy) (2024 line 43)
+    field: SchedA_L44
+    type: money
+  - line: schedA_45         # Medical savings account contributions/earnings (see instructions for worksheet;
+                            # include a copy) (2024 line 44)
+    field: SchedA_L45
+    type: money
+  - line: schedA_46         # Qualified organ donor expenses (2024 line 45)
+    field: SchedA_L46
+    type: money
+  - line: schedA_47         # Total deductions (add lines 13 through 46 ONLY) - Ohio IT 1040, line 2b (2024 line 46;
+                            # NEW widget SchedA_L47)
+    field: SchedA_L47
+    type: money
+
+  # =============================== Ohio Schedule of Business Income (IT BUS, pages 5-6)
+  # Part 1 — Business Income (lines 1-10); the "-" sign boxes mark negative lines.
+  - line: schedITbus_1          # Schedule B — Interest and Ordinary Dividends
+    field: SchedITBUS_L1
+    type: money
+  - line: schedITbus_2_neg      # line 2 "-" sign box
+    field: SchedITBUS_L2_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_2          # Schedule C — Net Profit or Loss From Business (Sole Proprietorship)
+    field: SchedITBUS_L2
+    type: money
+  - line: schedITbus_3_neg      # line 3 "-" sign box
+    field: SchedITBUS_L3_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_3          # Schedule D — Capital Gains and Losses
+    field: SchedITBUS_L3
+    type: money
+  - line: schedITbus_4_neg      # line 4 "-" sign box
+    field: SchedITBUS_L4_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_4          # Schedule E — Supplemental Income and Loss
+    field: SchedITBUS_L4
+    type: money
+  - line: schedITbus_5          # Guaranteed payments or compensation from a pass-through entity to a 20% or greater direct or indirect owner
+    field: SchedITBUS_L5
+    type: money
+  - line: schedITbus_6_neg      # line 6 "-" sign box
+    field: SchedITBUS_L6_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_6          # Schedule F — Net Profit or Loss From Farming
+    field: SchedITBUS_L6
+    type: money
+  - line: schedITbus_7          # Add-back of electing pass-through entity taxes paid on the Ohio form IT 4738 that qualify as business income
+    field: SchedITBUS_L7
+    type: money
+  - line: schedITbus_8          # Add-back of taxes paid to another state or the District of Columbia related to IRS notice 2020-75 that qualify as business income
+    field: SchedITBUS_L8
+    type: money
+  - line: schedITbus_9_neg      # line 9 "-" sign box
+    field: SchedITBUS_L9_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_9          # Other business income or loss not reported above (e.g. form 4797 amounts)
+    field: SchedITBUS_L9
+    type: money
+  - line: schedITbus_10_neg     # line 10 "-" sign box
+    field: SchedITBUS_L10_NEG
+    type: text
+    maxlen: 1
+  - line: schedITbus_10         # Total business income (add lines 1 through 9)
+    field: SchedITBUS_L10
+    type: money
+  # Part 2 — Business Income Deduction (lines 11-13)
+  - line: schedITbus_11         # Enter the lesser of line 10 above or Ohio IT 1040, line 1 (if negative, enter zero)
+    field: SchedITBUS_L11
+    type: money
+  - line: schedITbus_12         # Enter $250,000 (single/MFJ) OR $125,000 (MFS) — both printed on the 2025 face
+    field: SchedITBUS_L12
+    type: money
+  - line: schedITbus_13         # Enter the lesser of line 11 or line 12 — Ohio Schedule of Adjustments, line 13
+    field: SchedITBUS_L13
+    type: money
+  # Part 3 — Taxable Business Income (lines 14-16)
+  - line: schedITbus_14         # Line 11 minus line 13
+    field: SchedITBUS_L14
+    type: money
+  - line: schedITbus_15         # Taxable business income (lesser of line 14 or Ohio IT 1040, line 5) — Ohio IT 1040, line 6
+    field: SchedITBUS_L15
+    type: money
+  - line: schedITbus_16         # Business income tax liability — multiply line 15 by 3% (.03) — Ohio IT 1040, line 8b
+    field: SchedITBUS_L16
+    type: money
+  # Part 4 — Business Sources (8 rows: FEIN/SSN, primary ownership %, spouse ownership %, business name)
+  - line: schedITbus_src1_fein_ssn
+    field: SchedITBUS_L1_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src1_primary_pct
+    field: SchedITBUS_L1_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src1_spouse_pct
+    field: SchedITBUS_L1_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src1_name
+    field: SchedITBUS_L1_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src2_fein_ssn
+    field: SchedITBUS_L2_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src2_primary_pct
+    field: SchedITBUS_L2_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src2_spouse_pct
+    field: SchedITBUS_L2_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src2_name
+    field: SchedITBUS_L2_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src3_fein_ssn
+    field: SchedITBUS_L3_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src3_primary_pct
+    field: SchedITBUS_L3_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src3_spouse_pct
+    field: SchedITBUS_L3_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src3_name
+    field: SchedITBUS_L3_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src4_fein_ssn
+    field: SchedITBUS_L4_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src4_primary_pct
+    field: SchedITBUS_L4_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src4_spouse_pct
+    field: SchedITBUS_L4_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src4_name
+    field: SchedITBUS_L4_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src5_fein_ssn
+    field: SchedITBUS_L5_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src5_primary_pct
+    field: SchedITBUS_L5_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src5_spouse_pct
+    field: SchedITBUS_L5_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src5_name
+    field: SchedITBUS_L5_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src6_fein_ssn
+    field: SchedITBUS_L6_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src6_primary_pct
+    field: SchedITBUS_L6_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src6_spouse_pct
+    field: SchedITBUS_L6_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src6_name
+    field: SchedITBUS_L6_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src7_fein_ssn
+    field: SchedITBUS_L7_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src7_primary_pct
+    field: SchedITBUS_L7_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src7_spouse_pct
+    field: SchedITBUS_L7_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src7_name
+    field: SchedITBUS_L7_NAME
+    type: text
+    maxlen: 40
+  - line: schedITbus_src8_fein_ssn
+    field: SchedITBUS_L8_FEIN_SSN
+    type: text
+    maxlen: 9
+  - line: schedITbus_src8_primary_pct
+    field: SchedITBUS_L8_PRIM_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src8_spouse_pct
+    field: SchedITBUS_L8_SP_PCT_INT
+    type: text
+    maxlen: 6
+  - line: schedITbus_src8_name
+    field: SchedITBUS_L8_NAME
+    type: text
+    maxlen: 40
+
+  # =============================== Ohio Schedule of Credits (pages 7-8)
+  # 2025 RENUMBERED THIS SCHEDULE AGAIN. One printed line is NEW: line 24
+  # "Credit for transformational mixed-use development", so every 2024 line
+  # from 24 on moved down one number: the nonrefundable total is printed line
+  # 40 (2024: 39) and the refundable total line 47 (2024: 46). SchedC_L<n> is
+  # positional - it sits on printed line <n> - so keys are 2025 printed line
+  # numbers. Lines 1-23 kept their 2024 numbers and captions.
+  # Nonrefundable Credits (lines 1-37)
+  - line: schedC_1          # Tax liability before credits (from Ohio IT 1040, line 8c)
+    field: SchedC_L1
+    type: money
+  - line: schedC_2          # Retirement income credit (include 1099-R forms) - narrow box, /MaxLen 3
+    field: SchedC_L2
+    type: text
+    maxlen: 3
+  - line: schedC_3          # Lump sum retirement credit (include a copy of the worksheet and 1099-R forms)
+    field: SchedC_L3
+    type: money
+  - line: schedC_4          # Senior citizen credit (must be 65 or older to claim this credit) - narrow
+                            # box, /MaxLen 2
+    field: SchedC_L4
+    type: text
+    maxlen: 2
+  - line: schedC_5          # Lump sum distribution credit (include a copy of the worksheet and 1099-R forms)
+    field: SchedC_L5
+    type: money
+  - line: schedC_6          # Child care & dependent care credit (include a copy of the worksheet)
+    field: SchedC_L6
+    type: money
+  - line: schedC_7          # Displaced worker training credit (include a copy of the worksheet and all required
+                            # documentation)
+    field: SchedC_L7
+    type: money
+  - line: schedC_8          # Campaign contribution credit for Ohio statewide office or General Assembly - narrow
+                            # box, /MaxLen 3
+    field: SchedC_L8
+    type: text
+    maxlen: 3
+  - line: schedC_9          # Exemption credit - narrow box, /MaxLen 3
+    field: SchedC_L9
+    type: text
+    maxlen: 3
+  - line: schedC_10         # Total (add lines 2 through 9)
+    field: SchedC_L10
+    type: money
+  - line: schedC_11         # Tax less credits (line 1 minus line 10; if negative, enter zero)
+    field: SchedC_L11
+    type: money
+  # Printed line 12: "Joint filing credit (see instructions for table). ___%
+  # times line 11, up to $650". Both widgets carry /Ff = 0 on the 2025 blank:
+  # Ohio CLEARED the ReadOnly bit it set on them for 2024, and no JavaScript in
+  # the file writes either cell or its readonly property (DS_Print's barcode
+  # gather only reads SchedC_L12, through GVS('SchedC_L'+i)). Ordinary
+  # filer-entry cells; SchedC_L12's /V is AFRange_Validate(true, 0, true, 650),
+  # the printed cap.
+  - line: schedC_12_jfc     # Joint filing credit percentage box (% times line 11) - narrow box, /MaxLen 2
+    field: SchedC_L12_JFC
+    type: text
+    maxlen: 2
+  - line: schedC_12         # Joint filing credit amount, printed cap $650 - narrow box, /MaxLen 3
+    field: SchedC_L12
+    type: text
+    maxlen: 3
+  - line: schedC_13         # Earned income credit
+    field: SchedC_L13
+    type: money
+  - line: schedC_14         # Home school expenses credit (include copies of all required documentation) - narrow
+                            # box, /MaxLen 4 (2024: 3)
+    field: SchedC_L14
+    type: text
+    maxlen: 4
+  - line: schedC_15         # Scholarship donation credit (include copies of all required documentation)
+    field: SchedC_L15
+    type: money
+  - line: schedC_16         # Nonchartered, nonpublic school tuition credit (include copies of all required
+                            # documentation)
+    field: SchedC_L16
+    type: money
+  - line: schedC_17         # Credit for work-based learning experiences (include a copy of the credit certificate)
+    field: SchedC_L17
+    type: money
+  - line: schedC_18         # Ohio adoption credit carryforward
+    field: SchedC_L18
+    type: money
+  - line: schedC_19         # Nonrefundable job retention credit (include a copy of the credit certificate)
+    field: SchedC_L19
+    type: money
+  - line: schedC_20         # Credit for eligible new employees in an enterprise zone (include a copy of the credit
+                            # certificate)
+    field: SchedC_L20
+    type: money
+  - line: schedC_21         # Credit for the beginning farmers financial management program (include a copy of the
+                            # credit certificate)
+    field: SchedC_L21
+    type: money
+  - line: schedC_22         # Credit for commercial vehicle operator training expenses (include a copy of the credit
+                            # certificate)
+    field: SchedC_L22
+    type: money
+  - line: schedC_23         # Welcome Home Ohio credit (include a copy of the credit certificate)
+    field: SchedC_L23
+    type: money
+  - line: schedC_24         # NEW for 2025: Credit for transformational mixed-use development (include a copy of the
+                            # credit certificate)
+    field: SchedC_L24
+    type: money
+  - line: schedC_25         # Credit for sale/rental of agricultural assets to beginning farmers (include a copy of
+                            # the credit certificate) (2024 line 24)
+    field: SchedC_L25
+    type: money
+  - line: schedC_26         # Grape production credit (2024 line 25)
+    field: SchedC_L26
+    type: money
+  - line: schedC_27         # InvestOhio credit (include a copy of the credit certificate) (2024 line 26)
+    field: SchedC_L27
+    type: money
+  - line: schedC_28         # Lead abatement credit (include a copy of the credit certificate) (2024 line 27)
+    field: SchedC_L28
+    type: money
+  - line: schedC_29         # Opportunity zone investment credit (include a copy of the credit certificate)
+                            # (2024 line 28)
+    field: SchedC_L29
+    type: money
+  - line: schedC_30         # Technology investment credit carryforward (include a copy of the credit certificate)
+                            # (2024 line 29)
+    field: SchedC_L30
+    type: money
+  - line: schedC_31         # Enterprise zone day care & training credits (include a copy of the credit certificate)
+                            # (2024 line 30)
+    field: SchedC_L31
+    type: money
+  - line: schedC_32         # Research & development credit (include a copy of the credit certificate)
+                            # (2024 line 31)
+    field: SchedC_L32
+    type: money
+  - line: schedC_33         # Nonrefundable Ohio historic preservation credit (include a copy of the credit
+                            # certificate) (2024 line 32)
+    field: SchedC_L33
+    type: money
+  - line: schedC_34         # Ohio low-income housing credit (include a copy of the credit certificate)
+                            # (2024 line 33)
+    field: SchedC_L34
+    type: money
+  - line: schedC_35         # Affordable single-family housing credit (include a copy of the credit certificate)
+                            # (2024 line 34)
+    field: SchedC_L35
+    type: money
+  - line: schedC_36         # Total (add lines 12 through 35) (2024 line 35, 'add lines 12 through 34')
+    field: SchedC_L36
+    type: money
+  - line: schedC_37         # Tax less additional credits (line 11 minus line 36; if negative, enter zero)
+                            # (2024 line 36)
+    field: SchedC_L37
+    type: money
+  # Residency Credits (lines 38-39) and the nonrefundable total (line 40)
+  - line: schedC_38         # Nonresident credit - Ohio IT NRC, line 20 (include a copy) (2024 line 37)
+    field: SchedC_L38
+    type: money
+  - line: schedC_39         # Resident credit - Ohio IT RC, line 7 (include a copy) (2024 line 38)
+    field: SchedC_L39
+    type: money
+  - line: schedC_40         # Total nonrefundable credits (add lines 10, 36, 38, and 39) - Ohio IT 1040, line 9
+                            # (2024 line 39)
+    field: SchedC_L40
+    type: money
+  # Refundable Credits (lines 41-47)
+  - line: schedC_41         # Refundable Ohio historic preservation credit (include a copy of the credit
+                            # certificate) (2024 line 40)
+    field: SchedC_L41
+    type: money
+  - line: schedC_42         # Refundable job creation credit & job retention credit (include a copy of the credit
+                            # certificate) (2024 line 41)
+    field: SchedC_L42
+    type: money
+  - line: schedC_43         # Pass-through entity credit (include a copy of all Ohio IT K-1s) (2024 line 42)
+    field: SchedC_L43
+    type: money
+  - line: schedC_44         # Motion picture & Broadway theatrical production credit (include a copy of the credit
+                            # certificate) (2024 line 43)
+    field: SchedC_L44
+    type: money
+  - line: schedC_45         # Film and theater capital improvements credit (include a copy of the credit
+                            # certificate) (2024 line 44)
+    field: SchedC_L45
+    type: money
+  - line: schedC_46         # Venture capital credit (include a copy of the credit certificate) (2024 line 45)
+    field: SchedC_L46
+    type: money
+  - line: schedC_47         # Total refundable credits (add lines 41 through 46) - Ohio IT 1040, line 16
+                            # (2024 line 46; NEW widget SchedC_L47)
+    field: SchedC_L47
+    type: money
+
+  # =============================== Ohio Schedule of Dependents (pages 9-10)
+  # 15 dependent rows: SSN, date of birth (MM-DD-YYYY), relationship to you, first name, M.I., last name.
+  - line: schedJ_dep1_ssn
+    field: SchedJ_L1_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep1_dob           # "Dependent's date of birth (MM-DD-YYYY)" = 10 glyphs; the widget's
+                                    # /MaxLen is 15 but the box (75.5 pt on page 9, 75.3 pt on page 10, at
+                                    # CourierNew,Bold 12 = 7.2 pt/glyph) holds 10 — TIGHTER_THAN_WIDGET rows
+                                    # in test_pack_maxlen.py cover all 15 DOB lines
+    field: SchedJ_L1_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep1_relationship
+    field: SchedJ_L1_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep1_first
+    field: SchedJ_L1_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep1_mi
+    field: SchedJ_L1_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep1_last
+    field: SchedJ_L1_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep2_ssn
+    field: SchedJ_L2_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep2_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L2_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep2_relationship
+    field: SchedJ_L2_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep2_first
+    field: SchedJ_L2_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep2_mi
+    field: SchedJ_L2_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep2_last
+    field: SchedJ_L2_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep3_ssn
+    field: SchedJ_L3_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep3_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L3_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep3_relationship
+    field: SchedJ_L3_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep3_first
+    field: SchedJ_L3_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep3_mi
+    field: SchedJ_L3_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep3_last
+    field: SchedJ_L3_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep4_ssn
+    field: SchedJ_L4_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep4_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L4_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep4_relationship
+    field: SchedJ_L4_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep4_first
+    field: SchedJ_L4_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep4_mi
+    field: SchedJ_L4_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep4_last
+    field: SchedJ_L4_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep5_ssn
+    field: SchedJ_L5_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep5_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L5_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep5_relationship
+    field: SchedJ_L5_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep5_first
+    field: SchedJ_L5_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep5_mi
+    field: SchedJ_L5_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep5_last
+    field: SchedJ_L5_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep6_ssn
+    field: SchedJ_L6_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep6_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L6_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep6_relationship
+    field: SchedJ_L6_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep6_first
+    field: SchedJ_L6_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep6_mi
+    field: SchedJ_L6_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep6_last
+    field: SchedJ_L6_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep7_ssn
+    field: SchedJ_L7_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep7_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L7_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep7_relationship
+    field: SchedJ_L7_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep7_first
+    field: SchedJ_L7_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep7_mi
+    field: SchedJ_L7_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep7_last
+    field: SchedJ_L7_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep8_ssn
+    field: SchedJ_L8_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep8_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L8_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep8_relationship
+    field: SchedJ_L8_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep8_first
+    field: SchedJ_L8_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep8_mi
+    field: SchedJ_L8_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep8_last
+    field: SchedJ_L8_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep9_ssn
+    field: SchedJ_L9_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep9_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L9_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep9_relationship
+    field: SchedJ_L9_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep9_first
+    field: SchedJ_L9_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep9_mi
+    field: SchedJ_L9_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep9_last
+    field: SchedJ_L9_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep10_ssn
+    field: SchedJ_L10_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep10_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L10_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep10_relationship
+    field: SchedJ_L10_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep10_first
+    field: SchedJ_L10_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep10_mi
+    field: SchedJ_L10_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep10_last
+    field: SchedJ_L10_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep11_ssn
+    field: SchedJ_L11_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep11_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L11_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep11_relationship
+    field: SchedJ_L11_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep11_first
+    field: SchedJ_L11_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep11_mi
+    field: SchedJ_L11_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep11_last
+    field: SchedJ_L11_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep12_ssn
+    field: SchedJ_L12_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep12_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L12_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep12_relationship
+    field: SchedJ_L12_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep12_first
+    field: SchedJ_L12_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep12_mi
+    field: SchedJ_L12_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep12_last
+    field: SchedJ_L12_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep13_ssn
+    field: SchedJ_L13_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep13_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L13_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep13_relationship
+    field: SchedJ_L13_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep13_first
+    field: SchedJ_L13_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep13_mi
+    field: SchedJ_L13_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep13_last
+    field: SchedJ_L13_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep14_ssn
+    field: SchedJ_L14_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep14_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L14_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep14_relationship
+    field: SchedJ_L14_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep14_first
+    field: SchedJ_L14_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep14_mi
+    field: SchedJ_L14_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep14_last
+    field: SchedJ_L14_DEP_LN
+    type: text
+    maxlen: 20
+  - line: schedJ_dep15_ssn
+    field: SchedJ_L15_DEP_SSN
+    type: text
+    maxlen: 9
+  - line: schedJ_dep15_dob           # (MM-DD-YYYY), 10 glyphs — see schedJ_dep1_dob
+    field: SchedJ_L15_DEP_DOB
+    type: text
+    maxlen: 10
+  - line: schedJ_dep15_relationship
+    field: SchedJ_L15_DEP_RS
+    type: text
+    maxlen: 15
+  - line: schedJ_dep15_first
+    field: SchedJ_L15_DEP_FN
+    type: text
+    maxlen: 15
+  - line: schedJ_dep15_mi
+    field: SchedJ_L15_DEP_MI
+    type: text
+    maxlen: 1
+  - line: schedJ_dep15_last
+    field: SchedJ_L15_DEP_LN
+    type: text
+    maxlen: 20
+
+  # =============================== Ohio Schedule of Withholding (pages 11-12)
+  # Part A — Total Withholding
+  - line: schedW_a              # Total of all Ohio state tax withheld on pages 1 and 2 — Ohio IT 1040, line 14
+    field: SchedW_A
+    type: money
+  # Part B — W-2s (7 rows): P/S flag, Box b EIN, Box 1 wages, Box 2 federal income
+  # tax withheld, Box 15 employer's Ohio ID number, Box 16 Ohio wages, Box 17 Ohio income tax.
+  - line: schedW_b_w2_1_ps
+    field: SchedW_B_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_1_ein
+    field: SchedW_B_L1_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_1_box1_wages
+    field: SchedW_B_L1_WAGE
+    type: money
+  - line: schedW_b_w2_1_box2_fed_withheld
+    field: SchedW_B_L1_FITW
+    type: money
+  - line: schedW_b_w2_1_box15_oh_id
+    field: SchedW_B_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_1_box16_oh_wages
+    field: SchedW_B_L1_OHWAGE
+    type: money
+  - line: schedW_b_w2_1_box17_oh_tax
+    field: SchedW_B_L1_OHIT
+    type: money
+  - line: schedW_b_w2_2_ps
+    field: SchedW_B_L2_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_2_ein
+    field: SchedW_B_L2_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_2_box1_wages
+    field: SchedW_B_L2_WAGE
+    type: money
+  - line: schedW_b_w2_2_box2_fed_withheld
+    field: SchedW_B_L2_FITW
+    type: money
+  - line: schedW_b_w2_2_box15_oh_id
+    field: SchedW_B_L2_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_2_box16_oh_wages
+    field: SchedW_B_L2_OHWAGE
+    type: money
+  - line: schedW_b_w2_2_box17_oh_tax
+    field: SchedW_B_L2_OHIT
+    type: money
+  - line: schedW_b_w2_3_ps
+    field: SchedW_B_L3_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_3_ein
+    field: SchedW_B_L3_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_3_box1_wages
+    field: SchedW_B_L3_WAGE
+    type: money
+  - line: schedW_b_w2_3_box2_fed_withheld
+    field: SchedW_B_L3_FITW
+    type: money
+  - line: schedW_b_w2_3_box15_oh_id
+    field: SchedW_B_L3_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_3_box16_oh_wages
+    field: SchedW_B_L3_OHWAGE
+    type: money
+  - line: schedW_b_w2_3_box17_oh_tax
+    field: SchedW_B_L3_OHIT
+    type: money
+  - line: schedW_b_w2_4_ps
+    field: SchedW_B_L4_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_4_ein
+    field: SchedW_B_L4_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_4_box1_wages
+    field: SchedW_B_L4_WAGE
+    type: money
+  - line: schedW_b_w2_4_box2_fed_withheld
+    field: SchedW_B_L4_FITW
+    type: money
+  - line: schedW_b_w2_4_box15_oh_id
+    field: SchedW_B_L4_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_4_box16_oh_wages
+    field: SchedW_B_L4_OHWAGE
+    type: money
+  - line: schedW_b_w2_4_box17_oh_tax
+    field: SchedW_B_L4_OHIT
+    type: money
+  - line: schedW_b_w2_5_ps
+    field: SchedW_B_L5_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_5_ein
+    field: SchedW_B_L5_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_5_box1_wages
+    field: SchedW_B_L5_WAGE
+    type: money
+  - line: schedW_b_w2_5_box2_fed_withheld
+    field: SchedW_B_L5_FITW
+    type: money
+  - line: schedW_b_w2_5_box15_oh_id
+    field: SchedW_B_L5_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_5_box16_oh_wages
+    field: SchedW_B_L5_OHWAGE
+    type: money
+  - line: schedW_b_w2_5_box17_oh_tax
+    field: SchedW_B_L5_OHIT
+    type: money
+  - line: schedW_b_w2_6_ps
+    field: SchedW_B_L6_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_6_ein
+    field: SchedW_B_L6_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_6_box1_wages
+    field: SchedW_B_L6_WAGE
+    type: money
+  - line: schedW_b_w2_6_box2_fed_withheld
+    field: SchedW_B_L6_FITW
+    type: money
+  - line: schedW_b_w2_6_box15_oh_id
+    field: SchedW_B_L6_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_6_box16_oh_wages
+    field: SchedW_B_L6_OHWAGE
+    type: money
+  - line: schedW_b_w2_6_box17_oh_tax
+    field: SchedW_B_L6_OHIT
+    type: money
+  - line: schedW_b_w2_7_ps
+    field: SchedW_B_L7_PS
+    type: text
+    maxlen: 1
+  - line: schedW_b_w2_7_ein
+    field: SchedW_B_L7_EIN
+    type: text
+    maxlen: 9
+  - line: schedW_b_w2_7_box1_wages
+    field: SchedW_B_L7_WAGE
+    type: money
+  - line: schedW_b_w2_7_box2_fed_withheld
+    field: SchedW_B_L7_FITW
+    type: money
+  - line: schedW_b_w2_7_box15_oh_id
+    field: SchedW_B_L7_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_b_w2_7_box16_oh_wages
+    field: SchedW_B_L7_OHWAGE
+    type: money
+  - line: schedW_b_w2_7_box17_oh_tax
+    field: SchedW_B_L7_OHIT
+    type: money
+  # Part C — 1099-Rs (4 rows): P/S flag, Payer's TIN, Box 1 gross distribution,
+  # "Total distribution" checkbox, Box 7 distribution code, Box 15 payer's Ohio
+  # number, Box 4 federal income tax withheld, Box 14 Ohio tax withheld.
+  - line: schedW_c_1099r_1_ps
+    field: SchedW_C_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_c_1099r_1_tin
+    field: SchedW_C_L1_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_c_1099r_1_box1_gross
+    field: SchedW_C_L1_GROSS
+    type: money
+  - line: schedW_c_1099r_1_total_distribution
+    field: SchedW_C_L1_CHK
+    type: checkbox
+    on_state: /Yes
+  - line: schedW_c_1099r_1_box7_dist_code
+    field: SchedW_C_L1_DIST
+    type: text
+    maxlen: 2
+  - line: schedW_c_1099r_1_box15_oh_id
+    field: SchedW_C_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_c_1099r_1_box4_fed_withheld
+    field: SchedW_C_L1_FITW
+    type: money
+  - line: schedW_c_1099r_1_box14_oh_withheld
+    field: SchedW_C_L1_OHTW
+    type: money
+  - line: schedW_c_1099r_2_ps
+    field: SchedW_C_L2_PS
+    type: text
+    maxlen: 1
+  - line: schedW_c_1099r_2_tin
+    field: SchedW_C_L2_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_c_1099r_2_box1_gross
+    field: SchedW_C_L2_GROSS
+    type: money
+  - line: schedW_c_1099r_2_total_distribution
+    field: SchedW_C_L2_CHK
+    type: checkbox
+    on_state: /Yes
+  - line: schedW_c_1099r_2_box7_dist_code
+    field: SchedW_C_L2_DIST
+    type: text
+    maxlen: 2
+  - line: schedW_c_1099r_2_box15_oh_id
+    field: SchedW_C_L2_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_c_1099r_2_box4_fed_withheld
+    field: SchedW_C_L2_FITW
+    type: money
+  - line: schedW_c_1099r_2_box14_oh_withheld
+    field: SchedW_C_L2_OHTW
+    type: money
+  - line: schedW_c_1099r_3_ps
+    field: SchedW_C_L3_PS
+    type: text
+    maxlen: 1
+  - line: schedW_c_1099r_3_tin
+    field: SchedW_C_L3_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_c_1099r_3_box1_gross
+    field: SchedW_C_L3_GROSS
+    type: money
+  - line: schedW_c_1099r_3_total_distribution
+    field: SchedW_C_L3_CHK
+    type: checkbox
+    on_state: /Yes
+  - line: schedW_c_1099r_3_box7_dist_code
+    field: SchedW_C_L3_DIST
+    type: text
+    maxlen: 2
+  - line: schedW_c_1099r_3_box15_oh_id
+    field: SchedW_C_L3_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_c_1099r_3_box4_fed_withheld
+    field: SchedW_C_L3_FITW
+    type: money
+  - line: schedW_c_1099r_3_box14_oh_withheld
+    field: SchedW_C_L3_OHTW
+    type: money
+  - line: schedW_c_1099r_4_ps
+    field: SchedW_C_L4_PS
+    type: text
+    maxlen: 1
+  - line: schedW_c_1099r_4_tin
+    field: SchedW_C_L4_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_c_1099r_4_box1_gross
+    field: SchedW_C_L4_GROSS
+    type: money
+  - line: schedW_c_1099r_4_total_distribution
+    field: SchedW_C_L4_CHK
+    type: checkbox
+    on_state: /Yes
+  - line: schedW_c_1099r_4_box7_dist_code
+    field: SchedW_C_L4_DIST
+    type: text
+    maxlen: 2
+  - line: schedW_c_1099r_4_box15_oh_id
+    field: SchedW_C_L4_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_c_1099r_4_box4_fed_withheld
+    field: SchedW_C_L4_FITW
+    type: money
+  - line: schedW_c_1099r_4_box14_oh_withheld
+    field: SchedW_C_L4_OHTW
+    type: money
+  # Part D — W-2Gs (2 rows; 2024: 3 — the third row and its seven SchedW_D_L3_*
+  # widgets are gone): P/S flag, Payer's TIN (the key keeps its 2023 'fed_id'
+  # spelling), Box 1 reportable winnings, Box 4 federal income tax withheld,
+  # Box 13 Payer's Ohio ID number, Box 14 Ohio winnings, Box 15 Ohio income tax withheld.
+  - line: schedW_d_w2g_1_ps
+    field: SchedW_D_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_d_w2g_1_fed_id
+    field: SchedW_D_L1_FEDID
+    type: text
+    maxlen: 9
+  - line: schedW_d_w2g_1_box1_winnings
+    field: SchedW_D_L1_WIN
+    type: money
+  - line: schedW_d_w2g_1_box4_fed_withheld
+    field: SchedW_D_L1_FITW
+    type: money
+  - line: schedW_d_w2g_1_box13_oh_id
+    field: SchedW_D_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_d_w2g_1_box14_oh_winnings
+    field: SchedW_D_L1_OHWIN
+    type: money
+  - line: schedW_d_w2g_1_box15_oh_withheld
+    field: SchedW_D_L1_OHTW
+    type: money
+  - line: schedW_d_w2g_2_ps
+    field: SchedW_D_L2_PS
+    type: text
+    maxlen: 1
+  - line: schedW_d_w2g_2_fed_id
+    field: SchedW_D_L2_FEDID
+    type: text
+    maxlen: 9
+  - line: schedW_d_w2g_2_box1_winnings
+    field: SchedW_D_L2_WIN
+    type: money
+  - line: schedW_d_w2g_2_box4_fed_withheld
+    field: SchedW_D_L2_FITW
+    type: money
+  - line: schedW_d_w2g_2_box13_oh_id
+    field: SchedW_D_L2_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_d_w2g_2_box14_oh_winnings
+    field: SchedW_D_L2_OHWIN
+    type: money
+  - line: schedW_d_w2g_2_box15_oh_withheld
+    field: SchedW_D_L2_OHTW
+    type: money
+  # Part E — 1099-NEC (1 row; 2024 "1099-NECs", 2 rows — the second row and its
+  # seven SchedW_E_L2_* widgets are gone): P/S flag, Payer's TIN, Box 1
+  # nonemployee compensation, Box 4 federal income tax withheld, Box 6 payer's
+  # Ohio number, Box 7 Ohio income, Box 5 Ohio tax withheld. The row moved up
+  # 72 pt into the space the third W-2G row left; the DOR's /TU tooltips on
+  # SchedW_E_L1_COMP/OHINC/TIN now read W-2G captions ("Box 1 - Reportable
+  # winnings", "Box 14 - Ohio state winnings", "Box b - EIN"), so every cell
+  # was placed from the printed Part E captions and the sentinel audit.
+  - line: schedW_e_1099nec_1_ps
+    field: SchedW_E_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_e_1099nec_1_tin
+    field: SchedW_E_L1_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_e_1099nec_1_box1_comp
+    field: SchedW_E_L1_COMP
+    type: money
+  - line: schedW_e_1099nec_1_box4_fed_withheld
+    field: SchedW_E_L1_FITW
+    type: money
+  - line: schedW_e_1099nec_1_box6_oh_id
+    field: SchedW_E_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_e_1099nec_1_box7_state_income
+    field: SchedW_E_L1_OHINC
+    type: money
+  - line: schedW_e_1099nec_1_box5_oh_withheld
+    field: SchedW_E_L1_OHTW
+    type: money
+  # Part F — 1099-G (NEW for 2025, 1 row): P/S flag, Payer's TIN, Box 1
+  # Unemployment compensation, Box 4 Federal income tax withheld, Box 11b
+  # Payer's Ohio ID number, Box 12 Ohio income tax withheld. Six NEW widgets
+  # SchedW_F_L1_*, typed like their Part E counterparts (/MaxLen 1 / 9 / 9 / 8 / 8 / 8).
+  # Their /TU tooltips are copies of Part E's 1099-NEC captions ("Box 1 -
+  # Non-employee Compensation", "Box 6 - Payer's Ohio number", "Box 5 - Ohio
+  # tax withheld"), so each cell was placed from the printed 1099-G captions
+  # and proved by the sentinel audit.
+  - line: schedW_f_1099g_1_ps
+    field: SchedW_F_L1_PS
+    type: text
+    maxlen: 1
+  - line: schedW_f_1099g_1_tin
+    field: SchedW_F_L1_TIN
+    type: text
+    maxlen: 9
+  - line: schedW_f_1099g_1_box1_unemployment_comp
+    field: SchedW_F_L1_COMP
+    type: money
+  - line: schedW_f_1099g_1_box4_fed_withheld
+    field: SchedW_F_L1_FITW
+    type: money
+  - line: schedW_f_1099g_1_box11b_oh_id
+    field: SchedW_F_L1_OHID
+    type: text
+    maxlen: 8
+  - line: schedW_f_1099g_1_box12_oh_withheld
+    field: SchedW_F_L1_OHTW
+    type: money
+
+  # =============================== Ohio Universal Payment Coupon (page 13)
+  # The filer-data cells of the detachable payment slip. UPC_Payment is the
+  # coupon's one free-entry widget; the seven upc_* filer-data cells are
+  # ReadOnly P-007 class-4 mirrors, re-verified against the 2025 blank (OUPC
+  # PAGE-13 ADJUDICATION in the header): in a viewer each is fed by its own
+  # /AA /C from the page-1
+  # return fields, taxfill never runs that JavaScript, and unmapped they
+  # mailed a coupon whose name, address and SSN printed BLANK under their
+  # captions. The coupon's scan-line/check-digit cells, hidden data carriers
+  # and DOR-owned cells stay deliberately unmapped — every one is named, with
+  # its mechanism, in the header block.
+  - line: upc_payment           # Amount of Payment
+    field: UPC_Payment
+    type: text
+    maxlen: 9
+  - line: upc_first_name        # payer name block; /C copies TP_FN — supply tp_first_name's value
+    field: UPC_FName
+    type: text
+    maxlen: 15
+  - line: upc_mi                # /C copies TP_MI — supply tp_mi's value
+    field: 40P_MI
+    type: text
+    maxlen: 1
+  - line: upc_last_name         # /C copies TP_LN — supply tp_last_name's value
+    field: UPC_LName
+    type: text
+    maxlen: 14
+  - line: upc_address_line_1    # /C copies ADDRESS1 — supply address_line_1's value
+    field: UPC_address1
+    type: text
+    maxlen: 34
+  - line: upc_city_state_zip    # /C composes CITY + ", " + STATE + " " + ZIP — supply "City, ST 12345"; unmapped it printed its junk factory /V ",  " (an orphan comma)
+    field: UPC_CityStateZip
+    type: text
+    maxlen: 34
+  - line: upc_last_name_first3  # "Using UPPERCASE letters, print the first three letters of the taxpayer's last name."
+    field: UPC_1st3LName
+    type: text
+    maxlen: 3
+  - line: upc_ssn               # "Taxpayer's SSN" — /C copies TP_SSN; supply tp_ssn's value
+    field: UPC_Identifier
+    type: text
+    maxlen: 9
+relations:
+  # Only sums whose operands are ALL `money` lines are declared, and every one
+  # below was re-read off the 2025 printed face (the 2025 renumbering changed
+  # the line numbers of three of the five relations the 2024 pack declared;
+  # 8c and 25g are unconditional money-only sums the 2024 pack never declared
+  # — 2024's 8c and 26g print the same arithmetic — and are added here).
+  #   * schedA_47 ("add lines 13 through 46 ONLY") is OMITTED: operand schedA_39
+  #     (Ohio educator expenses, PDF /MaxLen 3) is typed `text`, not money.
+  #   * schedC_36 ("add lines 12 through 35") is OMITTED: operands schedC_12 and
+  #     schedC_14 are narrow `text` boxes.
+  # Sign-boxed lines (1, 3, 19, IT BUS 10) and "if negative, enter zero" /
+  # "if line X is more than..." conditional lines stay OMITTED per house style —
+  # which is why printed line 19 ("Line 17 minus line 18") is NOT declared even
+  # though 17 and 18 are both mapped money lines: L19_NEG carries its sign.
+  # Line 17's sum is unconditional on the 2025 face and all three operands are
+  # `money`. (The 2024 pack's "18 == 14 + 15 + 16 + 17" has no 2025 counterpart:
+  # the amended-return "amount previously paid" is now part of line 15.)
+  - "8c == 8a + 8b"                                                                    # IT 1040: "Income tax liability before credits (line 8a plus line 8b)"
+  - "13 == 10 + 11 + 12"                                                               # IT 1040: "Total Ohio tax liability ... (add lines 10, 11, and 12)"
+  - "17 == 14 + 15 + 16"                                                               # IT 1040: "Total Ohio tax payments (add lines 14, 15, and 16)"
+  - "25g == 25a + 25b + 25c + 25d + 25e + 25f"                                         # IT 1040 line 25 donations a-f: "Total. ... 25g."
+  - "schedA_12 == schedA_1 + schedA_2 + schedA_3 + schedA_4 + schedA_5 + schedA_6 + schedA_7 + schedA_8 + schedA_9 + schedA_10 + schedA_11"  # "Total additions (add lines 1 through 11 ONLY)"
+  - "schedC_40 == schedC_10 + schedC_36 + schedC_38 + schedC_39"                        # "Total nonrefundable credits (add lines 10, 36, 38, and 39 ...)"
+  - "schedC_47 == schedC_41 + schedC_42 + schedC_43 + schedC_44 + schedC_45 + schedC_46"  # "Total refundable credits (add lines 41 through 46 ...)"
+cross_form:
+  - "1 == f1040.11a"           # IT 1040 line 1 "Federal adjusted gross income (federal 1040 or 1040-SR, line 11a)" = Form 1040 (2025) line 11a (AGI)
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name

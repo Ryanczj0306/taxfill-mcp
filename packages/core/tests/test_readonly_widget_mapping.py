@@ -625,6 +625,25 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "computation. Either way taxfill must write the rate and the credit itself",
     ),
     StateComputed(
+        "states/oh/2025/it1040_oh/pack.yaml",
+        10,
+        "Phase J JS5 (2026-09-30), measured against the sha-pinned 2025 blank: the 2024 row's "
+        "CHK_AMD and TP_SSN1 and its seven OUPC coupon filer-data cells carry over (the "
+        "page-13 set of 60 ReadOnly non-pushbutton fields is the same names, /FT, /Ff, "
+        "/MaxLen, /DA and annotation /F as 2024; only three /V values changed), plus L18, "
+        "newly flagged (/Ff 0 -> 1). 2025 deleted printed line 17 and renumbered the page, "
+        "so L18 is now 'Amended return only - overpayment previously requested on original "
+        "and/or amended 2025 return', a line an amended filer must complete; no readonly "
+        "assignment in the file's JavaScript targets it (the CHK_AMD branch still toggles "
+        "L17/L19 and the deleted L25/L26A-G), the 2024 SchedC_L12 shape, so it stays mapped "
+        "or an amended return prints a blank line 18. Four fields LEFT the set: L17 and L19 "
+        "(/Ff 1 -> 0; now total payments and 'Line 17 minus line 18') and SchedC_L12 / "
+        "SchedC_L12_JFC (/Ff 1 -> 0) - all still mapped, so the count is 13 - 4 + 1 = 10. "
+        "The one other new ReadOnly widget, Date_Gen (page 1, /F Print|NoView, written only "
+        "by setToday() with the viewer's current date), is a print-date stamp like the "
+        "coupon's `today` and is correctly NOT mapped",
+    ),
+    StateComputed(
         "states/ri/2023/ri1040/pack.yaml",
         6,
         "the page-2 and page-3 halves of the twelve-widget identity banner mirror "
@@ -704,6 +723,7 @@ NONZERO_READONLY_DEFAULTS: dict[tuple[str, str], str] = {
         "the 2025 document JavaScript picks 32000 / 16000 / 25000 from the c.married / c.marrfilingsep boxes",
     ("states/oh/2023/it1040_oh/pack.yaml", "upc_city_state_zip"): "a JS-composed mirror (', ' placeholder)",
     ("states/oh/2024/it1040_oh/pack.yaml", "upc_city_state_zip"): "a JS-composed mirror (', ' placeholder)",
+    ("states/oh/2025/it1040_oh/pack.yaml", "upc_city_state_zip"): "a JS-composed mirror (', ' placeholder)",
     ("states/wv/2023/it140/pack.yaml", "6"):
         "its /C script: exemptions x 2000, else 500 (the WV zero-exemption amount)",
 }

@@ -33,6 +33,9 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     ("states/md/2023/md502/pack.yaml", "mailing_state"): "a two-letter state code (19.3 pt at Courier 10 fits 3)",
     ("states/me/2023/f1040me/pack.yaml", "tax_period.begin.month"): "a two-digit month (25.7 pt at 10 pt fits 5)",
     ("states/me/2023/f1040me/pack.yaml", "tax_period.begin.day"): "a two-digit day (25.6 pt at 10 pt fits 5)",
+    **{("states/oh/2025/it1040_oh/pack.yaml", f"schedJ_dep{i}_dob"):
+       "a dependent's date of birth printed (MM-DD-YYYY), 10 glyphs; the box (75.5 pt on page 9, 75.3 pt on "
+       "page 10, at Courier 12) fits 10; the widget says 15" for i in range(1, 16)},
     ("states/wv/2023/it140/pack.yaml", "name.suffix"): "a name suffix (JR / III); 25.5 pt at Courier 10 fits 4",
 }
 
