@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,184 tests** — offline 7,322 + live-.gov 862; derived
+Done and on `main` (**8,199 tests** — offline 7,333 + live-.gov 866; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -69,7 +69,7 @@ is JS5's).
   an empty checkbox frame; 1,414 before). The first two of those had been
   federal-only while CONVENTIONS.md called them binding — see Phase E for what
   shipped through the gap, and for the two live defects the widening found.
-- **State form packs — 77 across three years** (TY2023 42 / TY2024 19 / TY2025 16).
+- **State form packs — 78 across three years** (TY2023 42 / TY2024 19 / TY2025 17).
   The 2026-08-21 tranche added 10 (AR 2024 + 2025, NC/NJ/OH/RI/UT/VA 2024,
   OR/PA 2025) and closed **every PORTABLE row** in D2's measured triage for both
   TY2024 and TY2025; the 2026-08-25 tranche added 4 (IL-1040, ND-1, OR-40,
@@ -90,22 +90,22 @@ is JS5's).
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316, 8606, 8889, 8949, 8833, 1116, 8938 (2023–2025), Schedule 1-A (2025), and FinCEN 114 as a hand-fill worksheet. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (77 packs across TY2023–TY2025)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (78 packs across TY2023–TY2025)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**240 form packs total** — 228 `pack.yaml` (151 federal + 77 state) + 12
-`handfill.yaml`. The state 77 breaks down **TY2023 42 / TY2024 19 / TY2025 16**.
+**241 form packs total** — 229 `pack.yaml` (151 federal + 78 state) + 12
+`handfill.yaml`. The state 78 breaks down **TY2023 42 / TY2024 19 / TY2025 17**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **23 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, HI, KY, LA, MO, NC, NY, OH, OR, PA, UT
+> **24 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, HI, KY, LA, MO, NC, NY, OH, OR, PA, UT
 > and VA (2024+2025), and ID/IL/ND/NJ/NM/RI (2024) — after the 2026-08-21
 > ten-pack and 2026-08-25 four-pack tranches and the JS3b ports (UT 2025,
-> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **19**, state *knowledge*
+> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **18**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
-> still computes years those packs cannot fill. That asymmetry is now 19
+> still computes years those packs cannot fill. That asymmetry is now 18
 > jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
@@ -325,10 +325,10 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
-      TY2023-only**: 77 packs across TY2023 (42) / TY2024 (19) / TY2025 (16), so
-      **23 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, HI, KY, LA, MO, NC, NY, OH, OR, PA, UT and VA
+      TY2023-only**: 78 packs across TY2023 (42) / TY2024 (19) / TY2025 (17), so
+      **24 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, HI, KY, LA, MO, NC, NY, OH, OR, PA, UT and VA
       for both 2024 and 2025; ID, IL, ND, NJ, NM, RI for 2024. For the
-      other **19**, a 2024/2025 return still computes but cannot be filled.
+      other **18**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
@@ -2340,6 +2340,7 @@ line items sum to the headline delta.
     - **VA Form 760 2025 — DONE 2026-10-01** (`formpacks/states/va/2025/va760`, a RE-MAP of VA 2024 in name only). The 115 widgets keep every /Ff, /DA and /MaxLen; the triage's 10 "gone" names are renames at identical rects — the seven LOSS ovals (Check Box2-8 → "Loss 1" ... "loss 17"), the spouse's middle initial and first-four-letters boxes, and SSN 2 — re-bound and re-read; 60 widgets moved under 3 pt. Face deltas: "File by May 1, 2026", "Rev. 04/26", the line 19-21 years, a serial comma on line 8; line numbering 1-36 / 17a / 19a-b unchanged; the $11,950 / $23,900 filing thresholds and the $930 exemption unchanged. cross_form `1 == f1040.11a`; the SSN combs and the four 8-cell date boxes now declare `comb: true` (the SSNs with `format: ssn_digits_only`); an `account_type` group id on the shared Account Type radio. 114/114 sentinels confirmed on both pages; two adversarial verifiers (semantics FAIL on a false engine-behaviour claim in the banner → fixed; placement PASS), a narrow re-verify (PASS, no findings).
     - **SC1040 2025 — DONE 2026-10-01** (`formpacks/states/sc/2025/sc1040`, off the 2023 manifest). The 2025 blank ("Rev. 4/21/25") keeps every entry cell within 0.01 pt of 2023 — 163 of 164 boxes carry over box-for-box (pages 2-3 entirely); the one re-measured box is the combat-zone name, whose page-1 rule moved with the re-worded return-type captions (four captions gained bold prefixes). Face deltas: the years, line s's subsistence allowance $16/day (2023: $8), the "REFUNDS OR ZERO TAX DUE" mailing caption; no line added, dropped or renumbered (1-37, a-w, 22a-22e). The dependent exemption and under-6 deduction stamp $4,930 (the 2025 Instructions' worksheets); the Instructions file is now `SC1040Instr_2025.pdf`. Built, adversarially verified (FAIL on an Instructions-heading citation → fixed → re-verify PASS), stamped and read again at integration (test_sc1040_2025_overlay.py: 164/164 placements verify on both demo returns). Knowledge gap, not a mismatch: the SC 2025 pack records no subsistence-allowance figure.
     - **LA IT-540 2025 — DONE 2026-10-01** (`formpacks/states/la/2025/it540`, a RE-MAP of LA 2024). Louisiana's 2025 reform rewrote page 1: the exemption block (6, 6A blind / QSS, 6B-6F) is repealed and replaced by "6A AGE DESIGNATION" (taxpayer / spouse 65 or older), a NEW line 8 standard deduction ($12,500 status 1 / 3, $25,000 status 2 / 4 / 5) is inserted, and every later line is renumbered +1 while the widget names stayed (8A-8D → 9A-9D ... 46 → 47) — the exact trap the designator sweep exists for; "ITIN" boxes appear beside both SSNs; the dependents table gains rows 7-8. 517 widgets (2024: 519): 80 SAME, 51 MOVED, 10 CHANGED, 10 GONE, 17 NEW. 155 lines keyed to the 2025 printed numbers (9a-9d, 10-22, 23a / 23b, 24-38, 47), relations re-read (9d, 18, 22, 24, 31, 36, 38, 47), cross_form `7 == f1040.11a`, a YEAR_BEARING_KEY_FAMILIES row for the R-19000A box. 155/155 sentinels confirmed on the four return pages; two adversarial verifiers (semantics FAIL, placement FAIL — three Courier-box budgets: last names 19 → 16 glyphs in 119 pt, unit type 6 → 5), a fixer (7 fixed, 0 rejected) and a narrow re-verify (PASS). Knowledge for JS2c: `credits[3]` says the credit is carried to Line 20 — the 2025 face prints Line 21 (the +1 renumbering).
+    - **CA Form 540 2025 — DONE 2026-10-01** (`formpacks/states/ca/2025/form540`, a full RE-MAP of CA 2023: FTB prefixed every name "540_form_" and renumbered after each insertion, so all 167 bound names were gone and every binding was placed by position and printed label, then confirmed on the renders). 184 widgets / 169 fields (2023: 180); 176 lines, 18 relations re-read from the face (incl. the new 47, 95-97 and 115 arithmetic), cross_form `13 == f1040.11a`. The filing status is now a five-kid radio with long export names; the account-type and use-tax / health-care / designee answers are separate boxes under one group each. Face deltas: exemption credits $153 / $475, standard deduction $5,706 / $11,412, the $252,203 AGI threshold, line 62 renamed "Behavioral Health Services Tax", line 74 now the Program 4.0 film credit, four contribution funds dropped and four added (relation 110 sums the 18 printed codes), new Organ Donor Election and paid-preparer boxes. 176/176 bindings confirmed on all six sides; two adversarial verifiers (semantics PASS, placement PASS with one medium: the apt / PMB boxes' 14-glyph budget overflows an all-digit entry — re-measured to 13 from the fixer's own renders), a fixer (5 fixed, 1 rejected) and a narrow re-verify (PASS, no findings). The scaffold test's "CA 540 2025 is still open work" expectation flips to "shipped".
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
   - 9 discovery rows were recovered (wf_fe623a11-933).
   - Pack the AcroForm rows at TY2023 first, each re-checked against its recorded sha256: AL 40NR, AR1000NR, AZ 140NR, AZ 140PY, CO DR 0104PN, DE PIT-NON.

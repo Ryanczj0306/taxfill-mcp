@@ -1120,6 +1120,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: VA 760 2025 (a RE-MAP port of VA 2024: 10 widgets renamed at the same rects, no address box touched)
     # equals the reviewed VA 2024 row (address, city_town_or_post_office, state, zip_code).
     # JS5: LA IT-540 2025 (the address block is unchanged; the new ITIN flags and line 8 are not address lines) equals the reviewed LA 2024 row.
+    # JS5: CA 540 2025 (a RE-MAP of CA 2023 — the FTB renamed every widget, re-bound by position) equals the reviewed
+    # CA 2023 row (the seven mailing_address lines; the principal_residence.* and organ-donor lines are not address lines).
     import json
     from pathlib import Path
 

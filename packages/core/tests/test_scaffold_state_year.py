@@ -59,7 +59,7 @@ def test_newest_base_reports_a_form_already_shipped_for_the_target_year():
     rows = {(r["state"], r["form"]): r for r in sc.scaffold(2025, "newest")}
     assert rows[("ar", "ar1000f")]["status"] == "shipped (2025 pack exists)"    # AR 2025 shipped 2026-08-21
     assert rows[("ut", "tc40")]["status"] == "shipped (2025 pack exists)"       # UT 2025 shipped 2026-09-28 (JS3b)
-    assert rows[("ca", "form540")]["status"] == "candidate"                     # CA 540 2025 is still open work (a re-map)
+    assert rows[("ca", "form540")]["status"] == "shipped (2025 pack exists)"   # CA 540 2025 shipped 2026-10-01 (JS5, a re-map)
     legacy = {(r["state"], r["form"]): r for r in sc.scaffold(2025, "2023")}
     assert legacy[("ar", "ar1000f")]["status"] == "candidate"                   # a fixed base keeps the old census
 

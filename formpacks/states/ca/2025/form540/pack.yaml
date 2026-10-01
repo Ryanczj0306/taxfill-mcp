@@ -1,0 +1,346 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/ca/2023/form540/pack.yaml (ported 2026-10-01,
+# Phase J JS5; triaged RE-MAP — every one of the 167 field names the 2023 pack
+# binds is gone from the 2025 blank, so this pack was rebuilt by POSITION and
+# printed label (work/port.py) and every binding confirmed on sentinel renders.
+#
+# URL. https://www.ftb.ca.gov/forms/2025/2025-540.pdf (the FTB's own host). Digest
+# 3be81dcc5d2b… — two separate curl downloads on 2026-10-01 (04:49:15Z and
+# 04:49:23Z, 235,436 bytes each) and the triage cache copy all agree. %PDF-1.7,
+# an AcroForm with no XFA; pdfinfo Title "2025 Form 540 California Resident
+# Income Tax Return", CreationDate 2025-12-10, ModDate 2026-01-06.
+#
+# PRINTED IDENTITY. Side 1 prints "TAXABLE YEAR 2025 / California Resident
+# Income Tax Return / FORM 540"; the footers read "333 3101253 Form 540 2025
+# Side 1" through "Side 6 Form 540 2025 333 3106253" (2023: 3101233..3106233).
+# The fiscal-year line prints "year 2026." printed_year_verified = 2025. Six
+# sides, as in 2023.
+#
+# AcroForm topology against the 2023 blank (work/census.json). 184 widgets on
+# 169 top-level fields (2023: 180 widgets); per side 50 / 43 / 28 / 24 / 24 / 15.
+# No widget is ReadOnly or comb; /DA is Helv 10 on every text widget except
+# 540_form_1033 (the principal-residence "State" box, Helv 8 — the 2023 blank
+# had no Helv 8 widget) and ZaDb 8 on the buttons. The FTB prefixed every name with
+# "540_form_" AND renumbered after each insertion or removal, so a name is not
+# a binding: old "1047" (the line 8 count box) sits where "540_form_1043" now
+# is, while "540_form_1047" does not exist.
+# The 163 lines carried over from 2023 were each placed on the 2025 widget
+# occupying the 2023 widget's position. Measured as the largest displacement
+# of any of the four rect edges (work/buckets.py): 133 of the 163 lie within
+# 3 pt, 16 between 3 and 5 pt (the 2025 checkbox squares grew from 12.8 to
+# 16.6 pt around the same centre, every centre within 2 pt, and a few text
+# boxes shifted 3 pt), and 14 moved more than 5 pt because the face changed —
+# 445 (4024 -> 4020, 72.2 pt);
+# third_party_designee.allow_no (6008 RB -> 6008 RB, 39.1 pt);
+# paid_preparer.firm_name (6004 -> 6004, 37.1 pt); paid_preparer.ptin (6005
+# -> 6005, 37.1 pt); paid_preparer.firm_address (6006 -> 6006, 37.1 pt);
+# paid_preparer.firm_fein (6007 -> 6007, 37.1 pt); third_party_designee.name
+# (6009 -> 6009, 36.6 pt); third_party_designee.phone (6010 -> 6010, 36.4
+# pt); 438 (4020 -> 4018, 24.1 pt); 439 (4021 -> 4019, 24.1 pt); 413 (4014
+# -> 4013, 24.0 pt); 422 (4015 -> 4014, 24.0 pt); 423 (4016 -> 4015, 24.0
+# pt); 424 (4017 -> 4016, 24.0 pt); 0 changed side.
+# What the FTB re-authored:
+#   * FILING STATUS is now ONE radio field "540_form_1036 RB" with five kids
+#     whose /AP /N names are the printed captions ("/1 . Single.", "/2 . Married/
+#     R D P filing jointly (...)", "/3 . Married or R D P filing separately.",
+#     "/4 . Head of household (...)", "/5 . Qualifying surviving spouse or R D P .")
+#     — 2023 had five separate checkboxes 1036-1041 CB. The five lines keep
+#     group filing_status; the "different from federal" box stays its own
+#     field (540_form_1035 CB). The three line-3/line-5 text boxes renumbered
+#     (1039 -> 540_form_1037, 1042 -> 540_form_1038, 1043 -> 540_form_1039), the
+#     line 6 box 1044 CB -> 540_form_1040 CB, and the six exemption boxes
+#     1045-1050 -> 540_form_1041-1046.
+#   * DIRECT DEPOSIT account type: the 2023 radios 5010 RB / 5014 RB are now two
+#     separate checkboxes per account, 540_form_5009A/5009B CB and
+#     540_form_5013A/5013B CB ("Checking" upper, "Savings" lower — pdftotext
+#     puts "Checking" at y 469-481 and "Savings" at y 445-457 beside 5009A/B).
+#     The 2023 key 116.account_type (= the Savings kid /1) is replaced by
+#     116.account_type.checking / .savings sharing group 116.account_type
+#     (same for 117); nothing outside the CA packs referenced the old key.
+#   * LINE 113's two boxes are renamed 540_form_5004A/5004B CB (2023 5004/5005
+#     CB), and the Side 5 money lines shifted one id (113 -> 5005 .. 115 -> 5007,
+#     116 -> 5011, 117 -> 5015); line 111 is 540_form_5002 (2023 4027).
+#   * CONTRIBUTIONS (Side 4): codes 410 (Sea Otter), 425 (Keep Arts in Schools),
+#     440 (Rape Kit Backlog) and 444 (Suicide Prevention) are GONE from the face;
+#     431 (Prevention of Animal Homelessness and Cruelty), 447 (ALS Research
+#     Network), 448 (Pediatric Cancer Research) and 449 (Parkinson's Disease
+#     Research) are NEW, all four MAPPED. Line 110 now reads "code 400 through
+#     code 449" and its relation sums the 18 printed codes. The widget ids
+#     after 408 all shifted (2023 4014..4026 -> 540_form_4013..4024).
+#   * NEW Side 5 "Organ Donor Election" boxes 540_form_5018 CB (on_state
+#     "/Primary taxpayer") and 540_form_5019 CB (on_state "/ Spouse/R D P (if
+#     joint tax return)" — the leading space is in the blank) — MAPPED as
+#     organ_donor.primary_taxpayer / organ_donor.spouse (independent: one box
+#     per person; adjudicated in SEPARATE_OPTION_SETS_ADJUDICATED).
+#   * NEW Side 6 row "Print paid preparer's name" / "Paid preparer's phone
+#     number" (540_form_6003B / 6003C, /MaxLen 10 on the phone) — MAPPED as
+#     paid_preparer.name / paid_preparer.phone. The firm rows moved down 36 pt.
+#   * The voter box is 540_form_5016 CB (2023 5017 CB); the health-coverage
+#     radio 540_form_5017 RB (2023 5018 RB); the designee radio keeps 6008 RB.
+#     This port binds BOTH kids of each Yes/No radio and of the use-tax radio
+#     (health_care_coverage.yes/.no, third_party_designee.allow_yes/.allow_no,
+#     91.no_use_tax_owed / 91.paid_directly_cdtfa): on every one the box sits
+#     LEFT of its caption and /0 is the left (Yes / "No use tax is owed") kid.
+#   * /MaxLen: the SSN boxes (1007, 1012, 2002, 2005/2009/2013) now carry 11
+#     (2023: none on 1007/1012/2002, 10 on the three dependent boxes); the
+#     account numbers 17 -> 19; every money box 12; the three "Apt. no/ste. no."
+#     and "PMB" boxes (1016, 1017, 1031) LOST their /MaxLen (5 / 6 / 5), so
+#     each carries a measured budget of 12: on the render (work/digits_fill.py,
+#     scale 3) 12 digits fit all three boxes (72.5 / 73.0 / 70.7 pt at Helv 10;
+#     Helvetica digits advance 0.556 em, 66.7 pt), 13 fill 1016/1017 edge to
+#     edge and clip in 1031, 14 clip in all three — and neither the filler nor
+#     verify's clipping scan warns, since verify budgets 0.5 em per glyph.
+# All 184 widgets are bound (176 lines; name.full and
+# identifying_number.page6 are one field each with a widget on Sides 2-6).
+# NEW lines vs 2023: 91.no_use_tax_owed, 431, 447, 448, 449, 116.account_type.checking, 117.account_type.checking, health_care_coverage.yes, organ_donor.primary_taxpayer, organ_donor.spouse, paid_preparer.name, paid_preparer.phone, third_party_designee.allow_yes.
+# DROPPED lines vs 2023: 410, 425, 440, 444 (their rows are gone from the face).
+#
+# FACE DELTAS vs 2023 (work/facediff.txt). The exemption credits "7/8/9 X $153"
+# (2023 $144) and "10 X $475" ($446); the standard deduction "$5,706" /
+# "$11,412" ($5,363 / $10,726); line 32's AGI threshold "$252,203" ($237,035);
+# line 13 now reads "federal adjusted gross income (AGI) from federal Form 1040
+# or 1040-SR, line 11b" (2023: line 11); line 62 "Behavioral Health Services
+# Tax" (2023: Mental Health Services Tax); line 74 is "Refundable Program 4.0
+# California Motion Picture and Television Production Credit" (2023: Excess SDI
+# (or VPDI) withheld — the same line number now carries a different amount);
+# the years (line 72 "2025 California estimated tax", line 98 "applied to your
+# 2026 estimated tax"); the Side 4 contribution rows and the Side 5 Organ Donor
+# block and Side 6 preparer row described above. Line numbering 1-117 and the
+# page layout are otherwise unchanged (layoutdiff: median shift 0 on Sides 1-5).
+# knowledge/states/ca/2025.yaml carries the same $153 / $475, $5,706 / $11,412
+# and $252,203 — no mismatch.
+#
+# CROSS-FORM. The face cites "line 11b" of the 2025 Form 1040; that pack maps
+# 11b as "Amount from line 11a (adjusted gross income)" with "11b == 11a", and
+# CONVENTIONS.md requires the DEFINING line, so the leg is `13 == f1040.11a`.
+# ===========================================================================
+# California Form 540 (2025) — Resident Income Tax Return.
+#
+# Flat AcroForm: acroform_root is empty and field names are top-level
+# ("540_form_1003", "540_form_1036 RB"). The 2023 pack's line keys, groups and
+# RENAME conventions (scripts/assemble_ca540.py: identifying_number.page6 for
+# the Sides 2-6 SSN mirror, 7.count/8.count/9.count/10.count for the exemption
+# count boxes, 113.ftb_5805/5805f for the two line-113 boxes) are kept, so a
+# caller's keys carry over except where the face changed (listed above).
+# Relations are transcribed from the printed line labels of THIS face; the
+# federal-AGI cross_form targets the 2025 Form 1040's defining AGI line.
+# Blank PDF is fetched from the official FTB URL at runtime and digest-verified.
+
+form: '540'
+jurisdiction: states/ca
+tax_year: 2025
+source_url: https://www.ftb.ca.gov/forms/2025/2025-540.pdf
+pdf_sha256: 3be81dcc5d2be3d303596f6fa528e8fdb7cda6644afac6ccf869fc5ebeb7bf1c
+acroform_root: ''
+fields:
+  # ---- Side 1 ----
+  - { line: "amended_return", field: "540_form_1001 CB", type: checkbox, on_state: "/Yes" }  # Side 1 "Check here if this is an AMENDED return."
+  - { line: "fiscal_year.month_end", field: "540_form_1002", type: text, maxlen: 2 }  # "Fiscal year filers only: Enter month of year end: month____ year 2026."
+  - { line: "name.first", field: "540_form_1003", type: text }  # "Your first name"
+  - { line: "name.middle_initial", field: "540_form_1004", type: text, maxlen: 1 }  # "Initial"
+  - { line: "name.last", field: "540_form_1005", type: text }  # "Last name"
+  - { line: "name.suffix", field: "540_form_1006", type: text, maxlen: 4 }  # "Suffix"
+  - { line: "identifying_number", field: "540_form_1007", type: text, maxlen: 11 }  # "Your SSN or ITIN" (/MaxLen 11, new for 2025)
+  - { line: "name.spouse_first", field: "540_form_1008", type: text }  # "If joint tax return, spouse's/RDP's first name"
+  - { line: "name.spouse_middle_initial", field: "540_form_1009", type: text, maxlen: 1 }  # "Initial"
+  - { line: "name.spouse_last", field: "540_form_1010", type: text }  # "Last name"
+  - { line: "name.spouse_suffix", field: "540_form_1011", type: text, maxlen: 4 }  # "Suffix"
+  - { line: "spouse_identifying_number", field: "540_form_1012", type: text, maxlen: 11 }  # "Spouse's/RDP's SSN or ITIN" (/MaxLen 11)
+  - { line: "mailing_address.additional_info", field: "540_form_1013", type: text }  # "Additional information (see instructions)"
+  - { line: "pba_code", field: "540_form_1014", type: text, maxlen: 6 }  # "PBA code"
+  - { line: "mailing_address.street", field: "540_form_1015", type: text }  # "Street address (number and street) or PO box"
+  - { line: "mailing_address.apt_no", field: "540_form_1016", type: text, maxlen: 12 }  # "Apt. no/ste. no." — the widget dropped its 2023 /MaxLen 5; the 72.5 pt box at Helv 10 renders 12 digits whole, the 14th is clipped (work/digits_fill.py)
+  - { line: "mailing_address.pmb", field: "540_form_1017", type: text, maxlen: 12 }  # "PMB/private mailbox" — the widget dropped its 2023 /MaxLen 6; the 73.0 pt box renders 12 digits whole, the 14th is clipped
+  - { line: "mailing_address.city", field: "540_form_1018", type: text }  # "City (If you have a foreign address, see instructions)"
+  - { line: "mailing_address.state", field: "540_form_1019", type: text, maxlen: 2 }  # "State"
+  - { line: "mailing_address.zip", field: "540_form_1020", type: text, maxlen: 10 }  # "ZIP code"
+  - { line: "mailing_address.foreign_country", field: "540_form_1021", type: text }  # "Foreign country name"
+  - { line: "mailing_address.foreign_province", field: "540_form_1022", type: text }  # "Foreign province/state/county"
+  - { line: "mailing_address.foreign_postal", field: "540_form_1023", type: text }  # "Foreign postal code"
+  - { line: "date_of_birth", field: "540_form_1024", type: text, maxlen: 10 }  # "Your DOB (mm/dd/yyyy)"
+  - { line: "spouse_date_of_birth", field: "540_form_1025", type: text, maxlen: 10 }  # "Spouse's/RDP's DOB (mm/dd/yyyy)"
+  - { line: "prior_name", field: "540_form_1026", type: text }  # "Your prior name (see instructions)"
+  - { line: "spouse_prior_name", field: "540_form_1027", type: text }  # "Spouse's/RDP's prior name (see instructions)"
+  - { line: "county", field: "540_form_1028", type: text }  # "Enter your county at time of filing (see instructions)"
+  - { line: "principal_residence.same_as_mailing", field: "540_form_1029 CB", type: checkbox, on_state: "/Yes" }  # "If your address above is the same as your principal/physical residence address at the time of filing, check this box"
+  - { line: "principal_residence.street", field: "540_form_1030", type: text }  # principal residence "Street address (number and street) (If foreign address, see instructions.)"
+  - { line: "principal_residence.apt_no", field: "540_form_1031", type: text, maxlen: 12 }  # principal residence "Apt. no/ste. no." — the widget dropped its 2023 /MaxLen 5; the 70.7 pt box renders 12 digits whole, a 13th is cut
+  - { line: "principal_residence.city", field: "540_form_1032", type: text }  # principal residence "City"
+  - { line: "principal_residence.state", field: "540_form_1033", type: text, maxlen: 2 }  # principal residence "State"
+  - { line: "principal_residence.zip", field: "540_form_1034", type: text, maxlen: 10 }  # principal residence "ZIP code"
+  - { line: "filing_status.ca_different_from_federal", field: "540_form_1035 CB", type: checkbox, on_state: "/Yes" }  # "If your California filing status is different from your federal filing status, check the box here"
+  - { line: "filing_status.single", field: "540_form_1036 RB", type: checkbox, on_state: "/1 . Single.", group: "filing_status", required: true }  # "1 Single" — kid at x 74.5 / y 261.5 (2023: its own field 1036 CB)
+  - { line: "filing_status.mfj", field: "540_form_1036 RB", type: checkbox, on_state: "/2 . Married/R D P filing jointly (even if only one spouse / R D P had income). See instructions.", group: "filing_status" }  # "2 Married/RDP filing jointly (even if only one spouse/RDP had income). See instructions." — kid at x 74.5 / y 237.5
+  - { line: "filing_status.mfs", field: "540_form_1036 RB", type: checkbox, on_state: "/3 . Married or R D P filing separately.", group: "filing_status" }  # "3 Married/RDP filing separately. Enter spouse's/RDP's SSN or ITIN above and full name here." — kid at x 74.5 / y 189.4
+  - { line: "filing_status.mfs_spouse_name", field: "540_form_1037", type: text }  # line 3 "full name here" box (2023 field 1039)
+  - { line: "filing_status.hoh", field: "540_form_1036 RB", type: checkbox, on_state: "/4 . Head of household (with qualifying person). See instructions.", group: "filing_status" }  # "4 Head of household (with qualifying person). See instructions." — kid at x 247.2 / y 261.5
+  - { line: "filing_status.qss", field: "540_form_1036 RB", type: checkbox, on_state: "/5 . Qualifying surviving spouse or R D P .", group: "filing_status" }  # "5 Qualifying surviving spouse/RDP. Enter year spouse/RDP died." — kid at x 247.2 / y 237.5
+  - { line: "filing_status.qss_year_died", field: "540_form_1038", type: text, maxlen: 4 }  # line 5 "Enter year spouse/RDP died." (2023 field 1042)
+  - { line: "filing_status.qss_extra", field: "540_form_1039", type: text }  # line 5 second box under "See instructions." (2023 field 1043)
+  - { line: "6", field: "540_form_1040 CB", type: checkbox, on_state: "/Yes" }  # "6 If someone can claim you (or your spouse/RDP) as a dependent, check the box here. See instr." (2023 field 1044 CB)
+  - { line: "7.count", field: "540_form_1041", type: text, maxlen: 1 }  # "7 Personal: ... enter 1 in the box ... enter 2 in the box" — the count box (2023 field 1045)
+  - { line: "7", field: "540_form_1042", type: money }  # "7 X $153 ="
+  - { line: "8.count", field: "540_form_1043", type: text, maxlen: 1 }  # "8 Blind: ... enter 1; if both are visually impaired, enter 2" — the count box (2023 field 1047)
+  - { line: "8", field: "540_form_1044", type: money }  # "8 X $153 ="
+  - { line: "9.count", field: "540_form_1045", type: text, maxlen: 1 }  # "9 Senior: ... enter 1; if both are 65 or older, enter 2" — the count box (2023 field 1049)
+  - { line: "9", field: "540_form_1046", type: money }  # "9 X $153 ="
+  # ---- Side 2 ----
+  - { line: "name.full", field: "540_form_2001", type: text }  # "Your name:" — one field, widgets on Sides 2-6
+  - { line: "identifying_number.page6", field: "540_form_2002", type: text, maxlen: 11 }  # "Your SSN or ITIN:" — one field, widgets on Sides 2-6 (key kept from 2023; /MaxLen 11)
+  - { line: "dependent_1.first_name", field: "540_form_2003", type: text }  # "10 Dependents" — Dependent 1 "First Name"
+  - { line: "dependent_1.last_name", field: "540_form_2004", type: text }  # Dependent 1 "Last Name"
+  - { line: "dependent_1.ssn", field: "540_form_2005", type: text, maxlen: 11 }  # Dependent 1 "SSN. See instructions." (/MaxLen 11; 2023 pack 10)
+  - { line: "dependent_1.relationship", field: "540_form_2006", type: text }  # Dependent 1 "Dependent's relationship to you"
+  - { line: "dependent_2.first_name", field: "540_form_2007", type: text }  # Dependent 2 "First Name"
+  - { line: "dependent_2.last_name", field: "540_form_2008", type: text }  # Dependent 2 "Last Name"
+  - { line: "dependent_2.ssn", field: "540_form_2009", type: text, maxlen: 11 }  # Dependent 2 "SSN"
+  - { line: "dependent_2.relationship", field: "540_form_2010", type: text }  # Dependent 2 "relationship to you"
+  - { line: "dependent_3.first_name", field: "540_form_2011", type: text }  # Dependent 3 "First Name"
+  - { line: "dependent_3.last_name", field: "540_form_2012", type: text }  # Dependent 3 "Last Name"
+  - { line: "dependent_3.ssn", field: "540_form_2013", type: text, maxlen: 11 }  # Dependent 3 "SSN"
+  - { line: "dependent_3.relationship", field: "540_form_2014", type: text }  # Dependent 3 "relationship to you"
+  - { line: "10.count", field: "540_form_2015", type: text, maxlen: 2 }  # "Total dependent exemptions" — the count box before "10 X $475 ="
+  - { line: "10", field: "540_form_2016", type: money }  # "10 X $475 ="
+  - { line: "11", field: "540_form_2017", type: money }  # "11 Exemption amount: Add line 7 through line 10. Transfer this amount to line 32"
+  - { line: "12", field: "540_form_2018", type: money }  # "12 State wages from your federal Form(s) W-2, box 16"
+  - { line: "13", field: "540_form_2019", type: money }  # "13 Enter federal adjusted gross income (AGI) from federal Form 1040 or 1040-SR, line 11b."
+  - { line: "14", field: "540_form_2020", type: money }  # "14 California adjustments – subtractions. Enter the amount from Schedule CA (540), Part I, line 27, column B"
+  - { line: "15", field: "540_form_2021", type: money }  # "15 Subtract line 14 from line 13. If less than zero, enter the result in parentheses."
+  - { line: "16", field: "540_form_2022", type: money }  # "16 California adjustments – additions. Enter the amount from Schedule CA (540), Part I, line 27, column C"
+  - { line: "17", field: "540_form_2023", type: money }  # "17 California adjusted gross income. Combine line 15 and line 16"
+  - { line: "18", field: "540_form_2024", type: money }  # "18 Enter the larger of" itemized deductions or the standard deduction "$5,706" / "$11,412"
+  - { line: "19", field: "540_form_2025", type: money }  # "19 Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-"
+  - { line: "31.tax_table", field: "540_form_2026 CB", type: checkbox, on_state: "/Yes", group: "31.tax_method" }  # "31 Tax. Check the box if from:" — "Tax Table" box (x 182.5)
+  - { line: "31.tax_rate_schedule", field: "540_form_2027 CB", type: checkbox, on_state: "/Yes", group: "31.tax_method" }  # "Tax Rate Schedule" box (x 268.8)
+  - { line: "31.ftb_3800", field: "540_form_2028 CB", type: checkbox, on_state: "/Yes" }  # "FTB 3800" box (x 182.5, lower row)
+  - { line: "31.ftb_3803", field: "540_form_2029 CB", type: checkbox, on_state: "/Yes" }  # "FTB 3803" box (x 268.8, lower row)
+  - { line: "31", field: "540_form_2030", type: money }  # "31 Tax."
+  - { line: "32", field: "540_form_2031", type: money }  # "32 Exemption credits. Enter the amount from line 11. If your federal AGI is more than $252,203, see instructions."
+  - { line: "33", field: "540_form_2032", type: money }  # "33 Subtract line 32 from line 31. If less than zero, enter -0-"
+  - { line: "34.schedule_g1", field: "540_form_2033 CB", type: checkbox, on_state: "/Yes" }  # "34 Tax. See instructions. Check the box if from:" — "Schedule G-1" box
+  - { line: "34.ftb_5870a", field: "540_form_2034 CB", type: checkbox, on_state: "/Yes" }  # "FTB 5870A" box
+  - { line: "34", field: "540_form_2035", type: money }  # "34 Tax."
+  - { line: "35", field: "540_form_2036", type: money }  # "35 Add line 33 and line 34"
+  - { line: "40", field: "540_form_2037", type: money }  # "40 Nonrefundable Child and Dependent Care Expenses Credit. See instructions."
+  - { line: "43.credit_name", field: "540_form_2038", type: text }  # "43 Enter credit name"
+  - { line: "43.code", field: "540_form_2039", type: text, maxlen: 3 }  # line 43 "code"
+  - { line: "43", field: "540_form_2040", type: money }  # line 43 "and amount"
+  - { line: "44.credit_name", field: "540_form_2041", type: text }  # "44 Enter credit name"
+  - { line: "44.code", field: "540_form_2042", type: text, maxlen: 3 }  # line 44 "code"
+  - { line: "44", field: "540_form_2043", type: money }  # line 44 "and amount"
+  # ---- Side 3 ----
+  - { line: "45", field: "540_form_3003", type: money }  # "45 To claim more than two credits, see instructions. Attach Schedule P (540)"
+  - { line: "46", field: "540_form_3004", type: money }  # "46 Nonrefundable Renter's Credit. See instructions"
+  - { line: "47", field: "540_form_3005", type: money }  # "47 Add line 40 through line 46. These are your total credits"
+  - { line: "48", field: "540_form_3006", type: money }  # "48 Subtract line 47 from line 35. If less than zero, enter -0-"
+  - { line: "61", field: "540_form_3007", type: money }  # "61 Alternative Minimum Tax. Attach Schedule P (540)"
+  - { line: "62", field: "540_form_3008", type: money }  # "62 Behavioral Health Services Tax. See instructions" (2023: Mental Health Services Tax)
+  - { line: "63", field: "540_form_3009", type: money }  # "63 Other taxes and credit recapture. See instructions"
+  - { line: "64", field: "540_form_3010", type: money }  # "64 Add line 48, line 61, line 62, and line 63. This is your total tax."
+  - { line: "71", field: "540_form_3011", type: money }  # "71 California income tax withheld. See instructions"
+  - { line: "72", field: "540_form_3012", type: money }  # "72 2025 California estimated tax and other payments. See instructions"
+  - { line: "73", field: "540_form_3013", type: money }  # "73 Withholding (Form 592-B and/or Form 593). See instructions."
+  - { line: "74", field: "540_form_3014", type: money }  # "74 Refundable Program 4.0 California Motion Picture and Television Production Credit. See instructions" (2023 line 74 was Excess SDI (or VPDI) withheld — DIFFERENT meaning, same line number)
+  - { line: "75", field: "540_form_3015", type: money }  # "75 Earned Income Tax Credit (EITC). See instructions"
+  - { line: "76", field: "540_form_3016", type: money }  # "76 Young Child Tax Credit (YCTC). See instructions"
+  - { line: "77", field: "540_form_3017", type: money }  # "77 Foster Youth Tax Credit (FYTC). See instructions"
+  - { line: "78", field: "540_form_3018", type: money }  # "78 Add line 71 through line 77. These are your total payments. See instructions"
+  - { line: "91", field: "540_form_3019", type: money }  # "91 Use Tax. Do not leave blank. See instructions"
+  - { line: "91.no_use_tax_owed", field: "540_form_3020 RB", type: checkbox, on_state: "/0", group: "91.use_tax_zero" }  # "If line 91 is zero, check if:" — "No use tax is owed." kid (x 182.4; NEW line, the 2023 pack bound only the other kid)
+  - { line: "91.paid_directly_cdtfa", field: "540_form_3020 RB", type: checkbox, on_state: "/1", group: "91.use_tax_zero" }  # "You paid your use tax obligation directly to CDTFA." kid (x 305.0)
+  - { line: "92.full_year_health_coverage", field: "540_form_3021 CB", type: checkbox, on_state: "/Yes" }  # "92 If you and your household had full-year health care coverage, check the box."
+  - { line: "92", field: "540_form_3022", type: money }  # "Individual Shared Responsibility (ISR) Penalty. See instructions" — the line 92 amount
+  - { line: "93", field: "540_form_3023", type: money }  # "93 Payments balance. If line 78 is more than line 91, subtract line 91 from line 78"
+  - { line: "94", field: "540_form_3024", type: money }  # "94 Use Tax balance. If line 91 is more than line 78, subtract line 78 from line 91"
+  - { line: "95", field: "540_form_3025", type: money }  # "95 Payments after Individual Shared Responsibility Penalty. If line 93 is more than line 92, subtract line 92 from line 93."
+  - { line: "96", field: "540_form_3026", type: money }  # "96 Individual Shared Responsibility Penalty Balance. If line 92 is more than line 93, subtract line 93 from line 92."
+  - { line: "97", field: "540_form_3027", type: money }  # "97 Overpaid tax. If line 95 is more than line 64, subtract line 64 from line 95."
+  # ---- Side 4 ----
+  - { line: "98", field: "540_form_4003", type: money }  # "98 Amount of line 97 you want applied to your 2026 estimated tax"
+  - { line: "99", field: "540_form_4004", type: money }  # "99 Overpaid tax available this year. Subtract line 98 from line 97"
+  - { line: "100", field: "540_form_4005", type: money }  # "100 Tax due. If line 95 is less than line 64, subtract line 95 from line 64"
+  - { line: "400", field: "540_form_4006", type: money }  # Contributions "California Seniors Special Fund. See instructions" — code 400
+  - { line: "401", field: "540_form_4007", type: money }  # "Alzheimer's Disease and Related Dementia Voluntary Tax Contribution Fund" — code 401
+  - { line: "403", field: "540_form_4008", type: money }  # "Rare and Endangered Species Preservation Voluntary Tax Contribution Program" — code 403
+  - { line: "405", field: "540_form_4009", type: money }  # "California Breast Cancer Research Voluntary Tax Contribution Fund" — code 405
+  - { line: "406", field: "540_form_4010", type: money }  # "California Firefighters' Memorial Voluntary Tax Contribution Fund" — code 406
+  - { line: "407", field: "540_form_4011", type: money }  # "Emergency Food for Families Voluntary Tax Contribution Fund" — code 407
+  - { line: "408", field: "540_form_4012", type: money }  # "California Peace Officer Memorial Foundation Voluntary Tax Contribution Fund" — code 408 (2023 field 4012a)
+  - { line: "413", field: "540_form_4013", type: money }  # "California Cancer Research Voluntary Tax Contribution Fund" — code 413 (2023 field 4014; 2023's 4013 was code 410, gone)
+  - { line: "422", field: "540_form_4014", type: money }  # "School Supplies for Homeless Children Voluntary Tax Contribution Fund" — code 422
+  - { line: "423", field: "540_form_4015", type: money }  # "State Parks Protection Fund/Parks Pass Purchase" — code 423
+  - { line: "424", field: "540_form_4016", type: money }  # "Protect Our Coast and Oceans Voluntary Tax Contribution Fund" — code 424
+  - { line: "431", field: "540_form_4017", type: money }  # "Prevention of Animal Homelessness and Cruelty Voluntary Tax Contribution Fund" — code 431 (NEW for 2025; this row printed code 425 Keep Arts in Schools in 2023)
+  - { line: "438", field: "540_form_4018", type: money }  # "California Senior Citizen Advocacy Voluntary Tax Contribution Fund" — code 438
+  - { line: "439", field: "540_form_4019", type: money }  # "Native California Wildlife Rehabilitation Voluntary Tax Contribution Fund" — code 439
+  - { line: "445", field: "540_form_4020", type: money }  # "Mental Health Crisis Prevention Voluntary Tax Contribution Fund" — code 445 (2023 field 4024; the 2023 rows for 440 and 444 are gone)
+  - { line: "447", field: "540_form_4021", type: money }  # "California ALS Research Network Voluntary Tax Contribution Fund" — code 447 (NEW for 2025)
+  - { line: "448", field: "540_form_4022", type: money }  # "California Pediatric Cancer Research Voluntary Tax Contribution Fund" — code 448 (NEW for 2025)
+  - { line: "449", field: "540_form_4023", type: money }  # "Parkinson's Disease Research Voluntary Tax Contribution Fund" — code 449 (NEW for 2025)
+  - { line: "110", field: "540_form_4024", type: money }  # "110 Add amounts in code 400 through code 449. This is your total contribution"
+  # ---- Side 5 ----
+  - { line: "111", field: "540_form_5002", type: money }  # "111 AMOUNT YOU OWE. If you do not have an amount on line 99, add line 94, line 96, line 100, and line 110." (2023 field 4027)
+  - { line: "112", field: "540_form_5003", type: money }  # "112 Interest, late return penalties, and late payment penalties"
+  - { line: "113.ftb_5805", field: "540_form_5004A CB", type: checkbox, on_state: "/Yes", group: "113.form" }  # "113 Underpayment of estimated tax. Check the box:" — "FTB 5805 attached" (2023 field 5004 CB)
+  - { line: "113.ftb_5805f", field: "540_form_5004B CB", type: checkbox, on_state: "/Yes", group: "113.form" }  # "FTB 5805F attached" (2023 field 5005 CB)
+  - { line: "113", field: "540_form_5005", type: money }  # line 113 amount (2023 field 5006)
+  - { line: "114", field: "540_form_5006", type: money }  # "114 Total amount due. See instructions. Enclose, but do not staple, any payment" (2023 field 5007)
+  - { line: "115", field: "540_form_5007", type: money }  # "115 REFUND OR NO AMOUNT DUE. Subtract the sum of line 110, line 112, and line 113 from line 99." (2023 field 5008)
+  - { line: "116.routing_number", field: "540_form_5008", type: text, maxlen: 9 }  # first account "Routing number" (2023 field 5009)
+  - { line: "116.account_type.checking", field: "540_form_5009A CB", type: checkbox, on_state: "/Yes", group: "116.account_type" }  # first account "Type" — "Checking" box (upper, y 466.5; 2023: kid /0 of radio 5010 RB, unmapped)
+  - { line: "116.account_type.savings", field: "540_form_5009B CB", type: checkbox, on_state: "/Yes", group: "116.account_type" }  # first account "Savings" box (lower, y 442.0; 2023: kid /1 of radio 5010 RB, the 2023 key 116.account_type)
+  - { line: "116.account_number", field: "540_form_5010", type: text, maxlen: 19 }  # first account "Account number" (/MaxLen 19; 2023 17)
+  - { line: "116", field: "540_form_5011", type: money }  # "116 Direct deposit amount" (2023 field 5012)
+  - { line: "117.routing_number", field: "540_form_5012", type: text, maxlen: 9 }  # second account "Routing number" (2023 field 5013)
+  - { line: "117.account_type.checking", field: "540_form_5013A CB", type: checkbox, on_state: "/Yes", group: "117.account_type" }  # second account "Checking" box (upper, y 393.8; 2023: kid /0 of radio 5014 RB, unmapped)
+  - { line: "117.account_type.savings", field: "540_form_5013B CB", type: checkbox, on_state: "/Yes", group: "117.account_type" }  # second account "Savings" box (lower, y 369.8; 2023 key 117.account_type)
+  - { line: "117.account_number", field: "540_form_5014", type: text, maxlen: 19 }  # second account "Account number" (/MaxLen 19; 2023 17)
+  - { line: "117", field: "540_form_5015", type: money }  # "117 Direct deposit amount" (2023 field 5016)
+  - { line: "voter_info.register", field: "540_form_5016 CB", type: checkbox, on_state: "/Yes" }  # "Voter Info. For voter registration information, check the box and go to sos.ca.gov/elections." (2023 field 5017 CB)
+  - { line: "health_care_coverage.yes", field: "540_form_5017 RB", type: checkbox, on_state: "/0", group: "health_care_coverage" }  # "Do you want information on no-cost or low-cost health care coverage?" — "Yes" kid (x 499.2, caption "Yes" at x 519; NEW line, the 2023 pack bound only No)
+  - { line: "health_care_coverage.no", field: "540_form_5017 RB", type: checkbox, on_state: "/1", group: "health_care_coverage" }  # "No" kid (x 542.5, caption "No" at x 561.8; 2023 field 5018 RB)
+  - { line: "organ_donor.primary_taxpayer", field: "540_form_5018 CB", type: checkbox, on_state: "/Primary taxpayer" }  # "Organ Donor Election ... By checking the applicable box you authorize written consent for Donate Life California" — "Primary taxpayer" box (NEW for 2025)
+  - { line: "organ_donor.spouse", field: "540_form_5019 CB", type: checkbox, on_state: "/ Spouse/R D P (if joint tax return)" }  # "Spouse/RDP (if joint tax return)" box (NEW for 2025; its on_state really starts with a space)
+  # ---- Side 6 ----
+  - { line: "signature.date", field: "540_form_6001", type: text, maxlen: 10 }  # "Date" beside "Your signature"
+  - { line: "signature.email", field: "540_form_6002", type: text }  # "Your email address. Enter only one email address."
+  - { line: "signature.preferred_phone", field: "540_form_6003", type: text, maxlen: 10 }  # "Preferred phone number"
+  - { line: "paid_preparer.name", field: "540_form_6003B", type: text }  # "Print paid preparer's name" (NEW row for 2025)
+  - { line: "paid_preparer.phone", field: "540_form_6003C", type: text, maxlen: 10 }  # "Paid preparer's phone number" (NEW row for 2025)
+  - { line: "paid_preparer.firm_name", field: "540_form_6004", type: text }  # "Firm's name (or yours, if self-employed)"
+  - { line: "paid_preparer.ptin", field: "540_form_6005", type: text, maxlen: 9 }  # "PTIN"
+  - { line: "paid_preparer.firm_address", field: "540_form_6006", type: text }  # "Firm's address"
+  - { line: "paid_preparer.firm_fein", field: "540_form_6007", type: text, maxlen: 9 }  # "Firm's FEIN"
+  - { line: "third_party_designee.allow_yes", field: "540_form_6008 RB", type: checkbox, on_state: "/0", group: "third_party_designee" }  # "Do you want to allow another person to discuss this tax return with us?" — "Yes" kid (x 448.7, caption at x 470.9; NEW line, the 2023 pack bound only No)
+  - { line: "third_party_designee.allow_no", field: "540_form_6008 RB", type: checkbox, on_state: "/1", group: "third_party_designee" }  # "No" kid (x 499.1, caption at x 520.8; 2023 field 6008 RB)
+  - { line: "third_party_designee.name", field: "540_form_6009", type: text }  # "Print Third Party Designee's Name"
+  - { line: "third_party_designee.phone", field: "540_form_6010", type: text, maxlen: 10 }  # "Telephone Number"
+relations:
+  - "11 == 7 + 8 + 9 + 10"  # 11 "Add line 7 through line 10"
+  - "15 == 13 - 14"  # 15 "Subtract line 14 from line 13" (may be negative)
+  - "17 == 15 + 16"  # 17 "Combine line 15 and line 16"
+  - "19 == max(0, 17 - 18)"  # 19 "Subtract line 18 from line 17 ... If less than zero, enter -0-"
+  - "33 == max(0, 31 - 32)"  # 33 "Subtract line 32 from line 31. If less than zero, enter -0-"
+  - "35 == 33 + 34"  # 35 "Add line 33 and line 34"
+  - "47 == 40 + 43 + 44 + 45 + 46"  # 47 "Add line 40 through line 46" — the only printed lines in that range (new in this port)
+  - "48 == max(0, 35 - 47)"  # 48 "Subtract line 47 from line 35. If less than zero, enter -0-"
+  - "64 == 48 + 61 + 62 + 63"  # 64 "Add line 48, line 61, line 62, and line 63"
+  - "78 == 71 + 72 + 73 + 74 + 75 + 76 + 77"  # 78 "Add line 71 through line 77"
+  - "93 == max(0, 78 - 91)"  # 93 "If line 78 is more than line 91, subtract line 91 from line 78"
+  - "94 == max(0, 91 - 78)"  # 94 "If line 91 is more than line 78, subtract line 78 from line 91"
+  - "95 == max(0, 93 - 92)"  # 95 "If line 93 is more than line 92, subtract line 92 from line 93" (new in this port)
+  - "96 == max(0, 92 - 93)"  # 96 "If line 92 is more than line 93, subtract line 93 from line 92" (new in this port)
+  - "97 == max(0, 95 - 64)"  # 97 "If line 95 is more than line 64, subtract line 64 from line 95" (new in this port)
+  - "99 == 97 - 98"  # 99 "Subtract line 98 from line 97"
+  - "100 == max(0, 64 - 95)"  # 100 "If line 95 is less than line 64, subtract line 95 from line 64"
+  - "110 == 400 + 401 + 403 + 405 + 406 + 407 + 408 + 413 + 422 + 423 + 424 + 431 + 438 + 439 + 445 + 447 + 448 + 449"  # 110 "Add amounts in code 400 through code 449" — the 18 printed codes
+  - "115 == 99 - 110 - 112 - 113"  # 115 "REFUND OR NO AMOUNT DUE. Subtract the sum of line 110, line 112, and line 113 from line 99." (111 stays out: it applies only when line 99 is empty)
+cross_form:
+  - "13 == f1040.11a"  # 13 "federal adjusted gross income (AGI) from federal Form 1040 or 1040-SR, line 11b" — 2025 f1040 defines AGI on 11a (11b restates it)
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+signature:
+  page: 6  # Side 6 "Your signature / Date / Spouse's/RDP's signature" block
+mailing: null  # CA where-to-file lives in knowledge/states/ca (the face prints both PO boxes on Side 5)

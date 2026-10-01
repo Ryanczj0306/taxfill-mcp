@@ -1368,6 +1368,8 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
         'INDEPENDENT: "Schedule G-1 / FTB 5870A" are separate additional taxes; both may apply',
     ('states/ca/form540', 'filing_status'):
         'PARTIAL: the five statuses share group filing_status; the separate box marks a CA status different from the federal one',
+    ('states/ca/form540', 'organ_donor'):
+        'INDEPENDENT: the 2025 Side 5 "Organ Donor Election" prints one box per person ("Primary taxpayer" / "Spouse/RDP (if joint tax return)"); both may apply',
     ('states/ca/form540nr', '31'):
         'PARTIAL: Tax Table / Tax Rate Schedule share group 31.tax_method (one regular-tax method); the FTB 3800 and 3803 boxes add to it independently',
     ('states/ca/form540nr', '41'):
