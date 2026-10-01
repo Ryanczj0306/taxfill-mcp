@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,211 tests** — offline 7,341 + live-.gov 870; derived
+Done and on `main` (**8,235 tests** — offline 7,352 + live-.gov 883; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -69,7 +69,7 @@ is JS5's).
   an empty checkbox frame; 1,414 before). The first two of those had been
   federal-only while CONVENTIONS.md called them binding — see Phase E for what
   shipped through the gap, and for the two live defects the widening found.
-- **State form packs — 78 across three years** (TY2023 42 / TY2024 19 / TY2025 17).
+- **State form packs — 79 across three years** (TY2023 42 / TY2024 19 / TY2025 18).
   The 2026-08-21 tranche added 10 (AR 2024 + 2025, NC/NJ/OH/RI/UT/VA 2024,
   OR/PA 2025) and closed **every PORTABLE row** in D2's measured triage for both
   TY2024 and TY2025; the 2026-08-25 tranche added 4 (IL-1040, ND-1, OR-40,
@@ -90,22 +90,22 @@ is JS5's).
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316, 8606, 8889, 8949, 8833, 1116, 8938 (2023–2025), Schedule 1-A (2025), and FinCEN 114 as a hand-fill worksheet. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (78 packs across TY2023–TY2025)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (79 packs across TY2023–TY2025)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**243 form packs total** — 229 `pack.yaml` (151 federal + 78 state) + 14
-`handfill.yaml`. The state 78 breaks down **TY2023 42 / TY2024 19 / TY2025 17**.
+**244 form packs total** — 230 `pack.yaml` (151 federal + 79 state) + 14
+`handfill.yaml`. The state 79 breaks down **TY2023 42 / TY2024 19 / TY2025 18**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **24 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, HI, KY, LA, MO, NC, NM, NY, OH, OR, PA, SC, UT
+> **25 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, HI, KY, LA, MO, NC, NM, NY, OH, OR, PA, SC, UT
 > and VA (2024+2025), and ID/IL/ND/NJ/RI (2024) — after the 2026-08-21
 > ten-pack and 2026-08-25 four-pack tranches and the JS3b ports (UT 2025,
-> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **18**, state *knowledge*
+> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **17**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
-> still computes years those packs cannot fill. That asymmetry is now 18
+> still computes years those packs cannot fill. That asymmetry is now 17
 > jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
@@ -325,10 +325,10 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
-      TY2023-only**: 78 packs across TY2023 (42) / TY2024 (19) / TY2025 (17), so
-      **24 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, HI, KY, LA, MO, NC, NM, NY, OH, OR, PA, SC, UT and VA
+      TY2023-only**: 79 packs across TY2023 (42) / TY2024 (19) / TY2025 (18), so
+      **25 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, HI, KY, LA, MO, NC, NM, NY, OH, OR, PA, SC, UT and VA
       for both 2024 and 2025; ID, IL, ND, NJ, RI for 2024. For the
-      other **18**, a 2024/2025 return still computes but cannot be filled.
+      other **17**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
@@ -2343,6 +2343,7 @@ line items sum to the headline delta.
     - **CA Form 540 2025 — DONE 2026-10-01** (`formpacks/states/ca/2025/form540`, a full RE-MAP of CA 2023: FTB prefixed every name "540_form_" and renumbered after each insertion, so all 167 bound names were gone and every binding was placed by position and printed label, then confirmed on the renders). 184 widgets / 169 fields (2023: 180); 176 lines, 18 relations re-read from the face (incl. the new 47, 95-97 and 115 arithmetic), cross_form `13 == f1040.11a`. The filing status is now a five-kid radio with long export names; the account-type and use-tax / health-care / designee answers are separate boxes under one group each. Face deltas: exemption credits $153 / $475, standard deduction $5,706 / $11,412, the $252,203 AGI threshold, line 62 renamed "Behavioral Health Services Tax", line 74 now the Program 4.0 film credit, four contribution funds dropped and four added (relation 110 sums the 18 printed codes), new Organ Donor Election and paid-preparer boxes. 176/176 bindings confirmed on all six sides; two adversarial verifiers (semantics PASS, placement PASS with one medium: the apt / PMB boxes' 14-glyph budget overflows an all-digit entry — re-measured to 13 from the fixer's own renders), a fixer (5 fixed, 1 rejected) and a narrow re-verify (PASS, no findings). The scaffold test's "CA 540 2025 is still open work" expectation flips to "shipped".
     - **SC1040 2024 — DONE 2026-10-01** (`formpacks/states/sc/2024/sc1040`, off the 2023 manifest, built beside the 2025 sibling). "Rev. 7/8/24", serials 3075124x; the entry grid is identical to 2023 and 2025 (cells within 0.05 pt, paths within 0.01 pt): 163 of 164 boxes carry over, the combat-zone name re-measured on this blank's underscore string (164.89; the 2025 blank draws a rule instead, 163.85 — each measured on its own face). Face deltas: the years, the four bold return-type prefixes (as 2025), line s $16/day, the "REFUNDS OR ZERO TAX DUE" caption; no line added, dropped or renumbered; the Instructions are `SC1040Instr_2024.pdf` (September 2024) and the demo returns stamp its $4,790 dependent exemption. Three returns stamped and read (the demo, the full, and an every-line return with every box ticked and every cell filled); the verifier PASSED with three low findings (an inferred phrase in a note, a path-count wording), fixed. test_sc1040_2024_overlay.py: 164/164 placements verify.
     - **NM PIT-1 2025 — DONE 2026-10-01** (`formpacks/states/nm/2025/pit1`, off the 2024 manifest; the first `source_pages` manifest). TRD publishes the 2025 PIT-1 only inside the 136-page "2025 PIT Packet_Final.pdf" (pages 57-58, scanlines *250180100* / *250190100*; `/AcroForm` with an empty `/Fields`, no `/Annots` — a flat scannable form), so the manifest pins the packet (sha256 42754604…6be982) with `source_pages: [57, 58]`: `fill_form` stamps a two-page output holding just the return and the worksheet tells the filer to print only those pages. 116 boxes on 115 lines (2024: 118 / 117): 40 carried, 51 moved by the blank's own rules (page 1 lines 18a-22 +0.50 pt; page 2 in bands of -0.48 / -0.81 / -1.15 / -1.87 / -2.59 pt, lines 30 and 35 re-centred in taller boxes), 25 re-measured on the re-set header (1a-3d, box 5, 6a) and the redrawn 14/15/17/18 boxes. Face deltas: line 16 is "Reserved for Future Use / DO NOT USE" and 16a is gone (both dropped; line 17 = max(0, 9 + 10 + 11 - 12 - 13 - 14 - 15) as the face prints), 1a asks for the name as it appears on the state-issued driver's license or ID, HCA. 1 names the Health Care Authority (HCA) or BeWell (2024: NMHIE), the 2024 footer's due-date sentence is gone; the Instructions are quoted from the packet itself (pages 7-56, printed PIT-1-1..39) and the knowledge pack agrees (six brackets, line 16 reserved, T-7's printed $4,087 / $14,622 beside the statutory $4,089 / $14,624); the demo's line 18 = 2,042 is T-4's 56,400-56,500 MFJ row. The verifier PASSED with two low findings (the test's full return left ten marks unpainted; the banner gave the rect shifts without the larger label shifts), both fixed — the network test now stamps the demo, a marks return and the full return and verifies 116 placements on each. test_pit1_2025_overlay.py: 3 tests (census vs 2024, computes + the packet-page worksheet note, stamp/verify/render on the pinned packet).
+    - **VT IN-111 2025 — DONE 2026-10-01** (`formpacks/states/vt/2025/in111`, re-mapped from the 2023 pack). "Rev. 10/25", scanlines *251111100* / *251111200*; 109 → 99 widgets (89 names): SAME 35 / MOVED 19 / CHANGED 4 / PAGE 1 / GONE 33, 28 new. The P-001 trap of the year: Line21/Line22/Line29/Line30/Line31 KEEP their widget names while the face inserted a new line 21 (Child Care Contributions for Self-Employed individuals) and renumbered 2023's 21-31 to 22-32, so every page-2 money line was re-bound by its printed line (Line30 moved 231 pt into the tax-due box; Line31 is now interest/penalty; new Line32 with a page-1 echo kid is the amount due). Line 15 split into 15.whole / 15.decimal around a printed decimal point; the fifteen signature-date cells became five single "Date (MMDDYYYY)" boxes (maxlen 8, tighter than the widget's 10); the four contribution funds were re-ordered (24a Veterans, 24b Green Up, 24c Nongame, 24d Children's Trust; widget `Lind24a` is the DOR's own misspelling); the new FARMER / FISHERMAN box is mapped; Line 1 cites federal Form 1040 line 11a → cross_form `1 == f1040.11a`; 8 relations re-derived from this face (3, 6, 19, 23, 24e, 25, 26f, 32). Face figures re-read: standard deduction 7,650 / 15,300 / 7,650 / 11,450 / 15,300, exemption $5,300, 26c cites IN-112 Part II lines 13 / 17, 26e Schedule K-1VT line 30 — all equal the knowledge pack. Two verifiers PASSED (nine low findings — three banner sentences that over-stated measured shifts, two inherited maxlens (physical_address.street / foreign_country) that the 203.7-pt Courier-12 boxes cannot hold → tightened to 28 with TIGHTER_THAN_WIDGET rows and a 28-glyph render probe, and the knowledge pack's "Line 11" → "Line 11a"), all fixed; the MMDDYYYY boxes accept any 8 characters (no date format hint exists in the engine — left as a noted gap). audit_pack.py 85/85 written, verify_fails []; four alternative fills read the radio kids.
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
   - 9 discovery rows were recovered (wf_fe623a11-933).
   - Pack the AcroForm rows at TY2023 first, each re-checked against its recorded sha256: AL 40NR, AR1000NR, AZ 140NR, AZ 140PY, CO DR 0104PN, DE PIT-NON.

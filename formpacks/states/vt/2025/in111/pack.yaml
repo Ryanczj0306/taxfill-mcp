@@ -1,0 +1,554 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/vt/2023/in111/pack.yaml (ported 2026-10-01,
+# Phase J JS5; triaged RE-MAP — 33 of the 92 mapped fields gone). Generated from
+# a position + printed-label table (the port script checked every field name,
+# page, /AP state and maxlen against this blank) and every binding was then
+# confirmed on the sentinel renders.
+#
+# URL. https://tax.vermont.gov/sites/tax/files/documents/IN-111-2025.pdf.
+# Digest 728c6d2a4f14… — three separate curl downloads on 2026-10-01 (desktop
+# browser User-Agent; Last-Modified Fri, 23 Jan 2026) and the discovery copy
+# all agree. %PDF-1.6, AcroForm, not encrypted, 2 pages.
+#
+# PRINTED IDENTITY. Page 1 prints "Vermont Department of Taxes / 2025 Form
+# IN-111 / Vermont Income Tax Return", footer "Form IN-111 / Page 1 of 2 /
+# Rev. 10/25", scan line "*251111100*"; page 2 prints "Page 2 of 2 / Rev.
+# 10/25", scan line "*251111200*". printed_year_verified = 2025. Both pages
+# are the filed return; nothing else is in the file.
+#
+# AcroForm topology against the 2023 blank. 99 widgets = 89 field names
+# (2023: 109 widgets). Of the 2023 pack's mapped widgets 35 kept their rect,
+# 19 moved, 4 changed /MaxLen or /DA, 1 changed page and 33 are GONE; 28
+# widgets (27 names) are NEW.
+#   * THE TRAP (P-001): the names Line21, Line22, Line29, Line30 and Line31
+#     survive but no longer print the 2023 lines. The 2025 face inserts a NEW
+#     line 21 "Child Care Contributions for Self-Employed individuals" and
+#     renumbers everything after it (2023 21 -> 2025 22 ... 31 -> 32). Widgets
+#     Line21/Line22/Line29 sit in the SAME rect as in 2023 and now print lines
+#     21 (child care), 22 (use tax) and 29 (REFUND AMOUNT); Line30 moved 231 pt
+#     right into the line-30 tax-due result box; Line31 (2023: amount due, 2
+#     kids) is now the single line-31 interest-and-penalty box. Every one is
+#     mapped by the line printed beside it on this blank.
+#   * GONE (33) and what replaced each: Line15 -> Line15-a / Line15-b (line 15
+#     is now two boxes either side of a printed decimal point, see below);
+#     Line21-NoUseTax -> Line22-NoUseTax; Line23a..Line23e -> Lind24a (the
+#     DOR's own misspelling), Line24b, Line24c, Line24d, Line24e — and the four
+#     funds were REORDERED: 24a Vermont Veterans Fund (2023: 23c), 24b Green Up
+#     Vermont (23d), 24c Nongame Wildlife Fund (23a), 24d Vermont Children's
+#     Trust Foundation (23b); Line24 -> Line25; Line25a..Line25f ->
+#     Line26a..Line26f; Line26 -> Line27; Line27a/27b -> Line28a/28b; Line28 ->
+#     Line29; the fifteen Sig-TP-Date-MM/DD/YYYY, Sig-TP-DOB-*, Sig-SP-Date-*,
+#     Sig-SP-DOB-* and Sig-Prep-Date-* cells -> five single boxes
+#     Sig-TP-DateSigned, Sig-TP-DOB, Sig-SP-DateSigned, Sig-SP-DOB,
+#     Sig-Prep-DateSigned (/MaxLen 10, no comb flag; the face now reads "Date
+#     (MMDDYYYY)" / "Date of Birth (MMDDYYYY)" with no printed slashes, and the
+#     four ReadOnly "Slash" separator widgets are gone).
+#   * NEW (28 widgets): the 27 names above plus Line21 (the new child-care
+#     line keeps the old name), Line23 (total Vermont taxes), Line32 (AMOUNT
+#     DUE; 2 kids — the page-2 result box and the page-1 "Amount Due (from Line
+#     32)" echo, mapped once), the checkbox "Farmer/Fisherman" (/Yes; a NEW
+#     "FARMER / FISHERMAN" box at the end of the "Check all that apply" row,
+#     MAPPED as farmer_fisherman.yes) and the pushbutton "Button.Clear" (a
+#     page-1 "Clear ALL fields" button, NOT mapped). All 28 are mapped except
+#     the pushbutton; the only unmapped names on the blank are the four
+#     pushbuttons Button.Clear / Clear / PrintingInstrButton / Print.
+#   * /MaxLen, /Ff and /DA: Sig-TP-Phone, Sig-SP-Phone and Sig-PrepPhone gain
+#     /MaxLen 12 and their /DA goes "/Cour 0 Tf" -> "/Cour 12 Tf" (pack maxlen
+#     12, the widget's); Sig-PrepEIN /MaxLen 10 -> 9 (pack maxlen 9). Every
+#     other mapped text widget keeps its 2023 /MaxLen and "/Cour 12 Tf". No
+#     mapped widget is ReadOnly on this blank: every text box is /Ff 8388608,
+#     0 or (Sig-PrepPhone only) 12582912 = DoNotScroll|DoNotSpellCheck, bit 1
+#     clear on all; the SSN boxes are /Ff 0, /MaxLen 11, NOT comb-flagged, in
+#     both years — so this pack declares format: ssn_digits_only without comb.
+#   * Two text boxes cannot hold their own /MaxLen: PhysicalStreetAddress
+#     (/MaxLen 36) and Country (/MaxLen 32) are each 203.7 pt wide at a fixed
+#     "/Cour 12 Tf", which fits 28 glyphs (0.6 em = 7.2 pt each). Same rects
+#     and /MaxLen as 2023, where the pack tracked the widget; this pack budgets
+#     both at 28 (TIGHTER_THAN_WIDGET rows) so a longer 911 address or country
+#     name is refused by the filler instead of clipped at the box edge.
+#   * Moves: the "Check all that apply" row and the Filing Status row swapped
+#     places (all down 47 pt: the four Amended/Cannabis/Recomputed/Extended
+#     boxes 89 pt left, HCC-Code 104 pt left; Filing Status kids: Single and
+#     MFJ 19 pt right, MFS/HoH/QW within 10 pt of their 2023 x; Residency kids
+#     62-70 pt right and 49 pt up; every radio kid grew from a 13.4 pt to an
+#     18 pt square); TPSSN/SpSSN 14 pt left; money boxes on page 1 within 3
+#     pt; the page-2 lines re-flowed (median shift -9 pt; every row re-placed
+#     from the renders).
+#   * Filing Status /AP states renamed to carry the printed deduction:
+#     "/Single ($7650)", "/Married/ C U Filing Jointly ($15300)" (that stray
+#     space is in the file), "/Married/C U Filing Separately ($7650)", "/Head
+#     of Household ($11450)", "/Qualifying Widow(er) ($15300)". Residency's
+#     /Resident, /Part-Year Resident, /NonResident are unchanged. Every
+#     on_state below was re-dumped from this blank's /AP /N.
+#
+# FACE DELTAS vs 2023 (this blank's own text layer).
+#   * Line 1 cites "federal Form 1040, Line 11a" (2023: Line 11) -> cross_form
+#     1 == f1040.11a. Line 2 cites "Schedule IN-112, Part I, Line 19" (2023:
+#     Line 18). Line 8 keeps the "(If Line 1 is greater than $150,000, see
+#     instructions)" note (printed in 2023 too). Line 26c cites "Full-Year
+#     Residents-Line 13; Part-Year Residents-Line 17" (2023: 8 / 12); line
+#     26e "Schedule K-1VT, Line 30" (2023: Line 5).
+#   * Printed figures: Standard Deduction Single ($7,650) / Married/CU Filing
+#     Jointly ($15,300) / Married/CU Filing Separately ($7,650) / Head of
+#     Household ($11,450) / Qualifying Widow(er) ($15,300) (2023: 7,000 /
+#     14,050 / 7,000 / 10,550 / 14,050); line 5e "MULTIPLY Line 5d by $5,300
+#     (2025 Personal Exemption)" (2023: $4,850); line 12 "5% (0.05)" and line
+#     13 "$1,000" unchanged. knowledge/states/vt/2025.yaml agrees on all of
+#     them (SD 7,650/15,300/7,650/11,450; exemption $5,300; 5% / $1,000; the
+#     $150,000 minimum-tax note; IN-112 Part I Line 19; 26c Line 13 / Line 17).
+#     Its base-guidance note still cites "federal Form 1040, Line 11" where
+#     this face prints 11a, and it has no entry for the new line 21 child-care
+#     contribution or the FARMER / FISHERMAN box — reported, not edited.
+#   * Years: "911/Physical Street Address on 12/31/2025", "Vermont Residency
+#     Status as of 12/31/2025", "4. 2025 Vermont Standard Deduction", 26a/26b/
+#     26d/26e "2025", 26b "carried forward from 2024", 28a/28b "credited to
+#     2026".
+#   * Line 15 "Income Adjustment (Schedule IN-113, Line 35, or 100.0000%)" now
+#     prints "15. ______ . ________%" with a widget on each side of the
+#     printed decimal point: Line15-a (32.3 pt, 4 glyphs at Courier 12) and
+#     Line15-b (39.4 pt, 5 glyphs), both /MaxLen 9. Mapped as 15.whole
+#     (maxlen 3, "100") and 15.decimal (maxlen 4, "0000"); the 2023 key "15"
+#     is gone (nothing outside this pack referred to it). Both are
+#     TIGHTER_THAN_WIDGET rows in test_pack_maxlen.py.
+#   * The five signature-date boxes take MMDDYYYY (8 digits) in a /MaxLen-10
+#     widget; the two "Date (MMDDYYYY)" boxes beside the signatures are 67.6 pt
+#     (9 glyphs at Courier 12), so pack maxlen is 8 on all five
+#     (TIGHTER_THAN_WIDGET rows). The 2023 keys signature.*_date.month/day/year
+#     and preparer.date.month/day/year are replaced by signature.taxpayer_date,
+#     signature.taxpayer_dob, signature.spouse_date, signature.spouse_dob and
+#     preparer.date (nothing outside this pack referred to the old keys).
+#   * The "For Amended Returns Only" strip is still printed only (no widgets).
+#
+# Form IN-111, 2025 -- Vermont Income Tax Return. The single IN-111 serves
+# resident / part-year / nonresident via the "Vermont Residency Status as of
+# 12/31/2025" radio.
+#
+# Layout / what is FILED. This 2-page PDF is entirely the FILED return. BOTH
+# PAGES ARE MAPPED:
+#   page 1 -- header (Taxpayer + Spouse/CU-Partner last/first/MI/SSN with a
+#             "Check if Deceased" box each; Mailing Address + 911/Physical Street
+#             Address; City/State/ZIP-or-foreign-postal + Foreign Country; Vermont
+#             School District Code; Vermont Residency Status (ONE /Btn radio, 3
+#             kids); Filing Status & Standard Deduction (ONE /Btn radio, 5 kids);
+#             Healthcare Coverage Code + the "Check all that apply" row = AMENDED
+#             / CANNABIS (With Recomputed Federal Return) / RECOMPUTED / EXTENDED
+#             / FARMER-FISHERMAN); lines 1-16; a bottom "Amount Due (from Line
+#             32)" echo box that is the SAME AcroForm field as page-2 line 32.
+#   page 2 -- top "Amount from Line 16" echo = SAME field as page-1 line 16; a
+#             header echo of Taxpayer's Last Name + SSN (SAME fields TPLastName /
+#             TPSSN as page 1, mapped once); lines 17-32; the static "For Amended
+#             Returns Only" strip; the signature block (taxpayer / spouse date,
+#             DOB, phone; preparer date, phone, firm name+address, SSN-or-PTIN,
+#             FEIN; "may discuss with preparer" box).
+#
+# AcroForm. FLAT form: acroform_root = ''. Every widget's /T is the raw flat id
+# the form ships with ("Line7", "TPSSN", "Filing Status", "Lind24a").
+#
+# SHARED /T across pages/kids (mapped ONCE per logical control):
+#   * "Filing Status" -- ONE /Btn, 5 kids, group filing_status.
+#   * "Residency" -- ONE /Btn, 3 kids, group residency_status.
+#   * "TPLastName", "TPSSN", "Line16", "Line32" -- two kids each (page 1 + page
+#     2), one field each, mapped once.
+#
+# EXCLUDED widgets: the four pushbuttons Button.Clear (page 1) and Clear /
+# PrintingInstrButton / Print (page 2) — JavaScript clear / printing-
+# instructions / save-and-print buttons with no fillable state.
+#
+# Money vs text. Every numbered dollar line prints a ".00" suffix and is
+# `money`: 1-4, 5e, 6-14, 16-32 (incl. 24a-24e, 26a-26f, 28a, 28b). Line 15 is
+# a PERCENT split in two text boxes (15.whole / 15.decimal). Exemption COUNTS
+# 5a/5b/5c/5d stay text. SSNs are digits-only text (format: ssn_digits_only).
+# Names, MI, address parts, School / Healthcare codes, phones, MMDDYYYY dates,
+# preparer FEIN / PTIN stay text.
+#
+# Relations (on-face arithmetic, every operand mapped, unconditional only):
+#   3   "ADD Lines 1 and 2"                     -> 3 == 1 + 2
+#   5d  "ADD Lines 5a through 5c"               -- OMITTED (text counts)
+#   6   "ADD Lines 4 and 5e"                    -> 6 == 4 + 5e
+#   19  "Add Lines 17 and 18"                   -> 19 == 17 + 18
+#   23  "ADD Lines 20 through 22"               -> 23 == 20 + 21 + 22
+#   24e "24a + 24b + 24c + 24d = 24e"           -> 24e == 24a + 24b + 24c + 24d
+#   25  "ADD Lines 23 and 24e"                  -> 25 == 23 + 24e
+#   26f "ADD Lines 26a through 26e"             -> 26f == 26a + 26b + 26c + 26d + 26e
+#   32  "ADD Lines 30 & 31"                     -> 32 == 30 + 31
+# OMITTED (conditional / floor-at-zero / branch / table lookup): 7, 8, 10, 12,
+# 13, 14, 16, 20, 21 (see instructions), 22 (OR the certify box), 27, 29, 30.
+#
+# Cross_form. Line 1 "Federal Adjusted Gross Income (federal Form 1040, Line
+# 11a)" -> 1 == f1040.11a.
+form: "IN-111"
+jurisdiction: states/vt
+tax_year: 2025
+source_url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-2025.pdf
+pdf_sha256: "728c6d2a4f14d9a6c6fd5939e72a954c8c727db42daef4fd74568de6306827fc"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header
+  - line: name.last                      # "Taxpayer's Last Name" (page-2 header echo is the SAME field, mapped once)
+    field: TPLastName
+    type: text
+    maxlen: 17
+  - line: name.first                     # "First Name"
+    field: TPFirstName
+    type: text
+    maxlen: 17
+  - line: name.middle_initial            # "MI"
+    field: TPInit
+    type: text
+    maxlen: 1
+  - line: identifying_number             # "Social Security Number" (taxpayer; page-2 echo is the SAME field)
+    field: TPSSN
+    type: text
+    maxlen: 11
+    format: ssn_digits_only
+  - line: deceased.taxpayer              # "Check if Deceased" (taxpayer)
+    field: TPDiedThisYear
+    type: checkbox
+    on_state: "/Yes"
+  - line: spouse.name.last               # "Spouse's/CU Partner's Last Name"
+    field: SpLastName
+    type: text
+    maxlen: 17
+  - line: spouse.name.first              # "First Name" (spouse)
+    field: SpFirstName
+    type: text
+    maxlen: 17
+  - line: spouse.name.middle_initial     # "MI" (spouse)
+    field: SpInit
+    type: text
+    maxlen: 1
+  - line: spouse.identifying_number      # "Social Security Number" (spouse)
+    field: SpSSN
+    type: text
+    maxlen: 11
+    format: ssn_digits_only
+  - line: spouse.deceased                # "Check if Deceased" (spouse)
+    field: SPDiedThisYear
+    type: checkbox
+    on_state: "/Yes"
+  - line: mailing_address.street         # "Mailing Address (Number and Street/Road or PO Box)"
+    field: MailingAddress
+    type: text
+    maxlen: 36
+  - line: physical_address.street        # "911/Physical Street Address on 12/31/2025" — 203.7 pt at Courier 12 fits 28; widget /MaxLen 36
+    field: PhysicalStreetAddress
+    type: text
+    maxlen: 28
+  - line: mailing_address.city           # "City"
+    field: City
+    type: text
+    maxlen: 21
+  - line: mailing_address.state          # "State"
+    field: State
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip            # "ZIP Code or Foreign Postal Code"
+    field: ZIP
+    type: text
+    maxlen: 10
+  - line: foreign_country                # "Foreign Country" — 203.7 pt at Courier 12 fits 28; widget /MaxLen 32
+    field: Country
+    type: text
+    maxlen: 28
+  - line: school_district_code           # "Vermont School District Code"
+    field: SchoolCode
+    type: text
+    maxlen: 3
+  - line: healthcare_coverage_code       # "Enter Healthcare Coverage Code (See instructions for code options)"
+    field: HCC-Code
+    type: text
+    maxlen: 1
+
+  # ---- Vermont Residency Status as of 12/31/2025 (check one) (ONE /Btn "Residency", 3 kids)
+  - line: residency_status.resident      # RESIDENT
+    field: Residency
+    type: checkbox
+    on_state: "/Resident"
+    group: residency_status
+  - line: residency_status.part_year_resident # PART-YEAR RESIDENT
+    field: Residency
+    type: checkbox
+    on_state: "/Part-Year Resident"
+    group: residency_status
+  - line: residency_status.nonresident   # NONRESIDENT
+    field: Residency
+    type: checkbox
+    on_state: "/NonResident"
+    group: residency_status
+
+  # ---- Filing Status and Standard Deduction (ONE /Btn "Filing Status", 5 kids, physical L->R)
+  - line: filing_status.single           # Single ($7,650)
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Single ($7650)"
+    group: filing_status
+  - line: filing_status.married_filing_jointly # Married/CU Filing Jointly ($15,300)
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Married/ C U Filing Jointly ($15300)"
+    group: filing_status
+  - line: filing_status.married_filing_separately # Married/CU Filing Separately ($7,650)
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Married/C U Filing Separately ($7650)"
+    group: filing_status
+  - line: filing_status.head_of_household # Head of Household ($11,450)
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Head of Household ($11450)"
+    group: filing_status
+  - line: filing_status.qualifying_widow # Qualifying Widow(er) ($15,300)
+    field: "Filing Status"
+    type: checkbox
+    on_state: "/Qualifying Widow(er) ($15300)"
+    group: filing_status
+
+  # ---- "Check all that apply" row (five independent /Yes boxes)
+  - line: amended.yes                    # "AMENDED Return"
+    field: Amended
+    type: checkbox
+    on_state: "/Yes"
+  - line: cannabis.yes                   # "CANNABIS With Recomputed Federal Return"
+    field: Cannabis
+    type: checkbox
+    on_state: "/Yes"
+  - line: recomputed.yes                 # "RECOMPUTED Return"
+    field: Recomputed
+    type: checkbox
+    on_state: "/Yes"
+  - line: extended.yes                   # "EXTENDED Return"
+    field: Extended
+    type: checkbox
+    on_state: "/Yes"
+  - line: farmer_fisherman.yes           # "FARMER / FISHERMAN" (NEW box on the 2025 face)
+    field: "Farmer/Fisherman"
+    type: checkbox
+    on_state: "/Yes"
+
+  # ---- lines 1-16 (page 1)
+  - line: "1"                            # Federal Adjusted Gross Income (federal Form 1040, Line 11a)
+    field: Line1
+    type: money
+  - line: "2"                            # Net Modifications to Federal AGI (Schedule IN-112, Part I, Line 19)
+    field: Line2
+    type: money
+  - line: "3"                            # Federal AGI with Modifications (ADD Lines 1 and 2)
+    field: Line3
+    type: money
+  - line: "4"                            # 2025 Vermont Standard Deduction from filing status section above
+    field: Line4
+    type: money
+  - line: "5a"                           # Enter "1" for yourself if no one can claim you as a dependent (count)
+    field: Line5a
+    type: text
+    maxlen: 1
+  - line: "5b"                           # Enter "1" for your jointly filed spouse or CU partner if no one can claim them (count)
+    field: Line5b
+    type: text
+    maxlen: 1
+  - line: "5c"                           # Enter number of OTHER dependents claimed on federal Form 1040 (count)
+    field: Line5c
+    type: text
+    maxlen: 2
+  - line: "5d"                           # Total Exemptions (ADD Lines 5a through 5c) (count)
+    field: Line5d
+    type: text
+    maxlen: 2
+  - line: "5e"                           # MULTIPLY Line 5d by $5,300 (2025 Personal Exemption)
+    field: Line5e
+    type: money
+  - line: "6"                            # ADD Lines 4 and 5e
+    field: Line6
+    type: money
+  - line: "7"                            # Vermont Taxable Income (SUBTRACT Line 6 from Line 3. If less than zero, enter -0-)
+    field: Line7
+    type: money
+  - line: "8"                            # Vermont Income Tax from tax table or tax rate schedule (If Line 1 is greater than $150,000, see instructions)
+    field: Line8
+    type: money
+  - line: "9"                            # Net Adjustment to Vermont Tax (Schedule IN-119, Part I, Line 15)
+    field: Line9
+    type: money
+  - line: "10"                           # Vermont Income Tax with Adjustment (ADD Lines 8 and 9. If less than zero, enter -0-)
+    field: Line10
+    type: money
+  - line: "11"                           # Tax-Deductible Charitable Contribution (See instructions)
+    field: Line11
+    type: money
+  - line: "12"                           # Multiply Line 11 by 5% (0.05)
+    field: Line12
+    type: money
+  - line: "13"                           # Charitable Contribution Deduction (Enter the lesser of Line 12 or $1,000)
+    field: Line13
+    type: money
+  - line: "14"                           # Vermont Income Tax (Line 10 MINUS Line 13. If less than zero, enter -0-)
+    field: Line14
+    type: money
+  - line: 15.whole                       # Income Adjustment (Schedule IN-113, Line 35, or 100.0000%) -- digits LEFT of the printed decimal point ("100")
+    field: Line15-a
+    type: text
+    maxlen: 3
+  - line: 15.decimal                     # Income Adjustment -- the four digits RIGHT of the printed decimal point ("0000"); the face prints the "%"
+    field: Line15-b
+    type: text
+    maxlen: 4
+  - line: "16"                           # Adjusted Vermont Income Tax (MULTIPLY Line 14 by Line 15)
+    field: Line16                        # SAME field as the page-2 "Amount from Line 16" echo (mapped once)
+    type: money
+
+  # ============================================ page 2 -- lines 17-32
+  - line: "17"                           # Other State Credit (Schedule IN-117, Line 21)
+    field: Line17
+    type: money
+  - line: "18"                           # Vermont Tax Credits (Schedule IN-119, Part II)
+    field: Line18
+    type: money
+  - line: "19"                           # Total Vermont Credits (Add Lines 17 and 18)
+    field: Line19
+    type: money
+  - line: "20"                           # Vermont Income Tax after credits (SUBTRACT Line 19 from Line 16. If Line 19 is greater than Line 16, enter -0-)
+    field: Line20
+    type: money
+  - line: "21"                           # Child Care Contributions for Self-Employed individuals (see instructions for calculation) -- NEW 2025 line
+    field: Line21
+    type: money
+  - line: 22.no_use_tax                  # "Check to certify no Use Tax is due" (line 22)
+    field: Line22-NoUseTax
+    type: checkbox
+    on_state: "/Yes"
+  - line: "22"                           # Use Tax for taxable items on which no sales tax was charged, including online purchases (2023: line 21)
+    field: Line22
+    type: money
+  - line: "23"                           # Total Vermont Taxes (ADD Lines 20 through 22) (2023: line 22)
+    field: Line23
+    type: money
+  - line: "24a"                          # Vermont Veterans Fund (the DOR misspelled this widget "Lind24a"; 2023: 23c)
+    field: Lind24a
+    type: money
+  - line: "24b"                          # Green Up Vermont (2023: 23d)
+    field: Line24b
+    type: money
+  - line: "24c"                          # Nongame Wildlife Fund (2023: 23a)
+    field: Line24c
+    type: money
+  - line: "24d"                          # Vermont Children's Trust Foundation (2023: 23b)
+    field: Line24d
+    type: money
+  - line: "24e"                          # Total Contributions (24a + 24b + 24c + 24d) (2023: 23e)
+    field: Line24e
+    type: money
+  - line: "25"                           # Total of Vermont Taxes and Voluntary Contributions (ADD Lines 23 and 24e) (2023: 24)
+    field: Line25
+    type: money
+  - line: "26a"                          # 2025 Vermont Tax Withheld from W-2, 1099 (2023: 25a)
+    field: Line26a
+    type: money
+  - line: "26b"                          # 2025 Estimated Tax payments, amount carried forward from 2024, and/or payment made with 2025 extension (2023: 25b)
+    field: Line26b
+    type: money
+  - line: "26c"                          # Refundable Credits (Schedule IN-112, Part II: Full-Year Residents-Line 13; Part-Year Residents-Line 17) (2023: 25c)
+    field: Line26c
+    type: money
+  - line: "26d"                          # 2025 Vermont Real Estate Withholding from Form RW-171 (2023: 25d)
+    field: Line26d
+    type: money
+  - line: "26e"                          # 2025 Nonresident Estimated Tax payments (nonresident withholding) allocated on Schedule K-1VT, Line 30 (2023: 25e)
+    field: Line26e
+    type: money
+  - line: "26f"                          # Total Payments and Credits (ADD Lines 26a through 26e) (2023: 25f)
+    field: Line26f
+    type: money
+  - line: "27"                           # Overpayment. If Line 25 is less than Line 26f, SUBTRACT Line 25 from Line 26f (2023: 26)
+    field: Line27
+    type: money
+  - line: "28a"                          # Refund to be credited to 2026 Estimated Tax Payment (2023: 27a)
+    field: Line28a
+    type: money
+  - line: "28b"                          # Refund to be credited to 2026 Property Tax Bill (2023: 27b)
+    field: Line28b
+    type: money
+  - line: "29"                           # REFUND AMOUNT (SUBTRACT Lines 28a and 28b from Line 27) (2023: 28; the 2023 widget Line29 was tax due)
+    field: Line29
+    type: money
+  - line: "30"                           # If Line 25 is more than Line 26f, subtract Line 26f from Line 25. See instructions on tax due (2023: 29; the 2023 widget Line30 was interest and penalty)
+    field: Line30
+    type: money
+  - line: "31"                           # Interest and Penalty on Underpayment of Estimated Tax (Worksheet IN-152 or IN-152A) (2023: 30; the 2023 widget Line31 was AMOUNT DUE)
+    field: Line31
+    type: money
+  - line: "32"                           # AMOUNT DUE (ADD Lines 30 & 31) (2023: 31)
+    field: Line32                        # SAME field as the page-1 "Amount Due (from Line 32)" echo (mapped once)
+    type: money
+
+  # ---- signature block (page 2)
+  - line: signature.taxpayer_date        # taxpayer "Date (MMDDYYYY)" -- one box, 8 digits, no separators (2023: three MM/DD/YYYY cells)
+    field: Sig-TP-DateSigned
+    type: text
+    maxlen: 8
+  - line: signature.taxpayer_dob         # taxpayer "Date of Birth (MMDDYYYY)" -- one box, 8 digits
+    field: Sig-TP-DOB
+    type: text
+    maxlen: 8
+  - line: signature.taxpayer_phone       # taxpayer "Daytime Telephone Number"
+    field: Sig-TP-Phone
+    type: text
+    maxlen: 12
+  - line: signature.spouse_date          # spouse "Date (MMDDYYYY)" -- one box, 8 digits
+    field: Sig-SP-DateSigned
+    type: text
+    maxlen: 8
+  - line: signature.spouse_dob           # spouse "Date of Birth (MMDDYYYY)" -- one box, 8 digits
+    field: Sig-SP-DOB
+    type: text
+    maxlen: 8
+  - line: signature.spouse_phone         # spouse "Daytime Telephone Number"
+    field: Sig-SP-Phone
+    type: text
+    maxlen: 12
+  - line: preparer.date                  # preparer "Date (MMDDYYYY)" -- one box, 8 digits
+    field: Sig-Prep-DateSigned
+    type: text
+    maxlen: 8
+  - line: preparer.phone                 # "Preparer's Telephone Number"
+    field: Sig-PrepPhone
+    type: text
+    maxlen: 12
+  - line: preparer.address               # "Firm's Name (or yours if self-employed) and address" (no /MaxLen; 313.8 pt box)
+    field: Sig-PrepAddress1
+    type: text
+  - line: preparer.ptin                  # "Preparer's SSN or PTIN"
+    field: Sig-PrepSSNorPTIN
+    type: text
+    maxlen: 11
+  - line: preparer.ein                   # "FEIN" (/MaxLen 9 on this blank; 2023: 10)
+    field: Sig-PrepEIN
+    type: text
+    maxlen: 9
+  - line: preparer.may_discuss           # "Check if the Department of Taxes may discuss this return with the preparer shown."
+    field: "Authorizing to discuss"
+    type: checkbox
+    on_state: "/Yes"
+
+relations:
+  - "3 == 1 + 2"                         # 3 "Federal AGI with Modifications (ADD Lines 1 and 2)"
+  - "6 == 4 + 5e"                        # 6 "ADD Lines 4 and 5e"
+  - "19 == 17 + 18"                      # 19 "Total Vermont Credits (Add Lines 17 and 18)"
+  - "23 == 20 + 21 + 22"                 # 23 "Total Vermont Taxes (ADD Lines 20 through 22)"
+  - "24e == 24a + 24b + 24c + 24d"       # 24e "Total Contributions" (printed "24a .00 + 24b .00 + 24c .00 + 24d .00 = 24e")
+  - "25 == 23 + 24e"                     # 25 "Total of Vermont Taxes and Voluntary Contributions (ADD Lines 23 and 24e)"
+  - "26f == 26a + 26b + 26c + 26d + 26e" # 26f "Total Payments and Credits (ADD Lines 26a through 26e)"
+  - "32 == 30 + 31"                      # 32 "AMOUNT DUE (ADD Lines 30 & 31)"
+cross_form:
+  # Line 1 "Federal Adjusted Gross Income (federal Form 1040, Line 11a)" -- the 2025
+  # Form 1040 prints AGI on line 11a (2023: Line 11 -> f1040.11)
+  - "1 == f1040.11a"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null

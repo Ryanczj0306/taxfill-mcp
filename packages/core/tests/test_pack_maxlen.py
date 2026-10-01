@@ -36,6 +36,19 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     **{("states/oh/2025/it1040_oh/pack.yaml", f"schedJ_dep{i}_dob"):
        "a dependent's date of birth printed (MM-DD-YYYY), 10 glyphs; the box (75.5 pt on page 9, 75.3 pt on "
        "page 10, at Courier 12) fits 10; the widget says 15" for i in range(1, 16)},
+    ("states/vt/2025/in111/pack.yaml", "15.whole"):
+        'the digits left of line 15\'s printed decimal point ("100.0000%"); 32.3 pt at Courier 12 fits 4; the widget says 9',
+    ("states/vt/2025/in111/pack.yaml", "15.decimal"):
+        "the four digits right of that decimal point; 39.4 pt at Courier 12 fits 5; the widget says 9",
+    ("states/vt/2025/in111/pack.yaml", "physical_address.street"):
+        "the 911/physical street box, 203.7 pt at Courier 12 fits 28; the widget says 36 (same rect and /MaxLen as 2023)",
+    ("states/vt/2025/in111/pack.yaml", "foreign_country"):
+        "the Foreign Country box, 203.7 pt at Courier 12 fits 28; the widget says 32 (same rect and /MaxLen as 2023)",
+    **{("states/vt/2025/in111/pack.yaml", k):
+       'a "Date (MMDDYYYY)" box, 8 digits; the two signature-date boxes are 67.6 pt at Courier 12 (fit 9), the DOB and '
+       "preparer-date boxes 81.3 pt (fit 11); the widget says 10"
+       for k in ("signature.taxpayer_date", "signature.taxpayer_dob", "signature.spouse_date",
+                 "signature.spouse_dob", "preparer.date")},
     ("states/wv/2023/it140/pack.yaml", "name.suffix"): "a name suffix (JR / III); 25.5 pt at Courier 10 fits 4",
 }
 
