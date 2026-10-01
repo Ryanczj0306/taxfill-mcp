@@ -20,7 +20,8 @@
 # excess of $26,050" — one rate above the zero-bracket. Do not apply that to 2025.
 # Other 2025 changes: the exemption table gained a FOURTH tier ($0 at MAGI of $750,000 or
 # greater), the Joint Filing Credit now requires MAGI under $750,000, and form IT NRS is
-# discontinued in favor of an Ohio Nonresident Statement checkbox on IT 10 / IT 1040.
+# discontinued: the Ohio Nonresident Statement checkbox on IT 10 / IT 1040 (printed on the
+# IT 1040 since at least TY2023 — it is not new) is now the only route.
 jurisdiction: states/oh
 tax_year: 2025
 income_tax: true
@@ -38,7 +39,7 @@ treaty_note: 'Ohio IT 1040 line 1 starts from federal adjusted gross income (202
 citation:
   source: 2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation, 64 pages, PDF build 2026-01-23)
     - Line 1 federal AGI, Schedule of Adjustments additions/deductions, Who Must File an Ohio Income Tax Return?,
-    Ohio Residency (contact periods, the new Ohio Nonresident Statement checkbox), mailing addresses p. 3, due date
+    Ohio Residency (contact periods, the Ohio Nonresident Statement checkbox), mailing addresses p. 3, due date
     April 15 2026, payment / check payee ('Ohio Treasurer of State'), 2025 Ohio Income Tax Brackets (p. 18), personal
     and dependent exemption table (p. 17)
   url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
@@ -56,7 +57,8 @@ residency:
     A contact period requires an abode outside Ohio, being away overnight from it, and spending any portion of two
     consecutive days in Ohio. NEW FOR 2025: Ohio no longer uses form IT NRS — individuals who meet the required
     criteria establish the irrebuttable nonresident presumption by checking the Ohio Nonresident Statement box on
-    form IT 10 or IT 1040 (booklet pp. 61-62). Authorities: R.C. 5747.01(I)(1) and R.C. 5747.24(B)-(D).'
+    form IT 10 or IT 1040 (booklet pp. 61-62); the box itself is not new (the 2023 and 2024 IT 1040 print the same
+    row), only the form it replaces is gone. Authorities: R.C. 5747.01(I)(1) and R.C. 5747.24(B)-(D).'
   citation:
     source: 2025 Ohio IT 1040 / SD 100 Instruction Booklet - 'Ohio Residency', 'What Is a Contact Period?', and
       the Ohio Nonresident Statement instructions (Highlights for Tax Year 2025 and pp. 61-62)
@@ -185,7 +187,7 @@ payment:
     15, 2026. Do not mail cash. Instead, make payment by electronic check, credit or debit card, paper check, or
     money order. Make your check or money order payable to "Ohio Treasurer of State" and include an Ohio Universal
     Payment Coupon.'')'
-  web_pay_url: https://tax.ohio.gov/OHTAX
+  web_pay_url: https://tax.ohio.gov/pay  # the 2025 IT 1040 face prints "Pay electronically at tax.ohio.gov/pay" (line 22 and the coupon page); OH|TAX (tax.ohio.gov/OHTAX) is the account portal
 deadlines:
   filing_due_date: '2026-04-15'
   citation:

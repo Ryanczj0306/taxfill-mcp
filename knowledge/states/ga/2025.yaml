@@ -71,7 +71,7 @@ credits:
     source: Georgia DOR 2025 IT-511 Individual Income Tax Instruction Booklet, Low Income Credit Worksheet and Line
       17 instructions
     url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
-- name: Georgia Resident Itemizer Tax Credit
+- name: Georgia Eligible Itemizer Tax Credit
   type: nonrefundable
   eligibility: Full-year residents and part-year residents living in Georgia at the end of the year who itemized
     deductions on their returns.
@@ -80,14 +80,16 @@ credits:
   income_limit_2025: None stated
   claimed_on: Form 500, Line 19
   citation:
-    source: Georgia DOR 2025 IT-511 booklet, Line 19 instructions (Georgia Resident Itemizer Tax Credit)
+    source: Georgia DOR 2025 IT-511 booklet, Line 19 instructions (Georgia Eligible Itemizer Tax Credit)
     url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
 - name: Child and Dependent Care Expense Credit (Credit Code 202)
   type: nonrefundable
   eligibility: Georgia taxpayers who claimed and were allowed the federal child & dependent care expense credit
     under Internal Revenue Code Section 21 on their federal Form 1040.
-  amount: 30% of the federal IRC Section 21 child & dependent care credit claimed and allowed on the federal Form
-    1040. Cannot be carried forward or back; cannot exceed the taxpayer's income tax liability.
+  amount: 50% of the federal IRC Section 21 child & dependent care credit claimed and allowed on the federal Form
+    1040 (the 2025 IND-CR 202 prints 'Georgia allowable rate 50%'; 2024 was 30% — corrected 2026-10-01 from the 2025
+    IT-511 booklet and the 2025 Form 500 face). Cannot be carried forward or back; cannot exceed the taxpayer's
+    income tax liability.
   income_limit_2025: No separate Georgia income limit stated (governed by federal Section 21 rules)
   claimed_on: Form IND-CR Schedule 202 (included with Form 500/500X); result carried to the IND-CR Summary Worksheet,
     whose total flows to Form 500, Line 20
@@ -145,7 +147,10 @@ mailing_addresses:
     at the cited DOR source before relying on a specific figure/address.
 payment:
   check_payee: Georgia Department of Revenue (2025 IT-511 filing checklist — make your check or money order payable
-    to the Georgia Department of Revenue; send with the 525-TV voucher when paying by check)
+    to the Georgia Department of Revenue; send with the 525-TV voucher when paying by check. The voucher prints its own
+    address for a payment on an e-filed return — PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740323,
+    ATLANTA GA 30374-0323 (2025 Form 500 page 28 / 2025 IT-511 booklet, Form 525-TV); a paper return and its voucher
+    go to the with-payment address under mailing_addresses)
   web_pay_url: https://gtc.dor.ga.gov/ (Georgia Tax Center, GTC)
 deadlines:
   filing_due_date: '2026-04-15'
@@ -231,7 +236,7 @@ tax:
     ship.'
   - 'ITEMIZERS NOT MODELED: if you itemized on your federal return (or are MFS and your spouse itemizes), you MUST
     itemize on the Georgia return (Line 12c = federal Schedule A total less Georgia adjustments) and the standard
-    deduction does not apply. Itemizing residents may claim the Georgia Resident Itemizer Tax Credit of up to $300
+    deduction does not apply. Itemizing residents may claim the Georgia Eligible Itemizer Tax Credit of up to $300
     per taxpayer on Form 500 Line 19 — a CREDIT against Line 16 tax, not a base reduction, and not modeled.'
   - 'NO tax table and NO rate schedule: Line 16 is a straight multiplication printed on the form (''Multiply Line
     15c by 5.19%. Round to the nearest dollar'').'
@@ -242,7 +247,7 @@ tax:
     to full-year residents. Taxpayers required to file federal Form 1040NR generally may NOT take the Georgia standard
     deduction. NOTE: Form 500-EZ is DISCONTINUED for 2025 — all filers use Form 500.'
   - 'CREDITS (subtracted from tax, NOT modeled and NOT base reductions): Low Income Credit (Form 500 Line 17 — a per-exemption
-    CREDIT of $5-$26 for federal AGI under $20,000); Other State(s) Tax Credit (Line 18); Georgia Resident Itemizer
+    CREDIT of $5-$26 for federal AGI under $20,000); Other State(s) Tax Credit (Line 18); Georgia Eligible Itemizer
     Tax Credit (Line 19, up to $300 per itemizing taxpayer); IND-CR series 200 credits (Line 20); Schedule 2 series
     100 credits (Line 21). Total credits used (Line 22) cannot exceed Line 16 tax.'
   - 'Rounding: the Form 500 Line 16 instruction itself mandates ''Round to the nearest dollar''; this pack rounds

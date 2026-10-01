@@ -16,8 +16,9 @@
 # now comes from MO-A Part 1 Line 19); standard deduction $15,750 single/MFS, $23,625 head of
 # household, $31,500 married filing combined or qualifying widow(er), with the additional
 # 65-or-older/blind amount now $2,000 single/HoH and $1,600 MFC/MFS/QW (2024: $1,950/$1,550);
-# MO-1040 credit lines renumbered (Miscellaneous credits MO-TC now Line 42, Property Tax
-# Credit now Line 43 — 2024 was 43/45 — Working Family Tax Credit stays Line 44), and
+# MO-1040 credit lines unchanged from 2024 (Miscellaneous credits MO-TC Line 42, Property Tax
+# Credit Line 43, Working Family Tax Credit Line 44 — both years' faces print them so; an
+# earlier draft of this header claimed a renumbering, corrected 2026-10-01), and
 # deduction Lines 20, 22, and 23 are 'Reserved'. The Working Family Tax Credit remains 20%
 # of the federal EIC.
 jurisdiction: states/mo
@@ -87,8 +88,8 @@ credits:
     separate / $2,000 married filing combined renting or not owning the whole year / $4,000 married filing combined
     owning and occupying the whole year): renters or part-year owners — $27,200 or less; owners who occupied the
     home the entire year — $30,000 or less. Above the applicable limit you are not eligible to file the claim.'
-  claimed_on: Form MO-PTS attached to Form MO-1040 (credit carried to Form MO-1040, Line 43 — renumbered from 2024's
-    Line 45); or standalone Form MO-PTC if not required to file an income tax return.
+  claimed_on: Form MO-PTS attached to Form MO-1040 (credit carried to Form MO-1040, Line 43, as in 2024); or
+    standalone Form MO-PTC if not required to file an income tax return.
   citation:
     source: Missouri Department of Revenue - 2025 Form MO-1040 instruction booklet, Form MO-PTS section (Qualifications
       A-D; Lines 9-14; $27,200/$30,000 net-household-income limits; $750 rent / $1,100 combined caps) and 2025 Property
@@ -123,7 +124,7 @@ credits:
     April 15).
   income_limit_2025: No income limit.
   claimed_on: Form MO-FPT, claimed through Form MO-TC (2025 Miscellaneous Income Tax Credits, credit code FPT),
-    carried to Form MO-1040, Line 42 (renumbered from 2024's Line 43).
+    carried to Form MO-1040, Line 42 (as in 2024).
   citation:
     source: Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page and 2025 MO-1040 instruction
       booklet (Form MO-A Part 1 Line 4; Form MO-TC credit code FPT / Form MO-FPT)
