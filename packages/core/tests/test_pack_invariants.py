@@ -1428,6 +1428,8 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
     ('states/il/il1040', '10c_legally_blind'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/il/il1040', '42_household_needs_insurance'):
+        'INDEPENDENT: the 2025 line-42 row prints "Tell us who in your household needs health insurance: Self Spouse Dependent(s)" — one box per household member on separate /Btn fields; any combination may apply',
     ('states/il/il1040', 'C_claimed_as_dependent'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
     ('states/ky/form740', '13'):
