@@ -1,0 +1,388 @@
+# ===========================================================================
+# TY2024 PORT of formpacks/states/nm/2023/pit1/handfill.yaml (ported 2026-10-01,
+# Phase J JS5).
+#
+# BLANK. NM TRD's document library names a file by the GUID in its path, and
+# the 2023 GUID with "2024pit-1.pdf" swapped in still serves the 2023 blank.
+# The 2024 PIT-1 is GUID 55c7e522-196c-433c-8e4a-8629474a9df0 (source_url
+# below), found through the library's own search API from the Forms &
+# Publications page. Two separate downloads and the scaffold's triage copy all
+# digest to a9e7d64e1081…bf7ba2 (pinned below; 222,575 bytes, 2 pages). It is
+# still a flat scannable form: pdfinfo "Form: none", pypdf finds no /AcroForm.
+#
+# PRINTED IDENTITY. Page 1 prints "2024 PIT-1 / NEW MEXICO PERSONAL INCOME TAX
+# RETURN / For the year January 1 - December 31, 2024", "If amending use Form
+# 2024 PIT-X." and scanline *240180200*; page 2 prints "2024 PIT-1 (page 2)"
+# and *240190200*. The footer's due dates read April 30, 2025 (e-file and
+# e-pay) / April 15, 2025. The PDF carries no revision mark beyond the year.
+#
+# LAYOUT CENSUS (layoutdiff, pypdfium2 path objects, both blanks):
+#   * page 1 UNCHANGED — 98% of printed words within 0.5 pt of 2023 (median
+#     shift 0, 0) and 513 of 514 path objects identical; the one dropped path is
+#     the rule under the removed "Get your refund faster, file online using
+#     Taxpayer Access Point TAP" sentence, which no box touches. All 71 page-1
+#     boxes carry over unchanged (movebox's RE-MEASURE flags on 4a, 4b, 6b,
+#     dep4.*, 12a were anchor noise at d=(0,0); each was read on the render).
+#   * page 2 MOVED below line 28 — line 29's caption now wraps to two lines
+#     ("...paid as Entity-level tax or Composite income tax by a pass-through /
+#     entity. Attach 1099-Misc or RPD-41359"), its money box grew from 12.35 pt
+#     to 23.68 pt tall (y 515.93-539.61, the same three verticals at x 469.67 /
+#     480.24 / 575.36) and its printed "+ 29" label dropped 5.67 pt to the box's
+#     vertical middle (label baseline 530.44 -> 524.77), so line 29's baseline
+#     is re-measured to 524.51. Every box from line 30 down — 30-42, Refund
+#     Express, the HCA box, both signature blocks, phone, email and the paid
+#     preparer block (37 boxes) — moved exactly -11.33 pt: each box's own
+#     bounding rules match the 2023 rules shifted by that amount and nothing
+#     else. The page-2 SSN header, lines 23-28, 25a and 25b (9 boxes) are
+#     identical in both path sets. Counts: 80 boxes carried, 37 moved, 1
+#     re-measured; 0 lines added or dropped, 1 re-keyed (hsd_share ->
+#     hca_share, the face renamed the box "HCA. 1").
+#   Both demo returns were stamped on THIS blank, verified on every placement
+#   and read page by page at scale 2 (test_pit1_2024_overlay.py).
+#
+# FACE DELTAS vs 2023 (the complete printed-text diff, facediff.py):
+#   * year, scanlines, "Form 2024 PIT-X", due dates 2025; the TAP sentence
+#     under the title is gone;
+#   * 4a / 4b captions now read "Claimant's Name" / "Claimant's SSN";
+#   * line 15 "(PIT-ADJ, line 28)" (2023: line 27);
+#   * line 25a "reported on your 2024 federal income tax return";
+#   * line 29 "withheld from or paid as Entity-level tax or Composite income tax
+#     by a pass-through entity" (2023: "withheld from or paid by a pass-through
+#     entity");
+#   * line 30 "2024 estimated income tax payments"; line 41 "applied to your
+#     2025 Estimated Tax";
+#   * the HSD. 1 box is now "HCA. 1 ... through the Health Care Authority (HCA)
+#     or Health Insurance Exchange (NMHIE) ... share information ... with HCA
+#     and NMHIE".
+#   Every other caption, the line numbering 1a-42 and the mailing address
+#   (P.O. Box 25122) are unchanged.
+#
+# INSTRUCTIONS. The 2024 PIT-1 Instructions (same host, GUID eb517a58-1703-
+# 4772-97b9-0e7c54c6d4bb, two downloads digesting to 891043732ba1…22ffd7, 41
+# pages) were read for the printing_guidance quotes (PDF page 8 = printed
+# PIT-1-8 "Check the Print Quality"; PDF page 21 = printed PIT-1-21 "LINE
+# INSTRUCTIONS FOR FORM PIT-1 / Important Guidelines"), the line 18 / 18a
+# text (rate tables "starting on page 1T"; 18a R / B, and Y for a non-resident
+# electing the gross-royalty method) and the HCA.1 text (printed PIT-1-36).
+# The 2024 Tax Rate Table (PIT-TRT, GUID 8c12623f-2127-489a-886f-6efb1cd55d0e,
+# sha256 ceb43ac38ebe…2efe4) prints lookup rows to $100,000 and, over that,
+# 4.9% then 5.9% schedules (Single $4,618 + 4.9% over $100,000; $10,008 + 5.9%
+# over $210,000) — the same five statutory brackets knowledge/states/nm/
+# 2024.yaml records (1.7 / 3.2 / 4.7 / 4.9 / 5.9%). The 2023 manifest's note
+# listed four of them (no 4.9%); this year's note lists what the table prints.
+# The quote re-read test cannot fetch this host (fetch refuses it without a
+# pinned sha256), so the quotes were checked here by pdftotext against the
+# downloaded Instructions, whitespace-joined across line breaks.
+# ===========================================================================
+# New Mexico 2024 PIT-1 — Personal Income Tax Return.
+#
+# PRINT-ONLY (C3): every published PIT-1 revision (2023/2024/2025 checked) is a
+# flat scannable form — NO AcroForm widgets and NO XFA (introspect finds 0
+# fillable fields); this is NM TRD's deliberate posture (they steer filers to
+# TAP e-file). HAND-FILL pack (render_mode: hand_fill): the engine computes
+# every derivable line and emits a line->value worksheet; the filer PRINTS the
+# blank at source_url and hand-writes the values.
+#
+# Provenance: blank downloaded from source_url (2 pages, scanline barcodes
+# *240180200* / *240190200*); page-1 text verified "2024 PIT-1 / NEW MEXICO
+# PERSONAL INCOME TAX RETURN" before pinning pdf_sha256. HOST NOTE: NM TRD
+# serves its document library from an AWS API Gateway host
+# (klvg4oyd4j.execute-api.us-west-2.amazonaws.com) — the SAME knowingly-
+# accepted, self-disclosed exception host documented for NM in
+# knowledge/states/nm/2024.yaml and allow-listed in test_state_knowledge.py;
+# realfile.tax.newmexico.gov (the .gov alias) serves only the CURRENT year.
+# The library rotates the UUID path segments over time — pdf_sha256 is the
+# durable identity; re-locate via tax.newmexico.gov Forms & Publications if
+# the URL goes stale. SCOPE: complete — both pages (header/status/dependents,
+# income lines 9-22, payments/credits 23-32, due/refund 33-42, Refund
+# Express, HCA box). The Tax Rate Table lookup (line 18) stays a manual note.
+#
+# OVERLAY COORDINATES (Phase J JS4d, 2026-09-28, carried to 2024 by JS5 as the census above says): every line
+# carries an `overlay` block, so fill_form STAMPS the worksheet onto this blank. PIT-1's boxes are drawn with
+# ruling lines: each was measured from those lines and its printed line-number label (money ends 2 pt before the
+# right rule; a loss keeps its minus sign left of the number, per the instructions), stamped with sentinels,
+# verified, rendered and read. Your SSN is also stamped in the page-2 header. The fiscal-year dates, the separate
+# State / ZIP and foreign-province cells (3c / 3d are City / Country only), the signature dates, both
+# driver's-license / state-ID number, state and expiration blocks, and the paid-preparer block are all lines;
+# signatures stay hand-written.
+# fetch_blank accepts this host only against the pdf_sha256 pin (fetch.PINNED_ONLY_BLANK_HOSTS:
+# tax.newmexico.gov/forms-publications/ loads its forms table from it).
+form: "PIT-1"
+jurisdiction: states/nm
+tax_year: 2024
+render_mode: hand_fill
+source_url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/55c7e522-196c-433c-8e4a-8629474a9df0/2024pit-1.pdf
+pdf_sha256: "a9e7d64e10815f288044ae71c8e82258eb18f87755939f62a4ac9169c8bf7ba2"
+# PRINTING RULES (Phase J JS4b, read 2026-09-28; re-read 2026-10-01 in the 2024 PIT-1 Instructions, where every quote
+# is verbatim on the pages named below). A computer-generated form must meet
+# "the printing and legibility requirements of the software company" — for an overlay stamp that is this
+# engine's own legibility bar (render and read every stamped page). The only punctuation allowed in an entry is
+# a comma, which is how money stamps render. No minimum type size is published.
+printing_guidance:
+  - quote: "Type or print using blue or black ink."
+    source: "2024 PIT-1 Instructions, Line Instructions for Form PIT-1 — Important Guidelines (page PIT-1-21)"
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/eb517a58-1703-4772-97b9-0e7c54c6d4bb/2024pit-1-ins.pdf
+  - quote: "When using any computer-generated PIT form, you must comply with the printing and legibility requirements of the software company."
+    source: "2024 PIT-1 Instructions, Check the Print Quality (page PIT-1-8)"
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/eb517a58-1703-4772-97b9-0e7c54c6d4bb/2024pit-1-ins.pdf
+  - quote: "Do not use dollar signs ($), decimal points (.), or any punctuation marks or symbols other than a comma (,)."
+    source: "2024 PIT-1 Instructions, Line Instructions for Form PIT-1 — Important Guidelines (page PIT-1-21)"
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/eb517a58-1703-4772-97b9-0e7c54c6d4bb/2024pit-1-ins.pdf
+  - quote: "Use the boxes on the form as a guide for your handwritten entries."
+    source: "2024 PIT-1 Instructions, Line Instructions for Form PIT-1 — Important Guidelines (page PIT-1-21)"
+    url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/eb517a58-1703-4772-97b9-0e7c54c6d4bb/2024pit-1-ins.pdf
+signature_note: "Sign and date page 2 (BOTH must sign if filing jointly, even if only one had income); each signer also enters driver's license/state ID number (or NONE/DECLINED), state, and expiration date. Submit ORIGINAL forms only — never a photocopy."
+lines:
+  # ---- taxpayer / spouse identity (page 1) -----------------------------------
+  - { line: "tax_year.begin", label: "or fiscal year beginning (F.1)", type: text,
+      overlay: {page: 1, x: 128.9, y: 706.9, w: 77.29} }
+  - { line: "tax_year.end", label: "ending (F.2)", type: text,
+      overlay: {page: 1, x: 248.1, y: 706.53, w: 80.85} }
+  - { line: "1a", label: "Your name (first, middle, last)", type: text,
+      overlay: {page: 1, x: 46.09, y: 605.04, w: 251.41} }
+  - { line: "1b", label: "Your Social Security Number", type: text,
+      overlay: [{page: 1, x: 312.82, y: 602.72, w: 88.96}, {page: 2, x: 59.12, y: 686.46, w: 89.76}] }
+  - { line: "1c", label: "Taxpayer blind", type: checkbox,
+      overlay: {page: 1, x: 411.33, y: 602.37, w: 8.58} }
+  - { line: "1d", label: "Taxpayer age 65 or over", type: checkbox,
+      overlay: {page: 1, x: 432.14, y: 602.75, w: 8.58} }
+  - { line: "1e", label: "Taxpayer residency status (R resident / N non-resident / F first-year / P part-year)", type: text,
+      overlay: {page: 1, x: 457.54, y: 602.33, w: 16.6, cells: [457.54], cell_w: 16.6} }
+  - { line: "1f", label: "Taxpayer's date of birth", type: text,
+      overlay: {page: 1, x: 492.63, y: 601.99, w: 82.09} }
+  - { line: "2a", label: "Spouse's name (first, middle, last) — include if married filing separately", type: text,
+      overlay: {page: 1, x: 46.09, y: 578.25, w: 251.41} }
+  - { line: "2b", label: "Spouse's Social Security Number", type: text,
+      overlay: {page: 1, x: 312.82, y: 578.57, w: 88.96} }
+  - { line: "2c", label: "Spouse blind", type: checkbox,
+      overlay: {page: 1, x: 411.08, y: 578.63, w: 8.58} }
+  - { line: "2d", label: "Spouse age 65 or over", type: checkbox,
+      overlay: {page: 1, x: 432, y: 578.63, w: 8.58} }
+  - { line: "2e", label: "Spouse residency status (R/N/F/P)", type: text,
+      overlay: {page: 1, x: 457.54, y: 578.57, w: 16.6, cells: [457.54], cell_w: 16.6} }
+  - { line: "2f", label: "Spouse's date of birth", type: text,
+      overlay: {page: 1, x: 492.05, y: 579.72, w: 82.67} }
+  - { line: "3a", label: "Mark if the address is new or changed", type: checkbox,
+      overlay: {page: 1, x: 50.71, y: 556.47, w: 8.15} }
+  - { line: "3b", label: "Mailing address (number and street)", type: text,
+      overlay: {page: 1, x: 45.49, y: 533.35, w: 251.74} }
+  - { line: "3c", label: "City", type: text,
+      overlay: {page: 1, x: 45.49, y: 509.26, w: 149.43} }
+  - { line: "3c.state", label: "State", type: text,
+      overlay: {page: 1, x: 198.92, y: 509.26, w: 19.76} }
+  - { line: "3c.zip", label: "Postal/ZIP Code", type: text,
+      overlay: {page: 1, x: 222.68, y: 509.26, w: 74.55} }
+  - { line: "3d", label: "If foreign address, enter country", type: text,
+      overlay: {page: 1, x: 45.49, y: 483.46, w: 94.13} }
+  - { line: "3d.province", label: "Foreign province and/or state", type: text,
+      overlay: {page: 1, x: 143.62, y: 483.46, w: 153.61} }
+  - { line: "4a", label: "Claimant's name — deceased-taxpayer refund payee (attach Form RPD-41083)", type: text,
+      overlay: {page: 1, x: 320.37, y: 505.66, w: 160.39} }
+  - { line: "4b", label: "Claimant's SSN — deceased-taxpayer refund payee", type: text,
+      overlay: {page: 1, x: 320.46, y: 481.9, w: 89.24} }
+  - { line: "4c", label: "Taxpayer's date of death (if died before filing)", type: text,
+      overlay: {page: 1, x: 492.99, y: 553.95, w: 81.37} }
+  - { line: "4d", label: "Spouse's date of death (if died before filing)", type: text,
+      overlay: {page: 1, x: 492.44, y: 529.75, w: 81.92} }
+  - { line: "5", label: "EXEMPTIONS: taxpayer, spouse, dependents and other dependents from federal 1040 (00 if you are another taxpayer's dependent)", type: text,
+      overlay: {page: 1, x: 46.76, y: 468.83, w: 25.54} }
+  - { line: "6a", label: "Federal or state extension of time to file", type: checkbox,
+      overlay: {page: 1, x: 50.63, y: 435.95, w: 9.35} }
+  - { line: "6b", label: "Extension date", type: text,
+      overlay: {page: 1, x: 283.57, y: 436.01, w: 83.29} }
+  # ---- filing status (mark only one) ------------------------------------------
+  - { line: "filing_status.single", label: "(1) Single", type: checkbox,
+      overlay: {page: 1, x: 397.05, y: 423.23, w: 7.42} }
+  - { line: "filing_status.mfj", label: "(2) Married filing jointly", type: checkbox,
+      overlay: {page: 1, x: 397.05, y: 410.87, w: 7.42} }
+  - { line: "filing_status.mfs", label: "(3) Married filing separately (spouse's name/SSN in 2a and 2b)", type: checkbox,
+      overlay: {page: 1, x: 396.97, y: 398.23, w: 7.42} }
+  - { line: "filing_status.hoh", label: "(4) Head of household", type: checkbox,
+      overlay: {page: 1, x: 397.05, y: 374.79, w: 7.42} }
+  - { line: "filing_status.hoh_person", label: "(4a) Name of qualifying person (if not a counted dependent)", type: text,
+      overlay: {page: 1, x: 421.22, y: 350.34, w: 148.38} }
+  - { line: "filing_status.qss", label: "(5) Surviving spouse with dependent child", type: checkbox,
+      overlay: {page: 1, x: 397.05, y: 338.71, w: 7.42} }
+  # ---- dependents table (first 5; more on Schedule PIT-S) ----------------------
+  - { line: "dep1.first", label: "Dependent 1 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 385.86, w: 65.7} }
+  - { line: "dep1.last", label: "Dependent 1 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 385.86, w: 90.79} }
+  - { line: "dep1.ssn", label: "Dependent 1 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 385.86, w: 89.51} }
+  - { line: "dep1.dob", label: "Dependent 1 — date of birth (MM/DD/CCYY)", type: text,
+      overlay: {page: 1, x: 297.21, y: 385.86, w: 82.89} }
+  - { line: "dep2.first", label: "Dependent 2 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 373.81, w: 65.7} }
+  - { line: "dep2.last", label: "Dependent 2 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 373.81, w: 90.79} }
+  - { line: "dep2.ssn", label: "Dependent 2 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 373.81, w: 89.51} }
+  - { line: "dep2.dob", label: "Dependent 2 — date of birth", type: text,
+      overlay: {page: 1, x: 297.21, y: 373.81, w: 82.89} }
+  - { line: "dep3.first", label: "Dependent 3 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 361.66, w: 65.7} }
+  - { line: "dep3.last", label: "Dependent 3 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 361.66, w: 90.79} }
+  - { line: "dep3.ssn", label: "Dependent 3 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 361.66, w: 89.51} }
+  - { line: "dep3.dob", label: "Dependent 3 — date of birth", type: text,
+      overlay: {page: 1, x: 297.21, y: 361.66, w: 82.89} }
+  - { line: "dep4.first", label: "Dependent 4 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 349.44, w: 65.7} }
+  - { line: "dep4.last", label: "Dependent 4 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 349.44, w: 90.79} }
+  - { line: "dep4.ssn", label: "Dependent 4 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 349.44, w: 89.51} }
+  - { line: "dep4.dob", label: "Dependent 4 — date of birth", type: text,
+      overlay: {page: 1, x: 297.21, y: 349.44, w: 82.89} }
+  - { line: "dep5.first", label: "Dependent 5 — first name", type: text,
+      overlay: {page: 1, x: 39.21, y: 337.31, w: 65.7} }
+  - { line: "dep5.last", label: "Dependent 5 — last name", type: text,
+      overlay: {page: 1, x: 108.91, y: 337.31, w: 90.79} }
+  - { line: "dep5.ssn", label: "Dependent 5 — SSN", type: text,
+      overlay: {page: 1, x: 203.7, y: 337.31, w: 89.51} }
+  - { line: "dep5.dob", label: "Dependent 5 — date of birth", type: text,
+      overlay: {page: 1, x: 297.21, y: 337.31, w: 82.89} }
+  # ---- income (page 1, lines 9-22) ---------------------------------------------
+  - { line: "9", label: "Federal adjusted gross income (federal Form 1040/1040-SR, line 11)", type: money,
+      overlay: {page: 1, x: 483.24, y: 315.27, w: 91.12} }
+  - { line: "10", label: "(+) State and local tax deduction claimed on federal Schedule A, line 5a (itemizers; worksheet)", type: money,
+      overlay: {page: 1, x: 483.24, y: 297.63, w: 91.12} }
+  - { line: "11", label: "(+) Total additions to federal AGI (PIT-ADJ, line 6; attach PIT-ADJ)", type: money,
+      overlay: {page: 1, x: 483.24, y: 279.99, w: 91.12} }
+  - { line: "12", label: "(-) Federal standard or itemized deduction (federal Form 1040, line 12)", type: money,
+      overlay: {page: 1, x: 483.24, y: 267.03, w: 91.12} }
+  - { line: "12a", label: "Mark if you itemized", type: checkbox,
+      overlay: {page: 1, x: 423.11, y: 254.07, w: 10.57} }
+  - { line: "13", label: "(-) Deduction for certain dependents (worksheet)", type: money,
+      overlay: {page: 1, x: 483.24, y: 241.47, w: 91.12} }
+  - { line: "14", label: "(-) New Mexico low- and middle-income tax exemption", type: money,
+      overlay: {page: 1, x: 483.24, y: 228.87, w: 91.12} }
+  - { line: "15", label: "(-) Total deductions and exemptions from federal income (PIT-ADJ, line 28; attach)", type: money,
+      overlay: {page: 1, x: 483.24, y: 216.27, w: 91.12} }
+  - { line: "16", label: "(-) Medical care expense deduction (complete BOTH 16 and 16a or it is denied)", type: money,
+      overlay: {page: 1, x: 483.24, y: 204.03, w: 91.12} }
+  - { line: "16a", label: "Unreimbursed and uncompensated medical care expenses", type: money,
+      overlay: {page: 1, x: 340.57, y: 183.51, w: 91.11} }
+  - { line: "17", label: "NEW MEXICO TAXABLE INCOME: lines 9+10+11 minus lines 12,13,14,15,16 (zero floor)",
+      type: money, compute: "max(0, 9 + 10 + 11 - 12 - 13 - 14 - 15 - 16)",
+      overlay: {page: 1, x: 483.24, y: 164.43, w: 91.12} }
+  - { line: "18", label: "New Mexico tax on line 17, or from PIT-B line 14", type: money,
+      note: "MANDATED lookup: 2024 NM Tax Rate Table (PIT-TRT; lookup rows to $100,000, then the printed 4.9% and 5.9% schedules over $100,000) or PIT-B apportionment — take the table/schedule value, never plain bracket arithmetic.",
+      overlay: {page: 1, x: 483.24, y: 146.43, w: 91.12} }
+  - { line: "18a", label: "Enter R if from the Tax Rate Table, B if from PIT-B line 14", type: text,
+      note: "2024 Instructions, line 18a: a non-resident electing the special method for tax on gross royalty income enters Y.",
+      overlay: {page: 1, x: 425.11, y: 134.19, w: 6.57, cells: [425.11], cell_w: 6.57} }
+  - { line: "19", label: "(+) Additional tax on lump-sum distributions", type: money,
+      overlay: {page: 1, x: 483.24, y: 121.95, w: 91.12} }
+  - { line: "20", label: "(-) Credit for taxes paid to another state (residents; attach the other state's return)", type: money,
+      overlay: {page: 1, x: 483.24, y: 104.49, w: 91.12} }
+  - { line: "21", label: "(-) Business-related income tax credits applied (Schedule PIT-CR, line A; attach)", type: money,
+      overlay: {page: 1, x: 483.24, y: 87.03, w: 91.12} }
+  - { line: "22", label: "NET NEW MEXICO INCOME TAX: lines 18+19 minus lines 20,21 (zero floor)",
+      type: money, compute: "max(0, 18 + 19 - 20 - 21)",
+      overlay: {page: 1, x: 483.24, y: 68.67, w: 91.12} }
+  # ---- payments and credits (page 2) --------------------------------------------
+  - { line: "23", label: "Amount on line 22 from page 1", type: money, compute: "22",
+      overlay: {page: 2, x: 483.74, y: 640.84, w: 90.12} }
+  - { line: "24", label: "Total claimed on rebate and credit schedule (PIT-RC, line 26; attach)", type: money,
+      overlay: {page: 2, x: 483.74, y: 627.01, w: 90.12} }
+  - { line: "25", label: "(+) Working families tax credit (complete 25, 25a, and 25b or denied)", type: money,
+      overlay: {page: 2, x: 483.74, y: 613.19, w: 90.12} }
+  - { line: "25a", label: "Federal earned income credit (EIC) reported on your 2024 federal return or calculated under NM Expansion", type: money,
+      overlay: {page: 2, x: 341.07, y: 596.35, w: 90.11} }
+  - { line: "25b", label: "NM Expansion only: check if you did NOT qualify for the federal EIC", type: checkbox,
+      overlay: {page: 2, x: 423.12, y: 579.5, w: 10.56} }
+  - { line: "26", label: "(+) Refundable business-related credits (Schedule PIT-CR, line B; attach)", type: money,
+      overlay: {page: 2, x: 483.74, y: 566.46, w: 90.12} }
+  - { line: "27", label: "(+) New Mexico income tax withheld (attach annual statements)", type: money,
+      overlay: {page: 2, x: 483.74, y: 554.22, w: 90.12} }
+  - { line: "28", label: "(+) NM tax withheld from oil and gas proceeds (attach 1099-MISC or RPD-41285)", type: money,
+      overlay: {page: 2, x: 483.74, y: 541.98, w: 90.12} }
+  - { line: "29", label: "(+) NM tax withheld from or paid as entity-level tax or composite income tax by a pass-through entity (attach 1099-MISC or RPD-41359)", type: money,
+      overlay: {page: 2, x: 483.74, y: 524.51, w: 90.12} }
+  - { line: "30", label: "(+) 2024 estimated income tax payments", type: money,
+      overlay: {page: 2, x: 483.74, y: 507.06, w: 90.12} }
+  - { line: "31", label: "(+) Other payments", type: money,
+      overlay: {page: 2, x: 483.74, y: 494.82, w: 90.12} }
+  - { line: "32", label: "TOTAL PAYMENTS AND CREDITS: add lines 24 through 31",
+      type: money, compute: "24 + 25 + 26 + 27 + 28 + 29 + 30 + 31",
+      overlay: {page: 2, x: 483.74, y: 482.83, w: 90.12} }
+  # ---- tax due / overpayment ------------------------------------------------------
+  - { line: "33", label: "TAX DUE: if line 22 exceeds line 32, the difference", type: money, compute: "max(0, 22 - 32)",
+      overlay: {page: 2, x: 483.74, y: 470.09, w: 89.62} }
+  - { line: "34", label: "(+) Penalty on underpayment of estimated tax", type: money,
+      overlay: {page: 2, x: 483.74, y: 458.1, w: 89.62} }
+  - { line: "35", label: "Special underpayment-penalty method code 1-5 (attach RPD-41272)", type: text,
+      overlay: {page: 2, x: 483.74, y: 441.54, w: 89.62, align: right} }
+  - { line: "36", label: "(+) Penalty", type: money,
+      overlay: {page: 2, x: 483.74, y: 424.98, w: 89.62} }
+  - { line: "37", label: "(+) Interest", type: money,
+      overlay: {page: 2, x: 483.74, y: 412.74, w: 89.62} }
+  - { line: "38", label: "TAX, PENALTY, AND INTEREST DUE: add lines 33, 34, 36, and 37",
+      type: money, compute: "33 + 34 + 36 + 37",
+      overlay: {page: 2, x: 483.74, y: 400.75, w: 89.62} }
+  - { line: "39", label: "OVERPAYMENT: if line 23 is less than line 32, the difference", type: money, compute: "max(0, 32 - 23)",
+      overlay: {page: 2, x: 483.74, y: 388.01, w: 89.62} }
+  - { line: "40", label: "(-) Refund voluntary contributions (PIT-D, line 18; attach PIT-D)", type: money,
+      overlay: {page: 2, x: 483.74, y: 376.02, w: 89.62} }
+  - { line: "41", label: "(-) Amount of line 39 applied to your 2025 estimated tax", type: money,
+      overlay: {page: 2, x: 483.74, y: 363.78, w: 89.62} }
+  - { line: "42", label: "AMOUNT TO BE REFUNDED TO YOU: line 39 minus lines 40 and 41",
+      type: money, compute: "39 - 40 - 41",
+      overlay: {page: 2, x: 483.74, y: 351.79, w: 89.62} }
+  # ---- Refund Express (direct deposit) ---------------------------------------------
+  - { line: "re.routing", label: "RE.1 Routing number", type: text,
+      overlay: {page: 2, x: 103.27, y: 327.06, w: 79.55} }
+  - { line: "re.account", label: "RE.2 Account number", type: text,
+      overlay: {page: 2, x: 261.8, y: 327.06, w: 116.54} }
+  - { line: "re.checking", label: "RE.3 Account type — checking", type: checkbox,
+      overlay: {page: 2, x: 475.96, y: 327.06, w: 10.57} }
+  - { line: "re.savings", label: "RE.3 Account type — savings", type: checkbox,
+      overlay: {page: 2, x: 523.52, y: 327.06, w: 10.57} }
+  - { line: "re.foreign_yes", label: "RE.4 Refund goes to/through an account outside the US — Yes (cannot use this method)", type: checkbox,
+      overlay: {page: 2, x: 475.96, y: 315.07, w: 10.57} }
+  - { line: "re.foreign_no", label: "RE.4 Refund goes to/through an account outside the US — No", type: checkbox,
+      overlay: {page: 2, x: 523.52, y: 315.07, w: 10.57} }
+  # ---- HCA data-sharing box (2023: HSD. 1) --------------------------------------------
+  - { line: "hca_share", label: "HCA.1 Check to let the Health Care Authority (HCA)/NMHIE screen your household for medical insurance (authorizes TRD data sharing)", type: checkbox,
+      overlay: {page: 2, x: 63.78, y: 290.34, w: 10.57} }
+  - { line: "signature.date", label: "Date (your signature)", type: text,
+      overlay: {page: 2, x: 251.23, y: 220.95, w: 79.55} }
+  - { line: "signature.dl_number", label: "Driver's License, State ID No. or enter \"NONE\" or \"DECLINED\"", type: text,
+      overlay: {page: 2, x: 39.86, y: 196.47, w: 185.23} }
+  - { line: "signature.dl_state", label: "State (your driver's license / state ID)", type: text,
+      overlay: {page: 2, x: 230.09, y: 196.47, w: 16.14} }
+  - { line: "signature.dl_expiration", label: "Expiration Date (your driver's license / state ID)", type: text,
+      overlay: {page: 2, x: 251.23, y: 196.47, w: 79.55} }
+  - { line: "spouse.signature_date", label: "Date (spouse's signature)", type: text,
+      overlay: {page: 2, x: 251.23, y: 171.99, w: 79.55} }
+  - { line: "spouse.dl_number", label: "Spouse's Driver's License, State ID No. or enter \"NONE\" or \"DECLINED\"", type: text,
+      overlay: {page: 2, x: 39.86, y: 147.51, w: 185.23} }
+  - { line: "spouse.dl_state", label: "State (spouse's driver's license / state ID)", type: text,
+      overlay: {page: 2, x: 230.09, y: 147.51, w: 16.14} }
+  - { line: "spouse.dl_expiration", label: "Expiration Date (spouse's driver's license / state ID)", type: text,
+      overlay: {page: 2, x: 251.23, y: 147.51, w: 79.55} }
+  - { line: "phone", label: "Taxpayer's phone number", type: text,
+      overlay: {page: 2, x: 140.26, y: 122.67, w: 122.82} }
+  - { line: "email", label: "Taxpayer's email address", type: text,
+      overlay: {page: 2, x: 139.26, y: 110.27, w: 176.67} }
+  - { line: "preparer.date", label: "Paid preparer's Date", type: text,
+      overlay: {page: 2, x: 520.23, y: 232.69, w: 48.85} }
+  - { line: "preparer.firm", label: "P.1 Firm's name (or yours, if self-employed)", type: text,
+      overlay: {page: 2, x: 345.85, y: 208.21, w: 223.23} }
+  - { line: "preparer.nmbtin", label: "P.2 NMBTIN", type: text,
+      overlay: {page: 2, x: 393.41, y: 184.17, w: 101.19} }
+  - { line: "preparer.ptin", label: "P.3 Preparer's PTIN", type: text,
+      overlay: {page: 2, x: 420.33, y: 171.49, w: 74.27} }
+  - { line: "preparer.fein", label: "P.4 FEIN", type: text,
+      overlay: {page: 2, x: 383.34, y: 159.25, w: 79.55} }
+  - { line: "preparer.phone", label: "P.5 Preparer's phone number", type: text,
+      overlay: {page: 2, x: 457.32, y: 147.01, w: 95.4} }
+  - { line: "preparer.rpd41338", label: "P.6 Mark this box if Form RPD-41338 is on file for this taxpayer", type: checkbox,
+      overlay: {page: 2, x: 354.42, y: 122.4, w: 10.57} }
+mailing:
+  no_payment: "New Mexico Taxation and Revenue Department, P.O. Box 25122, Santa Fe, New Mexico 87504-5122"
+  with_payment: "New Mexico Taxation and Revenue Department, P.O. Box 25122, Santa Fe, New Mexico 87504-5122 (same address printed on the form; payment vouchers use PIT-PV)"
+  verify_url: https://www.tax.newmexico.gov
