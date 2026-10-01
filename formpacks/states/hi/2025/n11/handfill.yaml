@@ -11,7 +11,7 @@
 # "Form N-11 (Rev. 2025) Page N of 4".
 #
 # LAYOUT CENSUS (pdfium path objects and the text layer of THIS blank against
-# the 2024 blank, work/pathdiff and movebox):
+# the 2024 blank):
 #   * pages 1-3 ENTRY PATHS UNCHANGED: every digit cell, oval and minus square
 #     is a twin of its 2024 path within 0.3 pt; only the QR code (now drawn as
 #     1.44 pt path squares), three section rules re-stroked thinner about the
@@ -45,13 +45,13 @@
 #   4 re-measured (name, ptin, fein, phone); 3 lines
 #   dropped (51, 52, preparer.self_employed); 16 lines re-keyed (53.* -> 51.*,
 #   54.* -> 52.*, 55.* -> 53.*): 169 lines / 177 boxes -> 166 lines / 174 boxes.
-#   work/audit.py then found every declared cell rectangle, oval outline and
+#   A geometry audit then found every declared cell rectangle, oval outline and
 #   minus glyph of this manifest on THIS blank's paths and text layer (115 of
 #   117 geometry-pinned boxes; the two "misses" are the page-1 SSN middle cells,
 #   whose rectangles the form draws 0.52 pt higher than their neighbours, the
 #   same on the 2024 blank).
 #
-# FACE DELTAS vs 2024 (the printed-WORD diff, work/facediff.txt — not a
+# FACE DELTAS vs 2024 (the printed-WORD diff — not a
 # geometry diff; the re-set header captions above are the same words):
 #   * line 15 "First $8,636 of military reserve or Hawaii national guard duty
 #     pay" (2024: $8,082; Act 58 SLH 2025 per the Instructions' Changes to Note);

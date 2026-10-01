@@ -105,7 +105,7 @@
 # STALE WIDGET TOOLTIPS (/TU) — NOT evidence. The DOR rolled the printed face
 # but left several widget /TU strings at their prior-year wording, so a
 # name- or tooltip-based audit must not read them as the line's meaning.
-# Measured on this blank (work/tooltips.txt): 16a / 16aa "Rent paid in
+# Measured on this blank (the widgets' /TU strings): 16a / 16aa "Rent paid in
 # 2024", Line16aaa / 16bb "property taxes paid in 2024", 16b "Property taxes
 # paid on home in 2024" (face: 2025); line29 "2024 estimated tax payments and
 # amount applied from 2023 return" (face: "2025 ... from 2024 return"); 22
@@ -118,7 +118,7 @@
 # Form 1, 2025 — Wisconsin Income Tax (resident return).
 #
 # Authored via the taxfill pipeline: the 2023 map (`taxfill introspect`
-# sentinel sweep -> vision-map workflow) ported by work/port.py: pages 1 and 4
+# sentinel sweep -> vision-map workflow) ported by script: pages 1 and 4
 # kept, pages 2-3 re-bound line by line from widget position + printed label
 # on the 2025 blank, page 5 mapped new, and every line confirmed on the
 # sentinel renders (scripts/audit_pack.py).

@@ -55,7 +55,7 @@
 #   5 added (health_coverage.interest, 20d, 37.specify, 48d, 49.specify).
 #
 # HOW EACH BOX WAS MEASURED (the 2023 pilot's rules, re-derived from the 2023
-# blank, where they reproduce every 2023 box; work/port.py applies them):
+# blank, where they reproduce every 2023 box; a script applies them):
 #   entry rectangle (a flat 5-segment path): x = left + 2, w = width - 4,
 #     baseline y = bottom + (height - 6.5) / 2 (a 9 pt digit sits centred);
 #   per-character cells (SSNs 3-2-4, MM-DD-YYYY dates, phones, country code,

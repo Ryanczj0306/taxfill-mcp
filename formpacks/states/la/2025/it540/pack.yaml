@@ -3,7 +3,7 @@
 # Phase J JS5; triaged RE-MAP by the scaffold — 10 of the 151 mapped fields
 # are gone from the 2025 blank, and every printed line after 7 is RENUMBERED
 # while its field NAME stays, so this fields block was emitted from a
-# field -> 2025-line table (work/port.py) and every row confirmed on renders.
+# field -> 2025-line table, and every row confirmed on renders.
 #
 # URL. https://dam.ldr.la.gov/taxforms/IT540WEB-BC-2025-F.pdf (the 2024 file
 # was "IT-540-WEB-BC-2024-F.pdf" — the 2025 name drops the hyphens). Digest
@@ -19,7 +19,7 @@
 # printed_year_verified = 2025. Still 17 PDF pages, the same four return
 # pages (PDF 2-5) mapped and the same attachments excluded.
 #
-# AcroForm topology against the 2024 blank (work/census.txt). 517 widgets
+# AcroForm topology against the 2024 blank (a widget census). 517 widgets
 # (2024: 519). Of the 151 mapped widgets: 80 SAME, 51 MOVED, 10 CHANGED, 10
 # GONE; 17 NEW widgets; 9 unmapped base widgets gone (the Schedule D donation
 # cells and the two page-4 pushbuttons buttonClear / buttonPDF417).
@@ -78,9 +78,9 @@
 #   * Return pages 2-4: the mapped money widgets moved 0-12.3 pt as the rows
 #     re-flowed around the new line 8; no page changed its page index.
 #
-# FACE DELTAS vs 2024 (work/facediff.txt). NEW line 8 "LOUISIANA STANDARD
-# DEDUCTION – Enter the standard deduction amount that corresponds with your
-# filing status. Enter $12,500 if filing status is 1 or 3; $25,000 if 2, 4,
+# FACE DELTAS vs 2024 (the complete printed-text diff). NEW line 8 "LOUISIANA
+# STANDARD DEDUCTION – Enter the standard deduction amount that corresponds with
+# your filing status. Enter $12,500 if filing status is 1 or 3; $25,000 if 2, 4,
 # or 5." EVERY line after 7 is renumbered by +1 — 8A-8D -> 9A-9D, 9 -> 10, …,
 # 22A/22B -> 23A/23B, …, 46 -> 47 — while the widget NAMES stay (FEDITM, the
 # 2024 line 8A, is the 2025 line 9A), so every line key below is taken from
@@ -100,7 +100,7 @@
 # — all agree.
 # Form IT-540 (IT-540-WEB-BC), 2025 — Louisiana Resident Income Tax Return.
 #
-# Authored via the taxfill pipeline: the 2024 vision-mapped base -> work/port.py
+# Authored via the taxfill pipeline: the 2024 vision-mapped base ->
 # field table (position + printed label) -> scripts/audit_pack.py sentinel
 # audit, every return page read at zoom -> this map.
 #

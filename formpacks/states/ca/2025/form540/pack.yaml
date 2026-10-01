@@ -2,7 +2,7 @@
 # TY2025 PORT of formpacks/states/ca/2023/form540/pack.yaml (ported 2026-10-01,
 # Phase J JS5; triaged RE-MAP — every one of the 167 field names the 2023 pack
 # binds is gone from the 2025 blank, so this pack was rebuilt by POSITION and
-# printed label (work/port.py) and every binding confirmed on sentinel renders.
+# printed label, and every binding confirmed on sentinel renders.
 #
 # URL. https://www.ftb.ca.gov/forms/2025/2025-540.pdf (the FTB's own host). Digest
 # 3be81dcc5d2b… — two separate curl downloads on 2026-10-01 (04:49:15Z and
@@ -16,7 +16,7 @@
 # The fiscal-year line prints "year 2026." printed_year_verified = 2025. Six
 # sides, as in 2023.
 #
-# AcroForm topology against the 2023 blank (work/census.json). 184 widgets on
+# AcroForm topology against the 2023 blank (a widget census). 184 widgets on
 # 169 top-level fields (2023: 180 widgets); per side 50 / 43 / 28 / 24 / 24 / 15.
 # No widget is ReadOnly or comb; /DA is Helv 10 on every text widget except
 # 540_form_1033 (the principal-residence "State" box, Helv 8 — the 2023 blank
@@ -26,7 +26,7 @@
 # is, while "540_form_1047" does not exist.
 # The 163 lines carried over from 2023 were each placed on the 2025 widget
 # occupying the 2023 widget's position. Measured as the largest displacement
-# of any of the four rect edges (work/buckets.py): 133 of the 163 lie within
+# of any of the four rect edges: 133 of the 163 lie within
 # 3 pt, 16 between 3 and 5 pt (the 2025 checkbox squares grew from 12.8 to
 # 16.6 pt around the same centre, every centre within 2 pt, and a few text
 # boxes shifted 3 pt), and 14 moved more than 5 pt because the face changed —
@@ -85,7 +85,7 @@
 #     (2023: none on 1007/1012/2002, 10 on the three dependent boxes); the
 #     account numbers 17 -> 19; every money box 12; the three "Apt. no/ste. no."
 #     and "PMB" boxes (1016, 1017, 1031) LOST their /MaxLen (5 / 6 / 5), so
-#     each carries a measured budget of 12: on the render (work/digits_fill.py,
+#     each carries a measured budget of 12: on the render (a probe fill,
 #     scale 3) 12 digits fit all three boxes (72.5 / 73.0 / 70.7 pt at Helv 10;
 #     Helvetica digits advance 0.556 em, 66.7 pt), 13 fill 1016/1017 edge to
 #     edge and clip in 1031, 14 clip in all three — and neither the filler nor
@@ -95,7 +95,7 @@
 # NEW lines vs 2023: 91.no_use_tax_owed, 431, 447, 448, 449, 116.account_type.checking, 117.account_type.checking, health_care_coverage.yes, organ_donor.primary_taxpayer, organ_donor.spouse, paid_preparer.name, paid_preparer.phone, third_party_designee.allow_yes.
 # DROPPED lines vs 2023: 410, 425, 440, 444 (their rows are gone from the face).
 #
-# FACE DELTAS vs 2023 (work/facediff.txt). The exemption credits "7/8/9 X $153"
+# FACE DELTAS vs 2023 (the complete printed-text diff). The exemption credits "7/8/9 X $153"
 # (2023 $144) and "10 X $475" ($446); the standard deduction "$5,706" /
 # "$11,412" ($5,363 / $10,726); line 32's AGI threshold "$252,203" ($237,035);
 # line 13 now reads "federal adjusted gross income (AGI) from federal Form 1040
@@ -149,7 +149,7 @@ fields:
   - { line: "mailing_address.additional_info", field: "540_form_1013", type: text }  # "Additional information (see instructions)"
   - { line: "pba_code", field: "540_form_1014", type: text, maxlen: 6 }  # "PBA code"
   - { line: "mailing_address.street", field: "540_form_1015", type: text }  # "Street address (number and street) or PO box"
-  - { line: "mailing_address.apt_no", field: "540_form_1016", type: text, maxlen: 12 }  # "Apt. no/ste. no." — the widget dropped its 2023 /MaxLen 5; the 72.5 pt box at Helv 10 renders 12 digits whole, the 14th is clipped (work/digits_fill.py)
+  - { line: "mailing_address.apt_no", field: "540_form_1016", type: text, maxlen: 12 }  # "Apt. no/ste. no." — the widget dropped its 2023 /MaxLen 5; the 72.5 pt box at Helv 10 renders 12 digits whole, the 14th is clipped (a probe fill read on the render)
   - { line: "mailing_address.pmb", field: "540_form_1017", type: text, maxlen: 12 }  # "PMB/private mailbox" — the widget dropped its 2023 /MaxLen 6; the 73.0 pt box renders 12 digits whole, the 14th is clipped
   - { line: "mailing_address.city", field: "540_form_1018", type: text }  # "City (If you have a foreign address, see instructions)"
   - { line: "mailing_address.state", field: "540_form_1019", type: text, maxlen: 2 }  # "State"

@@ -4,7 +4,7 @@
 # the surviving names are NOT the surviving meanings, see TOPOLOGY).
 #
 # URL. https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf
-# Digest 7b7ae51e2ede… — two separate curl downloads (work/dl1.pdf, dl2.pdf) and
+# Digest 7b7ae51e2ede… — two separate curl downloads and
 # the triage cache copy all agree; %PDF-1.7, AcroForm, 4 pages, 198 widgets on
 # 183 fields (2023: 3 pages, 190 widgets, 179 fields).
 #
@@ -15,7 +15,7 @@
 # "Page 4 / …049999V1". The header flag now reads "Amended Return — Must
 # include page 4" (2023: page 3). printed_year_verified = 2025.
 #
-# TOPOLOGY against the 2023 blank (tools/census.py, work/census.txt). Mapped-
+# TOPOLOGY against the 2023 blank (a census of the mapped widgets). Mapped-
 # widget fates by NAME: 20 SAME, 77 MOVED, 56 PAGE (moved to another page), 1
 # CHANGED, 22 GONE; 31 NEW widgets on 26 names. The DOR inserted ONE printed
 # line — 16 "ACTIVE LABOR ORGANIZATION DUES (See instructions)" — and renumbered
@@ -81,13 +81,13 @@
 #     amendedFederal, auditAdvised, protectiveClaim /0 Yes (x=450) / /1 No
 #     (x=500). The single-widget boxes keep /Yes (amendedChk, ln21…, ln27b…)
 #     and /X (pitund, PITRES_ClaimDependent, ln06…MP, ln08b…).
-#   * Pages (tools/layoutdiff.py): page 1 now ends at line 19 (its rows sit
+#   * Pages (layout diff): page 1 now ends at line 19 (its rows sit
 #     12 pt lower); page 2 opens with line 20 and runs to 40 (median shift
 #     -24 pt, 2023's page-2 rows 25-40 moved -168 pt); page 3 holds lines 41-47,
 #     Section E, the signature and preparer blocks and the mailing boxes;
 #     page 4 is the amended-return page (48-62). signature page is 3.
 #
-# FACE DELTAS vs 2023 (tools/facediff.py, work/facediff.txt). New line 16; the
+# FACE DELTAS vs 2023 (the complete printed-text diff). New line 16; the
 # itemized subtotal is 17 "Add Line 13 through Line 16", 18 PIT-CRS, 19 "NET
 # ITEMIZED DEDUCTIONS - Subtract Line 18 from Line 17. Enter here and on Line
 # 20"; 20 election (still "$3250 … $6500 … $3250"), 21 additional standard
@@ -124,8 +124,8 @@
 # not touch /F, and a renderer or viewer that runs no JavaScript (pdfium,
 # Preview, a print spooler) draws the page BLANK: the sentinel audit rendered
 # every page-4 value invisible. Every page-4 binding was therefore proven on a
-# work-dir copy of the filled file with bit 2 of /F cleared
-# (work/alt/audit_unhidden.pdf), where each sentinel sits in its printed box. Acrobat/Reader with amendedChk set will show them;
+# copy of the filled file with bit 2 of /F cleared, where each sentinel sits in
+# its printed box. Acrobat/Reader with amendedChk set will show them;
 # anything else will not. Whether fill_form should clear the Hidden bit on a
 # widget it writes (an engine change, out of a port's scope) is left for the
 # integrator; the lines stay mapped because they are the amended return.

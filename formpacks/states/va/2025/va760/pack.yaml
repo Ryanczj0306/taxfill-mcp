@@ -18,7 +18,7 @@
 # text layer (no replacement string either) — the 2025 file prints no
 # text-layer scanline, which changes nothing in the map.
 #
-# AcroForm TOPOLOGY against the 2024 blank (tools/census.py + a field-level
+# AcroForm TOPOLOGY against the 2024 blank (a widget census + a field-level
 # flag dump walking /Parent). 115 widgets = 114 names in BOTH years. /Ff
 # histogram identical (65 x 29360128 Comb|DoNotSpellCheck|DoNotScroll, 39 x
 # none, 8 x 8388608, 3 x 12582912); ZERO ReadOnly widgets, so this pack maps
@@ -64,7 +64,7 @@
 # lines and the two exemption dollar boxes, AFDate on the two signature dates,
 # AFSpecial on Zip Code / Preparer Phone Number) are the same 45 as in 2024.
 #
-# FACE DELTAS vs 2024 (tools/facediff.py, both pages). Line numbering 1-36
+# FACE DELTAS vs 2024 (the complete printed-text diff, both pages). Line numbering 1-36
 # with 17a / 19a / 19b is UNCHANGED, and every caption is unchanged except the
 # years and one comma: "File by May 1, 2025" -> "May 1, 2026", "Rev. 11/24" ->
 # "Rev. 04/26", line 19 "withheld for 2024" -> "2025", line 20 "taxable year
@@ -81,7 +81,7 @@
 # instructions"), so there is nothing to cross-check and no mismatch. Line 30
 # keeps the 2024 "Commonwealth Savers (formerly Virginia529 and ABLE)" name
 # and the page-1 authorization keeps DMAS + VDSS + VHBE.
-# tools/layoutdiff.py: median printed-word shift (0.00, 0.00) on both pages,
+# Layout diff: median printed-word shift (0.00, 0.00) on both pages,
 # 97-98 % of words within 2 pt.
 #
 # WHAT CHANGED IN THE MAP (port.py, exact-count substitutions on the 2024
