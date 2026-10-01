@@ -117,7 +117,7 @@ State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
 All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
 38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC)
 via `hand_fill_worksheet`; `state_scope` tells you which returns are required.
-All four 2023 manifests (CT-1040, HI N-11, NM PIT-1, SC1040), HI N-11 and SC1040 2024 and 2025, and NM PIT-1 2024, also carry overlay coordinates:
+All four 2023 manifests (CT-1040, HI N-11, NM PIT-1, SC1040) and HI N-11, NM PIT-1 and SC1040 2024 and 2025, also carry overlay coordinates:
 `fill_form('ct1040' | 'n11' | 'pit1' | 'sc1040', ...)` stamps them onto the print blank, `verify_form(..., expected=values)`
 checks every box, and you render and read each page; the filer signs in ink.
 `hand_fill_worksheet` also serves one FEDERAL filing — `fincen114`, the FBAR
