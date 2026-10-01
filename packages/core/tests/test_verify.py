@@ -1133,6 +1133,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: WI Form 1 2025 (page 1 unchanged; pages 2-3 renumbered, new page 5) equals the reviewed WI 2023 row —
     # home_address / city_or_post_office / state / zip_code; the new Schedule 3 and anatomical-gift lines are not
     # address lines.
+    # JS5: ID Form 40 2025 (a RE-MAP: the name row splits into first / middle initial / last / suffix boxes and the
+    # preparer rows are renamed, none of them address lines) equals the reviewed ID 2024 row (the four mailing_address lines).
     import json
     from pathlib import Path
 
