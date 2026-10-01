@@ -1137,6 +1137,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # preparer rows are renamed, none of them address lines) equals the reviewed ID 2024 row (the four mailing_address lines).
     # JS5: CA Schedule CA (540) 2025 (a RE-MAP of CA 2023 by position; the new 1h type, 8v and two divorce-date boxes
     # are not address lines) equals the reviewed CA 2023 row: the schedule prints name and SSN only, no address.
+    # JS5: MS 80-105 2024 (a PORTABLE port of MS 2023, every widget name and /Rect kept; the two new header-SSN mirror
     import json
     from pathlib import Path
 

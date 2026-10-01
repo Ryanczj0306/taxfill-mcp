@@ -917,6 +917,11 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     # The 2025 port maps the page-2 and page-3 header "SSN" boxes (Page2SSN / Page3SSN: their own /Tx widgets, a
     # keystroke filter and no JavaScript that copies the page-1 SSN) as identifying_number_page2 / _page3; the 2023
     # pack had left them unmapped, so its continuation headers shipped blank (Phase J JS5).
+    # The 2024 port maps the page-2 and page-3 header "SSN" boxes (Page2SSN / Page3SSN: their own /Tx widgets, a
+    # keystroke filter and no JavaScript that copies the page-1 SSN) as identifying_number_page2 / _page3; the 2023
+    # pack had left them unmapped, so its continuation headers shipped blank (Phase J JS5, as the 2025 port in
+    # commit 8959461).
+    "states/ms/2024/f80105/pack.yaml": 2,
     "states/ms/2025/f80105/pack.yaml": 2,
     "states/ri/2023/ri1040/pack.yaml": 12,
     "states/ri/2024/ri1040/pack.yaml": 12,

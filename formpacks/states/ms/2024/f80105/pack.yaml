@@ -1,0 +1,844 @@
+# ===========================================================================
+# TY2024 PORT of formpacks/states/ms/2023/f80105/pack.yaml (ported 2026-10-01,
+# Phase J JS5; triaged PORTABLE — every widget the 2023 pack maps is in the
+# 2024 blank under the same name, page and /Rect). The pack TEXT was taken
+# from the verified TY2025 port — formpacks/states/ms/2025/f80105/pack.yaml as
+# committed to main in 8959461, which landed after ff43902, the HEAD this port
+# was built on (so that sibling is on main, not in the build tree) — whose
+# bindings are the 2023 pack's; every one of them was re-measured and
+# re-rendered on this 2024 blank (sentinel audit of all three pages at 170 dpi).
+#
+# URL. https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105248.pdf
+# — the DOR's 80105 + YY + 8 file-name scheme, exactly as the 2023 pack's
+# 80105238.pdf. dor.ms.gov served it with HTTP 200 to plain curl with a
+# desktop browser User-Agent (ssl_verify 0, no -k needed). Digest
+# 10a2f6bf680c… — two separate downloads on 2026-10-01 and the two discovery
+# downloads all agree (666,114 bytes). %PDF-1.6, AcroForm, 3 pages, 159
+# fields / 166 widgets, Distiller 24.0, ModDate 2024-09-18, /Title 80105248.
+#
+# PRINTED IDENTITY (this blank's own text layer, confirmed on the audit
+# renders). Page 1 prints "Form 80-105-24-8-1-000 (Rev. 09/24)", the title
+# "Mississippi / Resident Individual Income Tax Return", the year "2024" and the
+# scan line "801052481000"; page 2 prints "Form 80-105-24-8-2-000 (Rev. 09/24)",
+# "Page 2", "2024", "801052482000"; page 3 prints "Form 80-105-24-8-3-000
+# (Rev. 09/24)", "Page 3", "2024", "801052483000". printed_year_verified = 2024.
+# Still a 3-page PDF that is exactly the filed return.
+#
+# AcroForm topology against the 2023 blank (a census of the mapped widgets and
+# a field-level attribute diff walking /Parent). 166 widgets = 159 names in both
+# years. All 155 widget names the 2023 pack binds (162 lines: "Filing St"
+# carries five option widgets, "Check Box1" / "Check Box3" / "Check Box4" two
+# each) are SAME, and the field-level diff is EMPTY: same page, /FT, /Rect,
+# /MaxLen, /Ff, /Q, /DA ("/CourierNew,Bold 12 Tf", PreparerAddress 10 Tf),
+# /AP /N states (/1../5, /Yes, /1 /2) and /AA actions, and the same field
+# shape (kid-shaped widgets per page 5 / 0 / 6 in both — the five Filing St
+# and six page-3 checkbox kids). Zero NEW widgets, zero GONE. No widget in
+# either blank carries the ReadOnly bit; no document-level JavaScript, no
+# calculation order (/CO). The "Reset" / "PrintForm" pushbuttons sit where
+# the 2023 blank has them (x 445.7 / 445.9). Against the TY2025 blank the
+# only differences are the ones that blank introduced later: its 69 page-1
+# text fields re-authored into parent+kid shape (terminal here, as in 2023)
+# and its pushbuttons 7 pt further right; every name and every /Rect the
+# 2025 pack binds (157, including Page2SSN / Page3SSN) is SAME here.
+# The four names the 2023 pack left unmapped are the two pushbuttons (still
+# not data) and the page-2 / page-3 header "SSN" boxes Page2SSN / Page3SSN —
+# MAPPED here as in the 2025 pack, see "AcroForm" below.
+#
+# FACE DELTAS vs 2023 (facediff.py, layoutdiff.py). The only printed text that
+# differs on the three pages is the revision stamp (Rev. 11/23 -> Rev. 09/24,
+# "-23-8-N-000" -> "-24-8-N-000"), the scan line (80105238N000 -> 80105248N000)
+# and the year (2023 -> 2024); every other word matched within 2 pt (98 % of
+# page 1 and 100 % of pages 2-3 within 0.5 pt; median shift under 0.1 pt).
+# Against the 2025 blank the face differs only in the same three items. No
+# line was renumbered or recaptioned: lines 1-37 on page 1, 38-66 on page 2,
+# the direct-deposit lines 1 / 1a / 1b and the signature block on page 3 read
+# as in 2023, and every caption quoted in the field comments below was re-read
+# on this face. Printed figures: the filing-status exemptions "($12,000)"
+# (statuses 1-3), "($8,000)" (4), "($6,000)" (5), line 10 "Line 9 x $1,500",
+# line 55 "enter the lesser of amount or $15,000". knowledge/states/ms/2024.yaml
+# carries the same $12,000 / $8,000 / $6,000 exemptions and the $1,500
+# dependent figure; the face prints no tax rate (the knowledge pack's 4.7 %
+# comes from the 80-100 instructions, not this face). No mismatch.
+#
+# CHANGES vs the 2023 pack (the same four the TY2025 port, commit 8959461,
+# made, each re-measured on this blank). (1) tax_year, source_url, pdf_sha256. (2) Two
+# identity-mirror lines added, identifying_number_page2 / _page3 (CONVENTIONS
+# "Identity page mirrors": an unmapped continuation-page SSN box ships blank).
+# (3) The per-column arithmetic the face prints is declared in relations
+# (dotted line ids are accepted since Phase J JP5c; the 2023 block said they
+# were not). (4) Two preparer budgets tightened to what the printed box holds
+# at the widget's own /DA (TIGHTER_THAN_WIDGET rows in test_pack_maxlen.py):
+# preparer.address 25 -> 17 (PreparerAddress is 107.6 pt wide at Courier 10,
+# 0.6 em per glyph = 17.9 glyphs) and preparer.city 21 -> 11 (PreparerCity is
+# 83.0 pt at Courier 12 = 11.5 glyphs). Both clips were rendered on THIS blank
+# (a probe fill, read on the page image): a 25-character address shows 18 glyphs and a 21-character
+# city 11 plus a sliver of the 12th, each cut at the next divider; 17- / 11-
+# character values render complete and the pack refuses the longer ones. The
+# 2023 pack carries the same two over-budgets (not touched here). Every other
+# pack maxlen equals its widget's /MaxLen; no key renamed, no group or
+# on_state changed (every on_state re-dumped from this blank's /AP /N).
+#
+# NOTED, NOT CHANGED. Routing Number 1/2 (74.1 / 75.3 pt) and Account Number
+# 1/2 (130.4 / 130.7 pt) print a single solid underline each — one filled
+# rectangle 0.54 pt high per box (Routing 50.3-180.0 pt, Account 201.5-446.4
+# pt, the same in both rows), no per-character cells, no dash operator
+# anywhere in the page-3 content stream — and their widgets carry no comb bit
+# (/Ff 12582912), so comb: false. A value renders left-aligned at the 7.2-pt
+# Courier pitch and the full /MaxLen (9 / 17) fits the box (10.3 / 18.1
+# glyphs): nine- and seventeen-digit values rendered complete and legible on
+# this blank (read on a page-3 crop), as the 2023 pack shipped it. (The 2025
+# pack's banner describes these boxes as dotted cells; that sentence is not
+# what either face prints.) The four date boxes (TaxpayerDate, SpouseDate, PreparerDate
+# 65.6 pt; Alimony Divorce date 86.0 pt; /MaxLen 8) carry the DOR keystroke
+# filter AFSpecial_KeystrokeEx("99999999"), i.e. eight digits MMDDYYYY; the
+# face prints no M M D D cells, so they stay plain text (the comment on each
+# line says what to write). Taxpayer Last Name is 151.1 pt at Courier 12 and
+# holds its /MaxLen 21 on the render (21 x 7.2 = 151.2 pt, 0.1 pt over the
+# box); verify's width estimate flags that sub-point overrun on a 21-letter
+# surname — a verify heuristic edge, not a clip.
+#
+# UNRESOLVED: nothing. The direct-deposit "Checking" / "Savings" selectors and
+# the preparer Yes/No stay one /Btn each with /1 and /2 states, re-dumped from
+# this blank.
+# ===========================================================================
+# Form 80-105, 2024 -- Mississippi Resident Individual Income Tax Return.
+#
+# Provenance / freshness. Blank PDF downloaded from the official source_url below
+# (DOR MS individual forms). STEP 0 YEAR GATE: page 1 of the audit render was
+# READ and prints "Form 80-105-24-8-1-000 (Rev. 09/24)" with the title
+# "Mississippi / Resident Individual Income Tax Return / 2024" -- so
+# printed_year_verified = 2024. Pages 2 and 3 print "...24-8-2-000" / "...24-8-3-000"
+# headers, "Page 2" / "Page 3", both dated "2024". pdf_sha256 pinned to the exact
+# downloaded file (golden test verifies it).
+#
+# Layout / what is FILED vs SKIPPED. The PDF is exactly the 3-page filed return --
+# every page carries fillable AcroForm widgets and all 3 are mapped. There are NO
+# instruction or worksheet pages in this PDF. Mapped pages (1-indexed):
+#   page 1 = Form 80-105 Page 1 -- Amended flag; taxpayer/spouse name blocks; 2
+#            SSNs; mailing address (city/state/zip/county code); Filing Status
+#            (ONE /Btn "Filing St", on_states /1../5); Exemptions section
+#            (dependents grid rows 1-4 name/relation/SSN, line 7 total dependents,
+#            age-65 / blind flags for line 8, line 9 total, lines 10-12 exemption
+#            dollars); Mississippi Income Tax lines 13-16 with Column A (Taxpayer)
+#            / Column B (Spouse) splits (.a/.b), single-column lines 17-23;
+#            Payments lines 24-28; Refund/Balance lines 29-37 with Farmers-or-
+#            Fishermen flag, Direct-Deposit-Request flag, Installment-Agreement-
+#            Request flag.
+#   page 2 = Form 80-105 Page 2 -- header SSN box (identifying_number_page2);
+#            INCOME lines 38-49 (.a/.b
+#            column splits); ADJUSTMENTS lines 50-65 (.a/.b) with an alimony-paid
+#            detail row (name/SSN/state/divorce-date); line 66 Mississippi AGI
+#            (.a/.b) which feeds page-1 line 13; amended-return explanation lines.
+#   page 3 = Form 80-105 Page 3 -- header SSN box (identifying_number_page3);
+#            DIRECT DEPOSIT block (line 1D
+#            overpayment refund, routing/account 1 & 2 with Checking/Savings radios,
+#            amounts 2D/3D); SIGNATURE block (discuss-with-preparer Yes/No radio,
+#            taxpayer/spouse dates & phone, paid-preparer PTIN/phone/email/address).
+#
+# Line-id scheme. Numbered return lines keep their bare printed labels (1..66).
+# Column A (Taxpayer) / Column B (Spouse) money splits suffix .a/.b per CONVENTIONS
+# (e.g. 13.a/13.b ... 66.a/66.b). Single-column lines (17-37) carry the bare
+# number. Filing status, exemptions grid, dependents, direct-deposit and signature
+# blocks are namespaced (filing_status.*, dependent_N.*, age65_blind.*,
+# direct_deposit.*, preparer.*, alimony_paid.*, amended_explanation.*).
+#
+# AcroForm. FLAT form: acroform_root = '' . Every widget /T is the raw flat id the
+# form ships with. The Filing Status control is ONE /Btn named "Filing St" with
+# five distinct on_states (/1../5) -> each option its own line sharing field + group
+# "filing_status". The page-3 "Checking/Savings" selectors are each ONE /Btn
+# ("Check Box3" acct 1, "Check Box4" acct 2) with on_states /1 (Checking) /2
+# (Savings) -> grouped. The discuss-with-preparer Yes/No is ONE /Btn "Check Box1"
+# (/1 Yes, /2 No) -> grouped. The "Reset"/"PrintForm" JavaScript push-buttons (no
+# /Yes-style on-state; appearance-stream dict keys only) are NOT data fields and are
+# intentionally NOT mapped. The page-2/3 header "SSN" boxes (Page2SSN, Page3SSN)
+# are their own /Tx widgets (MaxLen 9, a 9-digit keystroke filter and nothing
+# else: the PDF has no document-level JavaScript and no calculation order, so
+# nothing copies the page-1 SSN into them). The 2023 pack left them unmapped
+# "to avoid duplicate identity"; that ships a blank SSN header on pages 2 and 3,
+# so this port maps them as the identity mirrors identifying_number_page2 /
+# identifying_number_page3 (same type, maxlen and ssn_digits_only format as
+# their page-1 source; CONVENTIONS "Identity page mirrors", P-007 class 4).
+#
+# Money vs text. Every numbered dollar line prints a ".00" whole-dollar suffix and
+# is `money`. Names, address parts, county code, dependent relation letter, total-
+# dependents counts (line 7, line 9), SSNs, routing/account numbers, dates, phones,
+# preparer fields and amended-explanation lines stay `text`. SSN boxes are
+# comb:false plain text maxlen 9 with format ssn_digits_only.
+#
+# Checkboxes / radio groups. Filing Status (group filing_status, one /Btn five
+# states). Direct-deposit account-type selectors (groups direct_deposit.acct1_type,
+# direct_deposit.acct2_type). Discuss-with-preparer (group preparer.discuss).
+# Independent single-state /Yes flags: Amended, the four age-65/blind boxes,
+# Farmers-or-Fishermen, Direct-Deposit-Request, Installment-Agreement-Request.
+#
+# Relations. Only on-face arithmetic where every operand is mapped is declared:
+# the single-column lines 12, 20, 23, 28, 31, 34, 37 and, per column (.a/.b), the
+# printed subtractions and sums of lines 16, 49, 65 and 66 plus the page-2 ->
+# page-1 transfer of line 66 into line 13. Line 9
+# ("line 7 plus number of boxes checked line 8") is NOT declared -- line 8 is four
+# independent checkboxes, not a summable money line. Lines that branch on a
+# comparison (29 overpayment, 35 balance due -- both conditional on 28 vs 23) are
+# NOT declared.
+#
+# Cross_form. Line 13 is "Mississippi adjusted gross income (from page 2, line 66)"
+# -- MS AGI, NOT federal AGI; the federal 1040 line 11 does not flow directly to any
+# 80-105 face line, so cross_form is empty.
+form: "80-105"
+jurisdiction: states/ms
+tax_year: 2024
+source_url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105248.pdf
+pdf_sha256: "10a2f6bf680cc196168a85d8917db8fab4c070c9eec1a009eb77efa2837ab834"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header / identity
+  - line: amended_return.yes               # "Amended" flag top-right
+    field: "Amended"
+    type: checkbox
+    on_state: /Yes
+  - line: name.first                       # "Taxpayer First Name"
+    field: "Taxpayer First Name"
+    type: text
+    maxlen: 21
+  - line: name.middle_initial              # "Initial"
+    field: "Taxpayer Initial"
+    type: text
+    maxlen: 1
+  - line: name.last                        # "Last Name"
+    field: "Taxpayer Last Name"
+    type: text
+    maxlen: 21
+  - line: spouse.name.first                # "Spouse First Name"
+    field: "Spouse First Name"
+    type: text
+    maxlen: 21
+  - line: spouse.name.middle_initial       # "Initial"
+    field: "Spouse Initial"
+    type: text
+    maxlen: 1
+  - line: spouse.name.last                 # "Last Name" (spouse)
+    field: "Spouse Last Name"
+    type: text
+    maxlen: 21
+  - line: mailing_address.street           # "Mailing Address (Number and Street...)"
+    field: "Address"
+    type: text
+    maxlen: 45
+  - line: mailing_address.city             # "City"
+    field: "City"
+    type: text
+    maxlen: 21
+  - line: mailing_address.state            # "State"
+    field: "State"
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip              # "Zip"
+    field: "Zip"
+    type: text
+    maxlen: 5
+  - line: county_code                      # "County Code"
+    field: "County Code"
+    type: text
+    maxlen: 2
+  - line: identifying_number               # "SSN"
+    field: "SSN"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: spouse.identifying_number        # "Spouse SSN"
+    field: "Spouse SSN"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+
+  # ---- Filing Status (ONE /Btn "Filing St", group filing_status)
+  - line: filing_status.married_combined_joint   # "1 Married - Combined or Joint Return ($12,000)"
+    field: "Filing St"
+    type: checkbox
+    on_state: /1
+    group: filing_status
+  - line: filing_status.married_spouse_died      # "2 Married - Spouse Died in Tax Year ($12,000)"
+    field: "Filing St"
+    type: checkbox
+    on_state: /2
+    group: filing_status
+  - line: filing_status.married_filing_separate  # "3 Married - Filing Separate Returns ($12,000)"
+    field: "Filing St"
+    type: checkbox
+    on_state: /3
+    group: filing_status
+  - line: filing_status.head_of_family           # "4 Head of Family ($8,000)"
+    field: "Filing St"
+    type: checkbox
+    on_state: /4
+    group: filing_status
+  - line: filing_status.single                   # "5 Single ($6,000)"
+    field: "Filing St"
+    type: checkbox
+    on_state: /5
+    group: filing_status
+
+  # ---- Exemptions: line 6 dependents grid (rows 1-4: name / B relation / C SSN)
+  - line: dependent_1.name                 # "6 (A) Name" row 1
+    field: "DependentName1"
+    type: text
+    maxlen: 18
+  - line: dependent_1.relationship         # "(B)" C/P/R relationship row 1
+    field: "DependentRelation1"
+    type: text
+    maxlen: 1
+  - line: dependent_1.identifying_number   # "(C) Dependent SSN" row 1
+    field: "DependentSSN1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: dependent_2.name
+    field: "DependentName2"
+    type: text
+    maxlen: 18
+  - line: dependent_2.relationship
+    field: "DependentRelation2"
+    type: text
+    maxlen: 1
+  - line: dependent_2.identifying_number
+    field: "DependentSSN2"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: dependent_3.name
+    field: "DependentName3"
+    type: text
+    maxlen: 18
+  - line: dependent_3.relationship
+    field: "DependentRelation3"
+    type: text
+    maxlen: 1
+  - line: dependent_3.identifying_number
+    field: "DependentSSN3"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: dependent_4.name
+    field: "DependentName4"
+    type: text
+    maxlen: 18
+  - line: dependent_4.relationship
+    field: "DependentRelation4"
+    type: text
+    maxlen: 1
+  - line: dependent_4.identifying_number
+    field: "DependentSSN4"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: "7"                              # "7 Total number of dependents (from line 6 and Form 80-491)"
+    field: "TotalDependents"
+    type: text
+    maxlen: 2
+
+  # ---- line 8 age-65 / blind flags (independent /Yes checkboxes)
+  - line: age65_blind.taxpayer_over_65     # "8 Taxpayer Age 65 or Over"
+    field: "TaxpayerOver65"
+    type: checkbox
+    on_state: /Yes
+  - line: age65_blind.taxpayer_blind       # "Taxpayer Blind"
+    field: "TaxpayerBlind"
+    type: checkbox
+    on_state: /Yes
+  - line: age65_blind.spouse_over_65       # "Spouse Age 65 or Over"
+    field: "SpouseOver65"
+    type: checkbox
+    on_state: /Yes
+  - line: age65_blind.spouse_blind         # "Spouse Blind"
+    field: "SpouseBlind"
+    type: checkbox
+    on_state: /Yes
+  - line: "9"                              # "9 Total dependents line 7 plus number of boxes checked line 8"
+    field: "Total dependents line 7 plus number of boxes checked line 8"
+    type: text
+    maxlen: 2
+  - line: "10"                             # "10 Line 9 x $1,500"
+    field: "Line10"
+    type: money
+  - line: "11"                             # "11 Enter filing status exemption"
+    field: "Line11"
+    type: money
+  - line: "12"                             # "12 Total (line 10 plus line 11)"
+    field: "Line12"
+    type: money
+
+  # ---- Mississippi Income Tax lines 13-16 (Column A taxpayer / Column B spouse)
+  - line: 13.a                             # "13 Mississippi adjusted gross income (from page 2, line 66)" col A
+    field: "13A"
+    type: money
+  - line: 13.b
+    field: "13B"
+    type: money
+  - line: 14.a                             # "14 Standard or itemized deductions" col A
+    field: "14A"
+    type: money
+  - line: 14.b
+    field: "14B"
+    type: money
+  - line: 15.a                             # "15 Exemptions (from line 12)" col A
+    field: "15A"
+    type: money
+  - line: 15.b
+    field: "15B"
+    type: money
+  - line: 16.a                             # "16 Mississippi taxable income (line 13 minus line 14 and line 15)" col A
+    field: "16A"
+    type: money
+  - line: 16.b
+    field: "16B"
+    type: money
+
+  # ---- single-column lines 17-23
+  - line: "17"                             # "17 Income tax due (from Schedule of Tax Computation)"
+    field: "17"
+    type: money
+  - line: "18"                             # "18 Credit for tax paid to another state (from Form 80-160, line 12)"
+    field: "18"
+    type: money
+  - line: "19"                             # "19 Other credits (from Form 80-401, line 1)"
+    field: "19"
+    type: money
+  - line: "20"                             # "20 Net income tax due (line 17 minus line 18 and line 19)"
+    field: "20"
+    type: money
+  - line: "21"                             # "21 Consumer use tax"
+    field: "21"
+    type: money
+  - line: "22"                             # "22 Catastrophe savings tax"
+    field: "22"
+    type: money
+  - line: "23"                             # "23 Total Mississippi income tax due (line 20 plus line 21 and line 22)"
+    field: "23"
+    type: money
+
+  # ---- Payments lines 24-28
+  - line: "24"                             # "24 Mississippi income tax withheld (complete Form 80-107)"
+    field: "24"
+    type: money
+  - line: "25"                             # "25 Estimated tax payments, extension payments..."
+    field: "25"
+    type: money
+  - line: "26"                             # "26 Credit for tax paid on an electing Pass-Through Entity Tax Return"
+    field: "26"
+    type: money
+  - line: "27"                             # "27 Refund received and/or amount carried forward (amended return only)"
+    field: "27"
+    type: money
+  - line: "28"                             # "28 Total payments (line 24 plus line 25 and line 26 minus line 27)"
+    field: "28"
+    type: money
+
+  # ---- Refund or Balance Due lines 29-37
+  - line: "29"                             # "29 Overpayment (if line 28 is more than line 23...)"
+    field: "29"
+    type: money
+  - line: "30"                             # "30 Interest and penalty (from Form 80-320, line 11 and/or line 12)"
+    field: "30"
+    type: money
+  - line: "31"                             # "31 Adjusted overpayment (line 29 minus line 30)"
+    field: "31"
+    type: money
+  - line: farmers_or_fishermen.yes         # "Farmers or Fishermen" flag near line 32
+    field: "FarmersFishermen"
+    type: checkbox
+    on_state: /Yes
+  - line: "32"                             # "32 Overpayment to be applied to next year estimated tax account"
+    field: "32"
+    type: money
+  - line: "33"                             # "33 Voluntary contribution (from Form 80-108, part III)"
+    field: "33"
+    type: money
+  - line: "34"                             # "34 Overpayment refund (line 31 minus line 32 and line 33)"
+    field: "34"
+    type: money
+  - line: direct_deposit_request.yes       # "Direct Deposit Request (check box and go to page 3)"
+    field: "Direct Deposit Request"
+    type: checkbox
+    on_state: /Yes
+  - line: "35"                             # "35 Balance due (if line 23 is more than line 28...)"
+    field: "35"
+    type: money
+  - line: "36"                             # "36 Interest and penalty (from Form 80-320, line 19)"
+    field: "36"
+    type: money
+  - line: "37"                             # "37 Total due (line 35 plus line 36)"
+    field: "37"
+    type: money
+  - line: installment_agreement_request.yes  # "Installment Agreement Request (... attach Form 71-661)"
+    field: "InstallmentAgreementRequest"
+    type: checkbox
+    on_state: /Yes
+
+  # ============================================ page 2 -- header "SSN" mirror
+  - line: identifying_number_page2         # page-2 header "SSN" box (widget Page2SSN, its own /Tx)
+    field: "Page2SSN"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+
+  # ---- INCOME lines 38-49 (.a/.b)
+  - line: 38.a                             # "38 Wages, salaries, tips, etc. (complete Form 80-107)" col A
+    field: "38A"
+    type: money
+  - line: 38.b
+    field: "38B"
+    type: money
+  - line: 39.a                             # "39 Business income (loss)"
+    field: "39A"
+    type: money
+  - line: 39.b
+    field: "39B"
+    type: money
+  - line: 40.a                             # "40 Capital gain (loss)"
+    field: "40A"
+    type: money
+  - line: 40.b
+    field: "40B"
+    type: money
+  - line: 41.a                             # "41 Rent, royalties, partnerships, S corporations, trusts, etc."
+    field: "41A"
+    type: money
+  - line: 41.b
+    field: "41B"
+    type: money
+  - line: 42.a                             # "42 Farm income (loss)"
+    field: "42A"
+    type: money
+  - line: 42.b
+    field: "42B"
+    type: money
+  - line: 43.a                             # "43 Interest income (from Form 80-108, part II, line 3)"
+    field: "43A"
+    type: money
+  - line: 43.b
+    field: "43B"
+    type: money
+  - line: 44.a                             # "44 Dividend income (from Form 80-108, part II, line 6)"
+    field: "44A"
+    type: money
+  - line: 44.b
+    field: "44B"
+    type: money
+  - line: 45.a                             # "45 Alimony received"
+    field: "45A"
+    type: money
+  - line: 45.b
+    field: "45B"
+    type: money
+  - line: 46.a                             # "46 Taxable pensions and annuities (complete Form 80-107)"
+    field: "46A"
+    type: money
+  - line: 46.b
+    field: "46B"
+    type: money
+  - line: 47.a                             # "47 Unemployment compensation (complete Form 80-107)"
+    field: "47A"
+    type: money
+  - line: 47.b
+    field: "47B"
+    type: money
+  - line: 48.a                             # "48 Other income (loss) (from Form 80-108, part V, line 10)"
+    field: "48A"
+    type: money
+  - line: 48.b
+    field: "48B"
+    type: money
+  - line: 49.a                             # "49 Total income (add lines 38 through 48)" col A
+    field: "49A"
+    type: money
+  - line: 49.b
+    field: "49B"
+    type: money
+
+  # ---- ADJUSTMENTS lines 50-66 (.a/.b)
+  - line: 50.a                             # "50 Payments to IRA"
+    field: "50A"
+    type: money
+  - line: 50.b
+    field: "50B"
+    type: money
+  - line: 51.a                             # "51 Payments to self-employed SEP, SIMPLE and qualified retirement plans"
+    field: "51A"
+    type: money
+  - line: 51.b
+    field: "51B"
+    type: money
+  - line: 52.a                             # "52 Interest penalty on early withdrawal of savings"
+    field: "52A"
+    type: money
+  - line: 52.b
+    field: "52B"
+    type: money
+  - line: 53.a                             # "53 Alimony paid (complete below)"
+    field: "53A"
+    type: money
+  - line: 53.b
+    field: "53B"
+    type: money
+  # alimony-paid detail row (under line 53)
+  - line: alimony_paid.name                # "Name"
+    field: "Alimony Name1"
+    type: text
+    maxlen: 19
+  - line: alimony_paid.identifying_number  # "SSN"
+    field: "Alimony SSN1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: alimony_paid.state               # "State"
+    field: "AlimonyState1"
+    type: text
+    maxlen: 2
+  # The four date boxes carry the DOR keystroke filter AFSpecial_KeystrokeEx("99999999"):
+  # write MMDDYYYY digits (maxlen 8 = the widget /MaxLen; no M M D D cells on the face).
+  - line: alimony_paid.date_of_divorce     # "Date of Divorce" — MMDDYYYY digits
+    field: "Alimony Divorce date"
+    type: text
+    maxlen: 8
+  - line: 54.a                             # "54 Moving expense (attach Federal Form 3903)"
+    field: "54A"
+    type: money
+  - line: 54.b
+    field: "54B"
+    type: money
+  - line: 55.a                             # "55 National Guard or Reserve pay (lesser of amount or $15,000)"
+    field: "55A"
+    type: money
+  - line: 55.b
+    field: "55B"
+    type: money
+  - line: 56.a                             # "56 Mississippi Prepaid Affordable College Tuition (MPACT)"
+    field: "56A"
+    type: money
+  - line: 56.b
+    field: "56B"
+    type: money
+  - line: 57.a                             # "57 Mississippi Affordable College Savings (MACS)"
+    field: "57A"
+    type: money
+  - line: 57.b
+    field: "57B"
+    type: money
+  - line: 58.a                             # "58 Self-employed health insurance deduction"
+    field: "58A"
+    type: money
+  - line: 58.b
+    field: "58B"
+    type: money
+  - line: 59.a                             # "59 Health savings account deduction"
+    field: "59A"
+    type: money
+  - line: 59.b
+    field: "59B"
+    type: money
+  - line: 60.a                             # "60 Catastrophe savings account deduction"
+    field: "60A"
+    type: money
+  - line: 60.b
+    field: "60B"
+    type: money
+  - line: 61.a                             # "61 Self-employment tax deduction"
+    field: "61A"
+    type: money
+  - line: 61.b
+    field: "61B"
+    type: money
+  - line: 62.a                             # "62 First-time home buyer savings account deduction"
+    field: "62A"
+    type: money
+  - line: 62.b
+    field: "62B"
+    type: money
+  - line: 63.a                             # "63 Agricultural disaster program compensation deduction"
+    field: "63A"
+    type: money
+  - line: 63.b
+    field: "63B"
+    type: money
+  - line: 64.a                             # "64 Mississippi Achieving a Better Life Experience (ABLE) Act deduction"
+    field: "64A"
+    type: money
+  - line: 64.b
+    field: "64B"
+    type: money
+  - line: 65.a                             # "65 Total adjustments (add lines 50 through 64)" col A
+    field: "65A"
+    type: money
+  - line: 65.b
+    field: "65B"
+    type: money
+  - line: 66.a                             # "66 Mississippi adjusted gross income (line 49 minus line 65)" col A
+    field: "66A"
+    type: money
+  - line: 66.b
+    field: "66B"
+    type: money
+
+  # ---- amended-return explanation lines (free text)
+  - line: amended_explanation.line_1       # "AMENDED RETURN - EXPLANATION OF CHANGES" row 1
+    field: "AMENDED RETURN EXPLANATION 1"
+    type: text
+    maxlen: 75
+  - line: amended_explanation.line_2
+    field: "AMENDED RETURN EXPLANATION 2"
+    type: text
+    maxlen: 75
+  - line: amended_explanation.line_3
+    field: "AMENDED RETURN EXPLANATION 3"
+    type: text
+    maxlen: 75
+  - line: amended_explanation.line_4
+    field: "AMENDED RETURN EXPLANATION 4"
+    type: text
+    maxlen: 75
+
+  # ============================================ page 3 -- header "SSN" mirror
+  - line: identifying_number_page3         # page-3 header "SSN" box (widget Page3SSN, its own /Tx)
+    field: "Page3SSN"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+
+  # ---- DIRECT DEPOSIT block
+  - line: direct_deposit.overpayment_refund  # "1 Overpayment refund (from page 1, line 34)"
+    field: "1D"
+    type: money
+  - line: direct_deposit.acct1_type.checking  # "Checking" account 1
+    field: "Check Box3"
+    type: checkbox
+    on_state: /1
+    group: direct_deposit.acct1_type
+  - line: direct_deposit.acct1_type.savings   # "Savings" account 1
+    field: "Check Box3"
+    type: checkbox
+    on_state: /2
+    group: direct_deposit.acct1_type
+  - line: direct_deposit.routing_number_1     # "a Routing Number 1"
+    field: "Routing Number 1"
+    type: text
+    maxlen: 9
+  - line: direct_deposit.account_number_1     # "Account Number 1"
+    field: "Account Number 1"
+    type: text
+    maxlen: 17
+  - line: direct_deposit.amount_1             # "1a Direct Deposit 1 Amount"
+    field: "2D"
+    type: money
+  - line: direct_deposit.acct2_type.checking  # "Checking" account 2
+    field: "Check Box4"
+    type: checkbox
+    on_state: /1
+    group: direct_deposit.acct2_type
+  - line: direct_deposit.acct2_type.savings   # "Savings" account 2
+    field: "Check Box4"
+    type: checkbox
+    on_state: /2
+    group: direct_deposit.acct2_type
+  - line: direct_deposit.routing_number_2     # "b Routing Number 2"
+    field: "Routing Number 2"
+    type: text
+    maxlen: 9
+  - line: direct_deposit.account_number_2     # "Account Number 2"
+    field: "Account Number 2"
+    type: text
+    maxlen: 17
+  - line: direct_deposit.amount_2             # "1b Direct Deposit 2 Amount"
+    field: "3D"
+    type: money
+
+  # ---- SIGNATURE block
+  - line: preparer.discuss.yes             # "This return may be discussed with the preparer  Yes"
+    field: "Check Box1"
+    type: checkbox
+    on_state: /1
+    group: preparer.discuss
+  - line: preparer.discuss.no              # "... No"
+    field: "Check Box1"
+    type: checkbox
+    on_state: /2
+    group: preparer.discuss
+  - line: signature.taxpayer_date          # "Taxpayer Signature / Date" — MMDDYYYY digits (DOR filter 99999999)
+    field: "TaxpayerDate"
+    type: text
+    maxlen: 8
+  - line: signature.taxpayer_phone         # "Taxpayer Phone Number"
+    field: "TaxpayerPhoneNumber"
+    type: text
+    maxlen: 12
+  - line: signature.spouse_date            # "Spouse Signature / Date" — MMDDYYYY digits (DOR filter 99999999)
+    field: "SpouseDate"
+    type: text
+    maxlen: 8
+  - line: preparer.ptin                    # "Paid Preparer PTIN"
+    field: "PreparerPTIN"
+    type: text
+    maxlen: 9
+  - line: preparer.phone                   # "Paid Preparer Phone Number"
+    field: "PreparerPhoneNumber"
+    type: text
+    maxlen: 12
+  - line: preparer.email                   # "Paid Preparer Email Address"
+    field: "PreparerEmailAddress"
+    type: text
+    maxlen: 21
+  - line: preparer.date                    # "Paid Preparer Signature / Date" — MMDDYYYY digits (DOR filter 99999999)
+    field: "PreparerDate"
+    type: text
+    maxlen: 8
+  # TIGHTER_THAN_WIDGET: PreparerAddress is 107.6 pt at Courier 10 (fits 17; the widget says 25),
+  # PreparerCity 83.0 pt at Courier 12 (fits 11; the widget says 21) — measured on this blank.
+  - line: preparer.address                 # "Paid Preparer Address" — 17 glyphs fit
+    field: "PreparerAddress"
+    type: text
+    maxlen: 17
+  - line: preparer.city                    # "City" — 11 glyphs fit
+    field: "PreparerCity"
+    type: text
+    maxlen: 11
+  - line: preparer.state                   # "State"
+    field: "PreparerState"
+    type: text
+    maxlen: 2
+  - line: preparer.zip                     # "Zip Code"
+    field: "PreparerZip"
+    type: text
+    maxlen: 5
+relations:
+  # On-face arithmetic where every operand is mapped (unconditional): the
+  # single-column lines 12, 20, 23, 28, 31, 34, 37, then the Column A / Column B
+  # splits (dotted ids; sum() ranges take only digit+letter ids, so the column
+  # totals are written out term by term). A blank Column B reads as zeros and
+  # every relation still holds. Line 10 ("Line 9 x $1,500") is NOT declared --
+  # line 9 is a text count, not a money line.
+  - "12 == 10 + 11"                        # 12 "Total (line 10 plus line 11)"
+  - "20 == 17 - 18 - 19"                   # 20 "line 17 minus line 18 and line 19"
+  - "23 == 20 + 21 + 22"                   # 23 "line 20 plus line 21 and line 22"
+  - "28 == 24 + 25 + 26 - 27"              # 28 "line 24 plus line 25 and line 26 minus line 27"
+  - "31 == 29 - 30"                        # 31 "Adjusted overpayment (line 29 minus line 30)"
+  - "34 == 31 - 32 - 33"                   # 34 "line 31 minus line 32 and line 33"
+  - "37 == 35 + 36"                        # 37 "Total due (line 35 plus line 36)"
+  - "16.a == 13.a - 14.a - 15.a"           # 16 "line 13 minus line 14 and line 15" -- col A
+  - "16.b == 13.b - 14.b - 15.b"           # -- col B
+  - "49.a == 38.a + 39.a + 40.a + 41.a + 42.a + 43.a + 44.a + 45.a + 46.a + 47.a + 48.a"  # 49 "add lines 38 through 48" -- col A
+  - "49.b == 38.b + 39.b + 40.b + 41.b + 42.b + 43.b + 44.b + 45.b + 46.b + 47.b + 48.b"  # -- col B
+  - "65.a == 50.a + 51.a + 52.a + 53.a + 54.a + 55.a + 56.a + 57.a + 58.a + 59.a + 60.a + 61.a + 62.a + 63.a + 64.a"  # 65 "add lines 50 through 64" -- col A
+  - "65.b == 50.b + 51.b + 52.b + 53.b + 54.b + 55.b + 56.b + 57.b + 58.b + 59.b + 60.b + 61.b + 62.b + 63.b + 64.b"  # -- col B
+  - "66.a == 49.a - 65.a"                  # 66 "line 49 minus line 65" -- col A
+  - "66.b == 49.b - 65.b"                  # -- col B
+  - "13.a == 66.a"                         # 13 "(from page 2, line 66)" / 66 "enter on page 1, line 13" -- col A
+  - "13.b == 66.b"                         # -- col B
+cross_form: []
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 3}
+mailing: null

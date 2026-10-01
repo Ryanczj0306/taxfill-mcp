@@ -52,6 +52,8 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
        "preparer-date boxes 81.3 pt (fit 11); the widget says 10"
        for k in ("signature.taxpayer_date", "signature.taxpayer_dob", "signature.spouse_date",
                  "signature.spouse_dob", "preparer.date")},
+    ("states/ms/2024/f80105/pack.yaml", "preparer.address"): "107.6 pt at Courier 10 fits 17; the widget says 25",
+    ("states/ms/2024/f80105/pack.yaml", "preparer.city"): "83.0 pt at Courier 12 fits 11; the widget says 21",
     ("states/wv/2023/it140/pack.yaml", "name.suffix"): "a name suffix (JR / III); 25.5 pt at Courier 10 fits 4",
 }
 
