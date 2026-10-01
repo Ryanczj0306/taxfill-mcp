@@ -1,0 +1,939 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/ca/2023/sched_ca_540/pack.yaml (ported
+# 2026-10-01, Phase J JS5; triaged RE-MAP — all 247 field names the 2023 pack
+# binds are gone from the 2025 blank (census: 247 GONE, 255 NEW), so every
+# binding was rebuilt by POSITION and printed row label (a census of the
+# 2023 pack against the 2025 blank, then the text layer's label beside each
+# 2025 widget rect) and confirmed on sentinel renders of all six sides.
+#
+# URL. https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf (the FTB's own host). Digest
+# 0927485bff61… — two separate curl downloads on 2026-10-01 (184,576 bytes
+# each) and the triage cache copy all agree. %PDF-1.7, AcroForm, 6 pages;
+# pdfinfo Title "2025 Schedule CA (540) California Adjustments - Residents",
+# CreationDate 2025-12-23, ModDate 2026-03-11.
+#
+# PRINTED IDENTITY. Side 1 prints "TAXABLE YEAR 2025 / SCHEDULE CA (540) /
+# California Adjustments — Residents" and "Important: Attach this schedule
+# behind Form 540, Side 6"; the footers read "7731253 Schedule CA (540) 2025
+# Side 1" through "Side 6 Schedule CA (540) 2025 7736253" (2023: 7731233..
+# 7736233). printed_year_verified = 2025. Six sides, as in 2023.
+#
+# AcroForm topology against the 2023 blank (census + rect matching).
+# 255 widgets = 254 /Tx + 1 /Btn (2023: 247 = 246 + 1). The FTB prefixed every
+# 2023 id with "540ca_form - " and kept the number on the same printed row
+# EXCEPT where it inserted a row, so a surviving number is not a binding:
+#   * Side 1 line 1h now reads "Other earned income. See instr. Enter type &
+#     amount." with a NEW text box "540ca_form - 1023" (160.8 pt, no /MaxLen)
+#     under the caption, mapped 1h_desc; the col-A amount that 2023's "1023"
+#     held is "540ca_form - 1023b" (1h_A).
+#   * Side 1 Section B line 2 now prints "2 a Alimony received. b Date of
+#     original divorce or separation agreement. See instr." — NEW box
+#     "540ca_form - 1055B" (/MaxLen 7), mapped B2b_date. The 2a row grew, so
+#     every Section B widget below it (lines 2a-7, 1054-1069) sits 11.6 pt
+#     lower than in 2023 under the same number.
+#   * Side 2 gained line "8v Digital assets received as ordinary income not
+#     reported elsewhere" with three NEW boxes "540ca_form - 2034/2035/2036"
+#     (A/B/C), mapped B8v_A/_B/_C. The 8z row moved down 24.0 pt and was
+#     RENUMBERED: its description box is now 2037 (2023: 2034) and its A/B/C
+#     boxes 2038/2039/2040 (2023: 2035/2036/2037).
+#   * Side 3 lines 9b1/9b2/9b3 (col B only) are suffixed "3004B/3005B/3006B".
+#   * Side 3 line 19 gained "c Date of original divorce or separation
+#     agreement. See instr." — NEW box "540ca_form - 3028A" (/MaxLen 7),
+#     mapped C19c_date. Lines 20-23 below it moved down 37.3 pt (20), 37.5 pt
+#     (21) and 36.5 pt (23) under their 2023 numbers (3029-3034).
+#   * Two NEW ReadOnly text widgets (/Ff 8388609, no /V, no /MaxLen, /DA
+#     "0 g" black, unlike every entry box's blue) sit on the two printed
+#     "Reserved for future use" rows: "540ca_form - 3033B" on Section C line
+#     22 and "540ca_form - 5026B" on Part II line 8d. P-007 class 3, left
+#     UNMAPPED — both treatments are allowed, and the ReadOnly bit alone
+#     decides nothing. The printed face is uneven between the two: Section C
+#     line 26 prints "Add line 11 through line 23 and line 25", a sum that
+#     DOES range over line 22 (the shape RESERVED_LINE_KEEPS cites for
+#     federal sched_1 line 22), while Part II line 8e prints "Add line 8a
+#     through line 8c", which skips 8d. Neither is mapped here because the
+#     2023 pack had no widget and no key on either row (so no API to keep
+#     addressable) and this pack declares no relation that would read 22 as
+#     blank-as-zero. If the integrator prefers the keep-mapped treatment for
+#     line 22, map 3033B as C22_A with reserved: true plus a RESERVED_LINE_KEEPS
+#     row; if a revision un-reserves either line, map it then.
+#   * Sides 4 and 6 keep every 2023 number; Side 5 too, apart from 5026B.
+# Every one of the 247 carried-over lines was placed on the 2025 widget whose
+# printed row label and column match; 220 of them lie within 2.2 pt of the 2023
+# rect (largest edge move) and the other 27 are the Side 1/2/3 row
+# shifts above (B2a-B7 11.6 pt, 8z 24.0 pt, C20 37.3 pt, C21 37.5 pt, C23
+# 36.5 pt, C24z_desc 4.0 pt).
+# /Ff (field-level walk of both blanks; 2023 = 12582912 on every text
+# widget): Side 1 (72 text widgets) keeps 12582912; Sides 3, 4 and 5 are all
+# 8388608 (plus the two ReadOnly 8388609 boxes and the /Btn 0); Side 2 keeps
+# 12582912 on 2001-2008 (lines 8a-8d) and is 8388608 from 2009 on (32); Side
+# 6 keeps 12582912 on 6001-6022 (Part II lines 11-18) and is 8388608 on
+# 6023-6036 (lines 19-30). Flags do not move a box; no widget is comb. /MaxLen:
+# the SSN boxes "1001" and "3027" now carry 11 (2023: none; the pack already
+# budgeted 11), the two date boxes 7, every dollar box 12 as before. /DA: the
+# checkbox "5000 CB" is "/ZaDb 0 Tf" (2023: 8 Tf, auto-size now); two dollar
+# boxes (2035, 2039) and the two ReadOnly boxes name HelveticaLTStd-Roman 10
+# instead of Helv 10 — same size. The checkbox's /AP /N on-state is still
+# "/Yes" (re-dumped from this blank).
+#
+# FACE DELTAS vs 2023 (per-page diff of the two text layers). Line 1f cites "federal Form 8839,
+# line 31" (2023: line 29); Section A line 7 is now printed "7 a Capital gain
+# or (loss) ... 7a", so its three keys are RENAMED 7_A/7_B/7_C -> 7a_A/7a_B/
+# 7a_C (only this pack referred to them); line 10 reads "Add Section A, line
+# 1z through line 7a, and Section B, line 1 through line 7, and line 9a";
+# Part II lines 2 and 23 cite "federal Form 1040 or 1040-SR, line 11b" (2023:
+# line 11); line 5e "Enter the smaller of line 5d or $40,000 ($20,000 if
+# married filing separately) in column A" (2023: $10,000 / $5,000; neither
+# year prints "/RDP" there); line 29 thresholds
+# $252,203 / $378,310 / $504,411 (2023: $237,035 / $355,558 / $474,075); line
+# 30 standard deduction $5,706 / $11,412 (2023: $5,363 / $10,726). The
+# standard deduction and the line 29 thresholds agree with
+# knowledge/states/ca/2025.yaml; that pack does not record the Part II 5e cap.
+# Three captions were reworded without changing their number: 9a "Add line
+# 8a through line 8z" (2023: "Add lines 8a through 8z"), 9b3 "FTB 3805Z, FTB
+# 3807, or FTB 3809" (2023: "3805Z, 3807, or 3809"), line 10 "Add Section A"
+# (2023: "Combine Section A"). Every other line NUMBER and column letter is
+# unchanged.
+#
+# Shared-test rows for this pack: packages/core/tests/fixtures/
+# filer_address_lines.json gains "states/ca/2025/sched_ca_540/pack.yaml": []
+# (the schedule has no address line, as in 2023). No ReadOnly widget is
+# mapped, so no STATE_COMPUTED_READONLY row; no pack maxlen is below its
+# widget's /MaxLen, so no TIGHTER_THAN_WIDGET row.
+# Schedule CA (540), 2025 — California Adjustments — Residents.
+#
+# Authored via the taxfill pipeline on the 2023 base: `taxfill introspect`
+# (sentinel sweep — every widget rendered with its own field name) →
+# vision-map workflow (every page + zoomed crops read to place each field on
+# its printed line/column) → this map; the 2025 bindings were re-derived by
+# position and printed label and confirmed on sentinel renders (port banner).
+#
+# Layout. The form is a flat AcroForm (acroform_root empty; the 2025 field
+# names are "540ca_form - NNNN", the 2023 sentinel id behind a fixed prefix,
+# with a few suffixed/renumbered rows listed in the port banner). Part I
+# (Sections A/B income, Section C adjustments) is a three-column grid:
+#   A = Federal Amounts (taxable amounts from your federal tax return)
+#   B = Subtractions (See instructions)
+#   C = Additions (See instructions)
+# Each income/adjustment line therefore has up to three money boxes; many lines
+# grey out one or two columns (no widget exists for a greyed cell — those line
+# keys are simply absent). Column-bearing keys carry an _A / _B / _C suffix.
+# Single-column computation lines (Part I "primary amount" boxes like 2a/3a and
+# the entire Part II lower block lines 18-30) have no suffix.
+#
+# 253 of the blank's 255 widgets are mapped. The two left out are the ReadOnly
+# boxes the FTB placed on the two printed "Reserved for future use" rows
+# (Section C line 22, Part II line 8d) — see the port banner. There are NO
+# pre-printed statutory constants inside any widget (every mapped box is
+# taxpayer-entered). The 240 dollar boxes carrying /MaxLen 12 are mapped as
+# `money`; the 12 other text widgets are genuine text (name, two SSN/ITIN
+# boxes, last name, two divorce-date boxes, and six "list type and amount /
+# specify / enter type" description lines); 1 checkbox (Part II "did NOT
+# itemize for federal but will for CA").
+#
+# Relations: Schedule CA's column math is conditional/cross-column (e.g. col A
+# less col B plus col C, with multiple greyed operands) and several addends are
+# unmapped greyed cells, so per the conservative house style NO relations are
+# declared. cross_form is likewise omitted: the printed totals feed Form 540
+# lines 14/16/18 but those are Form 540's input lines, not equalities asserted
+# on this schedule (Part II lines 2 and 23 cite "federal Form 1040 or 1040-SR,
+# line 11b" — the 2025 Form 1040's restatement of AGI, 11a being the defining
+# line; neither is declared, as in 2023).
+form: "Schedule CA (540)"
+jurisdiction: states/ca
+tax_year: 2025
+source_url: https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf
+pdf_sha256: 0927485bff61e49f21623c2df4f1e92b3b4d20ed52377814684f9bf814980660
+acroform_root: ''
+fields:
+  # ---------------------------------------------------------------- header
+  - line: name
+    field: '540ca_form - 1000'
+    type: text
+  - line: identifying_number
+    field: '540ca_form - 1001'
+    type: text
+    maxlen: 11
+
+  # ===================== Part I, Section A — Income (from federal 1040/1040-SR)
+  - line: 1a_A          # Total amount from federal Form(s) W-2, box 1
+    field: '540ca_form - 1002'
+    type: money
+  - line: 1a_B
+    field: '540ca_form - 1003'
+    type: money
+  - line: 1a_C
+    field: '540ca_form - 1004'
+    type: money
+  - line: 1b_A          # Household employee wages not reported on federal Form(s) W-2
+    field: '540ca_form - 1005'
+    type: money
+  - line: 1b_B
+    field: '540ca_form - 1006'
+    type: money
+  - line: 1b_C
+    field: '540ca_form - 1007'
+    type: money
+  - line: 1c_A          # Tip income not reported on line 1a
+    field: '540ca_form - 1008'
+    type: money
+  - line: 1c_B
+    field: '540ca_form - 1009'
+    type: money
+  - line: 1c_C
+    field: '540ca_form - 1010'
+    type: money
+  - line: 1d_A          # Medicaid waiver payments not reported on federal Form(s) W-2
+    field: '540ca_form - 1011'
+    type: money
+  - line: 1d_B
+    field: '540ca_form - 1012'
+    type: money
+  - line: 1d_C
+    field: '540ca_form - 1013'
+    type: money
+  - line: 1e_A          # Taxable dependent care benefits (federal Form 2441, line 26)
+    field: '540ca_form - 1014'
+    type: money
+  - line: 1e_B
+    field: '540ca_form - 1015'
+    type: money
+  - line: 1e_C
+    field: '540ca_form - 1016'
+    type: money
+  - line: 1f_A          # Employer-provided adoption benefits (federal Form 8839, line 31 — 2023 cited line 29)
+    field: '540ca_form - 1017'
+    type: money
+  - line: 1f_B
+    field: '540ca_form - 1018'
+    type: money
+  - line: 1f_C
+    field: '540ca_form - 1019'
+    type: money
+  - line: 1g_A          # Wages from federal Form 8919, line 6
+    field: '540ca_form - 1020'
+    type: money
+  - line: 1g_B
+    field: '540ca_form - 1021'
+    type: money
+  - line: 1g_C
+    field: '540ca_form - 1022'
+    type: money
+  - line: 1h_desc       # 1h "Other earned income. See instr. Enter type & amount." — the type box (NEW in 2025; no /MaxLen, 160.8 pt wide)
+    field: '540ca_form - 1023'
+    type: text
+  - line: 1h_A          # Other earned income — col A amount (widget 1023b; the 2023 widget 1023 held this amount)
+    field: '540ca_form - 1023b'
+    type: money
+  - line: 1h_B
+    field: '540ca_form - 1024'
+    type: money
+  - line: 1h_C
+    field: '540ca_form - 1025'
+    type: money
+  - line: 1i_C          # Nontaxable combat pay election (only col C box exists; A/B greyed)
+    field: '540ca_form - 1026'
+    type: money
+  - line: 1z_A          # Add line 1a through line 1i
+    field: '540ca_form - 1027'
+    type: money
+  - line: 1z_B
+    field: '540ca_form - 1028'
+    type: money
+  - line: 1z_C
+    field: '540ca_form - 1029'
+    type: money
+  - line: 2a            # Taxable interest — federal amount (primary box, left of grid)
+    field: '540ca_form - 1030'
+    type: money
+  - line: 2b_A
+    field: '540ca_form - 1031'
+    type: money
+  - line: 2b_B
+    field: '540ca_form - 1032'
+    type: money
+  - line: 2b_C
+    field: '540ca_form - 1033'
+    type: money
+  - line: 3a            # Ordinary dividends — federal amount (primary box)
+    field: '540ca_form - 1034'
+    type: money
+  - line: 3b_A
+    field: '540ca_form - 1035'
+    type: money
+  - line: 3b_B
+    field: '540ca_form - 1036'
+    type: money
+  - line: 3b_C
+    field: '540ca_form - 1037'
+    type: money
+  - line: 4a            # IRA distributions — federal amount (primary box)
+    field: '540ca_form - 1038'
+    type: money
+  - line: 4b_A
+    field: '540ca_form - 1039'
+    type: money
+  - line: 4b_B
+    field: '540ca_form - 1040'
+    type: money
+  - line: 4b_C
+    field: '540ca_form - 1041'
+    type: money
+  - line: 5a            # Pensions and annuities — federal amount (primary box)
+    field: '540ca_form - 1042'
+    type: money
+  - line: 5b_A
+    field: '540ca_form - 1043'
+    type: money
+  - line: 5b_B
+    field: '540ca_form - 1044'
+    type: money
+  - line: 5b_C
+    field: '540ca_form - 1045'
+    type: money
+  - line: 6a            # Social security benefits — federal amount (primary box)
+    field: '540ca_form - 1046'
+    type: money
+  - line: 6b_A
+    field: '540ca_form - 1047'
+    type: money
+  - line: 6b_B          # col C greyed for SS benefits
+    field: '540ca_form - 1048'
+    type: money
+  - line: 7a_A          # 7a Capital gain or (loss). See instructions (2023 printed this row as line 7)
+    field: '540ca_form - 1049'
+    type: money
+  - line: 7a_B
+    field: '540ca_form - 1050'
+    type: money
+  - line: 7a_C
+    field: '540ca_form - 1051'
+    type: money
+
+  # ============== Part I, Section B — Additional Income (from federal Sch 1)
+  - line: B1_A          # Taxable refunds, credits, or offsets of state and local income taxes
+    field: '540ca_form - 1052'
+    type: money
+  - line: B1_B          # col C greyed
+    field: '540ca_form - 1053'
+    type: money
+  - line: B2a_A         # Alimony received (col B greyed)
+    field: '540ca_form - 1054'
+    type: money
+  - line: B2a_C
+    field: '540ca_form - 1055'
+    type: money
+  - line: B2b_date      # 2b "Date of original divorce or separation agreement. See instr." (NEW in 2025). The 2025 FTB instructions, Section B line 2b: "Enter on line 2b the month and year of your original divorce or separation agreement" — month and year only, so /MaxLen 7 fits MM/YYYY; the filler REFUSES a longer value (a 10-char MM/DD/YYYY is rejected, not truncated)
+    field: '540ca_form - 1055B'
+    type: text
+    maxlen: 7
+  - line: B3_A          # Business income or (loss)
+    field: '540ca_form - 1056'
+    type: money
+  - line: B3_B
+    field: '540ca_form - 1057'
+    type: money
+  - line: B3_C
+    field: '540ca_form - 1058'
+    type: money
+  - line: B4_A          # Other gains or (losses)
+    field: '540ca_form - 1059'
+    type: money
+  - line: B4_B
+    field: '540ca_form - 1060'
+    type: money
+  - line: B4_C
+    field: '540ca_form - 1061'
+    type: money
+  - line: B5_A          # Rental real estate, royalties, partnerships, S corps, trusts, etc.
+    field: '540ca_form - 1062'
+    type: money
+  - line: B5_B
+    field: '540ca_form - 1063'
+    type: money
+  - line: B5_C
+    field: '540ca_form - 1064'
+    type: money
+  - line: B6_A          # Farm income or (loss)
+    field: '540ca_form - 1065'
+    type: money
+  - line: B6_B
+    field: '540ca_form - 1066'
+    type: money
+  - line: B6_C
+    field: '540ca_form - 1067'
+    type: money
+  - line: B7_A          # Unemployment compensation (col C greyed)
+    field: '540ca_form - 1068'
+    type: money
+  - line: B7_B
+    field: '540ca_form - 1069'
+    type: money
+
+  # ---- Section B line 8 (Other income), sub-lines a-z — continued on Side 2
+  - line: B8a_A         # Federal net operating loss (col B greyed)
+    field: '540ca_form - 2001'
+    type: money
+  - line: B8a_C
+    field: '540ca_form - 2002'
+    type: money
+  - line: B8b_A         # Gambling (col C greyed)
+    field: '540ca_form - 2003'
+    type: money
+  - line: B8b_B
+    field: '540ca_form - 2004'
+    type: money
+  - line: B8c_A         # Cancellation of debt
+    field: '540ca_form - 2005'
+    type: money
+  - line: B8c_B
+    field: '540ca_form - 2006'
+    type: money
+  - line: B8c_C
+    field: '540ca_form - 2007'
+    type: money
+  - line: B8d_A         # Foreign earned income exclusion from federal Form 2555 (col B greyed)
+    field: '540ca_form - 2008'
+    type: money
+  - line: B8d_C
+    field: '540ca_form - 2009'
+    type: money
+  - line: B8e_A         # Income from federal Form 8853 (col B greyed)
+    field: '540ca_form - 2010'
+    type: money
+  - line: B8e_C
+    field: '540ca_form - 2011'
+    type: money
+  - line: B8f_A         # Income from federal Form 8889 (col C greyed)
+    field: '540ca_form - 2012'
+    type: money
+  - line: B8f_B
+    field: '540ca_form - 2013'
+    type: money
+  - line: B8g_A         # Alaska Permanent Fund dividends (cols B/C greyed)
+    field: '540ca_form - 2014'
+    type: money
+  - line: B8h_A         # Jury duty pay (cols B/C greyed)
+    field: '540ca_form - 2015'
+    type: money
+  - line: B8i_A         # Prizes and awards (cols B/C greyed)
+    field: '540ca_form - 2016'
+    type: money
+  - line: B8j_A         # Activity not engaged in for profit income (cols B/C greyed)
+    field: '540ca_form - 2017'
+    type: money
+  - line: B8k_A         # Stock options (col B greyed)
+    field: '540ca_form - 2018'
+    type: money
+  - line: B8k_C
+    field: '540ca_form - 2019'
+    type: money
+  - line: B8l_A         # Income from rental of personal property (not a business) (cols B/C greyed)
+    field: '540ca_form - 2020'
+    type: money
+  - line: B8m_A         # Olympic and Paralympic medals and USOC prize money (cols B/C greyed)
+    field: '540ca_form - 2021'
+    type: money
+  - line: B8n_A         # IRC Section 951(a) inclusion (col C greyed)
+    field: '540ca_form - 2022'
+    type: money
+  - line: B8n_B
+    field: '540ca_form - 2023'
+    type: money
+  - line: B8o_A         # IRC Section 951A(a) inclusion (col C greyed)
+    field: '540ca_form - 2024'
+    type: money
+  - line: B8o_B
+    field: '540ca_form - 2025'
+    type: money
+  - line: B8p_A         # IRC Section 461(l) excess business loss adjustment
+    field: '540ca_form - 2026'
+    type: money
+  - line: B8p_B
+    field: '540ca_form - 2027'
+    type: money
+  - line: B8p_C
+    field: '540ca_form - 2028'
+    type: money
+  - line: B8q_A         # Taxable distributions from an ABLE account (cols B/C greyed)
+    field: '540ca_form - 2029'
+    type: money
+  - line: B8r_A         # Scholarship and fellowship grants not reported on W-2 (cols B/C greyed)
+    field: '540ca_form - 2030'
+    type: money
+  - line: B8s_A         # Nontaxable amount of Medicaid waiver payments on 1040 line 1a/1d (cols B/C greyed)
+    field: '540ca_form - 2031'
+    type: money
+  - line: B8t_A         # Pension/annuity from nonqualified deferred comp / IRC 457 plan (cols B/C greyed)
+    field: '540ca_form - 2032'
+    type: money
+  - line: B8u_A         # Wages earned while incarcerated (cols B/C greyed)
+    field: '540ca_form - 2033'
+    type: money
+  - line: B8v_A         # 8v Digital assets received as ordinary income not reported elsewhere (NEW row in 2025)
+    field: '540ca_form - 2034'
+    type: money
+  - line: B8v_B
+    field: '540ca_form - 2035'
+    type: money
+  - line: B8v_C
+    field: '540ca_form - 2036'
+    type: money
+  - line: B8z_desc      # line 8z — "Other income. List type and amount" description (2023 widget 2034; the 8z row moved down for 8v)
+    field: '540ca_form - 2037'
+    type: text
+  - line: B8z_A         # Other income — amount
+    field: '540ca_form - 2038'
+    type: money
+  - line: B8z_B
+    field: '540ca_form - 2039'
+    type: money
+  - line: B8z_C
+    field: '540ca_form - 2040'
+    type: money
+
+  # ---- Section B totals — continued on Side 3
+  - line: B9a_A         # Total other income. Add line 8a through line 8z (2025 wording; 2023 printed "Add lines 8a through 8z")
+    field: '540ca_form - 3001'
+    type: money
+  - line: B9a_B
+    field: '540ca_form - 3002'
+    type: money
+  - line: B9a_C
+    field: '540ca_form - 3003'
+    type: money
+  - line: B9b1_B        # Disaster loss deduction from form FTB 3805V (only col B)
+    field: '540ca_form - 3004B'
+    type: money
+  - line: B9b2_B        # NOL deduction from form FTB 3805V (only col B)
+    field: '540ca_form - 3005B'
+    type: money
+  - line: B9b3_B        # NOL deduction from form FTB 3805Z, FTB 3807, or FTB 3809 (only col B; 2025 wording)
+    field: '540ca_form - 3006B'
+    type: money
+  - line: B10_A         # 10 Total. Add Section A, line 1z through line 7a, and Section B, line 1 through line 7, and line 9a (col A); col B adds 9b1-9b3
+    field: '540ca_form - 3007'
+    type: money
+  - line: B10_B
+    field: '540ca_form - 3008'
+    type: money
+  - line: B10_C
+    field: '540ca_form - 3009'
+    type: money
+
+  # ============== Part I, Section C — Adjustments to Income (from federal Sch 1)
+  - line: C11_A         # Educator expenses (col C greyed)
+    field: '540ca_form - 3010'
+    type: money
+  - line: C11_B
+    field: '540ca_form - 3011'
+    type: money
+  - line: C12_A         # Certain business expenses of reservists, performing artists, fee-basis gov't officials
+    field: '540ca_form - 3012'
+    type: money
+  - line: C12_B
+    field: '540ca_form - 3013'
+    type: money
+  - line: C12_C
+    field: '540ca_form - 3014'
+    type: money
+  - line: C13_A         # Health savings account deduction (col C greyed)
+    field: '540ca_form - 3015'
+    type: money
+  - line: C13_B
+    field: '540ca_form - 3016'
+    type: money
+  - line: C14_A         # Moving expenses. Attach form FTB 3913 (col B greyed)
+    field: '540ca_form - 3017'
+    type: money
+  - line: C14_C
+    field: '540ca_form - 3018'
+    type: money
+  - line: C15_A         # Deductible part of self-employment tax (col C greyed)
+    field: '540ca_form - 3019'
+    type: money
+  - line: C15_B
+    field: '540ca_form - 3020'
+    type: money
+  - line: C16_A         # Self-employed SEP, SIMPLE, and qualified plans (cols B/C greyed)
+    field: '540ca_form - 3021'
+    type: money
+  - line: C17_A         # Self-employed health insurance deduction (col C greyed)
+    field: '540ca_form - 3022'
+    type: money
+  - line: C17_B
+    field: '540ca_form - 3023'
+    type: money
+  - line: C18_A         # Penalty on early withdrawal of savings (cols B/C greyed)
+    field: '540ca_form - 3024'
+    type: money
+  - line: C19a_A        # Alimony paid (col B greyed)
+    field: '540ca_form - 3025'
+    type: money
+  - line: C19a_C
+    field: '540ca_form - 3026'
+    type: money
+  - line: C19b_ssn      # line 19b — Recipient's SSN
+    field: '540ca_form - 3027'
+    type: text
+    maxlen: 11
+  - line: C19b_lastname # line 19b — Recipient's Last Name
+    field: '540ca_form - 3028'
+    type: text
+  - line: C19c_date     # 19c "Date of original divorce or separation agreement. See instr." (NEW in 2025). The 2025 FTB instructions, line 19c: "enter the month and year of your original divorce or separation agreement" — month and year only, so /MaxLen 7 fits MM/YYYY; the filler REFUSES a longer value (a 10-char MM/DD/YYYY is rejected, not truncated)
+    field: '540ca_form - 3028A'
+    type: text
+    maxlen: 7
+  - line: C20_A         # IRA deduction
+    field: '540ca_form - 3029'
+    type: money
+  - line: C20_B
+    field: '540ca_form - 3030'
+    type: money
+  - line: C20_C
+    field: '540ca_form - 3031'
+    type: money
+  - line: C21_A         # Student loan interest deduction (col B greyed)
+    field: '540ca_form - 3032'
+    type: money
+  - line: C21_C
+    field: '540ca_form - 3033'
+    type: money
+  - line: C23_A         # Archer MSA deduction (cols B/C greyed); line 22 "Reserved for future use" has one ReadOnly widget (3033B), unmapped — line 26's printed sum ranges over 22 but no relation here reads it; see the port banner
+    field: '540ca_form - 3034'
+    type: money
+
+  # ---- Section C line 24 (Other adjustments), sub-lines a-z — continued on Side 4
+  - line: C24a_A        # Jury duty pay (cols B/C greyed)
+    field: '540ca_form - 4001'
+    type: money
+  - line: C24b_A        # Deductible expenses related to income reported on line 8l
+    field: '540ca_form - 4002'
+    type: money
+  - line: C24b_B
+    field: '540ca_form - 4003'
+    type: money
+  - line: C24b_C
+    field: '540ca_form - 4004'
+    type: money
+  - line: C24c_A        # Nontaxable Olympic/Paralympic medals & USOC prize money reported on line 8m (col C greyed)
+    field: '540ca_form - 4005'
+    type: money
+  - line: C24c_B
+    field: '540ca_form - 4006'
+    type: money
+  - line: C24d_A        # Reforestation amortization and expenses (col C greyed)
+    field: '540ca_form - 4007'
+    type: money
+  - line: C24d_B
+    field: '540ca_form - 4008'
+    type: money
+  - line: C24e_A        # Repayment of supplemental unemployment benefits under federal Trade Act of 1974 (cols B/C greyed)
+    field: '540ca_form - 4009'
+    type: money
+  - line: C24f_A        # Contributions to IRC Section 501(c)(18)(D) pension plans
+    field: '540ca_form - 4010'
+    type: money
+  - line: C24f_B
+    field: '540ca_form - 4011'
+    type: money
+  - line: C24f_C
+    field: '540ca_form - 4012'
+    type: money
+  - line: C24g_A        # Contributions by certain chaplains to IRC Section 403(b) plans
+    field: '540ca_form - 4013'
+    type: money
+  - line: C24g_B
+    field: '540ca_form - 4014'
+    type: money
+  - line: C24g_C
+    field: '540ca_form - 4015'
+    type: money
+  - line: C24h_A        # Attorney fees and court costs for unlawful discrimination claims (cols B/C greyed)
+    field: '540ca_form - 4016'
+    type: money
+  - line: C24i_A        # Attorney fees/court costs paid re IRS whistleblower award (col C greyed)
+    field: '540ca_form - 4017'
+    type: money
+  - line: C24i_B
+    field: '540ca_form - 4018'
+    type: money
+  - line: C24j_A        # Housing deduction from federal Form 2555 (col C greyed)
+    field: '540ca_form - 4019'
+    type: money
+  - line: C24j_B
+    field: '540ca_form - 4020'
+    type: money
+  - line: C24k_A        # Excess deductions of IRC Section 67(e) expenses from federal Sch K-1 (1041) (cols B/C greyed)
+    field: '540ca_form - 4021'
+    type: money
+  - line: C24z_desc     # line 24z — "Other adjustments. List type and amount" description
+    field: '540ca_form - 4022'
+    type: text
+  - line: C24z_A        # Other adjustments — amount
+    field: '540ca_form - 4023'
+    type: money
+  - line: C24z_B
+    field: '540ca_form - 4024'
+    type: money
+  - line: C24z_C
+    field: '540ca_form - 4025'
+    type: money
+  - line: C25_A         # Total other adjustments. Add line 24a through line 24z
+    field: '540ca_form - 4026'
+    type: money
+  - line: C25_B
+    field: '540ca_form - 4027'
+    type: money
+  - line: C25_C
+    field: '540ca_form - 4028'
+    type: money
+  - line: C26_A         # Add line 11 through line 23 and line 25 in columns A, B, and C
+    field: '540ca_form - 4029'
+    type: money
+  - line: C26_B
+    field: '540ca_form - 4030'
+    type: money
+  - line: C26_C
+    field: '540ca_form - 4031'
+    type: money
+  - line: C27_A         # Total. Subtract line 26 from line 10 in columns A, B, and C
+    field: '540ca_form - 4032'
+    type: money
+  - line: C27_B
+    field: '540ca_form - 4033'
+    type: money
+  - line: C27_C
+    field: '540ca_form - 4034'
+    type: money
+
+  # ===================== Part II — Adjustments to Federal Itemized Deductions
+  - line: II_not_itemize_federal_cb   # Check box if you did NOT itemize for federal but will itemize for California
+    field: '540ca_form - 5000 CB'
+    type: checkbox
+    on_state: /Yes
+  # ---- Medical and Dental Expenses (lines 1-3 are single computation boxes)
+  - line: II1            # Medical and dental expenses
+    field: '540ca_form - 5001'
+    type: money
+  - line: II2            # Enter amount from federal Form 1040 or 1040-SR, line 11b (2023 cited line 11)
+    field: '540ca_form - 5002'
+    type: money
+  - line: II3            # Multiply line 2 by 7.5% (0.075)
+    field: '540ca_form - 5003'
+    type: money
+  - line: II4_A          # Subtract line 3 from line 1 (col B greyed)
+    field: '540ca_form - 5004'
+    type: money
+  - line: II4_C
+    field: '540ca_form - 5005'
+    type: money
+  # ---- Taxes You Paid
+  - line: II5a_A         # State and local income tax or general sales taxes (col C greyed)
+    field: '540ca_form - 5006'
+    type: money
+  - line: II5a_B
+    field: '540ca_form - 5007'
+    type: money
+  - line: II5b_A         # State and local real estate taxes (single col-A box)
+    field: '540ca_form - 5008'
+    type: money
+  - line: II5c_A         # State and local personal property taxes (single col-A box)
+    field: '540ca_form - 5009'
+    type: money
+  - line: II5d_A         # Add line 5a through line 5c (single col-A box)
+    field: '540ca_form - 5010'
+    type: money
+  - line: II5e_A         # Enter the smaller of line 5d or $40,000 ($20,000 if married filing separately) in column A — 2023 printed $10,000 ($5,000)
+    field: '540ca_form - 5011'
+    type: money
+  - line: II5e_B
+    field: '540ca_form - 5012'
+    type: money
+  - line: II5e_C
+    field: '540ca_form - 5013'
+    type: money
+  - line: II6_desc       # line 6 — "Other taxes. List type" description
+    field: '540ca_form - 5014'
+    type: text
+  - line: II6_A          # Other taxes — amount
+    field: '540ca_form - 5015'
+    type: money
+  - line: II6_B
+    field: '540ca_form - 5016'
+    type: money
+  - line: II6_C
+    field: '540ca_form - 5017'
+    type: money
+  - line: II7_A          # Add line 5e and line 6
+    field: '540ca_form - 5018'
+    type: money
+  - line: II7_B
+    field: '540ca_form - 5019'
+    type: money
+  - line: II7_C
+    field: '540ca_form - 5020'
+    type: money
+  # ---- Interest You Paid
+  - line: II8a_A         # Home mortgage interest and points reported on federal Form 1098 (col B greyed)
+    field: '540ca_form - 5021'
+    type: money
+  - line: II8a_C
+    field: '540ca_form - 5022'
+    type: money
+  - line: II8b_A         # Home mortgage interest not reported on federal Form 1098 (col B greyed)
+    field: '540ca_form - 5023'
+    type: money
+  - line: II8b_C
+    field: '540ca_form - 5024'
+    type: money
+  - line: II8c_A         # Points not reported on federal Form 1098 (col B greyed)
+    field: '540ca_form - 5025'
+    type: money
+  - line: II8c_C
+    field: '540ca_form - 5026'
+    type: money
+  - line: II8e_A         # Add line 8a through line 8c (line 8d "Reserved for future use" has one ReadOnly widget, 5026B, unmapped)
+    field: '540ca_form - 5027'
+    type: money
+  - line: II8e_B
+    field: '540ca_form - 5028'
+    type: money
+  - line: II8e_C
+    field: '540ca_form - 5029'
+    type: money
+  - line: II9_A          # Investment interest
+    field: '540ca_form - 5030'
+    type: money
+  - line: II9_B
+    field: '540ca_form - 5031'
+    type: money
+  - line: II9_C
+    field: '540ca_form - 5032'
+    type: money
+  - line: II10_A         # Add line 8e and line 9
+    field: '540ca_form - 5033'
+    type: money
+  - line: II10_B
+    field: '540ca_form - 5034'
+    type: money
+  - line: II10_C
+    field: '540ca_form - 5035'
+    type: money
+
+  # ---- Gifts to Charity — continued on Side 6
+  - line: II11_A         # Gifts by cash or check
+    field: '540ca_form - 6001'
+    type: money
+  - line: II11_B
+    field: '540ca_form - 6002'
+    type: money
+  - line: II11_C
+    field: '540ca_form - 6003'
+    type: money
+  - line: II12_A         # Other than by cash or check
+    field: '540ca_form - 6004'
+    type: money
+  - line: II12_B
+    field: '540ca_form - 6005'
+    type: money
+  - line: II12_C
+    field: '540ca_form - 6006'
+    type: money
+  - line: II13_A         # Carryover from prior year
+    field: '540ca_form - 6007'
+    type: money
+  - line: II13_B
+    field: '540ca_form - 6008'
+    type: money
+  - line: II13_C
+    field: '540ca_form - 6009'
+    type: money
+  - line: II14_A         # Add line 11 through line 13
+    field: '540ca_form - 6010'
+    type: money
+  - line: II14_B
+    field: '540ca_form - 6011'
+    type: money
+  - line: II14_C
+    field: '540ca_form - 6012'
+    type: money
+  # ---- Casualty and Theft Losses
+  - line: II15_A         # Casualty or theft loss(es). Attach federal Form 4684
+    field: '540ca_form - 6013'
+    type: money
+  - line: II15_B
+    field: '540ca_form - 6014'
+    type: money
+  - line: II15_C
+    field: '540ca_form - 6015'
+    type: money
+  # ---- Other Itemized Deductions
+  - line: II16_A         # Other — from list in federal instructions
+    field: '540ca_form - 6016'
+    type: money
+  - line: II16_B
+    field: '540ca_form - 6017'
+    type: money
+  - line: II16_C
+    field: '540ca_form - 6018'
+    type: money
+  - line: II17_A         # Add lines 4, 7, 10, 14, 15, and 16 in columns A, B, and C
+    field: '540ca_form - 6019'
+    type: money
+  - line: II17_B
+    field: '540ca_form - 6020'
+    type: money
+  - line: II17_C
+    field: '540ca_form - 6021'
+    type: money
+  - line: II18           # Total. Combine line 17 column A less column B plus column C (single box)
+    field: '540ca_form - 6022'
+    type: money
+  # ---- Job Expenses and Certain Miscellaneous Deductions (single-box block)
+  - line: II19           # Unreimbursed employee expenses. Attach federal Form 2106 if required
+    field: '540ca_form - 6023'
+    type: money
+  - line: II20           # Tax preparation fees
+    field: '540ca_form - 6024'
+    type: money
+  - line: II21_desc      # line 21 — "Other expenses: investment, safe deposit box, etc. List type" description
+    field: '540ca_form - 6025'
+    type: text
+  - line: II21           # Other expenses — amount
+    field: '540ca_form - 6026'
+    type: money
+  - line: II22           # Add line 19 through line 21
+    field: '540ca_form - 6027'
+    type: money
+  - line: II23           # Enter amount from federal Form 1040 or 1040-SR, line 11b (2023 cited line 11)
+    field: '540ca_form - 6028'
+    type: money
+  - line: II24           # Multiply line 23 by 2% (0.02). If less than zero, enter 0
+    field: '540ca_form - 6029'
+    type: money
+  - line: II25           # Subtract line 24 from line 22. If line 24 is more than line 22, enter 0
+    field: '540ca_form - 6030'
+    type: money
+  - line: II26           # Total Itemized Deductions. Add line 18 and line 25
+    field: '540ca_form - 6031'
+    type: money
+  - line: II27_desc      # line 27 — "Other adjustments. See instructions. Specify" description
+    field: '540ca_form - 6032'
+    type: text
+  - line: II27           # Other adjustments — amount
+    field: '540ca_form - 6033'
+    type: money
+  - line: II28           # Combine line 26 and line 27
+    field: '540ca_form - 6034'
+    type: money
+  - line: II29           # Itemized Deductions Worksheet result (federal AGI over $252,203 single/MFS, $378,310 HOH, $504,411 MFJ/QSS)
+    field: '540ca_form - 6035'
+    type: money
+  - line: II30           # Larger of line 29 or standard deduction ($5,706 single/MFS; $11,412 MFJ/HOH/QSS) → transfer to Form 540, line 18
+    field: '540ca_form - 6036'
+    type: money
+relations: []
+cross_form: []
+identity_fields:
+  - name
+  - identifying_number
