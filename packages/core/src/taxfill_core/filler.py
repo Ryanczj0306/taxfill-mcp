@@ -48,7 +48,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
-from pypdf.generic import ArrayObject, NameObject
+from pypdf.generic import ArrayObject, NameObject, NumberObject
 
 from taxfill_core.knowledge import assert_pack_filing_grade, provisional_marker
 from taxfill_core.redact import redact
@@ -173,6 +173,14 @@ class FillResult(BaseModel):
     warnings: list[str] = Field(
         default_factory=list,
         description="Non-fatal notes, e.g. IRS whole-dollar rounding adjustments.",
+    )
+    guards_hidden: list[str] = Field(
+        default_factory=list,
+        description=(
+            "P-027: the page-covering viewer-guard widgets (a DOR's 'use Adobe Reader' panel, a white 'print "
+            "lid' that prints over the page) the filler set Hidden so the return prints in any viewer; "
+            "'<field> (page N)' each. Empty for a form without them."
+        ),
     )
 
 
@@ -441,6 +449,78 @@ def _set_checkboxes(writer: PdfWriter, updates: dict[str, tuple[str, str]]) -> N
         field_obj[NameObject("/V")] = NameObject(state)
 
 
+# Annotation flags (PDF 32000-1 table 165) and field flags (table 226) the P-027 pass reads.
+F_HIDDEN, F_PRINT, F_NOVIEW = 2, 4, 32
+_FF_READONLY, _FF_PUSHBUTTON = 1, 1 << 16
+# A widget covering at least this share of its page is a candidate viewer guard.
+GUARD_PAGE_SHARE = 0.85
+
+
+def _inherited_attr(annot: object, key: str) -> object | None:
+    """An inheritable field attribute (/FT, /Ff), from the widget or the nearest ancestor that sets it."""
+    node = annot
+    seen: set[int] = set()
+    while node is not None and id(node) not in seen:
+        seen.add(id(node))
+        value = node.get(key)  # type: ignore[union-attr]
+        if value is not None:
+            return value
+        parent = node.get("/Parent")  # type: ignore[union-attr]
+        node = parent.get_object() if parent is not None else None
+    return None
+
+
+def is_viewer_guard(annot: object, page_area: float) -> bool:
+    """A page-covering pushbutton or ReadOnly text panel: a DOR's viewer guard, never a taxpayer line.
+
+    AL Form 40 ships a yellow "WARNING: PLEASE USE A DIFFERENT PDF VIEWER" pushbutton over every page
+    and a white ``printlid.N`` pushbutton (NoView + Print) that prints over it; MO-1040 prints a white
+    ReadOnly text panel, "PLEASE, USE THE PRINT BUTTON ON THE FORM". The forms' own JavaScript hides
+    them in Acrobat; taxfill never runs it (P-007 class 4), so the filler hides them itself (P-027).
+    """
+    rect = annot.get("/Rect")  # type: ignore[attr-defined]
+    if rect is None or len(rect) != 4:
+        return False
+    x0, y0, x1, y1 = (float(v) for v in rect)
+    if abs(x1 - x0) * abs(y1 - y0) < GUARD_PAGE_SHARE * page_area:
+        return False
+    flags = int(_inherited_attr(annot, "/Ff") or 0)
+    field_type = _inherited_attr(annot, "/FT")
+    return bool(flags & _FF_PUSHBUTTON) or (field_type == "/Tx" and bool(flags & _FF_READONLY))
+
+
+def _annotation_flag_pass(writer: PdfWriter, written: Mapping[str, str]) -> list[str]:
+    """P-027: every written widget becomes viewable and printable; every viewer guard is hidden.
+
+    A blank may ship a mapped widget Hidden or NoView (OH IT 1040's MFS spouse SSN, DE PIT-RES's
+    amended-return lines, every AL Form 40 data field) and un-hide it only through its own JavaScript.
+    taxfill writes the value and never runs the script, so without this pass the value sits invisible
+    in the file, verify reads it back as present, and the printed return is blank where it matters.
+    Returns the guards hidden, ``'<field> (page N)'`` each.
+    """
+    hidden: list[str] = []
+    for index, page in enumerate(writer.pages, 1):
+        box = page.mediabox
+        page_area = abs(float(box.width) * float(box.height)) or 1.0
+        for ref in page.get("/Annots", []):
+            annot = ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            flags = int(annot.get("/F", 0))
+            if _qualified_name(annot) in written:
+                wanted = (flags & ~(F_HIDDEN | F_NOVIEW)) | F_PRINT
+                if wanted != flags:
+                    annot[NameObject("/F")] = NumberObject(wanted)
+                continue
+            if not is_viewer_guard(annot, page_area):
+                continue
+            if flags & F_HIDDEN and not flags & F_PRINT:
+                continue  # already dark on screen and paper
+            annot[NameObject("/F")] = NumberObject(F_HIDDEN)
+            hidden.append(f"{_qualified_name(annot)} (page {index})")
+    return hidden
+
+
 REHEARSAL_STAMP = "REHEARSAL — DRAFT FORM — NOT FOR FILING"
 
 
@@ -663,6 +743,8 @@ def fill_form(
         writer.update_page_form_field_values(None, text_updates, auto_regenerate=False)
     if checkbox_updates:
         _set_checkboxes(writer, checkbox_updates)
+    # P-027: what was written must show and print; a DOR's viewer guard must not.
+    guards_hidden = _annotation_flag_pass(writer, written)
 
     # Viewers must regenerate appearance streams for the values to show.
     writer.set_need_appearances_writer(True)
@@ -682,4 +764,4 @@ def fill_form(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("wb") as fh:
         writer.write(fh)
-    return FillResult(written=written, warnings=warnings, rehearsal=rehearsal)
+    return FillResult(written=written, warnings=warnings, rehearsal=rehearsal, guards_hidden=guards_hidden)

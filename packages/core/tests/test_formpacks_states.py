@@ -68,6 +68,7 @@ if STATE_PACK_PATHS:
         _assert_section_clean(report.assertions, "assertion diff")
         _assert_section_clean(report.clipping, "clipping scan")
         _assert_section_clean(report.checkboxes, "checkbox audit")
+        _assert_section_clean([c for c in report.pitfall_checks if c.id == "P-027"], "widget flags (P-027)")
         pages = render_pdf(filled, tmp_path / "png")
         for page in pages:
             assert page.path.is_file() and page.path.stat().st_size > 1000

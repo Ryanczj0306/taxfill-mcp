@@ -1938,3 +1938,42 @@ pitfalls:
       test_p026_1040x_spouse_ssn_refuses_nra_naming_its_entry_space and
       test_p026_every_ssn_and_comb_line_of_every_pack_refuses_nra; in
       test_verify.py, test_p026_an_nra_literal_in_an_ssn_box_never_passes_as_blank.
+
+  - id: P-027
+    incident: >-
+      A filled return printed blank, or printed a warning page, outside Adobe
+      Reader. Three shapes, all found 2026-09-30 by the OH IT 1040 2025 port's
+      adversarial verify and the sweep it prompted (pre-existing on every
+      affected pack). (1) A blank ships a MAPPED widget with the annotation
+      Hidden flag (PDF 32000-1 table 165, bit 2) or NoView (bit 6) and shows
+      it only through its own JavaScript: OH IT 1040 2024's MFS spouse SSN
+      (SP_SSN_SEP), DE PIT-RES 2023's amended-return lines 47-58, GA 500
+      2023's 21 voucher cells, MO-1040 2023/2024's fdata / adjLine14 /
+      line20 / 33_YS and the account-type cells, NY IT-201's line 70a, and
+      all 72 mapped data widgets on page 1 of AL Form 40 2023. taxfill wrote
+      the value, verify read it back as present, and the value was on no
+      screen and no paper. (2) AL Form 40 covers every page with a yellow
+      "WARNING: PLEASE USE A DIFFERENT PDF VIEWER" pushbutton (VERCTRL,
+      viewable and printable) that its script hides in Acrobat: render_form
+      of a filled AL 40 showed only that warning, and so did every vision
+      audit since the pack shipped. (3) AL Form 40 (printlid.1-42) and
+      MO-1040 (printlid.1-31, "PLEASE, USE THE PRINT BUTTON ON THE FORM")
+      carry a white page-covering widget flagged NoView + Print — invisible
+      on screen, printed over the return by any viewer that honours the
+      flags without running the script.
+    countermeasure: >-
+      fill_form's flag pass (filler._annotation_flag_pass): every widget it
+      wrote gets Hidden and NoView cleared and Print set, and every viewer
+      guard — a widget covering at least 85% of its page that is a
+      pushbutton or a ReadOnly text panel (filler.is_viewer_guard) — is set
+      Hidden, listed in FillResult.guards_hidden (AL 40: 41, MO-1040: 32).
+      verify_form reads the filled PDF's flags back as pitfall check P-027
+      (verify.widget_flag_problems): a written widget still Hidden, NoView
+      or without Print, or a viewer guard still viewable or printable, FAILs
+      the report. Tests, P-027-tagged, in packages/core/tests/
+      test_viewer_guards.py (synthetic guards and hidden widgets; the real
+      AL 40, MO-1040 and OH IT 1040 blanks), and every golden round trip
+      (test_formpacks_federal.py, test_formpacks_states.py) asserts P-027
+      PASS. CONVENTIONS.md "Viewer guards and hidden widgets" records the
+      rule for pack authors: a page-covering guard is never mapped, and a
+      Hidden mapped widget is still mapped — the filler shows it.

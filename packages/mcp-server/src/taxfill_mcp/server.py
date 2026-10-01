@@ -253,7 +253,10 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
     """Deterministically fill a form. `values` maps line ids (per get_form_map) to values.
 
     Downloads/uses the official blank, writes the filled PDF to out_path, and returns the
-    written lines + any warnings. Rejects unknown lines and comb/length violations. No
+    written lines + any warnings, plus `guards_hidden` (P-027): the page-covering viewer-guard
+    widgets the filler set Hidden so the return prints in any viewer (AL Form 40's "use Adobe
+    Reader" panel and white print lids, MO-1040's print lids); every written widget is made
+    viewable and printable. Rejects unknown lines and comb/length violations. No
     identifying-number or comb line takes the literal 'NRA' (P-026): an MFS filer whose
     nonresident-alien spouse has no SSN/ITIN (and needs none) writes 'NRA' in the MFS ENTRY
     SPACE (the Instructions for Form 1040: "enter 'NRA' in the entry space") —
@@ -287,7 +290,8 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
             **_dump(result),
             "worksheet": _dump(_hand_fill_worksheet(pack, values)),
         }
-    return {"out_path": out_path, "written": result.written, "warnings": result.warnings}
+    return {"out_path": out_path, "written": result.written, "warnings": result.warnings,
+            "guards_hidden": result.guards_hidden}
 
 
 @mcp.tool()

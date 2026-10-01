@@ -125,7 +125,7 @@ from __future__ import annotations
 
 import math
 import re
-from collections.abc import Collection, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP, localcontext
 from pathlib import Path
 from typing import Literal
@@ -2317,6 +2317,61 @@ def _aggregate_blanks(*sections: Sequence) -> list[str]:
     return list(seen)
 
 
+def widget_flag_problems(pdf_path: str | Path, written_names: Iterable[str]) -> tuple[list[str], int]:
+    """P-027 on a FILLED PDF: (problems, widgets checked).
+
+    A problem is a written widget still Hidden or NoView, or without the Print flag (its value is in the
+    file but on no screen or paper), or a page-covering viewer guard (filler.is_viewer_guard) that is still
+    viewable or printable, which would cover the return in any viewer that does not run the form's script.
+    """
+    from pypdf import PdfReader  # noqa: PLC0415
+
+    from taxfill_core.filler import F_HIDDEN, F_NOVIEW, F_PRINT, is_viewer_guard  # noqa: PLC0415
+
+    wanted = set(written_names)
+    problems: list[str] = []
+    checked = 0
+    reader = PdfReader(str(pdf_path))
+    for index, page in enumerate(reader.pages, 1):
+        box = page.mediabox
+        page_area = abs(float(box.width) * float(box.height)) or 1.0
+        for ref in page.get("/Annots") or []:
+            annot = ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            flags = int(annot.get("/F", 0))
+            name = _widget_qualified_name(annot)
+            if name in wanted:
+                checked += 1
+                faults = [label for bit, label in ((F_HIDDEN, "Hidden"), (F_NOVIEW, "NoView")) if flags & bit]
+                if not flags & F_PRINT:
+                    faults.append("no Print flag")
+                if faults:
+                    problems.append(f"'{name}' on page {index} holds a value but is {', '.join(faults)}")
+            elif is_viewer_guard(annot, page_area) and (not flags & F_HIDDEN or flags & F_PRINT):
+                problems.append(f"viewer guard '{name}' covers page {index} and is still viewable or printable")
+    return problems, checked
+
+
+def _pitfall_p027(problems: Sequence[str], checked: int) -> PitfallCheck:
+    if problems:
+        return PitfallCheck(
+            id="P-027",
+            status=FAIL,
+            detail=(
+                f"{len(problems)} widget flag problem(s): " + "; ".join(problems[:6])
+                + ("; ..." if len(problems) > 6 else "")
+                + " — the value would not show or print in a viewer that does not run the form's JavaScript; "
+                "refill with fill_form (its flag pass clears Hidden/NoView on written widgets and hides the "
+                "page-covering guards) and re-verify"
+            ),
+        )
+    return PitfallCheck(
+        id="P-027", status=PASS,
+        detail=f"widget flags: {checked} written widget(s) viewable and printable; no page-covering viewer guard left visible",
+    )
+
+
 def _pitfall_p001(clipping: Sequence[ClippingCheck]) -> PitfallCheck:
     failures = sum(1 for check in clipping if check.status == FAIL)
     if failures:
@@ -2452,6 +2507,7 @@ def verify_form(
         assert_pack_filing_grade(pack, action="verify a form")
 
     widgets_from_disk = False
+    flag_checks: list[PitfallCheck] = []
     if isinstance(fields, (str, Path)):
         pdf_path = Path(fields)
         fields = read_pdf_fields(pdf_path)
@@ -2461,6 +2517,22 @@ def verify_form(
             # unmapped ReadOnly banners — see read_text_widgets.
             widgets = read_text_widgets(pdf_path, bound_names=bound_widget_names(pack))
             widgets_from_disk = True
+        # P-027 reads the file's annotation flags: the written widgets (the lines in `expected`, else
+        # every mapped widget holding a value) must be viewable and printable, and no viewer guard may be.
+        if expected is not None:
+            written_names = {qualified_field_name(pack, pf) for pf in pack.fields if pf.line in expected}
+        else:
+            written_names = {n for n in bound_widget_names(pack) if (fields.get(n) or "").strip() not in ("", "/Off")}
+            # The filler never touches a line it was not given, so a value the pinned blank already carries
+            # (AL 40's hidden "0.00" totals, MO-1040's CalcOption default) is the DOR's, not this fill's.
+            blank = _pinned_blank(pack)
+            if blank is not None:
+                try:
+                    baked = read_pdf_fields(blank)
+                except ValueError:  # a blank whose /Fields the filler rebuilds (the 2026 Schedule 3-A draft)
+                    baked = {}
+                written_names = {n for n in written_names if baked.get(n) != fields.get(n)}
+        flag_checks = [_pitfall_p027(*widget_flag_problems(pdf_path, written_names))]
     widget_models = _coerce_widgets(widgets or [])
 
     merged_values, value_checks = _merge_disk_and_supplied(pack, fields, values)
@@ -2492,6 +2564,7 @@ def verify_form(
     if confirmed_current_address is not None:
         pitfall_checks.append(_pitfall_p002(identity_checks))
     pitfall_checks.append(_pitfall_p003(checkbox_checks))
+    pitfall_checks.extend(flag_checks)  # P-027, only when the PDF itself was read
 
     return VerifyReport(
         ok=_all_pass(
@@ -2501,6 +2574,7 @@ def verify_form(
             clipping_checks,
             checkbox_checks,
             identity_checks,
+            flag_checks,
         ),
         form_keys=[pack.form],
         assertions=assertion_checks,

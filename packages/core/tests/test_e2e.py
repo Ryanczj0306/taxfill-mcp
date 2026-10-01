@@ -175,7 +175,7 @@ def test_happy_path_full_loop(pack: FormPack, blank_pdf: Path, tmp_path: Path):
     assert report.recompute and all(c.status == "PASS" for c in report.recompute)
     assert report.clipping and all(c.status == "PASS" for c in report.clipping)
     assert report.checkboxes and all(c.status == "PASS" for c in report.checkboxes)
-    assert {c.id for c in report.pitfall_checks} == {"P-001", "P-003"}
+    assert {c.id for c in report.pitfall_checks} == {"P-001", "P-003", "P-027"}  # P-027: the PDF itself was read
     assert all(c.status == "PASS" for c in report.pitfall_checks)
 
     # 4. render: a PNG artifact for the vision-review pass.

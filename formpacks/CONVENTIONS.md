@@ -474,3 +474,25 @@ Prefer the cached blanks in `.cache/blanks/` and verify a cached file's sha256
 against its pack's pin — then a full audit needs no network at all. If you must
 fetch, one URL per call with `--connect-timeout 20 --max-time 90 --retry 1`;
 never loop curl over a list of state DOR hosts.
+
+## Viewer guards and hidden widgets (P-027)
+
+Some DOR blanks are built for Adobe Reader and its JavaScript. The script shows and hides widgets at
+run time; taxfill never runs it (P-007 class 4), so the filler does the viewer's work, deterministically:
+
+- **A hidden mapped widget is still mapped.** A blank may ship a data widget with the annotation
+  Hidden (bit 2) or NoView (bit 6) flag and show it only from its script (OH IT 1040's MFS spouse SSN
+  `SP_SSN_SEP`, DE PIT-RES's amended-return lines, GA 500's voucher, every AL Form 40 data widget on
+  page 1). Map it like any other line. `fill_form` clears Hidden and NoView and sets Print on every
+  widget it writes, so the value shows on screen and prints in any viewer.
+- **A viewer guard is never mapped.** A widget covering 85% or more of its page that is a pushbutton or
+  a ReadOnly text panel is the form's guard, not a taxpayer line: AL 40's yellow "PLEASE USE A DIFFERENT
+  PDF VIEWER" `VERCTRL` (viewable and printable) and its white `printlid.N` (NoView + Print, so it prints
+  over the page), MO-1040's white `printlid.N` ("PLEASE, USE THE PRINT BUTTON ON THE FORM"). `fill_form`
+  sets each one Hidden and lists it in `FillResult.guards_hidden`; `filler.is_viewer_guard` is the rule.
+- **verify reads the flags back.** Pitfall check P-027 FAILs a filled PDF whose written widget is still
+  Hidden, NoView or without Print, or whose viewer guard is still viewable or printable
+  (`verify.widget_flag_problems`); the golden round trips assert it on every pack.
+- **The vision audit needs the pass.** `scripts/audit_pack.py` fills through `fill_form`, so its renders
+  show the form; a render of the raw blank (or of a file filled any other way) shows AL 40's warning page
+  and nothing else — that is what every earlier AL 40 audit was looking at.
