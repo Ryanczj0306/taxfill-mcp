@@ -1,0 +1,466 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/hi/2024/n11/handfill.yaml (ported 2026-10-01,
+# Phase J JS5).
+#
+# BLANK. https://files.hawaii.gov/tax/forms/2025/n11_i.pdf — two separate
+# downloads and the scaffold's triage copy all digest to b8ea0d539a3f…52f01a
+# (pinned below). Still a flat scannable form: no AcroForm, no fields.
+#
+# PRINTED IDENTITY. Page 1 prints "FORM N-11 (Rev. 2025)" and "Calendar Year
+# 2025"; the page footers read "N11_I 2025A 01..04 VID01" and pages 2-4 print
+# "Form N-11 (Rev. 2025) Page N of 4".
+#
+# LAYOUT CENSUS (pdfium path objects and the text layer of THIS blank against
+# the 2024 blank, work/pathdiff and movebox):
+#   * pages 1-3 ENTRY PATHS UNCHANGED: every digit cell, oval and minus square
+#     is a twin of its 2024 path within 0.3 pt; only the QR code (now drawn as
+#     1.44 pt path squares), three section rules re-stroked thinner about the
+#     same centre and the entry colour (pink -> orange) differ. 126 of the 127
+#     boxes on pages 1-3 and the two page-4 SSN boxes carry over unchanged.
+#   * page 2-4 HEADER CAPTIONS RE-SET WIDER (not a geometry change of the
+#     cells): "Your Social Security Number" / "Your Spouse's SSN" now end at
+#     x 335.65 / 477.00 (2024: 328.11 / 465.48) while all 18 SSN digit cells
+#     on each page are twins of their 2024 rectangles within 0.3 pt, so the
+#     SSN boxes carry over; the "Name(s) as shown on return" caption now ends
+#     at x 309.61 (2024: 302.95) and its underline (underscore glyphs of the
+#     text layer) runs 311.83-538.68 (2024: 305.19-532.03), so name.as_shown
+#     was re-measured to the 2025 underline on all three pages (+6.71 pt;
+#     at the 2024 x the first letter overprinted the caption's final "n").
+#     Page 1's "FOR OFFICE USE ONLY" caption also widened (x 158.67-255.03;
+#     2024: 158.67-218.88) with no entry box near it.
+#   * page 4 REBUILT: the two AMENDED RETURN ONLY lines (51, 52) with their
+#     minus squares are gone, replaced by a thin rule at y 479.25-480.75; lines
+#     46-50 (and the 47a/47c/50 ovals) keep their 2024 geometry; the Schedule
+#     C/E/F block (renumbered 53-55 -> 51-53), the designee row, both election
+#     ovals and the signature/occupation rows moved up by exactly 48.00 pt
+#     (every oval outline, cell rectangle, underline and ruling line re-read on
+#     the 2025 paths); the paid-preparer grid lost the "Check if self-employed"
+#     square and its x=473.5 divider: the right column is now three plain
+#     cells captioned "Preparer Tax Identification Number (PTIN)", "Federal
+#     Employer Identification Number (FEIN)" and "Telephone Number", so those
+#     three boxes were re-measured below their captions (preparer.date,
+#     preparer.name and preparer.firm follow their rules/icons at +48).
+#   Per page (boxes): p1 63 carried / p2 26 carried + 1 re-measured (name) /
+#   p3 36 carried + 1 re-measured (name) / p4 13 carried + 30 moved +48.00 +
+#   4 re-measured (name, ptin, fein, phone); 3 lines
+#   dropped (51, 52, preparer.self_employed); 16 lines re-keyed (53.* -> 51.*,
+#   54.* -> 52.*, 55.* -> 53.*): 169 lines / 177 boxes -> 166 lines / 174 boxes.
+#   work/audit.py then found every declared cell rectangle, oval outline and
+#   minus glyph of this manifest on THIS blank's paths and text layer (115 of
+#   117 geometry-pinned boxes; the two "misses" are the page-1 SSN middle cells,
+#   whose rectangles the form draws 0.52 pt higher than their neighbours, the
+#   same on the 2024 blank).
+#
+# FACE DELTAS vs 2024 (the printed-WORD diff, work/facediff.txt — not a
+# geometry diff; the re-set header captions above are the same words):
+#   * line 15 "First $8,636 of military reserve or Hawaii national guard duty
+#     pay" (2024: $8,082; Act 58 SLH 2025 per the Instructions' Changes to Note);
+#   * line 38 "2025 estimated tax payments", line 39 "applied from 2024
+#     return", line 46 "your 2026 ESTIMATED TAX";
+#   * page 4 as above (lines 51-52 removed, 53-55 -> 51-53, preparer captions).
+# Line 23's standard deduction ($4,400 / $8,800 / $6,424), line 25's $1,144
+# exemption, line 27's forms list and every page reference the face prints
+# are unchanged, and knowledge/states/hi/2025.yaml records the same figures.
+# The notes that cite the Instructions were re-read in the 2025 N-11
+# Instructions (n11ins.pdf, sha256 7160595e…e4e4d4): line 22's itemized
+# limitation moved to printed page 20 (its Total Itemized Deductions
+# Worksheet is on page 32; 2024: page 19 — the 2025 face's line-22 box still
+# prints "page 19", a stale face reference the note calls out) and line 42's
+# negative-line-36 worksheet is still on page 22. The four printing_guidance quotes are verbatim in the 2025 face
+# (page 1) and Instructions (page 4, Guidelines for Filling in Scannable Forms).
+# Both returns of test_n11_2025_overlay.py were stamped on THIS blank, verified
+# on every placement and read page by page.
+# ===========================================================================
+# Hawaii Form N-11 (Rev. 2025) — Individual Income Tax Return, RESIDENT.
+#
+# PRINT-ONLY (C3): the official N-11 PDF is a flat scannable form — NO AcroForm
+# widgets and NO XFA (introspect finds 0 fillable fields), so it cannot be filled
+# programmatically. This is therefore a HAND-FILL pack (render_mode: hand_fill): a
+# line manifest, not a field map. The engine (taxfill_core.handfill) computes every
+# derivable line from confirmed inputs and emits a line->value worksheet; the filer
+# PRINTS the blank at source_url and hand-writes the values onto it (black ink,
+# one char per box, per the form's own instructions).
+#
+# Provenance: blank downloaded from source_url; pages 1-2 rendered and READ to
+# confirm "Form N-11 (Rev. 2025) ... Calendar Year 2025" and the line labels before
+# pinning pdf_sha256. SCOPE (Phase J JS4d, 2026-09-28; page 4 re-measured for 2025 by JS5): all four printed pages, every
+# entry on the face — the header and fiscal-year boxes, identity, filing status,
+# exemptions and dependents, lines 7-53, the designee, election fund, signature and
+# paid-preparer blocks — each with overlay coordinates read from the blank's own
+# geometry and checked on renders. The itemized worksheets A-1..A-6 live in the
+# Instructions, not on the face; their totals enter here as 21a-21f.
+#
+# OVERLAY COORDINATES (Phase J JS4d, 2026-09-28): every line carries an `overlay` block, so
+# fill_form STAMPS the worksheet onto this blank. Oval boxes are the printed outline's OUTER
+# edge (pdfium's bounds for a stroked path include the whole 0.75pt stroke on each side; half
+# of it is taken back off), and each minus box is the printed white minus glyph inside its coloured
+# square (orange on the 2025 print), which a loss darkens exactly as the page-2 Example does. The name line and both SSNs
+# repeat in the page 2-4 headers, so those lines carry one box per page.
+form: "N-11"
+jurisdiction: states/hi
+tax_year: 2025
+render_mode: hand_fill
+source_url: https://files.hawaii.gov/tax/forms/2025/n11_i.pdf
+pdf_sha256: "b8ea0d539a3f75d92f66aff6425b66b3277027dde47a367593aa71bf2e52f01a"
+# PRINTING RULES (Phase J JS4b, read 2026-09-28; the 2025 face and Instructions re-read 2026-10-01): N-11 is a machine-read (scanned) form. The face asks for ONE
+# character per box and the instructions forbid printing outside the boxes, so every digit box is stamped
+# one character per printed cell (overlay.cells; money fills from the right, the ones digit in the last cell),
+# names and addresses go inside their open boxes, every oval is PAINTED (overlay.mark: fill) and a loss is
+# shown by shading the printed minus (overlay.minus), as the page-2 Example shows. No minimum type size is
+# published.
+printing_guidance:
+  - quote: "Please Write Using a Black Ink Pen. Enter One Letter Or Number In Each Box. Fill In Ovals Completely. Do NOT Submit a Photocopy!!"
+    source: "Form N-11 (2025), page 1"
+    url: https://files.hawaii.gov/tax/forms/2025/n11_i.pdf
+  - quote: "Use only a black or dark blue ink pen. Do not use red ink, pencils, felt tip pens, or erasable pens."
+    source: "Form N-11 Instructions (2025), General Instructions, Guidelines for Filling in Scannable Forms (page 4)"
+    url: https://files.hawaii.gov/tax/forms/2025/n11ins.pdf
+  - quote: "Because this form is read by a machine, print your numbers inside the boxes like this:"
+    source: "Form N-11 Instructions (2025), Guidelines for Filling in Scannable Forms (page 4)"
+    url: https://files.hawaii.gov/tax/forms/2025/n11ins.pdf
+  - quote: "Do NOT print outside the boxes."
+    source: "Form N-11 Instructions (2025), Guidelines for Filling in Scannable Forms (page 4)"
+    url: https://files.hawaii.gov/tax/forms/2025/n11ins.pdf
+signature_note: "Sign and date the printed N-11 in black ink before mailing (both spouses on a joint return)."
+lines:
+  # ---- header / identity ----------------------------------------------------
+  - { line: "tax_year.begin", label: "Fiscal Year Beginning (MM DD YY)", type: text, note: "Fiscal-year filers only; leave blank for calendar year 2025. Six boxes: month, day, two-digit year.",
+      overlay: {page: 1, x: 163.29, y: 663.2, w: 82.9, cells: [163.29, 173.29, 193.87, 203.87, 224.44, 234.44], cell_w: 11.75} }
+  - { line: "tax_year.end", label: "Fiscal Year Ending (MM DD YY)", type: text, note: "Fiscal-year filers only. Six boxes: month, day, two-digit year.",
+      overlay: {page: 1, x: 305.29, y: 662.25, w: 82.9, cells: [305.29, 315.29, 335.86, 345.86, 366.44, 376.44], cell_w: 11.75} }
+  - { line: "amended", label: "AMENDED Return", type: checkbox,
+      overlay: {page: 1, x: 35.667, y: 626.405, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "nol_carryback", label: "NOL Carryback", type: checkbox,
+      overlay: {page: 1, x: 35.667, y: 614.6, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "irs_adjustment", label: "IRS Adjustment", type: checkbox,
+      overlay: {page: 1, x: 35.667, y: 602.795, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "first_time_filer", label: "First Time Filer", type: checkbox,
+      overlay: {page: 1, x: 35.667, y: 590.99, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "name.first", label: "Your first name", type: text,
+      overlay: {page: 1, x: 52.92, y: 488.75, w: 121} }
+  - { line: "name.mi", label: "Your middle initial (M.I.)", type: text,
+      overlay: {page: 1, x: 177.92, y: 488.75, w: 22} }
+  - { line: "name.last", label: "Your last name", type: text,
+      overlay: {page: 1, x: 203.92, y: 488.75, w: 121} }
+  - { line: "name.suffix", label: "Your suffix", type: text,
+      overlay: {page: 1, x: 328.92, y: 488.75, w: 20} }
+  - { line: "name.last_four", label: "Enter the first four letters of your last name (use ALL CAPITAL letters)", type: text, note: "The first four letters of your last name, in capitals.",
+      overlay: {page: 1, x: 523.17, y: 458.27, w: 54.13, cells: [523.17, 536.17, 549.17, 562.3], cell_w: 15} }
+  - { line: "identifying_number", label: "Your Social Security Number", type: text,
+      overlay: [{page: 1, x: 427.03, y: 433.27, w: 149.14, cells: [427.03, 440.03, 453.03, 481.03, 494.03, 522.03, 535.03, 548.03, 561.17], cell_w: 15}, {page: 2, x: 227.59, y: 713.75, w: 113.14, h: 18.5, cells: [227.59, 238.09, 248.09, 269.08, 279.08, 299.58, 310.08, 320.08, 330.48], cell_w: 10.25}, {page: 3, x: 226.21, y: 713.88, w: 114.64, cells: [226.21, 236.71, 246.71, 267.71, 277.71, 298.21, 308.71, 318.71, 329.1], cell_w: 11.75}, {page: 4, x: 226.74, y: 714.64, w: 114.64, cells: [226.74, 237.24, 247.24, 268.24, 278.24, 298.74, 309.24, 319.24, 329.63], cell_w: 11.75}] }
+  - { line: "deceased.taxpayer", label: "Deceased (you)", type: checkbox,
+      overlay: {page: 1, x: 400.538, y: 410.02, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "deceased.taxpayer_date", label: "Your date of death (MM DD YY)", type: text, note: "Only if you died during the year. Six boxes: month, day, two-digit year.",
+      overlay: {page: 1, x: 480.03, y: 408.15, w: 96.14, cells: [480.03, 493.17, 514.17, 527.17, 548.17, 561.17], cell_w: 15} }
+  - { line: "spouse.first_name", label: "Spouse's first name", type: text,
+      overlay: {page: 1, x: 53.17, y: 452.75, w: 120.75} }
+  - { line: "spouse.mi", label: "Spouse's middle initial (M.I.)", type: text,
+      overlay: {page: 1, x: 177.92, y: 452.75, w: 22} }
+  - { line: "spouse.last_name", label: "Spouse's last name", type: text,
+      overlay: {page: 1, x: 203.92, y: 452.75, w: 121} }
+  - { line: "spouse.suffix", label: "Spouse's suffix", type: text,
+      overlay: {page: 1, x: 328.92, y: 452.75, w: 20} }
+  - { line: "spouse.last_four", label: "Enter the first four letters of your spouse's last name (use ALL CAPITAL letters)", type: text, note: "The first four letters of your spouse's last name, in capitals.",
+      overlay: {page: 1, x: 523.17, y: 374.27, w: 54.13, cells: [523.17, 536.17, 549.17, 562.3], cell_w: 15} }
+  - { line: "spouse.identifying_number", label: "Spouse's Social Security Number", type: text,
+      overlay: [{page: 1, x: 427.03, y: 349.27, w: 149.14, cells: [427.03, 440.03, 453.03, 481.03, 494.03, 522.03, 535.03, 548.03, 561.17], cell_w: 15}, {page: 2, x: 399.58, y: 713.75, w: 113.15, h: 18.5, cells: [399.58, 410.08, 420.08, 441.08, 451.08, 471.58, 482.08, 492.08, 502.48], cell_w: 10.25}, {page: 3, x: 398.81, y: 714, w: 114.64, cells: [398.81, 409.31, 419.31, 440.31, 450.31, 470.81, 481.31, 491.31, 501.7], cell_w: 11.75}, {page: 4, x: 398.24, y: 714.64, w: 114.64, cells: [398.24, 408.74, 418.74, 439.74, 449.74, 470.24, 480.74, 490.74, 501.13], cell_w: 11.75}] }
+  - { line: "deceased.spouse", label: "Deceased (spouse)", type: checkbox,
+      overlay: {page: 1, x: 400.538, y: 326.02, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "deceased.spouse_date", label: "Spouse's date of death (MM DD YY)", type: text, note: "Only if your spouse died during the year. Six boxes: month, day, two-digit year.",
+      overlay: {page: 1, x: 480.03, y: 324.15, w: 96.14, cells: [480.03, 493.17, 514.17, 527.17, 548.17, 561.17], cell_w: 15} }
+  - { line: "care_of", label: "Care Of (see Instructions, page 7)", type: text,
+      overlay: {page: 1, x: 53.17, y: 416.63, w: 295.75} }
+  - { line: "mailing_address.street", label: "Present mailing or home address", type: text,
+      overlay: {page: 1, x: 53.17, y: 380.5, w: 295.75} }
+  - { line: "mailing_address.city", label: "City, town or post office", type: text,
+      overlay: {page: 1, x: 53.17, y: 344.63, w: 160.83} }
+  - { line: "mailing_address.state", label: "State", type: text,
+      overlay: {page: 1, x: 218, y: 344.63, w: 32} }
+  - { line: "mailing_address.zip", label: "Postal/ZIP code", type: text,
+      overlay: {page: 1, x: 254, y: 344.63, w: 94.92} }
+  - { line: "mailing_address.foreign_province", label: "If foreign address, enter Province and/or State", type: text,
+      overlay: {page: 1, x: 53.17, y: 308.75, w: 196.83} }
+  - { line: "mailing_address.country", label: "Country (foreign address)", type: text,
+      overlay: {page: 1, x: 254, y: 308.75, w: 94.92} }
+  # ---- filing status (fill in only ONE oval) --------------------------------
+  - { line: "filing_status.single", label: "1 Single", type: checkbox,
+      overlay: {page: 1, x: 65.667, y: 276.37, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "filing_status.mfj", label: "2 Married filing joint return", type: checkbox,
+      overlay: {page: 1, x: 65.667, y: 264.565, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "filing_status.mfs", label: "3 Married filing separate return", type: checkbox,
+      overlay: {page: 1, x: 65.667, y: 252.76, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "filing_status.mfs_spouse_name", label: "3 Married filing separate return — spouse's full name", type: text, note: "Married filing separately only; also enter the spouse's SSN and first four letters of last name above.",
+      overlay: {page: 1, x: 132.8, y: 226.5, w: 162.8} }
+  - { line: "filing_status.hoh", label: "4 Head of household", type: checkbox,
+      overlay: {page: 1, x: 330.2, y: 276.37, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "filing_status.hoh_name", label: "4 Head of household — qualifying child's full name (a child who is not your dependent)", type: text, note: "Only when the qualifying person is a child but not your dependent.",
+      overlay: {page: 1, x: 389, y: 241, w: 149.4} }
+  - { line: "filing_status.qss", label: "5 Qualifying surviving spouse", type: checkbox,
+      overlay: {page: 1, x: 330.2, y: 228.87, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "6a.yourself", label: "6a Yourself", type: checkbox, note: "Do NOT fill in if you can be claimed as a dependent on another person's return (fill in the oval above line 21 instead).",
+      overlay: {page: 1, x: 68.202, y: 192.01, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "6a.age65", label: "6a Age 65 or over (you)", type: checkbox,
+      overlay: {page: 1, x: 232.96, y: 192.01, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "6b.spouse", label: "6b Spouse", type: checkbox,
+      overlay: {page: 1, x: 68.202, y: 180.205, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "6b.age65", label: "6b Age 65 or over (spouse)", type: checkbox,
+      overlay: {page: 1, x: 232.96, y: 180.205, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "6b.count", label: "Enter the number of ovals filled on 6a and 6b", type: money, note: "A count of the ovals filled on lines 6a and 6b (0-4), not dollars.",
+      overlay: {page: 1, x: 561.17, y: 185.25, w: 15, cells: [561.17], cell_w: 15} }
+  - { line: "6b.mfs_spouse", label: "If you filled ovals 3 and 6b and your spouse meets the qualifications (Instructions page 9), fill in this oval", type: checkbox,
+      overlay: {page: 1, x: 507.906, y: 159.885, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "dependent_1.name", label: "Dependent 1 — first and last name (6c/6d)", type: text,
+      overlay: {page: 1, x: 62.67, y: 122.5, w: 179.25} }
+  - { line: "dependent_1.ssn", label: "Dependent 1 — social security number", type: text,
+      overlay: {page: 1, x: 245.92, y: 122.5, w: 90} }
+  - { line: "dependent_1.relationship", label: "Dependent 1 — relationship", type: text,
+      overlay: {page: 1, x: 339.92, y: 122.5, w: 97} }
+  - { line: "dependent_2.name", label: "Dependent 2 — first and last name (6c/6d)", type: text,
+      overlay: {page: 1, x: 62.67, y: 110.5, w: 179.25} }
+  - { line: "dependent_2.ssn", label: "Dependent 2 — social security number", type: text,
+      overlay: {page: 1, x: 245.92, y: 110.5, w: 90} }
+  - { line: "dependent_2.relationship", label: "Dependent 2 — relationship", type: text,
+      overlay: {page: 1, x: 339.92, y: 110.5, w: 97} }
+  - { line: "dependent_3.name", label: "Dependent 3 — first and last name (6c/6d)", type: text,
+      overlay: {page: 1, x: 62.67, y: 98.5, w: 179.25} }
+  - { line: "dependent_3.ssn", label: "Dependent 3 — social security number", type: text,
+      overlay: {page: 1, x: 245.92, y: 98.5, w: 90} }
+  - { line: "dependent_3.relationship", label: "Dependent 3 — relationship", type: text,
+      overlay: {page: 1, x: 339.92, y: 98.5, w: 97} }
+  - { line: "dependent_4.name", label: "Dependent 4 — first and last name (6c/6d)", type: text,
+      overlay: {page: 1, x: 62.67, y: 86.5, w: 179.25} }
+  - { line: "dependent_4.ssn", label: "Dependent 4 — social security number", type: text,
+      overlay: {page: 1, x: 245.92, y: 86.5, w: 90} }
+  - { line: "dependent_4.relationship", label: "Dependent 4 — relationship", type: text,
+      overlay: {page: 1, x: 339.92, y: 86.5, w: 97} }
+  - { line: "dependent_5.name", label: "Dependent 5 — first and last name (6c/6d)", type: text,
+      overlay: {page: 1, x: 62.67, y: 74.5, w: 179.25} }
+  - { line: "dependent_5.ssn", label: "Dependent 5 — social security number", type: text,
+      overlay: {page: 1, x: 245.92, y: 74.5, w: 90} }
+  - { line: "dependent_5.relationship", label: "Dependent 5 — relationship", type: text,
+      overlay: {page: 1, x: 339.92, y: 74.5, w: 97} }
+  - { line: "dependent_6.name", label: "Dependent 6 — first and last name (6c/6d)", type: text,
+      overlay: {page: 1, x: 62.67, y: 62.5, w: 179.25} }
+  - { line: "dependent_6.ssn", label: "Dependent 6 — social security number", type: text,
+      overlay: {page: 1, x: 245.92, y: 62.5, w: 90} }
+  - { line: "dependent_6.relationship", label: "Dependent 6 — relationship", type: text,
+      overlay: {page: 1, x: 339.92, y: 62.5, w: 97} }
+  - { line: "6c", label: "Enter number of your children listed", type: money, note: "A count of the children you list in the 6c/6d table, not dollars. More than 6 dependents: use an attachment.",
+      overlay: {page: 1, x: 548.67, y: 112.25, w: 28, cells: [548.67, 561.67], cell_w: 15} }
+  - { line: "6d", label: "Enter number of other dependents", type: money, note: "A count of the other dependents you list, not dollars.",
+      overlay: {page: 1, x: 548.67, y: 88.25, w: 28, cells: [548.67, 561.67], cell_w: 15} }
+  - { line: "6e", label: "Total number of exemptions claimed (add numbers entered in boxes 6a thru 6d)", type: money, compute: "6b.count + 6c + 6d", note: "A count of exemptions, not dollars.",
+      overlay: {page: 1, x: 548.67, y: 52.25, w: 28, cells: [548.67, 561.67], cell_w: 15} }
+  - { line: "name.as_shown", label: "Name(s) as shown on return", type: text, note: "The name line in the page 2, 3 and 4 headers: your name(s) exactly as on page 1 (both spouses on a joint return).",
+      overlay: [{page: 2, x: 311.83, y: 690, w: 226.85}, {page: 3, x: 311.83, y: 690, w: 226.85}, {page: 4, x: 311.83, y: 690, w: 226.85}] }
+  # ---- income section (page 2, lines 7-24) ----------------------------------
+  - { line: "7", label: "Federal adjusted gross income (AGI)", type: money,
+      overlay: {page: 2, x: 448.54, y: 642.38, w: 99.75, h: 18.5, cells: [448.54, 459.04, 469.04, 482.54, 493.04, 503.04, 517.54, 528.04, 538.04], cell_w: 10.25, minus: {x: 433.35, y: 640.7, w: 6.48, h: 2.47}} }
+  - { line: "8", label: "Difference in state/federal wages due to COLA, ERS, etc.", type: money,
+      overlay: {page: 2, x: 288.54, y: 615.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "9", label: "Interest on out-of-state bonds (incl. municipal)", type: money,
+      overlay: {page: 2, x: 288.54, y: 591.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "10", label: "Other Hawaii additions to federal AGI", type: money,
+      overlay: {page: 2, x: 288.54, y: 567.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "11", label: "Total Hawaii additions to federal AGI (add lines 8-10)", type: money, compute: "8 + 9 + 10",
+      overlay: {page: 2, x: 354.54, y: 543.38, w: 99.75, h: 18.5, cells: [354.54, 365.04, 375.04, 388.54, 399.04, 409.04, 423.54, 434.04, 444.04], cell_w: 10.25} }
+  - { line: "12", label: "Add lines 7 and 11", type: money, compute: "7 + 11",
+      overlay: {page: 2, x: 448.54, y: 522.38, w: 99.75, h: 18.5, cells: [448.54, 459.04, 469.04, 482.54, 493.04, 503.04, 517.54, 528.04, 538.04], cell_w: 10.25, minus: {x: 433.35, y: 520.7, w: 6.48, h: 2.47}} }
+  - { line: "13", label: "Pensions taxed federally but not by Hawaii", type: money,
+      overlay: {page: 2, x: 288.54, y: 495.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "14", label: "Social security benefits taxed on federal return", type: money,
+      overlay: {page: 2, x: 288.54, y: 471.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "15", label: "First $8,636 of military reserve / HI national guard duty pay", type: money,
+      overlay: {page: 2, x: 288.54, y: 447.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "16", label: "Payments to an individual housing account", type: money,
+      overlay: {page: 2, x: 288.54, y: 423.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "17", label: "Exceptional trees deduction (attach affidavit)", type: money,
+      overlay: {page: 2, x: 288.54, y: 399.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "18", label: "Other Hawaii subtractions from federal AGI", type: money,
+      overlay: {page: 2, x: 288.54, y: 375.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "19", label: "Total Hawaii subtractions from federal AGI (add lines 13-18)", type: money, compute: "13 + 14 + 15 + 16 + 17 + 18",
+      overlay: {page: 2, x: 354.54, y: 351.38, w: 99.75, h: 18.5, cells: [354.54, 365.04, 375.04, 388.54, 399.04, 409.04, 423.54, 434.04, 444.04], cell_w: 10.25} }
+  - { line: "20", label: "Hawaii AGI (line 12 minus line 19)", type: money, compute: "12 - 19",
+      overlay: {page: 2, x: 448.54, y: 330.38, w: 99.75, h: 18.5, cells: [448.54, 459.04, 469.04, 482.54, 493.04, 503.04, 517.54, 528.04, 538.04], cell_w: 10.25, minus: {x: 433.35, y: 328.7, w: 6.48, h: 2.47}} }
+  - { line: "claimed_as_dependent", label: "CAUTION: If you can be claimed as a dependent on another person's return, see the Instructions on page 15, and fill in this oval", type: checkbox, note: "Fill in the oval only if someone else can claim you as a dependent. See Instructions page 15.",
+      overlay: {page: 2, x: 501, y: 302.77, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "21a", label: "Itemized: Medical and dental expenses (Worksheet A-1)", type: money,
+      overlay: {page: 2, x: 288.54, y: 255.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "21b", label: "Itemized: Taxes (Worksheet A-2)", type: money,
+      overlay: {page: 2, x: 288.54, y: 231.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "21c", label: "Itemized: Interest expense (Worksheet A-3)", type: money,
+      overlay: {page: 2, x: 288.54, y: 207.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "21d", label: "Itemized: Contributions (Worksheet A-4)", type: money,
+      overlay: {page: 2, x: 288.54, y: 183.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "21e", label: "Itemized: Casualty and theft losses (Worksheet A-5)", type: money,
+      overlay: {page: 2, x: 288.54, y: 159.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "21f", label: "Itemized: Miscellaneous deductions (Worksheet A-6)", type: money,
+      overlay: {page: 2, x: 288.54, y: 135.38, w: 99.75, h: 18.5, cells: [288.54, 299.04, 309.04, 322.54, 333.04, 343.04, 357.54, 368.04, 378.04], cell_w: 10.25} }
+  - { line: "22", label: "Total itemized deductions (add lines 21a-21f)", type: money,
+      note: "Itemizers only: add lines 21a through 21f, then apply the itemized-deduction limitation (2025 Instructions page 20, Line 22 Total Itemized Deductions, with its Total Itemized Deductions Worksheet on page 32; the face's line-22 box still prints 'page 19', where the 2025 Instructions discuss line 21) when Hawaii AGI (line 20) is above the threshold for your filing status. Leave blank if you take the standard deduction (line 23). Not computed: the limitation and the itemize-or-not choice are outside the line arithmetic.",
+      overlay: {page: 2, x: 448.54, y: 135.38, w: 99.75, h: 18.5, cells: [448.54, 459.04, 469.04, 482.54, 493.04, 503.04, 517.54, 528.04, 538.04], cell_w: 10.25} }
+  - { line: "23", label: "Standard deduction (status 1/3: $4,400; 2/5: $8,800; 4: $6,424)", type: money,
+      note: "Enter the standard deduction for your filing status, OR use line 22 if itemizing.",
+      overlay: {page: 2, x: 448.54, y: 99.38, w: 99.75, h: 18.5, cells: [448.54, 459.04, 469.04, 482.54, 493.04, 503.04, 517.54, 528.04, 538.04], cell_w: 10.25} }
+  - { line: "24", label: "Taxable income base: line 20 minus line 22 or 23, whichever applies (MUST be filled in)", type: money,
+      note: "= line 20 - (line 22 if you itemize, else line 23). Left uncomputed because the itemize-vs-standard choice is yours.",
+      overlay: {page: 2, x: 448.54, y: 75.38, w: 99.75, h: 18.5, cells: [448.54, 459.04, 469.04, 482.54, 493.04, 503.04, 517.54, 528.04, 538.04], cell_w: 10.25, minus: {x: 433.35, y: 75.7, w: 6.48, h: 2.47}} }
+  - { line: "25.disabled.yourself", label: "Line 25 — blind, deaf, or disabled: Yourself (fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 62.16, y: 638, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "25.disabled.spouse", label: "Line 25 — blind, deaf, or disabled: Spouse (fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 133.12, y: 638, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "25", label: "Exemptions: multiply $1,144 by the total number of exemptions claimed on line 6e", type: money, note: "= $1,144 x the total exemptions on line 6e. If you or your spouse is blind, deaf, or disabled (fill in the oval), see page 20 of the Instructions for the amount instead. Not computed: line 6e is a count and the disability case changes the amount.",
+      overlay: {page: 3, x: 446.79, y: 639.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "26", label: "Taxable Income: line 24 minus line 25 (but not less than zero)", type: money, compute: "max(0, 24 - 25)",
+      overlay: {page: 3, x: 446.79, y: 615.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "27.tax_table", label: "Line 27 — tax from the Tax Table (fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 145.84, y: 600.73, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "27.tax_rate_schedule", label: "Line 27 — tax from the Tax Rate Schedule (fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 208.48, y: 600.73, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "27.capital_gains_worksheet", label: "Line 27 — tax from the Capital Gains Tax Worksheet on page 33 of the Instructions (fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 312.667, y: 600.73, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "27.other_forms", label: "Line 27 — fill in oval if tax from Forms N-2, N-103, N-152, N-168, N-312, N-325, N-338, N-344, N-348, N-405, N-586, N-615, or N-814 is included", type: checkbox,
+      overlay: {page: 3, x: 72.667, y: 577.21, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "27", label: "Tax", type: money, note: "From the Tax Table, Tax Rate Schedule, or Capital Gains Tax Worksheet (Instructions page 33) for line 26 (fill in the matching oval), plus any tax from the listed forms (fill in that oval too). A table or worksheet lookup, not line arithmetic.",
+      overlay: {page: 3, x: 446.79, y: 567.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "27a", label: "If tax is from the Capital Gains Tax Worksheet, the net capital gain from line 14 of that worksheet", type: money,
+      overlay: {page: 3, x: 287.79, y: 543.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "28.dhs_exemptions", label: "Line 28 — number of DHS, etc. exemptions", type: text, note: "The count of exemptions for DHS, etc. from Form N-311 (two boxes, one digit each).",
+      overlay: {page: 3, x: 221.98, y: 494.25, w: 28, align: right, cells: [221.98, 234.98], cell_w: 15} }
+  - { line: "28", label: "Refundable Food/Excise Tax Credit (attach Form N-311)", type: money,
+      overlay: {page: 3, x: 287.79, y: 495.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "29", label: "Credit for Low-Income Household Renters (attach Schedule X)", type: money,
+      overlay: {page: 3, x: 287.79, y: 471.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "30", label: "Credit for Child and Dependent Care Expenses (attach Schedule X)", type: money,
+      overlay: {page: 3, x: 287.79, y: 447.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "31", label: "Credit for Child Passenger Restraint System(s) (attach a copy of the invoice)", type: money,
+      overlay: {page: 3, x: 287.79, y: 423.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "32", label: "Total refundable tax credits from Schedule CR (attach Schedule CR)", type: money,
+      overlay: {page: 3, x: 287.79, y: 399.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "33", label: "Total Refundable Credits: add lines 28 through 32", type: money, compute: "28 + 29 + 30 + 31 + 32",
+      overlay: {page: 3, x: 446.79, y: 375.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "34", label: "Adjusted Tax Liability: line 27 minus line 33 (if zero or less, see Instructions)", type: money, compute: "27 - 33", note: "Can be negative (refundable credits larger than the tax): the loss is shown by shading the printed minus box. If zero or less, see the Instructions.",
+      overlay: {page: 3, x: 446.79, y: 351.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75, minus: {x: 433.35, y: 352.7, w: 6.48, h: 2.47}} }
+  - { line: "35", label: "Total nonrefundable tax credits (attach Schedule CR)", type: money,
+      overlay: {page: 3, x: 446.79, y: 327.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "36", label: "Balance: line 34 minus line 35", type: money, compute: "34 - 35", note: "Can be negative: shade the printed minus box.",
+      overlay: {page: 3, x: 446.79, y: 303.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75, minus: {x: 433.35, y: 304.7, w: 6.48, h: 2.47}} }
+  - { line: "37", label: "Hawaii State Income tax withheld (attach W-2s; see page 22 of the Instructions for other attachments)", type: money,
+      overlay: {page: 3, x: 287.79, y: 279.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "38", label: "2025 estimated tax payments", type: money,
+      overlay: {page: 3, x: 287.79, y: 255.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "39", label: "Amount of estimated tax applied from 2024 return", type: money,
+      overlay: {page: 3, x: 287.79, y: 231.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "40", label: "Amount paid with extension", type: money,
+      overlay: {page: 3, x: 287.79, y: 207.37, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "41", label: "Total Payments: add lines 37 through 40", type: money, compute: "37 + 38 + 39 + 40",
+      overlay: {page: 3, x: 446.79, y: 183.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "42", label: "If line 41 is larger than line 36, the amount OVERPAID (line 41 minus line 36)", type: money, compute: "max(0, 41 - 36)", note: "Only when line 41 is larger than line 36 (otherwise leave blank; the balance due is line 48). A negative line 36 is handled by the same subtraction: the Instructions (page 22) add its absolute value to line 41, which is line 41 minus line 36.",
+      overlay: {page: 3, x: 446.79, y: 147.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "43a.yourself", label: "43a Hawaii Schools Repairs and Maintenance Fund — Yourself ($2; fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 316.738, y: 120, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "43a.spouse", label: "43a Hawaii Schools Repairs and Maintenance Fund — Spouse ($2; fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 364.08, y: 120, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "43b.yourself", label: "43b Hawaii Public Libraries Fund — Yourself ($5; fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 316.738, y: 108, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "43b.spouse", label: "43b Hawaii Public Libraries Fund — Spouse ($5; fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 364.08, y: 108, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "43c.yourself", label: "43c Domestic and Sexual Violence / Child Abuse and Neglect Funds — Yourself ($5; fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 316.738, y: 96, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "43c.spouse", label: "43c Domestic and Sexual Violence / Child Abuse and Neglect Funds — Spouse ($5; fill in the oval)", type: checkbox,
+      overlay: {page: 3, x: 364.08, y: 96, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "44", label: "Add the amounts of the filled ovals on lines 43a through 43c and enter the total here", type: money, note: "$2 for each filled 43a oval plus $5 for each filled 43b / 43c oval (at most $24). The ovals are checkbox lines, which the compute grammar does not resolve as amounts, so the sum is entered, not computed.",
+      overlay: {page: 3, x: 526.29, y: 87.25, w: 21.75, cells: [526.29, 536.29], cell_w: 11.75} }
+  - { line: "45", label: "Line 42 minus line 44", type: money, compute: "42 - 44",
+      overlay: {page: 3, x: 446.79, y: 63.37, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "46", label: "Amount of line 45 to be applied to your 2026 ESTIMATED TAX", type: money,
+      overlay: {page: 4, x: 287.79, y: 663.17, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "47a", label: "Amount to be REFUNDED TO YOU (line 45 minus line 46)", type: money, compute: "45 - 46", note: "If filing late, see page 23 of the Instructions.",
+      overlay: {page: 4, x: 446.79, y: 639.17, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "47a.foreign_bank", label: "Fill in this oval if this refund will ultimately be deposited to a foreign (non-U.S.) bank (then do not complete lines 47b, 47c, or 47d)", type: checkbox,
+      overlay: {page: 4, x: 62.738, y: 613, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "47b", label: "Routing number", type: text,
+      overlay: {page: 4, x: 143.29, y: 591.25, w: 93.75, cells: [143.29, 153.79, 163.79, 173.79, 184.29, 194.29, 204.79, 215.29, 225.29], cell_w: 11.75} }
+  - { line: "47c.checking", label: "47c Type: Checking", type: checkbox,
+      overlay: {page: 4, x: 309.703, y: 589.01, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "47c.savings", label: "47c Type: Savings", type: checkbox,
+      overlay: {page: 4, x: 380.738, y: 589.01, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "47d", label: "Account number", type: text,
+      overlay: {page: 4, x: 143.29, y: 567.25, w: 176.25, cells: [143.29, 153.79, 163.79, 173.79, 184.29, 194.29, 204.79, 215.29, 225.29, 235.79, 246.29, 256.29, 266.29, 276.79, 286.79, 297.29, 307.79], cell_w: 11.75} }
+  - { line: "48", label: "AMOUNT YOU OWE (line 36 minus line 41)", type: money, compute: "max(0, 36 - 41)", note: "Only when line 36 is larger than line 41 (otherwise the overpayment is on line 42). Floored at zero: this line has no minus box.",
+      overlay: {page: 4, x: 446.79, y: 555.17, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "49", label: "PAYMENT AMOUNT", type: money, note: "Submit payment online at hitax.hawaii.gov or attach a check or money order payable to \"Hawaii State Tax Collector.\"",
+      overlay: {page: 4, x: 446.79, y: 531.17, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "50", label: "Estimated tax penalty", type: money, note: "See page 23 of the Instructions. Do not include on line 42 or 48.",
+      overlay: {page: 4, x: 287.79, y: 495.17, w: 101.25, cells: [287.79, 298.29, 308.29, 321.79, 332.29, 342.29, 356.79, 367.29, 377.29], cell_w: 11.75} }
+  - { line: "50.n210", label: "Fill in this oval if Form N-210 is attached", type: checkbox,
+      overlay: {page: 4, x: 201.36, y: 493.21, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "51.yes", label: "51 Did you file a federal Schedule C? Yes", type: checkbox,
+      overlay: {page: 4, x: 190.738, y: 457, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "51.no", label: "51 Did you file a federal Schedule C? No", type: checkbox,
+      overlay: {page: 4, x: 229.738, y: 457, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "51", label: "Federal Schedule C: if yes, enter Hawaii gross receipts", type: money,
+      overlay: {page: 4, x: 446.79, y: 459.17, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "51.activity", label: "Federal Schedule C: your main business activity", type: text,
+      overlay: {page: 4, x: 158.98, y: 444, w: 92.68} }
+  - { line: "51.product", label: "Federal Schedule C: your main business product", type: text,
+      overlay: {page: 4, x: 161.22, y: 432, w: 90.45} }
+  - { line: "51.ge_id", label: "Federal Schedule C: AND your HI Tax I.D. No. for this activity (GE)", type: text, note: "Enter the 12 digits after the printed 'GE' (GE-XXX-XXX-XXXX-XX); separators are dropped.",
+      overlay: {page: 4, x: 437.29, y: 435.25, w: 138.75, cells: [437.29, 447.79, 457.79, 472.79, 483.29, 493.29, 508.29, 518.79, 528.79, 538.79, 553.79, 564.29], cell_w: 11.75} }
+  - { line: "52.yes", label: "52 Did you file a federal Schedule E for any rental activity? Yes", type: checkbox,
+      overlay: {page: 4, x: 190.738, y: 397, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "52.no", label: "52 Did you file a federal Schedule E for any rental activity? No", type: checkbox,
+      overlay: {page: 4, x: 229.738, y: 397, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "52", label: "Federal Schedule E (rental activity): if yes, enter Hawaii gross rents received", type: money,
+      overlay: {page: 4, x: 446.79, y: 411.17, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "52.ge_id", label: "Federal Schedule E (rental activity): AND your HI Tax I.D. No. for this activity (GE)", type: text, note: "Enter the 12 digits after the printed 'GE' (GE-XXX-XXX-XXXX-XX); separators are dropped.",
+      overlay: {page: 4, x: 437.29, y: 387.25, w: 138.75, cells: [437.29, 447.79, 457.79, 472.79, 483.29, 493.29, 508.29, 518.79, 528.79, 538.79, 553.79, 564.29], cell_w: 11.75} }
+  - { line: "53.yes", label: "53 Did you file a federal Schedule F? Yes", type: checkbox,
+      overlay: {page: 4, x: 190.738, y: 361, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "53.no", label: "53 Did you file a federal Schedule F? No", type: checkbox,
+      overlay: {page: 4, x: 229.738, y: 361, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "53", label: "Federal Schedule F: if yes, enter Hawaii gross receipts", type: money,
+      overlay: {page: 4, x: 446.79, y: 363.17, w: 101.25, cells: [446.79, 457.29, 467.29, 480.79, 491.29, 501.29, 515.79, 526.29, 536.29], cell_w: 11.75} }
+  - { line: "53.activity", label: "Federal Schedule F: your main business activity", type: text,
+      overlay: {page: 4, x: 158.98, y: 348, w: 92.68} }
+  - { line: "53.product", label: "Federal Schedule F: your main business product", type: text,
+      overlay: {page: 4, x: 161.22, y: 336, w: 90.45} }
+  - { line: "53.ge_id", label: "Federal Schedule F: AND your HI Tax I.D. No. for this activity (GE)", type: text, note: "Enter the 12 digits after the printed 'GE' (GE-XXX-XXX-XXXX-XX); separators are dropped.",
+      overlay: {page: 4, x: 437.29, y: 339.25, w: 138.75, cells: [437.29, 447.79, 457.79, 472.79, 483.29, 493.29, 508.29, 518.79, 528.79, 538.79, 553.79, 564.29], cell_w: 11.75} }
+  - { line: "designee.name", label: "Designee's name", type: text,
+      overlay: {page: 4, x: 141.28, y: 288, w: 145.51} }
+  - { line: "designee.phone", label: "Designee's phone no.", type: text,
+      overlay: {page: 4, x: 337.78, y: 288, w: 69.13} }
+  - { line: "designee.id_number", label: "Designee's identification number", type: text,
+      overlay: {page: 4, x: 496.18, y: 288, w: 78.49} }
+  - { line: "election_fund.yourself", label: "Hawaii Election Campaign Fund: indicate if you want $3 to go to the fund - Yes", type: checkbox, note: "Filling in the Yes oval will not change your tax or refund.",
+      overlay: {page: 4, x: 398.667, y: 276, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "election_fund.spouse", label: "Hawaii Election Campaign Fund: if joint return, indicate if your spouse designates $3 to the fund - Yes", type: checkbox, note: "Joint returns only. Filling in the Yes oval will not change your tax or refund.",
+      overlay: {page: 4, x: 398.667, y: 264, w: 12.928, h: 6.23, mark: fill} }
+  - { line: "signature.date", label: "Date you signed", type: text,
+      overlay: {page: 4, x: 246.21, y: 218, w: 76.46} }
+  - { line: "spouse.signature_date", label: "Date your spouse signed (if filing jointly, BOTH must sign)", type: text,
+      overlay: {page: 4, x: 498.21, y: 218, w: 76.46} }
+  - { line: "signature.occupation", label: "Your Occupation", type: text,
+      overlay: {page: 4, x: 77.69, y: 191.75, w: 166.52} }
+  - { line: "signature.daytime_phone", label: "Your Daytime Phone Number", type: text,
+      overlay: {page: 4, x: 246.21, y: 191.75, w: 76.46} }
+  - { line: "spouse.occupation", label: "Your Spouse's Occupation", type: text,
+      overlay: {page: 4, x: 341.69, y: 191.75, w: 154.52} }
+  - { line: "spouse.daytime_phone", label: "Your Spouse's Daytime Phone Number", type: text,
+      overlay: {page: 4, x: 498.21, y: 191.75, w: 76.46} }
+  - { line: "preparer.date", label: "Paid preparer's signature date", type: text,
+      overlay: {page: 4, x: 340.17, y: 170.15, w: 70.08} }
+  - { line: "preparer.ptin", label: "Preparer Tax Identification Number (PTIN)", type: text, note: "Below the printed caption, in the top-right cell of the Paid Preparer's Information grid.",
+      overlay: {page: 4, x: 414.54, y: 170.15, w: 160.13} }
+  - { line: "preparer.name", label: "Print Preparer's Name", type: text,
+      overlay: {page: 4, x: 165.67, y: 150, w: 244.58} }
+  - { line: "preparer.fein", label: "Federal Employer Identification Number (FEIN)", type: text, note: "Below the printed caption, in the middle-right cell of the grid.",
+      overlay: {page: 4, x: 414.57, y: 147, w: 160.1} }
+  - { line: "preparer.firm", label: "Firm's name (or yours if self-employed), Address, and ZIP Code", type: text,
+      overlay: {page: 4, x: 185.76, y: 126, w: 224.49} }
+  - { line: "preparer.phone", label: "Paid preparer's Telephone Number", type: text, note: "Below the printed caption, in the bottom-right cell of the grid. The 2025 face has no 'Check if self-employed' box.",
+      overlay: {page: 4, x: 414.16, y: 124, w: 160.51} }
+# where-to-file (HI mails N-11 to a single Honolulu address) is deferred to the
+# knowledge layer; the worksheet's job is the line values, not the envelope.
+mailing: null
