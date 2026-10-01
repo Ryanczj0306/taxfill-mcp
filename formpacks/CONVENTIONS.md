@@ -500,3 +500,13 @@ run time; taxfill never runs it (P-007 class 4), so the filler does the viewer's
   `group` whose members are separate fields, `fill_form` writes `/Off` to every other member the caller
   did not name, so a blank that ships one option pre-checked (GA 500's voucher "Paper Return") cannot
   leave two ticks on a one-answer question. An unanswered group is left as the blank had it.
+
+## A blank inside a booklet (`source_pages`)
+
+Some agencies publish the print-only return only inside a booklet or packet (NM's 2025 PIT-1 is pages
+57-58 of the 136-page PIT packet; WV's 2025 IT-140 is pages 3-4 of its forms-and-instructions booklet).
+The manifest then pins the booklet (`source_url`, `pdf_sha256`) and names the form's pages in
+`source_pages`; `fill_form` stamps and writes ONLY those pages, in that order, so every overlay `page`
+counts within them (1 = the first listed page), `verify_form` reads that output, and the worksheet tells
+the filer which pages to print. A listed page beyond the booklet's count is refused — the agency
+re-paginated, so re-read the booklet and fix `source_pages` (and the digest if the file changed).

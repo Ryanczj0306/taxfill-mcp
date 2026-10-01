@@ -261,6 +261,25 @@ class HandFillPack(BaseModel):
         default=None,
         description="Manifest-wide overlay defaults (font_size, money_align); each line's overlay block may override.",
     )
+    source_pages: list[int] | None = Field(
+        default=None, min_length=1,
+        description=(
+            "The 1-based pages of source_url's PDF that ARE this form, when the agency publishes the blank only "
+            "inside a booklet or packet (NM's 2025 PIT-1 is pages 57-58 of the 136-page PIT packet, WV's 2025 "
+            "IT-140 pages 3-4 of its forms-and-instructions booklet). stamp_overlay writes ONLY these pages, in "
+            "this order, so every overlay `page` counts within them (1 = the first listed page) and the filer "
+            "prints just the form. None when the blank is the form itself (Phase J JS5)."
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _source_pages_are_distinct_positive(self) -> "HandFillPack":
+        pages = self.source_pages or []
+        if any(p < 1 for p in pages) or len(set(pages)) != len(pages):
+            raise ValueError(
+                f"{self.form} {self.tax_year}: source_pages must be distinct 1-based page numbers, got {pages}"
+            )
+        return self
 
     @model_validator(mode="after")
     def _efile_only_says_where_to_file(self) -> "HandFillPack":

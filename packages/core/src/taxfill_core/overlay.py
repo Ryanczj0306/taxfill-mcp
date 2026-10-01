@@ -497,6 +497,30 @@ def efile_only_refusal(pack: HandFillPack) -> str:
     )
 
 
+def _form_pages(blank: Path, pack: HandFillPack) -> PdfWriter:
+    """A writer holding only the pack's ``source_pages`` of ``blank``, in the pack's order.
+
+    An agency may publish the blank only inside a booklet or packet (NM's 2025 PIT-1 is pages 57-58 of the
+    PIT packet). The stamped output is then just the form, so the manifest's page numbers count within it and
+    the filer prints nothing else (Phase J JS5).
+    """
+    from pypdf import PdfReader  # noqa: PLC0415
+
+    reader = PdfReader(str(blank))
+    total = len(reader.pages)
+    beyond = [p for p in (pack.source_pages or []) if p > total]
+    if beyond:
+        raise ValueError(
+            f"{blank.name} has {total} page(s) but the {pack.form} {pack.tax_year} hand-fill pack names source "
+            f"page(s) {beyond} — the agency re-paginated its booklet, or the pack's source_pages are wrong; re-read "
+            f"the booklet and fix source_pages (and re-pin pdf_sha256 if the file changed)"
+        )
+    writer = PdfWriter()
+    for page_no in pack.source_pages or []:
+        writer.add_page(reader.pages[page_no - 1])
+    return writer
+
+
 def _check_pages(pack: HandFillPack, n_pages: int, blank_name: str) -> None:
     bad = [(ln.line, box.page) for ln in pack.overlay_lines for box in ln.boxes if box.page > n_pages]
     if bad:
@@ -568,7 +592,9 @@ def stamp_overlay(
     worksheet = hand_fill_worksheet(pack, values)
 
     try:
-        writer = PdfWriter(clone_from=str(blank))
+        writer = _form_pages(blank, pack) if pack.source_pages else PdfWriter(clone_from=str(blank))
+    except ValueError:
+        raise
     except Exception as exc:
         raise ValueError(
             f"{blank} could not be parsed as a PDF ({exc}) — the download is corrupt or not a PDF; "

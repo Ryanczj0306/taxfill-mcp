@@ -391,3 +391,38 @@ def test_js4d_marks_are_validated():
     with pytest.raises(ValueError, match="money lines only"):
         _pack(lines=[{"line": "t", "label": "t", "type": "text",
                       "overlay": {"page": 1, "x": 1, "y": 1, "w": 5, "minus": {"x": 0, "y": 0, "w": 3, "h": 3}}}])
+
+
+# ── Phase J JS5: a blank that lives inside a booklet (source_pages) ──────────
+
+
+def test_js5_source_pages_stamp_only_the_listed_pages_of_a_booklet(tmp_path):
+    from pypdf import PdfReader, PdfWriter
+    from reportlab.pdfgen import canvas as rl_canvas
+
+    from taxfill_core.handfill import hand_fill_worksheet
+
+    form = _blank(tmp_path / "form.pdf")
+    cover = tmp_path / "cover.pdf"
+    c = rl_canvas.Canvas(str(cover), pagesize=letter)
+    c.drawString(72, 700, "booklet cover: instructions, tables, nothing to stamp")
+    c.save()
+    booklet = tmp_path / "booklet.pdf"
+    writer = PdfWriter()
+    writer.add_page(PdfReader(str(cover)).pages[0])          # booklet page 1: the cover
+    for page in PdfReader(str(form)).pages:                  # booklet pages 2-3: the form
+        writer.add_page(page)
+    writer.write(booklet)
+
+    pack = _pack(source_pages=[2, 3])                        # the manifest's page 1 is booklet page 2
+    result = stamp_overlay(booklet, pack, VALUES, tmp_path / "out.pdf")
+    assert result.page_count == 2 and not result.warnings
+    out = PdfReader(str(tmp_path / "out.pdf"))
+    assert len(out.pages) == 2 and "booklet cover" not in (out.pages[0].extract_text() or "")
+    assert verify_overlay(pack, Path(result.out_path), VALUES).ok
+    assert "page(s) 2, 3 of the PDF at print_url" in hand_fill_worksheet(pack, VALUES).instructions
+
+    with pytest.raises(ValueError, match=r"has 3 page\(s\) .* source page\(s\) \[9\]"):
+        stamp_overlay(booklet, _pack(source_pages=[2, 9]), VALUES, tmp_path / "bad.pdf")
+    with pytest.raises(ValueError, match="distinct 1-based"):
+        _pack(source_pages=[2, 2])

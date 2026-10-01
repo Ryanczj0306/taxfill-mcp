@@ -199,6 +199,13 @@ def hand_fill_worksheet(
         # A pack whose form cannot be printed and filed (the FBAR) supplies its own
         # instruction text; the class default is correct for the print-only state forms.
         kwargs["instructions"] = pack.instructions
+    if pack.source_pages:
+        # The blank lives inside a booklet or packet: say which pages are the form (JS5).
+        pages = ", ".join(str(p) for p in pack.source_pages)
+        kwargs["instructions"] = (
+            f"The form is page(s) {pages} of the PDF at print_url (a booklet); print only those pages — "
+            f"fill_form's stamped output holds just them. " + str(kwargs.get("instructions", Worksheet.model_fields["instructions"].default))
+        )
     return Worksheet(
         form=pack.form, jurisdiction=pack.jurisdiction, tax_year=pack.tax_year,
         print_url=pack.source_url, lines=out, signature_note=pack.signature_note,
