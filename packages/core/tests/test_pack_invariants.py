@@ -1130,6 +1130,11 @@ YEAR_BEARING_KEY_FAMILIES: tuple[YearFamily, ...] = (
         "not a year at all — Louisiana Schedule R-19000A is a FORM NUMBER whose digits "
         "happen to match the year pattern",
     ),
+    YearFamily(
+        "it540", "23b.amount_from_r<Y>0a", (),
+        "the same Form R-19000A box: the 2025 IT-540 renumbers 22B to 23B (a new line 8 "
+        "pushes every later line by one), the form number is unchanged",
+    ),
 )
 
 
@@ -1408,7 +1413,8 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
     ('states/ky/form740', 'deceased'):
         'INDEPENDENT: a deceased-taxpayer box and a deceased-spouse box; both may apply',
     ('states/la/it540', '6a'):
-        'INDEPENDENT: the 6A boxes (65 or older, blind, qualifying surviving spouse) are separate exemptions; several may apply',
+        'INDEPENDENT: the 6A boxes (65 or older, blind, qualifying surviving spouse) are separate exemptions; several may apply; '
+        'from 2025 the row is "6A AGE DESIGNATION" with one box per person (Taxpayer 65 or Older / Spouse 65 or Older), both may apply',
     ('states/la/it540', '6b'):
         'INDEPENDENT: the 6B boxes (spouse, 65 or older, blind) are separate exemptions; several may apply',
     ('states/ma/form1', '2c'):

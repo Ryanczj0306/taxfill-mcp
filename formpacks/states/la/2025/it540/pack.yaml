@@ -1,0 +1,392 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/la/2024/it540/pack.yaml (ported 2026-10-01,
+# Phase J JS5; triaged RE-MAP by the scaffold — 10 of the 151 mapped fields
+# are gone from the 2025 blank, and every printed line after 7 is RENUMBERED
+# while its field NAME stays, so this fields block was emitted from a
+# field -> 2025-line table (work/port.py) and every row confirmed on renders.
+#
+# URL. https://dam.ldr.la.gov/taxforms/IT540WEB-BC-2025-F.pdf (the 2024 file
+# was "IT-540-WEB-BC-2024-F.pdf" — the 2025 name drops the hyphens). Digest
+# e6b029c3a113… — two separate curl downloads on 2026-10-01 and the triage
+# copy all agree (476,286 bytes; the host's last-modified is 2026-02-03).
+# %PDF-1.6, "Form: AcroForm", 17 pages, PDF Title "IT-540-WEB-BC 2025
+# Louisiana Resident".
+#
+# PRINTED IDENTITY. PDF page 2 prints "IT-540-WEB-BC (Page 1 of 4) / 2025
+# LOUISIANA RESIDENT"; pages 3/4/5 print "2025 Form IT-540-WEB-BC (Page 2 of 4
+# / 3 of 4 / 4 of 4)"; the page barcodes read 62630..62633 (2024:
+# 62530..62533). Page 5 prints "Calendar year return due 5/15/2026".
+# printed_year_verified = 2025. Still 17 PDF pages, the same four return
+# pages (PDF 2-5) mapped and the same attachments excluded.
+#
+# AcroForm topology against the 2024 blank (work/census.txt). 517 widgets
+# (2024: 519). Of the 151 mapped widgets: 80 SAME, 51 MOVED, 10 CHANGED, 10
+# GONE; 17 NEW widgets; 9 unmapped base widgets gone (the Schedule D donation
+# cells and the two page-4 pushbuttons buttonClear / buttonPDF417).
+#   * GONE (return page 1, the repealed exemption block): EXM65B and EXMBB
+#     (6B spouse 65+/blind), SPOSS6B (6B spouse), EXMWDA (6A qualifying
+#     surviving spouse), EXMT6 (total of 6A & 6B), EXMT6C (6C dependents
+#     count), EXMT6D (6D total), EXMT6E (6E adoptions count), "6E NAME",
+#     EXMT6F (6F total exemptions). Nothing replaces them: the 2025 face
+#     prints no exemption totals (knowledge/states/la/2025.yaml: the $1,000
+#     exemptions were repealed by Act 11 of the 2024 Third Extraordinary
+#     Session). Their line keys 6a.blind, 6a.qualifying_surviving_spouse,
+#     6b.spouse, 6b.65_older, 6b.blind, 6, 6c, 6d, 6e, 6e_name, 6f are DROPPED.
+#   * The 6A row is now "6A AGE DESIGNATION: Taxpayer 65 or Older / Spouse 65
+#     or Older" — two surviving checkboxes re-placed left: EXM65A (rect x
+#     299-313) sits left of the printed "Taxpayer 65 or Older" (x 317-352) and
+#     stays 6a.65_older; EXMBA (x 364-378, 2024's "Yourself Blind" box) sits
+#     left of "Spouse 65 or Older" (x 382-415) and is keyed 6a.spouse_65_older
+#     BY POSITION AND LABEL, not by its name (P-001).
+#   * NEW EXMT6B (2-cell comb, /MaxLen 2) is the count box of the new 6B row
+#     "DEPENDENTS – … Enter the number of dependents claimed on Federal Form
+#     1040 or 1040-SR in the boxes here" — MAPPED as 6b (2024's 6c).
+#   * NEW dependent rows 6 and 7 (FN/LN/SSN/Relationship/BD(6C).6 and .7):
+#     the grid grew from six to eight rows ("If you have more than eight
+#     dependents, attach a statement"); the six old rows moved up 11.8-12.5
+#     pt. All eight rows MAPPED (dependent_1..dependent_8).
+#   * NEW "PRMSSN ITIN" and "SPOSSN ITIN" (/Btn, on /Yes) under the printed
+#     caption "ITIN" beside each SSN box — MAPPED as identifying_number.is_itin
+#     / spouse.identifying_number.is_itin (independent, one per person; a
+#     sub-key of the SSN line so the gate does not read it as an option of
+#     the spouse_decedent flag).
+#   * NEW LASTDED (return page 2, 5-cell comb, /MaxLen 5) is the new printed
+#     line 8 "LOUISIANA STANDARD DEDUCTION" — MAPPED as "8" (money).
+#   * NEW icon_empty (return page 4, a /Btn pushbutton, /Ff 65536, beside
+#     "Your Signature") — DOR button machinery like 2024's buttonClear, NOT
+#     mapped. NoBarcode / ArchiveDataBarP1 stay unmapped as in 2024.
+#   * NEW on EXCLUDED pages: LCAB (Schedule D, "Louisiana Cancer Advisory
+#     Board") and SchEFedDepSTBNS (Schedule E, line 2E) — outside this pack.
+#   * CHANGED: eleven text widgets LOST their /MaxLen (PRMFN, PRMLN, PRMSFX,
+#     SPOFN, SPOLN, SPOSFX, STADDR, UT, UN, CITY, FOREIGNNATION; 2024: 20, 19,
+#     3, 20, 19, 3, 30, 6, 5, 25, 25) and FOREIGNNATION widened 120.6 pt
+#     (now 314 pt). With no /MaxLen left, the pack maxlen is the only guard,
+#     so each is capped by the box it renders in: the unchanged /DA is
+#     "/CoBo 12 Tf" (Courier Bold 12, every glyph 0.6 em = 7.2 pt, the metric
+#     verify's clipping scan applies to a Courier face), so the budget is
+#     the measured rect width / 7.2 pt — PRMFN/SPOFN 148.1 pt hold 20, PRMLN/
+#     SPOLN 119.1 pt hold 16, PRMSFX/SPOSFX 26.2 pt hold 3, STADDR 227.5 pt
+#     holds 31, UT/UN 40.3 pt hold 5, CITY 225.9 pt holds 31, ZIPCD 54.5 pt
+#     holds 7, FOREIGNNATION 314.0 pt holds 43. Three 2024 maxlens exceeded
+#     that budget and are TIGHTENED here: name.last / spouse.name.last 19 ->
+#     16 and mailing_address.unit_type 6 -> 5 (a 19-glyph last name rendered
+#     cut at the box edge and verify FAILed it as P-001 clipping); the other
+#     eight keep the 2024 value, which fits (ZIP stays 5). Return-page
+#     capacities only — see the header-echo note under "SSN combs" for the
+#     narrower PRMFN kid on an excluded page. No /DA, /Ff or /AP state of
+#     any surviving widget changed.
+#   * Return pages 2-4: the mapped money widgets moved 0-12.3 pt as the rows
+#     re-flowed around the new line 8; no page changed its page index.
+#
+# FACE DELTAS vs 2024 (work/facediff.txt). NEW line 8 "LOUISIANA STANDARD
+# DEDUCTION – Enter the standard deduction amount that corresponds with your
+# filing status. Enter $12,500 if filing status is 1 or 3; $25,000 if 2, 4,
+# or 5." EVERY line after 7 is renumbered by +1 — 8A-8D -> 9A-9D, 9 -> 10, …,
+# 22A/22B -> 23A/23B, …, 46 -> 47 — while the widget NAMES stay (FEDITM, the
+# 2024 line 8A, is the 2025 line 9A), so every line key below is taken from
+# the 2025 printed label next to the widget's render, never from the name.
+# Line 10 is now "YOUR LOUISIANA TAXABLE INCOME – Subtract Lines 8 and 9D from
+# Line 7" (2024: "TAX TABLE INCOME – Subtract Line 8D from Line 7"); line 11
+# "YOUR LOUISIANA INCOME TAX – Multiply Line 10 by .03. Round to the nearest
+# dollar." (2024: the tax-table lookup). Lines 19/20 add "– See instructions."
+# The 6/6A-6F exemption block is replaced by "6A AGE DESIGNATION" and the 6B
+# dependents row (eight rows). "ITIN" captions beside both SSN boxes. The
+# years: line 27 "WITHHELD FOR 2025", 28 "CARRIED FORWARD FROM 2024", 29
+# "ESTIMATED PAYMENTS MADE FOR 2025", 37 "CREDITED TO 2026 INCOME TAX"; line
+# 35 cites "Schedule D, Line 14" (2024: Line 20); the perjury text cites
+# "Line 38"; page 4's barcode note is longer. Printed figures checked against
+# knowledge/states/la/2025.yaml: $12,500 / $25,000 (line 8), ".03" (line 11),
+# $25,000 refundable child-care / school-readiness AGI ceiling (lines 14-15)
+# — all agree.
+# Form IT-540 (IT-540-WEB-BC), 2025 — Louisiana Resident Income Tax Return.
+#
+# Authored via the taxfill pipeline: the 2024 vision-mapped base -> work/port.py
+# field table (position + printed label) -> scripts/audit_pack.py sentinel
+# audit, every return page read at zoom -> this map.
+#
+# Revision: see PRINTED IDENTITY in the port banner above. Page 5 carries the
+# perjury declaration + "Your Signature" block + the email row + the
+# paid-preparer block + the where-to-file addresses, and the IMPORTANT note
+# "All four (4) pages of this return MUST be mailed in together along with
+# your W-2s and completed schedules."
+#
+# PAGES MAPPED vs EXCLUDED.
+#   MAPPED — PDF pages 2,3,4,5 = the filed four-page IT-540 return
+#     (return Page 1 of 4 .. 4 of 4): identity/age designation/dependents,
+#     Lines 7-47, the direct-deposit block, the signature/preparer block.
+#   EXCLUDED — everything else in the 17-page booklet:
+#     - PDF page 1: the "Louisiana File Online" cover page (no widgets).
+#     - PDF pages 6-17: the ATTACH-IF-COMPLETED schedules and worksheets that
+#       are SEPARATE filed forms, not the IT-540 core return — Schedule C
+#       (Nonrefundable Priority 1, p.6), Schedule D (Donations, p.7),
+#       Schedule E (Adjustments, p.8), the School Expense Deduction Worksheet
+#       (p.9), Schedule F (Refundable Priority 2, p.10), Schedule G/H/I/J
+#       (pp.11-13), and the refundable/nonrefundable child-care & school-
+#       readiness credit worksheets (pp.14-17). Each is its own attachment
+#       with its own line numbering and would be a distinct pack.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw ids the
+# form ships, e.g. "PRMFN", "FEDAGI", "TAXWTH"). The dependent-detail grid uses
+# dotted row ids ("FN(6C).0".."BD(6C).7"); the direct-deposit "forwarded
+# outside US?" radio uses kids "OUTSIDEUS.Y"/"OUTSIDEUS.N".
+#
+# SSN combs. PRMSSN / SPOSSN are 9-cell comb boxes (the printed instruction
+# "You must enter your SSN below in the same order as shown on your federal
+# return"); they are comb:true, format:ssn_digits_only, maxlen:9 (dashes would
+# overflow the cells). PRMSSN is ONE field with 16 kid widgets — one on EVERY
+# PDF page 2-17: the header echo of the mapped return pages 3-5 ("Enter your
+# Social Security Number.") and of every excluded schedule and worksheet page
+# 6-17 — so it is mapped once and one write fills them all. PRMFN and PRMLN
+# likewise carry header-echo kids on the excluded PDF pages 9, 16 and 17
+# (the school-expense and child-care worksheets). Those echo boxes are
+# narrower than the return-page box: PRMLN's are 119.2 / 115.6 / 115.6 pt
+# (16 glyphs, matching maxlen 16), but PRMFN's page-9 kid is only 105.4 pt
+# (14 glyphs at 7.2 pt) against 148.1 pt (20) on the return page and 147.1 pt
+# on pages 16-17. name.first keeps maxlen 20 — the box this pack maps holds
+# 20 and the filler refuses, never truncates, an over-maxlen value — so a
+# 15-20 glyph first name fills the return cleanly but is clipped in the
+# page-9 worksheet header, and verify's whole-document clipping scan reports
+# that kid as a P-001 FAIL. The integrator may tighten name.first to 14 to
+# make every fill verify-clean at the cost of the return page's capacity.
+# The date boxes (both birth dates and both dates of death) are
+# 8-cell combs (/Ff comb bit, /MaxLen 8, printed "MM D D Y Y Y Y"): comb:true,
+# maxlen 8, so a date goes in as MMDDYYYY digits.
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix and is
+# mapped `money` (Lines 7-47 and their sub-lines 9A-9D, 14A/14B, 23A/23B).
+# Boxes that hold a COUNT or a single code digit are `text` (the schema has no
+# int type): the 6B dependents count, the filing-status box FILSTA (enter 1-5),
+# the school-readiness star digits (line 15), the refund-method digit
+# REFUNDOPT (line 38, enter 2 or 3). Names, address, dates, phone, bank
+# routing/account, preparer block are `text`.
+#
+# Checkboxes / radio groups.
+#   - The six "Mark Box" header flags (Name Change .. NOL Carryback), the two
+#     ITIN flags, the two 6A age boxes, and the lone FEDNRQ / SDE / FARMER
+#     (L33) / FARMER2 (L46) / PPSELFEMP flags are each an independent single
+#     /Yes checkbox (the 6A pair is adjudicated INDEPENDENT in
+#     SEPARATE_OPTION_SETS_ADJUDICATED: one box per person, both may apply).
+#   - Line 23A "CONSUMER USE TAX – You must mark one of these boxes." is two
+#     separate widgets (No use tax due = /no ; Amount from the Consumer Use Tax
+#     Worksheet = /Yes) answering ONE question -> shared group use_tax_23a.
+#     Line 23B likewise (No usage fee due / Amount from Form R-19000A, group
+#     road_usage_23b).
+#   - Direct-deposit account Type is two widgets (Checking = /1 ; Savings =
+#     /yes) answering one question -> group deposit_account_type. The
+#     "forwarded to a financial institution located outside the United
+#     States?" Yes/No is ONE field OUTSIDEUS with kids .Y/.N (on_state /yes
+#     each) -> they share group deposit_forwarded_us.
+#   on_state values were re-dumped from this blank's /AP /N, never guessed.
+#
+# Relations. Only equalities printed on the 2025 face with every operand mapped
+# to a single line: 9D "Subtract Line 9C from Line 9B", 18 "Add Lines 14 and 15
+# through 17", 22 "Subtract Line 21 from Line 19", 24 "Add Lines 22, 23A, and
+# 23B", 31 "Add Lines 25 through 30", 36 "Subtract Line 35 from Line 34", 38
+# "Subtract Line 37 from Line 36", 47 "Add Lines 39 through 46" (the three
+# subtractions are unconditional on the face and hold on every filing path
+# with a blank operand read as zero). Lines that floor at zero (L10, L13),
+# round (L11 "Multiply Line 10 by .03. Round to the nearest dollar"), or
+# branch on a comparison (L20, L32, L34, L39) are OMITTED.
+#
+# Cross_form. Line 7's printed label is "FEDERAL ADJUSTED GROSS INCOME"; the
+# 2025 Form 1040 prints AGI on line 11a, so the single cross_form equality is
+# 7 == f1040.11a.
+#
+# Coverage. 4 filed pages; 155 field entries mapped below (2024: 151 — 10
+# dropped, 14 added: 8, 6b, 6a.spouse_65_older (re-keyed EXMBA), the two
+# ITIN flags, and ten dependent-7/8 cells).
+form: IT-540
+jurisdiction: states/la
+tax_year: 2025
+source_url: https://dam.ldr.la.gov/taxforms/IT540WEB-BC-2025-F.pdf
+pdf_sha256: e6b029c3a113b55f308c4b58fc1d67b5f4eb26079b2247290483fa9673a0cd09
+acroform_root: ''
+fields:
+  # ===================================================== return Page 1 of 4
+  # ---- "Mark Box" header flags (each an independent single checkbox)
+  - { line: name_change, field: NAMCHG, type: checkbox, on_state: /Yes }
+  - { line: decedent_filing, field: DCDANT, type: checkbox, on_state: /Yes }
+  - { line: spouse_decedent, field: DCDSPO, type: checkbox, on_state: /Yes }
+  - { line: address_change, field: ADDRSCHG, type: checkbox, on_state: /Yes }
+  - { line: amended_return, field: AMMEND, type: checkbox, on_state: /Yes }
+  - { line: nol_carryback, field: NOL, type: checkbox, on_state: /Yes }
+  # ---- name / suffix (the 2025 widgets carry no /MaxLen; each maxlen <= rect width / 7.2 pt at the "/CoBo 12 Tf" Courier metric)
+  - { line: name.first, field: PRMFN, type: text, maxlen: 20 }           # 148.1 pt holds 20 (page-9 echo kid 105.4 pt = 14, see banner)
+  - { line: name.middle_initial, field: PRMMN, type: text, maxlen: 1 }
+  - { line: name.last, field: PRMLN, type: text, maxlen: 16 }            # 119.1 pt / 7.2 = 16 (2024's /MaxLen 19 is gone; 19 rendered cut)
+  - { line: name.suffix, field: PRMSFX, type: text, maxlen: 3 }          # 26.2 pt holds 3
+  - { line: spouse.name.first, field: SPOFN, type: text, maxlen: 20 }    # 148.1 pt holds 20
+  - { line: spouse.name.middle_initial, field: SPOMN, type: text, maxlen: 1 }
+  - { line: spouse.name.last, field: SPOLN, type: text, maxlen: 16 }     # 119.1 pt / 7.2 = 16
+  - { line: spouse.name.suffix, field: SPOSFX, type: text, maxlen: 3 }   # 26.2 pt holds 3
+  # ---- address
+  - { line: mailing_address.street, field: STADDR, type: text, maxlen: 30 }   # 227.5 pt holds 31
+  - { line: mailing_address.unit_type, field: UT, type: text, maxlen: 5 }     # 40.3 pt / 7.2 = 5.6 -> 5 (2024's /MaxLen 6 is gone; 6 rendered cut both ends, the box is centre-quadded)
+  - { line: mailing_address.unit_number, field: UN, type: text, maxlen: 5 }   # 40.3 pt holds 5
+  - { line: mailing_address.city, field: CITY, type: text, maxlen: 25 }       # 225.9 pt holds 31
+  - { line: mailing_address.state, field: STATE, type: text, maxlen: 2 }
+  - { line: mailing_address.zip, field: ZIPCD, type: text, maxlen: 5 }  # Courier Bold 12 in a 54.5 pt box — ZIP only, no ZIP+4
+  - { line: mailing_address.foreign_nation, field: FOREIGNNATION, type: text, maxlen: 25 }
+  # ---- SSN combs + ITIN flags / phone / DOB / date of death
+  - { line: identifying_number, field: PRMSSN, type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: identifying_number.is_itin, field: PRMSSN ITIN, type: checkbox, on_state: /Yes }  # printed "ITIN" box beside "Your SSN" (new 2025)
+  - { line: spouse.identifying_number, field: SPOSSN, type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: spouse.identifying_number.is_itin, field: SPOSSN ITIN, type: checkbox, on_state: /Yes }  # printed "ITIN" box beside "Spouse's SSN" (new 2025)
+  - { line: daytime_phone, field: PHNNUM, type: text, maxlen: 10 }
+  - { line: date_of_birth, field: YDOB, type: text, maxlen: 8, comb: true }  # 8 cells printed MM D D Y Y Y Y: digits only
+  - { line: spouse.date_of_birth, field: SDOB, type: text, maxlen: 8, comb: true }
+  - { line: date_of_death, field: DDOD, type: text, maxlen: 8, comb: true }  # "Decedent's Date of Death"
+  - { line: spouse.date_of_death, field: SDOD, type: text, maxlen: 8, comb: true }  # "Spouse's Date of Death"
+  # ---- filing status (enter 1-5 in one box), 6A age designation, 6B dependents
+  - { line: filing_status, field: FILSTA, type: text, maxlen: 1 }
+  - { line: 6a.65_older, field: EXM65A, type: checkbox, on_state: /Yes }  # 6A AGE DESIGNATION "Taxpayer 65 or Older" (box left of that caption)
+  - { line: 6a.spouse_65_older, field: EXMBA, type: checkbox, on_state: /Yes }  # 6A "Spouse 65 or Older" — 2024's blind box, re-keyed by position + label
+  - { line: 4_qualifying_person_name, field: ND, type: text }           # status 4 "If the qualifying person is not your dependent, enter name here."
+  - { line: 5_qualifying_person_name, field: ND(2), type: text }        # status 5, same instruction
+  - { line: 6b, field: EXMT6B, type: text, maxlen: 2 }                  # 6B "number of dependents claimed on Federal Form 1040 or 1040-SR" (2-cell comb)
+  # ---- 6B dependent-detail grid (rows 0..7; columns First/Last/SSN/Relationship/Birth Date (mm/dd/yyyy))
+  - { line: dependent_1.first_name, field: FN(6C).0, type: text }
+  - { line: dependent_1.last_name, field: LN(6C).0, type: text }
+  - { line: dependent_1.ssn, field: SSN(6C).0, type: text }
+  - { line: dependent_1.relationship, field: Relationship(6C).0, type: text }
+  - { line: dependent_1.birth_date, field: BD(6C).0, type: text }
+  - { line: dependent_2.first_name, field: FN(6C).1, type: text }
+  - { line: dependent_2.last_name, field: LN(6C).1, type: text }
+  - { line: dependent_2.ssn, field: SSN(6C).1, type: text }
+  - { line: dependent_2.relationship, field: Relationship(6C).1, type: text }
+  - { line: dependent_2.birth_date, field: BD(6C).1, type: text }
+  - { line: dependent_3.first_name, field: FN(6C).2, type: text }
+  - { line: dependent_3.last_name, field: LN(6C).2, type: text }
+  - { line: dependent_3.ssn, field: SSN(6C).2, type: text }
+  - { line: dependent_3.relationship, field: Relationship(6C).2, type: text }
+  - { line: dependent_3.birth_date, field: BD(6C).2, type: text }
+  - { line: dependent_4.first_name, field: FN(6C).3, type: text }
+  - { line: dependent_4.last_name, field: LN(6C).3, type: text }
+  - { line: dependent_4.ssn, field: SSN(6C).3, type: text }
+  - { line: dependent_4.relationship, field: Relationship(6C).3, type: text }
+  - { line: dependent_4.birth_date, field: BD(6C).3, type: text }
+  - { line: dependent_5.first_name, field: FN(6C).4, type: text }
+  - { line: dependent_5.last_name, field: LN(6C).4, type: text }
+  - { line: dependent_5.ssn, field: SSN(6C).4, type: text }
+  - { line: dependent_5.relationship, field: Relationship(6C).4, type: text }
+  - { line: dependent_5.birth_date, field: BD(6C).4, type: text }
+  - { line: dependent_6.first_name, field: FN(6C).5, type: text }
+  - { line: dependent_6.last_name, field: LN(6C).5, type: text }
+  - { line: dependent_6.ssn, field: SSN(6C).5, type: text }
+  - { line: dependent_6.relationship, field: Relationship(6C).5, type: text }
+  - { line: dependent_6.birth_date, field: BD(6C).5, type: text }
+  - { line: dependent_7.first_name, field: FN(6C).6, type: text }
+  - { line: dependent_7.last_name, field: LN(6C).6, type: text }
+  - { line: dependent_7.ssn, field: SSN(6C).6, type: text }
+  - { line: dependent_7.relationship, field: Relationship(6C).6, type: text }
+  - { line: dependent_7.birth_date, field: BD(6C).6, type: text }
+  - { line: dependent_8.first_name, field: FN(6C).7, type: text }
+  - { line: dependent_8.last_name, field: LN(6C).7, type: text }
+  - { line: dependent_8.ssn, field: SSN(6C).7, type: text }
+  - { line: dependent_8.relationship, field: Relationship(6C).7, type: text }
+  - { line: dependent_8.birth_date, field: BD(6C).7, type: text }
+
+  # ===================================================== return Page 2 of 4
+  # (PRMSSN / LSTNAM are single AcroForm fields whose widgets repeat the SSN /
+  # last-name echo on every return page — mapped once on Page 1 / once below.)
+  - { line: federal_wages_if_not_required, field: FEDWAG, type: money }  # "If you are not required to file a federal return, indicate wages here."
+  - { line: not_required_federal, field: FEDNRQ, type: checkbox, on_state: /Yes }  # "Mark this box and enter zero "0" on Line 13."
+  - { line: schedule_e_attached, field: SDE, type: checkbox, on_state: /Yes }  # Line 7 "From Louisiana Schedule E, attached"
+  - { line: "7", field: FEDAGI, type: money }                           # FEDERAL ADJUSTED GROSS INCOME
+  - { line: "8", field: LASTDED, type: money }                          # LOUISIANA STANDARD DEDUCTION — $12,500 if filing status 1 or 3; $25,000 if 2, 4, or 5 (new 2025)
+  - { line: 9a, field: FEDITM, type: money }                            # FEDERAL ITEMIZED DEDUCTIONS (2024 line 8A)
+  - { line: 9b, field: STDDED, type: money }                            # FEDERAL ITEMIZED DEDUCTION FOR MEDICAL AND DENTAL EXPENSES
+  - { line: 9c, field: EXCESS, type: money }                            # FEDERAL STANDARD DEDUCTION
+  - { line: 9d, field: FEDTAX, type: money }                            # EXCESS FEDERAL ITEMIZED DEDUCTIONS — Subtract Line 9C from Line 9B
+  - { line: "10", field: LATXBL, type: money }                          # YOUR LOUISIANA TAXABLE INCOME — Subtract Lines 8 and 9D from Line 7
+  - { line: "11", field: LATAX, type: money }                           # YOUR LOUISIANA INCOME TAX — Multiply Line 10 by .03
+  - { line: "12", field: ONRP1CRS, type: money }                        # NONREFUNDABLE PRIORITY 1 CREDITS — From Schedule C, Line 6
+  - { line: "13", field: TLNRP1CRS, type: money }                       # TAX LIABILITY AFTER NONREFUNDABLE PRIORITY 1 CREDITS — Subtract Line 12 from Line 11
+  - { line: "14", field: RFCCC, type: money }                           # 2025 LOUISIANA REFUNDABLE CHILD CARE CREDIT (federal AGI $25,000 or less)
+  - { line: 14a, field: QRFCCC, type: money }                           # qualified expense amount, Refundable Child Care Credit Worksheet, Line 3
+  - { line: 14b, field: RFCCCW6, type: money }                          # Refundable Child Care Credit Worksheet, Line 6
+  - { line: "15", field: RFSRCR, type: money }                          # 2025 LOUISIANA REFUNDABLE SCHOOL READINESS CREDIT
+  - { line: 15_code_5, field: REF5ST, type: text, maxlen: 1 }           # school-readiness "5 Star" box
+  - { line: 15_code_4, field: REF4ST, type: text, maxlen: 1 }           # "4 Star"
+  - { line: 15_code_3, field: REF3ST, type: text, maxlen: 1 }           # "3 Star"
+  - { line: 15_code_2, field: REF2ST, type: text, maxlen: 1 }           # "2 Star"
+  - { line: "16", field: LAEIC, type: money }                           # EARNED INCOME CREDIT — LA EIC Worksheet, Line 3
+  - { line: "17", field: INSCRDREDUCED, type: money }                   # OTHER REFUNDABLE PRIORITY 2 CREDITS — From Schedule F, Line 9
+  - { line: "18", field: ORP2CRS, type: money }                         # TOTAL REFUNDABLE PRIORITY 2 CREDITS — Add Lines 14 and 15 through 17
+  - { line: "19", field: TLRFP2CRS, type: money }                       # TAX LIABILITY AFTER REFUNDABLE PRIORITY 2 CREDITS — See instructions
+  - { line: "20", field: OPARP2C, type: money }                         # OVERPAYMENT AFTER REFUNDABLE PRIORITY 2 CREDITS — See instructions
+  - { line: "21", field: NRP3CRS, type: money }                         # NONREFUNDABLE PRIORITY 3 CREDITS — From Schedule J, Line 16
+  - { line: "22", field: ADLATX, type: money }                          # ADJUSTED LOUISIANA INCOME TAX — Subtract Line 21 from Line 19
+  - { line: last_name_first4, field: LSTNAM, type: text, maxlen: 4 }    # "Enter the first 4 letters of your last name in these boxes." (repeats every page)
+
+  # ===================================================== return Page 3 of 4
+  - { line: 23a.no_use_tax_due, field: 22A_USE_NO, type: checkbox, on_state: /no, group: use_tax_23a }  # 23A "No use tax due"
+  - { line: 23a.amount_from_worksheet, field: 22A_USE_YS, type: checkbox, on_state: /Yes, group: use_tax_23a }  # 23A "Amount from the Consumer Use Tax Worksheet"
+  - { line: 23a, field: USETAX, type: money }                           # CONSUMER USE TAX (2024 line 22A)
+  - { line: 23b.no_usage_fee_due, field: 22B_USE_NO, type: checkbox, on_state: /no, group: road_usage_23b }  # 23B "No usage fee due"
+  - { line: 23b.amount_from_r19000a, field: 22B_USE_YS, type: checkbox, on_state: /Yes, group: road_usage_23b }  # 23B "Amount from Form R-19000A"
+  - { line: 23b, field: E&HVRUFEE, type: money }                        # ELECTRIC AND HYBRID VEHICLE ROAD USAGE FEE
+  - { line: "24", field: INUSTX, type: money }                          # TOTAL INCOME TAX, CONSUMER USE TAX, AND ... ROAD USAGE FEE — Add Lines 22, 23A, and 23B
+  - { line: "25", field: OPORP2C, type: money }                         # OVERPAYMENT OF REFUNDABLE PRIORITY 2 CREDITS — amount from Line 20
+  - { line: "26", field: RFP4CRS, type: money }                         # REFUNDABLE PRIORITY 4 CREDITS — From Schedule I, Line 6
+  - { line: "27", field: TAXWTH, type: money }                          # AMOUNT OF LOUISIANA TAX WITHHELD FOR 2025
+  - { line: "28", field: AMTFWD, type: money }                          # AMOUNT OF CREDIT CARRIED FORWARD FROM 2024
+  - { line: "29", field: ESTPAY, type: money }                          # AMOUNT OF ESTIMATED PAYMENTS MADE FOR 2025
+  - { line: "30", field: EXTPAY, type: money }                          # AMOUNT OF EXTENSION PAYMENT
+  - { line: "31", field: TTLCR&PAY, type: money }                       # TOTAL REFUNDABLE TAX CREDITS AND PAYMENTS — Add Lines 25 through 30
+  - { line: "32", field: OPYMNT, type: money }                          # OVERPAYMENT — If Line 31 is greater than Line 24, subtract Line 24 from Line 31
+  - { line: 33_farmer, field: FARMER, type: checkbox, on_state: /Yes }  # L33 "If you are a farmer, check the box."
+  - { line: "33", field: UNPYMT, type: money }                          # UNDERPAYMENT PENALTY (Form R-210R)
+  - { line: "34", field: ADJOPT, type: money }                          # ADJUSTED OVERPAYMENT
+  - { line: "35", field: TOTALDONATIONS, type: money }                  # TOTAL DONATIONS — From Schedule D, Line 14
+  - { line: "36", field: SUBTOT, type: money }                          # SUBTOTAL — Subtract Line 35 from Line 34
+  - { line: "37", field: CRDFWD, type: money }                          # AMOUNT OF LINE 36 TO BE CREDITED TO 2026 INCOME TAX
+  - { line: "38", field: REFUND, type: money }                          # AMOUNT TO BE REFUNDED — Subtract Line 37 from Line 36
+  - { line: 38_refund_method, field: REFUNDOPT, type: text, maxlen: 1 }  # enter 2 (paper check) or 3 (direct deposit)
+  - { line: deposit_account_type.checking, field: CHECKING, type: checkbox, on_state: /1, group: deposit_account_type }
+  - { line: deposit_account_type.savings, field: SAVINGS, type: checkbox, on_state: /yes, group: deposit_account_type }
+  - { line: deposit_forwarded_outside_us.yes, field: OUTSIDEUS.Y, type: checkbox, on_state: /yes, group: deposit_forwarded_us }
+  - { line: deposit_forwarded_outside_us.no, field: OUTSIDEUS.N, type: checkbox, on_state: /yes, group: deposit_forwarded_us }
+  - { line: routing_number, field: BKROUTING, type: text, maxlen: 9 }
+  - { line: account_number, field: BKACCT, type: text, maxlen: 17 }
+
+  # ===================================================== return Page 4 of 4
+  - { line: "39", field: TAXDUE, type: money }                          # AMOUNT YOU OWE — If Line 24 is greater than Line 31, subtract Line 31 from Line 24
+  - { line: "40", field: ADDMFF, type: money }                          # ADDITIONAL DONATION TO THE MILITARY FAMILY ASSISTANCE FUND
+  - { line: "41", field: ADDCPR, type: money }                          # ADDITIONAL DONATION TO THE COASTAL PROTECTION AND RESTORATION FUND
+  - { line: "42", field: ADDFBK, type: money }                          # ADDITIONAL DONATION TO LOUISIANA FOOD BANK ASSOCIATION
+  - { line: "43", field: INTINT, type: money }                          # INTEREST — From the Interest Calculation Worksheet, Line 5
+  - { line: "44", field: INTDP, type: money }                           # DELINQUENT FILING PENALTY — Worksheet, Line 3
+  - { line: "45", field: INTLP, type: money }                           # DELINQUENT PAYMENT PENALTY — Worksheet, Line 7
+  - { line: 46_farmer, field: FARMER2, type: checkbox, on_state: /Yes }  # L46 "If you are a farmer, check the box."
+  - { line: "46", field: INTUP, type: money }                           # UNDERPAYMENT PENALTY (Form R-210R)
+  - { line: "47", field: TTLDUE, type: money }                          # BALANCE DUE LOUISIANA — Add Lines 39 through 46. PAY THIS AMOUNT.
+  # ---- Sign Here / paid-preparer block (signatures are handwritten; icon_empty is a pushbutton, unmapped)
+  - { line: signature_date, field: Pg4 Date(A), type: text }            # "Date (mm/dd/yyyy)" beside Your Signature
+  - { line: spouse.signature_date, field: Pg4 Date(B), type: text }     # "Date (mm/dd/yyyy)" beside Spouse's Signature
+  - { line: email_address, field: Email Address, type: text }           # "Email Address"
+  - { line: preparer.name, field: PreparerName, type: text }            # "Print/Type Preparer's Name"
+  - { line: preparer.signature_date, field: Pg4 Date(C), type: text }
+  - { line: preparer.self_employed, field: PPSELFEMP, type: checkbox, on_state: /Yes }  # "Check if Self-employed"
+  - { line: preparer.firm_name, field: FIRMNAME, type: text }
+  - { line: preparer.firm_fein, field: FIRMFEIN, type: text }
+  - { line: preparer.firm_address, field: FIRMADDRS, type: text }
+  - { line: preparer.telephone, field: PAIDPREPTEL, type: text }
+  - { line: preparer.ptin, field: PAIDPREPID, type: text, maxlen: 10 }  # "PTIN, FEIN, or LDR Account Number of Paid Preparer"
+relations:
+  - "9d == 9b - 9c"                              # Line 9D "EXCESS FEDERAL ITEMIZED DEDUCTIONS – Subtract Line 9C from Line 9B."
+  - "18 == 14 + 15 + 16 + 17"                    # Line 18 "TOTAL REFUNDABLE PRIORITY 2 CREDITS – Add Lines 14 and 15 through 17."
+  - "22 == 19 - 21"                              # Line 22 "ADJUSTED LOUISIANA INCOME TAX – Subtract Line 21 from Line 19."
+  - "24 == 22 + 23a + 23b"                       # Line 24 "Add Lines 22, 23A, and 23B."
+  - "31 == 25 + 26 + 27 + 28 + 29 + 30"          # Line 31 "TOTAL REFUNDABLE TAX CREDITS AND PAYMENTS – Add Lines 25 through 30."
+  - "36 == 34 - 35"                              # Line 36 "SUBTOTAL – Subtract Line 35 from Line 34. This amount of overpayment is available for credit or refund."
+  - "38 == 36 - 37"                              # Line 38 "AMOUNT TO BE REFUNDED – Subtract Line 37 from Line 36."
+  - "47 == 39 + 40 + 41 + 42 + 43 + 44 + 45 + 46" # Line 47 "BALANCE DUE LOUISIANA – Add Lines 39 through 46."
+cross_form:
+  - "7 == f1040.11a"       # Line 7 "FEDERAL ADJUSTED GROSS INCOME" = Form 1040 (2025) line 11a (AGI).
+identity_fields:
+  - identifying_number
+  - name.first
+  - name.last
+signature: { page: 5 }
+mailing: null
