@@ -1,0 +1,2445 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/ga/2023/ga500/pack.yaml (ported 2026-09-30,
+# Phase J JS5; triaged RE-MAP — 30 of the 532 widgets the 2023 pack maps are
+# gone from the 2025 blank). No 2024 pack has shipped, so the base is 2023.
+#
+# URL. https://apps.dor.ga.gov/FillableForms/webpdf/examples/2025GA500.pdf,
+# the same DOR host and path as the 2023 source_url with the year rolled.
+# Downloaded twice with curl on 2026-09-30 (HTTP 200, application/pdf,
+# 2,244,908 bytes each). Both digests are c7d56d972dab…, the same as the JS5
+# triage copy. %PDF-1.7, an AcroForm with no XFA, 28 pages as in 2023.
+#
+# PRINTED IDENTITY. Page 1 prints "Georgia Form 500 (Rev. 07/09/25)
+# Individual Income Tax Return Georgia Department of Revenue 2025 (Approved
+# web version) Page 1" (2023: "Rev. 08/30/23" and "2023"). Pages 2-5 print
+# "Georgia Form 500 ... 2025" with "Page 2" .. "Page 5". Schedules 1, 2, 2B
+# and 3 and the IND-CR Summary Worksheet print "(Rev. 07/09/25)" and
+# "2025 (Approved web version)" (Schedules 2 and 2B said "Approved software
+# version" in 2023). The IND-CR 201-214 pages print "2025 (Rev. 07/09/25)
+# (Approved web version)". Schedule 4 prints "(Rev. 07/09/25)", and the
+# 525-TV prints "525-TV (Rev. 05/20/25)" and "2025".
+# printed_year_verified = 2025.
+#
+# AcroForm topology against the 2023 blank. 676 widgets = 559 names (606
+# pypdf field objects). 2023 had 965 = 848 (943). The drop is the on-screen
+# calculator: its 222 "b.<row>.<page>" keys and 42 cdrabout/cdrbd/cdrbu/
+# cdrclose/cdrm/cdrtod/cdry controls (on six pages) are gone, and so are the
+# "Tax Table", "IND-CR Forms" and "500 Schedule 3" link buttons. None of
+# them was mapped. Of the 532 widgets the 2023 pack maps, 293 are unchanged,
+# 195 moved /Rect, 10 changed a flag or /MaxLen in place, 4 changed page and
+# 30 are GONE:
+#   * L6A / L6B / L6C (2023 line 6 "Number of exemptions", 6a Yourself, 6b
+#     Spouse, 6c total). Line 6 now prints "6. Reserved" over a hatched box
+#     that has no widget. Keys 6a_yourself / 6b_spouse / 6c_total dropped.
+#   * L11A, L11B, L11B_SUM, L11C and the four L11_TP65 / L11_TPBLIND /
+#     L11_SP65 / L11_SPBLIND boxes (2023 11a standard deduction, 11b "Self:
+#     65 or over? Blind? ... Total x 1,300", 11c total). ONE new ReadOnly
+#     widget L11 replaces them on printed line 11, MAPPED as "11". Keys 11a,
+#     11_self_65, 11_self_blind, 11_spouse_65, 11_spouse_blind, 11b_count,
+#     11b and 11c dropped.
+#   * L14A_6C, L14A, L14B_7A, L14B, L14C (2023 14a personal exemptions, 14b
+#     dependents, 14c total). The new ReadOnly L14_7C (the "number from Line
+#     7c" cell) and L14 (the amount) replace them on printed line 14, MAPPED
+#     as 14_count / "14". Keys 14a_count, 14a, 14b_count, 14b, 14c dropped.
+#   * S1TP_BIRTHDATE / S1SP_BIRTHDATE (the 2023 Schedule 1 "Date of Birth"
+#     rows). The dates of birth moved to page 1, into the new TP_BIRTH_DATE
+#     ("Your Date of Birth") and SPOUSE_BIRTH_DATE ("Spouse's Date of
+#     Birth"), /MaxLen 10 each, MAPPED as tp_birth_date / sp_birth_date. The
+#     2023 keys s1.tp_birth_date / s1.sp_birth_date are renamed because the
+#     boxes are no longer on Schedule 1 (no other file names either key).
+#   * S3L10B, S3L10B_SUM and the four S3L10B_TP65 / _TPBLIND / _SP65 /
+#     _SPBLIND boxes (Schedule 3 line 10b "Additional Standard Deduction").
+#     No replacement. Keys s3.10b, s3.10b_count and the four s3.10b_self_* /
+#     s3.10b_spouse_* boxes dropped.
+#   * S3L11A_6C, S3L11A, S3L11B_7A, S3L11B (Schedule 3 lines 11a and 11b).
+#     The new ReadOnly S3L11_7C and S3L11 replace them on printed line 11,
+#     MAPPED as s3.11_count / s3.11. Keys s3.11a_count, s3.11a, s3.11b_count
+#     and s3.11b dropped.
+#   * CB_CASUALITY_LOSS / S4_PORTION_CASUALITY_LOSS (the Schedule 4 "CASUALTY
+#     LOSS" box and its portion). No replacement: TYPE OF LOSS now prints
+#     NORMAL LOSS, INSURANCE LOSS (2) YEAR and FARM LOSS (2)YEAR only. Keys
+#     s4.casualty_loss / s4.casualty_loss_portion dropped.
+# The 8 NEW widgets are all mapped: the seven above plus L46, the ReadOnly
+# box of the new printed line 46 "THIS IS YOUR REFUND", mapped as "46".
+# The 4 PAGE moves: TP_DEC and SP_DEC went from the page-5 signature block to
+# page 1, where each prints "(Check box if deceased)" beside its SSN; L23 went
+# from page 4 to 3 and L39 from page 5 to 4 with the renumbering below.
+# The widget NAMES follow the new printed numbering: L19..L45 keep their
+# names, yet each now sits on a different printed line than in 2023 (see
+# FACE DELTAS). Keys "19".."45" therefore keep their widgets while their
+# meaning moves: 2023's "19" (IND-CR credits) is "20" here, "23" (Georgia tax
+# withheld on wages) is "24", "45" (the refund) is "46", and so on. Every
+# row was re-read on the sentinel renders, never matched by name.
+# Flags and limits on the surviving widgets:
+#   * /MaxLen. ID_B and ID_C 11 -> 9, ID_E 11 -> 10 (income statements B, C
+#     and E, "EMPLOYER/PAYER FEDERAL ID NUMBER (FEIN) SSN"); S2P2L4_FEIN and
+#     S2P2L8_FEIN 10 -> 11 (Schedule 2B lines 4 and 8). Each pack maxlen now
+#     equals its widget's. S4P1L5 lost its /MaxLen (see Schedule 4 below).
+#   * ReadOnly SET this year on L7C (7c: the form's JavaScript computes
+#     GN("L7A") + GN("L7B")), on L20, L23 and L30 (the renumbered IND-CR
+#     total, balance and overpayment), on CB_DD_TYPE / RTNUMBER / ACCNUMBER
+#     (46a direct deposit: the document JavaScript's checkDirectDeposit()
+#     unlocks all three only when GN("L46") > 0, i.e. on a refund), and on the
+#     Schedule 4 header copies TP_FIRSTNAME_COPY / TP_MIDINIT_COPY /
+#     TP_LASTNAME_COPY / TP_SUFFIX_COPY (the JavaScript copies them with
+#     SV("TP_FIRSTNAME_COPY",GVS("TP_FIRSTNAME")...) etc.). All of these stay
+#     mapped: taxfill never runs that JavaScript, so an unmapped one ships
+#     blank (P-007 class 4). CLEARED on L19, L21, L26, L44 (now filer-entry
+#     lines: the Eligible Itemizer credit, Schedule 2 credits, estimated tax,
+#     interest), CRP12L1C (IND-CR 212 C1) and CRP13L2 (IND-CR 213 line 2).
+#   * /F. S4P1L5 4 -> 6 (Print|Hidden), with its printed line now "Reserved".
+#   * /V. YY, the voucher Tax Year dropdown, '2023' -> '2025' (its only
+#     option now). S4P1L5 '0' -> none.
+#   * /DA. Unchanged on every surviving mapped widget, compared field by
+#     field: /CoBo 10 on the return's text boxes, /Helv 10 on the four
+#     dependent-relationship and two credit-code /Ch pickers, /Cour 10 on
+#     STATELIST, and /Cour 8, 8.5 and 10 on the 525-TV. Thirteen date widgets
+#     gained an explicit /Q 0 (left), the default. CB_DD_TYPE's two kids now
+#     carry an /Off appearance beside /C and /S.
+#   * Hidden. 21 of the widgets this pack maps are Hidden (/F 6) on the
+#     blank — the same 21 as in 2023, all mapped there too, and the filler
+#     does not change /F, so a value written to one does not print: the
+#     525-TV block (the name/address, city/state/ZIP, both SSNs, Tax Year,
+#     phone and Amount Paid boxes and the Amended / Paper / Electronically
+#     Filed boxes; when GN("L45") > GN("L46"), a balance due, the form's
+#     JavaScript sets display = 0 (visible) on the name/address, city/
+#     state/ZIP, SSN, Amount, Tax Year and phone boxes and on "Paper
+#     Return" ONLY, copies the name, address, SSNs and phone into them, and
+#     keeps "Electronically Filed" and "Amended Return" at display = 1
+#     (hidden) on both branches; "Paper Return" also ships pre-ticked on
+#     the blank, /V /1 /DV /1 /AS /1 in 2023 and 2025 alike, see the
+#     voucher.return_medium comment), IND-CR 212's PhysicianNumber /
+#     AssistantNumber (ReadOnly, no printed caption, no JavaScript setter
+#     in either year; both carry the same /TU, "Advanced Pratice Registered
+#     Nurse or Physician Assistant License Number" [sic]),
+#     IND-CR 213 line 2 (CRP13L2, printed as a hatched box in both years), the
+#     IND-CR Summary's line 5 (SUML5, "Reserved", hatched), Schedule 3's
+#     S3L9_TimeRatio and CB_DEDUCTION_TYPE's /G kid. The 2025 face now names
+#     the last two: line 9 reads "enter percentage or check the box for Time
+#     Ratio" and line 10 prints "Georgia Itemized" beside the /G kid, yet
+#     neither shows a box on the render (2023 printed neither phrase). Kept
+#     mapped as in 2023; see the open points at the end of this banner.
+# SSN_COPY, the page-header "YOUR SOCIAL SECURITY NUMBER" box, is MAPPED this
+# year as tp_ssn_page_header (2023 left it unmapped). It is ONE ReadOnly
+# /MaxLen 11 field with 26 widget kids, one on every page but 1 and 6, and
+# the document JavaScript fills it with SV("SSN_COPY",GVS("TP_SSN")...), which
+# taxfill never runs. Unmapped, 26 page headers print blank. That is the
+# CONVENTIONS "Identity page mirrors" case (P-007 class 4), in the shape of
+# Ohio's TP_SSN1, which Ohio maps under the same key tp_ssn_page_header
+# (paired with tp_ssn by an EXTRA_IDENTITY_MIRRORS row; GA has none, see the
+# open points). Like its source tp_ssn it is text, maxlen 11, no comb.
+# Schedule 4 Part I line 5 is dropped: 2023 printed "5. Previous Net
+# Operating Loss claimed" there (a ReadOnly widget holding 0); 2025 prints
+# "5. Reserved" over a hatched box, the widget S4P1L5 is now Hidden, and line
+# 6 now reads "Total of Lines 1 - 4". Nothing on the face names line 5, and a
+# value written there would be invisible, so s4.p1.5 is not a key and
+# fill_form refuses it. (`reserved: true` needs a RESERVED_LINE_KEEPS row, and
+# test_every_table_row_names_a_discovered_pack_of_the_right_jurisdiction keeps
+# state packs out of the RESERVED_* tables.)
+#
+# FACE DELTAS vs 2023.
+#   * Page 1: "6. Reserved"; the dates of birth and the deceased boxes
+#     described above; the "DEPARTMENT USE ONLY" panel is gone; the filing
+#     statuses read "B. Married filing jointly", "C. Married filing
+#     separately" and "D. Head of household or Qualifying surviving spouse".
+#   * Page 2: "11. Standard Deduction (Do not use FEDERAL STANDARD
+#     DEDUCTION)" with "Enter $12,000 if the filing status from Line 5 is A,
+#     C, or D. If the filing status is B, enter $24,000." and "Use EITHER
+#     Line 11 OR Line 12c."; line 13 "Subtract either Line 11 or Line 12c from
+#     Line 10; enter balance".
+#   * Page 3: "14. Enter the number from Line 7c. Multiply by $4,000"; 15a
+#     "(Line 13 less Line 14 or Schedule 3, Line 14)"; 15c "(Subtract Line 15b
+#     from Line 15a)"; "16. Tax (Multiply Line 15c by 5.19%. Round to the
+#     nearest dollar)" (2023: "Use Tax Rate Schedule in the IT-511 Tax
+#     Booklet"); a NEW "19. Georgia Eligible Itemizer Tax Credit (See IT-511
+#     Tax Booklet)"; 2023's 19-22 become 20-23 ("22. Total Credits Used (sum
+#     of Lines 17-21) cannot exceed Line 16", "23. Balance (Subtract Line 22
+#     from Line 16)").
+#   * Page 4: 2023's 23-38 become 24-39: "26. Estimated Tax paid for 2025 and
+#     Form IT-560", "28. Total prepayment credits (Add Lines 24, 25, 26 and
+#     27)", 29 and 30 compare Lines 23 and 28, "31. Amount to be credited to
+#     2026 ESTIMATED TAX". The REACH line (39) moved up from page 5.
+#   * Page 5: 2023's 39-45 and 45a become 40-46 and 46a: "42. Form 500 UET
+#     (Estimated tax penalty) 500 UET exception attached", "45. (If you owe)
+#     Add Lines 29, 32 through 44", "46. (If you are due a refund) Subtract the
+#     sum of Lines 31 thru 44 from Line 30 THIS IS YOUR REFUND", "46a. Direct
+#     Deposit". The refund address reads "PO BOX 740392 ATLANTA, GA
+#     30374-0392" (2023: 740380 / 30374-0380), and "PO BOX 740399 ATLANTA, GA
+#     30374-0399" prints under line 45. The signature captions lost "(Check
+#     box if deceased)". Keys 41_uet_exception and 45a_* are renamed
+#     42_uet_exception and 46a_* for the lines they now sit on (no other file
+#     names any of them).
+#   * Schedule 1: the "Date of Birth" rows are gone; worksheet line 4
+#     "Maximum Earned Income" prints 5000 (2023: 4000).
+#   * Schedule 3: line 9 "RATIO: Divide Line 8, Column C by Line 8, Column A
+#     enter percentage or check the box for Time Ratio."; "10. Standard
+#     Deduction / Itemized / Georgia Itemized" with the $12,000 / $24,000 note
+#     (its S and I kids swapped places: Standard Deduction's box now comes
+#     first); "11. Enter the number on Line 7c from Form 500 or Form 500X
+#     multiply by $4,000"; "12. ... Add Lines 10 and 11"; a new footnote to
+#     line 13, "*If Georgia itemized deductions are claimed, multiply Line 11
+#     by Ratio on Line 9 and add Line 10. Enter result on Line 13."; "Column A
+#     must equal Column B plus Column C."
+#   * IND-CR 202: "2. Georgia allowable rate ... 50%" and "(Line 1 x .50)"
+#     (2023: 30%, "(Line 1 x .30)"). IND-CR 203 and 206: unused credit "may
+#     be carried forward for up to three (3) tax years". IND-CR 207: "the
+#     physician must, on or before May 15, 2024, meet the following
+#     conditions". IND-CR 212: "ending on or before December 31, 2026" (2023:
+#     2023). IND-CR Summary: "Page 3 Line 20" (2023: Line 19).
+#   * Schedule 4: TYPE OF LOSS has no casualty box; Part I "5. Reserved" and
+#     "6. Total of Lines 1 - 4"; Part II line 18 adds "If zero or less, enter
+#     zero"; Schedule 4 pages 3 and 4 (each headed "Part III: Carryback")
+#     print "YOUR SOCIAL SECURITY NUMBER" over the header box.
+# Cross-checked against knowledge/states/ga/2025.yaml: 5.19%, $12,000 /
+# $24,000, $4,000, IND-CR 204's 10% / 150, IND-CR 201's $500 and the two PO
+# boxes agree. Two do not, reported and not edited here: the knowledge pack
+# gives IND-CR 202 as 30% where this face prints 50%, and it names line 19
+# "Georgia Resident Itemizer Tax Credit" where the face prints "Georgia
+# Eligible Itemizer Tax Credit".
+#
+# OPEN POINTS, not changed by this port.
+#   * tp_ssn_page_header is mapped here, while the 2023 pack leaves SSN_COPY
+#     unmapped and its STATE_COMPUTED_READONLY row calls that correct. The two
+#     years should agree. Its mirror pairing with tp_ssn is not gate-checked:
+#     the key has no page-number shape and EXTRA_IDENTITY_MIRRORS has no GA row.
+#   * The widgets listed under Hidden — RESOLVED at integration (2026-10-01,
+#     P-027): fill_form clears the Hidden bit on every widget it writes, so
+#     the 525-TV voucher cells and the s3.9_time_ratio / s3.10_deduction.*
+#     ticks print once written (the form's own JavaScript only sets value /
+#     readonly on S3L9_TimeRatio and CB_DEDUCTION_TYPE, never display, so the
+#     DOR's own fillable form keeps them hidden); verify's P-027 check reads
+#     the flags back.
+#   * voucher.return_medium — RESOLVED at integration (2026-10-01, P-028):
+#     "Paper Return" is pre-ticked on the blank (/DV /1), and fill_form now
+#     writes /Off to the unselected members of a separate-field group, so
+#     selecting voucher.electronically_filed alone clears it.
+#   * IND-CR 212's PhysicianNumber / AssistantNumber: Hidden, ReadOnly, no
+#     printed caption and no JavaScript setter in either year (the export
+#     lines //UF_Text += GVS("PhysicianNumber") are commented out in both),
+#     so they fit none of P-007's four classes cleanly; kept mapped as the
+#     2023 pack maps them (indcr212.physician_number / assistant_number).
+#   * The seven /Ch pickers (STATELIST, L7_DEP1-4_REL_LST, S2L1_CREDITCODE_LST,
+#     S2P2L1_CREDITCODE_LST) carry /F 0, no Print flag, in both years. Each is
+#     a screen-only companion of a printing text box that is mapped too, and
+#     S2P2L1_CREDITCODE_LST is now 9.9 pt wide (2023: 13.3).
+# ===========================================================================
+# Form 500, 2025 — Georgia Individual Income Tax Return (with Schedules 1, 2,
+# 2B, 3, the IND-CR individual credit forms 201-214, the IND-CR Summary
+# Worksheet, Schedule 4 Net Operating Loss Application, and the 525-TV
+# Individual/Fiduciary Payment Voucher) — the full 28-page fillable web PDF.
+#
+# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep —
+# every widget rendered with its own field name) -> vision-map workflow (all
+# 28 pages + zoomed crops read to place each field on its printed line /
+# column) -> this map -> golden round-trip + adversarial audit. Ported to
+# 2025 by the JS5 census + a sentinel render of every page (see above).
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the raw opaque
+# sentinel ids the form ships with, e.g. "TP_FIRSTNAME", "L8", "S1L7A",
+# "CRP12L1A", "S4P3L4B"). The main return (pages 1-5) has THREE amount
+# columns only on Schedule 3 (part-year/nonresident: A/B/C) and on the
+# Schedule 1 retirement worksheets (TAXPAYER / SPOUSE); everywhere else each
+# printed line is a single widget and the line key is the printed line number
+# ("L8" widget -> line "8", "S1L1" -> "s1.1", etc.). Navigation/print/reset
+# widgets and the duplicate page-10 field names are intentionally NOT mapped
+# (see Coverage).
+#
+# Coverage. The blank PDF exposes 606 AcroForm field objects (pypdf
+# get_fields), 559 distinct widget names. Mapped here: every fillable DATA
+# widget — taxpayer/spouse identity and the page-header SSN mirror, the
+# numbered income/tax/credit/payment lines and their sub-boxes, the six
+# income-statement (W-2/1099/G2) blocks, every Schedule 1/2/2B/3 line, all
+# eleven IND-CR credit forms (201-204, 206-209, 212-214; the 2023 banner said
+# twelve) and the IND-CR Summary Worksheet, all four Schedule 4 NOL pages,
+# and the 525-TV payment voucher. Each radio/choice
+# question (the six CB_WH_TYPE_* withholding types, the six CB_ID_TYPE_*
+# FEIN/SSN selectors, CB_DD_TYPE checking/savings, CB_DEDUCTION_TYPE
+# itemized/standard/Georgia, CB_CARRIED_FORWARD yes/no) is ONE /Btn field;
+# every option is mapped as its own checkbox line on that shared field with
+# the exact on_state read from the widget /AP /N dicts, and the filler
+# enforces single-selection within the shared `group`.
+#
+# Intentionally NOT mapped (none accept taxpayer data):
+#   * JavaScript PUSHBUTTONS (Ff bit-17 set): the per-page "printlid.<n>"
+#     print lids, "RESET PAGE", "BTPRINT", "VERCTRL", and the "GoTo Page
+#     1/2/3/3a" navigation links. Their only "on_state" is the
+#     appearance-stream dictionary key "/BBox". (The 2023 blank's on-screen
+#     calculator keypad is gone from this one.)
+#   * "Name Change" — Ff 65536 (bit-17 pushbutton) with NO /AP /N states; it
+#     is a UI toggle, not a fillable checkbox (/TU "Goto IT-511 Tax Booklet
+#     Name Change Sect...").
+#   * The "UF_*" user-form controls: "UF_Start"/"UF_Reset" (/BBox
+#     pushbuttons), "UF_L1A".."UF_L4B" (Ff 65537 pushbuttons), and the
+#     "UF_InfoA"/"UF_InfoB" hidden control text fields.
+#   * The /Btn "link" widgets "Form 500 Schedule 1" and "Additonal Schedule
+#     2" (their states are appearance-dict keys only — they jump to a page).
+#   * "SCANLINE" (Ff 8388609, ReadOnly) — the machine-generated voucher scan
+#     line, computed by the form, never typed.
+#   * The duplicate "P10.Page3.*" names pypdf reports for the page-10
+#     Schedule-2 widgets (31 of them, e.g. "P10.Page3.S2L2", beside the
+#     "P10.Page3" parent and "P10.Page3.Additonal Schedule 2"): the same logical
+#     widgets are mapped once under their bare names (S2L1_CREDITCODE, S2L9,
+#     S2L12, ...).
+#   * Schedule 4 Part I line 5 (S4P1L5): printed "Reserved", Hidden, and
+#     outside line 6's "Total of Lines 1 - 4" (see the port banner).
+# No pre-printed statutory constants are mapped: the per-rotation factors
+# "X 500", "X 1000", "X 375", "X 750" (IND-CR 212), the 50%/10%/33.33% rate lines (IND-CR 202/
+# 204/209) and the 150/500 maximum-credit lines (IND-CR 204/206) print as
+# fixed text with NO widget, and the hatched Schedule-4 cells (pages 3 and 4,
+# Part III line 3 column (a) and lines 12-13 column (b)) carry no field. (The
+# IND-CR Summary line 5 prints "Reserved" over a hatched box but still ships a
+# widget, SUML5 — Hidden and ReadOnly in both 2023 and 2025 — and line 13
+# totals "Lines 1 through 12", so it stays mapped as a leave-blank line. So
+# does IND-CR 213 line 2, "Enter $2,000 per qualified foster child (for years
+# after first five taxable years of adoption)", whose box is hatched and whose
+# widget CRP13L2 is Hidden in both years.)
+#
+# Money vs text. Every dollar box is mapped `money` (each prints to a wide
+# right-justified amount cell), EXCEPT a few small capped-credit cells whose
+# AcroForm /MaxLen is only 3-4 characters and so physically cannot hold a
+# four-digit dollar amount — Form 500 line 17 (Low Income Credit, /MaxLen 3),
+# the four IND-CR 201 boxes (CRP1L1..L4, /MaxLen 3, credit capped at $500), and
+# the seven IND-CR 212 per-rotation amounts (CRP12L1A..L1C, /MaxLen 4, capped
+# at $8,500). Those are mapped `text` with the widget's own maxlen so the
+# clipping scan enforces the form's real cell limit. Genuine text widgets stay
+# `text`: names,
+# address/city/state/ZIP, SSN/FEIN boxes (maxlen 9-11), driver's-license
+# id, dates (birth/disability/signature/death), the residency-status number,
+# the filing-status letter, the single-letter credit/deduction codes, the
+# 1- and 2-digit count boxes (dependent counts, the two "number from Line 7c"
+# cells, the IND-CR 212 rotation-count boxes), the company/relationship/
+# county/practice text, the preparer block, the bank routing (9) / account
+# (17) numbers, the voucher name/address block, and the phone numbers. The
+# voucher/header dropdowns (TAXTYPE, YY tax-year, STATELIST, the *_REL_LST
+# relationship pickers, and the S2/S2B credit-code pickers) are AcroForm /Ch
+# choice widgets; the filler writes their /V as text, so they are mapped
+# `text`.
+#
+# Relations. Only printed arithmetic that holds on EVERY filing path is
+# declared — a part-year/nonresident filer omits lines 9-14 and uses
+# Schedule 3, and a schedule the filer does not use reads as zeros. Declared:
+# 28 = 24 + 25 + 26 + 27 ("Add Lines 24, 25, 26 and 27"), and, since dotted
+# line ids evaluate (Phase J JP5c), the schedule sub-totals the face prints —
+# Schedule 1 lines 6 ("sum of Lines 1-5"), 13 ("sum of Lines 7-12", i.e.
+# 7a-7f and 8-12) and 14 ("Line 6 less Line 13"); Schedule 2 and 2B line 9
+# ("sum of Lines 2 through 8"); Schedule 3 line 5 in each column ("TOTAL
+# LINES 1 THRU 4"), its header rule "Column A must equal Column B plus
+# Column C." on the income lines 1-5 (added by the fixer pass), 12 ("Add
+# Lines 10 and 11") and 14 ("Subtract Line 13
+# from Line 8, Column C"); the IND-CR Summary line 13 ("Total of Lines 1
+# through 12") and its carry to line 20 (the summary prints "Enter here and on
+# Form 500/500X, Page 3 Line 20"; line 20 is "Credits used from IND-CR Summary
+# Worksheet"); and Schedule 4 Part II lines 10 ("Add Lines 1 - 9") and 17
+# ("Add Lines 11-16"). The form's own JavaScript computes each of these the
+# same way (L20 and SUML12 take the same running sum). The line-20 carry
+# is the one relation that spans the return and a worksheet: the summary
+# page also prints "Keep IND-CR Summary Worksheet for your records", so a
+# fill that enters line 20 and a credit form but leaves the worksheet
+# blank reports "20 == indcr_summary.13 FAIL ... blank-as-zero:
+# indcr_summary.13" (measured: {20: 500, indcr201.3: 500} -> report.ok
+# False; with indcr_summary.1 and .13 = 500 every relation passes). The
+# worksheet lives on the same filed PDF and the DOR JavaScript always fills
+# both, so the carry stays declared; dropping it for symmetry with lines 9
+# and 21 (no sibling relation, see below) is the integrator's call. OMITTED per the
+# conservative house style: arithmetic that holds only on the full-year path
+# (10, 13, 14 and 15a's "Line 13 less Line 14", and line 9, so Schedule 1
+# line 14 "Enter Net Total here and on Line 9" is not a relation either;
+# "Omit Lines 9 thru 14 ... if you are a part-year or nonresident filer"),
+# floors and caps (22 "cannot exceed Line 16", 23
+# "if zero or less", the "lesser of" credit lines, Schedule 4 Part II line
+# 18), the owe-vs-refund branches (29, 30, 45, 46), the "if applicable"
+# Schedule 2/2B carryovers, Schedule 3 line 8's "PLUS OR MINUS" (and the
+# column rule on its adjustment lines 6-8, which that row feeds), and the
+# percentage lines (Schedule 3 lines 9 and 13, IND-CR 202/204/209). Not
+# declared either, as in 2023: the arithmetic inside the individual IND-CR
+# credit forms, the Schedule 1 retirement and military worksheets, and the
+# Schedule 4 carryback columns.
+#
+# Cross_form. Line 8's printed label is "Federal adjusted gross income (From
+# Federal Form 1040)", so the single cross_form equality 8 == f1040.11a is
+# declared (the 2025 Form 1040 prints AGI on line 11a).
+form: Form 500
+jurisdiction: states/ga
+tax_year: 2025
+source_url: https://apps.dor.ga.gov/FillableForms/webpdf/examples/2025GA500.pdf
+pdf_sha256: c7d56d972dab40bc3145d91bed11767132e0b3b95725c9cf7db196906e7b80f6
+acroform_root: ''
+fields:
+  # ==================================================== PAGE 1 — header / status
+  - line: fiscal_year_beginning
+    field: FISCAL_DATE_BEG
+    type: text
+    maxlen: 10
+  - line: fiscal_year_ending
+    field: FISCAL_DATE_END
+    type: text
+    maxlen: 10
+  - line: dl_state_issued
+    field: STATE_ISSUED
+    type: text
+    maxlen: 2
+  - line: dl_state_issued_list      # driver's-license state dropdown (/Ch companion)
+    field: STATELIST
+    type: text
+  - line: dl_state_id               # Your Driver's License/State ID
+    field: DL/STATE_ID
+    type: text
+    maxlen: 9
+  - line: tp_first_name
+    field: TP_FIRSTNAME
+    type: text
+    maxlen: 15
+  - line: tp_middle_initial
+    field: TP_MIDINIT
+    type: text
+    maxlen: 1
+  - line: tp_ssn
+    field: TP_SSN
+    type: text
+    maxlen: 11
+  - line: tp_deceased               # "(Check box if deceased)" beside YOUR SOCIAL SECURITY NUMBER (page 5 in 2023)
+    field: TP_DEC
+    type: checkbox
+    on_state: /X
+  - line: tp_last_name
+    field: TP_LASTNAME
+    type: text
+    maxlen: 20
+  - line: tp_suffix
+    field: TP_SUFFIX
+    type: text
+    maxlen: 3
+  - line: tp_birth_date             # "Your Date of Birth" (NEW widget; 2023's s1.tp_birth_date on Schedule 1)
+    field: TP_BIRTH_DATE
+    type: text
+    maxlen: 10
+  - line: sp_first_name
+    field: SP_FIRSTNAME
+    type: text
+    maxlen: 15
+  - line: sp_middle_initial
+    field: SP_MIDINIT
+    type: text
+    maxlen: 1
+  - line: sp_ssn
+    field: SP_SSN
+    type: text
+    maxlen: 11
+  - line: sp_deceased               # "(Check box if deceased)" beside SPOUSE'S SOCIAL SECURITY NUMBER (page 5 in 2023)
+    field: SP_DEC
+    type: checkbox
+    on_state: /X
+  - line: sp_last_name
+    field: SP_LASTNAME
+    type: text
+    maxlen: 20
+  - line: sp_suffix
+    field: SP_SUFFIX
+    type: text
+    maxlen: 3
+  - line: sp_birth_date             # "Spouse's Date of Birth" (NEW widget; 2023's s1.sp_birth_date on Schedule 1)
+    field: SPOUSE_BIRTH_DATE
+    type: text
+    maxlen: 10
+  - line: address_changed           # "CHECK IF ADDRESS HAS CHANGED"
+    field: ADDRESSCHANGE
+    type: checkbox
+    on_state: /X
+  - line: address_line1             # line 2: Address (number and street or P.O. Box)
+    field: ADDRESS_L1
+    type: text
+    maxlen: 30
+  - line: address_line2
+    field: ADDRESS_L2
+    type: text
+    maxlen: 30
+  - line: city                      # line 3
+    field: CITY
+    type: text
+    maxlen: 22
+  - line: state
+    field: STATE
+    type: text
+    maxlen: 2
+  - line: zip
+    field: ZIP5
+    type: text
+    maxlen: 10
+  - line: country                   # Country if foreign
+    field: COUNTRY
+    type: text
+    maxlen: 25
+  - line: "4"                       # line 4: Residency Status (enter number: 1 full-year, 2 part-year, 3 nonresident)
+    field: L4_RESIDENCY_STATUS
+    type: text
+    maxlen: 1
+  - line: 4.part_year_from          # Part-Year Resident from date
+    field: L4_DATE1
+    type: text
+    maxlen: 10
+  - line: 4.part_year_to            # Part-Year Resident to date
+    field: L4_DATE2
+    type: text
+    maxlen: 10
+  - line: "5"                       # line 5: Filing Status (enter letter)
+    field: L5_FILING_STATUS
+    type: text
+    maxlen: 1
+  # line 6 prints "6. Reserved" over a hatched box with NO widget (2023: the 6a/6b/6c exemption boxes L6A/L6B/L6C,
+  # gone from this blank), so there is no line-6 key.
+  - line: 7a_qualified_dependents   # line 7a: Number of Qualified Dependents
+    field: L7A
+    type: text
+    maxlen: 2
+  - line: 7b_unborn_dependents      # 7b: Number of Unborn Dependents
+    field: L7B
+    type: text
+    maxlen: 2
+  - line: 7c_total_dependents       # 7c: Total Number of Dependents (ReadOnly: the form's JS sets GN("L7A") + GN("L7B"))
+    field: L7C
+    type: text
+    maxlen: 2
+
+  # ==================================================== PAGES 2-5, 7-28 — header SSN mirror
+  - line: tp_ssn_page_header        # "YOUR SOCIAL SECURITY NUMBER" header: ONE ReadOnly field, 26 kids; JS copies TP_SSN
+    field: SSN_COPY
+    type: text
+    maxlen: 11
+
+  # ==================================================== PAGE 2 — dependents (7d)
+  - line: dependent_1.name          # line 7d dependent detail rows
+    field: L7_DEP1_NAME_INIT
+    type: text
+    maxlen: 15
+  - line: dependent_1.last_name
+    field: L7_DEP1_LASTNAME
+    type: text
+    maxlen: 17
+  - line: dependent_1.ssn
+    field: L7_DEP1_SSN
+    type: text
+    maxlen: 11
+  - line: dependent_1.relationship
+    field: L7_DEP1_REL
+    type: text
+    maxlen: 17
+  - line: dependent_1.relationship_list
+    field: L7_DEP1_REL_LST
+    type: text
+  - line: dependent_2.name
+    field: L7_DEP2_NAME_INIT
+    type: text
+    maxlen: 15
+  - line: dependent_2.last_name
+    field: L7_DEP2_LASTNAME
+    type: text
+    maxlen: 17
+  - line: dependent_2.ssn
+    field: L7_DEP2_SSN
+    type: text
+    maxlen: 11
+  - line: dependent_2.relationship
+    field: L7_DEP2_REL
+    type: text
+    maxlen: 17
+  - line: dependent_2.relationship_list
+    field: L7_DEP2_REL_LST
+    type: text
+  - line: dependent_3.name
+    field: L7_DEP3_NAME_INIT
+    type: text
+    maxlen: 15
+  - line: dependent_3.last_name
+    field: L7_DEP3_LASTNAME
+    type: text
+    maxlen: 17
+  - line: dependent_3.ssn
+    field: L7_DEP3_SSN
+    type: text
+    maxlen: 11
+  - line: dependent_3.relationship
+    field: L7_DEP3_REL
+    type: text
+    maxlen: 17
+  - line: dependent_3.relationship_list
+    field: L7_DEP3_REL_LST
+    type: text
+  - line: dependent_4.name
+    field: L7_DEP4_NAME_INIT
+    type: text
+    maxlen: 15
+  - line: dependent_4.last_name
+    field: L7_DEP4_LASTNAME
+    type: text
+    maxlen: 17
+  - line: dependent_4.ssn
+    field: L7_DEP4_SSN
+    type: text
+    maxlen: 11
+  - line: dependent_4.relationship
+    field: L7_DEP4_REL
+    type: text
+    maxlen: 17
+  - line: dependent_4.relationship_list
+    field: L7_DEP4_REL_LST
+    type: text
+
+  # ==================================================== PAGE 2 — income (8-13)
+  - line: "8"                       # Federal adjusted gross income (From Federal Form 1040)
+    field: L8
+    type: money
+  - line: "9"                       # Adjustments from Form 500 Schedule 1
+    field: L9
+    type: money
+  - line: "10"                      # Georgia adjusted gross income (Net total of Line 8 and Line 9)
+    field: L10
+    type: money
+  - line: "11"                      # Standard Deduction — "Enter $12,000 if the filing status from Line 5 is A, C, or D.
+    field: L11                      # If the filing status is B, enter $24,000." (NEW ReadOnly widget; the form's JS
+    type: money                     # sets it from L5 and clears it when 12a/12b are used)
+  - line: 12a                       # Federal Itemized Deductions (Schedule A - Form 1040)
+    field: L12A
+    type: money
+  - line: 12b                       # Less adjustments
+    field: L12B
+    type: money
+  - line: 12c                       # Georgia Total Itemized Deductions
+    field: L12C
+    type: money
+  - line: "13"                      # Subtract either Line 11 or Line 12c from Line 10; enter balance
+    field: L13
+    type: money
+
+  # ==================================================== PAGE 3 — tax / credits (14-23)
+  - line: 14_count                  # 14: "Enter the number from Line 7c." (NEW ReadOnly cell; the JS copies L7C)
+    field: L14_7C
+    type: text
+    maxlen: 1
+    comb: true                      # the widget carries the Comb flag (/Ff 29360129 = ReadOnly|Comb|DoNotScroll), one cell
+  - line: "14"                      # 14: "Multiply by $4,000" (NEW ReadOnly widget; the JS sets L7C x 4000)
+    field: L14
+    type: money
+  - line: 15a                       # Income before GA NOL (Line 13 less Line 14 or Schedule 3, Line 14)
+    field: L15A
+    type: money
+  - line: 15b                       # Georgia NOL utilized
+    field: L15B
+    type: money
+  - line: 15c                       # Georgia Taxable Income (Subtract Line 15b from Line 15a)
+    field: L15C
+    type: money
+  - line: "16"                      # Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar)
+    field: L16
+    type: money
+  - line: 17a                       # Low Income Credit — 17a worksheet number
+    field: L17A
+    type: text
+    maxlen: 2
+  - line: 17b                       # Low Income Credit — 17b worksheet number
+    field: L17B
+    type: text
+    maxlen: 2
+  - line: "17"                      # Low Income Credit amount — printed "17c." (key kept as 2023's "17"; a rename
+                                    # is a reviewed cross-pack change under the CONVENTIONS rename rule, not a port edit)
+    field: L17
+    type: text
+    maxlen: 3
+  - line: "18"                      # Other State(s) Tax Credit (Include a copy of the other state(s) return)
+    field: L18
+    type: money
+  - line: "19"                      # Georgia Eligible Itemizer Tax Credit (See IT-511 Tax Booklet) — NEW line in 2025;
+    field: L19                      # 2023's line 19 (IND-CR credits) is line 20 below
+    type: money
+  - line: "20"                      # Credits used from IND-CR Summary Worksheet
+    field: L20
+    type: money
+  - line: "21"                      # Total Credits Used from Schedule 2 Georgia Tax Credits (must be filed electronically)
+    field: L21
+    type: money
+  - line: "22"                      # Total Credits Used (sum of Lines 17-21) cannot exceed Line 16
+    field: L22
+    type: money
+  - line: "23"                      # Balance (Subtract Line 22 from Line 16) if zero or less than zero, enter zero
+    field: L23
+    type: money
+
+  # -------- PAGE 3 — Income Statement Details A, B, C
+  - line: is_a.wh_type.w2
+    field: CB_WH_TYPE_A.0.0
+    type: checkbox
+    on_state: /W-2s
+    group: is_a_wh_type
+  - line: is_a.wh_type.g2a
+    field: CB_WH_TYPE_A.0.0
+    type: checkbox
+    on_state: /G2-A
+    group: is_a_wh_type
+  - line: is_a.wh_type.g2lp
+    field: CB_WH_TYPE_A.0.0
+    type: checkbox
+    on_state: /G2-LP
+    group: is_a_wh_type
+  - line: is_a.wh_type.1099
+    field: CB_WH_TYPE_A.0.0
+    type: checkbox
+    on_state: /1099s
+    group: is_a_wh_type
+  - line: is_a.wh_type.g2fl
+    field: CB_WH_TYPE_A.0.0
+    type: checkbox
+    on_state: /G2-FL
+    group: is_a_wh_type
+  - line: is_a.wh_type.g2rp
+    field: CB_WH_TYPE_A.0.0
+    type: checkbox
+    on_state: /G2-RP
+    group: is_a_wh_type
+  - line: is_a.id_type.fein
+    field: CB_ID_TYPE_A
+    type: checkbox
+    on_state: /FEIN
+    group: is_a_id_type
+  - line: is_a.id_type.ssn
+    field: CB_ID_TYPE_A
+    type: checkbox
+    on_state: /SSN
+    group: is_a_id_type
+  - line: is_a.payer_id            # Employer/Payer Federal ID Number (FEIN)
+    field: ID_A
+    type: text
+    maxlen: 9
+  - line: is_a.state_wh_id         # Employer/Payer State Withholding ID
+    field: WH_ID_A
+    type: text
+    maxlen: 10
+  - line: is_a.ga_wages            # GA Wages / Income
+    field: WAGES_INCOME_A
+    type: money
+  - line: is_a.ga_tax_withheld     # GA Tax Withheld
+    field: TAX_WH_A
+    type: money
+  - line: is_b.wh_type.w2
+    field: CB_WH_TYPE_B.0.0
+    type: checkbox
+    on_state: /W-2s
+    group: is_b_wh_type
+  - line: is_b.wh_type.g2a
+    field: CB_WH_TYPE_B.0.0
+    type: checkbox
+    on_state: /G2-A
+    group: is_b_wh_type
+  - line: is_b.wh_type.g2lp
+    field: CB_WH_TYPE_B.0.0
+    type: checkbox
+    on_state: /G2-LP
+    group: is_b_wh_type
+  - line: is_b.wh_type.1099
+    field: CB_WH_TYPE_B.0.0
+    type: checkbox
+    on_state: /1099s
+    group: is_b_wh_type
+  - line: is_b.wh_type.g2fl
+    field: CB_WH_TYPE_B.0.0
+    type: checkbox
+    on_state: /G2-FL
+    group: is_b_wh_type
+  - line: is_b.wh_type.g2rp
+    field: CB_WH_TYPE_B.0.0
+    type: checkbox
+    on_state: /G2-RP
+    group: is_b_wh_type
+  - line: is_b.id_type.fein
+    field: CB_ID_TYPE_B
+    type: checkbox
+    on_state: /FEIN
+    group: is_b_id_type
+  - line: is_b.id_type.ssn
+    field: CB_ID_TYPE_B
+    type: checkbox
+    on_state: /SSN
+    group: is_b_id_type
+  - line: is_b.payer_id
+    field: ID_B
+    type: text
+    maxlen: 9                       # the widget's /MaxLen (2023: 11)
+  - line: is_b.state_wh_id
+    field: WH_ID_B
+    type: text
+    maxlen: 10
+  - line: is_b.ga_wages
+    field: WAGES_INCOME_B
+    type: money
+  - line: is_b.ga_tax_withheld
+    field: TAX_WH_B
+    type: money
+  - line: is_c.wh_type.w2
+    field: CB_WH_TYPE_C.0.0
+    type: checkbox
+    on_state: /W-2s
+    group: is_c_wh_type
+  - line: is_c.wh_type.g2a
+    field: CB_WH_TYPE_C.0.0
+    type: checkbox
+    on_state: /G2-A
+    group: is_c_wh_type
+  - line: is_c.wh_type.g2lp
+    field: CB_WH_TYPE_C.0.0
+    type: checkbox
+    on_state: /G2-LP
+    group: is_c_wh_type
+  - line: is_c.wh_type.1099
+    field: CB_WH_TYPE_C.0.0
+    type: checkbox
+    on_state: /1099s
+    group: is_c_wh_type
+  - line: is_c.wh_type.g2fl
+    field: CB_WH_TYPE_C.0.0
+    type: checkbox
+    on_state: /G2-FL
+    group: is_c_wh_type
+  - line: is_c.wh_type.g2rp
+    field: CB_WH_TYPE_C.0.0
+    type: checkbox
+    on_state: /G2-RP
+    group: is_c_wh_type
+  - line: is_c.id_type.fein
+    field: CB_ID_TYPE_C
+    type: checkbox
+    on_state: /FEIN
+    group: is_c_id_type
+  - line: is_c.id_type.ssn
+    field: CB_ID_TYPE_C
+    type: checkbox
+    on_state: /SSN
+    group: is_c_id_type
+  - line: is_c.payer_id
+    field: ID_C
+    type: text
+    maxlen: 9                       # the widget's /MaxLen (2023: 11)
+  - line: is_c.state_wh_id
+    field: WH_ID_C
+    type: text
+    maxlen: 10
+  - line: is_c.ga_wages
+    field: WAGES_INCOME_C
+    type: money
+  - line: is_c.ga_tax_withheld
+    field: TAX_WH_C
+    type: money
+
+  # -------- PAGE 4 — Income Statement Details D, E, F
+  - line: is_d.wh_type.w2
+    field: CB_WH_TYPE_D.0.0
+    type: checkbox
+    on_state: /W-2s
+    group: is_d_wh_type
+  - line: is_d.wh_type.g2a
+    field: CB_WH_TYPE_D.0.0
+    type: checkbox
+    on_state: /G2-A
+    group: is_d_wh_type
+  - line: is_d.wh_type.g2lp
+    field: CB_WH_TYPE_D.0.0
+    type: checkbox
+    on_state: /G2-LP
+    group: is_d_wh_type
+  - line: is_d.wh_type.1099
+    field: CB_WH_TYPE_D.0.0
+    type: checkbox
+    on_state: /1099s
+    group: is_d_wh_type
+  - line: is_d.wh_type.g2fl
+    field: CB_WH_TYPE_D.0.0
+    type: checkbox
+    on_state: /G2-FL
+    group: is_d_wh_type
+  - line: is_d.wh_type.g2rp
+    field: CB_WH_TYPE_D.0.0
+    type: checkbox
+    on_state: /G2-RP
+    group: is_d_wh_type
+  - line: is_d.id_type.fein
+    field: CB_ID_TYPE_D
+    type: checkbox
+    on_state: /FEIN
+    group: is_d_id_type
+  - line: is_d.id_type.ssn
+    field: CB_ID_TYPE_D
+    type: checkbox
+    on_state: /SSN
+    group: is_d_id_type
+  - line: is_d.payer_id
+    field: ID_D
+    type: text
+    maxlen: 11
+  - line: is_d.state_wh_id
+    field: WH_ID_D
+    type: text
+    maxlen: 10
+  - line: is_d.ga_wages
+    field: WAGES_INCOME_D
+    type: money
+  - line: is_d.ga_tax_withheld
+    field: TAX_WH_D
+    type: money
+  - line: is_e.wh_type.w2
+    field: CB_WH_TYPE_E.0.0
+    type: checkbox
+    on_state: /W-2s
+    group: is_e_wh_type
+  - line: is_e.wh_type.g2a
+    field: CB_WH_TYPE_E.0.0
+    type: checkbox
+    on_state: /G2-A
+    group: is_e_wh_type
+  - line: is_e.wh_type.g2lp
+    field: CB_WH_TYPE_E.0.0
+    type: checkbox
+    on_state: /G2-LP
+    group: is_e_wh_type
+  - line: is_e.wh_type.1099
+    field: CB_WH_TYPE_E.0.0
+    type: checkbox
+    on_state: /1099s
+    group: is_e_wh_type
+  - line: is_e.wh_type.g2fl
+    field: CB_WH_TYPE_E.0.0
+    type: checkbox
+    on_state: /G2-FL
+    group: is_e_wh_type
+  - line: is_e.wh_type.g2rp
+    field: CB_WH_TYPE_E.0.0
+    type: checkbox
+    on_state: /G2-RP
+    group: is_e_wh_type
+  - line: is_e.id_type.fein
+    field: CB_ID_TYPE_E
+    type: checkbox
+    on_state: /FEIN
+    group: is_e_id_type
+  - line: is_e.id_type.ssn
+    field: CB_ID_TYPE_E
+    type: checkbox
+    on_state: /SSN
+    group: is_e_id_type
+  - line: is_e.payer_id
+    field: ID_E
+    type: text
+    maxlen: 10                      # the widget's /MaxLen (2023: 11)
+  - line: is_e.state_wh_id
+    field: WH_ID_E
+    type: text
+    maxlen: 10
+  - line: is_e.ga_wages
+    field: WAGES_INCOME_E
+    type: money
+  - line: is_e.ga_tax_withheld
+    field: TAX_WH_E
+    type: money
+  - line: is_f.wh_type.w2
+    field: CB_WH_TYPE_F.0.0
+    type: checkbox
+    on_state: /W-2s
+    group: is_f_wh_type
+  - line: is_f.wh_type.g2a
+    field: CB_WH_TYPE_F.0.0
+    type: checkbox
+    on_state: /G2-A
+    group: is_f_wh_type
+  - line: is_f.wh_type.g2lp
+    field: CB_WH_TYPE_F.0.0
+    type: checkbox
+    on_state: /G2-LP
+    group: is_f_wh_type
+  - line: is_f.wh_type.1099
+    field: CB_WH_TYPE_F.0.0
+    type: checkbox
+    on_state: /1099s
+    group: is_f_wh_type
+  - line: is_f.wh_type.g2fl
+    field: CB_WH_TYPE_F.0.0
+    type: checkbox
+    on_state: /G2-FL
+    group: is_f_wh_type
+  - line: is_f.wh_type.g2rp
+    field: CB_WH_TYPE_F.0.0
+    type: checkbox
+    on_state: /G2-RP
+    group: is_f_wh_type
+  - line: is_f.id_type.fein
+    field: CB_ID_TYPE_F
+    type: checkbox
+    on_state: /FEIN
+    group: is_f_id_type
+  - line: is_f.id_type.ssn
+    field: CB_ID_TYPE_F
+    type: checkbox
+    on_state: /SSN
+    group: is_f_id_type
+  - line: is_f.payer_id
+    field: ID_F
+    type: text
+    maxlen: 11
+  - line: is_f.state_wh_id
+    field: WH_ID_F
+    type: text
+    maxlen: 10
+  - line: is_f.ga_wages
+    field: WAGES_INCOME_F
+    type: money
+  - line: is_f.ga_tax_withheld
+    field: TAX_WH_F
+    type: money
+
+  # ==================================================== PAGE 4 — payments / totals (24-39)
+  - line: "24"                      # Georgia Income Tax Withheld on Wages and 1099s
+    field: L24
+    type: money
+  - line: "25"                      # Other Georgia Income Tax Withheld
+    field: L25
+    type: money
+  - line: "26"                      # Estimated Tax paid for 2025 and Form IT-560
+    field: L26
+    type: money
+  - line: "27"                      # Schedule 2B Refundable Tax Credits (Cannot be claimed unless filed electronically)
+    field: L27
+    type: money
+  - line: "28"                      # Total prepayment credits (Add Lines 24, 25, 26 and 27)
+    field: L28
+    type: money
+  - line: "29"                      # If Line 23 exceeds Line 28, subtract Line 28 from Line 23 and enter balance due
+    field: L29
+    type: money
+  - line: "30"                      # If Line 28 exceeds Line 23, subtract Line 23 from Line 28 and enter overpayment
+    field: L30
+    type: money
+  - line: "31"                      # Amount to be credited to 2026 ESTIMATED TAX
+    field: L31
+    type: money
+  - line: "32"                      # Georgia Wildlife Conservation Fund
+    field: L32
+    type: money
+  - line: "33"                      # Georgia Fund for Children and Elderly
+    field: L33
+    type: money
+  - line: "34"                      # Georgia Cancer Research Fund
+    field: L34
+    type: money
+  - line: "35"                      # Georgia Land Conservation Program
+    field: L35
+    type: money
+  - line: "36"                      # Georgia National Guard Foundation
+    field: L36
+    type: money
+  - line: "37"                      # Dog & Cat Sterilization Fund
+    field: L37
+    type: money
+  - line: "38"                      # Saving the Cure Fund
+    field: L38
+    type: money
+  - line: "39"                      # Realizing Educational Achievement Can Happen (REACH) Program (page 5 in 2023)
+    field: L39
+    type: money
+
+  # ==================================================== PAGE 5 — donations / refund / signature (40-46a)
+  - line: "40"                      # Public Safety Memorial Grant
+    field: L40
+    type: money
+  - line: "41"                      # Disabled Veterans' Scholarship Fund
+    field: L41
+    type: money
+  - line: 42_uet_exception          # line 42 "500 UET exception attached" (2023 key 41_uet_exception)
+    field: 500UET
+    type: checkbox
+    on_state: /X
+  - line: "42"                      # Form 500 UET (Estimated tax penalty)
+    field: L42
+    type: money
+  - line: "43"                      # Penalty: Late Payment and/or Late Filing
+    field: L43
+    type: money
+  - line: "44"                      # Interest
+    field: L44
+    type: money
+  - line: "45"                      # (If you owe) Add Lines 29, 32 through 44
+    field: L45
+    type: money
+  - line: "46"                      # (If you are due a refund) Subtract the sum of Lines 31 thru 44 from Line 30 — THIS
+    field: L46                      # IS YOUR REFUND (NEW ReadOnly widget)
+    type: money
+  # 46a direct deposit (2023 keys 45a_*). The three widgets are ReadOnly on the blank: the form's JS unlocks them only
+  # when GN("L46") > 0, so they stay mapped (class 4, a cell the form unlocks on another answer).
+  - line: 46a_account_type.checking # Direct Deposit type — Checking
+    field: CB_DD_TYPE
+    type: checkbox
+    on_state: /C
+    group: dd_account_type
+  - line: 46a_account_type.savings  # Direct Deposit type — Savings
+    field: CB_DD_TYPE
+    type: checkbox
+    on_state: /S
+    group: dd_account_type
+  - line: 46a_routing_number        # Routing Number
+    field: RTNUMBER
+    type: text
+    maxlen: 9
+  - line: 46a_account_number        # Account Number
+    field: ACCNUMBER
+    type: text
+    maxlen: 17
+  - line: tp_date_of_death
+    field: TP_DEC_DATE
+    type: text
+    maxlen: 10
+  - line: sp_date_of_death
+    field: SP_DEC_DATE
+    type: text
+    maxlen: 10
+  - line: tp_signature_date
+    field: TP_SIGNATURE_DATE
+    type: text
+    maxlen: 10
+  - line: tp_phone                  # Taxpayer's Phone Number
+    field: TP_PHONE
+    type: text
+    maxlen: 12
+  - line: sp_signature_date
+    field: SP_SIGNATURE_DATE
+    type: text
+    maxlen: 10
+  - line: tp_email                  # Taxpayer's E-mail Address
+    field: TP_EMAIL
+    type: text
+    maxlen: 30
+  - line: authorize_preparer_discussion   # I authorize DOR to discuss this return with the named preparer
+    field: DISCUSSRETURN
+    type: checkbox
+    on_state: /X
+  - line: preparer_name             # Name of Preparer Other Than Taxpayer
+    field: PREP_NAME
+    type: text
+    maxlen: 20
+  - line: preparer_firm_name
+    field: PREP_FIRMNAME
+    type: text
+    maxlen: 20
+  - line: preparer_phone
+    field: PREP_PHONE
+    type: text
+    maxlen: 12
+  - line: preparer_fein
+    field: PREP_FEIN
+    type: text
+    maxlen: 10
+  - line: preparer_ssn_ptin_sidn    # Preparer's SSN/PTIN/SIDN
+    field: PREP_SSN
+    type: text
+    maxlen: 11
+
+  # ==================================================== PAGE 6 — 525-TV Payment Voucher
+  - line: voucher.name_address1     # Individual or Fiduciary Name and Address block
+    field: ADDRESS 1
+    type: text
+    maxlen: 50
+  - line: voucher.name_address1b
+    field: ADDRESS 1b
+    type: text
+    maxlen: 50
+  - line: voucher.name_address2
+    field: ADDRESS 2
+    type: text
+    maxlen: 50
+  - line: voucher.name_address3
+    field: ADDRESS 3
+    type: text
+    maxlen: 50
+  - line: voucher.city
+    field: CITY1
+    type: text
+    maxlen: 50
+  - line: voucher.state
+    field: STATE1
+    type: text
+    maxlen: 2                     # the page-1 STATE widget carries /MaxLen 2 on the blank and this
+                                  # voucher mirror (/TU "STATE") restates it; its 18.8pt rect at Courier
+                                  # 8.5pt holds 3 glyphs, so an unhinted value clipped (verify P-001,
+                                  # visible since the ReadOnly scan widened 2026-09-11)
+  - line: voucher.zip
+    field: ZIP1
+    type: text
+  - line: voucher.amended_return
+    field: Amended Return
+    type: checkbox
+    on_state: /1
+  # voucher.return_medium: "Paper Return" ships PRE-TICKED on the blank (/V /1, /DV /1, /AS /1 — the same on the 2023
+  # blank), and the filler writes only the boxes it is given, so voucher.electronically_filed: true ALONE leaves both
+  # boxes at /1 with no fill warning (verify_form's checkbox audit then reports "group voucher.return_medium has 2 boxes
+  # checked"). Send voucher.paper_return: false with it: a "no" answer writes /Off. Both widgets are Hidden (/F 6), so
+  # neither tick prints; the form's JavaScript shows only "Paper Return" on its balance-due path (port banner, Hidden).
+  - line: voucher.paper_return      # pre-ticked on the blank (/DV /1): answer false when the return was e-filed
+    field: Paper Return
+    type: checkbox
+    group: voucher.return_medium
+    on_state: /1
+  - line: voucher.electronically_filed
+    field: Electronically Filed
+    type: checkbox
+    group: voucher.return_medium
+    on_state: /1
+  - line: voucher.type_of_return    # Type of Return (/Ch dropdown)
+    field: TAXTYPE
+    type: text
+  - line: voucher.taxpayer_ssn_fein # Taxpayer's SSN or Fiduciary FEIN
+    field: ACCOUNT NUMBER
+    type: text
+  - line: voucher.spouse_ssn        # Spouse's SSN (if joint or combined return)
+    field: SPOUSESSN
+    type: text
+  - line: voucher.tax_year          # Tax Year (/Ch dropdown)
+    field: YY
+    type: text
+  - line: voucher.phone             # Daytime Telephone Number
+    field: PHONENUMBER
+    type: text
+    maxlen: 10
+  - line: voucher.amount_paid       # Amount Paid
+    field: AMOUNT
+    type: money
+
+  # ==================================================== PAGE 7 — Schedule 1 (Adjustments to Income)
+  - line: s1.1                      # Interest on Non-Georgia Municipal and State Bonds
+    field: S1L1
+    type: money
+  - line: s1.2                      # Lump Sum Distributions
+    field: S1L2
+    type: money
+  - line: s1.3                      # Depreciation (additions)
+    field: S1L3
+    type: money
+  - line: s1.4                      # Net operating loss carryover deducted on Federal return
+    field: S1L4
+    type: money
+  - line: s1.5_specify              # Other (Specify) — additions
+    field: S1L5_OTHER
+    type: text
+    maxlen: 15
+  - line: s1.5
+    field: S1L5
+    type: money
+  - line: s1.6                      # Total Additions (Enter sum of Lines 1-5 here)
+    field: S1L6
+    type: money
+  # (2023's "Date of Birth" rows S1TP_BIRTHDATE / S1SP_BIRTHDATE are gone: the dates of birth are on page 1 now)
+  - line: s1.7a                     # Taxpayer Retirement Income Exclusion
+    field: S1L7A
+    type: money
+  - line: s1.7b                     # Taxpayer Military Retirement Income Exclusion
+    field: S1L7B
+    type: money
+  - line: s1.tp_disability_date     # Taxpayer Date of Disability
+    field: S1TP_DISABDATE
+    type: text
+    maxlen: 10
+  - line: s1.tp_disability_type     # Taxpayer Type of Disability
+    field: S1TP_DISABTYPE
+    type: text
+    maxlen: 10
+  - line: s1.7c                     # Taxpayer 7c amount
+    field: S1L7C
+    type: money
+  - line: s1.7d                     # Spouse Retirement Income Exclusion
+    field: S1L7D
+    type: money
+  - line: s1.7e                     # Spouse Military Retirement Income Exclusion
+    field: S1L7E
+    type: money
+  - line: s1.sp_disability_date     # Spouse Date of Disability
+    field: S1SP_DISABDATE
+    type: text
+    maxlen: 10
+  - line: s1.sp_disability_type     # Spouse Type of Disability
+    field: S1SP_DISABTYPE
+    type: text
+    maxlen: 10
+  - line: s1.7f                     # Spouse 7f amount
+    field: S1L7F
+    type: money
+  - line: s1.8                      # Social Security Benefits (subtractions)
+    field: S1L8
+    type: money
+  - line: s1.9                      # Path2College 529 Plan
+    field: S1L9
+    type: money
+  - line: s1.10                     # Interest on United States Obligations
+    field: S1L10
+    type: money
+  - line: s1.11                     # Depreciation (subtractions)
+    field: S1L11
+    type: money
+  - line: s1.12_specify             # Other Adjustments (Specify)
+    field: S1L12_ADJ1
+    type: text
+    maxlen: 15
+  - line: s1.12
+    field: S1L12
+    type: money
+  - line: s1.13                     # Total Subtractions (Enter sum of Lines 7-12 here)
+    field: S1L13
+    type: money
+  - line: s1.14                     # Net Adjustments (Line 6 less Line 13)
+    field: S1L14
+    type: money
+
+  # ==================================================== PAGE 8 — Schedule 1 Retirement Income Exclusion worksheet
+  - line: s1ret.tp.1                # Salary and wages (taxpayer)
+    field: TP_S1L1
+    type: money
+  - line: s1ret.sp.1                # Salary and wages (spouse)
+    field: SP_S1L1
+    type: money
+  - line: s1ret.tp.2                # Other Earned Income (Losses)
+    field: TP_S1L2
+    type: money
+  - line: s1ret.sp.2
+    field: SP_S1L2
+    type: money
+  - line: s1ret.tp.3                # Total Earned Income
+    field: TP_S1L3
+    type: money
+  - line: s1ret.sp.3
+    field: SP_S1L3
+    type: money
+  # line 4 ("Maximum Earned Income", TP_/SP_ widgets) is NOT mapped: a ReadOnly widget whose
+  # blank already holds the constant 5000 (2023: 4000) and carries no calculate script — class 1 (Phase J JEa)
+  - line: s1ret.tp.5                # Lesser of Line 3 or 4
+    field: TP_S1L5
+    type: money
+  - line: s1ret.sp.5
+    field: SP_S1L5
+    type: money
+  - line: s1ret.tp.6                # Interest Income
+    field: TP_S1L6
+    type: money
+  - line: s1ret.sp.6
+    field: SP_S1L6
+    type: money
+  - line: s1ret.tp.7                # Dividend Income
+    field: TP_S1L7
+    type: money
+  - line: s1ret.sp.7
+    field: SP_S1L7
+    type: money
+  - line: s1ret.tp.8                # Alimony
+    field: TP_S1L8
+    type: money
+  - line: s1ret.sp.8
+    field: SP_S1L8
+    type: money
+  - line: s1ret.tp.9                # Capital Gains (Losses)
+    field: TP_S1L9
+    type: money
+  - line: s1ret.sp.9
+    field: SP_S1L9
+    type: money
+  - line: s1ret.tp.10               # Other Income (Losses)
+    field: TP_S1L10
+    type: money
+  - line: s1ret.sp.10
+    field: SP_S1L10
+    type: money
+  - line: s1ret.tp.11               # Taxable IRA Distributions
+    field: TP_S1L11
+    type: money
+  - line: s1ret.sp.11
+    field: SP_S1L11
+    type: money
+  - line: s1ret.tp.12               # Taxable Pensions
+    field: TP_S1L12
+    type: money
+  - line: s1ret.sp.12
+    field: SP_S1L12
+    type: money
+  - line: s1ret.tp.13               # Rental, Royalty, Partnership, S Corp income (Losses)
+    field: TP_S1L13
+    type: money
+  - line: s1ret.sp.13
+    field: SP_S1L13
+    type: money
+  - line: s1ret.tp.14               # Total of Lines 6 through 13
+    field: TP_S1L14
+    type: money
+  - line: s1ret.sp.14
+    field: SP_S1L14
+    type: money
+  - line: s1ret.tp.15               # Add Lines 5 and 14
+    field: TP_S1L15
+    type: money
+  - line: s1ret.sp.15
+    field: SP_S1L15
+    type: money
+  - line: s1ret.tp.16               # Maximum Allowable Exclusion
+    field: TP_S1L16
+    type: money
+  - line: s1ret.sp.16
+    field: SP_S1L16
+    type: money
+  - line: s1ret.tp.17               # Lesser of Lines 15 and 16
+    field: TP_S1L17
+    type: money
+  - line: s1ret.sp.17
+    field: SP_S1L17
+    type: money
+
+  # ==================================================== PAGE 9 — Schedule 1 Military Retirement Income Exclusion
+  - line: s1mil.tp.1                # Taxable Military Retirement from 1099-R
+    field: TP_S1L1_P3
+    type: money
+  - line: s1mil.sp.1
+    field: SP_S1L1_P3
+    type: money
+  # line 2 ("Base Military Exclusion", TP_/SP_ widgets) is NOT mapped: a ReadOnly widget whose
+  # blank already holds the constant 17500 and carries no calculate script — class 1 (Phase J JEa)
+  - line: s1mil.tp.3                # Lesser of Line 1 or Line 2
+    field: TP_S1L3_P3
+    type: money
+  - line: s1mil.sp.3
+    field: SP_S1L3_P3
+    type: money
+  - line: s1mil.tp.4                # Taxable Georgia Salary and Wages
+    field: TP_S1L4_P3
+    type: money
+  - line: s1mil.sp.4
+    field: SP_S1L4_P3
+    type: money
+  - line: s1mil.tp.5                # Other Earned Georgia Income
+    field: TP_S1L5_P3
+    type: money
+  - line: s1mil.sp.5
+    field: SP_S1L5_P3
+    type: money
+  - line: s1mil.tp.6                # Total Georgia Earned Income
+    field: TP_S1L6_P3
+    type: money
+  - line: s1mil.sp.6
+    field: SP_S1L6_P3
+    type: money
+  - line: s1mil.tp.7                # Total additional Military Exclusion allowed
+    field: TP_S1L7_P3
+    type: money
+  - line: s1mil.sp.7
+    field: SP_S1L7_P3
+    type: money
+  - line: s1mil.tp.8                # Lesser of Line 1 or Line 7
+    field: TP_S1L8_P3
+    type: money
+  - line: s1mil.sp.8
+    field: SP_S1L8_P3
+    type: money
+
+  # ==================================================== PAGE 10 — Schedule 2 (Georgia Tax Credit Usage and Carryover)
+  - line: s2.1_credit_code          # Credit Code
+    field: S2L1_CREDITCODE
+    type: text
+    maxlen: 3
+  - line: s2.1_credit_code_list     # Credit Code dropdown (/Ch companion)
+    field: S2L1_CREDITCODE_LST
+    type: text
+  - line: s2.2                      # Credit remaining from previous years
+    field: S2L2
+    type: money
+  - line: s2.3_company
+    field: S2L3_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2.3_credit_certificate
+    field: S2L3_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2.3_fein
+    field: S2L3_FEIN
+    type: text
+    maxlen: 10
+  - line: s2.3                      # Credit generated this tax year
+    field: S2L3
+    type: money
+  - line: s2.4_company
+    field: S2L4_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2.4_credit_certificate
+    field: S2L4_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2.4_fein
+    field: S2L4_FEIN
+    type: text
+    maxlen: 10
+  - line: s2.4
+    field: S2L4
+    type: money
+  - line: s2.5_company
+    field: S2L5_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2.5_credit_certificate
+    field: S2L5_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2.5_fein
+    field: S2L5_FEIN
+    type: text
+    maxlen: 10
+  - line: s2.5
+    field: S2L5
+    type: money
+  - line: s2.6_company
+    field: S2L6_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2.6_credit_certificate
+    field: S2L6_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2.6_fein
+    field: S2L6_FEIN
+    type: text
+    maxlen: 10
+  - line: s2.6
+    field: S2L6
+    type: money
+  - line: s2.7_company
+    field: S2L7_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2.7_credit_certificate
+    field: S2L7_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2.7_fein
+    field: S2L7_FEIN
+    type: text
+    maxlen: 10
+  - line: s2.7
+    field: S2L7
+    type: money
+  - line: s2.8_company
+    field: S2L8_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2.8_credit_certificate
+    field: S2L8_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2.8_fein
+    field: S2L8_FEIN
+    type: text
+    maxlen: 10
+  - line: s2.8
+    field: S2L8
+    type: money
+  - line: s2.9                      # Total available credit (sum of Lines 2 through 8)
+    field: S2L9
+    type: money
+  - line: s2.10                     # Amount of the credit sold
+    field: S2L10
+    type: money
+  - line: s2.11                     # Credit used for this tax year
+    field: S2L11
+    type: money
+  - line: s2.12                     # Potential carryover to next tax year
+    field: S2L12
+    type: money
+
+  # ==================================================== PAGE 11 — Schedule 2B (Refundable Tax Credits)
+  - line: s2b.1_credit_code
+    field: S2P2L1_CREDITCODE
+    type: text
+    maxlen: 3
+  - line: s2b.1_credit_code_list
+    field: S2P2L1_CREDITCODE_LST
+    type: text
+  - line: s2b.2                     # Credit remaining from previous years
+    field: S2P2L2
+    type: money
+  - line: s2b.3_company
+    field: S2P2L3_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2b.3_credit_certificate
+    field: S2P2L3_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2b.3_fein
+    field: S2P2L3_FEIN
+    type: text
+    maxlen: 11
+  - line: s2b.3                     # Credit generated this tax year
+    field: S2P2L3
+    type: money
+  - line: s2b.4_company
+    field: S2P2L4_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2b.4_credit_certificate
+    field: S2P2L4_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2b.4_fein
+    field: S2P2L4_FEIN
+    type: text
+    maxlen: 11                      # the widget's /MaxLen (2023: 10)
+  - line: s2b.4
+    field: S2P2L4
+    type: money
+  - line: s2b.5_company
+    field: S2P2L5_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2b.5_credit_certificate
+    field: S2P2L5_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2b.5_fein
+    field: S2P2L5_FEIN
+    type: text
+    maxlen: 10
+  - line: s2b.5
+    field: S2P2L5
+    type: money
+  - line: s2b.6_company
+    field: S2P2L6_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2b.6_credit_certificate
+    field: S2P2L6_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2b.6_fein
+    field: S2P2L6_FEIN
+    type: text
+    maxlen: 10
+  - line: s2b.6
+    field: S2P2L6
+    type: money
+  - line: s2b.7_company
+    field: S2P2L7_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2b.7_credit_certificate
+    field: S2P2L7_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2b.7_fein
+    field: S2P2L7_FEIN
+    type: text
+    maxlen: 10
+  - line: s2b.7
+    field: S2P2L7
+    type: money
+  - line: s2b.8_company
+    field: S2P2L8_COMPANY
+    type: text
+    maxlen: 30
+  - line: s2b.8_credit_certificate
+    field: S2P2L8_CREDITCERTIFICATE
+    type: text
+    maxlen: 10
+  - line: s2b.8_fein
+    field: S2P2L8_FEIN
+    type: text
+    maxlen: 11                      # the widget's /MaxLen (2023: 10)
+  - line: s2b.8
+    field: S2P2L8
+    type: money
+  - line: s2b.9                     # Total available credit (sum of Lines 2 through 8)
+    field: S2P2L9
+    type: money
+  - line: s2b.10                    # Amount of the credit sold
+    field: S2P2L10
+    type: money
+  - line: s2b.11                    # Credit used for this tax year
+    field: S2P2L11
+    type: money
+  - line: s2b.12                    # Potential carryover to next tax year
+    field: S2P2L12
+    type: money
+
+  # ==================================================== PAGE 12 — Schedule 3 (Part-Year Nonresident)
+  - line: s3.1a                     # Wages, salaries, tips (Federal income after GA adjustment, Col A)
+    field: S3L1A
+    type: money
+  - line: s3.1b                     # Wages, salaries, tips (Income not taxable to GA, Col B)
+    field: S3L1B
+    type: money
+  - line: s3.1c                     # Wages, salaries, tips (Georgia income, Col C)
+    field: S3L1C
+    type: money
+  - line: s3.2a                     # Interest and Dividends
+    field: S3L2A
+    type: money
+  - line: s3.2b
+    field: S3L2B
+    type: money
+  - line: s3.2c
+    field: S3L2C
+    type: money
+  - line: s3.3a                     # Business Income or (Loss)
+    field: S3L3A
+    type: money
+  - line: s3.3b
+    field: S3L3B
+    type: money
+  - line: s3.3c
+    field: S3L3C
+    type: money
+  - line: s3.4a                     # Other Income or (Loss)
+    field: S3L4A
+    type: money
+  - line: s3.4b
+    field: S3L4B
+    type: money
+  - line: s3.4c
+    field: S3L4C
+    type: money
+  - line: s3.5a                     # Total Income (Total Lines 1 thru 4)
+    field: S3L5A
+    type: money
+  - line: s3.5b
+    field: S3L5B
+    type: money
+  - line: s3.5c
+    field: S3L5C
+    type: money
+  - line: s3.6a                     # Total Adjustments from Form 1040
+    field: S3L6A
+    type: money
+  - line: s3.6b
+    field: S3L6B
+    type: money
+  - line: s3.6c
+    field: S3L6C
+    type: money
+  - line: s3.7a                     # Total Adjustments from Form 500, Schedule 1
+    field: S3L7A
+    type: money
+  - line: s3.7b
+    field: S3L7B
+    type: money
+  - line: s3.7c
+    field: S3L7C
+    type: money
+  - line: s3.8a                     # Adjusted Gross Income (Line 5 plus or minus Lines 6 and 7)
+    field: S3L8A
+    type: money
+  - line: s3.8b
+    field: S3L8B
+    type: money
+  - line: s3.8c
+    field: S3L8C
+    type: money
+  - line: s3.9_time_ratio           # line 9 "enter percentage or check the box for Time Ratio" — S3L9_TimeRatio is Hidden
+    field: S3L9_TimeRatio
+    type: checkbox
+    on_state: /X
+  - line: s3.9                      # Ratio: Divide Line 8 Col C by Line 8 Col A (percentage)
+    field: S3L9
+    type: text
+    maxlen: 6
+  # Line 10 "Standard Deduction [S] Itemized [I] Georgia Itemized [G]": the three kids of CB_DEDUCTION_TYPE, each box
+  # right of its label (2023: "10a. Itemized [I] or Standard Deduction [S]"). The /G kid is Hidden (/F 6) on the blank, as
+  # in 2023, and 2025 now prints "Georgia Itemized" beside it: a /G tick does not print.
+  - line: s3.10_deduction.itemized  # Line 10 — Itemized
+    field: CB_DEDUCTION_TYPE
+    type: checkbox
+    on_state: /I
+    group: s3_deduction_type
+  - line: s3.10_deduction.standard  # Line 10 — Standard Deduction
+    field: CB_DEDUCTION_TYPE
+    type: checkbox
+    on_state: /S
+    group: s3_deduction_type
+  - line: s3.10_deduction.georgia   # Line 10 — Georgia Itemized
+    field: CB_DEDUCTION_TYPE
+    type: checkbox
+    on_state: /G
+    group: s3_deduction_type
+  - line: s3.10                     # Line 10 amount (standard: $12,000, or $24,000 if Married filing jointly)
+    field: S3L10
+    type: money
+  # (2023's 10b additional standard deduction and 11a/11b exemption rows are gone)
+  - line: s3.11_count               # Line 11 — "Enter the number on Line 7c from Form 500 or Form 500X" (NEW cell)
+    field: S3L11_7C
+    type: text
+    maxlen: 1
+    comb: true                      # the widget carries the Comb flag (/Ff 29360129), one cell, as L14_7C on page 3
+  - line: s3.11                     # Line 11 amount — "multiply by $4,000" (NEW widget)
+    field: S3L11
+    type: money
+  - line: s3.12                     # Total Deductions and Exemptions: Add Lines 10 and 11
+    field: S3L12
+    type: money
+  - line: s3.13                     # Multiply Line 12 by Ratio on Line 9
+    field: S3L13
+    type: money
+  - line: s3.14                     # Income before GA NOL (Line 8 Col C less Line 13)
+    field: S3L14
+    type: money
+
+  # ==================================================== PAGE 13 — IND-CR 201 (Disabled Person Home Purchase/Retrofit, credit 201)
+  - line: indcr201.1                # Credit remaining from previous years
+    field: CRP1L1
+    type: text
+    maxlen: 3
+  - line: indcr201.2                # Purchase/retrofit amount
+    field: CRP1L2
+    type: text
+    maxlen: 3
+  - line: indcr201.3                # Credit used this tax year
+    field: CRP1L3
+    type: text
+    maxlen: 3
+  - line: indcr201.4                # Potential carryover to next tax year
+    field: CRP1L4
+    type: text
+    maxlen: 3
+
+  # ==================================================== PAGE 14 — IND-CR 202 (Child and Dependent Care Expense, credit 202)
+  - line: indcr202.1                # Amount of child & dependent care expense credit claimed on Federal 1040
+    field: CRP2L1
+    type: money
+  - line: indcr202.3                # Allowable Child & Dependent Care Expense Credit (Line 1 x .50)
+    field: CRP2L3
+    type: money
+  - line: indcr202.4                # Credit used this tax year
+    field: CRP2L4
+    type: money
+
+  # ==================================================== PAGE 15 — IND-CR 203 (Georgia National Guard/Air National Guard, credit 203)
+  - line: indcr203.1                # Credit remaining from previous years
+    field: CRP3L1
+    type: money
+  - line: indcr203.2                # Qualified life insurance premiums
+    field: CRP3L2
+    type: money
+  - line: indcr203.3                # Credit used this tax year
+    field: CRP3L3
+    type: money
+  - line: indcr203.4                # Carryover to next tax year
+    field: CRP3L4
+    type: money
+
+  # ==================================================== PAGE 16 — IND-CR 204 (Qualified Caregiving Expense, credit 204)
+  - line: indcr204.qfm1.name        # Qualifying Family Member Name
+    field: CRP4_NAME
+    type: text
+    maxlen: 35
+  - line: indcr204.qfm1.ssn
+    field: CRP4_SSN
+    type: text
+    maxlen: 11
+  - line: indcr204.qfm1.relationship
+    field: CRP4_REL
+    type: text
+    maxlen: 18
+  - line: indcr204.qfm1.age         # Age, if 62 or over
+    field: CRP4_AGE
+    type: text
+    maxlen: 3
+  - line: indcr204.qfm1.disability_date  # If disabled, date of disability
+    field: CRP4_DISABDATE
+    type: text
+    maxlen: 10
+  - line: indcr204.qfm2.name        # Additional Qualifying Family Member
+    field: CRP4_NAME_2
+    type: text
+    maxlen: 35
+  - line: indcr204.qfm2.ssn
+    field: CRP4_SSN_2
+    type: text
+    maxlen: 11
+  - line: indcr204.qfm2.relationship
+    field: CRP4_REL_2
+    type: text
+    maxlen: 18
+  - line: indcr204.qfm2.age
+    field: CRP4_AGE_2
+    type: text
+    maxlen: 3
+  - line: indcr204.qfm2.disability_date
+    field: CRP4_DISABDATE_2
+    type: text
+    maxlen: 10
+  - line: indcr204.1                # Qualified caregiving expenses
+    field: CRP4L1
+    type: money
+  - line: indcr204.3                # Line 1 multiplied by Line 2 (10%)
+    field: CRP4L3
+    type: money
+  - line: indcr204.5                # Lesser of Line 3 or Line 4 ($150)
+    field: CRP4L5
+    type: money
+  - line: indcr204.6                # Credit used this tax year
+    field: CRP4L6
+    type: money
+
+  # ==================================================== PAGE 17 — IND-CR 206 (Disaster Assistance, credit 206)
+  - line: indcr206.agency           # Disaster assistance agency
+    field: CRP6_AGENCYNAME
+    type: text
+    maxlen: 28
+  - line: indcr206.1                # Credit remaining from previous years
+    field: CRP6L1
+    type: money
+  - line: indcr206.date_received    # Date assistance was received
+    field: CRP6_DATEASSISTANCERCV
+    type: text
+    maxlen: 10
+  - line: indcr206.3                # Amount of the disaster assistance received
+    field: CRP6L3
+    type: money
+  - line: indcr206.5                # Lesser of Line 3 or Line 4 ($500)
+    field: CRP6L5
+    type: money
+  - line: indcr206.6                # Credit used this tax year
+    field: CRP6L6
+    type: money
+  - line: indcr206.7                # Carryover to next tax year
+    field: CRP6L7
+    type: money
+
+  # ==================================================== PAGE 18 — IND-CR 207 (Rural Physicians, credit 207)
+  - line: indcr207.tp.county_residence    # Taxpayer — County of residence
+    field: CRP7_COUNTYRES
+    type: text
+    maxlen: 16
+  - line: indcr207.tp.county_practice     # Taxpayer — County of practice
+    field: CRP7_COUNTYPRAC
+    type: text
+    maxlen: 16
+  - line: indcr207.tp.practice_type       # Taxpayer — Type of practice
+    field: CRP7_PRACTYPE
+    type: text
+    maxlen: 16
+  - line: indcr207.tp.date_started         # Taxpayer — Date started working as rural physician
+    field: CRP7_DATESTARTWORK
+    type: text
+    maxlen: 10
+  - line: indcr207.tp.hospital_beds        # Taxpayer — Number of hospital beds
+    field: CRP7L5
+    type: text
+    maxlen: 4
+  - line: indcr207.sp.county_residence     # Spouse — County of residence
+    field: CRP7_COUNTYRES_2
+    type: text
+    maxlen: 16
+  - line: indcr207.sp.county_practice
+    field: CRP7_COUNTYPRAC_2
+    type: text
+    maxlen: 16
+  - line: indcr207.sp.practice_type
+    field: CRP7_PRACTYPE_2
+    type: text
+    maxlen: 16
+  - line: indcr207.sp.date_started
+    field: CRP7_DATESTARTWORK_2
+    type: text
+    maxlen: 10
+  - line: indcr207.sp.hospital_beds
+    field: CRP7L5_2
+    type: text
+    maxlen: 4
+  - line: indcr207.6                # Rural physicians credit ($5,000 per rural physician)
+    field: CRP7L6
+    type: money
+  - line: indcr207.7                # Credit used this tax year
+    field: CRP7L7
+    type: money
+
+  # ==================================================== PAGE 19 — IND-CR 208 (Adoption of a Foster Child, credit 208)
+  - line: indcr208.1                # Credit remaining from previous years
+    field: CRP8L1
+    type: money
+  - line: indcr208.2                # $2,000 per qualified foster child
+    field: CRP8L2
+    type: money
+  - line: indcr208.3                # Credit used this tax year
+    field: CRP8L3
+    type: money
+  - line: indcr208.4                # Carryover to next year
+    field: CRP8L4
+    type: money
+
+  # ==================================================== PAGE 20 — IND-CR 209 (Eligible Single-Family Residence, credit 209)
+  - line: indcr209.1                # Total credit (from 2009 IND-CR, Part 9, Line 5)
+    field: CRP9L1
+    type: money
+  - line: indcr209.3                # Maximum credit allowed (multiply Line 1 by Line 2 / 33.33%)
+    field: CRP9L3
+    type: money
+  - line: indcr209.4                # Enter unused credit
+    field: CRP9L4
+    type: money
+  - line: indcr209.5                # Credit allowed, lesser of Line 3 or Line 4
+    field: CRP9L5
+    type: money
+  - line: indcr209.6                # Credit used this tax year
+    field: CRP9L6
+    type: money
+  - line: indcr209.7                # Carryover to next year
+    field: CRP9L7
+    type: money
+
+  # ==================================================== PAGE 21 — IND-CR 212 (Community Based Faculty Preceptor, credit 212)
+  - line: indcr212.physician_number       # Physician identifier
+    field: PhysicianNumber
+    type: text
+    maxlen: 8
+  - line: indcr212.a.1_rotations          # A. Physician — First through Third Rotation count (max 3)
+    field: CRP12L1A_NUM
+    type: text
+    maxlen: 1
+  - line: indcr212.a.1                     # A. Line 1 Current Year Credit Amount
+    field: CRP12L1A
+    type: text
+    maxlen: 4
+  - line: indcr212.a.2_rotations          # A. Fourth through Tenth Rotation count (max 7)
+    field: CRP12L2A_NUM
+    type: text
+    maxlen: 1
+  - line: indcr212.a.2                     # A. Line 2 Current Year Credit Amount
+    field: CRP12L2A
+    type: text
+    maxlen: 4
+  - line: indcr212.a.3                     # A. Line 3 Add Line 1 and Line 2 (cannot exceed $8,500)
+    field: CRP12L3A
+    type: text
+    maxlen: 4
+  - line: indcr212.assistant_number       # Advanced practice nurse / physician assistant identifier
+    field: AssistantNumber
+    type: text
+    maxlen: 8
+  - line: indcr212.b.1_rotations          # B. First through Third Rotation count (max 3)
+    field: CRP12L1B_NUM
+    type: text
+    maxlen: 1
+  - line: indcr212.b.1                     # B. Line 1 Current Year Credit Amount
+    field: CRP12L1B
+    type: text
+    maxlen: 4
+  - line: indcr212.b.2_rotations          # B. Fourth through Tenth Rotation count (max 7)
+    field: CRP12L2B_NUM
+    type: text
+    maxlen: 1
+  - line: indcr212.b.2                     # B. Line 2 Current Year Credit Amount
+    field: CRP12L2B
+    type: text
+    maxlen: 4
+  - line: indcr212.b.3                     # B. Line 3 Add Line 1 and Line 2 (cannot exceed $6,375)
+    field: CRP12L3B
+    type: text
+    maxlen: 4
+  # C. "Community Based Faculty Preceptor Tax Credit Total" — line 1 prints "Credit used this year (enter no more than
+  # the total of Line A3 and Line B3)(enter here ...": a FILER-ENTERED amount on the 2025 face. The 2023 JavaScript set
+  # it to A3 + B3 (SV("CRP12L1C",GN("CRP12L3A")+GN("CRP12L3B"))); the 2025 JavaScript carries that line commented out
+  # and the widget lost its ReadOnly bit (/Ff 12582912). Enter the credit used, not the A3 + B3 subtotal.
+  - line: indcr212.c.1                     # C1. Credit used this year (no more than Line A3 + Line B3)
+    field: CRP12L1C
+    type: text
+    maxlen: 4
+
+  # ==================================================== PAGE 22 — IND-CR 213 (Adoption of a Foster Child 2021+, credit 213)
+  - line: indcr213.1                # $6,000 per qualified foster child (first five taxable years)
+    field: CRP13L1
+    type: money
+  - line: indcr213.2                # $2,000 per qualified foster child (years after first five); hatched box, CRP13L2 Hidden
+    field: CRP13L2
+    type: money
+  - line: indcr213.3                # Add Line 1 and Line 2, Current Year Credit Amount
+    field: CRP13L3
+    type: money
+  - line: indcr213.4                # Credit used this year
+    field: CRP13L4
+    type: money
+
+  # ==================================================== PAGE 23 — IND-CR 214 (Teacher Recruitment and Retention, credit 214)
+  - line: indcr214.1                # Credit remaining from previous year
+    field: CRP14L1
+    type: money
+  - line: indcr214.2                # Credit generated this tax year
+    field: CRP14L2
+    type: money
+  - line: indcr214.3                # Total credit available (Line 1 + Line 2)
+    field: CRP14L3
+    type: money
+  - line: indcr214.4                # Credit used this tax year
+    field: CRP14L4
+    type: money
+  - line: indcr214.5                # Potential carryover to next tax year
+    field: CRP14L5
+    type: money
+
+  # ==================================================== PAGE 24 — IND-CR Summary Worksheet
+  - line: indcr_summary.1           # Disabled Person Home Purchase or Retrofit Credit (201, Line 3)
+    field: SUML1
+    type: money
+  - line: indcr_summary.2           # Child and Dependent Care Expense Credit (202, Line 4)
+    field: SUML2
+    type: money
+  - line: indcr_summary.3           # Georgia National Guard/Air National Guard Credit (203, Line 3)
+    field: SUML3
+    type: money
+  - line: indcr_summary.4           # Qualified Caregiving Expense Credit (204, Line 6)
+    field: SUML4
+    type: money
+  - line: indcr_summary.5           # line 5 "Reserved" — leave blank (SUML5 is Hidden and ReadOnly; line 13 still totals 1-12)
+    field: SUML5
+    type: money
+  - line: indcr_summary.6           # Disaster Assistance Credit (206, Line 6)
+    field: SUML6
+    type: money
+  - line: indcr_summary.7           # Rural Physicians Credit (207, Line 7)
+    field: SUML7
+    type: money
+  - line: indcr_summary.8           # Adoption of a Foster Child Credit (208, Line 3)
+    field: SUML8
+    type: money
+  - line: indcr_summary.9           # Eligible Single-Family Residence Credit (209, Line 6)
+    field: SUML9
+    type: money
+  - line: indcr_summary.10          # Community Based Faculty Preceptor Credit (212, Line C1)
+    field: SUML10
+    type: money
+  # Field names on this worksheet do not track the printed line numbers, and
+  # SUML12/SUML13 are TRANSPOSED relative to their printed-line order. Verified
+  # against the sentinel sweep (each widget rendered with its own name) and the
+  # widget /Rect y-positions on page 24, top to bottom: SUML10 (line 10),
+  # SUML13 (printed line 11, Adoption 213), SUML14 (printed line 12, Teacher
+  # 214), SUML12 (printed line 13, Total — the bottom row). There is no
+  # "SUML11" widget. Mapped by printed line below.
+  - line: indcr_summary.11          # Adoption of a Foster Child Credit (213, Line 4)
+    field: SUML13
+    type: money
+  - line: indcr_summary.12          # Teacher Recruitment and Retention Credit (214, Line 4)
+    field: SUML14
+    type: money
+  - line: indcr_summary.13          # Total of Lines 1 through 12 (Enter here and on Form 500/500X, Page 3 Line 20)
+    field: SUML12
+    type: money
+
+  # ==================================================== PAGE 25 — Schedule 4 (Net Operating Loss Application) page 1
+  - line: s4.tp_first_name          # header copy block (ReadOnly since 2025: the JS copies TP_FIRSTNAME etc.)
+    field: TP_FIRSTNAME_COPY
+    type: text
+    maxlen: 20
+  - line: s4.tp_middle_initial
+    field: TP_MIDINIT_COPY
+    type: text
+    maxlen: 1
+  - line: s4.tp_last_name
+    field: TP_LASTNAME_COPY
+    type: text
+    maxlen: 20
+  - line: s4.tp_suffix
+    field: TP_SUFFIX_COPY
+    type: text
+    maxlen: 3
+  - line: s4.normal_loss            # Type of Loss — Normal Loss
+    field: CB_NORMAL_LOSS
+    type: checkbox
+    on_state: /X
+  - line: s4.normal_loss_portion
+    field: S4_PORTION_NORMAL_LOSS
+    type: money
+  # (2023's "CASUALTY LOSS" box and portion, CB_CASUALITY_LOSS / S4_PORTION_CASUALITY_LOSS, are gone)
+  - line: s4.insurance_loss         # Type of Loss — Insurance Loss (2) Year
+    field: CB_INSURANCE_LOSS
+    type: checkbox
+    on_state: /X
+  - line: s4.insurance_loss_portion
+    field: S4_PORTION_INSURANCE_LOSS
+    type: money
+  - line: s4.farm_loss              # Type of Loss — Farm Loss (2) Year
+    field: CB_FARM_LOSS
+    type: checkbox
+    on_state: /X
+  - line: s4.farm_loss_portion
+    field: S4_PORTION_FARM_LOSS
+    type: money
+  - line: s4.total_loss             # Total Loss(es)
+    field: S4_TOTAL_LOSS
+    type: money
+  - line: s4.p1.1                   # Part I — Georgia Income before NOL (Form 500, Line 15a)
+    field: S4P1L1
+    type: money
+  - line: s4.p1.2                   # Georgia Exemption
+    field: S4P1L2
+    type: money
+  - line: s4.p1.3                   # Excess Nonbusiness Deductions (NOL Worksheet Part II, Line 18)
+    field: S4P1L3
+    type: money
+  - line: s4.p1.4                   # Excess of Nonbusiness Capital losses over gains
+    field: S4P1L4
+    type: money
+  # Part I line 5 prints "5. Reserved" over a hatched box, its widget S4P1L5 is Hidden, and line 6 totals lines 1-4
+  # only, so there is no s4.p1.5 key (2023: "Previous Net Operating Loss claimed").
+  - line: s4.p1.6                   # Total of Lines 1 - 4. See instructions
+    field: S4P1L6
+    type: money
+  - line: s4.p1.7                   # IRC Section 461(l) loss eligible to be carried forward only
+    field: S4P1L7
+    type: money
+  - line: s4.p1.8                   # Total Loss(es)
+    field: S4P1L8
+    type: money
+  - line: s4.carried_forward.yes    # Is the loss only being carried forward? — Yes
+    field: CB_CARRIED_FORWARD
+    type: checkbox
+    on_state: /YES
+    group: s4_carried_forward
+  - line: s4.carried_forward.no     # Is the loss only being carried forward? — No
+    field: CB_CARRIED_FORWARD
+    type: checkbox
+    on_state: /NO
+    group: s4_carried_forward
+
+  # ==================================================== PAGE 26 — Schedule 4 page 2 (NOL Worksheet, Part II)
+  - line: s4.p2.1                   # Excess of Nonbusiness Capital gains over Nonbusiness Capital losses
+    field: S4P2L1
+    type: money
+  - line: s4.p2.2                   # Dividends
+    field: S4P2L2
+    type: money
+  - line: s4.p2.3                   # Interest
+    field: S4P2L3
+    type: money
+  - line: s4.p2.4                   # Alimony (received)
+    field: S4P2L4
+    type: money
+  - line: s4.p2.5                   # Pensions/Annuities
+    field: S4P2L5
+    type: money
+  - line: s4.p2.6                   # GA adjustment for retirement exclusion
+    field: S4P2L6
+    type: money
+  - line: s4.p2.7                   # GA adjustment for U.S. Interest
+    field: S4P2L7
+    type: money
+  - line: s4.p2.8                   # GA adjustment for non-Georgia municipal interest
+    field: S4P2L8
+    type: money
+  - line: s4.p2.9_specify          # Other (specify) — nonbusiness income
+    field: S4P2L9_OTHER
+    type: text
+    maxlen: 10
+  - line: s4.p2.9
+    field: S4P2L9
+    type: money
+  - line: s4.p2.10                  # Total Nonbusiness Income (Add Lines 1-9)
+    field: S4P2L10
+    type: money
+  - line: s4.p2.11                  # Standard/itemized deductions less casualty
+    field: S4P2L11
+    type: money
+  - line: s4.p2.12                  # Contributions to self-employed pension plan or Keogh
+    field: S4P2L12
+    type: money
+  - line: s4.p2.13                  # Alimony (paid)
+    field: S4P2L13
+    type: money
+  - line: s4.p2.14                  # Forfeited interest/penalty on early withdrawal
+    field: S4P2L14
+    type: money
+  - line: s4.p2.15                  # Contribution to a deductible IRA
+    field: S4P2L15
+    type: money
+  - line: s4.p2.16_specify         # Other (specify) — nonbusiness deduction
+    field: S4P2L16_OTHER
+    type: text
+    maxlen: 10
+  - line: s4.p2.16
+    field: S4P2L16
+    type: money
+  - line: s4.p2.17                  # Total Nonbusiness Deductions (Add Lines 11-16)
+    field: S4P2L17
+    type: money
+  - line: s4.p2.18                  # Excess of Nonbusiness Deductions (Line 17) less Nonbusiness Income (Line 10); if zero or less, zero
+    field: S4P2L18
+    type: money
+
+  # ==================================================== PAGE 27 — Schedule 4 page 3 (Part III: Carryback, first year)
+  - line: s4.p3.year_ended         # *Year Ended
+    field: YEAR_ENDED1
+    type: text
+    maxlen: 10
+  - line: s4.p3.1a                 # Federal adjusted gross income — (a) as filed
+    field: S4P3L1A
+    type: money
+  - line: s4.p3.1b                 # (b) Liability after application
+    field: S4P3L1B
+    type: money
+  - line: s4.p3.2a                 # Georgia adjustments
+    field: S4P3L2A
+    type: money
+  - line: s4.p3.2b
+    field: S4P3L2B
+    type: money
+  - line: s4.p3.3b                 # Net operating loss (col b only)
+    field: S4P3L3B
+    type: money
+  - line: s4.p3.4a                 # Georgia adjusted gross income
+    field: S4P3L4A
+    type: money
+  - line: s4.p3.4b
+    field: S4P3L4B
+    type: money
+  - line: s4.p3.5a                 # Deductions
+    field: S4P3L5A
+    type: money
+  - line: s4.p3.5b
+    field: S4P3L5B
+    type: money
+  - line: s4.p3.6a                 # Subtract Line 5 from Line 4
+    field: S4P3L6A
+    type: money
+  - line: s4.p3.6b
+    field: S4P3L6B
+    type: money
+  - line: s4.p3.7a                 # Exemptions
+    field: S4P3L7A
+    type: money
+  - line: s4.p3.7b
+    field: S4P3L7B
+    type: money
+  - line: s4.p3.8a                 # Taxable income (Line 7 from Line 6)
+    field: S4P3L8A
+    type: money
+  - line: s4.p3.8b
+    field: S4P3L8B
+    type: money
+  - line: s4.p3.9a                 # Income Tax
+    field: S4P3L9A
+    type: money
+  - line: s4.p3.9b
+    field: S4P3L9B
+    type: money
+  - line: s4.p3.10a                # Credits
+    field: S4P3L10A
+    type: money
+  - line: s4.p3.10b
+    field: S4P3L10B
+    type: money
+  - line: s4.p3.11a                # Tax after credits (Line 10 from Line 9)
+    field: S4P3L11A
+    type: money
+  - line: s4.p3.11b
+    field: S4P3L11B
+    type: money
+  - line: s4.p3.12a                # Enter Line 11 column (b)
+    field: S4P3L12A
+    type: money
+  - line: s4.p3.13a                # Decrease in tax (Line 12 from Line 11)
+    field: S4P3L13A
+    type: money
+
+  # ==================================================== PAGE 28 — Schedule 4 page 4 (Part III: Carryback, second year)
+  - line: s4.p4.year_ended
+    field: YEAR_ENDED2
+    type: text
+    maxlen: 10
+  - line: s4.p4.1a
+    field: S4P4L1A
+    type: money
+  - line: s4.p4.1b
+    field: S4P4L1B
+    type: money
+  - line: s4.p4.2a
+    field: S4P4L2A
+    type: money
+  - line: s4.p4.2b
+    field: S4P4L2B
+    type: money
+  - line: s4.p4.3b
+    field: S4P4L3B
+    type: money
+  - line: s4.p4.4a
+    field: S4P4L4A
+    type: money
+  - line: s4.p4.4b
+    field: S4P4L4B
+    type: money
+  - line: s4.p4.5a
+    field: S4P4L5A
+    type: money
+  - line: s4.p4.5b
+    field: S4P4L5B
+    type: money
+  - line: s4.p4.6a
+    field: S4P4L6A
+    type: money
+  - line: s4.p4.6b
+    field: S4P4L6B
+    type: money
+  - line: s4.p4.7a
+    field: S4P4L7A
+    type: money
+  - line: s4.p4.7b
+    field: S4P4L7B
+    type: money
+  - line: s4.p4.8a
+    field: S4P4L8A
+    type: money
+  - line: s4.p4.8b
+    field: S4P4L8B
+    type: money
+  - line: s4.p4.9a
+    field: S4P4L9A
+    type: money
+  - line: s4.p4.9b
+    field: S4P4L9B
+    type: money
+  - line: s4.p4.10a
+    field: S4P4L10A
+    type: money
+  - line: s4.p4.10b
+    field: S4P4L10B
+    type: money
+  - line: s4.p4.11a
+    field: S4P4L11A
+    type: money
+  - line: s4.p4.11b
+    field: S4P4L11B
+    type: money
+  - line: s4.p4.12a
+    field: S4P4L12A
+    type: money
+  - line: s4.p4.13a
+    field: S4P4L13A
+    type: money
+
+relations:
+  - "28 == 24 + 25 + 26 + 27"                # Line 28 "Total prepayment credits (Add Lines 24, 25, 26 and 27)"
+  - "s1.6 == s1.1 + s1.2 + s1.3 + s1.4 + s1.5"                  # Sch 1 line 6 "Total Additions (Enter sum of Lines 1-5 here)"
+  - "s1.13 == s1.7a + s1.7b + s1.7c + s1.7d + s1.7e + s1.7f + s1.8 + s1.9 + s1.10 + s1.11 + s1.12"  # "sum of Lines 7-12"
+  - "s1.14 == s1.6 - s1.13"                  # Sch 1 line 14 "Net Adjustments (Line 6 less Line 13)"
+  - "s2.9 == s2.2 + s2.3 + s2.4 + s2.5 + s2.6 + s2.7 + s2.8"          # Sch 2 line 9 "(sum of Lines 2 through 8)"
+  - "s2b.9 == s2b.2 + s2b.3 + s2b.4 + s2b.5 + s2b.6 + s2b.7 + s2b.8"  # Sch 2B line 9 "(sum of Lines 2 through 8)"
+  - "s3.5a == s3.1a + s3.2a + s3.3a + s3.4a"  # Sch 3 line 5 "TOTAL INCOME: TOTAL LINES 1 THRU 4", column A
+  - "s3.5b == s3.1b + s3.2b + s3.3b + s3.4b"  # column B
+  - "s3.5c == s3.1c + s3.2c + s3.3c + s3.4c"  # column C
+  - "s3.1a == s3.1b + s3.1c"                 # Sch 3 header "Column A must equal Column B plus Column C." — line 1
+  - "s3.2a == s3.2b + s3.2c"                 # line 2
+  - "s3.3a == s3.3b + s3.3c"                 # line 3
+  - "s3.4a == s3.4b + s3.4c"                 # line 4
+  - "s3.5a == s3.5b + s3.5c"                 # line 5
+  - "s3.12 == s3.10 + s3.11"                 # Sch 3 line 12 "Total Deductions and Exemptions: Add Lines 10 and 11"
+  - "s3.14 == s3.8c - s3.13"                 # Sch 3 line 14 "Subtract Line 13 from Line 8, Column C"
+  - "indcr_summary.13 == indcr_summary.1 + indcr_summary.2 + indcr_summary.3 + indcr_summary.4 + indcr_summary.5 + indcr_summary.6 + indcr_summary.7 + indcr_summary.8 + indcr_summary.9 + indcr_summary.10 + indcr_summary.11 + indcr_summary.12"  # "Total of Lines 1 through 12"
+  - "20 == indcr_summary.13"                 # IND-CR Summary line 13 "(Enter here and on Form 500/500X, Page 3 Line 20)"
+  - "s4.p2.10 == s4.p2.1 + s4.p2.2 + s4.p2.3 + s4.p2.4 + s4.p2.5 + s4.p2.6 + s4.p2.7 + s4.p2.8 + s4.p2.9"  # "Add Lines 1 - 9"
+  - "s4.p2.17 == s4.p2.11 + s4.p2.12 + s4.p2.13 + s4.p2.14 + s4.p2.15 + s4.p2.16"  # "(Add Lines 11-16)"
+cross_form:
+  - "8 == f1040.11a"                         # Line 8 "Federal adjusted gross income (From Federal Form 1040)" = AGI (2025 Form 1040 line 11a)
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name

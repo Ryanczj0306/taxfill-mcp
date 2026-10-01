@@ -479,6 +479,25 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "requires the filer to answer",
     ),
     StateComputed(
+        "states/ga/2025/ga500/pack.yaml",
+        181,
+        "the 2023 row re-measured field by field on the 2025 blank (Phase J JS5): 189 - 27 + 19. "
+        "MINUS 27: the 21 bindings of 2023 lines this port drops (6c; 11a-11c and the 11b count; "
+        "14a-14c and both counts; Schedule 3 10b, its count and four age / blind boxes, 11a / 11b "
+        "and both counts; Schedule 4 Part I line 5, now 'Reserved' and Hidden) and six surviving "
+        "widgets that lost the bit: L19 / L21 / L26 / L44, which now sit on the filer-entry lines "
+        "19 (Eligible Itemizer credit), 21 (Schedule 2 credits), 26 (estimated tax) and 44 "
+        "(interest), plus CRP12L1C and CRP13L2. PLUS 19: the new JS-set L11, L14 / L14_7C, L46 "
+        "and S3L11 / S3L11_7C; L7C (AFSimple_Calculate SUM of L7A, L7B); L20 / L23 / L30, the "
+        "renumbered IND-CR total, balance and overpayment; the 46a lines on CB_DD_TYPE (two) / "
+        "RTNUMBER / ACCNUMBER, which checkDirectDeposit() unlocks only when GN('L46') > 0; the "
+        "Schedule 4 name copies TP_FIRSTNAME / MIDINIT / LASTNAME / SUFFIX_COPY; and SSN_COPY "
+        "(tp_ssn_page_header), the page-header SSN the JS copies from TP_SSN onto 26 pages, "
+        "which the 2023 pack leaves unmapped. SCANLINE and the class-1 constants TP/SP_S1L4 "
+        "(now 5000) and TP/SP_S1L2_P3 (17500) stay unmapped. 181 fields but 178 widgets: "
+        "CB_DEDUCTION_TYPE's three option lines and CB_DD_TYPE's two share one field each",
+    ),
+    StateComputed(
         "states/mo/2023/mo1040/pack.yaml",
         223,
         "MO-1040's JS-computed totals; the ReadOnly 'do calculations' UI toggles and the "
@@ -642,6 +661,11 @@ NONZERO_READONLY_DEFAULTS: dict[tuple[str, str], str] = {
     ("states/ga/2023/ga500/pack.yaml", "s1mil.tp.7"):
         "'Total additional Military Exclusion allowed' — 35000 only with Georgia earned income (line 6)",
     ("states/ga/2023/ga500/pack.yaml", "s1mil.sp.7"): "the spouse column of s1mil.tp.7",
+    ("states/ga/2025/ga500/pack.yaml", "voucher.type_of_return"): "a /Ch dropdown (TAXTYPE) defaulted to '09'",
+    ("states/ga/2025/ga500/pack.yaml", "voucher.tax_year"): "a /Ch dropdown (YY) defaulted to '2025', its only option",
+    ("states/ga/2025/ga500/pack.yaml", "s1mil.tp.7"):
+        "'Total additional Military Exclusion allowed' — 35000 only with Georgia earned income (line 6)",
+    ("states/ga/2025/ga500/pack.yaml", "s1mil.sp.7"): "the spouse column of s1mil.tp.7",
     **{(f"states/mo/{y}/mo1040/pack.yaml", line): why for y in (2023, 2024) for line, why in (
         ("line32Y", "the document JavaScript assigns it (getField('line32Y').value = ...)"),
         ("line32S", "the document JavaScript assigns it"),
