@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,163 tests** — offline 7,307 + live-.gov 856; derived
+Done and on `main` (**8,169 tests** — offline 7,311 + live-.gov 858; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -97,15 +97,15 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**238 form packs total** — 227 `pack.yaml` (151 federal + 76 state) + 11
+**239 form packs total** — 227 `pack.yaml` (151 federal + 76 state) + 12
 `handfill.yaml`. The state 76 breaks down **TY2023 42 / TY2024 19 / TY2025 15**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **22 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, HI, KY, MO, NC, NY, OH, OR, PA, UT
+> **23 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, DC, HI, KY, MO, NC, NY, OH, OR, PA, UT
 > and VA (2024+2025), and ID/IL/LA/ND/NJ/NM/RI (2024) — after the 2026-08-21
 > ten-pack and 2026-08-25 four-pack tranches and the JS3b ports (UT 2025,
-> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **20**, state *knowledge*
+> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **19**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
-> still computes years those packs cannot fill. That asymmetry is now 20
+> still computes years those packs cannot fill. That asymmetry is now 19
 > jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
@@ -326,9 +326,9 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
       TY2023-only**: 76 packs across TY2023 (42) / TY2024 (19) / TY2025 (15), so
-      **22 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, HI, KY, MO, NC, NY, OH, OR, PA, UT and VA
+      **23 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, DC, HI, KY, MO, NC, NY, OH, OR, PA, UT and VA
       for both 2024 and 2025; ID, IL, LA, ND, NJ, NM, RI for 2024. For the
-      other **20**, a 2024/2025 return still computes but cannot be filled.
+      other **19**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
@@ -2338,6 +2338,7 @@ line items sum to the headline delta.
     - **HI N-11 2025 — DONE 2026-10-01** (`formpacks/states/hi/2025/n11`, off the 2024 manifest). Pages 1-3's entry paths are unchanged (126 of 127 boxes carry over) but the page 2-4 header captions were re-set 1-11 pt wider, so the name box starts after the new caption end (the verifier's one medium finding, fixed and re-measured). Page 4 is rebuilt: the two AMENDED RETURN ONLY lines (51, 52) and their minus squares are gone, lines 53-55 are renumbered 51-53 (every box in that block moved exactly +48 pt and was re-read on the 2025 paths), and the paid-preparer grid is re-laid out with PTIN / FEIN / Telephone captions (3 boxes re-measured). 166 lines / 174 boxes (2024: 169 / 177): 141 carried, 30 moved, 3 re-measured. Face deltas: line 15 $8,636 (Act 58 SLH 2025), the line 38 / 39 / 46 years; the standard deduction, the $1,144 exemption and the line-27 forms list are unchanged. The Instructions' line-22 limitation moved to page 20 (the face still prints "page 19" — the note follows the Instructions). Built, adversarially verified (FAIL → fixed → re-verify PASS with no findings), stamped and read again at integration (test_n11_2025_overlay.py).
     - **Engine: `source_pages` (2026-10-01).** NM publishes its 2025 PIT-1 only inside the 136-page PIT packet (pages 57-58) and WV its 2025 IT-140 only inside the forms-and-instructions booklet (pages 3-4, no fillable edition at all). A hand-fill manifest may now pin the booklet and name the form's pages in `source_pages`; `fill_form` stamps and writes only those pages (the manifest's page numbers count within them), `verify_form` reads that output, the worksheet says which pages to print, and a page beyond the booklet's count is refused. test_overlay.py covers the extraction, the verify, the worksheet text and the two refusals. NM 2025 and WV 2025 are the first users (both to build).
     - **VA Form 760 2025 — DONE 2026-10-01** (`formpacks/states/va/2025/va760`, a RE-MAP of VA 2024 in name only). The 115 widgets keep every /Ff, /DA and /MaxLen; the triage's 10 "gone" names are renames at identical rects — the seven LOSS ovals (Check Box2-8 → "Loss 1" ... "loss 17"), the spouse's middle initial and first-four-letters boxes, and SSN 2 — re-bound and re-read; 60 widgets moved under 3 pt. Face deltas: "File by May 1, 2026", "Rev. 04/26", the line 19-21 years, a serial comma on line 8; line numbering 1-36 / 17a / 19a-b unchanged; the $11,950 / $23,900 filing thresholds and the $930 exemption unchanged. cross_form `1 == f1040.11a`; the SSN combs and the four 8-cell date boxes now declare `comb: true` (the SSNs with `format: ssn_digits_only`); an `account_type` group id on the shared Account Type radio. 114/114 sentinels confirmed on both pages; two adversarial verifiers (semantics FAIL on a false engine-behaviour claim in the banner → fixed; placement PASS), a narrow re-verify (PASS, no findings).
+    - **SC1040 2025 — DONE 2026-10-01** (`formpacks/states/sc/2025/sc1040`, off the 2023 manifest). The 2025 blank ("Rev. 4/21/25") keeps every entry cell within 0.01 pt of 2023 — 163 of 164 boxes carry over box-for-box (pages 2-3 entirely); the one re-measured box is the combat-zone name, whose page-1 rule moved with the re-worded return-type captions (four captions gained bold prefixes). Face deltas: the years, line s's subsistence allowance $16/day (2023: $8), the "REFUNDS OR ZERO TAX DUE" mailing caption; no line added, dropped or renumbered (1-37, a-w, 22a-22e). The dependent exemption and under-6 deduction stamp $4,930 (the 2025 Instructions' worksheets); the Instructions file is now `SC1040Instr_2025.pdf`. Built, adversarially verified (FAIL on an Instructions-heading citation → fixed → re-verify PASS), stamped and read again at integration (test_sc1040_2025_overlay.py: 164/164 placements verify on both demo returns). Knowledge gap, not a mismatch: the SC 2025 pack records no subsistence-allowance figure.
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
   - 9 discovery rows were recovered (wf_fe623a11-933).
   - Pack the AcroForm rows at TY2023 first, each re-checked against its recorded sha256: AL 40NR, AR1000NR, AZ 140NR, AZ 140PY, CO DR 0104PN, DE PIT-NON.
