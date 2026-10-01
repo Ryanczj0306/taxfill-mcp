@@ -1128,6 +1128,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # equals the reviewed CA 2023 row (the seven mailing_address lines; the new paid_preparer.* rows are not address lines).
     # JS5: DE PIT-RES 2025 (the same homeAddress / city / state / zip boxes; the new pages-2-4 header.name and
     # header.taxpayer_id are not address lines) equals the reviewed DE 2023 row.
+    # JS5: MS 80-105 2025 (a PORTABLE port of MS 2023, every widget name and /Rect kept; the two new header-SSN mirror
+    # lines are not address lines) equals the reviewed MS 2023 row (the four mailing_address lines).
     import json
     from pathlib import Path
 

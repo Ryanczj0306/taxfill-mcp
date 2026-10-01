@@ -914,6 +914,10 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     # 2025 keeps the page-2 "Last Name (First 10 Characters)" box on its own widget (y_d400wf_lname2_PG2); the SSN
     # echo is the same field as page 1 and so is not a mirror (Phase J JS5).
     "states/nc/2025/d400/pack.yaml": 1,
+    # The 2025 port maps the page-2 and page-3 header "SSN" boxes (Page2SSN / Page3SSN: their own /Tx widgets, a
+    # keystroke filter and no JavaScript that copies the page-1 SSN) as identifying_number_page2 / _page3; the 2023
+    # pack had left them unmapped, so its continuation headers shipped blank (Phase J JS5).
+    "states/ms/2025/f80105/pack.yaml": 2,
     "states/ri/2023/ri1040/pack.yaml": 12,
     "states/ri/2024/ri1040/pack.yaml": 12,
     "states/va/2023/va760/pack.yaml": 1,
