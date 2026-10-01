@@ -661,7 +661,7 @@ states:
           Line 12, and compute tax on this amount", Line 24 "TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE", Line 25
           lump-sum tax, Line 26 total tax, Line 27a personal credits (x $110), Line 27b 60-or-over credits (x $110),
           Line 28 other states, Line 29 volunteer firefighter, Line 31 child care (50% of federal), Line 34 EITC
-          refundable/non-refundable boxes, new Line 39 capital gains tax payments, Lines 41-47 settle-up'
+          refundable/non-refundable boxes, Line 39 capital gains tax payments (2023: Line 38), Lines 41-47 settle-up'
         cadence: annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf
@@ -3715,6 +3715,18 @@ states:
       - url: https://tax.vermont.gov/individuals/who-should-file/nonresident
         answers: 'VT Dept of Taxes — Nonresident with Earned Vermont Income (Who Should File): nonresident filing
           threshold (net income > $100 or gross income > $1,000); Vermont-source income rules'
+        cadence: annual (per tax year; the newest shipped VT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.vermont.gov/sites/tax/files/documents/GB-1326.pdf
+        answers: 'VT Dept of Taxes — GB-1326, The Vermont Child Care Contribution (October 2024): ''Act 76 of 2023
+          creates the Child Care Contribution (CCC) under 32 V.S.A. Chapter 246''; ''there is no cap on self-employment
+          income subject to the CCC''; applies to self-employment income ''for work physically performed in Vermont'''
+        cadence: annual (per tax year; the newest shipped VT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://legislature.vermont.gov/statutes/section/32/246/10553
+        answers: 'Vermont Statutes Online — 32 V.S.A. § 10553 (chapter 246, Child Care Contribution): the 0.44%
+          wage / 0.11% self-employment rates, ''Added 2023, No. 76, § 24, eff. July 1, 2024''; (a)(2) the estimated-payment
+          treatment'
         cadence: annual (per tax year; the newest shipped VT pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       law_changes:

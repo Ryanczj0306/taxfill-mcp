@@ -26,12 +26,14 @@
 # deductions Line 22, TAXABLE INCOME Line 23, TAX LIABILITY Line 24, lump-sum tax
 # Line 25, total tax Line 26, personal credits Lines 27a/27b, other-state credit
 # Line 28, volunteer firefighter Line 29, child care Line 31, EITC Line 34,
-# withholding Line 35, total refundable credits Line 40. The TAIL shifted by one:
-# a new Line 39 "CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)" pushed the
-# settle-up lines down, so for 2025 balance due is Line 41, overpayment Line 42,
-# contributions Line 43, applied-to-2026-estimated Line 44, penalties/interest
-# Line 45, NET BALANCE DUE Line 46 (was 45) and NET REFUND Line 47 (was 46). The
-# mailing table in the 2025 instructions cites the new numbers ("If Enclosing
+# withholding Line 35, total refundable credits Line 40, CAPITAL GAINS TAX
+# PAYMENTS (Attach Form REW-EST) Line 39, balance due Line 41, overpayment Line
+# 42, contributions Line 43, applied-to-2026-estimated Line 44, penalties/interest
+# Line 45, NET BALANCE DUE Line 46 and NET REFUND Line 47 — every one the same
+# number as on the 2024 form. Against the 2023 form each line from 17 on is one
+# higher because the 2024 revision inserted Line 16 ACTIVE LABOR ORGANIZATION
+# DUES (Line 39 is 2023's Line 38 under its new number; 46/47 were 45/46). The
+# mailing table in the 2025 instructions cites these numbers ("If Enclosing
 # Payment w/ Balance Due (from Line 46)"; "If Refund Due (from Line 47)").
 jurisdiction: states/de
 tax_year: 2025
@@ -196,12 +198,13 @@ mailing_addresses:
     Wilmington, DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division of Revenue,
     P.O. Box 8711, Wilmington, DE 19899-8711.'
   with_payment: 'Enclosing payment / balance due (2025 PIT-RES Line 46): State of Delaware, Division of Revenue, P.O.
-    Box 508, Wilmington, DE 19899-508.'
+    Box 508, Wilmington, DE 19899-0508 (the ZIP+4 as the 2025 PIT-RES mailing boxes on pages 3 and 4 and the
+    Instructions'' own address list print it; the Instructions'' Step 5 table drops the leading zero, ''19899-508'').'
   citation:
     source: 'DE Division of Revenue - 2025 Form PIT-RES Instructions, Step 5 mailing table: "If Enclosing Payment w/
       Balance Due (from Line 46): State of Delaware, Division of Revenue, P.O. Box 508, Wilmington, DE 19899-508";
       "If Refund Due (from Line 47): ... P.O. Box 8710, Wilmington, DE 19899-8710"; "Zero Due returns or returns without
-      payment: ... P.O. Box 8711, Wilmington, DE 19899-8711" — note the 2025 line numbers are one higher than 2024''s'
+      payment: ... P.O. Box 8711, Wilmington, DE 19899-8711" — the 2025 line numbers equal 2024''s and are one higher than 2023''s (the 2024 revision inserted Line 16)'
     url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'
   verification: 'Some state facts could not be independently re-confirmed — see the pack''s `unverified` list; confirm
     at the cited DOR source before relying on a specific figure/address.'
@@ -235,7 +238,7 @@ all_citations:
     Line 23 "TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount", Line 24 "TAX LIABILITY
     FROM TAX RATE TABLE/SCHEDULE", Line 25 lump-sum tax, Line 26 total tax, Line 27a personal credits (x $110), Line
     27b 60-or-over credits (x $110), Line 28 other states, Line 29 volunteer firefighter, Line 31 child care (50% of
-    federal), Line 34 EITC refundable/non-refundable boxes, new Line 39 capital gains tax payments, Lines 41-47 settle-up'
+    federal), Line 34 EITC refundable/non-refundable boxes, Line 39 capital gains tax payments (2023: Line 38), Lines 41-47 settle-up'
   url: 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf'
 - source: 'Delaware 2025 State Income Tax Table & Schedule (TY25_taxtable.pdf) — "2025 STATE INCOME TAX SCHEDULE: If
     taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus
@@ -263,9 +266,9 @@ unverified:
 - 'Whether the federal-AGI start on the 2025 form ("FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040", no federal line number
   printed) corresponds to federal Form 1040 Line 11 was not restated on the 2025 form itself; the 2025 federal 1040
   keeps AGI on Line 11, so the mapping is unambiguous in practice.'
-- 'The new 2025 Form PIT-RES Line 39 "CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)" and DE Schedule IV were not
+- 'Form PIT-RES Line 39 "CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)" (2023''s Line 38) and DE Schedule IV were not
   researched beyond their appearance on the form and in the Line 39 instruction; Form REW-EST itself was not fetched.
-  This is the line that shifted the 2025 settle-up numbering.'
+  The line is not new: the 2024 revision''s inserted Line 16 (Active Labor Organization Dues) moved it from 38 to 39.'
 - 'The 2025 tax table (TY25_taxtable.pdf) was spot-checked, not transcribed: the $2,750-$2,800 band prints $17, $16,750-$16,800
   prints $586, $43,500-$43,550 prints $2,029, $45,400-$45,450 prints $2,135, $49,500-$49,550 prints $2,362 and $50,000-$50,050
   prints $2,390 — every sampled band equals band-midpoint bracket math under 30 Del. C. sec. 1102(a)(14), rounded
@@ -328,8 +331,9 @@ tax:
     ''TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount''. Instructions, Line 24: ''If
     Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater,
     use the tax schedule at the end of the tax table to compute your tax liability.'' NOTE — these are the SAME line
-    numbers as 2024: the 2025 form did NOT renumber Sections A-D (only the post-Line-38 settle-up lines shifted by
-    one, because a new Line 39 ''CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)'' was inserted).'
+    numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher
+    because the 2024 revision inserted Line 16 ''ACTIVE LABOR ORGANIZATION DUES'' (Line 39 ''CAPITAL GAINS TAX
+    PAYMENTS (Attach Form REW-EST)'' is 2023''s Line 38).'
   exemptions: {}
   standard_deduction:
     single: 3250
@@ -341,10 +345,11 @@ tax:
     deduction, the $2,500 additional standard deduction, and the $110 personal credits are all unchanged from 2024,
     and — unlike the 2023-to-2024 transition, which renumbered them — the 2025 PIT-RES keeps the deduction election
     on Line 20, additional standard deduction Line 21, total deductions Line 22, TAXABLE INCOME Line 23, TAX LIABILITY
-    Line 24, lump-sum tax Line 25, total tax Line 26 and personal credits Lines 27a/27b. Only the settle-up tail shifted:
-    a new Line 39 ''CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)'' pushed balance due to Line 41, overpayment
-    42, contributions 43, applied-to-2026-estimated 44, penalties/interest 45, NET BALANCE DUE 46 (was 45) and NET
-    REFUND 47 (was 46) — and the 2025 mailing table cites the new numbers.'
+    Line 24, lump-sum tax Line 25, total tax Line 26 and personal credits Lines 27a/27b. The settle-up tail is
+    also 2024''s: capital gains tax payments Line 39 (2023: 38), balance due 41, overpayment 42, contributions 43,
+    applied-to-2026-estimated 44, penalties/interest 45, NET BALANCE DUE 46 (2023: 45) and NET REFUND 47 (2023: 46)
+    — the +1 against 2023 came with the 2024 revision''s inserted Line 16, and the 2025 mailing table cites these
+    numbers.'
   - 'Base guidance: Supply 2025 Form PIT-RES Line 12, DELAWARE ADJUSTED GROSS INCOME = Line 1 federal AGI (from federal
     Form 1040) + Section A additions (Line 2 interest on non-Delaware state/local obligations; Line 3 fiduciary adjustment
     / oil depletion) - Section B subtractions (U.S.-obligation interest; pension/retirement exclusions; Delaware state

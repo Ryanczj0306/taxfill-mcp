@@ -280,6 +280,16 @@ tax:
     from tax on Line 14, not an income deduction.'
   - 'Part-year residents and nonresidents: Line 15 income adjustment percentage (Schedule IN-113, Line 35) multiplies
     Line 14 to get Line 16 Adjusted Vermont Income Tax — not modeled; full-year residents use 100%.'
+  - 'FARMER / FISHERMAN box — the last box of the page-1 ''Check all that apply'' row (AMENDED, CANNABIS, RECOMPUTED,
+    EXTENDED, FARMER / FISHERMAN), on the form since TY2024; NOT modeled. 2024 IN-111 Instructions, Farmer/Fisherman
+    (p. 6): ''If you meet the definition of a qualified farmer or fisherman under 26 U.S.C. § 6654(i)(2), please check
+    the box on Form IN-111. Generally, a qualified farmer or fisherman must earn at least 2/3 of their gross income from
+    farming or fishing in either the current or proceeding tax year to be exempt from paying quarterly estimated taxes.
+    Please see IRS Topic No. 416 for more information'' (''proceeding'' as printed). The booklet says only to check
+    the box; its Line 31 (underpayment interest and penalty) text prints no farmer or fisherman exception —
+    ''Estimated tax payments must either be: 1) equal to 100% of last year''s tax liability OR 2) 90% of this year''s
+    tax liability. If the tax liability due, less withholding, is less than $500, you will not be subject to penalty
+    or interest charges.'' — so what the box changes on Worksheet IN-152 is not documented there.'
 
 # Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
 # booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
