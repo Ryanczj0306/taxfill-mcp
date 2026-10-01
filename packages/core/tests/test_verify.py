@@ -1117,6 +1117,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # (mailing_address, city, state, zip_code; county_first_five_letters still rejected).
     # JS5: MN M1 2025 (a NEAR-PORT of MN 2023; the new County box is not a selector line) equals the reviewed MN 2023 row.
     # JS5: OH IT 1040 2025 (a RE-MAP of OH 2024 — page 2 and both long schedules renumbered; the five address widgets SAME) equals the reviewed OH 2024 row.
+    # JS5: VA 760 2025 (a RE-MAP port of VA 2024: 10 widgets renamed at the same rects, no address box touched)
+    # equals the reviewed VA 2024 row (address, city_town_or_post_office, state, zip_code).
     import json
     from pathlib import Path
 

@@ -918,6 +918,9 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     "states/ri/2024/ri1040/pack.yaml": 12,
     "states/va/2023/va760/pack.yaml": 1,
     "states/va/2024/va760/pack.yaml": 1,
+    # 2025 renamed the pair: the page-1 SSN is now "SSN 1" (2024: "Your SSN") and the
+    # page-2 header mirror is "SSN 2" (2024: "SSN 1") — still one mirror (Phase J JS5).
+    "states/va/2025/va760/pack.yaml": 1,
     "states/wi/2023/wi_form1/pack.yaml": 15,
 }
 
