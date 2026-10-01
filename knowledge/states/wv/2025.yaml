@@ -23,7 +23,7 @@ treaty_note: 'WV''s resident return (Form IT-140) starts from federal adjusted g
   tax-treaty income, foreign/nonresident-alien treaty income, or income excluded under a US tax treaty. Therefore
   treaty-exempt income is NOT re-taxed by WV -> conforms = true.'
 citation:
-  source: 'WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI
+  source: 'WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI
     (p.24), Schedule M increasing modifications lines 51-58 (no treaty add-back),
     Who Must File & Residency Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form
     IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)'
@@ -66,7 +66,7 @@ credits:
     household 100% at <=$32,150).
   claimed_on: Schedule FTC-1, then carried to line 2 of the IT-140 RECAP (Tax Credit Recap) schedule
   citation:
-    source: WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet), Schedule FTC-1 (p.11)
+    source: WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet), Schedule FTC-1 (p.11)
         and the 2025 Family Tax Credit Tables (p.12)
     url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
 - name: Homestead Excess Property Tax Credit (HEPTC)
@@ -102,7 +102,7 @@ credits:
   claimed_on: Schedule/Form SCTC-A (line 2, Part III), carried to Form IT-140 line 18 ('List Allowable Credit
     amount from Line 2, Part III of Form SCTC-A on Form IT-140, line 18')
   citation:
-    source: WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet), Senior Citizens Tax
+    source: WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet), Senior Citizens Tax
       Credit Information (page 34) and the Form SCTC-A instructions (Form IT-140 line 18)
     url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
 filing_requirement:
@@ -117,7 +117,7 @@ mailing_addresses:
   refund_or_no_payment: WV Tax Division, P.O. Box 1071, Charleston, WV 25324-1071
   with_payment: WV Tax Division, P.O. Box 3694, Charleston, WV 25336-3694
   citation:
-    source: 'WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point =
+    source: 'WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point =
     FAGI (p.24), Schedule M increasing modifications lines 51-58 (no treaty add-back),
     Who Must File & Residency Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form
     IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)'
@@ -133,13 +133,13 @@ payment:
 deadlines:
   filing_due_date: '2026-04-15'
   citation:
-    source: 'WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point =
+    source: 'WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point =
     FAGI (p.24), Schedule M increasing modifications lines 51-58 (no treaty add-back),
     Who Must File & Residency Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form
     IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)'
     url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
 all_citations:
-- source: 'WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI
+- source: 'WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI
     (p.24), Schedule M increasing modifications lines 51-58 (no treaty add-back),
     Who Must File & Residency Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form
     IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)'
@@ -283,7 +283,7 @@ tax:
   - 'QUALIFYING SURVIVING SPOUSE: the engine maps QSS to married_filing_jointly. West Virginia''s own filing status
     5, ''Widow(er) with dependent child'', uses the SAME Rate Schedule I as married filing jointly and the same $2,000
     exemptions, so the mapping reproduces the correct tax.'
-  - 'ROUNDING: the booklet requires whole dollars (''Round off amounts to WHOLE DOLLARS – NO CENTS'', p.14) and both
+  - 'ROUNDING: the booklet requires whole dollars (''Round off amounts to WHOLE DOLLARS – NO CENTS'', Tips on Filing a Paper Return, printed page 16 / PDF page 18) and both
     rate-schedule examples say ''Round to nearest whole dollar'' — consistent with the engine''s half-up rounding
     to whole dollars.'
   - 'LINE 7 FLOOR: ''IF LESS THAN ZERO, ENTER ZERO'' matches the engine''s max(0, base_after).'
