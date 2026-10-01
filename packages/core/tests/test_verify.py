@@ -1124,6 +1124,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # CA 2023 row (the seven mailing_address lines; the principal_residence.* and organ-donor lines are not address lines).
     # JS5: VT IN-111 2025 (a RE-MAP of VT 2023: page 2 renumbered, line 15 and the signature dates re-cut) equals the
     # reviewed VT 2023 row (the four mailing_address lines; physical_address.street is the 911 address, rejected as before).
+    # JS5: CA 540NR 2025 (a RE-MAP of CA 2023 — the FTB renamed every widget, re-bound by position and printed label)
+    # equals the reviewed CA 2023 row (the seven mailing_address lines; the new paid_preparer.* rows are not address lines).
     import json
     from pathlib import Path
 
