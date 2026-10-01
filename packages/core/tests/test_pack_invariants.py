@@ -1386,6 +1386,13 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply (military pension)',
     ('states/de/pit_res', '8b'):
         'INDEPENDENT: the 529 and ABLE boxes for each person are separate subtractions; several may apply',
+    ('states/de/pit_res', '21'):
+        'INDEPENDENT: the 2025 revision prints the 2023 line-20 age / blindness boxes ("Column A - if Spouse was: '
+        '65 or over / blind", "Column B - if You were: 65 or over / blind") on line 21, one per condition per '
+        'person; any combination may apply',
+    ('states/de/pit_res', '27b'):
+        'INDEPENDENT: the 2025 revision prints the 2023 line-26b row ("CHECK BOXES Spouse 60 or over (Column A)", '
+        '"Self 60 or over (Column B)") as line 27b, one box for each person; both may apply',
     ('states/ga/ga500', '11_self'):
         'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
     ('states/ga/ga500', '11_spouse'):

@@ -1126,6 +1126,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # reviewed VT 2023 row (the four mailing_address lines; physical_address.street is the 911 address, rejected as before).
     # JS5: CA 540NR 2025 (a RE-MAP of CA 2023 — the FTB renamed every widget, re-bound by position and printed label)
     # equals the reviewed CA 2023 row (the seven mailing_address lines; the new paid_preparer.* rows are not address lines).
+    # JS5: DE PIT-RES 2025 (the same homeAddress / city / state / zip boxes; the new pages-2-4 header.name and
+    # header.taxpayer_id are not address lines) equals the reviewed DE 2023 row.
     import json
     from pathlib import Path
 
