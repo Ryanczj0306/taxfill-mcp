@@ -16,8 +16,10 @@ jurisdiction: states/il
 tax_year: 2025
 income_tax: true
 conforms_to_federal_treaties: true
-treaty_note: 'IL-1040 starts from federal adjusted gross income: 2025 IL-1040 Step 2, Line 1 "Adjusted gross income
-  — Enter the adjusted gross income from your federal return." The instructions ("What is Illinois income?") confirm
+treaty_note: 'IL-1040 starts from federal adjusted gross income: the 2025 IL-1040 face, Step 2 Line 1, prints "Federal
+  adjusted gross income from your federal Form 1040 or 1040-SR, Line 11a", and the 2025 Instructions'' Step 2 Line 1
+  read "Adjusted gross income — Enter the adjusted gross income from your federal return." The instructions ("What is
+  Illinois income?") confirm
   "Your Illinois income includes the adjusted gross income (AGI) amount figured on your federal return, plus any
   additional income that must be added to your AGI." Income exempt from federal tax under a U.S. income tax treaty
   is already excluded from federal AGI, so it flows through and is not re-taxed. Illinois additions are limited:
@@ -33,8 +35,9 @@ citation:
     (April 15, 2026), income tax rate ("The Illinois income tax rate is 4.95 percent (.0495)"), exemption allowance
     ("The personal exemption amount for tax year 2025 is $2,850")
   url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf
-starts_from: 'federal AGI (2025 IL-1040 Step 2, Line 1: "Adjusted gross income — Enter the adjusted gross income
-  from your federal return")'
+starts_from: 'federal AGI (2025 IL-1040 face, Step 2 Line 1: "Federal adjusted gross income from your federal Form 1040 or
+  1040-SR, Line 11a"; the 2025 Instructions: "Adjusted gross income — Enter the adjusted gross income from your federal
+  return")'
 residency:
   summary: You are an Illinois resident if you were domiciled in Illinois for the entire tax year; your domicile
     is the place where you reside and intend to return after temporary absences (e.g., U.S. Armed Forces duty, residence
