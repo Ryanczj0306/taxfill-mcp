@@ -116,6 +116,23 @@ credits:
     source: CT DRS - 2024 Form CT-1040 Instructions (Rev. 01/25), Line 7 / Schedule 2 - Credit for Income Taxes
       Paid to Qualifying Jurisdictions
     url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+- name: 'Historic Homes Rehabilitation Tax Credit (Line 20d)'
+  type: refundable
+  eligibility: 'The 2024 Instructions, Line 20d: "All tax credit vouchers shall be issued by The Department of Economic and
+    Community Development to those eligible that are (1) owners rehabilitating historic homes; or (2) taxpayers making
+    contributions to qualified rehabilitation expenditures on historic homes." The booklet prints no statute, no cap and
+    no computation — the credit is whatever the DECD voucher shows. The form face captions the line "20d. Historic Home
+    Rehabilitation Credit" (new on the 2024 face); the Instructions call it the "Historic Homes Rehabilitation Tax Credit".'
+  amount: 'The voucher amount: "Enter the amount received from your Historic Homes Rehabilitation Tax Credit Voucher and
+    submit a copy of the voucher you received from the Department of Economic and Community Development with your
+    Connecticut income tax return." Refundable by placement — Line 21 "Total Payments and Refundable Credits" reads
+    "Add Lines 18, 19, 20, 20a, 20b, 20c, and 20d" (the Line 20d text itself never uses the word refundable).'
+  income_limit_2024: 'None printed.'
+  claimed_on: 'Form CT-1040, Line 20d, summed into Line 21 — a copy of the DECD voucher is attached'
+  citation:
+    source: 'CT DRS — 2024 Form CT-1040 Instructions (Rev. 01/25), p. 4 Line 20d Historic Homes Rehabilitation Tax Credit
+      and Line 21 Total Payments and Refundable Credits; the 2024 Form CT-1040 face, Lines 20d and 21'
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
 filing_requirement:
   note: 'Connecticut uses a "Gross Income Test." A resident generally must file Form CT-1040 if Connecticut gross
     income exceeds the threshold for their filing status: $12,000 (married filing separately), $15,000 (single),
@@ -273,6 +290,20 @@ tax:
   - Connecticut has no county or municipal income taxes and no standard deduction; the Table A personal exemption
     and the personal credit are the only general-relief mechanisms, both income-dependent, both computed on the Tax
     Calculation Schedule.
+  - 'Schedule 1 subtractions are the caller''s, not this block''s — the 2024 face adds Line 48d "Achieving Better Life
+    Experience (ABLE)", summed into Line 50 and Line 4. 2024 Instructions p. 10, Line 48d ABLE (Achieving a Better Life
+    Experience) Account: "Subtract the amount of your contributions made to an ABLE (Achieving a Better Life Experience)
+    account. The modification cannot exceed the maximum allowable contribution. The maximum ABLE contribution that may
+    be subtracted is the lesser of (1) the amount of contributions to all ABLE accounts during the taxable year; or
+    (2)(A) $5,000 for each individual taxpayer, including individuals whose filing status on their Connecticut income
+    tax return is single, head of household, filing separately, or (B) $10,000 for individuals whose filing status on
+    their Connecticut income tax return is filing jointly or qualifying surviving spouse." The booklet prints no
+    statute, effective year, carryforward or beneficiary rule.'
+  - 'The page-1 "Are you interested in learning more about the health coverage options available through Access Health
+    CT?" box has no tax effect: 2024 Instructions p. 2, "By checking the box on Form CT-1040, Connecticut Resident Income
+    Tax Return, you authorize the Department of Revenue Services to transmit certain demographic information about you
+    and your household to Access Health CT." — an authorization, so it is checked only when the filer asks for it.
+    Line 13 reads "Total allowable credits from Schedule CT-IT Credit, Part 1, Line 10" (2023: Line 11).'
 
 # Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
 # booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an
