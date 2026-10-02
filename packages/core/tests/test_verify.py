@@ -1159,6 +1159,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # U.S.)" row, and the new "County in Which Located" box is keyed "county", not an address line) equals the reviewed OK 2023 row.
     # JS5: ME 1040ME 2025 (a RE-MAP of ME 2023; the page-1 address widgets kept their names, the page-3 bank block is
     # not an address) equals the reviewed ME 2023 row (the four mailing_address lines).
+    # JS5: IN IT-40 2025 (a RE-MAP of IN 2023 — every header widget renamed, keys kept; the street caption now reads
+    # "Mailing address") equals the reviewed IN 2023 row (present_address, city, state, zip_or_postal_code).
     import json
     from pathlib import Path
 

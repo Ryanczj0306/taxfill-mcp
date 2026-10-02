@@ -1,0 +1,454 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/in/2023/it40/pack.yaml (ported 2026-10-02,
+# Phase J JS5; triaged RE-MAP — 64 of the base's 72 mapped widgets renamed).
+#
+# URL. https://forms.in.gov/Download.aspx?id=16914 — the IN DOR "Current Year
+# Individual Tax Forms" page lists it as "IT-40 Form | 154 | 2025 IT-40 Income
+# Tax Form | 09/25". Two separate downloads on 2026-10-02 both answered HTTP
+# 200 application/pdf ("IT-40 (9-25) Fillable.pdf", 3,242,429 bytes) and both
+# hash to 0b5d74cffea1dc758eff500a8d74bf020b53b977b57e04b12ce344316234b785,
+# equal to the discovery download. The host did not refuse, so no
+# mirror_urls entry is pinned. PDF CreationDate 2025-06-27, ModDate
+# 2025-08-12; AcroForm, no XFA, 2 pages.
+#
+# PRINTED IDENTITY. Page 1 prints "Form IT-40", "State Form 154",
+# "(R24 / 9-25)", "Indiana Full-Year Resident Individual Income Tax Return",
+# "2025" and "Due April 15, 2026"; the scan lines read *15125111694* (page 1)
+# and *15125121694* (page 2). printed_year_verified = 2025.
+#
+# TOPOLOGY against the 2023 blank (a widget census against the 2023 pack,
+# with every row re-read on a sentinel render). 2023: 72 fields over 72
+# widgets (64 text, 8 checkbox). 2025: 70 fields over 72 widgets (64 text;
+# 5 single /Yes checkboxes plus one 3-kid radio). Census: 0 SAME, 8 MOVED,
+# 64 GONE, 64 NEW; no base-unmapped widget existed.
+#   * MOVED (name kept): Your/Spouse First Name, Last Name and Suffix moved
+#     about 12 pt down the page (both first-name boxes also gained 14.3 pt on
+#     the left: 180.0 pt wide); Routing Number and Account Number moved about
+#     11 pt up. Routing (/MaxLen 9) and Account (/MaxLen 17) keep their comb
+#     flag (Ff 29360128) and /MaxLen.
+#   * GONE -> its 2025 replacement, every pair confirmed on the render:
+#     Fiscal1, "Fiscal 2", Fiscal3 -> Fiscal Year Beginning Month / Day / Year;
+#     Fiscal4-6 -> Fiscal Year Ending Month / Day / Year; Check Box Amend ->
+#     Amending; Your Social Security Number1-3 -> SSN 1-3; Spouse Social
+#     Security Number1-3 -> Spouse SSN 1-3; Check Box1 / Check Box2 -> You
+#     ITIN / Spouse ITIN; Your / Spouse First Initial -> Your / Spouse Middle
+#     Initial; Address -> Present Address; Check Box3 -> Married Filing
+#     Separately; City / State / Zip Code / Foreign Country -> Present City /
+#     Present State / Present ZIP / Foreign Country Code; County Where You
+#     Lived / You Worked / Spouse Lived / Spouse Worked -> County You Lived /
+#     You Worked / Spouse Lived / Spouse Worked; "1".."21" and "23".."26" ->
+#     "Line 1".."Line 21", "Line 23".."Line 26"; Your County Code / 19a ->
+#     "Line 19a 1" / "Line 19a 2"; Spouse County Code / 19b -> "Line 19b 1" /
+#     "Line 19b 2"; 19c, 19d, 20a -> "Line 19c", "Line 19d", "Line 20a";
+#     Check Box4 / Check Box5 / Check Box6 (three separate /Yes checkboxes) ->
+#     the three kids of ONE radio field "Account Type" (/0 /1 /2); Check Box7 ->
+#     Account Outside US; Date1 / Date2 -> Date You Signed / Date Spouse
+#     Signed.
+#   * NEW: the 64 replacements above, every one mapped. Nothing is left
+#     unmapped: no widget is ReadOnly, a pushbutton, a banner or a caption.
+#   * /MaxLen: every 2025 text widget except Routing and Account dropped it
+#     (2023: fiscal-year boxes 2/2/4, SSN boxes 3/2/4, initials 1, State 2,
+#     Zip Code 10, Foreign Country 2, the four county boxes and the two 19a/19b
+#     county codes 2). The pack keeps those caps as printed-box budgets; each
+#     box holds its cap at /Cour 12 (7.2 pt a glyph), and verify enforces a
+#     pack maxlen on a widget without one.
+#   * /Ff: every other text widget is now 8388608 (DoNotScroll); 2023 had
+#     12582912 (DoNotScroll + DoNotSpellCheck) on nine of them. The radio is
+#     Ff 49152 (Radio + NoToggleToOff); the /Yes boxes are Ff 0.
+#   * /DA: every text widget /CourierStd 12 -> /Cour 12. Every widget now
+#     carries a /TU tooltip.
+#   * Box widths that changed materially: Present Address 381.9 -> 410.4 pt,
+#     Present State 79.4 -> 43.2 pt, Present ZIP 108.4 -> 86.4 pt (holds the
+#     10-character ZIP+4), the 19a/19b county-code boxes 29.0 -> 21.6 pt, the
+#     two signature-date boxes 66.5 / 67.1 -> 64.8 pt.
+#
+# FACE DELTAS vs 2023 (a diff of the printed text, then the renders):
+#   * Revision stamp "(R22 / 9-23)" -> "(R24 / 9-25)"; year 2023 -> 2025; due
+#     date "April 15, 2024" -> "April 15, 2026"; scan lines 15123... ->
+#     15125....
+#   * The fiscal-year caption now reads "If filing for a fiscal year, enter the
+#     dates (MM/DD/YYYY). All others, leave blank (see instructions)."
+#   * The ITIN captions moved above the SSN row: "Place “X” in box if you are
+#     applying for ITIN." / "Place “X” in box if spouse is applying for
+#     ITIN." (the face prints ITIN with letter-spaced glyphs, which the text
+#     layer splits as "I T I N"); the married-filing-separately box moved up
+#     beside the SSN row, under "if amending."
+#   * The street box caption "Present address (number and street or rural
+#     route)" -> "Mailing address (number and street or PO Box)"; the foreign
+#     country code box moved to the right end of the City / State / ZIP row.
+#   * County codes "on Jan. 1, 2023" -> "on Jan. 1, 2025", and a NEW printed
+#     paragraph below them sends a filer whose mailing address differs from
+#     the principal residence address as of Jan. 1, 2025 to Schedule CT-40.
+#     It carries no widget.
+#   * Line 8 "multiply line 7 by 3.15% (.0315)" -> "multiply line 7 by 3%
+#     (.03)" — knowledge/states/in/2025.yaml records the same 3% rate.
+#   * Line 19 "applied to your 2024 estimated tax account" -> "2026"; the
+#     amount captions print "19a", "19b", "19c" and "20a" (2023: "a", "b",
+#     "c", "a").
+#   * Page 2 adds "Visit www.in.gov/taxpayer-receipt to view your taxpayer
+#     receipt." The mailing boxes (P.O. Box 7224 / 46207-7224 with payment,
+#     P.O. Box 40 / 46206-0040 otherwise) are unchanged and agree with the
+#     knowledge pack.
+#   * Line 1 still prints "Form 1040 or Form 1040-SR, line 11" although the
+#     TY2025 Form 1040 prints AGI on line 11a; the cross_form leg targets the
+#     defining line, f1040.11a.
+#   * Every line number 1-26 and its printed arithmetic are unchanged, so
+#     the relations carry over.
+#
+# Unresolved: none.
+# ===========================================================================
+# Form IT-40, 2025 — Indiana Full-Year Resident Individual Income Tax Return.
+#
+# Layout. Flat AcroForm (acroform_root empty; field names are the descriptive
+# ids the 2025 blank ships with, e.g. "Line 1", "SSN 1", "Present Address").
+# IT-40 is a single-column resident return: each numbered income/tax line is
+# one widget, so the line key is the printed line number ("1".."26"). Header,
+# county-code, refund/deposit and signature widgets carry descriptive keys.
+# Line keys are unchanged from the 2023 pack.
+#
+# Coverage. The blank has 70 AcroForm fields over 72 widgets; ALL are mapped
+# (the radio "Account Type" as three option lines). There are no
+# pushbuttons and no ReadOnly widgets, so nothing is intentionally unmapped.
+#
+# Checkboxes. Five single /Yes boxes (on-states re-dumped from this blank's
+# /AP /N): Amending ("if amending."), You ITIN, Spouse ITIN, Married Filing
+# Separately, and Account Outside US (line 22d). Line 22c "Type: Checking
+# Savings Hoosier Works MC" is ONE radio field with kids /0 (Checking),
+# /1 (Savings), /2 (Hoosier Works MC), mapped as three options of group
+# 22c_account_type on the shared field.
+#
+# Money vs text. Every numbered dollar line prints a ".00" cents suffix, so
+# lines 1-18, 19a/19b/19c, 19d, 20, 21 and 23-26 are `money`. Text stays text:
+# the six fiscal-year boxes, the 3-2-4 SSN boxes, names / initials / suffix,
+# address / city / state / ZIP, the 2-character foreign-country and county
+# boxes, the 19a/19b county codes, the line-20a code box, the routing (9) and
+# account (17) comb boxes, and the two signature-date boxes.
+#
+# Relations. Only unconditional equalities with every operand mapped are
+# declared (3=1+2, 5=3-4, 7=5-6, 11=8+9+10, 14=12+13, 15=11, 26=23+24+25).
+# Lines whose printed instruction is conditional, floored or capped are
+# OMITTED per the conservative house style: line 8 (rate multiply, "if answer
+# is less than zero, leave blank"), line 16 ("If line 14 is equal to or more
+# than line 15 … if smaller, skip to line 23"), line 17 ("cannot be greater
+# than line 16"), line 18 (depends on the conditional line 16), line 19d
+# ("cannot be more than line 18"), line 21 ("If less than zero, see line 23
+# instructions"), and line 23 (a greater-than test).
+#
+# Cross_form. Line 1 prints "Enter your federal adjusted gross income from
+# your federal income tax return, Form 1040 or Form 1040-SR, line 11". The
+# TY2025 Form 1040 splits that line (11a "This is your adjusted gross income",
+# 11b "Amount from line 11a"), so the single equality is 1 == f1040.11a.
+form: Form IT-40
+jurisdiction: states/in
+tax_year: 2025
+source_url: https://forms.in.gov/Download.aspx?id=16914
+pdf_sha256: 0b5d74cffea1dc758eff500a8d74bf020b53b977b57e04b12ce344316234b785
+acroform_root: ''
+fields:
+  # ===================================================== header (page 1)
+  # ---- Fiscal year: "If filing for a fiscal year, enter the dates (MM/DD/YYYY). All others, leave blank"
+  #      — from month / day / year to month / day / year, six separate boxes. The 2025 widgets carry no
+  #      /MaxLen; the caps are the printed MM / DD / YYYY.
+  - line: fiscal_year_from_month
+    field: Fiscal Year Beginning Month
+    type: text
+    maxlen: 2
+  - line: fiscal_year_from_day
+    field: Fiscal Year Beginning Day
+    type: text
+    maxlen: 2
+  - line: fiscal_year_from_year
+    field: Fiscal Year Beginning Year
+    type: text
+    maxlen: 4
+  - line: fiscal_year_to_month
+    field: Fiscal Year Ending Month
+    type: text
+    maxlen: 2
+  - line: fiscal_year_to_day
+    field: Fiscal Year Ending Day
+    type: text
+    maxlen: 2
+  - line: fiscal_year_to_year
+    field: Fiscal Year Ending Year
+    type: text
+    maxlen: 4
+  - line: amending::yes          # "Place “X” in box if amending."
+    field: Amending
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Your / spouse SSN — three boxes each (3-2-4 digits) around printed dashes; no /MaxLen on the 2025
+  #      widgets, so the caps are the printed digit counts.
+  - line: tp_ssn_area
+    field: SSN 1
+    type: text
+    maxlen: 3
+  - line: tp_ssn_group
+    field: SSN 2
+    type: text
+    maxlen: 2
+  - line: tp_ssn_serial
+    field: SSN 3
+    type: text
+    maxlen: 4
+  - line: spouse_ssn_area
+    field: Spouse SSN 1
+    type: text
+    maxlen: 3
+  - line: spouse_ssn_group
+    field: Spouse SSN 2
+    type: text
+    maxlen: 2
+  - line: spouse_ssn_serial
+    field: Spouse SSN 3
+    type: text
+    maxlen: 4
+  - line: tp_itin_applying::yes      # "Place “X” in box if you are applying for ITIN."
+    field: You ITIN
+    type: checkbox
+    on_state: /Yes
+  - line: spouse_itin_applying::yes  # "Place “X” in box if spouse is applying for ITIN."
+    field: Spouse ITIN
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Name — first name / Initial / Last name / Suffix (filer row, then the joint-return spouse row)
+  - line: tp_first_name
+    field: Your First Name
+    type: text
+  - line: tp_first_initial
+    field: Your Middle Initial
+    type: text
+    maxlen: 1
+  - line: tp_last_name
+    field: Your Last Name
+    type: text
+  - line: tp_suffix
+    field: Your Suffix
+    type: text
+  - line: spouse_first_name
+    field: Spouse First Name
+    type: text
+  - line: spouse_first_initial
+    field: Spouse Middle Initial
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: Spouse Last Name
+    type: text
+  - line: spouse_suffix
+    field: Spouse Suffix
+    type: text
+
+  # ---- Address. The 2025 face captions the street box "Mailing address (number and street or PO Box)"
+  #      (2023: "Present address (number and street or rural route)"); the widget is still named
+  #      "Present Address" and the line key stays present_address, so callers keep one key across years.
+  #      Foreign country now sits at the right end of the City / State / ZIP row.
+  - line: present_address
+    field: Present Address
+    type: text
+  - line: married_filing_separately::yes  # "Place “X” in box if you are married filing separately."
+    field: Married Filing Separately
+    type: checkbox
+    on_state: /Yes
+  - line: city
+    field: Present City
+    type: text
+  - line: state
+    field: Present State
+    type: text
+    maxlen: 2
+  - line: zip_or_postal_code
+    field: Present ZIP
+    type: text
+    maxlen: 10
+  - line: foreign_country_code
+    field: Foreign Country Code
+    type: text
+    maxlen: 2
+
+  # ---- 2-digit county codes ("for the county where you lived and worked on Jan. 1, 2025")
+  - line: county_where_you_lived
+    field: County You Lived
+    type: text
+    maxlen: 2
+  - line: county_where_you_worked
+    field: County You Worked
+    type: text
+    maxlen: 2
+  - line: county_where_spouse_lived
+    field: County Spouse Lived
+    type: text
+    maxlen: 2
+  - line: county_where_spouse_worked
+    field: County Spouse Worked
+    type: text
+    maxlen: 2
+
+  # ===================================================== income / tax (page 1)
+  - line: "1"        # Federal AGI — the face prints "Form 1040 or Form 1040-SR, line 11" (see cross_form)
+    field: Line 1
+    type: money
+  - line: "2"        # Indiana Add-Backs — Schedule 1, line 7
+    field: Line 2
+    type: money
+  - line: "3"        # "Add line 1 and line 2"
+    field: Line 3
+    type: money
+  - line: "4"        # Indiana Deductions — Schedule 2, line 12
+    field: Line 4
+    type: money
+  - line: "5"        # Subtract line 4 from line 3
+    field: Line 5
+    type: money
+  - line: "6"        # Indiana Exemptions — Schedule 3, line 7
+    field: Line 6
+    type: money
+  - line: "7"        # Indiana Adjusted Gross Income — subtract line 6 from line 5
+    field: Line 7
+    type: money
+  - line: "8"        # State adjusted gross income tax — "multiply line 7 by 3% (.03)"
+    field: Line 8
+    type: money
+  - line: "9"        # County tax — Schedule CT-40
+    field: Line 9
+    type: money
+  - line: "10"       # Other taxes — Schedule 4, line 4
+    field: Line 10
+    type: money
+  - line: "11"       # Indiana Taxes — add lines 8, 9 and 10
+    field: Line 11
+    type: money
+
+  # ===================================================== credits / tax (page 2)
+  - line: "12"       # Credits — Schedule 5, line 13
+    field: Line 12
+    type: money
+  - line: "13"       # Offset credits — Schedule 6, line 8
+    field: Line 13
+    type: money
+  - line: "14"       # Indiana Credits — add lines 12 and 13
+    field: Line 14
+    type: money
+  - line: "15"       # Indiana Taxes — amount from line 11
+    field: Line 15
+    type: money
+  - line: "16"       # If line 14 >= line 15, subtract line 15 from line 14 (else skip to 23)
+    field: Line 16
+    type: money
+  - line: "17"       # Donations — Schedule IN-DONATE; cannot be greater than line 16
+    field: Line 17
+    type: money
+  - line: "18"       # Overpayment — subtract line 17 from line 16
+    field: Line 18
+    type: money
+
+  # ---- line 19 — "Amount from line 18 to be applied to your 2026 estimated tax account". The 2025 face
+  #      prints the amount captions "19a", "19b", "19c" (2023: "a", "b", "c"); each county-code box
+  #      is 21.6 pt (2023: 29.0 pt) and still holds the two digits at Courier 12.
+  - line: 19a_your_county_code
+    field: Line 19a 1
+    type: text
+    maxlen: 2
+  - line: 19a        # your county tax to be applied
+    field: Line 19a 2
+    type: money
+  - line: 19b_spouse_county_code
+    field: Line 19b 1
+    type: text
+    maxlen: 2
+  - line: 19b        # spouse county tax to be applied
+    field: Line 19b 2
+    type: money
+  - line: 19c        # Indiana adjusted gross income tax to be applied
+    field: Line 19c
+    type: money
+  - line: 19d        # Total to be applied (a + b + c; cannot be more than line 18)
+    field: Line 19d
+    type: money
+
+  # ---- line 20 — penalty for underpayment of estimated tax (IT-2210 / IT-2210A)
+  - line: "20"
+    field: Line 20
+    type: money
+  - line: 20a        # "Enter Code A if annualizing. Enter Code F if farmer or fisherman"
+    field: Line 20a
+    type: text
+    maxlen: 1
+
+  - line: "21"       # Refund — line 18 minus lines 19d and 20
+    field: Line 21
+    type: money
+
+  # ---- line 22 — Direct Deposit. 22c "Type: Checking  Savings  Hoosier Works MC" is ONE radio field
+  #      "Account Type" (Ff 49152, Radio + NoToggleToOff) with three kids, on-states /0 /1 /2 left to right,
+  #      each box printed left of its caption; 2023 had three separate /Yes checkboxes.
+  - line: 22a_routing_number
+    field: Routing Number
+    type: text
+    maxlen: 9
+  - line: 22b_account_number
+    field: Account Number
+    type: text
+    maxlen: 17
+  - line: 22c_account_type::checking
+    field: Account Type
+    type: checkbox
+    group: 22c_account_type
+    on_state: /0
+  - line: 22c_account_type::savings
+    field: Account Type
+    type: checkbox
+    group: 22c_account_type
+    on_state: /1
+  - line: 22c_account_type::hoosier_works_mc
+    field: Account Type
+    type: checkbox
+    group: 22c_account_type
+    on_state: /2
+  - line: 22d_account_outside_us::yes  # "Place an “X” in the box if refund will go to an account outside the United States."
+    field: Account Outside US
+    type: checkbox
+    on_state: /Yes
+
+  # ---- amount due (page 2)
+  - line: "23"       # If line 15 > line 14, subtract line 14 from line 15; add any amount on line 20
+    field: Line 23
+    type: money
+  - line: "24"       # Penalty if filed after due date
+    field: Line 24
+    type: money
+  - line: "25"       # Interest if filed after due date
+    field: Line 25
+    type: money
+  - line: "26"       # Amount You Owe — add lines 23, 24 and 25
+    field: Line 26
+    type: money
+
+  # ---- Sign and date
+  # Both 2025 date boxes are 64.8 pt wide at /Cour 12 (7.2 pt a character): 9 characters, so "MM/DD/YYYY"
+  # clips and the cap stays 8 — "MM/DD/YY" (the Courier-aware clipping budget). No /MaxLen on either widget.
+  - line: your_signature_date
+    field: Date You Signed
+    type: text
+    maxlen: 8
+  - line: spouse_signature_date
+    field: Date Spouse Signed
+    type: text
+    maxlen: 8
+relations:
+  - "3 == 1 + 2"            # Line 3 "Add line 1 and line 2"
+  - "5 == 3 - 4"            # Line 5 "Subtract line 4 from line 3."
+  - "7 == 5 - 6"            # Line 7 "Subtract line 6 from line 5. … Indiana Adjusted Gross Income."
+  - "11 == 8 + 9 + 10"     # Line 11 "Add lines 8, 9 and 10. … Indiana Taxes."
+  - "14 == 12 + 13"        # Line 14 "Add lines 12 and 13. … Indiana Credits."
+  - "15 == 11"             # Line 15 "Enter amount from line 11."
+  - "26 == 23 + 24 + 25"   # Line 26 "Amount Due: Add lines 23, 24 and 25."
+cross_form:
+  - "1 == f1040.11a"       # Line 1 "your federal adjusted gross income … Form 1040 or Form 1040-SR, line 11" —
+                           # the TY2025 Form 1040 defines AGI on line 11a (11b restates it on page 2).
+identity_fields:
+  - tp_ssn_area
+  - tp_first_name
+  - tp_last_name
