@@ -1361,6 +1361,14 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
         'INDEPENDENT: the 7A personal-credit boxes (yourself / spouse, 65 or over, 65 Special, blind, deaf, head of household / surviving spouse) are separate credits; several may apply',
     ('states/ar/ar1000f', 'deceased'):
         'INDEPENDENT: a deceased-taxpayer box and a deceased-spouse box; both may apply',
+    ('states/ar/ar1000nr', '7a'):
+        'INDEPENDENT: the 7A personal-credit boxes (yourself / spouse, 65 or over, 65 Special, blind, deaf, head of household / surviving spouse) are separate credits; several may apply',
+    ('states/ar/ar1000nr', 'deceased'):
+        'INDEPENDENT: a deceased-taxpayer box and a deceased-spouse box; both may apply',
+    ('states/ar/ar1000nr', 'military_spouse'):
+        'INDEPENDENT: one box for each person on the printed rows "Primary - Military Spouse" / "Spouse - Military Spouse"; both may apply',
+    ('states/ar/ar1000nr', 'remote_worker'):
+        'INDEPENDENT: one box for each person on the printed rows "Primary - Remote Worker" / "Spouse - Remote Worker"; both may apply',
     ('states/az/az140', '58_credit'):
         'INDEPENDENT: line 58 checks each credit form claimed (308-I, 334, 349); several may apply',
     ('states/az/az140', 'oe_10_age65'):

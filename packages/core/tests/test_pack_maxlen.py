@@ -26,6 +26,9 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     **{(f"states/ar/{y}/ar1000f/pack.yaml", "direct_deposit_2.account.17"):
        "the 17th one-character account-number cell (14.6 pt at 9 pt, fits 3); cells 1-16 carry /MaxLen 1, this "
        "one the DOR's 10" for y in (2023, 2024, 2025)},
+    ("states/ar/2023/ar1000nr/pack.yaml", "7b.count"):
+        "the 7B dependent count (13.3 pt box, auto-size font); the 7A count box ARNR-49 carries /MaxLen 2, this one "
+        "the DOR's 10",
     ("states/ca/2025/form540nr/pack.yaml", "7.count"): "a one-digit exemption count (14.0 pt at Helv 10 fits 2); the widget says 11",
     ("states/id/2023/form40/pack.yaml", "preparer.state"): "31.5 pt at 10 pt fits 6; the widget says 10",
     ("states/ks/2023/k40/pack.yaml", "42.school_district_number"): "42 pt at Courier 12 fits 5; the widget says 10",

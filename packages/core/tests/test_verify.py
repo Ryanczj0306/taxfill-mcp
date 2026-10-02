@@ -1174,6 +1174,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # new date-of-death combs are not address lines) equals the reviewed MA 2023 row (the four mailing_address lines).
     # JS5: CO DR 0104 2025 (a RE-MAP of CO 2023 — every widget renamed, contact block moved to page 2, keys kept) equals the
     # reviewed CO 2023 row (mailing_address, city, state, zip_code); the new dependent_N_* and preparer_* lines are not address lines.
+    # JS5: AR AR1000NR 2023 (a NEW pack, no base year). Reviewed: its selection equals the reviewed AR1000F 2023 row (the four
+    # mailing_address lines); foreign_country, nonresident.state_of_residence and the preparer.* lines are not selected.
     import json
     from pathlib import Path
 

@@ -1,0 +1,436 @@
+# ===========================================================================
+# Form AR1000NR, 2023 -- Arkansas Individual Income Tax Return, NONRESIDENT AND
+# PART YEAR RESIDENT. A NEW pack (Phase J JS5, 2026-10-02): no earlier year of
+# this form shipped. formpacks/states/ar/2023/ar1000f (the same state's TY2023
+# resident return) set the conventions followed here -- key spelling, identity
+# fields, the mailing-address split, maxlen handling -- but no binding was
+# carried over from it: the only field names the two blanks share are
+# Signature1-3.
+#
+# URL. The DFA's own file (source_url below). Digest be12df06b15a… -- two
+# independent downloads on 2026-10-02 agree.
+#
+# PRINTED IDENTITY. Page 1 prints "2023 AR1000NR / ARKANSAS INDIVIDUAL INCOME
+# TAX RETURN / Nonresident and Part Year Resident" and "Software ID DFA WEB";
+# the footers read "AR1000NR, Page 1 (R 7/3/2023)", "AR1000NR, Page 2 (R
+# 6/13/2023)" and "AR1000NR, Page 3 (R 7/5/2023)"; the barcodes read ITNR231,
+# ITNR232 and ITNR233. printed_year_verified = 2023.
+#
+# Layout. FLAT AcroForm: acroform_root is empty and the widgets carry generic
+# names ("ARNR-1-5", "ARNR-2-31", "ARNR-DD-12" ...) with no line label, so every
+# row below was bound by the widget's position against the printed label (the
+# blank's text layer) and then confirmed on a sentinel render of every page.
+# All three pages are the filed return:
+#   page 1 -- header (fiscal-year dates, amended flag, primary / spouse name, MI,
+#             SSN and deceased flags, mailing address, foreign-address flag,
+#             emails), the remote-worker / military-spouse boxes, the
+#             NONRESIDENT / PART YEAR RESIDENT choice with the state of
+#             residence and the part-year "From:" / "To:" dates, the 1099-G /
+#             booklet / extension boxes, DL# / state ID rows, FILING STATUS 1-6,
+#             line 7A personal-credit boxes, the six-row dependents table, 7B, 7C;
+#   page 2 -- "Primary SSN" header, INCOME lines 8-25 in THREE columns, TAX
+#             COMPUTATION 26-38, APPORTIONMENT 38A-38D;
+#   page 3 -- "Primary SSN" header, PAYMENTS 39-46, REFUND OR TAX DUE 47-52C,
+#             DIRECT DEPOSIT, the signature block and the paid preparer block.
+#
+# Columns. Page 2 heads its money columns "(A) Primary/Joint Income", "(B)
+# Spouse's Income Status 4 Only" and "(C) Arkansas Income Only". A line's box
+# in each is keyed <line>.a / .b / .c (the resident pack's .a / .b spelling plus
+# .c for the Arkansas column). The render shows which boxes are shaded, and a
+# shaded box has no widget: lines 9 and 17 print only inline "Primary" /
+# "Spouse" boxes (keyed .primary / .spouse) with all three columns shaded; 18A
+# shades column B (18a.a, 18a.c); 18A and 18B carry inline "Gross" / "Taxable"
+# boxes (.gross / .taxable); lines 26-29 shade column C (27-29 are .a / .b);
+# lines 30-38D are one right-hand box each (bare keys).
+#
+# Coverage. The blank holds 261 widget entries on 248 field names. Mapped: 254
+# lines on 243 fields. NOT mapped (5 fields): "Print Button" and "Clear Button"
+# (the yellow PRINT FORM / CLEAR FORM pushbuttons above the title), and
+# Signature1 / Signature2 / Signature3, the primary, spouse and paid-preparer
+# signature boxes: they are /Sig (digital-signature) fields, and a sentinel
+# written to each did not render at all, so a key there would accept a value
+# that never prints. The boxes are signed by hand; the Date / Telephone / PTIN
+# boxes beside them are ordinary text fields and are mapped. No widget is
+# ReadOnly and none sets the comb flag.
+#
+# Money vs text. Every numbered dollar box prints a "00" cents cell and is
+# `money`. Line 38C "Divide line 38A by 38B" is a ratio: the 2023 instructions
+# booklet says "Enter as a decimal rounded to six places. Do not exceed 100%",
+# so ARNR-2-78 stays `text` (money would round 0.166667 to 0). The 7A / 7B
+# "X $29 =" count boxes hold a count (`text`): ARNR-49 carries /MaxLen 2, which
+# the pack repeats; ARNR-1-69 is the same 13.3 pt box but carries /MaxLen 10
+# and an auto-size font, so the pack sets maxlen 2 (tighter than the widget,
+# adjudicated in the maxlen test) rather than let a long value shrink. Name,
+# address, email, date, phone, PTIN, the line-43 certification number and the
+# 52A exception code are `text`; the routing / account cells are one-character
+# text boxes (/MaxLen 1 each). The dates print "(mm/dd/yyyy)" captions over
+# plain boxes, so they are not combs.
+#
+# SSN. ARNR-1-9 is ONE field whose widgets are page 1's "Primary's social
+# security number" and the "Primary SSN" headers of pages 2 and 3, so the one
+# key `identifying_number` fills all three (no page mirror key is needed).
+# The SSN boxes are plain text widgets, mapped with format: ssn_digits_only.
+#
+# Checkboxes. Each option is bound to the label printed beside it, read by
+# position (P-030), and every on_state was read from this blank's /AP /N:
+#   * ARNR-21 (/Non "NONRESIDENT:", /Part "PART YEAR RESIDENT:"), ARNR-34
+#     filing status (/1 ... /6), ARNR-2-59 (/Choice1 "Low income table ($0)",
+#     /Choice2 "Standard deduction", /Choice3 "Itemized deductions"), ARNR-DD-2
+#     and ARNR-DD-30 (/Checking, /Savings) and ARNR-1-102 preparer discuss (/Yes,
+#     /No) are radio fields; each carries one `group` id. A fill of every
+#     non-first option was rendered and each X sat beside its own label;
+#   * every other box is its own /Btn field with the single state /Yes (or, for
+#     the remote-worker / military-spouse boxes, /Yes beside /Off): amended,
+#     deceased x2, outside-U.S., the four "Primary - / Spouse - Remote Worker /
+#     Military Spouse" boxes (each sits RIGHT of its label), the 1099-G /
+#     booklet / extension requests, the eleven 7A boxes, and the
+#     foreign-account direct-deposit box.
+#
+# Relations follow the face's printed arithmetic (dotted keys since Phase J
+# JP5c); the apportionment block is covered by 38A and 38B. Omitted, with the
+# reason:
+#   38C and 38D -- 38C is a `text` ratio and verify reads only MONEY lines from
+#     the filled PDF, so "38d == 38 * 38c" would see 38C as blank (0) on an
+#     ordinary fill and FAIL a correct return. Rewritten as 38 * 38A / 38B it
+#     divides by zero when 38B is blank and skips the printed six-place
+#     rounding, so a product near a .50 boundary could round the other way;
+#   28 "Subtract line 27 from line 25" -- the face prints no floor, and the
+#     booklet sends itemizers to "the larger of your itemized deductions (from
+#     Form AR3) or your Standard Deduction" with no cap at line 25;
+#   7A / 7B (count X $29) -- the count is a `text` box;
+#   18A / 18B -- the result depends on the $6,000 exclusion and on Gross vs
+#     Taxable, which the face does not reduce to one expression.
+#
+# Cross_form: none. The face cites no federal line: it prints "ATTACH PAGE 1
+# AND 2 OF YOUR FEDERAL RETURN" and "Attach federal Sch. C / D / E / F", and
+# builds income line by line from its own lines 8-22.
+#
+# Mailing is printed on page 3 ("Mail Return & Payment to:"): "Refund:
+# Arkansas State Income Tax, P.O. Box 1000, Little Rock, AR 72203-1000" and
+# "Tax Due/No Tax: Arkansas State Income Tax, P.O. Box 2144, Little Rock, AR
+# 72203-2144". A return that neither pays nor claims a refund goes to the Tax
+# Due/No Tax box, so no_payment names both cases.
+#
+# Face figures against knowledge/states/ar/2023.yaml: the $29 per 7A box and
+# per dependent (7A / 7B "X $29 =") and the "Less $6,000" on 18A / 18B match
+# the knowledge pack's $29 personal tax credit and $6,000 retirement exemption.
+# The face prints the year words "widowed before 2023 or divorced at end of
+# 2023", "credit brought forward from 2022" (line 40) and "applied to 2024
+# estimated tax" (line 48).
+form: "AR1000NR"
+jurisdiction: states/ar
+tax_year: 2023
+source_url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000NR_PartYear_or_Non-ResidentIndividualIncomeTaxReturn.pdf
+pdf_sha256: "be12df06b15ac06d62121a57a9f65972f04b98933d6643c7d9b355c9daba1862"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header
+  - { line: "tax_year_end_date", field: "ARNR-1-1", type: text }  # "Jan. 1 - Dec. 31, 2023 or fiscal year ending ____"
+  - { line: "tax_year_end_year", field: "ARNR-1-2", type: text, maxlen: 2 }  # ", 20 __" (2-digit year; /MaxLen 2)
+  - { line: "amended_return.yes", field: "ARNR-1-3", type: checkbox, on_state: "/Yes" }  # "CHECK BOX IF AMENDED RETURN"
+  # ---- primary name + deceased + SSN
+  - { line: "name", field: "ARNR-1-5", type: text }  # "Primary's legal first name" (identity name)
+  - { line: "name.primary_mi", field: "ARNR-1-6", type: text, maxlen: 1 }  # MI (/MaxLen 1)
+  - { line: "name.primary_last", field: "ARNR-1-7", type: text }  # Last name
+  - { line: "deceased.primary", field: "ARNR-1-8", type: checkbox, on_state: "/Yes" }  # "Check if Deceased" (primary row; label right of the box)
+  - { line: "identifying_number", field: "ARNR-1-9", type: text, format: "ssn_digits_only" }  # "Primary's social security number" -- one field, also the page-2 and page-3 "Primary SSN" header
+  # ---- spouse name + deceased + SSN
+  - { line: "spouse.name", field: "ARNR-1-10", type: text }  # "Spouse's legal first name"
+  - { line: "spouse.name_mi", field: "ARNR-1-11", type: text, maxlen: 1 }  # MI (/MaxLen 1)
+  - { line: "spouse.name_last", field: "ARNR-1-12", type: text }  # Last name
+  - { line: "deceased.spouse", field: "ARNR-1-13", type: checkbox, on_state: "/Yes" }  # "Check if Deceased" (spouse row)
+  - { line: "spouse.identifying_number", field: "ARNR-1-14", type: text, format: "ssn_digits_only" }  # "Spouse's social security number"
+  # ---- address
+  - { line: "mailing_address.street", field: "ARNR-1-15", type: text }  # "Mailing address (number and street, P.O. box or rural route)"
+  - { line: "mailing_address.outside_us", field: "ARNR-1-19", type: checkbox, on_state: "/Yes" }  # "Check if address is outside U.S."
+  - { line: "mailing_address.city", field: "ARNR-1-16", type: text }  # City
+  - { line: "mailing_address.state", field: "ARNR-1-17", type: text }  # State or province
+  - { line: "mailing_address.zip", field: "ARNR-1-18", type: text }  # ZIP
+  - { line: "mailing_address.foreign_country", field: "ARNR-1-20", type: text }  # "Foreign country name"
+  - { line: "primary_email", field: "ARNR-1-20A", type: text }  # "Primary email"
+  - { line: "secondary_email", field: "ARNR-1-20B", type: text }  # "Secondary email"
+  # ---- remote worker / military spouse (one box per person; each box sits RIGHT of its label)
+  - { line: "remote_worker.primary", field: "ARNR-1-20C", type: checkbox, on_state: "/Yes" }  # "Primary - Remote Worker"
+  - { line: "remote_worker.spouse", field: "ARNR-1-20C-2", type: checkbox, on_state: "/Yes" }  # "Spouse - Remote Worker"
+  - { line: "military_spouse.primary", field: "ARNR-1-20D", type: checkbox, on_state: "/Yes" }  # "Primary - Military Spouse"
+  - { line: "military_spouse.spouse", field: "ARNR-1-20D-2", type: checkbox, on_state: "/Yes" }  # "Spouse - Military Spouse"
+  # ---- residency (one radio field ARNR-21; each oval sits LEFT of its label)
+  - { line: "residency_status.nonresident", field: "ARNR-21", type: checkbox, on_state: "/Non", group: "residency_status" }  # "NONRESIDENT:"
+  - { line: "residency_status.part_year_resident", field: "ARNR-21", type: checkbox, on_state: "/Part", group: "residency_status" }  # "PART YEAR RESIDENT: Dates lived in AR:"
+  - { line: "nonresident.state_of_residence", field: "ARNR-1-22", type: text }  # "List state of residence:" (/MaxLen 10); the box is 43.4 pt wide at a fixed Arial Bold 9 -- enter the two-letter postal code (a long state name may clip)
+  - { line: "part_year.date_from", field: "ARNR-1-24", type: text }  # part-year "From:" (/MaxLen 10)
+  - { line: "part_year.date_to", field: "ARNR-1-25", type: text }  # part-year "To:" (/MaxLen 10)
+  # ---- request checkboxes
+  - { line: "request_1099g.yes", field: "ARNR-25A", type: checkbox, on_state: "/Yes" }  # "Check the box if you still want us to mail you a paper Form 1099-G next year."
+  - { line: "request_tax_booklet.yes", field: "ARNR-25B", type: checkbox, on_state: "/Yes" }  # "Check here if you want a tax booklet mailed to you next year."
+  - { line: "filed_extension.yes", field: "ARNR-25C", type: checkbox, on_state: "/Yes" }  # "Check this box if you have filed a state extension or an automatic federal extension"
+  # ---- driver license / state ID rows (primary then spouse)
+  - { line: "drivers_license.primary_number", field: "ARNR-1-26", type: text }  # "DL# / State ID" (primary)
+  - { line: "drivers_license.primary_state", field: "ARNR-1-27", type: text, maxlen: 2 }  # "Your state" (/MaxLen 2)
+  - { line: "drivers_license.primary_issue_date", field: "ARNR-1-28", type: text }  # "Issue date (mm/dd/yyyy)"
+  - { line: "drivers_license.primary_expiration_date", field: "ARNR-1-29", type: text }  # "Expiration date (mm/dd/yyyy)"
+  - { line: "drivers_license.spouse_number", field: "ARNR-1-30", type: text }  # "DL# / State ID" (spouse)
+  - { line: "drivers_license.spouse_state", field: "ARNR-1-31", type: text, maxlen: 2 }  # "Spouse state" (/MaxLen 2)
+  - { line: "drivers_license.spouse_issue_date", field: "ARNR-1-32", type: text }  # "Issue date (mm/dd/yyyy)"
+  - { line: "drivers_license.spouse_expiration_date", field: "ARNR-1-33", type: text }  # "Expiration date (mm/dd/yyyy)"
+  # ---- FILING STATUS (one radio field ARNR-34, six kids; options 1-3 left column, 4-6 right)
+  - { line: "filing_status.single", field: "ARNR-34", type: checkbox, on_state: "/1", group: "filing_status" }  # 1 Single (Or widowed before 2023 or divorced at end of 2023)
+  - { line: "filing_status.married_filing_joint", field: "ARNR-34", type: checkbox, on_state: "/2", group: "filing_status" }  # 2 Married filing joint (Even if only one had income)
+  - { line: "filing_status.head_of_household", field: "ARNR-34", type: checkbox, on_state: "/3", group: "filing_status" }  # 3 Head of household
+  - { line: "filing_status.married_filing_separately_same_return", field: "ARNR-34", type: checkbox, on_state: "/4", group: "filing_status" }  # 4 Married filing separately on the same return
+  - { line: "filing_status.married_filing_separately_different_returns", field: "ARNR-34", type: checkbox, on_state: "/5", group: "filing_status" }  # 5 Married filing separately on different returns
+  - { line: "filing_status.surviving_spouse", field: "ARNR-34", type: checkbox, on_state: "/6", group: "filing_status" }  # 6 Surviving spouse with dependent child
+  - { line: "filing_status.head_of_household_child_name", field: "ARNR-1-35", type: text }  # status 3: "enter child's name here"
+  - { line: "filing_status.separate_spouse_name", field: "ARNR-1-36", type: text }  # status 5: "Enter spouse's name here and SSN above"
+  - { line: "filing_status.surviving_spouse_year_died", field: "ARNR-1-37", type: text, maxlen: 4 }  # status 6: "Year spouse died" (/MaxLen 4)
+  # ---- line 7A personal-tax-credit checkboxes (top row = Yourself, bottom row = Spouse; each box LEFT of its label)
+  - { line: "7a.yourself", field: "ARNR-38", type: checkbox, on_state: "/Yes" }  # 7A Yourself
+  - { line: "7a.yourself_65_or_over", field: "ARNR-40", type: checkbox, on_state: "/Yes" }  # Yourself 65 or over
+  - { line: "7a.yourself_65_special", field: "ARNR-42", type: checkbox, on_state: "/Yes" }  # Yourself 65 Special
+  - { line: "7a.yourself_blind", field: "ARNR-44", type: checkbox, on_state: "/Yes" }  # Yourself Blind
+  - { line: "7a.yourself_deaf", field: "ARNR-46", type: checkbox, on_state: "/Yes" }  # Yourself Deaf
+  - { line: "7a.head_of_household_surviving_spouse", field: "ARNR-48", type: checkbox, on_state: "/Yes" }  # Head of household/surviving spouse (Filing status 3 only) (Filing status 6 only)
+  - { line: "7a.spouse", field: "ARNR-39", type: checkbox, on_state: "/Yes" }  # 7A Spouse
+  - { line: "7a.spouse_65_or_over", field: "ARNR-41", type: checkbox, on_state: "/Yes" }  # Spouse 65 or over
+  - { line: "7a.spouse_65_special", field: "ARNR-43", type: checkbox, on_state: "/Yes" }  # Spouse 65 Special
+  - { line: "7a.spouse_blind", field: "ARNR-45", type: checkbox, on_state: "/Yes" }  # Spouse Blind
+  - { line: "7a.spouse_deaf", field: "ARNR-47", type: checkbox, on_state: "/Yes" }  # Spouse Deaf
+  - { line: "7a.count", field: "ARNR-49", type: text, maxlen: 2 }  # 7A "Multiply number of boxes checked" count (/MaxLen 2)
+  - { line: "7a", field: "ARNR-50", type: money }  # 7A amount (count X $29 =)
+  # ---- Dependents table (6 printed rows: first name/last name, SSN, relationship)
+  - { line: "dependent_1.first_name", field: "ARNR-1-51", type: text }  # row 1. ONE cell spans both printed heads "First name" and "Last name" -- it takes the full name (key spelled as the resident pack's)
+  - { line: "dependent_1.ssn", field: "ARNR-1-52", type: text, format: "ssn_digits_only" }  # "Dependent's social security number"
+  - { line: "dependent_1.relationship", field: "ARNR-1-53", type: text }  # "Dependent's relationship to you"
+  - { line: "dependent_2.first_name", field: "ARNR-1-54", type: text }  # row 2.
+  - { line: "dependent_2.ssn", field: "ARNR-1-55", type: text, format: "ssn_digits_only" }
+  - { line: "dependent_2.relationship", field: "ARNR-1-56", type: text }
+  - { line: "dependent_3.first_name", field: "ARNR-1-57", type: text }  # row 3.
+  - { line: "dependent_3.ssn", field: "ARNR-1-58", type: text, format: "ssn_digits_only" }
+  - { line: "dependent_3.relationship", field: "ARNR-1-59", type: text }
+  - { line: "dependent_4.first_name", field: "ARNR-1-60", type: text }  # row 4.
+  - { line: "dependent_4.ssn", field: "ARNR-1-61", type: text, format: "ssn_digits_only" }
+  - { line: "dependent_4.relationship", field: "ARNR-1-62", type: text }
+  - { line: "dependent_5.first_name", field: "ARNR-1-63", type: text }  # row 5.
+  - { line: "dependent_5.ssn", field: "ARNR-1-64", type: text, format: "ssn_digits_only" }
+  - { line: "dependent_5.relationship", field: "ARNR-1-65", type: text }
+  - { line: "dependent_6.first_name", field: "ARNR-1-66", type: text }  # row 6.
+  - { line: "dependent_6.ssn", field: "ARNR-1-67", type: text, format: "ssn_digits_only" }
+  - { line: "dependent_6.relationship", field: "ARNR-1-68", type: text }
+  - { line: "7b.count", field: "ARNR-1-69", type: text, maxlen: 2 }  # 7B "Multiply number of DEPENDENTS from above" count (13.3 pt box, auto-size font; /MaxLen 10, pack maxlen 2 like 7A's)
+  - { line: "7b", field: "ARNR-1-70", type: money }  # 7B amount (count X $29 =)
+  - { line: "7c", field: "ARNR-1-71", type: money }  # 7C TOTAL PERSONAL TAX CREDITS (Add lines 7A and 7B. Enter total here and on line 34)
+  # ============================================ page 2 -- income / tax computation / apportionment
+  # column (A) Primary/Joint Income = .a; (B) Spouse's Income, Status 4 Only = .b; (C) Arkansas Income Only = .c
+  - { line: "8.a", field: "ARNR-2-1", type: money }  # 8 Wages, salaries, tips, etc. (Attach W-2s) -- col A
+  - { line: "8.b", field: "ARNR-2-2", type: money }  # -- col B
+  - { line: "8.c", field: "ARNR-2-3", type: money }  # -- col C (Arkansas)
+  - { line: "9.primary", field: "ARNR-2-4", type: money }  # 9 Military pay: Primary (inline box; the row's A/B/C boxes are shaded)
+  - { line: "9.spouse", field: "ARNR-2-5", type: money }  # 9 Military pay: Spouse (inline box)
+  - { line: "10.a", field: "ARNR-2-6", type: money }  # 10 Interest income (If over $1,500, attach AR4) -- col A
+  - { line: "10.b", field: "ARNR-2-7", type: money }  # -- col B
+  - { line: "10.c", field: "ARNR-2-8", type: money }  # -- col C (Arkansas)
+  - { line: "11.a", field: "ARNR-2-9", type: money }  # 11 Dividend income (If over $1,500, attach AR4) -- col A
+  - { line: "11.b", field: "ARNR-2-10", type: money }  # -- col B
+  - { line: "11.c", field: "ARNR-2-11", type: money }  # -- col C (Arkansas)
+  - { line: "12.a", field: "ARNR-2-12", type: money }  # 12 Alimony and separate maintenance received -- col A
+  - { line: "12.b", field: "ARNR-2-13", type: money }  # -- col B
+  - { line: "12.c", field: "ARNR-2-14", type: money }  # -- col C (Arkansas)
+  - { line: "13.a", field: "ARNR-2-15", type: money }  # 13 Business or professional income (Attach federal Sch. C) -- col A
+  - { line: "13.b", field: "ARNR-2-16", type: money }  # -- col B
+  - { line: "13.c", field: "ARNR-2-17", type: money }  # -- col C (Arkansas)
+  - { line: "14.a", field: "ARNR-2-18", type: money }  # 14 Capital gains/(losses) from stocks, bonds, etc. (Attach federal Sch. D) -- col A
+  - { line: "14.b", field: "ARNR-2-19", type: money }  # -- col B
+  - { line: "14.c", field: "ARNR-2-20", type: money }  # -- col C (Arkansas)
+  - { line: "15.a", field: "ARNR-2-21", type: money }  # 15 Other gains or (losses) (See instructions) -- col A
+  - { line: "15.b", field: "ARNR-2-22", type: money }  # -- col B
+  - { line: "15.c", field: "ARNR-2-23", type: money }  # -- col C (Arkansas)
+  - { line: "16.a", field: "ARNR-2-24", type: money }  # 16 Non-qualified IRA distributions and taxable annuities (Attach all 1099Rs) -- col A
+  - { line: "16.b", field: "ARNR-2-25", type: money }  # -- col B
+  - { line: "16.c", field: "ARNR-2-26", type: money }  # -- col C (Arkansas)
+  - { line: "17.primary", field: "ARNR-2-27", type: money }  # 17 Military retirement: Primary (inline box; the row's A/B/C boxes are shaded)
+  - { line: "17.spouse", field: "ARNR-2-28", type: money }  # 17 Military retirement: Spouse (inline box)
+  - { line: "18a.gross", field: "ARNR-2-29", type: money }  # 18A Primary employer pension plan(s)/qualified IRA(s): Gross
+  - { line: "18a.taxable", field: "ARNR-2-30", type: money }  # 18A Taxable (Less $6,000)
+  - { line: "18a.a", field: "ARNR-2-31", type: money }  # 18A result -- col A (col B is shaded)
+  - { line: "18a.c", field: "ARNR-2-32", type: money }  # 18A result -- col C (Arkansas)
+  - { line: "18b.gross", field: "ARNR-2-33", type: money }  # 18B Spouse employer pension plan(s)/qualified IRA(s): Gross
+  - { line: "18b.taxable", field: "ARNR-2-34", type: money }  # 18B Taxable (Less $6,000)
+  - { line: "18b.a", field: "ARNR-2-35", type: money }  # 18B result -- col A
+  - { line: "18b.b", field: "ARNR-2-36", type: money }  # 18B result -- col B
+  - { line: "18b.c", field: "ARNR-2-37", type: money }  # 18B result -- col C (Arkansas)
+  - { line: "19.a", field: "ARNR-2-38", type: money }  # 19 Rents, royalties, partnerships, estates, trusts, etc. (Attach federal Sch. E) -- col A
+  - { line: "19.b", field: "ARNR-2-39", type: money }  # -- col B
+  - { line: "19.c", field: "ARNR-2-40", type: money }  # -- col C (Arkansas)
+  - { line: "20.a", field: "ARNR-2-41", type: money }  # 20 Farm income (Attach federal Sch. F) -- col A
+  - { line: "20.b", field: "ARNR-2-42", type: money }  # -- col B
+  - { line: "20.c", field: "ARNR-2-43", type: money }  # -- col C (Arkansas)
+  - { line: "21.a", field: "ARNR-2-44", type: money }  # 21 Unemployment -- col A
+  - { line: "21.b", field: "ARNR-2-45", type: money }  # -- col B
+  - { line: "21.c", field: "ARNR-2-45A", type: money }  # -- col C (Arkansas)
+  - { line: "22.a", field: "ARNR-2-47", type: money }  # 22 Other income/depreciation differences (Attach Form AR-OI) -- col A
+  - { line: "22.b", field: "ARNR-2-48", type: money }  # -- col B
+  - { line: "22.c", field: "ARNR-2-49", type: money }  # -- col C (Arkansas)
+  - { line: "23.a", field: "ARNR-2-50", type: money }  # 23 TOTAL INCOME: (Add lines 8 through 22) -- col A
+  - { line: "23.b", field: "ARNR-2-51", type: money }  # -- col B
+  - { line: "23.c", field: "ARNR-2-52", type: money }  # -- col C (Arkansas)
+  - { line: "24.a", field: "ARNR-2-53", type: money }  # 24 TOTAL ADJUSTMENTS: (Attach Form AR1000ADJ) -- col A
+  - { line: "24.b", field: "ARNR-2-54", type: money }  # -- col B
+  - { line: "24.c", field: "ARNR-2-55", type: money }  # -- col C (Arkansas)
+  - { line: "25.a", field: "ARNR-2-56", type: money }  # 25 ADJUSTED GROSS INCOME: (Subtract line 24 from line 23) -- col A
+  - { line: "25.b", field: "ARNR-2-57", type: money }  # -- col B
+  - { line: "25.c", field: "ARNR-2-58", type: money }  # -- col C (Arkansas)
+  # ---- line 26 "Select tax table (Select only one)": one radio field ARNR-2-59, options printed on line 27's rows
+  - { line: "27.low_income_table", field: "ARNR-2-59", type: checkbox, on_state: "/Choice1", group: "tax_table" }  # 27 Low income table ($0), See line 26 instructions
+  - { line: "27.standard_deduction", field: "ARNR-2-59", type: checkbox, on_state: "/Choice2", group: "tax_table" }  # Standard deduction (See instructions)
+  - { line: "27.itemized_deductions", field: "ARNR-2-59", type: checkbox, on_state: "/Choice3", group: "tax_table" }  # Itemized deductions (Attach AR3)
+  - { line: "27.a", field: "ARNR-2-61", type: money }  # 27 deduction amount -- col A (col C is shaded on lines 26-29)
+  - { line: "27.b", field: "ARNR-2-62", type: money }  # -- col B
+  - { line: "28.a", field: "ARNR-2-63", type: money }  # 28 NET TAXABLE INCOME: (Subtract line 27 from line 25) -- col A
+  - { line: "28.b", field: "ARNR-2-64", type: money }  # -- col B
+  - { line: "29.a", field: "ARNR-2-65", type: money }  # 29 TAX: (Enter tax from tax table) -- col A
+  - { line: "29.b", field: "ARNR-2-66", type: money }  # -- col B
+  - { line: "30", field: "ARNR-2-67", type: money }  # 30 Combined tax (Add amounts from line 29, columns A and B)
+  - { line: "31", field: "ARNR-2-68", type: money }  # 31 Enter tax from Lump Sum Distribution Averaging Schedule (Attach AR1000TD)
+  - { line: "32", field: "ARNR-2-69", type: money }  # 32 Additional tax on IRA and qualified plan withdrawal and overpayment
+  - { line: "33", field: "ARNR-2-70", type: money }  # 33 TOTAL TAX: (Add lines 30 through 32)
+  - { line: "34", field: "ARNR-2-71", type: money }  # 34 Personal tax credit(s) (Enter total from line 7C)
+  - { line: "35", field: "ARNR-2-72", type: money }  # 35 Child care credit (Attach AR2441)
+  - { line: "36", field: "ARNR-2-73", type: money }  # 36 Other credits (Attach AR1000TC)
+  - { line: "37", field: "ARNR-2-74", type: money }  # 37 TOTAL CREDITS: (Add lines 34 through 36)
+  - { line: "38", field: "ARNR-2-75", type: money }  # 38 NET TAX: (Subtract line 37 from line 33. If line 37 is greater than line 33, enter 0)
+  # ---- APPORTIONMENT
+  - { line: "38a", field: "ARNR-2-76", type: money }  # 38A Enter the amount from line 25, Column C
+  - { line: "38b", field: "ARNR-2-77", type: money }  # 38B Enter the total amount from line 25, Columns A and B
+  - { line: "38c", field: "ARNR-2-78", type: text }  # 38C Divide line 38A by 38B -- a decimal ratio (instructions: six places, not over 100%)
+  - { line: "38d", field: "ARNR-2-79", type: money }  # 38D APPORTIONED TAX LIABILITY: (Multiply line 38 by line 38C)
+  # ============================================ page 3 -- payments / refund / direct deposit / signatures
+  - { line: "39", field: "ARNR-2-80", type: money }  # 39 Arkansas income tax withheld (Attach copies of W-2, 1099R, W2-G, 1099-PT, and/or AR-K1)
+  - { line: "40", field: "ARNR-2-81", type: money }  # 40 Estimated tax paid or credit brought forward from 2022
+  - { line: "41", field: "ARNR-2-82", type: money }  # 41 Payment made with extension
+  - { line: "42", field: "ARNR-2-83", type: money }  # 42 AMENDED RETURNS ONLY - Previous payments
+  - { line: "43.certification_number", field: "ARNR-2-84", type: text }  # 43 Early childhood program: Certification number
+  - { line: "43", field: "ARNR-2-85", type: money }  # 43 Early childhood program amount (Attach AR1000EC and AR2441)
+  - { line: "44", field: "ARNR-2-86", type: money }  # 44 TOTAL PAYMENTS: (Add lines 39 through 43)
+  - { line: "45", field: "ARNR-2-87", type: money }  # 45 AMENDED RETURNS ONLY - Previous refund
+  - { line: "46", field: "ARNR-2-88", type: money }  # 46 Adjusted total payments (Subtract line 45 from line 44)
+  - { line: "47", field: "ARNR-2-89", type: money }  # 47 AMOUNT OF OVERPAYMENT/REFUND: If line 46 is greater than line 38D, enter difference
+  - { line: "48", field: "ARNR-2-90", type: money }  # 48 Amount to be applied to 2024 estimated tax
+  - { line: "49", field: "ARNR-2-91", type: money }  # 49 Amount of Check-Off contributions (Attach Form AR1000CO)
+  - { line: "50", field: "ARNR-2-92", type: money }  # 50 AMOUNT TO BE REFUNDED TO YOU: (Subtract lines 48 and 49 from line 47)
+  - { line: "51", field: "ARNR-2-93", type: money }  # 51 AMOUNT DUE: (If line 46 is less than line 38D, enter difference; If over $1,000, continue to 52A)
+  - { line: "52a.exception_code", field: "ARNR-2-94", type: text, maxlen: 3 }  # 52A UEP "If required, enter exception in box 52A" (/MaxLen 3)
+  - { line: "52b", field: "ARNR-2-95", type: money }  # Penalty 52B
+  - { line: "52c", field: "ARNR-2-96", type: money }  # 52C Add lines 51 and 52B -- TOTAL DUE
+  # ---- direct deposit
+  - { line: "direct_deposit.foreign_account", field: "ARNR-DD-1", type: checkbox, on_state: "/Yes" }  # "Check if either deposit(s) will ultimately be placed in a foreign account."
+  - { line: "direct_deposit_1.account_type.checking", field: "ARNR-DD-2", type: checkbox, on_state: "/Checking", group: "direct_deposit_1_account_type" }  # Account 1 "Checking or"
+  - { line: "direct_deposit_1.account_type.savings", field: "ARNR-DD-2", type: checkbox, on_state: "/Savings", group: "direct_deposit_1_account_type" }  # Account 1 "Savings"
+  - { line: "direct_deposit_1.routing.1", field: "ARNR-DD-3", type: text, maxlen: 1 }  # "Routing number 1" (9 one-character cells, /MaxLen 1)
+  - { line: "direct_deposit_1.routing.2", field: "ARNR-DD-4", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.routing.3", field: "ARNR-DD-5", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.routing.4", field: "ARNR-DD-6", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.routing.5", field: "ARNR-DD-7", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.routing.6", field: "ARNR-DD-8", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.routing.7", field: "ARNR-DD-9", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.routing.8", field: "ARNR-DD-10", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.routing.9", field: "ARNR-DD-11", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.1", field: "ARNR-DD-12", type: text, maxlen: 1 }  # "Account number 1" (17 one-character cells, /MaxLen 1)
+  - { line: "direct_deposit_1.account.2", field: "ARNR-DD-13", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.3", field: "ARNR-DD-14", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.4", field: "ARNR-DD-15", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.5", field: "ARNR-DD-16", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.6", field: "ARNR-DD-17", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.7", field: "ARNR-DD-18", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.8", field: "ARNR-DD-19", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.9", field: "ARNR-DD-20", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.10", field: "ARNR-DD-21", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.11", field: "ARNR-DD-22", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.12", field: "ARNR-DD-23", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.13", field: "ARNR-DD-24", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.14", field: "ARNR-DD-25", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.15", field: "ARNR-DD-26", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.16", field: "ARNR-DD-27", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.account.17", field: "ARNR-DD-28", type: text, maxlen: 1 }
+  - { line: "direct_deposit_1.amount", field: "ARNR-DD-29", type: money }  # "Direct deposit 1 amt."
+  - { line: "direct_deposit_2.account_type.checking", field: "ARNR-DD-30", type: checkbox, on_state: "/Checking", group: "direct_deposit_2_account_type" }  # Account 2 "Checking or"
+  - { line: "direct_deposit_2.account_type.savings", field: "ARNR-DD-30", type: checkbox, on_state: "/Savings", group: "direct_deposit_2_account_type" }  # Account 2 "Savings"
+  - { line: "direct_deposit_2.routing.1", field: "ARNR-DD-31", type: text, maxlen: 1 }  # "Routing number 2"
+  - { line: "direct_deposit_2.routing.2", field: "ARNR-DD-32", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.routing.3", field: "ARNR-DD-33", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.routing.4", field: "ARNR-DD-34", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.routing.5", field: "ARNR-DD-35", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.routing.6", field: "ARNR-DD-36", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.routing.7", field: "ARNR-DD-37", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.routing.8", field: "ARNR-DD-38", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.routing.9", field: "ARNR-DD-39", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.1", field: "ARNR-DD-40", type: text, maxlen: 1 }  # "Account number 2"
+  - { line: "direct_deposit_2.account.2", field: "ARNR-DD-41", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.3", field: "ARNR-DD-42", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.4", field: "ARNR-DD-43", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.5", field: "ARNR-DD-44", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.6", field: "ARNR-DD-45", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.7", field: "ARNR-DD-46", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.8", field: "ARNR-DD-47", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.9", field: "ARNR-DD-48", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.10", field: "ARNR-DD-49", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.11", field: "ARNR-DD-50", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.12", field: "ARNR-DD-51", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.13", field: "ARNR-DD-52", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.14", field: "ARNR-DD-53", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.15", field: "ARNR-DD-54", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.16", field: "ARNR-DD-55", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.account.17", field: "ARNR-DD-56", type: text, maxlen: 1 }
+  - { line: "direct_deposit_2.amount", field: "ARNR-DD-57", type: money }  # "Direct deposit 2 amt."
+  # ---- Sign Here / Paid Preparer (the three signature boxes are /Sig widgets, signed by hand: not mapped)
+  - { line: "signature.primary_date", field: "ARNR-1-97", type: text }  # Primary's Date
+  - { line: "signature.primary_phone", field: "ARNR-1-98", type: text }  # Telephone
+  - { line: "signature.spouse_date", field: "ARNR-1-99", type: text }  # Spouse's Date
+  - { line: "signature.spouse_phone", field: "ARNR-1-100", type: text }  # Telephone
+  - { line: "preparer.ptin", field: "ARNR-1-101", type: text }  # "PTIN/ID number" (/MaxLen 11)
+  - { line: "preparer.may_discuss.yes", field: "ARNR-1-102", type: checkbox, on_state: "/Yes", group: "preparer_may_discuss" }  # "May the Arkansas Revenue Division discuss this return with the preparer?" Yes
+  - { line: "preparer.may_discuss.no", field: "ARNR-1-102", type: checkbox, on_state: "/No", group: "preparer_may_discuss" }  # No
+  - { line: "preparer.name", field: "ARNR-1-103", type: text }  # "Preparer's name"
+  - { line: "preparer.phone", field: "ARNR-1-104", type: text }  # Telephone
+  - { line: "preparer.address", field: "ARNR-1-105", type: text }  # Address
+  - { line: "preparer.city", field: "ARNR-1-106", type: text }  # City
+  - { line: "preparer.state", field: "ARNR-1-107", type: text }  # State
+  - { line: "preparer.zip", field: "ARNR-1-108", type: text }  # ZIP
+  - { line: "preparer.email", field: "ARNR-1-109", type: text }  # Email
+relations:
+  # The face's own arithmetic, per column where the line prints columns. Line
+  # 23's "Add lines 8 through 22" sums the boxes that exist in each column: 9
+  # and 17 are shaded in all three, 18A is shaded in column B.
+  - "7c == 7a + 7b"  # 7C "Add lines 7A and 7B"
+  - "23.a == 8.a + 10.a + 11.a + 12.a + 13.a + 14.a + 15.a + 16.a + 18a.a + 18b.a + 19.a + 20.a + 21.a + 22.a"  # 23 "TOTAL INCOME: (Add lines 8 through 22)" -- col A
+  - "23.b == 8.b + 10.b + 11.b + 12.b + 13.b + 14.b + 15.b + 16.b + 18b.b + 19.b + 20.b + 21.b + 22.b"  # -- col B (18A shades its col-B box)
+  - "23.c == 8.c + 10.c + 11.c + 12.c + 13.c + 14.c + 15.c + 16.c + 18a.c + 18b.c + 19.c + 20.c + 21.c + 22.c"  # -- col C
+  - "25.a == 23.a - 24.a"  # 25 "Subtract line 24 from line 23" -- col A
+  - "25.b == 23.b - 24.b"  # -- col B
+  - "25.c == 23.c - 24.c"  # -- col C
+  - "30 == 29.a + 29.b"  # 30 "Add amounts from line 29, columns A and B"
+  - "33 == 30 + 31 + 32"  # 33 "TOTAL TAX: (Add lines 30 through 32)"
+  - "34 == 7c"  # 34 "Enter total from line 7C"
+  - "37 == 34 + 35 + 36"  # 37 "TOTAL CREDITS: (Add lines 34 through 36)"
+  - "38 == max(0, 33 - 37)"  # 38 "Subtract line 37 from line 33. If line 37 is greater than line 33, enter 0"
+  - "38a == 25.c"  # 38A "Enter the amount from line 25, Column C"
+  - "38b == 25.a + 25.b"  # 38B "Enter the total amount from line 25, Columns A and B"
+  - "44 == 39 + 40 + 41 + 42 + 43"  # 44 "TOTAL PAYMENTS: (Add lines 39 through 43)"
+  - "46 == 44 - 45"  # 46 "Subtract line 45 from line 44"
+  - "47 == max(0, 46 - 38d)"  # 47 "If line 46 is greater than line 38D, enter difference"
+  - "50 == 47 - 48 - 49"  # 50 "Subtract lines 48 and 49 from line 47"
+  - "51 == max(0, 38d - 46)"  # 51 "If line 46 is less than line 38D, enter difference"
+  - "52c == 51 + 52b"  # 52C "Add lines 51 and 52B"
+cross_form: []
+identity_fields:
+  - name
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 3}
+mailing:
+  # Printed on page 3 under "Mail Return & Payment to:" (Refund / Tax Due/No Tax).
+  no_payment: "Refund: Arkansas State Income Tax, P.O. Box 1000, Little Rock, AR 72203-1000 (a return with no tax due and no refund: Arkansas State Income Tax, P.O. Box 2144, Little Rock, AR 72203-2144)"
+  with_payment: "Arkansas State Income Tax, P.O. Box 2144, Little Rock, AR 72203-2144"
+  verify_url: https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf
