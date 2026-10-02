@@ -2651,7 +2651,7 @@ fields:
   - line: "line63_pass_through_business_alt_income_tax_credit_d05"
     field: "undefined_165"
     type: text
-    maxlen: 2
+    maxlen: 1   # one printed digit cell; the widget says /MaxLen 2 (comb)
   - line: "line63_pass_through_business_alt_income_tax_credit_d06"
     field: "Text187"
     type: text
@@ -2675,7 +2675,7 @@ fields:
   - line: "line64_child_dependent_care_credit_d01"
     field: "undefined_168"
     type: text
-    maxlen: 2
+    maxlen: 1   # one printed digit cell; the widget says /MaxLen 2 (comb)
   - line: "line64_child_dependent_care_credit_d02"
     field: "Text192"
     type: text
@@ -2707,7 +2707,7 @@ fields:
   - line: "line65_nj_child_tax_credit_d01"
     field: "undefined_162"
     type: text
-    maxlen: 2
+    maxlen: 1   # one printed digit cell; the widget says /MaxLen 2 (comb)
   - line: "line65_nj_child_tax_credit_d02"
     field: "Text182"
     type: text

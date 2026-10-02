@@ -837,7 +837,9 @@ MIRRORS_WITHOUT_A_SINGLE_SOURCE_KEY: tuple[MirrorlessPack, ...] = (
             "while each continuation header is ONE box. The pairing is nine-to-one and "
             "one-to-one-under-another-name, so it cannot be derived from the key",
         )
-        for year in (2023, 2024)
+        # 2025 keeps the same six one-box continuation headers over the same nine-cell
+        # page-1 SSN and one combined name box (Phase J JS5, re-read on the port renders).
+        for year in (2023, 2024, 2025)
     ),
     *(
         MirrorlessPack(

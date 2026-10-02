@@ -1,316 +1,202 @@
 # ===========================================================================
-# TY2024 PORT of formpacks/states/nj/2023/nj1040/pack.yaml (ported 2026-08-21).
+# TY2025 PORT of formpacks/states/nj/2024/nj1040/pack.yaml (ported 2026-09-30,
+# Phase J JS5; triaged PORTABLE by the 2026-09-30 discovery census: all 813
+# field names the 2024 pack maps are still in the 2025 blank and none is gone,
+# but 734 of them MOVED, so every row was re-read on the renders rather than
+# carried by name).
 #
-# This pack was NOT re-authored from a fresh introspect sweep; it is the TY2023
-# map re-pinned to the TY2024 blank. SIX things changed from the 2023 pack:
-# `tax_year`, `source_url`, `pdf_sha256`, and the two Filing-Status line keys
-# `filing_status_qw_year_of_death::2021`/`::2022` -> `::2022`/`::2023` — the
-# printed ovals rolled a year, so that one is a real semantic fix, not
-# cosmetics (see PRINTED-LINE DIFF below) — plus two changes made in a review
-# pass after this port first shipped: the ten line-69 keys are now YEAR-FREE
-# (`line69_credit_to_2024_tax_dNN` -> `line69_credit_to_next_year_tax_dNN`, see
-# YEAR-BEARING LINE KEYS below) and the 38 option lines of the 13 radio
-# questions now carry `group` ids (see P-008 below). Everything else — every
-# field name, every on_state, the ordering and the commentary — is
-# byte-identical to the 2023 pack, so this stays a reviewable diff. The base
-# commentary's "2023" references below are the original author's and were
-# deliberately left untouched.
+# URL AND DIGEST. https://www.nj.gov/treasury/taxation/pdf/current/1040.pdf,
+# downloaded twice in separate runs on 2026-09-30 (18:57:20Z and 18:57:29Z,
+# desktop Chrome user agent): both HTTP 200 application/pdf with no redirect,
+# 830,686 bytes, %PDF-1.6, byte-identical, sha256 3d15ad99f3ce...4c7eb6a3 — the
+# digest of the discovery run's copies too. Server headers: Last-Modified Wed,
+# 03 Dec 2025 14:00:48 GMT; ETag "cacde-69304290". The host served it without
+# a 401/403, so the pack carries no mirror_urls.
+# URL VOLATILITY — the first pack pinned to a YEAR-AGNOSTIC path. /pdf/current/
+# serves whichever year NJ is posting. Its Wayback CDX history, hashed against
+# both blanks: every 2025 capture (20250204232626 .. 20251116095446) carries
+# the SHA-1 of the 2024 base blank (GFZMLE5I...), and every 2026 capture
+# (20260116223511 .. 20260928153101) this file's SHA-1 (PAOMS3L5...). The 2024
+# blank now answers at the dated path the 2024 pack pins
+# (/pdf/other_forms/tgi-ee/2024/1040.pdf: 200, 714,901 bytes), while the 2025
+# dated path (/pdf/other_forms/tgi-ee/2025/1040.pdf) answers 404, both on
+# 2026-09-30. So once NJ posts TY2026 here, fetch_blank fails closed on this
+# digest (a cached copy keeps working): re-point source_url at the 2025 dated
+# path, after confirming it serves this digest.
 #
-# What was verified before shipping this port:
-#   * IDENTITY — the trap this repo has already been bitten by: a year in the
-#     URL proves nothing, only the PDF's own printed year does. Page 1 of the
-#     pinned file extracts "2024 NJ-1040", "New Jersey Resident Income Tax
-#     Return", "Part-year residents, provide months/days you were a New Jersey
-#     resident during 2024", the pre-printed date combs "M M / D D / 2  4",
-#     and the fiscal-year-end box "M M   2025". This is the 2024 revision, not
-#     a re-issued 2023 file served from a /2024/ path.
-#   * DIGEST PROVENANCE — DOUBLE DOWNLOAD. The blank was downloaded from
-#     `source_url` twice, independently; both copies are byte-identical
-#     (714,901 bytes, header %PDF-1.6) and digest to the pinned pdf_sha256
-#     ea42e8d3...35c5. The 2023 base blank was also re-downloaded from its own
-#     source_url and still digests to the 2023 pack's pin (77ec771e...), so
-#     both sides of every comparison below are provably official artifacts and
-#     not stale cache entries.
-#   * TOPOLOGY: IDENTICAL. 840 widget annotations across 4 pages in both years
-#     (mediabox 594 x 783 pt, unchanged), collapsing to the same 813 distinct
-#     AcroForm field names; the 2023-only and 2024-only name sets are both
-#     EMPTY. All 813 names this pack maps exist in the 2024 blank, and the 2024
-#     blank carries no name this pack leaves unmapped. Matched BY NAME, every
-#     widget keeps its box to within 0.01 pt of width and height and moves at
-#     most 0.43 pt in x / 0.65 pt in y (the DOR nudged the whole page content
-#     by a fraction of a point). The same 15 field names carry more than one
-#     widget in both years with the same multiplicities: the 13 radio groups,
-#     plus the two mirror twins the base header documents ('undefined_118' at
-#     line 41, 'undefined_114' shared by line 42 and line 55).
-#     ONE non-cosmetic difference, and it is a NON-ISSUE for this map: the
-#     per-page /Annots ORDER changed (first divergence on page 1 at index 60,
-#     where 'Check Box42' and 'x  1000_2' swap). The base header records that
-#     the 2023 blank's get_fields order matched page/widget order and that this
-#     is how the original author tied raw field names to printed positions —
-#     that provenance no longer reproduces on the 2024 file. It cannot affect a
-#     shipped pack, which addresses widgets BY NAME, and the by-name geometry
-#     check above is what proves each name still points at the same box. Do not
-#     re-derive a future NJ port from annotation order.
-#   * PRINTED-LINE DIFF: ZERO RENUMBERING — stated explicitly, as the gate
-#     requires. All four pages text-extract to the same number of lines in both
-#     years (120 / 142 / 119 / 123) and the printed line-number token sequence
-#     is IDENTICAL page by page (p1: 1,2,3,5,6..14; p2: 15,16a,16b,17..37a,38,
-#     39,40a,40b,41; p3: 42,43,44,44,45..53a,53b,53c,54..67; p4: 68..80).
-#     Nothing was inserted, split, removed or renumbered. The COMPLETE set of
-#     printed-text changes is eleven lines, every one a year roll or a copy
-#     edit:
-#       p1  "2023 NJ-1040" -> "2024 NJ-1040"
-#       p1  part-year residency "during 2023" -> "during 2024"
-#       p1  the two part-year date combs "/ 2  3" -> "/ 2  4"
-#       p1  line 5 QW year-of-death ovals "2021 or 2022" -> "2022 or 2023"
-#       p1  line 7 senior "Born in 1958 or earlier" -> "in 1959 or earlier"
-#       p1  fiscal-year end "M M   2024" -> "M M   2025"
-#       p2  line 40b "residency status during 2023" -> "during 2024"
-#       p3  line 57 "Credit from 2022 tax return" -> "from 2023 tax return"
-#       p3  line 65 "younger on 12/31/23" -> "younger on 12/31/24"
-#       p4  line 69 "credit to your 2024 tax" -> "credit to your 2025 tax"
-#       p4  "does your spouse want to designate $1?" -> "does your spouse/CU
-#           partner want to designate $1?" (copy edit; same Group246 radio)
-#     Exactly ONE of those touches a mapping, which is why this port is not a
-#     three-line diff: the line 5 year-of-death ovals. The radio field
-#     ('Group1qualwi5ab') and its export values are unchanged, but the PRINTED
-#     labels moved, so the 2023 keys would silently fill the WRONG oval — old
-#     key `::2022` addresses the box the 2024 form prints as "2023". Re-checked
-#     both visually and by geometry: /0 is the LEFT oval (rect x0 305.9) =
-#     printed "2022"; /1 is the RIGHT oval (x0 381.9) = printed "2023". Keys
-#     renamed accordingly; the field and on_states are untouched.
-#   * READONLY ADJUDICATION (knowledge/pitfalls.yaml P-007) — mandatory, and
-#     done per widget rather than from the flag summary. Every one of the 840
-#     widgets was resolved for the AcroForm ReadOnly bit (/Ff bit 1) by walking
-#     the /Parent chain, and the whole 855-node field tree was separately swept
-#     for an own /Ff with bit 1. RESULT: this blank has ZERO ReadOnly widgets.
-#     The only /Ff values present are 12582912 (DoNotSpellCheck|DoNotScroll,
-#     760 nodes), 8388608 (DoNotScroll, 8), 49152 (Radio|NoToggleToOff, 13) and
-#     25165824 (Comb|DoNotScroll, 3) — not one has bit 1 set. The 2023 blank is
-#     identical on this point. So there is nothing to CLASSIFY — the four
-#     P-007 classes discriminate among ReadOnly/greyed widgets and this blank
-#     has none: no class-4 JS-computed running total or page-2/3/4 name+SSN
-#     mirror, and no cell the printed text makes necessarily blank. That is
-#     consistent with the form itself: the AcroForm declares NO /CO calculation
-#     order and no /XFA, the catalog has no /Names JavaScript tree and no
-#     /OpenAction, and all 24 nodes carrying /AA hold exactly {/F format, /K
-#     keystroke} — zero /C calculate actions, in both years. NJ does not
-#     auto-compute this return at all; every total on the NJ-1040 is a filer
-#     entry, which is why this pack maps them all and must keep doing so.
-#     PRESET VALUES — MEASURED, AND THE MEASUREMENT CORRECTS THIS HEADER. An
-#     earlier draft asserted that no widget in the blank ships a preset value.
-#     Sweeping the whole 855-node field tree for /V and /DV refutes it: there
-#     is EXACTLY ONE preset entry in the file, and it is in a mapped widget —
-#     field "x  1000" (page 1, the line 6 Regular-exemption result box, rect
-#     496.6 343.8 551.4 360.9) ships /V = "." in BOTH the 2024 and the 2023
-#     blank, and this pack maps it as exemption_6_regular_amount. The MAPPING
-#     STANDS, and not on a flag-only rationale: the widget is an ordinary
-#     writable /Tx (/Ff 12582912 = DoNotSpellCheck|DoNotScroll, ReadOnly bit
-#     clear), its three siblings "x  1000_2/_3/_4" (lines 7, 8, 12) carry no
-#     /V at all, and a stray period is not a figure the DOR is asserting, so
-#     this is NOT a P-007 class-1 DOR-printed constant — it is a DOR authoring
-#     slip in one of four otherwise identical result boxes. Proved harmless
-#     rather than argued: the audit fill writes "Test 47" into it and a 170-dpi
-#     crop of the rendered line-6 result box shows "Test 47" alone, with no
-#     residual period. The durable number for a future port to re-measure:
-#     preset /V or /DV entries in the field tree = 1 (2024 and 2023 alike), and
-#     it is this one. What P-007 forbids is the un-measured assertion, which is
-#     why the count is stated here instead of the old sweeping claim.
-#     Not the same thing, and still true: the "x $1,000" / "x $6,000"
-#     multipliers are printed ARTWORK beside an empty result box, not values
-#     inside a widget — the multiplier text is not fillable and is not mapped;
-#     only the result cell is.
-#     CONSEQUENCE for the gates agent: this pack maps NO ReadOnly widget, so it
-#     needs NO row in STATE_COMPUTED_READONLY in
-#     packages/core/tests/test_readonly_widget_mapping.py — packs absent from
-#     that table are pinned at ZERO, and zero is the measured truth here.
-#     states/nj/2023 is likewise (correctly) absent.
-#   * EMBEDDED FACTS re-verified against THIS blank's own printed text, not
-#     carried over from the base header. Every dollar constant printed on the
-#     face is unchanged from 2023: the exemption multipliers "x $1,000"
-#     (lines 6, 7, 8, 12), "x $1,500" (10, 11) and "x $6,000" (9, veteran);
-#     the $10 / $20 designated-contribution radio labels on lines 70-77; the
-#     $1 Gubernatorial Elections Fund; and line 40a's "18% of Rent". Page 4
-#     prints "Refund or No Tax Due Address ... Revenue Processing Center -
-#     Refunds, PO Box 555, Trenton, NJ 08647-0555" and the payment address
-#     "PO Box 111, Trenton, NJ 08645-0111" — the same two the 2023 face prints
-#     and the same two knowledge/states/nj/2024.yaml records. All 40 /Btn
-#     export values were DUMPED from /AP /N and never guessed: every one of
-#     this pack's 40 checkbox on_state strings is a real appearance state of
-#     its own widget — "/Yes" (26 single boxes), "/Choice1".."/Choice5"
-#     (Group1 filing status), "/Choice1".."/Choice3" (Group182 line 40b and the
-#     line 71-75 contribution radios), "/0".."/2" (Group168 line 70, Group611
-#     line 76, Group6112 line 77), "/0"/"/1" (Group1qualwi5ab) and "/On"
-#     (Line77bdue, the line 79 e-check box — still the one /Btn whose /AP /N
-#     has no /Off state, exactly as in 2023).
-#     NOT on the face and therefore NOT claimed here: the filing due date. No
-#     date is printed anywhere on this blank; knowledge/states/nj/2024.yaml
-#     carries 2025-04-15 with its own citation.
-#   * LAW DELTAS vs the base year: NONE on the printed face. No dollar figure,
-#     rate, threshold, percentage or address changed 2023 -> 2024; the eleven
-#     printed changes listed above are year tokens and one copy edit. Cross-
-#     checked against knowledge/states/nj/2024.yaml, which models the same
-#     $1,000 / $1,500 / $6,000 exemptions, the 18%-of-rent property-tax basis,
-#     the $15,000 ($7,500 MFS) line 41 cap and the same two PO Box addresses:
-#     FACE AND KNOWLEDGE AGREE, so there is no face/knowledge mismatch to
-#     report for TY2024.
-#   * VISION AUDIT — `uv run python scripts/audit_pack.py
-#     formpacks/states/nj/2024/nj1040/pack.yaml`: exit 0, "mapped_lines": 813,
-#     "written_fields": 813, "verify_fails": [] (assertions / clipping /
-#     checkbox), 4 pages rendered at 170 dpi and ALL FOUR READ page by page.
-#     813 AND NOT 838, and the difference is not a coverage hole. This pack has
-#     838 field ENTRIES = 838 distinct line keys, but 13 of the radio questions
-#     put one line per OPTION on a single shared AcroForm field, and the audit's
-#     synthetic_values answers each shared field exactly once: 838 - 25
-#     non-first radio options = 813 lines filled, one per distinct AcroForm
-#     field name (813 names in the blank, all of them mapped). A CORRECTION to
-#     this header: it previously reported "838 mapped lines filled, 838 fields
-#     written", which is the pack's entry count and not what the harness
-#     prints. A re-run must show 813/813; if it ever shows 838 the radio
-#     groups have been flattened onto separate fields.
-#     WHAT THE AUDIT CAUGHT (it did not come back empty):
-#       - Line 5's year-of-death oval. The rendered page shows the X in the
-#         LEFT box, printed "2022" — which is what forced the ::2021/::2022 ->
-#         ::2022/::2023 key rename above. Had the keys been ported unchanged,
-#         a "died in 2022" filer would have been marked "2023".
-#       - Line 60 ("Excess New Jersey Disability Insurance Withheld") renders
-#         with three GREY ZEROS in the last three of its six comb cells
-#         ("0 . 0 0"). They are not widgets: only three widgets (Text165,
-#         Text166, Text167) exist anywhere in that row's y-band, and they are
-#         the three LEFT cells this pack maps. The zeros are page ARTWORK the
-#         DOR pre-prints, identical in the 2023 blank. So the row is correctly
-#         mapped at three cells and a future author must NOT "add the missing
-#         cells" — there is nothing there to bind, and the P-007 rule about
-#         never covering a DOR-printed constant is what the artwork means.
-#       - The two mirror twins the base header describes were re-measured, and
-#         ONE of the base header's claims is WRONG. (a) 'undefined_118' on line
-#         41: the two widgets are STACKED IN THE SAME CELL (x0 487.3 and 487.7,
-#         same y) — not "the next cell of this line" as the base comment says.
-#         Line 41's comb is therefore 7 cells wide, all 7 are mapped
-#         (d01-d04, d06-d08 — the d05 gap is a naming artifact, not a hole),
-#         and the ordered-fill render shows exactly 7 digits with none missing.
-#         (b) 'undefined_114' really is shared ACROSS two lines: page 3 y 677
-#         (line 42, cell 3) and page 3 y 336 (line 55, cell 2). The consequence
-#         is visible rather than theoretical — filling both lines renders line
-#         55 as "1 3 , 3 4 5 , 6 7 8 . 9 0", i.e. line 55's second cell ECHOES
-#         line 42's third digit instead of its own. Both positions are the
-#         ten-millions digit of their line, so a realistic return is unaffected,
-#         but this is a DISPLAYED WRONG DIGIT, not merely an unfillable cell.
-#         Recorded in `unverified` terms in the port report; the DOR would have
-#         to fix the blank.
-#       - Everything else was clean, checked page by page. Page 1: header/SSN,
-#         MFS-spouse-SSN, county-code, part-year and fiscal-year combs all land
-#         in their own boxes; the three header check boxes, the four dependent
-#         rows (name + 9-cell SSN + 4-cell birth year + no-insurance box) and
-#         the seven "x $N,NNN =" result cells each sit on their own printed
-#         line (6 -> line 6, ... 12 -> line 12); the pre-printed "Division use"
-#         digits stay untouched. Page 2: every line 15-41 amount lands on its
-#         own printed row, including the short combs (16b, 20b, 28a, 28b, 37a,
-#         37b) and line 40b's Homeowner oval. Page 3: lines 42-67 likewise,
-#         with the 53a/53b/53c/NJ-HCC boxes, the two line-58 EIC boxes and the
-#         line-64 CU-couple box on their own rows, and the maxlen-2 cells
-#         (line 63 d05, 64 d01, 65 d01) render both characters unclipped.
-#         Page 4: the eight contribution radios each mark the $10 box (the
-#         first option), both Gubernatorial Yes boxes are marked and both No
-#         boxes stay empty, the line-79 e-check oval is marked, and the 15-cell
-#         driver's-license and two 9-cell EIN combs are complete and unclipped.
-#         No value landed off-page, in a neighbouring line, or outside its box.
-#       - COMB ORDER was proved, not assumed, by a second adversarial fill that
-#         gives every cell of a line a DIFFERENT character (the audit harness's
-#         own sentinel writes the same 'T' in every cell, which cannot detect a
-#         transposition). Line 15 renders "1 2 , 3 4 5 , 6 7 8 . 9 0" and lines
-#         16a/16b/17/18/19/54/57 the same way: d01 is the leftmost, highest-
-#         order digit and the last dNN is the rightmost cent digit, exactly as
-#         the key scheme claims. This also confirms the county-code run, whose
-#         field names run BACKWARDS ('CM4' 'CM3' 'CM2' 'CM1'): the render puts
-#         county_municipality_code_d1 in the leftmost box.
+# PRINTED IDENTITY. Page 1 prints "2025 NJ-1040 / New Jersey Resident / Income
+# Tax Return", "Part-year residents, provide months/days you were a New Jersey
+# resident during 2025", the part-year date combs "M M / D D /2 5", the
+# fiscal-year end "M M 2026" and the Digital Assets question "... a digital
+# asset in 2025 ...". Each page's barcode caption reads 040HP01250, 040HP02250,
+# 040HP03250 and 040HP04250 (the 2024 blank: 040HP01240 .. 040HP04240); the
+# captions are vector artwork with no text layer on either blank, so they were
+# read on the rendered pages, not extracted. Document
+# info: Title "2025 NJ-1040 Resident Income Tax Return", CreationDate
+# 2025-10-27, ModDate 2025-11-25. printed_year_verified = 2025.
 #
-# YEAR-BEARING LINE KEYS — ADJUDICATED HERE, and the adjudication CHANGED this
-# pack (it also changed states/ut/2024/tc40, ported the same day, which had
-# taken the OPPOSITE decision on the identical shape).
-#   THE RULE: a line key must not embed an absolute year that moves with the tax
-#   year. Name the ROLE relative to the pack's own tax_year and let tax_year
-#   supply the absolute year. So printed line 69, "Amount from line 68 you want
-#   to credit to your 2025 tax", is keyed `line69_credit_to_next_year_tax_dNN`
-#   here — renamed from the ported `line69_credit_to_2024_tax_dNN` (10 comb
-#   cells, d01-d10; the printed line NUMBER, the widgets and the mapping are
-#   untouched).
-#   WHY, weighed against "a line key is an API surface and renaming one is a
-#   breaking change". Both alternatives are worse. (a) KEEPING "2024" in the
-#   TY2024 pack ships an identifier that says the money went to 2024 tax for a
-#   box the state applies to 2025 — a caller who maps their own field by key
-#   name inverts the DIRECTION of the money (a payment already made vs a
-#   carry-forward out). That is not a cosmetic label; it is the one kind of
-#   staleness that can produce a wrong return. (b) ROLLING it to "2025" is
-#   honest for exactly one year and then must be renamed again on every single
-#   port — it manufactures the very cross-year API churn the "don't rename"
-#   argument exists to prevent, and guarantees a stale key the first time a
-#   porter forgets. A year-free key is honest in every year AND never needs
-#   renaming again, so it carries no caveat at all. Cost of this rename,
-#   measured before making it: `grep -rn line69_credit_to_2024_tax .` matched
-#   ONLY the 2023 and 2024 NJ packs — no calc op, extractor, fixture, test,
-#   knowledge file or cross_form rule references the key, so nothing outside
-#   these pack files can break.
-#   WHAT THE PRECEDENT ACTUALLY SAYS — grepped, not recalled, because an earlier
-#   draft of this header overstated it and the overstatement is corrected here.
-#   NY it203 2023/2024/2025 all carried `69_amount_applied_to_2024_estimate`
-#   (correct on the 2023 face, STALE on the 2024 and 2025 faces, with a
-#   documented caveat in those two headers) — a real precedent for "keep it",
-#   and exactly the failure mode above, two years deep by the time all three
-#   packs took the year-free rename (2026-08-24). NY it201, however,
-#   has ZERO year-bearing line keys in 2023, 2024 and 2025: it never "shipped
-#   the identical documented caveat" and is no precedent either way. Claiming it
-#   was is the false half of the citation this header used to make.
-#   FOLLOW-UPS this pack could not make itself (other owners) — ALL TAKEN
-#   2026-08-24: states/nj/2023/nj1040 renamed `line69_credit_to_2024_tax_dNN`
-#   to this pack's exact spelling, states/ut/2023/tc40 renamed
-#   `refund_applied_to_2024`, and NY it203 2023/2024/2025 renamed line 69, so
-#   every family now agrees across its shipped years. The rule itself is
-#   formpacks/CONVENTIONS.md "Year tokens in line keys" (landed 2026-08-21),
-#   enforced repo-wide by test_pack_invariants.py's year-offset gate.
-#   THE EXCEPTION, and the contrast is the whole point: the `::2022`/`::2023`
-#   rename above KEEPS its years, because there the year identifies WHICH
-#   PHYSICAL OVAL takes the X. That is a mapping fact, not a label, so those two
-#   keys must be re-derived from the printed face on every port.
+# TOPOLOGY against the 2024 blank (the census, plus a per-widget probe: the
+# census compares only the FIRST widget of a field). Still 4 pages, mediabox
+# 594 x 783, flat AcroForm, no XFA. 844 widgets on 814 field names, per page
+# 150 / 302 / 225 / 167 (2024: 840 on 813; 148 / 303 / 222 / 167). Each of
+# the 813 names the 2024 pack maps is still on its own page with the same /FT,
+# /Ff, /MaxLen, /DA and /AP states — no flag, font, cell count or export value
+# changed — and 734 of them moved their /Rect:
+#   * page 1 re-flowed around the new Digital Assets row. The header rows moved
+#     at most 2.2 pt; below the new row, the Filing Status block sits 23-30 pt
+#     lower, exemption lines 6-13 19-21 pt lower, the dependent rows 16-18 pt;
+#   * page 3: lines 42-49 moved under 2.5 pt, lines 50-67 1-3.8 pt lower;
+#   * pages 2 and 4: the printed text did not move (every word but the rolled
+#     year within 0.5 pt); the widgets were redrawn — about two thirds of the
+#     page-2 cells are 1.4-1.8 pt wider — and moved at most 4.7 pt on page 2
+#     (field "274", line 37c) and 2.6 pt on page 4.
+# The structural changes, each re-read on the renders:
+#   1. NEW field "Groupda" (page 1), a two-widget radio with /Ff 49152 like the
+#      13 others: /0 sits right of the printed "Yes", /1 right of "No" — the
+#      Digital Assets question. MAPPED as digital_assets::yes (/0) and
+#      digital_assets::no (/1), group digital_assets. Not `required`, like every
+#      other radio here: the face prints no must-answer instruction, only "(See
+#      instructions.)".
+#   2. Line 60 ("Excess New Jersey Disability Insurance Withheld") dropped the
+#      grey pre-printed "0 . 0 0" from its last three comb cells and gained
+#      three widgets there — but no new FIELDS: each is a second widget of
+#      "Text176" / "Text177" / "Text178", which are line 61's cells d04-d06. A
+#      field holds one value, so line 60's three right-hand cells always DISPLAY
+#      line 61's last three digits and can never hold line 60's own. A DOR
+#      authoring defect this pack cannot fix; see UNRESOLVED.
+#   3. "undefined_118" (line 41 d04) lost the duplicate widget the 2024 blank
+#      stacked in the same cell. Line 41 is still 7 cells, all mapped.
+#   4. "undefined_114" keeps both widgets: line 42's cell 3 and line 55's cell 2
+#      (as in 2024; line 55 cannot hold a digit of its own there).
+# No base-unmapped widget went away (the 2024 pack mapped every name), and
+# Groupda is the only new name.
 #
-# P-008 (checkbox groups) — FIXED IN THIS PORT, and it is the one behaviour
-# change here beyond the ReadOnly/audit corrections. The base pack gave its 13
-# radio questions NO `group` id, so fill_form silently accepted two answers to
-# one question (last write wins on the shared field) and verify's checkbox audit
-# could not see the question at all. Every one of the 38 option lines on a
-# SHARED AcroForm field now carries a group id — mechanically the line stem
-# before "::" (filing_status, filing_status_qw_year_of_death,
-# line40b_residency_status, line70..77 contributions, gubernatorial_*), which is
-# AR1000F's convention for the same shape. No line key, field, on_state or count
-# changed: the audit still fills 813 lines with 0 verify FAILs, because
-# synthetic_values already deduplicated by shared field. `required` is
-# deliberately left off all 38 (a legitimately blank NJ-1040 answers none of
-# these), matching P-008's sched_e reasoning; the at-most-one check applies
-# regardless of `required`, which is the point. states/nj/2023/nj1040 has the
-# identical gap and is NOT fixed here — it is not this pack's file.
+# LINE 6 RE-KEYED — a mis-map carried from the 2023 pack, found by this port's
+# render. Line 6 "Regular" prints THREE ovals, each LEFT of its label ("Self",
+# "Spouse/CU Partner", "Domestic Partner"), but "Self" is printed SOLID BLACK on
+# the blank (every filer takes it; so on the 2024 blank too) and has no widget.
+# The row's two widgets are the other two ovals: "Check Box39" (x0 217.6) sits
+# before "Spouse/CU Partner" and "Check Box40" (x0 316.1) before "Domestic
+# Partner". The 2023 and 2024 packs keyed them exemption_6_regular_self and
+# exemption_6_regular_spouse_cu, one oval off: a "self" answer marked the
+# Spouse/CU Partner oval and a "spouse" answer the Domestic Partner oval. Here
+# Check Box39 is exemption_6_regular_spouse_cu, Check Box40 is the new
+# exemption_6_regular_domestic_partner, and exemption_6_regular_self is gone,
+# so a caller asking for it gets "unknown line key" instead of a wrong mark
+# (the pre-printed Self oval needs no entry; the line 6 count box still counts
+# it). No calc op, extractor, fixture, knowledge file or cross_form rule names
+# these keys — only the three NJ-1040 packs. The 2023 and 2024 packs were
+# re-keyed the same way on 2026-10-02 (pitfall P-030;
+# test_nj1040_line6_ovals.py reads the label right of each widget on every
+# year's blank).
 #
-# Caveat for the next author — a stale LABEL, not a mis-map:
-#   * Two AcroForm field NAMES the DOR ships are stale against its own printed
-#     face, in 2023 and 2024 alike: "CountyMunicipality Code See Table page 50"
-#     (both faces print "See Table page 52") and "Drivers License Number
-#     Voluntary Instructions page 44" (both faces print just "(See
-#     instructions)"). These are widget names, not content — nothing to fix,
-#     and they must NOT be "corrected" or the map stops resolving.
+# FACE DELTAS vs 2024 (a diff of the printed text). No line was renumbered,
+# split, added or removed: lines 1-80 print in the 2024 order. The complete
+# printed change:
+#   p1  "2024 NJ-1040" -> "2025 NJ-1040"; part-year "during 2024" -> "during
+#       2025"; both part-year date combs "/2 4" -> "/2 5"; fiscal-year end "M M
+#       2025" -> "M M 2026"; line 5 year-of-death ovals "2022 or 2023" -> "2023
+#       or 2024"; line 7 "Born in 1959 or earlier" -> "in 1960 or earlier"; and
+#       the NEW row "Digital Assets / Did you (or your spouse/CU partner)
+#       receive (as a reward, award, or payment for property or services); or
+#       sell, exchange, or otherwise dispose of a digital asset in 2025 (or a
+#       financial interest in a digital asset)? (See instructions.) Yes No".
+#   p2  line 40b "residency status during 2024" -> "during 2025".
+#   p3  line 57 "Credit from 2023 tax return" -> "from 2024 tax return"; line
+#       60's "0 . 0 0" artwork -> a printed "." separator (item 2 above); line
+#       65 "younger on 12/31/24" -> "younger on 12/31/25".
+#   p4  line 69 "credit to your 2025 tax" -> "credit to your 2026 tax".
+# The line 5 roll is the one that changes a mapping. "Group1qualwi5ab" and its
+# /0 and /1 states are unchanged, but the printed years moved, so the keys roll
+# ::2022/::2023 -> ::2023/::2024: /0 is the LEFT oval (x0 305.86), printed
+# "2023"; /1 the RIGHT oval (x0 381.86), printed "2024". Left unrolled, a
+# caller marking a 2023 death would have filled the oval printed "2024". Line
+# 69 needs nothing: its key has been year-free since the TY2024 port.
+# Figures on the face, all unchanged from 2024: the exemption multipliers "x
+# $1,000" (lines 6, 7, 8, 12), "x $1,500" (10, 11) and "x $6,000" (9); line
+# 40a "18% of Rent"; line 16a "Enclose federal Schedule B if over $1,500"; the
+# $1 Gubernatorial Elections Fund designations; the $10 / $20 ovals of lines
+# 70-77; and the page-4 addresses "Revenue Processing Center – Payments, PO Box
+# 111, Trenton, NJ 08645-0111" (tax due) and "Revenue Processing Center –
+# Refunds, PO Box 555, Trenton, NJ 08647-0555" (refund or no tax due). The
+# exemption amounts, the 18% of rent and both addresses match
+# knowledge/states/nj/2025.yaml: no face/knowledge mismatch. No filing due
+# date is printed on the face.
+#
+# READONLY AND PRESETS (P-007), re-measured on this blank. None of the 862
+# field-tree nodes has the ReadOnly bit; the own /Ff values are 12582912 (760
+# nodes), 8388608 (8), 49152 (14: the 13 radios of 2024 plus Groupda) and
+# 25165824 (3). No /CO, no /XFA, no catalog /Names or /OpenAction, and all 24
+# /AA entries hold only /F + /K (format / keystroke) actions: the form computes
+# nothing, so P-007 has nothing to classify, this pack maps no ReadOnly widget
+# and it needs no STATE_COMPUTED_READONLY row. The one preset value is the 2024
+# one: "x  1000" (the line 6 result box, exemption_6_regular_amount) ships /V
+# "." — an ordinary writable /Tx, mapped, and overwritten by a fill.
+#
+# SENTINEL AUDIT (scripts/audit_pack.py, 170 dpi): exit 0, "mapped_lines"
+# 814, "written_fields" 814, "verify_fails" [] — one sentinel per AcroForm
+# field (the 840 line keys answer each radio once, on its first option). All
+# four pages read: every sentinel sits in its own printed box, each radio's
+# first option (Digital Assets Yes, Single, 2023, Homeowner, the eight $10
+# ovals, both Gubernatorial Yes) is marked on its own label, and line 6's
+# result box shows its sentinel alone, the preset "." overwritten.
+# That harness writes the same "T" into every one-character cell, so it cannot
+# tell cells apart. An IDENTITY FILL did: each comb run spelled its printed
+# line label in its first cells and its dNN index digit in the rest ("1 5 3 4
+# 5 6 7 8 9 0" on line 15, "1 6 a 4 ..." on 16a, "Y 2 3 ... 9" in your SSN,
+# "C 2 3 4" in the county code), the single boxes followed a checked /
+# unchecked pattern that tells neighbours apart, and every radio took its LAST
+# option; three more fills took the middle options (filing status 2, 3 and 4,
+# 40b Tenant, the eight $20 ovals). All pages read at 170 dpi: every row shows
+# its own printed line number, every run reads left to right with d01
+# leftmost (the county code's fields are named CM4..CM1 and still put d1
+# leftmost), and the marked boxes are exactly the pattern's. 840 / 840 line
+# keys confirmed on renders: 773 text lines, 27 single boxes, 40 radio
+# options. The twins render as measured: line 55's cell 2 repeats line 42's
+# cell 3 (the millions digit of both), and line 60's last three cells repeat
+# line 61's ones and cents digits. Line 41 shows its 7 digits.
+# Three widgets carry the comb flag with /MaxLen 2 where the face prints ONE
+# digit cell (the thousands digit of line 63 = d05, line 64 = d01 and line 65
+# = d01; boxes 15.6, 16.0 and 14.9 pt wide, in the column of line 62's
+# /MaxLen-1 thousands cell): a two-character sentinel rendered as two glyphs
+# squeezed into the one printed box. The pack therefore budgets maxlen 1 (the
+# 2024 pack carried the widget's 2), adjudicated as a tighter-than-widget
+# budget. Re-audited at maxlen 1: each of the three cells shows its one
+# sentinel centred in the printed box, like its neighbours.
+#
+# UNRESOLVED (the DOR would have to fix the blank):
+#   * Line 60 / line 61 (item 2). Line 60 prints "X , X X X . X X"; filling line
+#     61 also prints its ones digit and both cents digits in line 60's last
+#     three cells, so a return with any line 61 amount shows a spurious amount
+#     on line 60, and line 60 itself can be filled only down to its tens digit
+#     (d01-d03 = thousands, hundreds, tens). A return with a nonzero line 60 or
+#     line 61 needs line 60's cells corrected by hand before it is filed.
+#   * "undefined_114" (item 4): line 55's cell 2 always shows line 42's cell 3,
+#     the millions digit of both lines.
+#   * Field NAMES do not describe their boxes, as in 2024 (the renders place
+#     each): "SpousesCU Partners SSN if filing jointly" is the Home Address box,
+#     "CountyMunicipality Code See Table page 50" the City box (the face prints
+#     "See Table page 52" by the county code), and "Drivers License Number
+#     Voluntary Instructions page 44" is licence cell 1 (the face prints "(See
+#     instructions)"). Names are addresses, not labels: do not "correct" them.
 # ===========================================================================
-# Form NJ-1040, 2023 - New Jersey Resident Income Tax Return.
+# Form NJ-1040, 2025 - New Jersey Resident Income Tax Return.
 #
-# Authored via the taxfill pipeline: `taxfill introspect` (sentinel sweep -
-# every widget rendered with its own field name) -> vision-map workflow (all
-# four pages rendered from the official blank, with per-widget rect overlays
-# read against the printed line labels to place every cell) -> this map.
+# Authored for TY2023 via the taxfill pipeline: `taxfill introspect` (sentinel
+# sweep - every widget rendered with its own field name) -> vision-map workflow
+# (all four pages rendered from the official blank, with per-widget rect
+# overlays read against the printed line labels to place every cell) -> this
+# map; carried to TY2024 and TY2025 by ports re-verified on each year's renders.
 #
 # Layout. Flat AcroForm (acroform_root empty). The shipped field names are the
 # raw, often-scrambled sentinel ids the form ships with (e.g. "undefined_42",
 # "Text146", "Group168", "x  1000") - they do NOT track the printed line
 # numbers, so every line key below was assigned from the widget's PAGE +
-# POSITION, not from its field name. The blank's get_fields order is identical
-# to the page/widget order, which is how each raw field path was tied to its
-# spot on the form.
+# POSITION, not from its field name. (The 2023 author tied raw names to spots
+# through the blank's get_fields order, which then matched the page/widget
+# order. It no longer does: on the 2025 blank the two orders part at field
+# index 29, "Text21" vs "Check Box20". Match names by geometry and the
+# render, never by order.)
 #
 # NJ-1040 prints nearly every dollar amount as a row of single-character COMB
 # cells (one digit per box, with pre-printed comma/decimal separators that are
@@ -326,28 +212,34 @@
 #
 # Sections. Page 1: header (taxpayer/spouse SSN, name, address, county code,
 # the three header checkboxes), part-year-resident & fiscal-year date combs,
-# Filing Status (Group1, one radio /Choice1..5), the MFS spouse-SSN comb, the
+# the Digital Assets Yes/No radio (Groupda, new for TY2025), Filing Status
+# (Group1, one radio /Choice1..5), the MFS spouse-SSN comb, the
 # qualifying-widow year-of-death radio, Exemptions 6-13 (each: self/spouse
 # oval(s) + a count box + the "x $N,NNN =" result amount), and the four
 # Dependent rows (name + SSN comb + birth-year comb + "no health insurance"
 # box). Pages 2-4: the numbered income / tax / credit / payment / contribution
 # lines, each a comb amount, plus line-level checkboxes (NJ-2210 enclosed,
-# health-coverage 53a/53b, the REQUIRED NJ-HCC box, the EIC and Child-and-
-# Dependent-Care CU-couple boxes, line-79 e-check), the line-40b residency
-# radio (Homeowner/Tenant/Both), the line-70..77 designated-contribution
-# radios ($10 / $20 / Other), the Gubernatorial Elections Fund Yes/No radios,
-# the signature dates, and the paid-preparer block.
+# health-coverage 53a/53b, the NJ-HCC enclosure box (the face prints REQUIRED
+# beside line 53c; it is conditional, so not a required: true line), the EIC
+# and Child-and-Dependent-Care CU-couple boxes, line-79 e-check), the line-40b
+# residency radio (Homeowner/Tenant/Both), the line-70..77 designated-
+# contribution radios ($10 / $20 / Other), the Gubernatorial Elections Fund
+# Yes/No radios, the signature dates, and the paid-preparer block.
 #
-# Checkboxes / radios. on_state strings are copied verbatim from the skeleton
-# (the widget AP /N keys), preserving the odd values the form uses: filing
-# status & several contributions use "/Choice1".."/Choice5"; the contribution
-# radios on lines 70/71 and 75-77 use "/0" "/1" "/2"; single yes/no boxes use
-# "/Yes"; the line-79 e-check box uses "/On". Radio questions that are ONE
-# AcroForm field with several mutually exclusive options share that field and
-# carry one line per option (e.g. "filing_status::single", "::mfj", ...)
-# [TY2024 port: every such option line also carries a `group` id — the stem
-# before "::" — so one question cannot be answered twice; see P-008 in the
-# banner. The 2023 base pack has none.]
+# Checkboxes / radios. Every on_state is a real /AP /N key of its own widget,
+# re-dumped from the 2025 blank (41 /Btn fields, 67 widgets): "/Yes" on the
+# 26 single boxes; "/Choice1".."/Choice5" on Group1 (filing status);
+# "/Choice1".."/Choice3" on Group182 (line 40b) and the line 71-75
+# contribution radios; "/0".."/2" on Group168 (line 70), Group611 (line 76)
+# and Group6112 (line 77); "/Choice1"/"/Choice2" on the Gubernatorial
+# Yes/No radios (Group245 you, Group246 spouse/CU partner); "/0"/"/1" on
+# Group1qualwi5ab (line 5 year of death) and Groupda (Digital Assets); and
+# "/On" on the line-79 e-check box (Line77bdue, whose /AP /N has no /Off).
+# Radio questions that are ONE AcroForm field with several mutually exclusive
+# options share that field and carry one line per option (e.g.
+# "filing_status::single", "::mfj", ...), and every such option line carries
+# a `group` id — the stem before "::" — so one question cannot be answered
+# twice (P-008; since the TY2024 port).
 #
 # Relations / cross_form. OMITTED. Every NJ-1040 total (e.g. 27, 38, 54, 66) is
 # split across many single-character comb cells; no line key holds a whole
@@ -355,22 +247,30 @@
 # fields, and the conservative house style declares none. No printed label
 # names a federal source line directly (NJ gross income is built on Schedule
 # NJ-BUS / NJ-COJ etc., not a federal 1040 line), so cross_form is empty too.
+# Re-read on the 2025 face: its federal references are enclosure notes (16a
+# "Enclose federal Schedule B if over $1,500", 18 "federal Schedule C", 21 and
+# 22 "federal Schedule K-1") and line 58's "IRS calculate your federal earned
+# income credit" box; none cites a federal line, so the 2025 Form 1040's
+# line 11a split does not reach this form.
 #
-# Coverage. The blank has 840 AcroForm widgets; 838 lines are mapped here. The
-# two widgets NOT given their own line are mirror twins: the NJ-1040 reuses the
-# AcroForm field name "undefined_118" for two adjacent line-41 comb cells, and
-# "undefined_114" for one line-42 cell AND one line-55 cell. Widgets that share
-# a field name always display the same value, and the engine writes a field
-# once, so each duplicated name is mapped a single time (the twin still renders
-# the value) - flagged inline at the kept line. There are no JS pushbuttons or
-# readonly tooltips to omit. The pre-printed comma/period separators, the greyed
-# ".00" cents, and the "Division use" boxes are static artwork, not widgets.
+# Coverage. The 2025 blank has 844 AcroForm widgets on 814 field names, and all
+# 814 names are mapped here, as 840 line keys (the 14 radio fields carry 40
+# option lines). The four widgets without a line of their own are mirror
+# twins, a second widget under an already-mapped name: "undefined_114" (line
+# 42 cell 3 AND line 55 cell 2) and, new for TY2025, "Text176" / "Text177" /
+# "Text178" (line 61 cells 4-6 AND line 60 cells 4-6; see the port banner).
+# Widgets that share a field name always display the same value, and the
+# engine writes a field once, so each duplicated name is mapped a single time
+# (the twin still renders the value) - flagged inline at the kept line. There
+# are no JS pushbuttons or readonly tooltips to omit. The pre-printed
+# comma/period separators and the "Division use" boxes are static artwork,
+# not widgets.
 
 form: "Form NJ-1040"
 jurisdiction: "states/nj"
-tax_year: 2024
-source_url: "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040.pdf"
-pdf_sha256: "ea42e8d33faa16b71d96b7c8e70d82cdbea95f993ce8bcad4da83b48f7fd35c5"
+tax_year: 2025
+source_url: "https://www.nj.gov/treasury/taxation/pdf/current/1040.pdf"
+pdf_sha256: "3d15ad99f3ced62a38eb53c25bd53830a0b9e3927abcb75030ef06ec4c7eb6a3"
 acroform_root: ''
 fields:
   # ===================================================== PAGE 1 - header, filing status, exemptions, dependents
@@ -530,6 +430,23 @@ fields:
     field: "Text29"
     type: text
     maxlen: 1
+  # Digital Assets (NEW for TY2025): "Did you (or your spouse/CU partner)
+  #   receive (as a reward, award, or payment for property or services); or
+  #   sell, exchange, or otherwise dispose of a digital asset in 2025 (or a
+  #   financial interest in a digital asset)? (See instructions.) Yes No". ONE
+  #   radio field, "Groupda", with two widgets: /0 sits right of the printed
+  #   "Yes" (x0 477.73), /1 right of "No" (x0 534.16). The key is year-free:
+  #   the printed year describes the question and selects no widget.
+  - line: "digital_assets::yes"
+    field: "Groupda"
+    type: checkbox
+    on_state: "/0"
+    group: "digital_assets"
+  - line: "digital_assets::no"
+    field: "Groupda"
+    type: checkbox
+    on_state: "/1"
+    group: "digital_assets"
   - line: "filing_status::single"
     field: "Group1"
     type: checkbox
@@ -591,28 +508,26 @@ fields:
     type: checkbox
     on_state: "/Choice5"
     group: "filing_status"
-  # Printed line 5 rolled its ovals for TY2024 ("2022  or  2023"). The field and
-  #   its export values are unchanged from 2023; only the printed labels moved, so
-  #   these two KEYS were renamed. /0 is the LEFT oval (rect x0 305.9) = printed
-  #   "2022"; /1 is the RIGHT oval (x0 381.9) = printed "2023". Verified by
-  #   geometry and by reading the rendered page.
-  - line: "filing_status_qw_year_of_death::2022"
+  # Printed line 5 rolled its ovals again for TY2025 ("2023  or  2024"; TY2024
+  #   printed "2022 or 2023"). The field and its export values are unchanged;
+  #   only the printed labels moved, so these two KEYS roll. /0 is the LEFT oval
+  #   (rect x0 305.86) = printed "2023"; /1 is the RIGHT oval (x0 381.86) =
+  #   printed "2024". Verified by geometry and by reading the rendered page.
+  - line: "filing_status_qw_year_of_death::2023"
     field: "Group1qualwi5ab"
     type: checkbox
     on_state: "/0"
     group: "filing_status_qw_year_of_death"
-  - line: "filing_status_qw_year_of_death::2023"
+  - line: "filing_status_qw_year_of_death::2024"
     field: "Group1qualwi5ab"
     type: checkbox
     on_state: "/1"
     group: "filing_status_qw_year_of_death"
   # Line 6 prints three ovals, each LEFT of its label: "Self" (printed solid
-  #   black, no widget — every filer takes it), "Spouse/CU Partner" and
-  #   "Domestic Partner". The row's two widgets are the last two (Check Box39
-  #   x0 217.6, Check Box40 x0 316.1). RE-KEYED 2026-10-02 (pitfall P-030): this
-  #   pack keyed them by order as `_self` and `_spouse_cu`, one oval off, so a
-  #   "self" answer marked Spouse/CU Partner. The pre-printed Self oval needs no
-  #   entry (the line 6 count box still counts it).
+  #   black, no widget), "Spouse/CU Partner" and "Domestic Partner". The two
+  #   widgets are the last two (Check Box39 x0 217.6, Check Box40 x0 316.1).
+  #   RE-KEYED in the TY2025 port (the 2023/2024 packs keyed them `_self` and
+  #   `_spouse_cu`, one oval off, until P-030). See LINE 6 RE-KEYED in the banner.
   - line: "exemption_6_regular_spouse_cu"
     field: "Check Box39"
     type: checkbox
@@ -2168,12 +2083,11 @@ fields:
     field: "undefined_118"
     type: text
     maxlen: 1
-    # NOTE: a second widget also named 'undefined_118' shares this cell. The 2023
-    #   base pack's comment says it "sits in the next cell of this line"; the 2024
-    #   port re-measured it and that is WRONG in both years — the two widgets are
-    #   STACKED (x0 487.3 and 487.7, same y0 63.1), so line 41's comb is 7 cells
-    #   wide and all 7 are mapped here. The d05 gap in the key names is a naming
-    #   artifact, not an unfillable box; the ordered-fill render shows 7 digits.
+    # NOTE: the 2023 and 2024 blanks stacked a second widget named
+    #   'undefined_118' in this same cell; the 2025 blank has only this one (x0
+    #   485.21). Line 41 is still a 7-cell comb and all 7 cells are mapped. The
+    #   d05 gap in the key names is a naming artifact kept for key stability, not
+    #   an unfillable box; the ordered-fill render shows 7 digits.
   - line: "line41_property_tax_deduction_d06"
     field: "Text1"
     type: text
@@ -2836,6 +2750,13 @@ fields:
     field: "Text175"
     type: text
     maxlen: 1
+  # Line 60 (Excess New Jersey Disability Insurance Withheld). The 2025 face
+  #   prints a 6-cell comb, one cell, ",", three cells, ".", two cells (2024:
+  #   three cells plus a grey pre-printed "0 . 0 0"). Only the three LEFT cells
+  #   are fields of their own (Text165-167, mapped d01-d03 as in 2024). The three
+  #   RIGHT cells are second widgets of "Text176" / "Text177" / "Text178", line
+  #   61's d04-d06, so they always show line 61's last three digits and cannot
+  #   hold line 60's own. A DOR blank defect, unresolved: see the port banner.
   - line: "line60_excess_disability_insurance_withheld_d01"
     field: "Text165"
     type: text
@@ -2864,6 +2785,9 @@ fields:
     field: "Text176"
     type: text
     maxlen: 1
+    # NOTE (TY2025): 'Text176', 'Text177' and 'Text178' (d04-d06) each have a
+    #   second widget in line 60's three right-hand cells, which therefore echo
+    #   this line's last three digits. See the line 60 note and the port banner.
   - line: "line61_excess_family_leave_insurance_withheld_d05"
     field: "Text177"
     type: text
@@ -3119,14 +3043,13 @@ fields:
     field: "Text23312###5z564312###5z5643"
     type: text
     maxlen: 1
-  # NOTE: the 2024 face prints "69. Amount from line 68 you want to credit to
-  #   your 2025 tax". The printed line NUMBER and the widgets are unchanged from
-  #   2023, so the map is unchanged; only the KEY changed, from the ported
-  #   `line69_credit_to_2024_tax_dNN` to the year-free
-  #   `line69_credit_to_next_year_tax_dNN` — the destination is always the year
-  #   after this pack's tax_year, so the key cannot go stale on the next port
-  #   (rule and reasoning in YEAR-BEARING LINE KEYS in the banner). Do not
-  #   renumber, and do not re-add a year.
+  # NOTE: the 2025 face prints "69. Amount from line 68 you want to credit to
+  #   your 2026 tax". The printed line NUMBER and the widget names are
+  #   unchanged, and the key has been year-free since the TY2024 port
+  #   (`line69_credit_to_next_year_tax_dNN`; formpacks/CONVENTIONS.md "Year
+  #   tokens in line keys"): the destination is always the year after this
+  #   pack's tax_year, so nothing rolls here. Do not renumber, and do not
+  #   re-add a year.
   - line: "line69_credit_to_next_year_tax_d01"
     field: "74112###5z564396669"
     type: text

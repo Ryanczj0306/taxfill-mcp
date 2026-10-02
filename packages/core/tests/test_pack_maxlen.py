@@ -55,6 +55,23 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     ("states/ms/2024/f80105/pack.yaml", "preparer.address"): "107.6 pt at Courier 10 fits 17; the widget says 25",
     ("states/ms/2024/f80105/pack.yaml", "preparer.city"): "83.0 pt at Courier 12 fits 11; the widget says 21",
     ("states/wv/2023/it140/pack.yaml", "name.suffix"): "a name suffix (JR / III); 25.5 pt at Courier 10 fits 4",
+    # the same three one-digit cells on the 2023 and 2024 blanks (identical rects and /DA; tightened 2026-10-02
+    # when the 2025 port's verifier found them)
+    **{(f"states/nj/{y}/nj1040/pack.yaml", k): (
+        f"the thousands digit, one printed cell ({w} pt at 9 pt, fits 3); its row neighbours carry /MaxLen 1, this "
+        "comb widget the DOR's 2")
+       for y in (2023, 2024)
+       for k, w in (("line63_pass_through_business_alt_income_tax_credit_d05", "15.6"),
+                    ("line64_child_dependent_care_credit_d01", "16.0"), ("line65_nj_child_tax_credit_d01", "14.9"))},
+    ("states/nj/2025/nj1040/pack.yaml", "line63_pass_through_business_alt_income_tax_credit_d05"):
+        "the thousands digit, one printed cell (15.6 pt at 9 pt, fits 3); its row neighbours carry /MaxLen 1, this "
+        "comb widget the DOR's 2",
+    ("states/nj/2025/nj1040/pack.yaml", "line64_child_dependent_care_credit_d01"):
+        "the thousands digit, one printed cell (16.0 pt at 9 pt, fits 3); its row neighbours carry /MaxLen 1, this "
+        "comb widget the DOR's 2",
+    ("states/nj/2025/nj1040/pack.yaml", "line65_nj_child_tax_credit_d01"):
+        "the thousands digit, one printed cell (14.9 pt at 9 pt, fits 3); its row neighbours carry /MaxLen 1, this "
+        "comb widget the DOR's 2",
 }
 
 

@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,389 tests** — offline 7,461 + live-.gov 928; derived
+Done and on `main` (**8,415 tests** — offline 7,473 + live-.gov 942; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -69,7 +69,7 @@ is JS5's).
   an empty checkbox frame; 1,414 before). The first two of those had been
   federal-only while CONVENTIONS.md called them binding — see Phase E for what
   shipped through the gap, and for the two live defects the widening found.
-- **State form packs — 87 across three years** (TY2023 42 / TY2024 20 / TY2025 25).
+- **State form packs — 88 across three years** (TY2023 42 / TY2024 20 / TY2025 26).
   The 2026-08-21 tranche added 10 (AR 2024 + 2025, NC/NJ/OH/RI/UT/VA 2024,
   OR/PA 2025) and closed **every PORTABLE row** in D2's measured triage for both
   TY2024 and TY2025; the 2026-08-25 tranche added 4 (IL-1040, ND-1, OR-40,
@@ -90,18 +90,18 @@ is JS5's).
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316, 8606, 8889, 8949, 8833, 1116, 8938 (2023–2025), Schedule 1-A (2025), and FinCEN 114 as a hand-fill worksheet. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (87 packs across TY2023–TY2025)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (88 packs across TY2023–TY2025)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**255 form packs total** — 238 `pack.yaml` (151 federal + 87 state) + 17
-`handfill.yaml`. The state 87 breaks down **TY2023 42 / TY2024 20 / TY2025 25**.
+**256 form packs total** — 239 `pack.yaml` (151 federal + 88 state) + 17
+`handfill.yaml`. The state 88 breaks down **TY2023 42 / TY2024 20 / TY2025 26**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **30 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, NM, NY, OH, OR, PA, SC, UT
-> and VA (2024+2025), and ND/NJ/RI (2024) — after the 2026-08-21
+> **30 of the 42 jurisdictions fill a post-2023 year** — AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, NJ, NM, NY, OH, OR, PA, SC, UT
+> and VA (2024+2025), and ND/RI (2024) — after the 2026-08-21
 > ten-pack and 2026-08-25 four-pack tranches and the JS3b ports (UT 2025,
 > AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **12**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
@@ -325,9 +325,9 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
-      TY2023-only**: 87 packs across TY2023 (42) / TY2024 (20) / TY2025 (25), so
-      **30 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, NM, NY, OH, OR, PA, SC, UT and VA
-      for both 2024 and 2025; ND, NJ, RI for 2024. For the
+      TY2023-only**: 88 packs across TY2023 (42) / TY2024 (20) / TY2025 (26), so
+      **30 of the 42 jurisdictions** can fill a post-2023 year — AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, NJ, NM, NY, OH, OR, PA, SC, UT and VA
+      for both 2024 and 2025; ND, RI for 2024. For the
       other **12**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
@@ -2364,6 +2364,7 @@ line items sum to the headline delta.
     - **MS Form 80-105 2024 — DONE 2026-10-01** (`formpacks/states/ms/2024/f80105`, PORTABLE off MS 2023, text taken from the verified 2025 sibling). dor.ms.gov/…/80105248.pdf, "Form 80-105-24-8-N-000 (Rev. 09/24)", scanlines 80105248N000; 166 widgets = 159 names in all three years — every one of the 155 names the 2023 pack binds is SAME, and the field-level attribute diff walking /Parent is EMPTY (the 2024 blank keeps the 2023 terminal field shape; the parent + kid re-authoring is 2025's), no ReadOnly widget, no document JS. Face deltas: only the revision stamp, the scanlines and the year (layoutdiff 100% of words within 2 pt, median ≤ 0.07 pt); printed figures re-read ($12,000 / $8,000 / $6,000 exemptions, line 10 × $1,500, line 55 $15,000). As the 2025 pack: the page-2 / page-3 header SSN boxes are identity mirrors (IDENTITY_MIRROR_COUNTS 2 — the 2023 pack shipped them blank), the per-column arithmetic is declared with dotted ids, `preparer.address` 25 → 17 and `preparer.city` 21 → 11 from clip probes rendered on THIS blank (TIGHTER_THAN_WIDGET rows), MMDDYYYY filter comments on the four date lines. Two verifiers PASSED with two low findings (the banner cited the 2025 sibling as a path absent from the build tree; the routing / account boxes print one plain underline each, not per-character cells), both fixed; 157/157 sentinels on the renders. The 2023 pack keeps its two preparer over-budgets (not touched).
     - **IL-1040 2025 — DONE 2026-10-01** (`formpacks/states/il/2025/il1040`, re-mapped from the 2024 pack). tax.illinois.gov/…/currentyear/individual/il-1040.pdf — a rotating path that will serve TY2026 around Dec 2026 - Jan 2027 and then fail closed on the pinned digest (the taxarchive 2025 path 404s today; no mirror_urls, the host answers 200), and one that already re-served this same R-12/25 form as a different byte stream earlier in 2026 — the banner records the Wayback digests; "IL-1040 Front / Back (R-12/25)", barcodes *60012251W* / *60012252W*. The 2024 pack bound 96 widgets: GONE 53 / MOVED 41 / SAME 2; the 2025 blank has 109 widgets / 102 names, 64 new — the DOR re-authored the names (step1-A-*, option sets, caption-named 34a-d / 42 boxes, bank cells, phones, preparer / designee) at the same printed boxes, so 53 fields were re-bound by position + printed label; the Help banner's ReadOnly widget is gone (zero ReadOnly); /MaxLen dropped on SSNs, DOBs, ZIP, PTIN, FEIN and phones (maxlen kept at the printed counts), kept on area codes, Routing 9 / Account 17 (comb), fiscal boxes, money. Face deltas: Line 1 cites federal "Line 11a" → cross_form `1 == f1040.11a`; the header asks for a full date of birth (keys `tp_date_of_birth` / `spouse_date_of_birth` replace the year-of-birth keys); line 42 recaptioned for Get Covered Illinois with NEW "Self / Spouse / Dependent(s)" boxes (`42_household_needs_insurance::*`, an INDEPENDENT option set); printed figures unchanged (10b / 10c × $1,000, line 12 4.95%). Group ids on the four shared-field option sets; the fixer added `10 == 10a + 10b + 10c + 10d` (printed unconditionally, omitted by the 2023 / 2024 packs without reason). The `A_filing_status::*` prefix stays although the face letters the item "B" (a cross-year key; declared in the banner). Two verifiers PASSED with ten low findings (banner measurements and wording, the nursing-home caption, the URL re-save history, the line-10 relation, the key-prefix letter, a knowledge attribution); fixer 5 fixed / 2 rejected with evidence. 107/107 lines confirmed on the renders.
     - **NJ-1040 2023 / 2024 line 6 re-keyed — DONE 2026-10-02** (pitfall P-030). The NJ 2025 port's render found the 2023 and 2024 packs keying line 6's two widgets by order: the first oval ("Self") is printed solid with no widget, so `exemption_6_regular_self` sat on the Spouse/CU Partner oval and `_spouse_cu` on Domestic Partner. Both packs now bind Check Box39 to `exemption_6_regular_spouse_cu` and Check Box40 to `exemption_6_regular_domestic_partner` (no key for the pre-printed oval), as the 2025 port does; test_nj1040_line6_ovals.py reads the label printed right of each widget on every year's blank, and CONVENTIONS.md gains the bind-by-label rule.
+    - **NJ-1040 2025 — DONE 2026-10-02** (`formpacks/states/nj/2025/nj1040`, PORTABLE off NJ 2024 by name, re-read row by row). nj.gov/treasury/taxation/pdf/current/1040.pdf — a year-agnostic path (every 2026 Wayback capture is this blank, every 2025 one the 2024 blank), so the banner records the re-point for when TY2026 posts. 844 widgets / 814 fields: 734 of the 813 mapped names MOVED when page 1 re-flowed around the new Digital Assets row (added as `digital_assets::yes/no`), 79 SAME, none gone; the blank's line 60 ones/cents cells echo line 61 (a DOR defect, documented). Line 6's two ovals are keyed by their printed labels, which led to the 2023/2024 fix above (P-030). Three one-digit cells whose comb widgets say /MaxLen 2 are tightened to 1 (TIGHTER_THAN_WIDGET rows), and the 2023 and 2024 packs, which carried the same 2 on the same rects, are tightened alongside.
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
   - 9 discovery rows were recovered (wf_fe623a11-933).
   - Pack the AcroForm rows at TY2023 first, each re-checked against its recorded sha256: AL 40NR, AR1000NR, AZ 140NR, AZ 140PY, CO DR 0104PN, DE PIT-NON.
