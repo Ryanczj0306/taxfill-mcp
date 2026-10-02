@@ -1151,6 +1151,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # ND 2024 row (street, apt, city, state, zip).
     # JS5: RI-1040 2025 (a PORTABLE port of RI 2024, every widget name and /Rect kept) equals the reviewed RI 2024 row
     # (the four mailing_address lines; city_town_legal_residence, signature.*.license_state and 28.state still rejected).
+    # JS5: IA 1040 2025 (a RE-MAP of IA 2023 — six pages, Schedule 1 renumbered; the page-1 address boxes kept their
+    # widgets; designee.street and the new date-of-birth lines are not selected) equals the reviewed IA 2023 row.
     import json
     from pathlib import Path
 

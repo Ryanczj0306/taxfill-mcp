@@ -4,7 +4,7 @@
 
 ![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 8,479 passing](https://img.shields.io/badge/tests-8%2C479%20passing-brightgreen)
+![Tests: 8,496 passing](https://img.shields.io/badge/tests-8%2C496%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 > [!WARNING]
@@ -85,7 +85,7 @@ recorded with its authority in `RECONCILIATION.md`, your audit trail. Progress i
 |---|---|
 | **Federal forms** | Form 1040 with its schedules and attachments for TY2023–2025, Form 1040-NR from TY2022, Form 8843 from TY2019 — 151 packs, including TY2026 planning drafts |
 | **Federal tax law** | 2019–2026 (2026 is planning-only) |
-| **State forms** | Resident returns for 31 of the 42 income-tax jurisdictions in TY2025, 23 in TY2024, all 42 in TY2023; separate nonresident returns for CA and NY — [check your state](docs/COVERAGE.md#state-forms) |
+| **State forms** | Resident returns for 32 of the 42 income-tax jurisdictions in TY2025, 23 in TY2024, all 42 in TY2023; separate nonresident returns for CA and NY — [check your state](docs/COVERAGE.md#state-forms) |
 | **Print-and-hand-fill** | 13 state-return worksheets for years whose form is not a fillable PDF (CT, HI, NM, SC; WV for 2025) — the values are stamped onto the official blank |
 | **FBAR** | A FinCEN Form 114 worksheet, for keying into FinCEN's BSA E-Filing System (the FBAR is e-filed, never mailed with the return) |
 | **State tax law** | All 50 states + DC, 2023–2025 |

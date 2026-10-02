@@ -62,6 +62,10 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     ("states/ms/2024/f80105/pack.yaml", "preparer.address"): "107.6 pt at Courier 10 fits 17; the widget says 25",
     ("states/ms/2024/f80105/pack.yaml", "preparer.city"): "83.0 pt at Courier 12 fits 11; the widget says 21",
     ("states/wv/2023/it140/pack.yaml", "name.suffix"): "a name suffix (JR / III); 25.5 pt at Courier 10 fits 4",
+    ("states/ia/2025/ia1040/pack.yaml", "21.fish_wildlife"):
+        "the line-21 Fish/Wildlife contribution dollars box, 15.8 pt at Calibri 10; the filler clips 2 pt inside each side, so 3 digits clip on render and 2 fit; the widget says 4 (2023: 27.3 pt)",
+    ("states/ia/2025/ia1040/pack.yaml", "21.child_abuse"):
+        "the line-21 Child Abuse Prevention contribution dollars box, 15.1 pt at Calibri 10; the filler clips 2 pt inside each side, so 3 digits clip on render and 2 fit; the widget says 4 (2023: 27.4 pt)",
     # the same three one-digit cells on the 2023 and 2024 blanks (identical rects and /DA; tightened 2026-10-02
     # when the 2025 port's verifier found them)
     **{(f"states/nj/{y}/nj1040/pack.yaml", k): (
