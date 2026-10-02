@@ -1157,6 +1157,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # reviewed NE 2023 row (the four mailing_address lines; the new amended-return and preparer.* lines are not address lines).
     # JS5: OK Form 511 2025 (a RE-MAP of OK 2023; mailing_address.country re-binds to the new "Foreign Country (if not
     # U.S.)" row, and the new "County in Which Located" box is keyed "county", not an address line) equals the reviewed OK 2023 row.
+    # JS5: ME 1040ME 2025 (a RE-MAP of ME 2023; the page-1 address widgets kept their names, the page-3 bank block is
+    # not an address) equals the reviewed ME 2023 row (the four mailing_address lines).
     import json
     from pathlib import Path
 
