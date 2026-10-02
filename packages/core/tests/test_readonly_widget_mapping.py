@@ -674,6 +674,13 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "bind/access attributes and printed captions on the 2024 blank",
     ),
     StateComputed(
+        "states/ri/2025/ri1040/pack.yaml",
+        6,
+        "the same six as 2024 — same names, /Ff 8388609 / 1, access=\"protected\" only on the "
+        "page-2/3 instances and <bind match=\"global\"/> on every mirror in the 2025 template, "
+        "under the same printed banner captions (Phase J JS5)",
+    ),
+    StateComputed(
         "states/wi/2023/wi_form1/pack.yaml",
         15,
         "the page-2/3/4 name + SSN header MIRRORS (fnamepg2..4, lnamepg2..4, "

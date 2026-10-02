@@ -310,18 +310,17 @@ def anchors(c: dict) -> list[tuple[Path, str, str]]:
          f"TY2025 {sy[2025]})"),
         (roadmap, r"\*\*\d+ of the 42 jurisdictions fill a post-2023 year\*\*",
          f"**{c['post2023']} of the 42 jurisdictions fill a post-2023 year**"),
-        (roadmap, r"fill a post-2023 year\*\* — [A-Z, ]+\n> and [A-Z]+ \(2024\+2025\), and [A-Z/]+ \(2024\) — after",
-         f"fill a post-2023 year** — {', '.join(c['both_years'][:-1])}\n> and {c['both_years'][-1]} (2024+2025), "
-         f"and {'/'.join(c['only_2024'])} (2024) — after"),
+        # the per-year roster (the old "both years / 2024 only" split had no slot for the 2025-only ports)
+        (roadmap, r"fill a post-2023 year\*\* —\n> TY2024 for \*\*\d+\*\* \([A-Z, ]+\) and TY2025 for \*\*\d+\*\* \([A-Z, ]+\) — after",
+         f"fill a post-2023 year** —\n> {roster} — after"),
         (roadmap, r"For the remaining \*\*\d+\*\*, state \*knowledge\*",
          f"For the remaining **{c['jurisdictions'] - c['post2023']}**, state *knowledge*"),
         (roadmap, r"That asymmetry is now \d+\n> jurisdictions wide",
          f"That asymmetry is now {c['jurisdictions'] - c['post2023']}\n> jurisdictions wide"),
-        (roadmap, r"\*\*\d+ of the 42 jurisdictions\*\* can fill a post-2023 year — [A-Z, ]+(?: and [A-Z]+)?\n      for both "
-                  r"2024 and 2025; [A-Z, ]+ for 2024\. For the\n      other \*\*\d+\*\*",
-         f"**{c['post2023']} of the 42 jurisdictions** can fill a post-2023 year — "
-         f"{', '.join(c['both_years'][:-1])} and {c['both_years'][-1]}\n      for both 2024 and 2025; "
-         f"{', '.join(c['only_2024'])} for 2024. For the\n      other **{c['jurisdictions'] - c['post2023']}**"),
+        (roadmap, r"\*\*\d+ of the 42 jurisdictions\*\* can fill a post-2023 year —\n      TY2024 for \*\*\d+\*\* \([A-Z, ]+\) and "
+                  r"TY2025 for \*\*\d+\*\* \([A-Z, ]+\)\. For the\n      other \*\*\d+\*\*",
+         f"**{c['post2023']} of the 42 jurisdictions** can fill a post-2023 year —\n      {roster}. For the\n      "
+         f"other **{c['jurisdictions'] - c['post2023']}**"),
         (roadmap, r"\*\*\d+ form packs total\*\* — \d+ `pack\.yaml` \(\d+ federal \+ \d+ state\) \+ \d+",
          f"**{c['federal'] + c['state'] + c['handfill']} form packs total** — {c['federal'] + c['state']} `pack.yaml` "
          f"({c['federal']} federal + {c['state']} state) + {c['handfill']}"),

@@ -407,7 +407,7 @@ fields:
   - line: specific_party.name            # "...fill in the name of the political party"
     field: Page1[0].SpecificParty[0]
     type: text
-    maxlen: 12
+    maxlen: 10   # no /MaxLen; the 75.5 pt Courier 12 box renders 10 glyphs whole, an 11th clips (measured 2026-10-02 on the 2025 port, same widget)
 
   # ---- filing status (5 separate single-state /Btn, each its own option)
   - line: filing_status.single          # "Single"

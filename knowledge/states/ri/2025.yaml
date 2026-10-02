@@ -42,7 +42,7 @@ tax_year: 2025
 income_tax: true
 conforms_to_federal_treaties: true
 treaty_note: 'The RI-1040 resident return starts from federal adjusted gross income (2025 RI-1040 Line 1 = federal
-  AGI from Federal Form 1040 or 1040-SR, line 11; instructions Line 3 "Modified Federal Adjusted Gross Income:
+  AGI from Federal Form 1040 or 1040-SR, line 11a — the 2025 face prints "line 11a"; instructions Line 3 "Modified Federal Adjusted Gross Income:
   Determine your modified federal adjusted gross income by combining the amount on line 1 with the amount on line
   2"), and the General Instructions state that the Rhode Island income tax is imposed on the federal taxable income
   of a resident. RI taxable income is then built only via the RI Schedule M modifications and — new for 2025 — the
@@ -67,7 +67,7 @@ citation:
     Worksheet", RI Schedule EIC Line 40 "The Rhode Island percentage is 16%", RI Schedule I Line 21 "Multiply the
     amount on line 20 by 25%"'
   url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
-starts_from: federal AGI (Federal Form 1040/1040-SR, line 11) — RI-1040 Line 1; RI taxable income then computed
+starts_from: federal AGI (Federal Form 1040/1040-SR, line 11a) — RI-1040 Line 1; RI taxable income then computed
   via RI Schedule M modifications and the new RI Schedule HR1 add-backs, the RI standard deduction, and RI exemptions
 # DEV_PLAN §7.2 effective_law_changes — the typed delta registry (schema shipped in
 # knowledge.py long before any pack used it; this is the FIRST data instance repo-wide,
@@ -131,8 +131,9 @@ credits:
     Line 41 = Line 39 x Line 40.'
   income_limit_2025: No separate Rhode Island income limit; eligibility and income limits track the federal EITC
     (the federal EITC AGI/investment-income limits for the 2025 tax year apply).
-  claimed_on: RI Schedule EIC, line 41; carried to Form RI-1040, page 1, line 14d. RI Schedule EIC is on page 3
-    of the RI-1040 Resident booklet and must be completed and attached.
+  claimed_on: RI Schedule EIC, line 41; carried to Form RI-1040, page 2, line 14d (the 2025 face's Schedule EIC line 41
+    prints "Enter here and on RI-1040, page 2, line 14d"; the Instructions quoted below still say "page 1"). RI Schedule
+    EIC is on page 3 of the RI-1040 Resident booklet and must be completed and attached.
   citation:
     source: '2025 INSTRUCTIONS FOR FILING RI-1040 (RI Division of Taxation, Revised 11/2025) - RI Schedule EIC instructions:
       ''Line 40 - The Rhode Island percentage is 16%.'' and ''Line 41 - Rhode Island Earned Income Credit: Multiply
@@ -152,7 +153,7 @@ credits:
     amount or $700. The 2025 income-based percentage table runs: less than $6,991 = 3%; $6,991-$10,480 = 4%;
     $10,481-$13,970 = 5%; $13,971-$17,460 = 6% (1 person) or 5% (2 or more); $17,461-$40,730 = 6%.'
   income_limit_2025: Total household income of $40,730 or less for 2025 (up from $39,275 for 2024).
-  claimed_on: Form RI-1040H; carried to Form RI-1040, page 1, line 14c. RI-1040H must be filed by April 15, 2026;
+  claimed_on: Form RI-1040H; carried to Form RI-1040, page 2, line 14c ("Property tax relief credit from RI-1040H, line 13"). RI-1040H must be filed by April 15, 2026;
     an extension to file RI-1040 does NOT extend the time to file RI-1040H.
   citation:
     source: 'RI Division of Taxation ADVISORY ADV 2025-22, "Inflation-adjusted amounts set for Tax Year 2026 /
@@ -334,7 +335,7 @@ tax:
     head_of_household: 16350
   notes:
   - 'Base guidance: Supply 2025 Form RI-1040, Line 3 ''Modified Federal Adjusted Gross Income'' (Line 1 federal AGI
-    from Federal Form 1040 or 1040-SR, line 11, combined with Line 2 net modifications from RI Schedule M; with no
+    from Federal Form 1040 or 1040-SR, line 11a, combined with Line 2 net modifications from RI Schedule M; with no
     modifications Line 3 equals federal AGI). Do NOT subtract anything yourself: the op subtracts the shipped RI
     standard deduction (Line 4) and the shipped $5,100-per-person exemptions (Line 6) to reach RI TAXABLE INCOME
     (Line 7), then applies the rate schedule.'

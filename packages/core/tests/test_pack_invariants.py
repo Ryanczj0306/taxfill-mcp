@@ -927,6 +927,8 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     "states/ms/2025/f80105/pack.yaml": 2,
     "states/ri/2023/ri1040/pack.yaml": 12,
     "states/ri/2024/ri1040/pack.yaml": 12,
+    # 2025 keeps every mirror widget at the same name and /Rect (Phase J JS5).
+    "states/ri/2025/ri1040/pack.yaml": 12,
     "states/va/2023/va760/pack.yaml": 1,
     "states/va/2024/va760/pack.yaml": 1,
     # 2025 renamed the pair: the page-1 SSN is now "SSN 1" (2024: "Your SSN") and the

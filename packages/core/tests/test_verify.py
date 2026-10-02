@@ -1149,6 +1149,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # ZIP/county boxes were renamed and are still rejected) equals the reviewed MD 2023 row.
     # JS5: ND-1 2025 (a PORTABLE port of ND 2024, every widget name kept; no address box touched) equals the reviewed
     # ND 2024 row (street, apt, city, state, zip).
+    # JS5: RI-1040 2025 (a PORTABLE port of RI 2024, every widget name and /Rect kept) equals the reviewed RI 2024 row
+    # (the four mailing_address lines; city_town_legal_residence, signature.*.license_state and 28.state still rejected).
     import json
     from pathlib import Path
 
