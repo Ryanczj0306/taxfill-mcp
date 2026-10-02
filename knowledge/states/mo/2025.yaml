@@ -195,7 +195,8 @@ unverified:
   filing separately, or qualifying widow(er)) are from the Line 14 narrative.
 - The 2025 Form MO-WFTC worksheet itself (booklet p.43) was not read line-by-line; the 20%-of-federal-EIC rate,
   the 'EIC law as of January 1, 2021' computation basis, and the eligibility bullets are from the Line 44 instructions.
-  Whether an investment-income cap applies for 2025 is stated on Form MO-WFTC — confirm there before claiming.
+  The investment-income cap is printed on the 2025 Form MO-WFTC itself (question 3 — "Do you have investment income
+  greater than $4,400 (see instructions)? Yes - STOP. You do not qualify for the Missouri Working Family Tax Credit.").
 - MO-NRI form mechanics were not fully read; the residency/usage description is drawn from the MO-1040 instructions
   (Lines 31/32) and the DOR non-residents page rather than a line-by-line read of MO-NRI.
 - The scope and any conditions of the new 100% capital gain subtraction (Form MO-A Part 1 Line 18) beyond the printed
@@ -319,8 +320,10 @@ tax:
     14 instructions, CHANGED for 2025): $2,000 for single and head of household (2024: $1,950); $1,600 for married
     filing combined, married filing separately, or qualifying widow(er) (2024: $1,550). A net qualified disaster loss
     increase to the federal standard deduction increases the Missouri one by the same amount (paper filing required).
-    Itemizers use Form MO-A Part 2 instead — note the 2025 MO-A Part 2 worksheet trigger at federal Schedule A Line
-    5d over $40,000 ($20,000 MFS) or federal Form 1040 Line 11a over $500,000 ($250,000 MFS).'
+    Itemizers use Form MO-A Part 2 instead — the 2025 MO-A prints its Part 2 worksheet trigger as "Complete this
+    worksheet only if your total state and local taxes included in your federal itemized deductions exceeded
+    $40,000 ($20,000 if married filing separately) or you were required to complete a federal worksheet to calculate
+    Federal Schedule A, Line 5e." (no AGI figure of its own).'
   - 'Head of household / qualifying widow(er) additional exemption: $1,400 on MO-1040 Line 15 (unchanged for 2025)
     — a base reduction already included in the Line 29 base, so it is not shipped; the Missouri filing status must
     match the federal filing status to claim it.'
@@ -339,9 +342,10 @@ tax:
   - 'Not modeled — apportionment and credits after Line 30: nonresidents/part-year residents multiply Line 30 by the
     Missouri income percentage (Line 32, Form MO-NRI), and residents may take the resident credit for taxes paid to
     other states (Line 31, Form MO-CR); this op produces the pre-apportionment Line 30 amount. Also not modeled (they
-    are CREDITS against tax, not base reductions): Property Tax Credit (Line 43 for 2025, renumbered from 2024''s
-    Line 45; Form MO-PTS), Missouri Working Family Tax Credit (Line 44, Form MO-WFTC — still 20% of the federal EIC),
-    and miscellaneous credits (Line 42 for 2025, renumbered from 2024''s Line 43; Form MO-TC).'
+    are CREDITS against tax, not base reductions): Property Tax Credit (Line 43; Form MO-PTS), Missouri Working Family
+    Tax Credit (Line 44, Form MO-WFTC — still 20% of the federal EIC; the 2025 form''s question 3, "Do you have
+    investment income greater than $4,400 (see instructions)?", stops a filer who answers Yes), and miscellaneous
+    credits (Line 42; Form MO-TC). The 2024 MO-1040 printed the same line numbers (42 MO-TC, 43 MO-PTS, 44 MO-WFTC).'
   - This pack follows the 2025 Form MO-1040 long form; the MO-1040A short form uses the same 2025 Tax Chart (its instructions
     were the second-pass source) but has its own line layout.
 # effective_law_changes promoted 2026-08-11 from this pack's OWN prose (the HEADLINE 2025
@@ -349,8 +353,8 @@ tax:
 # DEV_PLAN §7.2 — no new research. The rate cut is modeled: true (it IS the shipped
 # tax.brackets top rate); the new 100% capital gain subtraction is modeled: false because it
 # is a base reduction the caller must already have folded into the supplied Line 29 taxable
-# income. Credit-line renumbering (MO-TC to Line 42, Property Tax Credit to Line 43) and the
-# annual standard-deduction figures are form/inflation movement, not law changes.
+# income. The annual standard-deduction figures are inflation movement, not law changes (the
+# credit lines 42-44 kept their 2024 numbers — an earlier note here claimed a renumbering).
 effective_law_changes:
 - description: >-
     Missouri's TOP INDIVIDUAL RATE was cut AGAIN for tax year 2025, to 4.7% (2024: 4.8%; 2023:

@@ -193,7 +193,7 @@ lines:
       type: money, compute: "max(0, 9 + 10 + 11 - 12 - 13 - 14 - 15 - 16)",
       overlay: {page: 1, x: 483.24, y: 164.43, w: 91.12} }
   - { line: "18", label: "New Mexico tax on line 17, or from PIT-B line 14", type: money,
-      note: "MANDATED lookup: 2023 NM Tax Rate Table (1.7%/3.2%/4.7%/5.9% brackets as printed) or PIT-B apportionment — take the table/schedule value, never plain bracket arithmetic.",
+      note: "MANDATED lookup: 2023 NM Tax Rate Table (1.7%/3.2%/4.7%/4.9%/5.9% brackets) or PIT-B apportionment — take the table/schedule value, never plain bracket arithmetic.",
       overlay: {page: 1, x: 483.24, y: 146.43, w: 91.12} }
   - { line: "18a", label: "Enter R if from the Tax Rate Table, B if from PIT-B line 14", type: text,
       overlay: {page: 1, x: 425.11, y: 134.19, w: 6.57, cells: [425.11], cell_w: 6.57} }
