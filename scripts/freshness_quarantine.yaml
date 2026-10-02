@@ -4,9 +4,9 @@
 # The job was red 6 of 6 weeks from 2026-08-17 (last: run 35621846216, 2026-09-21) on three items
 # alone, so a NEW red would have been lost in the old one. All three retired 2026-09-28: the DC booklet
 # row by Phase J JS1a (DC 2025 re-verified against the re-issued booklet), the two MA Form 1 fetch rows
-# by JS1b (the pack's digest-verified Wayback mirror). JS1b's newest-capture probe then found the one
-# row below. With it quarantined, the job is green unless something else breaks, and any red opens a
-# `freshness red` issue.
+# by JS1b (the pack's digest-verified Wayback mirror). JS1b's newest-capture probe then found one more
+# (MA Form 1 2023's 2026-05-22 re-issue), retired 2026-10-02 by Phase J JS5, which re-mapped the pack
+# onto that re-issue and re-pinned it. The list is empty: any red opens a `freshness red` issue.
 #
 # Rules (scripts/freshness_quarantine.py; tests in packages/core/tests/test_freshness_quarantine.py):
 #   * kind network_test: `id` is a pytest node id. The quarantine masks only a failure to FETCH the
@@ -15,14 +15,4 @@
 #     as quarantined instead of failing the job.
 #   * `expires` is at most 200 days after `added`. An expired entry FAILS the drift job; renew it
 #     only with a reason, or fix the source (the `fixed_by` tranche) and delete the row.
-entries:
-  - kind: drift
-    url: "https://www.mass.gov/doc/2023-form-1-massachusetts-resident-income-tax-return/download"
-    added: "2026-09-28"
-    expires: "2027-03-31"
-    fixed_by: JS5
-    why: >-
-      mass.gov re-issued the 2023 Form 1 on 2026-05-22 as a rebuilt AcroForm (360 fields, every name
-      changed); check_drift sees it through the newest Wayback capture (20260920033523, 5cbb5655...).
-      The pack's pinned 2024-01-17 revision stays reachable byte-for-byte through its mirror_urls;
-      re-pinning to the re-issue is a full re-map, done with MA's JS5 discovery.
+entries: []

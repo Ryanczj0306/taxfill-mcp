@@ -152,7 +152,12 @@ def test_check_drift_quarantines_the_known_red_but_fails_a_new_one(monkeypatch, 
     assert cd.main(today=dt.date(2026, 10, 5)) == 1
 
 
-def test_an_expired_quarantine_row_fails_the_drift_job(monkeypatch, capsys):
+def test_an_expired_quarantine_row_fails_the_drift_job(monkeypatch, capsys, tmp_path):
+    # A synthetic row: the live file can be empty (the last row, MA Form 1 2023's re-issue, retired with JS5).
+    (tmp_path / "q.yaml").write_text(yaml.safe_dump({"entries": [{
+        "kind": "drift", "url": DC_BOOKLET, "added": "2026-09-27", "expires": "2027-03-31", "fixed_by": "JS1a",
+        "why": "the DC 2025 booklet 404"}]}), encoding="utf-8")
+    monkeypatch.setenv("TAXFILL_FRESHNESS_QUARANTINE", str(tmp_path / "q.yaml"))
     _drift(monkeypatch, [])
     expiry = max(e.expires for e in fq.load())
     assert cd.main(today=expiry) == 0

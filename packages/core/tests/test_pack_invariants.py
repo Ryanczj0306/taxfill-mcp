@@ -1451,10 +1451,16 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
     ('states/ma/form1', 'campaign_fund'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ma/form1', 'deceased'):
+        'INDEPENDENT: "Fill in appropriate oval(s) if taxpayer(s) is deceased" prints a Taxpayer and a Spouse oval; both may apply',
     ('states/ma/form1', 'name_changed'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
     ('states/ma/form1', 'schedule'):
         'INDEPENDENT: the Schedule FCI and TDS boxes mark separate attached schedules',
+    ('states/ma/form1', 'under_18'):
+        'INDEPENDENT: "Fill in if under age 18" prints a Taxpayer and a Spouse oval on the same row; both may apply',
+    ('states/ma/form1', 'veteran'):
+        'INDEPENDENT: "Fill in if veteran of U.S. armed services ..." prints a Taxpayer and a Spouse oval; both may apply',
     ('states/md/md502', '10a_pension_exclusion'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
     ('states/md/md502', '10b_ranger_pension'):
