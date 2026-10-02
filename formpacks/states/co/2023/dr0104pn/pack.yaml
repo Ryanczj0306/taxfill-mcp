@@ -1,0 +1,196 @@
+# Form DR 0104PN, 2023 — Colorado Part-Year Resident/Nonresident Tax
+# Calculation Schedule. NEW pack (Phase J JS5, 2026-10-02); no earlier
+# DR 0104PN pack exists in any year. It is a schedule of the DR 0104
+# (formpacks/states/co/2023/dr0104), never a return of its own.
+#
+# URL. https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2023.pdf.
+# Digest 4412af7b3abc… — two direct downloads on 2026-10-02 and the copy the
+# discovery pass recorded all agree. %PDF-1.7, an AcroForm, no JavaScript,
+# four US-letter pages; document Title "DR 0104PN, 2023 Part-Year
+# Resident/Nonresident Tax Calculation Schedule".
+#
+# PRINTED IDENTITY. Page 1 prints "Form 104PN", "Part-Year Resident/Nonresident
+# Tax Calculation Schedule 2023", "Page 1 of 3" and the stamp "DR 0104PN
+# (11/08/23)" under the barcode; pages 2 and 3 print "Page 2 of 3" / "Page 3
+# of 3" and the same stamp at the top. The stamp appears once per page. The scan lines read *230104PN19999*, *230104PN29999*
+# and *230104PN39999*. printed_year_verified = 2023. Page 4 of the PDF is
+# empty: no text layer, no image, no widget.
+#
+# AcroForm topology. Flat (acroform_root empty), human-readable field names
+# equal to the printed line numbers. 46 terminal fields carry 59 widgets, all
+# on pages 1-3:
+#   * "Taxpayer’s Name" (the name contains a curly apostrophe, U+2019) is ONE
+#     text field with three widgets — the page 1 "Taxpayer’s Name" box and the
+#     page 2 / page 3 "Name" header boxes — and "SSN or ITIN" is likewise one
+#     field with a widget in each page header. One write fills all three, so
+#     each is mapped once (header_name, ssn_or_itin) and no page mirror key
+#     exists.
+#   * "1", "2" and "3" are radio fields (/Ff 49152, NoToggleToOff + Radio)
+#     with four widgets each; their /AP /N on-states are re-dumped below.
+#   * the other 41 are single-widget text fields: the four part-year date
+#     boxes, the money lines 4-36, the percentage box 34, and four "List
+#     Type" rows.
+# No widget is ReadOnly, none carries a /MaxLen, none is a comb; every text
+# widget's /DA is "/Helv 10 Tf 0 g". All 46 fields are mapped — nothing is
+# intentionally omitted.
+#
+# Columns. Lines 4-36 alternate between a "Federal Information" column
+# (widgets at x 302-426) and a "Colorado Information" column (x 438-563):
+# federal 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 and 36;
+# Colorado 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33 and 35.
+# Line 34 (the percentage) and line 36 (the apportioned tax) sit in the
+# federal column's x range although they are neither federal figures; their
+# printed labels and the render place them. Each line has exactly one widget,
+# so the keys are the bare printed numbers.
+#
+# Money vs text. Every numbered dollar line prints a "00" cents cell and is
+# `money`. Line 34 prints "Divide line 33 by line 32. Round to the fourth
+# decimal place, i.e. xxx.xxxx" with a printed "%" after the box — a
+# percentage with four decimals, so it stays `text` (money would round the
+# fraction away). The part-year dates print "Beginning (MM/YY)" / "Ending
+# (MM/YY)" captions over free text boxes (not combs), so they stay `text`
+# with the slash. The "List Type" rows under lines 18, 19, 22 and 23 are
+# full-width free text.
+#
+# Checkboxes. Each option is bound to the label printed to its right (read
+# from the text layer by position, P-030), not by widget order:
+#   line 1 "Taxpayer is (mark one):" / line 2 "Spouse is (mark one):" —
+#     /a "Full-Year Nonresident", /b "Part-Year Resident from", /c "Full-Year
+#     Resident", /d "Nonresident 305-day rule Military";
+#   line 3 "Mark the federal form you filed:" — /1040 "1040", "/1040 NR"
+#     "1040 NR", "/1040 SR" "1040 SR", /Other "Other".
+# Each set is ONE radio field, so its options share one `group` id.
+#
+# Relations. The face's own arithmetic, every operand a mapped money line:
+#   21 "Total Colorado Income. Enter the total from the Colorado column, lines
+#      5, 7, 9, 11, 13, 15, 17 and 19";
+#   25 "Subtract line 23 from line 21"; 28 "Total of lines 24 and 26";
+#   29 "Total of lines 25 and 27"; 32 "Subtract line 30 from line 28";
+#   33 "Subtract line 31 from line 29".
+# OMITTED, with the reason:
+#   34 == 33 / 32 * 100.0 and 36 == 35 * 34 / 100.0 — line 34 is a `text`
+#     percentage, and verify reads only MONEY lines from the filled PDF, so a
+#     relation over 34 would see it as blank (0) on an ordinary fill and FAIL
+#     a correct schedule. Written around 34 as 36 == 35 * 33 / 32, it divides
+#     by zero (a FAIL) whenever line 32 is blank, and it skips the printed
+#     four-decimal rounding of line 34, so a product landing near a .50
+#     boundary would round the other way. Neither holds on every filing path.
+#   20 "Total Income. Enter total other income amount found on your federal
+#     form 1040" — the face prints no sum of the federal column, so no
+#     relation is declared over it.
+#
+# Cross_form. Two face citations name a line:
+#   4 "Enter all income from your federal form 1040, line 1z" -> f1040.1z
+#     (the 2023 Form 1040's line 1z, "Add lines 1a through 1h");
+#   36 "Apportioned tax. Multiply line 35 by the percentage on line 34. Enter
+#     here and on DR 0104 line 11" -> dr0104.11 (the 2023 DR 0104 line 11
+#     reads "Colorado Tax from tax table or the DR 0104PN line 36").
+# Two more name no line but have exactly one target on the 2023 Form 1040:
+#   24 "Adjusted Gross Income. Enter amount from your federal form 1040" ->
+#     f1040.11 (the 2023 Form 1040 prints adjusted gross income only on line
+#     11, "Subtract line 10 from line 9. This is your adjusted gross income");
+#   22 "Enter all federal adjustments from your federal form 1040" ->
+#     f1040.10 (page 2's own note under line 23 cites "other adjustments
+#     reported on federal form 1040, 1040 SR, or 1040 SP, line 10"; the 2023
+#     Form 1040 line 10 is "Adjustments to income from Schedule 1, line 26").
+# A filing without a Form 1040 (a 1040-NR filer, line 3) SKIPs every f1040
+# leg. Not declared: 20 "Total Income. Enter total other income amount found
+# on your federal form 1040" names no line, and its "other income" wording
+# does not pin one target; 12 sums three federal lines ("lines 4b, 5b, and
+# 6b"), which a single-ref cross_form cannot express; 26 and 30 take DR 0104
+# lines 3-7 / line 9 "excluding" charitable amounts, so they are not
+# equalities; 35 is a tax-table lookup on DR 0104 line 10.
+#
+# Identity. header_name and ssn_or_itin use the same keys as the 2023 DR 0104
+# pack, so a filing that carries both forms cross-checks them.
+#
+# Signature and mailing. The schedule prints no signature block and no
+# address; page 1 says "Complete this form after you have filled out lines 1
+# through 10 of the DR 0104", and it travels with that return — signature
+# null, mailing null.
+form: Form DR 0104PN
+jurisdiction: states/co
+tax_year: 2023
+source_url: https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2023.pdf
+pdf_sha256: 4412af7b3abca19ab6ffd7f5701ffc94080760f1e8dfa28bb462d15728b4ae65
+acroform_root: ''
+fields:
+  # ============================================ page 1 — header (one field, painted into the page 1-3 headers)
+  - { line: "header_name", field: "Taxpayer’s Name", type: text }  # "Taxpayer’s Name" (page 1); "Name" (pages 2-3)
+  - { line: "ssn_or_itin", field: "SSN or ITIN", type: text }  # "SSN or ITIN" (pages 1-3)
+  # ============================================ page 1 — line 1 "Taxpayer is (mark one):"
+  - { line: "1.full_year_nonresident", field: "1", type: checkbox, on_state: "/a", group: "taxpayer_residency" }  # "Full-Year Nonresident"
+  - { line: "1.part_year_resident", field: "1", type: checkbox, on_state: "/b", group: "taxpayer_residency" }  # "Part-Year Resident from"
+  - { line: "1.full_year_resident", field: "1", type: checkbox, on_state: "/c", group: "taxpayer_residency" }  # "Full-Year Resident"
+  - { line: "1.nonresident_305_day_rule_military", field: "1", type: checkbox, on_state: "/d", group: "taxpayer_residency" }  # "Nonresident 305-day rule Military"
+  - { line: "1.part_year_beginning", field: "1 Begining", type: text }  # "Beginning (MM/YY)" (field name misspelt on the blank)
+  - { line: "1.part_year_ending", field: "1 Ending", type: text }  # "Ending (MM/YY)"
+  # ============================================ page 1 — line 2 "Spouse is (mark one):"
+  - { line: "2.full_year_nonresident", field: "2", type: checkbox, on_state: "/a", group: "spouse_residency" }  # "Full-Year Nonresident"
+  - { line: "2.part_year_resident", field: "2", type: checkbox, on_state: "/b", group: "spouse_residency" }  # "Part-Year Resident from"
+  - { line: "2.full_year_resident", field: "2", type: checkbox, on_state: "/c", group: "spouse_residency" }  # "Full-Year Resident"
+  - { line: "2.nonresident_305_day_rule_military", field: "2", type: checkbox, on_state: "/d", group: "spouse_residency" }  # "Nonresident 305-day rule Military"
+  - { line: "2.part_year_beginning", field: "2 Begining", type: text }  # "Beginning (MM/YY)"
+  - { line: "2.part_year_ending", field: "2 Ending", type: text }  # "Ending (MM/YY)"
+  # ============================================ page 1 — line 3 "Mark the federal form you filed:"
+  - { line: "3.f1040", field: "3", type: checkbox, on_state: "/1040", group: "federal_form_filed" }  # "1040"
+  - { line: "3.f1040nr", field: "3", type: checkbox, on_state: "/1040 NR", group: "federal_form_filed" }  # "1040 NR"
+  - { line: "3.f1040sr", field: "3", type: checkbox, on_state: "/1040 SR", group: "federal_form_filed" }  # "1040 SR"
+  - { line: "3.other", field: "3", type: checkbox, on_state: "/Other", group: "federal_form_filed" }  # "Other"
+  # ============================================ page 1 — lines 4-11 (F = Federal Information, C = Colorado Information)
+  - { line: "4", field: "4", type: money }  # F  Enter all income from your federal form 1040, line 1z
+  - { line: "5", field: "5", type: money }  # C  income from line 4 earned while working in Colorado and/or while a Colorado resident
+  - { line: "6", field: "6", type: money }  # F  sum of all taxable interest and ordinary dividends from your federal form 1040
+  - { line: "7", field: "7", type: money }  # C  income from line 6 earned while a resident of Colorado or derived from Colorado property
+  - { line: "8", field: "8", type: money }  # F  Unemployment Compensation from your federal form 1040, Schedule 1
+  - { line: "9", field: "9", type: money }  # C  income from line 8 from State of Colorado unemployment benefits and/or ... while a Colorado resident
+  - { line: "10", field: "10", type: money }  # F  all capital gains and (losses) from both your federal form 1040 and 1040, Schedule 1
+  - { line: "11", field: "11", type: money }  # C  income from line 10 earned while a Colorado resident and/or on property located in Colorado
+  # ============================================ page 2 — lines 12-23
+  - { line: "12", field: "12", type: money }  # F  sum of all income from your federal form 1040, lines 4b, 5b, and 6b
+  - { line: "13", field: "13", type: money }  # C  income from line 12 received while a Colorado resident
+  - { line: "14", field: "14", type: money }  # F  sum of all business income or (loss) and farm income or (loss) from your federal form 1040
+  - { line: "15", field: "15", type: money }  # C  income from line 14 earned while a Colorado resident and/or from Colorado sources
+  - { line: "16", field: "16", type: money }  # F  all supplemental income and (loss) found on your federal form 1040, Schedule E
+  - { line: "17", field: "17", type: money }  # C  income from line 16 from Colorado sources; and/or rent and royalty ...; and/or partnership/S corporation/fiduciary income
+  - { line: "18", field: "18", type: money }  # F  sum of all other income from your federal form 1040, Schedule 1
+  - { line: "18.list_type", field: "18 List Type", type: text }  # "List Type" row under line 18
+  - { line: "19", field: "19", type: money }  # C  income from line 18 earned while a Colorado resident and/or from Colorado sources
+  - { line: "19.list_type", field: "19 List Type", type: text }  # "List Type" row under line 19
+  - { line: "20", field: "20", type: money }  # F  Total Income. Enter total other income amount found on your federal form 1040
+  - { line: "21", field: "21", type: money }  # C  Total Colorado Income. Total of the Colorado column, lines 5, 7, 9, 11, 13, 15, 17 and 19
+  - { line: "22", field: "22", type: money }  # F  all federal adjustments from your federal form 1040
+  - { line: "22.list_type", field: "22 List Type", type: text }  # "List Type" row under line 22
+  - { line: "23", field: "23", type: money }  # C  adjustments from line 22 as follows (the bullet rules printed below the line)
+  - { line: "23.list_type", field: "23 List Type", type: text }  # "List Type" row under line 23
+  # ============================================ page 3 — lines 24-36
+  - { line: "24", field: "24", type: money }  # F  Adjusted Gross Income. Enter amount from your federal form 1040
+  - { line: "25", field: "25", type: money }  # C  Colorado Adjusted Gross Income. Subtract line 23 from line 21
+  - { line: "26", field: "26", type: money }  # F  Additions to AGI. Sum of lines 3 through 7 of Colorado Form 104 excluding charitable contribution adjustments
+  - { line: "27", field: "27", type: money }  # C  Additions to Colorado AGI. Amount from line 26 that is non-Colorado state or local bond interest earned while a Colorado resident
+  - { line: "28", field: "28", type: money }  # F  Total of lines 24 and 26
+  - { line: "29", field: "29", type: money }  # C  Total of lines 25 and 27
+  - { line: "30", field: "30", type: money }  # F  Subtractions from AGI. Amount from line 9 of Colorado Form 104 excluding qualifying charitable contributions
+  - { line: "31", field: "31", type: money }  # C  Subtractions from Colorado AGI. Amount from line 30 as follows (bullets below the line)
+  - { line: "32", field: "32", type: money }  # F  Modified Adjusted Gross Income. Subtract line 30 from line 28
+  - { line: "33", field: "33", type: money }  # C  Modified Colorado Adjusted Gross Income. Subtract line 31 from line 29
+  - { line: "34", field: "34", type: text }  # Divide line 33 by line 32. Round to the fourth decimal place, i.e. xxx.xxxx — printed "%" after the box
+  - { line: "35", field: "35", type: money }  # C  Tax from the tax table based on income reported on the DR 0104 line 10
+  - { line: "36", field: "36", type: money }  # Apportioned tax. Multiply line 35 by the percentage on line 34. Enter here and on DR 0104 line 11
+relations:
+  - "21 == 5 + 7 + 9 + 11 + 13 + 15 + 17 + 19"  # 21 "Enter the total from the Colorado column, lines 5, 7, 9, 11, 13, 15, 17 and 19"
+  - "25 == 21 - 23"  # 25 "Subtract line 23 from line 21"
+  - "28 == 24 + 26"  # 28 "Total of lines 24 and 26"
+  - "29 == 25 + 27"  # 29 "Total of lines 25 and 27"
+  - "32 == 28 - 30"  # 32 "Subtract line 30 from line 28"
+  - "33 == 29 - 31"  # 33 "Subtract line 31 from line 29"
+cross_form:
+  - "4 == f1040.1z"  # 4 "Enter all income from your federal form 1040, line 1z"
+  - "22 == f1040.10"  # 22 "Enter all federal adjustments from your federal form 1040" (page 2 note — "federal form 1040, 1040 SR, or 1040 SP, line 10")
+  - "24 == f1040.11"  # 24 "Adjusted Gross Income. Enter amount from your federal form 1040" (2023 Form 1040 line 11 = AGI)
+  - "36 == dr0104.11"  # 36 "Enter here and on DR 0104 line 11"
+identity_fields:
+  - ssn_or_itin
+  - header_name
+signature: null
+mailing: null
