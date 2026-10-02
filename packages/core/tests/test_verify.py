@@ -1147,6 +1147,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # (empty) CA 2023 row: the schedule prints name and SSN only, no address block.
     # JS5: MD 502 2025 (a RE-MAP of MD 2023; the five mailing-address widgets kept their names, the MD physical-address
     # ZIP/county boxes were renamed and are still rejected) equals the reviewed MD 2023 row.
+    # JS5: ND-1 2025 (a PORTABLE port of ND 2024, every widget name kept; no address box touched) equals the reviewed
+    # ND 2024 row (street, apt, city, state, zip).
     import json
     from pathlib import Path
 

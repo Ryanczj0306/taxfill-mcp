@@ -1,0 +1,580 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/nd/2024/nd1/pack.yaml (ported 2026-10-02,
+# Phase J JS5; triaged PORTABLE — every widget of the base survives).
+#
+# URL. https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28702-form-nd-1-2025.pdf
+# Digest e7c35d515b7b… — two separate downloads on 2026-10-01 and the
+# discovery copy agree byte for byte (HTTP 200 application/pdf, %PDF-1.6, not
+# encrypted, no XFA). The DOR RE-ISSUED this file mid-season: the PDF's own
+# CreationDate is 2025-10-01 but its ModDate is 2026-02-11, and the server
+# reports Last-Modified Fri, 20 Feb 2026 18:26:54 GMT (ETag
+# "8a0a0-64b4590c839b9"). A copy fetched before about 20 Feb 2026 may carry a
+# different digest. The Wayback capture of 2026-03-11 (timestamp
+# 20260311155858) re-fetched on 2026-10-02 hashes to the same digest, so the
+# pinned file has been stable since at least then. The host serves scripted
+# downloads directly, so no mirror_urls entry is needed.
+#
+# PRINTED IDENTITY. Page 1 prints "Form ND-1" over a large "2025", masthead
+# "INDIVIDUAL INCOME TAX RETURN / OFFICE OF STATE TAX COMMISSIONER / SFN 28702
+# (12-2025)", and "Attach a copy of your entire 2025 federal income tax
+# return"; page 2 prints "2025 Form ND-1 / SFN 28702 (12-2025), Page 2".
+# printed_year_verified = 2025.
+#
+# TWO TEXT LAYERS (the re-issue's trace). Each page first paints a form
+# XObject holding an EARLIER 2025 face, then the page's own content stream
+# paints the corrected face over it. The covered layer still reads line 1a
+# "Form 1040 or 1040-SR, line 11." / "If zero, enter zero" and the old header
+# captions ("Last name", "Date Of Death"); the visible layer reads "line 11a."
+# / "If zero, enter 0". A 300 dpi render of line 1a shows only "line 11a.",
+# with no ghost of the covered text. Plain text extraction returns both layers
+# interleaved, so every face quote below comes from the visible content
+# stream alone, read against the render.
+#
+# AcroForm topology against the 2024 blank (a widget census plus a
+# field-level dump walking /Parent). 92 widgets = 92 fields on 2 pages in both
+# years: 0 gone, 0 new, every name kept on the same page. Zero differences in
+# /FT, /Ff, /MaxLen, /DA ("/Verdana 8 Tf 0 g" on all 77 text widgets), /Q or
+# checkbox on-states (all 15 checkboxes /Yes). The only /Ff value is 4194304
+# (DoNotSpellCheck) on 54 text fields — NO field carries the ReadOnly bit, so
+# nothing needs a P-007 adjudication. The one structural change: 2024 split
+# four fields into a parent plus one kid widget ("SSN", "Spouse SSN",
+# "Spouse Name, MI", "Spouse Last Name"); 2025 merges each into a single
+# terminal field, so the form is now fully flat, names unchanged. Rects: 83
+# of the 92 moved, the largest edge move 7.3 pt ("S& 27"). The 39 boxes of
+# the numbered dollar lines are each 7.0 pt narrower. On most of them both
+# edges moved in (the left edge by 2.0 to 5.0 pt, the right edge by the
+# rest); only "SF 26" and "SO 27" (line 37) lost the 7 pt from the right
+# edge alone, and "S& 27" lost 7.3 pt there while its left edge moved out
+# 0.3 pt. The eight line-31/34/35 part boxes kept their width. No other
+# widget's edge moved more than 4.03 pt ("Checking"). The printed words
+# moved by a median of under 1.2 pt on each page, with 98-99% of them within
+# 2 pt. Every binding was re-confirmed on the sentinel render.
+#
+# FACE DELTAS vs 2024 (diff of the visible printed text). Line numbering 1a
+# through 37 is unchanged, and lines 10 (Servicemembers Civil Relief Act
+# adjustment, grey code "(NJ)") and 11 (military pay exclusion, "(AX)") keep
+# the 2024 order. Changed:
+#   * line 1a "Federal adjusted gross income from Form 1040 or 1040-SR, line
+#     11a. If zero, enter 0" (2024: "line 11. If zero, enter zero") — so the
+#     cross_form is now `1a == f1040.11a`, the defining AGI line of the 2025
+#     Form 1040;
+#   * line 27 "Estimated tax paid on 2025 Forms ND-1ES and ND-1EXT plus an
+#     overpayment, if any, applied from your 2024 return";
+#   * line 30 "Amount of line 29 that you want applied to your 2026
+#     estimated tax";
+#   * line 36 "Balance due. Add lines 33, 34, 35 and, if applicable, line
+#     37. Pay to: ND Office of State Tax Commissioner" (2024: "Pay to: ND
+#     State Tax Commissioner");
+#   * caption case: "Last Name", "Date of Death", "Trees for ND Trust Fund",
+#     "Type of Account", "Print Name of Paid Preparer Signature";
+#   * the two "Attach ..." reminders beside line A were solid bullets in 2024
+#     and are hollow circles in 2025, but they carry no widget, so there is
+#     nothing to map.
+# No dollar figure or rate is printed on the face apart from the "$5.00"
+# thresholds of lines 29, 32 and 33, the same as 2024.
+#
+# SIGNATURE-DATE BUDGET (measured on this blank's sentinel render). The
+# three page-2 date boxes ("Date signed", "Date signed 2", "date preparer
+# signed") are 44.9 / 44.9 / 45.4 pt wide, centred, at a fixed
+# "/Verdana 8 Tf" with no /MaxLen. The AcroForm's own Verdana /Widths give
+# 636 per digit and 454 per slash, so a 10-character MM/DD/YYYY date is
+# 48.0 pt and its first digit was cut off on the render under the 2024
+# budget of maxlen 10. These three lines now carry maxlen 8: an 8-character
+# MM/DD/YY is 37.8 pt and eight digits 40.7 pt, both inside the box. The
+# filler rejects a longer value instead of letting it clip. Verify's clipping
+# estimate (0.5 em per glyph, 40 pt) does not catch this. The two
+# Date of Death boxes are 52.2 pt wide, and a full MM/DD/YYYY rendered there
+# intact, so they keep maxlen 10.
+#
+# CHANGED IN THIS PACK: tax_year, source_url, pdf_sha256, the cross_form leg
+# (f1040.11 -> f1040.11a), maxlen 10 -> 8 on signature.taxpayer_date,
+# signature.spouse_date and preparer.date (see above), and the year- and
+# caption-facing comments (provenance, layout, the header boxes, lines 1a,
+# the 10/11 note, 27, 30, 31, 35, 36, direct deposit, the signature dates,
+# preparer name), and six relations the 2024 pack left out on a stale
+# grammar claim or as floor-at-zero lines: the three printed "Enter total"
+# sums of lines 31, 34 and 35 (dotted line ids, accepted since Phase J
+# JP5c), 18 and 25 as max(0, ...) and 19 == 18. Every field binding, line
+# key, type, other maxlen, checkbox group, on_state, the five 2024 relations
+# and every identity field is the 2024 pack's.
+#
+# UNRESOLVED. None for the bindings. Line 36's printed payee now differs from
+# the knowledge pack's check_payee ("ND State Tax Commissioner", from the
+# booklet). The form does not own that value, so this pack does not change.
+# ===========================================================================
+# Form ND-1, 2025 -- North Dakota Individual Income Tax Return (resident return).
+# The single 2-page PDF is the entire filed return; ND-1 serves full-year
+# residents (tax from the Tax Table, line 20) and non/part-year residents (tax
+# from Schedule ND-1NR). This pack maps the resident-return face.
+#
+# Provenance / freshness. Blank downloaded from the official source_url below;
+# see URL and PRINTED IDENTITY in the port banner above. Line 1a reads "Federal
+# adjusted gross income from Form 1040 or 1040-SR, line 11a"; line 2 "Planned
+# gift or endowment tax credit adjustment to income". printed_year_verified =
+# 2025. pdf_sha256 pinned to the exact downloaded file (golden test verifies it).
+#
+# Layout / pages. 2-page PDF; BOTH PAGES ARE THE FILED RETURN (no instruction or
+# worksheet pages bundled in this file):
+#   page 1 -- fiscal-year-end M/D/Y; header (Your First Name and Middle Initial
+#             + Last Name, Deceased flag + Date of Death, SSN for you; same
+#             quartet for spouse; mailing Address + Apt; City / State / ZIP);
+#             box D Amended (General / Federal NOL) + box E Extension;
+#             box F MN/MT Reciprocity (fill circle + State); line A Filing status
+#             (1 Single, 2 MFJ, 3 MFS, 4 HoH, 5 QSS -- fill only one); line B
+#             School district code (B-1/B-2); line C Income source code; lines
+#             1a/1b (federal AGI, federal taxable income); ADDITIONS lines 2, 3,
+#             4a (total additions), 4b (add 1b + 4a); SUBTRACTIONS lines 5-16
+#             (10 SCRA adjustment, 11 military pay -- the 2024 order, which
+#             swapped them vs 2023), line 17 (total subtractions), line 18
+#             (ND taxable income).
+#   page 2 -- line 19 (ND taxable income from pg1); line 20 (Tax); OTHER CREDITS
+#             lines 21-23, line 24 (total credits), line 25 (net tax liability);
+#             TAX PAID lines 26-27, line 28 (total payments); REFUND lines 29-30,
+#             line 31 voluntary contributions (Veterans'/Wildlife/Trees + total),
+#             line 32 (Refund); direct-deposit a Type of Account (Checking/Savings),
+#             b Routing Number, c Account Number; TAX DUE line 33 (tax due), line
+#             34 (Penalty + Interest + total), line 35 voluntary contributions
+#             (Veterans'/Wildlife/Trees + total), line 36 (Balance due), line 37
+#             (interest on underpaid est. tax from Sch ND-1UT); 1099-G consent +
+#             Disclosure authorization fill circles; signature block (you/spouse
+#             signature dates + phones, preparer PTIN/date/name/phone). Mail-to
+#             address printed at page-2 foot.
+#
+# AcroForm. FLAT form: acroform_root = '' . 92 top-level widgets, no hierarchy
+# (pypdf: every /Fields entry has its own /T, no /Kids). Every one of the 92 is a
+# distinct fillable widget mapped to a printed control it sits on -- ALL 92
+# MAPPED, none excluded. No AcroForm /T is shared across two printed controls.
+#
+# Checkbox groups. This form has NO shared /Btn radio -- each option is its own
+# independent single-state checkbox (on_state /Yes). Per CONVENTIONS the boxes of
+# one printed one-of-N question still share a `group` so exactly one is chosen:
+#   * filing_status  -- line A: 1 Single / 2 MFJ / 3 MFS / 4 HoH / 5 QSS.
+#   * refund.account_type -- direct-deposit item a: Checking / Savings.
+# Every OTHER checkbox is a standalone independent flag (its own line, on_state
+# /Yes, no group): Deceased (you), Deceased (spouse), box D Amended General, box D
+# Amended Federal NOL, box E Extension, box F MN/MT fill circle, 1099-G consent,
+# Disclosure authorization.
+#
+# Money vs text. Every numbered dollar line is mapped `money`: 1a, 1b, 2, 3, 4a,
+# 4b, 5-16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, the three
+# line-31 sub-funds + 31 total, 32, 33, the two line-34 parts + 34 total, the
+# three line-35 sub-funds + 35 total, 36, 37. SSNs are single boxes (no comb
+# widget on this form) kept `text`. Names, address, city/state/zip, apt, dates of
+# death, fiscal-year M/D/Y, school-district/income-source codes, MN/MT state,
+# routing/account numbers, phones, signature dates, preparer PTIN/name stay
+# `text` (narrow boxes carry the introspected maxlen).
+#
+# Relations (on-face arithmetic, every operand mapped, unconditional only):
+#   4a  "Total additions. Add lines 2 and 3"       -> 4a == 2 + 3
+#   4b  "Add lines 1b and 4a"                       -> 4b == 1b + 4a
+#   17  "Total subtractions. Add lines 5 through 16"-> 17 == 5+6+7+8+9+10+11+12+13+14+15+16
+#   24  "Total credits. Add lines 21 through 23"    -> 24 == 21 + 22 + 23
+#   28  "Total payments. Add lines 26 and 27"       -> 28 == 26 + 27
+#   18  "Subtract line 17 from line 4b. If less than zero, enter 0"
+#                                                   -> 18 == max(0, 4b - 17)
+#   19  "Enter your North Dakota taxable income from line 18 of page 1"
+#                                                   -> 19 == 18
+#   25  "Subtract line 24 from line 20. If less than zero, enter 0"
+#                                                   -> 25 == max(0, 20 - 24)
+#   31  Veterans' / Wildlife / Trees ... "Enter total"
+#                     -> 31 == 31.veterans + 31.wildlife + 31.trees
+#   34  "Penalty ... Interest ... Enter total"      -> 34 == 34.penalty + 34.interest
+#   35  Veterans' / Wildlife / Trees ... "Enter total"
+#                     -> 35 == 35.veterans + 35.wildlife + 35.trees
+# A blank sub-fund or penalty part reads as zero, so the three totals hold on
+# every path. OMITTED (the $5.00 floor or a branch the face does not pin down):
+# 29 (overpayment iff line 28 > line 25; "If less than $5.00, enter 0"), 32
+# ("Subtract lines 30 and 31 from line 29. If less than $5.00, enter 0"), 33
+# (tax due iff line 28 < line 25; "If less than $5.00, enter 0"), 36 ("Add
+# lines 33, 34, 35 and, if applicable, line 37" -- 37 is conditional so left to
+# calc).
+#
+# Cross_form. Line 1a "Federal adjusted gross income from Form 1040 or 1040-SR,
+# line 11a" == federal AGI, 2025 Form 1040 line 11a.
+form: "ND-1"
+jurisdiction: states/nd
+tax_year: 2025
+source_url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28702-form-nd-1-2025.pdf
+pdf_sha256: "e7c35d515b7b1e101bef3ceb04cd8363d5df3e44da19654982b8f26bfeed83da"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- fiscal year end
+  - line: fiscal_year_end.month          # "If a fiscal year filer, enter fiscal year end:" month
+    field: Fiscal year month
+    type: text
+    maxlen: 2
+  - line: fiscal_year_end.day            # fiscal year end day
+    field: Fiscal year day
+    type: text
+    maxlen: 2
+  - line: fiscal_year_end.year           # fiscal year end year
+    field: Fiscal year year
+    type: text
+    maxlen: 4
+  # ---- header: taxpayer (first name + MI and last name are separate boxes,
+  #      as since 2024)
+  - line: name.first                     # "Your First Name and Middle Initial"
+    field: First Name MI
+    type: text
+  - line: name.last                      # "Last Name" (taxpayer)
+    field: Last Name
+    type: text
+  - line: deceased.taxpayer              # "Deceased" fill circle (taxpayer)
+    field: Deceased 1 box
+    type: checkbox
+    on_state: /Yes
+  - line: deceased.taxpayer.date         # "Date of Death" (taxpayer, narrow box)
+    field: Date of death
+    type: text
+    maxlen: 10
+  - line: identifying_number             # "Your Social Security Number" (single box)
+    field: SSN
+    type: text
+  # ---- header: spouse
+  - line: spouse.name.first              # "If Joint Return, Spouse's First Name and MI"
+    field: Spouse Name, MI
+    type: text
+  - line: spouse.name.last               # "Last Name" (spouse)
+    field: Spouse Last Name
+    type: text
+  - line: deceased.spouse                # "Deceased" fill circle (spouse)
+    field: Deceased 2 box
+    type: checkbox
+    on_state: /Yes
+  - line: deceased.spouse.date           # "Date of Death" (spouse, narrow box)
+    field: Date of death 2
+    type: text
+    maxlen: 10
+  - line: spouse.identifying_number      # "Spouse's Social Security Number" (single box)
+    field: Spouse SSN
+    type: text
+  # ---- header: mailing address
+  - line: mailing_address.street         # "Current Mailing Address"
+    field: Address
+    type: text
+  - line: mailing_address.apt            # "Apt Number" (narrow box)
+    field: Apt
+    type: text
+    maxlen: 10
+  - line: mailing_address.city           # "City"
+    field: City
+    type: text
+  - line: mailing_address.state          # "State"
+    field: State
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip            # "ZIP Code" (narrow box)
+    field: Zip code
+    type: text
+    maxlen: 10
+
+  # ---- box D: Amended
+  - line: amended.general                # "D. Fill in if applicable: Amended: General"
+    field: general
+    type: checkbox
+    on_state: /Yes
+  - line: amended.federal_nol            # "Amended: Federal NOL"
+    field: NOL
+    type: checkbox
+    on_state: /Yes
+  # ---- box E: Extension
+  - line: extension                      # "E. Fill in if applicable: Extension"
+    field: extension
+    type: checkbox
+    on_state: /Yes
+  # ---- box F: MN/MT Reciprocity
+  - line: mn_mt_reciprocity              # "F. MN/MT Reciprocity" fill circle
+    field: MN/MT box
+    type: checkbox
+    on_state: /Yes
+  - line: mn_mt_reciprocity.state        # "F. MN/MT Reciprocity ... State"
+    field: MN/MT Recprocity
+    type: text
+    maxlen: 2
+
+  # ---- line A: Filing status used on federal return (fill only one)
+  - line: filing_status.single                       # A.1 Single
+    field: Single
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+  - line: filing_status.married_filing_jointly       # A.2 Married filing jointly
+    field: Married, jointly
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+  - line: filing_status.married_filing_separately    # A.3 Married filing separately
+    field: Married, separately
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+  - line: filing_status.head_of_household            # A.4 Head of household
+    field: Head
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+  - line: filing_status.qualifying_surviving_spouse  # A.5 Qualifying surviving spouse
+    field: Surviving Spouse
+    type: checkbox
+    on_state: /Yes
+    group: filing_status
+
+  # ---- line B: School district code / line C: Income source code
+  - line: b.district                     # "B. School district code:" first box
+    field: B-1
+    type: text
+    maxlen: 2
+  - line: b.subcode                      # "B. School district code:" second box (after hyphen)
+    field: B-2
+    type: text
+    maxlen: 3
+  - line: c                              # "C. Income source code"
+    field: C
+    type: text
+    maxlen: 2
+
+  # ---- lines 1a-1b
+  - line: 1a                             # 1a Federal adjusted gross income (Form 1040/1040-SR line 11a; if zero, enter 0)
+    field: SX 1a
+    type: money
+  - line: 1b                             # 1b Federal taxable income (Form 1040/1040-SR line 15)
+    field: SS 1b
+    type: money
+
+  # ---- Additions lines 2-4b
+  - line: "2"                            # 2 Planned gift or endowment tax credit adjustment to income
+    field: NK 2
+    type: money
+  - line: "3"                            # 3 Total other additions (Schedule ND-1SA)
+    field: AV 3
+    type: money
+  - line: 4a                             # 4a Total additions. Add lines 2 and 3
+    field: Line 4a
+    type: money
+  - line: 4b                             # 4b Add lines 1b and 4a
+    field: Line 4b
+    type: money
+
+  # ---- Subtractions lines 5-18
+  - line: "5"                            # 5 Interest from U.S. obligations
+    field: SN 5
+    type: money
+  - line: "6"                            # 6 Net long-term capital gain exclusion
+    field: NC 6
+    type: money
+  - line: "7"                            # 7 Exempt income of an eligible Native American
+    field: S4 7
+    type: money
+  - line: "8"                            # 8 Benefits received from U.S. Railroad Retirement Board
+    field: SS 8
+    type: money
+  - line: "9"                            # 9 Licensed peace officer retirement benefit exclusion (See instructions)
+    field: AW 9
+    type: money
+  # NOTE: printed lines 10 and 11 keep the 2024 order, which SWAPPED CONTENT
+  # vs 2023 while the widgets stayed put under their old names, so the field-
+  # name letter prefixes no longer match the grey codes printed beside the
+  # rows. Keys are printed line numbers; the bindings below are position-true
+  # and confirmed on the 2025 render: widget "AX 10" sits on printed line 10
+  # (grey code "(NJ) 10") and widget "NJ 11" on printed line 11 ("(AX) 11").
+  - line: "10"                           # 10 Nonresident only: Servicemembers Civil Relief Act adjustment (Attach Form W-2) [2023: line 11]
+    field: AX 10
+    type: money
+  - line: "11"                           # 11 Military pay exclusion (Attach Form W-2) [2023: line 10]
+    field: NJ 11
+    type: money
+  - line: "12"                           # 12 North Dakota College SAVE account deduction
+    field: AA 12
+    type: money
+  - line: "13"                           # 13 Qualified dividend exclusion
+    field: AO 13
+    type: money
+  - line: "14"                           # 14 Military retirement benefit exclusion (Attach Form 1099-R)
+    field: AQ 14
+    type: money
+  - line: "15"                           # 15 Social security benefit exclusion
+    field: AR 15
+    type: money
+  - line: "16"                           # 16 Total other subtractions (Schedule ND-1SA)
+    field: AB 16
+    type: money
+  - line: "17"                           # 17 Total subtractions. Add lines 5 through 16
+    field: Line 17
+    type: money
+  - line: "18"                           # 18 North Dakota taxable income. Subtract line 17 from line 4b
+    field: ND 18
+    type: money
+
+  # ============================================ page 2
+  - line: "19"                           # 19 North Dakota taxable income from line 18 of page 1
+    field: Line 19
+    type: money
+  - line: "20"                           # 20 Tax (Tax Table or Schedule ND-1NR line 23)
+    field: SB 20
+    type: money
+  # ---- Other credits 21-25
+  - line: "21"                           # 21 Credit for income tax paid to another state (Schedule ND-1CR)
+    field: SD 21
+    type: money
+  - line: "22"                           # 22 Marriage penalty credit for joint filers
+    field: AC 22
+    type: money
+  - line: "23"                           # 23 Total other credits (Schedule ND-1TC)
+    field: AE 23
+    type: money
+  - line: "24"                           # 24 Total credits. Add lines 21 through 23
+    field: Line 24
+    type: money
+  - line: "25"                           # 25 Net tax liability. Subtract line 24 from line 20
+    field: SE 25
+    type: money
+  # ---- Tax paid 26-28
+  - line: "26"                           # 26 North Dakota income tax withheld from wages and other payments (Attach Forms W-2, 1099, and/or ND Sch. K-1)
+    field: SF 26
+    type: money
+  - line: "27"                           # 27 "Estimated tax paid on 2025 Forms ND-1ES and ND-1EXT plus an overpayment, if any, applied from your 2024 return" (2025 face, verbatim)
+    field: S& 27
+    type: money
+  - line: "28"                           # 28 Total payments. Add lines 26 and 27
+    field: AJ 28
+    type: money
+  # ---- Refund 29-32
+  - line: "29"                           # 29 Overpayment
+    field: SG 29
+    type: money
+  - line: "30"                           # 30 "Amount of line 29 that you want applied to your 2026 estimated tax" (2025 face, verbatim)
+    field: SQ 30
+    type: money
+  - line: 31.veterans                    # 31 Voluntary contribution: Veterans' Postwar Trust Fund
+    field: AS
+    type: money
+  - line: 31.wildlife                    # 31 Voluntary contribution: Watchable Wildlife Fund
+    field: SP
+    type: money
+  - line: 31.trees                       # 31 Voluntary contribution: Trees for ND Trust Fund
+    field: SW
+    type: money
+  - line: "31"                           # 31 Voluntary contribution(s) enter total
+    field: "31"
+    type: money
+  - line: "32"                           # 32 Refund. Subtract lines 30 and 31 from line 29
+    field: SR 32
+    type: money
+  # ---- direct deposit (item a Type of Account, b Routing, c Account)
+  - line: refund.account_type.checking   # a. Type of Account: Checking
+    field: Checking
+    type: checkbox
+    on_state: /Yes
+    group: refund.account_type
+  - line: refund.account_type.savings    # a. Type of Account: Savings
+    field: Savings
+    type: checkbox
+    on_state: /Yes
+    group: refund.account_type
+  - line: refund.routing_number          # b. Routing Number
+    field: routing number
+    type: text
+    maxlen: 9
+  - line: refund.account_number          # c. Account Number
+    field: account number
+    type: text
+    maxlen: 17
+  # ---- Tax Due 33-37
+  - line: "33"                           # 33 Tax due. Subtract line 28 from line 25
+    field: SZ 33
+    type: money
+  - line: 34.penalty                     # 34 Penalty
+    field: penalty
+    type: money
+  - line: 34.interest                    # 34 Interest
+    field: interest
+    type: money
+  - line: "34"                           # 34 Penalty + Interest enter total
+    field: "34"
+    type: money
+  - line: 35.veterans                    # 35 Voluntary contribution: Veterans' Postwar Trust Fund
+    field: AT
+    type: money
+  - line: 35.wildlife                    # 35 Voluntary contribution: Watchable Wildlife Fund
+    field: SU
+    type: money
+  - line: 35.trees                       # 35 Voluntary contribution: Trees for ND Trust Fund
+    field: SY
+    type: money
+  - line: "35"                           # 35 Voluntary contribution(s) enter total
+    field: "35"
+    type: money
+  - line: "36"                           # 36 Balance due. Add lines 33, 34, 35 and, if applicable, line 37 (Pay to: ND Office of State Tax Commissioner)
+    field: Line 36
+    type: money
+  - line: "37"                           # 37 Interest on underpaid estimated tax (Schedule ND-1UT)
+    field: SO 27
+    type: money
+
+  # ---- fill-in circles
+  - line: consent_1099g                  # "1099-G consent" fill circle
+    field: 1099 G box
+    type: checkbox
+    on_state: /Yes
+  - line: disclosure_authorization       # "Disclosure authorization" fill circle
+    field: Disclosure box
+    type: checkbox
+    on_state: /Yes
+
+  # ---- signature block
+  - line: signature.taxpayer_date        # "Your Signature ... Date" (44.9 pt box; MM/DD/YY -- see SIGNATURE-DATE BUDGET)
+    field: Date signed
+    type: text
+    maxlen: 8
+  - line: signature.taxpayer_phone       # "Your Signature ... Telephone Number"
+    field: day phone
+    type: text
+  - line: signature.spouse_date          # "Spouse's Signature ... Date" (44.9 pt box; MM/DD/YY)
+    field: Date signed 2
+    type: text
+    maxlen: 8
+  - line: signature.spouse_phone         # "Spouse's Signature ... Telephone Number"
+    field: Spouse phone
+    type: text
+  - line: preparer.ptin                  # "Paid Preparer Signature ... PTIN"
+    field: ID
+    type: text
+  - line: preparer.date                  # "Paid Preparer Signature ... Date" (45.4 pt box; MM/DD/YY)
+    field: date preparer signed
+    type: text
+    maxlen: 8
+  - line: preparer.name                  # "Print Name of Paid Preparer Signature"
+    field: preparer name
+    type: text
+  - line: preparer.phone                 # preparer "Telephone Number"
+    field: preparer phone
+    type: text
+
+relations:
+  - "4a == 2 + 3"                                          # 4a "Total additions. Add lines 2 and 3"
+  - "4b == 1b + 4a"                                        # 4b "Add lines 1b and 4a"
+  - "17 == 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16"  # 17 "Add lines 5 through 16"
+  - "24 == 21 + 22 + 23"                                   # 24 "Total credits. Add lines 21 through 23"
+  - "28 == 26 + 27"                                        # 28 "Total payments. Add lines 26 and 27"
+  - "18 == max(0, 4b - 17)"                                # 18 "Subtract line 17 from line 4b. If less than zero, enter 0"
+  - "19 == 18"                                             # 19 "Enter your North Dakota taxable income from line 18 of page 1"
+  - "25 == max(0, 20 - 24)"                                # 25 "Subtract line 24 from line 20. If less than zero, enter 0"
+  - "31 == 31.veterans + 31.wildlife + 31.trees"          # 31 Veterans' / Watchable Wildlife / Trees for ND ... "Enter total"
+  - "34 == 34.penalty + 34.interest"                       # 34 "Penalty ... Interest ... Enter total"
+  - "35 == 35.veterans + 35.wildlife + 35.trees"          # 35 Veterans' / Watchable Wildlife / Trees for ND ... "Enter total"
+  # OMITTED: 29, 32, 33 (each "If less than $5.00, enter 0", and 29/33 branch
+  # on line 28 vs line 25) and 36 ("if applicable, line 37") -- left to calc.
+cross_form:
+  # Line 1a "Federal adjusted gross income from Form 1040 or 1040-SR, line 11a"
+  # (2025 face); 11a is the defining AGI line of the 2025 Form 1040.
+  - "1a == f1040.11a"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null
