@@ -41,7 +41,7 @@
 # field name) plus a second audit_pack.py sentinel render at 200 dpi — not off
 # /Rect y-coordinates (pitfall P-001: field dumps lie, pixels do not).
 # WHAT THE VISION AUDIT ACTUALLY CAUGHT (an audit that caught nothing is
-# suspicious — docs/CONTRIBUTING-PACKS.md step 6):
+# suspicious — docs/dev/CONTRIBUTING-PACKS.md step 6):
 #   1. Printed line 10 is TWO widgets, not one. The dump shows f1_18 (/MaxLen 1)
 #      and f1_19 at the same /Rect y (228) inside one printed row; only the
 #      render reveals that the form's own decimal point sits BETWEEN them, so

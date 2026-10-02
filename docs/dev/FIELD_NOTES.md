@@ -16,7 +16,7 @@ honest fix. Roadmap items derived from these live in [`ROADMAP.md`](ROADMAP.md).
 
 **Where the items come from.** Each N-item below states its own trigger; they come from
 separate illustrations, not one household. The multi-segment visa timeline behind N-1 is
-pinned by eval r for TY2025 (`evals/test_scenarios.py`): F-1 student → F-1 OPT → a
+pinned by eval r for TY2025 (`packages/core/tests/evals/test_scenarios.py`): F-1 student → F-1 OPT → a
 **cap-exempt** H-1B (a nonprofit research employer, whose H-1B can start on any date) from
 July 15 leaves only the 170 H-1B days of the transition year countable, 170 < 183, so the
 filer is a confirmed **nonresident** for that year despite full-year presence.
@@ -116,7 +116,7 @@ need their dates**, because the *other* segment is what forces a return.
 #### N-5 — Nothing for a user with zero filing experience to fill in
 
 There was no artifact to hand a no-experience filer. The fix is
-[`INTAKE_WORKSHEET.md`](INTAKE_WORKSHEET.md) (canonical English; localized copies ship
+[`INTAKE_WORKSHEET.md`](../INTAKE_WORKSHEET.md) (canonical English; localized copies ship
 alongside it, see the file header) — a fill-in worksheet whose three opening
 rules are *"don't guess, write 'don't know'"*, *"every identity/address fact is a date
 range, not a word"*, and *"one worksheet per person; unmarried ⇒ two taxpayers"*. It should

@@ -395,7 +395,7 @@ def test_tool_surface_is_exactly_23_and_matches_manifest():
     """Exact tool-surface guard (the other test is a subset check, so it misses ADDED tools).
 
     Adding/removing/renaming a tool fails here until both EXPECTED_TOOLS and the shipped
-    bundle/manifest.json are updated — keeping the server, the tests, and the one-click
+    packages/mcp-server/bundle/manifest.json are updated — keeping the server, the tests, and the one-click
     .mcpb manifest in lock-step (the packaging job also asserts 23 against the built wheel).
     """
     from pathlib import Path
@@ -406,7 +406,7 @@ def test_tool_surface_is_exactly_23_and_matches_manifest():
     )
     assert len(names) == 23
 
-    manifest = json.loads((Path(__file__).parents[3] / "bundle" / "manifest.json").read_text())
+    manifest = json.loads((Path(__file__).parents[1] / "bundle" / "manifest.json").read_text())
     manifest_names = {t["name"] for t in manifest["tools"]}
     assert manifest_names == names, (
         f"manifest/server drift — only in manifest: {manifest_names - names}, "

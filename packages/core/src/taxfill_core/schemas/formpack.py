@@ -299,7 +299,7 @@ class FormPack(BaseModel):
         elif is_dft or self.draft_created:
             raise ValueError(
                 "a final pack cannot use an irs.gov/pub/irs-dft/ source_url or carry draft_created — set "
-                "source_status: draft (drafts-first authoring, docs/CONTRIBUTING-PACKS.md) or point at the final form"
+                "source_status: draft (drafts-first authoring, docs/dev/CONTRIBUTING-PACKS.md) or point at the final form"
             )
         return self
 
@@ -397,7 +397,7 @@ def load_pack(path: str | Path) -> FormPack:
     if not isinstance(raw, dict):
         raise ValueError(
             f"{path}: a form pack must be a YAML mapping (key: value pairs), "
-            f"got {type(raw).__name__} — see docs/DEV_PLAN.md section 5 for the schema"
+            f"got {type(raw).__name__} — see docs/dev/DEV_PLAN.md section 5 for the schema"
         )
     pack = FormPack.model_validate(raw)
     _PACK_CACHE[key] = pack

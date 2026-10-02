@@ -65,7 +65,7 @@ Sources (verified against the official PDFs):
   knowledge/federal/<year>.yaml credits.foreign_tax_credit. All fetched
   2026-08-27.
 
-Rule from docs/DEV_PLAN.md section 10: if the implementation disagrees with
+Rule from docs/dev/DEV_PLAN.md section 10: if the implementation disagrees with
 ANY published row below, the implementation is wrong — fix it, never the
 fixture.
 """

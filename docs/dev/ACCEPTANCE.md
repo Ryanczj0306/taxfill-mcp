@@ -1,16 +1,17 @@
 # v0.1 acceptance test — non-developer, ≤20 minutes
 
 The ship gate from dev plan §13: a person who is **not** a developer should reach
-a filled, reviewable sample form in under 20 minutes using only the README. Run
+a filled, reviewable sample form in under 20 minutes using only the README and the
+user guide it links ([docs/USER_GUIDE.md](../USER_GUIDE.md)). Run
 this on a machine that has never had the repo. Check every box; any miss is a
 release blocker, not a "known issue".
 
 ## Setup (target: ≤5 min)
 
 - [ ] Install the client (Claude Desktop, or Claude Code) per its own docs.
-- [ ] **Published path:** `claude mcp add taxfill -- uvx taxfill-mcp` — completes
+- [ ] **Published path:** `claude mcp add --scope user taxfill -- uvx taxfill-mcp` — completes
       with no error; `uvx` bootstraps Python with no separate install.
-      **Pre-publish path:** follow the README "Today — from a source checkout".
+      **Pre-publish path:** follow the README [Quickstart](../../README.md#quickstart).
 - [ ] Restart/refresh the client; the `taxfill` tools appear in the tool list.
 - [ ] No Python/uv error text is shown to the user at any point.
 
@@ -44,7 +45,7 @@ release blocker, not a "known issue".
 
 - [ ] Total elapsed time < 20 min.
 - [ ] No dead-ends that required reading code, editing config by hand, or
-      searching outside the README.
+      searching outside the README and the user guide.
 - [ ] Every dollar figure on the draft is traceable to a citation or explicitly
       flagged unverified.
 

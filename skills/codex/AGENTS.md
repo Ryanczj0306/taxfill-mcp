@@ -21,7 +21,8 @@ on stderr).
 ## Hard rules
 
 1. Never invent a value — unknown stays a gap. Every number comes from a tool
-   (`calc`, `estimate_refund`, `fill_form`), never your own arithmetic.
+   (`calc`, `estimate_refund`, `fill_form`), never your own arithmetic. With `fill_form`,
+   write every filled PDF to an ABSOLUTE `out_path` under the year's workspace `drafts/` folder (`~/taxfill-workspace/<year>/drafts/`, or `$TAXFILL_WORKSPACE/<year>/drafts/`) so `taxfill purge <year>` removes it with the rest of the year's data.
 2. Confirm extracted document values with the user before filling.
 3. `verify_form`/`verify_filing` after every fill — ALWAYS recompute the
    table-lookup lines via `calc` and pass them as `independent` (e.g.
@@ -114,11 +115,11 @@ election is unavailable, file `formpacks/federal/<year>/f1116` — one form PER 
 exactly one of boxes a-g ticked above Part I (box c, passive, is the 1099-DIV box 7 basket).
 
 State returns run through the SAME pipeline with `jurisdiction="states/<xx>"`.
-All 42 income-tax jurisdictions (41 states + DC) ship a resident return pack —
+All 42 income-tax jurisdictions (41 states + DC) ship a TY2023 resident return pack —
 38 as fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC — and WV for TY2025, whose return is a booklet page)
 via `hand_fill_worksheet`; `state_scope` tells you which returns are required.
-All twelve manifests (CT-1040, HI N-11, NM PIT-1, SC1040 for 2023, 2024 and 2025) also carry overlay coordinates:
-`fill_form('ct1040' | 'n11' | 'pit1' | 'sc1040', ...)` stamps them onto the print blank, `verify_form(..., expected=values)`
+All thirteen manifests (CT-1040, HI N-11, NM PIT-1, SC1040 for 2023, 2024 and 2025, plus WV IT-140 for 2025) also carry overlay coordinates:
+`fill_form('ct1040' | 'n11' | 'pit1' | 'sc1040' | 'it140', ...)` stamps them onto the print blank, `verify_form(..., expected=values)`
 checks every box, and you render and read each page; the filer signs in ink.
 `hand_fill_worksheet` also serves one FEDERAL filing — `fincen114`, the FBAR
 (FinCEN Form 114): e-file only through FinCEN's BSA E-Filing System, no fillable
@@ -130,9 +131,8 @@ returns `required: null` plus `must_ask` rather than guessing.
 `calc("state_tax", …)` covers **every** jurisdiction for 2023, 2024 AND 2025 —
 flat or graduated is the PACK's call, and the split moves by
 year, so never assume and never do state tax arithmetic yourself. Note the year
-mismatch: state KNOWLEDGE spans 2023-2025, but state FORM packs cover 2024/2025
-for only **13 of the 42** jurisdictions — AR, NY, OR and PA (2024 + 2025), and
-IL, MO, NC, ND, NJ, OH, RI, UT, VA (2024). For the other 29 a 2024/2025 state
+mismatch: state KNOWLEDGE spans 2023-2025, but state FORM packs cover TY2023 for
+all 42 jurisdictions, then TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **27** (AR, AZ, CA, CT, DC, DE, GA, HI, ID, IL, KY, LA, MN, MO, MS, NC, NM, NY, OH, OR, PA, SC, UT, VA, VT, WI, WV). For any other jurisdiction-year a state
 return computes but cannot be filled. Never assume a year exists: call
 `list_forms` with the jurisdiction and year and read what comes back.
 

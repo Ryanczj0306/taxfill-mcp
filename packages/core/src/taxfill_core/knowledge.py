@@ -2672,7 +2672,7 @@ def load_knowledge(
             f"no knowledge pack for jurisdiction '{jurisdiction}', tax year {year} — looked for {path}. "
             f"If this year should be supported, author that file (copy the schema of knowledge/federal/2023.yaml). "
             f"For a year newer than the newest shipped pack, follow the freshness protocol "
-            f"(docs/DEV_PLAN.md section 7): resolve every number from the official sources listed in "
+            f"(docs/dev/DEV_PLAN.md section 7): resolve every number from the official sources listed in "
             f"knowledge/sources.yaml (irs.gov only) and cite each block — never fill a line whose authority "
             f"you cannot cite."
         )
@@ -2751,7 +2751,7 @@ def assert_filing_grade(
         f"Use it for PROJECTIONS only (what will I owe / what should I set aside / "
         f"married-vs-separate comparisons). To file for {year}, either wait for the year's "
         f"final forms and instructions to publish and re-author the pack under the two-pass "
-        f"freshness protocol (docs/DEV_PLAN.md section 7), or file for a year whose pack is "
+        f"freshness protocol (docs/dev/DEV_PLAN.md section 7), or file for a year whose pack is "
         f"filing-grade. Blocks deliberately absent from this pack (calc fails closed on each "
         f"rather than inventing a figure): {', '.join(marker.blocks_deliberately_absent) or 'none'}."
     )

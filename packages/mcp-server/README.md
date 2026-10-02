@@ -3,7 +3,8 @@
 The MCP server that exposes the TaxFill engine as tools any MCP client can call.
 It does the deterministic PDF/calc work; your agent does the interviewing and
 judgment. 100% local — the only outbound traffic is downloading blank forms from
-official `.gov` URLs. Every output is a review draft: you review, sign, and file.
+the tax agencies' own sites (or an exact, digest-checked Internet Archive copy when a state
+site blocks scripts). Every output is a review draft: you review, sign, and file.
 
 > v0.1 is in development and not yet published to PyPI, so the quickstarts below
 > run it **from a source checkout** with `uv`.
@@ -19,14 +20,16 @@ deterministic ops over cited per-year data) · `get_sources` · `workspace_save`
 `filing_summary` · `file_and_pay`
 
 Your data stays on your machine: the resumable workspace (profiles, documents,
-filled drafts) lives at `~/taxfill-workspace` (override with the
-`TAXFILL_WORKSPACE` env var), and `taxfill purge <year>` wipes a year on demand.
+and the filled drafts the agent writes to `<year>/drafts/`) lives at `~/taxfill-workspace`
+(override with the `TAXFILL_WORKSPACE` env var), and `taxfill purge <year>` wipes a year on
+demand (from a source checkout: `uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill purge <year>`).
 
 ## Run it
 
 ```bash
 # from the repo root
-uv run taxfill-mcp        # starts the stdio server
+uv run taxfill tools      # smoke test: lists every tool
+uv run taxfill-mcp        # the stdio server itself (your MCP client normally starts it)
 ```
 
 ## Add to a client
@@ -34,7 +37,7 @@ uv run taxfill-mcp        # starts the stdio server
 **Claude Code:**
 
 ```bash
-claude mcp add taxfill -- uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill-mcp
+claude mcp add --scope user taxfill -- uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill-mcp
 ```
 
 **Claude Desktop / Cowork** — add to the MCP servers config:

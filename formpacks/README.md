@@ -1,29 +1,16 @@
 # Form packs
 
-This directory will hold **form packs**: versioned YAML data files
-(`pack.yaml`) that describe one tax form for one jurisdiction and one tax
-year — the AcroForm field map, math relations for the verifier, cross-form
-consistency rules, signature placement, and official mailing addresses.
+One directory per form per tax year — `federal/<year>/<form>/` and `states/<st>/<year>/<form>/` — holding either a
+`pack.yaml` (a fillable AcroForm) or a `handfill.yaml` (a print-and-hand-fill manifest for a form with no fillable
+PDF). Each pack is pure data: the official blank's URL and SHA-256, the line → field map, the verifier's math
+relations and cross-form rules, identity fields, the signature location and the mailing addresses. Federal and state
+forms share one schema (`packages/core/src/taxfill_core/schemas/formpack.py`), so coverage grows by adding packs here,
+never by changing engine code.
 
-The schema is defined in [`docs/DEV_PLAN.md`](../docs/DEV_PLAN.md) (section 5)
-and implemented as a pydantic model in
-`packages/core/src/taxfill_core/schemas/formpack.py`. Federal and state forms
-use the same schema; coverage grows by adding packs here, never by changing
-engine code.
+- **What ships today:** [docs/COVERAGE.md](../docs/COVERAGE.md), generated from this directory.
+- **The binding authoring rules,** and the test that enforces each: [CONVENTIONS.md](CONVENTIONS.md).
+- **Adding a form or a year:** the [pack-authoring guide](../docs/dev/CONTRIBUTING-PACKS.md) and the schema spec in
+  [DEV_PLAN §5](../docs/dev/DEV_PLAN.md).
 
-Planned layout:
-
-```
-formpacks/
-├── federal/2023/f1040/pack.yaml
-├── federal/2022/f1040nr/  f8843/  sched_1/  sched_c/  sched_oi/  ...
-└── states/ca/2023/form540nr/pack.yaml
-```
-
-**Status: empty by design.** Federal packs (f8843 2019-2024, f1040nr +
-schedules 2022-2023, f1040 + schedules 2023-2024) are delivered in
-**milestone M2**; California packs follow in **M5**.
-
-Note: packs contain only metadata. Blank PDFs are downloaded at runtime from
-official .gov URLs and checksum-verified — they are never vendored in this
-repo.
+Packs contain only metadata. Blank PDFs are downloaded at runtime from official `.gov` URLs and checksum-verified —
+they are never committed to this repo.

@@ -1,4 +1,4 @@
-# Known-pitfall registry (docs/DEV_PLAN.md, section 10).
+# Known-pitfall registry (docs/dev/DEV_PLAN.md, section 10).
 #
 # Every bug found becomes (a) a permanent verifier rule,
 # (b) a regression test, and (c) where applicable, an intake-question fix.
@@ -1458,7 +1458,7 @@ pitfalls:
       every election posture),
       test_residency.py, test_profile.py, test_intake.py,
       test_projection_ops.py, test_file_and_pay.py, test_workspace.py, eval (o)
-      in evals/test_scenarios.py, and the residency MCP tool in
+      in packages/core/tests/evals/test_scenarios.py, and the residency MCP tool in
       packages/mcp-server/tests/test_server_e2e.py. THE PRIOR-YEAR FACT (JF5b
       part 1): PriorFilings.return_forms records the return filed for each
       earlier year ('1040', '1040-NR', 'dual_status', '1040_with_6013_election',

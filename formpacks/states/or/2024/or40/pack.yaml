@@ -7,7 +7,7 @@
 # (scripts/scaffold_state_year.py `_candidate_url`, base 2023 -> target 2024:
 # the single 4-digit year token in the basename), then fetched.
 #
-# IDENTITY (verified on the PDF, not the URL — docs/ROADMAP.md records a DOR
+# IDENTITY (verified on the PDF, not the URL — docs/dev/ROADMAP.md records a DOR
 # serving a wrong-year revision from a year-named path, so a year in the URL
 # proves nothing). Page-1 text of the downloaded blank prints "2024 Form
 # OR-40 / Oregon Individual Income Tax Return for Full-year Residents", the
@@ -187,7 +187,7 @@
 # empty), and nothing overflows or runs off page. What the audit caught: the
 # six stale maxlens were found by the /MaxLen diff BEFORE the render, and
 # the render confirmed the corrected values fit; beyond that the render
-# surfaced no new defect — stated explicitly per docs/CONTRIBUTING-PACKS.md.
+# surfaced no new defect — stated explicitly per docs/dev/CONTRIBUTING-PACKS.md.
 #
 # UNVERIFIED (nothing in this pack rests on it, listed for honesty): the
 # instruction-booklet-only facts this blank does not print — the filing due

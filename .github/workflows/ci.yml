@@ -36,7 +36,7 @@ jobs:
 
   test-count:
     # The headline test count is quoted in the README badge (alt text AND the
-    # shields.io URL), the README status paragraph, and the ROADMAP. All four were
+    # shields.io URL) and the ROADMAP. Every copy was once
     # maintained by hand and went stale four times — at one point the badge's alt
     # text disagreed with its own URL. The suites are glob-parametrized over the
     # knowledge/formpack YAMLs, so the number moves whenever a pack lands. Derive

@@ -16,7 +16,9 @@ that leaks PII take priority over all feature work.
 - **100% local.** The engine, the MCP server and the CLI run on your machine.
   There are no accounts, no cloud, no telemetry, and no logs kept by the tool
   itself. The **only** outbound traffic is downloading blank official form
-  PDFs from `.gov` URLs (`fetch_blank`), which sends nothing about you.
+  PDFs from the tax agencies' own sites (`fetch_blank`) — or, when a state host refuses
+  scripted downloads, an exact Internet Archive copy of that same URL, used only
+  if its bytes match the pinned SHA-256 — which sends nothing about you.
 - **Your agent is part of the picture.** taxfill is driven by an AI agent over
   MCP or a shell. Anything a tool RETURNS — results, and especially error
   messages — lands in that agent's transcript, which the client may log or
@@ -30,7 +32,7 @@ Everything taxfill writes lives under **one directory you own**:
 
 | What | Where |
 |---|---|
-| The resumable workspace (profile.json with SSN/address, source documents, filled drafts, RECONCILIATION.md) | `~/taxfill-workspace/<year>/` — override with the `TAXFILL_WORKSPACE` env var; an existing `./taxfill-workspace` from an earlier release keeps working |
+| The resumable workspace (profile.json with SSN/address, source documents, RECONCILIATION.md, and the filled drafts the agent writes to its `drafts/` folder — `fill_form` writes wherever its `out_path` points, and the skill files point it there) | `~/taxfill-workspace/<year>/` — override with the `TAXFILL_WORKSPACE` env var; an existing `./taxfill-workspace` from an earlier release keeps working |
 | Cached **blank** form PDFs (public documents, no PII) | `<repo>/.cache/blanks` from a checkout; `<workspace root>/.cache/blanks` from an installed wheel; override with `TAXFILL_BLANKS_CACHE` |
 
 The server, the CLI and `taxfill purge` resolve the workspace through the same

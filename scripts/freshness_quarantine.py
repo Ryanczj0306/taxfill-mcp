@@ -1,7 +1,7 @@
 """The freshness quarantine (Phase J JT0c): known reds behind an expiring allowlist.
 
 ``scripts/freshness_quarantine.yaml`` names each known red of the weekly freshness job. The root
-``conftest.py`` marks a quarantined network test xfail on a fetch failure only, and
+``packages/conftest.py`` marks a quarantined network test xfail on a fetch failure only, and
 ``scripts/check_drift.py`` reports a quarantined URL's drift without failing. An expired entry
 fails the drift job, so a quarantine cannot quietly become permanent.
 """

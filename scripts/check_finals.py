@@ -36,7 +36,7 @@ from taxfill_core.fetch import _USER_AGENT  # noqa: E402
 from taxfill_core.knowledge import provisional_marker  # noqa: E402
 from taxfill_core.schemas.formpack import load_pack  # noqa: E402
 
-# The year-level publications the provisional knowledge pack waits on (docs/ROADMAP.md JT0c).
+# The year-level publications the provisional knowledge pack waits on (docs/dev/ROADMAP.md JT0c).
 PUBLICATIONS = ("p1040", "i1040gi", "p501")
 FINAL_URL = "https://www.irs.gov/pub/irs-prior/{stem}--{year}.pdf"
 TIMEOUT = 30.0
@@ -141,7 +141,7 @@ def issue_body(result: WatchResult) -> str:
         "",
         f"Still 404 ({len(result.missing)}): " + (", ".join(f"`{w.stem}`" for w in result.missing) or "none"),
         "",
-        "Re-pin per docs/ROADMAP.md JT6: re-audit each pack against the FINAL face, set source_status: final, "
+        "Re-pin per docs/dev/ROADMAP.md JT6: re-audit each pack against the FINAL face, set source_status: final, "
         "record the final's pdf_sha256, and re-read every form_line off the final.",
     ]
     return "\n".join(lines)

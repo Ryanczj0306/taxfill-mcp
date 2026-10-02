@@ -383,7 +383,7 @@
 # ---------------------------------------------------------------------------
 # WHAT THE VISION AUDIT ACTUALLY CAUGHT
 # ---------------------------------------------------------------------------
-# (docs/CONTRIBUTING-PACKS.md step 6: "an audit that caught nothing is
+# (docs/dev/CONTRIBUTING-PACKS.md step 6: "an audit that caught nothing is
 # suspicious — say so explicitly if it truly caught nothing". On this port it
 # caught the two changes that decide the whole map, and corrected no binding
 # afterwards; all of that is stated.)
@@ -579,7 +579,7 @@
 # pass. The first keys off the LINE SHAPE `<stem>.yes` + `<stem>.no` and these
 # options are lettered; the second only fires when two checkbox lines SHARE one
 # AcroForm field, and these twelve lines bind twelve different fields. That is
-# the THIRD topology blind spot recorded in docs/ROADMAP.md Phase E; this pack
+# the THIRD topology blind spot recorded in docs/dev/ROADMAP.md Phase E; this pack
 # doubles its own contribution to that population (two sets of six rather than
 # two sets of three), and like the 2023 pair these are genuinely EXCLUSIVE
 # ("Check only one box"), so they belong on the grouped side of the

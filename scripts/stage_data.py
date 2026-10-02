@@ -8,7 +8,7 @@ copy them into ``packages/core/src/taxfill_core/_data/`` — the location the
 it is git-ignored, force-included into the distribution via ``[tool.hatch.build]
 artifacts`` in the core ``pyproject.toml``, and recreated fresh on every run.
 
-Usage (release step, see docs/PUBLISHING.md):
+Usage (release step, see docs/dev/PUBLISHING.md):
 
     python scripts/stage_data.py && uv build --package taxfill-core
 """

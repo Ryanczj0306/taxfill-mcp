@@ -4,9 +4,10 @@ Thanks for your interest in contributing! taxfill-mcp is an open-source (MIT) ex
 layer for AI tax prep: guided intake, deterministic form filling, mandatory verification,
 and file-and-pay instructions, consumable by any MCP client.
 
-**Project status:** v0.1 is in development. The design spec is complete
-([docs/DEV_PLAN.md](docs/DEV_PLAN.md)), nothing is published to PyPI yet, and the
-install/usage flows described in the docs are the *planned* v0.1 experience.
+**Project status:** pre-release. Everything runs today from a source checkout (see the
+[README quickstart](../README.md#quickstart)); nothing is published to PyPI yet. The design spec is
+[docs/dev/DEV_PLAN.md](../docs/dev/DEV_PLAN.md), and the remaining work is planned in
+[docs/dev/ROADMAP.md](../docs/dev/ROADMAP.md).
 
 A few ground rules up front:
 
@@ -16,7 +17,7 @@ A few ground rules up front:
   draft; the human reviews, signs, and files on paper. There is no e-filing, by design.
   Contributions must never weaken this framing.
 - **Privacy is a feature:** 100% local, no telemetry, the only outbound traffic is
-  downloading blank forms from official .gov URLs.
+  downloading blank forms from the tax agencies' own sites (or, when a state site blocks scripted downloads, an exact Internet Archive copy of that same URL), checksum-verified either way.
 - Be kind. Reviews focus on correctness and data quality, not on people.
 
 ## Ways to contribute (ordered by leverage)
@@ -26,19 +27,20 @@ A few ground rules up front:
    zero engine changes. Highest-impact contribution.
 2. **State knowledge packs** — thresholds, residency rules, credits, treaty
    conformity, payment portals, mailing addresses for a state
-   (`knowledge/states/<st>/<year>.yaml` plus its `sources.yaml` block).
+   (`knowledge/states/<st>/<year>.yaml`, a citation on every block; then regenerate
+   `knowledge/sources_states.yaml` with `scripts/assemble_state_sources.py`).
 3. **Pitfall reports from real filings** — a bug or near-miss you hit while actually
    filing is gold. Report it (redact all PII); it becomes a permanent verifier rule,
    a regression test, and often an intake-question fix.
 4. **Eval scenarios** — synthetic taxpayer scenarios with expected line values
-   (`evals/`). These keep agents honest across releases.
+   (`packages/core/tests/evals/`). These keep agents honest across releases.
 5. **Docs and translations** — README improvements, troubleshooting entries,
    community translations of user-facing docs.
 
 ## Authoring a form pack
 
 Form packs live at `formpacks/<jurisdiction>/<year>/<form>/pack.yaml`. Federal and
-state forms use the **same schema** — see [docs/DEV_PLAN.md §5](docs/DEV_PLAN.md) for
+state forms use the **same schema** — see [docs/dev/DEV_PLAN.md §5](../docs/dev/DEV_PLAN.md) for
 the authoritative spec. Annotated example:
 
 ```yaml
@@ -100,13 +102,14 @@ Pack-authoring checklist:
 ## Knowledge packs and sources
 
 Jurisdiction knowledge ships as data in `knowledge/`. Rules from
-[docs/DEV_PLAN.md §7](docs/DEV_PLAN.md):
+[docs/dev/DEV_PLAN.md §7](../docs/dev/DEV_PLAN.md):
 
 - **No topic without a source.** Every topic in a knowledge pack — and anything a
   position decision can rely on — must be backed by an entry in
   `knowledge/sources.yaml` with `url` (official .gov source), `answers` (what
-  questions it resolves), and `cadence` (when it updates). State blocks ship
-  together with each state's knowledge pack.
+  questions it resolves), and `cadence` (when it updates). State sources are generated
+  from each state pack's own citations into `knowledge/sources_states.yaml` by
+  `scripts/assemble_state_sources.py` (CI fails when that file is stale).
 - **Never hardcode numbers that lack final IRS guidance.** When a law is enacted but
   the IRS has not published final caps/phase-outs/form lines, the pack stores the
   *lookup path* (which source answers it), not a guessed number. Agents resolve it
@@ -120,7 +123,7 @@ Jurisdiction knowledge ships as data in `knowledge/`. Rules from
 
 ## The pitfall rule (every bug fix)
 
-Per [docs/DEV_PLAN.md §10](docs/DEV_PLAN.md), every bug found compounds
+Per [docs/dev/DEV_PLAN.md §10](../docs/dev/DEV_PLAN.md), every bug found compounds
 into permanent protection. **Every bug-fix PR must include:**
 
 1. An entry in `knowledge/pitfalls.yaml` (id, incident description with PII redacted,
@@ -141,13 +144,13 @@ The packages are not on PyPI yet, but local development works today:
 git clone https://github.com/Ryanczj0306/taxfill-mcp
 cd taxfill-mcp
 uv sync                                        # install dependencies
-uv run python -m pytest -m "not network"       # the offline suite CI runs on every push
-uv run python -m pytest -m network             # the live-.gov layer (the weekly freshness job)
+uv run python -m pytest -m "not network" -n auto   # the offline suite CI runs on every push
+uv run python -m pytest -m network -n auto         # the live-.gov layer (the weekly freshness job)
 ```
 
-Repo layout, architecture, and milestones are documented in
-[docs/DEV_PLAN.md](docs/DEV_PLAN.md) — read it before making non-trivial changes;
-it is the single source of truth for the design.
+The repo layout is sketched in [docs/README.md](../docs/README.md#repository-layout); the architecture
+and milestones are in [docs/dev/DEV_PLAN.md](../docs/dev/DEV_PLAN.md) — read it before making non-trivial
+changes; it is the single source of truth for the design.
 
 ## Testing
 
@@ -158,7 +161,7 @@ it is the single source of truth for the design.
 - Freshness runs WEEKLY (`.github/workflows/freshness.yml`, Mondays, plus on demand): it
   re-fetches the official sources, blanks and addresses, and a red opens a `freshness red`
   issue; known reds wait in `scripts/freshness_quarantine.yaml` with an expiry. `finals.yml`
-  watches for a planning year's final forms in October and November.
+  watches for a planning year's final forms: weekly in October and November, daily from mid-December to mid-February.
 - Every pitfall in `knowledge/pitfalls.yaml` must have a regression test (the gate above).
 - After adding tests, run `uv run python scripts/sync_test_count.py --write` so README and the
   ROADMAP carry the real count.
@@ -174,4 +177,4 @@ identifying detail first.
 ## License
 
 By contributing, you agree that your contributions are licensed under the
-[MIT License](LICENSE).
+[MIT License](../LICENSE).

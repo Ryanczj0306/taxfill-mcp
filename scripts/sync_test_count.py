@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Single source of truth for the headline test count — README badge + ROADMAP line.
 
-The count is quoted in three places (README's badge alt text, the badge's own
-shields.io URL, README's status paragraph, and the ROADMAP "Where we are" line),
+The count is quoted in the README badge (its alt text AND its shields.io URL) and
+the ROADMAP "Where we are" line (an earlier README status paragraph quoted it too),
 and every one of them was maintained by hand. It went stale four separate times:
 the ROADMAP records truth-ups from ~903 -> ~1076 -> 1222 -> 1,401 -> 2,297, and by
 2026-08-07 the README badge had drifted so far that its ALT TEXT (2,178) disagreed
@@ -36,7 +36,7 @@ REPO = Path(__file__).resolve().parents[1]
 # Files that quote the count, and the patterns that carry it. Each entry is
 # (path, regex with a single {n} placeholder group, how to render the number).
 README = REPO / "README.md"
-ROADMAP = REPO / "docs" / "ROADMAP.md"
+ROADMAP = REPO / "docs" / "dev" / "ROADMAP.md"
 
 
 def _collect(marker: str | None) -> int:
@@ -75,8 +75,6 @@ def _edits(total: int, offline: int, network: int) -> list[tuple[Path, str, str]
         # apart from each other once; keeping them in one rule makes that impossible.
         (README, r"!\[Tests: [\d,]+ passing\]\(https://img\.shields\.io/badge/tests-[\d%C,A-Za-z]+?-brightgreen\)",
          f"![Tests: {t} passing](https://img.shields.io/badge/tests-{t_url}%20passing-brightgreen)"),
-        # README status paragraph
-        (README, r"covered by [\d,]+ tests", f"covered by {t} tests"),
         # ROADMAP "Where we are" — the count only; whether each layer is green is
         # stated in prose next to it (the weekly network layer can be red while
         # the offline layer is green, so "all green" must never be baked in here).

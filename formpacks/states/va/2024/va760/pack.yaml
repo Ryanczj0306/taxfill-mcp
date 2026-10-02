@@ -19,7 +19,7 @@
 # with the magic "%PDF-1.6" — a real PDF, not an HTML error page wearing a
 # .pdf name.
 #
-# IDENTITY (read off the PDF, never off the URL — docs/ROADMAP.md records
+# IDENTITY (read off the PDF, never off the URL — docs/dev/ROADMAP.md records
 # files.tax.utah.gov serving a 2025 revision from a /2023/ path). Page-1 text
 # of the pinned file prints "2024 Virginia Form 760 / Resident Income Tax
 # Return", "File by May 1, 2025 — USE BLACK INK", form id 2601031, and
@@ -219,7 +219,7 @@
 #     2023 overpayment applied toward 2024", and line 30 "Commonwealth Savers
 #     (formerly Virginia529 and ABLE) Contributions".
 # WHAT THE AUDIT CAUGHT: nothing. Stated explicitly per
-# docs/CONTRIBUTING-PACKS.md step 6 — no clipped comb, no wrong-box hit, no
+# docs/dev/CONTRIBUTING-PACKS.md step 6 — no clipped comb, no wrong-box hit, no
 # silent checkbox group, no off-page or overflowing value, no sentinel on the
 # wrong printed line. That is the expected outcome for a port whose AcroForm
 # and printed line numbering are both provably unchanged, and it is reported

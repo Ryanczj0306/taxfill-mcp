@@ -56,7 +56,7 @@
 # second audit_pack.py sentinel render at 200 dpi — not off /Rect
 # y-coordinates (pitfall P-001: field dumps lie, pixels do not).
 # WHAT THE VISION AUDIT ACTUALLY CAUGHT (an audit that caught nothing is
-# suspicious — docs/CONTRIBUTING-PACKS.md step 6):
+# suspicious — docs/dev/CONTRIBUTING-PACKS.md step 6):
 #   1. Lines 9 and 10 do NOT live in the amount column. Their widgets f1_10 and
 #      f1_11 sit at x 410-482, in an INSET box left of the main column (which
 #      starts at x 504), because the printed row puts the "9"/"10" line-number

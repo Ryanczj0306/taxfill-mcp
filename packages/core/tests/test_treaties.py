@@ -28,7 +28,7 @@ re-derivation):
 * Pub 901 (Rev. September 2024): https://www.irs.gov/pub/irs-pdf/p901.pdf
   cross-checks every number above.
 
-Rule from docs/DEV_PLAN.md section 10: if the implementation disagrees with
+Rule from docs/dev/DEV_PLAN.md section 10: if the implementation disagrees with
 any published value below, the implementation is wrong — fix it, never the
 fixture.
 """

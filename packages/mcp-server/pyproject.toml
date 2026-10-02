@@ -17,7 +17,7 @@ dependencies = [
     "mcp>=1.2,<2",
     # Pin to the matching core release so `uvx taxfill-mcp` never resolves a
     # mismatched taxfill-core from PyPI. Keep in sync with the version bump
-    # (see docs/PUBLISHING.md).
+    # (see docs/dev/PUBLISHING.md).
     "taxfill-core==0.1.0",
 ]
 

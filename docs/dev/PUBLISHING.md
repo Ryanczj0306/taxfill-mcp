@@ -29,10 +29,16 @@ Set the same version in both packages (they release together):
 - `packages/core/src/taxfill_core/__init__.py` → `__version__`
 - `packages/mcp-server/src/taxfill_mcp/__init__.py` → `__version__`
 
-For the first real release, drop the `.dev0` suffix → `0.1.0`. Also flip the
-"not yet published to PyPI" notes in both package `README.md`s and
-`packages/mcp-server/README.md`'s quickstart from the source-checkout form to
-`uvx taxfill-mcp`, and the status lines in the root `pyproject.toml`.
+For the first real release, drop the `.dev0` suffix → `0.1.0`. Also flip every
+pre-release note to the published form (`uvx taxfill-mcp`, the `.mcpb` bundle,
+a bare `taxfill` on PATH): the root README's Quickstart callout and connect
+steps; docs/USER_GUIDE.md ("Install and connect", "Coming with v0.1", the
+`uv run … taxfill purge` lines and the FAQ "What isn't supported yet?");
+docs/TOOLS.md's `uv run taxfill` CLI note; the "not yet published to PyPI"
+notes in both package `README.md`s and `packages/mcp-server/README.md`'s
+quickstart; the "Project status" line in .github/CONTRIBUTING.md; the "Until
+then" section of packages/mcp-server/bundle/README.md; and the status lines in
+the root `pyproject.toml`.
 
 **Re-read the four PyPI-immutable surfaces before every upload** — once a
 version is on PyPI they cannot be corrected without a new version number:
@@ -115,14 +121,14 @@ git tag -a v0.1.0 -m "TaxFill v0.1.0" && git push origin v0.1.0
 
 ## 6. Build the MCPB bundle (publish-gated)
 
-Now that `uvx taxfill-mcp` works, follow [`bundle/README.md`](../bundle/README.md):
+Now that `uvx taxfill-mcp` works, follow [`packages/mcp-server/bundle/README.md`](../../packages/mcp-server/bundle/README.md):
 
 ```bash
-cd bundle
+cd packages/mcp-server/bundle
 mcpb validate && mcpb pack   # manifest.json already finalized — just validate + pack -> taxfill.mcpb
 ```
 
-`bundle/manifest.json` is already finalized and **passes `mcpb validate`** against
+`packages/mcp-server/bundle/manifest.json` is already finalized and **passes `mcpb validate`** against
 the current CLI schema (v0.2): the `$schema_note` draft marker was dropped,
 `server.entry_point` added, and the `permissions` block removed (the v0.2/v0.3
 schema has no permissions field — Claude Desktop prompts for file/network consent
@@ -137,7 +143,7 @@ path the README references.
 
 - [ ] `uvx taxfill-mcp` works on a machine that never had the repo.
 - [ ] One-click `.mcpb` installs in Claude Desktop and the tools appear.
-- [ ] README quickstart no longer says "not yet published".
+- [ ] No pre-release wording is left: `grep -rn -i "not on PyPI yet\|not yet published\|coming with v0.1" README.md docs .github packages` is empty.
 - [ ] Tag pushed; GitHub release notes drafted.
 - [ ] A non-developer reaches a filled sample form in <20 min from the README
-      alone (the §13 acceptance test — see [`ACCEPTANCE.md`](ACCEPTANCE.md)).
+      and the user guide it links (the §13 acceptance test — see [`ACCEPTANCE.md`](ACCEPTANCE.md)).

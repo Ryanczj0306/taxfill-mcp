@@ -21,8 +21,7 @@ _WORKSHEET_EN = """\
 
 > **What this is.** A fill-in-the-blank worksheet a tax-inexperienced user can complete
 > *before* (or during) the agent interview, so the agent gets date-ranged facts instead of
-> one-word answers. Designed from the intake gaps N-1/N-2/N-3 recorded in
-> [`FIELD_NOTES.md`](FIELD_NOTES.md). Localizations:
+> one-word answers. Localizations:
 > [`INTAKE_WORKSHEET.zh-CN.md`](INTAKE_WORKSHEET.zh-CN.md). Both are emitted at runtime by
 > `intake_checklist` via `taxfill_core.worksheet` (this file is sync-tested against that
 > module).
@@ -211,8 +210,7 @@ _WORKSHEET_ZH_CN = """\
 # 报税情况自述表（中文 / zh-CN）
 
 > **这是什么？** 一份填空式自述表，给没有报税经验的人在 agent 访谈之前（或访谈过程中）填写，
-> 让 agent 拿到带日期段的事实，而不是一个词的回答。它依据 [`FIELD_NOTES.md`](FIELD_NOTES.md)
-> 里记录的 intake 缺口 N-1/N-2/N-3 设计。英文正式版见 [`INTAKE_WORKSHEET.md`](INTAKE_WORKSHEET.md)；
+> 让 agent 拿到带日期段的事实，而不是一个词的回答。英文正式版见 [`INTAKE_WORKSHEET.md`](INTAKE_WORKSHEET.md)；
 > 两个版本都由 `intake_checklist` 通过 `taxfill_core.worksheet` 在运行时生成（本文件是 zh-CN
 > 本地化版本，并与该模块做同步测试）。
 

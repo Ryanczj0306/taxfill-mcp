@@ -1,6 +1,6 @@
 # TaxFill — Completion Roadmap (remaining work)
 
-The design spec is [`docs/DEV_PLAN.md`](DEV_PLAN.md). This is the forward-looking
+The design spec is [`docs/dev/DEV_PLAN.md`](DEV_PLAN.md). This is the forward-looking
 plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 — see Phase J).
 
 > **Status note (2026-09-24).** Done: Phases 0, B, C1, C3, D1, E (except two boxes),
@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,382 tests** — offline 7,456 + live-.gov 926; derived
+Done and on `main` (**8,384 tests** — offline 7,458 + live-.gov 926; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -123,14 +123,14 @@ decision (Phase J JD2.3).
 
 ## History
 
-The completed phases — 0, E, F, G and I — moved VERBATIM to [`docs/HISTORY.md`](HISTORY.md) on 2026-09-28 (Phase J JD2), so this file carries the open work. Their cross-references ("see Phase G", tranche ids) resolve there. Phases C, D and H stay here: each still has a box open under a Phase J tranche.
+The completed phases — 0, E, F, G and I — moved VERBATIM to [`docs/HISTORY.md`](HISTORY.md) (now `docs/dev/HISTORY.md`) on 2026-09-28 (Phase J JD2), so this file carries the open work. Their cross-references ("see Phase G", tranche ids) resolve there. Phases C, D and H stay here: each still has a box open under a Phase J tranche.
 
 ## Phase A — Ship v0.1 (Effort: S–M, ~1–2 weeks; the real gate)
 
 > Nothing is installable by a normal user until this lands. **No code blockers** —
 > this is pure launch execution. The one external dependency is **maintainer PyPI
-> credentials**. Runbooks already written: [`docs/PUBLISHING.md`](PUBLISHING.md),
-> [`docs/ACCEPTANCE.md`](ACCEPTANCE.md), [`docs/DEMO.md`](DEMO.md).
+> credentials**. Runbooks already written: [`docs/dev/PUBLISHING.md`](PUBLISHING.md),
+> [`docs/dev/ACCEPTANCE.md`](ACCEPTANCE.md), [`docs/dev/DEMO.md`](DEMO.md).
 
 - [ ] **A1 — Publish `taxfill-mcp` (+ `taxfill-core`) to PyPI.** **Verified
       PyPI-ready (re-verified 2026-06-29):** data re-staged and both packages rebuilt
@@ -163,9 +163,9 @@ The completed phases — 0, E, F, G and I — moved VERBATIM to [`docs/HISTORY.m
       → `taxfill.mcpb` remains, and it is **publish-gated** (the bundle launches
       `uvx taxfill-mcp`, which only resolves after A1). Primary path for non-technical
       Claude Desktop users.
-- [ ] **A4 — Record the 60-second demo GIF** → Phase J **JA1** (agent half) / **JA2** (user half). per `docs/DEMO.md` (storyboard +
+- [ ] **A4 — Record the 60-second demo GIF** → Phase J **JA1** (agent half) / **JA2** (user half). per `docs/dev/DEMO.md` (storyboard +
       6 beats already written) → `docs/media/demo.gif`; embed in README.
-- [ ] **A5 — Run the 20-minute non-developer acceptance test** → Phase J **JA1** (agent half) / **JA2** (user half). (`docs/ACCEPTANCE.md`)
+- [ ] **A5 — Run the 20-minute non-developer acceptance test** → Phase J **JA1** (agent half) / **JA2** (user half). (`docs/dev/ACCEPTANCE.md`)
       on a clean machine; fix whatever blocks a non-technical user.
 - [ ] **A6 — Flip README** → Phase J **JA1** (agent half) / **JA2** (user half). "not yet on PyPI / bundle coming" language to shipped.
 
@@ -335,7 +335,7 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       the provisional 2026 planning pack shipped 2026-08-04).
       **Remaining:** (a) the rest of the 2024→2025 **state form pack** tranche — 46
       packs/year. The pipeline half is ready (2026-08-10):
-      `scripts/scaffold_state_year.py` + `docs/CONTRIBUTING-PACKS.md`.
+      `scripts/scaffold_state_year.py` + `docs/dev/CONTRIBUTING-PACKS.md`.
       ⚠️ **Correction (2026-08-11):** the "39 of 46 URLs derivable" figure was
       string derivation only and NEVER PROBED — it over-reported by ~2×. The
       script now has `--triage`, which downloads each candidate and diffs the
@@ -402,7 +402,7 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       jurisdictions now resolve `get_sources(topic, year, 'states/xx')` with
       state-shaped retrieval hints, unblocking state TY2026 planning packs.
 - [x] Community pack-contribution pipeline — **DONE 2026-08-10**:
-      [`docs/CONTRIBUTING-PACKS.md`](CONTRIBUTING-PACKS.md) documents the full
+      [`docs/dev/CONTRIBUTING-PACKS.md`](CONTRIBUTING-PACKS.md) documents the full
       author→audit→PR flow (fetch+digest, `taxfill introspect`, vision field-map,
       adversarial audit, golden test, gates-on-the-exact-tree), and
       `scripts/scaffold_state_year.py` turns a year tranche into a managed
@@ -467,7 +467,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       deliberately year-aware because the pre-2025 rule reached further). An
       employer state whose pack carries the block gets the state's actual cited
       rule; anywhere else stays the generic verify-at-DOR fallback.)* The worksheet is canonical ENGLISH in
-      [`INTAKE_WORKSHEET.md`](INTAKE_WORKSHEET.md), shipped inside the wheel as
+      [`INTAKE_WORKSHEET.md`](../INTAKE_WORKSHEET.md), shipped inside the wheel as
       `taxfill_core.worksheet` (zh-CN alongside, both sync-tested byte-for-byte)
       and emitted by `intake_checklist` on the start state. Also landed with the
       tranche: `retirement_contributions` (the N-11 Roth/pre-tax deferral split,
@@ -599,7 +599,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
         on a provisional pack, and each outcome carries its missing_blocks —
         a silent cross-year diff was exactly the $2,126 credit-drop trap.
       * Tool count 22 → 23, flipped at every gate (EXPECTED_TOOLS + the
-        exactly-N test, test_cli, ci.yml packaging, bundle/manifest.json —
+        exactly-N test, test_cli, ci.yml packaging, packages/mcp-server/bundle/manifest.json —
         whose stale 17-op calc description got trued up to 25 in passing —
         README, ROADMAP, all three skills).
 - [x] **H8 — tax-advantaged account knowledge — DONE 2026-08-10** (N-10, N-11,
@@ -1344,10 +1344,10 @@ line items sum to the headline delta.
     - A dummy draft pack passes the golden test in rehearsal mode; MCP fill_form still refuses 2026.
     - The invariant fails on a draft pack in a non-provisional year.
 - [x] **JT0b — Planning-year fixtures — DONE 2026-09-27** (M; deps JT0a) [TY26-02]
-  - *As built:* a root `conftest.py` with `planning_year` (the newest provisional federal year; skips when none) and `synthetic_provisional_pack` (`make(strip)` → a tmp knowledge copy whose planning pack has the named blocks removed and declared absent). Rewritten to behaviour: evals i2 (every declared-absent block is absent; the blocks a projection needs ship; second_passes resolve; removal_blockers names what keeps the marker on), i3 (the refusal names every absent block and what is still assumed), i4, i5 (a stripped `credits` block names the CTC NOT ESTIMATED); test_estimate_ledger's missing-blocks twin; test_schedule_1a's deliberately-absent refusal (a stripped `obbba_schedule_1a`); test_compare_scenarios' cross-year label. test_projection_ops' 2023 FICA refusal is a past-year pin (the 2023 pack predates the Medicare fields), not a planning-year one, and stays.
+  - *As built:* a shared `conftest.py` (now `packages/conftest.py`) with `planning_year` (the newest provisional federal year; skips when none) and `synthetic_provisional_pack` (`make(strip)` → a tmp knowledge copy whose planning pack has the named blocks removed and declared absent). Rewritten to behaviour: evals i2 (every declared-absent block is absent; the blocks a projection needs ship; second_passes resolve; removal_blockers names what keeps the marker on), i3 (the refusal names every absent block and what is still assumed), i4, i5 (a stripped `credits` block names the CTC NOT ESTIMATED); test_estimate_ledger's missing-blocks twin; test_schedule_1a's deliberately-absent refusal (a stripped `obbba_schedule_1a`); test_compare_scenarios' cross-year label. test_projection_ops' 2023 FICA refusal is a past-year pin (the 2023 pack predates the Medicare fields), not a planning-year one, and stays.
   - A `planning_year` conftest fixture returns the newest provisional federal year and skips when there is none.
   - A `synthetic_provisional_pack` fixture makes a tmp copy with named blocks stripped.
-  - Rewrite the absent-block assertions to test behaviour, not today's contents of 2026.yaml: evals/test_scenarios.py:237, :261, :273-281, :307, :340-360; test_estimate_ledger.py:176-189; test_schedule_1a.py:174-176; test_compare_scenarios.py:84-89; test_projection_ops.py:197.
+  - Rewrite the absent-block assertions to test behaviour, not today's contents of 2026.yaml: packages/core/tests/evals/test_scenarios.py:237, :261, :273-281, :307, :340-360; test_estimate_ledger.py:176-189; test_schedule_1a.py:174-176; test_compare_scenarios.py:84-89; test_projection_ops.py:197.
   - **Acceptance:** the suite is green, and it stays green when a 2026 block is added to a scratch copy.
 - [x] **JT0c — Finals watch, red-quarantine, the 1040-ES voucher, the 2026 header — DONE 2026-09-27** (M; deps JT0a) [TY26-04 + G22(3) + TY26-22 + TY26-30]
   - *As built:*
@@ -2015,9 +2015,9 @@ line items sum to the headline delta.
   2. **PUBLISHING runbook** [G17].
      - Its smoke test asserts 22 tools (:83); ci.yml:111 says 23.
      - The `.dev0` step is obsolete: all four version sites read 0.1.0. Reintroduce 0.1.0.dev0 on main.
-     - bundle/README cites a snippet that does not exist → write scripts/gen_manifest_tools.py plus an equality test.
+     - packages/mcp-server/bundle/README cites a snippet that does not exist → write scripts/gen_manifest_tools.py plus an equality test.
      - Add the mcp<2 decision (2.2.0 is the latest release; 1.30.0 the latest 1.x) and a CHANGELOG step.
-  3. **Sample W-2** [G19]. ACCEPTANCE and DEMO use "the bundled SAMPLE W-2", which does not exist. Generate docs/samples/w2_2023_synthetic.{png,pdf} with scripts/make_sample_w2.py: SSN 999-88-xxxx, a SAMPLE watermark, and the README walkthrough figures.
+  3. **Sample W-2** [G19]. ACCEPTANCE and DEMO use "the bundled SAMPLE W-2", which does not exist. Generate docs/samples/w2_2023_synthetic.{png,pdf} with scripts/make_sample_w2.py: SSN 999-88-xxxx, a SAMPLE watermark, and the walkthrough figures in docs/USER_GUIDE.md ("Your first return in ~15 minutes").
   4. **CI packaging set** [G26]. The smoke check hard-codes a pre-Phase-G set (ci.yml:104-105). Derive the counts from the repo and compare against data_root() / list_forms().
   5. **.mcpb runtime** [G18; unverified]. The bundle launches `uvx`. Prototype mcpb v0.4 `server.type: "uv"`, test it on a machine without uv, else document uv as step 0. Add `mcpb validate` to CI.
   6. **Release workflow** [G20, agent part]. release.yml with Trusted Publishing on tag v*: build, twine check, clean-venv smoke, publish core then mcp, GitHub release from CHANGELOG. Add CHANGELOG.md, and re-stage `_data` before building.
@@ -2087,7 +2087,7 @@ line items sum to the headline delta.
     - **(2)** load_pack memoizes on (path, mtime, size) and hands every caller a deep copy (parse 65 ms vs copy 3 ms on MO-1040). list_forms narrows its glob to `<jurisdiction>/<year>/`.
       - list_forms('federal', 2025): 3.0 s → 13 ms warm (0.38 s cold), with a perf guard.
       - pytest-xdist is a dev dependency, and CI runs the offline suite with `-n auto`: locally 9.5 min on `-n 10`, beside another suite (single-process ~25 min).
-    - **(5)** the completed phases (0, E, F, G, I) moved verbatim to docs/HISTORY.md, and every open box names its Phase J tranche (26 boxes, test_every_open_roadmap_box_names_its_tranche). Closed on the way: Phase E's SSN-maxlen box (JEa); A2–A6 now point at JA1/JA2.
+    - **(5)** the completed phases (0, E, F, G, I) moved verbatim to docs/HISTORY.md (now docs/dev/HISTORY.md), and every open box names its Phase J tranche (26 boxes, test_every_open_roadmap_box_names_its_tranche). Closed on the way: Phase E's SSN-maxlen box (JEa); A2–A6 now point at JA1/JA2.
     - **(4, local half)** the 17 merged local branches are pruned (`git branch -d`).
     - **(4) done 2026-09-28.** The parked `phase-j2-overlay` is recorded as merged (8945e30, `-s ours`; its code landed by hand in JS4a) and deleted, with the user's OK. `git fetch --prune` shows the 10 remote duplicates are already gone, so `git branch -r --no-merged origin/main` is empty. No stray worktree is left.
   - **Waiting on the user:**
@@ -2097,8 +2097,8 @@ line items sum to the headline delta.
      - Pre-filter by path and memoize load_pack on (path, mtime).
      - Run pytest-xdist `-n auto` in CI, keeping the property tests seed-deterministic.
   3. **The real merge gate** [G07]. Record the real gate, or enable branch protection — the user's decision.
-  4. **Git hygiene** [G27]. Prune the 17 merged local branches, the 10 remote duplicates (all patch-equivalent to main) and the /private/tmp worktree. Remote deletes need the user's OK.
-  5. **ROADMAP shape** [G33]. Split it into OPEN WORK and docs/HISTORY.md, and add a CI check that every open box names its tranche.
+  4. **Git hygiene** [G27]. Prune the 17 merged local branches, the 10 remote duplicates (all patch-equivalent to main) and a stale temporary worktree. Remote deletes need the user's OK.
+  5. **ROADMAP shape** [G33]. Split it into OPEN WORK and docs/HISTORY.md (now docs/dev/HISTORY.md), and add a CI check that every open box names its tranche.
   - **Acceptance.**
     - `sync_doc_counts --check` runs in CI.
     - `list_forms('federal', 2025)` < 0.3 s (perf guard).

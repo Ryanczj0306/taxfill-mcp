@@ -1,4 +1,4 @@
-"""Keep bundle/manifest.json's tool list equal to the runtime (Phase J JD1).
+"""Keep packages/mcp-server/bundle/manifest.json's tool list equal to the runtime (Phase J JD1).
 
 The manifest's `tools` entries are what a one-click install shows before the server ever runs, so they drift
 silently: until JD1 the calc entry said "32 ops" and named none of the six ops added since, and
@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-MANIFEST = REPO / "bundle" / "manifest.json"
+MANIFEST = REPO / "packages" / "mcp-server" / "bundle" / "manifest.json"
 SERVER = REPO / "packages" / "mcp-server" / "src" / "taxfill_mcp" / "server.py"
 
 
@@ -38,14 +38,14 @@ def main(argv: list[str]) -> int:
     calc = next(t for t in manifest["tools"] if t["name"] == "calc")
     want = calc_description(runtime_ops())
     if calc["description"] == want:
-        print("bundle/manifest.json calc entry is current")
+        print("packages/mcp-server/bundle/manifest.json calc entry is current")
         return 0
     if "--write" not in argv:
-        print("bundle/manifest.json calc entry is stale — run with --write")
+        print("packages/mcp-server/bundle/manifest.json calc entry is stale — run with --write")
         return 1
     calc["description"] = want
     MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
-    print("bundle/manifest.json calc entry rewritten")
+    print("packages/mcp-server/bundle/manifest.json calc entry rewritten")
     return 0
 
 

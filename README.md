@@ -1,284 +1,115 @@
 # taxfill-mcp
 
-**The execution layer for AI tax prep — agents think, taxfill fills, verifies, and gets it mailed.**
+**Your AI assistant prepares a paper U.S. tax return: taxfill fills the official PDFs, verifies every number, and tells you exactly how to sign and mail it.**
 
 ![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange)
-![Spec: complete](https://img.shields.io/badge/spec-complete-blue)
-![v0.1: in development](https://img.shields.io/badge/v0.1-in%20development-yellow)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 8,382 passing](https://img.shields.io/badge/tests-8%2C382%20passing-brightgreen)
+![Tests: 8,384 passing](https://img.shields.io/badge/tests-8%2C384%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> **Project status: pre-release, runnable from source.** The core engine, the federal form packs (2019–2025, incl. the OBBBA-year TY2025 set), the guided-intake/knowledge layer, knowledge packs for all 50 states + DC and resident form packs for all 42 income-tax jurisdictions, and the MCP server all work today and are covered by 8,382 tests. You can run it now from a source checkout (see [Quickstart](#quickstart)). It is **not yet on PyPI**, so the one-line `uvx` install and the one-click `.mcpb` bundle are still coming. The full spec — the single source of truth — lives at [`docs/DEV_PLAN.md`](docs/DEV_PLAN.md). Star/watch the repo to follow along.
+> [!WARNING]
+> taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**: you check
+> every number, sign every form, and file the return yourself. It does **not** e-file (paper print-and-mail, by design).
+> MIT licensed, provided as-is **with no warranty**.
 
-> ### ⚠️ Disclaimer
-> taxfill-mcp is **not tax advice** and **not a tax preparer**. Everything it produces is a **review draft**. You — the human — review every number, sign every form, and file every return yourself. It does **not** e-file (paper print-and-mail, by design). Provided as-is under the MIT license, **with no warranty** of any kind.
+## What it does
 
----
+The AI interviews and reasons with you; taxfill does the arithmetic, PDF field mechanics, consistency checks and filing logistics.
 
-## What this is (and is not)
-
-**It is:**
-
-- **Free and open source** (MIT).
-- **Runs entirely on your computer.** No cloud, no accounts, no telemetry.
-- A set of MCP tools that give any AI agent (Claude Desktop/Cowork, Claude Code, Copilot, Codex CLI, ...) a guided tax interview, deterministic PDF form filling, a mandatory verification gate, and a personalized print-sign-mail-pay checklist.
-- A pile of **versioned form and jurisdiction knowledge** (field maps, math relations, mailing addresses, state rules) shipped as data, so agents stop rediscovering it every session.
-
-**It is not:**
-
-- A tax preparer or a tax-advice engine. The agent and the user decide positions; the server validates mechanics.
-- An e-filing service. Output is a paper return you print, sign, and mail — by design.
-- A guarantee of correctness. Every output is a draft for **your** review.
-
-### Who it's for
-
-Tax prep with an LLM agent works well today only when an expert checks every step. taxfill-mcp turns that expertise into infrastructure: structured intake, deterministic filling, automated verification, and filing logistics that **any** MCP-capable agent can use, for anyone who has tax documents and an AI assistant.
-
----
-
-## How it works
-
-The agent walks you through nine steps. Progress lives in a resumable local workspace, so you can stop and pick up days later (real filings take time while you hunt for documents):
-
-```
-INTAKE → EXTRACT & CONFIRM → ESTIMATE & ROADMAP ↺ → RESIDENCY & SCOPE → POSITIONS → FILL → VERIFY → SUMMARY → FILE & PAY
-```
-
-1. **Intake** — a guided interview. The server tells the agent exactly what to ask and which documents to collect; you answer in chat and snap photos of your tax docs.
-2. **Extract & confirm** — the agent reads each document (its vision does the reading; `extract_document` structures and validates the reading) into a table of values, each with a record of where it came from. You confirm the table before anything gets filled. Hard rule: **unknown values stay blank** — nothing is ever invented.
-3. **Estimate & roadmap** — as soon as your first W-2/1099 is confirmed, you get a preliminary refund/owed **range** with its assumptions stated, plus a personalized roadmap (which forms, which documents are still missing). It is refreshed after every later step — with "what changed" — until it converges to the exact summary number. Always labeled ESTIMATE, never fake precision.
-4. **Residency & scope** — computes your federal residency status (resident / nonresident / dual-status) and which states you owe a return to, producing the exact list of forms you need.
-5. **Positions** — you and the agent decide elections, treaty articles, filing status (including married-filing-jointly vs separately), and credits. The agent records every decision and its legal authority in a `RECONCILIATION.md` — your audit trail.
-6. **Fill** — deterministic, field-map-driven PDF filling. No hand-rolled scripts.
-7. **Verify** — a mandatory gate: math checks, cross-form consistency, clipped-text scans, and a visual review of every rendered page. Loops until zero issues.
-8. **Summary** — bottom line first, in plain language: *"Federal 2025: refund $1,250. Federal 2024: you owe $380, plus a late penalty the IRS will bill separately."* (a hypothetical nonresident student with one back year; demo numbers) You approve before anything is printed.
-9. **File & pay** — a personalized checklist: how to pay, where to sign, how to assemble each envelope, where to mail it (certified mail walkthrough included), and what mail to expect afterward.
-
-### Why agents need this
-
-LLMs can already do high-quality tax reasoning. What they lack — and what taxfill provides — is everything around the reasoning:
-
-1. **Guided intake** — users don't know what to provide; agents ask ad-hoc.
-2. **A reliable execution layer** — hand-rolled PDF scripts vary in quality every session.
-3. **Verification discipline** — math checks, cross-form consistency, and render reviews get re-invented (or skipped) each time.
-4. **Persistent form knowledge** — field names, comb-cell limits, checkbox quirks, and mailing addresses should be versioned data, not rediscovered facts.
-5. **Filing logistics** — payment, signatures, envelope assembly, and mailing are where users fail at the last mile.
-6. **Trustworthy arithmetic** — nobody should trust LLM mental math on a tax return, and they shouldn't have to: every number comes from a deterministic calc engine over cited per-year data and is independently recomputed at verification time. Precision is the product.
-
----
+- **Guided interview to filled forms.** Your MCP agent (Claude Code, Claude Desktop/Cowork, Copilot, Codex CLI) asks
+  the right questions, reads your W-2s and 1099s, and fills the official IRS and state PDFs. Unknown values stay blank; nothing is invented.
+- **Math you don't have to trust an LLM for.** Every number comes from a deterministic calc engine over cited, per-year
+  tax data and is recomputed independently at verify time. The mandatory verify gate checks math, cross-form consistency, clipped text, and every rendered page.
+- **The last mile, done.** A plain-language bottom line, then a personal pay / print / sign / mail checklist.
+- **Private and free.** taxfill runs on your computer and sends nothing about you anywhere: no cloud, no accounts, no
+  telemetry. Its only download is blank forms from the tax agencies' own sites (or an exact Internet Archive copy when a state
+  site blocks scripts), checksum-verified. Your AI assistant does see the documents and answers you give it, under its
+  provider's data policy; taxfill masks SSN-shaped values in its own error messages.
 
 ## Quickstart
 
-### Today — from a source checkout
+> **Pre-release:** runs from a source checkout. It is **not on PyPI yet**, so `uvx taxfill-mcp` and the one-click
+> `.mcpb` bundle are not available yet. Known gaps: [FAQ](docs/USER_GUIDE.md#faq).
 
-You need [`uv`](https://docs.astral.sh/uv/) (it bootstraps Python for you) and `git`.
+You need [`uv`](https://docs.astral.sh/uv/) (it installs Python for you) and `git`.
 
 ```bash
 git clone https://github.com/Ryanczj0306/taxfill-mcp
 cd taxfill-mcp
 uv sync                 # creates the venv, installs both packages
-uv run taxfill-mcp      # starts the stdio MCP server (Ctrl-C to stop)
+uv run taxfill tools    # smoke test: lists every tool (your agent starts the server itself)
 ```
 
-Then point your agent at it (use the **absolute path** to the checkout):
+Then connect your agent, using the **absolute path** to the checkout, and install the workflow skill so the agent
+follows taxfill's rules (you confirm every value before filling; the verify gate is mandatory):
 
-- **Claude Code:**
-
+- **Claude Code** — add the server for every project, then install the skill:
   ```bash
-  claude mcp add taxfill -- uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill-mcp
+  claude mcp add --scope user taxfill -- uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill-mcp
+  mkdir -p ~/.claude/skills/taxfill && cp skills/claude/SKILL.md ~/.claude/skills/taxfill/
   ```
 
-- **Claude Desktop / Cowork** — add to the MCP servers config:
-
+- **Claude Desktop / Cowork** — merge this into the `mcpServers` object of `claude_desktop_config.json` (Settings →
+  Developer → Edit Config) and restart the app; then, with code execution enabled, upload a ZIP of the `skills/claude`
+  folder as a skill ([how](https://support.claude.com/en/articles/12512180-use-skills-in-claude)):
   ```json
   { "mcpServers": { "taxfill": {
       "command": "uv",
       "args": ["run", "--project", "/ABSOLUTE/PATH/TO/taxfill-mcp", "taxfill-mcp"] } } }
   ```
 
-- **Copilot / Codex CLI** — point their MCP config at the same `uv run … taxfill-mcp` command, and paste the matching skill file ([`skills/codex/AGENTS.md`](skills/codex/AGENTS.md) or [`skills/copilot/instructions.md`](skills/copilot/instructions.md)) so the agent knows the workflow. Claude clients pick up [`skills/claude/SKILL.md`](skills/claude/SKILL.md).
+- **Codex CLI / Copilot** — put the same `uv run … taxfill-mcp` command in their MCP config, and copy the matching
+  instructions where the agent reads them: [`skills/codex/AGENTS.md`](skills/codex/AGENTS.md) into the folder you run
+  Codex from (or `~/.codex/AGENTS.md`), or [`skills/copilot/instructions.md`](skills/copilot/instructions.md) to
+  `.github/copilot-instructions.md` in your workspace.
 
-### Coming with v0.1 (once published to PyPI)
+Then ask your agent: *"Help me prepare my 2025 federal return."* Filling in the
+[intake worksheet](docs/INTAKE_WORKSHEET.md) first makes the interview faster.
 
-- **Claude Desktop / Cowork** — one-click MCPB bundle (`taxfill.mcpb`): download, double-click, done. The primary path for non-technical users.
-- **Claude Code:** `claude mcp add taxfill -- uvx taxfill-mcp` (`uvx` bootstraps Python; no checkout needed).
+Tools not showing up? Check that the path is absolute and fully restart the client; if Claude Desktop reports
+`spawn uv ENOENT`, set `"command"` to the full path printed by `which uv`. More: [troubleshooting](docs/USER_GUIDE.md#troubleshooting).
 
-A 60-second demo GIF lands with v0.1.
-
----
-
-## What to prepare
-
-Snap a clear photo (or PDF) of each document you have — all four corners in frame, no glare. The interview tells you exactly which ones apply to you; a typical set:
-
-- **Identity:** SSN or ITIN; your **current** mailing address (where you get mail *today*).
-- **Income:** every **W-2**, and any **1099** (NEC for self-employment, INT/DIV for bank/brokerage, B for sales), **1098-T** (tuition), **K-1**.
-- **If you're on a visa (F/J/H/L/…):** passport ID page, visa, **I-94** travel history, and **I-20** (F-1) or **DS-2019** (J-1).
-- **For a refund or to pay electronically:** a check or your bank's routing + account numbers.
-- **Back-filing:** which years you've filed before, and anything you already paid.
-
-The agent confirms each extracted value with you before it touches a form, and anything missing is reported as a gap — never guessed.
-
-## Your first return in ~15 minutes
-
-An abbreviated, synthetic walkthrough (a hypothetical filer with demo numbers: simple W-2, single, 2023):
-
-> **You:** I need to file my 2023 federal taxes. I have one W-2.
->
-> **Agent:** *(calls `intake_checklist`)* Let's start. What's your full legal name and SSN? Are you a U.S. citizen or green-card holder? And your **current** mailing address — where you receive mail *today*, not where you lived in 2023?
->
-> **You:** *(answers; uploads a photo of the W-2)*
->
-> **Agent:** From your W-2 I read **wages $52,000** and **federal tax withheld $5,400** — can you confirm those two numbers? *(you confirm)* *(calls `estimate_refund`)* Preliminary **ESTIMATE: a refund of about $1,039** — assuming single, standard deduction, no other income or credits. I'll tighten it as we go.
->
-> **Agent:** *(calls `calc`, `fill_form` for Form 1040, then `verify_form`)* Filled and verified — all math checks pass. *(calls `render_form`)* Here are your pages — please look them over. *(shows images)*
->
-> **Agent:** *(calls `filing_summary`)* **Bottom line — Federal 2023: refund $1,039**, because your employer withheld more than you owe. The refund-claim deadline is around 2027-04-15. Approve and I'll prepare the mailing checklist?
->
-> **You:** Approved.
->
-> **Agent:** *(calls `file_and_pay`)* Print only the form pages (not the instructions), single-sided; sign and date the return in ink; attach your W-2; and mail to **Ogden, UT 84201-0002** (California, refund). Photograph the signed pages and keep a copy. Done — you review, sign, and mail it yourself.
-
-## Troubleshooting
-
-- **`uv: command not found`** — install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh` (macOS/Linux) or see the [uv docs](https://docs.astral.sh/uv/). It bootstraps Python; you don't install Python yourself.
-- **Permission prompts on first run** — your OS may ask to allow network access (only for downloading blank forms from irs.gov) and file access (the folder where filled PDFs are written). Both are expected.
-- **The client doesn't see the `taxfill` tools** — make sure the MCP command uses the **absolute** path to the checkout (`uv run --project /ABS/PATH …`), then fully restart the client. `uv run taxfill-mcp` should start without errors in that folder.
-- **Where are my filled PDFs?** — wherever you (or the agent) set `out_path` in `fill_form`. Ask the agent to use a folder you can find, e.g. `~/Documents/taxes-2023/`.
-- **How do I resume later?** — progress can persist to a local workspace: the agent saves your profile and decisions (`workspace_save` / `workspace_record_position`) and resumes them in a later session with `workspace_load`, so you can stop and pick up days later. Wipe it any time with `taxfill purge <year>`.
-
----
-
-## Architecture
+## How a session works
 
 ```
-taxfill/
-├── packages/
-│   ├── core/          # pure Python: workspace, intake, residency, fill, verify, render, calc
-│   └── mcp-server/    # thin MCP wrapper (official python-sdk, stdio)
-├── formpacks/         # per-form data: federal/2023/f1040, states/ca/2023/form540nr, ...
-├── knowledge/         # jurisdiction knowledge as DATA: thresholds, credits, mailing addresses
-├── skills/            # workflow skills for Claude / Codex / Copilot
-├── evals/             # synthetic scenarios + expected line values
-└── docs/
+INTAKE → EXTRACT & CONFIRM → ESTIMATE & ROADMAP → RESIDENCY & SCOPE → POSITIONS → FILL → VERIFY → SUMMARY → FILE & PAY
 ```
 
-**Key principle:** the engine is jurisdiction- and form-agnostic. Federal and state forms use the same `pack.yaml` schema, so state coverage grows by **adding data packs, never by changing engine code**. Blank PDFs are downloaded at runtime from official .gov URLs and checksum-verified — never vendored in the repo.
+You confirm every extracted value before filling and approve the summary before printing. Each position you take is
+recorded with its authority in `RECONCILIATION.md`, your audit trail. Progress is saved in a local workspace
+(`~/taxfill-workspace/<year>/`), so you can resume days later.
 
----
+## What it covers
 
-## MCP tool surface
-
-All 23 tools are available today (from source); the server registers exactly 23 (CI-asserted).
-
-| Tool | Purpose |
+| | Coverage |
 |---|---|
-| `intake_checklist` | Next interview questions + required documents |
-| `list_document_kinds` | The supported tax-document types and their official box layouts — read this before `extract_document` |
-| `extract_document` | Structure + validate your reading of a W-2/1099/1098/1042-S/etc. into provenance-tagged fields |
-| `residency` | Federal NRA/RA/dual-status via the Substantial Presence Test, work shown |
-| `state_scope` | Which states to file, in what role, with which forms and candidate benefits |
-| `list_forms` / `get_form_map` | Discover form packs; line-to-field maps + math relations |
-| `fetch_blank` | Download the official blank PDF, checksum-verify |
-| `fill_form` | Deterministic fill; comb/format handling; rejects unknown lines |
-| `verify_form` / `verify_filing` | Assertion diffs, relation math, clipping scan, checkbox audit, cross-form consistency |
-| `render_form` | Page PNGs returned as MCP image content for agent vision review |
-| `calc` | Deterministic tax math — 40 ops (`calc(op, args)`). Tax computation: `tax`, `tax_with_preferential_rates`, `standard_deduction`, `se_tax`, `additional_medicare_tax`, `niit`, `taxable_social_security`, `excess_ss`, `employee_fica`, `capital_loss_limitation`, `state_tax`; Credits and deductions: `child_tax_credit`, `eitc`, `dependent_care_credit`, `education_credits`, `ptc_annual`, `ptc_monthly`, `foreign_tax_credit_election`, `student_loan_interest_deduction`, `schedule_1a_deductions`, `charitable_deduction`, `hsa_deduction`, `treaty_benefit`, `claim_of_right_repayment`; Retirement and equity: `contribution_limits`, `elective_deferral_room`, `ira_contribution_eligibility`, `ira_pro_rata`, `ira_net_income_attributable`, `ira_recharacterization`, `roth_conversion`, `espp_disposition`; Planning and payments: `estimated_tax_safe_harbor`, `underpayment_penalty`, `withholding_projection`, `paystub_to_w2`, `annualize_ytd`, `marginal_dollar_savings`, `magi_ladder`, `foreign_asset_reporting` |
-| `estimate_refund` | Early refund/owed range from a partial profile, with composition and assumption list — labeled ESTIMATE for a closed year and PROJECTION for a planning year (a provisional pack, today TY2026) |
-| `compare_scenarios` | Two or more what-if scenarios diffed against the first, with an exact per-slot ledger and a sequential input walk that telescopes to the headline delta |
-| `get_sources` | Ranked official .gov sources per topic (freshness protocol) |
-| `filing_summary` | Plain-language bottom line per jurisdiction before printing |
-| `file_and_pay` | Personalized pay/print/sign/assemble/mail checklist |
-| `hand_fill_worksheet` | A line→value worksheet for the print-only state forms (CT, HI, NM, SC; WV for TY2025) and FinCEN Form 114, which have no fillable AcroForm |
-| `workspace_save` / `workspace_load` | Persist and resume the intake profile in the local workspace (`taxfill-workspace/<year>/`) |
-| `workspace_record_position` / `workspace_reconcile` | Record each decided position with its authority, then generate RECONCILIATION.md and CHECKLIST.md |
+| **Federal forms** | Form 1040 with its schedules and attachments for TY2023–2025, Form 1040-NR from TY2022, Form 8843 from TY2019 — 151 packs, including TY2026 planning drafts |
+| **Federal tax law** | 2019–2026 (2026 is planning-only) |
+| **State forms** | Resident returns for 27 of the 42 income-tax jurisdictions in TY2025, 23 in TY2024, all 42 in TY2023; separate nonresident returns for CA and NY — [check your state](docs/COVERAGE.md#state-forms) |
+| **Print-and-hand-fill** | 13 state-return worksheets for years whose form is not a fillable PDF (CT, HI, NM, SC; WV for 2025) — the values are stamped onto the official blank |
+| **FBAR** | A FinCEN Form 114 worksheet, for keying into FinCEN's BSA E-Filing System (the FBAR is e-filed, never mailed with the return) |
+| **State tax law** | All 50 states + DC, 2023–2025 |
+| **Documents read** | 29 tax-document kinds (W-2, 1099s, 1098s, 1042-S, …) |
 
-### Calling the tools from a shell (non-MCP agents)
+Most TY2026 forms are mapped from the IRS early-release drafts and fill in rehearsal mode only until the final forms
+post (the 2026 Form 1040-ES vouchers are final).
+Full form-by-year matrix: [docs/COVERAGE.md](docs/COVERAGE.md).
 
-An agent that can run a shell command but doesn't speak MCP (Codex CLI, a script,
-CI) can reach the **same tools** through the bundled `taxfill` CLI. It dispatches
-through the same FastMCP registry as the stdio server, so it always covers every
-tool with no extra wiring:
+## Read more
 
-```bash
-taxfill tools                         # discover: tool names + which args each takes
-taxfill tools --json                  # machine-readable (name, description, inputSchema)
+| If you want to… | Read |
+|---|---|
+| Gather your documents first | [Intake worksheet](docs/INTAKE_WORKSHEET.md) · [中文版](docs/INTAKE_WORKSHEET.zh-CN.md) |
+| See the nine steps, a sample return, troubleshooting, privacy, FAQ | [User guide](docs/USER_GUIDE.md) |
+| Look up the 23 MCP tools, the 40 calc ops, or the `taxfill` CLI for non-MCP agents | [Tools reference](docs/TOOLS.md) |
+| Browse all docs, including maintainer docs | [Docs index](docs/README.md) · [`docs/dev/`](docs/dev/) |
+| Contribute a form pack or state knowledge | [CONTRIBUTING](.github/CONTRIBUTING.md) · [Pack-authoring guide](docs/dev/CONTRIBUTING-PACKS.md) |
+| Report a security or privacy issue privately | [SECURITY](.github/SECURITY.md) |
 
-taxfill call list_forms '{"jurisdiction": "federal", "year": 2023}'
-echo '{"path": "w2.png", "kind": "W-2", "fields": {}}' | taxfill call extract_document --stdin
-taxfill call render_form '{"pdf_path": "filled.pdf", "pages": [1], "dpi": 150}' --out-dir ./pages
-```
-
-`call` prints the tool's structured result as JSON on stdout; `render_form`'s page
-images are written to files (their paths returned under `"images"`). A tool that
-raises exits non-zero with a JSON error on stderr — so shell agents can branch on
-the exit code.
-
-If a state host refuses every non-browser fetcher (HTTP 403), `fetch_blank` first tries the
-pack's `mirror_urls` — an exact Wayback snapshot of the official URL, used only when its
-bytes hash to the pinned digest. Failing that, save the PDF from a browser and seed it:
-`taxfill seed-blank saved.pdf --pack formpacks/states/ma/2023/form1/pack.yaml` (or
-`--url <source_url> --sha256 <pdf_sha256>`). The file is digest-checked before it is cached.
-
----
-
-## Privacy, in plain words
-
-- **Everything runs locally.** Your documents and SSN never leave your computer.
-- **The only internet access** is downloading blank tax forms from official .gov URLs (checksum-verified).
-- **No telemetry, no accounts, no uploads.** The tool keeps no logs of its own.
-- **Errors are redacted.** Identifier-shaped content (SSN/ITIN patterns, long digit runs) is masked before any error echoes a value — in the engine's own errors AND the CLI, because tool errors land in your agent's transcript.
-- **Your data lives in one place you own:** `~/taxfill-workspace/<year>/` (override with `TAXFILL_WORKSPACE`; an existing `./taxfill-workspace` from an earlier release keeps working). The saved profile, source documents and filled drafts are all under it — nothing is scattered into whatever directory the MCP client launched from.
-- Any documents you save locally hold sensitive data at rest — keep OS disk encryption on (FileVault / BitLocker).
-- The workspace can be wiped any time with a single `taxfill purge <year>`, which overwrites the file bytes before deleting (best-effort on copy-on-write filesystems/SSDs — see [SECURITY.md](SECURITY.md) for the honest caveat); also delete any files you saved yourself when you're done.
-- Found a way any of this fails? [SECURITY.md](SECURITY.md) has the private reporting channel.
-
----
-
-## Roadmap
-
-Milestones from the [dev plan](docs/DEV_PLAN.md) (§15):
-
-- [x] **M0 — Scaffold:** monorepo, pack & profile schemas, CI, license + disclaimer, CONTRIBUTING
-- [x] **M1 — Core engine:** formpack loader, filler, verifier, render, calc (data-driven tax tables, source-verified), residency (SPT + exempt years)
-- [x] **M2 — Federal packs:** **151 packs** — f8843 (2019–2026), f1040-NR + schedules (2022–2026), f1040 + schedules (2023–2026, incl. the OBBBA TY2025 set with the new Schedule 1-A and the TY2026 set mapped from the IRS early-release drafts — rehearsal-only until the finals post) — field-map + relation audits clean. Per year: 2019:1, 2020:1, 2021:1, 2022:5, 2023:35, 2024:35, 2025:37, 2026:36 (Forms 8606, 8889 and 8949 joined all three recent years in the 2026-08-26 Phase-I1/I2/I3 tranches; Forms 8833, 1116 and 8938 in the 2026-08-27 Phase-I4 tranche, which also added FinCEN Form 114 as a hand-fill worksheet because the FBAR is e-filed to FinCEN rather than attached to the return). The 2026-08 backfill closed the old year holes — the **f1040-NR chain now ships for 2024**, and the common attachments (Schedule D/E/SE, 8812, 8962, 2441, 8863, 8959, 8960, plus 843, 8316, W-7, 1040-X, 1040-ES, 4868, 2555, 5329) ship for **2023, 2024 and 2025**
-- [x] **M3 — Intake + knowledge:** profile schema, intake checklist, estimate_refund + roadmap, federal knowledge **2019–2026** (irs.gov-cited; 2026 ships `provisional: planning_only` — projection math only, not for filing), sources registry, filing summary, file & pay
-- [x] **M4 — MCP server:** stdio server, 23 tools, image content for renders, client quickstarts
-- [x] **M5 — State support:** resident return packs for all **42 income-tax jurisdictions** (41 states + DC) — 38 via fillable AcroForm (**87** state `pack.yaml` in total) plus **4 via print/hand-fill** (CT, HI, NM, SC). Per year: **TY2023 42** (the full resident sweep: CA 540/540NR + both Schedule CAs, NY IT-201/IT-203, and 34 more), **TY2024 20** (AR1000F, AZ 140, IL-1040, MO-1040, NC D-400, ND-1, NJ-1040, NY IT-201/IT-203, OH IT 1040, OR-40, PA-40, RI-1040, UT TC-40, VA 760, DC D-40, KY 740, LA IT-540, ID Form 40), **TY2025 25** (AR1000F, AZ 140, NY IT-201/IT-203, OR-40, PA-40, UT TC-40, DC D-40, KY 740). Knowledge packs for all 50 states + DC with cited credits and typed `tax` blocks: **2023 42/42, 2024 42/42, 2025 42/42** (RI 2025 closed the cohort 2026-08-07). No-income-tax states; state scoping. **30 of the 42 jurisdictions now fill a post-2023 year** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA); for the other 12, 2024/2025 returns can be *computed* from the knowledge packs but not yet *filled*
-- [~] **M6 — Skill + README + launch:** ✅ agent skills with cookbook, ✅ eval harness, ✅ this README, ✅ self-contained packaging + drift CI; remaining: `.mcpb` bundle, demo GIF, PyPI publish
-- [~] **M7 — Scale-out:** ✅ pack-authoring CLI (`taxfill introspect`), ✅ document extraction (`extract_document`), ✅ persistent workspace + `taxfill purge`, ✅ Schedule SE/D/E + Form 8863/2555 via the introspect pipeline, ✅ extensions (Form 4868), ✅ estimated-tax vouchers (Form 1040-ES), ✅ amended returns (Form 1040-X), ✅ ITIN application (Form W-7), ✅ the hard-to-source states (CT/IA/MA/NM/SC/UT — all shipped 2026-07-24); remaining: nonresident/part-year forms beyond CA & NY, and more tax years for **state form** packs — the 2026-08-21 / 2026-08-25 tranches and Phase J JS3b took 30 jurisdictions (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) past TY2023, so the remaining 12 still fill TY2023 only (knowledge already spans 2023–2025)
-
----
-
-## FAQ
-
-**Is this legal?**
-Yes. You are preparing and filing your own return — the same thing you'd do with pen and paper, with an AI assistant and verification tooling helping. taxfill is not a paid preparer and never signs anything; you do.
-
-**What if I already filed?**
-v0.1 targets original returns (including late back-filing). Amended returns ship too: Form 1040-X Rev. 2-2024 for TY2023–2024, Rev. 12-2025 for TY2025, and the Rev. 12-2026 draft for TY2026 (rehearsal-only until the final posts).
-
-**What if I get audited?**
-The agent records every position decision and its cited authority in a `RECONCILIATION.md` — a line-by-line audit trail of what was claimed and why, which is exactly what you want to have on hand. (The skill instructs the agent to maintain it as you go.)
-
-**Does it e-file?**
-No, by design. Output is a paper return: you print it, sign it, and mail it (the file & pay checklist walks you through certified mail). Paper filing keeps a human signature and review in the loop for every return.
-
-**How much does it cost?**
-Free. Open source, MIT licensed, runs on your own machine.
-
----
-
-## Contributing
-
-Contributions are welcome — especially form packs and state knowledge. See [CONTRIBUTING.md](CONTRIBUTING.md) for the pack-authoring guide and the pitfall-registry rule: every bug fix must ship with a permanent verifier rule and a regression test.
+**Repo layout:** `packages/core` (pure-Python engine) · `packages/mcp-server` (thin MCP wrapper plus the `taxfill` CLI) ·
+`formpacks/` (per-form field maps as YAML) · `knowledge/` (per-year tax law as cited YAML) · `skills/` (agent instructions) ·
+`scripts/` (maintainer tooling). Coverage grows by adding data packs, not engine code; blank PDFs are fetched at runtime, never stored here.
 
 ## License
 
-[MIT](LICENSE).
-
----
-
-> ### ⚠️ Disclaimer (again, because it matters)
-> taxfill-mcp is **not tax advice**, **not a tax preparer**, and does **not** e-file. Everything it produces is a **review draft**: you review every value, you sign, you file, and you are responsible for your return. Software is provided **as-is, with no warranty**, under the MIT license.
+[MIT](LICENSE). Provided as-is, with no warranty. Not tax advice; you review, sign and file your own return.

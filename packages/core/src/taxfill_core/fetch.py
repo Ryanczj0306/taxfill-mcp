@@ -376,7 +376,7 @@ def fetch_blank(
             raise FetchError(
                 f"checksum mismatch for {url}: downloaded sha256 {actual_digest} != "
                 f"expected {expected_digest} — the IRS may have published a NEW revision "
-                f"of this form (freshness protocol, docs/DEV_PLAN.md section 7). The "
+                f"of this form (freshness protocol, docs/dev/DEV_PLAN.md section 7). The "
                 f"download is quarantined at {quarantine}; render its page 1, READ the "
                 f"printed form year and title, and only if it is still the correct "
                 f"revision update the pack's pdf_sha256 to {actual_digest}. A "

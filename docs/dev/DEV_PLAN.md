@@ -44,15 +44,17 @@ taxfill/
 │   │   ├── workspace.py           # resumable session state, drafts, audit artifacts
 │   │   ├── intake.py              # interview spec → required questions/docs per profile
 │   │   ├── residency.py           # SPT, exempt years, state residency classification
-│   │   ├── formpack.py            # load/validate form packs
+│   │   ├── discovery.py           # load/validate form packs (schema: schemas/formpack.py)
 │   │   ├── filler.py              # AcroForm fill (pypdf), appearance regen
 │   │   ├── verify.py              # assertions + relations + consistency + clipping
 │   │   ├── render.py              # pdftoppm/pypdfium2 → PNG artifacts
 │   │   ├── calc.py                # deterministic tax math: per-year tables/schedules/credits (data-driven), day counting, rounding, routing checksum
 │   │   ├── estimate.py            # partial-profile refund estimator + roadmap (range, composition, assumptions)
 │   │   ├── knowledge.py           # jurisdiction knowledge loader (thresholds, credits)
-│   │   └── redact.py              # PII-safe logging
-│   └── mcp-server/                # thin MCP wrapper (official python-sdk, stdio)
+│   │   ├── redact.py              # PII-safe logging
+│   │   └── tests/evals/           # synthetic end-to-end scenarios + expected line values
+│   ├── mcp-server/                # thin MCP wrapper (official python-sdk, stdio); bundle/ = the .mcpb recipe
+│   └── conftest.py                # shared pytest fixtures for both packages' tests
 ├── formpacks/
 │   ├── federal/2023/f1040/pack.yaml
 │   ├── federal/2022/f1040nr/  f8843/  sched_1/ sched_c/ sched_oi/ ...
@@ -64,8 +66,8 @@ taxfill/
 │   ├── claude/SKILL.md            # workflow skill for Claude Code / Cowork
 │   ├── codex/AGENTS.md
 │   └── copilot/instructions.md
-├── evals/                         # synthetic scenarios + expected line values
-└── docs/
+├── scripts/                       # maintainer tooling (count sync, drift/finals checks, pack scaffolding)
+└── docs/                          # user docs; docs/dev/ = maintainer docs (this spec, roadmap, history)
 ```
 
 **Key principle:** the engine is jurisdiction- and form-agnostic. Federal and state forms use the same `pack.yaml` schema; state coverage grows by adding data packs, never by changing engine code.
@@ -139,7 +141,7 @@ provisional year, fills and verifies only in the core-only rehearsal mode (stamp
 NOT FOR FILING"; MCP `fill_form` still refuses the year), and a re-posted draft is a drift WARNING to re-audit.
 The knowledge pack's `provisional.second_passes` (the older `second_pass` is a deprecated alias) records each
 pass's `source_status`, and the marker comes off only when `removal_blockers()` is empty — see
-`docs/CONTRIBUTING-PACKS.md` ("Drafts-first").
+`docs/dev/CONTRIBUTING-PACKS.md` ("Drafts-first").
 
 ## 6. State tax support
 
@@ -184,7 +186,7 @@ Tax law moves faster than any shipped knowledge pack. Example: the One Big Beaut
 | `filing_summary(paths[])` | plain-language bottom line per jurisdiction (refund/owed, deadlines, statute-of-limitations status) for user approval before printing |
 | `file_and_pay(filing_manifest)` | see §9 |
 
-Server is **100% local**; only outbound traffic is fetching blank forms from official government URLs. No telemetry. Logs pass through `redact.py` (SSN/account masking). The workspace holds SSN-bearing documents at rest: README instructs users to keep OS disk encryption on (FileVault/BitLocker), and `taxfill purge <year>` wipes a workspace when done.
+Server is **100% local**; only outbound traffic is fetching blank forms from official government URLs (or an exact, digest-verified Internet Archive copy when a state host refuses scripted downloads). No telemetry. Logs pass through `redact.py` (SSN/account masking). The workspace holds SSN-bearing documents at rest: the user guide (docs/USER_GUIDE.md) instructs users to keep OS disk encryption on (FileVault/BitLocker), and `taxfill purge <year>` wipes a workspace when done.
 
 ## 9. File & pay module (the last mile, first-class)
 
@@ -252,7 +254,7 @@ Encoded as hard requirements in the skill and in tool output formats, not as vib
 
 ## 13. README & onboarding spec (non-technical users are the target reader)
 
-The README is a deliverable with acceptance criteria, not an afterthought:
+The README and the user guide it links (docs/USER_GUIDE.md) are deliverables with acceptance criteria, not an afterthought. As built (2026-10), the README is a short landing page — what it is / is not, the disclaimer, the quickstart and a coverage summary — and the transcript, what to prepare, privacy, troubleshooting and FAQ below live in the user guide:
 
 - **First screen:** what this is / is not (free, open-source, runs on your computer, you review and sign everything; not a tax preparer, no e-file), who it's for, 60-second demo GIF.
 - **Zero-background quickstart, one path per client**, each a literal copy-paste sequence with screenshots:
@@ -261,10 +263,10 @@ The README is a deliverable with acceptance criteria, not an afterthought:
   - *Copilot / Codex CLI:* equivalent one-liners + where to paste the skill file.
 - **"Your first return in 15 minutes":** an annotated synthetic conversation transcript (hypothetical persona, demo numbers) showing intake → photos → summary → printed checklist.
 - **What to prepare:** document checklist with example photos.
-- **Privacy in plain words:** "your documents never leave your computer; the only internet access is downloading blank forms from irs.gov; delete everything with `taxfill purge`."
+- **Privacy in plain words:** "taxfill sends nothing about you anywhere (your AI assistant sees what you share with it, under its provider's policy); the only internet access is downloading blank forms from the tax agencies' own sites, or an exact digest-verified Internet Archive copy; delete everything with `taxfill purge`."
 - **Troubleshooting:** the five real failure modes (uv missing, permissions, client can't see the server, where output files live, how to resume).
 - **FAQ:** is this legal; what if I already filed; what if I get audited (your RECONCILIATION.md is your audit trail); does it e-file (no, by design); cost (free).
-- **Acceptance test for the README itself:** a person with no terminal experience must reach a filled sample form in under 20 minutes following only the README (this is an explicit M6 QA task with a non-developer tester).
+- **Acceptance test for the README itself:** a person with no terminal experience must reach a filled sample form in under 20 minutes following only the README and the user guide it links (this is an explicit M6 QA task with a non-developer tester).
 - English canonical; community translations (`README.zh.md`, …) welcome.
 
 ## 14. Testing & evals
@@ -310,12 +312,17 @@ Where the shipped code differs from the plan above, the code is right and this l
 dispatch chain in the MCP server for ops (40 today), `list_forms` / the formpack tree for packs, and the
 `sources.yaml` topics for `get_sources`. Tests pin README, the skills and CONVENTIONS to them.
 
+- **The README is a landing page (§13).** Since the 2026-10 layout cleanup the README holds the pitch, the
+  disclaimer, the quickstart and a synced coverage table (~100 lines); the §13 transcript, what to prepare, privacy,
+  troubleshooting and FAQ live in docs/USER_GUIDE.md, the tool table in docs/TOOLS.md, and the per-form, per-year
+  matrix in docs/COVERAGE.md (generated by scripts/sync_doc_counts.py). Maintainer docs, this spec included, live
+  in docs/dev/.
 - **Two labels, not one (§2, §11).** `estimate_refund` labels a closed year ESTIMATE and a planning year —
   a knowledge pack marked `provisional: planning_only`, today TY2026 — PROJECTION ("a future year whose forms do
   not exist"). Form packs for a planning year fill only in rehearsal mode, stamped as such.
 - **Freshness runs weekly, not nightly (§7, §9, §14, §16).** `.github/workflows/freshness.yml` runs every
-  Monday (`cron: "13 9 * * 1"`) plus on demand; `finals.yml` watches for a planning year's finals in October
-  and November. Known reds sit in `scripts/freshness_quarantine.yaml` with an expiry.
+  Monday (`cron: "13 9 * * 1"`) plus on demand; `finals.yml` watches for a planning year's finals — weekly in
+  October and November, daily from mid-December to mid-February. Known reds sit in `scripts/freshness_quarantine.yaml` with an expiry.
 - **The DocSpec set is `list_document_kinds` (§8).** It carries 29 kinds — the W-2, the 1099 family, the
   1098 family, the 1095s, 1042-S, SSA-1099, 3921/3922, 5498/5498-SA, W-2G, the three Schedule K-1s, the IRA
   custodian statement and (JP3a) the pay stub. The I-94, the I-20 and the IRS wage-and-income transcript were

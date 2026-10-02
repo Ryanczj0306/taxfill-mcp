@@ -1,6 +1,6 @@
 # TaxFill — history of the completed phases
 
-Moved verbatim from docs/ROADMAP.md on 2026-09-28 (Phase J JD2): the ROADMAP keeps the open work, and this file the record of how the finished phases were built. Nothing here is open — every box below is `[x]`.
+Moved verbatim from docs/ROADMAP.md (now docs/dev/ROADMAP.md) on 2026-09-28 (Phase J JD2): the ROADMAP keeps the open work, and this file the record of how the finished phases were built. Nothing here is open — every box below is `[x]`.
 
 ## Phase 0 — Hygiene & truth-up (Effort: S — do first, hours)
 
@@ -69,7 +69,7 @@ one verified test count, CI green.
 
 ## Phase E — Test & eval hardening (Effort: S–M)
 
-- [x] **Finish the §14 eval suite — DONE (2026-06-28).** `evals/test_scenarios.py`
+- [x] **Finish the §14 eval suite — DONE (2026-06-28).** `packages/core/tests/evals/test_scenarios.py`
       now implements all **13 scenarios (a–m)**, green: **(k)** MFJ two W-2s (joint
       standard deduction/brackets + both-signature checklist), **(l)** MFJ-vs-MFS
       comparison (engine computes both ways → `RefundEstimate.comparison` carries the
@@ -489,7 +489,7 @@ scenario exercises the persona that motivated it.
       box layout read off the official form, round-trip tested.
 - [x] **I6 — the six Phase I decisions, encoded — DONE 2026-08-27.** It lands as eval
       scenario **`s`**, not "i14": this plan invented that label, but
-      `evals/test_scenarios.py` numbers scenarios by LETTER and the `i` prefix
+      `packages/core/tests/evals/test_scenarios.py` numbers scenarios by LETTER and the `i` prefix
       already belongs to the provisional-guard family (i, i2-i5). Scenario `s`
       re-runs the SIX Phase I decisions on independent synthetic fixtures (demo
       numbers) against the ops I1-I4 shipped, and pins the numbers the engine

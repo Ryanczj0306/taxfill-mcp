@@ -1,6 +1,6 @@
 # taxfill-mcp — uv workspace root (virtual: the repo root is not a package).
 #
-# The single source of truth for this project is docs/DEV_PLAN.md.
+# The single source of truth for this project is docs/dev/DEV_PLAN.md.
 # Status: v0.1 is IN DEVELOPMENT — nothing is published to PyPI yet.
 #
 # Quickstart for contributors:
@@ -18,7 +18,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["packages/core/tests", "packages/mcp-server/tests", "evals"]
+testpaths = ["packages/core/tests", "packages/mcp-server/tests"]
 addopts = "-q"
 markers = [
     "network: needs internet access to download official blank PDFs from .gov URLs (skips gracefully when offline; deselect with -m 'not network')",

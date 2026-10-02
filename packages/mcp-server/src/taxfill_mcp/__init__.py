@@ -1,6 +1,6 @@
 """taxfill-mcp — the MCP server package.
 
-Single source of truth: ``docs/DEV_PLAN.md`` at the repo root. The server lives
+Single source of truth: ``docs/dev/DEV_PLAN.md`` at the repo root. The server lives
 in :mod:`taxfill_mcp.server` (FastMCP over the official ``mcp`` python-sdk);
 ``taxfill_mcp.server.main`` is the ``taxfill-mcp`` console entry point and runs
 it over stdio. It exposes the tested ``taxfill_core`` engine as MCP tools

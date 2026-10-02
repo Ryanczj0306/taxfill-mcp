@@ -4,9 +4,9 @@ description: >-
   Prepare U.S. tax returns end to end with the taxfill MCP server: guided
   intake, deterministic fill, mandatory verify, render-and-review, bottom-line
   approval, and a print-and-mail checklist. Use when a user wants to prepare,
-  back-file, or estimate a federal return or a state return (all 41 income-tax
-  states + DC ship a resident return pack; `state_scope` says which returns are
-  required). Paper
+  back-file, or estimate a federal return or a state return (every income-tax
+  state + DC has a TY2023 resident return pack, later years vary; `state_scope`
+  says which returns are required). Paper
   filing only — no e-file. Every output is a review draft the user signs.
 ---
 
@@ -63,11 +63,11 @@ Show the user which step they're on and that they can stop and resume anytime
 | `compare_scenarios(year, scenarios, income?, profile?, save_as?, load?, income_updates?)` | run 2+ what-ifs (filing postures / §6013(g) election / revised facts / cross-year) and diff each against the FIRST with two EXACT attributions — a per-slot ledger view and a sequential input walk whose steps telescope to the headline delta. `save_as` persists the set in the workspace; `load` (+`income_updates`) re-runs it after a fact changes — planning is iterative, so prefer re-running a saved set over rebuilding. Cross-year comparisons are labeled PROJECTION and name what the planning year could not price |
 | `list_forms(jurisdiction?, year?)` / `get_form_map(form, year, jurisdiction?)` | discover packs (federal + `states/<xx>`); line→field map + relations |
 | `fetch_blank(form, year, jurisdiction?)` | download the official blank (checksum-verified) |
-| `fill_form(form, year, values, out_path, jurisdiction?)` | deterministic fill; rejects unknown lines + comb/length errors |
+| `fill_form(form, year, values, out_path, jurisdiction?)` | deterministic fill; rejects unknown lines + comb/length errors. Write every filled PDF to an ABSOLUTE `out_path` under the year's workspace `drafts/` folder (`~/taxfill-workspace/<year>/drafts/`, or `$TAXFILL_WORKSPACE/<year>/drafts/`) so `taxfill purge <year>` removes it with the rest of the year's data |
 | `verify_form(form, year, pdf_path, expected?, independent?, jurisdiction?)` | assertions + relation math + independent recompute (`independent` = line→calc result, e.g. `{"16": 36036}`) + clipping + checkbox audit |
 | `verify_filing(items, independent?)` | cross-form identity + inter-form relations across the whole filing (`independent` keyed form_key→{line: calc result}) |
 | `render_form(pdf_path, pages?)` | page PNGs returned as image content — vision-review every page |
-| `hand_fill_worksheet(form, year, jurisdiction, values?)` | print-and-copy worksheet for the 4 print-only (non-AcroForm) states: **CT, HI, NM, SC**. These packs are NOT returned by `list_forms` — if `list_forms("states/ct"\|"states/hi"\|"states/nm"\|"states/sc", …)` comes back empty, that is expected: go straight to `hand_fill_worksheet` (`ct1040` / `n11` / `pit1` / `sc1040`). **All four can also be STAMPED**: their 2023 manifests carry measured overlay coordinates, so `fill_form('ct1040' | 'n11' | 'pit1' | 'sc1040', 2023, values, out, 'states/ct' | 'states/hi' | 'states/nm' | 'states/sc')` stamps every value onto the print blank (`render_mode: "hand_fill_overlay"`), then `verify_form(..., expected=values)` gives the OVERLAY verdict — render every page and read it, and the filer still signs in ink. HI's N-11 is machine-read: its ovals are painted and a loss shades the printed minus box, so pass a loss as a negative number. **Also the FBAR**: FinCEN Form 114 is e-file only through FinCEN's BSA E-Filing System and irs.gov states a PRINTED Form 114 is not accepted, so it has no fillable pack either — `hand_fill_worksheet('fincen114', <year>, 'federal')` gathers the values (and computes the $10,000 aggregate-maximum test) for keying into the BSA system. It is filed with FinCEN, NOT the IRS, and is NOT part of the return envelope. |
+| `hand_fill_worksheet(form, year, jurisdiction, values?)` | print-and-copy worksheet for the 4 print-only (non-AcroForm) states: **CT, HI, NM, SC** — plus **WV for TY2025** (`it140`, a booklet page). These packs are NOT returned by `list_forms` — if `list_forms("states/ct"\|"states/hi"\|"states/nm"\|"states/sc", …)` (or WV for 2025) comes back empty, that is expected: go straight to `hand_fill_worksheet` (`ct1040` / `n11` / `pit1` / `sc1040` / `it140`). **All of them can also be STAMPED**: their 2023–2025 manifests carry measured overlay coordinates, so `fill_form('ct1040' | 'n11' | 'pit1' | 'sc1040', 2023, values, out, 'states/ct' | 'states/hi' | 'states/nm' | 'states/sc')` stamps every value onto the print blank (`render_mode: "hand_fill_overlay"`), then `verify_form(..., expected=values)` gives the OVERLAY verdict — render every page and read it, and the filer still signs in ink. HI's N-11 is machine-read: its ovals are painted and a loss shades the printed minus box, so pass a loss as a negative number. **Also the FBAR**: FinCEN Form 114 is e-file only through FinCEN's BSA E-Filing System and irs.gov states a PRINTED Form 114 is not accepted, so it has no fillable pack either — `hand_fill_worksheet('fincen114', <year>, 'federal')` gathers the values (and computes the $10,000 aggregate-maximum test) for keying into the BSA system. It is filed with FinCEN, NOT the IRS, and is NOT part of the return envelope. |
 | `calc(op, args)` | deterministic tax math — 40 ops, one bullet each under **calc ops** below; every number on a return comes from one of them |
 | `get_sources(topic, year, jurisdiction?)` | ranked .gov sources + freshness channels |
 | `workspace_save(year, profile)` / `workspace_load(year)` | persist / resume the intake profile between sessions |
@@ -277,7 +277,7 @@ drafts, some figures are still unannounced, and every result carries the plannin
 ### Recipe C — add a state return
 
 State filing runs through the SAME fill/verify pipeline as federal. **All 42
-income-tax jurisdictions (41 states + DC) ship a resident return pack**: 38 as
+income-tax jurisdictions (41 states + DC) ship a TY2023 resident return pack**: 38 as
 fillable AcroForms, and 4 as print-only hand-fill manifests (CT, HI, NM, SC — and WV for TY2025, whose return is a booklet page) via
 `hand_fill_worksheet` — all four returns for TY2023, TY2024 and TY2025 also stamp through `fill_form` (overlay coordinates; the NM 2025 blank is two pages inside TRD's PIT packet — the worksheet names the pages to print and `fill_form` writes only them). `state_scope` drives the list. (`hand_fill_worksheet` also
 serves one FEDERAL filing: `fincen114`, the FBAR — e-file only, no PDF blank.)
@@ -286,8 +286,7 @@ serves one FEDERAL filing: `fincen114`, the FBAR — e-file only, no PDF blank.)
 > packs (rates, brackets, credits, thresholds → `calc("state_tax", …)`) ship for
 > **2023, 2024 and 2025** — all 42 jurisdictions, every year. State *form* packs
 > are **thinner and uneven**: 87 packs, TY2023 for all 42 jurisdictions but
-> post-2023 for only **30** — **AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, NM, NY, OH, OR, PA, SC, UT, VA (2024 and 2025)** and
-> **ND, NJ, RI (2024)**. For the other 12 jurisdictions
+> then TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **27** (AR, AZ, CA, CT, DC, DE, GA, HI, ID, IL, KY, LA, MN, MO, MS, NC, NM, NY, OH, OR, PA, SC, UT, VA, VT, WI, WV). For any other jurisdiction-year
 > a 2024 or
 > 2025 return computes but **cannot be filled**: say so plainly and fall back to
 > `get_sources` + the state's own blank. Do not memorize this list — it grows

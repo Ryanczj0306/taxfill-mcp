@@ -186,7 +186,7 @@
 #           c1_2[0] = the 17a tick, f1_20=17b;
 #   Part III f1_21=18, f1_22=19, f1_23=20, f1_24=21.
 # WHAT THE VISION AUDIT ACTUALLY CAUGHT (an audit that caught nothing is
-# suspicious — docs/CONTRIBUTING-PACKS.md step 6):
+# suspicious — docs/dev/CONTRIBUTING-PACKS.md step 6):
 #   1. The line-13 rewrite itself. The mechanical diff reported "27 -> 27
 #      names, no /Ff or /MaxLen change, 11 rects up 12 pt" — a textbook
 #      PORTABLE verdict. Only reading the face showed that the printed row the

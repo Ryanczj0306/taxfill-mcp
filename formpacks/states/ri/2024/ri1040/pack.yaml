@@ -10,12 +10,12 @@
 # count 321 -> 323. Because RI names its widgets SEMANTICALLY
 # (RICheckoffAmt[0], not f3_12[0]), the surviving names hid a real page-3
 # renumbering: four line KEYS moved even though no field name did. See
-# "PRINTED-LINE DIFF" below — this is the exact trap docs/CONTRIBUTING-PACKS.md
+# "PRINTED-LINE DIFF" below — this is the exact trap docs/dev/CONTRIBUTING-PACKS.md
 # warns about ("identical field NAMES do not prove the state kept its line
 # NUMBERING").
 #
 # IDENTITY (checked BEFORE the digest was pinned; the files.tax.utah.gov trap
-# recorded in docs/ROADMAP.md is that a year in the URL proves nothing):
+# recorded in docs/dev/ROADMAP.md is that a year in the URL proves nothing):
 # page-1 text of the downloaded PDF extracts "State of Rhode Island Division of
 # Taxation / 2024 Form RI-1040 / Resident Individual Income Tax Return"; the
 # page-2 footer reads "Revised 09/2024" (2023 blank: "Revised 11/2023"); and

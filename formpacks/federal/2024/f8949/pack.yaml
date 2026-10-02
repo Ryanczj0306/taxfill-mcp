@@ -305,7 +305,7 @@
 # ---------------------------------------------------------------------------
 # WHAT THE VISION AUDIT ACTUALLY CAUGHT
 # ---------------------------------------------------------------------------
-# (docs/CONTRIBUTING-PACKS.md step 6: "an audit that caught nothing is
+# (docs/dev/CONTRIBUTING-PACKS.md step 6: "an audit that caught nothing is
 # suspicious — say so explicitly if it truly caught nothing". On this port it
 # caught NO binding error and one reading trap; both halves are stated, and
 # the clean result is exactly what the mechanical diff predicted.)
@@ -502,7 +502,7 @@
 # yes/no; `test_pack_radio_options_share_one_group_and_distinct_states` only
 # fires when two checkbox lines SHARE one AcroForm field, and these six lines
 # bind six different fields. That is the THIRD topology blind spot recorded in
-# docs/ROADMAP.md Phase E — this pack adds two more sets to that sweep's
+# docs/dev/ROADMAP.md Phase E — this pack adds two more sets to that sweep's
 # population, and unlike most of them these two are genuinely EXCLUSIVE
 # ("Check only one box"), so they belong on the grouped side of the
 # adjudication table that item calls for. Verified by execution against this

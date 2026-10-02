@@ -74,7 +74,7 @@ def _run_pytest(tmp_path: Path, quarantine: list[dict], *extra: str) -> subproce
     (tmp_path / "pytest.ini").write_text("[pytest]\nmarkers =\n    network: live .gov access\n")
     (tmp_path / "conftest.py").write_text(textwrap.dedent(f"""
         import importlib.util, sys
-        spec = importlib.util.spec_from_file_location("taxfill_root_conftest", {str(REPO / "conftest.py")!r})
+        spec = importlib.util.spec_from_file_location("taxfill_root_conftest", {str(REPO / "packages" / "conftest.py")!r})
         root = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = root
         spec.loader.exec_module(root)

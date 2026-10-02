@@ -21,7 +21,7 @@ def pytest_collection_modifyitems(config, items):
     from taxfill_core.fetch import FetchError  # noqa: PLC0415
 
     spec = importlib.util.spec_from_file_location(
-        "freshness_quarantine", Path(__file__).resolve().parent / "scripts" / "freshness_quarantine.py")
+        "freshness_quarantine", Path(__file__).resolve().parents[1] / "scripts" / "freshness_quarantine.py")
     quarantine = sys.modules.setdefault(spec.name, importlib.util.module_from_spec(spec))
     spec.loader.exec_module(quarantine)
     quarantine.quarantine_items(items, quarantine.load(), dt.date.today(), FetchError)

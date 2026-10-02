@@ -15,7 +15,10 @@ key lines recomputed via `calc` (e.g. `{"16": 36036}`; keyed per form_key for
 > 0) — then `render_form` and review every page; `estimate_refund` is a
 labeled range with assumptions (ESTIMATE for a closed year, PROJECTION for a planning year — TY2026 today, rehearsal-only; SKILL.md Recipes P and R cover planning and IRA basis); review draft only
 (user signs and mails paper — no e-file); for a year/benefit not in the shipped
-packs, resolve via `get_sources` (.gov) and cite, or refuse.
+packs, resolve via `get_sources` (.gov) and cite, or refuse; write every filled PDF
+to an ABSOLUTE `out_path` under the year's workspace `drafts/` folder
+(`~/taxfill-workspace/<year>/drafts/`, or `$TAXFILL_WORKSPACE/<year>/drafts/`) so
+`taxfill purge <year>` removes it with the rest of the year's data.
 
 **Flow:** intake_checklist → extract_document & confirm → estimate_refund →
 residency & state_scope → positions (workspace_record_position) → fill_form →
@@ -75,10 +78,10 @@ above `regular_tax` is lost for good. A qualifying surviving spouse gets $300, n
 "a joint return". Otherwise file `formpacks/federal/<year>/f1116`, one form per category of income.
 
 **State returns** use the same pipeline with `jurisdiction="states/<xx>"`. All 42
-income-tax jurisdictions (41 states + DC) ship a resident return pack — 38 as
+income-tax jurisdictions (41 states + DC) ship a TY2023 resident return pack — 38 as
 fillable AcroForms, 4 as print-only hand-fill manifests (CT, HI, NM, SC — and WV for TY2025, whose return is a booklet page) via
 `hand_fill_worksheet`; `state_scope` says which returns are required. All four 2023
-returns (CT-1040, HI N-11, NM PIT-1, SC1040) and their 2024 and 2025 manifests also stamp through `fill_form` (overlay coordinates), then `verify_form` with
+returns (CT-1040, HI N-11, NM PIT-1, SC1040), their 2024 and 2025 manifests, and WV's TY2025 IT-140 (`it140`) also stamp through `fill_form` (overlay coordinates), then `verify_form` with
 `expected=values`; render and read every page, and the filer signs in ink.
 `hand_fill_worksheet` also covers one FEDERAL filing, `fincen114` (the FBAR /
 FinCEN Form 114): e-file only via FinCEN's BSA E-Filing System, no fillable PDF,
@@ -89,10 +92,9 @@ together and says `must_ask` instead of guessing.
 `calc("state_tax", …)` covers every jurisdiction for 2023, 2024 AND 2025 —
 flat vs graduated is the pack's call and moves by year, so never
 assume and never compute a state tax line yourself. State KNOWLEDGE spans
-2023-2025; state FORM packs cover 2024/2025 for only **13 of the 42**
-jurisdictions (AR/NY/OR/PA 2024+2025, IL/MO/NC/ND/NJ/OH/RI/UT/VA 2024), so for
-the other 29 a 2024/2025 return computes but cannot be filled — check
-`list_forms` for the jurisdiction and year instead of assuming.
+2023-2025; state FORM packs cover TY2023 for all 42 jurisdictions, then
+TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **27** (AR, AZ, CA, CT, DC, DE, GA, HI, ID, IL, KY, LA, MN, MO, MS, NC, NM, NY, OH, OR, PA, SC, UT, VA, VT, WI, WV), so for any other jurisdiction-year a return computes but cannot be
+filled — check `list_forms` for the jurisdiction and year instead of assuming.
 
 **Tools:** intake_checklist, list_document_kinds, extract_document, residency,
 state_scope, estimate_refund, compare_scenarios, list_forms, get_form_map, fetch_blank, fill_form,

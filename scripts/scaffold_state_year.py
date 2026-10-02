@@ -36,7 +36,7 @@ Phase J JS3a added:
 What it deliberately does NOT do: download-and-trust, introspect, or author
 packs. Every candidate that probes OK still goes through the full quality gate
 (fetch_blank with a human-confirmed digest -> taxfill introspect -> vision
-field-map -> adversarial audit -> golden tests) — see docs/CONTRIBUTING-PACKS.md.
+field-map -> adversarial audit -> golden tests) — see docs/dev/CONTRIBUTING-PACKS.md.
 A no-token or 404 row is REAL WORK (find the year's URL on the DOR forms index;
 MA additionally needs a digest-verified Wayback mirror) and the work-list makes
 that visible instead of silently truncating the tranche.

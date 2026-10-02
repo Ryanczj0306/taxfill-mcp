@@ -1,6 +1,6 @@
 """taxfill-core — pure-Python core for TaxFill (no MCP dependency).
 
-Single source of truth: ``docs/DEV_PLAN.md`` at the repo root.
+Single source of truth: ``docs/dev/DEV_PLAN.md`` at the repo root.
 
 Status: v0.1 is IN DEVELOPMENT. M0 shipped the schemas (form packs, intake
 profile) and the routing-number checksum; M1 ships the engine exported here:

@@ -1,27 +1,21 @@
 # Skills
 
-This directory holds the **agent skill layer**: the workflow instructions that
-teach any MCP client to run the nine-step flow (intake → extract & confirm →
-estimate & roadmap → residency & scope → positions → fill → verify → summary →
-file & pay) with the project's hard rules — never invent data, user confirms
-extracted values before filling, the verify gate is mandatory (feed calc
-results to `independent`), everything is a review draft, and the human signs
-and files (paper print-and-mail; no e-filing).
-
-Planned layout (see [`docs/DEV_PLAN.md`](../docs/DEV_PLAN.md), sections 3
-and 11):
+The agent skill layer: workflow instructions that teach any MCP client to run the nine-step flow (intake → extract &
+confirm → estimate & roadmap → residency & scope → positions → fill → verify → summary → file & pay) with the
+project's hard rules — never invent data; the user confirms extracted values before anything is filled; the verify
+gate is mandatory (calc results feed `independent`); everything is a review draft; the human signs and files on paper
+(no e-filing).
 
 ```
 skills/
-├── claude/SKILL.md            # Claude Code / Cowork workflow skill
-├── codex/AGENTS.md
-└── copilot/instructions.md
+├── claude/SKILL.md            # Claude Code / Claude Desktop / Cowork
+├── codex/AGENTS.md            # Codex CLI
+└── copilot/instructions.md    # GitHub Copilot
 ```
 
-The skill files ship with cookbook recipes (copy-paste tool-call sequences
-per scenario), the freshness protocol for tax years newer than the shipped
-knowledge packs, and a no-MCP fallback appendix using `packages/core`
-directly.
-
-**Status: shipped** (all three skill files above are live and kept in sync
-with the 22-tool surface).
+`claude/SKILL.md` is the canonical file: it carries the cookbook recipes (copy-paste tool-call sequences per
+scenario), the freshness protocol for tax years newer than the shipped knowledge, and a no-MCP fallback that uses
+`taxfill_core` directly. The Codex and Copilot files are condensed mirrors of its rules and tool list that point back
+to it. How to install each one is in the [README quickstart](../README.md#quickstart).
+`packages/mcp-server/tests/test_skills_sync.py` keeps them in step with the live tool surface, so a tool or calc op
+the server gains cannot go unmentioned here.
