@@ -1,0 +1,1518 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/ca/2023/sched_ca_540nr/pack.yaml (ported
+# 2026-10-01, Phase J JS5; triaged RE-MAP — all 411 mapped names gone).
+#
+# URL. https://www.ftb.ca.gov/forms/2025/2025-540nr-ca.pdf. Digest
+# b9a0db9f466b80907a9082bc2cae6fde78f60ba065f1d2a782889fa1198b1bad — two
+# separate curl downloads on 2026-10-01 and the triage cache copy all agree
+# (218,902 bytes, %PDF-1.7, AcroForm, 5 pages, Producer "Adobe PDF Library
+# 17.0", ModDate 2026-02-11).
+#
+# PRINTED IDENTITY. Side 1 prints "TAXABLE YEAR 2025", "California Adjustments
+# — Nonresidents or Part-Year Residents", "SCHEDULE CA (540NR)" and the stamp
+# "7741253 Schedule CA (540NR) 2025 Side 1"; Sides 2-5 print 7742253 … 7745253
+# with "Schedule CA (540NR) 2025 Side N". Part I reads "for taxable year 2025"
+# and line 8 "Before 2025:". printed_year_verified = 2025.
+#
+# ACROFORM TOPOLOGY against the 2023 blank (411 widgets, flat ids 1000-5030).
+# The 2025 blank has 421 widgets = 414 /Tx + 7 /Btn, every name prefixed
+# "540NR CA - " (e.g. "540NR CA - 1026"), so all 411 base names are GONE by
+# name. The ids were also RENUMBERED, not just prefixed: the six residency
+# checkboxes "1002 CB".."1007 CB" became TWO radio fields "1002 RB" (a Myself:
+# three kids, on_states "/During 2025: My California (CA) Residency (Check
+# one). Myself. Nonresident", "/My California Residency. Myself. Part-Year
+# Resident.", "/My California Residency. Myself. Resident.") and "1003 RB" (b
+# Spouse: the three Spouse states), /Ff 49152, so every later Side-1 id is the
+# base id minus 4 (base 1008 res2a_you_state -> 1004; base 1030 line 1a col A
+# -> 1026; base 1109 line 7 col E -> 1105, now line 7a col E...). Sides 2-5
+# were renumbered around the new rows (base 2001 = line 1 col A -> 2001 is now
+# line 3 col A). Every binding below was therefore placed by widget POSITION
+# plus the printed row label on this blank's own text layer, and then
+# confirmed on the sentinel renders (scripts/audit_pack.py) of all five
+# pages — never by name.
+#   * Ten widgets are NEW. Eight are mapped: 1060B (1h "Enter type & amount"
+#     description, A1h_desc), 1112b (Section B 2b "Date of original divorce
+#     or separation agreement", B2b_date), 3049B (Section C 19c "Date of
+#     original divorce or separation agreement", C19c_date) and 2088-2092
+#     (Section B line 8v "Digital assets received as ordinary income not
+#     reported elsewhere", columns A-E, B8v_A..E).
+#     The two date boxes are PLAIN text boxes on a printed underline — no
+#     cells, no Comb bit (/Ff 12582912), /MaxLen 7, 70.2 pt (1112b) and
+#     88.2 pt (3049B) wide — and each widget's own tooltip reads "Enter date
+#     as 2 digit month and 4 digit year", i.e. MM/YYYY (7 characters). The
+#     filler REFUSES a longer value, so a Part I style MM/DD/YYYY is rejected
+#     rather than truncated.
+#   * Two are deliberately UNMAPPED, the only ReadOnly widgets on the blank
+#     (/Ff 12582913 = ReadOnly|DoNotSpellCheck|DoNotScroll): 3059 sits on
+#     Section C "22 Reserved for future use" (column A only; the printed
+#     line-26 sum is the RANGE "Add line 11 through line 23 and line 25",
+#     which encloses line 22, but the ReadOnly box stays blank and so adds
+#     nothing, and no relation reads it) and 4056 on Part III "8d Reserved
+#     for future use" (column A only; printed 8e is "Add line 8a through
+#     line 8c", which does not name 8d). The 2023 blank had NO widget on
+#     either line, so no key existed and none is added — P-007 class 3, the
+#     excluding treatment; fill_form raises on "C22_A" / "III8d_A".
+#   * /MaxLen: every grid money box now carries /MaxLen 11 (2023: 12 — one
+#     fewer character, the pack declares no money maxlen so verify's hard
+#     MaxLen check follows the widget); the five primary boxes 2a/3a/4a/5a/6a
+#     (1074/1080/1086/1092/1098) grew 10 -> 12 and Part III lines 1-3
+#     (4030-4032) stay 12; the Part I date
+#     boxes grew from /MaxLen 8 to 10 (1009/1011/1013/1015 and 1022-1025),
+#     because the printed template is now "_ _/_ _/_ _ _ _" with the two
+#     slashes INSIDE the 10-cell comb, so a value keeps its slashes (maxlen 10,
+#     no `comb` flag — the filler's comb mode is digits-only and would land the
+#     digits one cell off the template); the SSN box 1001 gained /MaxLen 11
+#     (was none; the pack already budgeted 11). /Ff: the Part I entry cells,
+#     the 19b SSN segments and the Part IV percentage cells carry the Comb bit
+#     (29360128) as in 2023; every other text widget is 12582912. /DA: the
+#     Section B parenthesised cells 2023/2024 (8a), 2079-2081 (8s) and 2035
+#     (8d col C) are /Helv 7, 2034 (8d col A) /Helv 6.5, and 4056 /Helv 10;
+#     all other grid cells /Helv 8 (2023: the grid cells were /Helv 0,
+#     auto-size — 344 of the 411 base widgets).
+#   * NOT ENTIRELY FLAT. 62 Side-2 money fields (2001-2057 and 2068-2072) are
+#     one-kid PARENT fields: the name, /MaxLen 11 and /Ff sit on the parent,
+#     the widget is its only kid. For 2001-2057 the parent says /Q 0 and
+#     /DA "/Helv 10" while the kid widget says /Q 2 (right) and its own /DA
+#     (/Helv 8 x53, /Helv 7 x3, /Helv 6.5 x1); 2068-2072 keep /DA /Helv 8
+#     and /Q 2 on the parent only. A dump must read the WIDGET-level /DA and
+#     /Q (the figures above). The 2023 blank had no kid text widgets. The
+#     bindings are unaffected (the filler resolves the parent name and the
+#     sentinel audit wrote all 62), but a viewer that follows the parent's
+#     /Q 0 and /Helv 10 (poppler does) draws the value left-aligned at 10 pt,
+#     so an 11-digit amount clips in those boxes; the pdfium render
+#     right-aligns them at the kid's size.
+#
+# FACE DELTAS vs 2023 (a diff of the printed text of all five sides; read
+# on this blank).
+#   * Section A line 7 is now printed "7 a Capital gain or (loss) ... 7a", so
+#     the keys are A7a_A..E (2023: A7_A..E; grep shows no other referrer).
+#   * Section B lines 1 ("Taxable refunds, credits, or offsets ...") and 2a
+#     ("Alimony received") moved from the top of Side 2 to the foot of Side 1
+#     (widgets 1106/1107 and 1108/1110/1111/1112), with the new 2b date box.
+#   * Section B 8v (digital assets) and Section C 19c (date) are new rows;
+#     line 10 now reads "Add Section A, line 1z through line 7a, ...".
+#   * 1f cites "federal Form 8839, line 31" (2023: line 29); 1h reads "Other
+#     earned income. See instr. Enter type & amount." with its own text box.
+#   * Part III line 2 and line 23 cite "federal Form 1040 or 1040-SR, line
+#     11b" (2023: line 11 — the 2025 Form 1040 restates AGI on 11b).
+#   * Part III 5e: "the smaller of line 5d or $40,000 ($20,000 if married
+#     filing separately)" (2023: $10,000 / $5,000).
+#   * Part III line 29 thresholds: $252,203 single/MFS, $378,310 HoH,
+#     $504,411 MFJ/QSS (2023: $237,035 / $355,558 / $474,075); line 30
+#     standard deduction $5,706 / $11,412 (2023: $5,363 / $10,726). All five
+#     figures agree with knowledge/states/ca/2025.yaml.
+#   * Years: "taxable year 2025", "During 2025:", "Before 2025:".
+#   * Printed-word shift: Side 1 median 0; Side 2 (-1.9, +6.9) pt and Side 3
+#     (0, -3.8) pt from the moved/added rows; Sides 4-5 unchanged.
+#
+# UNRESOLVED. None. relations and cross_form stay empty for the reasons the
+# 2023 pack states (conditional cross-column math with greyed operands; Part
+# III lines 2/23 restate federal AGI but the schedule asserts no equality).
+# ===========================================================================
+# Schedule CA (540NR), 2025 — California Adjustments — Nonresidents or
+# Part-Year Residents.
+#
+# Layout. acroform_root empty; field names are the prefixed ids
+# "540NR CA - 1000" .. "540NR CA - 5030" (all top-level fields; the 62
+# Side-2 one-kid parents above are addressed by the parent name), plus
+# the "B" suffixed boxes 1060B/1112b/3049B and the "RB"/"CB" button
+# fields). Side 1 carries the
+# name/SSN header and Part I Residency Information (two-letter state codes,
+# mm/dd/yyyy move dates, day counts, Y/N, period ranges — for Yourself and
+# Spouse/RDP), then Part II Section A (Income) and the first two lines of
+# Section B. Part II Income Adjustment Schedule (Sections A/B income, Section
+# C adjustments) is a FIVE-column grid:
+#   A = Federal Amounts (taxable amounts from your federal tax return)
+#   B = Subtractions (difference between CA & federal law)
+#   C = Additions (difference between CA & federal law)
+#   D = Total Amounts Using CA Law As If You Were a CA Resident
+#       (subtract col. B from col. A; add col. C to the result)
+#   E = CA Amounts (income earned or received as a CA resident and income
+#       earned or received from CA sources as a nonresident)
+# Each income/adjustment line therefore has up to five money boxes; many lines
+# grey out one or more columns (no widget exists for a greyed cell — those
+# column keys are simply absent). Column-bearing keys carry an _A/_B/_C/_D/_E
+# suffix. Lines 2a/3a/4a/5a/6a carry a single "primary" federal-amount box to
+# the left of the grid (suffix _a). Part III (Adjustments to Federal Itemized
+# Deductions) reverts to a THREE-column grid (A/B/C only); its single-box
+# computation lines (1-3, 18-30) have no suffix, while 5b-5d carry only a
+# column-A box and keep the _A suffix (III5b_A..III5d_A). Part IV (California
+# Taxable Income) is single-box computation lines 1-5.
+#
+# 419 of the 421 widgets are mapped (412 text/money widgets + the 7 button
+# widgets as 7 checkbox lines); the two unmapped ones are the reserved lines
+# above. Every mapped box is taxpayer-entered: there are NO pre-printed
+# statutory constants with a widget on this form (the Side 5 line 29/30
+# amounts and the 7.5% / 2% factors are printed text, not fillable). The 22
+# residency text boxes (1004-1025) and the SSN/last-name/date boxes
+# (3046-3049, 3049B) on line 19b/19c are genuine text; the Side-1 residency
+# status is two radio groups (residency_myself / residency_spouse) and the
+# Side-4 "did NOT itemize for federal" box (4029 CB) a checkbox (on_state
+# /Yes); six description lines (1060B, 2093, 4008, 4043, 5013, 5020) are text.
+# All remaining dollar boxes are mapped as money. The line 19b recipient SSN
+# is split into three boxes (3046 = 3 digits, 3047 = 2, 3048 = 4); the Part IV
+# line 3 deduction percentage is split into an integer box (5027, 1 digit) and
+# a four-place decimal box (5028).
+#
+# Relations: Schedule CA's column math is conditional/cross-column (col D =
+# col A less col B plus col C, with multiple greyed operands, and col E depends
+# on residency apportionment), and several addends are unmapped greyed cells, so
+# per the conservative house style NO relations are declared. cross_form is
+# likewise omitted: the Side-5 Part IV line 5 total feeds Form 540NR line 35,
+# but that is Form 540NR's input line, not an equality asserted on this schedule.
+form: "Schedule CA (540NR)"
+jurisdiction: states/ca
+tax_year: 2025
+source_url: https://www.ftb.ca.gov/forms/2025/2025-540nr-ca.pdf
+pdf_sha256: b9a0db9f466b80907a9082bc2cae6fde78f60ba065f1d2a782889fa1198b1bad
+acroform_root: ''
+fields:
+  # ---------------------------------------------------------------- header
+  - line: name
+    field: '540NR CA - 1000'
+    type: text
+  - line: identifying_number
+    field: '540NR CA - 1001'
+    type: text
+    maxlen: 11
+
+  # ============================ Part I — Residency Information (Side 1)
+  # Line 1 — My California (CA) Residency (Check one): two RADIO fields on the
+  # 2025 blank ("1002 RB" = a Myself, "1003 RB" = b Spouse; three kids each,
+  # /Ff 49152 = NoToggleToOff|Radio), replacing the six separate checkboxes
+  # of 2023. Each kid's on_state is dumped from THIS blank's /AP /N.
+  - line: 1a_myself_nonresident_cb      # 1a Myself — Nonresident
+    field: '540NR CA - 1002 RB'
+    type: checkbox
+    on_state: '/During 2025: My California (CA) Residency (Check one). Myself. Nonresident'
+    group: 'residency_myself'
+  - line: 1a_myself_partyear_cb         # 1a Myself — Part-Year Resident
+    field: '540NR CA - 1002 RB'
+    type: checkbox
+    on_state: '/My California Residency. Myself. Part-Year Resident.'
+    group: 'residency_myself'
+  - line: 1a_myself_resident_cb         # 1a Myself — Resident
+    field: '540NR CA - 1002 RB'
+    type: checkbox
+    on_state: '/My California Residency. Myself. Resident.'
+    group: 'residency_myself'
+  - line: 1b_spouse_nonresident_cb      # 1b Spouse — Nonresident
+    field: '540NR CA - 1003 RB'
+    type: checkbox
+    on_state: '/During 2025: My California (CA) Residency (Check one). Spouse. Nonresident'
+    group: 'residency_spouse'
+  - line: 1b_spouse_partyear_cb         # 1b Spouse — Part-Year Resident
+    field: '540NR CA - 1003 RB'
+    type: checkbox
+    on_state: '/My California Residency. Spouse. Part-Year Resident.'
+    group: 'residency_spouse'
+  - line: 1b_spouse_resident_cb         # 1b Spouse — Resident
+    field: '540NR CA - 1003 RB'
+    type: checkbox
+    on_state: '/My California Residency. Spouse. Resident.'
+    group: 'residency_spouse'
+  # Line 2a — domiciled in (enter two letter code)
+  - line: res2a_you_state               # Yourself
+    field: '540NR CA - 1004'
+    type: text
+    maxlen: 2
+  - line: res2a_spouse_state            # Spouse/RDP
+    field: '540NR CA - 1005'
+    type: text
+    maxlen: 2
+  # Line 2b — military and stationed in (enter two letter code)
+  - line: res2b_you_state
+    field: '540NR CA - 1006'
+    type: text
+    maxlen: 2
+  - line: res2b_spouse_state
+    field: '540NR CA - 1007'
+    type: text
+    maxlen: 2
+  # Line 3 — became a CA resident (state of prior residence and date (mm/dd/yyyy) of move);
+  # the date box is a 10-cell comb printed _ _/_ _/_ _ _ _, so the value keeps its two slashes
+  - line: res3_you_state
+    field: '540NR CA - 1008'
+    type: text
+    maxlen: 2
+  - line: res3_you_date                 # mm/dd/yyyy
+    field: '540NR CA - 1009'
+    type: text
+    maxlen: 10
+  - line: res3_spouse_state
+    field: '540NR CA - 1010'
+    type: text
+    maxlen: 2
+  - line: res3_spouse_date              # mm/dd/yyyy
+    field: '540NR CA - 1011'
+    type: text
+    maxlen: 10
+  # Line 4 — became a CA nonresident (new state of residence and date (mm/dd/yyyy) of move)
+  - line: res4_you_state
+    field: '540NR CA - 1012'
+    type: text
+    maxlen: 2
+  - line: res4_you_date                 # mm/dd/yyyy
+    field: '540NR CA - 1013'
+    type: text
+    maxlen: 10
+  - line: res4_spouse_state
+    field: '540NR CA - 1014'
+    type: text
+    maxlen: 2
+  - line: res4_spouse_date              # mm/dd/yyyy
+    field: '540NR CA - 1015'
+    type: text
+    maxlen: 10
+  # Line 5 — was a CA nonresident the entire year (enter state of residence)
+  - line: res5_you_state
+    field: '540NR CA - 1016'
+    type: text
+    maxlen: 2
+  - line: res5_spouse_state
+    field: '540NR CA - 1017'
+    type: text
+    maxlen: 2
+  # Line 6 — number of days I spent in CA for any purpose
+  - line: res6_you_days
+    field: '540NR CA - 1018'
+    type: text
+    maxlen: 3
+  - line: res6_spouse_days
+    field: '540NR CA - 1019'
+    type: text
+    maxlen: 3
+  # Line 7 — owned a home/property in CA (enter Y for Yes, N for No)
+  - line: res7_you_yn
+    field: '540NR CA - 1020'
+    type: text
+    maxlen: 1
+  - line: res7_spouse_yn
+    field: '540NR CA - 1021'
+    type: text
+    maxlen: 1
+  # Line 8 — Before 2025: I was a CA resident for the period of (from — upper row / to — lower row)
+  - line: res8_you_from                 # upper row, Yourself
+    field: '540NR CA - 1022'
+    type: text
+    maxlen: 10
+  - line: res8_you_to                   # lower row, Yourself
+    field: '540NR CA - 1023'
+    type: text
+    maxlen: 10
+  - line: res8_spouse_from              # upper row, Spouse/RDP
+    field: '540NR CA - 1024'
+    type: text
+    maxlen: 10
+  - line: res8_spouse_to                # lower row, Spouse/RDP
+    field: '540NR CA - 1025'
+    type: text
+    maxlen: 10
+
+  # ================ Part II, Section A — Income (Side 1) — 5-column grid A..E
+  - line: A1a_A                         # 1a Total amount from federal Form(s) W-2, box 1
+    field: '540NR CA - 1026'
+    type: money
+  - line: A1a_B
+    field: '540NR CA - 1027'
+    type: money
+  - line: A1a_C
+    field: '540NR CA - 1028'
+    type: money
+  - line: A1a_D
+    field: '540NR CA - 1029'
+    type: money
+  - line: A1a_E
+    field: '540NR CA - 1030'
+    type: money
+  - line: A1b_A                         # 1b Household employee wages not reported on federal Form(s) W-2
+    field: '540NR CA - 1031'
+    type: money
+  - line: A1b_B
+    field: '540NR CA - 1032'
+    type: money
+  - line: A1b_C
+    field: '540NR CA - 1033'
+    type: money
+  - line: A1b_D
+    field: '540NR CA - 1034'
+    type: money
+  - line: A1b_E
+    field: '540NR CA - 1035'
+    type: money
+  - line: A1c_A                         # 1c Tip income not reported on line 1a
+    field: '540NR CA - 1036'
+    type: money
+  - line: A1c_B
+    field: '540NR CA - 1037'
+    type: money
+  - line: A1c_C
+    field: '540NR CA - 1038'
+    type: money
+  - line: A1c_D
+    field: '540NR CA - 1039'
+    type: money
+  - line: A1c_E
+    field: '540NR CA - 1040'
+    type: money
+  - line: A1d_A                         # 1d Medicaid waiver payments not reported on federal Form(s) W-2
+    field: '540NR CA - 1041'
+    type: money
+  - line: A1d_B
+    field: '540NR CA - 1042'
+    type: money
+  - line: A1d_C
+    field: '540NR CA - 1043'
+    type: money
+  - line: A1d_D
+    field: '540NR CA - 1044'
+    type: money
+  - line: A1d_E
+    field: '540NR CA - 1045'
+    type: money
+  - line: A1e_A                         # 1e Taxable dependent care benefits from federal Form 2441, line 26
+    field: '540NR CA - 1046'
+    type: money
+  - line: A1e_B
+    field: '540NR CA - 1047'
+    type: money
+  - line: A1e_C
+    field: '540NR CA - 1048'
+    type: money
+  - line: A1e_D
+    field: '540NR CA - 1049'
+    type: money
+  - line: A1e_E
+    field: '540NR CA - 1050'
+    type: money
+  - line: A1f_A                         # 1f Employer-provided adoption benefits from federal Form 8839, line 31
+    field: '540NR CA - 1051'
+    type: money
+  - line: A1f_B
+    field: '540NR CA - 1052'
+    type: money
+  - line: A1f_C
+    field: '540NR CA - 1053'
+    type: money
+  - line: A1f_D
+    field: '540NR CA - 1054'
+    type: money
+  - line: A1f_E
+    field: '540NR CA - 1055'
+    type: money
+  - line: A1g_A                         # 1g Wages from federal Form 8919, line 6
+    field: '540NR CA - 1056'
+    type: money
+  - line: A1g_B
+    field: '540NR CA - 1057'
+    type: money
+  - line: A1g_C
+    field: '540NR CA - 1058'
+    type: money
+  - line: A1g_D
+    field: '540NR CA - 1059'
+    type: money
+  - line: A1g_E
+    field: '540NR CA - 1060'
+    type: money
+  - line: A1h_desc                      # 1h Other earned income — "Enter type & amount" description (NEW in 2025)
+    field: '540NR CA - 1060B'
+    type: text
+  - line: A1h_A                         # 1h Other earned income — amounts
+    field: '540NR CA - 1061'
+    type: money
+  - line: A1h_B
+    field: '540NR CA - 1062'
+    type: money
+  - line: A1h_C
+    field: '540NR CA - 1063'
+    type: money
+  - line: A1h_D
+    field: '540NR CA - 1064'
+    type: money
+  - line: A1h_E
+    field: '540NR CA - 1065'
+    type: money
+  - line: A1i_C                         # 1i Nontaxable combat pay election (cols A/B greyed)
+    field: '540NR CA - 1066'
+    type: money
+  - line: A1i_D
+    field: '540NR CA - 1067'
+    type: money
+  - line: A1i_E
+    field: '540NR CA - 1068'
+    type: money
+  - line: A1z_A                         # 1z Add line 1a through line 1i
+    field: '540NR CA - 1069'
+    type: money
+  - line: A1z_B
+    field: '540NR CA - 1070'
+    type: money
+  - line: A1z_C
+    field: '540NR CA - 1071'
+    type: money
+  - line: A1z_D
+    field: '540NR CA - 1072'
+    type: money
+  - line: A1z_E
+    field: '540NR CA - 1073'
+    type: money
+  - line: A2a                           # 2a Taxable interest — federal amount (primary box, left of grid)
+    field: '540NR CA - 1074'
+    type: money
+  - line: A2b_A                         # 2b Taxable interest
+    field: '540NR CA - 1075'
+    type: money
+  - line: A2b_B
+    field: '540NR CA - 1076'
+    type: money
+  - line: A2b_C
+    field: '540NR CA - 1077'
+    type: money
+  - line: A2b_D
+    field: '540NR CA - 1078'
+    type: money
+  - line: A2b_E
+    field: '540NR CA - 1079'
+    type: money
+  - line: A3a                           # 3a Ordinary dividends — federal amount (primary box)
+    field: '540NR CA - 1080'
+    type: money
+  - line: A3b_A                         # 3b Ordinary dividends
+    field: '540NR CA - 1081'
+    type: money
+  - line: A3b_B
+    field: '540NR CA - 1082'
+    type: money
+  - line: A3b_C
+    field: '540NR CA - 1083'
+    type: money
+  - line: A3b_D
+    field: '540NR CA - 1084'
+    type: money
+  - line: A3b_E
+    field: '540NR CA - 1085'
+    type: money
+  - line: A4a                           # 4a IRA distributions — federal amount (primary box)
+    field: '540NR CA - 1086'
+    type: money
+  - line: A4b_A                         # 4b IRA distributions
+    field: '540NR CA - 1087'
+    type: money
+  - line: A4b_B
+    field: '540NR CA - 1088'
+    type: money
+  - line: A4b_C
+    field: '540NR CA - 1089'
+    type: money
+  - line: A4b_D
+    field: '540NR CA - 1090'
+    type: money
+  - line: A4b_E
+    field: '540NR CA - 1091'
+    type: money
+  - line: A5a                           # 5a Pensions and annuities — federal amount (primary box)
+    field: '540NR CA - 1092'
+    type: money
+  - line: A5b_A                         # 5b Pensions and annuities
+    field: '540NR CA - 1093'
+    type: money
+  - line: A5b_B
+    field: '540NR CA - 1094'
+    type: money
+  - line: A5b_C
+    field: '540NR CA - 1095'
+    type: money
+  - line: A5b_D
+    field: '540NR CA - 1096'
+    type: money
+  - line: A5b_E
+    field: '540NR CA - 1097'
+    type: money
+  - line: A6a                           # 6a Social security benefits — federal amount (primary box)
+    field: '540NR CA - 1098'
+    type: money
+  - line: A6b_A                         # 6b Social security benefits (taxable) — cols C/D/E greyed
+    field: '540NR CA - 1099'
+    type: money
+  - line: A6b_B
+    field: '540NR CA - 1100'
+    type: money
+  - line: A7a_A                         # 7a Capital gain or (loss) — printed 7a on the 2025 face (was 7 in 2023)
+    field: '540NR CA - 1101'
+    type: money
+  - line: A7a_B
+    field: '540NR CA - 1102'
+    type: money
+  - line: A7a_C
+    field: '540NR CA - 1103'
+    type: money
+  - line: A7a_D
+    field: '540NR CA - 1104'
+    type: money
+  - line: A7a_E
+    field: '540NR CA - 1105'
+    type: money
+
+  # ============ Part II, Section B — Additional Income — A..E grid
+  # Lines 1 and 2a now print at the foot of Side 1 (they opened Side 2 in 2023)
+  - line: B1_A                          # 1 Taxable refunds, credits, or offsets of state/local income taxes (C/D/E greyed)
+    field: '540NR CA - 1106'
+    type: money
+  - line: B1_B
+    field: '540NR CA - 1107'
+    type: money
+  - line: B2b_date                      # 2b Date of original divorce or separation agreement (NEW in 2025; plain 70-pt box, no cells, /MaxLen 7 — the widget tooltip asks for 2-digit month and 4-digit year, MM/YYYY; the filler REFUSES a longer value)
+    field: '540NR CA - 1112b'
+    type: text
+    maxlen: 7
+  - line: B2a_A                         # 2a Alimony received (col B greyed)
+    field: '540NR CA - 1108'
+    type: money
+  - line: B2a_C
+    field: '540NR CA - 1110'
+    type: money
+  - line: B2a_D
+    field: '540NR CA - 1111'
+    type: money
+  - line: B2a_E
+    field: '540NR CA - 1112'
+    type: money
+  # ---- Side 2
+  - line: B3_A                          # 3 Business income or (loss)
+    field: '540NR CA - 2001'
+    type: money
+  - line: B3_B
+    field: '540NR CA - 2002'
+    type: money
+  - line: B3_C
+    field: '540NR CA - 2003'
+    type: money
+  - line: B3_D
+    field: '540NR CA - 2004'
+    type: money
+  - line: B3_E
+    field: '540NR CA - 2005'
+    type: money
+  - line: B4_A                          # 4 Other gains or (losses)
+    field: '540NR CA - 2006'
+    type: money
+  - line: B4_B
+    field: '540NR CA - 2007'
+    type: money
+  - line: B4_C
+    field: '540NR CA - 2008'
+    type: money
+  - line: B4_D
+    field: '540NR CA - 2009'
+    type: money
+  - line: B4_E
+    field: '540NR CA - 2010'
+    type: money
+  - line: B5_A                          # 5 Rental real estate, royalties, partnerships, S corps, trusts, etc.
+    field: '540NR CA - 2011'
+    type: money
+  - line: B5_B
+    field: '540NR CA - 2012'
+    type: money
+  - line: B5_C
+    field: '540NR CA - 2013'
+    type: money
+  - line: B5_D
+    field: '540NR CA - 2014'
+    type: money
+  - line: B5_E
+    field: '540NR CA - 2015'
+    type: money
+  - line: B6_A                          # 6 Farm income or (loss)
+    field: '540NR CA - 2016'
+    type: money
+  - line: B6_B
+    field: '540NR CA - 2017'
+    type: money
+  - line: B6_C
+    field: '540NR CA - 2018'
+    type: money
+  - line: B6_D
+    field: '540NR CA - 2019'
+    type: money
+  - line: B6_E
+    field: '540NR CA - 2020'
+    type: money
+  - line: B7_A                          # 7 Unemployment compensation (cols C/D/E greyed)
+    field: '540NR CA - 2021'
+    type: money
+  - line: B7_B
+    field: '540NR CA - 2022'
+    type: money
+  # ---- Section B line 8 (Other income), sub-lines a-z
+  - line: B8a_A                         # 8a Federal net operating loss — printed in parentheses (cols B/D/E greyed)
+    field: '540NR CA - 2023'
+    type: money
+  - line: B8a_C
+    field: '540NR CA - 2024'
+    type: money
+  - line: B8b_A                         # 8b Gambling (col C greyed)
+    field: '540NR CA - 2025'
+    type: money
+  - line: B8b_B
+    field: '540NR CA - 2026'
+    type: money
+  - line: B8b_D
+    field: '540NR CA - 2027'
+    type: money
+  - line: B8b_E
+    field: '540NR CA - 2028'
+    type: money
+  - line: B8c_A                         # 8c Cancellation of debt
+    field: '540NR CA - 2029'
+    type: money
+  - line: B8c_B
+    field: '540NR CA - 2030'
+    type: money
+  - line: B8c_C
+    field: '540NR CA - 2031'
+    type: money
+  - line: B8c_D
+    field: '540NR CA - 2032'
+    type: money
+  - line: B8c_E
+    field: '540NR CA - 2033'
+    type: money
+  - line: B8d_A                         # 8d Foreign earned income exclusion from federal Form 2555 — in parentheses (B/D/E greyed)
+    field: '540NR CA - 2034'
+    type: money
+  - line: B8d_C
+    field: '540NR CA - 2035'
+    type: money
+  - line: B8e_A                         # 8e Income from federal Form 8853 (col B greyed)
+    field: '540NR CA - 2036'
+    type: money
+  - line: B8e_C
+    field: '540NR CA - 2037'
+    type: money
+  - line: B8e_D
+    field: '540NR CA - 2038'
+    type: money
+  - line: B8e_E
+    field: '540NR CA - 2039'
+    type: money
+  - line: B8f_A                         # 8f Income from federal Form 8889 (cols C/D/E greyed)
+    field: '540NR CA - 2040'
+    type: money
+  - line: B8f_B
+    field: '540NR CA - 2041'
+    type: money
+  - line: B8g_A                         # 8g Alaska Permanent Fund dividends (cols B/C greyed)
+    field: '540NR CA - 2042'
+    type: money
+  - line: B8g_D
+    field: '540NR CA - 2043'
+    type: money
+  - line: B8g_E
+    field: '540NR CA - 2044'
+    type: money
+  - line: B8h_A                         # 8h Jury duty pay (cols B/C greyed)
+    field: '540NR CA - 2045'
+    type: money
+  - line: B8h_D
+    field: '540NR CA - 2046'
+    type: money
+  - line: B8h_E
+    field: '540NR CA - 2047'
+    type: money
+  - line: B8i_A                         # 8i Prizes and awards (cols B/C greyed)
+    field: '540NR CA - 2048'
+    type: money
+  - line: B8i_D
+    field: '540NR CA - 2049'
+    type: money
+  - line: B8i_E
+    field: '540NR CA - 2050'
+    type: money
+  - line: B8j_A                         # 8j Activity not engaged in for profit income (cols B/C greyed)
+    field: '540NR CA - 2051'
+    type: money
+  - line: B8j_D
+    field: '540NR CA - 2052'
+    type: money
+  - line: B8j_E
+    field: '540NR CA - 2053'
+    type: money
+  - line: B8k_A                         # 8k Stock options (col B greyed)
+    field: '540NR CA - 2054'
+    type: money
+  - line: B8k_C
+    field: '540NR CA - 2055'
+    type: money
+  - line: B8k_D
+    field: '540NR CA - 2056'
+    type: money
+  - line: B8k_E
+    field: '540NR CA - 2057'
+    type: money
+  - line: B8l_A                         # 8l Income from rental of personal property (not a business) (cols B/C greyed)
+    field: '540NR CA - 2058'
+    type: money
+  - line: B8l_D
+    field: '540NR CA - 2059'
+    type: money
+  - line: B8l_E
+    field: '540NR CA - 2060'
+    type: money
+  - line: B8m_A                         # 8m Olympic and Paralympic medals and USOC prize money (cols B/C greyed)
+    field: '540NR CA - 2061'
+    type: money
+  - line: B8m_D
+    field: '540NR CA - 2062'
+    type: money
+  - line: B8m_E
+    field: '540NR CA - 2063'
+    type: money
+  - line: B8n_A                         # 8n IRC Section 951(a) inclusion (cols C/D/E greyed)
+    field: '540NR CA - 2064'
+    type: money
+  - line: B8n_B
+    field: '540NR CA - 2065'
+    type: money
+  - line: B8o_A                         # 8o IRC Section 951A(a) inclusion (cols C/D/E greyed)
+    field: '540NR CA - 2066'
+    type: money
+  - line: B8o_B
+    field: '540NR CA - 2067'
+    type: money
+  - line: B8p_A                         # 8p IRC Section 461(l) excess business loss adjustment
+    field: '540NR CA - 2068'
+    type: money
+  - line: B8p_B
+    field: '540NR CA - 2069'
+    type: money
+  - line: B8p_C
+    field: '540NR CA - 2070'
+    type: money
+  - line: B8p_D
+    field: '540NR CA - 2071'
+    type: money
+  - line: B8p_E
+    field: '540NR CA - 2072'
+    type: money
+  - line: B8q_A                         # 8q Taxable distributions from an ABLE account (cols B/C greyed)
+    field: '540NR CA - 2073'
+    type: money
+  - line: B8q_D
+    field: '540NR CA - 2074'
+    type: money
+  - line: B8q_E
+    field: '540NR CA - 2075'
+    type: money
+  - line: B8r_A                         # 8r Scholarship and fellowship grants not reported on W-2 (cols B/C greyed)
+    field: '540NR CA - 2076'
+    type: money
+  - line: B8r_D
+    field: '540NR CA - 2077'
+    type: money
+  - line: B8r_E
+    field: '540NR CA - 2078'
+    type: money
+  - line: B8s_A                         # 8s Nontaxable amount of Medicaid waiver payments on 1040 line 1a/1d — in parentheses (B/C greyed)
+    field: '540NR CA - 2079'
+    type: money
+  - line: B8s_D
+    field: '540NR CA - 2080'
+    type: money
+  - line: B8s_E
+    field: '540NR CA - 2081'
+    type: money
+  - line: B8t_A                         # 8t Pension/annuity from nonqualified deferred comp / IRC 457 plan (cols B/C greyed)
+    field: '540NR CA - 2082'
+    type: money
+  - line: B8t_D
+    field: '540NR CA - 2083'
+    type: money
+  - line: B8t_E
+    field: '540NR CA - 2084'
+    type: money
+  - line: B8u_A                         # 8u Wages earned while incarcerated (cols B/C greyed)
+    field: '540NR CA - 2085'
+    type: money
+  - line: B8u_D
+    field: '540NR CA - 2086'
+    type: money
+  - line: B8u_E
+    field: '540NR CA - 2087'
+    type: money
+  - line: B8v_A                         # 8v Digital assets received as ordinary income not reported elsewhere (NEW in 2025)
+    field: '540NR CA - 2088'
+    type: money
+  - line: B8v_B
+    field: '540NR CA - 2089'
+    type: money
+  - line: B8v_C
+    field: '540NR CA - 2090'
+    type: money
+  - line: B8v_D
+    field: '540NR CA - 2091'
+    type: money
+  - line: B8v_E
+    field: '540NR CA - 2092'
+    type: money
+  - line: B8z_desc                      # 8z Other income — "List type and amount" description
+    field: '540NR CA - 2093'
+    type: text
+  - line: B8z_A                         # 8z Other income — amounts
+    field: '540NR CA - 2094'
+    type: money
+  - line: B8z_B
+    field: '540NR CA - 2095'
+    type: money
+  - line: B8z_C
+    field: '540NR CA - 2096'
+    type: money
+  - line: B8z_D
+    field: '540NR CA - 2097'
+    type: money
+  - line: B8z_E
+    field: '540NR CA - 2098'
+    type: money
+  - line: B9a_A                         # 9a Total other income. Add line 8a through line 8z
+    field: '540NR CA - 2099'
+    type: money
+  - line: B9a_B
+    field: '540NR CA - 2100'
+    type: money
+  - line: B9a_C
+    field: '540NR CA - 2101'
+    type: money
+  - line: B9a_D
+    field: '540NR CA - 2102'
+    type: money
+  - line: B9a_E
+    field: '540NR CA - 2103'
+    type: money
+
+  # ---- Section B 9b sub-lines + line 10 total (Side 3) — only cols B, D, E exist (A/C greyed)
+  - line: B9b1_B                        # 9b1 Disaster loss deduction from form FTB 3805V
+    field: '540NR CA - 3001'
+    type: money
+  - line: B9b1_D
+    field: '540NR CA - 3002'
+    type: money
+  - line: B9b1_E
+    field: '540NR CA - 3003'
+    type: money
+  - line: B9b2_B                        # 9b2 NOL deduction from form FTB 3805V
+    field: '540NR CA - 3004'
+    type: money
+  - line: B9b2_D
+    field: '540NR CA - 3005'
+    type: money
+  - line: B9b2_E
+    field: '540NR CA - 3006'
+    type: money
+  - line: B9b3_B                        # 9b3 NOL deduction from form FTB 3805Z, FTB 3807, or FTB 3809
+    field: '540NR CA - 3007'
+    type: money
+  - line: B9b3_D
+    field: '540NR CA - 3008'
+    type: money
+  - line: B9b3_E
+    field: '540NR CA - 3009'
+    type: money
+  - line: B10_A                         # 10 Total. Add Section A line 1z..7a and Section B line 1..7, 9a, 9b1..9b3
+    field: '540NR CA - 3010'
+    type: money
+  - line: B10_B
+    field: '540NR CA - 3011'
+    type: money
+  - line: B10_C
+    field: '540NR CA - 3012'
+    type: money
+  - line: B10_D
+    field: '540NR CA - 3013'
+    type: money
+  - line: B10_E
+    field: '540NR CA - 3014'
+    type: money
+
+  # ============ Part II, Section C — Adjustments to Income (Side 3) — A..E grid
+  - line: C11_A                         # 11 Educator expenses (cols C/D/E greyed)
+    field: '540NR CA - 3015'
+    type: money
+  - line: C11_B
+    field: '540NR CA - 3016'
+    type: money
+  - line: C12_A                         # 12 Certain business expenses of reservists, performing artists, fee-basis officials
+    field: '540NR CA - 3017'
+    type: money
+  - line: C12_B
+    field: '540NR CA - 3018'
+    type: money
+  - line: C12_C
+    field: '540NR CA - 3019'
+    type: money
+  - line: C12_D
+    field: '540NR CA - 3020'
+    type: money
+  - line: C12_E
+    field: '540NR CA - 3021'
+    type: money
+  - line: C13_A                         # 13 Health savings account deduction (cols C/D/E greyed)
+    field: '540NR CA - 3022'
+    type: money
+  - line: C13_B
+    field: '540NR CA - 3023'
+    type: money
+  - line: C14_A                         # 14 Moving expenses. Attach form FTB 3913 (col B greyed)
+    field: '540NR CA - 3024'
+    type: money
+  - line: C14_C
+    field: '540NR CA - 3025'
+    type: money
+  - line: C14_D
+    field: '540NR CA - 3026'
+    type: money
+  - line: C14_E
+    field: '540NR CA - 3027'
+    type: money
+  - line: C15_A                         # 15 Deductible part of self-employment tax (col C greyed)
+    field: '540NR CA - 3028'
+    type: money
+  - line: C15_B
+    field: '540NR CA - 3029'
+    type: money
+  - line: C15_D
+    field: '540NR CA - 3030'
+    type: money
+  - line: C15_E
+    field: '540NR CA - 3031'
+    type: money
+  - line: C16_A                         # 16 Self-employed SEP, SIMPLE, and qualified plans (cols B/C greyed)
+    field: '540NR CA - 3032'
+    type: money
+  - line: C16_D
+    field: '540NR CA - 3033'
+    type: money
+  - line: C16_E
+    field: '540NR CA - 3034'
+    type: money
+  - line: C17_A                         # 17 Self-employed health insurance deduction (col C greyed)
+    field: '540NR CA - 3035'
+    type: money
+  - line: C17_B
+    field: '540NR CA - 3036'
+    type: money
+  - line: C17_D
+    field: '540NR CA - 3037'
+    type: money
+  - line: C17_E
+    field: '540NR CA - 3038'
+    type: money
+  - line: C18_A                         # 18 Penalty on early withdrawal of savings (cols B/C greyed)
+    field: '540NR CA - 3039'
+    type: money
+  - line: C18_D
+    field: '540NR CA - 3040'
+    type: money
+  - line: C18_E
+    field: '540NR CA - 3041'
+    type: money
+  - line: C19a_A                        # 19a Alimony paid (col B greyed)
+    field: '540NR CA - 3042'
+    type: money
+  - line: C19a_C
+    field: '540NR CA - 3043'
+    type: money
+  - line: C19a_D
+    field: '540NR CA - 3044'
+    type: money
+  - line: C19a_E
+    field: '540NR CA - 3045'
+    type: money
+  - line: C19b_ssn1                     # 19b Recipient's SSN — first segment (3 digits)
+    field: '540NR CA - 3046'
+    type: text
+    maxlen: 3
+  - line: C19b_ssn2                     # 19b Recipient's SSN — middle segment (2 digits)
+    field: '540NR CA - 3047'
+    type: text
+    maxlen: 2
+  - line: C19b_ssn3                     # 19b Recipient's SSN — last segment (4 digits)
+    field: '540NR CA - 3048'
+    type: text
+    maxlen: 4
+  - line: C19b_lastname                 # 19b Recipient's Last name
+    field: '540NR CA - 3049'
+    type: text
+  - line: C19c_date                     # 19c Date of original divorce or separation agreement (NEW in 2025; plain 88-pt box, no cells, /MaxLen 7 — the widget tooltip asks for 2-digit month and 4-digit year, MM/YYYY; the filler REFUSES a longer value)
+    field: '540NR CA - 3049B'
+    type: text
+    maxlen: 7
+  - line: C20_A                         # 20 IRA deduction
+    field: '540NR CA - 3050'
+    type: money
+  - line: C20_B
+    field: '540NR CA - 3051'
+    type: money
+  - line: C20_C
+    field: '540NR CA - 3052'
+    type: money
+  - line: C20_D
+    field: '540NR CA - 3053'
+    type: money
+  - line: C20_E
+    field: '540NR CA - 3054'
+    type: money
+  - line: C21_A                         # 21 Student loan interest deduction (col B greyed)
+    field: '540NR CA - 3055'
+    type: money
+  - line: C21_C
+    field: '540NR CA - 3056'
+    type: money
+  - line: C21_D
+    field: '540NR CA - 3057'
+    type: money
+  - line: C21_E
+    field: '540NR CA - 3058'
+    type: money
+  # line 22 "Reserved for future use" — widget 3059 (col A, /Ff ReadOnly) deliberately UNMAPPED, see banner
+  - line: C23_A                         # 23 Archer MSA deduction (cols B/C greyed)
+    field: '540NR CA - 3060'
+    type: money
+  - line: C23_D
+    field: '540NR CA - 3061'
+    type: money
+  - line: C23_E
+    field: '540NR CA - 3062'
+    type: money
+  # ---- Section C line 24 (Other adjustments), sub-lines a-z
+  - line: C24a_A                        # 24a Jury duty pay (cols B/C greyed)
+    field: '540NR CA - 3063'
+    type: money
+  - line: C24a_D
+    field: '540NR CA - 3064'
+    type: money
+  - line: C24a_E
+    field: '540NR CA - 3065'
+    type: money
+  - line: C24b_A                        # 24b Deductible expenses related to income reported on line 8l
+    field: '540NR CA - 3066'
+    type: money
+  - line: C24b_B
+    field: '540NR CA - 3067'
+    type: money
+  - line: C24b_C
+    field: '540NR CA - 3068'
+    type: money
+  - line: C24b_D
+    field: '540NR CA - 3069'
+    type: money
+  - line: C24b_E
+    field: '540NR CA - 3070'
+    type: money
+  - line: C24c_A                        # 24c Nontaxable Olympic/Paralympic medals & USOC prize money on line 8m (cols C/D/E greyed)
+    field: '540NR CA - 3071'
+    type: money
+  - line: C24c_B
+    field: '540NR CA - 3072'
+    type: money
+  - line: C24d_A                        # 24d Reforestation amortization and expenses (col C greyed)
+    field: '540NR CA - 3073'
+    type: money
+  - line: C24d_B
+    field: '540NR CA - 3074'
+    type: money
+  - line: C24d_D
+    field: '540NR CA - 3075'
+    type: money
+  - line: C24d_E
+    field: '540NR CA - 3076'
+    type: money
+  - line: C24e_A                        # 24e Repayment of supplemental unemployment benefits under Trade Act of 1974 (cols B/C greyed)
+    field: '540NR CA - 3077'
+    type: money
+  - line: C24e_D
+    field: '540NR CA - 3078'
+    type: money
+  - line: C24e_E
+    field: '540NR CA - 3079'
+    type: money
+  - line: C24f_A                        # 24f Contributions to IRC Section 501(c)(18)(D) pension plans
+    field: '540NR CA - 3080'
+    type: money
+  - line: C24f_B
+    field: '540NR CA - 3081'
+    type: money
+  - line: C24f_C
+    field: '540NR CA - 3082'
+    type: money
+  - line: C24f_D
+    field: '540NR CA - 3083'
+    type: money
+  - line: C24f_E
+    field: '540NR CA - 3084'
+    type: money
+  - line: C24g_A                        # 24g Contributions by certain chaplains to IRC Section 403(b) plans
+    field: '540NR CA - 3085'
+    type: money
+  - line: C24g_B
+    field: '540NR CA - 3086'
+    type: money
+  - line: C24g_C
+    field: '540NR CA - 3087'
+    type: money
+  - line: C24g_D
+    field: '540NR CA - 3088'
+    type: money
+  - line: C24g_E
+    field: '540NR CA - 3089'
+    type: money
+  - line: C24h_A                        # 24h Attorney fees and court costs for unlawful discrimination claims (cols B/C greyed)
+    field: '540NR CA - 3090'
+    type: money
+  - line: C24h_D
+    field: '540NR CA - 3091'
+    type: money
+  - line: C24h_E
+    field: '540NR CA - 3092'
+    type: money
+
+  # ---- Section C continued (Side 4): 24i-24k, 24z, 25, 26, 27
+  - line: C24i_A                        # 24i Attorney fees/court costs re IRS detecting tax law violations (cols C/D/E greyed)
+    field: '540NR CA - 4001'
+    type: money
+  - line: C24i_B
+    field: '540NR CA - 4002'
+    type: money
+  - line: C24j_A                        # 24j Housing deduction from federal Form 2555 (cols C/D/E greyed)
+    field: '540NR CA - 4003'
+    type: money
+  - line: C24j_B
+    field: '540NR CA - 4004'
+    type: money
+  - line: C24k_A                        # 24k Excess deductions of IRC Section 67(e) expenses from federal Sch K-1 (1041) (cols B/C greyed)
+    field: '540NR CA - 4005'
+    type: money
+  - line: C24k_D
+    field: '540NR CA - 4006'
+    type: money
+  - line: C24k_E
+    field: '540NR CA - 4007'
+    type: money
+  - line: C24z_desc                     # 24z Other adjustments — "List type and amount" description
+    field: '540NR CA - 4008'
+    type: text
+  - line: C24z_A                        # 24z Other adjustments — amounts
+    field: '540NR CA - 4009'
+    type: money
+  - line: C24z_B
+    field: '540NR CA - 4010'
+    type: money
+  - line: C24z_C
+    field: '540NR CA - 4011'
+    type: money
+  - line: C24z_D
+    field: '540NR CA - 4012'
+    type: money
+  - line: C24z_E
+    field: '540NR CA - 4013'
+    type: money
+  - line: C25_A                         # 25 Total other adjustments. Add line 24a through line 24z
+    field: '540NR CA - 4014'
+    type: money
+  - line: C25_B
+    field: '540NR CA - 4015'
+    type: money
+  - line: C25_C
+    field: '540NR CA - 4016'
+    type: money
+  - line: C25_D
+    field: '540NR CA - 4017'
+    type: money
+  - line: C25_E
+    field: '540NR CA - 4018'
+    type: money
+  - line: C26_A                         # 26 Add line 11 through line 23 and line 25 in each column, A through E
+    field: '540NR CA - 4019'
+    type: money
+  - line: C26_B
+    field: '540NR CA - 4020'
+    type: money
+  - line: C26_C
+    field: '540NR CA - 4021'
+    type: money
+  - line: C26_D
+    field: '540NR CA - 4022'
+    type: money
+  - line: C26_E
+    field: '540NR CA - 4023'
+    type: money
+  - line: C27_A                         # 27 Total. Subtract line 26 from line 10 in each column, A through E
+    field: '540NR CA - 4024'
+    type: money
+  - line: C27_B
+    field: '540NR CA - 4025'
+    type: money
+  - line: C27_C
+    field: '540NR CA - 4026'
+    type: money
+  - line: C27_D
+    field: '540NR CA - 4027'
+    type: money
+  - line: C27_E
+    field: '540NR CA - 4028'
+    type: money
+
+  # =============== Part III — Adjustments to Federal Itemized Deductions (Side 4)
+  # 3-column grid (A = Federal Amounts, B = Subtractions, C = Additions)
+  - line: III_not_itemize_federal_cb    # Check the box if you did NOT itemize for federal but will itemize for California
+    field: '540NR CA - 4029 CB'
+    type: checkbox
+    on_state: '/Yes'
+  # ---- Medical and Dental Expenses (lines 1-3 single computation boxes)
+  - line: III1                          # 1 Medical and dental expenses
+    field: '540NR CA - 4030'
+    type: money
+  - line: III2                          # 2 Enter amount from federal Form 1040 or 1040-SR, line 11b
+    field: '540NR CA - 4031'
+    type: money
+  - line: III3                          # 3 Multiply line 2 by 7.5% (0.075)
+    field: '540NR CA - 4032'
+    type: money
+  - line: III4_A                        # 4 Subtract line 3 from line 1 (col B greyed)
+    field: '540NR CA - 4033'
+    type: money
+  - line: III4_C
+    field: '540NR CA - 4034'
+    type: money
+  # ---- Taxes You Paid
+  - line: III5a_A                       # 5a State and local income tax or general sales taxes (col C greyed)
+    field: '540NR CA - 4035'
+    type: money
+  - line: III5a_B
+    field: '540NR CA - 4036'
+    type: money
+  - line: III5b_A                       # 5b State and local real estate taxes (single col-A box)
+    field: '540NR CA - 4037'
+    type: money
+  - line: III5c_A                       # 5c State and local personal property taxes (single col-A box)
+    field: '540NR CA - 4038'
+    type: money
+  - line: III5d_A                       # 5d Add line 5a through line 5c (single col-A box)
+    field: '540NR CA - 4039'
+    type: money
+  - line: III5e_A                       # 5e Enter the smaller of line 5d or $40,000 ($20,000 if married filing separately)
+    field: '540NR CA - 4040'
+    type: money
+  - line: III5e_B
+    field: '540NR CA - 4041'
+    type: money
+  - line: III5e_C
+    field: '540NR CA - 4042'
+    type: money
+  - line: III6_desc                     # 6 Other taxes. "List type" description
+    field: '540NR CA - 4043'
+    type: text
+  - line: III6_A                        # 6 Other taxes — amount
+    field: '540NR CA - 4044'
+    type: money
+  - line: III6_B
+    field: '540NR CA - 4045'
+    type: money
+  - line: III6_C
+    field: '540NR CA - 4046'
+    type: money
+  - line: III7_A                        # 7 Add line 5e and line 6
+    field: '540NR CA - 4047'
+    type: money
+  - line: III7_B
+    field: '540NR CA - 4048'
+    type: money
+  - line: III7_C
+    field: '540NR CA - 4049'
+    type: money
+  # ---- Interest You Paid
+  - line: III8a_A                       # 8a Home mortgage interest and points reported on federal Form 1098 (col B greyed)
+    field: '540NR CA - 4050'
+    type: money
+  - line: III8a_C
+    field: '540NR CA - 4051'
+    type: money
+  - line: III8b_A                       # 8b Home mortgage interest not reported on federal Form 1098 (col B greyed)
+    field: '540NR CA - 4052'
+    type: money
+  - line: III8b_C
+    field: '540NR CA - 4053'
+    type: money
+  - line: III8c_A                       # 8c Points not reported on federal Form 1098 (col B greyed)
+    field: '540NR CA - 4054'
+    type: money
+  - line: III8c_C
+    field: '540NR CA - 4055'
+    type: money
+  # line 8d "Reserved for future use" — widget 4056 (col A, /Ff ReadOnly) deliberately UNMAPPED, see banner
+  - line: III8e_A                       # 8e Add line 8a through line 8c
+    field: '540NR CA - 4057'
+    type: money
+  - line: III8e_B
+    field: '540NR CA - 4058'
+    type: money
+  - line: III8e_C
+    field: '540NR CA - 4059'
+    type: money
+  - line: III9_A                        # 9 Investment interest
+    field: '540NR CA - 4060'
+    type: money
+  - line: III9_B
+    field: '540NR CA - 4061'
+    type: money
+  - line: III9_C
+    field: '540NR CA - 4062'
+    type: money
+  - line: III10_A                       # 10 Add line 8e and line 9
+    field: '540NR CA - 4063'
+    type: money
+  - line: III10_B
+    field: '540NR CA - 4064'
+    type: money
+  - line: III10_C
+    field: '540NR CA - 4065'
+    type: money
+  # ---- Gifts to Charity
+  - line: III11_A                       # 11 Gifts by cash or check
+    field: '540NR CA - 4066'
+    type: money
+  - line: III11_B
+    field: '540NR CA - 4067'
+    type: money
+  - line: III11_C
+    field: '540NR CA - 4068'
+    type: money
+  - line: III12_A                       # 12 Other than by cash or check (col C widget is 4071, col B 4070)
+    field: '540NR CA - 4069'
+    type: money
+  - line: III12_B
+    field: '540NR CA - 4070'
+    type: money
+  - line: III12_C
+    field: '540NR CA - 4071'
+    type: money
+  - line: III13_A                       # 13 Carryover from prior year
+    field: '540NR CA - 4072'
+    type: money
+  - line: III13_B
+    field: '540NR CA - 4073'
+    type: money
+  - line: III13_C
+    field: '540NR CA - 4074'
+    type: money
+  - line: III14_A                       # 14 Add line 11 through line 13
+    field: '540NR CA - 4075'
+    type: money
+  - line: III14_B
+    field: '540NR CA - 4076'
+    type: money
+  - line: III14_C
+    field: '540NR CA - 4077'
+    type: money
+
+  # ---- Part III continued (Side 5): Casualty/Theft, Other, totals
+  - line: III15_A                       # 15 Casualty or theft loss(es). Attach federal Form 4684
+    field: '540NR CA - 5001'
+    type: money
+  - line: III15_B
+    field: '540NR CA - 5002'
+    type: money
+  - line: III15_C
+    field: '540NR CA - 5003'
+    type: money
+  - line: III16_A                       # 16 Other — from list in federal instructions
+    field: '540NR CA - 5004'
+    type: money
+  - line: III16_B
+    field: '540NR CA - 5005'
+    type: money
+  - line: III16_C
+    field: '540NR CA - 5006'
+    type: money
+  - line: III17_A                       # 17 Add lines 4, 7, 10, 14, 15, and 16 in columns A, B, and C
+    field: '540NR CA - 5007'
+    type: money
+  - line: III17_B
+    field: '540NR CA - 5008'
+    type: money
+  - line: III17_C
+    field: '540NR CA - 5009'
+    type: money
+  - line: III18                         # 18 Total. Combine line 17 column A less column B plus column C (single box)
+    field: '540NR CA - 5010'
+    type: money
+  # ---- Job Expenses and Certain Miscellaneous Deductions (single-box block)
+  - line: III19                         # 19 Unreimbursed employee expenses (job travel, union dues, etc.)
+    field: '540NR CA - 5011'
+    type: money
+  - line: III20                         # 20 Tax preparation fees
+    field: '540NR CA - 5012'
+    type: money
+  - line: III21_desc                    # 21 Other expenses (investment, safe deposit box, etc.) "List type" description
+    field: '540NR CA - 5013'
+    type: text
+  - line: III21                         # 21 Other expenses — amount
+    field: '540NR CA - 5014'
+    type: money
+  - line: III22                         # 22 Add line 19 through line 21
+    field: '540NR CA - 5015'
+    type: money
+  - line: III23                         # 23 Enter amount from federal Form 1040 or 1040-SR, line 11b (inline box)
+    field: '540NR CA - 5016'
+    type: money
+  - line: III24                         # 24 Multiply line 23 by 2% (0.02). If less than zero, enter 0
+    field: '540NR CA - 5017'
+    type: money
+  - line: III25                         # 25 Subtract line 24 from line 22
+    field: '540NR CA - 5018'
+    type: money
+  - line: III26                         # 26 Total Itemized Deductions. Add line 18 and line 25
+    field: '540NR CA - 5019'
+    type: money
+  - line: III27_desc                    # 27 Other adjustments. See instructions. "Specify" description
+    field: '540NR CA - 5020'
+    type: text
+  - line: III27                         # 27 Other adjustments — amount
+    field: '540NR CA - 5021'
+    type: money
+  - line: III28                         # 28 Combine line 26 and line 27
+    field: '540NR CA - 5022'
+    type: money
+  - line: III29                         # 29 Itemized Deductions Worksheet result (Yes path; federal AGI over $252,203 / $378,310 / $504,411)
+    field: '540NR CA - 5023'
+    type: money
+  - line: III30                         # 30 Enter the larger of line 29 or standard deduction shown ($5,706 / $11,412)
+    field: '540NR CA - 5024'
+    type: money
+
+  # =============== Part IV — California Taxable Income (Side 5) — single boxes
+  - line: IV1                           # 1 California AGI. Enter your California AGI from Part II, line 27, column E
+    field: '540NR CA - 5025'
+    type: money
+  - line: IV2                           # 2 Enter your deductions from line 30
+    field: '540NR CA - 5026'
+    type: money
+  - line: IV3_int                       # 3 Deduction Percentage (integer part, before the printed decimal point)
+    field: '540NR CA - 5027'
+    type: text
+    maxlen: 1
+  - line: IV3_dec                       # 3 Deduction Percentage (four-place decimal part)
+    field: '540NR CA - 5028'
+    type: text
+    maxlen: 4
+  - line: IV4                           # 4 California Itemized/Standard Deductions. Multiply line 2 by line 3 percentage
+    field: '540NR CA - 5029'
+    type: money
+  - line: IV5                           # 5 California Taxable Income. Subtract line 4 from line 1 → Form 540NR, line 35
+    field: '540NR CA - 5030'
+    type: money
+relations: []
+cross_form: []
+identity_fields:
+  - name
+  - identifying_number

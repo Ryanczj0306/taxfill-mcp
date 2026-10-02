@@ -393,6 +393,19 @@ RESERVED_LINES_UNMAPPED: tuple[ReservedUnmapped, ...] = (
         )
         for year in (2023, 2024)
     ),
+    # CA Schedule CA (540NR) 2025 (Phase J JS5): the only two ReadOnly widgets on the blank (/Ff 12582913)
+    # sit on Section C "22 Reserved for future use" (3059, column A) and Part III "8d Reserved for future
+    # use" (4056, column A). The 2023 blank had NO widget on either line, so the 2023 pack never had a key
+    # for them, and the printed sums tolerate the gap: line 26 is the RANGE "Add line 11 through line 23
+    # and line 25", line 8e "Add line 8a through line 8c". Not contested: no other year keeps them.
+    ReservedUnmapped(
+        "states/ca/2025/sched_ca_540nr/pack.yaml",
+        ("C22_A", "III8d_A"),
+        ("C21_A", "C23_A", "C26_A", "III8c_A", "III8e_A"),
+        None,
+        "22 and 8d print 'Reserved for future use' on the only ReadOnly widgets; the line-26 range sum and "
+        "the 8e sum (8a through 8c) tolerate the gap, and no 2023 key existed",
+    ),
 )
 
 
