@@ -1165,6 +1165,11 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # name and SSN or ITIN, no address block (the address lives on the DR 0104, whose reviewed row is unchanged).
     # JS5: AL Form 40 2025 (a partial re-map of AL 2023; the page-1 address widgets kept their names) equals the reviewed
     # AL 2023 row (ADDRESS, CITY, STATE, ZIP); the new vehicle-loan, Schedule OC and second Schedule RS lines are not address lines.
+    # JS5: MI-1040 2025 (a RE-MAP of MI 2023 — every page-1 widget renamed, City/State/ZIP re-cut for the new Country
+    # Code box) equals the reviewed MI 2023 row (home_address, city_or_town, state, zip_code); the new country_code box
+    # on the City/State/ZIP row is not selected, same as the 4-line 2023 row; 35c is the disaster address, not the filer's.
+    # JS5: KS K-40 2025 (a RE-MAP of KS 2023: the exemptions block and page 2 re-cut; the four address widgets keep
+    # their names and /Rects) equals the reviewed KS 2023 row (the four mailing_address lines).
     import json
     from pathlib import Path
 

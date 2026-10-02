@@ -1,0 +1,558 @@
+# ===========================================================================
+# TY2025 RE-MAP of formpacks/states/mi/2023/mi1040/pack.yaml (ported 2026-10-02,
+# Phase J JS5; triaged RE-MAP — 72 of the 85 mapped field names gone).
+#
+# URL. Michigan Treasury's "2025 Individual Income Tax Forms" page
+# (https://www.michigan.gov/taxes/iit-forms/2025-individual-income-tax-forms)
+# links the MI-1040 as the source_url below, query string included. Two separate
+# downloads of that link, a download of the same path without the query string,
+# and the JS5 triage copy all hash to 98e6d52b88e4… (323,997 bytes, %PDF-1.7,
+# AcroForm, 3 pages; encrypted with an empty user password and printing allowed,
+# as the 2023 blank was).
+#
+# PRINTED IDENTITY. Page 1 prints "Michigan Department of Treasury (Rev. 06-25),
+# Page 1 of 3", "2025 MICHIGAN Individual Income Tax Return MI-1040" and "Return
+# is due April 15, 2026"; pages 2-3 print "2025 MI-1040, Page 2 of 3" / "Page 3
+# of 3". Scan lines "+ 0000 2025 05 01 27 8", "... 05 02 27 6", "... 05 03 27 4".
+# printed_year_verified = 2025. (No 2024 MI-1040 pack exists; the base is 2023.)
+#
+# AcroForm topology against the 2023 blank (a widget census of the 2023 pack
+# plus a /Rect pairing of every widget). 95 -> 103 widgets. Still flat, still
+# no ReadOnly widget, no /CO calculation order and no XFA; the only JavaScript
+# is AFNumber/AFSpecial format+keystroke and an upper-casing validate on the
+# name boxes, so nothing on this form computes. The "Reset" push-button stays
+# unmapped and the FSSN1/FSSN2/FSSN3 comb still repeats atop pages 2 and 3 as
+# extra widgets of the SAME fields (mapped once). That leaves 96 data widgets,
+# all mapped here as 96 lines.
+#   * SAME name and /Rect (9): FSSN1-3, SpSSN1-3, Home address, School District
+#     Code, Line 19b.
+#   * RENAMED at an identical /Rect (every other page-1 widget, and page-2 rows
+#     18-19): "F First Name" -> "Filer's First Name", "F initial" -> "Filer's
+#     Initial", "Sp ..." -> "Spouse's ...", "Amended return box" -> "Amended
+#     Return Checkbox", "Check Box4/5/6" -> "Line 5a Filer Checkbox" / "Line 5b
+#     Spouse Checkbox" / "Line 6 Checkbox", "Residency status" / "Check Box11" /
+#     "Check Box12" -> "Line 8a Resident Chceckbox" (sic) / "Line 8b Nonresident
+#     Checkbox" / "Line 8c Part-Year Resident", "*" -> "Line 7c Spouse Name",
+#     "9a".."9d" -> "Line 9a Number" / "Line 9b Numbers" (sic) / "Line 9c Number"
+#     / "Line 9d Number", "Check Box13" -> "Line 9e Checkbox", "line 9a".."line
+#     17" -> "Line 9a".."Line 17", "line 18a/18b/19a" -> "Line 18a/18b/19a".
+#   * RE-CUT: "City or town" (right edge 17.0 pt in), "State" (21 pt left) and
+#     "Zip Code" (left edge 24 pt left, right edge 51.5 pt left; 87.8 -> 60.3 pt
+#     wide) make room for the NEW "Country Code" box under the new caption
+#     "ZIP/Postal Code   Country Code" — mapped as country_code.
+#   * SPLIT INTO SEPARATE FIELDS: the 2023 filing status was ONE /Btn ("Filing
+#     status", three kids /single /married filing jointly /married filing
+#     separately); 2025 ships three single-widget fields ("Line 7a Single
+#     Checkbox" /Single, "Line 7b Checkbox" /Married Filing Jointly, "Line 7c
+#     Checkbox" /Married Filing separately). The 2023 account type was ONE /Btn
+#     ("type checking", /Yes = Checking, /No = Savings); 2025 ships "Checking
+#     Account Checkbox" /Checking and "Savings Account Checkbox" /Savings. Both
+#     sets now carry a group id (below).
+#   * RENUMBERED page 2 (a new line 20 is inserted; rows 21-25 re-flow and the
+#     rows from line 26 down sit 24 pt lower): "line 20" (Income Tax) -> "Line 21"; "line 21".."line 26" ->
+#     "Line 22".."Line 27"; "line 27a/27b" -> "Line 28a/28b"; "line 28".."line
+#     31" -> "Line 29".."Line 32"; "31a" / "Line 31b" (the 32a/32b boxes) ->
+#     "Line 33a Checkbox" / "Line 33b Checkbox" (both now /Yes; 2023's 32b box
+#     was /No); "line 32 c" -> "Line 33c"; "line 33" -> "Line 34".
+#   * RENUMBERED page 3 (the new 35a-35d block pushes everything down: lines
+#     36-39 sit about 145 pt lower, direct deposit, dates of death, preparer and the
+#     authorize box 192 pt lower): "Line 34 Interest/Penalty" -> "Line 36
+#     Interest/Penalty", "line 34/35/36" -> "Line 36/37/38", 2023's "Line 37"
+#     (REFUND) -> "Line 39". The name "Line 37" SURVIVES but now sits on the
+#     2025 printed line 37 (Overpayment), 97 pt lower — a surviving name is not
+#     a surviving meaning. "routing" / "account number" -> "Routing Number" /
+#     "Account Number"; "Text1".."Text6" -> "Filer/Spouse Month/Day/Year of
+#     Death"; "preparer's PTIN" / "preparer's business" / "preparer's business
+#     address" -> "Preparer's PTIN, FEIN, or SSN" / "Preparer's Name" /
+#     "Preparer's Business Name, Address, and Telephone Number"; "authorize box"
+#     (/Yes) -> "Authorize Checkbox" (/Authorized).
+#   * NEW lines mapped: country_code; 20a / 20b ("Line 20a" / "Line 20b", the
+#     organ-donation credit AMOUNT / CREDIT); 35a ("Line 35a Checkbox"), 35b
+#     (the widget is named "Line 3b Checkbox" (sic) but sits in the 35b box —
+#     confirmed on the render), 35c ("Line 35c", multiline), 35d ("Line 35d",
+#     multiline); 40 ("Line 40 Checkbox", the digital-asset box). Nothing new is
+#     left unmapped.
+#   * /MaxLen unchanged on every carried box (SSN 3/2/4, State 2, School
+#     District Code 5, exemption counts 2, date-of-death 2/2/4); the new boxes
+#     carry none. The date-of-death boxes are separate MM / DD / YYYY widgets
+#     (Ff DoNotScroll + DoNotSpellCheck), not combs. /DA is Helv 10 throughout
+#     except the line-36 Interest / Penalty boxes (Helv 12, as in 2023). 2023's
+#     "/Helv 0" (auto-size) on the filer last-name and both spouse name boxes,
+#     and "/ZaDb 0" on the checkboxes, are gone: those widgets now carry no /DA
+#     and take the AcroForm default "/Helv 0 Tf 0 g".
+#
+# FACE DELTAS vs 2023 (a diff of the printed text). Rev. 10-23 -> Rev. 06-25;
+# every "2023" -> "2025" (filing and residency status headings, line 33 amended
+# returns), due date April 15, 2026; line 9 exemptions "x $5,800" (9a), "x
+# $3,400" (9b), "x $500" (9c), "x $5,800" (9d), and the line-9 NOTE "enter
+# $1,500 on line 9e"; line 17 "Multiply line 16 by 4.25% (0.0425)" (2023:
+# 4.05%); NEW line 20 "Credit for organ donation expenses", so line 21 now reads
+# "Subtract the sum of lines 18b, 19b, and 20b from line 17"; line 25 "Add lines
+# 21 through 24"; line 28 EITC "Multiply line 28a by 30% (0.30)"; line 32
+# "Estimated tax, extension payments and 2024 credit forward"; line 34 "Add
+# lines 26, 27, 28b, 29, 30, 31, 32 and 33c"; NEW 35a-35d "PENALTY AND/OR
+# INTEREST RELIEF REQUEST"; lines 36-39 compare lines 34 and 25; line 38
+# "credited to your 2026 estimated tax for your 2026 tax return"; NEW line 40
+# "DIGITAL ASSET ... during 2025"; deceased "died after December 31, 2024";
+# "Pay amount on line 36". knowledge/states/mi/2025.yaml records the same
+# 4.25%, $5,800 / $3,400 / $500 / $5,800 / $1,500 and the 30% EITC.
+#
+# LINE KEYS. Numbered lines are keyed by the printed number of THIS face, so a
+# key does not mean the same line across years: 2025 "21" is Income Tax (2023
+# "20"), "25" is Total Tax Liability (2023 "24"), "34" is total refundable
+# credits (2023 "33"), "36" is YOU OWE, "39" is REFUND. There is no plain "20"
+# key in 2025 (the row is 20a / 20b). The named keys follow the same numbers:
+# 32a_amended_refund / 32b_amended_tax -> 33a_ / 33b_, 34_interest /
+# 34_penalty -> 36_interest / 36_penalty. Nothing outside this pack refers to
+# any of these keys.
+#
+# RENDER CHECK. All 96 lines were confirmed on sentinel renders of this blank:
+# one fill with a distinct value per line, then separate fills for the group
+# alternates (7b, 7c, Savings, 33b) and for the boxes whose short sentinels
+# repeat (initials, SSN cells, State, the 9a-9d counts, the date-of-death
+# boxes) and the neighbouring single boxes (5a / 5b, 8a / 8b / 8c, 35a / 35b).
+#
+# Unresolved: none.
+# ===========================================================================
+#
+# Form MI-1040, 2025 — Michigan Individual Income Tax Return.
+#
+# Layout. Flat AcroForm (acroform_root empty). Field names are the raw ids the
+# 2025 blank ships, kept EXACTLY, misspellings included ("Line 8a Resident
+# Chceckbox", "Line 9b Numbers", "Line 3b Checkbox" for 35b, the on_state
+# "/State Campaing Fund Spouse"). The SSN comb (FSSN1/FSSN2/FSSN3, three cells
+# of 3/2/4 digits) prints atop all three pages but is ONE AcroForm field per
+# cell with several widget annotations, so it is mapped a single time in the
+# page-1 header.
+#
+# Coverage. Every distinct fillable field is mapped. One widget is
+# intentionally OMITTED — it accepts no taxpayer data:
+#   * "Reset" — the red "Reset Form" push-button (top of page 1, Ff bit 17
+#     Pushbutton); its /AP /N keys are appearance-stream dict keys, not states.
+#
+# Checkboxes. Every on_state is re-read from this blank's /AP /N. Filing status
+# (box 7, printed "Check one.") is three separate /Btn fields sharing group
+# 7_filing_status. Residency (box 8) is printed "Check all that apply." — three
+# separate fields, deliberately ungrouped, as in 2023. The type of account is two separate
+# fields sharing group account_type. The amended-return boxes 33a / 33b share
+# group 33_amended_adjustment: each one sets the SIGN of the single 33c amount
+# ("enter this amount as a negative number on line 33c" / "as a positive number
+# on line 33c"), so the two cannot both apply. 35a and 35b stay independent
+# (the face does not say "check one"). The rest are independent single boxes.
+#
+# Money vs text. Every numbered dollar box prints a "00" cents cell and is
+# mapped `money` (9a-9f amounts, 10-34, 18a/18b, 19a/19b, 20a/20b, 28a/28b,
+# 33c, 36-39 and the line-36 Interest / Penalty boxes). Text stays text: names,
+# address / city / state / ZIP / country code, the school-district code, the
+# spouse full-name box, the SSN cells, the 2-digit exemption COUNT boxes
+# (9a-9d — counts, not dollars), the 35c disaster address and 35d description,
+# bank routing / account numbers, the date-of-death MM / DD / YYYY boxes, and
+# the preparer fields.
+#
+# Relations. Only unconditional equalities printed on this face with every
+# operand mapped: 12 = 10 + 11; 25 = 21 + 22 + 23 + 24; 34 = 26 + 27 + 28b +
+# 29 + 30 + 31 + 32 + 33c (33c is signed, an amended return's negative entry
+# included); 39 = 37 - 38. Omitted: the "enter 0" floors on 14 / 16 / 21, the
+# rate multiply on 17 and the 30% on 28b (whole-dollar rounding), the line-36 /
+# 37 comparisons (36 also folds in interest and penalty), line 15 ("line 9f or
+# Schedule NR"), and line 9f ("Add lines 9a, 9b, 9c, 9d and 9e"), whose
+# operands are keyed 9a_amount .. 9e_amount, which the relation grammar does
+# not tokenize.
+#
+# Cross_form. Line 10 prints "Adjusted Gross Income from your U.S. Form 1040
+# (see instructions)"; the 2025 Form 1040 prints AGI on line 11a, so the leg is
+# 10 == f1040.11a (2023: f1040.11).
+form: Form MI-1040
+jurisdiction: states/mi
+tax_year: 2025
+source_url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040.pdf?rev=c1d9fa606c614f799b4aa38843fa87f4&hash=CFBA1487FAEED3EF2D548B7E52D889BA
+pdf_sha256: 98e6d52b88e412a5d51529bc3144bd137eb24554e30c918f63fdcf82cf9cd01c
+acroform_root: ''
+fields:
+  # ===================================================== header (page 1)
+  # OMITTED: "Reset" (red "Reset Form" push-button — form action, not fillable).
+  - line: amended_return             # "Amended Return (Include Schedule AMD)" top-right
+    field: Amended Return Checkbox
+    type: checkbox
+    on_state: /Amended
+
+  # ---- 1 — Filer name and 2 — SSN
+  - line: filer_first_name
+    field: "Filer's First Name"
+    type: text
+  - line: filer_middle_initial       # "M.I." — single-character initial box
+    field: "Filer's Initial"
+    type: text
+    maxlen: 1
+  - line: filer_last_name
+    field: "Filer's Last Name"
+    type: text
+  - line: filer_ssn_1
+    field: FSSN1
+    type: text
+    maxlen: 3
+  - line: filer_ssn_2
+    field: FSSN2
+    type: text
+    maxlen: 2
+  - line: filer_ssn_3
+    field: FSSN3
+    type: text
+    maxlen: 4
+
+  # ---- spouse name and 3 — SSN
+  - line: spouse_first_name
+    field: "Spouse's First Name"
+    type: text
+  - line: spouse_middle_initial      # "M.I." — single-character initial box
+    field: "Spouse's Initial"
+    type: text
+    maxlen: 1
+  - line: spouse_last_name
+    field: "Spouse's Last Name"
+    type: text
+  - line: spouse_ssn_1
+    field: SpSSN1
+    type: text
+    maxlen: 3
+  - line: spouse_ssn_2
+    field: SpSSN2
+    type: text
+    maxlen: 2
+  - line: spouse_ssn_3
+    field: SpSSN3
+    type: text
+    maxlen: 4
+
+  # ---- address (City / State / ZIP re-cut in 2025 to make room for Country Code)
+  - line: home_address               # "Home Address (Number, Street, or P.O. Box)"
+    field: Home address
+    type: text
+  - line: city_or_town
+    field: City or town
+    type: text
+  - line: state
+    field: State
+    type: text
+    maxlen: 2
+  - line: zip_code                   # "ZIP/Postal Code"
+    field: Zip Code
+    type: text
+  - line: country_code               # NEW in 2025 — "Country Code"
+    field: Country Code
+    type: text
+  - line: school_district_code       # box 4 — School District Code (5 digits)
+    field: School District Code
+    type: text
+    maxlen: 5
+
+  # ---- box 5 — STATE CAMPAIGN FUND (a. Filer / b. Spouse)
+  - line: 5a_campaign_fund_filer
+    field: Line 5a Filer Checkbox
+    type: checkbox
+    on_state: /State Campaign Fund Filer
+  - line: 5b_campaign_fund_spouse    # on_state spelled as the blank ships it
+    field: Line 5b Spouse Checkbox
+    type: checkbox
+    on_state: /State Campaing Fund Spouse
+
+  # ---- box 6 — FARMERS, FISHERMEN, OR SEAFARERS (2/3 of income from farming)
+  - line: 6_farmers_fishermen
+    field: Line 6 Checkbox
+    type: checkbox
+    on_state: /Yes
+
+  # ---- box 7 — 2025 FILING STATUS. Check one. (three SEPARATE /Btn fields, one group)
+  - line: 7_filing_status::single    # a. Single
+    field: Line 7a Single Checkbox
+    type: checkbox
+    on_state: /Single
+    group: 7_filing_status
+  - line: 7_filing_status::mfj       # b. Married filing jointly
+    field: Line 7b Checkbox
+    type: checkbox
+    on_state: /Married Filing Jointly
+    group: 7_filing_status
+  - line: 7_filing_status::mfs       # c. Married filing separately*
+    field: Line 7c Checkbox
+    type: checkbox
+    on_state: /Married Filing separately
+    group: 7_filing_status
+  - line: 7c_spouse_full_name        # "* If you check box “c,” complete line 3 and enter spouse’s full name below"
+    field: Line 7c Spouse Name
+    type: text
+
+  # ---- box 8 — 2025 RESIDENCY STATUS. Check all that apply. (separate fields, NOT grouped)
+  - line: 8a_residency::resident     # a. Resident
+    field: Line 8a Resident Chceckbox
+    type: checkbox
+    on_state: /Resident
+  - line: 8b_residency::nonresident  # b. Nonresident *
+    field: Line 8b Nonresident Checkbox
+    type: checkbox
+    on_state: /Nonresident
+  - line: 8c_residency::part_year    # c. Part-Year Resident *
+    field: Line 8c Part-Year Resident
+    type: checkbox
+    on_state: /Part-Year Resident
+
+  # ===================================================== line 9 — EXEMPTIONS
+  - line: 9a_count                   # Number of exemptions (count box, x $5,800)
+    field: Line 9a Number
+    type: text
+    maxlen: 2
+  - line: 9a_amount
+    field: Line 9a
+    type: money
+  - line: 9b_count                   # Number of special exemptions (count box, x $3,400)
+    field: Line 9b Numbers
+    type: text
+    maxlen: 2
+  - line: 9b_amount
+    field: Line 9b
+    type: money
+  - line: 9c_count                   # Number of qualified disabled veterans (count box, x $500)
+    field: Line 9c Number
+    type: text
+    maxlen: 2
+  - line: 9c_amount
+    field: Line 9c
+    type: money
+  - line: 9d_count                   # Number of Certificates of Stillbirth from MDHHS (count box, x $5,800)
+    field: Line 9d Number
+    type: text
+    maxlen: 2
+  - line: 9d_amount
+    field: Line 9d
+    type: money
+  - line: 9e_claimed_as_dependent    # "Claimed as dependent, see line 9 NOTE above" (NOTE: "enter $1,500 on line 9e")
+    field: Line 9e Checkbox
+    type: checkbox
+    on_state: /Yes
+  - line: 9e_amount
+    field: Line 9e
+    type: money
+  - line: 9f_amount                  # "Add lines 9a, 9b, 9c, 9d and 9e. Enter here and on line 15."
+    field: Line 9f
+    type: money
+
+  # ===================================================== income / tax (10-17)
+  - line: "10"                       # Adjusted Gross Income from your U.S. Form 1040 (see instructions)
+    field: Line 10
+    type: money
+  - line: "11"                       # Additions from Schedule 1, line 9. Include Schedule 1
+    field: Line 11
+    type: money
+  - line: "12"                       # Total. Add lines 10 and 11
+    field: Line 12
+    type: money
+  - line: "13"                       # Subtractions from Schedule 1, line 31. Include Schedule 1
+    field: Line 13
+    type: money
+  - line: "14"                       # Income subject to tax. Subtract line 13 from line 12 (floor 0)
+    field: Line 14
+    type: money
+  - line: "15"                       # Exemption allowance. Enter amount from line 9f or Schedule NR, line 19
+    field: Line 15
+    type: money
+  - line: "16"                       # Taxable income. Subtract line 15 from line 14 (floor 0)
+    field: Line 16
+    type: money
+  - line: "17"                       # Tax. Multiply line 16 by 4.25% (0.0425)
+    field: Line 17
+    type: money
+
+  # ---- NONREFUNDABLE CREDITS (18-25), page 2
+  # NOTE: "Filer's Full Social Security Number" atop pages 2 and 3 is the SAME
+  # AcroForm fields (FSSN1/FSSN2/FSSN3) as the page-1 header comb, mapped once above.
+  - line: 18a                        # Income Tax Imposed by government units outside Michigan — AMOUNT
+    field: Line 18a
+    type: money
+  - line: 18b                        # ... — CREDIT
+    field: Line 18b
+    type: money
+  - line: 19a                        # Michigan Historic Preservation Tax Credit — AMOUNT
+    field: Line 19a
+    type: money
+  - line: 19b                        # ... — CREDIT
+    field: Line 19b
+    type: money
+  - line: 20a                        # NEW 2025 — Credit for organ donation expenses — AMOUNT
+    field: Line 20a
+    type: money
+  - line: 20b                        # ... — CREDIT
+    field: Line 20b
+    type: money
+  - line: "21"                       # Income Tax. Subtract the sum of lines 18b, 19b, and 20b from line 17 (floor 0)
+    field: Line 21
+    type: money
+  - line: "22"                       # Voluntary Contributions from Form 4642, line 6. Include Form 4642
+    field: Line 22
+    type: money
+  - line: "23"                       # Penalty for nonqualified withdrawal from Form 5792 (MI First-Time Home Buyer Savings), line 5
+    field: Line 23
+    type: money
+  - line: "24"                       # USE TAX due on Internet, mail order or other out-of-state purchases (Worksheet 1)
+    field: Line 24
+    type: money
+  - line: "25"                       # Total Tax Liability. Add lines 21 through 24
+    field: Line 25
+    type: money
+
+  # ---- REFUNDABLE CREDITS AND PAYMENTS (26-34)
+  - line: "26"                       # Property Tax Credit. Include MI-1040CR or MI-1040CR-2
+    field: Line 26
+    type: money
+  - line: "27"                       # Farmland Preservation Tax Credit. Include MI-1040CR-5
+    field: Line 27
+    type: money
+  - line: 28a                        # Earned Income Tax Credit — FEDERAL
+    field: Line 28a
+    type: money
+  - line: 28b                        # ... — MICHIGAN (multiply line 28a by 30% (0.30))
+    field: Line 28b
+    type: money
+  - line: "29"                       # Michigan Historic Preservation Tax Credit (refundable). Include Form 3581
+    field: Line 29
+    type: money
+  - line: "30"                       # Credit for allocated share of tax paid by an electing flow-through entity
+    field: Line 30
+    type: money
+  - line: "31"                       # Michigan tax withheld from Schedule W, line 6. Include Schedule W
+    field: Line 31
+    type: money
+  - line: "32"                       # Estimated tax, extension payments and 2024 credit forward
+    field: Line 32
+    type: money
+
+  # ---- line 33 — 2025 AMENDED RETURNS ONLY (33a / 33b set the sign of the one 33c amount)
+  - line: 33a_amended_refund         # "check box 33a and enter this amount as a negative number on line 33c"
+    field: Line 33a Checkbox
+    type: checkbox
+    on_state: /Yes
+    group: 33_amended_adjustment
+  - line: 33b_amended_tax            # "check box 33b ... as a positive number on line 33c"
+    field: Line 33b Checkbox
+    type: checkbox
+    on_state: /Yes
+    group: 33_amended_adjustment
+  - line: 33c                        # amended adjustment amount (signed)
+    field: Line 33c
+    type: money
+  - line: "34"                       # Total refundable credits and payments. Add lines 26, 27, 28b, 29, 30, 31, 32 and 33c
+    field: Line 34
+    type: money
+
+  # ---- page 3 — PENALTY AND/OR INTEREST RELIEF REQUEST (NEW 2025)
+  - line: 35a_combat_zone            # eligible for a federal extension for service in a combat zone
+    field: Line 35a Checkbox
+    type: checkbox
+    on_state: /Yes
+  - line: 35b_disaster_zone          # affected by a declared disaster zone in Michigan; widget named "Line 3b Checkbox" (sic)
+    field: Line 3b Checkbox
+    type: checkbox
+    on_state: /Yes
+  - line: 35c_disaster_address       # "Address affected by the declared disaster."
+    field: Line 35c
+    type: text
+  - line: 35d_disaster_description   # "Enter the disaster zone and describe how you were affected by the disaster"
+    field: Line 35d
+    type: text
+
+  # ---- REFUND OR TAX DUE (36-39)
+  - line: 36_interest                # "Include interest [____]" on line 36 YOU OWE
+    field: Line 36 Interest
+    type: money
+  - line: 36_penalty                 # "... and penalty [____]"
+    field: Line 36 Penalty
+    type: money
+  - line: "36"                       # YOU OWE. If line 34 is less than line 25, subtract line 34 from line 25
+    field: Line 36
+    type: money
+  - line: "37"                       # Overpayment. If line 34 is greater than line 25, subtract line 25 from line 34
+    field: Line 37
+    type: money
+  - line: "38"                       # Credit Forward. Amount of line 37 to be credited to your 2026 estimated tax
+    field: Line 38
+    type: money
+  - line: "39"                       # REFUND. Subtract line 38 from line 37
+    field: Line 39
+    type: money
+
+  # ---- DIGITAL ASSET (NEW 2025)
+  - line: 40_digital_asset           # "Check this box if you and/or your spouse ... engaged in any of the following during 2025"
+    field: Line 40 Checkbox
+    type: checkbox
+    on_state: /Yes
+
+  # ---- DIRECT DEPOSIT
+  - line: routing_transit_number     # a. Routing Transit Number
+    field: Routing Number
+    type: text
+  - line: account_number             # b. Account Number
+    field: Account Number
+    type: text
+  - line: account_type::checking     # c. Type of Account — 1. Checking
+    field: Checking Account Checkbox
+    type: checkbox
+    on_state: /Checking
+    group: account_type
+  - line: account_type::savings      # c. Type of Account — 2. Savings
+    field: Savings Account Checkbox
+    type: checkbox
+    on_state: /Savings
+    group: account_type
+
+  # ---- Deceased Taxpayer — ENTER DATE OF DEATH ONLY (MM-DD-YYYY), separate boxes
+  - line: filer_dod_month            # Filer date of death — MM
+    field: Filer Month of Death
+    type: text
+    maxlen: 2
+  - line: filer_dod_day              # Filer date of death — DD
+    field: Filer Day of Death
+    type: text
+    maxlen: 2
+  - line: filer_dod_year             # Filer date of death — YYYY
+    field: Filer Year of Death
+    type: text
+    maxlen: 4
+  - line: spouse_dod_month           # Spouse date of death — MM
+    field: Spouse Month of Death
+    type: text
+    maxlen: 2
+  - line: spouse_dod_day             # Spouse date of death — DD
+    field: Spouse Day of Death
+    type: text
+    maxlen: 2
+  - line: spouse_dod_year            # Spouse date of death — YYYY
+    field: Spouse Year of Death
+    type: text
+    maxlen: 4
+
+  # ---- Preparer Certification
+  - line: preparer_ptin              # Preparer’s PTIN, FEIN or SSN
+    field: "Preparer's PTIN, FEIN, or SSN"
+    type: text
+  - line: preparer_name              # Preparer’s Name (print or type)
+    field: "Preparer's Name"
+    type: text
+  - line: preparer_business_address  # Preparer’s Business Name, Address and Telephone Number
+    field: "Preparer's Business Name, Address, and Telephone Number"
+    type: text
+
+  # ---- Authorize Treasury to discuss return with preparer
+  - line: authorize_discuss          # "By checking this box, I authorize Treasury to discuss my return with my preparer."
+    field: Authorize Checkbox
+    type: checkbox
+    on_state: /Authorized
+relations:
+  - "12 == 10 + 11"                                  # Line 12 "Total. Add lines 10 and 11."
+  - "25 == 21 + 22 + 23 + 24"                        # Line 25 "Total Tax Liability. Add lines 21 through 24"
+  - "34 == 26 + 27 + 28b + 29 + 30 + 31 + 32 + 33c"  # Line 34 "Add lines 26, 27, 28b, 29, 30, 31, 32 and 33c"
+  - "39 == 37 - 38"                                  # Line 39 "Subtract line 38 from line 37." REFUND
+cross_form:
+  - "10 == f1040.11a"              # Line 10 "Adjusted Gross Income from your U.S. Form 1040" (2025 AGI = line 11a)
+identity_fields:
+  - filer_ssn_1
+  - filer_first_name
+  - filer_last_name
