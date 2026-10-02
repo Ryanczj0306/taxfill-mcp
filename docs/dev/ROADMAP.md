@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,496 tests** — offline 7,528 + live-.gov 968; derived
+Done and on `main` (**8,512 tests** — offline 7,539 + live-.gov 973; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -69,7 +69,7 @@ is JS5's).
   an empty checkbox frame; 1,414 before). The first two of those had been
   federal-only while CONVENTIONS.md called them binding — see Phase E for what
   shipped through the gap, and for the two live defects the widening found.
-- **State form packs — 93 across three years** (TY2023 42 / TY2024 20 / TY2025 31).
+- **State form packs — 94 across three years** (TY2023 42 / TY2024 20 / TY2025 32).
   The 2026-08-21 tranche added 10 (AR 2024 + 2025, NC/NJ/OH/RI/UT/VA 2024,
   OR/PA 2025) and closed **every PORTABLE row** in D2's measured triage for both
   TY2024 and TY2025; the 2026-08-25 tranche added 4 (IL-1040, ND-1, OR-40,
@@ -90,22 +90,22 @@ is JS5's).
 golden):** federal — f1040, f1040-NR, f8843, Schedule 1/2/3/A/B/C/OI/SE/D/E/8812,
 Schedule A (1040-NR), Schedule NEC, Forms 8863, 2555, 4868, 1040-ES, 1040-X, W-7,
 8959, 8960, 8962, 2441, 843 (Rev. 12-2024), 8316, 8606, 8889, 8949, 8833, 1116, 8938 (2023–2025), Schedule 1-A (2025), and FinCEN 114 as a hand-fill worksheet. state — **all 42 income-tax
-jurisdictions**: **38 via fillable AcroForm (93 packs across TY2023–TY2025)** — CA (540 + 540NR +
+jurisdictions**: **38 via fillable AcroForm (94 packs across TY2023–TY2025)** — CA (540 + 540NR +
 Schedule CA 540/540NR), NY (IT-201 + IT-203), IL, PA, OH, GA, NC, MI, NJ, VA, AZ,
 IN, MO, MD, AL, CO, MN, WI, KY (740), OR (OR-40), LA (IT-540), KS (K-40),
 AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**261 form packs total** — 244 `pack.yaml` (151 federal + 93 state) + 17
-`handfill.yaml`. The state 93 breaks down **TY2023 42 / TY2024 20 / TY2025 31**.
+**262 form packs total** — 245 `pack.yaml` (151 federal + 94 state) + 17
+`handfill.yaml`. The state 94 breaks down **TY2023 42 / TY2024 20 / TY2025 32**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
-> **32 of the 42 jurisdictions fill a post-2023 year** —
-> TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **32** (AR, AZ, CA, CT, DC, DE, GA, HI, IA, ID, IL, KY, LA, MD, MN, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA, VT, WI, WV) — after the 2026-08-21
+> **33 of the 42 jurisdictions fill a post-2023 year** —
+> TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **33** (AR, AZ, CA, CT, DC, DE, GA, HI, IA, ID, IL, KY, LA, MD, MN, MO, MS, NC, ND, NE, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA, VT, WI, WV) — after the 2026-08-21
 > ten-pack and 2026-08-25 four-pack tranches and the JS3b ports (UT 2025,
-> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **10**, state *knowledge*
+> AZ 2024/2025, DC 2024/2025, KY 2024/2025, LA 2024, ID 2024). For the remaining **9**, state *knowledge*
 > spans 2023–2025 while the only fillable pack is TY2023, so `calc.state_tax`
-> still computes years those packs cannot fill. That asymmetry is now 10
+> still computes years those packs cannot fill. That asymmetry is now 9
 > jurisdictions wide rather than 40 (see D2).
 
 > ✅ The four formerly-untracked state packs (**AL, CO, MN, WI**) are now committed
@@ -325,10 +325,10 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       2025 42/42** (RI 2025 closed the cohort 2026-08-07), every pack carrying the
       same 18 blocks incl. a typed `tax` block, auto-enrolled into the suite by the
       glob at `test_state_knowledge.py:26`. State *form* packs are **no longer
-      TY2023-only**: 93 packs across TY2023 (42) / TY2024 (20) / TY2025 (31), so
-      **32 of the 42 jurisdictions** can fill a post-2023 year —
-      TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **32** (AR, AZ, CA, CT, DC, DE, GA, HI, IA, ID, IL, KY, LA, MD, MN, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA, VT, WI, WV). For the
-      other **10**, a 2024/2025 return still computes but cannot be filled.
+      TY2023-only**: 94 packs across TY2023 (42) / TY2024 (20) / TY2025 (32), so
+      **33 of the 42 jurisdictions** can fill a post-2023 year —
+      TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **33** (AR, AZ, CA, CT, DC, DE, GA, HI, IA, ID, IL, KY, LA, MD, MN, MO, MS, NC, ND, NE, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA, VT, WI, WV). For the
+      other **9**, a 2024/2025 return still computes but cannot be filled.
       Federal spans
       2019–2025 for forms and 2019–2026 for knowledge (the TY2025 OBBBA set, 13 packs
       incl. the new Schedule 1-A, + knowledge/federal/2025.yaml shipped 2026-07-25;
@@ -2382,6 +2382,7 @@ line items sum to the headline delta.
     - **ND-1 2025 — DONE 2026-10-02** (`formpacks/states/nd/2025/nd1`, PORTABLE off ND 2024). tax.nd.gov/…/2025-iit/28702-form-nd-1-2025.pdf, "SFN 28702 (12-2025)" — re-issued mid-season (ModDate 2026-02-11; a Wayback capture of 2026-03-11 is byte-identical). Each page paints the earlier face as a form XObject under the corrected one (line 1a "line 11" beneath "line 11a"), so face quotes come from the visible stream only. 92 widgets keep every name, flag, /MaxLen and on-state; 83 moved by at most 7.3 pt. Line 1a now binds `f1040.11a`; the three signature/preparer date boxes are tightened to 8 characters.
     - **RI-1040 2025 — DONE 2026-10-02** (`formpacks/states/ri/2025/ri1040`, PORTABLE off RI 2024). tax.ri.gov/…/2026-01/2025_1040WE_w.pdf (Cloudflare-cached; fetched twice, byte-identical); 323 widgets / 329 fields keep every name and rect, and the 22 CHANGED are /MaxLen removals, so each affected maxlen was re-measured by rendering probe fills (names 26, licences 14, relationships 10, party name 10 — the 2023 and 2024 packs carried 12 on the same widget and are tightened alongside). Relations added from the face: 21 = 20 × 0.25, 29 = min(23, 27, 28), Schedule W 16 = the sum of 1-15. The dependent DOB boxes clip the 8th digit (see JEe).
     - **IA 1040 2025 — DONE 2026-10-02** (`formpacks/states/ia/2025/ia1040`, re-mapped from the 2023 pack). revenue.iowa.gov/media/4401/download (the gateway page's "Fillable" file), footers 41-001a … 41-001f; now six pages, 253 widgets / 236 names, every one mapped: of the 217 fields the 2023 pack maps, 22 SAME / 80 MOVED / 96 on another page / 19 GONE, plus 39 new. Step 4 line 1 became 1a-1f (1f the Enhanced Deduction for Seniors from federal Schedule 1-A), the dependents table gained a fourth row, page 1 gained two date-of-birth boxes and a HOH/QSS child row, and the pages re-cut (Schedule 1 is page 5). The line-21 contribution boxes narrowed to 15 pt and hold 2 digits (maxlen 2, TIGHTER_THAN_WIDGET); on page 4 the DOR placed both header widgets ~10 pt right of their printed boxes (a blank defect, documented).
+    - **NE Form 1040N 2025 — DONE 2026-10-02** (`formpacks/states/ne/2025/f1040n`, re-mapped from the 2023 pack). revenue.nebraska.gov/…/2025/f_1040N.pdf, stamp 8-417-2025 — revised in place (a January 2026 Wayback capture has a different widget set; February 2026 on matches the pin). A new three-page layout: 102 of 143 mapped widgets gone, 137 new, lines renumbered from 18 on (old 28-30 → 34-39, incl. the PTET credit), filing status now radio fields. The 2025 1040N is also the amended return (no separate 1040XN): an "Amended Return" flag and four amended-only Yes/No questions, plus the new foreign-adversarial-company question, are mapped. Relation added: 58 = 58 state + 58 local.
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
   - 9 discovery rows were recovered (wf_fe623a11-933).
   - Pack the AcroForm rows at TY2023 first, each re-checked against its recorded sha256: AL 40NR, AR1000NR, AZ 140NR, AZ 140PY, CO DR 0104PN, DE PIT-NON.

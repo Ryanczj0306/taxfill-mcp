@@ -41,6 +41,9 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
         "the two-digit cents cell after the printed decimal point (16.6 pt at Courier 10 fits 3); the widget says 10",
     ("states/me/2023/f1040me/pack.yaml", "tax_period.begin.month"): "a two-digit month (25.7 pt at 10 pt fits 5)",
     ("states/me/2023/f1040me/pack.yaml", "tax_period.begin.day"): "a two-digit day (25.6 pt at 10 pt fits 5)",
+    ("states/ne/2025/f1040n/pack.yaml", "64b"):
+        '64b "Type of Account" takes one digit ("1 = Checking 2 = Savings"); the box is 18.5 pt wide, cut into 10 comb '
+        "cells of 1.85 pt (the digit lands on cell 1); the widget says 10",
     ("states/ms/2025/f80105/pack.yaml", "preparer.address"): "107.6 pt at Courier 10 fits 17; the widget says 25",
     ("states/ms/2025/f80105/pack.yaml", "preparer.city"): "83.0 pt at Courier 12 fits 11; the widget says 21",
     **{("states/oh/2025/it1040_oh/pack.yaml", f"schedJ_dep{i}_dob"):

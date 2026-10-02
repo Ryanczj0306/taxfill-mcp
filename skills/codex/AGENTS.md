@@ -132,7 +132,7 @@ returns `required: null` plus `must_ask` rather than guessing.
 flat or graduated is the PACK's call, and the split moves by
 year, so never assume and never do state tax arithmetic yourself. Note the year
 mismatch: state KNOWLEDGE spans 2023-2025, but state FORM packs cover TY2023 for
-all 42 jurisdictions, then TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **32** (AR, AZ, CA, CT, DC, DE, GA, HI, IA, ID, IL, KY, LA, MD, MN, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA, VT, WI, WV). For any other jurisdiction-year a state
+all 42 jurisdictions, then TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **33** (AR, AZ, CA, CT, DC, DE, GA, HI, IA, ID, IL, KY, LA, MD, MN, MO, MS, NC, ND, NE, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA, VT, WI, WV). For any other jurisdiction-year a state
 return computes but cannot be filled. Never assume a year exists: call
 `list_forms` with the jurisdiction and year and read what comes back.
 

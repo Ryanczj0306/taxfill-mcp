@@ -1153,6 +1153,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # (the four mailing_address lines; city_town_legal_residence, signature.*.license_state and 28.state still rejected).
     # JS5: IA 1040 2025 (a RE-MAP of IA 2023 — six pages, Schedule 1 renumbered; the page-1 address boxes kept their
     # widgets; designee.street and the new date-of-birth lines are not selected) equals the reviewed IA 2023 row.
+    # JS5: NE 1040N 2025 (a RE-MAP of NE 2023 — new 3-page layout, the address widgets renamed at the same rows) equals the
+    # reviewed NE 2023 row (the four mailing_address lines; the new amended-return and preparer.* lines are not address lines).
     import json
     from pathlib import Path
 

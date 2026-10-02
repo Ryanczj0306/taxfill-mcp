@@ -1505,6 +1505,9 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
         'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
     ('states/ne/f1040n', '2b'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
+    ('states/ne/f1040n', 'amended_reason'):
+        'INDEPENDENT: the 2025 page-3 "Reasons for Amending" row prints nine boxes (Only Federal change, Childcare '
+        'Credit Change, ... Other Reason for Amending (explain below)) on separate /Btn fields; the face gives no check-one instruction, and one amendment can have several reasons',
     ('states/oh/it1040_oh', 'nonresident_statement'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
     ('states/ok/form511', 'age_65'):
