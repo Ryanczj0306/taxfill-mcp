@@ -606,11 +606,18 @@ fields:
     type: checkbox
     on_state: "/1"
     group: "filing_status_qw_year_of_death"
-  - line: "exemption_6_regular_self"
+  # Line 6 prints three ovals, each LEFT of its label: "Self" (printed solid
+  #   black, no widget — every filer takes it), "Spouse/CU Partner" and
+  #   "Domestic Partner". The row's two widgets are the last two (Check Box39
+  #   x0 217.6, Check Box40 x0 316.1). RE-KEYED 2026-10-02 (pitfall P-030): this
+  #   pack keyed them by order as `_self` and `_spouse_cu`, one oval off, so a
+  #   "self" answer marked Spouse/CU Partner. The pre-printed Self oval needs no
+  #   entry (the line 6 count box still counts it).
+  - line: "exemption_6_regular_spouse_cu"
     field: "Check Box39"
     type: checkbox
     on_state: "/Yes"
-  - line: "exemption_6_regular_spouse_cu"
+  - line: "exemption_6_regular_domestic_partner"
     field: "Check Box40"
     type: checkbox
     on_state: "/Yes"

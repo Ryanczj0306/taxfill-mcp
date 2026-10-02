@@ -2021,3 +2021,25 @@ pitfalls:
       (test_p029_plain_money_style_prints_digits_only,
       test_p029_blank_zero_computes_leaves_an_all_blank_sum_blank,
       test_p029_blank_zero_computes_evaluates_first_and_keeps_a_nonzero_result).
+  - id: P-030
+    incident: >-
+      A pre-printed option shifted a row of keys by one. NJ-1040 line 6
+      ("Regular") prints three ovals, each left of its label, and prints the
+      first ("Self") solid black with no widget because every filer takes it.
+      The 2023 and 2024 packs keyed the row's two widgets by order —
+      exemption_6_regular_self on Check Box39 and exemption_6_regular_spouse_cu
+      on Check Box40 — so a "self" answer marked the Spouse/CU Partner oval and
+      a "spouse" answer marked Domestic Partner. Found by the JS5 NJ-1040 2025
+      port's render (2026-10-01), confirmed on both blanks' text layers and a
+      render of the 2024 row (2026-10-02).
+    countermeasure: >-
+      Both packs re-keyed by the printed label beside each widget (Check Box39
+      = exemption_6_regular_spouse_cu, Check Box40 =
+      exemption_6_regular_domestic_partner; no key for the pre-printed Self
+      oval, so a caller asking for it gets "unknown line key" instead of a
+      wrong mark), matching the 2025 port. formpacks/CONVENTIONS.md gains the
+      rule "bind each option widget to the label printed beside it, never by
+      the widgets' order". Tests, P-030-tagged, in
+      packages/core/tests/test_nj1040_line6_ovals.py: every NJ-1040 year's
+      line 6 keys, and (network) the label printed right of each widget on the
+      year's own blank.

@@ -158,6 +158,11 @@ enforced by `test_year_bearing_line_keys_keep_their_offset_from_tax_year`
   group/field, and a reused `on_state` is a mis-mapping, not a group).
 - Find the real `on_state` values by dumping the blank PDF's field
   appearance states — never guess them.
+- **Bind each option widget to the label printed beside it, never by the
+  widgets' order (P-030).** A row can print an option that has no widget — NJ-1040
+  line 6 prints its "Self" oval solid black because every filer takes it — and
+  keying the remaining widgets left to right then shifts every key by one. A
+  pre-printed, widget-less option gets no line.
 
 ### The two topologies are not equally dangerous
 
