@@ -446,7 +446,10 @@ class StateComputed(NamedTuple):
 STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
     StateComputed(
         "states/al/2023/al40/pack.yaml",
-        566,
+        555,
+        "566 -> 555 on 2026-10-02 (P-031 pass): the UltraForms barcode helpers UF_InfoA-K "
+        "(script-written stream length / viewer version, no printed box, never printed) are unmapped, "
+        "as the TY2025 port did. "
         "the pack's own header states it: 'AL marks many running totals ReadOnly, but they "
         "remain mapped so a filer can carry the computed value'. The dominant flag value is "
         "/Ff 12582913 (DoNotScroll|DoNotSpellCheck|ReadOnly). 580 -> 568 on 2026-09-23: the "

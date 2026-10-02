@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**8,576 tests** — offline 7,584 + live-.gov 992; derived
+Done and on `main` (**8,578 tests** — offline 7,585 + live-.gov 993; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2387,6 +2387,7 @@ line items sum to the headline delta.
     - **OK Form 511 2025 — DONE 2026-10-02** (`formpacks/states/ok/2025/form511`, re-mapped from the 2023 pack). oklahoma.gov/…/individuals/current/511-Pkt.pdf — a rotating "current" slot (it will serve TY2026 later; the banner names the past-year path to re-point to); 52-page packet, widgets on pages 42-51. Of the 2023 bindings 270 MOVED, 16 GONE, 4 changed page, 18 new: a new Part Three line 29 renumbers every later return line by one, and Schedules 511-A/B/C each gained lines.
     - **ME Form 1040ME 2025 — DONE 2026-10-02** (`formpacks/states/me/2025/f1040me`, re-mapped from the 2023 pack). maine.gov/…/inline-files/25_1040ME_fillable.pdf, barcodes *2502100* … *2502111*; 122 widgets / 110 fields (2023: 129 / 114): 24 unchanged, 62 moved, 10 changed only /MaxLen, 14 gone, 10 new, all mapped. The refund-deposit block moved to page 3 as 34c-34e (Checking / Savings now separate single-state fields, grouped), net overpayment is line 33, the penalty is page-2 line 32 and the amount due a single line 35; the health-care-coverage block is gone from the face. Free-text boxes without a /MaxLen budget one glyph per 5.6 pt of measured width (realistic Arial 10 text clipped at verify's 5 pt).
     - **IN Form IT-40 2025 — DONE 2026-10-02** (`formpacks/states/in/2025/it40`, re-mapped from the 2023 pack). forms.in.gov/Download.aspx?id=16914 ("2025 IT-40 Income Tax Form | 09/25"), "(R24 / 9-25)", 2 pages. 64 of the 72 mapped widgets were renamed in place ("1" → "Line 1", the SSN and county boxes, fiscal-year fields) and re-bound pair by pair on the render; 8 kept their names and moved. Filing status became one three-kid radio field.
+    - **AL Form 40 2023 re-keyed — DONE 2026-10-02** (pitfall P-031; found by the AL 2025 port's semantic verifier). Page 1's keys from line 5 on followed a superseded face, one number high (key "22" on printed 21, "34_total_donations" on printed 33 — the overpayment applied to next year's estimated tax), and the relations matched the shifted keys, so verify never flagged it. Re-keyed to 5a, 5b, 20a, 20b, 21-34 as in the 2025 port; the UltraForms barcode helpers UF_InfoA-K are unmapped (ReadOnly count 566 → 555); test_al40_line_designators.py reads the printed number beside every numbered page-1 widget. The same pass made P-027 measure viewer guards against the CropBox (AL 40's cropped worksheet pages printed blank).
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
   - 9 discovery rows were recovered (wf_fe623a11-933).
   - Pack the AcroForm rows at TY2023 first, each re-checked against its recorded sha256: AL 40NR, AR1000NR, AZ 140NR, AZ 140PY, CO DR 0104PN, DE PIT-NON.

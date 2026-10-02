@@ -85,7 +85,7 @@ BANNERS_UNMAPPED: dict[str, tuple[str, ...]] = {
 # it never broke a one-line fill — the round trip's sentinel in it FAILed the
 # widened scan instead (test_formpacks_states' network round trip pins that).
 NOT_LINES_UNMAPPED: dict[str, tuple[str, ...]] = {
-    AL40_2023: _AL_BANNERS,
+    AL40_2023: (*_AL_BANNERS, *(f"UF_Info{c}" for c in "ABCDEFGHIJK")),   # + the barcode helpers (P-031 pass)
     MO1040_2023: (*_MO_BANNERS, "Text1"),
     MO1040_2024: (*_MO_BANNERS, "Text1"),
 }

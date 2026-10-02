@@ -2048,3 +2048,23 @@ pitfalls:
       packages/core/tests/test_nj1040_line6_ovals.py: every NJ-1040 year's
       line 6 keys, and (network) the label printed right of each widget on the
       year's own blank.
+  - id: P-031
+    incident: >-
+      Line keys numbered from a superseded face, with relations that hid it.
+      The AL Form 40 2023 pack keyed page 1's lines 5a/5b, 20a/20b and 21-34
+      as "5_al_tax_withheld", "5", "20_amount", "21_amount" and 22-34 — one
+      number high: key "22" sat on printed line 21 (total tax liability),
+      "33" on 32 (the overpayment) and "34_total_donations" on 33 (the
+      overpayment applied to next year's estimated tax). Its relations were
+      written against the shifted keys, so every verify passed; an agent that
+      fills by the printed line number wrote the wrong boxes. Found by the JS5
+      AL Form 40 2025 port's semantic verifier (2026-10-02), which measured
+      every widget against the number printed beside it.
+    countermeasure: >-
+      The 2023 pack re-keyed to its printed numbers (5a, 5b, 20a, 20b, 21-34),
+      matching the 2025 port, with relation 8 reading "8 == 5b + 6 + 7".
+      formpacks/CONVENTIONS.md gains the rule "a numbered key equals the line
+      number printed on its row; relations cannot catch a consistent shift".
+      Tests, P-031-tagged, in packages/core/tests/test_al40_line_designators.py:
+      on every shipped AL Form 40 year's own blank, each numbered page-1 key
+      equals the number printed in the gutter beside its widget.

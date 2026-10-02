@@ -158,6 +158,11 @@ enforced by `test_year_bearing_line_keys_keep_their_offset_from_tax_year`
   group/field, and a reused `on_state` is a mis-mapping, not a group).
 - Find the real `on_state` values by dumping the blank PDF's field
   appearance states — never guess them.
+- **A numbered key equals the line number printed on its row (P-031).** A pack
+  ported from an older face can carry the old numbering one line off, and its
+  relations — written against the same keys — still pass, so verify cannot see
+  the shift. Read the printed number beside every numbered widget on the
+  year's own blank.
 - **Bind each option widget to the label printed beside it, never by the
   widgets' order (P-030).** A row can print an option that has no widget — NJ-1040
   line 6 prints its "Self" oval solid black because every filer takes it — and
