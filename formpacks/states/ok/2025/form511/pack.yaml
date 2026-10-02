@@ -1,0 +1,1393 @@
+# ===========================================================================
+# TY2025 PORT of formpacks/states/ok/2023/form511/pack.yaml (ported 2026-10-02,
+# Phase J JS5; the 2026-09-30 discovery census triaged it RE-MAP: of the
+# widgets the 2023 pack binds, 270 MOVED, 16 are GONE and 4 changed PAGE, and
+# the 2025 blank carries 18 NEW widgets — a new Part Three line 29 renumbers
+# every later return line by one, and Schedules 511-A/B/C each gained lines).
+#
+# URL + DIGEST. source_url is the OTC's "current" slot,
+# https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf.
+# Downloaded twice on 2026-10-02 (two separate curl runs): HTTP 200
+# application/pdf, both 1,299,105 bytes, sha256
+# c90cf30381cca6262ec94050acde8db1ee58885360f0af4ec21e045d1cc5a572, equal to
+# each other and to the four 2026-09-30 discovery downloads; Last-Modified
+# Tue, 02 Dec 2025 14:58:36 GMT, ETag "13d2a1-644f95487df00". %PDF-1.6, 52
+# pages, a flat AcroForm (no XFA, no NeedAppearances), /Title "2025 Form 511
+# Oklahoma Resident Individual Income Tax Forms Packet & Instructions",
+# /ModDate 2025-12-02. The Wayback Machine capture 20260519225322 of the same
+# URL carries CDX SHA-1 GDVJGOGZ5KHE3SEWREOEWAPNTFPXACHJ, which is this
+# file's SHA-1 (base32) — the same bytes. No mirror_urls: the host answers 200
+# (they are tried only on a 401/403).
+# URL VOLATILITY: "current/" is a rotating slot. It served a different file
+# in the Feb-Mar 2025 captures (CDX digest WBDT2K6T...), and the 2024 packet
+# now lives at past-year/2024/511-Pkt-2024.pdf (HTTP 200 on 2026-10-02). When
+# the OTC posts the TY2026 packet, current/511-Pkt.pdf will serve 2026 content
+# and the pinned digest fails closed. The 2025 file is then expected at
+# .../individuals/past-year/2025/511-Pkt-2025.pdf by the 2024 naming
+# (past-year/2025/511-Pkt-2025.pdf and past-year/2025/511-Pkt.pdf both answer
+# 404 on 2026-10-02); re-point source_url there once it answers with this
+# digest.
+#
+# PRINTED IDENTITY (this blank's text layer). Page 1 "2025 Oklahoma Resident
+# Individual Income Tax Forms and Instructions"; PDF page 42 "Form 511" /
+# "2025" / "Oklahoma Resident Income Tax Return"; pages 43-49 "2025 Form 511 -
+# Resident Income Tax Return - Page 2" .. "Page 8"; page 50 "Oklahoma Claim for
+# Credit/Refund of Sales Tax" / "FORM 538-S"; page 51 "2025 Form 538-S - Claim
+# for Credit/Refund of Sales Tax - Page 2". No separate revision stamp is
+# printed. printed_year_verified = 2025.
+#
+# AcroForm topology against the 2023 blank. 318 widgets on PDF pages 42-51
+# (2023: 327), the same page span; 294 top-level /Fields both years (295
+# qualified names in 2025: "511 Foreign Country if not U.S" is a parent
+# "511 Foreign Country if not U" with kid "S", and the filler joins the /T
+# parts, so the pack binds the joined name). No widget is ReadOnly in either
+# year. The 16 mapped widgets GONE and what replaced them:
+#   * "511 Country" — the address row now prints "County in Which Located"
+#     over a NEW "511 County" at the same box; the country moved to its own
+#     row, "Foreign Country (if not U.S.):", NEW "511 Foreign Country if not
+#     U.S". mailing_address.country re-binds there (maxlen 23 = the 146.7 pt box
+#     at Courier 10, 0.6 em per glyph, less padding; 2023's 82 pt box had 14);
+#     the county box gets the new key `county`.
+#   * "511 Line 39 Check" -> "511 Line 40 Check" (40.annualized_installment;
+#     2023 key 39.annualized_installment).
+#   * "511 Part 4 33", "511 Part 5 38", "511 Part 5 41" — the overpayment, tax
+#     due and total lines are now 34, 39 and 42, on "511 Part 4 34", "511 Part 5
+#     39" and the NEW "511 Part 5 42".
+#   * "511 Part 4 34a" (the Schedule 511-H line-number box) -> NEW "511 Part 4
+#     35a", now key 36.line_number.
+#   * "511 Part 5 40a" / "40b" (the penalty and interest $ blanks left of the
+#     2023 line-40 amount) -> line 41 (a) and (b), each with its own amount
+#     column: NEW "511 Part 5 41a" / "41b". 2025 has no combined penalty line.
+#   * "511A 13 Other" -> NEW "511A 17 Other"; "511B 7 Other Additions" -> NEW
+#     "511B 9 Other Additions" (the Miscellaneous type-code boxes).
+#   * "511H 3 $", "511H 3 O Amount", "511H 4", "511H 4 $", "511H 4 O Amount",
+#     "511H 5" — Schedule 511-H prints two organizations (2023: four) and its
+#     total on line 3, so "511H 3" is now the TOTAL.
+# Two widgets the 2023 pack left unmapped are gone too: "511a Names" and
+# "538-S Name(s) Shown of Form 538-s" — the continuation headers no longer
+# print "Name(s) Shown", only "Your Social Security Number:".
+# The 4 PAGE changes: "511 Part 3 30" (2023 page 44, line 30 Payments) is on
+# page 43 and prints line 30 Amount paid with original return; "511B 7", "511B
+# 8", "511B 9" moved to page 46 (Schedule 511-B continues there).
+# NEW widgets, all 18 mapped: "511 County" (county), "511 Foreign Country if not
+# U.S" (mailing_address.country), "511 Part 3 29 Number of Eligible Students"
+# (29.eligible_students), "511 Part 3 33" (33), "511 Part 4 35a"
+# (36.line_number), "511 Part 4 38" (38), "511 Line 40 Check"
+# (40.annualized_installment), "511 Part 5 41a" / "41b" / "42" (41a, 41b, 42),
+# "511A 17 Other" / "511A 17" / "511A 18" (sch_511a.17.type_code, .17, .18),
+# "511B 9 Other Additions" / "511B 10" (sch_511b.9.type_code, .10), "511C 7"
+# (sch_511c.7), "511I Change 21" / "22" (sch_511i.change_21 / _22).
+# NEIGHBOUR THEFT — names that SURVIVE with a new meaning (every one re-bound by
+# its printed row): "511 Part 3 30".."32" and "511 Part 4 34".."37" and "511
+# Part 5 39" / "40" now print lines 30-40 of the renumbered ladder (in 2025 each
+# widget name equals its printed line number); "511A 15" / "511A 16" are now the
+# Bonus Depreciation and Qualified Equity Investment lines (2023: Miscellaneous
+# and total), "511B 8" / "511B 9" Bonus Depreciation Add-back and Miscellaneous
+# (2023: Miscellaneous and total), "511C 5" / "511C 6" Parental Choice (Private
+# School) and Miscellaneous (2023: Miscellaneous and total), "511H 2" Wildlife
+# Diversity (2023: the YMCA program).
+# Header mirrors (P-007 class 4): the page 2-8 "Your Social Security Number:"
+# boxes are ONE field "511a SSN1" (one widget on each of PDF pages 43-49,
+# /MaxLen 9) and page 51's is "538-S Your Social Security Number" (no /MaxLen).
+# The 2023 pack left both unmapped, so its continuation headers shipped blank;
+# they are mapped here as identifying_number_page2 and
+# f538s.identifying_number_page2.
+# Attribute changes on surviving names: "511 Part 2 18 Line #" lost its
+# /MaxLen 2 (17.line_number keeps the 2-character budget); the 538-S Part 2
+# dependent cells 1a-1d / 2a-2d / 4a-4d went from /DA Cour 7 to Cour 8, and
+# 5a-5d from Cour 6 to Cour 8. /FT and /Ff unchanged; every checkbox on_state
+# re-dumped from this blank's /AP /N (all equal to 2023's).
+# UNRESOLVED / DELIBERATE GAP: "538-S Spouse Occupation" now has TWO widgets —
+# one under the spouse "Occupation" caption and one at [317.36, 75.81, 572.22,
+# 94.75], inside the "Preparer's PTIN" box. A value written to the field prints
+# in both places (confirmed by writing a test value to the field on a scratch
+# copy and rendering page 51: it shows in both boxes), so
+# f538s.spouse_occupation is NOT mapped in 2025 (the spouse
+# writes it by hand); it returns if the OTC re-issues the form with its own
+# PTIN field.
+# KNOWN GAP (as in 2023): the 538-S page-2 "Debit Card" refund box is a kid of
+# the Form 511 field "Send my refund as a:" with its own on_state /Debit Card
+# (the 511 page-44 kid is /DebitCard), so the 511 debit-card choice leaves it
+# unticked and it cannot be filled alongside the 511 choice;
+# f538s.refund.send_as.debit_card is not mapped (see the 538-S refund block).
+#
+# FACE / LAW DELTAS vs 2023 (a diff of the printed text, every page read on the
+# renders). Page 1: address row adds "County in Which Located" and the
+# separate "Foreign Country (if not U.S.):" row; filing status 5 is now
+# "Qualifying surviving spouse with dependent child" ("List year of spouse death
+# here"). Page 2: line 10 "Married Filing Joint or Qualifying Surviving Spouse:
+# $12,700" (Single/MFS $6,350, HoH $9,350 unchanged); line 11 "X $1,000"; line 16
+# "Form 511-TX"; line 17 "Other Tax Credits (provide Form 511-CR). Enter the
+# 511-CR line number of the credit in the box"; lines 22/23 "2025"; line 28
+# "(provide Form 511-EIC)"; NEW line 29 "Parental Choice Tax Credit for
+# Homeschool Expenses (provide Form 591-D) / Total number of eligible students
+# claimed"; 2023's line 29 is now 30. Page 3: line 31 "add lines 21-30 from page
+# 2", 33 "line 31 minus 32", 34 overpayment, 35 "applied to 2026 estimated tax",
+# 36 donations, 37 "add lines 35 and 36", 38 "line 34 minus line 37", 39 tax
+# due, 40 underpayment interest, 41 (a) "penalty of 5%" / (b) "interest of 1.25%
+# per month", 42 "add lines 39 through 41b". Schedule 511-A: NEW 15 "Oklahoma
+# Bonus Depreciation Deduction", NEW 16 "Oklahoma Deduction for Qualified Equity
+# Investments in an Eligible Oklahoma Venture Capital Company", 17 Miscellaneous,
+# 18 "add lines 1-17". 511-B: NEW 8 "Oklahoma Bonus Depreciation Add-back", 9
+# Miscellaneous, 10 "add lines 1-9". 511-C: NEW 5 "Parental Choice Tax Credit for
+# Private School", 6 Miscellaneous, 7 "add lines 1-6". 511-D still caps at
+# "$17,000"; 511-F still 20% / 5% and "$100,000"; 511-G still 5% under the 2020
+# federal rules. 511-H: two organizations, total "on line 36 of Form 511". 511-I:
+# 22 explanation rows (2023: 20). 538-S: "If deceased in 2025 or 2026",
+# "Physical Address in 2025", "EIC received in 2025", "x $40", "carry the credit
+# to Form 511, line 25". 2025 drops the printed "00" cents suffix that 2023
+# put after every amount box: the amount lines are plain underlines under
+# "ROUND TO NEAREST WHOLE DOLLAR.", so `money` (whole dollars) is unchanged.
+# Face erratum, carried from 2023 unchanged: line 18 still prints "DO NOT PAY
+# THIS AMOUNT. PAYMENT IS FIGURED ON LINE 41." although the total due is now
+# line 42 (41 is the penalty/interest split); no binding depends on it.
+# knowledge/states/ok/2025.yaml agrees with every figure it
+# carries ($6,350 / $12,700 / $9,350, $1,000, $40, 5%, 20%, $100,000, 511-B lines
+# 1-9 totalled on 10).
+#
+# Form 511, 2025 -- Oklahoma Resident Individual Income Tax Return.
+#
+# Provenance / freshness: see URL + DIGEST and PRINTED IDENTITY above.
+#
+# Layout / what is FILED vs SKIPPED. The 511 Packet is mostly an INSTRUCTION
+# BOOKLET. The fillable AcroForm widgets live only on PDF pages 42-51; pages
+# 1-41 (cover, instructions, tax tables, worksheets) and page 52 carry NO
+# widgets and are NOT filed -- they are SKIPPED, same discipline as the LA
+# IT-540 booklet. Mapped pages (1-indexed PDF page = printed "Page N"):
+#   page 42 = Form 511 Page 1  -- header (2 SSNs + deceased flags, names,
+#             mailing address, county, foreign country, Amended flag), Filing
+#             Status (ONE /Btn radio with 5 on_states), Exemptions grid
+#             (Regular/Special/Blind x Yourself/Spouse, dependents count,
+#             total), Age-65 flags, Dependents table (4 rows), Part One lines
+#             1-7, Part Two lines 8-9.
+#   page 43 = Form 511 Page 2  -- header SSN, Part Two lines 10-18 (14 split
+#             into 14a/14b/14 method-code + 14 total; 17 has a 511-CR line-#
+#             box) and Part Three lines 19-30 (19 + no-use-tax box; 22
+#             qualified-farmer box; 29 + eligible-students count box).
+#   page 44 = Form 511 Page 3  -- Part Three 31-33, Part Four refund 34-38 +
+#             direct-deposit block, Part Five amount-you-owe 39-42 (40 + the
+#             annualized-installment box; 41 split 41a/41b), signature block
+#             (discuss box, occupations, phones, preparer). Mailing address
+#             printed here: PO Box 26800, Oklahoma City, OK 73126-0800.
+#   page 45 = Schedule 511-A (Subtractions 1-18) + Schedule 511-B lines 1-6
+#   page 46 = Schedule 511-B lines 7-10 + Schedule 511-C (Adjustments 1-7) +
+#             Schedule 511-D (Itemized 1-11)
+#   page 47 = Schedule 511-E (Deductions/Exemptions 1-5) + Schedule 511-F
+#             (Child Care/Child Tax Credit 1-7)
+#   page 48 = Schedule 511-G (Earned Income Credit 1-4) + Schedule 511-H
+#             (Donations from Refund 1-3)
+#   page 49 = Schedule 511-I (Amended Return Information: Yes/No + 22 change lines)
+#   pages 50-51 = Form 538-S (Claim for Credit/Refund of Sales Tax) -- a distinct
+#             OTC form filed WITH the 511 to claim the line-25 Sales Tax Relief
+#             Credit; mapped here under the f538s.* namespace.
+#
+# Line-id scheme. The CORE Form 511 numbered lines keep their bare printed labels
+# (1..42, with .a/.b column splits e.g. 4a/4b, 14a/14b, 41a/41b). The attached
+# 511 schedules are namespaced sch_511a.* .. sch_511i.* and Form 538-S as f538s.*
+# so their own line numbers do not collide with the core return's lines. Keys
+# follow THIS year's printed numbers, so a key whose number survived from 2023
+# may name a different printed line (see NEIGHBOUR THEFT above).
+#
+# AcroForm. FLAT form: acroform_root = '' . Every widget's /T is the raw flat id
+# the form ships with (e.g. "511 Part 1 1", "511A 18", "538-S Part 4 15-3"); the
+# one field whose kid carries its own /T (so the filler joins the names) is the
+# foreign-country box above. 318 widget entries exist
+# across pages 42-51. The continuation-page header SSN ("511a SSN1", one field
+# repeated on pages 43-49) and the 538-S page-2 header SSN are mapped as
+# identity mirrors.
+#
+# Money vs text. Every numbered dollar line is `money` (whole dollars; "ROUND TO
+# NEAREST WHOLE DOLLAR."). Percentage lines (511E line 4, 511F line 6, 511G
+# line 3) and the ratio numerator/denominator boxes (xx 6a/6b, 3a/3b) stay
+# `text`. Method/Type code boxes (14-1, 511-CR line #, schedule "Other"
+# type-code boxes, donation line-# box) and counts (exemptions grid, eligible
+# students, 538-S exemptions A-D) stay `text`. Routing/account numbers, names,
+# SSNs, occupations, phones, descriptions, and retirement claim numbers stay
+# `text`.
+#
+# Checkboxes / radio groups. Filing Status is ONE /Btn field named "Filing Status"
+# with five distinct on_states (/Single /Married Joint /Married Separate /HoH
+# /Widower); per CONVENTIONS each option is its own line sharing that field +
+# group "filing_status". Likewise the 538-S "Send my refund as a:" / account /
+# outside-US groups, and the 511-H per-row "$2/$5/Other" amount selectors, are one
+# /Btn each with distinct on_states -> shared group. All other boxes are
+# independent single-state /Yes (or /No) flags (deceased, amended, age-65, dep>4,
+# no-use-tax, qualified-farmer, line-40, discuss, 511D-7 yes/no, 511I yes/no).
+#
+# Relations. Single-box on-face arithmetic where every operand is mapped to a
+# line. Lines that floor at zero ("do not enter less than zero": 18) or branch on
+# a comparison (34/39, 38) are not declared. Schedule totals that are plain
+# "add lines a-b" sums are declared with dotted line ids.
+#
+# Cross_form. Form 511 Part One line 1 prints "Federal adjusted gross income (from
+# Federal 1040 or 1040-SR)" -- federal AGI, which the 2025 Form 1040 prints on
+# line 11a = f1040.11a.
+form: "511"
+jurisdiction: states/ok
+tax_year: 2025
+source_url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+pdf_sha256: "c90cf30381cca6262ec94050acde8db1ee58885360f0af4ec21e045d1cc5a572"
+acroform_root: ''
+fields:
+  # ============================================ page 42 -- Form 511 Page 1 header
+  - line: identifying_number              # "Your Social Security Number"
+    field: "511 SSN1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: deceased.taxpayer               # "X if this taxpayer is deceased"
+    field: "Deceased 1"
+    type: checkbox
+    on_state: /Yes
+  - line: spouse.identifying_number       # "Spouse's Social Security Number (joint return only)"
+    field: "511 sSSN1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: spouse.deceased                 # "X if this taxpayer is deceased" (spouse)
+    field: "Deceased 2"
+    type: checkbox
+    on_state: /Yes
+  - line: amended_return.yes              # "X if this is an amended 511. See Schedule 511-I."
+    field: "Amended"
+    type: checkbox
+    on_state: /Yes
+  - line: name.first                      # "Your First Name"
+    field: "511 Your First Name"
+    type: text
+  - line: name.middle_initial             # "Middle Initial"
+    field: "511 Your Middle Initial"
+    type: text
+    maxlen: 3
+  - line: name.last                       # "Last Name"
+    field: "511 Your Last Name"
+    type: text
+  - line: spouse.name.first               # "If a Joint Return, Spouse's First Name"
+    field: "511 sFirst Name"
+    type: text
+  - line: spouse.name.middle_initial      # "Middle Initial"
+    field: "511 sMiddle Initial"
+    type: text
+    maxlen: 3
+  - line: spouse.name.last                # "Last Name"
+    field: "511 sLast Name"
+    type: text
+  - line: mailing_address.street          # "Mailing Address (Number and street ...)"
+    field: "511 Address"
+    type: text
+  - line: mailing_address.city            # "City"
+    field: "511 City"
+    type: text
+  - line: mailing_address.state           # "State"
+    field: "511 State"
+    type: text
+    maxlen: 2                             # the 2025 box is 19.2 pt wide (2023: 25.0 pt), Cour 10, no widget /MaxLen; a probe fill rendered 2 letters whole and clipped the 3rd
+  - line: mailing_address.zip             # "ZIP or Postal Code"
+    field: "511 ZIP"
+    type: text
+    maxlen: 10
+  - line: county                          # NEW 2025 -- "County in Which Located" (the box where 2023 printed "Country")
+    field: "511 County"
+    type: text
+  - line: mailing_address.country         # "Foreign Country (if not U.S.):" -- 2025 moved it to its own row below
+    field: "511 Foreign Country if not U.S"
+    type: text
+    maxlen: 23
+
+  # ---- Filing Status (ONE /Btn radio, group filing_status)
+  - line: filing_status.single            # "1 Single"
+    field: "Filing Status"
+    type: checkbox
+    on_state: /Single
+    group: filing_status
+  - line: filing_status.married_filing_joint  # "2 Married filing joint return"
+    field: "Filing Status"
+    type: checkbox
+    on_state: /Married Joint
+    group: filing_status
+  - line: filing_status.married_filing_separate  # "3 Married filing separate"
+    field: "Filing Status"
+    type: checkbox
+    on_state: /Married Separate
+    group: filing_status
+  - line: filing_status.head_of_household  # "4 Head of household with qualifying person"
+    field: "Filing Status"
+    type: checkbox
+    on_state: /HoH
+    group: filing_status
+  - line: filing_status.qualifying_widow   # "5 Qualifying surviving spouse with dependent child"
+    field: "Filing Status"
+    type: checkbox
+    on_state: /Widower
+    group: filing_status
+  - line: filing_status.separate_spouse_name  # "3 (If spouse is also filing, list name and SSN below) Name"
+    field: "Status 3a"
+    type: text
+  - line: filing_status.separate_spouse_ssn   # "3 ... Social Security Number"
+    field: "Status 3b"
+    type: text
+    maxlen: 9
+  - line: filing_status.widow_year         # "5 List year of spouse death here"
+    field: "Status 5a"
+    type: text
+    maxlen: 4
+
+  # ---- Exemptions grid (Regular/Special/Blind by Yourself/Spouse; dependents; total)
+  - line: exemptions.yourself.regular      # "Yourself - Regular"
+    field: "Exemptions 1"
+    type: text
+    maxlen: 1
+  - line: exemptions.yourself.special      # "Yourself - Special"
+    field: "Exemptions 2"
+    type: text
+    maxlen: 1
+  - line: exemptions.yourself.blind        # "Yourself - Blind"
+    field: "Exemptions 3"
+    type: text
+    maxlen: 1
+  - line: exemptions.yourself.total        # "(a)" total for yourself row
+    field: "Exemptions 4"
+    type: text
+    maxlen: 1
+  - line: exemptions.spouse.regular        # "Spouse - Regular"
+    field: "Exemptions 5"
+    type: text
+    maxlen: 1
+  - line: exemptions.spouse.special        # "Spouse - Special"
+    field: "Exemptions 6"
+    type: text
+    maxlen: 1
+  - line: exemptions.spouse.blind          # "Spouse - Blind"
+    field: "Exemptions 7"
+    type: text
+    maxlen: 1
+  - line: exemptions.spouse.total          # "(b)" total for spouse row
+    field: "Exemptions 8"
+    type: text
+    maxlen: 1
+  - line: exemptions.dependents            # "(c) Number of dependents"
+    field: "Exemptions 9"
+    type: text
+    maxlen: 2
+  - line: exemptions.total                 # "Add the Totals from lines (a), (b), and (c). Enter the TOTAL here"
+    field: "Exemptions 10"
+    type: text
+    maxlen: 2
+
+  # ---- Age 65 or Older?
+  - line: age_65.yourself                  # "Age 65 or Older? Yourself"
+    field: "511 65 Yourself?"
+    type: checkbox
+    on_state: /Yes
+  - line: age_65.spouse                    # "Age 65 or Older? Spouse"
+    field: "511 65 Spouse?"
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Dependents (more-than-four flag + 4-row table)
+  - line: dependents.more_than_four        # "If more than four dependents ... place an 'X' here"
+    field: "Dependents, if more than four, check here"
+    type: checkbox
+    on_state: /Yes
+  - line: dependent_1.name.first
+    field: "511 Dependents First Name 1"
+    type: text
+  - line: dependent_1.name.last
+    field: "511 Dependents Last Name 1"
+    type: text
+  - line: dependent_1.ssn
+    field: "511 Dependents SSN 1"
+    type: text
+  - line: dependent_1.date_of_birth
+    field: "511 Dependents Date of Birth 1"
+    type: text
+  - line: dependent_1.relationship
+    field: "511 Dependents Relationship 1"
+    type: text
+  - line: dependent_2.name.first
+    field: "511 Dependents First Name 2"
+    type: text
+  - line: dependent_2.name.last
+    field: "511 Dependents Last Name 2"
+    type: text
+  - line: dependent_2.ssn
+    field: "511 Dependents SSN 2"
+    type: text
+  - line: dependent_2.date_of_birth
+    field: "511 Dependents Date of Birth 2"
+    type: text
+  - line: dependent_2.relationship
+    field: "511 Dependents Relationship 2"
+    type: text
+  - line: dependent_3.name.first
+    field: "511 Dependents First Name 3"
+    type: text
+  - line: dependent_3.name.last
+    field: "511 Dependents Last Name 3"
+    type: text
+  - line: dependent_3.ssn
+    field: "511 Dependents SSN 3"
+    type: text
+  - line: dependent_3.date_of_birth
+    field: "511 Dependents Date of Birth 3"
+    type: text
+  - line: dependent_3.relationship
+    field: "511 Dependents Relationship 3"
+    type: text
+  - line: dependent_4.name.first
+    field: "511 Dependents First Name 4"
+    type: text
+  - line: dependent_4.name.last
+    field: "511 Dependents Last Name 4"
+    type: text
+  - line: dependent_4.ssn
+    field: "511 Dependents SSN 4"
+    type: text
+  - line: dependent_4.date_of_birth
+    field: "511 Dependents Date of Birth 4"
+    type: text
+  - line: dependent_4.relationship
+    field: "511 Dependents Relationship 4"
+    type: text
+
+  # ---- PART ONE: Oklahoma Adjusted Gross Income (lines 1-7)
+  - line: "1"                              # 1 Federal adjusted gross income (from Federal 1040 or 1040-SR)
+    field: "511 Part 1 1"
+    type: money
+  - line: "2"                              # 2 Oklahoma Subtractions (provide Schedule 511-A)
+    field: "511 Part 1 2"
+    type: money
+  - line: "3"                              # 3 Line 1 minus line 2
+    field: "511 Part 1 3"
+    type: money
+  - line: 4a                               # 4 Out-of-state income, except wages. Describe:
+    field: "511 Part 1 4a"
+    type: text
+  - line: 4b                               # 4 (amount column)
+    field: "511 Part 1 4b"
+    type: money
+  - line: "5"                              # 5 Line 3 minus line 4
+    field: "511 Part 1 5"
+    type: money
+  - line: "6"                              # 6 Oklahoma Additions (provide Schedule 511-B)
+    field: "511 Part 1 6"
+    type: money
+  - line: "7"                              # 7 Oklahoma adjusted gross income (line 5 plus line 6)
+    field: "511 Part 1 7"
+    type: money
+
+  # ---- PART TWO: Oklahoma Taxable Income, Tax and Credits (lines 8-18; 8-9 on page 42, 10-18 on page 43)
+  - line: "8"                              # 8 Oklahoma Adjustments (provide Schedule 511-C)
+    field: "511 Part 2 8"
+    type: money
+  - line: "9"                              # 9 Oklahoma income after adjustments (line 7 minus line 8)
+    field: "511 Part 2 9"
+    type: money
+  # ============================================ page 43 -- Form 511 Page 2
+  - line: identifying_number_page2         # page-2..8 header "Your Social Security Number:" -- ONE field ("511a SSN1")
+    field: "511a SSN1"                     # whose widgets sit on PDF pages 43-49, so this one key fills all seven
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: "10"                             # 10 Oklahoma itemized deductions or Oklahoma standard deduction
+    field: "511 Part 2 10"
+    type: money
+  - line: 11.count                         # 11 Exemptions: total number of exemptions claimed on page 1 ... X $1,000
+    field: "511 Part 2 11 A"
+    type: text
+    maxlen: 2
+  - line: "11"                             # 11 (amount column)
+    field: "511 Part 2 11"
+    type: money
+  - line: "12"                             # 12 Total deductions and exemptions (add lines 10 and 11 or amount from Sch. 511-E, line 5)
+    field: "511 Part 2 12"
+    type: money
+  - line: "13"                             # 13 Oklahoma Taxable Income (line 9 minus line 12)
+    field: "511 Part 2 13"
+    type: money
+  - line: 14a                              # 14 (a) Oklahoma Income Tax from Tax Table or Farm Income Averaging
+    field: "511 Part 2 14a"
+    type: money
+  - line: 14b                              # 14 (b) HSA additional 10% tax / recapture / installment
+    field: "511 Part 2 14b"
+    type: money
+  - line: 14.method                        # 14 method code box ("1"=farm avg, "2"=HSA, "3"=recapture, "4"=installment)
+    field: "511 Part 2 14-1"
+    type: text
+    maxlen: 1
+  - line: "14"                             # 14 Oklahoma Income Tax (line 14a plus line 14b)
+    field: "511 Part 2 14"
+    type: money
+  - line: "15"                             # 15 Oklahoma child care/child tax credit
+    field: "511 Part 2 15"
+    type: money
+  - line: "16"                             # 16 Credit for taxes paid to another state (provide Form 511-TX)
+    field: "511 Part 2 16"
+    type: money
+  - line: 17.line_number                   # 17 "Enter the 511-CR line number of the credit in the box" (2025 widget has
+    field: "511 Part 2 18 Line #"          # no /MaxLen -- 2023 had 2; the 2-digit budget is kept, box 22.7 pt wide)
+    type: text
+    maxlen: 2
+  - line: "17"                             # 17 Other Tax Credits (provide Form 511-CR) (amount)
+    field: "511 Part 2 17"
+    type: money
+  - line: "18"                             # 18 Income Tax (line 14 minus lines 15-17). Do not enter less than zero.
+    field: "511 Part 2 18"
+    type: money
+
+  # ---- PART THREE: Tax, Credits, and Payments (lines 19-30 on page 43)
+  - line: 19.no_use_tax                    # 19 "If you certify that no use tax is due, place an 'X' here"
+    field: "Part 3 20 ck"
+    type: checkbox
+    on_state: /Yes
+  - line: "19"                             # 19 Use tax due on Internet, mail order, or other out-of-state purchases
+    field: "511 Part 2 19"
+    type: money
+  - line: "20"                             # 20 Balance (add lines 18 and 19)
+    field: "511 Part 3 20"
+    type: money
+  - line: "21"                             # 21 Oklahoma withholding
+    field: "511 Part 3 21"
+    type: money
+  - line: 22.qualified_farmer             # 22 "qualified farmer" checkbox
+    field: "Part 3 23 ck"
+    type: checkbox
+    on_state: /Yes
+  - line: "22"                             # 22 2025 estimated tax payments
+    field: "511 Part 3 22"
+    type: money
+  - line: "23"                             # 23 2025 payment with extension
+    field: "511 Part 3 23"
+    type: money
+  - line: "24"                             # 24 Low Income Property Tax Credit (provide Form 538-H)
+    field: "511 Part 3 24"
+    type: money
+  - line: "25"                             # 25 Sales Tax Relief Credit (provide Form 538-S)
+    field: "511 Part 3 25"
+    type: money
+  - line: "26"                             # 26 Natural Disaster Tax Credit (provide Form 576)
+    field: "511 Part 3 26"
+    type: money
+  - line: "27"                             # 27 Credit from Form 578
+    field: "511 Part 3 27"
+    type: money
+  - line: "28"                             # 28 Oklahoma earned income credit (provide Form 511-EIC)
+    field: "511 Part 3 28"
+    type: money
+  - line: 29.eligible_students             # NEW 2025 -- 29 "Total number of eligible students claimed" (count box;
+    field: "511 Part 3 29 Number of Eligible Students"   # no /MaxLen, 22.0 pt at Courier 10 = 2 glyphs)
+    type: text
+    maxlen: 2
+  - line: "29"                             # NEW 2025 -- 29 Parental Choice Tax Credit for Homeschool Expenses (provide Form 591-D)
+    field: "511 Part 3 29"
+    type: money
+  - line: "30"                             # 30 Amount paid with original return plus additional paid after it was filed (amended return only)
+    field: "511 Part 3 30"                 # (2023 line 29; this widget name printed 2023's line 30 on page 44)
+    type: money
+
+  # ============================================ page 44 -- Form 511 Page 3
+  # ---- PART THREE continued (lines 31-33)
+  - line: "31"                             # 31 Payments and credits (add lines 21-30 from page 2)
+    field: "511 Part 3 31"
+    type: money
+  - line: "32"                             # 32 Overpayment as shown on original return ... (amended return only)
+    field: "511 Part 3 32"
+    type: money
+  - line: "33"                             # 33 Total payments and credits (line 31 minus 32) -- NEW widget name
+    field: "511 Part 3 33"
+    type: money
+  # ---- PART FOUR: Refund (lines 34-38)
+  - line: "34"                             # 34 If line 33 is more than line 20, subtract line 20 from line 33. Overpayment.
+    field: "511 Part 4 34"
+    type: money
+  - line: "35"                             # 35 Amount of line 34 to be applied to 2026 estimated tax (original return only)
+    field: "511 Part 4 35"
+    type: money
+  - line: 36.line_number                   # 36 box -- "Place the line number of the organization from Schedule 511-H in the
+    field: "511 Part 4 35a"                # box below. If you give to more than one organization, put a 99 in the box."
+    type: text
+    maxlen: 2
+  - line: "36"                             # 36 Donations from your refund (total from Schedule 511-H)
+    field: "511 Part 4 36"
+    type: money
+  - line: "37"                             # 37 Total deductions from refund (add lines 35 and 36)
+    field: "511 Part 4 37"
+    type: money
+  - line: "38"                             # 38 Amount to be refunded to you (line 34 minus line 37) -- NEW widget name
+    field: "511 Part 4 38"
+    type: money
+
+  # ---- Refund direct-deposit block
+  - line: refund.send_as.debit_card        # "Send my refund as a: Debit Card"
+    field: "Send my refund as a:"
+    type: checkbox
+    on_state: /DebitCard
+    group: refund.send_as
+  - line: refund.send_as.paper_check       # "Send my refund as a: Paper Check"
+    field: "Send my refund as a:"
+    type: checkbox
+    on_state: /PaperCheck
+    group: refund.send_as
+  - line: refund.outside_us.yes            # "Is this refund going to ... an account located outside of the United States? Yes"
+    field: "511 Outside US?"
+    type: checkbox
+    on_state: /Yes
+    group: refund.outside_us
+  - line: refund.outside_us.no             # "... No"
+    field: "511 Outside US?"
+    type: checkbox
+    on_state: /No
+    group: refund.outside_us
+  - line: refund.account_type.checking     # "Direct Deposit my refund in my: Checking Account"
+    field: "511 Refund"
+    type: checkbox
+    on_state: /Checking
+    group: refund.account_type
+  - line: refund.account_type.savings      # "... Savings Account"
+    field: "511 Refund"
+    type: checkbox
+    on_state: /Savings
+    group: refund.account_type
+  - line: refund.routing_number            # "Routing Number"
+    field: "511 RN 1"
+    type: text
+  - line: refund.account_number            # "Account Number"
+    field: "511 AN 1"
+    type: text
+
+  # ---- PART FIVE: Amount You Owe (lines 39-42)
+  - line: "39"                             # 39 If line 20 is more than line 33, subtract line 33 from line 20. Tax due.
+    field: "511 Part 5 39"
+    type: money
+  - line: 40.annualized_installment        # 40 "(annualized installment method )" checkbox -- NEW widget name
+    field: "511 Line 40 Check"
+    type: checkbox
+    on_state: /Yes
+  - line: "40"                             # 40 Underpayment of estimated tax interest
+    field: "511 Part 5 40"
+    type: money
+  - line: 41a                              # 41 (a) For delinquent payment add penalty of 5% -- NEW widget, own amount column
+    field: "511 Part 5 41a"
+    type: money
+  - line: 41b                              # 41 (b) For delinquent payment add interest of 1.25% per month -- NEW widget
+    field: "511 Part 5 41b"
+    type: money
+  - line: "42"                             # 42 Total tax, penalty, and interest (add lines 39 through 41b) -- NEW widget
+    field: "511 Part 5 42"
+    type: money
+
+  # ---- Signature block
+  - line: signature.discuss_with_preparer  # "If the Oklahoma Tax Commission may discuss this return with your tax preparer, place an 'X' here"
+    field: "511 Discuss?"
+    type: checkbox
+    on_state: /Yes
+  - line: signature.taxpayer_occupation    # "Taxpayer's Occupation"
+    field: "511 Taxpayer Occupation"
+    type: text
+  - line: signature.taxpayer_phone         # "Daytime Phone (optional)"
+    field: "T511 Taxpayer Phone"
+    type: text
+  - line: signature.spouse_occupation      # "Spouse's Occupation"
+    field: "511 Spouse Occupation"
+    type: text
+  - line: signature.spouse_phone           # "Daytime Phone (optional)" (spouse)
+    field: "511 Spouse Phone"
+    type: text
+  - line: preparer.address_phone           # "Paid Preparer's Address and Phone Number"
+    field: "Preparer's Address/Phone"
+    type: text
+  - line: preparer.id_number               # "Preparer's PTIN:"
+    field: "Preparer's ID Number"
+    type: text
+
+  # ============================================ page 45 -- Schedule 511-A (Subtractions)
+  - line: sch_511a.1                        # 1 Interest on U.S. government obligations
+    field: "511A 1"
+    type: money
+  - line: sch_511a.2                        # 2 Social Security benefits taxed on your Federal Form 1040 or 1040-SR
+    field: "511A 2"
+    type: money
+  - line: sch_511a.3                        # 3 Federal civil service retirement in lieu of social security
+    field: "511A 3"
+    type: money
+  - line: sch_511a.3.claim_number_taxpayer  # 3 Retirement Claim Number: Taxpayer
+    field: "511A 3-1"
+    type: text
+  - line: sch_511a.3.claim_number_spouse    # 3 Retirement Claim Number: Spouse
+    field: "511A 3-2"
+    type: text
+  - line: sch_511a.4                        # 4 Military Retirement
+    field: "511A 4"
+    type: money
+  - line: sch_511a.5                        # 5 Oklahoma government or Federal civil service retirement
+    field: "511A 5"
+    type: money
+  - line: sch_511a.6                        # 6 Other retirement income
+    field: "511A 6"
+    type: money
+  - line: sch_511a.7                        # 7 U.S. Railroad Retirement Board benefits
+    field: "511A 7"
+    type: money
+  - line: sch_511a.8                        # 8 Oklahoma depletion
+    field: "511A 8"
+    type: money
+  - line: sch_511a.9.loss_years             # 9 Oklahoma net operating loss - Loss Year(s)
+    field: "511A 9 Loss Years"
+    type: text
+  - line: sch_511a.9                        # 9 Oklahoma net operating loss
+    field: "511A 9"
+    type: money
+  - line: sch_511a.10                       # 10 Exempt tribal income
+    field: "511A 10"
+    type: money
+  - line: sch_511a.11                       # 11 Gains from the sale of exempt government obligations
+    field: "511A 11"
+    type: money
+  - line: sch_511a.12                       # 12 Oklahoma Capital Gain Deduction (provide Form 561)
+    field: "511A 12"
+    type: money
+  - line: sch_511a.13                       # 13 Income Tax Refund (Federal Sch 1, line 1)
+    field: "511A 13"
+    type: money
+  - line: sch_511a.14                       # 14 Oklahoma income distributed by an electing PTE
+    field: "511A 14"
+    type: money
+  - line: sch_511a.15                       # NEW 2025 line -- 15 Oklahoma Bonus Depreciation Deduction
+    field: "511A 15"                        # (2023's "511A 15" was the Miscellaneous line, now 17)
+    type: money
+  - line: sch_511a.16                       # NEW 2025 line -- 16 Oklahoma Deduction for Qualified Equity Investments in an
+    field: "511A 16"                        # Eligible Oklahoma Venture Capital Company (2023's "511A 16" was the total)
+    type: money
+  - line: sch_511a.17.type_code             # 17 Miscellaneous: type-of-deduction number box (NEW widget name)
+    field: "511A 17 Other"
+    type: text
+    maxlen: 2
+  - line: sch_511a.17                       # 17 Miscellaneous: Other subtractions (NEW widget)
+    field: "511A 17"
+    type: money
+  - line: sch_511a.18                       # 18 Total subtractions (add lines 1-17; enter on line 2 of Form 511) (NEW widget)
+    field: "511A 18"
+    type: money
+
+  # ---- Schedule 511-B (Additions)
+  - line: sch_511b.1                        # 1 State and municipal bond interest
+    field: "511B 1"
+    type: money
+  - line: sch_511b.2.description            # 2 Out-of-state losses (describe)
+    field: "511B 2 Description"
+    type: text
+  - line: sch_511b.2                        # 2 Out-of-state losses (enter as a positive number)
+    field: "511B 2"
+    type: money
+  - line: sch_511b.3                        # 3 Lump sum distributions
+    field: "511B 3"
+    type: money
+  - line: sch_511b.4                        # 4 Federal net operating loss
+    field: "511B 4"
+    type: money
+  - line: sch_511b.5                        # 5 Recapture of depletion / add back of excess Federal depletion
+    field: "511B 5"
+    type: money
+  - line: sch_511b.6                        # 6 Recapture of Contributions to Oklahoma 529 Plan(s)
+    field: "511B 6"
+    type: money
+  # ---- Schedule 511-B continued on page 46 (lines 7-10)
+  - line: sch_511b.7                        # 7 Oklahoma loss distributed by an electing PTE
+    field: "511B 7"
+    type: money
+  - line: sch_511b.8                        # NEW 2025 line -- 8 Oklahoma Bonus Depreciation Add-back
+    field: "511B 8"                         # (2023's "511B 8" was the Miscellaneous line, now 9)
+    type: money
+  - line: sch_511b.9.type_code             # 9 Miscellaneous: type-of-addition number box (NEW widget name)
+    field: "511B 9 Other Additions"
+    type: text
+    maxlen: 2
+  - line: sch_511b.9                        # 9 Miscellaneous: Other additions (2023's "511B 9" was the total)
+    field: "511B 9"
+    type: money
+  - line: sch_511b.10                       # 10 Total additions (add lines 1-9; enter on line 6 of Form 511) (NEW widget)
+    field: "511B 10"
+    type: money
+
+  # ============================================ page 46 -- Schedule 511-C (Adjustments)
+  - line: sch_511c.1                        # 1 Military pay exclusion
+    field: "511C 1"
+    type: money
+  - line: sch_511c.2                        # 2 Qualifying disability deduction
+    field: "511C 2"
+    type: money
+  - line: sch_511c.3                        # 3 Contributions to Oklahoma 529 Plan(s)
+    field: "511C 3"
+    type: money
+  - line: sch_511c.4                        # 4 Deduction for providing foster care
+    field: "511C 4"
+    type: money
+  - line: sch_511c.5                        # NEW 2025 line -- 5 Parental Choice Tax Credit for Private School
+    field: "511C 5"                         # (2023's "511C 5" was the Miscellaneous line, now 6)
+    type: money
+  - line: sch_511c.6.type_code             # 6 Miscellaneous: type-of-deduction number box
+    field: "511C 6 Other"
+    type: text
+    maxlen: 2
+  - line: sch_511c.6                        # 6 Miscellaneous: Other adjustments (2023's "511C 6" was the total)
+    field: "511C 6"
+    type: money
+  - line: sch_511c.7                        # 7 Total adjustments (add lines 1-6; enter on line 8 of Form 511) (NEW widget)
+    field: "511C 7"
+    type: money
+
+  # ---- Schedule 511-D (Itemized Deductions)
+  - line: sch_511d.1                        # 1 Federal itemized deductions from Federal Sch. A, line 17
+    field: "511D 1"
+    type: money
+  - line: sch_511d.2                        # 2 State and local sales or income taxes from Federal Sch. A, line 5a
+    field: "511D 2"
+    type: money
+  - line: sch_511d.3                        # 3 Line 1 minus line 2
+    field: "511D 3"
+    type: money
+  - line: sch_511d.4                        # 4 Medical and Dental expenses from Federal Sch. A, line 4
+    field: "511D 4"
+    type: money
+  - line: sch_511d.5                        # 5 Gifts to Charity from Federal Sch. A, line 14
+    field: "511D 5"
+    type: money
+  - line: sch_511d.6                        # 6 Line 3 minus lines 4 and 5
+    field: "511D 6"
+    type: money
+  - line: sch_511d.7.yes                    # 7 Is line 6 more than $17,000? YES
+    field: "511D 7"
+    type: checkbox
+    on_state: /Yes
+    group: sch_511d.7
+  - line: sch_511d.7.no                     # 7 ... NO
+    field: "511D 7"
+    type: checkbox
+    on_state: /No
+    group: sch_511d.7
+  - line: sch_511d.9                        # 9 Medical and Dental expenses from Federal Sch. A, line 4
+    field: "511D 9"
+    type: money
+  - line: sch_511d.10                       # 10 Gifts to Charity from Federal Sch. A, line 14
+    field: "511D 10"
+    type: money
+  - line: sch_511d.11                       # 11 Oklahoma Itemized Deductions
+    field: "511D 11"
+    type: money
+
+  # ============================================ page 47 -- Schedule 511-E (Deductions/Exemptions)
+  - line: sch_511e.1                        # 1 Oklahoma itemized deductions or Oklahoma standard deduction
+    field: "511E 1"
+    type: money
+  - line: sch_511e.2                        # 2 Exemptions ($1,000 x number of exemptions)
+    field: "511E 2"
+    type: money
+  - line: sch_511e.3                        # 3 Total (add lines 1 and 2)
+    field: "511E 3"
+    type: money
+  - line: sch_511e.4.numerator              # 4 ratio numerator (line 7 of Form 511)
+    field: "511E 6a"
+    type: text
+  - line: sch_511e.4.denominator            # 4 ratio denominator (line 3 of Form 511)
+    field: "511E 6b"
+    type: text
+  - line: sch_511e.4                        # 4 Enter the percentage from the above calculation
+    field: "511E 4"
+    type: text
+  - line: sch_511e.5                        # 5 Total allowable deductions and exemptions (line 3 x line 4)
+    field: "511E 5"
+    type: money
+
+  # ---- Schedule 511-F (Child Care/Child Tax Credit)
+  - line: sch_511f.1                        # 1 Enter your Federal child care credit
+    field: "511F 1"
+    type: money
+  - line: sch_511f.2                        # 2 Multiply line 1 by 20%
+    field: "511F 2"
+    type: money
+  - line: sch_511f.3                        # 3 Enter your Federal child tax credit
+    field: "511F 3"
+    type: money
+  - line: sch_511f.4                        # 4 Multiply line 3 by 5%
+    field: "511F 4"
+    type: money
+  - line: sch_511f.5                        # 5 Enter the larger of line 2 or line 4
+    field: "511F 5"
+    type: money
+  - line: sch_511f.6.numerator              # 6 ratio numerator (line 7 of Form 511)
+    field: "511F 6a"
+    type: text
+  - line: sch_511f.6.denominator            # 6 ratio denominator (line 1 of Form 511)
+    field: "511F 6b"
+    type: text
+  - line: sch_511f.6                        # 6 Enter the percentage from the above calculation
+    field: "511F 6"
+    type: text
+  - line: sch_511f.7                        # 7 Multiply line 5 by line 6 (enter on line 15 of Form 511)
+    field: "511F 7"
+    type: money
+
+  # ============================================ page 48 -- Schedule 511-G (Earned Income Credit)
+  - line: sch_511g.1                        # 1 Federal earned income credit
+    field: "511G 1"
+    type: money
+  - line: sch_511g.2                        # 2 Multiply line 1 by 5%
+    field: "511G 2"
+    type: money
+  - line: sch_511g.3.numerator              # 3 ratio numerator (line 7 of Form 511)
+    field: "511G 3a"
+    type: text
+  - line: sch_511g.3.denominator            # 3 ratio denominator (line 1 of Form 511)
+    field: "511G 3b"
+    type: text
+  - line: sch_511g.3                        # 3 Enter the percentage from the above calculation
+    field: "511G 3"
+    type: text
+  - line: sch_511g.4                        # 4 Oklahoma earned income credit (line 2 x line 3; enter on line 28 of Form 511)
+    field: "511G 4"
+    type: money
+
+  # ---- Schedule 511-H (Donations from Refund) -- 2025 prints TWO organizations (2023 printed four) and the total
+  - line: sch_511h.1.amount_option          # 1 Court Appointed Special Advocates $2/$5/Other selector -- $2
+    field: "511H 1 $"
+    type: checkbox
+    on_state: /2
+    group: sch_511h.1.amount_option
+  - line: sch_511h.1.amount_option_5         # 1 ... $5
+    field: "511H 1 $"
+    type: checkbox
+    on_state: /5
+    group: sch_511h.1.amount_option
+  - line: sch_511h.1.amount_option_other     # 1 ... Other ($ box)
+    field: "511H 1 $"
+    type: checkbox
+    on_state: /O
+    group: sch_511h.1.amount_option
+  - line: sch_511h.1.other_amount            # 1 Other amount entered
+    field: "511H 1 O Amount"
+    type: text
+  - line: sch_511h.1                         # 1 (amount column)
+    field: "511H 1"
+    type: money
+  - line: sch_511h.2.amount_option           # 2 Support Wildlife Diversity Fund $2/$5/Other selector -- $2
+    field: "511H 2 $"                        # (2023's "511H 2" row was the YMCA program; Wildlife was 2023 line 3)
+    type: checkbox
+    on_state: /2
+    group: sch_511h.2.amount_option
+  - line: sch_511h.2.amount_option_5
+    field: "511H 2 $"
+    type: checkbox
+    on_state: /5
+    group: sch_511h.2.amount_option
+  - line: sch_511h.2.amount_option_other
+    field: "511H 2 $"
+    type: checkbox
+    on_state: /O
+    group: sch_511h.2.amount_option
+  - line: sch_511h.2.other_amount
+    field: "511H 2 O Amount"
+    type: text
+  - line: sch_511h.2
+    field: "511H 2"
+    type: money
+  - line: sch_511h.3                         # 3 Total donations (add lines 1 and 2; enter on line 36 of Form 511)
+    field: "511H 3"                          # (2023's "511H 3" was the Wildlife amount)
+    type: money
+
+  # ============================================ page 49 -- Schedule 511-I (Amended Return Information)
+  - line: sch_511i.amended_federal.yes       # "Did you file an amended Federal return? Yes"
+    field: "511I Amended"
+    type: checkbox
+    on_state: /Yes
+    group: sch_511i.amended_federal
+  - line: sch_511i.amended_federal.no        # "... No"
+    field: "511I Amended"
+    type: checkbox
+    on_state: /No
+    group: sch_511i.amended_federal
+  - line: sch_511i.change_1
+    field: "511I Change 1"
+    type: text
+  - line: sch_511i.change_2
+    field: "511I Change 2"
+    type: text
+  - line: sch_511i.change_3
+    field: "511I Change 3"
+    type: text
+  - line: sch_511i.change_4
+    field: "511I Change 4"
+    type: text
+  - line: sch_511i.change_5
+    field: "511I Change 5"
+    type: text
+  - line: sch_511i.change_6
+    field: "511I Change 6"
+    type: text
+  - line: sch_511i.change_7
+    field: "511I Change 7"
+    type: text
+  - line: sch_511i.change_8
+    field: "511I Change 8"
+    type: text
+  - line: sch_511i.change_9
+    field: "511I Change 9"
+    type: text
+  - line: sch_511i.change_10
+    field: "511I Change 10"
+    type: text
+  - line: sch_511i.change_11
+    field: "511I Change 11"
+    type: text
+  - line: sch_511i.change_12
+    field: "511I Change 12"
+    type: text
+  - line: sch_511i.change_13
+    field: "511I Change 13"
+    type: text
+  - line: sch_511i.change_14
+    field: "511I Change 14"
+    type: text
+  - line: sch_511i.change_15
+    field: "511I Change 15"
+    type: text
+  - line: sch_511i.change_16
+    field: "511I Change 16"
+    type: text
+  - line: sch_511i.change_17
+    field: "511I Change 17"
+    type: text
+  - line: sch_511i.change_18
+    field: "511I Change 18"
+    type: text
+  - line: sch_511i.change_19
+    field: "511I Change 19"
+    type: text
+  - line: sch_511i.change_20
+    field: "511I Change 20"
+    type: text
+  - line: sch_511i.change_21                 # NEW 2025 -- the explanation block grew from 20 to 22 rows
+    field: "511I Change 21"
+    type: text
+  - line: sch_511i.change_22
+    field: "511I Change 22"
+    type: text
+
+  # ============================================ pages 50-51 -- Form 538-S (Sales Tax Relief Credit)
+  - line: f538s.identifying_number          # Taxpayer's Social Security Number
+    field: "538-S SSN1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: f538s.date_of_death               # "If deceased in 2025 or 2026, enter date of death"
+    field: "538-S SSN1-1"
+    type: text
+  - line: f538s.spouse.identifying_number   # Spouse's Social Security Number
+    field: "538-S sSSN1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: f538s.spouse.date_of_death        # spouse "If deceased in 2025 or 2026, enter date of death"
+    field: "538-S sSSN1-1"
+    type: text
+  - line: f538s.name.first                  # Taxpayer's First Name
+    field: "538-S Taxpayer First Name"
+    type: text
+  - line: f538s.name.middle_initial         # Middle Initial
+    field: "538-S Taxpayer Middle Initial"
+    type: text
+    maxlen: 3
+  - line: f538s.name.last                   # Last Name
+    field: "538-S Taxpayer Last Name"
+    type: text
+  - line: f538s.spouse.name.first           # Spouse's First Name
+    field: "538-S Spouse First Name"
+    type: text
+  - line: f538s.spouse.name.middle_initial  # Middle Initial
+    field: "538-S Spouse Middle Initial"
+    type: text
+    maxlen: 3
+  - line: f538s.spouse.name.last            # Last Name
+    field: "538-S Spouse Last Name"
+    type: text
+  - line: f538s.mailing_address.street      # Mailing Address (Number and street ...)
+    field: "538-S Mailing Address"
+    type: text
+  - line: f538s.mailing_address.city        # City
+    field: "538-S City"
+    type: text
+  - line: f538s.mailing_address.state       # State
+    field: "538-S State"
+    type: text
+    maxlen: 3
+  - line: f538s.mailing_address.zip         # ZIP
+    field: "538-S ZIP"
+    type: text
+    maxlen: 10                                # the 2025 box is 65.6 pt wide (2023: 71.9 pt), Cour 10, no widget /MaxLen; a probe fill rendered 10 characters (a ZIP+4 like 73126-0800) whole and clipped the 11th
+  - line: f538s.physical_address            # Part 1: Physical Address in 2025
+    field: "538-S Physical Address"
+    type: text
+  - line: f538s.physical_disability         # "X if you or your spouse have a physical disability ..."
+    field: "538-S Physical Disability"
+    type: checkbox
+    on_state: /Yes
+  - line: f538s.age_65                       # "X if you or your spouse are 65 years of age or over"
+    field: "538-S 65 or Over"
+    type: checkbox
+    on_state: /Yes
+  - line: f538s.oklahoma_resident.yes        # "Oklahoma resident for the entire year? yes"
+    field: "538-S Oklahoma Resident"
+    type: checkbox
+    on_state: /Yes
+    group: f538s.oklahoma_resident
+  - line: f538s.oklahoma_resident.no         # "... no"
+    field: "538-S Oklahoma Resident"
+    type: checkbox
+    on_state: /No
+    group: f538s.oklahoma_resident
+  # ---- Part 2: Dependents (4 rows: name / age / SSN / relationship / yearly income)
+  - line: f538s.dependent_1.name
+    field: "538-S Part 2 1a"
+    type: text
+  - line: f538s.dependent_1.age
+    field: "538-S Part 2 2a"
+    type: text
+    maxlen: 3
+  - line: f538s.dependent_1.ssn
+    field: "538-S Part 2 3a-1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: f538s.dependent_1.relationship
+    field: "538-S Part 2 4a"
+    type: text
+  - line: f538s.dependent_1.yearly_income
+    field: "538-S Part 2 5a"
+    type: money
+  - line: f538s.dependent_2.name
+    field: "538-S Part 2 1b"
+    type: text
+  - line: f538s.dependent_2.age
+    field: "538-S Part 2 2b"
+    type: text
+    maxlen: 3
+  - line: f538s.dependent_2.ssn
+    field: "538-S Part 2 3b-1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: f538s.dependent_2.relationship
+    field: "538-S Part 2 4b"
+    type: text
+  - line: f538s.dependent_2.yearly_income
+    field: "538-S Part 2 5b"
+    type: money
+  - line: f538s.dependent_3.name
+    field: "538-S Part 2 1c"
+    type: text
+  - line: f538s.dependent_3.age
+    field: "538-S Part 2 2c"
+    type: text
+    maxlen: 3
+  - line: f538s.dependent_3.ssn
+    field: "538-S Part 2 3c-1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: f538s.dependent_3.relationship
+    field: "538-S Part 2 4c"
+    type: text
+  - line: f538s.dependent_3.yearly_income
+    field: "538-S Part 2 5c"
+    type: money
+  - line: f538s.dependent_4.name
+    field: "538-S Part 2 1d"
+    type: text
+  - line: f538s.dependent_4.age
+    field: "538-S Part 2 2d"
+    type: text
+    maxlen: 3
+  - line: f538s.dependent_4.ssn
+    field: "538-S Part 2 3d-1"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: f538s.dependent_4.relationship
+    field: "538-S Part 2 4d"
+    type: text
+  - line: f538s.dependent_4.yearly_income
+    field: "538-S Part 2 5d"
+    type: money
+  # ---- Exemption Information (A Yourself, B Spouse, C dependents, D total)
+  - line: f538s.exemptions.yourself          # A. Yourself
+    field: "538-S Exemptions A"
+    type: text
+    maxlen: 1
+  - line: f538s.exemptions.spouse            # B. Spouse
+    field: "538-S Exemptions B"
+    type: text
+    maxlen: 1
+  - line: f538s.exemptions.dependents        # C. Number of dependents
+    field: "538-S Exemptions C1"
+    type: text
+    maxlen: 2
+  - line: f538s.exemptions.total             # D. Total exemptions claimed (add A-C)
+    field: "538-S Exemptions D1"
+    type: text
+    maxlen: 2
+  # ---- Part 3: Gross Income (lines 1-14; 1-8 on page 50, 9-14 on page 51)
+  - line: f538s.1                            # 1 Total wages, salaries, fees, commissions, bonuses, and tips
+    field: "538-S Part 3 1"
+    type: money
+  - line: f538s.2                            # 2 Total interest and dividend income received
+    field: "538-S Part 3 2"
+    type: money
+  - line: f538s.3                            # 3 Total of all dependents' income (from Part 2, column 5)
+    field: "538-S Part 3 3"
+    type: money
+  - line: f538s.4                            # 4 Social Security payments (total including Medicare)
+    field: "538-S Part 3 4"
+    type: money
+  - line: f538s.5                            # 5 Railroad Retirement benefits
+    field: "538-S Part 3 5"
+    type: money
+  - line: f538s.6                            # 6 Other pensions, annuities and IRAs
+    field: "538-S Part 3 6"
+    type: money
+  - line: f538s.7                            # 7 Alimony
+    field: "538-S Part 3 7"
+    type: money
+  - line: f538s.8                            # 8 Unemployment benefits
+    field: "538-S Part 3 8"
+    type: money
+  - line: f538s.identifying_number_page2    # page-51 header "Your Social Security Number:" -- its own field
+    field: "538-S Your Social Security Number"
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: f538s.9                            # 9 Earned Income Credit (EIC) received in 2025
+    field: "538-S Part 3 9"
+    type: money
+  - line: f538s.10.description               # 10 Nontaxable sources of income (specify)
+    field: "538-S Part 3 10a"
+    type: text
+  - line: f538s.10                           # 10 Nontaxable sources of income (amount)
+    field: "538-S Part 3 10"
+    type: money
+  - line: f538s.11                           # 11 Gross income from rentals, royalties, partnerships, estates & trusts ...
+    field: "538-S Part 3 11"
+    type: money
+  - line: f538s.12                           # 12 Gross income from business and farm
+    field: "538-S Part 3 12"
+    type: money
+  - line: f538s.13.description               # 13 Other income (specify)
+    field: "538-S Part 3 13a"
+    type: text
+  - line: f538s.13                           # 13 Other income (amount)
+    field: "538-S Part 3 13"
+    type: money
+  - line: f538s.14                           # 14 Total gross household income (add lines 1-13)
+    field: "538-S Part 3 14-1"
+    type: money
+  # ---- Part 4: Sales Tax Credit Computation (line 15)
+  - line: f538s.15.count                     # 15 Total qualified exemptions claimed in Box D on page 1
+    field: "538-S Part 4 15-1"
+    type: text
+    maxlen: 2
+  - line: f538s.15                           # 15 ... x $40 (credit claimed)
+    field: "538-S Part 4 15-3"
+    type: money
+  # ---- 538-S direct-deposit / signature block (page 51)
+  # KNOWN GAP — the 538-S "Debit Card" box is not fillable together with the 511 refund method.
+  # On this blank the page-51 538-S "Send my refund as a: ... Debit Card" box is a third kid of
+  # the Form 511 field "Send my refund as a:" (WITH the colon), whose page-44 kids are the 511
+  # Debit Card (/DebitCard) and Paper Check (/PaperCheck). The page-51 kid has its OWN on_state
+  # /Debit Card (with a space), so the 511 choice refund.send_as.debit_card (/V /DebitCard)
+  # leaves the 538-S Debit Card box OFF (measured on the sentinel fill: p44 kid /AS /DebitCard,
+  # p51 kid /AS /Off). One /V cannot hold both values, and writing /Debit Card would clear the
+  # 511 refund-method choice, so f538s.refund.send_as.debit_card is DELIBERATELY UNMAPPED: a
+  # 538-S filer who wants a debit card ticks that box by hand. It returns if the OTC gives the
+  # 538-S box its own field. Only the 538-S paper-check box (a DISTINCT field "Send my refund
+  # as a" WITHOUT the colon, on_state /Paper Check) is mapped.
+  - line: f538s.refund.send_as.paper_check   # "... Paper Check"
+    field: "Send my refund as a"
+    type: checkbox
+    on_state: /Paper Check
+    group: f538s.refund.send_as
+  - line: f538s.refund.outside_us.yes        # "... account located outside of the United States? Yes"
+    field: "538-S Outside US?"
+    type: checkbox
+    on_state: /Yes
+    group: f538s.refund.outside_us
+  - line: f538s.refund.outside_us.no         # "... No"
+    field: "538-S Outside US?"
+    type: checkbox
+    on_state: /No
+    group: f538s.refund.outside_us
+  - line: f538s.refund.account_type.checking # "Direct Deposit my refund in my: Checking Account"
+    field: "538-S Account"
+    type: checkbox
+    on_state: /Checking
+    group: f538s.refund.account_type
+  - line: f538s.refund.account_type.savings  # "... Savings Account"
+    field: "538-S Account"
+    type: checkbox
+    on_state: /Savings
+    group: f538s.refund.account_type
+  - line: f538s.refund.routing_number        # Routing Number
+    field: "538-S RN 1"
+    type: text
+  - line: f538s.refund.account_number        # Account Number
+    field: "538-S AN 1"
+    type: text
+  - line: f538s.discuss_with_preparer        # "If the OTC may discuss this return with your tax preparer, place an 'X' here"
+    field: "538-S Discuss Return"
+    type: checkbox
+    on_state: /Yes
+  - line: f538s.taxpayer_occupation          # Taxpayer's Occupation
+    field: "538-S Taxpayer Occupation"
+    type: text
+  # f538s.spouse_occupation is DELIBERATELY UNMAPPED in 2025: the field "538-S Spouse Occupation" now carries TWO
+  # widgets -- one under the spouse "Occupation" caption and a second at [317.36, 75.81, 572.22, 94.75], inside the
+  # "Preparer's PTIN" box -- so any value written to it also prints in the preparer's PTIN box. The spouse's
+  # occupation on the 538-S is written by hand. (See the port banner.)
+relations:
+  # Core Form 511 on-face arithmetic (every operand mapped, unconditional).
+  - "3 == 1 - 2"                            # 3 "Line 1 minus line 2"
+  - "5 == 3 - 4b"                           # 5 "Line 3 minus line 4"
+  - "7 == 5 + 6"                            # 7 "line 5 plus line 6"
+  - "9 == 7 - 8"                            # 9 "line 7 minus line 8"
+  - "12 == 10 + 11 + sch_511e.5"            # 12 "add lines 10 and 11 or amount from Sch. 511-E, line 5" (511-E line 5
+                                            #    says "Leave lines 10-11 of Form 511 blank", so one side is blank)
+  - "13 == 9 - 12"                          # 13 "line 9 minus line 12"
+  - "14 == 14a + 14b"                       # 14 "line 14a plus line 14b"
+  - "20 == 18 + 19"                         # 20 "add lines 18 and 19"
+  - "31 == 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29 + 30"   # 31 "add lines 21-30 from page 2"
+  - "33 == 31 - 32"                         # 33 "line 31 minus 32"
+  - "37 == 35 + 36"                         # 37 "add lines 35 and 36"
+  - "42 == 39 + 40 + 41a + 41b"             # 42 "add lines 39 through 41b"
+  # Schedule totals printed as plain sums (dotted line ids are accepted by the relation grammar).
+  - "sch_511a.18 == sch_511a.1 + sch_511a.2 + sch_511a.3 + sch_511a.4 + sch_511a.5 + sch_511a.6 + sch_511a.7 + sch_511a.8 + sch_511a.9 + sch_511a.10 + sch_511a.11 + sch_511a.12 + sch_511a.13 + sch_511a.14 + sch_511a.15 + sch_511a.16 + sch_511a.17"   # "add lines 1-17"
+  - "sch_511b.10 == sch_511b.1 + sch_511b.2 + sch_511b.3 + sch_511b.4 + sch_511b.5 + sch_511b.6 + sch_511b.7 + sch_511b.8 + sch_511b.9"   # "add lines 1-9"
+  - "sch_511c.7 == sch_511c.1 + sch_511c.2 + sch_511c.3 + sch_511c.4 + sch_511c.5 + sch_511c.6"   # "add lines 1-6"
+  - "sch_511d.3 == sch_511d.1 - sch_511d.2"                    # 511-D 3 "Line 1 minus line 2"
+  - "sch_511d.6 == sch_511d.3 - sch_511d.4 - sch_511d.5"       # 511-D 6 "Line 3 minus lines 4 and 5"
+  - "sch_511e.3 == sch_511e.1 + sch_511e.2"                    # 511-E 3 "Total (add lines 1 and 2)"
+  - "sch_511h.3 == sch_511h.1 + sch_511h.2"                    # 511-H 3 "add lines 1 and 2"
+  - "f538s.14 == f538s.1 + f538s.2 + f538s.3 + f538s.4 + f538s.5 + f538s.6 + f538s.7 + f538s.8 + f538s.9 + f538s.10 + f538s.11 + f538s.12 + f538s.13"   # 538-S 14 "Add lines 1-13"
+  # Not declared: 18 ("Do not enter less than zero"), 34/39 (branch on a comparison), 38 (refund side of that
+  # branch), 511-D line 11 (YES/NO branch), and the percentage/multiply lines (511-E 5, 511-F 2/4/7, 511-G 2/4,
+  # 538-S 15), which round to whole dollars.
+cross_form:
+  # Form 511 Part One line 1 "Federal adjusted gross income (from Federal 1040 or
+  # 1040-SR)" == federal AGI, which the 2025 Form 1040 prints on line 11a.
+  - "1 == f1040.11a"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 44}
+mailing: null

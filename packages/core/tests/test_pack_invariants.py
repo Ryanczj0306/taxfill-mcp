@@ -925,6 +925,10 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     # commit 8959461).
     "states/ms/2024/f80105/pack.yaml": 2,
     "states/ms/2025/f80105/pack.yaml": 2,
+    # The 2025 port maps the continuation headers "Your Social Security Number:" — "511a SSN1" (ONE field, a widget on
+    # each of PDF pages 43-49) and the 538-S page-2 "538-S Your Social Security Number" — as identifying_number_page2 and
+    # f538s.identifying_number_page2; the 2023 pack had left both unmapped, so its headers shipped blank (Phase J JS5).
+    "states/ok/2025/form511/pack.yaml": 2,
     "states/ri/2023/ri1040/pack.yaml": 12,
     "states/ri/2024/ri1040/pack.yaml": 12,
     # 2025 keeps every mirror widget at the same name and /Rect (Phase J JS5).
