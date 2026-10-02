@@ -1163,6 +1163,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # "Mailing address") equals the reviewed IN 2023 row (present_address, city, state, zip_or_postal_code).
     # JS5: CO DR 0104PN 2023 (a NEW schedule pack; no base year) selects nothing: the face prints only the taxpayer's
     # name and SSN or ITIN, no address block (the address lives on the DR 0104, whose reviewed row is unchanged).
+    # JS5: AL Form 40 2025 (a partial re-map of AL 2023; the page-1 address widgets kept their names) equals the reviewed
+    # AL 2023 row (ADDRESS, CITY, STATE, ZIP); the new vehicle-loan, Schedule OC and second Schedule RS lines are not address lines.
     import json
     from pathlib import Path
 

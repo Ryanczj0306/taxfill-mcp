@@ -198,7 +198,7 @@ def _dark_share(png: Path) -> float:
 
 
 @pytest.mark.network
-def test_p027_al40_hides_its_41_guards_and_its_page_1_renders_the_return(tmp_path: Path):
+def test_p027_al40_hides_its_42_guards_and_its_page_1_renders_the_return(tmp_path: Path):
     from taxfill_core.render import render_pdf
     from taxfill_core.schemas.formpack import load_pack
     from test_formpacks_federal import synthetic_values
@@ -214,6 +214,23 @@ def test_p027_al40_hides_its_41_guards_and_its_page_1_renders_the_return(tmp_pat
     (page1,) = render_pdf(tmp_path / "al40.pdf", tmp_path / "png", dpi=60, pages=[1])
     assert _dark_share(page1.path) > 0.07
     report = verify_form(pack, tmp_path / "al40.pdf", expected=synthetic_values(pack))
+    assert [c for c in report.pitfall_checks if c.id == "P-027"][0].status == "PASS"
+
+
+@pytest.mark.network
+def test_p027_al40_2025_hides_the_cropped_worksheet_lids(tmp_path: Path):
+    """AL 40 2025's pages 44-45 crop a short window out of a Letter MediaBox; their white print lids cover the whole
+    window but 29% of the MediaBox. Measured against the MediaBox, both worksheets printed blank."""
+    from taxfill_core.schemas.formpack import load_pack
+    from test_formpacks_federal import synthetic_values
+
+    path = Path(__file__).resolve().parents[3] / "formpacks/states/al/2025/al40/pack.yaml"
+    if not path.exists():
+        pytest.skip("the AL 40 2025 pack is not shipped")
+    pack = load_pack(path)
+    result = fill_form(pack, synthetic_values(pack), _blank(pack), tmp_path / "al40_2025.pdf")
+    assert {"(page 44)", "(page 45)"} <= {g[g.index("("):] for g in result.guards_hidden}
+    report = verify_form(pack, tmp_path / "al40_2025.pdf", expected=synthetic_values(pack))
     assert [c for c in report.pitfall_checks if c.id == "P-027"][0].status == "PASS"
 
 

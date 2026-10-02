@@ -464,6 +464,24 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "you have more than one Schedule D/E', baked into the blank) are unmapped too",
     ),
     StateComputed(
+        "states/al/2025/al40/pack.yaml",
+        625,
+        "the 2023 row re-measured field by field on the 2025 blank (Phase J JS5): 566 - 11 - 7 - 1 + 78. MINUS 11: "
+        "the UltraForms barcode helpers UF_InfoA-UF_InfoK the 2023 pack maps are unmapped here, with the new UF_InfoL "
+        "(the blank's UF_SetStream() writes the barcode stream length / viewer version into them; no /TU, no Print "
+        "flag, no printed box: P-007 class 2, not a line). MINUS 7: "
+        "ReadOnly widgets of 2023 lines the 2025 blank no longer has (SCHOCLINE3PT, SCHOCLINE3PX-5PX, SCHOCLINE9PR, "
+        "SCHOCPG5SECC2C24 / 7C24); MINUS 1: SCHOCPRTYLINE1 lost the bit (Part Y is now the filer-entry Preceptor "
+        "credit). PLUS 78 new form-computed fields: Schedule A 11c (VEHICLEVIN, which the script fills from VLIW8); "
+        "Schedule OC Part R row R7e columns 3-5 and the R7f sum, Part W lines W3-W6, its W7a-W7e columns 3-5 and the "
+        "W7f sum, the Z3 / AA3 / AB3 / AC3 credit-allowable lines, Section C row C23 columns 2 / 7 and rows C26-C30, "
+        "Section F F5 / F6; the second Schedule RS's name / SSN mirrors, line 8-11 totals, Part IV 1-2 and Part V 1 "
+        "(15); the Vehicle Loan Interest Spreadsheet line 21 total; and all eight Qualified "
+        "Vehicle Loan Interest Worksheet lines. Each sits on a printed white box the form's script computes. The DOR "
+        "banners and captions (Instructions, Instructions1-5 / 7-12, NonDriver, txtMultiScheduleD/E and the new "
+        "VEHICLE 'check the box' caption) stay unmapped",
+    ),
+    StateComputed(
         "states/de/2023/pit_res/pack.yaml",
         16,
         "the eight two-column computed lines (4a/4b, 9a/9b, 10a/10b, 16a/16b, 18a/18b, "
@@ -722,6 +740,9 @@ def _keeps_by_pack() -> dict[str, dict[str, ReservedKeep]]:
 # is a printed constant, class 1, never mapped (Phase J JEa adjudicated the list below field by field against
 # the printed row and the widget's own /AA scripts). Keyed (pack, line) -> why the default is not a constant.
 NONZERO_READONLY_DEFAULTS: dict[tuple[str, str], str] = {
+    ("states/al/2025/al40/pack.yaml", "VLIW4"):
+        "'Enter $100,000 ($200,000 if married filing jointly)' — the blank's script sets 200000 when MFJ is checked, "
+        "else 100000 (the shipped value)",
     ("states/ga/2023/ga500/pack.yaml", "voucher.type_of_return"): "a /Ch dropdown (TAXTYPE) defaulted to '09'",
     ("states/ga/2023/ga500/pack.yaml", "voucher.tax_year"): "a /Ch dropdown (YY) defaulted to '2023'",
     ("states/ga/2023/ga500/pack.yaml", "s1mil.tp.7"):
