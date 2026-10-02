@@ -40,7 +40,8 @@
 # units-of-five UI control) - those carry no taxpayer data and are intentionally
 # OMITTED (each such name appears only as an appearance-stream /BBox, never a
 # real /AP /N on-state). Of the remaining 2274 data widgets (2084 text, 190
-# checkboxes), 2260 are mapped. AL marks many running totals ReadOnly, but they
+# checkboxes), 2249 are mapped (2260 until the 2026-10-02 pass unmapped the
+# barcode helpers UF_InfoA-K). AL marks many running totals ReadOnly, but they
 # remain mapped so a filer can carry the computed value (P-007 class 4).
 #
 # The 12 deliberately UNMAPPED text widgets (2026-09-23) are ReadOnly DOR
@@ -67,8 +68,8 @@
 # skeleton's defaulted "/1" and "/BBox" on-states belonged only to the omitted
 # pushbuttons and the UF_* helper toggles; no data checkbox uses them.
 #
-# Money vs text. The skeleton tagged every dollar box `text maxlen:9`. The 35
-# numbered dollar lines of the Form 40 return body (page 1 income/tax lines 5-35
+# Money vs text. The skeleton tagged every dollar box `text maxlen:9`. The 33
+# numbered dollar lines of the Form 40 return body (page 1 income/tax lines 5a-35
 # and the two party-fund $ boxes) are re-typed `money` so the verifier can
 # enforce the page-1 arithmetic. All schedule/worksheet amount boxes are left
 # `text` exactly as introspected: many of them are percentage / ratio / "divide
@@ -76,12 +77,15 @@
 # value must never be whole-dollar rounded, so the conservative choice is to
 # keep them text rather than risk corrupting a fraction.
 #
-# Relations. Only unconditional page-1 equalities whose every operand is a
-# mapped money line are declared: line 8 = 5+6+7 (total income), line 15 =
-# 11+12+13+14 (total deductions). Branchy / table-driven lines (16 taxable
-# income, 17 tax-from-table, 18 net tax, 22 total liability with its $1 voluntary
-# party-fund add-ons, the owe/refund split) are OMITTED per the conservative
-# house style. cross_form is empty: Alabama computes its own state AGI and the
+# Relations. Every unconditional page-1 instruction whose operands are mapped
+# money lines is declared, as in the TY2025 pack (since the 2026-10-02 P-031
+# pass; before it only 8 and 15 were): 8 "line 5b through line 7", 10 "Subtract
+# line 9 from line 8", 15 "Add lines 11, 12, 13, and 14", 16 "Subtract line 15
+# from line 10" (it may go negative — Form NOL-85 takes a negative Form 40
+# taxable income), 21 "Add lines 18, 19, 20a, and 20b", 22 "from column A, line
+# 5a", 27 "Add lines 22, 23, 24, 25, and 26", 29 "Subtract line 28 from line
+# 27". Table-driven or branching lines (17 tax-from-table, 18 net tax, 30-35
+# the owe / refund split) are OMITTED. cross_form is empty: Alabama computes its own state AGI and the
 # federal figures on page 2 are reconciliation boxes, not unconditional copies of
 # a single federal line.
 form: Form 40
@@ -8728,7 +8732,13 @@ fields:
     maxlen: 9
 relations:
   - "8 == 5b + 6 + 7"
+  - "10 == 8 - 9"
   - "15 == 11 + 12 + 13 + 14"
+  - "16 == 10 - 15"
+  - "21 == 18 + 19 + 20a + 20b"
+  - "22 == 5a"
+  - "27 == 22 + 23 + 24 + 25 + 26"
+  - "29 == 27 - 28"
 cross_form: []
 identity_fields:
   - SSSN
