@@ -14,8 +14,8 @@ from pdf_fixtures import make_acroform_pdf
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import ArrayObject, DictionaryObject, FloatObject, NameObject, NumberObject, TextStringObject
 
-from taxfill_core.filler import F_HIDDEN, F_NOVIEW, F_PRINT, fill_form, is_viewer_guard
-from taxfill_core.schemas.formpack import FormPack
+from taxfill_core.filler import F_HIDDEN, F_NOVIEW, F_PRINT, fill_form, is_viewer_guard, visible_box
+from taxfill_core.schemas.formpack import FormPack, PackField
 from taxfill_core.verify import verify_form, widget_flag_problems
 
 PACK = FormPack.model_validate({
@@ -128,11 +128,47 @@ def test_p027_a_guard_left_printable_fails_verify(guarded_blank: Path, tmp_path:
 def test_p027_the_guard_rule_is_page_coverage_plus_pushbutton_or_readonly_text(guarded_blank: Path):
     reader = PdfReader(str(guarded_blank))
     page = reader.pages[0]
-    area = float(page.mediabox.width) * float(page.mediabox.height)
-    verdicts = {str(a.get_object()["/T"]): is_viewer_guard(a.get_object(), area) for a in page.get("/Annots", [])}
+    box = visible_box(page)
+    verdicts = {str(a.get_object()["/T"]): is_viewer_guard(a.get_object(), box) for a in page.get("/Annots", [])}
     assert {k for k, v in verdicts.items() if v} == {"VERCTRL", "printlid.1", "PANEL"}
     assert not verdicts["statement"]        # 78% of the page, but a writable text box
     assert not verdicts["GoToSchedule"]     # a pushbutton, but a small one
+
+
+def test_p027_a_guard_is_measured_against_the_visible_cropbox(tmp_path: Path):
+    """AL Form 40's worksheet pages crop a short window out of a Letter MediaBox; the print lid covers the whole
+    window but under a third of the MediaBox. Measured against the MediaBox it stayed printable and the worksheet
+    printed blank — the rule measures the visible area (the CropBox) instead."""
+    plain = make_acroform_pdf(tmp_path / "plain.pdf", [{"name": "worksheet_line", "maxlen": 12}])
+    writer = PdfWriter(clone_from=str(plain))
+    page = writer.pages[0]
+    width = float(page.mediabox.width)
+    window = (12.0, 537.0, width - 9.0, 792.0)          # AL 2023 page 40's CropBox shape
+    page[NameObject("/CropBox")] = ArrayObject([FloatObject(v) for v in window])
+    lid = DictionaryObject({
+        NameObject("/Type"): NameObject("/Annot"), NameObject("/Subtype"): NameObject("/Widget"),
+        NameObject("/FT"): NameObject("/Btn"), NameObject("/Ff"): NumberObject(PUSHBUTTON),
+        NameObject("/T"): TextStringObject("printlid.43"), NameObject("/F"): NumberObject(F_NOVIEW | F_PRINT),
+        NameObject("/Rect"): ArrayObject([FloatObject(v) for v in (4.0, 530.0, width - 4.0, 792.0)]),
+        NameObject("/P"): page.indirect_reference,
+    })
+    ref = writer._add_object(lid)
+    page["/Annots"].append(ref)
+    writer._root_object["/AcroForm"]["/Fields"].append(ref)
+    blank = tmp_path / "cropped.pdf"
+    writer.write(blank)
+    page = PdfReader(str(blank)).pages[0]
+    media_share = (width - 8.0) * 262.0 / (width * float(page.mediabox.height))
+    assert media_share < 0.85, media_share               # the old MediaBox rule would have missed it
+    lid_annot = next(a.get_object() for a in page["/Annots"] if a.get_object()["/T"] == "printlid.43")
+    assert is_viewer_guard(lid_annot, visible_box(page))
+    pack = FormPack(form="X", jurisdiction="states/xx", tax_year=2023, source_url="https://example.gov/x.pdf",
+                    pdf_sha256="0" * 64, acroform_root="",
+                    fields=[PackField(line="worksheet_line", field="worksheet_line", type="text", maxlen=12)])
+    result = fill_form(pack, {"worksheet_line": "1250"}, blank, tmp_path / "filled.pdf")
+    assert result.guards_hidden == ["printlid.43 (page 1)"]
+    problems, _ = widget_flag_problems(tmp_path / "filled.pdf", ["worksheet_line"])
+    assert not problems
 
 
 def test_p027_is_reported_only_when_the_pdf_itself_is_read():
@@ -169,7 +205,10 @@ def test_p027_al40_hides_its_41_guards_and_its_page_1_renders_the_return(tmp_pat
 
     pack = load_pack(Path(__file__).resolve().parents[3] / "formpacks/states/al/2023/al40/pack.yaml")
     result = fill_form(pack, synthetic_values(pack), _blank(pack), tmp_path / "al40.pdf")
-    assert len(result.guards_hidden) == 41
+    # 42: page 40's lid covers its whole CropBox but a third of its MediaBox (measured against the CropBox since
+    # the JS5 AL 2025 port's re-verify; the MediaBox rule hid 41 and left page 40 printing blank)
+    assert len(result.guards_hidden) == 42
+    assert any(g.endswith("(page 40)") for g in result.guards_hidden)
     assert {g.split(" ")[0].split(".")[0] for g in result.guards_hidden} == {"printlid", "VERCTRL"}
     # Before the pass, page 1 rendered as the yellow warning (dark share 0.046); the return itself is far busier.
     (page1,) = render_pdf(tmp_path / "al40.pdf", tmp_path / "png", dpi=60, pages=[1])

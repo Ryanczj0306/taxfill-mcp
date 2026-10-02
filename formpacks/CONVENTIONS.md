@@ -490,7 +490,8 @@ run time; taxfill never runs it (P-007 class 4), so the filler does the viewer's
   `SP_SSN_SEP`, DE PIT-RES's amended-return lines, GA 500's voucher, every AL Form 40 data widget on
   page 1). Map it like any other line. `fill_form` clears Hidden and NoView and sets Print on every
   widget it writes, so the value shows on screen and prints in any viewer.
-- **A viewer guard is never mapped.** A widget covering 85% or more of its page that is a pushbutton or
+- **A viewer guard is never mapped.** A widget covering 85% or more of its page's VISIBLE area (the CropBox — AL 40's
+  worksheet pages crop a short window out of a Letter MediaBox) that is a pushbutton or
   a ReadOnly text panel is the form's guard, not a taxpayer line: AL 40's yellow "PLEASE USE A DIFFERENT
   PDF VIEWER" `VERCTRL` (viewable and printable) and its white `printlid.N` (NoView + Print, so it prints
   over the page), MO-1040's white `printlid.N` ("PLEASE, USE THE PRINT BUTTON ON THE FORM"). `fill_form`

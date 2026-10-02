@@ -2326,15 +2326,14 @@ def widget_flag_problems(pdf_path: str | Path, written_names: Iterable[str]) -> 
     """
     from pypdf import PdfReader  # noqa: PLC0415
 
-    from taxfill_core.filler import F_HIDDEN, F_NOVIEW, F_PRINT, is_viewer_guard  # noqa: PLC0415
+    from taxfill_core.filler import F_HIDDEN, F_NOVIEW, F_PRINT, is_viewer_guard, visible_box  # noqa: PLC0415
 
     wanted = set(written_names)
     problems: list[str] = []
     checked = 0
     reader = PdfReader(str(pdf_path))
     for index, page in enumerate(reader.pages, 1):
-        box = page.mediabox
-        page_area = abs(float(box.width) * float(box.height)) or 1.0
+        page_box = visible_box(page)
         for ref in page.get("/Annots") or []:
             annot = ref.get_object()
             if annot.get("/Subtype") != "/Widget":
@@ -2348,7 +2347,7 @@ def widget_flag_problems(pdf_path: str | Path, written_names: Iterable[str]) -> 
                     faults.append("no Print flag")
                 if faults:
                     problems.append(f"'{name}' on page {index} holds a value but is {', '.join(faults)}")
-            elif is_viewer_guard(annot, page_area) and (not flags & F_HIDDEN or flags & F_PRINT):
+            elif is_viewer_guard(annot, page_box) and (not flags & F_HIDDEN or flags & F_PRINT):
                 problems.append(f"viewer guard '{name}' covers page {index} and is still viewable or printable")
     return problems, checked
 

@@ -1964,9 +1964,14 @@ pitfalls:
     countermeasure: >-
       fill_form's flag pass (filler._annotation_flag_pass): every widget it
       wrote gets Hidden and NoView cleared and Print set, and every viewer
-      guard — a widget covering at least 85% of its page that is a
-      pushbutton or a ReadOnly text panel (filler.is_viewer_guard) — is set
-      Hidden, listed in FillResult.guards_hidden (AL 40: 41, MO-1040: 32).
+      guard — a widget covering at least 85% of its page's VISIBLE area
+      (the CropBox, filler.visible_box) that is a pushbutton or a ReadOnly
+      text panel (filler.is_viewer_guard) — is set Hidden, listed in
+      FillResult.guards_hidden (AL 40 2023: 42, MO-1040: 32). The share was
+      first measured against the MediaBox; AL 40's worksheet pages crop a
+      short window out of a Letter MediaBox, so their print lids covered the
+      whole window but under a third of the MediaBox and both worksheets
+      printed blank — found by the JS5 AL 2025 port's re-verify (2026-10-02).
       verify_form reads the filled PDF's flags back as pitfall check P-027
       (verify.widget_flag_problems): a written widget still Hidden, NoView
       or without Print, or a viewer guard still viewable or printable, FAILs

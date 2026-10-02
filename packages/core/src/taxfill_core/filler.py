@@ -452,7 +452,7 @@ def _set_checkboxes(writer: PdfWriter, updates: dict[str, tuple[str, str]]) -> N
 # Annotation flags (PDF 32000-1 table 165) and field flags (table 226) the P-027 pass reads.
 F_HIDDEN, F_PRINT, F_NOVIEW = 2, 4, 32
 _FF_READONLY, _FF_PUSHBUTTON = 1, 1 << 16
-# A widget covering at least this share of its page is a candidate viewer guard.
+# A widget covering at least this share of its page's VISIBLE area (the CropBox) is a candidate viewer guard.
 GUARD_PAGE_SHARE = 0.85
 
 
@@ -470,19 +470,36 @@ def _inherited_attr(annot: object, key: str) -> object | None:
     return None
 
 
-def is_viewer_guard(annot: object, page_area: float) -> bool:
+def visible_box(page: object) -> tuple[float, float, float, float]:
+    """The part of a page a viewer shows and a printer prints: its CropBox (pypdf answers the MediaBox when the
+    page sets none), as (left, bottom, right, top)."""
+    box = page.cropbox  # type: ignore[attr-defined]
+    xs, ys = sorted((float(box.left), float(box.right))), sorted((float(box.bottom), float(box.top)))
+    return xs[0], ys[0], xs[1], ys[1]
+
+
+def is_viewer_guard(annot: object, page_box: tuple[float, float, float, float]) -> bool:
     """A page-covering pushbutton or ReadOnly text panel: a DOR's viewer guard, never a taxpayer line.
 
     AL Form 40 ships a yellow "WARNING: PLEASE USE A DIFFERENT PDF VIEWER" pushbutton over every page
     and a white ``printlid.N`` pushbutton (NoView + Print) that prints over it; MO-1040 prints a white
     ReadOnly text panel, "PLEASE, USE THE PRINT BUTTON ON THE FORM". The forms' own JavaScript hides
     them in Acrobat; taxfill never runs it (P-007 class 4), so the filler hides them itself (P-027).
+
+    Coverage is measured against the page's VISIBLE area, ``page_box`` (``visible_box(page)``), not its
+    MediaBox: AL Form 40's worksheet pages crop a short window out of a full Letter MediaBox, and their print
+    lids cover all of that window but under a third of the MediaBox — measured against the MediaBox they
+    stayed printable and both worksheets printed blank (found by the JS5 AL 2025 port's re-verify).
     """
     rect = annot.get("/Rect")  # type: ignore[attr-defined]
     if rect is None or len(rect) != 4:
         return False
-    x0, y0, x1, y1 = (float(v) for v in rect)
-    if abs(x1 - x0) * abs(y1 - y0) < GUARD_PAGE_SHARE * page_area:
+    xs = sorted((float(rect[0]), float(rect[2])))
+    ys = sorted((float(rect[1]), float(rect[3])))
+    bx0, by0, bx1, by1 = page_box
+    visible = max((bx1 - bx0) * (by1 - by0), 1.0)
+    covered = max(0.0, min(xs[1], bx1) - max(xs[0], bx0)) * max(0.0, min(ys[1], by1) - max(ys[0], by0))
+    if covered < GUARD_PAGE_SHARE * visible:
         return False
     flags = int(_inherited_attr(annot, "/Ff") or 0)
     field_type = _inherited_attr(annot, "/FT")
@@ -500,8 +517,7 @@ def _annotation_flag_pass(writer: PdfWriter, written: Mapping[str, str]) -> list
     """
     hidden: list[str] = []
     for index, page in enumerate(writer.pages, 1):
-        box = page.mediabox
-        page_area = abs(float(box.width) * float(box.height)) or 1.0
+        page_box = visible_box(page)
         for ref in page.get("/Annots", []):
             annot = ref.get_object()
             if annot.get("/Subtype") != "/Widget":
@@ -512,7 +528,7 @@ def _annotation_flag_pass(writer: PdfWriter, written: Mapping[str, str]) -> list
                 if wanted != flags:
                     annot[NameObject("/F")] = NumberObject(wanted)
                 continue
-            if not is_viewer_guard(annot, page_area):
+            if not is_viewer_guard(annot, page_box):
                 continue
             if flags & F_HIDDEN and not flags & F_PRINT:
                 continue  # already dark on screen and paper
