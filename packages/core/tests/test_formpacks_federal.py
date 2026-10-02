@@ -153,7 +153,9 @@ def synthetic_values(pack: FormPack) -> dict[str, object]:
     """Fill values for EVERY mapped line of a pack, radio-group safe.
 
     - money lines get distinct small whole-dollar amounts (101, 112, 123, ...
-      — small enough never to trip the width clipping heuristic);
+      — small enough never to trip the width clipping heuristic), cut to the
+      line's last ``maxlen`` digits when the box is narrower (IA 2025's line-21
+      contribution boxes hold 2 digits: 431 becomes 31);
     - every checkbox question is exercised exactly once: the FIRST member of
       each ``group`` — and of each shared AcroForm ``field`` (radio kids) —
       is answered yes, siblings are omitted (a radio field holds one choice);
@@ -166,7 +168,10 @@ def synthetic_values(pack: FormPack) -> dict[str, object]:
     answered: set[tuple[str, str]] = set()
     for pack_field in pack.fields:
         if pack_field.type == "money":
-            values[pack_field.line] = 101 + 11 * money_index
+            amount = 101 + 11 * money_index
+            if pack_field.maxlen and len(str(amount)) > pack_field.maxlen:
+                amount = int(str(amount)[-pack_field.maxlen:]) or 1
+            values[pack_field.line] = amount
             money_index += 1
         elif pack_field.type == "checkbox":
             keys = {("field", pack_field.field)}
