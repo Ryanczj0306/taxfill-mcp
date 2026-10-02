@@ -1,95 +1,116 @@
 # ===========================================================================
-# RE-MAP onto DOR's 2026-05-22 RE-ISSUE of the 2023 Form 1 (re-mapped
-# 2026-10-02, Phase J JS5). The pack keeps its tax year and every line key
-# whose printed box has a widget; it drops the three signature keys and adds
-# eleven (see TOPOLOGY).
+# TY2025 PORT of formpacks/states/ma/2023/form1/pack.yaml as re-mapped onto
+# DOR's 2026-05-22 re-issue of the 2023 Form 1 (ported 2026-10-02, Phase J
+# JS5; triaged RE-MAP). That re-issue shares this blank's caption-named
+# AcroForm, so it is the port source: a widget census of this blank against
+# the pack on the 2024-01-17 blank finds 148 of its 152 mapped widgets gone by
+# name (every name changed), against the re-issue pack 143 of 160 fields keep
+# their names.
 #
 # URL. source_url below, fetched with a desktop-browser request (mass.gov sits
 # behind Akamai and answers 403 to a plain fetcher) in two separate runs on
-# 2026-10-02: both 200 application/pdf, 184,504 bytes, Last-Modified Tue, 26
-# May 2026 16:57:11 GMT, sha256 5cbb5655…3573492 — the same digest as the
-# discovery copy. The exact Wayback capture 20260920033523 (`mirror_urls`)
-# answers 200 with the same bytes, so fetch_blank's 403 fallback lands on the
-# pin and caches it only if the digest matches (a mismatch fails closed).
+# 2026-10-02: both 200 application/pdf, 558,273 bytes, Last-Modified Mon, 27
+# Jul 2026 18:10:33 GMT, sha256 0bb62498…cb04a07 — the same digest as the
+# discovery copy. The Wayback request web/2026id_/<source_url> redirects to
+# capture 20260911192930 (`mirror_urls`), which answers 200 with the same
+# bytes, so fetch_blank's 403 fallback lands on the pin and caches it only if
+# the digest matches (a mismatch fails closed).
 #
 # PRINTED IDENTITY. Page 1 prints "Massachusetts Department of Revenue",
-# "2023" and "Form 1 Massachusetts Resident Income Tax Return"; pages 2-4
-# print "2023 FORM 1, PAGE 2/3/4". No revision stamp is printed. /Title
-# "Massachusetts Department of Revenue 2023 Form 1 Massachusetts Resident
-# Income Tax Return", /CreationDate 2023-11-16, /ModDate 2026-05-22.
+# "2025" and "Form 1 Massachusetts Resident Income Tax Return"; pages 2-4
+# print "2025 FORM 1, PAGE 2/3/4". No revision stamp is printed. /Title "2025
+# Massachusetts Form 1 Personal Income Tax Return", /CreationDate 2025-11-25,
+# /ModDate 2026-07-14. Pages are 594 x 783 pt.
 #
-# HISTORY. Until this re-map the pack pinned DOR's 2024-01-17 revision
-# (/ModDate), sha256 86233c2d…802c4, reachable only through its Wayback
-# capture https://web.archive.org/web/20241214140401id_/<source_url>. That
-# revision is a valid 2023 Form 1 too (the same printed face, line 39's
-# cross-reference aside). The other captures of this URL: 20240114213231
-# (d5bc73d6…, 2024-01-12, the same 179 widgets = 163 terminal fields, an
-# earlier cut of the page-2 text layer) and 20250901090115 (613a1a0d…,
-# re-issued 2025-04-14, the same 179 = 163, line 39's cross-reference
-# corrected).
+# HISTORY. Two earlier cuts of this URL are on the Wayback Machine: capture
+# 20260121215233 (sha256 25aa53e0…, /ModDate 2026-01-15) and 20260420000228
+# (e25f0567…, /ModDate 2026-01-23). The second prints the same text on every
+# page and carries the same widgets (names, /Rect, flags, appearance states)
+# as the pinned file; only the bytes differ.
 #
-# TOPOLOGY against the 2024-01-17 blank (a widget census by position and
-# printed label, every row then confirmed on a sentinel render). 176 widgets
-# = 160 terminal fields (was 179 = 163). Every field name changed: the
-# re-issue names each field after its caption ("line 3. Wages, salaries, tips
-# and other employee compensation (from all Forms W-2)"). Acrobat reads a "."
-# in a field name as a hierarchy, so those 160 terminal fields hang under 159
-# top-level /Fields entries as dotted /T chains and pypdf's get_fields lists
-# 360 names (every dotted prefix is a node); `field:` below is always the
-# full terminal name. The names are NOT evidence of meaning: several carry
-# another year's words ("line 2c taxpayer age 65 or over before 2025", "line
-# 14a. Enter the total qualified rent paid in 2024 in the box") while the
-# face prints "before 2024" and "rent paid in 2023". Position and the printed
-# label decided every row.
-#   * 144 base fields have a re-issue widget of the same type within 2 pt of
-#     their old centre, under the same printed label — re-bound one for one.
-#   * The taxpayer phone box moved 24 pt right and now sits under its
-#     "TAXPAYER'S PHONE" caption. The paid-preparer strip was re-laid: name
-#     (now 220 pt wide), SSN or PTIN, date and EIN boxes each moved to sit
-#     under their printed captions; the phone box stayed.
-#   * GONE: the three signature fields (Signature, Spsignature, signature).
-#     YOUR SIGNATURE, SPOUSE'S SIGNATURE and PAID PREPARER'S SIGNATURE are
-#     printed boxes only, signed by hand; their lines are dropped.
-#   * NEW, all mapped: the old pack's eleven UNMAPPABLE page-1 ovals (nested
-#     '0'/'1' kids under "Checkcash"/"Checktp1" that ticked together) are now
-#     eleven standalone /Btn fields, each with its own name and a /Yes
-#     appearance, so each fills alone: amended_return, federal_amendment,
-#     other_jurisdiction_change, amended_return_bba, veteran_taxpayer /
-#     _spouse, deceased_taxpayer / _spouse, under_18_taxpayer / _spouse and
-#     noncustodial_parent. Nothing on this blank needs hand-ticking.
-#   * Flags. No widget is ReadOnly. Lines 5a and 5b lost their comb and
-#     /MaxLen (now plain Helv 10 text boxes); the pack keeps its maxlen 8 and
-#     3 (the boxes are 99.5 and 40.1 pt wide). The 43c multiplier box has no
-#     /MaxLen and no /DA of its own (the AcroForm default applies); maxlen 3
-#     stays. Lines 2b, 2c and 2d now carry /DA Helv 12. Filing status is still
-#     ONE radio field, but two of its states were renamed: /Married filing
-#     jointly and /Married filing separately (were "... joint return" /
-#     "... separate return"); every on_state below is re-dumped from this
-#     blank. The other-jurisdiction date (printed M M D D Y Y Y Y) and both
-#     SSNs are comb widgets (/MaxLen 8 and 9) and now say so (comb: true; the
-#     SSNs also format: ssn_digits_only).
+# TOPOLOGY against the re-issue pack (a widget census by position and printed
+# label; every row then confirmed on a sentinel render). 179 widgets = 163
+# terminal fields under 162 top-level /Fields entries (the re-issue: 176 =
+# 160). Field names are captions, and Acrobat reads each "." in one as a
+# hierarchy, so pypdf's get_fields lists 361 names; `field:` below is always
+# the full terminal name. No widget is ReadOnly. The 143 fields present
+# under the same name on both blanks (159 widgets on each, 155 name/page
+# pairs) carry the same /FT, /Ff, /MaxLen, /DA and appearance states.
+#   * 143 fields keep their names. 23 sit where they sat; 120 moved with
+#     their rows: page 1's name rows 8.0 pt up, lines a/b 12.4 pt up, line 1
+#     7.6 pt up, lines 2a-2g about 3 pt up; page 2's lines 5-23 20-21 pt up
+#     (the 5a/5b row is gone); page 3's lines 25-38 2.6-12.8 pt up or down
+#     (38a-38c also 13.4 pt right); page 4's direct-deposit, interest/penalty and preparer
+#     rows about 20 pt down. The page-1 battery was re-laid: the custodial-
+#     parent oval moved 285.8 pt right onto its own row, the Schedule TDS /
+#     FCI and digital-assets ovals moved left onto one "Fill in if the
+#     following applies" row, the deceased ovals moved left to make room for
+#     date combs, and the NRA oval moved 45.9 pt right.
+#   * 10 fields were renamed at their own row, meaning unchanged: "zip code"
+#     -> "zip"; line b "... line 11" -> "... line 11a"; the four 2c fields
+#     ("... before 2025" -> "... before 2026", "number of people" -> "number
+#     of"); 14a, 39 and 40 (the years in their names); "Print Paid Preparer’s
+#     Name" -> "Print Paid Preparer’S Name".
+#   * 5 fields were renumbered with the face: the re-issue's line 50 (total),
+#     51 (overpayment), 52 (applied to next year), 53 (refund) and 54 (tax
+#     due) are this blank's lines 51-55, so the keys "51"-"55" moved with
+#     them, the direct-deposit keys are 54_* (were 53_*) and the interest /
+#     penalty / M-2210 boxes under the tax-due line are 55a-55c (were
+#     54a-54c).
+#   * GONE: lines 5a and 5b (the face prints one line 5, "Massachusetts bank
+#     interest"); their keys are dropped.
+#   * NEW, all mapped: line 50 "Nonresident withholding on sales of
+#     Massachusetts real estate (from Schedule 62-WH)" (comb, /MaxLen 8); a
+#     date-of-death comb (/MaxLen 8, printed M M D D Y Y Y Y) beside each
+#     deceased oval -> deceased_taxpayer_date / deceased_spouse_date
+#     (comb: true); and two line-1 ovals, "Fill in if not using same filing
+#     status on the federal return" -> 1_not_same_federal_filing_status and
+#     "Fill in if joint filing exemption for spouses with Massachusetts gross
+#     income under $8,000" -> 1_joint_filing_exemption.
+#   * Key rename: the custodial-parent oval is keyed custodial_parent (was
+#     1_custodial_parent); it is now its own battery row, not part of line 1.
 #
-# FACE DELTAS vs the 2024-01-17 revision (a diff of the printed text): line
-# 39 now reads "from 2022 Form 1, line 52 or Form 1-NR/PY, line 56" (was "line
-# 51 ... line 55"); everything else is leader-dot spacing and soft hyphens.
-# The words moved by a median 0.0 pt (page 3: 0.63 pt left); 98-99% sit within
-# 2 pt. Printed figures re-read on this face: line 2a $4,400 / $6,800 /
-# $8,800, 2b x $1,000, 2d x $2,200, 5b $200 / $100, 11a/11b "Not more than
-# $2,000", line 22 "If line 21 is more than $24,000, multiply by .05" and the
-# optional 5.85% oval, 23a x .085, 23b x .12, 28b "4% Surtax" — all as
-# knowledge/states/ma/2023.yaml records them.
-# Line 2c is the exception. Its text layer reads "x $1,700 = 2c", but the
-# "1," is a separate text object filled WHITE (RGB 255,255,255) at x
-# 429.1-433.8 pt, so the printed, visible face reads "x $ 700 = 2c" — on this
-# re-issue and on the 2024-01-17 revision alike (a scan of both files for
-# white or invisible text finds that one object and nothing else), and the
-# re-issue's own field name says "multiplied by $700". The 2c_total comment
-# below keeps "x $700", the figure a filer sees.
+# FACE DELTAS vs the re-issued 2023 return (a diff of the printed text): the
+# years (header "2025"; 2c "Age 65 or over before 2026"; 14a "rent paid in
+# 2025"; 39 "2024 overpayment applied to your 2025 estimated tax (from 2024
+# Form 1, line 52 or Form 1-NR/PY, line 56.)"; 40 "2025 Massachusetts
+# estimated tax payments"; 53 "APPLIED to your 2026 ESTIMATED TAX"); line b
+# "(from U.S. Form 1040, line 11a)" (was line 11); line 1 "Fill in only one
+# filing status (See instructions)" with the two new ovals and without the old
+# "(both must sign return)" / "(enter spouse's name ...)" captions; line 2a
+# reflowed onto one row "Single/Married filing separately ($4,400), Head of
+# household ($6,800), Married filing jointly ($8,800)"; the deceased row now
+# "Fill in oval(s) if taxpayer(s) is deceased. Taxpayer (date of death) ...
+# Spouse (date of death)"; the digital-asset question shortened to "Reporting
+# digital assets (see instructions)"; line 5 one box; line 38 "Massachusetts
+# income tax withheld from: a. Form(s) W-2 / b. Form(s) 1099. Enclose Schedule
+# 62-WH / c. Other forms. Enclose Schedule 62-WH"; page 4 lines 50-55 as in
+# TOPOLOGY ("51 TOTAL. Add lines 38 through 42 and lines 48 through 50", "52
+# ... go to line 55 ... enter 0 in line 54", "54 THIS IS YOUR REFUND.
+# Subtract line 53 from line 52", "55 TAX DUE. Subtract line 51 from line
+# 37"); the page-1 enclosure list adds "62-WH"; "M.I." captions now "MI". The
+# text layer drops the "fi" ligature ("fle", "fling"); quotes here use the
+# visible spelling.
+# Printed figures re-read on this face: line 2a $4,400 / $6,800 / $8,800, 2b
+# x $1,000, 2d x $2,200, 11a/11b "Not more than $2,000", line 22 "If line 21
+# is more than $24,000, multiply by .05" and the optional 5.85% oval, 23a x
+# .085, 23b x .12, 28b "4% Surtax", the joint-filing-exemption oval's
+# "$8,000". knowledge/states/ma/2025.yaml records every one of these except
+# the 11a/11b "Not more than $2,000" cap, which it does not carry (reported
+# for the knowledge layer). Lines 43 and
+# 46 print blank multipliers ("43b x ____ = 43", "x ______(See
+# instructions)"), no figure.
+# Line 2c is the exception, as on the 2023 blanks. Its text layer reads "x
+# $1,700 = 2c", but the "1," is a separate text object in render mode 3
+# (invisible) filled WHITE at x 428.1-432.8 pt, so the visible face reads "x $
+# 700 = 2c" (a scan of the file for white or invisible text finds no other
+# object carrying a character; the rest are empty or a lone space), and the
+# field's own name says "multiplied by $700". The 2c_total comment below keeps "x $700", the figure a filer sees.
 #
-# knowledge/states/ma/2023.yaml carried $1,700 for line 2c (the text-layer
+# knowledge/states/ma/2025.yaml carried $1,700 for line 2c (the text-layer
 # reading) until 2026-10-02; it now records the visible $700.
 # ===========================================================================
-# Form 1, 2023 — Massachusetts Resident Income Tax Return (4 pages).
+# Form 1, 2025 — Massachusetts Resident Income Tax Return (4 pages).
 #
 # Provenance. source_url is the exact official mass.gov document URL, behind
 # Akamai (403 to plain fetchers); `mirror_urls` is the exact Wayback id_
@@ -97,13 +118,13 @@
 # seed-blank <saved.pdf> --pack <this file>` is the by-hand route.
 #
 # Layout. Flat AcroForm (acroform_root empty) with caption-named fields (see
-# TOPOLOGY above). The header identity strip (first name / M.I. / last name /
+# TOPOLOGY above). The header identity strip (first name / MI / last name /
 # SSN) repeats on every page but is ONE field per name with 4 widgets —
 # mapped once; filling it populates all four pages. The page-2 to page-4
-# strips are narrower than page 1's (the M.I. box sits at x 179.5 instead of
+# strips are narrower than page 1's (the MI box sits at x 179.5 instead of
 # 185.8) but belong to the same fields.
 #
-# Coverage. 160 terminal fillable fields in the blank; all 160 mapped, as 164
+# Coverage. 163 terminal fillable fields in the blank; all 163 mapped, as 167
 # logical lines ("filing status" is ONE /Btn radio field carrying 4 option
 # lines; "direct deposit" is one field carrying 2).
 #
@@ -115,19 +136,23 @@
 # /MaxLen, an 18 pt blank — 3).
 #
 # Relations. Only unconditional printed-face math is declared. OMITTED per
-# the conservative house style: 5 = 5a - 5b, 17 = 10 - 16, 19 = 17 - 18 and
-# 32 = 28 - (29..31) (all floored "not less than 0"); 10 = add 3..9 (lines
-# 6a/6b/7/10 hold unsigned amounts whose sign comes from the loss X-boxes);
-# 14 = 14a / 2 (capped by instructions); 22/23a/23b/24 (tax table / rate
-# products); 43 and 46 (multiplier comes from the instructions, not the
-# face); 51 and 54 (refund-vs-tax-due branches).
+# the conservative house style: 17 = 10 - 16, 19 = 17 - 18 and 32 = 28 -
+# (29..31) (all floored "not less than 0"); 10 = add 3..9 (lines 6a/6b/7/10
+# hold unsigned amounts whose sign comes from the loss X-boxes); 14 = 14a / 2
+# (capped by instructions); 2b/2c/2d ("Total x $1,000 = 2b", "x $700 = 2c",
+# "x $2,200 = 2d" — the multiplicand is a count box typed text, and relation
+# math runs over money lines; 2c's figure also differs between the visible
+# print and the text layer, see the banner); 22/23a/23b/24 (tax table / rate
+# products); 43 and
+# 46 (multiplier comes from the instructions, not the face); 52 and 55
+# (refund-vs-tax-due branches).
 form: MA Form 1
 jurisdiction: states/ma
-tax_year: 2023
-source_url: https://www.mass.gov/doc/2023-form-1-massachusetts-resident-income-tax-return/download
+tax_year: 2025
+source_url: https://www.mass.gov/doc/2025-form-1-massachusetts-resident-income-tax-return/download
 mirror_urls:
-  - https://web.archive.org/web/20260920033523id_/https://www.mass.gov/doc/2023-form-1-massachusetts-resident-income-tax-return/download
-pdf_sha256: 5cbb565548962c69ab4fdfb9ee8f13fde7708090dc27fdf87c6d36bd3b573492
+  - https://web.archive.org/web/20260911192930id_/https://www.mass.gov/doc/2025-form-1-massachusetts-resident-income-tax-return/download
+pdf_sha256: 0bb62498fda14b515084b83fb4467f379f17d08a712f6390b1cd2fceecb04a07
 acroform_root: ''
 fields:
   # ================================================= header (page 1; shared fields repeat on pages 2-4)
@@ -174,7 +199,7 @@ fields:
     type: text
     maxlen: 2
   - line: mailing_address.zip
-    field: "zip code"
+    field: "zip"
     type: text
     maxlen: 7
   - line: foreign_province_state_county
@@ -188,9 +213,8 @@ fields:
     type: text
     maxlen: 7
 
-  # ---- "Fill in if (see instructions)" battery (page 1). In the 2026-05-22 re-issue every
-  # ---- oval is its own named /Btn field (on_state /Yes), so all of them are mapped; on the
-  # ---- 2024-01-17 revision eleven of them were unfillable shared '0'/'1' kids.
+  # ---- "Fill in if (see instructions):" battery (page 1). Every oval is its own named /Btn
+  # ---- field (on_state /Yes, re-dumped from this blank), so each fills alone.
   - line: amended_return                   # "Amended return"
     field: "Amended return"
     type: checkbox
@@ -235,15 +259,26 @@ fields:
     field: "spouse"
     type: checkbox
     on_state: /Yes
-  # "Fill in appropriate oval(s) if taxpayer(s) is deceased" — Taxpayer / Spouse ovals
+  # "Fill in oval(s) if taxpayer(s) is deceased. Taxpayer (date of death) ... Spouse (date of
+  # death)" — an oval and a printed M M D D Y Y Y Y date comb (/MaxLen 8) for each person
   - line: deceased_taxpayer
     field: "taxpayer deceased"
     type: checkbox
     on_state: /Yes
+  - line: deceased_taxpayer_date           # taxpayer's date of death, MMDDYYYY in the comb cells
+    field: "deceased taxpayer date of death"
+    type: text
+    maxlen: 8
+    comb: true
   - line: deceased_spouse
     field: "spouse deceased"
     type: checkbox
     on_state: /Yes
+  - line: deceased_spouse_date             # spouse's date of death, MMDDYYYY in the comb cells
+    field: "deceased spouse date of death"
+    type: text
+    maxlen: 8
+    comb: true
   # "Fill in if under age 18" — Taxpayer / Spouse ovals
   - line: under_18_taxpayer
     field: "taxpayer under age 18"
@@ -266,7 +301,14 @@ fields:
     field: "noncustodial parent"
     type: checkbox
     on_state: /Yes
-  # "Fill in if filing the following schedule(s)"
+  # "Fill in if you are a custodial parent who has released claim to exemption for child(ren)"
+  # — its own battery row on this face (it sat in the line 1 block on the 2023 return)
+  - line: custodial_parent
+    field: "custodial parent has released claim to exemption for children"
+    type: checkbox
+    on_state: /Yes
+  # "Fill in if the following applies: Filing Schedule TDS / Filing Schedule FCI / Reporting
+  # digital assets (see instructions)" — three independent ovals on one row
   - line: schedule_tds
     field: "filing Schedule TDS"
     type: checkbox
@@ -275,8 +317,7 @@ fields:
     field: "filing Schedule FCI"
     type: checkbox
     on_state: /Yes
-  # "Fill in if at any time during 2023 you received ... or otherwise disposed of a digital asset"
-  - line: digital_assets
+  - line: digital_assets                   # "Reporting digital assets (see instructions)"
     field: "reporting digital assets (see instructions)"
     type: checkbox
     on_state: /Yes
@@ -294,12 +335,12 @@ fields:
     field: "fill in box if line b is a loss"
     type: checkbox
     on_state: /On
-  - line: b                                # Total federal adjusted gross income (U.S. Form 1040, line 11)
-    field: "b Total federal income from U.S. Form 1040, line 11"
+  - line: b                                # Total federal adjusted gross income (U.S. Form 1040, line 11a)
+    field: "b Total federal income from U.S. Form 1040, line 11a"
     type: money
     maxlen: 8
 
-  # ---- 1 FILING STATUS (ONE /Btn radio field; "Fill in one only")
+  # ---- 1 FILING STATUS (ONE /Btn radio field; "Fill in only one filing status (See instructions)")
   - line: 1_filing_status::single
     field: "line 1 filing status"
     type: checkbox
@@ -321,11 +362,15 @@ fields:
     type: checkbox
     on_state: /Head of household
     group: 1_filing_status
-  - line: 1_custodial_parent               # custodial parent who released claim to exemption for child(ren)
-    field: "custodial parent has released claim to exemption for children"
+  - line: 1_not_same_federal_filing_status # "Fill in if not using same filing status on the federal return"
+    field: "Fill in if not using same filing status on the federal return"
     type: checkbox
     on_state: /Yes
-  - line: 1_nra                            # NRA (see instructions)
+  - line: 1_joint_filing_exemption         # "Fill in if joint filing exemption for spouses with Massachusetts gross income under $8,000"
+    field: "Fill in if joint filing exemption for spouses with Massachusetts gross income under $8,000"
+    type: checkbox
+    on_state: /Yes
+  - line: 1_nra                            # "NRA", printed beside Married filing separately
     field: "nonresident alien"
     type: checkbox
     on_state: /Yes
@@ -343,20 +388,20 @@ fields:
     field: "line 2b Total. Number of dependents multiplied by $1000"
     type: money
     maxlen: 5
-  - line: 2c_you                           # Age 65 or over before 2024 — You
-    field: "line 2c taxpayer age 65 or over before 2025"
+  - line: 2c_you                           # Age 65 or over before 2026 — You
+    field: "line 2c taxpayer age 65 or over before 2026"
     type: checkbox
     on_state: /Yes
-  - line: 2c_spouse                        # Age 65 or over before 2024 — Spouse
-    field: "line 2c taxpayer's spouse age 65 or over before 2025"
+  - line: 2c_spouse                        # Age 65 or over before 2026 — Spouse
+    field: "line 2c taxpayer's spouse age 65 or over before 2026"
     type: checkbox
     on_state: /Yes
   - line: 2c_total                         # "Total" count box, x $700 = 2c (visible print; see banner)
-    field: "total number of people over age 65 or over before 2025"
+    field: "total number of over age 65 or over before 2026"
     type: text
     maxlen: 1
   - line: 2c
-    field: "line 2c Total. Number of people age 65 or over before 2025 multiplied by $700"
+    field: "line 2c Total. Number of age 65 or over before 2026 multiplied by $700"
     type: money
     maxlen: 4
   - line: 2d_you                           # Blindness — You
@@ -389,11 +434,14 @@ fields:
     maxlen: 6
 
   # ---- SIGN HERE strip (page 1). The signature boxes are printed only (no widget): sign by hand.
-  - line: tp_signature_date                # 53.6 pt box, Helv 12, printed / / — 8 chars max (MMDDYYYY)
+  # The date boxes (53.6 pt, Helv 12, no /MaxLen) print their own "/ /" (taxpayer x 258.0-261.6 and
+  # 274.6-278.2; spouse x 529.0-532.6 and 545.6-549.2): an MM/DD/YY value (8 chars) lines up with them on
+  # the render, while 8 bare MMDDYYYY digits at 12 pt would print over the slashes.
+  - line: tp_signature_date                # MM/DD/YY, 8 chars max
     field: "date of signature"
     type: text
     maxlen: 8
-  - line: spouse_signature_date            # 53.6 pt box, Helv 12, printed / / — 8 chars max (MMDDYYYY)
+  - line: spouse_signature_date            # MM/DD/YY, 8 chars max
     field: "date of spouse's signature"
     type: text
     maxlen: 8
@@ -414,18 +462,7 @@ fields:
     field: "line 4. Taxable pensions and annuities. Attach any Form(s) 1099-R with Massachusetts withholding. See instructions"
     type: money
     maxlen: 8
-  # 5a and 5b: plain Helv 10 text boxes on the re-issue (no comb, no /MaxLen), so
-  # the digits print as one right-aligned run and do not line up with the
-  # printed digit cells; the value still sits inside the box.
-  - line: 5a                               # Massachusetts bank interest (no widget /MaxLen since the re-issue)
-    field: "line 5a. Massachusetts bank interest"
-    type: money
-    maxlen: 8
-  - line: 5b                               # exemption amount ($200 MFJ / $100 otherwise; no widget /MaxLen)
-    field: "line 5b. Exemption amount. If married filing jointly, enter $200; otherwise enter $100"
-    type: money
-    maxlen: 3
-  - line: "5"                              # a - b (not less than 0)
+  - line: "5"                              # "5 Massachusetts bank interest" (one box; no 5a/5b on this face)
     field: "line 5. Massachusetts bank interest"
     type: money
     maxlen: 8
@@ -483,8 +520,8 @@ fields:
     field: "line 11b. Amount spouse paid to Social Security, Medicare, Railroad, U.S. or Massachusetts retirement. Not more than $2,000"
     type: money
     maxlen: 4
-  - line: 14a                              # total qualified rent paid in 2023
-    field: "line 14a. Enter the total qualified rent paid in 2024 in the box"
+  - line: 14a                              # total qualified rent paid in 2025
+    field: "line 14a. Enter the total qualified rent paid in 2025 in the box"
     type: money
     maxlen: 5
   - line: "14"                             # rental deduction (14a / 2, capped per instructions)
@@ -671,12 +708,14 @@ fields:
     maxlen: 8
 
   # ===================================================== page 4 (line 45 is "Reserved for future use": static zeros, no widget)
-  - line: "39"                             # 2022 overpayment applied to 2023 estimated tax (from 2022 Form 1, line 52)
-    field: "line 39. 2022 overpayment applied to your 2023 estimated tax (from 2022 Form 1, line 52 or Form 1-NR/PY, line 56.)"
+  # Lines 50-55 are renumbered against the 2023 return: line 50 is new, so the total,
+  # overpayment, applied, refund and tax-due lines are 51-55 (were 50-54).
+  - line: "39"                             # 2024 overpayment applied to 2025 estimated tax (from 2024 Form 1, line 52)
+    field: "line 39. 2024 overpayment applied to your 2025 estimated tax (from 2024 Form 1, line 52 or Form 1-NR/PY, line 56.)"
     type: money
     maxlen: 8
-  - line: "40"                             # 2023 MA estimated tax payments
-    field: "Line 40. 2023 Massachusetts estimated tax payments. Do not include line 39 amount"
+  - line: "40"                             # 2025 MA estimated tax payments
+    field: "Line 40. 2025 Massachusetts estimated tax payments. Do not include line 39 amount"
     type: money
     maxlen: 8
   - line: "41"                             # payments made with extension
@@ -735,65 +774,71 @@ fields:
     field: "line 49. Excess Paid Family Leave withholding. See instructions"
     type: money
     maxlen: 8
-  - line: "50"                             # TOTAL. Add lines 38 through 42 and lines 48 and 49
-    field: "line 50. Total. Add lines 38 through 42 and lines 48 through 49"
+  - line: "50"                             # NEW: nonresident withholding on sales of MA real estate (Schedule 62-WH)
+    field: "line 50. Nonresident withholding on sales of Massachusetts real estate (from Schedule 62-WH)"
     type: money
     maxlen: 8
-  - line: "51"                             # OVERPAYMENT (if 37 < 50: 50 - 37)
-    field: "line 51. Overpayment. If line 37 is smaller than line 50, subtract line 37 from line 50. If line 37 is larger than line 50, go to line 54. If line 37 and line 50 are equal, enter 0 in line 53"
+  - line: "51"                             # TOTAL. Add lines 38 through 42 and lines 48 through 50
+    field: "line 51. Total. Add lines 38 through 42 and lines 48 through 50"
     type: money
     maxlen: 8
-  - line: "52"                             # overpayment APPLIED to 2024 estimated tax
-    field: "line 52. Amount of overpayment you want applied to your 2024 estimated tax"
+  - line: "52"                             # OVERPAYMENT (if 37 < 51: 51 - 37)
+    field: "line 52. Overpayment. If line 37 is smaller than line 51, subtract line 37 from line 51. If line 37 is larger than line 51, go to line 55. If line 37 and line 51 are equal, enter 0 in line 54"
     type: money
     maxlen: 8
-  - line: "53"                             # THIS IS YOUR REFUND. Subtract line 52 from line 51
-    field: "line 53. This Is Your Refund. Subtract line 52 from line 51. Mail to: Massachusetts DOR, PO Box 7000, Boston, MA 02204"
+  - line: "53"                             # overpayment APPLIED to 2026 estimated tax
+    field: "line 53. Amount of overpayment you want applied to your 2026 estimated tax"
     type: money
     maxlen: 8
-  # ---- direct deposit of refund (ONE /Btn field, two options)
-  - line: 53_account_type::checking
+  # DOR prints the letters R E F U N D in the line-54 comb cells (text layer, x 457.3-527.2 inside the widget);
+  # the refund digits print over them by design, and the value stays legible on the render.
+  - line: "54"                             # THIS IS YOUR REFUND. Subtract line 53 from line 52
+    field: "line 54. This Is Your Refund. Subtract line 53 from line 52. Mail to: Massachusetts DOR, PO Box 7000, Boston, MA 02204"
+    type: money
+    maxlen: 8
+  # ---- direct deposit of refund (ONE /Btn field, two options; "Type of account (select one)")
+  - line: 54_account_type::checking
     field: "direct deposit"
     type: checkbox
     on_state: /Checking
-    group: 53_account_type
-  - line: 53_account_type::savings
+    group: 54_account_type
+  - line: 54_account_type::savings
     field: "direct deposit"
     type: checkbox
     on_state: /Savings
-    group: 53_account_type
-  - line: 53_routing_number                # first two digits must be 01-12 or 21-32
+    group: 54_account_type
+  - line: 54_routing_number                # first two digits must be 01-12 or 21-32
     field: "Direct deposit of refund. Routing number (first two digits must be 01 to 12 or 21 to 32)"
     type: text
     maxlen: 9
-  - line: 53_account_number
+  - line: 54_account_number
     field: "Direct deposit of refund. Account number"
     type: text
     maxlen: 17
-  - line: "54"                             # TAX DUE. Subtract line 50 from line 37
-    field: "line 54. Tax Due. Subtract line 50 from line 37. Pay in full online at mass.gov/masstaxconnect"
+  - line: "55"                             # TAX DUE. Subtract line 51 from line 37
+    field: "line 55. Tax Due. Subtract line 51 from line 37. Pay in full online at mass.gov/masstaxconnect"
     type: money
     maxlen: 8
   - line: m2210_exception                  # "Exception. Enclose Form M-2210." oval
     field: "Fill in if M-2210 exception. Enclose Form M-2210"
     type: checkbox
     on_state: /Yes
-  - line: 54a                              # Interest (amounts affecting refund or tax due)
+  - line: 55a                              # Interest ("These amounts will affect your refund or tax due"; printed under line 55)
     field: "Interest"
     type: money
     maxlen: 5
-  - line: 54b                              # Penalty
+  - line: 55b                              # Penalty
     field: "Penalty"
     type: money
     maxlen: 5
-  - line: 54c                              # M-2210 amount
+  - line: 55c                              # M-2210 amount
     field: "M-2210 amount"
     type: money
     maxlen: 5
 
   # ---- paid preparer strip (page 4). PAID PREPARER'S SIGNATURE is printed only (no widget).
   - line: preparer_name
-    field: "Print Paid Preparer’s Name"
+    field: "Print Paid Preparer’S Name"
     type: text
   # The face prints two stray "/" marks inside the SSN or PTIN box (x 276 and
   # 293); a 9-character comb value prints over them. The box is the right one.
@@ -836,11 +881,11 @@ relations:
   - "37 == 32 + 33 + 34 + 35 + 36"         # 37 "Add lines 32 through 36."
   - "38 == sum(38a..38c)"                  # 38 "Total. Add lines 38a through 38c."
   - "48 == 43 + 44 + 46 + 47"              # 48 "TOTAL REFUNDABLE CREDITS. Add lines 43 through 47" (45 reserved)
-  - "50 == 38 + 39 + 40 + 41 + 42 + 48 + 49"  # 50 "TOTAL. Add lines 38 through 42 and lines 48 and 49"
-  - "53 == 51 - 52"                        # 53 "THIS IS YOUR REFUND. Subtract line 52 from line 51."
+  - "51 == 38 + 39 + 40 + 41 + 42 + 48 + 49 + 50"  # 51 "TOTAL. Add lines 38 through 42 and lines 48 through 50"
+  - "54 == 52 - 53"                        # 54 "THIS IS YOUR REFUND. Subtract line 53 from line 52."
 cross_form:
   - "a == f1040.9"                         # line a "Total federal income (from U.S. Form 1040, line 9)"
-  - "b == f1040.11"                        # line b "Total federal adjusted gross income (from U.S. Form 1040, line 11)"
+  - "b == f1040.11a"                       # line b "Total federal adjusted gross income (from U.S. Form 1040, line 11a)"
 identity_fields:
   - tp_ssn
   - tp_first_name

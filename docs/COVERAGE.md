@@ -83,7 +83,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 
 ## State forms
 
-State returns for **42 income-tax jurisdictions** — 42 in 2023, 23 in 2024, 39 in 2025 — from **101 fillable state packs** and **13 print-and-hand-fill worksheets**. Each row lists the resident return and, where mapped, the state's separate nonresident / part-year return (such as CA Form 540NR or NY IT-203).
+State returns for **42 income-tax jurisdictions** — 42 in 2023, 23 in 2024, 40 in 2025 — from **102 fillable state packs** and **13 print-and-hand-fill worksheets**. Each row lists the resident return and, where mapped, the state's separate nonresident / part-year return (such as CA Form 540NR or NY IT-203).
 
 | Jurisdiction | 2023 | 2024 | 2025 |
 |---|---|---|---|
@@ -104,7 +104,7 @@ State returns for **42 income-tax jurisdictions** — 42 in 2023, 23 in 2024, 39
 | KS — Kansas | K-40 | — | K-40 |
 | KY — Kentucky | Form 740 | Form 740 | Form 740 |
 | LA — Louisiana | IT-540 | IT-540 | IT-540 |
-| MA — Massachusetts | MA Form 1 | — | — |
+| MA — Massachusetts | MA Form 1 | — | MA Form 1 |
 | MD — Maryland | Form 502 | — | Form 502 |
 | ME — Maine | Form 1040ME | — | Form 1040ME |
 | MI — Michigan | Form MI-1040 | — | Form MI-1040 |

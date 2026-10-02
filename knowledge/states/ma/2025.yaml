@@ -5,7 +5,7 @@
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
 # Two-pass verification: every key figure below was drafted from the 2025 Form 1
 # instructions, then independently re-checked against the 2025 Form 1 blank itself
-# (which prints the $4,400/$6,800/$8,800 line 2a exemptions, the $1,000/$1,700/$2,200
+# (which prints the $4,400/$6,800/$8,800 line 2a exemptions, the $1,000/$700/$2,200
 # line 2b-2d multipliers, the line 22 '$24,000 / multiply by .05' tax line, and the
 # line 28b 4% surtax line). mass.gov sits behind Akamai and 403s non-browser fetchers,
 # so BOTH documents were recovered from the Wayback Machine's 200-status captures of the
@@ -204,7 +204,7 @@ all_citations:
     from U.S. Form 1040 lines 9 and 11a; line 1 filing statuses plus the new "if joint filing exemption for spouses
     with Massachusetts gross income under $8,000" oval; line 2a personal exemptions "Single/Married filing separately
     ($4,400), Head of household ($6,800), Married filing jointly ($8,800)"; line 2b dependents x $1,000; line 2c age
-    65 or over before 2026 x $1,700; line 2d blindness x $2,200; line 2e medical/dental; line 2f adoption; line 2g
+    65 or over before 2026 x $700; line 2d blindness x $2,200; line 2e medical/dental; line 2f adoption; line 2g
     total exemptions; line 17 "5.0% INCOME AFTER DEDUCTIONS"; line 18 total exemption amount; line 19 "5.0% INCOME
     AFTER EXEMPTIONS ... Not less than 0"; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line 21 "TOTAL
     TAXABLE 5.0% INCOME. Add lines 19 and 20"; line 22 "TAX ON 5.0% INCOME (from tax table). If line 21 is more than
@@ -232,7 +232,7 @@ tax:
   citation:
     source: 'MA DOR — 2025 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a ''Personal exemptions.
       Single/Married filing separately ($4,400), Head of household ($6,800), Married filing jointly ($8,800)''; line
-      2b number of dependents x $1,000; line 2c age 65 or over before 2026 x $1,700; line 2d blindness x $2,200; line
+      2b number of dependents x $1,000; line 2c age 65 or over before 2026 x $700; line 2d blindness x $2,200; line
       17 ''5.0% INCOME AFTER DEDUCTIONS. Subtract line 16 from line 10. Not less than 0''; line 18 total exemption amount
       (from line 2g); line 19 ''5.0% INCOME AFTER EXEMPTIONS. Subtract line 18 from line 17. Not less than 0''; line
       20 INTEREST AND DIVIDEND INCOME (from Schedule B, line 38); line 21 ''TOTAL TAXABLE 5.0% INCOME. Add lines 19
@@ -256,8 +256,8 @@ tax:
       note: 'Form 1 line 2b: $1,000 per dependent (''Number of dependents (do not include yourself or your spouse). Enclose
         Schedule DI ... x $1,000''). APPLIED by calc.state_tax via dependents_count.'
     age_65:
-      amount: 1700
-      note: 'Form 1 line 2c: $1,700 per age-65-or-over-before-2026 box (You/Spouse). NOT applied by calc.state_tax — subtract
+      amount: 700
+      note: 'Form 1 line 2c: $700 per age-65-or-over-before-2026 box (You/Spouse) — the visible face prints ''× $ 700 = 2c''; its text layer reads ''$1,700'' because a separate ''1,'' text object is invisible, which an earlier extraction copied (corrected 2026-10-02 from a render of the blank). NOT applied by calc.state_tax — subtract
         it from the supplied base or compute line 2c on the form.'
     blind:
       amount: 2200
@@ -270,7 +270,7 @@ tax:
     head_of_household: 6800
   notes:
   - 'Figures unchanged from 2024 (both passes re-verified for 2025): the 5.0% rate, the line 2a-2d exemption amounts
-    ($4,400/$6,800/$8,800 personal; $1,000 dependent; $1,700 age 65+; $2,200 blindness) and the $24,000 tax-table
+    ($4,400/$6,800/$8,800 personal; $1,000 dependent; $700 age 65+; $2,200 blindness) and the $24,000 tax-table
     cutoff are identical. What MOVED for 2025 is the 4% surtax threshold, indexed $1,053,750 -> $1,083,150, plus credit
     figures outside this block (Senior Circuit Breaker maximum $2,730 -> $2,820; the MA EITC''s referenced federal
     earned-income ceiling $66,819 -> $68,675).'
@@ -278,7 +278,7 @@ tax:
     line 16 total deductions) PLUS line 20 (interest and dividend income from Schedule B, line 38) — i.e., the Part
     B 5.0% taxable income BEFORE the line 18 exemptions. The op subtracts the line 2a personal exemption (shipped
     per filing status in standard_deduction) and $1,000 per dependent (line 2b), reproducing lines 18-21, then multiplies
-    by 5% (line 22). Filers with line 2c-2f exemptions (age 65+ $1,700 each, blindness $2,200 each, medical/dental
+    by 5% (line 22). Filers with line 2c-2f exemptions (age 65+ $700 each, blindness $2,200 each, medical/dental
     from U.S. Schedule A line 4, adoption) must subtract those amounts from the supplied base themselves.'
   - 'Modeling decision — standard_deduction carries the Form 1 line 2a PERSONAL EXEMPTION: Massachusetts has NO standard
     deduction; line 2a is a fixed per-filing-status base reduction ($4,400 single or married filing separately, $6,800

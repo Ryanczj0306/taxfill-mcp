@@ -1170,6 +1170,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # on the City/State/ZIP row is not selected, same as the 4-line 2023 row; 35c is the disaster address, not the filer's.
     # JS5: KS K-40 2025 (a RE-MAP of KS 2023: the exemptions block and page 2 re-cut; the four address widgets keep
     # their names and /Rects) equals the reviewed KS 2023 row (the four mailing_address lines).
+    # JS5: MA Form 1 2025 (a RE-MAP port of the re-issued MA 2023 pack; "zip code" renamed "zip" at the same box, the
+    # new date-of-death combs are not address lines) equals the reviewed MA 2023 row (the four mailing_address lines).
     import json
     from pathlib import Path
 

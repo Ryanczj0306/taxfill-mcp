@@ -5,7 +5,7 @@
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
 # Two-pass verification: every key figure below was drafted from the 2024 Form 1
 # instructions, then independently re-checked against the 2024 Form 1 blank itself
-# (which prints the $4,400/$6,800/$8,800 line 2a exemptions, the $1,000/$1,700/$2,200
+# (which prints the $4,400/$6,800/$8,800 line 2a exemptions, the $1,000/$700/$2,200
 # line 2b-2d multipliers, the line 22 '$24,000 / multiply by .05' tax line, and the
 # line 28b 4% surtax line). mass.gov sits behind Akamai and 403s non-browser fetchers,
 # so BOTH documents were recovered from the Wayback Machine's archive of the SAME
@@ -170,7 +170,7 @@ all_citations:
     Schedule Y Line 4 tax-treaty deduction, whole-dollar rounding, due date April 15 2025, PO Box 7000/7003
   url: https://www.mass.gov/doc/2024-form-1-instructions/download
 - source: '2024 Form 1 Massachusetts Resident Income Tax Return (MA DOR; second-pass verification: line 2a personal
-    exemptions $4,400/$6,800/$8,800; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $1,700; line
+    exemptions $4,400/$6,800/$8,800; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $700; line
     2d blindness x $2,200; line 5 plain ''Massachusetts bank interest'' with the former exemption boxes REMOVED;
     line 17/18/19 deduction-exemption sequence; line 21 total taxable 5.0% income; line 22 ''TAX ON 5.0% INCOME
     (from tax table). If line 21 is more than $24,000, multiply by .05''; line 23a/23b 8.5%/12% Schedule B tax; line
@@ -210,7 +210,7 @@ tax:
   citation:
     source: 'MA DOR — 2024 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a ''Personal exemptions.
       If single or married filing separately, enter $4,400. If head of household, enter $6,800. If married filing jointly,
-      enter $8,800''; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $1,700; line 2d blindness x
+      enter $8,800''; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $700; line 2d blindness x
       $2,200; line 17 ''5.0% INCOME AFTER DEDUCTIONS''; line 18 total exemption amount (from line 2g); line 19 ''5.0%
       INCOME AFTER EXEMPTIONS... Not less than 0''; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line
       21 ''TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20''; line 22 ''TAX ON 5.0% INCOME (from tax table). If line
@@ -233,8 +233,8 @@ tax:
       note: 'Form 1 line 2b: $1,000 per dependent (do not include yourself or your spouse; enclose Schedule DI). APPLIED
         by calc.state_tax via dependents_count.'
     age_65:
-      amount: 1700
-      note: 'Form 1 line 2c: $1,700 per age-65-or-over-before-2025 box (You/Spouse). NOT applied by calc.state_tax — subtract
+      amount: 700
+      note: 'Form 1 line 2c: $700 per age-65-or-over-before-2025 box (You/Spouse) — the visible face prints ''× $ 700 = 2c''; its text layer reads ''$1,700'' because a separate ''1,'' text object is invisible, which an earlier extraction copied (corrected 2026-10-02 from a render of the blank). NOT applied by calc.state_tax — subtract
         it from the supplied base or compute line 2c on the form.'
     blind:
       amount: 2200
@@ -254,7 +254,7 @@ tax:
     line 16 total deductions) PLUS line 20 (interest and dividend income from Schedule B, line 38) — i.e., the Part
     B 5.0% taxable income BEFORE the line 18 exemptions. The op subtracts the line 2a personal exemption (shipped
     per filing status in standard_deduction) and $1,000 per dependent (line 2b), reproducing lines 18-21, then multiplies
-    by 5% (line 22). Filers with line 2c-2f exemptions (age 65+ $1,700 each, blindness $2,200 each, medical/dental
+    by 5% (line 22). Filers with line 2c-2f exemptions (age 65+ $700 each, blindness $2,200 each, medical/dental
     from U.S. Schedule A line 4, adoption) must subtract those amounts from the supplied base themselves.'
   - 'Modeling decision — standard_deduction carries the Form 1 line 2a PERSONAL EXEMPTION: Massachusetts has NO standard
     deduction; line 2a is a fixed per-filing-status base reduction ($4,400 single or married filing separately, $6,800

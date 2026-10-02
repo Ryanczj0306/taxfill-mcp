@@ -1456,7 +1456,8 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
     ('states/ma/form1', 'campaign_fund'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
     ('states/ma/form1', 'deceased'):
-        'INDEPENDENT: "Fill in appropriate oval(s) if taxpayer(s) is deceased" prints a Taxpayer and a Spouse oval; both may apply',
+        'INDEPENDENT: "Fill in appropriate oval(s) if taxpayer(s) is deceased" (2023; from 2025 "Fill in oval(s) if '
+        'taxpayer(s) is deceased.") prints a Taxpayer and a Spouse oval; both may apply',
     ('states/ma/form1', 'name_changed'):
         'INDEPENDENT: one box for each person (you / your spouse) on the same printed row; both may apply',
     ('states/ma/form1', 'schedule'):

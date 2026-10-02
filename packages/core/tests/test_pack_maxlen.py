@@ -35,6 +35,7 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     ("states/ks/2025/k40/pack.yaml", "42.historic_site_number"):
         "42.0 pt at Courier 12 fits 5 (the widget is still named '43 Historic Site number'); the widget says 10",
     ("states/ma/2023/form1/pack.yaml", "43a"): "12.5 pt at 12 pt fits 2; the widget says 10",
+    ("states/ma/2025/form1/pack.yaml", "43a"): "12.5 pt at 12 pt fits 2; the widget says 10 (the same box as 2023)",
     ("states/md/2023/md502/pack.yaml", "mailing_state"): "a two-letter state code (19.3 pt at Courier 10 fits 3)",
     ("states/md/2025/md502/pack.yaml", "mailing_state"): "a two-letter state code (17.2 pt at Courier 10 fits 3); the widget says 10",
     ("states/md/2025/md502/pack.yaml", "spouse_middle_initial"): "a middle initial (14.3 pt at Courier 10 fits 2); the widget says 10",
