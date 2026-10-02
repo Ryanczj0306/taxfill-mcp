@@ -93,7 +93,7 @@ together and says `must_ask` instead of guessing.
 flat vs graduated is the pack's call and moves by year, so never
 assume and never compute a state tax line yourself. State KNOWLEDGE spans
 2023-2025; state FORM packs cover TY2023 for all 42 jurisdictions, then
-TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **40** (AL, AR, AZ, CA, CT, DC, DE, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, NC, ND, NE, NJ, NM, NY, OH, OK, OR, PA, RI, SC, UT, VA, VT, WI, WV), so for any other jurisdiction-year a return computes but cannot be
+TY2024 for **23** (AR, AZ, CT, DC, HI, ID, IL, KY, LA, MO, MS, NC, ND, NJ, NM, NY, OH, OR, PA, RI, SC, UT, VA) and TY2025 for **41** (AL, AR, AZ, CA, CO, CT, DC, DE, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, NC, ND, NE, NJ, NM, NY, OH, OK, OR, PA, RI, SC, UT, VA, VT, WI, WV), so for any other jurisdiction-year a return computes but cannot be
 filled — check `list_forms` for the jurisdiction and year instead of assuming.
 
 **Tools:** intake_checklist, list_document_kinds, extract_document, residency,

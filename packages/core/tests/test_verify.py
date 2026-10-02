@@ -1172,6 +1172,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # their names and /Rects) equals the reviewed KS 2023 row (the four mailing_address lines).
     # JS5: MA Form 1 2025 (a RE-MAP port of the re-issued MA 2023 pack; "zip code" renamed "zip" at the same box, the
     # new date-of-death combs are not address lines) equals the reviewed MA 2023 row (the four mailing_address lines).
+    # JS5: CO DR 0104 2025 (a RE-MAP of CO 2023 — every widget renamed, contact block moved to page 2, keys kept) equals the
+    # reviewed CO 2023 row (mailing_address, city, state, zip_code); the new dependent_N_* and preparer_* lines are not address lines.
     import json
     from pathlib import Path
 

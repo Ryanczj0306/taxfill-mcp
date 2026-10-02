@@ -83,7 +83,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 
 ## State forms
 
-State returns for **42 income-tax jurisdictions** — 42 in 2023, 23 in 2024, 40 in 2025 — from **102 fillable state packs** and **13 print-and-hand-fill worksheets**. Each row lists the resident return and, where mapped, the state's separate nonresident / part-year return (such as CA Form 540NR or NY IT-203).
+State returns for **42 income-tax jurisdictions** — 42 in 2023, 23 in 2024, 41 in 2025 — from **103 fillable state packs** and **13 print-and-hand-fill worksheets**. Each row lists the resident return and, where mapped, the state's separate nonresident / part-year return (such as CA Form 540NR or NY IT-203).
 
 | Jurisdiction | 2023 | 2024 | 2025 |
 |---|---|---|---|
@@ -91,7 +91,7 @@ State returns for **42 income-tax jurisdictions** — 42 in 2023, 23 in 2024, 40
 | AR — Arkansas | AR1000F | AR1000F | AR1000F |
 | AZ — Arizona | Form 140 | Form 140 | Form 140 |
 | CA — California | Form 540, Form 540NR, Schedule CA (540), Schedule CA (540NR) | — | Form 540, Form 540NR, Schedule CA (540), Schedule CA (540NR) |
-| CO — Colorado | Form DR 0104, Form DR 0104PN | — | — |
+| CO — Colorado | Form DR 0104, Form DR 0104PN | — | Form DR 0104 |
 | CT — Connecticut | CT-1040 ✎ | CT-1040 ✎ | CT-1040 ✎ |
 | DC — District of Columbia | D-40 | D-40 | D-40 |
 | DE — Delaware | PIT-RES | — | PIT-RES |
