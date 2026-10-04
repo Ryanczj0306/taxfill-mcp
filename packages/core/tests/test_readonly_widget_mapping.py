@@ -730,6 +730,14 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "(test_verify_readonly_scan.py)",
     ),
     StateComputed(
+        "states/wi/2024/wi_form1/pack.yaml",
+        17,
+        "the same 17 mirror fields as the 2025 pack: the 15 page-2/3/4 name + SSN header "
+        "mirrors plus page 5's lnamepg5 / fnamepg5 (the 2024 Form 1 is the first five-page "
+        "year, Schedule 3 on page 5); the page-5 SSN cells are second widgets of ss3pg4 / "
+        "ss2pg4 / ss4pg4. Measured 2026-10-02 against the sha-pinned 2024 blank (Phase J JS5)",
+    ),
+    StateComputed(
         "states/wi/2025/wi_form1/pack.yaml",
         17,
         "the same 15 page-2/3/4 name + SSN header mirrors as 2023 plus the NEW page 5's "

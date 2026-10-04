@@ -83,7 +83,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 
 ## State forms
 
-State returns for **42 income-tax jurisdictions** — 42 in 2023, 25 in 2024, 41 in 2025 — from **106 fillable state packs** and **13 print-and-hand-fill worksheets**. Each row lists the resident return and, where mapped, the state's separate nonresident / part-year return (such as CA Form 540NR or NY IT-203).
+State returns for **42 income-tax jurisdictions** — 42 in 2023, 26 in 2024, 41 in 2025 — from **107 fillable state packs** and **13 print-and-hand-fill worksheets**. Each row lists the resident return and, where mapped, the state's separate nonresident / part-year return (such as CA Form 540NR or NY IT-203).
 
 | Jurisdiction | 2023 | 2024 | 2025 |
 |---|---|---|---|
@@ -127,7 +127,7 @@ State returns for **42 income-tax jurisdictions** — 42 in 2023, 25 in 2024, 41
 | UT — Utah | UT TC-40 | UT TC-40 | UT TC-40 |
 | VA — Virginia | Form 760 | Form 760 | Form 760 |
 | VT — Vermont | IN-111 | — | IN-111 |
-| WI — Wisconsin | Form 1 | — | Form 1 |
+| WI — Wisconsin | Form 1 | Form 1 | Form 1 |
 | WV — West Virginia | IT-140 | — | IT-140 ✎ |
 
 ✎ = print-and-hand-fill: that year's official form is not a fillable PDF, so `hand_fill_worksheet` lists every line and `fill_form` stamps the values onto the official blank. (draft) / (rehearsal) = fills in rehearsal mode only, as in the federal legend. — = not yet mapped for that year (the tax itself can still be *computed* from the state knowledge pack).

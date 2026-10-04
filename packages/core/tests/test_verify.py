@@ -1178,6 +1178,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # mailing_address lines); foreign_country, nonresident.state_of_residence and the preparer.* lines are not selected.
     # JS5: MN M1 2024 (a PORTABLE port of MN 2023; the new County box is not a selector line) equals the reviewed MN 2023 row.
     # JS5: GA Form 500 2024 (a RE-MAP port of GA 2023, carried back from GA 2025; the address block is SAME in both) equals the reviewed GA 2023 row.
+    # JS5: WI Form 1 2024 (the same 209-widget topology as WI 2025; page 1 unchanged from 2023) equals the reviewed
+    # WI 2023 row — home_address / city_or_post_office / state / zip_code; Schedule 3 and anatomical-gift lines are not.
     import json
     from pathlib import Path
 

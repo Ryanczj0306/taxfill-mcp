@@ -939,6 +939,9 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     # page-2 header mirror is "SSN 2" (2024: "SSN 1") — still one mirror (Phase J JS5).
     "states/va/2025/va760/pack.yaml": 1,
     "states/wi/2023/wi_form1/pack.yaml": 15,
+    # The 2024 Form 1 is the first five-page year: the same page-5 name mirrors (lnamepg5 /
+    # fnamepg5) and SSN second widgets as 2025. 15 + 2 (Phase J JS5).
+    "states/wi/2024/wi_form1/pack.yaml": 17,
     # The 2025 Form 1 adds a fifth page (Schedule 3) whose header repeats the name in two NEW
     # ReadOnly widgets (lnamepg5 / fnamepg5); its SSN cells are second widgets of the page-4
     # fields, so they need no key. 15 + 2 (Phase J JS5).
