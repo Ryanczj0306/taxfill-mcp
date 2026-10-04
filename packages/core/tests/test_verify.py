@@ -1177,6 +1177,7 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: AR AR1000NR 2023 (a NEW pack, no base year). Reviewed: its selection equals the reviewed AR1000F 2023 row (the four
     # mailing_address lines); foreign_country, nonresident.state_of_residence and the preparer.* lines are not selected.
     # JS5: MN M1 2024 (a PORTABLE port of MN 2023; the new County box is not a selector line) equals the reviewed MN 2023 row.
+    # JS5: GA Form 500 2024 (a RE-MAP port of GA 2023, carried back from GA 2025; the address block is SAME in both) equals the reviewed GA 2023 row.
     import json
     from pathlib import Path
 

@@ -509,6 +509,24 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "requires the filer to answer",
     ),
     StateComputed(
+        "states/ga/2024/ga500/pack.yaml",
+        177,
+        "the 2025 row re-measured field by field on the 2024 blank (Phase J JS5): 181 + 1 - 5. PLUS 1: "
+        "CRP12L1C (IND-CR 212 C1) is still ReadOnly here (/Ff 12582913, as in 2023) and the live JS sets it "
+        "(SV('CRP12L1C',GN('CRP12L3A')+GN('CRP12L3B'))); 2025 cleared the bit. MINUS 5 (2 unmapped options + "
+        "3 dropped Hidden ReadOnly keys): s3.9_time_ratio (S3L9_TimeRatio) and s3.10_deduction.georgia "
+        "(CB_DEDUCTION_TYPE's /G kid) are unmapped — the 2024 face prints neither option, both widgets are "
+        "Hidden with no JS display setter, and S3L9_TimeRatio lies on line 9's printed caption; and three "
+        "Hidden ReadOnly widgets the 2025 pack maps, SUML5 (IND-CR Summary line 5, printed 'Reserved' over a "
+        "hatched box) and PhysicianNumber / AssistantNumber (IND-CR 212, an uncaptioned box, export lines "
+        "commented out), whose keys are dropped so fill_form refuses them (the non-ReadOnly CRP13L2, IND-CR 213 "
+        "line 2 over a hatched box, is dropped too). The page-1 / Schedule 1 dates of birth and the page-5 "
+        "deceased boxes are not ReadOnly. SCANLINE and the class-1 constants TP/SP_S1L4 (5000) and "
+        "TP/SP_S1L2_P3 (17500) stay "
+        "unmapped. 177 fields but 175 widgets: CB_DEDUCTION_TYPE's two option lines and CB_DD_TYPE's two "
+        "share one field each",
+    ),
+    StateComputed(
         "states/ga/2025/ga500/pack.yaml",
         181,
         "the 2023 row re-measured field by field on the 2025 blank (Phase J JS5): 189 - 27 + 19. "
@@ -748,6 +766,12 @@ NONZERO_READONLY_DEFAULTS: dict[tuple[str, str], str] = {
     ("states/ga/2023/ga500/pack.yaml", "s1mil.tp.7"):
         "'Total additional Military Exclusion allowed' — 35000 only with Georgia earned income (line 6)",
     ("states/ga/2023/ga500/pack.yaml", "s1mil.sp.7"): "the spouse column of s1mil.tp.7",
+    ("states/ga/2024/ga500/pack.yaml", "voucher.type_of_return"): "a /Ch dropdown (TAXTYPE) defaulted to '09'",
+    ("states/ga/2024/ga500/pack.yaml", "voucher.tax_year"):
+        "a /Ch dropdown (YY) defaulted to '2024' (options 2024, 2023, 2022)",
+    ("states/ga/2024/ga500/pack.yaml", "s1mil.tp.7"):
+        "'Total additional Military Exclusion allowed' — 35000 only with Georgia earned income (line 6)",
+    ("states/ga/2024/ga500/pack.yaml", "s1mil.sp.7"): "the spouse column of s1mil.tp.7",
     ("states/ga/2025/ga500/pack.yaml", "voucher.type_of_return"): "a /Ch dropdown (TAXTYPE) defaulted to '09'",
     ("states/ga/2025/ga500/pack.yaml", "voucher.tax_year"): "a /Ch dropdown (YY) defaulted to '2025', its only option",
     ("states/ga/2025/ga500/pack.yaml", "s1mil.tp.7"):
