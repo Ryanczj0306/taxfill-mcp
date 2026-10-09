@@ -488,6 +488,16 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "21a/21b, 22a/22b, 25a/25b) — DE's JS totals; taxfill computes and writes them",
     ),
     StateComputed(
+        "states/de/2024/pit_res/pack.yaml",
+        22,
+        "the eleven two-column computed lines of the 2024 revision (4, 9, 10, 17, 19, 22, 23, 26, "
+        "33, 41, 42; Columns A and B, /Ff 8388609, each with its own /AA /C calculate script and a "
+        "seat in the 25-entry /CO) — the 2023 set renumbered +1 after the inserted line 16 plus the "
+        "newly flagged 33 (balance), 41 (balance due) and 42 (overpayment); line 12 carries a "
+        "calculate script but no ReadOnly flag here. DE's JS totals, taxfill computes and writes "
+        "them (Phase J JS5, 2026-10-02)",
+    ),
+    StateComputed(
         "states/de/2025/pit_res/pack.yaml",
         22,
         "the eleven two-column computed lines of the 2025 revision (4, 9, 10, 12, 17, 19, 22, 26, "
