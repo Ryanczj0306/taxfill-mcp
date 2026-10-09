@@ -1180,6 +1180,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: GA Form 500 2024 (a RE-MAP port of GA 2023, carried back from GA 2025; the address block is SAME in both) equals the reviewed GA 2023 row.
     # JS5: WI Form 1 2024 (the same 209-widget topology as WI 2025; page 1 unchanged from 2023) equals the reviewed
     # WI 2023 row — home_address / city_or_post_office / state / zip_code; Schedule 3 and anatomical-gift lines are not.
+    # JS5: NE 1040N 2024 (a RE-MAP of NE 2023: the address widgets renamed in place -- Address1 / Zip Code -> Address / ZIP
+    # Code -- keys kept) equals the reviewed NE 2023 row (the four mailing_address lines).
     import json
     from pathlib import Path
 
