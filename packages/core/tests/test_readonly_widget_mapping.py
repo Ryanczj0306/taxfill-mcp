@@ -786,6 +786,15 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "IT-140's JS-computed totals and read-only header repeaters; the validate/timestamp "
         "helper fields are correctly NOT mapped",
     ),
+    StateComputed(
+        "states/wv/2024/it140/pack.yaml",
+        54,
+        "the 2023 set re-bound to the renumbered 2024 lines (page 2 lines 12-28, Schedule M 29-61), "
+        "plus the new line-21 total (sum of 21A/21B/21C) and the newly ReadOnly Schedule M 34 pair "
+        "(34(c), or 35% of it over the AGI limit), Schedule M 52 and RECAP 2 (= FTC-1 line 8); minus "
+        "line 19 and Schedule M 51 column B, which the 2024 blank made writable. Each of the 54 carries "
+        "its own /AA calculate script. Measured 2026-10-04 against the sha-pinned 2024 blank (Phase J JS5)",
+    ),
 )
 
 
@@ -841,6 +850,8 @@ NONZERO_READONLY_DEFAULTS: dict[tuple[str, str], str] = {
     ("states/oh/2025/it1040_oh/pack.yaml", "upc_city_state_zip"): "a JS-composed mirror (', ' placeholder)",
     ("states/wv/2023/it140/pack.yaml", "6"):
         "its /C script: exemptions x 2000, else 500 (the WV zero-exemption amount)",
+    ("states/wv/2024/it140/pack.yaml", "6"):
+        "its /C script: exemptions x 2000, else 500 (the WV zero-exemption amount), unchanged in 2024",
 }
 
 

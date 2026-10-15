@@ -1224,6 +1224,9 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # zip_code); the four address boxes are the same widgets.
     # JS5: MT Form 2 2024 (a RE-MAP of MT 2023, the first reform-year face) selects the reviewed MT 2023 set — the four
     # mailing_address lines, now in printed order; Schedule 2EC's sched2ec.physical_address.* block is rejected as a physical address.
+    # JS5: WV IT-140 2024 (a RE-MAP of WV 2023: page 2 and Schedule M renumbered, page-1 header widgets unchanged) equals
+    # the reviewed WV 2023 row (mailing_address street / street2 / city / state / zip); Schedule H's physician address is
+    # not a filer address line.
     import json
     from pathlib import Path
 
