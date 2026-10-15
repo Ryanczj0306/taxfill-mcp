@@ -1574,13 +1574,13 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
     ('states/mt/form2', 'dd'):
         'PARTIAL: checking / savings share group dd_account_type; the outside-US box is independent',
     ('states/mt/form2', 'deceased'):
-        'INDEPENDENT: the 2025 face prints a "Deceased?" box on the taxpayer row and another on the spouse row; both may apply',
+        'INDEPENDENT: the 2024 and 2025 faces print a "Deceased?" box on the taxpayer row and another on the spouse row; both may apply',
     ('states/mt/form2', 'exemptions.a'):
         'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
     ('states/mt/form2', 'exemptions.b'):
         'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply (and the spouse box)',
     ('states/mt/form2', 'residency'):
-        'PARTIAL: the residency statuses (three in 2023; four in 2025, which adds "Mixed Residency") share group residency_status; the military-spouse and ND-reciprocity boxes are independent',
+        'PARTIAL: the residency statuses (three in 2023 and 2024; four in 2025, which adds "Mixed Residency") share group residency_status; the military-spouse and ND-reciprocity boxes are independent',
     ('states/mt/form2', 'sched2'):
         'INDEPENDENT: Schedule II prints "Alternative Method Filer (See instructions)" and "30 Day Nonresident Exclusion (See instructions)" as two boxes for two separate elections, each with its own instructions; the face does not make them alternatives',
     ('states/mt/form2', 'sched2ec.attest'):

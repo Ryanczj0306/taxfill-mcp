@@ -160,6 +160,9 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
                  "signature.spouse_dob", "preparer.date")},
     ("states/ms/2024/f80105/pack.yaml", "preparer.address"): "107.6 pt at Courier 10 fits 17; the widget says 25",
     ("states/ms/2024/f80105/pack.yaml", "preparer.city"): "83.0 pt at Courier 12 fits 11; the widget says 21",
+    **{("states/mt/2024/form2/pack.yaml", k):
+       "a page-2 printed-name box, 323.9 pt at Courier 10 fits 53; the widget says 55"
+       for k in ("preparer.name", "third_party_designee.name")},
     ("states/wv/2023/it140/pack.yaml", "name.suffix"): "a name suffix (JR / III); 25.5 pt at Courier 10 fits 4",
     ("states/ia/2025/ia1040/pack.yaml", "21.fish_wildlife"):
         "the line-21 Fish/Wildlife contribution dollars box, 15.8 pt at Calibri 10; the filler clips 2 pt inside each side, so 3 digits clip on render and 2 fit; the widget says 4 (2023: 27.3 pt)",

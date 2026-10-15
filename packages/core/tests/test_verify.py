@@ -1222,6 +1222,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: MI-1040 2024 (a RE-MAP of MI 2023 — widgets renamed on all three pages at identical /Rects, the 32a/32b
     # boxes 1-2 pt taller, every line key kept) equals the reviewed MI 2023 row (home_address, city_or_town, state,
     # zip_code); the four address boxes are the same widgets.
+    # JS5: MT Form 2 2024 (a RE-MAP of MT 2023, the first reform-year face) selects the reviewed MT 2023 set — the four
+    # mailing_address lines, now in printed order; Schedule 2EC's sched2ec.physical_address.* block is rejected as a physical address.
     import json
     from pathlib import Path
 
