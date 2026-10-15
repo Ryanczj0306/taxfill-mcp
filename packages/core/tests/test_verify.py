@@ -1130,6 +1130,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # mailing_address lines; physical_address.street rejected as before).
     # JS5: CA 540NR 2025 (a RE-MAP of CA 2023 — the FTB renamed every widget, re-bound by position and printed label)
     # equals the reviewed CA 2023 row (the seven mailing_address lines; the new paid_preparer.* rows are not address lines).
+    # JS5: CA 540NR 2024 (a port of the 2025 pack onto the 2024 blank, which already carries the 2025 widget names)
+    # equals the reviewed CA 2023 row (the seven mailing_address lines; the 2024 face has no paid_preparer name/phone row).
     # JS5: DE PIT-RES 2025 (the same homeAddress / city / state / zip boxes; the new pages-2-4 header.name and
     # header.taxpayer_id are not address lines) equals the reviewed DE 2023 row.
     # JS6: DE PIT-NON 2023 (a new non-resident pack; the same homeAddress-style taxpayerAddress / City / State / Zip
