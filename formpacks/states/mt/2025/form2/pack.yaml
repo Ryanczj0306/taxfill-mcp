@@ -113,7 +113,12 @@
 # lesser of line 27 or $1,150", the attestation "less than $45,000". These
 # agree with knowledge/states/mt/2025.yaml wherever it records them.
 #
-# RELATIONS follow the printed arithmetic. Left out on purpose: page 1 line 8
+# RELATIONS follow the printed arithmetic. Line 10 ("Subtract line 9 from line 8.") prints no floor,
+# but the 2025 instructions' Schedule III Part I text does ("Nonrefundable credits reduce the amount of
+# tax you owe but cannot reduce your tax liability below zero"), so line 10 is floored at zero and line 9
+# stays the full Schedule III line 14 (added 2026-10-15; found by the TY2024 port's semantic verify, which
+# showed a correct return with credits above the tax failing the unfloored relation). Left out on
+# purpose: page 1 line 8
 # (residents copy worksheet line 13; other filers use Schedule II), line 15
 # (Worksheet A can reduce the credit), worksheet line 1 (page 2 line 1 copies
 # page 1 line 7, but the instructions' refund-only paths for North Dakota
@@ -1364,7 +1369,7 @@ relations:
   - "5 == sched1.24"  # 5 "Montana subtractions ... from Schedule I, Part I, line 24"
   - "7 == max(0, 3 + 4 - 5 - 6)"  # 7 "Add lines 3 and 4. Then subtract lines 5 and 6. If zero or less, enter 0 (zero)."
   - "9 == sched3.14"  # 9 "Nonrefundable tax credits from Schedule III, Part I, line 14"
-  - "10 == 8 - 9"  # 10 "Subtract line 9 from line 8."
+  - "10 == max(0, 8 - 9)"  # 10 "Subtract line 9 from line 8." The face prints no floor; the 2025 instructions do (Schedule III, Part I, Nonrefundable Credits, printed page 30 of 42) — "Nonrefundable credits reduce the amount of tax you owe but cannot reduce your tax liability below zero."
   - "11 == 11a + 11b + 11c + 11d + 11e"  # 11 "Add lines 11a through 11e"
   - "16 == sched2ec.30"  # 16 "Elderly Homeowner/Renter Credit from Schedule 2EC, Line 30"
   - "17 == sched3.17"  # 17 "Refundable tax credits from Schedule III, Part I, line 17"
