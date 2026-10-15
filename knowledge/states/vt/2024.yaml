@@ -240,8 +240,8 @@ tax:
   - 'Base guidance: Supply Form IN-111, Line 3 "Federal AGI with Modifications" = Line 1 federal AGI (federal Form
     1040, Line 11) plus/minus Line 2 net modifications to federal AGI (Schedule IN-112, Part I, Line 18). With no
     Vermont modifications, Line 3 equals federal AGI, so plain federal AGI is the correct input for most filers. The
-    op then subtracts the shipped Vermont standard deduction (IN-111 Line 4) and $4,850 per exemption (Lines 5a-5e)
-    to reproduce Line 7, Vermont Taxable Income.'
+    op then subtracts the shipped Vermont standard deduction (IN-111 Line 4) and $5,100 per exemption (Lines 5a-5e;
+    2024 IN-111 Instr. p.7, Line 5e ''Multiply Line 5d by $5,100'') to reproduce Line 7, Vermont Taxable Income.'
   - 'Tax-table mandate below $75,000: each 2024 Vermont Tax Rate Schedule prints ''TAXABLE INCOME UNDER $75,000 USE
     THE TAX TABLES'' across its sub-$75,000 rows. The 2024 Vermont Tax Tables (IN-111 Instr. pp.13-17) compute tax
     at the midpoint of each $100 band, rounded to whole dollars (spot-verified: Single $30,000-$30,100 band = $1,007
@@ -261,12 +261,18 @@ tax:
     change at $75,000 (e.g., MFJ 3.35% actually runs $0-$75,850; Single 6.60% runs $45,400-$110,050). Same-rate rows
     are merged in the shipped brackets; the math is identical.
   - 'Qualifying Widow(er)/surviving spouse: Schedule Y-1 is captioned ''Married Filing Jointly; Qualifying Widow(er);
-    or Civil Union Filing Jointly'' and the QW standard deduction is the same $14,050, so the engine''s QSS-to-MFJ
-    mapping matches Vermont exactly. Civil Union Filing Separately uses Schedule Y-2 (married_filing_separately);
-    Civil Union Filing Jointly uses Y-1.'
-  - 'Additional standard deduction not applied by the engine: $1,150 per standard-deduction box checked on federal
-    Form 1040 (born before Jan. 2, 1959, or blind) is added to the Line 4 standard deduction per the chart on IN-111
-    Instr. p.7 — compute those cases from the form''s chart.'
+    or Civil Union Filing Jointly'' and the QW standard deduction is the same $14,850 (the 2024 IN-111 face, p.1,
+    prints ($14,850) under both Married/CU Filing Jointly and Qualifying Widow(er); the Instr. p.7 Line 4 chart row is
+    ''Married Filing Jointly or Qualifying Widow(er) 14,850''), so the engine''s QSS-to-MFJ mapping matches Vermont
+    exactly. Civil Union Filing Separately uses Schedule Y-2 (married_filing_separately); Civil Union Filing Jointly
+    uses Y-1.'
+  - 'Additional standard deduction not applied by the engine: $1,200 per standard-deduction box checked on federal
+    Form 1040 (born before Jan. 2, 1960, or blind) is added to the Line 4 standard deduction per the chart on IN-111
+    Instr. p.7 (''You also receive an additional deduction of $1,200 for each standard deduction box checked on the
+    federal Form 1040''; chart columns 1-4: Single 8,600/9,800; MFJ or QW 16,050/17,250/18,450/19,650; MFS
+    8,600/9,800/11,000/12,200; HoH 12,300/13,500). The form face (2024 IN-111, p.1) prints no per-box figure — Line 4
+    says only ''Please see instructions if you or your spouse checked any standard deduction boxes on federal Form
+    1040, page 1'' — so compute those cases from the instructions'' chart.'
   - 'Exemption gates not modeled: Line 5a counts yourself ONLY if no one can claim you as a dependent on a 2024 return;
     Line 5b (spouse/CU partner) must be left blank if filing status is Qualifying Widow(er) or Married Filing Separately.'
   - Vermont has no itemized-deduction option on the 2024 IN-111 — Line 4 offers only the Vermont standard deduction
