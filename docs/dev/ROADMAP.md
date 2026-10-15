@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**9,243 tests** — offline 7,975 + live-.gov 1268; derived
+Done and on `main` (**9,294 tests** — offline 8,026 + live-.gov 1268; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -2015,6 +2015,7 @@ line items sum to the headline delta.
     7. **Test docstrings** (23 tools; every op, 38) and the resolved MS note.
     8. **D2** re-measured (the 2026-09-28 rows in the D2 entry): UT 2025 is PORTABLE and unshipped (JS3b).
 - [ ] **JA1 — Phase A, the agent half** (M; deps J0; takes the next slot the day the user says they are ready to publish; supersedes A1–A6's open boxes)
+  - *Part A DONE 2026-10-15 (items 1, 2 and 4):* both PyPI descriptions are count-free; both package READMEs and both `__init__` docstrings drop the pre-release wording for the release status (TY2025 is the newest filing-grade year; the 2026 packs are provisional — through the server `fill_form` refuses them except the 2026 Form 1040-ES; a form with no pack is refused today) and no longer say blank forms come only from .gov hosts; packages/mcp-server/tests/test_release_surfaces.py holds all of it plus one version across six sites. scripts/release_smoke.py replaces ci.yml's hand-typed federal-2023 set and tool count with counts derived from the checkout, and the taxfill-mcp sdist excludes bundle/. PUBLISHING.md: the version policy (the first release is tagged from `0.1.0` as is; the `.dev0` cycle starts after it), the mcp<2 decision (ship on the locked 1.x: on 2026-10-15 the latest 1.x is 1.30.0, 2.x 2.3.0, the lock 1.28.0; FastMCP became `mcp.server.mcpserver.MCPServer` in 2.x), a working TestPyPI dry run and a post-release grep the tests keep in sync. Adversarial verify FAIL (1 high: the core README's .gov-only traffic claim; 5 medium), all fixed, re-verify PASS.
   1. **Immutable descriptions** [G16]. The PyPI-immutable descriptions say "21 calculation ops" (taxfill-core), "22 tools" (taxfill-mcp) and "21 deterministic ops" (packages/mcp-server README), and nothing tests them. The runtime has 32 ops and 23 tools. Use count-free wording, and add test_release_surfaces.py.
   2. **PUBLISHING runbook** [G17].
      - Its smoke test asserts 22 tools (:83); ci.yml:111 says 23.

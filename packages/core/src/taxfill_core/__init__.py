@@ -1,9 +1,15 @@
 """taxfill-core — pure-Python core for TaxFill (no MCP dependency).
 
-Single source of truth: ``docs/dev/DEV_PLAN.md`` at the repo root.
+Source, design spec and docs: https://github.com/Ryanczj0306/taxfill-mcp
 
-Status: v0.1 is IN DEVELOPMENT. M0 shipped the schemas (form packs, intake
-profile) and the routing-number checksum; M1 ships the engine exported here:
+Release status: TY2025 is the newest filing-grade tax year, and stays so until
+a later release re-pins the 2026 packs on the IRS's final 2026 forms. The 2026
+packs are provisional: they fill only in rehearsal mode, never for filing (the
+2026 Form 1040-ES, paid during 2026, fills normally). A form with no pack is
+refused today; a later release adds an unmapped draft for such a form, which is
+never filing-grade.
+
+The engine exported here:
 
 * **calc** — deterministic tax math over versioned knowledge packs
   (:func:`tax_from_taxable_income`, :func:`standard_deduction`,
@@ -18,15 +24,19 @@ profile) and the routing-number checksum; M1 ships the engine exported here:
 * **render** — PDF pages to PNG for the vision-review pass
   (:func:`render_pdf`);
 * **knowledge** — the per-year jurisdiction data loader
-  (:func:`load_knowledge`).
+  (:func:`load_knowledge`);
+* **discovery** — the per-year form packs (line -> field maps) and their
+  loaders (:func:`list_forms`, :func:`load_form_pack`).
 
-Form packs arrive in M2, the MCP server in M4.
+The MCP server that exposes this engine to AI clients is the separate
+``taxfill-mcp`` package.
 
 TaxFill is the execution layer for AI tax prep. It is NOT tax advice and NOT
 a tax preparer: every output is a review draft, and the human reviews, signs,
 and files (paper print-and-mail by design — no e-filing). Everything runs
-100% locally with no telemetry; the only outbound traffic (in later
-milestones) is downloading blank forms from official .gov URLs.
+100% locally with no telemetry; the only outbound traffic is downloading
+blank forms from the tax agencies' own sites (or an exact, digest-checked
+Internet Archive copy when a state site blocks scripts).
 """
 
 from taxfill_core.calc import (

@@ -203,7 +203,8 @@ def filing_summary(
     Returns:
         A :class:`FilingSummary`: one concise bottom line per return + an
         approval prompt. Federal items resolve deadlines from the cited pack;
-        non-federal items get a plain bottom line and a note (state in M5).
+        a state item gets its bottom line plus the deadline and notes from its
+        state knowledge pack (a confirm-at-the-DOR note where the pack has none).
 
     Raises:
         ValueError: an empty manifest.

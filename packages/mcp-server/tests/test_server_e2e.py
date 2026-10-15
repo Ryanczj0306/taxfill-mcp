@@ -396,7 +396,8 @@ def test_tool_surface_is_exactly_23_and_matches_manifest():
 
     Adding/removing/renaming a tool fails here until both EXPECTED_TOOLS and the shipped
     packages/mcp-server/bundle/manifest.json are updated — keeping the server, the tests, and the one-click
-    .mcpb manifest in lock-step (the packaging job also asserts 23 against the built wheel).
+    .mcpb manifest in lock-step (the packaging job checks the built wheel's tools against EXPECTED_TOOLS and the
+    count below: scripts/release_smoke.py).
     """
     from pathlib import Path
 

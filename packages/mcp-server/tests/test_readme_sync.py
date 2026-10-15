@@ -86,7 +86,8 @@ def test_the_bundle_manifest_lists_the_runtime_tools_and_ops():
 
 
 def test_the_quoted_doc_counts_are_current():
-    """JD2: tools, ops, DocSpec kinds and pack counts in README / SKILL / DEV_PLAN / pyproject are derived."""
+    """JD2: tools, ops, DocSpec kinds and pack counts in README / SKILL / DEV_PLAN / TOOLS are derived (the PyPI
+    descriptions carry no count: test_release_surfaces.py)."""
     import subprocess
     import sys
 

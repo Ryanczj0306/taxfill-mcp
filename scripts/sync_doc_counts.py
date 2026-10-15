@@ -7,6 +7,11 @@ pack total and its per-year split, the state and hand-fill pack counts. They dri
 did — the core package's pyproject description still said "21 calculation ops" at 40, and the server's "22
 tools" at 23 — so they are derived, never typed.
 
+The PyPI-frozen surfaces carry no count at all (Phase J JA1: the two ``description`` fields, both package READMEs
+and both package docstrings are immutable once a version is uploaded, so a count there would go stale with no way to
+correct it; test_release_surfaces.py holds them count-free), and PUBLISHING.md's smoke step runs
+scripts/release_smoke.py, which reads the tool set from test_server_e2e.py.
+
 It also generates the form-by-year tables in docs/COVERAGE.md (between the GENERATED markers) from the packs
 themselves, so the page a reader checks for "can it fill my form?" cannot drift either.
 
@@ -289,16 +294,7 @@ def anchors(c: dict) -> list[tuple[Path, str, str]]:
         (skill, r"deterministic tax math — \d+ ops, one bullet each", f"deterministic tax math — {c['ops']} ops, one bullet each"),
         (skill, r"The federal set is \*\*\d+ packs\*\*", f"The federal set is **{c['federal']} packs**"),
         (REPO / "docs" / "dev" / "DEV_PLAN.md", r"It carries \d+ kinds", f"It carries {c['doc_kinds']} kinds"),
-        (REPO / "packages" / "mcp-server" / "README.md", r"## Tools \(dev plan §8\) — all \d+",
-         f"## Tools (dev plan §8) — all {c['tools']}"),
-        (REPO / "packages" / "mcp-server" / "README.md", r"`calc` \(\d+\ndeterministic ops",
-         f"`calc` ({c['ops']}\ndeterministic ops"),
-        (REPO / "docs" / "dev" / "PUBLISHING.md", r"assert len\(asyncio\.run\(s\.mcp\.list_tools\(\)\)\) == \d+",
-         f"assert len(asyncio.run(s.mcp.list_tools())) == {c['tools']}"),
         (REPO / "docs" / "dev" / "PUBLISHING.md", r"It declares the \*\*\d+ tools\*\*", f"It declares the **{c['tools']} tools**"),
-        (REPO / "packages" / "core" / "pyproject.toml", r"and \d+ calculation ops", f"and {c['ops']} calculation ops"),
-        (REPO / "packages" / "mcp-server" / "pyproject.toml", r"cited tax math \(\d+ tools\)",
-         f"cited tax math ({c['tools']} tools)"),
         # Phase J JS3b: the state form-pack counts (they drifted: "61 state" survived the UT 2025 port).
         (skill, r"are \*\*thinner and uneven\*\*: \d+ packs", f"are **thinner and uneven**: {c['state']} packs"),
         # Phase J JS5 / the 2026-10 cleanup: the per-year state form roster every skill file quotes (the old

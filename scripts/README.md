@@ -15,6 +15,7 @@ Run them from the repo root with `uv run python scripts/<name>.py`. None is need
 | `introspect_pdf.py` | Dumps a blank AcroForm's widgets, for authoring a new pack |
 | `audit_pack.py` | Field-map audit harness for one pack |
 | `stage_data.py` | Copies `knowledge/` and `formpacks/` into the core package before a build (release step) |
+| `release_smoke.py` | Checks an installed wheel against the checkout it was built from: packs per jurisdiction-year, every staged data file, the state knowledge years, the pinned tool set (CI's packaging job and `docs/dev/PUBLISHING.md`; run it with the wheel's interpreter, outside the repo) |
 | `assemble_state_sources.py` | Regenerates `knowledge/sources_states.yaml` from the state knowledge packs' own citations; re-run it after changing a state pack's citations (`--check` runs in the test suite) |
 | `assemble_state_knowledge.py`, `assemble_state_tax_blocks.py`, `assemble_state_credits.py` | Build state knowledge packs, their `tax:` blocks and their credits from a cited research fetch (JSON) given on the command line — how the state knowledge was first assembled |
 | `assemble_ca540.py`, `assemble_ca540nr.py` | One-time generators of the 2023 CA Form 540 / 540NR packs from a vision-mapping file that is not in the repo; kept as the record of how those packs were made |

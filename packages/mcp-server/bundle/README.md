@@ -31,7 +31,7 @@ mcpb pack            # produces taxfill.mcpb
 current CLI schema (v0.2, as of 2026-06-28): the `$schema_note` draft marker was
 dropped, `server.entry_point` (`"taxfill-mcp"`) was added, and the old
 `permissions` block was removed — the v0.2/v0.3 schema has no `permissions` field,
-so Claude Desktop prompts for the outbound-.gov-network + local-file consent at
+so Claude Desktop prompts for the outbound-network + local-file consent at
 install time instead. If a future `mcpb validate` flags field-name drift (the
 schema evolves), adjust `manifest.json` to match and re-run. After any server tool
 change, run `uv run python scripts/sync_bundle_manifest.py --write` (it rewrites the calc entry;

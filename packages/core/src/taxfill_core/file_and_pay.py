@@ -8,9 +8,10 @@ later of 3 years from filing or 2 years from payment). Every jurisdiction/
 payment fact comes from the cited knowledge pack (mailing addresses, payment
 options, deadlines) — never invented.
 
-v1 is federal-only (state where-to-file and portals ship with the state packs
-in M5); a non-federal item returns a clear "ships in M5" note rather than a
-guess.
+A state item (``jurisdiction='states/<xx>'``) gets its checklist from that state's
+knowledge pack, with a confirm-at-the-DOR note on its logistics figures; a state
+with no knowledge pack for the year gets a note to confirm where and how to file
+(or, with no income tax, that there is no return to file), rather than a guess.
 
 Special federal items with their own paths: a standalone Form 8843 (information
 return, fixed Austin address), a return filed WITH Form W-7 (the Austin ITIN
@@ -286,7 +287,7 @@ class FilingManifestItem(BaseModel):
 
     form: str = Field(description="Form name, e.g. '1040', '1040-NR'.")
     tax_year: int
-    jurisdiction: str = Field(default="federal", description="'federal' (v1) or 'states/<xx>' (M5).")
+    jurisdiction: str = Field(default="federal", description="'federal' or 'states/<xx>'.")
     bottom_line: int = Field(description="Signed: positive = refund, negative = amount owed, 0 = balanced.")
     taxpayer: str | None = Field(
         default=None,

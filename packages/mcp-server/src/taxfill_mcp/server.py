@@ -3,8 +3,9 @@
 A thin MCP wrapper (official ``mcp`` python-sdk, FastMCP) over the tested
 ``taxfill_core`` engine. The agent does interviewing/judgment; these tools do
 all the deterministic PDF/calc work. Design commitments hold: 100% local, no
-telemetry; the only outbound traffic is downloading blank forms from official
-.gov URLs (``fetch_blank``). Every output is a review draft — the human signs
+telemetry; the only outbound traffic is downloading blank forms (``fetch_blank``)
+from the tax agencies' own sites (or an exact, digest-checked Internet Archive
+copy when a state site blocks scripts). Every output is a review draft — the human signs
 and files.
 
 Tools take agent-friendly arguments (``form``/``year``, not raw FormPack

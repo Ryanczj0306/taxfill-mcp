@@ -1,19 +1,20 @@
 [project]
 name = "taxfill-mcp"
 version = "0.1.0"
-description = "Local MCP server for preparing US paper tax returns: guided intake, deterministic fill, mandatory verification, cited tax math (23 tools). No cloud, no e-file, no telemetry."
+description = "Local MCP server for preparing US paper tax returns: guided intake, deterministic fill, mandatory verification, cited tax math. No cloud, no e-file, no telemetry."
 requires-python = ">=3.11"
 license = "MIT"
 readme = "README.md"
 dependencies = [
-    # Upper bound is load-bearing: the MCP python-sdk 2.0.0 (released 2026-08)
-    # REMOVED the high-level FastMCP API from the `mcp` distribution entirely
-    # (extracted upstream to the standalone `fastmcp` package — mcp 2.0's wheel
-    # contains no fastmcp module at all), so server.py's
-    # `from mcp.server.fastmcp import FastMCP, Image` cannot resolve on 2.x.
-    # A clean-venv install of an unbounded `mcp>=1.2` therefore produces an
-    # IMPORT-BROKEN wheel — exactly what the packaging CI job caught. Keep the
-    # cap until the 2.x migration is evaluated (see ROADMAP A1 follow-up).
+    # Upper bound is load-bearing: server.py imports
+    # `from mcp.server.fastmcp import FastMCP, Image`, a 1.x module. In the MCP
+    # python-sdk 2.x (2.0.0 released 2026-07-28) FastMCP was renamed to
+    # `mcp.server.mcpserver.MCPServer` and other APIs changed: the 2.0.0 wheel
+    # has no `mcp.server.fastmcp`, and 2.3.0's is a stub that raises
+    # ModuleNotFoundError. A clean-venv install of an unbounded `mcp>=1.2`
+    # therefore produces an IMPORT-BROKEN wheel — exactly what the packaging CI
+    # job caught. Keep the cap until the server is ported to 2.x (the mcp<2
+    # decision in docs/dev/PUBLISHING.md).
     "mcp>=1.2,<2",
     # Pin to the matching core release so `uvx taxfill-mcp` never resolves a
     # mismatched taxfill-core from PyPI. Keep in sync with the version bump
@@ -34,3 +35,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/taxfill_mcp"]
+
+# The .mcpb bundle recipe (bundle/) is built from the repo at release time, not from
+# the sdist; keep it out so its repo-relative links and release-time wording are not
+# frozen in an immutable PyPI file.
+[tool.hatch.build.targets.sdist]
+exclude = ["/bundle"]
