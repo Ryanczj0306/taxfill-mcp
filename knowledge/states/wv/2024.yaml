@@ -286,8 +286,9 @@ tax:
   - 'CREDITS ARE NOT EXEMPTIONS AND ARE NOT MODELED: line 8 tax is reduced on line 9 by the Tax Credit Recap Schedule
     credits — notably the Family Tax Credit (Schedule FTC-1), which can reduce the line 8 tax by up to 100% for low-income
     families based on family size and Modified Federal AGI, plus the refundable Senior Citizen Tax Credit (line 18)
-    and Homestead Excess Property Tax Credit (line 19). The engine computes line 8 only; actual line 10 liability
-    may be lower.'
+    and Homestead Excess Property Tax Credit (line 19), the Build WV refundable credit (line 20) and the three WV
+    Property Tax Adjustment Tax Credits (line 21 boxes A/B/C). The engine computes line 8 only; actual line 10
+    liability may be lower.'
   - No county or municipal income tax is collected through Form IT-140 — the return computes only the West Virginia
     state personal income tax.
 
@@ -334,16 +335,24 @@ effective_law_changes:
     income tax is refunded.
   status: final_form_published
   affects:
-  - Tax Credit Recap Schedule (refundable property tax credits)
+  - Form IT-140 line 21, WV Property Tax Adjustment Tax Credits — box A Motor Vehicle Property Tax, box B Disabled
+    Veteran Real Property Tax, box C Small Business Property Tax; the sum enters line 21 and is totalled on line 23
+    (Payments and Refundable Credits, lines 15-22). NOT the Tax Credit Recap Schedule — its lines are non-refundable
+    credits whose total (RECAP line 27) goes to IT-140 line 9.
   modeled: false
   lookup_path: >-
-    2024 IT-140 booklet, Property Tax Credits (p.19), and TSD 454 (motor vehicle), TSD 455 (disabled veterans), TSD
-    456 (small business) at tax.wv.gov.
+    2024 IT-140 booklet, Property Tax Credits (p.20), IT-140 line 21 instructions (p.25), and TSD 454 (motor
+    vehicle), TSD 455 (disabled veterans), TSD 456 (small business) at tax.wv.gov.
   citation:
     source: >-
-      2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024: 'New
-      property tax credits are available this year.' Property Tax Credits (p.19) — Motor Vehicle Tax Credit: 'A credit
-      may be claimed for timely paid personal property taxes on qualified motor vehicles.'
+      2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024 (p.15):
+      'New property tax credits are available this year.' Property Tax Credits (p.20) — Motor Vehicle Tax Credit: 'A
+      credit may be claimed for timely paid personal property taxes on qualified motor vehicles. If the annual tax
+      credit allowed is more than the income tax a refund will be issued for the difference.' Form IT-140 line 21
+      (p.2): 'WV Property Tax Adjustment Tax Credits (claim each separately below. Enter sum on line 21)' with boxes
+      A MOTOR VEHICLE PROPERTY TAX, B DISABLED VETERAN REAL PROPERTY TAX, C SMALL BUSINESS PROPERTY TAX; instructions
+      (p.25): 'LINE 21 WV PROPERTY TAX ADJUSTMENT TAX CREDIT. Enter the amount in the appropriate box for the credit
+      being claimed. The schedule(s) must be submitted with tax return.'
     url: https://tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf
 law_changes_checked:
   checked: 2026-09-28
