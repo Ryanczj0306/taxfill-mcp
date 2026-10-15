@@ -137,17 +137,28 @@ mailing_addresses:
     P.O. Box 8710, Wilmington, DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division
     of Revenue, P.O. Box 8711, Wilmington, DE 19899-8711.'
   with_payment: 'Enclosing payment / balance due (PIT-RES Line 45 / PIT-NON Line 59): State of Delaware, Division
-    of Revenue, P.O. Box 508, Wilmington, DE 19899-508.'
+    of Revenue, P.O. Box 508, Wilmington, DE 19899-0508 (the ZIP+4 as the PIT-NON form face mailing box and the
+    PIT-NON Instructions'' Where to File list (printed page 11) print it; the Instructions'' Step 5 tables drop the
+    leading zero, ''19899-508'').'
   citation:
-    source: 'DE Division of Revenue - 2023 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who
-      Must File, residency definition, When to File (due 4/30/2024), Section A Additions (Line 1 federal AGI from
-      1040 Line 11; Lines 2-3 only), mailing addresses, check payee ''DE Division of Revenue'', portal tax.delaware.gov'
-    url: https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf
+    source: 'DE Division of Revenue - 2023 Form PIT-NON (Rev. 20231113), printed page 1 mailing box: "BALANCE DUE
+      WITH PAYMENT ENCLOSED (LINE 59) ... PO Box 508, Wilmington, DE 19899-0508"; "REFUND (LINE 60) ... PO Box 8710,
+      Wilmington, DE 19899-8710"; "ALL OTHER RETURNS ... PO Box 8711, Wilmington, DE 19899-8711"; the 2023 PIT-RES
+      Instructions Step 5 table (printed page 3) for the PIT-RES Line 45/46 numbering.'
+    url: https://revenuefiles.delaware.gov/2023/PIT-NON_2023-01_PaperInteractive.pdf
   verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
     at the cited DOR source before relying on a specific figure/address.
 payment:
-  check_payee: DE Division of Revenue
+  check_payee: 'Delaware Division of Revenue (the 2023 PIT-NON form face and PIT-NON Instructions Line 59 print
+    "Make check(s) payable to: Delaware Division of Revenue"; the 2023 PIT-RES Instructions Line 45 abbreviate the
+    same payee "DE Division of Revenue")'
   web_pay_url: https://tax.delaware.gov
+  citation:
+    source: 'DE Division of Revenue - 2023 Form PIT-NON (Rev. 20231113), printed page 1 mailing box "Make check payable
+      to: Delaware Division of Revenue"; 2023 PIT-NON Instructions, Line 59 Net Balance Due "Make checks payable to:
+      Delaware Division of Revenue." (printed page 10); 2023 PIT-RES Instructions, Line 45 Net Balance Due "Make check
+      payable to: DE Division of Revenue." (printed page 11)'
+    url: https://revenuefiles.delaware.gov/2023/PIT-NON_2023-01_PaperInteractive.pdf
 deadlines:
   filing_due_date: '2024-04-30'
   citation:
@@ -174,7 +185,8 @@ unverified:
   Payment page at revenue.delaware.gov/payment/. Exact landing URL for a balance-due payment was not independently
   re-confirmed on a live page beyond the instruction-booklet references - confirm at the DOR.'
 - 'Check payee exact wording: the 2023 PIT-RES instructions state ''Make check payable to: DE Division of Revenue'';
-  this was confirmed in the resident booklet but not separately on the FAQ/payment web page.'
+  the 2023 PIT-NON form face and instructions spell the same payee out as ''Delaware Division of Revenue''. Both
+  booklets were read, but the FAQ/payment web page was not separately checked.'
 tax:
   citation:
     source: 'Delaware Division of Revenue, 2023 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions

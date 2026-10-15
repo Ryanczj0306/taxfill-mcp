@@ -153,16 +153,22 @@ filing_requirement:
     must file if they had any gross income from Delaware sources during 2024. (Source: 2024 PIT-RES instructions,
     ''Who Must File a Return,'' p.2.)'
 mailing_addresses:
-  refund_or_no_payment: 'Refund due (PIT-RES Line 46): State of Delaware, Division of Revenue, P.O. Box 8710, Wilmington,
-    DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division of Revenue, P.O. Box
-    8711, Wilmington, DE 19899-8711.'
-  with_payment: 'Enclosing payment / balance due (PIT-RES Line 45): State of Delaware, Division of Revenue, P.O.
-    Box 508, Wilmington, DE 19899-508.'
+  refund_or_no_payment: 'Refund due (PIT-RES Line 47 NET REFUND): State of Delaware, Division of Revenue, P.O. Box
+    8710, Wilmington, DE 19899-8710. Zero-due returns or returns without payment ("ALL OTHER RETURNS"): State of
+    Delaware, Division of Revenue, P.O. Box 8711, Wilmington, DE 19899-8711.'
+  with_payment: 'Enclosing payment / balance due (PIT-RES Line 46 NET BALANCE DUE): State of Delaware, Division of
+    Revenue, P.O. Box 508, Wilmington, DE 19899-0508 (the ZIP+4 as the PIT-RES mailing boxes on pages 3 and 4 and
+    the Instructions'' own amended-return address list (p.12) print it; the Instructions'' Step 5 table drops the
+    leading zero, ''19899-508'').'
   citation:
-    source: 'DE Division of Revenue - 2024 Form PIT-RES Instructions, Step 5 mailing table: balance due (Line 45)
-      P.O. Box 508; refund due (Line 46) P.O. Box 8710; zero due / without payment P.O. Box 8711 — all Wilmington,
-      DE'
-    url: https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/PIT_Instructions/PIT-RES_TY24_2024-01_Instructions.pdf
+    source: 'DE Division of Revenue - 2024 Form PIT-RES (Rev. 20240821), printed page 3 mailing box: "BALANCE DUE
+      WITH PAYMENT ENCLOSED (LINE 46) ... PO Box 508, Wilmington, DE 19899-0508"; "REFUND (LINE 47) ... PO Box 8710,
+      Wilmington, DE 19899-8710"; "ALL OTHER RETURNS ... PO Box 8711, Wilmington, DE 19899-8711"; confirmed by the
+      2024 PIT-RES Instructions, Line 46 Net Balance Due / Line 47 Net Refund (printed page 11). CAUTION: the
+      Instructions'' Step 5 mailing table (printed page 3) still prints the 2023 line numbers ("Balance Due (from
+      Line 45)", "Refund Due (from Line 46)") and the ZIP as "19899-508" — the renumbered form face
+      governs.'
+    url: https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/PIT-RES_2024-01_PaperInteractive.pdf
   verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
     at the cited DOR source before relying on a specific figure/address.
 payment:
