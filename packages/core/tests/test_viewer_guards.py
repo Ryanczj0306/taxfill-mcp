@@ -289,6 +289,42 @@ def test_p027_al40_2025_hides_the_cropped_worksheet_lids(tmp_path: Path):
 
 
 @pytest.mark.network
+def test_p027b_al40nr_2023_hides_the_nol85a_print_lids(tmp_path: Path):
+    """AL Form 40NR 2023's NOL-85A pages (20-29) carry white NoView + Print lids over 72.6-83.1% of the page, under the
+    85% guard share: before P-027b they stayed printable and covered the form body of every one of those pages."""
+    from pypdf import PdfReader
+
+    from taxfill_core.schemas.formpack import load_pack
+    from test_formpacks_federal import synthetic_values
+
+    path = Path(__file__).resolve().parents[3] / "formpacks/states/al/2023/al40nr/pack.yaml"
+    if not path.exists():
+        pytest.skip("the AL 40NR 2023 pack is not shipped")
+    pack = load_pack(path)
+    blank = _blank(pack)
+    lids = {}   # page -> (name, share of the visible page) for every NoView + Print pushbutton under 85% coverage
+    for index, page in enumerate(PdfReader(str(blank)).pages, 1):
+        box = visible_box(page)
+        area = (box[2] - box[0]) * (box[3] - box[1])
+        for ref in page.get("/Annots", []):
+            annot = ref.get_object()
+            flags = int(annot.get("/F", 0))
+            if annot.get("/Subtype") != "/Widget" or not (flags & F_NOVIEW and flags & F_PRINT):
+                continue
+            x0, y0, x1, y1 = (float(v) for v in annot["/Rect"])
+            share = (min(max(x0, x1), box[2]) - max(min(x0, x1), box[0])) * (min(max(y0, y1), box[3]) - max(min(y0, y1), box[1])) / area
+            if 0.5 <= share < 0.85:
+                lids[index] = (str(annot.get("/T")), share)
+    assert sorted(lids) == list(range(20, 30)), lids
+    assert all(0.72 < share < 0.84 for _, share in lids.values()), lids
+    result = fill_form(pack, synthetic_values(pack), blank, tmp_path / "al40nr.pdf")
+    hidden_pages = {int(g[g.index("(page ") + 6:-1]) for g in result.guards_hidden}
+    assert set(range(20, 30)) <= hidden_pages, result.guards_hidden
+    report = verify_form(pack, tmp_path / "al40nr.pdf", expected=synthetic_values(pack))
+    assert [c for c in report.pitfall_checks if c.id == "P-027"][0].status == "PASS"
+
+
+@pytest.mark.network
 def test_p027_mo1040_hides_its_print_lids_and_oh_prints_the_mfs_spouse_ssn(tmp_path: Path):
     from taxfill_core.schemas.formpack import load_pack
     from test_formpacks_federal import synthetic_values
