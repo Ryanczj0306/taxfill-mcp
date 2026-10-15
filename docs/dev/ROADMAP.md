@@ -1,8 +1,15 @@
 # TaxFill — Completion Roadmap (remaining work)
 
 The design spec is [`docs/dev/DEV_PLAN.md`](DEV_PLAN.md). This is the forward-looking
-plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 — see Phase J).
+plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 — see Phase K; the 2026-09-23 re-plan is Phase J).
 
+> **Status note (2026-10-09).** Re-planned **pointer-first** (Phase K, approved by the user 2026-10-09).
+> Every federal and engine Phase J tranche is done except JT5g / JT6 (gated on the IRS), JA1 / JA2 (the
+> release), JEe and JD2.3 (the user's).
+> The state backfill (JS5 / JS6) lands what its recovery wave re-creates of 23 packs (JK0) and then stops,
+> except on demand. Next: the release (JK2–JK7), TY2026 readiness (JK8–JK11, JT6, JS7a), the no-pack
+> fallback fill path (JK13–JK19) and the knowledge-layer slim (JK20–JK26).
+>
 > **Status note (2026-09-24).** Done: Phases 0, B, C1, C3, D1, E (except two boxes),
 > F, G (G1–G6; G4 finished 2026-07-24 with all 35 graduated/flat jurisdictions), H
 > (except H5's 2026 Tax Table, externally blocked) and I (2026-08-27).
@@ -37,6 +44,10 @@ re-mapped the pack onto the re-issue. The 2026-10-12 run was red again on two ne
 booklet moved, and mass.gov and its Wayback mirror refuse GitHub-hosted runners — which JK2 (2026-10-15)
 fixed or quarantined: the MN citations re-pointed, fetch retries and a CI blank cache added, and the ten MA
 network tests quarantined until 2027-01-11.
+
+> **Status (2026-10-15):** JK2 landed (978fc2f): the MN booklet citations re-pointed, fetch and finals-watch retries,
+> a CI blank cache and the ten MA quarantine rows. The scheduled runs of 2026-10-19 and 10-26 are the proof; issue #3
+> closes after the first green one. The code CI (ci.yml) is green.
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (23 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -122,11 +133,286 @@ offline suite plus CI green, with an adversarial second-agent verify recorded in
 commit body. Whether to restore feature branches under branch protection is a user
 decision (Phase J JD2.3).
 
+**Next (2026-10-15):** Phase K, below. JK0 (the recovery wave) is done; next the release (RC by
+2026-10-23; the upload waits on the user's JA2 steps), then TY2026 readiness, then the no-pack fallback,
+then the knowledge slim. The synced counts above are current (every JK0 integration re-ran
+scripts/sync_doc_counts.py); the unanchored ones are JK1's: the calc op count is 40
+(packages/mcp-server/tests/test_skills_sync.py:54), not the 35 quoted above.
+
 ---
 
 ## History
 
-The completed phases — 0, E, F, G and I — moved VERBATIM to [`docs/HISTORY.md`](HISTORY.md) (now `docs/dev/HISTORY.md`) on 2026-09-28 (Phase J JD2), so this file carries the open work. Their cross-references ("see Phase G", tranche ids) resolve there. Phases C, D and H stay here: each still has a box open under a Phase J tranche.
+The completed phases — 0, E, F, G and I — moved VERBATIM to [`docs/HISTORY.md`](HISTORY.md) (now `docs/dev/HISTORY.md`) on 2026-09-28 (Phase J JD2), so this file carries the open work. Their cross-references ("see Phase G", tranche ids) resolve there. Phases C, D and H stay here: each still has a box open under a Phase J tranche. In the commit that lands the 2026-10-09 re-plan (Phase K JK1), the completed Phase J tranches follow them verbatim, under "Phase J — completed tranches"; their ids resolve there too.
+
+## Phase K — Pointer-first re-plan (approved 2026-10-09)
+
+> **Decision (the user, 2026-10-09; the rebuilt draft reviewed and committed 2026-10-15; record: [ADR-0001](adr/ADR-0001-pointer-first.md)).** TaxFill points an agent at the right official form, rule and figure. Packs stay for **high-volume, current-year forms only**: a PDF field name → printed line map cannot be derived safely at use time (the ME 1040ME 2023 pack had lines 21-23 rotated one box, and every relation still passed). Calc ops and relation verify stay. The new order:
+> 0. let the running recovery wave finish re-creating and integrating its 23 packs (sunk cost: 6 had a pack on disk, 17 survived only as replay logs; KG1 applied to each — **done 2026-10-15, all 23 landed**), then **stop** TY2024-and-earlier state backfill and the rest of JS6 except on demand (see the on-demand rule under Deferred);
+> 1. **release** (Phase A: PyPI, tag, `.mcpb`, demo, acceptance; user-held steps stay the user's);
+> 2. **TY2026 readiness**: federal finals Dec-Feb (JT5g/JT6); JS7 cut down to the high-volume states (JS7a), with the rest using the fallback;
+> 3. a **no-pack fallback fill path** for the long tail: introspect the official blank, anchor fields to printed labels, fill and verify at use time, label confidence honestly, and never claim filing-grade;
+> 4. **slim the knowledge layer** to pointers, verbatim quotes and the figures calc ops read. Narrative duplicates official text and drifts: JS2c logged 25 mismatches, all in narrative or figures calc does not apply (ROADMAP JS2c; the applied figures are calc.py:10985-11019; `tax_line` and every `tax.notes` entry are still emitted in calc output at :11037-11042, so JK23/JK26 cover them);
+> 5. the Not-scheduled backlog stays unchanged.
+>
+> This section supersedes Phase J's ordering rules 3-4 and its "Phased sequencing" for every open item. Rule 5 (the tranche contract) still applies. Synthesized from three read-only plans and two judges (2026-10-09, against 063f293).
+
+**Commit rule (JK1).** The new docs/dev/ROADMAP.md lands in **one commit** with (a) the "Phase J — completed tranches" block appended to docs/dev/HISTORY.md and (b) docs/dev/adr/ADR-0001-pointer-first.md. Without (a) every DONE write-up leaves the repo and the pointer lines point at nothing; without (b) the Phase K header link is dead (test_doc_links.py).
+
+**Tranche ids.** New tranches are spelled `JK<n>`. `test_every_open_roadmap_box_names_its_tranche` (packages/mcp-server/tests/test_readme_sync.py:98-117) only accepts `\bJ[A-Z]{1,2}(?:\d+[a-z]?|[a-z])\b` (:101), so `JK0` passes and a bare `K0` does not. Kept ids: JA1, JA2, JD2 (.3 only), JEe, JS2c, JT5g, JT6. JS7 becomes JS7a, with JS7b deferred. `JK0a` (a suffix letter) also passes.
+
+**Guardrails** (each tranche below cites them):
+
+| id | Guardrail |
+|---|---|
+| KG1 | Sunk cost is not a reason to ship. A recovery-wave pack that fails any JS5 gate (digest pin, vision audit, golden round trip, repo pack gates) is **dropped and listed**, not patched under time pressure. |
+| KG2 | No silent wrong numbers. A known wrong-output defect outranks new coverage: the ME 1040ME 2023 lines 21-23 mis-bind (JK0a, fixed 2026-10-14), and the JF5a follow-ups (~$3,050 overstated in a repro; JK3 found both already fixed in dfe7dd8 and pinned them 2026-10-15). |
+| KG3 | Honest health signal. The release is not cut while freshness is red, unless the red is quarantined with a written reason (scripts/freshness_quarantine.yaml). |
+| KG4 | Every dated tranche has an automated trigger. Today JT5g and JS7 have none, and the finals cron stops 02-15 (.github/workflows/finals.yml:21). |
+| KG5 | Unmapped output is **never** filing-grade. The fallback's `unmapped_draft` grade and its page stamp are unconditional: no flag, prompt or knowledge-pack state can lift them. The stamp is drawn into each page's content stream (flattened), not added as an annotation: today's rehearsal stamp is a pypdf FreeText annotation with no /F Print flag (filler.py:785-793; pypdf sets PRINT only on Highlight, annotations/_markup_annotations.py:302), so it does not print and any viewer can delete it. `provisional_marker` returns None for a jurisdiction with no pack (knowledge.py:2702-2712), so the grade must not depend on it. |
+| KG6 | Safe before broad. Anchoring is benchmarked blind against ≥30 shipped packs before any confidence above "low" is emitted. "high" is allowed only where measured precision is ≥99%, and the ME 1040ME 2023 rotation is a mandatory case. The benchmark reports a per-form "any mis-anchored field" rate beside per-field precision, and the response says "anchored (unverified line map)", never a bare "high". The ground truth (the shipped packs' line maps) may itself hold rotations, so the ME case and every benchmark disagreement are adjudicated by a vision check before they count. If the benchmark fails, the fallback ships inspect + worksheet only (no PDF fill). |
+| KG7 | No model arithmetic presented as computed. A fallback value no calc op produced is labeled "agent-computed, unverified". ReadOnly widgets and calculated widgets (an /AA /C calculate or /F format action, ReadOnly or not) are never filled; they are listed as "hand-write these". |
+| KG8 | Output freeze **2026-12-01 → 2027-04-15**: no knowledge-schema change, and no change to the output shape of the pack path or of any knowledge consumer. Fixes to wrong values are still allowed. **Allowed:** additive, opt-in tool parameters and response fields that only the unmapped path uses (e.g. `form="unmapped"`, `source_url`, `grade`), provided the JK21 golden diff of every pack-path response is byte-identical. JK16/JK17 should still merge by 2026-11-30 where they can. |
+| KG9 | User-held steps stay the user's: the PyPI publisher/token, the mcp<2 decision, the v0.1.0 tag and upload, the demo GIF, the acceptance tester, branch protection (JD2.3), the JT6 early-flip policy, the RI DOB rendering, and the DC exception named at docs/dev/ROADMAP.md:2507 ("any DC exception before 2026-10-15"; what it is was not found in the repo — the user confirms it or lets it lapse). |
+| KG10 | Public repo: demo personas only. This covers the sample W-2, the journey goldens, benchmark fixtures and pilot forms. |
+| KG11 | Refuse what cannot be anchored. In unmapped mode `fill_form` refuses any value whose target widget is anchored `none`, and `low` unless the user confirms that field on the rendered page (a per-field override recorded in the response). Refused fields come back as "hand-write these". |
+
+**Collision order** for Dec 2026 – Mar 2027: JT6 > JS7a (+ JK10 label-adjacency guard) > the fallback (JK16-JK18) > the knowledge layer. Release support (JK7, JK12) takes the next free slot. A dated tranche never interrupts one in progress.
+
+**Calendar** (latest starts; the RC date is under agent control, the upload date is the user's):
+
+| Date | What |
+|---|---|
+| 2026-10-12 | weekly freshness run (freshness.yml:30); expected red on MA until JK2 |
+| 2026-10-14 / 10-15 | **done:** JK0, JK0a, JK2, JK3, JK4, JA1 |
+| 2026-10-15 | TY2025 extension deadline. v0.1 cannot meet it because JA2 is user-held, so its TY2025 audience is late filers, amended returns and rehearsal users |
+| 2026-10-16 | JK1 (lands with the user's OK on this re-plan), JS2c close-out |
+| 2026-10-21 / 10-23 | JK5 dry run / **release candidate ready**; the upload waits only on JA2 |
+| 2026-11-02 … 11-30 | JK6, JK13-JK17, JK21 (by 11-05), JK20 (by 11-09), JK9 (by 11-16), JK8 (by 11-23; daily cron from 12-15), JK24 (by 11-24), JK10, JEe, JK22-JK23 (pre-freeze, zero-output) |
+| 2026-12-01 | KG8 freeze begins; JK25 lands before this or not at all for TY2026 |
+| 2026-12-15 | JK11 user decisions; first state 2026 blanks expected |
+| 2027-01-05 | JT5g falls back into JT6 if no IRS NEC/OI draft has posted |
+| 2027-02-01 | JK12 v0.2 (TY2026 season) |
+| 2027-03-15 | finals cron ends (JK8); manual check for i1040gi and the 2027 Rev. Proc. |
+| 2027-04-16 | KG8 ends; JK26 may start |
+
+**At a glance** (S = hours, M = a day, L = days, XL = a week or more):
+
+| # | Tranche | Size | Deps | External | Latest start |
+|---|---|---|---|---|---|
+| 0 | JK0 Recovery wave re-creates + integrates 23 packs | per pack | — | — | **done 2026-10-15** |
+| 0a | JK0a ME 1040ME 2023 lines 21-23 re-bind (P-032) | S | — | — | **done 2026-10-14** |
+| 1 | JS2c close-out | S | JK0 | — | 2026-10-16 |
+| 2 | JK1 ROADMAP truth-up + backfill freeze | S | JK0, JS2c | other workflow idle | 2026-10-16 |
+| 3 | JK2 Honest health signal (MA red, finals retry) | S–M | — | the 10-19 / 10-26 scheduled runs | **done 2026-10-15** |
+| 4 | JK3 JF5a MFS follow-ups, verify first | S | — | — | **done 2026-10-15** |
+| 5 | JK4 CI runner + action pins | S | — | — | **done 2026-10-15** |
+| 6 | JA1 Phase A agent half (trimmed) | M–L | — | — | **done 2026-10-15** |
+| 7 | JK5 Release-candidate dry run | M | JK1 (the rest done) | — | 2026-10-21 |
+| 8 | JK6 Five journey goldens | M | JA1.3 | — | 2026-11-02 |
+| 9 | JA2 Phase A user half (+ JD2.3) | user | JK5 | the user | user's call (RC 2026-10-23) |
+| 10 | JK7 A6 flip + `.mcpb` on the release | S | JA2 upload | PyPI upload | upload + 1 day |
+| 11 | JK13 Fallback surface + guardrail ADR | S | — | user may weigh in | 2026-11-02 |
+| 12 | JK14 Introspect + pack-less fetch | M | JK13 | — | 2026-11-09 |
+| 13 | JK15 Anchor + blind benchmark | L | JK14 | — | 2026-11-16 |
+| 14 | JK21 Golden-diff harness over every tool | M | — | — | 2026-11-05 |
+| 15 | JK20 Hoist citations into `sources` | M | JK0, JS2c, JK21 | — | 2026-11-09 |
+| 16 | JK22 Drop never-read TY2025 blocks (zero-output) | M | JK20, JK21 | — | 2026-11-16 (must land by 11-30) |
+| 17 | JK16 Pack-less fill | L | JK14, JK15 | — | 2026-11-23 |
+| 18 | JK8 Watch coverage | M | JK2, JK9 (state rows) | — | 2026-11-23 |
+| 19 | JK9 Tier-1 state triage table | S–M | JK0 | IRS SOI state data | 2026-11-16 |
+| 20 | JK10 Label-adjacency guard (base pack + every port) | M | — | — | 2026-11-30 |
+| 21 | JEe Text width vs widget padding | M | JK0 | the user: RI DOB choice | 2026-11-30 |
+| 22 | JK17 Pack-less verify + grade label | M | JK16 | — | 2026-11-30 |
+| 23 | JK23 Quote-verbatim checker (report mode) | M | — | — | 2026-11-30 |
+| 24 | JK24 Schema v2 models + dual loader | M | JK20, JK21 | — | 2026-11-24 (else 2027-04-16) |
+| 25 | JK25 2026 scaffold emits v2 (optional) | S | JK24, JK23 | — | lands by 2026-12-01 or skipped |
+| 26 | JK18 Fallback skill text + evals | S–M | JK17, JK6 | — | 2026-12-07 |
+| 27 | JK11 User decisions for JT6 | user | — | the user | 2026-12-15 |
+| 28 | JT5g Schedule NEC / OI 2026 | M | JK8 | IRS drafts | drafts + 3 business days |
+| 29 | JT6 Finals re-pin + flip + 2027 pack | L–XL | JK8, JK11 | IRS finals, 2027 Rev. Proc. | the day check_finals fires |
+| 30 | JS7a TY2026 high-volume states | XL | JK9, JK10, JT6's f1040 re-pin | states' 2026 blanks | each blank's posting date |
+| 31 | JK19 Fallback pilot on 5 long-tail forms | M | JK18 | — | 2027-01-11 |
+| 32 | JK12 v0.2 release | S | JT6, first JS7a batch (fallback only if JK15 passed and the JK19 report exists) | the user pushes the tag | 2027-02-01 |
+| 33 | JK26 TY2025 knowledge migration to v2 | XL | JK21-JK24, KG8 ends | — | 2027-04-16 (not before) |
+
+### K-P0 — Land the sunk cost, then stop
+
+- [x] **JK0 — The recovery wave re-creates and integrates 23 packs from its replay logs — DONE 2026-10-15** (three relaunches across two spend-limit stops)
+  - All 23 landed, each through JS5's per-pack acceptance and an independent post-integration check: al24, al40nr23, az140nr23, az140py23, ca540_24, ca540nr_24, caschca540_24, caschca540nr_24, co24, de24, depitnon23, ia24, in24, ks24, md24, me24, mi24, mt24, mt25, ne24, ok24, vt24, wv24. None was dropped under KG1; the checks found only wording problems in ROADMAP bullets and banners (fixed as new commits).
+  - Outcome: TY2025 state forms for **42/42** jurisdictions; TY2024 for **41/42** (MA is the deliberate exception: its current bytes have no Wayback capture and mass.gov refuses scripts); JS6 adds AL 40NR, AZ 140NR, AZ 140PY and DE PIT-NON 2023, leaving the three CT forms (deferred).
+  - What the verifiers found beyond the packs: **P-027b** (filler: a NoView + Print pushbutton over half the visible page is a print lid — AL 40NR 2023's NOL-85A pages printed with the form body covered; 0 of 53,554 shipped widgets change verdict), the **MT Form 2 2025 line-10 zero floor** (a correct return with credits above the tax failed verify), and nine JS2c knowledge corrections (AL AZ CO DE IA MD MT VT WV). A relaunch bug (a chain whose verifiers all died counted as ready) was caught before it committed anything.
+- [x] **JK0a — ME 1040ME 2023 lines 21-23: bind by printed row (P-032) — DONE 2026-10-14** (585eb77) — the 2023 pack binds lines 21-23 by position like the 2024 and 2025 ports; P-032 is in the pitfall registry, CONVENTIONS.md gains the bind-by-printed-row rule, and test_me1040_lines_21_23.py pins the (key, widget) map offline and reads the printed number beside each widget on every year's blank.
+- **JS2c** (kept; its box is in Block 7). JK0's nine knowledge corrections landed 2026-10-15 (AL AZ CO DE IA MD MT VT WV, each re-checked against the cited booklet). Left: the MN 2025 line-11 caption (decision: no change, recorded). JK1 closes the box.
+- [ ] **JK1 — ROADMAP truth-up and the backfill freeze** (S; deps JK0 committed and the other workflow idle; latest start 2026-10-16)
+  - **Land the swap under the commit rule above:** the new ROADMAP, the "Phase J — completed tranches" block appended to docs/dev/HISTORY.md, and docs/dev/adr/ADR-0001-pointer-first.md, in one commit.
+  - Re-derive every "Where we are" count from disk (sync_doc_counts / sync_test_count, then by hand for the unanchored ones: "35 ops" vs 40 pinned at packages/mcp-server/tests/test_skills_sync.py:54; the federal "111 packs"), using what JK0 actually landed.
+  - Close the JS5, JS6, C2 and D2 boxes as "deferred (on demand, Phase K re-plan)", listing what is left. Move their DONE progress notes verbatim to HISTORY.md.
+  - Already annotated in place on 2026-10-09 and **kept as they are** (historical text stays verbatim; nothing is removed): the "TY2024 leftovers fold into JS7" text (JS5's discovery bullet, the old→new map row J3, Phase J acceptance, Phased sequencing item 4), JT5g's "on the check_finals watchlist" (a correction sub-bullet), the JT5a "latest start 2026-11-16", and "the overlay filler exists (branch `phase-j2-overlay`)".
+  - **Acceptance:** test_readme_sync green, with no open box lacking a J-style id. HISTORY.md holds no open box. Every [x] J-tranche id named in a ROADMAP "Done — moved verbatim" pointer line appears as a `- [x] **<id>` line in docs/dev/HISTORY.md. docs/dev/adr/ADR-0001-pointer-first.md exists and test_doc_links.py is green. Every row of the 2026-10-09 item ledger is placed in a tranche, deferred or dropped.
+
+### K-R — Release v0.1 (priority 1; RC ready 2026-10-23)
+
+- [x] **JK2 — Honest health signal before release — DONE 2026-10-15** (978fc2f) — the 2026-10-12 freshness run had two causes: the MN 2025 M1 booklet moved (its 14 citations re-pointed) and mass.gov plus its Wayback mirror refuse GitHub-hosted runners (the ten MA Form 1 network tests). `fetch._download` and `check_finals.head_status` now retry transient failures; freshness.yml caches the runner's blanks; the ten MA tests are quarantined until 2027-01-11, deleted after two green weekly runs. Acceptance pending only on the clock: the 2026-10-19 and 10-26 scheduled runs, then issue #3 closes.
+- [x] **JK3 — JF5a's MFS follow-ups: verify first, then fix — DONE 2026-10-15** (e92812c) — both were already fixed in dfe7dd8 (JF5a, 2026-09-27); at its parent the same demo profiles showed the defects (-1,583 vs -29; a 3,047 spouse-return gap). test_estimate_p018_mfs.py pins both; a 102-profile comparison changed no figure.
+- [x] **JK4 — Pin the CI runners and actions — DONE 2026-10-15** (c9e89ad) — ubuntu-24.04 in all eight jobs, actions/checkout and astral-sh/setup-uv pinned by commit SHA (setup-uv moved to the node24 v10.3.0), uv pinned to 0.13.0, and .github/dependabot.yml proposes the action bumps weekly.
+- **JA1 — DONE 2026-10-15** in three parts (f2a3ec4 surfaces + runbook + derived smoke; 0cc6675 the TY2025 demo-persona W-2 and walkthrough; fe600f2 release.yml with Trusted Publishing, the .mcpb uv runtime, CHANGELOG), each through an adversarial verify and re-verify; its box moved to HISTORY.md with the other completed Phase J tranches. The Phase K changes it carried out:
+  - JA1.2 drops `gen_manifest_tools.py` (scripts/sync_bundle_manifest.py and its test cover it).
+  - JA1.3 targets **TY2025**: a demo-persona W-2 (SSN 999-88-xxxx, SAMPLE watermark), and ACCEPTANCE.md / DEMO.md move off 2023.
+  - **Before any upload**, flip the pre-release wording in everything that ships inside a wheel or on its PyPI page, because both are immutable once v0.1.0 is uploaded: packages/mcp-server/README.md:9, :59 (the PyPI long_description, packages/mcp-server/pyproject.toml:7); packages/mcp-server/src/taxfill_mcp/__init__.py:20; packages/core/src/taxfill_core/__init__.py:5. Make the PyPI `description` count-free (packages/mcp-server/pyproject.toml:4 says "(23 tools)"; JA1.1/JA1.6 wanted count-free wording).
+  - The release text says three things: TY2025 is the filing-grade year until JT6 flips TY2026; the 2026 packs are provisional; a form with no pack is refused today, and later gets an unmapped draft (KG5).
+- [ ] **JK5 — Release-candidate dry run** (M; deps JK0, JK0a, JK1-JK4, JA1; latest start 2026-10-21)
+  - Cut from a pushed, CI-green commit after the JK0 wave stops committing.
+  - **Acceptance:** both wheels build. `uvx twine check dist/*` passes. The clean-venv smoke shows 23 tools and the derived pack counts. `mcpb validate` passes. An agent runs ACCEPTANCE.md end to end on the TY2025 demo persona (Form 1040 + one high-volume state). The A6 diff (JK7's file list) and the release notes are pre-drafted on a branch. `grep -rn -i "not on PyPI yet\|not yet published\|coming with v0.1\|IN DEVELOPMENT" packages` (PUBLISHING.md:146's grep, widened) is empty on the RC. This is a developer dry run, not the non-developer test.
+- [ ] **JK6 — Five journey goldens** (M; deps JA1.3; latest start 2026-11-02) (KG10)
+  - Scripted TY2025 runs through the MCP tools, demo personas only:
+    1. a W-2 employee in a big state;
+    2. an F-1 nonresident-alien student;
+    3. a part-year mover;
+    4. a city-tax filer (OH municipal / school district, MI city, NYC, PA local EIT);
+    5. an amended prior-year return.
+  - Each step records its path: **pack / fallback / pointer / refusal**. Journeys 3-5 assert the honest pointer or refusal today and are upgraded when JK16-JK18 land.
+  - **Acceptance:** all five run in CI e2e. ACCEPTANCE.md walks journey 1. They become the test that no fallback output says filing-grade.
+- **JA2** (kept; user-held, KG9). See the JA2 box in Block 6. The RC is ready 2026-10-23. Recommendation for the mcp<2 decision: ship v0.1 on the locked 1.x (uv.lock 1.28.0; latest 1.x 1.30.0, latest 2.x 2.3.0 on 2026-10-09) and plan 2.x afterwards. **JD2.3** (branch protection or a recorded real gate) is the user's, before the tag push or recorded as not adopted.
+- [ ] **JK7 — A6: flip the repo-only pre-release wording after the upload** (S; deps the JA2 upload; latest start the day after)
+  - Repo-only surfaces (the wheel- and PyPI-shipped ones flip in JA1, before the upload): README.md:5, :31-32; docs/USER_GUIDE.md:71, :182; docs/TOOLS.md:3 ("from source") and its `uv run taxfill` CLI note (:43-47; PUBLISHING.md:37 names it); .github/CONTRIBUTING.md:7-8, :141; the root pyproject.toml:4 comment; packages/mcp-server/bundle/README.md:56-59. Also embed docs/media/demo.gif (DEMO.md:6 says the README references it; it does not).
+  - **Acceptance:** `uvx taxfill-mcp` works in a clean venv. `taxfill.mcpb` is attached to the GitHub release. PUBLISHING.md:146's grep, run over packages/ as well, is empty.
+
+### K-T — TY2026 readiness (priority 2)
+
+- [ ] **JK8 — Watches as triggers** (M; deps JK2's retry, JK9 for the state rows; latest start 2026-11-23, live before the 12-15 daily cron) (KG4)
+  - Extend the finals cron from 02-15 (finals.yml:21) to **03-15**. The i1040gi precedent is 2026-02-25.
+  - Watch by name: the irs-dft f1040nrn/f1040nro drafts (JT5g's trigger, still dated 2025-05-13 on 2026-10-09); the 2027 inflation Rev. Proc.; the five non-draft 2026 packs (f1040es, f8316, f843, f8833, fw7).
+  - Add a state-blank watch for the JK9 tier-1 list (JS7a's trigger).
+  - **Acceptance:** a dry run lists every new target. A planted 200 opens the issue. The cron covers October to 03-15. A manual check is booked for 2027-03-15.
+- [ ] **JK9 — Tier-1 state triage table (replaces JS7's "re-triage every state")** (S–M; deps JK0; latest start 2026-11-16, so JK8's state rows are live by 11-23; external: IRS SOI state data)
+  - Rank income-tax states by individual-return count from a cited IRS SOI table (the user's criterion: high volume). Pick about 12. The plans proposed CA, NY, IL, PA, OH, MI, GA, NC, NJ, VA, MA; the table decides.
+  - **Recommendation for the user to accept or reject** (not part of the 2026-10-09 decision): weight the ranking toward where nonresident-alien students cluster. Without the user's yes, the ranking is volume only.
+  - Per state, record:
+    - the resident form;
+    - the NR/PY form;
+    - the amend route (a checkbox on the same form, or a separate X form such as IT-201-X or IL-1040-X);
+    - whether the 2025 pack maps the amended checkbox (MO's `amendedTXT` is unmapped, JEa).
+  - Pre-scaffold each state from its newest base (`--base newest`).
+  - **Acceptance:** the table is committed with its volume citation, and the scaffolds are staged.
+- [ ] **JK10 — Label-adjacency guard on the base pack and every port** (M; latest start 2026-11-30)
+  - The real failures are in the **base** pack, not in a widget that moved between years: the ME 1040ME 2023 widget names are rotated against their printed captions and the 2024 and 2025 blanks carry the same names on the same rows (measured by the ME 1040ME 2024 port's verifier, 2026-10-04); AL Form 40 2023's keys were one number high and the relations matched (docs/dev/ROADMAP.md:2391, P-031). A name or /Rect diff between years reports these as unchanged and carries the mis-bind forward; today's triage diffs names only (scripts/scaffold_state_year.py:170-177).
+  - Primary check: for every mapped widget, read the printed line number beside it and require it to equal the pack's line key. Generalise the existing per-form tests (packages/core/tests/test_al40_line_designators.py, P-031; the ME test from JK0a, P-032) into one gate. Run it on the base pack and on every port.
+  - Secondary signal: `scaffold_state_year.py --triage` also diffs each widget's /Rect against the prior-year blank (`extract_fields` reads rects, packages/core/src/taxfill_core/packbuild.py:67-94); a moved widget forces a re-map.
+  - **Acceptance:** two real base-pack rotations are caught: the ME 1040ME 2023 3-cycle (on 063f293's pack) and the AL 40 2023 one-high shift (on its pre-P-031 keys). It runs on every JS7a port and every on-demand port, and on the base pack each port starts from.
+- **JEe** (kept; latest start 2026-11-30, before the 2026 maps are made; deps JK0 so the sweep covers the integrated packs). The user decides the RI dependent-DOB rendering (KG9).
+- [ ] **JK11 — The user's JT6 decisions, ahead of the finals** (user; latest 2026-12-15) (KG9)
+  - (a) Early flip with disclosed absences (`filing_grade_absent_blocks`) or a full flip only. (b) Whether a negative entry prints "(60,000)" where Pub 519 asks for parentheses (JT4c's finding, HISTORY.md).
+  - **Acceptance:** both decisions are recorded in JT6.
+- **JT5g** (kept): triggered by JK8. If no IRS 2026 Schedule NEC/OI draft has posted by **2027-01-05**, both packs are built from the finals inside JT6.
+- **JT6** (kept; absorbs H5's Tax Table re-pin): deps JK8, JK11. Target: t-t4 on finals within 5 business days of the last required final.
+- [ ] **JS7a — TY2026 state sprint, high-volume states only (replaces JS7's scope)** (XL, per pack; deps JK9, JK10, and JT6's f1040 re-pin for the federal base lines rather than all of JT6; external: each state's 2026 blank, Dec 2026 – Feb 2027)
+  - **Per pack:** JS5's acceptance, the JK10 label-adjacency guard (on its base pack and the port), and the amended checkbox mapped where the state amends on the same form.
+  - NR/PY packs only where a lineage exists and the state is tier-1 (CA 540NR + Schedule CA (540NR), NY IT-203).
+  - Born v2 only if JK25 landed by 2026-12-01; otherwise v1. JS7a is never blocked on the knowledge layer.
+  - **Acceptance:** each tier-1 resident pack ships within ~10 business days of its blank. The triage table row is updated.
+- **JS7b** — every other state's TY2026 return: deferred (on demand, Phase K re-plan). Calc figures ship if the knowledge pack exists. The form goes through the fallback (JK13-JK18) as an unmapped draft and is never filing-grade. A pack is built on demand (the on-demand rule) or when volume justifies one. Exception: a state whose blanks come only from a pinned-only host cannot use the unpinned fallback fetch — today NM (fetch.py:88-95, refused at :335-340) — so it gets a refusal with a pointer, or a user-supplied local blank (JK14).
+- [ ] **JK12 — v0.2 for the TY2026 season** (S; deps JT6, the first JS7a batch, and JK13-JK18 if ready; latest start 2027-02-01; external: the user pushes the tag)
+  - The fallback's PDF fill ships in v0.2 only if JK15 passed and the JK19 pilot report exists; otherwise v0.2 ships inspect + worksheet only, or no fallback.
+  - **Acceptance:** tag, PyPI and `.mcpb` are published. The CHANGELOG lists which forms are filing-grade and the fallback's LIMITS. The release notes say which tax year is filing-grade.
+
+### K-F — No-pack fallback fill path (priority 3)
+
+Every building block exists as a core or CLI authoring tool (fetch with sha256=None, extract_fields, sentinel_sweep, locate_labels, clipping_scan, widget_flag_problems). Rendering already runs at use time: `render_form(pdf_path)` is a shipped MCP tool that renders any PDF with no pack (packages/mcp-server/src/taxfill_mcp/server.py:410-424), so it serves the vision check as is. The others do not: every fill, verify and fetch tool starts from `_load_any_pack` (server.py:181-195). Prior art for label anchoring: packages/core/tests/test_al40_line_designators.py (P-031) reads the printed number beside every numbered page-1 widget, and JK0a's ME test does the same for P-032. The only no-pack guidance today is the skill's "fall back to `get_sources` + the official blank" (skills/claude/SKILL.md:180-182, :291-292).
+
+- [ ] **JK13 — Surface and guardrail ADR** (S; **no deps**: it must not wait on the user-held release; latest start 2026-11-02)
+  - Decide the MCP surface. Recommendation: ride the existing tools, `fetch_blank` / `fill_form` / `verify_form` / `get_form_map` with `form="unmapped"` + `source_url`, keeping **23 tools**. The overlay precedent is server.py:181-195 / test_overlay_tools.py:54. The cost is that pack and unmapped results share a schema, so `grade: "unmapped_draft"` must appear in **every** response, not only the summary.
+  - The alternative is a 24th tool, which edits every hard-coded "23": ci.yml:115, test_cli.py:69/:78, test_server_e2e.py:19/:397, bundle/manifest.json, test_overlay_tools.py:54, docs/dev/PUBLISHING.md:89 and :135, docs/TOOLS.md:3, and packages/mcp-server/pyproject.toml:4 (the PyPI description; immutable once uploaded, which is why JA1 makes it count-free).
+  - Riding the existing tools changes their input schema and response shape; KG8 allows it only as additive, opt-in, unmapped-only parameters and fields with the pack path byte-identical (JK21).
+  - Write down the refusal rules: XFA-only or scanned pages; page-1 year or title not matching the request; a non-official host; ReadOnly or pushbutton targets.
+  - **Acceptance:** ADR-0002 is committed under docs/dev/adr/ (ADR-0001 records this re-plan), and KG5-KG7 and KG11 are written into it.
+- [ ] **JK14 — Introspect + pack-less fetch** (M; deps JK13; latest start 2026-11-09)
+  - `extract_fields` reads /TU, the /Ff bits (ReadOnly, multiline, comb, pushbutton), /Ch + /Opt, the /DA size and /Q. Today every non-/Btn field is typed "text" (packbuild.py:88).
+  - It also reads each widget's /AA actions: a /C (calculate) or /F (format) action marks the field as calculated, ReadOnly or not (KG7).
+  - Fetch: official host only; sha256 recorded, not pinned; the page-1 printed year and title are read and checked; XFA-only and scanned blanks are detected and refused.
+  - Today's fetch rules stand and are stated, not bypassed: a PINNED_ONLY host is refused without a pinned sha256 (fetch.py:88-95, :335-340; today NM's document API), and a Wayback mirror is used only digest-verified (fetch.py:224-225), so a host that answers 403 (mass.gov) cannot be served unpinned. For those the fallback returns a refusal with a pointer, or accepts a **user-supplied local blank** whose page-1 year/title check stands in for the pin.
+  - Cache: with sha256=None today's fetch returns any cached file for the URL without re-downloading (fetch.py:352-354), and several state URLs are rotating "current" slots (IL-1040, OK 511; docs/dev/ROADMAP.md:2378, :2388). A pack-less fetch therefore force-refreshes (or records a digest per (url, fetched_at)), and the page-1 year/title check runs on a cached copy as well as on a fresh download.
+  - **Acceptance:** unit tests per field type, checked against the 2025 pack blanks, including /AA detection on a 2025 pack blank with calculated totals. A wrong-year blank is refused, including a wrong-year blank already in the cache. A PINNED_ONLY host and a 403 host without a digest are refused with a pointer.
+- [ ] **JK15 — Anchor + blind benchmark** (L; deps JK14; latest start 2026-11-16) (KG6)
+  - Dump every text run with its box. Pair each widget with its nearest printed label (left or above, same row) plus the line-number token. Cross-check with /TU. Emit a per-field anchor confidence: high, med, low or none.
+  - Run blind on **≥30 shipped packs**, federal and state, and compare each with the pack's line map. The ME 1040ME 2023 3-cycle (063f293's pack) and the AL 40 2023 one-high shift are mandatory cases and must be flagged; every disagreement with a pack is adjudicated by a vision check before the pack counts as ground truth.
+  - **Acceptance:** the accuracy table is committed, with per-field precision **and** a per-form "any mis-anchored field" rate. "high" is emitted only where measured per-field precision is ≥99%, and the response wording is "anchored (unverified line map)". If precision is lower, JK16 is skipped and the fallback ships inspect + worksheet only.
+- [ ] **JK16 — Pack-less fill** (L; deps JK14, JK15; latest start 2026-11-23)
+  - Keyed by qualified field name. It refuses ReadOnly, pushbutton, viewer-guard and calculated (/AA) widgets and returns them as "hand-write these" (KG7). It refuses any value whose target widget is anchored `none`, and `low` unless the user confirmed that field on the rendered page (KG11). It enforces /MaxLen and the comb bit. Whole-dollar rendering applies only to fields the caller marks as money.
+  - Every page gets the stamp "UNMAPPED DRAFT — NOT FILING-GRADE", **drawn into the page content stream** (flattened), not an annotation. The rehearsal stamp it was to reuse (packages/core/src/taxfill_core/filler.py:785-793) is a pypdf FreeText annotation with no /F Print flag (filler.py sets F_PRINT only on written widgets, :525-528), so it does not print and can be deleted in a viewer; check and fix the rehearsal stamp the same way. A values worksheet comes with it.
+  - The response carries `status: "unverified_draft"` and an explicit next step (verify_form, then render_form on every page) until JK17's verify has run on that output.
+  - **Acceptance:** e2e on 3 demo forms. The stamp cannot be turned off. The print path is rasterised and the stamp is OCR-read on every page. A planted unanchorable widget and a calculated-total widget are refused and listed as "hand-write these".
+- [ ] **JK17 — Pack-less verify + grade label** (M; deps JK16; latest start 2026-11-30) (KG5)
+  - Checks: a round trip of exactly the written names; regression_diff against the fetched blank (nothing else changed); clipping_scan; widget_flag_problems (P-027); optional agent-declared relations, keyed on the agent's own anchors and labeled so.
+  - Returns an explicit LIMITS list on the OVERLAY_VERDICT_LIMITS model (packages/core/src/taxfill_core/overlay.py:219-230): no line map, no relations of record, no identity or cross_form checks, no P-003, and no revision pin.
+  - The `unmapped_draft` grade is unconditional, including for jurisdictions with no knowledge pack.
+  - Verify fails when any page lacks the content-stream stamp. A pass returns a `verified_at` token bound to the output file's sha256; any later change to the file voids it.
+  - **Acceptance:** no code path returns filing-grade for an unmapped form. `ok: true` never implies filing-grade. A stamp-stripped page fails verify.
+- [ ] **JK18 — Fallback skill text + evals** (S–M; deps JK17, JK6; latest start 2026-12-07)
+  - Replace the no-pack guidance in all three synced skill files (packages/mcp-server/tests/test_skills_sync.py:31-35): skills/claude/SKILL.md:180-182 and :291-292, skills/codex/AGENTS.md:136 ("cannot be filled"), and skills/copilot/instructions.md:96. The agent says up front that no pack exists, renders and vision-checks every page, keeps the draft label, and labels any line it computed itself.
+  - **Acceptance:** the skill sync tests are green for all three files. Evals pass, including the refusal when a user asks "is this ready to file?", and an assertion that the agent never says "done" or "complete" before verify_form has run on that output's sha256. Journey goldens 3-5 are upgraded from refusal to a labeled draft.
+- [ ] **JK19 — Pilot 5 long-tail forms** (M; deps JK18; latest start 2027-01-11)
+  - Candidates: a city return, a rare federal schedule, a CT nonresident form, one TY2023 state form, and one non-tier-1 TY2025 state form from an official host. MA Form 1 2024 is the **refusal case**: mass.gov answers 403 and a mirror is served only digest-verified (fetch.py:224-225), so the pilot checks that the fallback refuses it with a pointer (or takes a user-supplied blank). Publish per-form results.
+  - **Acceptance:** a pilot report exists. No form is promoted to filing-grade without a real pack. Any change to the stamp or label policy needs the pilot data and a user decision.
+
+### K-K — Slim the knowledge layer (priority 4)
+
+What the code reads: calc applies roughly 4% of state bytes and ~11% of federal leaf bytes. About 1.2 MB of state prose is read by nothing at runtime. All 25 JS2c mismatches sat in narrative, pointer labels or non-applied figures (2026-10-09 survey of main @ 063f293). Before 12-01 only **zero-output** work happens. The schema migration of TY2025 waits until after 2027-04-15 (KG8).
+
+- [ ] **JK21 — Golden-diff harness** (M; latest start 2026-11-05)
+  - Snapshot the output of every MCP tool that reads state knowledge (state_tax via calc.py, state_scope via statescope.py, file_and_pay, filing_summary, and get_sources through sources_states.yaml, sources.py:107-112) over every jurisdiction and year. The residency tool is not included: it calls `_classify` only (server.py:1041-1078) and residency.py reads no state knowledge.
+  - Add the missing TY2025 pins now: the OH $342.00 / $2,394.32 discontinuity (knowledge/states/oh/2025.yaml:293-303; no test pins "342.00" today), AZ Line 49 and the IL IL-E/EIC caveats for 2025. The existing pins test TY2023 only (packages/core/tests/test_state_knowledge.py:411-414 asserts OH 2023's "360.69"; :298 is AZ 2023; :319-324 is IL 2023).
+  - **Acceptance:** the harness runs in CI. It is the gate for JK20, JK22, JK24 and JK26.
+- [ ] **JK20 — Hoist citations into a `sources` table** (M; deps JK0, JS2c, JK21; latest start 2026-11-09, after JK21's 11-05)
+  - scripts/assemble_state_sources.py:37-50 reads `sources` ids, so a citation outlives the block that carried it. Regenerate sources_states.yaml.
+  - **Acceptance:** the test_sources.py:330 byte-equality holds. get_sources' state coverage does not shrink. The JK21 diff is otherwise byte-identical.
+- [ ] **JK22 — Drop never-read blocks from the TY2025 state packs** (M; deps JK20, JK21; latest start 2026-11-16, **must land by 2026-11-30**, else it resumes 2027-04-16)
+  - Drop: residency, filing_requirement, starts_from, credit amounts/limits, and the TY2025 YAML header comments (~107 KB: 106,611 bytes of `^#` lines in knowledge/states/*/2025.yaml; 214 KB is the TY2023-2025 total; their provenance moves to git history). Only what the JK21 diff proves unread. Credit eligibility prose is read by state_scope (statescope.py:201-203), so it waits for JK26.
+  - **Acceptance:** the JK21 diff is byte-identical, apart from get_sources, which must not shrink. The suite is green.
+- [ ] **JK23 — Quote-verbatim checker** (M; latest start 2026-11-30)
+  - Check quoted spans against cached source text keyed by url + sha256 (the check_drift.py pattern). Run it in **report mode** over the quotes in tax.notes and form_lines. Mismatches go to JS2c.
+  - **Acceptance:** CI runs it in report mode, and a seeded paraphrase is reported.
+- [ ] **JK24 — Schema v2 models + dual-version loader** (M; deps JK20, JK21; latest start 2026-11-24; if not merged by 2026-11-30 it slips to 2027-04-16, KG8)
+  - Quote/SourceRef models, generalising FormLineEntry (packages/core/src/taxfill_core/knowledge.py:2094). StateKnowledge v2 (typed sources, base_line, caveats, treaty, pointer-only credits, law_changes with quotes, logistics, gaps; a ~400-char quote cap). TY2023/2024 are frozen as v1; the single-version loader at knowledge.py:3143-3190 (`load_state_knowledge`) becomes dual-version. No dual loader exists today.
+  - **Acceptance:** both shapes load, and the JK21 diff is byte-identical. No consumer changes.
+- [ ] **JK25 — The 2026 state scaffold emits v2** (S; deps JK24, JK23; lands **by 2026-12-01 or is skipped for TY2026**)
+  - **Acceptance:** a v2 scaffold validates and passes JK23. If it is late, JS7a ships v1 and migrates with JK26.
+- [ ] **JK26 — Migrate TY2025 to v2** (XL; deps JK21-JK24 and the end of KG8; **starts no earlier than 2027-04-16**; done before TY2027 state work, ~2027-10)
+  - Triage the 486 TY2025 tax.notes into base_line, typed caveats or dropped diaries, with a two-verifier wave and a per-state diff the user can review. tax.notes is "Cited disclosures/quirks the calc op must surface" (knowledge.py:2978-2981) and state_tax prints every one (calc.py:11037), so the user's "keep every figure a calc op reads" includes the disclosures the op must surface: every note naming a not-modeled add-on, surcharge, recapture or form-computed amount survives as a typed caveat that state_tax still prints. The OH $342.00 discontinuity, AZ Line 49 and the IL IL-E/EIC caveats must survive, guarded by the TY2025 pins JK21 adds (the existing pins, test_state_knowledge.py:411-414, :298, :319-324, are TY2023).
+  - Rewrite the consumers: calc.py:11021-11040, statescope.py:196-254, file_and_pay.py:938-966, filing_summary.py:270-280. Rewrite the narrative-pinning tests (test_state_knowledge.py:96-131, :219, :298, :324, :397, :414, :431; test_statescope.py:108-220; the test_state_law_change_sweep.py:36 count). JK23 becomes enforcing.
+  - **Acceptance:** the state_tax golden is defined as the tax figure plus the set of calc-surfaced caveats, and every one is unchanged (the work string's wording may change). state_scope still names each credit with its line and link. The registry loses no URL.
+
+### Deferred (on demand, Phase K re-plan)
+
+**On-demand rule.** A deferred pack (any TY2024-or-earlier state form, any JS6/C2 NR/PY form outside tier 1, any JS7b state) is opened only on an explicit request from the user or a filed GitHub issue naming the form and the tax year. Amendment eligibility alone is never a request. The request gets its own JK-style tranche id in this file. The pack must pass JS5's per-pack acceptance, the JK10 label-adjacency guard and KG1 before it ships. Until it lands, the fallback serves the form as a labeled draft (or refuses it, per JK14's host rules).
+
+- **JS5 remainder:** MA Form 1 2024 (no Wayback capture of the current bytes; the fallback refuses it too, JK19); any JK0 pack dropped under KG1 or missing the 2026-10-23 cut-off; the remaining ~20 old-year re-maps and ~26 URL-discovery tasks. The fallback (JK13-JK18) covers them, where JK14's host rules allow, until a user asks for a pack.
+- **JS6 remainder:** the three CT nonresident / part-year forms (overlay or hand-fill), any JS6 row JK0 drops, and the part-year allocation golden (it ships with the first on-demand NR/PY pack).
+- **C2:** folded into the JS6 deferral. Tier-1 NR/PY forms with a lineage are in JS7a.
+- **D2:** closed after JK0; any further old year is on demand.
+- **JS7b:** non-tier-1 TY2026 states.
+- **A part-year income allocation calc op** (no such op is found in calc.py). Until it exists, the fallback labels allocation lines as agent-computed.
+- **Local-collector pointer table and NYC rate-schedule op:** proposed by the user-journey plan and not adopted, because the user asked to slim the knowledge layer and not grow it. Journey 4 relies on the fallback plus get_sources.
+- **mcp 2.x migration:** follows the user's JA2 decision. Do it after v0.1 and before v0.2 if the 1.x line stops getting fixes.
+- **Federal knowledge trim** (comments, filing_thresholds prose, effective_law_changes prose, tax.salt_cap): federal is already ~93% read.
+- **Not scheduled** (priority 5): unchanged; see the end of Phase J.
+
+### Dropped
+
+- Folding the TY2024 leftovers into JS7 (old→new map row J3; JS5's discovery bullet; Phased sequencing item 4). Replaced by the backfill freeze.
+- JS5's "resume discovery for the 20 never-started states plus OK, MA and NE": its old-year purpose is gone.
+- JA1.2's `scripts/gen_manifest_tools.py`: moot, because scripts/sync_bundle_manifest.py and its test exist (bundle/README.md:18-20).
+- JA1's stale sub-claims ("asserts 22 tools (:83)", "the runtime has 32 ops", "2.2.0 is the latest"): PUBLISHING.md:89 is `== 23`, the op count is 40, and upstream is 2.3.0 / 1.30.0.
+- JS7's "re-triage every state": replaced by JK9 + JS7a + the fallback.
+
+**Acceptance (phase):**
+- v0.1 is installable from PyPI and as a `.mcpb`. A non-developer passes ACCEPTANCE on TY2025.
+- TY2026 federal forms are filing-grade within 5 business days of the last required final. Every tier-1 state ships within ~10 business days of its blank.
+- An unmapped form fills only as a stamped (content-stream), labeled draft, refuses unanchorable fields, and has a measured anchor precision behind every "anchored".
+- Between 2026-12-01 and 2027-04-15 no pack-path or knowledge-consumer output shape changes (KG8; additive unmapped-only fields excepted). After JK26, state narrative is quotes that a checker holds to the source.
+- No open box in this file lacks a J-style id. Every item in the 2026-10-09 ledger has a home.
+
+---
 
 ## Phase A — Ship v0.1 (Effort: S–M, ~1–2 weeks; the real gate)
 
@@ -159,18 +445,25 @@ The completed phases — 0, E, F, G and I — moved VERBATIM to [`docs/HISTORY.m
       install exposed it). **Follow-up before/at publish:** decide whether v0.1
       ships on 1.x (cap stays) or migrates to the standalone `fastmcp` package /
       mcp 2.x low-level server API; either way re-run the packaging smoke test.
+      **Phase K (2026-10-09):** JA1 → JK5 (release-candidate dry run, RC 2026-10-23) → JA2 (the user) →
+      JK7 (A6). Recommendation for the mcp<2 decision: ship v0.1 on the locked 1.x (uv.lock 1.28.0).
 - [ ] **A2 — Tag the release.** → Phase J **JA1** (agent half) / **JA2** (user half). `git tag v0.1.0` + GitHub release notes.
+      **Phase K (2026-10-09):** JK5 → JA2 → JK7.
 - [~] **A3 — Build the `.mcpb` one-click bundle.** → Phase J **JA1** (agent half) / **JA2** (user half). **Manifest finalized (2026-06-28):**
       dropped the `$schema_note` draft marker, added `server.entry_point`, removed the
       now-unschema'd `permissions` block — `mcpb validate` **PASSES**. Only `mcpb pack`
       → `taxfill.mcpb` remains, and it is **publish-gated** (the bundle launches
       `uvx taxfill-mcp`, which only resolves after A1). Primary path for non-technical
       Claude Desktop users.
+      **Phase K (2026-10-09):** JK5 → JA2 → JK7.
 - [ ] **A4 — Record the 60-second demo GIF** → Phase J **JA1** (agent half) / **JA2** (user half). per `docs/dev/DEMO.md` (storyboard +
       6 beats already written) → `docs/media/demo.gif`; embed in README.
+      **Phase K (2026-10-09):** JK5 → JA2 → JK7.
 - [ ] **A5 — Run the 20-minute non-developer acceptance test** → Phase J **JA1** (agent half) / **JA2** (user half). (`docs/dev/ACCEPTANCE.md`)
       on a clean machine; fix whatever blocks a non-technical user.
+      **Phase K (2026-10-09):** JK5 → JA2 → JK7.
 - [ ] **A6 — Flip README** → Phase J **JA1** (agent half) / **JA2** (user half). "not yet on PyPI / bundle coming" language to shipped.
+      **Phase K (2026-10-09):** JA1 flips the PyPI-shipped READMEs before the upload; JK7 flips the repo-only surfaces after it.
 
 **Acceptance:** `uvx taxfill-mcp` and the one-click `.mcpb` both work; a
 non-developer reaches a filled sample form in <20 min following only the README.
@@ -223,9 +516,13 @@ files.tax.utah.gov year path; CT/SC/NM/HI as hand-fill manifests):
 
 Only **CA** (540NR + Schedule CA 540NR) and **NY** (IT-203) have them today.
 
+*(Phase K note 2026-10-09: stale since 2026-10-02 — CO DR 0104PN 2023 and AR1000NR 2023 ship too, and the Phase K JK0 recovery wave is re-creating AL 40NR, AZ 140NR, AZ 140PY and DE PIT-NON 2023.)*
+
 - [ ] Add the separate nonresident/part-year return for each state that has one
       (IL Schedule NR, OH IT NRC, PA part-year, etc.) + the adjustment schedule.
       → Phase J **JS6** (9 discovery rows with url+sha256 recovered from the 2026-09-11 run).
+      → **deferred (on demand, Phase K re-plan)** once Phase K JK0 lands; JK1 closes this box. Long-tail
+      NR/PY forms use the no-pack fallback (JK13–JK18); tier-1 NR/PY forms with a pack lineage are in JS7a.
 
 ### C3 — Hard states (need engine work, not just packs)
 
@@ -404,6 +701,9 @@ pipeline (the `taxfill introspect` CLI seeds the field map).
       equality-tested, hand overrides in `sources.yaml` win) — all **42** income-tax
       jurisdictions now resolve `get_sources(topic, year, 'states/xx')` with
       state-shaped retrieval hints, unblocking state TY2026 planning packs.
+      **Phase K (2026-10-09):** the TY2024 (and MT 2025) packs the recovery wave re-creates land in **JK0**;
+      every other old-year re-map / URL-discovery row is **deferred (on demand, Phase K re-plan)**, and
+      JK1 closes this box.
 - [x] Community pack-contribution pipeline — **DONE 2026-08-10**:
       [`docs/dev/CONTRIBUTING-PACKS.md`](CONTRIBUTING-PACKS.md) documents the full
       author→audit→PR flow (fetch+digest, `taxfill introspect`, vision field-map,
@@ -544,6 +844,7 @@ backed by cited `calc` data. **Deps:** none for D1 (CLI ready); D2 builds on D1.
       (correct, but it makes mid-year planning impossible). Note the packs land
       **before** the year's forms exist, so the pack must be usable for math with
       no form pack present.*)
+      **Phase K:** the 2026 Tax Table final re-pin is part of JT6 (K-T lane).
 - [x] **H6 — Schedule 1-A calc op — DONE 2026-08-09** (N-6; the calc op is
       `schedule_1a_deductions`, the 18th op). The item turned out HALF-BUILT:
       the `tax.obbba_schedule_1a` knowledge block (two-pass verified, with the
@@ -716,6 +1017,11 @@ line items sum to the headline delta.
 >
 > On 2026-09-23 six read-only reviews re-checked every claim on a clean checkout of `a233031` and against primary .gov text. The lenses were engine defects, the recharacterization design, the decision surface, the Phase J salvage, TY2026 readiness, and docs/release/process. A critic pass then re-verified the plan itself. Bracketed ids such as `[DEF-01]` are the 2026-09-23 review's gap ids, and each item carries its evidence pointer inline. Figures in acceptance tests are *illustrative* (demo numbers).
 
+> **2026-10-09:** Phase K replaces ordering rules 3–4 and the "Phased sequencing" section for every open
+> item; rule 5 (the tranche contract) still applies. The completed tranches below moved verbatim to
+> [HISTORY.md](HISTORY.md) in the same commit that lands this ROADMAP (Phase K JK1); each block keeps its open
+> tranches and a pointer line.
+
 **Ordering rules (in force until this phase closes):**
 1. **J0 first.** The dirty tree blocks every commit.
 2. **By user harm.** Filing-wrong defects come first, then silent omissions. After those come the retirement block and workaround-needed decision ops. Absences that announce themselves come last.
@@ -753,7 +1059,7 @@ line items sum to the headline delta.
 | J1(a) verify scans mapped ReadOnly widgets | J0 commit A, **with** the regression fix it needs (J0.3) |
 | J1(b) N-8 §871(i)(2)(A) deposit-interest exclusion | J0 commit B plus its missing tests; the dual-status corner goes to JF5b.3 |
 | J2 overlay filler (CT/HI/NM/SC) | merged onto main by JS4a (2026-09-28, verifier fixed); the per-state packs ship as JS4c–d |
-| J3 state 2024/2025 remainder (73 pack-years, not ~66) | JS3a/b (scaffold + cheap ports incl. UT 2025) + JS5 (re-maps / URL-dead); TY2024 leftovers fold into JS7 |
+| J3 state 2024/2025 remainder (73 pack-years, not ~66) | JS3a/b (scaffold + cheap ports incl. UT 2025) + JS5 (re-maps / URL-dead); TY2024 leftovers fold into JS7 (dropped 2026-10-09: Phase K stops old-year backfill) |
 | J4 C2 nonresident / part-year | JS6 |
 | J5 effective_law_changes sweep | JS2, re-scoped from 84 to 30 packs (15 adjudications) |
 | J6 docs truth-up + push | J0.6 (header, this section, N-8/H5 status) + JD1 + JD2 |
@@ -807,1008 +1113,25 @@ line items sum to the headline delta.
 
 ### Block 0 — Salvage
 
-- [x] **J0 — Salvage and close the 2026-09-11 working tree — DONE 2026-09-24** (commits 7376aa3 A, 2912644 B, 7863049 C, and the docs commit; branch `phase-j2-overlay` parks J2; `wip/phase-j-partial` keeps the untouched snapshot) (M; deps: none; external: none)
-  - **Why.** Main carries 15 files that no verifier ever checked, and two tests fail:
-    - `test_estimate::test_fix2_…` pins a sentence N-8 removed on purpose (the test is wrong, the code is right);
-    - `test_pitfall_coverage`: P-013 has no regression test.
-    
-    J1(a) as written is a regression, and J2's verifier false-passes. No file needs rewriting.
-  - **J0.1 Snapshot** [G21, PJ-14].
-    - Commit the whole tree as one commit on `wip/phase-j-partial`, then switch `main` back to `a233031`.
-    - Where a file belongs to one deliverable, check it out whole from the snapshot.
-    - `handfill.py` is the one mixed file: it holds the FBAR checkbox fix and J2's `worksheet_money_values`. Hand-apply it; there is no interactive staging here.
-    - Apply the P-013 edit to `pitfalls.yaml` after commit A's P-007 edit.
-    - Put the J2 files and hunks on `phase-j2-overlay`: overlay.py, schemas/handfill.py, the filler.py dispatch, `taxfill locate` in cli.py, server.py `_load_any_pack` routing, and handfill.py `worksheet_money_values`.
-  - **J0.2 Housekeeping** [G24].
-    - The `.venv` shebangs still point at the pre-move `~/Desktop` path, so `.venv/bin/pytest` fails with "bad interpreter". Local Python is 3.12.5; CI pins 3.11.
-    - Run `rm -rf .venv && uv sync --python 3.11`, add `.python-version` = 3.11, and clear the stale `__pycache__`.
-  - **J0.3 Commit A — verify scans mapped ReadOnly widgets (old J1a), plus the regression it introduced** [PJ-02; the export half of PJ-13].
-    - AL-40 2023 maps DOR instruction banners (`Instructions`, `Instructions1`–`11`, `NonDriver`; al40/pack.yaml:62), and so do MO-1040 2023/2024 (`Texto7`–`9`, `MOAText`, `lblNRI`; mo1040 2023 pack.yaml:1651). A real one-line fill therefore now FAILs P-001 12 / 5 / 5 times, where HEAD gives ok=True.
-    - The 826 round-trip tests miss it because their sentinel values overwrite the banners.
-    - Fix the verifier: it scans a mapped ReadOnly widget only when this fill could have written it (its line is in `expected` / the merged values), or when its /V differs from the pinned blank's.
-    - Fix the packs: unmap the banners, and re-pin `STATE_COMPUTED_READONLY` 580→568, 262→256 and 260→254 (the MO counts also drop MO-1040's empty `Text1` checkbox frame, which the widened scan FAILed on), each with its reason (test_readonly_widget_mapping.py:386-416).
-    - Keep the GA 500 / WV IT-140 maxlen hints, export `bound_widget_names`, and mark P-007(b) closed.
-  - **J0.4 Commit B — N-8 (old J1b) plus its tests** [PJ-03].
-    - The code is correct against IRC 871(i)(1)-(3), Pub 519 ch. 3 and ch. 1, and the 2025 i1040NR line 2b Exceptions 1 and 3.
-    - Rewrite test_estimate.py:1071 to assert the 871(i)(2)(A) disclosure and the absence of "OVERTAX".
-    - Add the tests P-013 itself names:
-      - test_estimate: the `deposit_interest_exclusion` slot; partial characterization; a resident control; uncharacterized interest taxed with a note; a confirmed-MFJ election taxed; the validator (`bank_deposit_interest > interest` raises); combined_with_spouse sums it;
-      - test_intake: 4 tests;
-      - test_sources: 3 routing tests plus the bank-bonus neighbour guard.
-    - The 1099-INT status note (extract.py:134-140) names `IncomeSnapshot.bank_deposit_interest`.
-    - Flip N-8 to DONE in H4/H6 and in FIELD_NOTES [G03].
-  - **J0.5 Commit C — hand_fill_worksheet ticks "X" for "no"** [PJ-05]. At HEAD, any non-empty value ticks the box, including the **federal** FinCEN 114 (8 checkbox lines × 3 years) and the CT/NM/HI/SC packs. Ship the `_checkbox_checked` and `-0` rendering hunk with its tests.
-  - **J0.6 Docs commit.**
-    - This section, plus the header / "Where we are" truth-up and H5's guard marked shipped [G01, G02, G04, part of PJ-12].
-    - An `unverified` entry in knowledge/states/dc/2025.yaml: "the cited 2025 D-40 booklet URL has returned 404 since 2026-08-24; DC OTR re-issued it as 2025_D40_Book_082026_v1.pdf; figures not re-verified → JS1a". No tool reads that list (grep: no consumer in taxfill_core), so the same line also goes into ROADMAP.
-  - **Acceptance.**
-    - `main` is clean and both branches exist.
-    - `uv run python -m pytest -m "not network"` exits 0 from the rebuilt venv, with no "bad interpreter".
-    - `sum(STATE_COMPUTED_READONLY) == 1,390` across 11 packs.
-    - New repo-wide sweep: for every pack with a cached blank, a minimal one-text-line fill verifies with **zero** ReadOnly clipping FAILs.
-    - test_handfill:
-      - 'no' / False / '0' / 'off' leave the box blank; 'yes' / True / 1 / 'x' tick it;
-      - 'maybe' raises, naming the line with the value redacted;
-      - a computed '-0' renders '0';
-      - an FBAR no-answer leaves its box blank.
-    - sync_test_count is clean; CI is green; pushed.
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* J0.
 
 ### Block 1 — Federal filing-wrong and silent defects
 
-- [x] **JF6a — Form-line registry, helper and guard — DONE 2026-09-24** (S–M; deps J0) — pitfall *form-line-drift* (P-015)
-  - **Why.** Form line numbers are typed as literals: about 100 in calc.py alone, plus the estimate / intake / server / profile / workspace sites. They are already wrong for TY2025, for 2019/2020, and for 2026 per the posted drafts. The next tranches would add more (Schedule 1 line 8z, 1040 line 25c, 8959 Part V, Schedule SE line 8a), so the registry comes first. This is the knowledge-gap pattern: the figure ships, the year's form metadata does not. [DEF-05 + LD-17 + TY26-19]
-  - **Build.**
-    - A TOP-LEVEL `form_lines` block in knowledge/federal/{2019..2026}.yaml, registered in the sources-coverage mapping and typed in knowledge.py. Each entry carries `line_source: final | draft Created <date>` and the face URL.
-    - Helper `form_line(pack, key)`: a key missing for a year raises; a draft entry renders with "(2026 DRAFT form — re-verify at final)".
-    - Design choice, recorded: the numbers live in the knowledge pack, not a Python module. They are per-year published facts that need sources and the draft/second-pass discipline, and JT6 then lists the draft entries to re-verify.
-    - This tranche reads each year's face only for the keys JF1a/JF3/JF4 need:
-      - `sched1.other_income`: '8' for 2019/2020, '8z' from 2021. Faces read 2026-09-23: 2019/2020 print only "8 Other income. List type and amount"; 2021 first prints "8z … 9 Total other income. Add lines 8a through 8z".
-      - `f1040nr.treaty_exempt`
-      - `f8959.withholding_part`
-      - the 1040 line that takes the Form 8959 Part V amount (25c on the 2026 draft)
-      - `sched_se.ss_wages`
-    - JF6b/JF6c add the rest, each reading the faces for the keys it adds.
-  - **Guard.** A static test scans the calc.py / estimate.py / intake.py / server.py f-strings for `(Schedule [123]|Form 1040(-NR)?|8959|8889|Schedule 1-A)[^\n]{0,15}line \d` outside `form_line`. Today's literals are listed in a frozen debt list that JF6b/JF6c shrink to zero; an entry that no longer matches fails the test (self-clearing, like the P-007 tables).
-  - **Acceptance.**
-    - `form_line(2020, 'sched1.other_income') == '8'`; 2021 → '8z'; an unknown year raises; a 2026 draft entry carries the DRAFT suffix.
-    - A new literal added anywhere fails the guard.
-    - The pitfall has a citing test.
-
-- [x] **JF1a — Wrong words on the resident, retirement and payroll paths — DONE 2026-09-25** (S–M; deps JF6a) — pitfalls *treaty-destination* (P-016), *flat-rate-precondition* (P-017). As built, the paper-refund note (item 5) covers every tax year, not only TY2025+: FS-2026-02 Topic A Q1 keys the phase-out on when the refund is ISSUED (after Sept. 30, 2025), and a 1040-NR refund also quotes Topic D Q1 for filers abroad.
-  1. **Treaty reporting line** [DEF-04].
-     - The treaty text always sends the filer to Schedule OI item L / Form 1040-NR line 1k (estimate.py:1856, :151-153; calc.py:47, :8449; server.py:355, :834).
-     - Pub 519 (2025) ch. 9 says a resident alien enters it "in parentheses, on Schedule 1 (Form 1040), line 8z", with "Exempt income", the country and the article. Pub 519 (2020) says "in parentheses on line 8, Schedule 1 (Form 1040)" (read 2026-09-23). Form 8833 exception 2 covers students and trainees.
-     - Branch on the classification:
-       - resident → `form_line(year, 'sched1.other_income')`;
-       - nonresident → the Schedule OI / `f1040nr.treaty_exempt` text;
-       - dual-status candidate or unknown → both, framed conditionally.
-     - `treaty_benefit` gains `resident_alien`.
-  2. **Box 2a is gross for a traditional IRA** [RC-06]. `retirement_income_taxable` is documented as "1099-R box 2a" (estimate.py:140-141; server.py:831-832). For a traditional-IRA distribution or conversion, box 2a is the GROSS amount with 2b checked (i1099r 2026), so a filer with basis has AGI overstated by that basis. Re-document the field as the TAXABLE amount (Form 1040 line 4b/5b), point at `ira_pro_rata`, and state that codes N/R and G/H are 0.
-  3. **The flat 22% is conditional** [LD-01 + DEF-13].
-     - Four use sites say bonuses are withheld at the FLAT 22% and to "project 22% × bonus" (calc.py:3510-3518; knowledge.py:1231-1236; server.py:392; SKILL.md:71).
-     - The rule is Treas. Reg. 31.3402(g)-1(a)(7)(i). The employer "may" use the flat rate only if:
-       - (B) the supplemental wages "are either not paid concurrently with regular wages or are separately stated on the payroll records"; and
-       - (C) "Income tax has been withheld from regular wages of the employee during the calendar year of the payment or the preceding calendar year". Pub 15 (2026) §7 reads this as "you" (the employer) having withheld.
-       
-       Otherwise (a)(6)(i) requires the aggregate procedure, and Pub 15 §7 item 2 says "use method 1b". (a)(2) makes 37% mandatory over $1,000,000.
-     - Hire status is not the test. The two methods can differ by thousands of dollars on a large bonus.
-     - Knowledge: add `flat_rate_conditions` (both quotes), `method_if_conditions_fail: aggregate` and `flat_rate_optional: true` to the 2026 `supplemental_withholding` block, and to 2025 after re-reading Pub 15 (2025).
-     - Rewrite all four use sites to state the two conditions and the aggregate fallback. They point at no op until JP1c ships one.
-  4. **Resident aliens on F-1 owe FICA** [LD-12, text + refusal]. employee_fica states only "F-1 OPT = NO FICA" (server.py:381; calc.py:3255-3262, :3302-3306). Pub 519 ch. 8 says it is withheld "if you are considered a resident alien … even though your nonimmigrant classification … remains the same".
-     - Add that converse to the docstring, the work string and SKILL.md.
-     - Add optional `residency_classification`: for 'resident', fica_exempt on an F/J segment is refused, quoting Pub 519.
-  5. **Paper refund checks** [TY26-15, note part]. file_and_pay promises a paper refund check (file_and_pay.py:353). irs.gov/ModernPayments announces the "phase out of paper tax refund checks beginning Sept. 30, 2025, to the extent permitted by law". For TY2025+, a refund without direct deposit gets that note with the citation.
-  - **Acceptance.**
-    - Treaty:
-      - resident-classified 2025 → contains "Schedule 1" and "8z", not "1040-NR line 1k";
-      - resident-classified 2020 → "Schedule 1 line 8", not "8z";
-      - the NRA assertion at test_estimate.py:1361 still passes.
-    - The `retirement_income_taxable` description contains "TAXABLE" and "ira_pro_rata".
-    - The safe-harbor work contains "31.3402(g)-1(a)(7)(i)", "separately stated" and "aggregate", and no longer contains the unconditional 22% sentence.
-    - `employee_fica(residency_classification='resident')` with an F-1 segment `fica_exempt=True` raises, quoting Pub 519 ch. 8.
-    - `file_and_pay` for a TY2025 refund with `direct_deposit=False` carries the ModernPayments note.
-    - Both pitfalls have citing tests.
-
-- [x] **JF5a — FILING-WRONG: the §6013 election keeps nonresident rules — DONE 2026-09-26** (M; deps J0) [PJ-04] — pitfall *residency-facts* (P-018). As built: the fact is `residency_facts.section_6013_election` on the TAXPAYER (a spouse copy is refused), applied on a household married for the year (never onto a single/HOH figure); a confirmed MFJ status of a nonresident is read as the election unless a DECLINE is recorded (a recorded `false` wins: MFJ leaves the candidates and a confirmed MFJ gets a contradiction note) or the precondition fails (neither spouse a citizen or resident on the recorded facts: IRC 6013(g)(3), not applied, priced without it); a recorded election whose facts point to 6013(h) is kind 'either' (a continuing 6013(g) election cannot be told apart until JF5b's prior-year fact); the 6013(g)(3) gate and intake share one trust rule (a nonresident answer resting on a missing lookback year is unknown); compare_scenarios' walk always ends on the scenario's own configuration and books a reading change to the step where it happens; a married filer's head of household is priced by route (nonresident spouse: 1040-NR spouse, no EITC, Pub 519 ch. 5; lived apart: a free deduction method, Pub 501), and a nonresident alien's HOH is never recommended in compare_scenarios (a confirmed one is priced as given with a Pub 519 ch. 5 caveat, JF1b.12); the 6013(g)(3) gate counts only a CERTAIN nonresident (residency.certain_nonresident); both J0 follow-ups shipped. The adversarial verify added: IRC 6013(g) and 6013(h) are two quoted texts (statement, duration, NIIT default 1.1411-2(a)(2)(iii) vs (iv)) chosen from each spouse's no-election residency; the two-return MFS pair prices both deduction methods under IRC 63(c)(6)(A); a spouse of unknown residency is bracketed under 1040-NR rules; compare_scenarios' `us_resident_election` is tri-state (omitted follows the recorded fact) and never recommends an election the facts rule out; the W-7 last mile, Form 8843 and the FICA refusal text ride the election; intake and the estimate apply a recorded election on the same marriage rule (an unanswered marital status with a confirmed joint status included), and a scenario that follows a recorded election onto a single/HOH status is named as not applied.
-  - **Why.**
-    - compare_scenarios' §6013(g)/(h) election flips only `identity.us_person` (scenarios.py:170-176), which `_classify_residency` ignores whenever a timeline and day counts exist (estimate.py:914-928, :1699-1701).
-    - So a timeline-bearing NRA couple's election MFJ outcome keeps nonresident rules, including an itemized-only deduction of $0. Reproduced at HEAD on the test fixture: election −763 vs MFS −2,513.
-    - test_compare_scenarios.py:30-31 uses a timeline-free profile, which is why no test sees it.
-    - Pub 519 ch. 1: the couple are "treated for income tax purposes as residents for your entire tax year".
-  - **Build.**
-    - Add `residency_facts.section_6013_election: Answer[bool]`, set by the scenario.
-    - When it is True, `_classify_residency` returns a resident-shaped result: standard deduction, NIIT evaluated, deposit exclusion off. The worldwide-income and FICA caveats stay.
-    - Mirror the rule in the residency tool and intake output.
-    - **J0 re-verify follow-ups (2026-09-24):** the election flag must switch the deposit exclusion off on an MFS status too (Pub 519 ch. 1: after the election year the couple "can file joint or separate returns", both still residents — today only the MFJ gate is modeled); and the spouse's two-return MFS `_bottom_line` must take the SPOUSE'S own classification as `nonresident` (today it borrows the taxpayer's for every rule except the deposit exclusion: a US-citizen spouse's 1040 gets no standard deduction and ordinary rates — ~$3,050 overstated in the verifier's repro, disclosed only through P-013's not-modeled list).
-      - *Closed 2026-10-15 (re-plan JK3, verify first):* both were already fixed in dfe7dd8 (JF5a, 2026-09-27) — the recorded election reaches `_election_state` on an MFS status, so the deposit gate no longer fires, and `_mfs_pair` prices the spouse's return from the spouse's own facts. At dfe7dd8^ the same demo profiles gave -1,583 vs -29 for (a) and a 3,047 spouse-return gap for (b), the lost MFS standard deduction at 22%; on HEAD both equal the calc recomputation, and a 102-profile comparison changed no figure. packages/core/tests/test_estimate_p018_mfs.py pins both (a recorded election plus a confirmed MFS status, with a recorded decline as the control).
-  - **Acceptance.**
-    - On a timeline-bearing fixture, the election's MFJ "Less: standard deduction" equals the pack's MFJ figure for the year.
-    - No 1040-NR label appears; NIIT is evaluated.
-    - The pitfall has a citing test.
-
-- [x] **JF5b — Prior-year residency fact; price the dual-status risk — DONE 2026-09-27** (M; deps JF5a) — As built: part 1 the prior-year return fact (`PriorFilings.return_forms[year-1]`, a CONTRADICTION/CHECK first, a may-flip nonresident bracketed on resident rules); part 2 the dual-status point under Pub 519 ch. 6 with the full-year-resident end only where a route is open, and the nonresident-period deposit split; part 3a the Treas. Reg. 1.1411-2(a)(2)(iii)/(iv) NIIT default on every election figure; part 3b the election as a CANDIDATE for a nonresident or dual-status taxpayer (symmetric with the reverse couple), route (ii) pointing at it, a dual-status spouse's own return under ch. 6, and a prior-year election return as a continuing IRC 6013(g) (the prior-year return alone never applies it; a confirmed joint status is still read as the election, JF5a). Deferred (not done): a prior `dual_status` departure return followed by residency (Treas. Reg. 301.7701(b)-4(e)(2)); the departure note's 10-day de minimis and foreign-tax-home wording; the compare walk's `bank_deposit_interest_nonresident_period` subset pair → JF1b.6; spouse-field coverage over list/Optional fields → JF1b.5; a confirmed head of household in a dual-status year priced as given → JF1b.12; a dual-status U.S. spouse's own separate-return NIIT under 6013(g); no NIIT note on compare_scenarios outcomes; a (iii)(A) tie where one spouse is a certain nonresident; the reverse dual couple (a citizen with a dual-status SPOUSE) whose joint candidate is still not an election figure; the spouse has no prior-year return fact. Also deferred from part 3b's verify: route (ii) under a confirmed non-joint status (the same-status resident figure is lawful only in a later year of a continuing 6013(g)); the continuing-election reading is named, not priced, when no answer is recorded; the residency MCP tool's section_6013_kind has no prior-year-election input; the part-3a positive-liability reading of "subject to tax under section 1411" is accepted and labeled.
-  - *Part 1 as built (2026-09-27; items 1 and 6 — items 2-5 remain):* `PriorFilings.return_forms` (only `year-1` is read: `1040`/`dual_status` True, `1040-NR` False, `not_filed`/`1040_with_6013_election` unknown, the latter a labeled judgment); `classify(..., prior_year_resident)` — True + SPT met is resident from Jan 1 (arrival triggers and First-Year Choice pointers suppressed, departure note kept), True + SPT not met stays nonresident behind a first CONTRADICTION reason, never "definitive", and is never a certain nonresident; threaded through estimate/intake (taxpayer only; the spouse has no prior-filings fact) and the residency tool; intake asks `prior_filings.return_form`, the worksheet maps onto the five values; the estimate puts a CONTRADICTION or "may be WRONG" reason first and brackets the full-year resident reading (the spouse's may-flip brackets the spouse-resident MFS pair); a recorded prior 1040 the timeline makes impossible (a fully exempt prior year) gets a first CHECK THE PRIOR-YEAR RETURN judgment; only the start of the year is settled (a departure caveat names IRC 7701(b)(2)(B)). Deferred from its verify: a prior `dual_status` DEPARTURE return followed by residency again (Treas. Reg. 301.7701(b)-4(e)(2): a possible prior-year amendment), the departure note's 10-day de minimis and foreign-tax-home wording, `section_6013_kind` reading `return_forms` (a prior election return separates a continuing 6013(g) from a new 6013(h)) — all to part 2/3.
-  - *Part 2 as built (2026-09-27; items 2 and 3 — items 4-5 remain):* a `dual_status_candidate` with no election prices Pub 519 ch. 6's restrictions for the POINT (`_bottom_line(dual_status=True)`: itemized or $0, never the standard deduction; no EITC (IRC 32(c)(1)(D)), no AOTC/LLC (25A(g)(7)); MFS rates married, single unmarried — a labeled inference; the preferential rates and NIIT kept, disclosed as a whole-year snapshot whose NIIT may be overstated, Treas. Reg. 1.1411-2(a)(2)(ii)); the RANGE adds the full-year-resident figure only where a route is open (`_dual_status_routes`: the prior-year fact not recorded '1040-NR', or the election open to a married filer — closed by a recorded decline; wrong timeline dates is always named, never opens it alone), so an unmarried filer with a prior 1040-NR gets the point alone; `_DUAL_STATUS_CAVEAT` is now `_dual_status_caveat` (point, approximation, range and route); no "Standard deduction assumed" on a dual-status figure; the EITC/education disclosures name what the resident figure claims; the roadmap step names the credit bars. Item 3: `IncomeSnapshot.bank_deposit_interest_nonresident_period` (a validated subset of `bank_deposit_interest`, summed in `combined_with_spouse`) is the only deposit interest excluded on a dual-status payee's return (IRC 871(i)(1)-(3), Treas. Reg. 1.871-13(a)(1); the spouse's separate return by the spouse's own year, JF5a's assumed-nonresident reading included) and is out of NII; `_dual_deposit_note` names the dollars excluded and taxed or, with no split, the amount taxed in full and what to record (us_person False or unanswered; the old "not established" note speaks only for an unclassified filer); intake asks `interest_character` of a dual-status owner and `income_documents.interest_period`; P-013 rule (f) and P-018 extended; HEAD-vs-tree battery of 39 profiles: every non-dual-status figure byte-identical, all 17 dual-status differences matched an independent calc recomputation. Not done here: a dual-status SPOUSE's separate return still prices resident rules for the point (nonresident in the range) — only its deposit interest splits. Deferred from its verify: a dual-status SPOUSE's own separate return is still priced on resident rules at the point (only its deposit interest splits) → part 3; route (ii)'s range end is the same status under resident rules, not the joint election figure → part 3 (item 5); a prior `1040_with_6013_election` as a continuing 6013(g) election → part 3; the compare walk's third subset/parent pair (`bank_deposit_interest_nonresident_period`) → JF1b.6; the spouse-field coverage test over list/Optional fields → JF1b.5; a confirmed head of household on a dual-status year priced as given → JF1b.12.
-  - *Part 3a as built (2026-09-27; item 4 — item 5 and the part-2 deferrals remain for part 3b):* with a spouse snapshot every election figure prices the Treas. Reg. 1.1411-2(a)(2)(iii)(A)/(iv)(A) NIIT default (`estimate._price_niit`: each spouse's own snapshot under the MFS rules against $125,000; `_bottom_line(niit_override=…)`): 6013(g) — the joint point uses the default (the U.S. spouse's own NIIT, $0 for the spouse who is a nonresident without the election; a dual-status U.S. spouse bounded from $0) and the range adds the combined-income figure only when that default is above $0 (else the note says the second election is not available, (iii)(B)(2)/(B)(3)); 6013(h) — point min(combined, both full-year own figures), range min(combined, the other spouse's own), the i8960 first-year sentence dropped; 'either' (and a 6013(g) couple the facts cannot tell apart) — the combined figure stays, every reading in the range, the note names the fact that settles it; separate returns under the election price the nonresident spouse at NIIT $0 with the resident-rules figure in the range; no spouse snapshot — figures unchanged, the note names `income.spouse`; P-018, server doc and SKILL.md carry it; tests `test_p018_niit_default_*` (Examples A-D, each against independent `calc.niit` calls); HEAD-vs-tree battery of 27 profiles: all 15 without an election figure (or without a spouse snapshot or investment income) byte-identical in figures, all 12 election differences matched an independent recomputation. Deviation from the brief's test list: Example C's $1,292 is not in the 6013(h) range — the couple takes the lower (the orchestrator's min rule). Verify fixes: no default for a couple with no nonresident or arriving spouse on their own facts (a U.S. person or full-year resident never takes the (iii)/(iv) role); the pricing gate reads the priced NIIT amounts (a capped capital loss); the not-available text says the second election cannot be MADE this year and names a continuing earlier one. Accepted: the MFJ candidate of a citizen with a spouse who is nonresident on their own facts (no recorded election) is an election figure and takes the default. Deferred: a dual-status U.S. spouse's own separate-return NIIT under 6013(g) (part 3b); compare_scenarios outcomes carry no NIIT note (the figures use the default); a tie where one spouse is a certain nonresident; the positive-liability reading of "subject to tax under section 1411" is labeled.
-  - *Part 3b as built (2026-09-27; item 5 and the part-2 deferrals — JF5b done):* (5a) a married taxpayer whose own no-election residency is nonresident or dual-status, with no status confirmed, no answer recorded and the election not unavailable (IRC 6013(g)(3)), keeps married-filing-jointly as a CANDIDATE (`_candidate_statuses(election_candidate=True)`) priced on resident rules for both spouses (`_outcome` forces `self_nra`/`self_dual` False) and treated as an election figure (NIIT default, deposit, FICA and NIIT notes worded as a candidate); the kind reads a no-answer candidate as a NEW choice (a dual-status arrival year with a U.S. spouse is 6013(h)); `_section_6013_candidate_caveat` names the precondition as not settled — with `household.spouse.us_person` and the spouse's visa timeline and days — when the spouse's residency is not on file; MFS stays the primary; the symmetry test swaps roles and incomes. (5b) the dual-status caveat's route (ii) is the joint candidate; the same status under resident rules stays in the range only through route (i) (`_DualRoutes.resident_figure_open`). (5c) a dual-status SPOUSE's own separate return is priced under ch. 6 at the point (`_mfs_pair(spouse_dual=…)`, the recorded decline's assumed reading included, and inside a head-of-household figure), the range pricing it for the whole year under resident rules (all deposit interest taxed) and under Form 1040-NR rules. (5d) `residency.section_6013_kind(prior_year_election=True)` is 'g' (IRC 6013(g)(3); 6013(h)(2)) in the estimator and intake; a continuing 6013(g) whose nonresident spouse arrives this year prices that spouse's NIIT from $0 to the full-year figure ((iv)(A)'s facts, a reading); with that prior-year return and no answer the election is NOT applied — `residency.prior_year_election_continues` is an assumption, a what-would-change-it entry and an intake note, and intake asks `household.section_6013_election` (the spouse battery's copy suppressed). (5e) HEAD-vs-tree battery of 41 profiles: all 25 outside 5a-5d byte-identical in figures (one reverse-couple NIIT note reworded as the candidate's), all 14 figure changes matched an independent calc recomputation, 2 more changed text only.
-  1. **Prior-year residency fact** [DEF-14 + LD-11].
-     - There is no structured prior-year-residency fact:
-       - PriorFilings (schemas/profile.py:469-495) stores only filed_years;
-       - `residency.classify` (residency.py:835-841) has no prior-year input; the rule is only prose (residency.py:1015-1016);
-       - the onboarding worksheet asks the question (worksheet.py:175, :343), but nothing stores the answer.
-     - Result, reproduced: a truncated F-1 history returns "This nonresident answer is definitive" for a filer who filed the prior year's Form 1040, and the standard deduction is dropped.
-     - The law:
-       - IRC 7701(b)(2)(A)(i) applies the partial-year rule only to an alien who "was not a resident of the United States at any time during the preceding calendar year";
-       - Pub 519 ch. 1: such a filer "will be considered a U.S. resident at the beginning of the current year".
-     - Build:
-       - `PriorFilings.return_forms: dict[int, Answer[Literal['1040','1040-NR','dual_status','1040_with_6013_election','not_filed']]]`, with an intake question for us_person=False (the worksheet answers map here);
-       - `classify(..., prior_year_resident: bool | None)`: True with the SPT met → resident from Jan 1, dual-status triggers suppressed. True with the SPT not met on the given timeline → a first-position CONTRADICTION reason, never "definitive": the timeline is probably incomplete, or the prior return may be on the wrong form (labeled judgment);
-       - thread it through `estimate._classify_residency` and `intake._residency_classification`.
-  2. **Price the dual-status risk** [DEF-15 + LD-11(c)]. A dual-status candidate takes the resident branch (estimate.py:1616 → :1229-1236) and gets the full standard deduction, while `_DUAL_STATUS_CAVEAT` (:759-766) says "NO standard deduction".
-     - Low end: deduction forced to itemized or 0, MFJ/HOH dropped.
-     - High end: the full-year-resident figure.
-     - Reword the caveat to point at the range.
-  3. **Dual-status deposit interest** [PJ-11; law unverified]. In a dual-status year, nonresident-period deposit interest gets neither the N-8 exclusion nor a disclosure (estimate.py:1701). Read Pub 519 ch. 6 first. At minimum ship a disclosure naming the amount; ship the exclusion only if the reading supports it.
-  4. **NIIT default under the §6013 election** (found by JF5a's second adversarial verify, 2026-09-26: the law and edge lenses). Under the election the joint figure's NIIT assumes the optional chapter-2A election; the default is never priced. Treas. Reg. 1.1411-2(a)(2)(iii)(A) (6013(g)) / (iv)(A) (6013(h)): the spouses are "treated as married filing separately for purposes of section 1411" and under (iii) "the nonresident alien spouse will not be subject to tax under section 1411" ((iv): subject only on the resident-period income). (iii)(B)(2): the second election must be made "for the first taxable year beginning after December 31, 2013, in which the United States taxpayer is subject to tax under section 1411", judged "without regard to the effect of the section 6013(g) election".
-     - Build: price the default (the U.S. spouse's own NII and MAGI against the MFS threshold; the nonresident spouse at $0 under (iii), resident-period income only under (iv)) on the joint AND the separate figures under the election, and bracket it with the elected figure in the range; say when the second election is not yet available.
-     - JF5a ships only the note (estimate._section_6013_niit_note: the joint figure ASSUMES the second election; the default may be higher or lower; when it is available).
-  5. **The election as a candidate for a nonresident TAXPAYER** (found by JF5a's third adversarial verify, 2026-09-26: the acceptance lens). With no recorded election and no confirmed status, a nonresident taxpayer married to a U.S. citizen gets MFS only (1040-NR), while the reverse couple (citizen taxpayer, nonresident spouse) gets MFJ as a candidate with the §6013 caveat. Price the election-MFJ figure as a candidate for the nonresident taxpayer too (resident rules, the (g)/(h) text by kind), with the same caveat, so both directions of the couple see the choice. When the precondition cannot be judged because the spouse's residency is not on file, the caveat should say so and name what to record.
-  6. **A nonresident answer that may flip, on the pricing path** (found by JF5a's fourth adversarial verify, 2026-09-27: the trust lens; pre-existing). When the taxpayer's or the spouse's 'nonresident' answer rests on a missing lookback year that could flip it (`ClassificationResult.nonresident_may_flip`), estimate_refund prices Form 1040-NR rules with no sign of classify's "may be WRONG" warning. Surface that warning in the estimate (and on the spouse's separate return), and bracket the resident reading in the range.
-  - **Acceptance.**
-    - Truncated F-1 history + prior 1040 → not definitive; CONTRADICTION reason first.
-    - Full history + prior 1040 → resident, no dual-status flag, standard deduction applied, `_fica_exemption_note` suppressed.
-    - H-1B arrival 2026-03-01 (306 days) → the low end has deduction 0, the high end the standard deduction, and the assumption names the range.
-    - Dual-status + `bank_deposit_interest > 0` → a disclosure naming the amount.
-    - Citing tests for the residency-facts pitfall.
-
-- [x] **JF1b — Small logic fixes — DONE 2026-09-27** (S–M; deps J0)
-  - *Part A as built (2026-09-27; items 13 and 1-8 — items 9-12 are part B):* 13 the filler refuses 'NRA' on every SSN/comb line and names the pack's MFS entry-space line (pitfall P-026; verify keeps the literal on every SSN/comb line); 1 magi_ladder's 8959/NIIT rows read the raw status via `_surtax_threshold` (QSS $200,000 / $250,000); 2 the §6013 conditional caveat needs a married household (an unmarried visa filer gets a no-§6013 1040-NR caveat; the dual-status caveat names the election only on a marriage); 3 the passport's why follows the classification, tax_year threaded; 4 `ira_contribution_eligibility(roth_ira_dec31_value=)` applies the IRC 4973(a) cap and the work names the 408(d)(4) / Form 4868 / 301.9100-2 deadlines; 5 a structural IncomeSnapshot joint-view test; 6 `estimate.INCOME_LINKED_FIELDS` groups the walk's subset/parent (and dependent-care) overrides into one step; 7 no recount warning (and 'definitive' only) when the SPT's maximum countable total is under 183 or the current-year span under 31; 8 the partner note quotes the §6013 precondition. Open from part A: the traditional_deduction path still books a contribution over the phased-out DEDUCTION as a 4973 excess (IRC 4973(b) computes it "without regard to section 219(g)").
-  - *Part B as built (2026-09-27; items 9-12):* 9 the year of a spouse's death is a married year for filing status (`_married_for_year`, Pub 501: "considered married for the whole year for filing status purposes") — MFJ/MFS candidates, the spouse snapshot on the joint figure, the election's marriage gate and the joint-route wording ("IF the choice is open in the year of your spouse's death"); 10 head of household is a CANDIDATE for a citizen or resident whose spouse is, or may be, a nonresident alien with no election recorded and none declined (Pub 501, Considered Unmarried), priced on the nonresident-spouse route (a spouse of unknown residency read as the nonresident it needs; the note says it exists only without the election), and that route's return carries `_bottom_line(married_7703=True)` — IRC 2(b)(2)(B) applies "For purposes of this subsection", so no education credit (25A(g)(6); the 2025 Form 8863 instructions' "You (or your spouse) were a nonresident alien"), no dependent care credit (21(e)(2)), no student loan interest deduction (221(e)(2)-(3)), the $1,500 capital-loss limit (1211(b)(1); Treas. Reg. 1.1211-1(b)(7)(i); Pub 550 "$1,500 if you are married and file a separate return"), no PTC (36B(c)(1)(C); the 8962 instructions' Exception 1 is the living-apart head of household only), the $125,000 NIIT (Treas. Reg. 1.1411-2(a)(2)(iii)(A)) and Additional Medicare (3101(b)(2)(B)) thresholds, and a $0 Social Security base amount (86(c)(1)(C), the MFS candidate's lived-together assumption), one assumption quoting each rule that changed the figure; intake's married filing-status question names head of household on the citizen side; 11 the IRC 3121(b)(19) FICA withheld-in-error note is built per person (the spouse's own snapshot and no-election classification) and only for an F/J/M/Q period overlapping the year; 12 a confirmed head of household of a nonresident (Pub 519 ch. 5) or dual-status (ch. 6: "You cannot use the head of household Tax Table column") filer is priced as the status the filer can use — married filing separately if married, else single — with the caveat naming the swap, compare_scenarios' note the same, and intake quoting the ch. 6 bar on a dual-status year. Pitfall P-018 extended. Deferred → JF2.5: the lived-apart route's capital-loss limit, the unrecorded lived-apart-all-year fact for IRC 86(c)(1)(C), and the separated-spouse EITC rule on the nonresident-spouse route.
-  1. **QSS threshold** [DEF-11]. magi_ladder applies the MFJ-aliased $250,000 Form 8959 threshold to QSS (calc.py:4175-4182 via `_resolve_filing_status`); Form 8959 line 5 and knowledge/federal/2025.yaml:168 say $200,000. Use `_surtax_threshold` with the raw status, and move the NIIT row onto the same helper.
-  2. **§6013 caveat gate** [DEF-16]. The §6013(g)/(h) caveat fires for unmarried single visa holders (estimate.py:2288-2302). Gate it on `_is_married`, and suppress it once JF5b's prior-year fact plus the SPT settle residency.
-  3. **Document checklist wording** [DEF-19]. `_required_documents` frames every us_person=False filer as "a nonresident return", computed residents included (intake.py:1187-1204). Gate it on the residency classification and thread `tax_year` through.
-  4. **Excess-contribution excise** [RC-11]. The excise ignores the IRC 4973(a) cap: it "shall not exceed 6 percent of the value of the account … (determined as of the close of the taxable year)" (Form 5329 line 25; calc.py:3855, :3884). The remedy text (calc.py:3901-3905) names no date. Add `roth_ira_dec31_value`, and name the deadlines: April 15 of year+1, or Oct 15 with an extension or via §301.9100-2 for a timely-filed return. JR2c adds the op pointer.
-  5. **Spouse-field coverage** [LD-10]. combined_with_spouse lists its 18 summed fields by hand (estimate.py:239-247) with no structural test, and N-8 already had to add one by hand. Add a test over `IncomeSnapshot.model_fields`, with the household-level exclusions explicit, that fails naming any missing field.
-  6. **Scenario walk vs subset validators** (J0 re-verify). compare_scenarios' one-override-at-a-time input walk raises a ValidationError at an intermediate step when a parent drops below its subset (`interest` before `bank_deposit_interest`, `dividends` before `qualified_dividends`). Apply subset/parent pairs together in the walk, and test both orders.
-  7. **Residency: no recount warning on a capped count** (found 2026-09-24 by a verifier pass). When the non-exempt span caps the weighted SPT total below 183 (a cap-exempt H-1B from July 15 after an F-1: at most 170 countable days), `residency.classify` calls the nonresident answer "definitive" AND warns that the total "is close to the 183-day threshold — recount days present". No recount can raise a capped count; skip the warning when the count equals the non-exempt span and the answer is definitive.
-  8. **Intake §6013 wording** (same pass). The unmarried-partner note in intake.py says a nonresident spouse joins a joint return "only via the §6013(g)/(h) election" without the election's precondition: one spouse must be a U.S. citizen or resident at year end (g), or become resident during the year (h); two NRAs who both stay nonresident cannot elect. Add the condition.
-  9. **Year of a spouse's death: candidate statuses** (found by JF5a's second adversarial verify, 2026-09-26: the edge lens). Pub 501: "If your spouse died during the year, you are considered married for the whole year for filing status purposes." `_candidate_statuses` (widowed branch) offers only 'single' in the year of death and `spouse_split` uses `_is_married`, so the deceased spouse's snapshot is dropped from a joint figure. Build: thread `_married_for_year` into `_candidate_statuses` (MFJ/MFS in the year of death) and into `spouse_split`. JF5a only refuses the §6013 election on that 'single' figure and says why (estimate._election_not_applied_reason). When MFJ/MFS become candidates in the year of death, remove the `status is None` guards in `estimate._election_marriage_ok` and `intake._election_in_effect` together, so intake and the estimate keep one marriage rule.
-  10. **Considered-unmarried head of household without a recorded decline** (found by JF5a's third adversarial verify, 2026-09-26: the regression lens). Pub 501, Considered Unmarried: "You are considered unmarried for head of household purposes if your spouse was a nonresident alien at any time during the year and you don't choose to treat your nonresident spouse as a resident alien." `_candidate_statuses` offers HOH to a citizen or resident with a nonresident spouse only after a recorded decline (JF5a); with the election unanswered and a qualifying person, HOH is never a candidate. Add it (priced as that return plus the spouse's separate one, as the no-joint path does), conditional on not electing. The same pass found the rest of the nonresident-spouse route's "married under IRC 7703" class, which JF5a gates only for the EITC: IRC 2(b)(2)(B) applies "for purposes of this subsection", so the HOH return still gets the AOTC/LLC (25A(g)(6)), the dependent care credit (21(e)(2)), the student loan interest deduction (221(e)(2)), the $3,000 capital-loss limit (1211(b): $1,500 for a married individual filing separately), the PTC (36B) and the $200,000 NIIT/Additional Medicare thresholds (Treas. Reg. 1.1411-2(a)(2)(iii)(A) and IRC 3101(b)(2)(B) set the married-filing-separately amounts). Carry one married-under-7703 flag on that return and gate each item, with a test per item.
-  11. **FICA withheld in error on the SPOUSE** (same pass, the acceptance lens). estimate.py builds the IRC 3121(b)(19) withheld-in-error note from the taxpayer's `ss_withheld_by_employer` only; an F/J spouse's box-4 withholding gets no note, under the election or on the spouse's own 1040-NR. Build the note per person from each snapshot, keyed on that person's no-election classification.
-  12. **A nonresident alien's confirmed head of household** (found by JF5a's fourth adversarial verify, 2026-09-27: the unavailable and regression lenses; pre-existing). Pub 519 ch. 5: "You cannot file as head of household if you are a nonresident alien at any time during the tax year." A confirmed head_of_household for a nonresident taxpayer is priced as given (HOH rates on Form 1040-NR). JF5a says so in the residency caveat and keeps such a scenario out of compare_scenarios' `recommended`; price the status the filer can use instead (married filing separately, or single), and let intake stop offering HOH on that path.
-  13. **FILING-WRONG: the 'NRA' literal lands in the spouse-SSN box** (found by JF5a's fifth adversarial verify, 2026-09-27; pre-existing). The Instructions for Form 1040 (2023 and 2024: "If your spouse doesn't have and isn't required to have an SSN or ITIN, enter 'NRA' in the entry space below the filing status checkboxes"; 2025: "enter 'NRA' in the entry space") and Pub 501 put it in the MFS entry space, and "Be sure to enter your spouse's SSN or ITIN in the space for spouse's SSN" governs the SSN box. filler.py accepts 'NRA' on the spouse identifying-number comb (other `ssn_digits_only` and comb lines refuse it; plain text lines take it; the name match in `_accepts_nra` also admits `26.former_spouse_ssn` on the 2025 pack), and its acceptance comment and refusal text cite the instructions for that box (test_filler.py encodes it). Route the literal to the MFS entry space (`filing_status.spouse_or_qualifying_person_name` on the 2023/2024 packs, `filing_status.mfs_spouse_name` on 2025), leave the SSN comb blank, fix the comment and refusal text, and add tests filling 'NRA' into each year's entry-space key and refusing it on `26.former_spouse_ssn` (JF5a already corrected SKILL.md's wording and names this item).
-  - **Acceptance.**
-    - `magi_ladder(240000, QSS, 2025, wages=240000)` → the 8959 row shows $200,000, 'above'.
-    - An unmarried single visa holder → no "6013" in assumptions or `what_would_change_it`; married with no residency facts → still present.
-    - A resident F-1 profile → no "nonresident return" text.
-    - A Dec-31 value below the excess → excise = 6% × value.
-    - F-1 2022-08-18 → 2025-07-14 then H-1B 2025-07-15, TY2025 → 'nonresident', definitive, and no "recount" reason.
-    - The intake unmarried-partner note names the §6013(g)/(h) precondition.
-    - The spouse-field test fails when a field is dropped from the list.
-
-- [x] **JF2 — Wrong-law routing and document notes — DONE 2026-09-27** (M; deps J0)
-  - *As built (2026-09-27):* 1 eight topics in knowledge/sources.yaml — `ira_recharacterization_and_excess_contributions` (Treas. Reg. 1.408A-5, 1.408-11, 301.9100-2; IRC 408A(d)(6)-(7), 408(d)(4), 4973, 72(t)(2)(A)(ix); Pub 590-A; i5329; Form 5498 box 4), `form_1099r_distribution_codes`, `payroll_withholding` (Pub 15 section 7, Pub 15-T, Form W-4, Treas. Reg. 31.3402(g)-1), `wage_reporting_w2`, `excess_deferrals_402g` (IRC 402(g), Treas. Reg. 1.402(g)-1(e), Pub 525), `charitable_nonitemizer` (IRC 170(p), 170(b)(1)(I), the W-4 (2026) Deductions Worksheet, the TEOS deductibility-codes page — TEOS itself refuses scripted clients), `wage_repayment_claim_of_right` (Pub 525 Repayments, IRC 1341, Pub 15 section 13), `underpayment_penalty` (IRC 6654, i2210, Form 2210) — every URL fetched and every quote checked verbatim by script (the eCFR sections through its renderer API); Pub 526's membership-benefit rules on itemized_charitable; the J0 follow-up both ways (Pub 550 interest sentences on investment_income; the fdap text drops the "interest income" heading and names the 1099-INT/1042-S, "NRA interest" and "bank interest"); a HEAD-vs-tree sweep over 240 queries found and removed eight new wrong pointers the first drafts made ("401k contribution limit", "IRA contribution limit", "amended return" — now Form 1040-X on filing_basics — "estimated tax payments", "where to file", "early distribution penalty", "tips deduction", "charitable contributions"); 2 the 1099-R DocSpec reads the 2026 face (`BoxSpec.aliases`: 7a→7, 7b→7_ira_sep_simple, 8a→8, resolved before the unexpected check; two different readings of one box are invalid) with boxes 3, 5, 6, 7c, 7d, 8b, 9a, 9b, 10-19, payer name and account number, and a status note on the relabel and the recipient box-2b sentence; 3 the 1099-DIV DocSpec has boxes 5 and 12 and a status note (Pub 550 money market funds, IRC 871(k)(1)(A)/(C)(i) — a caller fact), the `interest`/`dividends` field notes, 871(k) in nonresident_fdap, pitfall P-013 rule (g); 4 nonresident_spouse_election says where each statement goes (6013(g): the first joint return, none in a later year; 6013(h): the year of the choice); 5 (a) the lived-apart head of household is capped at $1,500 too (IRC 1211(b)(1) does not refer to section 7703; Pub 501: "not for other purposes"), (b) `household.spouses_lived_apart_all_year` (IRC 86(c)(1)(C)(ii)) prices the $25,000 base amount on every separate return and intake asks it of a married separate filer with an SSA-1099. Deferred: (c) the separated-spouse EITC rule → Not scheduled (below).
-  1. **Wrong-law pointers** [RC-10 + LD-03]. get_sources hands out confident wrong-law pointers (the P-005/P-006 class). Reproduced 2026-09-23:
-
-     | Query | Routes to |
-     |---|---|
-     | "net income attributable" | self_employment |
-     | "1099-R box 7 code N"; "Form 5498 box 4" | foreign_tax_credit |
-     | "Treas. Reg. 1.408A-5" | FBAR |
-     | "supplemental wage withholding bonus" | deadlines |
-     | "paycheck withholding W-4 percentage method" | foreign_tax_credit |
-     | "Publication 15-T" | FBAR |
-     | "paystub W-2 box 1 box 3 box 5" | ira_basis_and_roth_conversions |
-
-     Clean misses: recharacterization, Form 5329, excess deferrals, the non-itemizer charitable deduction, charitable membership benefits, wage repayment (claim of right).
-
-     New topics (fetch every URL before authoring):
-     - `ira_recharacterization_and_excess_contributions`: eCFR 1.408A-5, 1.408-11, 301.9100-2; IRC 408A(d)(6)-(7), 408(d)(4), 4973(a)/(f), 72(t)(2)(A)(ix); Pub 590-A; i8606; i5329.
-     - `form_1099r_distribution_codes`: i1099r Table 1 and the box 7a cautions; the f1099r recipient text.
-     - `payroll_withholding`: Pub 15, Pub 15-T, Form W-4 (2026), eCFR 31.3402(g)-1.
-     - `wage_reporting_w2`: iw2w3 (2026).
-     - `excess_deferrals_402g`.
-     - `charitable_nonitemizer`: IRC 170(p) and 170(b)(1)(I), the W-4 (2026) Deductions Worksheet, the TEOS deductibility-codes page. One topic, which also serves TY2026.
-     - `wage_repayment_claim_of_right`: Pub 525 Repayments, Pub 15 §13.
-     - `underpayment_penalty`: IRC 6654, Form 2210 and its instructions, Pub 505.
-
-     Keep the answers text free of tokens that pull toward neighbouring topics.
-     - **J0 re-verify follow-up:** resident-generic interest queries ("interest income", "savings bond interest", "certificate of deposit", "deposit interest") now land on `nonresident_fdap`, and "1099-INT nonresident" / "nonresident alien bank interest" / "NRA interest" still route wrong. Add a verified Pub 550 interest sentence to `investment_income` and routing tests both ways (resident queries → investment_income; the three P-013 queries stay on nonresident_fdap).
-  2. **1099-R 2026 layout** [RC-04 = TY26-23]. The 1099-R DocSpec is the 2025 layout: a 2026 form read with its own labels gives gaps ['7'] and unexpected ['5', '7a', '7b'] (extract.py:252-266). Box 5 is missing, although server.py:443 tells agents to pass it.
-     - Add `BoxSpec.aliases` (7a→7, 7b→7_ira_sep_simple, 8a→8), resolved before the unexpected-key check.
-     - Add boxes 3, 5, 6, 7c, 7d, 8, 8b, 9a, 9b, 10, 11 and 12–19, plus payer name and account number.
-     - Add a status note with the 2026 relabel and the recipient box-2b sentence.
-  3. **Fund payouts are dividends** [LD-15]. Pub 550: money-market fund amounts "should be reported as dividends, not as interest". For an NRA, IRC 871(k)(1)(A) exempts interest-related dividends from a RIC.
-     - The 1099-DIV DocSpec (extract.py:159-173) has no status note and no boxes 5 or 12. Add both.
-     - Add estimator field notes on `dividends` / `interest`.
-     - Add the 871(k) URL to `nonresident_fdap` and extend P-013. Whether a given fund pays such dividends is a caller fact.
-  4. **Nonresident-spouse source wording** (found by JF5a's second adversarial verify, 2026-09-26: the surface lens). knowledge/sources.yaml's nonresident-spouse `answers` text describes making the election only in 6013(g) terms ("signed statement by BOTH spouses attached to the first joint return"); the 6013(h) statement goes on "your joint return for the year of the choice" (Pub 519 ch. 1), and a later year of a continuing 6013(g) election attaches none. Reword the routing text for both choices, and check the neighbouring topics' answers are not captured by the new words (the neighbour-theft companion bug).
-  5. **A married head of household's other married-separately rules** (JF1b part B deferrals, 2026-09-27). (a) The lived-apart route keeps the $3,000 capital-loss limit, but IRC 1211(b)(1) ("$1,500 in the case of a married individual filing a separate return") does not refer to section 7703, so 7703(b) does not unmarry that filer; Treas. Reg. 1.1211-1(b)(7)(i) reads "a husband or a wife who files a separate return", Pub 550 "$1,500 if you are married and file a separate return", and the Schedule D instructions "($1,500 if married filing separately)" — read Pub 501 and the 1040 instructions for the lived-apart head of household, decide the route's limit, and test it. (b) IRC 86(c)(1)(C) needs whether the spouses lived apart "at all times during the taxable year"; the fact is not recorded, so the MFS candidate and the nonresident-spouse head of household both price a $0 base amount — record it (a household fact, asked of a married separate filer with Social Security benefits) and price the $25,000 base amount when they lived apart all year. (c) The separated-spouse EITC rule (IRC 32(d)(2)(B)) on the nonresident-spouse route is still not modeled (disclosed).
-  - **Acceptance.**
-    - Each query above routes to its own topic.
-    - Bidirectional neighbour-theft tests re-run the canonical queries of self_employment, foreign_tax_credit, FBAR, ira_basis_and_roth_conversions, deadlines, estimated_tax, contribution_limits, NIIT and HSA (e.g. "1099-DIV box 7" → foreign_tax_credit; "Form 8606" → ira_basis_and_roth_conversions).
-    - A 2026 1099-R read with 7a/7b resolves with no gap; box 5 is a known box.
-    - A 1099-DIV extraction carries the new note.
-
-- [x] **JF3 — W-2 boxes 3/5/6 reach the estimator — DONE 2026-09-27** (M; deps JF6a, JF1b) — pitfall *box1-standin* (P-019)
-  - *As built:* `IncomeSnapshot.medicare_wages` (box 5), `ss_wages` (boxes 3 + 7) and `medicare_tax_withheld` (box 6 per employer; needs box 5 — validator, and INCOME_LINKED_FIELDS moves the pair as one compare-walk step); None/empty means box 1 stands in, disclosed. Form 8959 prices box 5 (an exempt F/J student's $0 included); each person's Schedule SE subtracts its own boxes 3 + 7 (`_bottom_line(se_ss_wages=)`); the withholding reconciliation credits box 6 less the pack's employee Medicare rate x box 5 over the people who gave box 6 (a spouse with none never shrinks it) on the operand slot `additional_medicare_withholding`, labeled through form_line (`f8959.withholding_part`, `f1040.additional_medicare_withholding`); `_addmed_box_note` fires with the tax, with box 6, or when box 1 stood in and box 1 plus the year's 402(g) limit reaches the lowest threshold priced; the Schedule SE note only when box 1 stood in; the joint view sums each box with box 1 standing in for a spouse who gave none; compare_scenarios names a scenario that moves wages but not boxes 3/5; the estimate_refund docstring lists the fields. Deferred → Not scheduled: the 2019-2024 packs carry no employee Medicare rate and no 402(g) limit, so there the box-6 credit says NOT ESTIMATED and the stand-in note keys only on a priced Form 8959.
-  1. **Box 5 for Form 8959** [DEF-01].
-     - Form 8959 is priced on Box 1 (estimate.py:1430-1432), and IncomeSnapshot has no Box 5 field (extra='forbid').
-     - The Box-1-for-Box-5 caveat (estimate.py:1909-1915) appears only when 8959 already computes a non-zero amount. So a 401(k) deferrer with Box 1 under the threshold and Box 5 over it loses the 0.9% silently. In the other direction, exempt F-1 wages are overstated.
-     - The draft 2026 Form 8959 line 1 reads "Medicare wages and tips from Form W-2, box 5".
-     - Add `medicare_wages`.
-     - Record an `addmed_box1_fallback` note when wages plus the year's 402(g) limit reaches the threshold, and let the caveat fire even when 8959 computes $0.
-     - The SE Part IV threshold reduction (calc.py:795) takes the Box 5 total.
-     - `scenarios._apply_overrides` warns when `wages` changes but boxes 3/5 do not.
-  2. **Box 3 for Schedule SE** [DEF-02]. Schedule SE is fed Box 1 (estimate.py:1111-1115, :1674-1677); the draft 2026 Schedule SE line 8a says "total of boxes 3 and 7". Add a per-person `ss_wages`, with the line label from `form_line`.
-  3. **Box 6 withholding credit** [DEF-03 + LD-16]. With no box-6 input, Additional Medicare Tax withheld never credits.
-     - Add `medicare_tax_withheld: list[int]`, one entry per employer.
-     - Part V line 22 = max(0, Σ box 6 − 1.45% × Box 5), with the rate taken from the pack.
-     - New operand slot `additional_medicare_withholding`, labeled from `form_line` (8959 Part V → the 1040 other-withholding line).
-     - A validator requires `medicare_wages` whenever box 6 is given.
-  - **Files.** estimate.py, scenarios.py, server.py (estimate_refund docstring :826-835), pitfalls.yaml, test_estimate.py, test_estimate_ledger.py.
-  - **Acceptance** (*illustrative* figures).
-    - MFJ 2026, wages 240,000, medicare_wages 262,000 → an `additional_medicare_tax` slot of 108 (0.9% × (262,000 − 250,000)); the point estimate is 108 lower.
-    - Same snapshot without medicare_wages → a "box 5" assumption, even with no 8959 line.
-    - F-1 exempt: medicare_wages 0, wages 250,000 → no 8959 line.
-    - SE: se_net 50,000, wages 170,000, ss_wages 184,500 (2026) → SE social-security portion 0.
-    - One employer: box 5 260,000, box 6 4,310 → withholding slot −540.
-    - The 240-profile ledger property suite and the spouse-field test stay green; the pitfall has a citing test.
-
-- [x] **JF4 — FICA tiers and the safe harbor read the right box — DONE 2026-09-27** (M; deps JF3)
-  - *As built:* 1 `calc._payroll_boxes` gives marginal_dollar_savings, hsa_deduction and magi_ladder person-level `ss_wages` (boxes 3 + 7, against the wage base) and `medicare_wages` (box 5, against the 0.9% threshold); the one-figure `wages` stays as a deprecated alias that stands in for both and says so; marginal_dollar_savings keys the 0.9% on the filing-status Form 8959 threshold (it already did) and now on box 5; hsa_deduction gains `filing_status` — with it the tier is the Form 8959 TAX threshold, without it the old status-blind withholding threshold, still named an upper bound; magi_ladder's 8959 row measures `medicare_wages`. 2 estimated_tax_safe_harbor takes `excess_ss_credit` (withholding, IRC 31(b)(1)), `refundable_credits` (off the tax, 6654(f)(4)) and `additional_medicare_withheld` (off the tax, 6654(m) "to the extent not withheld"), and `prior_year_refundable_credits` (off the prior-year tax — the 2025 Instructions for Form 2210: "subtract from that total amount the refundable credits"), quotes 6654(g)(1)'s ratable deeming (a late W-4 bump covers earlier installments, a late 1040-ES payment does not), and names the prior-year lines through form_line — the new registry keys `f1040.agi` (8b in 2019, 11 in 2020-2024, 11a from 2025) and `f1040.total_tax` (16, then 24, 24a on the 2026 draft), each read off its face 2026-09-27; the old text told a 2026 filer to read line 11 of a 2025 return whose AGI is line 11a. `estimate.safe_harbor_inputs_from_estimate` reads the inputs off an estimate's ledger. The intake / profile / server prior-year line literals stay for JF6c.
-  1. **Shared tier helper** [DEF-10]. marginal_dollar_savings, hsa_deduction and magi_ladder take an unspecified `wages` (calc.py:3948, :4008-4033, :5448, :5815-5863, :4112, :4175-4182). Box 1 picks the wrong tier by up to 6.2% / 0.9% per dollar, and hsa_deduction prices the liability on the status-blind withholding threshold (:5830).
-     - Add `_payroll_fica_tier(ss_wages, medicare_wages, filing_status, year)` with person-level totals, and new kwargs.
-     - Keep `wages` as a deprecated alias, with a disclosure of which box it assumed.
-  2. **Safe-harbor inputs** [DEF-12 + LD-14]. estimated_tax_safe_harbor (calc.py:3405-3435; server.py:386-392) omits four statutory facts:
-     - the excess-SS credit is "considered an amount withheld at source" (IRC 31(b)(1));
-     - a §31 credit is deemed paid with "an equal part … deemed paid on each due date" (§6654(g)(1));
-     - `tax` is net of non-§31 refundable credits (§6654(f)(4));
-     - Additional Medicare Tax is included only "to the extent not withheld" (§6654(m)).
-     
-     Changes:
-     - Add inputs `excess_ss_credit`, `additional_medicare_withheld` and `refundable_credits`.
-     - Add a ratable-deeming work line: a Q4 W-4 bump cures earlier quarters, a late 1040-ES payment does not.
-     - Build the prior-year line references with `form_line`.
-     - Optional helper `safe_harbor_inputs_from_estimate(RefundEstimate)` that reads the ledger slots.
-  - **Acceptance** (*illustrative* figures).
-    - Head of household 2026, ss_wages 185,000 (at or above the $184,500 base): medicare_wages 215,000 → 0.0235; medicare_wages 190,000 → 0.0145.
-    - hsa_deduction, MFJ, ss_wages = medicare_wages = 230,000 → 1.45%.
-    - Safe harbor: projected tax 32,000, withholding 26,000, excess_ss_credit 900 → expected withholding 26,900.
-    - refundable_credits 2,500 → current-year prong = 90% × 29,500.
-    - The work cites 6654(g)(1).
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JF6a, JF1a, JF5a, JF5b, JF1b, JF2, JF3, JF4.
 
 ### Block 2 — Paycheck-dated decision ops
 
-- [x] **JP1a — employee_fica two layers, and the Step 4(c) solve — DONE 2026-09-27** (M; deps JF1a, JF3, JF4; **latest start 2026-10-14**) [DEF-09 + the rest of LD-12 + LD-14's 4(c)] — pitfall *withholding-vs-liability*
-  - **Why.**
-    - employee_fica pools ONE Social Security base and ONE Medicare accumulator across all segments, labels the person-level LIABILITY split as per-segment "withholding" (calc.py:3221-3225, :3293-3345), and rounds wages to whole dollars (:3317).
-    - Withholding is per employer: each employer withholds Social Security up to the base, and the 0.9% applies only to "wages from the employer in excess of $200,000" (IRC 3102(f)(1); Pub 15 (2026) §9; knowledge/federal/2026.yaml:271-276).
-    - Liability is per person, against the Form 8959 status threshold. The difference between the two is the hidden excess-SS credit.
-  - *As built:* segments carry `employer` (none = one employer) and keep their cents; WITHHOLDING is per employer (its own wage base and IRC 3102(f)(1)'s $200,000 — segment rows, the `employers` rows, the totals); with `filing_status` the person's `liability` (one base; the 0.9% over the Form 8959 status threshold); `excess_ss_credit` (2+ employers) and `additional_medicare_reconciliation` (+ owed / − credited) name the differences; estimated_tax_safe_harbor's `remaining_pay_dates` returns `step_4c_per_check` (the shortfall over the remaining checks, rounded up), citing 6654(g)(1) and quoting the Form W-4 Step 4(c) line. Pitfall P-020.
-  - **Build.**
-    - Segments gain `employer`; wages stay in Decimal cents.
-    - Two output layers: withholding per employer, and liability per person (when `filing_status` is given).
-    - Add `excess_ss_credit` and `additional_medicare_reconciliation`, with unambiguous field names.
-    - estimated_tax_safe_harbor gains optional `remaining_pay_dates`, and returns the Step 4(c) amount per remaining check that reaches the required payment under §6654(g)(1) ratable deeming. The projected withholding is still a caller input until JP1c.
-  - **Acceptance** (*illustrative* figures).
-    - Two concurrent employers, $150,000 + $90,000 (2026), head of household:
-      - employer 2 withholds SS 5,580.00 and Additional Medicare 0;
-      - person liability SS 11,439.00; excess_ss_credit 3,441;
-      - head-of-household liability Additional Medicare 360.00.
-    - $150,000.40 + $89,999.60 keeps the cents.
-    - One employer, $230,000, MFJ → withheld 270.00, liability 0, reconciliation −270.
-    - `test_wage_base_is_one_annual_pool_across_segments` still passes (segments without `employer` are one employer).
-    - A shortfall of 2,400 over 6 remaining checks → 4(c) of 400 per check, citing 6654(g)(1).
-    - The pitfall has a citing test.
-- [x] **JP2 — Multi-employer 402(g) room — DONE 2026-09-27** (M; deps J0; **latest start 2026-10-19**) [LD-05]
-  - *As built:* calc op `elective_deferral_room` (op count 32 → 33; MCP tools stay 23): the 402(g) room across every employer with the 414(v) catch-up by year-end age (50+, the higher amount at 60-63 — 414(v)(5)(A), (2)(B)(i)); per-check dollars and percent rounded DOWN (to the plan increment) so the last check never overshoots; an excess with its April 15 deadline (irs.gov: "not postponed by extending the filing"), the Pub 525 double tax and the individual's choice of plan (Treas. Reg. 1.402(g)-1(e)(2)(i)); the SECURE 2.0 Roth catch-up test (414(v)(7)(A); new pack field `roth_catch_up_wage_threshold`, 2026: $150,000 per Notice 2025-67); each plan's 415(c) room (catch-ups outside it, 414(v)(3)(A)(i)). contribution_limits' 402(g) string points at it; RetirementContributionsYear gains `deferrals_by_employer`; SKILL.md and the calc docstring list it (and now carry the JF4/JP1a arguments).
-  - **Why.** contribution_limits takes only `year` (calc.py:3627-3630). Nothing computes the room left across employers, so a job-changer's new plan cannot see the old plan's deferrals.
-  - **Build** `calc.elective_deferral_room`:
-    - remaining §402(g) room, with the age catch-ups;
-    - the per-check dollar amount and percent, rounded DOWN to the plan's increment, that lands at or under the cap by the year's last pay date;
-    - any excess by employer, with the April 15 correction deadline, which "is not postponed by extending the filing", and the double-tax consequence (irs.gov excess-deferrals page);
-    - the SECURE 2.0 Roth catch-up wage test;
-    - §415(c) room per plan.
-  - contribution_limits' 402(g) scoping string points at the new op, and RetirementContributionsYear gains a per-employer split.
-  - **Acceptance** (*illustrative* figures; 2026 pack: limit 24,500, catch_up_50 8,000, catch_up_60_63 11,250).
-    - $11,000 deferred at a prior employer, under 50 → $13,500 room.
-    - Ages 50–59 → $21,500; ages 60–63 → $24,750 (11,250 instead of 8,000).
-    - The per-check percent is rounded down and never overshoots.
-    - An excess case shows the April 15 deadline; op count +1.
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JP1a, JP2.
 
 ### Block 3 — The retirement block
 
-- [x] **JR1 — Form 1099-R box 7 interpretation — DONE 2026-09-27** (M; deps JF2)
-  - *As built:* `knowledge/forms/1099r_distribution_codes.yaml` — Table 1 of the 2019, 2023, 2024, 2025 and 2026 i1099r revisions, transcribed by word coordinates and read row by row against each page (29 codes, 30 with Y from 2025; `since`, `used_with`, `used_with_from` — Y pairs with 4/7/K, S with J, J with S, from 2025 — `title_until` for J/P/R's older wordings, {year}/{prior_year} title templates, account, return_effect; the loader asserts symmetry per revision; 2020-2022 take the 2019 = 2023 table) and the rule quotes (two codes; 8 with 1, 2 or 4; Q/T alone; the box 7b, recharacterization, direct-rollover, code Y, box 2b and box 7d sentences). `taxfill_core/distribution_codes.py`: `parse_box7`, `validate` (V0 unknown for the revision, V1-V5), `interpret`. extract_document (core and MCP, tool count 23) takes `tax_year`; `_VALIDATORS` add `findings` (severity / rule_id / boxes / message / citation — a flagged box stays 'ok', the message says "misread OR payer error: request a CORRECTED Form 1099-R") and `interpretation`; the caveat counts them. V6-V14 as listed (V7 is an error through 2024 and a warning from 2025, when a Roth SIMPLE IRA may check box 7b; V10 is an error for H and a warning for G); Form 5498 box 4 > 0 is info finding V15 (count the contribution once).
-  1. **Code knowledge and interpreter** [RC-03].
-     - Codes are stored as raw text (extract.py:263; `_coerce` 'code' is plain `str()`), so an impossible "NQ7" comes back 'ok' with no warning.
-     - i1099r (2026) box 7a:
-       - "a maximum of two alphanumeric codes";
-       - "Only three numeric combinations are permitted … codes 8 and 1, 8 and 2, or 8 and 4";
-       - "Do not combine code Q or T with any other codes".
-     - Table 1 changes by revision: Y is new in 2025, and S went from 'None' (2024) to 'J' (2025). N/R/8/P/T meanings are year-relative.
-     - New `knowledge/forms/1099r_distribution_codes.yaml`, year-invariant with revision markers:
-       - built from the 2019/2023/2024/2025/2026 revisions;
-       - per code: a title template with {year}/{prior_year}/{year_minus_5}, used_with and used_with_from, account, the box 2a/7b rules, return_effect, and a verbatim citation;
-       - the loader asserts the used_with table is symmetric; ships via the stage_data rglob.
-     - New `taxfill_core/distribution_codes.py`: `parse_box7`, `validate` → findings, `interpret` → Box7Interpretation.
-  2. **Semantic validation in extract_document** [RC-05]. There is none beyond type coercion (extract.py:1295-1365; ExtractedDocument :1203-1216).
-     - Add optional `tax_year` to the core function and the MCP tool (tool count stays 23).
-     - Add a `_VALIDATORS` registry, `ExtractedDocument.findings` (severity / rule_id / boxes / message / citation) and `interpretation`.
-     - A field's status stays 'ok' (a payer error is a real reading); the message says "misread OR payer error: request a CORRECTED Form 1099-R".
-     - Rules V1–V14:
-       - more than two codes;
-       - a numeric pair outside the three permitted;
-       - a pair not in used_with for the revision;
-       - Q or T combined with anything;
-       - Y without 4/7/K;
-       - N/R with box 2a ≠ 0;
-       - J/Q/T with the IRA box checked;
-       - 2b checked with 2a filled on a non-IRA;
-       - IRA box with codes 1/2/7 and 2b checked → pointer to ira_pro_rata;
-       - G/H with 2a > 0;
-       - P → amend the prior year;
-       - 1/J/S → the 10%/25% tax and Form 5329;
-       - 2a > box 1;
-       - 7d without 7c.
-  3. **Form 5498 box 4** [RC-13]. Box 4 is captured (extract.py:978) but never explained, so one contribution can be counted twice (the first trustee's box 1/10 plus the second trustee's box 4). Add the note and an info finding.
-  - **Acceptance.**
-    - A golden per-revision Table 1 transcription; symmetry holds for 2019/2024/2025/2026.
-    - "NQ7" → error; "7 1" → error; "8 1" → ok; Q+B → error.
-    - Y in 2024 → unknown code; "S J" is valid in 2025 and invalid in 2024.
-    - N/R strings resolve against tax_year.
-    - An N code with 2a ≠ 0 → an error finding, and the caveat reads "N findings (E errors)".
-    - 5498 box 4 > 0 → an info finding; MCP e2e tool count is 23.
-- [x] **JR2a — Net income attributable, the statements module, the deadline fallback — DONE 2026-09-27** (M; deps JR1, JF6a)
-  - *As built:* calc op `ira_net_income_attributable` (op count 33 → 34): amount x (adjusted closing − adjusted opening) / adjusted opening, the opening balance counting every contribution in (the one being moved included) and the closing balance adding back every distribution out; exact division to cents with the three-place figure and its difference beside it; negative after a loss; the whole-account rule; reproduces 1.408-11 Ex. 1 ($75) and Ex. 2 ($186.89 exact vs the printed $187) and 1.408A-5 Ex. 1 (−$10,000) and Ex. 2 ($5,000 / $4,000). `taxfill_core/statements.py`: `recharacterization_statement` (both i8606 examples verbatim in the first person; [NAME]/[SSN] placeholders; "Filed pursuant to section 301.9100-2" heads a late one; the optional conversion sentence labeled optional), `returned_contribution_statement`, and `ira_line_4b_statement` (the 2025 line 4c instructions' "Line 4b – $1,000 Rollover and $500 HFD.", the line through form_line). New registry keys `f1040.ira_distributions` (4a) and `f1040.ira_taxable` (4b), 2019-2026, read off each face. `calc._return_due_date`: the pack's date when it has one, else IRC 6072(a)'s April 15 rolled by IRC 7503 (weekends, DC Emancipation Day) and labeled ASSUMED; the extended date is Treas. Reg. 1.6081-4(a)'s 6 months, rolled the same way; an override wins.
-  1. **NIA op** [RC-01]. A grep for 1.408-11, 1.408A-5, "net income attributable", 408(d)(4) and 408A(d)(6) across packages/ and knowledge/ returns 0 hits.
-     - New `calc.ira_net_income_attributable(purpose='recharacterization'|'returned_contribution', …)`.
-     - Formula (Treas. Reg. 1.408A-5 A-2(c)(1); 1.408-11(a)(1)): "Contribution × (Adjusted Closing Balance − Adjusted Opening Balance) / Adjusted Opening Balance".
-       - The opening balance includes the contribution being moved.
-       - The closing balance adds back distributions and recharacterizations.
-     - Implement the whole-account rule; a negative NIA is allowed (Pub 590-A).
-     - Divide EXACTLY, and also report the three-place result and its dollar difference. This is a labeled choice: Pub 590-A says "at least three places", and three-place rounding misses the regulation's own examples.
-     - No per-year figures, so no pack read.
-  2. **Statements** [RC-09, generator half]. New `taxfill_core/statements.py`.
-     - `recharacterization_statement(facts)`, in the element order of the i8606 examples.
-       - [NAME]/[SSN] placeholders keep PII out of calc output.
-       - "FILED PURSUANT TO § 301.9100-2" heads the statement when late.
-       - The optional conversion sentence is labeled optional.
-     - Also `returned_contribution_statement` and `ira_line_4c_statement`.
-  3. **Deadline fallback** [RC-15]. The 2026 pack has no deadlines block (2026.yaml:80-91).
-     - Shared helper `_return_due_date(year, pack)`: the pack when present; otherwise April 15 of year+1 (IRC 6072(a)) with the §7503 weekend / DC-holiday roll.
-     - Label the fallback ASSUMED, accept an override, and carry the provisional stamp.
-  - **Acceptance.**
-    - NIA reproduces the regulation examples:
-      - 1.408-11 Ex. 1: $75 on $400;
-      - 1.408-11 Ex. 2: $186.89 exact (the regulation prints $187; the test documents the difference);
-      - 1.408A-5 Ex. 1: −$10,000;
-      - 1.408A-5 Ex. 2: $5,000 / $4,000.
-    - Statement goldens reproduce both i8606 examples:
-      - $4,000 contributed, $3,000 recharacterized with $300 of earnings, $1,000 deducted;
-      - $4,000 → $4,200, the account balance, same-year line 4a.
-    - The late path carries the §301.9100-2 header.
-    - Due dates: TY2025 from the pack (2026-04-15 / 2026-10-15); TY2026 computed (2027-04-15, a Thursday) and labeled.
-    - Op count +1.
-- [x] **JR2b — The recharacterization op — DONE 2026-09-27** (M–L; deps JR2a) [RC-02 + TY26-27 + LD-18 + RC-12] — pitfall *recharacterization*
-  - *As built:* `calc.ira_recharacterization` (op 35; P-021), with a signature designed from this spec (the review's §B was not kept): `direction, amount, contribution_year, contribution_date, contributed_total?, transfer_date?, source_kind?, deducted?`, the NIA inputs, `extension_filed?, return_filed_date?, due_date_override?`, the eligibility facts, `other_*_contributions?, elect_nondeductible?, roth_ira_dec31_value?, readings?, then_convert?`.
-    - **Refusals:** a conversion, a rollover (A-4, with its SIMPLE exception quoted), SEP/SIMPLE employer money (A-5), an overlap with the deducted part ((B)(ii)), an amount above the contribution, a contribution date outside Jan 1 – the unextended due date (Pub 590-A), and a transfer dated before the contribution.
-    - **Deadline status** comes from `_return_due_date`: `open` (no transfer date), `timely` (by the due date, or by the extended date with `extension_filed`), `late_301_9100_2` (no extension, a return filed by the due date: an amended return with the header) or `too_late`. With neither fact known, a transfer after the due date is refused with the question.
-    - **Code N vs R** follows the transfer year (i1099r 2026 wording, box 7a from 2026), and with it Form 1040 line 4a vs the statement only.
-    - **Target side:** Roth → traditional checks IRC 4973(b) (the combined per-person limit, without 219(g)); traditional → Roth checks Roth eligibility.
-    - **Deduction** via ira_contribution_eligibility; `elect_nondeductible` quotes 408(o)(2)(B)(ii).
-    - **Form 8606:** `line_1_add` counts contribution dollars only (A-3); `line_4_add` applies when the original contribution was dated Jan 1 – Apr 15 of year+1; `line_6_adjustment` is ±(amount + NIA) after year end, labeled a CHOICE (i8606 Line 6).
-    - **Documents and notice:** the i8606 statement (via statements.py); four expected documents (the first trustee's 5498 box 1/10, the transfer-year 1099-R boxes 1 and 2a, and the second trustee's 5498 box 4) with the ±$1 reconciliation; the A-6(a) notice, filled.
-    - **Alternatives:** `return_408d4` (additional tax 0, quoting 72(t)(2)(A)(ix), i5329 exception 21 AND the i8606 sentence it overrules) and `leave_in_place` (the capped 4973 excise).
-    - **then_convert** runs roth_conversion with line_1_add as this-year basis (or as carryforward when the conversion is in a later year, labeled).
-    - **Tests:** test_ira_recharacterization.py (13, including both i8606 worked examples reproduced to the dollar).
-  - **Why.** `ira_contribution_eligibility` (FIELD_NOTES N-11) detects an over-the-phase-out Roth contribution, but nothing fixes it. Recharacterization is the fix, and no op models it.
-  - **Build** `calc.ira_recharacterization`; the full signature is in the review (§B).
-    - **Refusals:**
-      - conversions made after 2017 (408A(d)(6)(B)(iii));
-      - rollovers (A-4);
-      - employer SEP/SIMPLE money (A-5);
-      - deducted amounts ((B)(ii));
-      - an amount above the contribution.
-    - **NIA** via JR2a.
-    - **Deadline status** via the shared helper: timely, late (§301.9100-2 plus an amended return), or too late.
-    - **Code N vs R**, by the year of the transfer. This decides Form 1040 line 4a vs statement-only reporting (i8606 2025).
-    - **Target-side limit check:**
-      - Roth → traditional: is it still an excess under 4973(b)?
-      - traditional → Roth: is the filer Roth-eligible?
-    - **Deduction** via ira_contribution_eligibility, with `elect_nondeductible` (408(o)(2)(B)(ii)).
-    - **Form 8606 inputs:**
-      - `line_1_add` counts contribution dollars only; NIA is never basis (A-3);
-      - `line_4_add` applies when the ORIGINAL contribution date is Jan 1 – Apr 15 of year+1;
-      - `line_6_adjustment` is labeled a CHOICE.
-    - **Documents:** the expected documents, and a ±$1 reconciliation of any 1099-R / 5498 readings passed in; the trustee notification checklist (A-6(a)).
-    - **Alternatives:**
-      - a 408(d)(4) return. The earnings owe no 10% tax per IRC 72(t)(2)(A)(ix) and i5329 exception 21. i8606 ("generally subject") conflicts; follow the statute and quote both in the pitfall so a re-read of i8606 cannot undo it;
-      - leaving it in place, with the 6% excise capped per 4973(a).
-    - **Optional `then_convert`**, delegating to roth_conversion; it refuses a conversion dated before the transfer.
-  - **Interpretive choices for the user to confirm** (labeled in the op output):
-    - the `line_6_adjustment` value for a recharacterization after year end;
-    - "including extensions" read as applying only when an extension was actually filed; otherwise the Oct 15 date goes via §301.9100-2 plus an amended return;
-    - exact division rather than three places.
-  - **Acceptance.**
-    - Every refusal has a test.
-    - N/R timing → line 4a vs statement_only; the Jan–Apr line-4 rule holds; NIA is excluded from line 1.
-    - The return_408d4 alternative shows additional tax 0, citing 72(t)(2)(A)(ix).
-    - then_convert embeds roth_conversion with the line-1 basis.
-    - Op count +1; the pitfall has citing tests.
-- [x] **JR2c — Custodian statements, the filing manifest, rule reach — DONE 2026-09-27** (M; deps JR2b) [RC-09 manifest half + RC-16 + TY26-27]
-  - *As built:*
-    - **DocSpec `IRA custodian statement`** (27 kinds). Its boxes are statement_type (trade_confirmation | transfer_confirmation | year_end_fmv), custodian, account_type, account_number, transaction date/type, amount, from/to accounts, contribution_year, fmv_date and fmv.
-      - The status note quotes the i1099r 2026 timing: the 5498 "with the IRS by May 31, 2027", the statement to each participant "by February 1, 2027".
-      - Validators: V16 an unknown type, V17 a year-end value not as of Dec 31, V18 a confirmation without an amount or ISO date.
-    - **`extract.dec31_total_value_from_statements(documents, tax_year)`** returns `Dec31Value`. It sums the traditional/SEP/SIMPLE Dec-31 values with each statement's provenance and lists the excluded ones (a Roth IRA, the wrong date, a confirmation, another kind) with the reason.
-    - **The confirmation round trip:** ira_recharacterization reconciles a `{form: 'confirmation', box: 'amount'}` reading against the amount transferred.
-    - **Manifest:** `FilingManifestItem.attached_statements`. file_and_pay's assemble list says ATTACH THE <STATEMENT>, and the sign list says it is not signed separately. ira_recharacterization's work names the entry.
-    - **Rule reach:**
-      - ira_contribution_eligibility's EXCESS line;
-      - the intake Roth IRA note;
-      - roth_conversion's docstring (a conversion is final, so recharacterize first);
-      - the 1099-R note (N vs R) and the 5498 box 4 finding;
-      - the codex and copilot skill files.
-    - **Eval (u):** the `HOH_RECHARACTERIZE_BEFORE_CONVERTING` fixture (a hypothetical head-of-household filer; reusable by JT4c). The excess is found, a conversion is refused, the move is recharacterized, then converted with only the $210 of earnings taxable, and the manifest names the statement.
-    - **Tests:** test_ira_custodian_statement.py (5).
-  - **Custodian-statement DocSpec.** Form 5498 is due to the IRS "by May 31, 2027", after April 15. The Dec-31 FMV statement goes to participants "by February 1, 2027" (i1099r 2026). So a new `IRA custodian statement` DocSpec covers:
-    - trade / transfer confirmations (date, amount, type, from/to account);
-    - the year-end FMV statement, which feeds `dec31_total_value` for ira_pro_rata / roth_conversion with document provenance.
-    
-    The op notes the 5498 timing prominently.
-  - **Manifest.** `FilingManifestItem.attached_statements`, so the filing checklist says what to attach.
-  - **Rule reach.**
-    - Pointers at the use sites: JF1b.4's EXCESS line, the intake Roth IRA note (intake.py:1142-1150), the roth_conversion docstring, and the 5498 and 1099-R notes.
-    - Skills docs and op list updated.
-    - A separate synthetic what-if eval on a hypothetical head-of-household filer covers "recharacterize before converting". JT4c's t4 rehearsal reuses that fixture.
-  - **Acceptance.**
-    - A confirmation round trip, and an FMV statement feeding `dec31_total_value` with provenance.
-    - The manifest lists "recharacterization statement".
-    - test_skills_sync matches the runtime op list.
-- [x] **JR3a — Retirement distributions in the estimator — DONE 2026-09-27** (M; deps JR1, JR2b) [RC-07, part 1]
-  - *As built:* `IncomeSnapshot.retirement_distributions: list[RetirementDistribution]`.
-    - **Fields:** gross, taxable_amount (2a), the two 2b flags, codes, ira_sep_simple, rolled_over (the disposition), taxable_override, early_exception_amount, federal_withholding (informational), label.
-    - **Pricing:** `_retirement_taxable` decides each item from its box 7 codes (`distribution_codes.parse_box7`).
-      - The override wins, less any rollover.
-      - P is excluded; the assumption quotes the year's own Table 1 title.
-      - N, R and Q are $0. G and H take box 2a, $0 when blank.
-      - Otherwise box 2a, less any rollover. An IRA's 2b-checked gross is flagged for ira_pro_rata, J for Roth basis, and a blank 2a uses the gross with a disclosure.
-    - **Exclusivity:** `retirement_income_taxable` stays the manual figure, and both together is a ValueError.
-    - **Joint view:** the lists are concatenated. A spouse's manual figure beside a list rides as an override item; two manual figures are summed.
-    - **Docs:** server.py documents the list.
-    - **Tests:**
-      - test_estimate `test_jr3a_*`: Q/G/H/R/JP → 0; 7 with a rollover; the override; P's assumption; the refusal; the joint view;
-      - `retirement_distributions` is classified as concatenated in the JF1b.5 spouse-field test.
-  - Today IncomeSnapshot has one hand-fed integer (estimate.py:87-192, :228).
-  - Add `retirement_distributions: list[RetirementDistribution]`: gross, 2a, the 2b flags, codes, IRA box, disposition, override, early_exception_amount, and withheld (informational).
-  - Route each item through `distribution_codes.interpret`.
-  - `retirement_income_taxable` stays as a manual override, refused when the list is also set.
-  - **Acceptance:** Q → 0; G/H rollover → 0; J+P → excluded with an assumption; both inputs set → ValueError; the spouse-field test covers the new list.
-- [x] **JR3b — Per-person IRA pool and pro-rata — DONE 2026-09-27** (M; deps JR3a) [RC-07, part 2]
-  - *As built:* `IncomeSnapshot.ira_pool: IraPoolFacts` holds basis_carryforward (line 2, required; 0 = no basis), nondeductible_contributions_this_year (line 1), contributions_made_after_year_end (line 4) and dec31_total_value (line 6, required with basis).
-    - **New field:** `RetirementDistribution.converted_to_roth`, which sends an item to Form 8606 line 8 rather than line 7.
-    - **Pricing:** estimate_refund resolves EACH person's 2b-checked IRA items first (`_resolve_ira_pool`). Those are items with the IRA box and box 2b checked, no override, and no Q/N/R/P/G/H code.
-      - The op is calc.ira_pro_rata. Zero basis means the items are fully taxable.
-      - The result is split across the items and rides on each as `taxable_override` with a "(<who>'s Form 8606)" label, so the joint view concatenates without merging pools.
-      - The joint view drops `ira_pool`; the JF1b.5 class is `_SPOUSE_NEVER_MERGED`.
-    - **Refusals:** no pool gets a prescriptive ValueError naming the `{basis_carryforward: 0}` answer; basis without line 6 names `dec31_total_value`.
-    - **Disclosure:** an assumption names each item priced through the person's own Form 8606.
-    - **Tests** (test_estimate `test_jr3b_*`):
-      - the illustrative recharacterize-then-convert case, taxable $250 = NIA + growth, not the $7,250 gross;
-      - the required pool and the explicit zero;
-      - an MFJ couple's pools priced apart.
-  - Add `ira_pool: IraPoolFacts` per person.
-  - Traditional-IRA items with 2b checked go through ira_pro_rata. `ira_pool` is then REQUIRED, with a prescriptive refusal; `{basis_carryforward: 0}` is the explicit no-basis answer.
-  - Spouses' pools never merge (Form 8606 is filed per spouse).
-  - **Acceptance** (*illustrative*): a code-N recharacterization plus a code-2 conversion, with the pool carrying the line-1 basis → taxable = NIA + growth, not the box-2a gross. An MFJ couple's pools stay separate.
-- [x] **JR3c — The 72(t) and 4973 taxes — DONE 2026-09-27** (M; deps JR3a, JF6b) [RC-08]
-  - *As built:*
-    - **New operand slots:** `early_distribution_additional_tax` and `ira_excess_contribution_excise`, both in total tax and labeled from form_line.
-    - **New keys, read 2026-09-27:**
-      - f5329.early_distribution_tax (4), f5329.traditional_excess_tax (17), f5329.roth_excess_tax (25);
-      - sched2.retirement_additional_tax (6 / 8 / 5 on the 2026 draft);
-      - sched2.ira_excess_excise (6 / 8 / 18 on the 2026 draft Schedule 2, Form 5329 Created 7/31/26).
-    - **72(t):** Form 5329 Part I prices each 1099-R's taxable part less its early_exception_amount at 10% for codes 1/J (72(t)(1)) and 25% for S (72(t)(6)).
-      - Code 8 with J/1 owes 0 (72(t)(2)(A)(ix), disclosed); code P is not this year's.
-    - **4973:** IncomeSnapshot gains `traditional_ira_excess` / `roth_ira_excess` (lines 16/24) and `*_ira_dec31_value`. The excise is 6% capped per person at the Dec-31 value, and the joint view applies each person's cap before summing.
-      - An uncapped charge is disclosed.
-    - **Docs:** server.py.
-    - **Tests** (test_estimate `test_jr3c_*`):
-      - code 1 $12,000 → $1,200 labeled "Form 5329 line 4 -> Schedule 2 line 8"; the exception amount; SIMPLE 25%; code 7 → none;
-      - J8 → earnings taxable, 0 additional tax;
-      - the cap (7,000 vs 5,000 → $300); the uncapped disclosure; 2026 → line 18; the joint caps;
-      - every ledger reconciles.
-  - The estimator has no 72(t) additional tax and no 4973 excise (grep: 0 hits; `_LEDGER_SLOTS` estimate.py:307-343).
-    - IRC 72(t)(1) is "10 percent of the portion … includible in gross income"; (t)(6) makes it 25% in a SIMPLE IRA's first two years.
-    - 4973(a) is 6%, capped at the account value.
-  - New slots `early_distribution_additional_tax` and `ira_excess_contribution_excise`, labeled from `form_line`: Schedule 2 line 8 for 2025; lines 5 and 18 on the 2026 draft Schedule 2 and the 2026 draft Form 5329 (Created 7/31/26).
-  - **Acceptance** (*illustrative*):
-    - Code 1, $12,000, no basis, under 59½ → a $1,200 slot.
-    - J+8 → earnings taxable, 0 additional tax.
-    - The excise is capped at the Dec-31 value; the ledger reconciles.
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JR1, JR2a, JR2b, JR2c, JR3a, JR3b, JR3c.
 
 ### Block 4 — The TY2026 foundation (dated)
 
-- [x] **JT0a — Draft packs, rehearsal mode, multiple second passes — DONE 2026-09-27** (M; deps J0; **latest start 2026-10-12**) [TY26-01 + TY26-03 + G32 + LD-08(3)]
-  - **Why.** Every 2026 draft for the Wave A forms is posted at irs.gov/pub/irs-dft/. The IRS cover sheet says "there are never any changes to the last posted draft of the form and the final revision of the form"; drafts of instructions and publications do change. Three gates refuse drafts-first authoring today:
-    - the URL-prefix test (test_formpacks_federal.py:208-217);
-    - `assert_filing_grade` inside the golden test (filler.py:360; verify.py:2324/2427);
-    - the sha256 pin, which breaks when IRS re-posts a draft (f1040--dft: Last-Modified 2026-09-17, Created 8/19/26).
-  - *As built:* `FormPack.source_status` / `draft_created` with a validator (a draft needs its Created stamp; a final pack may not use irs-dft or carry the stamp); the URL test allows irs-dft only for a draft; core-only `fill_form(..., rehearsal=True)` / `verify_form(..., rehearsal=True)` accept only a draft pack, bypass the filing-grade guard and stamp every page with a FreeText "REHEARSAL — DRAFT FORM — NOT FOR FILING" (MCP never passes it, so MCP fill_form still refuses 2026); check_drift reports a re-posted draft as "draft re-posted: re-audit" (a warning); `test_no_draft_packs_in_a_filing_grade_year`; `Provisional.second_passes` (second_pass kept as a deprecated alias) with each pass's `source_status` / `draft_created`, `draft_only_blocks()` and `removal_blockers()` (absent blocks, draft-only blocks); CONTRIBUTING-PACKS "Drafts-first" and DEV_PLAN §5.
-  - **Build.**
-    - FormPack gains `source_status: final | draft` and `draft_created`; the URL test allows irs-dft only for draft packs.
-    - A core-only `rehearsal=True` on fill_form / verify_form, never reachable through MCP. It bypasses the filing-grade guard only for draft packs and stamps "REHEARSAL — DRAFT FORM — NOT FOR FILING"; the golden test uses it.
-    - check_drift reports a draft sha change as WARN ("draft re-posted: re-audit").
-    - New invariant `test_no_draft_packs_in_a_filing_grade_year`.
-    - `Provisional.second_passes: list[…]`, keeping `second_pass` as a deprecated alias. Each entry carries `source_status` and `draft_created`. Removing the marker is refused while a draft-only entry covers a block.
-    - Document it in CONTRIBUTING-PACKS ("Drafts-first") and DEV_PLAN §5.
-  - **Acceptance.**
-    - A dummy draft pack passes the golden test in rehearsal mode; MCP fill_form still refuses 2026.
-    - The invariant fails on a draft pack in a non-provisional year.
-- [x] **JT0b — Planning-year fixtures — DONE 2026-09-27** (M; deps JT0a) [TY26-02]
-  - *As built:* a shared `conftest.py` (now `packages/conftest.py`) with `planning_year` (the newest provisional federal year; skips when none) and `synthetic_provisional_pack` (`make(strip)` → a tmp knowledge copy whose planning pack has the named blocks removed and declared absent). Rewritten to behaviour: evals i2 (every declared-absent block is absent; the blocks a projection needs ship; second_passes resolve; removal_blockers names what keeps the marker on), i3 (the refusal names every absent block and what is still assumed), i4, i5 (a stripped `credits` block names the CTC NOT ESTIMATED); test_estimate_ledger's missing-blocks twin; test_schedule_1a's deliberately-absent refusal (a stripped `obbba_schedule_1a`); test_compare_scenarios' cross-year label. test_projection_ops' 2023 FICA refusal is a past-year pin (the 2023 pack predates the Medicare fields), not a planning-year one, and stays.
-  - A `planning_year` conftest fixture returns the newest provisional federal year and skips when there is none.
-  - A `synthetic_provisional_pack` fixture makes a tmp copy with named blocks stripped.
-  - Rewrite the absent-block assertions to test behaviour, not today's contents of 2026.yaml: packages/core/tests/evals/test_scenarios.py:237, :261, :273-281, :307, :340-360; test_estimate_ledger.py:176-189; test_schedule_1a.py:174-176; test_compare_scenarios.py:84-89; test_projection_ops.py:197.
-  - **Acceptance:** the suite is green, and it stays green when a 2026 block is added to a scratch copy.
-- [x] **JT0c — Finals watch, red-quarantine, the 1040-ES voucher, the 2026 header — DONE 2026-09-27** (M; deps JT0a) [TY26-04 + G22(3) + TY26-22 + TY26-30]
-  - *As built:*
-    - **Finals watch:** `scripts/check_finals.py` plus its own workflow `.github/workflows/finals.yml`. It covers the draft packs of the newest provisional federal year (by IRS file stem) plus p1040, i1040gi and p501; all three answered 404 on 2026-09-27.
-      - The cron is Mondays in Oct–Nov, then daily Dec 15–31, all of January and Feb 1–15.
-      - The issue body re-lists the posted and missing finals. The script comments only when that list changes, and a non-404 HEAD fails the run as a "watch blind".
-      - `--dry-run` prints the re-pin list and the gh commands. `--assume-posted` rehearses the issue while nothing is posted.
-    - **Quarantine:** `scripts/freshness_quarantine.yaml` plus a loader. Every row carries `added`, `expires` (at most 200 days later), `fixed_by` and `why`; the two MA rows and the DC row expire 2027-03-31 and point at JS1b/JS1a.
-      - A root-conftest hook marks a quarantined network test `xfail(raises=FetchError)`, so the quarantine never masks an assertion failure.
-      - `check_drift.main` reports quarantined drift and fails on an expired row.
-      - A freshness.yml `report` job opens or comments on a `freshness red` issue on any failure.
-    - **1040-ES:** `FormPack.filing_grade_basis` (`year_knowledge` | `own_final_revision`) and `knowledge.assert_pack_filing_grade`. The basis is allowlisted to `OWN_FINAL_REVISION_FORMS = {("federal", "1040-ES")}` and needs a final pack on an irs-prior URL. fill_form, verify_form and verify_filing route through it.
-    - **Sources:** a `draft_forms` change channel (irs.gov/draft-tax-forms) and six topics, every quote verified against its own URL on 2026-09-27:
-      - federal_public_benefit: the draft Schedule 3-A (Created 6/24/26), 8 U.S.C. 1641(b)–(c) and 1611(a);
-      - itemized_limitation_2026: IRC 68 as rewritten by P.L. 119-21 §70111, and the draft Schedule A line 18 ($384,350);
-      - **form_1098vli**, planned as vehicle_loan_interest_statement: IRC 6050AA, the draft 1098-VLI (Created 8/20/26) and 163(h)(4)(B)(iii);
-      - **w2_2026_codes_tp_tt**, planned as w2_2026_tips_overtime: the FINAL 2026 W-2 (Created 1/7/26) and iw2w3 2026, with codes TP/TT and box 14b;
-      - trump_accounts: IRC 530A and i4547 (Rev. December 2025);
-      - tax_tables: the draft Pub 1040 (2026), dated Aug 28, 2026.
-    - **Renames:** the two planned keys were renamed because their key tokens outweighed any answers text. They took "tips", "overtime", "tips deduction", "car loan interest", "student loan interest" and "interest income" from their own topics.
-    - **Routing fix:** `get_sources` now ignores a year token (`_YEAR_TOKEN`) in the query and in the key. Before, "2026 tax brackets" routed to the charitable non-itemizer entry.
-      - Two companion text fixes: tax_rates_and_tables now says "tax brackets", and Pub 936 now carries its Form 1098 sentence, so "Form 1098" leaves `education` for `itemized_mortgage_interest`.
-      - A HEAD-vs-tree sweep over 240 queries plus 49 probes changes only one route: "box 12 code D" moves from foreign_tax_credit to the W-2 box 12 topic, whose iw2w3 source defines code D.
-    - **2026 header:** knowledge/federal/2026.yaml:1-67 now lists:
-      - what is final (Rev. Proc. 2025-32, Notice 2025-67, Pub 15, 1040-ES, W-2/iw2w3);
-      - the drafts with their Created dates (1040 8/19/26; Schedules 1, 1-A, 2, 3, 3-A, A, B, D and SE; Forms 8949, 8959, 8889 and 8606; Pub 1040);
-      - what is not posted at all (i1040gi 2026, Pub 501 2026, the Schedule 1-A and 3-A instructions);
-      - the four outstanding items;
-      - `still_assumed`, which now names the draft Pub 1040.
-    - **Tests:** test_freshness_quarantine.py (13 tests, including a subprocess pytest run), test_formpacks_federal `test_jt0c_*` (2) and test_sources `test_jt0c_*` (5).
-  - **Why.** The finals watch is JT6's only trigger. freshness.yml has been red 6 of 6 weeks since 2026-08-17 (last: run 35621846216), so a signal routed there would be lost.
-  - **Finals watch.** `scripts/check_finals.py` runs in its OWN workflow and opens or updates an issue labeled `ty2026-finals: re-pin now`.
-    - It HEADs irs-prior/<form>--2026.pdf for every draft pack, plus p1040, i1040gi and p501; all returned 404 on 2026-09-23.
-    - It runs weekly Oct–Nov and daily Dec 15 – Feb 15.
-  - **Quarantine.** In freshness.yml, the two known MA tests and the DC drift row go into an explicit allowlist with an expiry date and a JS1 pointer, so any NEW red opens a `freshness red` issue.
-  - **Sources.** A `draft_forms` change channel and topics federal_public_benefit, itemized_limitation_2026, vehicle_loan_interest_statement, w2_2026_tips_overtime, trump_accounts and tax_tables.
-  - **1040-ES voucher.** The Q4 2026 voucher is due 2027-01-15, and the 2026 Form 1040-ES is FINAL (irs-prior/f1040es--2026.pdf). Add `filing_grade_basis: own_final_revision`, allowlisted to f1040es.
-  - **2026 header.** Rewrite knowledge/federal/2026.yaml:1-50, which claims one blocker and unpublished forms, to the real outstanding list with draft and final sources.
-  - **Acceptance.**
-    - check_finals prints the re-pin list and files the issue in a dry run.
-    - A new failing network test fails freshness while the allowlisted ones do not; an expired allowlist entry fails.
-    - The 1040-ES allowlist test passes.
-- [x] **JT3a–d — Wave A: the core W-2 / retirement / HSA 2026 federal packs, drafts-first — DONE 2026-09-27** (JT3a **latest start 2026-10-26**; deps JT0a–c, JF6c) [TY26-20]
-  - **Sub-tranches.** The count in parentheses is how many 2025-pack field names are missing from the draft.
-    - **JT3a** (M–L): f1040 (43 of 192), sched_1a (44/54; 225 fields). **DONE 2026-09-27** — *as built:*
-      - **formpacks/federal/2026/f1040** (draft Created 8/19/26, sha e044e765…): 200 of 207 widgets (the 7 unmapped are the paid-preparer block).
-        - New keys 12f, 24a–c and 32a–c; 12d keys roll to `…_jan_2_1962`; 13a is now Schedule 1-A line 44 and 13b QBI.
-        - The new citizen / U.S. national / work-authorized question maps as two grouped radios, `citizen_or_work_authorized.{you,spouse}.{yes,no}` (not required: the 2026 instructions are not final).
-        - 28.do_not_claim_actc is gone (the draft prints no box). The state box is 62.8pt, so maxlen 13 (the round trip's clipping scan caught the 2025 value of 14).
-        - `signature.page` 3: the draft's page 1 is the IRS cover sheet.
-        - The four ROADMAP relations plus 34/37 against 24c. Cross_form keeps the printed Schedule 1/2/3 legs, allowlisted in test_pack_invariants until JT3b/JT3c ship those packs (the 2022 precedent), and adds `13a == sched_1a.44`.
-      - **formpacks/federal/2026/sched_1a** (draft Created 6/16/26, sha e22aec7f…): all 185 widgets.
-        - Tables 4 (i–v), 6 (i–xiii: two printed tables sharing rows a–e), 16 (i–iii) and 18 (i–iv), keyed `<row>.<column>`.
-        - 28a/28b gain grouped yes/no radios `original_use` and `us_final_assembly`.
-        - Cross_form: `1 == f1040.11b`, `44 == f1040.13a`. The f1040nr legs join with the 2026 f1040nr pack (JT5c).
-      - **Harness:**
-        - The golden round trip runs a draft pack in rehearsal mode.
-        - `list_forms` / `get_form_map` carry `source_status` and `draft_created`.
-        - The renumbered-line guard adds 2026 f1040 24 and 32.
-        - test_discovery: 113 federal packs, the 2026 ones all drafts.
-      - **Tests** (test_formpacks_federal `test_jt3a_*`):
-        - the printed-face keys and the 13a/13b trap, the face math on a consistent demo return (and a stale 33 caught);
-        - the Schedule 1-A hookup read from the form_lines registry for 2025 and 2026;
-        - the Schedule 1-A table and radio shape.
-      - **Vision audit:** every page of both filled drafts, at 110 and 200 dpi, with each synthetic value checked against its printed line. It caught the state-box clip and found nothing else.
-    - **JT3b** (M): sched_2 (19/63), f8959 (0/26, but its Parts are reordered), f8889 (0 missing). **DONE 2026-09-27** — *as built:*
-      - **formpacks/federal/2026/sched_2** (draft Created 4/27/26, sha 0e3d4faa…): all 68 widgets, mapped from scratch — Part II is now Sections A/B/C.
-        - The header carries the 2025→2026 line map. TRAP: 2026 line 5 is the IRA additional tax (2025 line 8) and 16a/16b/16c the old 5/6/7.
-        - 13a–13o/13z are the old 17a–17o/17z; the old 17p/17q are 19a/19b; 18 is the NEW excess-contribution line; 11 is the SE Additional Medicare Tax and 17b the wages/RRTA part.
-        - 13z.type is a two-row multiline box: maxlen 70 at the draft's 9pt DA (2025's 8pt gave 79).
-        - Relations: 1z, 3, 14, 15, 16c, 17d, 19c, 20, 21. The Form 1040's `17 == sched_2.3` / `23 == sched_2.21` now resolve, so their allowlist rows are gone.
-      - **formpacks/federal/2026/f8959** (draft Created 5/27/26, sha 8f663b2c…): the same 26 names in the same line order, but Parts II/IV swap.
-        - RRTA is 8–11 and the wages+RRTA total is line 12 → Schedule 2 line 17b; SE is 13–18 → Schedule 2 line 11. The 2025 all-parts total (line 18) is gone.
-        - Relations re-derived from the face (10, 11, 12, 15, 16, 17, 18 new); cross_form `12 == sched_2.17b`, `18 == sched_2.11`.
-      - **formpacks/federal/2026/f8889** (draft Created 4/30/26, sha c94550b7…): a port of the 2025 pack. The topology is identical (the 1pt-narrower SSN box aside).
-        - The face changes: the year, line 3's $4,400/$8,750, the 13c/13d Schedule 2 destinations, and the full 14b/14c/17b designators. Cross_form stays empty (additive legs).
-      - **Tests** (test_formpacks_federal `test_jt3b_*`):
-        - the Schedule 2 renumber; the 8959 Part reorder against the 2025 pack; the 8959 math on a demo wage+SE return; 8889 = the 2025 map;
-        - NEW invariant: every form_lines registry entry names a line its same-year pack maps (220 entries over 2022-2026, 43 for 2026).
-        - test_discovery 116; the filer-address fixture gains 3 empty rows.
-      - **Vision audit:** all four pages, each synthetic value against its printed line. It caught nothing; the 8959 trap was caught from the face before the render.
-    - **JT3c** (M): f8606 (18/45), sched_1 (1/73), sched_3 (2/36). **DONE 2026-09-27** — *as built:*
-      - **Every 2026 draft's widget /DA is 9pt (2025: 8pt)**, and verify's clipping scan reads it, so each 2025 write-in budget shrinks by 1/9:
-        - the 8z/24z two-row boxes take maxlen 70 (2025: 79);
-        - Form 8606's 10.dec box (26.8pt) takes maxlen 5 — the round trip's clipping scan caught it.
-      - **formpacks/federal/2026/f8606** (draft Created 4/21/26, sha 4d7e8fe4…): all 47 widgets, EVERY name changed.
-        - The zero padding is gone (f1_01 → f1_1).
-        - The one city/state/ZIP box is three boxes, keyed as on Form 1040, so lines 1–14 moved +2.
-        - TRAP: the preparer block's f2_19/f2_20 swap meaning (2026: firm address, then firm EIN).
-        - The umbrella Note now excludes Trump accounts. `signature.page` 3.
-        - The relations and the dropped-relation decisions carry over.
-      - **formpacks/federal/2026/sched_1** (draft Created 4/24/26, sha a017a1b7…): the 2025 map, with two changes:
-        - line 14's storage-fees box moved (the row adds "and the intelligence community");
-        - 24a sits under Line24_ReadOrder.
-        - Line 22 (reserved, ReadOnly) stays mapped under a new RESERVED_LINE_KEEPS row.
-      - **formpacks/federal/2026/sched_3** (draft Created 4/27/26, sha 5feb6f8d…):
-        - 5a now cites "Form 5695, line 3"; 5b is reserved and ReadOnly and leaves line 8's sum. Both 5b and 6e stay unmapped under a new RESERVED_LINES_UNMAPPED row.
-        - NEW 13e (Form 1062, line 14); 13z..15 rebind +1.
-      - **With Schedules 1–3 shipped**, the last 2026 CROSS_FORM_TARGET_ALLOWLIST rows are gone: every 2026 Form 1040 leg resolves.
-      - **Harness fix:** the reserved-line refusal test fills a draft in rehearsal mode.
-      - **Tests:** test_jt3c_* (the 8606 rebind + preparer swap, Schedule 1's two rebinds + budgets, the Schedule 3 reserve/13e + the 1040's legs resolving); test_discovery 119; the filer-address fixture gains 3 rows.
-        - The f8606 row differs from 2025 (the split box). Reviewed: it equals the Form 1040's reviewed set.
-      - **Vision audit:** every page of the three, each value against its printed line. Nothing beyond the 10.dec width.
-    - **JT3d** (M):
-      - sched_b, sched_d and f8949 (0 missing each);
-      - f8833: the current final is byte-identical to the 2025 pin → copy, source_status final;
-      - **f1040es**: FINAL, but all 56 mapped names changed; uses `own_final_revision`.
-      - **DONE 2026-09-27** — *as built:*
-        - **The rehearsal decision** (the JT3a question): `filler.rehearsal_only(pack)` is True for a DRAFT pack and for a FINAL pack whose year is planning-only (basis year_knowledge); fill_form/verify_form(rehearsal=True) accept exactly those.
-          - A pack on its own final revision (the 1040-ES) fills normally and refuses rehearsal, as does a final pack in a filing-grade year. MCP never passes rehearsal.
-          - The golden round trip, the readonly sweep and the reserved-line refusal test all use the predicate.
-        - **sched_b / sched_d / f8949** (drafts Created 4/7/26, 4/1/26, 4/1/26): identical topology (72 / 55 / 202 widgets; name, rect, /MaxLen, /AP); only the year text moves (and Schedule B's "country(ies)").
-          - Ported with their 2025 maps, relations and cross_form. The same widgets stay unmapped as in 2025 (sched_d's shaded g cells, f8949's Totals (f) cells).
-        - **f8833**: the live irs-pdf/f8833.pdf re-downloaded 2026-09-27 is byte-identical to the Rev. 12-2022 pin, so the 2025 pack is copied with tax_year 2026. It is a FINAL pack that is rehearsal-only until JT6.
-        - **f1040es** (irs-prior/f1040es--2026.pdf, Created 2/12/26; 16 pages, 118 widgets): all 56 voucher bindings re-read by rect.
-          - Vouchers 3/2/1 are on page 15 (f15_1/15/29 blocks) and voucher 4 on page 14 (f14_1..14). The 62 unmapped are the page-12 worksheet (27), the page-13 record (31) and 4 link buttons.
-          - `filing_grade_basis: own_final_revision`, so it fills and verifies without rehearsal.
-        - **Tests** (`test_jt3d_*`): the rehearsal predicate's four cases; the f8833 pin and its refusal of a normal fill; the 1040-ES position rebind; the three identical-topology maps. test_discovery 124 (11 drafts + 2 finals for 2026); the filer-address fixture gains 5 rows, each equal to its 2025 base.
-        - **Per-form tables the new packs reached:** SCHED_D_SHADED_G_WIDGETS[2026] (the /Ff re-read: the same two cells); IDENTITY_MIRROR_COUNTS f8949 2026 = 2. The sched_d / sched_e / f1116 / f8833 pack-parametrized fill checks now pass the rehearsal predicate.
-        - **Vision audit:** the 1040-ES voucher pages (14, 15), each value in its box. The other four are field-for-field equal to their audited 2025 packs (pinned by test), and their round trips ran against the 2026 blanks.
-  - **Traps.** Key every field by its PRINTED line:
-    - 1040 13a and 13b swap meaning. 2025: 13a = QBI, 13b = Schedule 1-A. 2026: 13a = Schedule 1-A line 44, 13b = QBI.
-    - The 1040 gains 12f, 24a–c and 32a–c.
-    - Form 8959's Part II becomes RRTA and self-employment moves to Part IV, under identical field names.
-    - Schedule 2 is renumbered.
-    - (Found in JT3a) A FINAL pack in a provisional year (the 2026 f8833 of JT3d) is neither filing-grade nor a draft, so `fill_form` refuses it and `rehearsal=True` refuses it too. The golden round trip needs a decision there: let rehearsal accept a final pack whose year is provisional, or have JT3d record why it is filing-grade.
-  - **Relations and cross_form:**
-    - f1040: '14 == 12e + 12f + 13a + 13b', '24c == 24a + 24b', '32c == 32a - 32b', '33 == 25d + 26 + 32c';
-    - sched_1a: '44 == f1040.13a';
-    - f8959: '12 == 7 + 11', '12 == sched_2.17b', '18 == sched_2.11';
-    - f8889 → sched_2.13c/13d and sched_1.8f.
-  - **Acceptance, per pack.**
-    - Vision-audited page by page against the draft, with the trap list and the Created date in its header.
-    - Golden round trip in rehearsal mode; cross_form targets resolve; `test_form_lines_resolve` passes for 2026.
-    - test_discovery counts updated.
-    - f1040es 2026 fills and verifies WITHOUT rehearsal.
-- [x] **JF6b — Rewire calc.py's line literals — DONE 2026-09-27** (M; deps JF6a) [DEF-05 + DEF-06 calc part + DEF-08]
-  - *As built:*
-    - **44 new form_lines keys in every federal pack 2019-2026** (352 entries), read 2026-09-27 off each year's face — the 2026 values off the drafts. An absent line is recorded with its reason and a quote of what the face prints instead.
-      - The keys:
-        - f1040: wages / qualified dividends / pensions ± taxable / social security ± taxable / capital gain / deduction / taxable income / tax / ctc / eic / actc / sched_1a;
-        - f1040nr.sched_1a;
-        - Schedule 1: hsa_deduction / se_deduction / student_loan_interest / stock_options / hsa_distributions / hsa_testing_income;
-        - Schedule 2: se_tax / additional_medicare (+ _se) / niit / hsa_distribution_tax / hsa_eligibility_tax / ftc_regular_tax_addition;
-        - Schedule 3: foreign_tax_credit / dependent_care / excess_ss;
-        - sched1a.total; f8959.total_tax; eleven f8889 lines.
-      - Each `printed` quote is rebuilt from the face's pypdf text, which is what test_every_entry_quotes_its_face reads. That checker now sets a trailing label aside only when it IS the entry's designator, so "... line 13a 44" checks.
-    - **Every calc.py literal renders through form_line.** The FORM_LINE_DEBT calc.py rows are gone, and so is the REBINDING_DEBT row: `_step_part`'s parameter is now `part_line`.
-      - Static descriptions name the registry key.
-      - `_capital_loss_1040_line` (a Python year table) is gone. A new `calc._face_line(year, key, form)` names a year past the shipped packs without guessing a number.
-      - ira_pro_rata, capital_loss_limitation and espp_disposition now use knowledge_dir for form_lines; each had called `del knowledge_dir`.
-    - **Real errors fixed:**
-      - The 2021 Schedule 1 sends Form 8889 line 16 to 8e and line 20 to 8z; the op printed 8f.
-      - From 2024 Form 1116 line 20 adds Schedule 2 line 1z, not line 2 (i1116 2019-2025 read).
-      - ESPP income for a 2021 sale goes on 8j; for 2019/2020 on the unlettered other-income line.
-      - The HSA and Additional Medicare 2026 text now says 13c/13d, 17b + 11 and NIIT 6.
-      - Form 8959's withholding reconciliation is "Part V", not "Part IV".
-      - The EIC line is 18a / 27 / 27a by year, and AGI is 11a for 2025.
-    - **Tests** (test_form_lines `test_jf6b_*`):
-      - JF6B_EXPECTED over 8 years;
-      - the surtax, HSA, EIC, FTC and capital-loss work strings;
-      - no calc.py debt left.
-      - test_tax_calc's 2026 HSA assertion was flipped to 13c.
-  - **Schedule 2 destinations.** calc.py:711/732/815 ("line 11"), :830/840/894 ("line 12") and :5349-5350/5411/5413/6071-6073/6099 ("Part II line 17c/17d").
-    - The draft 2026 Schedule 2 (Created 4/27/26) prints NIIT on 6, Additional Medicare on SE income on 11, the HSA taxes on 13c/13d, and Additional Medicare on wages on 17b. Line 12 is now the §965 liability.
-    - The draft 2026 Form 8959 sends line 12 → 17b and line 18 → 11.
-    - The 2019/2020 finals print "8 Taxes from: a Form 8959 b Form 8960".
-    - test_tax_calc.py:3442 asserts the wrong 2026 text; flip it.
-  - **Form 1040 references.** Stale for TY2025: AGI "line 11" (now 11a), standard deduction "line 12" (12e), EIC "line 27" (27a) — calc.py:2325/2520/2530/2555/2677/2776/2810/3419-3421/3448/3501. Read the 2019 and 2021 EIC lines off their faces (the review did not).
-  - **Form 8959 Part V.** The withholding reconciliation is cited as "Part IV" (calc.py:764-766, :816); it is Part V on the 2023, 2025 and 2026 faces. Read 2019–2022 before encoding.
-  - **Capital-loss destination.** `calc._capital_loss_1040_line` is a Python year table ('7a' if year >= 2025 else '7'), which is exactly what the registry replaces. The guard's field rule carries its three uses (in `_schedule_d_citation`, `_capital_loss_one_year` and `capital_loss_limitation`) as debt rows. The 2019 face sends Schedule D line 21 to Form 1040 line 6 (f1040sd--2019.pdf, read 2026-09-24); nothing prints it wrong today because capital_loss_limitation refuses years before 2022. Replace the helper with a `form_line` key read off each year's face.
-  - **Name clash.** calc.py's Schedule 1-A line model has a `form_line` field, and its line helper has a `form_line: str` parameter (calc.py:2937, :3088). Rename the parameter when calc.py imports `knowledge.form_line`. The guard's `test_form_line_in_the_guarded_modules_is_the_registry_helper` allows the class field and carries the parameter as its one `REBINDING_DEBT` row (self-clearing); it refuses every other def / assignment / import / parameter / except-as / match binding of `form_line` or `knowledge`.
-  - **Not forced by the guard.** About 50 literals sit outside the ROADMAP regex's prefixes: Schedule D lines 6/7/14/15/16/21 (incl. "Schedule D line 8b/1b/9/2" in `capital_loss_limitation`), Form 8606, Form 1116, Form 8960 line 17, "Schedule SE line 6" (calc), "Schedule C line 31" (estimate) and "Schedule 8812 line 3". JF3's Schedule SE label (`sched_se.ss_wages`) is therefore NOT guard-enforced until the prefixes widen. Other known gaps: a named %-format, a literal split across a `join`, a letter appended after a trusted field, a capitalised "Line" or a newline before "line". JF6c: widen the prefix alternation (at least Schedule SE / D / C / 8812, Forms 8606 / 1116 / 8960) once JF6b/JF6c have shrunk the debt, and pin each gap it closes with a probe.
-  - **Acceptance.**
-    - Parametrized over 2019–2026: the additional_medicare_tax / niit / hsa_deduction work strings equal their `form_line` values. For 2026 that is 17b + 11, 6, and 13c/13d; for 2019/2020, 8a/8b.
-    - `eitc(…, 2025).work` contains "27a"; "Part V" appears wherever the face says so.
-    - The frozen debt list has no calc.py entries left.
-- [x] **JF6c — Rewire the other sites and the Schedule 1-A keys — DONE 2026-09-27** (M; deps JF6b) [DEF-06 rest + DEF-07 + the line half of LD-08]
-  - *As built:*
-    - **Seven more keys in every federal pack, read 2026-09-27:**
-      - `f1040nr.taxable_interest` (9a in 2019, then 2b);
-      - `f1040nr.itemized` (37 / 12 / 12a in 2021 / 12 / 12a in 2026);
-      - `f1040nr.agi` (35 / 11 / 11a from 2025);
-      - the Schedule 1-A part totals `sched1a.tips` / `.overtime` / `.car_loan` / `.senior` (13/21/30/37 for 2025, 15/27/36/43 on the 2026 draft; absent before 2025).
-    - **Rewired through form_line:**
-      - the planning-year intake question (the prior year's `f1040.agi` / `f1040.total_tax`, so 2026 asks for "11a");
-      - the 1040-NR deposit-interest texts in intake and estimate;
-      - the 1040-NR itemized-only note;
-      - the server.py calc docs, including the 1116 line 20 note, now "the Schedule 2 amount the year's instructions name".
-    - **Rephrased as registry keys:** schemas/profile.py's prior-year fields and workspace.py's Position example.
-    - **Schedule 1-A:** `schedule_1a_deductions` takes its part keys from the registry. The 2025 keys stay ['13','21','30','37'].
-    - **Debt:** FORM_LINE_DEBT and REBINDING_DEBT are empty.
-    - **New `test_form_lines_resolve`:** every key the guarded modules and statements.py pass to form_line resolves in every shipped year.
-    - **2026 total tax:** `f1040.total_tax` for 2026 is now recorded ABSENT with the reason. The draft prints 24a "This is your total tax" and 24c = 24a + 24b, and which one §6654 reads is unverified until JT6; nothing reads it before tax year 2027.
-  - intake.py:1172-1179 asks a planning-year user for "line 11" of the prior return. Also fix schemas/profile.py:477-492, server.py:211/344/386-392 and workspace.py:81, and the Form 1040-NR itemized "line 12" (estimate.py:1033/1223/1717), which becomes 12a in 2026.
-  - schedule_1a_deductions hardcodes form_line keys 13/21/30/37 and "line 38 → 1040 13b / 1040-NR 13c" (calc.py:2937-2940, :2962-2965, :3129-3180; server.py:396). These key verify_form's recompute.
-  - The draft 2026 Schedule 1-A (Created 6/16/26) totals on 15/27/36/43 → 44 → 1040/1040-NR 13a, with rounding lines 13/25/34. Data-drive the keys.
-  - The 2026 total-tax line for the §6654 prior-year prong (24a vs 24c) is UNVERIFIED; leave it absent until JT6.
-  - **Acceptance.**
-    - The 2026 planning-year intake question contains "11a".
-    - 2025 Schedule 1-A form_line keys stay ['13','21','30','37']; 2026 data has `sched1a.car_loan == '36'` and `f1040.sched_1a == '13a'`.
-    - The frozen debt list is empty; `test_form_lines_resolve` passes for every year that has packs.
-- [x] **JF7 — Schedule 1-A reaches the estimator — DONE 2026-09-27** (M; deps JF6c, JF1b) [LD-09]
-  - *As built:*
-    - **Inputs:** IncomeSnapshot gains `qualified_tips`, `qualified_overtime_premium` and `car_loan_interest` (summed on the joint view), plus `senior_taxpayer` / `senior_spouse`.
-      - estimate_refund derives the senior flags from the profile: 65 by year end — born before January 2 of year - 64 — and a 9-digit SSN, never an ITIN. The caller can override them.
-      - The spouse snapshot's own flag becomes the joint view's `senior_spouse`, counted on MFJ only.
-    - **_bottom_line:** calls schedule_1a_deductions with MAGI = AGI (the Part I add-backs are not modeled, and the assumption says so). Its new EXPLANATORY slot `schedule_1a_deductions` sits between `deduction` and `taxable_income`, labeled "Form 1040 line <form_line f1040.sched_1a>" (or 1040-NR). Taxable income = AGI - deduction - Schedule 1-A.
-    - **MFS:** the forfeiture flows through every candidate status via the op, and the assumption names it.
-    - **Years without the block:** 2025-2028 without it → `MissingBlock('tax.obbba_schedule_1a', understates_refund)` plus NOT ESTIMATED. Before 2025 → "2025-2028 only", no block.
-    - **Docs:** server.py's estimate_refund documents the fields.
-    - **Tests:**
-      - test_estimate `test_jf7_*` (5): the op-total equality, MFS forfeiture, the planning-year MissingBlock, pre-2025, and senior from DOB/SSN/ITIN;
-      - the ledger property suite draws the new fields;
-      - a compare_scenarios tips what-if attributes its delta.
-  - **Why.** estimate_refund has no below-AGI input: nothing in estimate.py or scenarios.py references schedule_1a/obbba (IncomeSnapshot, estimate.py:100-198). Both workarounds are wrong:
-    - `pre_agi_adjustments` lowers AGI, which moves every MAGI test;
-    - `itemized_deductions` is max()'d against the standard deduction, wrong for a non-itemizer.
-    
-    TY2025 estimates for tipped, overtime, car-loan and senior filers overstate tax with no disclosure.
-  - **Build.**
-    - Add `qualified_tips`, `qualified_overtime_premium` and `car_loan_interest`; the seniors count comes from profile DOB and SSN.
-    - `_bottom_line` calls schedule_1a_deductions with MAGI = AGI plus the modeled add-backs.
-    - A `schedule_1a_deductions` slot between `deduction` and `taxable_income`, labeled from `form_line`.
-    - The MFS forfeiture flows through the candidate statuses.
-    - A year without the block, with an input engaged → `MissingBlock('tax.obbba_schedule_1a', direction='understates_refund')`.
-  - **Acceptance.**
-    - TY2025 single with the three inputs → taxable income lower by exactly the op's total.
-    - The MFS candidate forfeits tips, overtime and senior but not car-loan interest.
-    - 2026 with an input → the MissingBlock (until JF8).
-    - The 240-profile property suite and the compare_scenarios tests are extended and green.
-- [x] **JF8 — Schedule 1-A for 2026, and Form 1098-VLI — DONE 2026-09-27** (M; deps JT0b, JF6c, JF7)
-  - *As built:*
-    - **tax.obbba_schedule_1a for 2026:**
-      - Pass 1 is the statute (IRC 224(b)/(h), 225(b)/(g), 163(h)(4)(A)-(D), 151(d)(5)(C), quoted in the block header, read 2026-09-27 at uscode.house.gov). Every figure is unindexed and equals 2025's (test-pinned).
-      - Pass 2 is two `second_passes` entries: the FINAL W-4 (2026) Step 4(b) worksheet, and the DRAFT Schedule 1-A (Created 6/16/26) for the slopes, the rounding and "born before January 2, 1962". The pack's singular `second_pass` became the list.
-      - Dropped from blocks_deliberately_absent and the 2026 header's outstanding list. Its effective_law_changes entry now cites the statute with `modeled: true`, fixing G28: it had carried a copy of the Pub 15 supplemental-wage citation.
-      - A new invariant: no two FEDERAL law-change entries share a citation. State booklets are the declared exception, since one What's New page lists several changes.
-    - **`senior_deduction.born_before`** (a date: 1961-01-02 for 2025, 1962-01-02 for 2026) is test-pinned to IRC 151(d)(5)(C)(ii)'s age-65 rule and to the printed requirement. The op's error, docstring, estimator note and server doc no longer carry a 1961 literal.
-    - **Found and fixed:** schedule_1a_deductions' work printed the 2025 Part ranges ("lines 4-13", "14-21", "22-30", "31-37") and "VIN on line 22" for every year.
-      - Both now derive from the year's form_lines Part totals: 2026 prints 4-15 / 16-27 / 28-36 / 37-43, VIN on 28. The loan date comes from the block too.
-      - The JF6a guard missed these because "Schedule 1-A" was not within 15 characters of "line".
-    - **Form 1098-VLI DocSpec** (28 kinds): source irs-pdf/f1098vli.pdf, the final Rev. December 2026 (the About page and irs.gov/Form1098VLI 404).
-      - Boxes 1, 2a-2d, 3a/3b, 4, 5, 6, 7 plus the lender/payer TINs and the account number.
-      - The status note quotes 163(h)(4)(B)(i)/(iii) and (D) for boxes 3a/2d/6/7, and box 5's "Do not deduct this amount".
-      - Checks: V19 (a 17-character VIN), V20 (box 6/7 unchecked → not qualified), V21 (loan on/before 2024-12-31).
-      - The form_1098vli sources topic gains the final form; route sweep 0/258 changed.
-    - **Tests:**
-      - test_schedule_1a `test_jf8_*`: statute = block = 2025; the born-before rule for 2025/2026; 2026 goldens for all four parts (including line 34's round-up); car-loan interest above the phase-out → $0 with the work; the 2025 work unchanged.
-      - test_extract `test_jf8_1098vli_*`; test_knowledge's citation invariant.
-      - test_estimate: the JF7 missing-block test moves to a synthetic planning pack, and 2026 now prices Schedule 1-A with no MissingBlock (line 13a in the label).
-  1. **The 2026 block** [LD-08 + TY26-06 + G28].
-     - `tax.obbba_schedule_1a` is declared absent for 2026 (2026.yaml:81), yet the figures are statutory and unindexed:
-       - 163(h)(4)(C): $10,000 / $100,000 ($200,000 joint) / $200 per $1,000;
-       - 224(b): $25,000 / $150,000 ($300,000);
-       - 225(b): $12,500 ($25,000);
-       - 151(d)(5)(C): $6,000 / 6% / $75,000 ($150,000).
-     - They are printed on the draft 2026 Schedule 1-A and on the FINAL Form W-4 (2026) Step 4(b).
-     - Author the block: pass 1 the statute; pass 2 the final W-4 plus the draft, recorded in second_passes.
-     - Replace the "January 2, 1961" literals (calc.py:3008/3048; server.py:378) with `senior_born_before` data: 1961-01-02 for 2025; for 2026 "born before January 2, 1962".
-     - Drop the block from blocks_deliberately_absent, and set its effective_law_changes entry to `modeled: true`.
-     - Replace the copy-pasted Pub 15 citation at 2026.yaml:519-548 (G28), and add an invariant that no two effective_law_changes entries share an identical citation.source unless declared.
-     - Add a line to the Dec checklist: re-verify against the final form.
-  2. **Form 1098-VLI DocSpec** [TY26-25]. The form is dated December 2026 (irs-pdf/f1098vli.pdf).
-     - Boxes: 1, 2a–2d (year / make / model / VIN), 3a/3b, 4, 5, 6 (original use), 7 (US final assembly).
-     - The status note maps boxes 6, 7 and 3a to the Schedule 1-A eligibility keys; the DocSpec feeds schedule_1a_deductions.
-  - **Acceptance.**
-    - 2026 figures equal the statute and the 2025 block.
-    - 2026 goldens for all four parts, including line 34's "increase the result to the next higher whole number".
-    - Car-loan interest above the phase-out → $0 with the work shown, not a refusal.
-    - JF7's MissingBlock disappears for 2026; eval i2 passes via the planning_year fixture.
-    - A 1098-VLI round trip.
-- [x] **JF9 — The 2026 charitable deduction and its characterization rules — DONE 2026-09-27** (M; deps JT0b, JF7, JF2) [LD-06 + DEF-18 + TY26-17 + LD-07] — pitfall *charitable-characterization* = **P-022**
-  - *As built:*
-    - **Sources read 2026-09-27:**
-      - IRC 170(p) and 170(b)(1)(I) (uscode.house.gov, with the §70424(b)/§70425(c) "after December 31, 2025" notes; its prelim text drops 170(p)'s "$" before 1,000);
-      - the TEOS deductibility-code table; Rev. Proc. 2025-32 §4.33(2) ($13.90 / $69.50 / $139);
-      - Pub 526 (2025)'s "$75 or less" membership text; IRC 6115(a); 170(f)(8)(A)/(C); 170(f)(17);
-      - IRS INFO 2010-0172 (the plaque sentence; an information letter, labeled not a ruling);
-      - the final W-4 (2026) lines 12 and 6d; the draft 1040 line 12f and 1040-NR line 12b.
-    - **Knowledge:**
-      - A top-level `charitable_contributions` 2026 block (typed CharitableContributionsParams): the cap by status, cash only, eligible TEOS PC/POF/FED, excluded SO/SONFI/SOUNK and DAFs, the 0.005 floor, the three Rev. Proc. figures (quoted so the cents survive YAML), $75 / $75 / $250.
-      - It maps to JF2's charitable_nonitemizer topic in the sources-coverage rule, and its effective_law_changes entry is `modeled: true`.
-      - form_lines `f1040.charitable_nonitemizer` in EVERY year, as the resolve rule requires: 10b in 2020 (the CARES Act adjustment) and 12b in 2021 (the CAA 2021 deduction), neither IRC 170(p); absent in 2019 and 2022-2025; 12f on the 2026 draft.
-      - `f1040nr.charitable_nonitemizer` 12b for 2026 only.
-    - **Op `calc.charitable_deduction`** (36 ops):
-      - Per-gift deductible amounts under the P-022 rules. Recognition only keeps the full amount; a membership of $75 or less is disregarded; token items and benefits within 2% or $139 are insubstantial; otherwise the benefit's value comes off, and a payment over $75 whose benefit value is not stated is refused (the 6115 statement).
-      - The 170(f)(8) and 170(f)(17) duties; 170(p) payee eligibility (a "depends" TEOS code needs `donee_170b1a`); the cap; the 0.5% floor; the better path.
-      - Refuses a year before 2026. Server docs and all three skills carry it.
-    - **Estimator:** `charitable_cash_nonitemizer` (summed on the joint view) and slot `nonitemizer_charitable_deduction`.
-      - The method choice is itemized vs standard + the capped 170(p) amount, and taxable income drops by it (Form 1040 line from form_lines).
-      - Disclosures: itemizing won (the input is unused, and the itemized figure must already net the floor); 2025 ignored; a planning pack without the block → MissingBlock + NOT ESTIMATED; a 1040-NR / dual-status return → NOT ESTIMATED.
-    - **Tests** (test_charitable_deduction `test_p022_*`): the block's figures, the pre-2026 refusal, the cap and payee exclusions, the "depends" determination, every characterization rule, the membership refusal, the substantiation duties, the floor and the better path, the estimator's $600 / $1,400→$1,000 / itemize-wins / 2025 / planning-pack cases.
-  1. **The deduction.**
-     - Nothing models IRC 170(p) (P.L. 119-21 §70424, "taxable years beginning after December 31, 2025"): "not in excess of $1,000 ($2,000 in the case of a joint return)", cash "to an organization described in section 170(b)(1)(A) and not- (1) … 509(a)(3), or (2) … donor advised fund". Draft 2026 Form 1040 line 12f; draft 1040-NR line 12b.
-     - Nor the 0.5% itemizer floor (170(b)(1)(I)).
-     - **Knowledge:** a top-level `charitable_contributions` 2026 block:
-       - the caps and the cash-only rule;
-       - excluded payees: TEOS codes SO / SONFI / SOUNK, and DAFs;
-       - the 0.005 floor;
-       - insubstantial-benefit figures $13.90 / $69.50 / $139 (Rev. Proc. 2025-32 §4.33);
-       - the $75 membership disregard, the $250 contemporaneous written acknowledgment, the $75 quid-pro-quo threshold;
-       - form_lines 12f / 12b (draft).
-       
-       Pass 2 is the final W-4 (2026) Deductions Worksheet lines 12 and 6d.
-     - **Op:** `calc.charitable_deduction(year, filing_status, gifts[…])`. It returns per-gift deductible amounts, the substantiation duties, the 170(p) amount, the floor-reduced itemized amount, and which path wins against the standard deduction. It refuses before 2026.
-     - **Estimator:** field `charitable_cash_nonitemizer` and slot `nonitemizer_charitable_deduction`, applied only when the standard deduction wins. A year without the block → MissingBlock plus NOT ESTIMATED.
-  2. **Characterization rules.** The pitfall quotes each one, and the op's work string repeats them:
-     - Pub 526's $75 membership-benefit disregard ("in return for an annual payment of $75 or less");
-     - IRC 6115 for payments over $75;
-     - the 170(f)(8)(A) acknowledgment for gifts of $250 or more;
-     - donor recognition is not a return benefit (IRS INFO 2010-0172, labeled non-precedential);
-     - the payee-entity check via TEOS.
-  - **Acceptance** (*illustrative*).
-    - 2026 single: $600 of qualifying cash → taxable income $600 lower; $1,400 → capped at $1,000.
-    - 2025 → the input is ignored, with a disclosure.
-    - A membership payment over $75 with no statement of the benefit's value → refused, prescribing that statement.
-    - `recognition_only` → zero benefit; a gift of $250 or more flags the acknowledgment.
-    - SO / SONFI / SOUNK / DAF payees are excluded from 170(p).
-    - NRA path: NOT ESTIMATED until the 2026 1040-NR instructions settle eligibility (IRC 873 not read).
-    - Op count +1; the pitfall has citing tests.
-- [x] **JT1a — PTC 2026: the cliff returns — DONE 2026-09-27** (M; deps JT0b) [TY26-12]
-  - *As built:*
-    - **Schema:** `no_400_pct_cliff: false` REQUIRES a bounded top band (and `true` an open one), and an empty `repayment_limitation` means no limitation at any FPL.
-    - **tax.ptc for 2026:**
-      - Rev. Proc. 2025-25 §3.01's six bands: 2.10% up to 9.96%, the top band "not more than 400%" = fpl_pct_less_than 401 on the integer line 5.
-      - The 2025 HHS Poverty Guidelines (FR Doc. 2025-01377): $15,650 + $5,500, AK $19,550 + $6,880, HI $17,990 + $6,330.
-      - `repayment_limitation: []` (Rev. Proc. 2025-32 §2.04: OBBBA §71305 removes 36B(f)(2)(B)).
-      - The draft Form 8962 (Created 4/21/26) is a draft second pass for the cliff (line 6 "Did you enter 401%?" / "You are not eligible") and the reserved lines 28-29. The posted draft i8962 still prints the 2024 guidelines ("For 2025, the 2024 federal poverty lines are used"), so it is not a source.
-      - ptc leaves blocks_deliberately_absent, with a modeled effective_law_changes entry.
-    - **Op:** over the bounded table no band applies. ptc_annual and ptc_monthly return PTC $0 with a null figure and contribution, and the settle text quotes §2.04 for the uncapped repayment.
-    - **Found and fixed:** the 401 test truncated first. Worksheet 2 compares the UNTRUNCATED income with 400% of the FPL, so 400.006% is 401. Harmless while 400 and 401 priced the same; the 2026 cliff turns on it.
-    - **Docs:** the server doc and the op docstring said 2023-2024 and "NO eligibility cliff".
-    - **Tests** (test_tax_calc `test_jt1a_*`): the 2026 table and FPL; 399 / 400 / 401% (1,781 / 1,765 / $0); the untruncated 401 in 2025 and 2026; the uncapped repayment below 200% and over 400%; the monthly method over the cliff; the schema pairing both ways.
-  - **Why.**
-    - Rev. Proc. 2025-25's 2026 table has no open top band ("At least 300% but not more than 400% 9.96%").
-    - Rev. Proc. 2025-32 §2.04: §71305 "removes § 36B(f)(2)(B)".
-    - The draft Form 8962 line 6 asks "Did you enter 401%?".
-    - The engine requires an open last band (knowledge.py:854-858); `no_400_pct_cliff` has no reader (:838); and calc.py:1866's settle text is wrong for 2026.
-  - **Build.**
-    - Allow a bounded last band: FPL above 400% → PTC $0 and full repayment.
-    - `repayment_limitation: []` means no limitation at any FPL.
-    - Author 2026 `ptc`: Rev. Proc. 2025-25 plus the 2025 HHS guidelines, with the draft 8962 as pass 2.
-  - **Acceptance:** tests at 399 / 400 / 401% FPL, plus an uncapped repayment.
-- [x] **JT1b — Dependent care 2026 — DONE 2026-09-27** (M; deps JT0b) [TY26-11]
-  - *As built:*
-    - **Schema:** `DependentCarePhaseDown.applies_to` (all | joint | non_joint) and `DependentCareParams.legs_for(status)`. The contiguity and no-overlap checks run separately over the joint and the non-joint slide; the op filters the legs by filing status.
-    - **tax.dependent_care for 2026:**
-      - Read off IRC 21(a)(2) as amended by P.L. 119-21 §70405 (quoted in the block): .50 → .35 over $15,000 per $2,000; then .35 → .20 over $150,000 per $4,000 joint / over $75,000 per $2,000 otherwise.
-      - IRC 21(c)'s $3,000 / $6,000 and 21(d)(2)'s $250 / $500 are unchanged. IRC 129(a)(2)(A) (§70404) gives $7,500 ($3,750 MFS), the draft Form 2441 (Created 4/30/26) line 21.
-      - Pass 2 is the draft 2026 i2441's "2026 Phaseout Schedule". dependent_care leaves blocks_deliberately_absent, with a modeled effective_law_changes entry.
-    - **Docs:** the op docstrings and the server doc now carry the 2026 slide.
-    - **Tests** (test_tax_calc `test_jt1b_*`): EVERY row of the draft schedule, both columns, at each row's "over + 1" and "not over" AGI (joint, HoH, single); the block and exclusion; 2025 unchanged; joint .35 vs single .27 at $90,000.
-  - **Why.** The draft i2441 line 8 table's second phase-down leg depends on filing status: joint from $150,000 in $4,000 steps, others from $75,000 in $2,000 steps. The rate "ranges from 50% to 20%", and line 21 is $7,500 ($3,750 MFS). DependentCarePhaseDown (knowledge.py:908-950) and calc.py:2697-2714 have no status key.
-  - **Build:** `applies_to: all | joint | non_joint`, then author 2026.
-  - **Acceptance:** goldens for every row of the draft table.
-- [x] **JT1c — The Schedule 3-A gate (federal public benefit) — DONE 2026-09-27** (M; deps JT0b) [TY26-18] — pitfall *public-benefit-qualified-alien* = **P-023**
-  - *As built:*
-    - **Sources read 2026-09-27:**
-      - the draft Schedule 3-A (Created 6/24/26): lines 1a-8, and its caution — the schedule is completed "only if you are claiming the earned income credit (EIC), additional child tax credit (ACTC), refundable American opportunity credit, or refundable adoption credit";
-      - the rule behind it, **REG-119882-25** (91 FR 53812, Aug. 20, 2026; comments closed 2026-10-05, hearing 2026-10-14), a PROPOSED rule, every quote checked against the published Federal Register text: proposed Treas. Reg. 1.23-2, 1.24-3, 1.25A-7 and 1.32-4 — the refunded portion is the SUM of the four credits over "the tax imposed on the taxpayer by subtitle A of the Code (reduced by credits allowable under subparts A, B, D, and G …)"; status is judged "on the date the taxpayer files the taxpayer's return"; one qualifying spouse is enough on a joint return; withholding stays refundable (1.23-2(f)(8)); it is "proposed to apply for taxable years ending on or after the date these regulations are published as final regulations";
-      - 8 U.S.C. 1641(b)-(c). **Correction to the spec above:** 1641(c)(4) DOES name a nonimmigrant status — "an alien who has been granted nonimmigrant status under section 101(a)(15)(T)" — so the sources.yaml answer that said no nonimmigrant category is listed was wrong and is fixed. The proposed definition cites 1641(b) only, while 1641(c) says "For purposes of this chapter, the term 'qualified alien' includes" its categories: kept as an open reading.
-      - The Schedule 3-A instructions are not posted (irs-dft/i1040s3a--dft.pdf 404; the posted i1040gi draft is still the 2025 one).
-    - **Knowledge:** a top-level `federal_public_benefit` 2026 block (typed FederalPublicBenefitParams): rule_status (only `proposed` validates — a final rule belongs in the point), the applicability, the four credits by ledger slot, the refunded-portion, joint-return, filing-date and definition quotes, the schedule's lines, the eight 1641(b) categories and the two 1641(c) ones apart. A federal pack from 2026 with a credits block and no federal_public_benefit block is refused at load. It maps to the federal_public_benefit sources topic, which gains the Federal Register entry.
-    - **Profile:** `identity.qualified_alien_status` and `household.spouse.qualified_alien_status` — us_citizen, us_national, the 1641(b) ids, battered_alien, t_nonimmigrant, none_of_these.
-    - **Estimator:** each return's Schedule 3-A figure (BottomLineResult.federal_public_benefit; the two-return MFS pair keeps the spouse's own) is the affected credits over the total tax less the Section B wage part of the Additional Medicare Tax. Each person's answer: the recorded status, else us_person True (a citizen or green-card holder), else the latest visa status (T → 1641(c)(4), a reading; any other nonimmigrant class → on neither list), else unknown. With no one on the return qualifying, the LOW end holds the amount back and the point keeps it; the note quotes the rule, and an unrecorded answer adds a what-would-change item. Server docs and SKILL.md carry it. No intake question: the estimator asks only when the amount is non-zero.
-    - **Tests** (test_public_benefit `test_p023_*`, on a knowledge copy whose 2026 pack borrows the 2025 credits block until JT1d): the block's quotes and the profile ids; the load refusal and the rule_status gate; an H-1B household with ACTC + EIC (the low end drops exactly the refunded portion and keeps the withholding refund); an LPR household and a recorded refugee unchanged; the 1641(c) readings; one qualifying spouse on a joint return; the unrecorded answer; the Section B wage tax left out of the liability; nothing before 2026.
-  - **Left for JT6:** re-read the final Schedule 3-A and its instructions (the qualified-alien definition they adopt), and the final rule if it publishes — a final rule moves the forfeiture into the point.
-- [x] **JT1d — Credits 2026 — DONE 2026-09-27** (M; deps JT1c) [TY26-08]
-  - *As built:*
-    - **Sources read 2026-09-27:** Rev. Proc. 2025-32 §4.05 ($2,200; the refundable $1,700) and §4.06 (the EITC table, the $12,200 investment-income limit); IRC 24(h)(2)-(7) and the new 24(i) (the $2,200 indexed after 2025, increases "rounded to the next lowest multiple of $100"); IRC 32(b)(1); the draft Schedule 8812 (Form 1040) 2026 (Created 4/24/26) and its draft instructions, which print the same CTC figures, the $2,500 earned-income floor and the joint-return SSN rule.
-    - **Knowledge:** a top-level 2026 `credits` block — child_tax_credit (2,200 / 1,700 / the $500 ODC, the $400,000 / $200,000 thresholds, the 24(h)(7) SSN rule quoted), foreign_tax_credit (the 904(j) $300 / $600, cited to the statute since the 2026 Form 1116 instructions are not posted) and earned_income_tax_credit (the §4.06 table). `credits` leaves blocks_deliberately_absent; a law entry cites IRC 24 (modeled). The JT1c rule holds: the pack carries federal_public_benefit beside it.
-    - **Second pass:** the CTC figures match the draft Schedule 8812 (a draft pass). The EITC figures match the draft Pub 1040 (2026), Tax and Earned Income Credit Tables (Aug 28, 2026): every one of its 11,176 EIC Table cells reproduces from the block with the IRC 32(b)(1) percentages. The tests also check IRC 32(b)(1)'s own arithmetic (each maximum = earned income amount x credit percentage; each completed phaseout = threshold + maximum / phaseout percentage, within $1). JT6 re-reads the final table.
-    - **Found doing that pass:** the engine's `eitc` op prices by a ratio (maximum / earned income amount), not the table's percentages, and misses 327 of the 2026 cells by $1 — and 1.6% to 10.4% of each final 2019-2025 table's cells (2025: 647 of 10,928). Fixed in its own commit after JT1e ("the EITC is the EIC Table").
-    - **Tests:** test_tax_calc `test_jt1d_*` (every figure, the 32(b) arithmetic per row, the 2026 child_tax_credit and eitc ops); test_estimate `test_jt1d_the_2026_estimate_prices_the_family_credits`. test_public_benefit now runs on the shipped 2026 pack (its borrowed-credits fixture is gone).
-    - eval i5 and the ledger tests keep stripping the block through the JT0b fixture (synthetic_provisional_pack(["credits"])), so they test the absent-block path whatever ships.
-- [x] **JT1e — Education credits 2026 — DONE 2026-09-27** (M; deps JT1c) [TY26-10] — pitfall *education-ssn-deadline* = **P-024**
-  - *As built:*
-    - **Sources read 2026-09-27:** IRC 25A(b)(1), (c)(1), (d)(1), (g)(1) and (i) (uscode.house.gov), with P.L. 119-21 §70606(c) ("shall apply to taxable years beginning after December 31, 2025"); the draft Form 8863 (2026) (Created 4/28/26) — "A valid social security number (SSN) is now required to claim an education credit", lines 2 and 13 "$180,000 … $90,000" — and its draft instructions (What's New, Table 1, the identification requirement).
-    - **Two readings recorded:** the statute says "such individual's social security number"; the draft instructions say "only one spouse is required to have a valid SSN" on a joint return. The block records the instructions' reading (`one_spouse_suffices_on_joint_return: true`) with both quoted; JT6 re-reads the final instructions.
-    - **Knowledge:** the 2026 `tax.education_credits` block (the statutory, unindexed amounts and MAGI range, cited to IRC 25A) with the new `ssn_requirement` (EducationSsnRequirement). A federal education block from 2026 without it is refused at load. education_credits leaves blocks_deliberately_absent.
-    - **Calc:** op education_credits names the rule in its work for a year that carries it (eligibility stays the caller's judgment).
-    - **Estimator:** `education_ssn_taxpayer` / `education_ssn_spouse` (derived from the profile's tax IDs: an SSN, an ITIN (starts with 9), or not recorded) and `aotc_students_ssn_ok` per student. No credit on an ITIN (both spouses' on a joint return) or to an ITIN-only dependent student; NOT ESTIMATED when the filer's or a student's answer is not recorded. The joint view pads the per-student answers and keeps each person's flag, like the senior flags; the field-coverage test classifies all three.
-    - **Tests** (test_education_2026 `test_p024_*`): the block's quotes; the load refusal; the op's 2026 phase-out and rule text; an SSN vs an ITIN filer; an ITIN-only student → no AOTC; an unknown status → NOT ESTIMATED; one spouse's SSN is enough on a joint return; 2025 keeps no gate.
-    - "Valid for employment" is not on the profile (an SSN card's legend), so it is disclosed, not tested.
-- [x] **JT1d+ — The EITC is the EIC Table (2019-2026) — DONE 2026-09-27** (found by the JT1d second pass)
-  - **Why.** calc op `eitc` and the estimator priced the credit by a ratio (maximum / earned income amount in, maximum / phase-out range out). A filer copies the printed EIC Table's figure, and the ratio missed 1.6% to 10.4% of each year's cells by $1 (2025: 647 of 10,928).
-  - **The table's construction, read off ~80,000 printed cells (2026-09-27):**
-    - each $50 band is priced at its midpoint with the IRC 32(b)(1) percentages (2021: IRC 32(n)(3), 15.3% with no qualifying child);
-    - the phase-in is capped at the printed maximum;
-    - past the threshold, the phase-out is taken from the printed maximum in the 2024-2026 tables and from the unrounded one (credit rate x earned income amount) in the 2019-2023 tables;
-    - a band that holds the earned income amount or the threshold prints the maximum.
-    
-    With that, every cell of the 2019-2025 final tables (Instructions for Form 1040) and of the draft 2026 table (Pub 1040 (2026), Aug 28, 2026) reproduces.
-  - **Built:**
-    - Each year's EITC rows carry credit_rate / phaseout_rate, with an `eic_table` block (band width, phase-out base, what was verified, the table's URL).
-    - `calc.eic_table_amount` / `eic_table_credit` implement EIC Worksheet A: the table on earned income, and the smaller of that and the table on AGI when AGI differs and is at or over the threshold. The op and the estimator use them; the label reads "EIC Table". A pack without the rule keeps the ratio, disclosed.
-  - **Tests:**
-    - test_tax_calc `test_the_eitc_is_the_eic_table` (printed cells the ratio missed, and the kink bands);
-    - `test_every_year_carries_the_eic_table_rule`;
-    - `test_worksheet_a_takes_the_smaller_of_the_two_lookups`;
-    - the network `test_every_cell_of_the_printed_eic_table`, all eight years (it re-downloads the 2026 draft, so the final's table is checked the day it posts).
-    - The old tests now pin the printed values.
-- [x] **JT2a — Tax Table, SALT/itemized, student loan, Social Security — DONE 2026-09-27** (M; deps JT0b) [TY26-05, TY26-07, TY26-09, TY26-13]
-  - *As built (sources read 2026-09-27):*
-    - **Tax Table.** The draft Pub 1040 (2026) (Aug 28, 2026) agrees with the engine on all 8,248 cells (2,062 rows x 4; the spec's 8,240 was a miscount). Recorded as a draft second pass on tax_table.row_bands, with its citation updated. Goldens at every row-width edge ($5 / $10 / $25 / $50) and at $99,950.
-    - **SALT.** tax.salt_cap from IRC 164(b)(7) (P.L. 119-21 §70120): $40,400 / $20,200 MFS, over $505,000 / $252,500 reduced 30%, floor $10,000 ($5,000 MFS). Checked against the draft Schedule A (Created 5/12/26) line 5e. Data, as in 2025; a law entry.
-    - **The discipline test** (test_jt2a_every_prior_year_block_is_present_or_declared_absent): a planning pack carries each block the year before carried, or declares it absent. It found only salt_cap.
-    - **Itemized 2026.** tax.itemized_limitation from IRC 68 as rewritten by P.L. 119-21 §70111 (2/37 of the lesser of the deductions or the taxable income over the 37% bracket start), with the draft line 18 screen, "$384,350". The worksheet stays a lookup path (i1040sa (2026) not posted). The estimator DISCLOSES the screen when an itemizer's AGI less the Schedule 1-A deductions is over it, and does not price the reduction. Its law entry is irs_guidance_pending, modeled false. The 0.5% floor rides in charitable_contributions (JF9). The block is named `itemized_limitation`, not `itemized_2026`: a key does not carry its year.
-    - **Student loan interest.** Rev. Proc. 2025-32 §4.29: $85,000-$100,000 / $175,000-$205,000 (the joint range is $30,000 wide).
-    - **Taxable Social Security.** IRC 86(c)'s statutory amounts, checked against the draft Pub 915 (2026) (Aug 17, 2026). Recorded as a draft pass.
-    - taxable_social_security and student_loan_interest leave blocks_deliberately_absent; what remains is filing_thresholds, payment_options, mailing_addresses and deadlines (JT2b, JT6).
-  - **Tests:** test_tax_calc `test_jt2a_*` (the Tax Table edges, the blocks and passes, the discipline test, the 2026 student-loan and Social Security ops); test_estimate `test_jt2a_the_2026_itemized_limitation_is_disclosed_at_the_screen`.
-- [x] **JT2b — Deadlines, payment options, with-payment addresses — DONE 2026-09-27** (S–M; deps JT0b) [TY26-14 + the rest of TY26-15]
-  - *As built (read 2026-09-27):*
-    - **Deadlines** from the draft Form 4868 (2026) (Created 5/13/26): "For a 2026 calendar-year return, this is April 15, 2027, for most people"; abroad "by June 15, 2027"; the 1040-NR no-wage due date "June 15, 2027"; the six-month limit "(October 15, 2027, for most calendar-year taxpayers)". April 15, 2027 is a Thursday, so no shift. The refund window is IRC 6511(a), as in 2025.
-    - **Payment options** from the draft Form 1040-V (2026) (Created 5/21/26): "United States Treasury", the "2026 Form 1040" memo, Direct Pay, EFTPS and card. The 2026 draft drops 2025's $1,000-per-day cash sentence, so the block gives only the PayCash page.
-    - **Addresses:** the draft 1040-V's three with-payment rows (Charlotte P.O. Box 1214; Louisville P.O. Box 931000 for the other states and DC; Charlotte P.O. Box 1303 for the foreign/territory row). The no-payment addresses and both Form 1040-NR addresses print only in the 2026 instructions, which are not posted (the irs-dft i1040gi and i1040nr still serve the 2025 drafts), so they are None — never carried from 2025.
-    - The knowledge schema admits a None address only in a planning pack (a filing-grade pack is refused), and file_and_pay says which address is unpublished instead of returning a bare None. The ITIN Operation and standalone-8843 entries carry over (the W-7 and 8843 pages are not year-specific).
-    - deadlines, payment_options and mailing_addresses leave blocks_deliberately_absent; only filing_thresholds remains (JT6).
-  - **Tests** (test_file_and_pay `test_jt2b_*`): a 2026 balance due in California resolves Louisville and 2027-04-15 / 2027-06-15; Texas resolves Charlotte 1214; a refund and a 1040-NR get the "not published yet" note and the 2030-04-15 refund window; a filing-grade pack with an unstated address is refused.
-  - **External:** filing_thresholds and the no-payment / 1040-NR addresses wait for the 2026 i1040gi, i1040nr and Pub 501 (JT6).
-- [x] **JT4a — The 2026 W-2 and structured W-2 facts — DONE 2026-09-27** (M; deps JF3, JF2) [TY26-24 + DEF-17]
-  - *As built (read 2026-09-27):*
-    - **Source:** the FINAL Instructions for Forms W-2 and W-3 (2026) (Jan 29, 2026; irs-prior/iw2w3--2026.pdf). What's New: "Box 14 has been split into box 14a and box 14b", plus new box 12 codes TA (IRC 128 Trump account employer contributions), TP (cash tips) and TT (qualified overtime, "only the "half" portion").
-    - **Knowledge:** knowledge/forms/w2_box12_codes.yaml has all 33 codes, titled from the instructions' index, verbatim. `since` is 2026 for TA/TP/TT, and each code has a route. The IRC 402(g) group is D, E, F, S (402(g)(3)(A)-(D)) plus the designated Roth AA/BB (402A(c)(1): "any elective deferral"). 457(b) (G, EE) is separate. The box 14 and 14b rules are quoted. Loader: taxfill_core/w2_codes.py.
-    - **Extract:** the W-2 DocSpec gains 14a (alias "14", the pre-2026 box) and 14b. Validator V22 flags a box 12 entry that is unreadable or not a code for the tax year (TT on a 2025 W-2). V23 flags box 14b before 2026. V24 flags 14b without TP, TP without 14b, and a "000" occupation. V25 gives each routed code's destination as an info finding.
-    - **Estimator:** IncomeSnapshot.w2s (W2Facts: boxes 1-7, 10, 12, 14b) feeds a before-validator. It DERIVES wages, ss_wages (3 + 7), medicare_wages, the per-employer box 4 / box 6 lists, dependent_care_benefits (box 10) and qualified_overtime_premium (code TT). An aggregate given as well must agree, or the snapshot is refused. federal_withholding may exceed the box 2 total (estimated payments) but not fall below it.
-      - Box 10 reaches dependent_care_credit's employer_benefits; the old "NOT tracked" disclosure now names the amount or asks for it.
-      - The assumptions flag a per-person 402(g) excess across employers (the year's contribution_limits figure) and code W next to pre_agi_adjustments (the double-count trap).
-      - The joint view concatenates w2s and sums the benefits, and the field-coverage classes include both.
-    - **Not derived:** qualified_tips from code TP. TP is all cash tips, qualified only in a listed occupation (box 14b; "000" marks a nonqualifying one), so the caller confirms it. V25 names the route.
-  - **Tests** (test_w2_2026 `test_jt4a_*`): the code table; derived = hand-fed aggregates and the same estimate; each mismatch raises; box 10 reduces the 2025 Form 2441 limit to the op's figure; TT and the joint view; the 402(g) and code-W disclosures; the W-2 reading's V22-V25 and the box 14 alias.
-- [x] **JT4b — 1099-B boxes — DONE 2026-09-27** (S; deps J0) [TY26-26]
-  - *As built (read 2026-09-27):* the Form 1099-B (2026) (irs-prior/f1099b--2026.pdf, Created 8/26/25) and its Instructions for Recipient, and the Instructions for Form 8949 (2025).
-    - The DocSpec gains the applicable Form 8949 checkbox, 1f, 2-Ordinary, 3 (collectibles / QOF), 6 (gross / net proceeds), 7, 12 and 13.
-    - Validator V26 (info) routes each reading. Box 12 and box 2 give Form 8949 box A/D (basis reported to the IRS) or B/E (not reported, or box 12 unchecked). Exception 1's direct entry on Schedule D line 1a / 8a applies when basis was reported, box 1f/1g shows no adjustment, and neither Ordinary nor box 3 is checked — quoted.
-    - V27 flags both term boxes checked, box 12 with box 5, box 12 without a term box, box 7's loss bar, and a printed applicable checkbox that disagrees with boxes 2 and 12.
-  - **Tests** (test_extract `test_jt4b_*`): a box-12 reading carries the routing note; unreported basis goes to B/E; an adjustment, Ordinary or a collectible forces Form 8949; the V27 contradictions.
-- [x] **JT4c — Dress-rehearsal evals, scenarios t–t4 — DONE 2026-09-27** (M; deps JT3a–d, JT4a, JT4b, JF1a, JF8, JF9, JR2c, JR3c, JT2b) [TY26-29]
-  - *As built:* packages/core/tests/test_dress_rehearsal_2026.py. Four SYNTHETIC TY2026 households with demo amounts, each run extract -> calc -> fill (rehearsal, the 2026 draft packs) -> verify_filing(rehearsal=True) -> filing_summary -> file_and_pay. The blanks come from the local cache; an empty cache SKIPS, like the readonly sweeps.
-    - **t — two concurrent employers:**
-      - two 2026 W-2 readings, each routing code D to the one 402(g) limit (V25), with elective_deferral_room across both;
-      - a 1098-VLI (V19-V21 clean) through Schedule 1-A Part IV, and a 1099-INT;
-      - estimate_refund from the structured W-2s equals the return. f1040 + sched_1a verify, with 13a == sched_1a.44 and 1 == f1040.11b PASS;
-      - file_and_pay gives 2027-04-15 and the Louisville with-payment address.
-    - **t2 — a resident J-1 researcher:** "J-1 researcher" classifies resident for 2026 (2 exempt years). China Art. 19 survives the saving clause. The exemption goes negative on Schedule 1 line 8z ("Exempt income, China, Art. 19") with 8 == sched_1.10 PASS; direct deposit.
-    - **t3 — a joint return:**
-      - one spouse's code TT (Schedule 1-A Part III), the other's code W beside a 5498-SA (Form 8889 family coverage, hsa_deduction) with the code-W guard firing;
-      - an index-fund 1099-DIV (Schedule B, QDCG tax);
-      - a covered long-term 1099-B loss routed by box 12 to Schedule D line 8a (Exception 1);
-      - f1040 + sched_1 + sched_1a + f8889 + sched_b + sched_d verify, with four cross-form chains PASS; BOTH spouses sign.
-    - **t4 — head of household with a child:** the code N and code 2 1099-Rs, ira_recharacterization then convert (Form 8606 lines 1-18, an exact 0.875 on line 10), a $600 170(p) gift on line 12f, the CTC on line 19. The recharacterization statement is in the assembly, and the unpublished 2026 refund address note appears.
-  - **Engine change:** verify_filing gains `rehearsal` (core only), mirroring verify_form — every pack must be rehearsable (draft or planning-year final).
-  - **Found for JT6:** a negative money entry renders as "-60000"; Pub 519's resident treaty exemption asks for the amount "in parentheses" on Schedule 1's other-income line. The packs' convention (a negative value) holds for the math. Whether the printed field should read "(60,000)" needs the final 2026 face and instructions.
-  - All four flip to final mode at JT6.
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JT0a, JT0b, JT0c, JT3a–d, JF6b, JF6c, JF7, JF8, JF9, JT1a, JT1b, JT1c, JT1d, JT1e, JT1d+, JT2a, JT2b, JT4a, JT4b, JT4c.
 - [ ] **JT5a–g — Wave B: the rest of the federal set for 2026** (JT5a **latest start 2026-11-16**; deps JT3a; each sub-tranche commits per pack) [TY26-21]
+  - *(Phase K note 2026-10-09: JT5a–f are done and moved to HISTORY.md; only JT5g is open, triggered by JK8. The "JT5a latest start 2026-11-16" above is historical.)*
   - **JT5a** (M): copies f843, fw7, f8316 (current finals byte-identical to their 2025 pins) and fincen114; near-ports sched_se, f4868, f8960. **DONE 2026-09-27:**
     - **Copies:** the live irs-pdf f843 / fw7 / f8316, re-downloaded 2026-09-27, hash to their 2025 pins, so the 2026 packs keep URL and sha and change only tax_year. They are finals in a planning year, so rehearsal-only. FinCEN 114's 2026 handfill.yaml is the year-invariant worksheet.
     - **Near-ports onto the drafts:**
@@ -1878,157 +1201,17 @@ line items sum to the headline delta.
     - The 1040-X ZIP and foreign-postal-code boxes (70 pt at the draft's 9pt) take maxlen 10 / 15.
     - The filer-address fixture gains both rows; test_discovery 145. Tests: `test_jt5f_*`.
   - **JT5g** (external): sched_nec and sched_oi, once their 2026 drafts post. The f1040nrn/nro drafts are still 2025; they are on the check_finals watchlist.
+    - **Correction 2026-10-09:** the f1040nrn/nro drafts are not on the check_finals watchlist — the dry run watched 34 URLs, neither stem. → Phase K **JK8** adds the watch; if no draft posts by 2027-01-05, both packs are built from the finals inside JT6.
   - **Acceptance:** as JT3.
   - **Port rule (found in JF8):** calc.py prints ~330 worksheet and form line literals for forms outside the form_lines registry (Schedule SE, Form 8962, Form 8863, the QDCG and Social Security worksheets, ...), each true for the year it was read. Each Wave B port greps calc.py for its form's literals and moves any that differ onto form_lines.
 
 ### Block 5 — Remaining decision ops
 
-- [x] **JP1b — Pub 15-T 2026 knowledge — DONE 2026-09-27** (M; deps JF1a) [LD-02, knowledge half]
-  - *As built:* a top-level 2026 `payroll_withholding` block (typed PayrollWithholdingParams) transcribed from Publication 15-T (2026) (irs-prior/p15t--2026.pdf, read 2026-09-27):
-    - Worksheet 1A line 1g ($12,900 MFJ / $8,600 otherwise; 0 with the Step 2 box) and line 1k's $4,300 per pre-2020 allowance;
-    - Table 3's pay periods;
-    - the STANDARD and Step 2 checkbox annual tables for MFJ, single-or-MFS (one table, built on the single schedule) and HoH — each row has columns A-E, exact cents, rows validated contiguous;
-    - the nonresident alien add-ons (Table 2 for a 2020-or-later W-4: $16,100 a year; Table 1 before 2020: $11,800), per payroll period;
-    - the rounding rule, quoted.
-  - **Second-pass tests** (test_payroll_withholding `test_jp1b_*`): every STANDARD row equals the pack's rate schedule shifted by (standard deduction - line 1g), carrying the tax to its floor; every checkbox row equals the half-width bracket shifted by half the standard deduction, carrying half the tax (rounded half up). All three statuses x both tables pass. A gap in a table is refused.
-  - **Left for JP1c:** Pub 15's partial-period rule, applied where pay dates are counted.
-- [x] **JP1c — The withholding projection op — DONE 2026-09-27** (M–L; deps JP1a, JP1b) [LD-02, op half + missing Pub 15-T §6 + the rest of LD-12]
-  - *As built:* `calc.withholding_projection` (taxfill_core/withholding.py; op 37; server docs, dispatch, all three skills), per employer:
-    - **Regular checks:** Pub 15-T (2026) Worksheet 1A from the knowledge block (JP1b), counted by PAY DATE through employment_end — explicit dates, or weekly / biweekly / semimonthly / monthly schedules. A pre-2020 W-4 takes $4,300 per allowance and no head-of-household table. The nonresident alien add-on uses Table 2 (or Table 1 for a pre-2020 W-4 first paid before 2020), noted as never on the W-2. A partial first period's wages are withheld as a full payroll period. The dollar rounding (Pub 15-T's option) is used consistently.
-    - **Supplemental wages** (the pack's P-017 block, Treas. Reg. 31.3402(g)-1): the excess of the year's supplemental wages over $1,000,000 is withheld at 37%. The flat 22% is open only when (a)(7)(i)(B) and (C) both hold. It is FORCED aggregate when either fails, both methods as a range when both hold (the employer's option) or a fact is unknown, and an INTERPRETIVE choice when the bonus rides the first withheld regular check. The aggregate procedure withholds on (the concurrent or most recent regular wages + the bonus) less the regular withholding.
-    - **Employee-requested methods** (Pub 15-T section 6): cumulative wages — refused without the written request and the same payroll period since January. Part-year employment — refused without the written request under penalties of perjury, the calendar-year basis and the anticipated days, and refused over "no more than 245 days". The divisor counts the idle periods since the last employment.
-    - **FICA per employer:** box 4 at 6.2% to the employer's own wage base, and box 6 at 1.45% plus 0.9% over the employer's own $200,000 (IRC 3102(f)(1)). employee_fica reconciles the person.
-    - **Outputs:** per-check rows, box 2 low/high, boxes 3-6, and `w2s` that feed estimate_refund's IncomeSnapshot.w2s (JT4a). JF1a's P-017 text now points at the op instead of "no op computes it yet".
-  - **Tests** (test_withholding_projection `test_jp1c_*`):
-    - Pub 15 (2026) Example 2's wage-bracket figures ($65 / $179 / $419) reproduced within $1, and Example 3's 22% x $1,000 = $220;
-    - (i) a bonus before any withheld regular check this or last year → aggregate forced;
-    - (ii) after a withheld check and separately stated → the range;
-    - (iii) concurrent and not separately stated → aggregate;
-    - (iv) with the first check → interpretive;
-    - an unknown fact → a range; 37% over $1M; the NRA add-on; a partial first period; employment_end;
-    - the part-year refusal at 246 days, and its lower total; the cumulative gate;
-    - per-employer box 4 / box 6, and the w2s feeding IncomeSnapshot.
-  - **Not built:** the wage bracket method's own tables (the percentage method is what automated payroll uses; the examples show the difference stays within $1), and the residency_classification auto-fill into employee_fica (fica_exempt stays the caller's per-employer judgment, as in employee_fica).
-- [x] **JP5a — Underpayment penalty, regular method — DONE 2026-09-28** (M; deps JF4) [critic: missing]
-  - *As built:* calc op 38 `underpayment_penalty` (taxfill_core/penalty.py). It follows the statute's own mechanics, all quoted from uscode.house.gov:
-    - IRC 6654(b)(1)–(3): the underpayment, its period, and the FIFO "order in which such installments are required to be paid" — which is how Form 2210 Section A's line 14 compounds arrears;
-    - 6654(g)(1): ratable withholding, or all actual dates;
-    - the 6654(e)(1) $1,000 and 6654(h) January-31 exceptions.
-  - The per-year calendar is a new `tax.estimated_tax_penalty` block (due dates, period end, day count, rate periods).
-    - 2025: the Instructions for Form 2210 (2025) Penalty Worksheet's four periods, each × 0.07.
-    - 2026: the IRS quarterly table — Q2 6%, Q3 7%, Q4 7%, and Q1 2027 None, so the op fails closed.
-    - IRC 6621(b)(2)(B) is why period 4 keeps the Q1 rate through April 15 ("shall also apply during the first 15 days of the 4th month").
-    - sources.yaml's underpayment_penalty topic gains the IRS quarterly-rate page ("quarterly interest rates" now routes there instead of missing onto nonresident_fdap).
-  - **Tests** (test_underpayment_penalty.py) reproduce the instructions' own worked facts:
-    - Example 3's line-1b allocation and Example 4's "15"/"61" days ($204.05 total);
-    - Example 2's "56 days";
-    - Table 2's Chart of Total Days (76/92/92/105; 15/92/92/105; 15/92/105; 90);
-    - the 2026 6% quarter and the Q1-2027 refusal; the exceptions.
-  - Op count 38.
-- [x] **JP5b — The annualized income installment method (Schedule AI) — DONE 2026-09-28** (M; deps JP5a)
-  - *As built:* `underpayment_penalty(..., annualized={...})` computes Schedule AI Parts I and II column by column. The constants are a new `estimated_tax_penalty.schedule_ai` block, read off each face:
-    - Form 2210 (2025) final: 4 / 2.4 / 1.5 / 1; 22.5 / 45 / 67.5 / 90%; line 29 $44,025–$176,100; lines 32/34.
-    - Draft Form 2210 (2026) (Created 4/16/26), labeled draft: the same factors, line 29 $46,125–$184,500, and the NEW line 9b "Additional deductions". The 2025 face has no such line, so the Schedule 1-A deductions come off line 13 per the 2025 line-14 instruction.
-  - Line 27 = min(line 23, line 26) feeds line 10. The same payments are priced against the regular 25% installments too (`regular_method_penalty`).
-  - **Tests:** a Q4-weighted demo year pays less under Schedule AI and the op reports both; the SE factors against each year's prorated base; the input guards.
-- [x] **JP3a — Employment schema and paystub DocSpec — DONE 2026-09-28** (M; deps JP1c) [LD-04, part 1]
-  - *As built:* `Profile.employment: dict[year, list[EmploymentRecord]]`. Each record: employer, start/end (checked in order), pay frequency, first pay date, gross per period, the JP1c `W4Facts`, and `PayrollDeductions` per period split by tax character — pre-tax 401(k), IRC 125 premiums, HSA through the plan (code W), health FSA, dependent care FSA (box 10), 132(f); post-tax Roth, after-tax, loan.
-  - The `paystub` DocSpec (29 kinds): source iw2w3.pdf. Its status note quotes the W-2 instructions' "Calendar year basis" and box 1's elective-deferral exclusion. Validators: V28 (a YTD figure below its own current figure) and V29 (a pay date outside the tax year).
-  - **Tests** (test_paystub.py): a synthetic stub extracts with its caveat; the validators; a workspace save/load round trip keeps the schema; the date guard.
-- [x] **JP3b — Paystub → projected W-2 — DONE 2026-09-28** (M; deps JP3a, JP2) [LD-04, part 2]
-  - *As built:* calc op 39 `paystub_to_w2` (taxfill_core/paystub.py). It takes the stub's YTD actuals plus the checks still to be PAID by December 31, counted by pay date.
-    - The first check after December 31 is reported as next year's (a biweekly January 1 check).
-    - An ended job adds nothing; nothing is annualized.
-    - Box 1 = gross − pre-tax 401(k) − the cafeteria-plan reductions. Boxes 3/5 exclude only the latter, box 3 is capped at the wage base, and boxes 4/6 use this employer's own rates (the 0.9% over $200,000).
-    - Box 10 and box 12 D/AA/W. The output `w2` feeds `estimate_refund`'s `income.w2s`.
-  - annualize_ytd's work now says never to annualize an ended job. The README calc row, SKILL.md bullets, DEV_PLAN §18 and the bundle manifest move to 39 ops.
-  - **Tests** (test_paystub_to_w2.py): a mid-year stub reproduces the hand-computed W-2; an ended job; the January 1 check; the wage-base cap; a stub from another year refuses.
-- [x] **JP4 — Wage repayment: claim of right (§1341) — DONE 2026-09-28** (M; deps JF2) [LD-13] — pitfall *claim-of-right* = **P-025**
-  - *As built:* calc op 40 `claim_of_right_repayment` (taxfill_core/repayment.py), quoting IRC 1341(a)–(b) (uscode.house.gov) and Pub 525 (2025) Repayments.
-    - Method 1 (the deduction) vs Method 2 (this year's tax less the prior year's decrease); the lesser tax wins.
-    - At $3,000 or less, nothing is deductible and no credit applies.
-    - A business or capital repayment goes on its own schedule; the claim-of-right premise is required.
-    - The payroll-tax notes: FICA back from the employer or on Form 843; Additional Medicare Tax only on a prior-year Form 1040-X.
-  - The destinations are two new form_lines keys, read off every 2019–2026 face (all 16 pass test_every_entry_quotes_its_face against the downloaded PDFs):
-    - `scheda.claim_of_right`: line 16 through 2025, 17h on the 2026 draft.
-    - `sched3.section_1341_credit`: 13 box d in 2019 and 12d in 2020 (both write-ins per that year's Form 1040 instructions), 13d in 2021–2023, 13b from 2024.
-  - **Tests** (test_claim_of_right.py, `test_p025_*`):
-    - Pub 525 Example 40 with its printed taxes: $5,156 vs $5,335, deduct.
-    - The same from the Tax Table ($5,159 vs $5,341) — the example's 2025 taxes are not the 2025 table's.
-    - $3,000 or less; the credit winning when last year's rate was higher; business routing and payroll notes; the lines per year.
-  - Op count 40.
-- [x] **JR4a — Form 5329, 2025 pack — DONE 2026-09-28** (M–L; deps JR3c) [RC-14]
-  - *As built:* formpacks/federal/2025/f5329 — all 75 widgets of f5329--2025.pdf (Created 6/12/25, 3 pages, no ReadOnly), bound by y-coordinate and checked on a sentinel render of every page.
-    - The line-2 exception-number box is its own text key, `2.exception_number` ("01–23 ... If more than one exception applies, enter 99").
-    - 19 relations: every printed Add/Subtract row, the Part II 10%, and line 55.
-    - Deliberately NOT declared, with the reason on each row: line 4 (the printed SIMPLE-IRA 25% Caution); the six 6% lines (the Dec-31 value is off-form); 54a/54b (the "RC" reasonable-cause waiver changes the entry).
-    - No cross_form: Schedule 2 line 8 is "the combined tax" of a separate form per spouse. The address block and signature apply only when the form is filed by itself (the f8606 shape).
-  - **The recompute from JR3c's rules:** `taxfill_core.estimate.form5329_lines(snapshot, year)` returns one person's lines 1–4 and 16–17 / 24–25 from the estimator's own code. Pass it to `verify_form(..., independent=...)`.
-    - The corrective earnings (box 7 code 8 with J/1) go on line 1 AND line 2, per the i5329 Line 15/23 instructions ("Report this amount on line 2 and enter exception number 21").
-    - Its tax lines are keyed by the bare designator (`form_line_entry(...).line`): `form_line` renders a draft year's line with its marker text, which is no key a pack maps.
-  - New key `f5329` in KNOWN_FORM_KEYS and CONVENTIONS (37 keys); the filer-address fixture row equals f8606 2025's; federal packs 146.
-  - **Tests** (test_form5329.py, `test_jr4a_*`):
-    - the helper vs the estimator's slots; the SIMPLE rate, the exception amount and the cap;
-    - the golden round trip with "21" on line 2 (verify ok, and every recomputed line PASSes);
-    - a line 4 that taxed the corrective earnings, caught only by the recompute;
-    - the per-person / standalone-signature shape; the bare keys on a draft year.
-- [x] **JR4b — Form 5329: 2023/2024 ports and the 2026 draft pack — DONE 2026-09-28** (M; deps JR4a, JT0a)
-  - *As built:* three packs, each bound from its own rects and checked on a sentinel render of every page.
-    - **2024** (75 widgets): the 2025 names, but 31 rects moved. TRAP: the preparer f3_11/f3_12 swap (2024: f3_11 is the firm address, f3_12 the EIN).
-    - **2023** (73 widgets, two pages): Part IX is the pre-2024 layout — 52 / 53 / 54, the line-55 10%-rate box (`55.reduced_rate`) and 55, with the rate split in the Line 55 Worksheet. So there is no `55 == 54a + 54b`, and line 54 carries no relation (the 2023 "RC" waiver enters the reduced shortfall on line 54). Exceptions run 01–21.
-    - **2026 draft** (Created 7/31/26, 85 widgets, `source_status: draft`, re-pinned at JT6):
-      - the city/state/ZIP box split into three (page 1 moves +2);
-      - Schedule 2 line 5 for Parts I/II/XI and line 18 for III–X;
-      - NEW Parts X (Trump-account excess contributions, 56–61) and XI (their distributed earnings, 62–63). Line 61's 6% has no "smaller of ... or the value" clause, and 63 is 100% of 62, so both are declared;
-      - the preparer block renumbered.
-  - Federal packs 149; filer-address fixture rows (2023/2024 = the 2025 row; 2026 = the 2026 f8606 set).
-  - **Tests** (test_form5329.py, `test_jr4b_*`):
-    - the 2024 swap; the 2023 Part IX shape; the 2026 renumbering and the Trump-account relations;
-    - a per-pack golden with exception 21 for each of 2023, 2024 and 2026 (the draft in rehearsal mode), every recomputed line PASSing.
-- [x] **JP5c — Form 2210 packs — DONE 2026-09-28** (M–L; deps JP5b, JT0a)
-  - *As built:* new form key f2210 (38 keys), two packs, each bound from its widget groups and checked on a sentinel render of every page.
-    - **2025:** 167 of 199 widgets. The 32 ReadOnly cells are the six shaded Section A cells, 22(a)/25(a), and the 1-point dummies on Schedule AI's printed rows 2, 5, 20, 29, 32 and 34.
-    - **2026 draft** (Created 4/16/26, 171 of 203): Schedule AI line 9 becomes 9a plus a NEW 9b "Additional deductions" (every widget below moves +4), and line 29's limits move to the $184,500 wage base.
-    - Keys: Part I bare; Part III `10.a`–`18.c` and `19`; Schedule AI `ai.<line>.<column>`.
-  - **The relation grammar now admits dotted ids** (verify `_TOKEN_RE`: a LINE may carry `.segment`s; floats still match first, and `1a..1h` still splits). That is what lets Form 2210 declare 104 printed relations. The printed factors are float literals (`* 4.0`), so a bare `4` never reads as line 4.
-    - Not declared: line 10 (box C), and Schedule AI 24 and 31 — true only when Schedule AI is used, while a regular-method filing leaves it blank.
-    - Cross-form: only `1 == f1040nr.22`. The Form 1040 leg is false on the section 965 exclusion; `19 -> line 38` is false when only page 1 is filed.
-  - **The recompute:** `penalty.form2210_lines(result)` works Section A the way the face prints it (line 11 per payment window) and raises if a line 17 disagrees with the 6654(b)(3) ledger. Line 19 is the whole-dollar penalty, and with Schedule AI it adds every face line.
-    - JP5b's Schedule AI columns gain `face_lines`, and lines 33 and 35 are now rounded as lines of their own (36 = 33 + 35, as printed).
-  - The 18 packs / handfills that recorded the old grammar wall carry a dated note → **JEc**.
-  - **Tests** (test_form2210.py, `test_jp5c_*`):
-    - Section A vs the ledger (Instructions Example 3);
-    - goldens for the regular method, Schedule AI (box C, SE tax) and the 2026 draft with 9b in rehearsal mode, every relation and recomputed line PASSing;
-    - non-compounding arrears caught only by the recompute; the shaded cells unmapped;
-    - test_verify: dotted ids, floats and ranges.
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JP1b, JP1c, JP5a, JP5b, JP3a, JP3b, JP4, JR4a, JR4b, JP5c.
 
 ### Block 6 — Docs, release, debt
 
-- [x] **JD1 — Docs truth-up, the rest of old J6 — DONE 2026-09-28** (M; deps JR2c, JF6c)
-  - *As built:*
-    1. **README:** all 23 tools, and a calc row naming the 38 ops. estimate_refund is ESTIMATE / PROJECTION; M2 reads 145 packs (2026:34); the 1040-X FAQ carries its three revisions. `test_readme_sync.py` derives every count from the runtime: tools, ops, the M2 per-year pack counts and the bundle manifest.
-    2. **DEV_PLAN §18 "Deviations as built":** the two labels, weekly freshness, the 28-kind DocSpec set, no perceptual-hash tests, the routing checksum living in the profile schema, and the live registries as the authority.
-    3. **SKILL.md:** a "calc ops" section with one bullet per op (38); Recipe P (planning-year projection) and Recipe R (IRA basis / backdoor / recharacterization); the coverage callout (145 packs; 34/34/35, plus TY2026's 34 drafts). The estimate_refund docstring states both labels. `scripts/sync_bundle_manifest.py` rewrites bundle/manifest.json's calc entry from the dispatch chain; the Codex and Copilot skills mirror the label and point at Recipes P and R.
-    4. **CONVENTIONS:** lists all 36 keys, pinned equal to KNOWN_FORM_KEYS by a test, and adds a hand-fill section (the four print-only states and FinCEN 114).
-    5. **CONTRIBUTING:** the pitfall gate as it really works, no snapshot tests, weekly freshness, the dev commands and the test-count sync.
-    6. **FIELD_NOTES:** a status row for every N-item, plus later findings (H9, Phase I, Phase J) — hypothetical personas, mechanisms only.
-    7. **Test docstrings** (23 tools; every op, 38) and the resolved MS note.
-    8. **D2** re-measured (the 2026-09-28 rows in the D2 entry): UT 2025 is PORTABLE and unshipped (JS3b).
-- [x] **JA1 — Phase A, the agent half — DONE 2026-10-15** (M; deps J0; takes the next slot the day the user says they are ready to publish; supersedes A1–A6's open boxes)
-  - *Part A DONE 2026-10-15 (items 1, 2 and 4):* both PyPI descriptions are count-free; both package READMEs and both `__init__` docstrings drop the pre-release wording for the release status (TY2025 is the newest filing-grade year; the 2026 packs are provisional — through the server `fill_form` refuses them except the 2026 Form 1040-ES; a form with no pack is refused today) and no longer say blank forms come only from .gov hosts; packages/mcp-server/tests/test_release_surfaces.py holds all of it plus one version across six sites. scripts/release_smoke.py replaces ci.yml's hand-typed federal-2023 set and tool count with counts derived from the checkout, and the taxfill-mcp sdist excludes bundle/. PUBLISHING.md: the version policy (the first release is tagged from `0.1.0` as is; the `.dev0` cycle starts after it), the mcp<2 decision (ship on the locked 1.x: on 2026-10-15 the latest 1.x is 1.30.0, 2.x 2.3.0, the lock 1.28.0; FastMCP became `mcp.server.mcpserver.MCPServer` in 2.x), a working TestPyPI dry run and a post-release grep the tests keep in sync. Adversarial verify FAIL (1 high: the core README's .gov-only traffic claim; 5 medium), all fixed, re-verify PASS.
-  - *Part B DONE 2026-10-15 (item 3):* scripts/make_sample_w2.py renders docs/samples/w2_2025_synthetic.{pdf,png} — a hypothetical new-grad software engineer at "Example Tech Corp" (SSN 999-88-0425, a SAMPLE watermark, fonts embedded so the render does not depend on the host): box 3 at the 2025 Social Security wage base read from the knowledge pack, boxes 4/6 from `employee_fica`, box 1 net of a 401(k) deferral checked against the 402(g) limit, box 2 a chosen figure (the 2025 pack carries no Pub 15-T tables). The user guide walkthrough, ACCEPTANCE.md and DEMO.md move to TY2025 and this persona; packages/core/tests/test_sample_w2.py reads every box back through `extract_document` and checks that the docs quote what the tools return for it. Adversarial verify FAIL (1 high: a pixel test that depended on the host's fonts), fixed, re-verify PASS.
-  - *Part C DONE 2026-10-15 (items 5 and 6):* .github/workflows/release.yml runs on a `v*` tag only: a read-only build job checks that the tag is on main and equals every version site and that docs/CHANGELOG.md has a dated section (scripts/release_notes.py), runs the release tests, builds, `twine check`s and smoke-tests both packages, and validates, packs and byte-checks the `.mcpb`; then Trusted Publishing uploads taxfill-core before taxfill-mcp (environment `pypi`, the OIDC token the only credential, `skip-existing` so a re-run after a partial upload sends only the missing file); then github-release waits until the version resolves on PyPI, launches the packed bundle with its own manifest command (scripts/bundle_probe.py: initialize + tools/list equal to the manifest) and creates the release from the CHANGELOG section. The bundle moves to manifest 0.4 with the experimental uv runtime, untested in any Claude Desktop build so far: the bundle README, PUBLISHING.md and the CHANGELOG say so and keep `uvx taxfill-mcp` as the fallback. docs/CHANGELOG.md starts at 0.1.0; its coverage block is regenerated by sync_doc_counts until the release commit dates the section. Adversarial verify FAIL (4 medium: an unproven claim about hosts without the uv runtime, the bundle packed in the job holding a write token, no recovery from a partial upload, release notes promising a rehearsal fill the server refuses), all fixed, re-verify PASS. What is left of Phase A is the user's (JA2): the PyPI Trusted Publisher and the `pypi` environment, the mcp<2 decision, the v0.1.0 tag, the demo GIF, a non-developer tester, branch protection.
-  1. **Immutable descriptions** [G16]. The PyPI-immutable descriptions say "21 calculation ops" (taxfill-core), "22 tools" (taxfill-mcp) and "21 deterministic ops" (packages/mcp-server README), and nothing tests them. The runtime has 32 ops and 23 tools. Use count-free wording, and add test_release_surfaces.py.
-  2. **PUBLISHING runbook** [G17].
-     - Its smoke test asserts 22 tools (:83); ci.yml:111 says 23.
-     - The `.dev0` step is obsolete: all four version sites read 0.1.0. Reintroduce 0.1.0.dev0 on main.
-     - packages/mcp-server/bundle/README cites a snippet that does not exist → write scripts/gen_manifest_tools.py plus an equality test.
-     - Add the mcp<2 decision (2.2.0 is the latest release; 1.30.0 the latest 1.x) and a CHANGELOG step.
-  3. **Sample W-2** [G19]. ACCEPTANCE and DEMO use "the bundled SAMPLE W-2", which does not exist. Generate docs/samples/w2_2023_synthetic.{png,pdf} with scripts/make_sample_w2.py: SSN 999-88-xxxx, a SAMPLE watermark, and the walkthrough figures in docs/USER_GUIDE.md ("Your first return in ~15 minutes").
-  4. **CI packaging set** [G26]. The smoke check hard-codes a pre-Phase-G set (ci.yml:104-105). Derive the counts from the repo and compare against data_root() / list_forms().
-  5. **.mcpb runtime** [G18; unverified]. The bundle launches `uvx`. Prototype mcpb v0.4 `server.type: "uv"`, test it on a machine without uv, else document uv as step 0. Add `mcpb validate` to CI.
-  6. **Release workflow** [G20, agent part]. release.yml with Trusted Publishing on tag v*: build, twine check, clean-venv smoke, publish core then mcp, GitHub release from CHANGELOG. Add CHANGELOG.md, and re-stage `_data` before building.
-  - **Acceptance:** `twine check` PASSED ×4; the clean-venv smoke shows 23 tools and the derived pack counts; test_release_surfaces and the manifest equality test are green; the sample W-2 extracts.
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JD1, JA1.
 - [ ] **JA2 — Phase A, the user half** (external: the user) [G20]
   - The user:
     - creates a PyPI account with 2FA and a Trusted Publisher (or pending publisher) for taxfill-core and taxfill-mcp, bound to release.yml — or provides a token (both names were free on PyPI and TestPyPI on 2026-09-23);
@@ -2038,57 +1221,8 @@ line items sum to the headline delta.
     - recruits a non-developer ACCEPTANCE tester;
     - makes any branch-protection change.
   - Then an agent does A6.
-- [x] **JK4 — Pin the CI runner image, the actions and uv — DONE 2026-10-15** (S; release prep of the 2026-10-09 re-plan) — ci.yml, freshness.yml and finals.yml run on ubuntu-24.04 in all eight jobs (GitHub moves ubuntu-latest to 26.04 from 2026-10-19, actions/runner-images#14748); actions/checkout is pinned to fbc6f399 (v5.1.0) and astral-sh/setup-uv to 1c37ad07 (v10.3.0, node24; v6.8.0 was node20), each by commit SHA with the tag in a trailing comment; setup-uv's `version` input pins uv 0.13.0. .github/dependabot.yml proposes the action bumps weekly; the ubuntu pin and the uv version move only by hand. The first CI run on the merged tree is the live proof (expect one cold `uv sync`: the action major changes the cache key).
-- [x] **JK2 — Honest health signal: freshness and the finals watch — DONE 2026-10-15** (S–M; release prep of the 2026-10-09 re-plan) — the 2026-10-12 freshness run 38294478202 was red on two causes. The 2025 Form M1 instruction booklet moved on revenue.state.mn.us from /2026-07/ to /2026-10/m1-inst-25.pdf (the same 40-page booklet): its 14 citations in knowledge/sources_states.yaml and knowledge/states/mn/2025.yaml are re-pointed. mass.gov answers 403 to GitHub-hosted runners and the pack's Wayback mirror 429 or connection refused, which failed the ten MA Form 1 2023/2025 network tests: `fetch._download` now retries 429, 5xx and connection failures (three attempts, 2 s then 6 s, a finite Retry-After honoured up to 30 s; 401/403 and 404 are answers and never retried), the mirror path shares it, freshness.yml's network-tests job restores and saves `.cache/blanks` through actions/cache (pinned by SHA; `fetch_blank` still digest-checks every cached file), and the ten node ids are quarantined until 2027-01-11, pinned exactly by test_freshness_quarantine.py. Delete those rows after two consecutive green weekly runs (watch 10-19 and 10-26). `check_finals.head_status` retries a 5xx or a timeout the same way: one irs.gov 503 had turned the 2026-10-05 watch red (run 37363005332).
-- [x] **JEa — SSN maxlen and reserved lines — DONE 2026-09-28** (M; deps J0) [G30 + PJ-13 rest]
-  - *As built:*
-    - **maxlen tracks the widget.** 41 federal SSN fields (identifying_number in f8606 / f8960 / f8962 / sched_2 / sched_a / sched_oi / sched_3a, and f8962 30b–33b; 2022–2026) move 9 → 11, their widget /MaxLen. NY IT-203 2025 line 35 moves 10 → 4: its widget holds 4, the one pack that let through more than its box.
-      - New network-marked test_pack_maxlen.py over every pack: a pack maxlen may never exceed the widget's; a tighter one needs a `TIGHTER_THAN_WIDGET` row with the measured box (11 state rows, self-clearing).
-    - **`PackField.reserved`**: set on exactly the 19 RESERVED_LINE_KEEPS rows (a test holds the two equal). fill_form warns when a value lands on one; scripts/audit_pack.py leaves them blank.
-    - **CONVENTIONS** "Reserved, shaded and ReadOnly widgets" gains the `reserved` flag, the "never map a DOR banner or caption" rule (with the J0.3 AL-40 / MO-1040 cases) and the maxlen rule.
-    - **J0 verifier follow-ups:**
-      - freshness.yml runs test_verify_readonly_sweep.py after the network round trips warm the cache;
-      - unmapped the class-1 captions — AL-40 2023 txtMultiScheduleD/E; MO-1040 2023/2024's 28 printlid.* lids, ProtectBarcode, vendorid, amendedTXT, line51txt, 1040_30Text (STATE_COMPUTED_READONLY al40 568→566, mo1040 256→223 / 254→221);
-      - adjudicated the nonzero ReadOnly defaults: GA 500's TP/SP_S1L4 (4000) and TP/SP_S1L2_P3 (17500) are constants → unmapped (193→189). The 17 others are class 4 (JS-assigned, filing-status-dependent, a /C script, a /Ch default), pinned in `NONZERO_READONLY_DEFAULTS` with a network test that fails on any unadjudicated one;
-      - verify enforces a bound pack maxlen on a scanned widget with no /MaxLen of its own (`_bound_maxlen_checks`; blank-owned widgets are dropped first, so J0.3's regression cannot return);
-      - the width heuristic counts wrapped lines for a multiline widget (/Ff bit 13) against the rows its height holds;
-      - `fetch.cached_blank_path(url, sha256)` is public, and verify and the new tests use it;
-      - the stale "verify skips ReadOnly widgets" prose is reworded (sched_d / sched_e 2023–2025, OH IT-1040 2023/2024, test_formpacks_federal, test_pack_invariants), and P-007 records (b) as closed.
-  - **Tests:**
-    - test_pack_maxlen.py (223 network cases);
-    - test_filler reserved warning; the reserved-flag equality;
-    - NONZERO_READONLY_DEFAULTS;
-    - test_verify multiline and bound-maxlen;
-    - test_fetch cached_blank_path;
-    - the two sweep controls re-based on the multiline rule.
-- [x] **JEb — Checkbox topology — DONE 2026-09-28** (L; deps J0) [G31]
-  - *As built:* re-measured on 212 packs — 377 option sets on separate fields with non-yes/no tokens, 240 without one shared group id (147 families by form and stem). Each family was read off its printed row (row text beside the widgets, and a crop where the text layer was garbled).
-  - **Grouped — the face makes them alternatives** (82 lines, 11 packs):
-    - ID Form 40 / KS K-40 / NE 1040N filing status;
-    - KS / NE residency (type of return);
-    - KS "Amended Return (Mark ONE)";
-    - the ID / MD / MO 2023–2024 / IN account types;
-    - MD's "All taxpayers must select one method";
-    - AZ 140's per-dependent under-17 / 17-or-over boxes (14 dependents);
-    - CA 540 / 540NR's "FTB 5805 attached / FTB 5805F attached" and the Tax Table / Tax Rate Schedule method;
-    - MO-NRI's Missouri / Non-Missouri home of record per person;
-    - GA 500's paper / electronic voucher boxes.
-  - **Adjudicated — 120 families** in `SEPARATE_OPTION_SETS_ADJUDICATED` (test_pack_invariants.py), keyed (family, stem) so a row covers every year. Each is `INDEPENDENT:` (e.g. "Check applicable boxes", one box per spouse, W-7's "you must also check and complete box h") or `PARTIAL:` (a grouped subset beside independent boxes: filing status + the NRA-spouse election, the dependent credit pair + the lived-with boxes).
-  - **Gates:** `test_separate_widget_option_sets_are_adjudicated` over every pack; `test_every_option_set_row_still_describes_an_ungrouped_set` (self-clearing, INDEPENDENT/PARTIAL wording required). P-008 and CONVENTIONS updated; the Phase E box is closed.
-- [x] **JEc — Declare the relations the dotted-id grammar now allows — DONE 2026-09-28** (M; deps JP5c; added 2026-09-28 by JP5c, outside the original 62-tranche table)
-  - *As built:* each candidate re-read against its face.
-    - **sched_d 2023–2026:** the column (h) head, "Subtract column (e) from column (d) and combine the result with column (g)", for all eight rows. Rows 1a/8a have no (g): the shaded cells are unmapped. 9 relations per pack.
-    - **sched_oi 2022–2025:** item L "(e) Total" = the three column (d) rows. The 2025 Instructions for Form 1040-NR (item L) provide no continuation statement, so the total is the three printed rows.
-    - **f8949 2023–2026:** the per-row identity and "2 Totals. Add the amounts in columns (d), (e), (g), and (h)" — 36 relations (14 rows a Part) in 2023/2024, 30 (11 rows) in 2025/2026.
-    - **sched_nec 2023–2025:** 13a–13e, "Add lines 1a through 12 in columns (a) through (d)", each sub-column summing the rows mapped in it.
-    - **MT Form 2 (2023)** stays out, with the reason recorded: its per-column arithmetic spans ~600 dotted money lines over 11 pages and belongs with the JS5 MT re-map. The FinCEN 114 handfills keep their underscore keys (the note states why).
-  - Every dated JP5c note is replaced by the declaration or the reason.
-  - **Tests:** test_dotted_relations.py — per family and year, a consistent fill PASSes and one wrong cell FAILs exactly its relation (Instructions for Form 8949 (2025) Column (h) example: $6,000 − $2,000 + ($1,000) = $3,000).
-- [x] **JEd — Viewer guards and hidden widgets — DONE 2026-10-01** (M; found by the JS5 OH IT 1040 2025 port's adversarial verify; added outside the original 62-tranche table) — pitfall *viewer-guard* = **P-027**
-  - *Found.* OH IT 1040's MFS spouse SSN widget ships with the annotation Hidden flag and is shown only by the form's JavaScript, so a filled MFS return carried the SSN in the file and nowhere on paper. A sweep of every cached blank then found 141 mapped widgets flagged Hidden or NoView across AL 40 (72, every page-1 data widget), DE PIT-RES (28, the amended-return lines), GA 500 (21, the voucher), MO-1040 (8-9), NY IT-201 (1) and OH (1) — and two viewer guards: AL 40's page-covering yellow "WARNING: PLEASE USE A DIFFERENT PDF VIEWER" pushbutton (viewable and printable, hidden only by the script, so `render_form` of a filled AL 40 had only ever shown that warning) and the white NoView + Print "print lids" on every page of AL 40 (42) and MO-1040 (31), which a viewer that honours the flags prints over the return.
-  - *As built.* `fill_form` runs a flag pass after writing: every written widget gets Hidden and NoView cleared and Print set; every viewer guard (a widget covering ≥ 85% of its page that is a pushbutton or a ReadOnly text panel, `filler.is_viewer_guard`) is set Hidden and listed in `FillResult.guards_hidden` (the MCP tool returns it). `verify_form` reads the filled PDF's flags back as pitfall check P-027 (`verify.widget_flag_problems`): a written widget still Hidden / NoView / without Print, or a guard still viewable or printable, FAILs the report. The golden round trips assert P-027 on every pack. CONVENTIONS "Viewer guards and hidden widgets".
-  - **Tests:** test_viewer_guards.py (synthetic hidden widgets and guards through fill → flags → verify, the negative on a re-hidden widget; network: AL 40 hides 41 guards and its page 1 renders the form, MO-1040 hides 32, OH's spouse SSN prints).
-  - **P-028 (same tranche, found by the GA 500 2025 placement verify):** GA 500's voucher ships "Paper Return" pre-checked, and the return-medium boxes are separate fields sharing a `group`; selecting "Electronically Filed" left both ticked. `fill_form` now writes `/Off` to the separate-field siblings of a selected group member (an unanswered group stays as shipped). The 2026-10-01 sweep found 21 pre-checked mapped checkbox widgets (GA, KY 740 ×3, MO-1040 ×2, WV IT-140); GA's is the only one on a separate-field group.
+  - **Phase K:** the RC is ready 2026-10-23 (JK5); JD2.3 before the tag push; A6 = JK7 (Phase K KG9: every step above stays the user's).
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JK4, JK2, JEa, JEb, JEc, JEd.
 - [ ] **JEe — Text width vs the widget's inner padding** (M; found by the JS5 RI-1040 2025 port's fixer, 2026-10-02)
   - *Found.* verify's width check passes a value when `len × advance × size <= rect width` (Courier 0.6 em). Render
     probes on RI-1040 2025 show the last glyph clipped when the value fills the rect exactly — the widget's inner
@@ -2099,6 +1233,7 @@ line items sum to the headline delta.
     fit at exact width (TIGHTER_THAN_WIDGET rows where a widget /MaxLen exists). RI's dependent date-of-birth boxes
     (no 8-digit MMDDYYYY renders whole) need a product decision in the same pass: MMDDYY, a smaller font, or a
     documented clip.
+  - **Phase K:** K-T lane, latest start 2026-11-30 (before the 2026 maps are made); the sweep covers the JK0 packs; the RI DOB rendering is the user's call.
 - [~] **JD2 — Process: derived counts, suite speed, branches, ROADMAP shape — AGENT HALF DONE 2026-09-28** (M; deps JD1)
   - *As built:*
     - **(1)** scripts/sync_doc_counts.py derives the tool / op / DocSpec / pack counts and rewrites 16 anchors: README, SKILL.md, DEV_PLAN, both package READMEs, PUBLISHING.md's smoke assert, and the two PyPI descriptions. It found the descriptions still at "21 calculation ops" / "22 tools" and the server README at "21 deterministic ops" (JA1.1's list).
@@ -2111,6 +1246,7 @@ line items sum to the headline delta.
     - **(4) done 2026-09-28.** The parked `phase-j2-overlay` is recorded as merged (8945e30, `-s ours`; its code landed by hand in JS4a) and deleted, with the user's OK. `git fetch --prune` shows the 10 remote duplicates are already gone, so `git branch -r --no-merged origin/main` is empty. No stray worktree is left.
   - **Waiting on the user:**
     - (3) the real merge gate / branch protection.
+    - **Phase K:** JD2.3 stays user-held (KG9): before the JA2 tag push, or recorded as not adopted.
   1. **Derived counts** [G15]. New `scripts/sync_doc_counts.py`, keeping the sync_test_count entrypoint: tools, ops, DocSpecs, packs, hand-fill packs and the ReadOnly total. It rewrites anchors, runs `--check` in CI, and regex-asserts the pyproject descriptions.
   2. **Suite speed** [G25]. About 5.6 min locally and 10.2 min in CI (run 33118033631); two property tests take 48.8 s and 45.3 s; list_forms parses 172 packs per call (~3.1 s; discovery.py:142-147).
      - Pre-filter by path and memoize load_pack on (path, mtime).
@@ -2140,72 +1276,11 @@ line items sum to the headline delta.
     - By the 2025 precedent the form finals and Pub 1040 arrive by mid-January 2027 (f1040 created 2026-01-02; p1040 modified 2026-01-15), and i1040gi arrives last, around late February (2025 edition created 2026-02-25). This is an inference, not a guarantee.
     - An earlier flip, with filing_thresholds and the no-payment addresses left as disclosed absences (file_and_pay pointing at the irs.gov where-to-file page), is a plan choice for the user; it needs a small post-provisional `filing_grade_absent_blocks` list.
   - **External:** the IRS finals and the 2027 Rev. Proc.
+  - **Phase K (2026-10-09):** deps JK8 (the watch, cron extended to 03-15) and JK11 (the user's early-flip and "(60,000)" decisions; the latter is JT4c's finding, now in HISTORY.md). Absorbs H5's Tax Table re-pin and JT1c's Schedule 3-A re-verify. JT5g folds in if its drafts never post. JS7a waits only on the f1040 re-pin.
 
 ### Block 7 — State (federal-first; starts after the federal lanes)
 
-- [x] **JS1a — DC 2025 re-verification — DONE 2026-09-28** (S–M) [G22]
-  - *As built:* fetched the re-issued `2025_D40_Book_082026_v1.pdf` (105 pages, modified 2026-08-20; the old URL still 404s). Every quoted booklet passage and figure in knowledge/states/dc/2025.yaml was re-found in it:
-    - the OBBBA non-conformity text;
-    - DC's own standard deduction ($15,000 / $22,500 / $30,000; additional $1,600 / $2,000);
-    - EITC at 100% (childless maximum $649, investment limit $11,950);
-    - Schedule H $1,425 and Schedule ELC $1,200;
-    - the Line 7 "Other" additions, the April 15, 2026 deadline and both PO boxes;
-    - the rate schedule and the two spot-checked tax-table rows ($1,302, $3,595).
-  - The 15 citation URLs point at the re-issue, and sources_states.yaml is regenerated. J0.6's STALE SOURCE `unverified` line and JT0c's DC drift quarantine row are removed; the quarantine test now uses a synthetic drift row.
-- [x] **JS1b — MA mirror and a seed command — DONE 2026-09-28** (M) [G23]
-  - MA Form 1's Wayback cache-seed existed only on the maintainer's disk, and CI and fresh installs got a 403 that said "retry in a minute".
-  - Add pack `mirror_urls` with the exact `web.archive.org/web/<ts>id_/<official>` snapshot, tried on 401/403 and ALWAYS digest-verified.
-  - Add `taxfill seed-blank`, and name both remedies in the 403 message.
-  - **Acceptance:** a mocked 403 exercises the fallback; a digest mismatch fails closed; the network layer is green; the allowlist is empty.
-  - *As built:*
-    - **Schema:** `FormPack.mirror_urls`. Each entry must be `https://web.archive.org/web/<14 digits>id_/` + this pack's own `source_url`, and a pack with mirrors needs a real `pdf_sha256`.
-    - **Fetch:** a 401/403 raises `RefusedFetchError`; `fetch_blank(..., mirrors=)` then tries each mirror. Without a digest a mirror is never used. A mirror that serves other bytes fails closed and caches nothing, not even a quarantine copy. Verified bytes are cached under the OFFICIAL URL's cache name. `fetch_pack_blank(pack)` passes a pack's URL, digest and mirrors; the server's `fetch_blank`/`fill_form`, `scripts/audit_pack.py` and every network test that fetches a pack's blank go through it. The 403 message names both remedies.
-    - **CLI:** `taxfill seed-blank <pdf> (--pack <pack.yaml> | --url U --sha256 D) [--cache-dir]` digest-checks a browser-saved blank before caching it (exit 1 on a mismatch or a non-PDF, 2 on missing arguments).
-    - **MA pin:** the id_ redirect (`web/<year>id_/<url>`) names each capture while the CDX API is down. Of the four captures, only 20241214140401 hashes to the pinned `86233c2d…` (DOR's 2024-01-17 revision). A live run from an empty cache: 403, mirror, digest match, cached in 0.7 s.
-    - **Finding → JS5.** The other captures are DOR re-issues of the SAME URL:
-      - 2025-04-14 (`613a1a0d…`): the same 172 fields; only line 39's cross-reference is corrected ("line 51 … line 55" → "line 52 … line 56").
-      - 2026-05-22 (`5cbb5655…`, captured 2026-09-20): a rebuilt AcroForm, 360 fields, every name changed.
-      The 403 hid both from the drift job, which only warned on a refusal. `check_drift` now digest-checks the NEWEST Wayback capture of a refused host that has `mirror_urls` (`_newest_capture`; only a digest comes back, nothing is cached). It reports MA as REVISED, and that is the one quarantine row left: `fixed_by: JS5`, expires 2027-03-31. The pinned revision is still an official TY2023 Form 1 and stays reachable byte-for-byte, so re-pinning to the re-issue is a full re-map, done with MA's JS5 discovery.
-    - **Quarantine:** both MA `network_test` rows are deleted, and a test asserts no `network_test` row remains. The drift row's URL may be cited by a form pack as well as a knowledge pack.
-    - **Docs:** CONVENTIONS "Source URL and checksum" (how to find and pin a snapshot); CONTRIBUTING-PACKS triage table; the README shell section.
-    - Tests: `test_fetch.py` (6: the fallback, fail-closed, no digest / off-URL mirror refused, the 403 message, `fetch_pack_blank`, `seed_blank`), `test_cli_seed_blank.py` (3), `test_formpack.py` (the mirror shape), `test_check_drift.py` (2: the newest-capture probe matches or reports REVISED; an unreadable archive leaves the warning).
-- [x] **JS2 — State law-change sweep (old J5, re-scoped) — DONE 2026-09-28** (M) [PJ-17 + G05(c)]
-  - 30 of the 84 2024/2025 packs lacked `effective_law_changes`; 15 had law-change prose (ar24, ar25, ca24, ct24, mi25, ms24, ms25, nd24, nm24, ny24, sc24, sc25, wi25, wv24, wv25).
-  - Adjudicate those 15 from the booklets they cite. Record an explicit empty list with "checked <date>, source <url>" for the other 15.
-  - **Acceptance:** a gate test that the key is present on all 84 packs (and on every future state year pack).
-  - *As built:*
-    - **Schema:** `StateKnowledge.law_changes_checked` (`LawChangesChecked`: `checked` date, `finding`, a .gov `citation`). The gate `test_state_law_change_sweep.py` requires the key on every TY2024+ state pack, requires a checked record when the list is empty, and requires the record's URL to be one the pack cites elsewhere. `KnowledgePack` had declared `effective_law_changes` twice (the second, undescribed, won); the duplicate is gone. `assemble_state_sources.py` maps the new block to `law_changes`.
-    - **Method.** Every document each pack cites was fetched. Each quoted run in an entry, and in a checked record, was re-found in the fetched text by a normalizing quote checker; 0 misses on all 30. Where the year's booklet has a What's New / Special Information / Legislative Changes section, it was read in full and compared with the prior year's list, so carry-overs are not recorded as new. Where it has none (CT, DE, NJ, NM, SC, VT, CO), the form's line list and the instruction headings were diffed against the prior year, and the tax blocks compared.
-    - **Result: 30 packs, 52 entries; 7 packs carry an empty list** (ar25, de25, nd24, nj24, nj25, nm24, ri24). All 30 carry a checked record. Rate changes are `modeled: true` (ar24, ct24's bottom two bands, ks24's SB 1 restructure, mi24's return to 4.25%, ms24/ms25, sc24/sc25, wi25's Act 15 bracket, wv25's §11-21-4i cut, co25's return to 4.4%); everything the engine does not compute is `modeled: false`, so `state_scope` warns.
-    - **Two sources the packs lacked were added, fetched and verified:**
-      - NY's personal-income-tax detail page for 2024 (`/legal/2024/pit-corp-changes.htm`; the pack cited only the index);
-      - PA's Working Pennsylvanians Tax Credit page. The credit came in the November 2025 budget, after the April 2025 PA-40 instructions were printed.
-    - **Defects found and fixed in the prose:**
-      - WV 2024 claimed a "retroactive 2024 rate cut" and quoted §11-21-4g as applying from January 1, 2024. The statute (fetched) says 2023, and the 2024 rates are 2023's.
-      - WV 2025's three rate notes were a blind year-substitution: 2024's rates and constants, a misquoted statute, and "not TY2025, not TY2025". They now cite §11-21-4i (2024 Second Special Session SB 2033), whose 2025 rates the tax block already carried.
-    - **Found, not fixed here → JS2b:** the WV 2024/2025 packs' other source rows were copied from 2023 with only the directory year changed. Four URLs per pack 404 (`…/PIT/2024/it140.2023.pdf` and the like), their labels say "2023", and several line references are 2023's. Examples: 2024 Schedule M's increasing modifications are lines 53-60 (total 61), not 51-58; HEPTC goes to line 19, not 18. The 2025 booklet itself is inconsistent here: IT-140 lines 2/3 cite "line 61 / line 52 of Schedule M" while its Schedule M prints 59/50.
-    - SC 2025 records a live question, not an answer: SC conforms to the IRC through December 31, 2024, and its August 2025 instructions predate the July 2025 federal act. Line 1 is federal taxable income, and the booklet does not say how the new federal deductions are treated.
-- [x] **JS2b — Year-currency repair: WV 2024/2025, VT 2024, HI 2024 — DONE 2026-09-28** (S–M) [JS2 finding]
-  - JS2 found packs rolled forward from 2023 with only part of their text updated.
-  - *As built:* each repair re-read the year's own document, fetched 2026-09-28.
-    - **WV 2024 and 2025:**
-      - Four URLs per pack 404'd (`…/PIT/2024/it140.2023.pdf` and the like). 2024 now cites its own `it140.2024.pdf`, `schedule-HEPTC1.2024`, `schedule-M.2024` and `schedule-A.2024`. 2025 cites its Schedule M and A; its IT-140 and HEPTC-1 live only inside the booklet, which is cited instead.
-      - The credit figures were 2023's (3x and 1.5x the 2023 poverty guideline). Now:
-        - Family Tax Credit Table 1: 100% at $15,060 / $20,440 / $25,820 / $31,200 for 2024, and $15,650 / $21,150 / $26,650 / $32,150 for 2025, with the full one-person phase-out;
-        - HEPTC: $45,180-$93,600 (+$16,140) for 2024, and $46,950-$96,450 (+$16,500) for 2025;
-        - SCTC: $22,590-$46,800 (+$8,070) for 2024, and $23,475-$48,225 (+$8,250) for 2025.
-      - Line references: SCTC goes to IT-140 line 18 and HEPTC to line 19 (were 17/18). 2024 Schedule M increasing modifications are lines 53-60, totalled on line 61 (subtractions on 52). Page references: starting point p.24, Who Must File p.17, Schedule A Part II instructions p.32. The treaty note cites the year's own instructions, and the due dates are April 15, 2025 / 2026.
-      - The "payable to WV Tax Division" claim is printed nowhere. `check_payee` keeps the addressee, and a `check_payee_note` quotes the Line 24 instruction.
-      - The 2025 booklet's own inconsistency (IT-140 lines 2/3 cite Schedule M lines 61/52, while the 2025 Schedule M prints 59/50) is recorded in `unverified`.
-    - **VT 2024:**
-      - The credits cited the 2023 IN-112 documents. They now cite the 2024 ones, with birth years 2019-2024 and IN-111 line 26c (the new Child Care Contribution line moved it from 25c). The child tax credit example is fixed ($720 covers $138,001-$139,000 only).
-      - The renter credit now uses the 2024 eligibility and due dates (April 15 / Oct. 15, 2025). The filing requirement is reworded for 2024, the IN-116 voucher and the IN-113 instructions are 2024's, and the Form IN-111 link points at `IN-111-2024.pdf` (was `/document/2023-form-111`).
-    - **HI 2024:** the renter credit's label said "Rev. 2023" and cited the 2023 N-11 instructions; the linked 2024 Schedule X is "(REV. 2024)" and its line 12 names Form N-11 line 29.
-    - **The drift job never probed state citations:** `check_source_urls` read only `knowledge/sources.yaml`. It now also probes the generated `sources_states.yaml`, which is how WV's dead URLs would have surfaced.
-    - **Gate** `test_state_pack_year_currency.py`, on every TY2024+ state pack:
-      - no citation file from an earlier year: WV's pattern (the pack's year in the directory, an earlier year in the file name), or any earlier-year file outside law and bulletin URLs. Three rows are adjudicated: MN's December bracket press releases and SC's TC-60, whose 2024 revision still 404s.
-      - none of the carried-over phrasings found.
-      - It fails on the pre-repair packs (vt24, wv24, wv25) and passes after.
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JS1a, JS1b, JS2, JS2b.
 - [~] **JS2c — Knowledge corrections the JS5 ports surfaced** (S–M, per pack; added 2026-10-01). Every port's verifiers compare the figures and captions the face prints with the year's knowledge pack and report mismatches; each is re-read at the pack's own cited source before it is changed.
   - *Done 2026-10-01 (GA, OH, MO):* GA 2025's IND-CR 202 rate is 50% (the 2025 IT-511 booklet and the IND-CR 202 face both print "Georgia allowable rate 50%"; the pack said 30%, the 2024 rate), line 19 is the "Georgia Eligible Itemizer Tax Credit" (the booklet's own name), and the 525-TV voucher's PO Box 740323 address is recorded under payment; OH 2025's `payment.web_pay_url` is tax.ohio.gov/pay (printed twice on the face; OH|TAX is the portal) and the Ohio Nonresident Statement checkbox is no longer described as new (the 2023 and 2024 faces print the same row; what ended is form IT NRS); MO 2025 no longer claims the MO-TC / MO-PTS lines were renumbered from 2024 (both faces print 42 / 43); LA 2025's child-care credit is carried to Line 21 (the +1 renumbering; the pack said 2024's Line 20) and its header no longer says lines 6A / 6B were removed (6A survives as the age designation, 6B as the dependents count). `sources_states.yaml` regenerated.
   - *Done 2026-10-01 (DE, VT):* DE 2025 said a NEW line 39 (capital gains tax payments) pushed the settle-up lines down by one and that the 2025 numbers were "one higher than 2024's" — the 2024 blank (Revision 20240821) already prints the same numbering, and line 39 is 2023's line 38: the +1 against 2023 came with the 2024 revision's inserted line 16 (Active Labor Organization Dues), restated in the header, the tax block, the law-changes note and the citation; the payment ZIP+4 is 19899-0508 as the form's own mailing boxes print it (the Instructions' Step 5 table drops the leading zero). VT 2025's base-guidance note cited federal Form 1040 "Line 11" where the 2025 IN-111 face prints "Line 11a"; and neither VT pack described two IN-111 face items that date from the TY2024 form — the Line 21 Child Care Contribution (Act 76 of 2023, 32 V.S.A. chapter 246: 0.11% of Vermont self-employment income per the 2025 worksheet, the 2024 half-year exclusion gone, no cap — quoted from the 2025 IN-111 Instructions p. 8, GB-1326 and § 10553) and the FARMER / FISHERMAN box (26 U.S.C. § 6654(i)(2), Instructions p. 6; the booklet says only to check it), now in both years' `tax.notes`; `knowledge/sources_states.yaml` regenerated.
@@ -2228,140 +1303,17 @@ line items sum to the headline delta.
   - *Done 2026-10-15 (VT):* vt/2024's `tax.notes` still carried three 2023 figures: "$4,850 per exemption", a QW standard deduction of "$14,050" and "$1,150 per standard-deduction box ... born before Jan. 2, 1959". The 2024 IN-111 face (Rev. 10/24, p.1) prints "MULTIPLY Line 5d by $5,100" and ($14,850) under both Married/CU Filing Jointly and Qualifying Widow(er), and the Instructions (p.7, Line 4) print "$1,200 for each standard deduction box" for those "born before Jan. 2, 1960" with the 1-4 box chart; the notes now quote both. The structured keys, header and citation source already had the 2024 figures; no figure changes.
   - *Done 2026-10-15 (WV):* wv/2024 said the three new refundable property tax credits (motor vehicle, disabled veteran real property, small business) affect the Tax Credit Recap Schedule and placed them on booklet p.19; the 2024 IT-140 face claims them on line 21 boxes A/B/C ("WV Property Tax Adjustment Tax Credits (claim each separately below. Enter sum on line 21)"), totalled on line 23 with the other refundable credits, while RECAP line 27 sends only non-refundable credits to line 9 — `affects`, `lookup_path` (Property Tax Credits p.20, line 21 instructions p.25) and the citation now quote the face, and the credits-not-modeled note names lines 20 and 21. The fillable face's RECAP line 18 "Child and Development Care Credit" is a misprint of the same §11-21-26 credit (booklet RECAP W and the statute say "Dependent"); no change. wv/2025's widowed-spouse disabled veteran entry repeats the RECAP attribution — open.
   - *Open:* MN 2025's M1 face prints "line 11 of federal Form 1040" where the M1 Instructions (quoted in the pack) say 11a — the DOR's caption lags its own instructions; no change. The MO-A Part 2 threshold wording and the MO-WFTC investment-income question, and NM's 2023 manifest note that omitted the 4.9% bracket, stay open until their packs are re-read.
-- [x] **JS3a — Scaffold starts from the newest base — DONE 2026-09-28** (M) [G05 + PJ-15 (1)]
-  - `scaffold_state_year.py` gains:
-    - `--base newest`;
-    - `--rows <json>`, seeded from the 16 recovered discovery rows (url + sha256 in the wf_babce8da-141 journal);
-    - a cache-first triage (today network-only, :72-101);
-    - year+1 upload-folder and revision-token derivation (AL, CT and DC tokens are stale today).
-  - **Acceptance:** the offline triage reproduces the recorded rows; UT 2025 triages PORTABLE against UT 2024.
-  - *As built:*
-    - **Base and rows.** `--base newest` gives each form its newest shipped year below the target (UT 2025 → UT 2024). `scripts/state_discovery_rows.json` holds the 16 journal rows (AL, AZ, CO, DC, DE, ID, KY, LA × 2024/2025) with their pinned digests, public fields only. `--rows` substitutes a row's URL for the derivation and reports `recorded_verdict` / `reproduces`.
-    - **Triage.** It is cache-first: the triage cache, then the shared blank cache for a pinned digest. A cached or downloaded file that is not the pin is `DIGEST-MISMATCH`, never trusted. `--offline` never opens a URL; an uncached candidate is `NOT-CACHED`.
-    - **Derivation rules:**
-      - 4-digit years move with their base+1 upload folder in one pass, so AL's `uploads/2024/01/23f40.pdf` → `uploads/2026/01/25f40.pdf`;
-      - CT's MMYY suffix `_1223` → `_1224`;
-      - `%20` separates a year rather than joining its digits (KY's `Form%20740%202023.pdf`);
-      - a revision date in the file name (DC `01222024` / `011525`, ID `08-23-2023`; month and day range-checked, so `SC1040_2023` is not one) makes the row `revision-dated (needs a recorded row)` instead of a wrong candidate.
-      - An underscore rule for MD/ME (`23_forms`) derived only dead URLs and was dropped.
-    - **Downloads** use the browser User-Agent `taxfill_core.fetch` uses: CO's host answers 403 to the old agent. An incomplete TLS chain (tax.idaho.gov) is retried through curl. Either way the bytes are classified, and digest-checked for a recorded row.
-    - **Acceptance, run 2026-09-28.** Online, 16/16 recorded rows reproduce; offline, from the warmed cache, 8/8 per year. UT 2025 is PORTABLE against UT 2024, and the network test `test_ut_2025_triages_portable_against_ut_2024` pins it. The 2025 newest-base work-list (JS3b's input) is: 5 already shipped (ar1000f, or40, pa40, ny it201/it203); PORTABLE az140, d40 and tc40; NEAR-PORT al40 (34 fields) and ky form740 (4); 16 RE-MAP; the rest URL-DEAD, no-year-token or print-only. In newest mode a form with a target-year pack is reported `shipped` and not triaged; a fixed `--base` keeps the old census.
-    - Tests: `test_scaffold_state_year.py` — 12 offline (derivations, revision dates, newest base, shipped forms, rows + cache-first + digest mismatch + offline, the rows file is public data) and 2 network (UT, and all 16 rows reproduce).
-- [x] **JS3b — Cheap state ports — DONE 2026-09-28** (M–L, per pack) [G05 + PJ-15 (2)–(3)] — 11 pack-years shipped: UT 2025, AZ 24/25, DC 24/25, KY 24/25, LA 2024, ID 2024. AL 40 24/25 moved to JS5 (measured below).
-  - UT 2025 TC-40 is PORTABLE and unshipped: files.tax.utah.gov/tax/forms/2025/tc-40.pdf returns 200, sha256 0eac22fb…37cdf, and all 106 mapped UT-2024 fields exist in it.
-  - Then the rows marked PORTABLE / NEAR-PORT, TY2025 first: AZ 24/25, DC 24/25, KY 24 (PORTABLE) / 25 (NEAR-PORT, 4 fields), LA 24, AL 24 (NEAR-PORT, 3), ID 24 (NEAR-PORT, 2).
-  - **Acceptance, per pack:** re-downloaded with a digest pin, vision-audited, golden round trip.
-  - *Progress:*
-    - **UT 2025 TC-40 — SHIPPED 2026-09-28** (`formpacks/states/ut/2025/tc40`).
-      - The pin matches three independent downloads (`0eac22fb…37cdf`), and the printed identity is 40501 / "2025".
-      - All 111 widgets are identical to 2024 (page, /Rect, /MaxLen, /Ff, /FT, /AP states). There are zero ReadOnly widgets and the same script-slot census, and the scripts are byte-identical and format-only.
-      - Pages 2-3 of the 2025 file have no text layer, so they were rendered and compared: zero renumbering.
-      - Face deltas: 4.5%, $2,111, $18,213 / $27,320 / $36,426, the line-14 Schedule A 5e-less-5b/5c caption, fund codes 18 and 19, and the year captions. The UT 2025 knowledge pack already matched all of them.
-      - The sentinel audit ran 104/104 with 0 fails, and all three pages were read. Every UT network gate passes: golden round trip, ReadOnly audit, maxlen, verify sweep.
-      - UT 2023, 2024 and 2025 now declare the Part 4 contributions total; it waited only on the dotted-id grammar (JP5c). `test_dotted_relations.py` checks it both ways.
-      - The line-4 cross_form moved to `f1040.11a`: the 2025 Form 1040 prints AGI on line 11a. The pack-invariant gate caught the carried-over `f1040.11`.
-    - **AZ Form 140 2024 and 2025 — SHIPPED 2026-09-28** (`formpacks/states/az/{2024,2025}/az140`).
-      - URLs come from the discovery rows (AZDOR's `document/` path; the scaffold's derivation 404s). Each pin matches four downloads: the discovery pair, the triage and a direct re-fetch. Printed identity: ADOR 10413 (24) / (25).
-      - Against the 2023 base the 430 widgets keep every name, /MaxLen, /Ff, /FT and /AP state, but 154 moved /Rect by a few points to about 20 pt as captions re-wrapped (pages 1, 2, 3, 5 and 6). Only two changed size, both taller, so no capacity-based maxlen shrank.
-      - Every row was re-read: the page 1-2 line lists extract identically, and pages 5-6 (no row text layer) were rendered and compared letter by letter (A-T, A-W). The sentinel audit then placed all 391 lines on their rows, all six 2024 pages read, 0 fails.
-      - 2025 is widget-identical to 2024.
-      - Face deltas: the page-3 charitable increase is 31% → 33% (2024) → 34% (2025), matching the knowledge packs; Form 301 cross-references moved to lines 30/60; row V gained an "MCTCP worksheet" pointer. 2025's cross_form is `f1040.11a`.
-      - Every AZ network gate passes.
-      - The four shared radio questions (filing status, itemized/standard, political party, account type) now carry `group:` ids in all three AZ packs, which clears az/2023's `SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID` debt row.
-    - **DC D-40 2024 and 2025 — SHIPPED 2026-09-28** (`formpacks/states/dc/{2024,2025}/d40`).
-      - Each pin matches three copies: the discovery row, the triage cache and a fresh re-fetch. Printed identity: page-1 barcode 2404001100002 / 2504001100002, footer "Revised 01/2025" / "Revised 11/2025".
-      - Both years add ONE widget over the 2023 base, the Line 27 oval for the new monthly-EITC election ("Do you choose to receive your DC EITC refund in 12 monthly payments instead of one total payment?"; for tax years from 2024 the payout is a choice, not automatic). It maps to `27.monthly_eitc_payments`: `EITC Opt in` → `/Choice1` in 2024, `LUMPSUM PYT` → `/SSN_1` in 2025.
-      - The printed numbering did not move: the 2023 pack already keyed `D40_Line_26d/26e` to lines 27d/27e.
-      - 2025 moved the MediaBox to [9 9 621 801] and every widget by (+13, +13), so the page-relative placement is unchanged; the audit renders confirm it. The account-number box went to /MaxLen 17.
-      - Face deltas: the 27c multiplier is ×.70 (2024) → ×1.00 (2025), and both knowledge packs already carry it (70% with the new election; 100% for 2025, election kept). 2025's cross_form is `f1040.11a`.
-      - The sentinel audit ran 100/100 with 0 fails in both years, and all six pages were read. Every DC network gate passes.
-    - `sync_doc_counts.py` now also derives the post-2023 jurisdiction counts and the SKILL.md / README / ROADMAP state lists, so a port no longer leaves them stale. After DC it also anchors the README per-year TY2024/TY2025 counts, the M5 "N of the 42 … now fill" list (the AZ port had left it at 13) and the ROADMAP banner's "(2024+2025)" list.
-    - **KY Form 740 2024 and 2025 — SHIPPED 2026-09-28** (`formpacks/states/ky/{2024,2025}/form740`).
-      - Each pin matches three copies: the discovery row, the triage cache and a fresh re-fetch. Printed identity: 240001 / 250001 42A740 (10-24) / (10-25), "FORM 740 (2024)" / "(2025)" on pages 2-3.
-      - 2024 keeps every 2023 widget (page, /Rect, /MaxLen, /Ff, /FT, /AP states). It adds ONE: the line-34a "Check if Form 2210-K attached" box, which the 2023 face printed with no widget, mapped as `34a.form_2210k`. The PDF gains a blank, widget-less fourth page (rendered). Face deltas: $41,496 / $3,160 / 4%, already in the knowledge pack.
-      - 2025 (NEAR-PORT, 4). `740CityStateZip` is split into `740City` / `740State` (/MaxLen 2) / `740Zip`, mapped as mailing_address.city / .state / .zip. The ZIP box has no /MaxLen, so its pack maxlen 10 (ZIP+4) is sized to the 54.7 pt box: the first audit flagged the overflow. The three signature boxes are no longer widgets (signed by hand), so their lines are dropped. 69 widgets moved by at most 7.2 pt; renders confirmed every row. Face deltas: line 5 "line 11a" (cross_form `5_b == f1040.11a`), $42,760 / $3,270, still 4%, already in the knowledge pack.
-      - All three KY years now carry group ids on the five shared-/Btn questions, retiring ky/2023's `SHARED_FIELD_OPTIONS_WITHOUT_GROUP_ID` row.
-      - The 2023 NOTE claiming the grammar could not reference column lines was stale after JP5c and was never flagged. It is now declared: 7.a, 9.a/9.b and 14.a/14.b as printed, and 19 = 18 A + B (checked against the 2023 and 2024 packets). Line 7 column B stays out because its line-5 key `5_b` (dot-free so cross_form can name it) does not tokenize in the relation grammar. 11 stays out because a zero is plausible under the deduction. `test_dotted_relations.py` checks all three years both ways.
-      - Sentinel audits 108/108 (2024) and 107/107 (2025), 0 fails. All pages were read. Every KY network gate passes for 2023-2025.
-    - **LA IT-540 2024 — SHIPPED 2026-09-28** (`formpacks/states/la/2024/it540`). PORTABLE in the triage (no mapped name vanished), but a real re-layout:
-      - The booklet is renamed IT-540-WEB-BC. The pin matches three copies. Printed identity: "2024 LOUISIANA RESIDENT", barcodes 62530..62533, "Calendar year return due 5/15/2025". Still 17 PDF pages, with the same four return pages mapped.
-      - Return page 1's date row now holds four 8-cell combs. The DOBs moved (SDOB 186 pt), and two NEW boxes are mapped: "Decedent's Date of Death" and "Spouse's Date of Death".
-      - Return page 4 gained an "Email Address" row (mapped), and the signature dates moved up 24 pt. Its 2-D-barcode machinery (NoBarcode, ArchiveDataBarP1, two pushbuttons) is left unmapped.
-      - Eleven mapped boxes gained a /MaxLen, and each pack maxlen now tracks it (suffixes 4 -> 3, unit type 5 -> 6).
-      - Every text /DA went from Helvetica Bold 10 to Courier Bold 12. So the ZIP box (54.5 pt, 7 characters) caps at 5, and the dependent-name columns clip long names, which is what surfaced JS3c.
-      - The date boxes (2023's two and 2024's four) are now `comb: true`: the cells print M M D D Y Y Y Y, and "01/15/2024" would put slashes in the cells.
-      - The LA 2023 header's "109 field entries" is corrected to 148 (2024: 151).
-      - Face deltas: the years and line 34 "Schedule D, Line 20" (was 22). Sentinel audit 147/147 with 0 fails, all four return pages read. Every LA network gate passes.
-    - **ID Form 40 2024 — SHIPPED 2026-09-28** (`formpacks/states/id/2024/form40`).
-      - The pin matches three copies. Printed identity: "Form 40 2024", footer "EFO00089 09-04-2024 Page 1/2 of 2".
-      - NEAR-PORT: the two missing fields are the direct-deposit boxes, now split into one widget per digit (9 routing + 17 account cells). They map as `57.routing_number.1..9` / `57.account_number.1..17`, maxlen 1 each, the AR 1000F per-digit shape. Every other mapped widget keeps its page and /Rect.
-      - StateAbbrv / PreparerState lost their /MaxLen, and the pack's maxlen 2 still binds (JEa).
-      - Face deltas: the years, the $14,600 / $21,900 / $29,200 standard deductions (already in the knowledge pack with the 5.695% rate), and a printed floor on line 19 (already undeclared).
-      - Sentinel audit 145/145 with 0 fails, both pages read. The full network gate set (799) passes.
-    - **AL 40 2024 / 2025 → JS5.** The triage calls them NEAR-PORT (3 / 34 fields gone), but the census of the 2,260 mapped fields says partial re-map:
-      - 2024 splits page 15 in two (every later page shifts +1). 166 mapped widgets moved more than 20 pt and 34 more by 5-20 pt. Schedule OC gains carry-forward and limitation columns (40 new widgets), and CHECKOFF18/19 and SCHOCLINE9PR are gone.
-      - 2025 adds four more pages (2,846 widgets) and drops 34 mapped fields.
-      - A 41-45-page sentinel read of a 2,260-line pack is JS5 work, not a cheap port.
-- [x] **JS3c — Courier-aware clipping check — DONE 2026-09-28** (M; added 2026-09-28 by JS3b, outside the original 62-tranche table)
-  - *Found by the LA 2024 port.* Its blank moved every text widget from "/HeBo 10" to "/CoBo 12". The audit's renders showed the dependent-name columns clipping "Test Taxpayer 27" at both edges while verify reported 0 fails. The P-001 width estimate used the 0.5-em Helvetica average for every font, but Courier advances exactly 0.6 em a glyph. 31 state packs map Courier text widgets (AL alone 2,074), so verify under-reported clipping on all of them by a sixth.
-  - *As built:* `read_text_widgets` resolves each widget's /DA font through the AcroForm /DR /BaseFont, sets `TextWidget.monospace`, and falls back to Acrobat's /Cour /CoBo /CoOb /CoBO aliases when unresolvable. `clipping_scan` uses 0.6 for a Courier face, on the single-line width and the multiline row budget, and names the metric in its message.
-  - *What the exact metric found* (network goldens: 51 overflows over 9 packs):
-    - **Real capacity limits, fixed in the packs.** A 10-character MM/DD/YYYY date does not fit the IN (Date1/Date2), KS ("date signed" x2) or MD (Text Box 101/103) signature-date boxes: they cap at 8, "MM/DD/YY". KS's school-district and historic-site boxes hold 5, not the 6 their Helvetica-era TIGHTER_THAN_WIDGET rows claimed. MT's EHRC line 21 is the one whole-number digit of a 0.00-1.00 Credit Multiplier, so maxlen 2 -> 1. The KS / MD / WV TIGHTER_THAN_WIDGET rows are re-measured in Courier.
-    - **Unrealistic test data, fixed in the generator.** `synthetic_values` put 16-character "Test Taxpayer N" into first-name boxes, "Test N" into suffix, count and code boxes, and a 10-character date into boxes the pack caps shorter. It now writes realistic lengths: suffix "JR", unit type "APT", first-four-letters "TEST", names "Tess N", free text "TN", and a two-digit year under a date cap.
-  - *Also fixed:* two JS3a network tests went red when JS3b shipped UT 2025 (newest mode stops triaging a shipped form), because the per-state gates never ran them. They now replay the recorded base (2023; UT against a fixed 2024) and pin the newest-mode "shipped" report.
-  - **Tests:** `test_js3c_*` in test_verify.py — Courier vs Helvetica on the same value, the multiline budget, /DR resolution where a resolved /BaseFont beats the alias name. Every network gate passes.
-- [x] **JS4a — Overlay verifier fixed and tested — DONE 2026-09-28** (M; was on `phase-j2-overlay`) [PJ-01 + PJ-06]
-  - *As built:* the parked branch's overlay filler (overlay.py, the `overlay:` schema, `taxfill locate`, and the fill_form / verify_form / fetch_blank routing — still 23 tools) is merged onto main by hand; filler, cli and server had moved on for a month.
-    - **verify_overlay now reads the DECLARED box.** It keeps only glyphs drawn in the stamp font (unembedded base-14 Helvetica, found through each character's pdfium text object; the CT, HI and SC blanks embed every font they print). It requires exact equality, left to right, and a blank line's box must hold nothing. Unknown keys are refused.
-    - The PJ-01 negatives (stamped 14,000 / 10 / 1,200 against expected 4,000 / 0 / 200) FAIL, and the failure names the value that is actually stamped. The fail-safe limit is recorded: a blank's own unembedded-Helvetica text inside a box reads as stamped.
-    - `fill_form(rehearsal=True)` refuses a hand-fill pack. server.py imports overlay lazily, and a subprocess test pins that.
-  - **Tests:** test_overlay.py (12, on a synthetic blank printed in embedded Vera) covers the round trip and every alignment, the PJ-01 negatives, blank-box, wrong-coordinate and beyond-the-page failures, the shrink / overflow / non-WinAnsi / comb warnings, the widths table vs pypdf's Core-14 metrics, `locate_labels` whole-word hits within 1 pt, and the fail-safe. test_overlay_tools.py (5) covers fill_form → verify_form through the tools, the 23-tool count, the no-coordinates refusal, and `taxfill locate`. CONVENTIONS.md gains the overlay-coordinates section.
-  - Found for JS4d: the NM PIT-1 manifest's `source_url` is an AWS API-gateway host (NM TRD's file service), which fetch's official-host rule refuses, so the NM blank cannot be fetched or located until it has an official URL or a seeded copy.
-- [x] **JS4b — verify_filing routing, FBAR "blank", DOR guidance — DONE 2026-09-28** (M) [PJ-08 + PJ-10]
-  - *As built:*
-    - **verify_filing** takes a stamped print-only form in the same list, with `expected` (the fill_form values). It gets the OVERLAY verdict under an `overlay` section, and the filing is ok only when every item is. The limits say the stamped forms took no part in the cross-form identity / cross_form checks, since there are no fields to read back. Guards: `independent` keys are split per item kind, and a stray form_key is still refused. A filing with no AcroForm item is refused, pointing at per-form verify_form.
-    - **The FBAR**: a new `efile_only` manifest flag (set on all four fincen114 years, validated to require `instructions` and forbid overlay blocks) makes fetch_blank and fill_form refuse it, pointing at the BSA E-Filing System. hand_fill_worksheet still serves the value-gathering sheet.
-    - **The agencies' printing rules**, read 2026-09-28 and recorded verbatim in a new `printing_guidance` list (quote / source / url). CT: the form face, "Complete return in blue or black ink only." HI: the machine-read N-11, "Enter One Letter Or Number In Each Box" / "Do NOT print outside the boxes", so its overlay stamps combs. NM: "Type or print using blue or black ink.", computer-generated forms must meet "the printing and legibility requirements of the software company", and the comma is the only punctuation allowed. SC: no ink, font or machine-print rule, only the foreign-address line.
-    - None publishes a minimum type size. The new `min_font_size` field (the overlay's shrink floor when set) stays unset on all four. stamp_overlay returns the rules with every stamp.
-  - **Tests:** test_overlay_tools.py (JS4b): a real f8843 filed with a stamped CT-1040-shaped form (ok, a PJ-01-style wrong value FAILs, `expected` required, stray key refused), the FBAR refusals x4 years, the efile_only schema rules. test_overlay.py: the rules and the min_font_size floor in the stamp result, and a network test that re-reads every quote verbatim from its source (the NM booklet sits on the AWS gateway host fetch refuses, so its quotes rest on the 2026-09-28 read).
-- [x] **JS4c — CT-1040 2023 pilot — DONE 2026-09-28** (M–L) [PJ-07]
-  - *As built:* every line of formpacks/states/ct/2023/ct1040/handfill.yaml carries an `overlay` block, so fill_form stamps the whole return (181 lines, 184 placements).
-    - Each box was measured from the blank's own vector rectangles and, for per-character cells, its underline strokes. A workflow did the first pass: 4 page authors and 4 adversarial verifiers, each stamping sentinels, verifying and reading its page at scale 3, plus a second 2+2 pass for the added lines. The main loop then re-extracted every cell edge, re-stamped and read all four pages.
-    - **Engine, found by the pilot:** CT prints uneven per-character cells (the SSN 3-2-4 around printed dashes, MM-DD-YYYY dates, phones 3-3-4, Line 54's digits either side of a pre-printed point). A uniform `comb` missed them by up to 5 pt. `OverlayBox.cells` + `cell_w` now centre each character in its measured cell and drop separators, validated to sit inside the declared box.
-    - `overlay` may also be a list, so the SSN is stamped, and verified, in all four page headers.
-    - **Manifest, found by the pilot:**
-      - Line 52's name and two-letter code are separate boxes (52a / 52a.code).
-      - Each property row has two date boxes (60-62 .date_1 / .date_2).
-      - Line 66 stamps only the digits after its pre-printed point.
-      - The read found 25 printed entries the manifest had never listed: the fiscal-year dates, the deceased boxes, suffixes, country code, residence town and ZIP, the MFS spouse name, and page 2's signature dates, phones, email, paid-preparer block and third-party designee. All are lines now; the signatures stay hand-written.
-      - The verifiers' two catches were fixed: tax_year.begin's box stops before the pre-printed "2023", so a full date FAILs instead of overprinting, and the preparer FEIN cells sit inside their white box.
-  - **Tests:** test_ct1040_overlay.py covers every line's coordinates, the SSN on all four pages, and a demo return plus a full fiscal-year / preparer / designee return stamping on the real blank with no warning. Both pass the OVERLAY verdict on all 184 placements, a wrong line 1 FAILs exactly lines 1, 3 and 5, and all four pages render. test_overlay.py covers cells layout / validation and repeated placements (a missing header copy FAILs). test_overlay_tools.py covers the real ct1040 through fill_form → verify_form.
-- [x] **JS4d — SC, NM, HI overlays — DONE 2026-09-28** (L, per pack) — all four print-only state returns now stamp.
-  - SC line numbers are not isolated words in the text layer, so anchor on captions.
-  - **Acceptance, per pack:** as JS4c.
-  - *Progress:*
-    - **SC1040 2023 — DONE 2026-09-28.** 162 lines, 164 placements. SC's entry areas are ruled table cells, measured from the ruling lines and captions by a 3-author / 3-verifier workflow, then re-stamped and read in the main loop.
-      - The same read found 51 printed entries the manifest had never listed: deceased boxes, fiscal-year dates, the spouse suffix, the four-row dependents table, the b / h / j type blanks, the p / q dates of birth, subsistence days, the Line 33 exception code, the signature date, the preparer-discussion Yes / No and the paid-preparer block. The SSN also repeats in the page 2-3 headers.
-      - Lines 4 and 32 were "left manual" because their dotted addends "cannot appear in a compute expression". That stopped being true with JP5c, and the stamped demo return showed the result: Line 4 blank, so Line 5 wrong. Both now compute, the same stale-grammar-note class JEc cleared elsewhere.
-      - test_sc1040_overlay.py covers every line's coordinates, the computes, and a demo and a full return stamping on the real blank with no warning, verifying on all 164 placements, with a wrong value FAILing.
-    - **NM PIT-1 2023 — DONE 2026-09-28.** 117 lines, 118 placements, from a 2-author / 2-verifier workflow plus the main-loop read.
-      - NM TRD serves the blank from an AWS API-gateway host, which fetch's official-host rule refused, so the pack could not even fetch its blank. Verified from the source: tax.newmexico.gov/forms-publications/ loads its forms table through prod.realfile.rtsclients.com/js/rf-tables.js, which fetches from that host. fetch now takes it, and ONLY with a pinned sha256, via `fetch.PINNED_ONLY_BLANK_HOSTS` (one entry, with that provenance). A look-alike gateway host is still refused.
-      - The read found 20 unlisted entries, and 3c / 3d were combined labels over separate City / State / ZIP and Country / Province cells.
-      - test_pit1_overlay.py: the demo and full returns (including a loss on line 9) stamp clean and verify on all 118 placements. test_fetch covers the pinned-only rule.
-    - **HI N-11 2023 — DONE 2026-09-28.** 169 lines (was 38), 177 placements, from a 4-author / 4-verifier workflow plus the main-loop read of every page.
-      - The manifest stopped at line 24. The read listed the other 131 printed entries: the fiscal-year and date-of-death cells, the four return-type ovals, M.I. / suffix / first-four-letters boxes, care-of and foreign address, the exemption ovals and counts, the six-row dependents table, lines 25-55 with their ovals, the designee, election fund, signature and paid-preparer blocks. The name line and both SSNs repeat in the page 2-4 headers.
-      - N-11 is machine-read, so the engine learned three things (CONVENTIONS "Machine-read forms"). `mark: fill` paints an oval in the printed shape: straight sides and round ends, because an inscribed ellipse left the four shoulders pink. `minus` shades the printed minus for a loss, and a negative in digit cells without one is refused. Money in `cells` fills from the right. The verdict reads painted marks from a render.
-      - Verifier catches, all fixed: pdfium's stroked-path bounds carry the full 0.75pt stroke on each side, so 28 painted ovals spilled about 0.35pt past the outline. The main loop found the other 13 the verifiers missed, and all 41 now use the outline's outer edge measured from the path points. The minus boxes painted the whole pink square, where the face's Example darkens only the minus glyph. The DHS count filled from the left. The preparer's self-employed X touched its frame, four activity / product entries started against their caption's colon, and dependent row 6 was needlessly indented.
-      - Computes: line 22 no longer sums 21a-21f. Its face points to the itemized-deduction limitation (Instructions page 19), and a standard-deduction filer must leave it blank, where the sum stamped "0". Line 42 now computes max(0, 41 - 36), which covers a negative line 36 the way the Instructions (page 22) do.
-      - test_n11_overlay.py: every line's coordinates, the 41 painted ovals and the 8 minus boxes, the computes, and a demo return plus a full loss-year return stamping clean and verifying on all 177 placements. A wrong sign and an unpainted oval FAIL. test_overlay.py covers the oval shape, right-filled cells, the minus box and the mark validation.
-- [x] **JS4h — Scanned-form filing tips: no commas, no zero-filled lines — DONE 2026-10-01** (S–M; P-029). WV's 2025 IT-140 booklet tells the filer "NEVER USE COMMAS when filling in dollar amounts" and "Lines where no entry is required should be left blank. Do not fill in with zeros." — the overlay engine printed "98,500" and stamped a computed "0" on the credit-total line of a return claiming no credit. `HandFillPack.money_style` ('plain' prints digits only; the default 'grouped' keeps "98,500") and `HandFillPack.blank_zero_computes` (a computed money line stays blank when every line the evaluator resolved for it is blank AND the result is 0; the compute is still evaluated, so a malformed one raises on the empty build as before; the blank stays blank for later computes; an entered 0 and a literal term's non-zero result still print) — declared per manifest, quoted from the form's own tips under `printing_guidance`, named in the worksheet's instructions. `worksheet_money_values(ws, pack)` reports a blank-by-rule compute as 0, so verify's independent recompute of 0 agrees instead of asking the caller to stamp the forbidden 0; a loss into a `comb` box with no minus box is refused like digit cells. Operands come from the evaluator's own lookups (`_OperandRecorder`), never a second tokenizer. Two adversarial verifiers — engine semantics (20,000 fuzzed expressions, all 173 shipped computes, a repo-vs-tree worksheet / stamp / verify comparison over the 15 shipped manifests: identical) and WV application (every stamped token read on the renders: no comma anywhere, line 21 empty, -8300 with its minus) — raised seven medium findings between them (the first blank rule skipped the evaluator and blanked non-zero results; the recompute path; the missing guidance quotes; a false banner claim; the doc counts), all fixed before integration; their narrow re-checks were cut short by the spend limit, so the fixes rest on the tree's 172 green tests and the re-stamped WV returns. Tests P-029-tagged in test_handfill.py / test_overlay.py; CONVENTIONS "A scanned form's own filing tips".
+  - **Phase K:** close after JK0 (latest start 2026-10-16). The *Open* bullet's MO-A, MO-WFTC and NM items are recorded done in the 2026-10-02 (MO, MD, MN, NM) entry above; what is left is the MN caption (no change) and whatever JK0's verifiers report. From JK23 on, the quote checker's report feeds this box.
+- *Done — moved verbatim to [HISTORY.md](HISTORY.md) in the commit that lands this ROADMAP (Phase K JK1, planned 2026-10-09):* JS3a, JS3b, JS3c, JS4a, JS4b, JS4c, JS4d, JS4h.
 - [ ] **JS5 — State 2024/2025 re-maps and URL discovery (rest of old J3)** (XL, per pack) [PJ-15 (4)–(5)]
+  - **Phase K (2026-10-09):** the 23 recovery-wave packs (6 with a pack on disk, 17 re-created from replay logs) land through **JK0** (in flight), each under KG1. The remainder — MA Form 1 2024, the ~20 re-maps, the ~26 URL-discovery tasks — is then **deferred (on demand, Phase K re-plan)**, and JK1 closes this box. The "fold into JS7" and "resume discovery for the 20 never-started states" bullets are dropped. AL 40 2025 and the MA 2023 re-map are done (progress below); AL 40 2024 is in JK0.
   - Open at the 2026-09-11 count: 73 pack-years, minus JS3b.
     - 2024: 32 (RE-MAP 10, URL-DEAD 11, no-token 7, print-only 4).
     - 2025: 41 (PORTABLE 1, RE-MAP 12, URL-DEAD 17, no-token 7, print-only 4).
   - TY2025 before TY2024. Every CA pack is a full re-map.
   - **AL 40 2024 and 2025** (from JS3b, measured 2026-09-28; see the JS3b progress note): re-place the Schedule OC rows and map its new carry-forward / limitation columns, re-read all 41 (2024) / 45 (2025) pages, and resolve the 3 / 34 vanished fields.
   - Resume discovery for the 20 never-started states plus OK, MA and NE in resumable pools of 3–4 workers. The remaining TY2024 rows fold into JS7.
+    - *(Dropped 2026-10-09, Phase K: no further old-year discovery, and no TY2024 fold into JS7; see Phase K, Dropped.)*
   - **MA 2023 Form 1 re-map** (JS1b finding): mass.gov now serves the 2026-05-22 re-issue, a rebuilt 360-field AcroForm. Re-map the pack onto it (its named ovals may also clear the 11 unmappable `Checkcash`/`Checktp1` kids), re-pin `pdf_sha256` and `mirror_urls` to a matching capture, and delete the MA drift row in `scripts/freshness_quarantine.yaml`.
   - **Acceptance, per pack:** digest pin, vision audit, golden round trip, triage row updated.
   - *Progress (2026-09-30):*
@@ -2437,6 +1389,7 @@ line items sum to the headline delta.
     - **MT Form 2 2024 — DONE 2026-10-15** (`formpacks/states/mt/2024/form2`, a RE-MAP of the 2023 pack that is in fact a new map by widget position, because 2024 is Montana's first simplification year; TY2024 now has 40 jurisdictions; reconstructed from its build transcripts after the 2026-10-04 scratch loss and re-verified on renders). revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf (sha256 126be01d…cfbdee6, 536,013 bytes, stamps "2024v5" / "11/2024"), 12 pages, AcroForm, no XFA, AES-256 encrypted with print allowed. 587 widgets / 545 fields against the 2023 blank's 791 / 755: 42 field names survive (all moved /Rect), 712 of the base pack's mapped fields are gone with the forms they sat on, 517 widgets are new. 568 lines over 544 fields (56 checkbox lines); only the "Clear Form" pushbutton is unbound. The 2024 face starts from federal AGI (line 1 from Form 1040 line 11), prints one money column, uses the five federal filing statuses ("Married Filing Jointly" really carries /2a) and carries Schedules I-V, 2EC and a Transition Schedule. Residency keeps three options but its on_states change to /Resident /Part-year Resident /1; the page-12 "Type of Adjustment" kids are cross-labelled and keyed by printed label. 63 relations, `cross_form` 1 == f1040.11; lines 3, 7 and 10 are floored at zero on the 2024 instructions' authority (the face prints no floor). Digit combs are `comb: true`; ratio boxes, state codes and the dashed UCRN / JGI boxes are maxlen-only. The semantic verifier returned FAIL with one high, one medium and two low findings, all fixed in the pack (the high one: line 10 had no zero floor, so a correct return whose Schedule III credits exceed line 8 failed one of its two relations; now `10 == max(0, 8 - 9)`); the fixes touched banner comments and that one relation, and the re-verifier passed (bindings and renders unchanged). Open, outside the pack: the live TY2025 pack (`formpacks/states/mt/2025/form2/pack.yaml`) carries the same unfloored `10 == 8 - 9` and needs the same one-relation fix, which the 2025 Schedule III instructions' sentence supports. Shared tables: filer_address_lines.json row (the four mailing_address lines), test_pack_maxlen.py rows (two page-2 printed-name boxes), test_verify.py comment; the existing MT adjudication rows in test_pack_invariants.py cover this pack, their deceased and residency wording extended to 2024. Knowledge check: `knowledge/states/mt/2024.yaml` agrees with the face, no mismatches.)
     - **WV IT-140 2024 — DONE 2026-10-15** (`formpacks/states/wv/2024/it140`, a RE-MAP of the 2023 pack onto a renumbered page 2 and Schedule M; TY2024 now has 41 jurisdictions; reconstructed from its build transcripts after the 2026-10-04 scratch loss and re-verified on renders). tax.wv.gov/Documents/PIT/2024/it140.2024.pdf (sha256 1b9a3c71…1261, 2,524,481 bytes; independent downloads agree), page 1 prints "IT-140 F", "2024" and scan line P40202401F with no revision stamp, 45 pages, AcroForm with document JavaScript, AES-256 with print allowed. 643 widgets / 556 names against the 2023 blank's 640: of the 377 widgets the 2023 pack mapped, 222 kept name and /Rect, 116 kept the name but moved, 39 are gone; 46 are new (44 mapped, two "Click here to go to Form IT-140" pushbuttons not). 378 lines over 384 widgets (397 field entries); 54 mapped ReadOnly widgets, each with its own calculate script. Page 2 gained a line-12 penalty box and line 21 A/B/C (property-tax credits) and renumbers 2023 lines 12-26 by one or two; Schedule M renumbers +2 (27-59 become 29-61) and line 34 gained a 34(c) cell, so a surviving widget name such as M29A now sits on a different printed line and every key was re-bound by /Rect. Dropped keys: preparer.not_efile and heptc.8.yes/no (box or widget gone from the face) and preparer.signature (an /FT /Sig widget that the 2023 pack mapped as text; fill_form writes a /V no viewer renders, so it is left for a hand signature). Schedule H now maps the disabled taxpayer's SSN and the physician's state and ZIP. 5 relations plus cross_form 1 == f1040.11; line 28 is deliberately not declared, because a balance-due filer who donates breaks 28 == 25 - 26 - 27. RECAP line 18 prints "(§11-21-26)" on the rendered face while the text layer drops the digits (settled on a 200 dpi render). The semantic and placement verifiers' low findings (preparer EIN / telephone print in the Printed Name band, tax_method nonresident box offset 10 pt from its square, recap.25 and the extended-due-date dropdown overlap) are recorded as field comments; the one medium (signature) was fixed and the re-verifier passed. Open, outside the pack: the TY2023 WV pack still maps preparer.signature as text onto the same /Sig widget, and no test asserts that a mapped field is not /FT /Sig; `knowledge/states/wv/2024.yaml` says the new refundable property-tax credits go on the Recap Schedule, but the face claims them on IT-140 line 21 A/B/C (summed into line 23), and it quotes "Child and Dependent Care Credit" where RECAP 18 prints "Child and Development Care Credit". Shared tables: filer_address_lines.json row (the five mailing_address lines), test_pack_maxlen.py (name.suffix), test_readonly_widget_mapping.py (54 computed ReadOnly widgets and the line-6 default), test_verify.py comment.)
 - [ ] **JS6 — Nonresident / part-year state returns (old J4 = C2)** (XL, per pack) [PJ-16]
+  - **Phase K (2026-10-09):** AL 40NR, AZ 140NR, AZ 140PY and DE PIT-NON 2023 land through **JK0** if the wave re-creates them and they pass KG1; the three CT forms and the part-year allocation golden are **deferred (on demand, Phase K re-plan)**; JK1 closes this box.
   - 9 discovery rows were recovered (wf_fe623a11-933).
   - Pack the AcroForm rows at TY2023 first, each re-checked against its recorded sha256: AL 40NR, AR1000NR, AZ 140NR, AZ 140PY, CO DR 0104PN, DE PIT-NON.
   - The three CT forms go through JS4 or hand-fill manifests.
@@ -2463,8 +1416,11 @@ line items sum to the headline delta.
 - [ ] **JS7 — TY2026 state sprint** (XL, per pack; external: states' 2026 blanks, Dec 2026 – Feb 2027)
   - Re-triage from each state's NEWEST shipped base (`--base newest`), after the federal JT6.
   - **Acceptance, per pack:** as JS5; the re-triage table is committed.
+  - **Phase K (2026-10-09): re-scoped** → **JS7a** (the JK9 tier-1 states, each port behind the JK10 label-adjacency guard) and JS7b (every other state: fallback-only, deferred on demand). TY2024 leftovers no longer fold in. This box closes with JS7a.
 
 **Not scheduled** (backlog; disclosed as not modeled):
+*(Phase K priority 5, 2026-10-09: unchanged.)*
+
 - AMT / Form 6251.
 - ISO, §83(b) and RSU vesting. JP1c's supplemental path covers RSU-vest withholding for TY2027 planning.
 - Wash sales.
@@ -2479,8 +1435,11 @@ line items sum to the headline delta.
 - The recharacterization flow runs end to end: from a 1099-R, 5498 or custodian statement to the Form 8606 inputs, the 1040 lines and the attached statement.
 - The TY2026 dress-rehearsal scenarios (t–t4) fill and verify on the finals within 5 business days of the last required final.
 - Every open box elsewhere in this ROADMAP is closed or named in a tranche: A1–A6 → JA1/JA2; C2 → JS6; D2 → JS3a/b, JS5, JS7; Phase E ×2 → JEa/JEb; H5's Tax Table → JT2a/JT6.
+- **2026-10-09:** the remaining open items are re-homed in Phase K (its tables, Deferred and Dropped lists). The "D2 → … JS7" route above no longer holds: the TY2024 → JS7 fold is dropped 2026-10-09 (see Phase K, Dropped); D2's remainder is deferred on demand.
 
 ## Phased sequencing (recommended order)
+
+> **Superseded 2026-10-09 by Phase K** for every open item; kept as the record of the Phase J order.
 
 1. **Done:** Phase 0, E (except two boxes, now JEa/JEb), F, G, H (except H5's 2026 Tax Table, now JT2a/JT6), I, and persona-review Tiers 1+2.
 
@@ -2531,6 +1490,7 @@ line items sum to the headline delta.
    * C2 → JS6;
    * D2's re-map and URL-dead rows → JS3b and JS5;
    * the 2024 leftovers → JS7.
+     *(2026-10-09: this fold is dropped; see Phase K, Dropped.)*
 
 **Tranche size.** Every tranche is at most about a day of work (M). Multi-pack tranches commit per pack. So a spend-limit death costs at most one sub-tranche.
 
@@ -2543,6 +1503,7 @@ JT6 pre-empts everything when `check_finals` reports the finals. By the 2025 pre
 
 **No remaining item needs a new heavyweight dependency:**
 * the overlay filler exists (branch `phase-j2-overlay` → JS4a–d);
+  *(2026-10-09: merged by JS4a; the branch was deleted in JD2.)*
 * MA's fetch block has a recorded, digest-verified mirror (JS1b, done 2026-09-28);
 * TY2026 authoring runs on drafts-first packs (JT0a).
 
