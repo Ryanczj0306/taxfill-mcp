@@ -507,6 +507,16 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "totals, taxfill computes and writes them (Phase J JS5, 2026-10-01)",
     ),
     StateComputed(
+        "states/de/2023/pit_non/pack.yaml",
+        40,
+        "the NON-RESIDENT return's JS-computed cells (Phase J JS6, measured on the sha-pinned blank): lines 15, 17, 20, "
+        "21, 27, 28 in both columns (FEDERAL / DELAWARE SOURCE); 30a and 30b; 34, 36, 40, 41; line 42's Box A / Box B "
+        "copies of 30a / 30b and its prorated amount; 43a's 'x $110 =' amount, '( x ___ )' proration copy and line amount; "
+        "43b's boxes-checked count, 'x $110 =' amount, proration copy and line amount; 46, 47, 53, 54, 55, 59, 60; and "
+        "amended 61, 63, 66, 67, 68. /Ff 8388609, each with its own /AA /C calculate script and a seat in the 41-entry "
+        "/CO (these 40 plus ln37ColA, which is not ReadOnly); no blank /V. The ReadOnly machPrintID margin id is NOT mapped",
+    ),
+    StateComputed(
         "states/ga/2023/ga500/pack.yaml",
         189,
         "GA 500's JS-computed totals and mirrors (the ReadOnly SCANLINE voucher barcode and "

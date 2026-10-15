@@ -1128,6 +1128,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # equals the reviewed CA 2023 row (the seven mailing_address lines; the new paid_preparer.* rows are not address lines).
     # JS5: DE PIT-RES 2025 (the same homeAddress / city / state / zip boxes; the new pages-2-4 header.name and
     # header.taxpayer_id are not address lines) equals the reviewed DE 2023 row.
+    # JS6: DE PIT-NON 2023 (a new non-resident pack; the same homeAddress-style taxpayerAddress / City / State / Zip
+    # boxes and keys as PIT-RES; preparer.* are not address lines) equals the reviewed DE PIT-RES 2023 row.
     # JS5: DE PIT-RES 2024 (the same homeAddress / city / state / zip boxes; the pages-2-4 header.name and
     # header.taxpayer_id it introduced are not address lines) equals the reviewed DE 2023 row.
     # JS5: MS 80-105 2025 (a PORTABLE port of MS 2023, every widget name and /Rect kept; the two new header-SSN mirror

@@ -1,0 +1,844 @@
+# Form PIT-NON, 2023 -- Delaware Individual NON-RESIDENT Income Tax Return.
+# Non-resident / part-year return (authored new, Phase J JS6; no earlier PIT-NON
+# pack exists). The 2023 PIT-RES pack is the convention reference for identity,
+# mailing-block, checkbox and column-key style; no binding was copied from it.
+#
+# Provenance / freshness. Blank downloaded twice from the official source_url
+# below; both copies hash to the pdf_sha256 pinned here (535,354 bytes, %PDF-1.7,
+# AcroForm, 3 pages, Adobe InDesign 19.0, created 2023-11-13). The text layer of
+# every page prints "DELAWARE / DIVISION OF REVENUE", the spaced "2 0 2 3", "PIT-NON",
+# the spaced "F O R M" and the title "DELAWARE INDIVIDUAL NON-RESIDENT INCOME TAX
+# RETURN"; the
+# footers print "DFPITNON2023019999V1 / Revision 20231113 / Page 1",
+# "DFPITNON2023029999V1 ... Page 2" and "DFPITNON2023039999V1 ... Page 3".
+# printed_year_verified = 2023.
+#
+# Layout / what is FILED. All three pages are the filed return (no instruction
+# pages in this file).
+#   page 1 -- header (two 9-cell comb Taxpayer IDs; first / M.I. / last / suffix
+#             for you and spouse; home address + apartment in ONE street box;
+#             city / state / zip; fiscal-year begin / end; Amended flag; Form
+#             PIT-UND attached; Claimed-as-dependent; "Check if FULL-YEAR
+#             Non-Resident in 2023"; the part-year "dates you resided in
+#             Delaware" pair), FILING STATUS 1, 2, 3, 5 (the face prints no
+#             status 4), and the TWO-COLUMN income table lines 1-29:
+#             COLUMN A = "FEDERAL", COLUMN B = "DELAWARE SOURCE INCOME/LOSS".
+#             Sections A (1-17), B additions (18-21), C subtractions (22-29;
+#             line 23 spouse / you military-pension flags, line 26b Tuition /
+#             ABLE flags). Then the two single-cell allocation lines -- 30a
+#             (Column B cell only, "modified Delaware Source Income. Enter on
+#             Page 2, Line 42, Box A") and 30b (Column A cell only, "Delaware
+#             Adjusted Gross Income. Enter on Page 2, Line 37 and Line 42, Box B").
+#   page 2 -- ONE column, lines 31-60. Section D deductions 31-36; Section E
+#             calculations 37-60 with the PRORATION block on line 42 ("A. Line
+#             30a", "B. Line 30b", "= PRORATION DECIMAL", "X Tax Liability from
+#             Tax Rate Table/ Schedule Amount", then the line-42 amount) and the
+#             two prorated credit rows 43a / 43b (count, "x $110 =", the "( x ___ )"
+#             proration-decimal copy, the line amount); line 38 standard /
+#             itemized election (ONE /Btn); line 39 spouse / you 65-or-over and
+#             blind flags; Section F direct deposit; signature block; paid
+#             preparer block.
+#   page 3 -- FOR AMENDED RETURNS ONLY, lines 61-72 in one column under a printed
+#             "COLUMN B" header, then 73 / 74 / 75 Yes-No questions and the two
+#             free-text explanation boxes. Every page-3 widget carries the
+#             annotation Hidden flag (/F 134 or 6) for the form's script to show;
+#             fill_form clears it on every widget it writes (CONVENTIONS P-027).
+#
+# Keys. Two-column lines 1-29 take a single-letter column suffix, <line>a
+# (Column A, FEDERAL) and <line>b (Column B, DELAWARE SOURCE), as the PIT-RES
+# pack does; printed lines that already carry a letter take dotted column ids
+# (7a.a / 7a.b, 7b.a / 7b.b, 26a.a / 26a.b, 26b.a / 26b.b). 30a and 30b are
+# single cells and keep their printed label. Pages 2 and 3 have one column, so
+# their keys are the printed line numbers ("31" ... "72"). Line-42 / 43a / 43b
+# sub-boxes are dotted members of their line (42.box_a, 42.proration_decimal,
+# 43a.exemptions_amount, ...).
+#
+# AcroForm. FLAT form: acroform_root = '' . 186 widget annotations on 177
+# fields; every field /T a raw flat id (taxpayerID, ln01ColA,
+# ln42ProrationWhole, ...); no /Parent name chain beyond the 16 radio kid
+# widgets (7 groups, below), which carry no /T of their own. EXCLUDED:
+# 'printForm' and 'resetForm' (PRINT / RESET pushbuttons, page 1 top) and
+# 'machPrintID' (a ReadOnly, Hidden 7.2 x 12 pt machine-print id
+# beside the page-1 header that the Taxpayer ID validate script un-hides -- not a
+# taxpayer line). Every other widget is mapped.
+#
+# ReadOnly (P-007). 40 mapped widgets carry /Ff bit 1, every one class 4 -- each
+# has its own /AA /C calculate script and a seat in the AcroForm /CO list (41
+# entries -- these 40 plus ln37ColA, which copies line 30b but is NOT ReadOnly): lines 15,
+# 17, 20, 21, 27, 28 in both columns; 30a; 30b; 34, 36, 40, 41; 42 Box A / Box B
+# and the line-42 amount; 43a's "x $110 =" amount, proration copy and line
+# amount; 43b's boxes-checked count, "x $110 =" amount, proration copy and line
+# amount; 46, 47, 53, 54, 55, 59, 60; and amended 61, 63, 66, 67, 68. taxfill
+# never runs the script, so each stays mapped and the engine writes it. No
+# widget on the blank carries a /V default.
+#
+# Shared /Btn radios (ONE AcroForm field, several kid widgets; one line per
+# kid with its own on_state re-dumped from this blank's /AP /N, one group):
+#   * "filingStatus" -- 1 Single, Divorced, Widow(er) (/fs1), 2 Joint (/fs2),
+#     3 Married & Filing Separate Forms (/fs3), 5 Head of Household (/fs5).
+#   * "ln38RadioDeduction" -- 38 a. STANDARD (/standard) / b. DELAWARE ITEMIZED
+#     (/itemized).
+#   * "directDepositAcctType" -- CHECKING (/checking) / SAVINGS (/savings).
+#   * "foreignAccount" -- refund to an account outside the United States YES
+#     (/YES) / NO (/NO).
+#   * "ln73Radio" (Yes /Yes, No /No), "ln74Radio" and "ln75Radio" (/YES, /NO).
+# Every other checkbox is its own single-state /Btn: Amended (/Yes), PIT-UND
+# attached, Claimed as dependant, FULL-YEAR Non-Resident, line 23 spouse / you
+# military pension, line 26b Tuition / ABLE (all /X); line 39 spouse / you 65 or
+# over and blind, line 43b spouse / self 60 or over (all /Yes). Each option was
+# bound to the label printed beside it by its /Rect against the text layer (the
+# filing-status, direct-deposit, outside-US and page-3 boxes sit 3.6-7.2 pt LEFT
+# of their label; the line 23, 26b, 38, 39 and 43b boxes sit 1.5-17 pt RIGHT of
+# theirs), never by widget order, and every one was confirmed on the render.
+#
+# Money vs text. Every "$ ... .00" cell is `money` (whole dollars), including
+# 42 Box A / Box B, the line-42 schedule amount and the two "x $110 =" amounts.
+# The proration decimal and its two "( x ___ )" copies are `text` (the
+# instructions carry it to four decimal places, e.g. 0.4167, which a whole-dollar
+# money cell would round away). The exemption count and boxes-checked count,
+# the line-44 state, names, address, dates (the part-year boxes print
+# "mm-dd-yyyy" beneath them and every date widget formats with
+# AFDate_FormatEx("mm-dd-yyyy"); they are plain boxes, not combs), routing / account
+# numbers, phones, emails, preparer fields and the 73 / 75 explanations are `text`.
+# A text maxlen equals the widget /MaxLen where one exists (IDs 9, state 2, zip 5,
+# routing 9, account 17, phones 10, line-44 state 2). Of the 112 money cells, the
+# 107 line-amount cells (Column A / Column B of lines 1-29, the 30a / 30b cells
+# and the right-hand line cells of 31-72) carry /MaxLen 9, which verify's MaxLen
+# check guards; the five line-42 / 43 sub-cells (42 Box A, 42 Box B, the 42
+# schedule amount and the two "x $110 =" cells of 43a / 43b) have no /MaxLen;
+# at their Helvetica 10 a digit advances 5.56 pt, so the 72 pt line-42 cells
+# hold 12 digits and the 36 pt "x $110 =" cells 6 (99 exemptions x $110 is
+# $10,890, five digits). The M.I. (1), suffix (4),
+# preparer ID (9), counts (2 / 1) and proration boxes (6) carry pack budgets on
+# widgets that have no /MaxLen.
+#
+form: "PIT-NON"
+jurisdiction: states/de
+tax_year: 2023
+source_url: https://revenuefiles.delaware.gov/2023/PIT-NON_2023-01_PaperInteractive.pdf
+pdf_sha256: "0646ee65db626f71685e211f194725677ada60ba65fba01f5dfe1c85ced76a7f"
+acroform_root: ''
+fields:
+
+  # ============================================ page 1 -- header
+  - line: identifying_number                # "Your Taxpayer ID" (9-cell comb, /MaxLen 9)
+    field: taxpayerID
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: spouse.identifying_number         # "Spouse Taxpayer ID" (9-cell comb, /MaxLen 9)
+    field: spouseTaxpayerID
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: name.first                        # "Your First Name"
+    field: taxpayerFirstName
+    type: text
+  - line: name.middle_initial               # "M.I."
+    field: taxpayerMI
+    type: text
+    maxlen: 1
+  - line: name.last                         # "Last Name"
+    field: taxpayerLastName
+    type: text
+  - line: name.suffix                       # "Suffix"
+    field: taxpayerSuffix
+    type: text
+    maxlen: 4
+  - line: spouse.name.first                 # "Spouse First Name"
+    field: spouseFirstName
+    type: text
+  - line: spouse.name.middle_initial        # spouse "M.I."
+    field: spouseMI
+    type: text
+    maxlen: 1
+  - line: spouse.name.last                  # spouse "Last Name"
+    field: spouseLastName
+    type: text
+  - line: spouse.name.suffix                # spouse "Suffix"
+    field: spouseSuffix
+    type: text
+    maxlen: 4
+  - line: mailing_address.street            # "Present Home Address (Number and Street)" + "Apartment #" (one box)
+    field: taxpayerAddress
+    type: text
+  - line: mailing_address.city              # "City"
+    field: taxpayerCity
+    type: text
+  - line: mailing_address.state             # "State" (/MaxLen 2)
+    field: taxpayerState
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip               # "Zip Code" (/MaxLen 5)
+    field: taxpayerZipCode
+    type: text
+    maxlen: 5
+  - line: fiscal_year.begin                 # "For Fiscal Year beginning" (mm-dd-yyyy)
+    field: fiscalStart
+    type: text
+  - line: fiscal_year.end                   # "and ending" (mm-dd-yyyy)
+    field: fiscalEnd
+    type: text
+  - line: amended.yes                       # "Amended Return / Must include page 3"
+    field: amendedChkBox
+    type: checkbox
+    on_state: /Yes
+  - line: pit_und_attached.yes              # "Form PIT-UND Attached"
+    field: pitund
+    type: checkbox
+    on_state: /X
+  - line: claimed_as_dependent.yes          # "Claimed as Dependant on someone else's return"
+    field: claimedDependent
+    type: checkbox
+    on_state: /X
+  - line: full_year_nonresident.yes         # "Check if FULL-YEAR Non-Resident in 2023"
+    field: fullYearNonResident
+    type: checkbox
+    on_state: /X
+  - line: part_year.start                   # "If you were a part-year resident in 2023, give the dates you resided in Delaware" (first mm-dd-yyyy)
+    field: partYearStart
+    type: text
+  - line: part_year.end                     # part-year residency end date (second mm-dd-yyyy)
+    field: partYearEnd
+    type: text
+
+  # ---- Filing Status (ONE /Btn "filingStatus"; the face prints 1, 2, 3, 5 -- no status 4)
+  - line: filing_status.single              # 1. Single, Divorced, Widow(er)
+    field: filingStatus
+    type: checkbox
+    on_state: /fs1
+    group: filing_status
+  - line: filing_status.joint               # 2. Joint
+    field: filingStatus
+    type: checkbox
+    on_state: /fs2
+    group: filing_status
+  - line: filing_status.married_filing_separate # 3. Married & Filing Separate Forms
+    field: filingStatus
+    type: checkbox
+    on_state: /fs3
+    group: filing_status
+  - line: filing_status.head_of_household   # 5. Head of Household
+    field: filingStatus
+    type: checkbox
+    on_state: /fs5
+    group: filing_status
+
+  # ============================================ SECTION A -- INCOME AND ADJUSTMENTS FROM FEDERAL RETURN (1-17)
+  - line: 1a                                # 1 WAGES, SALARIES, TIPS, ETC. (Col A, FEDERAL)
+    field: ln01ColA
+    type: money
+  - line: 1b                                # 1 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln01ColB
+    type: money
+  - line: 2a                                # 2 INTEREST (Col A, FEDERAL)
+    field: ln02ColA
+    type: money
+  - line: 2b                                # 2 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln02ColB
+    type: money
+  - line: 3a                                # 3 DIVIDENDS (Col A, FEDERAL)
+    field: ln03ColA
+    type: money
+  - line: 3b                                # 3 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln03ColB
+    type: money
+  - line: 4a                                # 4 STATE REFUNDS, CREDITS OR OFFSETS OF STATE & LOCAL INCOME TAXES (Col A, FEDERAL)
+    field: ln04ColA
+    type: money
+  - line: 4b                                # 4 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln04ColB
+    type: money
+  - line: 5a                                # 5 ALIMONY RECEIVED (Col A, FEDERAL)
+    field: ln05ColA
+    type: money
+  - line: 5b                                # 5 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln05ColB
+    type: money
+  - line: 6a                                # 6 BUSINESS INCOME OR (LOSS) (Col A, FEDERAL)
+    field: ln06ColA
+    type: money
+  - line: 6b                                # 6 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln06ColB
+    type: money
+  - line: 7a.a                              # 7a CAPITAL GAIN OR (LOSS) (Col A, FEDERAL)
+    field: ln07aColA
+    type: money
+  - line: 7a.b                              # 7a (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln07aColB
+    type: money
+  - line: 7b.a                              # 7b OTHER GAINS OR (LOSSES) (Col A, FEDERAL)
+    field: ln07bColA
+    type: money
+  - line: 7b.b                              # 7b (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln07bColB
+    type: money
+  - line: 8a                                # 8 IRA DISTRIBUTIONS (Col A, FEDERAL)
+    field: ln08ColA
+    type: money
+  - line: 8b                                # 8 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln08ColB
+    type: money
+  - line: 9a                                # 9 TAXABLE PENSIONS AND ANNUITIES (Col A, FEDERAL)
+    field: ln09ColA
+    type: money
+  - line: 9b                                # 9 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln09ColB
+    type: money
+  - line: 10a                               # 10 RENTS, ROYALTIES, PARTNERSHIPS, S CORPS, ESTATES, TRUSTS, ETC. (Col A, FEDERAL)
+    field: ln10ColA
+    type: money
+  - line: 10b                               # 10 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln10ColB
+    type: money
+  - line: 11a                               # 11 FARM INCOME OR (LOSS) (Col A, FEDERAL)
+    field: ln11ColA
+    type: money
+  - line: 11b                               # 11 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln11ColB
+    type: money
+  - line: 12a                               # 12 UNEMPLOYMENT COMPENSATION (INSURANCE) (Col A, FEDERAL)
+    field: ln12ColA
+    type: money
+  - line: 12b                               # 12 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln12ColB
+    type: money
+  - line: 13a                               # 13 TAXABLE SOCIAL SECURITY BENEFITS (Col A, FEDERAL)
+    field: ln13ColA
+    type: money
+  - line: 13b                               # 13 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln13ColB
+    type: money
+  - line: 14a                               # 14 OTHER INCOME (State nature and source) (Col A, FEDERAL)
+    field: ln14ColA
+    type: money
+  - line: 14b                               # 14 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln14ColB
+    type: money
+  - line: 15a                               # 15 TOTAL INCOME - Add Line 1 through Line 14 (Col A, FEDERAL)
+    field: ln15ColA
+    type: money
+  - line: 15b                               # 15 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln15ColB
+    type: money
+  - line: 16a                               # 16 TOTAL FEDERAL ADJUSTMENTS (Col A, FEDERAL)
+    field: ln16ColA
+    type: money
+  - line: 16b                               # 16 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln16ColB
+    type: money
+  - line: 17a                               # 17 FEDERAL ADJUSTED GROSS INCOME FOR DELAWARE PURPOSES Subtract Line 16 from Line 15 (Col A, FEDERAL)
+    field: ln17ColA
+    type: money
+  - line: 17b                               # 17 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln17ColB
+    type: money
+
+  # ============================================ SECTION B -- ADDITIONS (18-21)
+  - line: 18a                               # 18 INTEREST RECEIVED ON OBLIGATIONS OF ANY STATE OTHER THAN DELAWARE (Col A, FEDERAL)
+    field: ln18ColA
+    type: money
+  - line: 18b                               # 18 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln18ColB
+    type: money
+  - line: 19a                               # 19 FIDUCIARY ADJUSTMENT, OIL DEPLETION (Col A, FEDERAL)
+    field: ln19ColA
+    type: money
+  - line: 19b                               # 19 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln19ColB
+    type: money
+  - line: 20a                               # 20 TOTAL - Add Line 18 to Line 19 (Col A, FEDERAL)
+    field: ln20ColA
+    type: money
+  - line: 20b                               # 20 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln20ColB
+    type: money
+  - line: 21a                               # 21 Add Line 17 to Line 20 (Col A, FEDERAL)
+    field: ln21ColA
+    type: money
+  - line: 21b                               # 21 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln21ColB
+    type: money
+
+  # ============================================ SECTION C -- SUBTRACTIONS (22-30b)
+  - line: 22a                               # 22 INTEREST RECEIVED ON U.S. OBLIGATIONS (Col A, FEDERAL)
+    field: ln22ColA
+    type: money
+  - line: 22b                               # 22 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln22ColB
+    type: money
+  - line: 23.spouse_military_pension        # 23 "If your Spouse had a Military Pension"
+    field: ln23MilPensionSpouse
+    type: checkbox
+    on_state: /X
+  - line: 23.self_military_pension          # 23 "If You had a Military Pension"
+    field: ln23MilPension
+    type: checkbox
+    on_state: /X
+  - line: 23a                               # 23 PENSION/RETIREMENT EXCLUSIONS (Col A, FEDERAL)
+    field: ln23ColA
+    type: money
+  - line: 23b                               # 23 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln23ColB
+    type: money
+  - line: 24a                               # 24 DELAWARE STATE TAX REFUND (Col A, FEDERAL)
+    field: ln24ColA
+    type: money
+  - line: 24b                               # 24 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln24ColB
+    type: money
+  - line: 25a                               # 25 Fiduciary Adjustment, Work Opportunity Credit, Delaware NOL Carryforward, etc. (Col A, FEDERAL)
+    field: ln25ColA
+    type: money
+  - line: 25b                               # 25 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln25ColB
+    type: money
+  - line: 26a.a                             # 26a Taxable Social Security Benefits/Railroad (Col A, FEDERAL)
+    field: ln26ColA
+    type: money
+  - line: 26a.b                             # 26a (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln26ColB
+    type: money
+  - line: 26b.tuition_program               # 26b "529 Contribution to Delaware-sponsored Tuition Program"
+    field: ln26bTuitionCheck
+    type: checkbox
+    on_state: /X
+  - line: 26b.able_program                  # 26b "or ABLE Program"
+    field: line26bAbleCheck
+    type: checkbox
+    on_state: /X
+  - line: 26b.a                             # 26b 529 Contribution to Delaware-sponsored Tuition Program or ABLE Program (Col A, FEDERAL)
+    field: ln26bColA
+    type: money
+  - line: 26b.b                             # 26b (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln26bColB
+    type: money
+  - line: 27a                               # 27 TOTAL Add Line 22 through Line 26b (Col A, FEDERAL)
+    field: ln27ColA
+    type: money
+  - line: 27b                               # 27 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln27ColB
+    type: money
+  - line: 28a                               # 28 Subtract Line 27 from Line 21 (Col A, FEDERAL)
+    field: ln28ColA
+    type: money
+  - line: 28b                               # 28 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln28ColB
+    type: money
+  - line: 29a                               # 29 EXCLUSION FOR CERTAIN PERSONS 60 AND OVER OR DISABLED (Col A, FEDERAL)
+    field: ln29ColA
+    type: money
+  - line: 29b                               # 29 (Col B, DELAWARE SOURCE INCOME/LOSS)
+    field: ln29ColB
+    type: money
+  - line: 30a                               # 30a "COLUMN B- Subtract Line 29 from Line 28. This is your modified Delaware Source Income. Enter on Page 2, Line 42, Box A" (Col B cell only)
+    field: ln30aColB
+    type: money
+  - line: 30b                               # 30b "COLUMN A - Subtract Line 29 from Line 28. This is your Delaware Adjusted Gross Income. Enter on Page 2, Line 37 and Line 42, Box B" (Col A cell only)
+    field: ln30bColA
+    type: money
+
+  # ============================================ page 2 -- SECTION D -- DEDUCTIONS (31-36), one column
+  - line: "31"                              # 31 ENTER TOTAL ITEMIZED DEDUCTIONS (If Filing Status 3, See instructions)
+    field: ln31ColA
+    type: money
+  - line: "32"                              # 32 ENTER FOREIGN TAXES PAID
+    field: ln32ColA
+    type: money
+  - line: "33"                              # 33 ENTER CHARITABLE MILEAGE DEDUCTION
+    field: ln33ColA
+    type: money
+  - line: "34"                              # 34 TOTAL - Add Line 31 through Line 33
+    field: ln34ColA
+    type: money
+  - line: "35"                              # 35 ENTER FORM PIT-CRS TAX CREDIT ADJUSTMENT
+    field: ln35ColA
+    type: money
+  - line: "36"                              # 36 Subtract Line 35 from Line 34. Enter here and on Line 38.
+    field: ln36ColA
+    type: money
+
+  # ============================================ SECTION E -- CALCULATIONS (37-60)
+  - line: "37"                              # 37 DELAWARE ADJUSTED GROSS INCOME - Enter amount from Line 30b here
+    field: ln37ColA
+    type: money
+  - line: 38.standard                       # 38 "If you elect the STANDARD DEDUCTION check here a."
+    field: ln38RadioDeduction
+    type: checkbox
+    on_state: /standard
+    group: deduction_type
+  - line: 38.itemized                       # 38 "If you elect the DELAWARE ITEMIZED DEDUCTIONS check here b."
+    field: ln38RadioDeduction
+    type: checkbox
+    on_state: /itemized
+    group: deduction_type
+  - line: "38"                              # 38 "Filing Statuses 1, 3, & 5 enter $3250; Filing Status 2 enter $6500; / Enter amount from Line 36."
+    field: ln38ColA
+    type: money
+  - line: 39.spouse_over_65                 # 39 "Check Box(es)- if SPOUSE was: 65 or over"
+    field: ln39Spouse65
+    type: checkbox
+    on_state: /Yes
+  - line: 39.spouse_blind                   # 39 "if SPOUSE was: ... blind"
+    field: ln39SpouseBlind
+    type: checkbox
+    on_state: /Yes
+  - line: 39.self_over_65                   # 39 "Check box(es) - if YOU were: 65 or over"
+    field: ln3965
+    type: checkbox
+    on_state: /Yes
+  - line: 39.self_blind                     # 39 "if YOU were: ... blind"
+    field: ln39Blind
+    type: checkbox
+    on_state: /Yes
+  - line: "39"                              # 39 ADDITIONAL STANDARD DEDUCTIONS (Not Allowed with Itemized Deductions)
+    field: ln39ColA
+    type: money
+  - line: "40"                              # 40 TOTAL DEDUCTIONS - Add Line 38 to Line 39 and enter here
+    field: ln40ColA
+    type: money
+  - line: "41"                              # 41 TAXABLE INCOME - Subtract Line 40 from Line 37, and compute tax on this amount
+    field: ln41ColA
+    type: money
+  - line: 42.box_a                          # 42 TAX LIABILITY COMPUTATION "A. Line 30a"
+    field: ln42a
+    type: money
+  - line: 42.box_b                          # 42 "B. Line 30b"
+    field: ln42b
+    type: money
+  - line: 42.proration_decimal              # 42 "= PRORATION DECIMAL (See instructions)" -- four places, e.g. 0.4167
+    field: ln42ProrationWhole
+    type: text
+    maxlen: 6
+  - line: 42.tax_liability                  # 42 "X Tax Liability from Tax Rate Table/Schedule Amount"
+    field: ln42ScheduleAmt
+    type: money
+  - line: "42"                              # 42 prorated tax liability (decimal x schedule amount)
+    field: ln42ColA
+    type: money
+  - line: 43a.exemptions                    # 43a "Enter number of exemptions listed on Federal return"
+    field: ln43aExemptions
+    type: text
+    maxlen: 2
+  - line: 43a.exemptions_amount             # 43a "x $110 ="
+    field: ln42aExemptionsFactor
+    type: money
+  - line: 43a.proration_decimal             # 43a "Multiply this amount by the proration decimal on Line 42 ( x ___ )"
+    field: ln43aProrationAmt
+    type: text
+    maxlen: 6
+  - line: 43a                               # 43a PERSONAL CREDITS ... and enter total here
+    field: ln43aColA
+    type: money
+  - line: 43b.spouse_over_60                # 43b "CHECK BOX(ES) SPOUSE 60 or over (if filing status 2)"
+    field: ln43bSpouse65
+    type: checkbox
+    on_state: /Yes
+  - line: 43b.self_over_60                  # 43b "SELF 60 or over"
+    field: ln43bSelf65
+    type: checkbox
+    on_state: /Yes
+  - line: 43b.boxes_checked                 # 43b "Enter number of boxes checked on Line 43b"
+    field: ln43bNoChkBox
+    type: text
+    maxlen: 1
+  - line: 43b.boxes_amount                  # 43b "x $110 ="
+    field: ln43bCheckBoxFactor
+    type: money
+  - line: 43b.proration_decimal             # 43b "Multiply this amount by the proration decimal on Line 42 ( x ___ )"
+    field: ln43bProration
+    type: text
+    maxlen: 6
+  - line: 43b                               # 43b additional personal credits ... and enter total here
+    field: ln43bColA
+    type: money
+  - line: 44.state                          # 44 "TAX IMPOSED BY STATE OF ___" (/MaxLen 2)
+    field: ln44State
+    type: text
+    maxlen: 2
+  - line: "44"                              # 44 TAX IMPOSED BY STATE OF -- Part-Year Residents Only
+    field: ln44ColA
+    type: money
+  - line: "45"                              # 45 OTHER NON-REFUNDABLE CREDITS
+    field: ln45ColA
+    type: money
+  - line: "46"                              # 46 TOTAL NON-REFUNDABLE CREDITS - Add Line 43a through Line 45
+    field: ln46ColA
+    type: money
+  - line: "47"                              # 47 BALANCE - Subtract Line 46 from Line 42. If Line 46 is greater than Line 42, enter 0.
+    field: ln47ColA
+    type: money
+  - line: "48"                              # 48 DELAWARE TAX WITHHELD - (Attach W-2s/1099s)
+    field: ln48ColA
+    type: money
+  - line: "49"                              # 49 ESTIMATED TAX PAID & PAYMENTS WITH EXTENSIONS
+    field: ln49ColA
+    type: money
+  - line: "50"                              # 50 S CORP PAYMENTS
+    field: ln50ColA
+    type: money
+  - line: "51"                              # 51 REFUNDABLE BUSINESS CREDITS
+    field: ln51ColA
+    type: money
+  - line: "52"                              # 52 CAPITAL GAINS TAX PAYMENTS (Attach form REW-EST)
+    field: ln52ColA
+    type: money
+  - line: "53"                              # 53 TOTAL REFUNDABLE CREDITS - Add Line 48 through Line 52
+    field: ln53ColA
+    type: money
+  - line: "54"                              # 54 BALANCE DUE If Line 47 is greater than Line 53 ...
+    field: ln54ColA
+    type: money
+  - line: "55"                              # 55 OVERPAYMENT If Line 53 is greater than Line 47 ...
+    field: ln55ColA
+    type: money
+  - line: "56"                              # 56 CONTRIBUTIONS TO SPECIAL FUNDS (complete and attach PIT-NNS)
+    field: ln56ColA
+    type: money
+  - line: "57"                              # 57 AMOUNT OF LINE 55 TO BE APPLIED TO 2024 ESTIMATED TAX ACCOUNT
+    field: ln57ColA
+    type: money
+  - line: "58"                              # 58 PENALTIES AND INTEREST DUE (If Line 54 is greater than $800, see estimated tax instructions)
+    field: ln58ColA
+    type: money
+  - line: "59"                              # 59 NET BALANCE DUE - Add Line 54, Line 56, and Line 58 -- PAY IN FULL
+    field: ln59ColA
+    type: money
+  - line: "60"                              # 60 NET REFUND - Subtract Lines 56, 57, and 58 from Line 55
+    field: ln60ColA
+    type: money
+
+  # ---- SECTION F -- DIRECT DEPOSIT INFORMATION
+  - line: direct_deposit.type.checking      # "ACCOUNT TYPE: CHECKING"
+    field: directDepositAcctType
+    type: checkbox
+    on_state: /checking
+    group: account_type
+  - line: direct_deposit.type.savings       # "ACCOUNT TYPE: SAVINGS"
+    field: directDepositAcctType
+    type: checkbox
+    on_state: /savings
+    group: account_type
+  - line: direct_deposit.routing            # "ROUTING NUMBER" (9-cell comb, /MaxLen 9)
+    field: directDepositRouting
+    type: text
+    maxlen: 9
+  - line: direct_deposit.account            # "ACCOUNT NUMBER" (17-cell comb, /MaxLen 17)
+    field: directDepositAcctNo
+    type: text
+    maxlen: 17
+  - line: direct_deposit.outside_us.yes     # "Is this refund going to or through an account that is located outside of the United States? YES"
+    field: foreignAccount
+    type: checkbox
+    on_state: /YES
+    group: outside_us
+  - line: direct_deposit.outside_us.no      # "... NO"
+    field: foreignAccount
+    type: checkbox
+    on_state: /NO
+    group: outside_us
+
+  # ---- signature block
+  - line: signature.taxpayer_date           # "YOUR SIGNATURE ... DATE" (mm-dd-yyyy)
+    field: sigDate
+    type: text
+  - line: signature.spouse_date             # "SPOUSE SIGNATURE ... DATE" (mm-dd-yyyy)
+    field: spouseSigDate
+    type: text
+  - line: home_phone                        # "HOME PHONE NUMBER" (/MaxLen 10)
+    field: homePhone
+    type: text
+    maxlen: 10
+  - line: business_phone                    # "BUSINESS PHONE NUMBER" (/MaxLen 10)
+    field: busPhone
+    type: text
+    maxlen: 10
+  - line: email                             # "EMAIL ADDRESS"
+    field: sigEmail
+    type: text
+
+  # ---- PAID PREPARER INFORMATION
+  - line: preparer.date                     # PAID PREPARER SIGNATURE "DATE"
+    field: ppSigDate
+    type: text
+  - line: preparer.address                  # preparer "ADDRESS"
+    field: ppAddress
+    type: text
+  - line: preparer.city                     # preparer "CITY"
+    field: ppCity
+    type: text
+  - line: preparer.state                    # preparer "STATE" (/MaxLen 2)
+    field: ppState
+    type: text
+    maxlen: 2
+  - line: preparer.zip                      # preparer "ZIP CODE"
+    field: ppZip
+    type: text
+  - line: preparer.ein_ssn_ptin             # "EIN, SSN or PTIN"
+    field: ppEINSSNPTIN
+    type: text
+    maxlen: 9
+  - line: preparer.phone                    # preparer "PHONE NO." (/MaxLen 10)
+    field: ppPhone
+    type: text
+    maxlen: 10
+  - line: preparer.email                    # preparer "EMAIL ADDRESS"
+    field: ppEmail
+    type: text
+
+  # ============================================ page 3 -- FOR AMENDED RETURNS ONLY (one column, printed "COLUMN B")
+  - line: "61"                              # 61 TOTAL REFUNDABLE CREDITS - From Line 53
+    field: ln61ColB
+    type: money
+  - line: "62"                              # 62 AMOUNT PAID ON ORIGINAL RETURN
+    field: ln62ColB
+    type: money
+  - line: "63"                              # 63 SUBTOTAL - Add Lines 61 and 62
+    field: ln63ColB
+    type: money
+  - line: "64"                              # 64 REFUND RECEIVED
+    field: ln64ColB
+    type: money
+  - line: "65"                              # 65 Estimated tax carryover and/or Special Funds contributions as shown on original return
+    field: ln65ColB
+    type: money
+  - line: "66"                              # 66 Subtract Line 64 and Line 65 from Line 63
+    field: ln66ColB
+    type: money
+  - line: "67"                              # 67 BALANCE DUE - If Line 47 is greater than Line 66 ...
+    field: ln67ColB
+    type: money
+  - line: "68"                              # 68 OVERPAYMENT - If Line 66 is greater than Line 47 ...
+    field: ln68ColB
+    type: money
+  - line: "69"                              # 69 AMOUNT OF LINE 68 TO BE APPLIED TO YOUR ESTIMATED TAX ACCOUNT
+    field: ln69ColB
+    type: money
+  - line: "70"                              # 70 PENALTIES AND INTEREST DUE
+    field: ln70ColB
+    type: money
+  - line: "71"                              # 71 NET BALANCE DUE - Add Line 67 and Line 69 to Line 70 -- PAY IN FULL
+    field: ln71ColB
+    type: money
+  - line: "72"                              # 72 NET REFUND - Subtract Line 69 and Line 70 from Line 68
+    field: ln72ColB
+    type: money
+  - line: 73.yes                            # 73 "Is an amended Federal return being filed? Yes"
+    field: ln73Radio
+    type: checkbox
+    on_state: /Yes
+    group: amended_federal
+  - line: 73.no                             # 73 "... No"
+    field: ln73Radio
+    type: checkbox
+    on_state: /No
+    group: amended_federal
+  - line: 73.detail                         # 73 "If no, please explain. If the changes pertain to the Delaware return only, list the line numbers being amended." (multiline)
+    field: ln73Detail
+    type: text
+  - line: 74.yes                            # 74 "Has the Delaware Division of Revenue advised you your original return is being audited? Yes"
+    field: ln74Radio
+    type: checkbox
+    on_state: /YES
+    group: audit_advised
+  - line: 74.no                             # 74 "... No"
+    field: ln74Radio
+    type: checkbox
+    on_state: /NO
+    group: audit_advised
+  - line: 75.yes                            # 75 "Is this amended return being filed as a protective claim? Yes"
+    field: ln75Radio
+    type: checkbox
+    on_state: /YES
+    group: protective_claim
+  - line: 75.no                             # 75 "... No"
+    field: ln75Radio
+    type: checkbox
+    on_state: /NO
+    group: protective_claim
+  - line: 75.detail                         # 75 "A detailed explanation of all changes must be provided in this space." (multiline)
+    field: ln75Detail
+    type: text
+
+# Relations (on-face arithmetic, unconditional, every operand a mapped money line;
+# both columns of the two-column table). The ALLOCATION lines are declared as
+# printed: 30a / 30b (Column B / Column A "Subtract Line 29 from Line 28"), 37
+# ("Enter amount from Line 30b here") and the two proration boxes of line 42
+# ("A. Line 30a" / "B. Line 30b"), so a changed Delaware-source or federal input
+# fails verify. NOT declared:
+#   * 42 (= proration decimal x schedule amount) and 43a / 43b (= amount x
+#     "( x ___ )" decimal). The decimal is text (a 4-place ratio a whole-dollar
+#     money line cannot hold), so verify cannot read it from disk; and the
+#     2023 PIT-NON instructions (Line 42) round it ("Carry out the computation to four decimal places,
+#     rounding off the fourth position"; "may not exceed 1.0000 or be less than
+#     zero"), so a relation over the exact quotient 42.box_a / 42.box_b would FAIL
+#     a correctly rounded return whenever the two products straddle a half dollar.
+#   * conditional / branch lines: 38 (standard amount or line 36 by election), 47
+#     (floored at 0), 54 / 55 and 67 / 68 (balance-due vs overpayment), 59 / 60
+#     and 71 / 72 (net lines whose operands depend on that branch), and 61 ("From
+#     Line 53"), which is blank on every original return while 53 is not.
+#   * 43a / 43b "x $110 =" (the count is a text cell).
+# The face, not the form's script, is transcribed: ln66ColB's calculate script
+# computes 63 - (64 - 65) while the face prints "Subtract Line 64 and Line 65
+# from Line 63"; the relation follows the face.
+relations:
+  - "15a == 1a + 2a + 3a + 4a + 5a + 6a + 7a.a + 7b.a + 8a + 9a + 10a + 11a + 12a + 13a + 14a"  # 15 "TOTAL INCOME - Add Line 1 through Line 14" (Col A)
+  - "15b == 1b + 2b + 3b + 4b + 5b + 6b + 7a.b + 7b.b + 8b + 9b + 10b + 11b + 12b + 13b + 14b"  # 15 (Col B)
+  - "17a == 15a - 16a"                                                                          # 17 "Subtract Line 16 from Line 15" (Col A)
+  - "17b == 15b - 16b"                                                                          # 17 (Col B)
+  - "20a == 18a + 19a"                                                                          # 20 "TOTAL - Add Line 18 to Line 19" (Col A)
+  - "20b == 18b + 19b"                                                                          # 20 (Col B)
+  - "21a == 17a + 20a"                                                                          # 21 "Add Line 17 to Line 20" (Col A)
+  - "21b == 17b + 20b"                                                                          # 21 (Col B)
+  - "27a == 22a + 23a + 24a + 25a + 26a.a + 26b.a"                                              # 27 "TOTAL Add Line 22 through Line 26b" (Col A)
+  - "27b == 22b + 23b + 24b + 25b + 26a.b + 26b.b"                                              # 27 (Col B)
+  - "28a == 21a - 27a"                                                                          # 28 "Subtract Line 27 from Line 21" (Col A)
+  - "28b == 21b - 27b"                                                                          # 28 (Col B)
+  - "30a == 28b - 29b"                                                                          # 30a "COLUMN B- Subtract Line 29 from Line 28" -- modified Delaware Source Income
+  - "30b == 28a - 29a"                                                                          # 30b "COLUMN A - Subtract Line 29 from Line 28" -- Delaware Adjusted Gross Income
+  - "34 == 31 + 32 + 33"                                                                        # 34 "TOTAL - Add Line 31 through Line 33"
+  - "36 == 34 - 35"                                                                             # 36 "Subtract Line 35 from Line 34"
+  - "37 == 30b"                                                                                 # 37 "Enter amount from Line 30b here"
+  - "40 == 38 + 39"                                                                             # 40 "TOTAL DEDUCTIONS - Add Line 38 to Line 39"
+  - "41 == 37 - 40"                                                                             # 41 "TAXABLE INCOME - Subtract Line 40 from Line 37"
+  - "42.box_a == 30a"                                                                           # 42 "A. Line 30a" (30a "Enter on Page 2, Line 42, Box A") -- the proration numerator
+  - "42.box_b == 30b"                                                                           # 42 "B. Line 30b" (30b "Enter on Page 2, Line 37 and Line 42, Box B") -- the proration denominator
+  - "46 == 43a + 43b + 44 + 45"                                                                 # 46 "TOTAL NON-REFUNDABLE CREDITS - Add Line 43a through Line 45"
+  - "53 == 48 + 49 + 50 + 51 + 52"                                                              # 53 "TOTAL REFUNDABLE CREDITS - Add Line 48 through Line 52"
+  - "63 == 61 + 62"                                                                             # 63 "SUBTOTAL - Add Lines 61 and 62" (amended only; blank reads 0 == 0)
+  - "66 == 63 - 64 - 65"                                                                        # 66 "Subtract Line 64 and Line 65 from Line 63" (amended only)
+# Cross_form. None: the face cites no federal line number (Column A is headed
+# only "FEDERAL", and line 17 reads "FEDERAL ADJUSTED GROSS INCOME FOR DELAWARE
+# PURPOSES"), and the 2023 PIT-NON instructions have military income
+# subtracted "in Column A, Line 16", so 17a is not always federal AGI. No leg is
+# declared.
+cross_form: []
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing:
+  # Printed at the foot of page 1: "BALANCE DUE WITH PAYMENT ENCLOSED (LINE 59)
+  # MAIL COMPLETED FORM TO: Delaware Division of Revenue PO Box 508, Wilmington,
+  # DE 19899-0508 Make check payable to: Delaware Division of Revenue"; "REFUND
+  # (LINE 60) ... PO Box 8710 Wilmington, DE 19899-8710"; "ALL OTHER RETURNS ...
+  # PO Box 8711 Wilmington, DE 19899-8711". Page 3 (FOR AMENDED RETURNS ONLY,
+  # lines 61-75) prints its own footer: "NET BALANCE DUE WITH PAYMENT ENCLOSED
+  # (LINE 71) ... PO Box 508, Wilmington, DE 19899-0508"; "NET REFUND (LINE 72)
+  # ... PO Box 8710 Wilmington, DE 19899-8710"; "ALL OTHER RETURNS ... PO Box
+  # 8711 Wilmington, DE 19899-8711". So an amended return routes on lines 71 /
+  # 72, not 59 / 60: one whose line 60 shows a refund but whose line 72 is
+  # empty (the original refund already received) goes to PO Box 8711. The schema
+  # holds two addresses, so no_payment carries the original and amended
+  # no-payment branches as printed, and with_payment names both payment lines.
+  # verify_url is the Division's 2023 PIT-NON instructions, which print the same
+  # three boxes for the original return and, under "Amended Returns / Where to
+  # File", P.O. Box 8711 with Line 71 to Box 508 and Line 72 to Box 8710.
+  no_payment: "Original return: refund (line 60) -- Delaware Division of Revenue, PO Box 8710, Wilmington, DE 19899-8710; all other returns -- Delaware Division of Revenue, PO Box 8711, Wilmington, DE 19899-8711. AMENDED return (page 3): net refund (line 72) -- PO Box 8710, Wilmington, DE 19899-8710; all other amended returns -- PO Box 8711, Wilmington, DE 19899-8711"
+  with_payment: "Delaware Division of Revenue, PO Box 508, Wilmington, DE 19899-0508 (make check payable to Delaware Division of Revenue) -- balance due on line 59, or on an amended return the net balance due on line 71"
+  verify_url: https://revenuefiles.delaware.gov/2023/PIT-NON_TY23_2023-01_Instructions.pdf

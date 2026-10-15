@@ -1429,6 +1429,18 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
     ('states/de/pit_res', '27b'):
         'INDEPENDENT: the 2025 revision prints the 2023 line-26b row ("CHECK BOXES Spouse 60 or over (Column A)", '
         '"Self 60 or over (Column B)") as line 27b, one box for each person; both may apply',
+    ('states/de/pit_non', '23'):
+        'INDEPENDENT: the PIT-NON 2023 line 23 row prints "If your Spouse had a Military Pension" and "If You had a '
+        'Military Pension", one box for each person; both may apply',
+    ('states/de/pit_non', '26b'):
+        'INDEPENDENT: line 26b prints "529 Contribution to Delaware-sponsored Tuition Program" and "or ABLE Program"; the '
+        'instructions give each its own maximum and say to mark the box for each kind of contribution; both may apply',
+    ('states/de/pit_non', '39'):
+        'INDEPENDENT: line 39 prints "if SPOUSE was: 65 or over / blind" and "if YOU were: 65 or over / blind", one box per '
+        'condition per person; any combination may apply',
+    ('states/de/pit_non', '43b'):
+        'INDEPENDENT: line 43b prints "SPOUSE 60 or over (if filing status 2)" and "SELF 60 or over", then "Enter number of '
+        'boxes checked"; both may apply',
     ('states/ga/ga500', '11_self'):
         'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
     ('states/ga/ga500', '11_spouse'):
