@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**9,014 tests** — offline 7,845 + live-.gov 1169; derived
+Done and on `main` (**9,033 tests** — offline 7,864 + live-.gov 1169; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -33,7 +33,10 @@ OTR re-issued it). Phase J JT0c (2026-09-27) put both behind an expiring allowli
 (`scripts/freshness_quarantine.yaml`), so a NEW red opens a `freshness red` issue, and
 JS1a/JS1b (2026-09-28) fixed both. The last row — JS1b's newest-capture probe showed mass.gov
 re-issued the 2023 Form 1 in May 2026 as a rebuilt AcroForm — retired 2026-10-02 when JS5
-re-mapped the pack onto the re-issue; the quarantine list is empty.
+re-mapped the pack onto the re-issue. The 2026-10-12 run was red again on two new causes — the MN 2025 M1
+booklet moved, and mass.gov and its Wayback mirror refuse GitHub-hosted runners — which JK2 (2026-10-15)
+fixed or quarantined: the MN citations re-pointed, fetch retries and a CI blank cache added, and the ten MA
+network tests quarantined until 2027-01-11.
 
 - **M0 scaffold · M1 engine · M2 federal packs · M3 intake + knowledge · M4 MCP
   server (23 tools, stdio, image content) · M5 state support · M6 code/docs.**
@@ -2032,6 +2035,7 @@ line items sum to the headline delta.
     - makes any branch-protection change.
   - Then an agent does A6.
 - [x] **JK4 — Pin the CI runner image, the actions and uv — DONE 2026-10-15** (S; release prep of the 2026-10-09 re-plan) — ci.yml, freshness.yml and finals.yml run on ubuntu-24.04 in all eight jobs (GitHub moves ubuntu-latest to 26.04 from 2026-10-19, actions/runner-images#14748); actions/checkout is pinned to fbc6f399 (v5.1.0) and astral-sh/setup-uv to 1c37ad07 (v10.3.0, node24; v6.8.0 was node20), each by commit SHA with the tag in a trailing comment; setup-uv's `version` input pins uv 0.13.0. .github/dependabot.yml proposes the action bumps weekly; the ubuntu pin and the uv version move only by hand. The first CI run on the merged tree is the live proof (expect one cold `uv sync`: the action major changes the cache key).
+- [x] **JK2 — Honest health signal: freshness and the finals watch — DONE 2026-10-15** (S–M; release prep of the 2026-10-09 re-plan) — the 2026-10-12 freshness run 38294478202 was red on two causes. The 2025 Form M1 instruction booklet moved on revenue.state.mn.us from /2026-07/ to /2026-10/m1-inst-25.pdf (the same 40-page booklet): its 14 citations in knowledge/sources_states.yaml and knowledge/states/mn/2025.yaml are re-pointed. mass.gov answers 403 to GitHub-hosted runners and the pack's Wayback mirror 429 or connection refused, which failed the ten MA Form 1 2023/2025 network tests: `fetch._download` now retries 429, 5xx and connection failures (three attempts, 2 s then 6 s, a finite Retry-After honoured up to 30 s; 401/403 and 404 are answers and never retried), the mirror path shares it, freshness.yml's network-tests job restores and saves `.cache/blanks` through actions/cache (pinned by SHA; `fetch_blank` still digest-checks every cached file), and the ten node ids are quarantined until 2027-01-11, pinned exactly by test_freshness_quarantine.py. Delete those rows after two consecutive green weekly runs (watch 10-19 and 10-26). `check_finals.head_status` retries a 5xx or a timeout the same way: one irs.gov 503 had turned the 2026-10-05 watch red (run 37363005332).
 - [x] **JEa — SSN maxlen and reserved lines — DONE 2026-09-28** (M; deps J0) [G30 + PJ-13 rest]
   - *As built:*
     - **maxlen tracks the widget.** 41 federal SSN fields (identifying_number in f8606 / f8960 / f8962 / sched_2 / sched_a / sched_oi / sched_3a, and f8962 30b–33b; 2022–2026) move 9 → 11, their widget /MaxLen. NY IT-203 2025 line 35 moves 10 → 4: its widget holds 4, the one pack that let through more than its box.

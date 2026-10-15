@@ -6,7 +6,17 @@
 # row by Phase J JS1a (DC 2025 re-verified against the re-issued booklet), the two MA Form 1 fetch rows
 # by JS1b (the pack's digest-verified Wayback mirror). JS1b's newest-capture probe then found one more
 # (MA Form 1 2023's 2026-05-22 re-issue), retired 2026-10-02 by Phase J JS5, which re-mapped the pack
-# onto that re-issue and re-pinned it. The list is empty: any red opens a `freshness red` issue.
+# onto that re-issue and re-pinned it.
+#
+# The list now holds the ten MA Form 1 (2023 and 2025) network tests, added 2026-10-15 by JK2 (the 2026-10-09 re-plan)
+# after run 38294478202 (2026-10-12): mass.gov answers HTTP 403 to every non-browser fetcher, and from a
+# GitHub-hosted runner the pack's digest-verified Wayback mirror answers HTTP 429 or refuses the
+# connection, so the runner has no path to the blank. From a developer machine the mirror works and the
+# blank is cached locally, digest-verified; the tests pass there. JK2 also gave the runner a blank cache
+# (actions/cache in freshness.yml's network-tests job) so a run that gets through once serves the next.
+# DELETE these ten rows once that cache has served the MA tests green on two consecutive weekly runs;
+# packages/core/tests/test_freshness_quarantine.py pins the ten node ids, so the deletion updates it too.
+# Any other red opens a `freshness red` issue.
 #
 # Rules (scripts/freshness_quarantine.py; tests in packages/core/tests/test_freshness_quarantine.py):
 #   * kind network_test: `id` is a pytest node id. The quarantine masks only a failure to FETCH the
@@ -15,4 +25,64 @@
 #     as quarantined instead of failing the job.
 #   * `expires` is at most 200 days after `added`. An expired entry FAILS the drift job; renew it
 #     only with a reason, or fix the source (the `fixed_by` tranche) and delete the row.
-entries: []
+entries:
+- kind: network_test
+  id: "packages/core/tests/test_formpacks_states.py::test_state_pack_golden_roundtrip[ma_2023_form1]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_formpacks_states.py::test_state_pack_golden_roundtrip[ma_2025_form1]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_pack_maxlen.py::test_pack_maxlen_never_exceeds_the_widget_and_tracks_it[states-ma-2023-form1]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_pack_maxlen.py::test_pack_maxlen_never_exceeds_the_widget_and_tracks_it[states-ma-2025-form1]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_pack_maxlen.py::test_every_tighter_budget_row_is_still_tighter[states/ma/2023/form1-43a]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_pack_maxlen.py::test_every_tighter_budget_row_is_still_tighter[states/ma/2025/form1-43a]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_readonly_widget_mapping.py::test_state_pack_readonly_mapped_count_matches_the_pinned_audit[states-ma-2023-form1]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_readonly_widget_mapping.py::test_state_pack_readonly_mapped_count_matches_the_pinned_audit[states-ma-2025-form1]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_readonly_widget_mapping.py::test_every_nonzero_readonly_default_is_adjudicated_class_4[states-ma-2023-form1]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: network_test
+  id: "packages/core/tests/test_readonly_widget_mapping.py::test_every_nonzero_readonly_default_is_adjudicated_class_4[states-ma-2025-form1]"
+  added: 2026-10-15
+  expires: 2027-01-11
+  fixed_by: JK2
+  why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.

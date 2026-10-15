@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 import textwrap
+import urllib.error
 from pathlib import Path
 
 import pytest
@@ -35,9 +36,29 @@ DC_BOOKLET = ("https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publicati
 # ── the quarantine file ──────────────────────────────────────────────────────
 
 
+# JK2 (2026-10-15): the ten MA Form 1 network tests the GitHub-hosted runner cannot fetch for — mass.gov answers
+# 403 and the pack's Wayback mirror 429 / connection refused — until the CI blank cache has served them green on
+# two consecutive weekly runs. Pinned exactly, so deleting the rows (or adding one) must revisit this test.
+MA_FORM1_NETWORK_TESTS = frozenset(
+    f"packages/core/tests/{module}::{func}[{param}]"
+    for module, func, params in (
+        ("test_formpacks_states.py", "test_state_pack_golden_roundtrip", ("ma_2023_form1", "ma_2025_form1")),
+        ("test_pack_maxlen.py", "test_pack_maxlen_never_exceeds_the_widget_and_tracks_it",
+         ("states-ma-2023-form1", "states-ma-2025-form1")),
+        ("test_pack_maxlen.py", "test_every_tighter_budget_row_is_still_tighter",
+         ("states/ma/2023/form1-43a", "states/ma/2025/form1-43a")),
+        ("test_readonly_widget_mapping.py", "test_state_pack_readonly_mapped_count_matches_the_pinned_audit",
+         ("states-ma-2023-form1", "states-ma-2025-form1")),
+        ("test_readonly_widget_mapping.py", "test_every_nonzero_readonly_default_is_adjudicated_class_4",
+         ("states-ma-2023-form1", "states-ma-2025-form1")),
+    )
+    for param in params
+)
+
+
 def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
     entries = fq.load()
-    assert {e.fixed_by for e in entries} <= {"JS5"}     # JS1a/JS1b retired theirs; JS1b's probe found MA's re-issue
+    assert {e.fixed_by for e in entries} == {"JK2"}     # JS1a/JS1b/JS5 retired theirs; JK2's rows self-clear
     knowledge = "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "knowledge").rglob("*.yaml"))
     knowledge += "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "formpacks").rglob("pack.yaml"))
     for e in entries:
@@ -48,7 +69,12 @@ def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
             assert f"def {func}(" in (REPO / path).read_text(encoding="utf-8"), e.target
         else:
             assert e.target in knowledge, f"quarantined URL no longer cited anywhere — delete the row: {e.target}"
-    assert not any(e.kind == "network_test" for e in entries)  # JS1b: every blank fetch is green (acceptance)
+    # JS1b's acceptance (every blank fetch green) holds on a developer machine; from the GitHub-hosted runner the
+    # two MA packs are served only by the CI blank cache, so exactly their ten node ids are quarantined (JK2).
+    assert {e.target for e in entries if e.kind == "network_test"} == MA_FORM1_NETWORK_TESTS
+    assert not any(e.kind == "drift" for e in entries)   # the MN M1 booklet move was FIXED (new URL), not quarantined
+    assert {e.added for e in entries} == {dt.date(2026, 10, 15)}
+    assert all("mass.gov" in e.why and "mirror" in e.why and "cache" in e.why for e in entries)
 
 
 @pytest.mark.parametrize(("row", "message"), [
@@ -153,7 +179,8 @@ def test_check_drift_quarantines_the_known_red_but_fails_a_new_one(monkeypatch, 
 
 
 def test_an_expired_quarantine_row_fails_the_drift_job(monkeypatch, capsys, tmp_path):
-    # A synthetic row: the live file can be empty (the last row, MA Form 1 2023's re-issue, retired with JS5).
+    # A synthetic row, so the test does not move with the live file's own expiries (JS5 retired the last drift
+    # row; JK2's rows are network_test rows and an expired one fails the drift job the same way).
     (tmp_path / "q.yaml").write_text(yaml.safe_dump({"entries": [{
         "kind": "drift", "url": DC_BOOKLET, "added": "2026-09-27", "expires": "2027-03-31", "fixed_by": "JS1a",
         "why": "the DC 2025 booklet 404"}]}), encoding="utf-8")
@@ -232,6 +259,77 @@ def test_check_finals_opens_one_issue_then_updates_it_only_when_the_list_changes
     grown = _Runner(open_issue="12", body=body)
     assert cf.main([], head=_head({"p1040", "p501"}), runner=grown) == 0
     assert [c[:2] for c in grown.calls][-2:] == [["issue", "edit"], ["issue", "comment"]]
+
+
+def _head_answers(monkeypatch, script: list) -> tuple[list[str], list[float]]:
+    """cf.urllib.request.urlopen pops the next scripted answer (an exception to raise, or a status to return);
+    returns (urls seen, backoffs that would have been slept)."""
+    seen: list[str] = []
+    sleeps: list[float] = []
+
+    class _Resp:
+        def __init__(self, code):
+            self.code = code
+
+        def getcode(self):
+            return self.code
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    def urlopen(req, timeout=None):
+        seen.append(req.full_url)
+        answer = script.pop(0)
+        if isinstance(answer, BaseException):
+            raise answer
+        return _Resp(answer)
+
+    monkeypatch.setattr(cf.urllib.request, "urlopen", urlopen)
+    return seen, sleeps
+
+
+U = "https://www.irs.gov/pub/irs-prior/p1040--2026.pdf"
+
+
+def _503(url: str = U) -> urllib.error.HTTPError:
+    return urllib.error.HTTPError(url, 503, "Service Unavailable", {}, None)
+
+
+def test_jk2_head_status_retries_a_5xx_or_a_timeout_but_not_a_404(monkeypatch):
+    seen, sleeps = _head_answers(monkeypatch, [_503(), 200])
+    assert cf.head_status("https://www.irs.gov/pub/irs-prior/p1040--2026.pdf", sleep=sleeps.append) == 200
+    assert len(seen) == 2 and sleeps == [2.0]
+    seen, sleeps = _head_answers(monkeypatch, [_503(), urllib.error.URLError(TimeoutError("timed out")), 404])
+    assert cf.head_status(U, sleep=sleeps.append) == 404
+    assert len(seen) == 3 and sleeps == [2.0, 6.0]
+    seen, sleeps = _head_answers(monkeypatch, [urllib.error.HTTPError(U, 404, "Not Found", {}, None), 200])
+    assert cf.head_status(U, sleep=sleeps.append) == 404                        # an answer: never retried
+    assert len(seen) == 1 and sleeps == []
+    seen, sleeps = _head_answers(monkeypatch, [_503()] * 3)
+    assert cf.head_status(U, sleep=sleeps.append) == 503                        # exhausted: the status comes back
+    assert len(seen) == 3 and sleeps == [2.0, 6.0]
+    seen, sleeps = _head_answers(monkeypatch, [urllib.error.URLError(OSError("Network is unreachable"))] * 3)
+    with pytest.raises(urllib.error.URLError):                                  # exhausted: the failure is raised
+        cf.head_status(U, sleep=sleeps.append)
+    assert len(seen) == 3 and sleeps == [2.0, 6.0]
+
+
+def test_jk2_one_503_then_200_is_posted_and_three_503s_are_an_error(monkeypatch, capsys):
+    watched = [cf.Watched("p1040", "publication")]
+    _, sleeps = _head_answers(monkeypatch, [_503(), 200])
+    result = cf.run_watch(2026, watched, head=lambda url: cf.head_status(url, sleep=sleeps.append))
+    assert [w.stem for w in result.posted] == ["p1040"] and result.errors == []
+    assert "POSTED" in capsys.readouterr().out and sleeps == [2.0]
+    _, sleeps = _head_answers(monkeypatch, [_503()] * 3)
+    result = cf.run_watch(2026, watched, head=lambda url: cf.head_status(url, sleep=sleeps.append))
+    assert result.posted == [] and result.errors == ["https://www.irs.gov/pub/irs-prior/p1040--2026.pdf: HTTP 503"]
+    assert "ERROR" in capsys.readouterr().out and sleeps == [2.0, 6.0]
+    _, sleeps = _head_answers(monkeypatch, [urllib.error.URLError(TimeoutError("timed out"))] * 3)
+    result = cf.run_watch(2026, watched, head=lambda url: cf.head_status(url, sleep=sleeps.append))
+    assert len(result.errors) == 1 and "timed out" in result.errors[0] and sleeps == [2.0, 6.0]
 
 
 def test_check_finals_nothing_posted_files_nothing_and_a_blind_watch_fails(capsys):

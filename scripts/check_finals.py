@@ -23,6 +23,7 @@ import argparse
 import json
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -40,6 +41,11 @@ from taxfill_core.schemas.formpack import load_pack  # noqa: E402
 PUBLICATIONS = ("p1040", "i1040gi", "p501")
 FINAL_URL = "https://www.irs.gov/pub/irs-prior/{stem}--{year}.pdf"
 TIMEOUT = 30.0
+# A 5xx, a timeout or a connection failure gets three attempts (about 2 s, then 6 s apart) before it blinds the
+# watch: run 37363005332 (2026-10-05) went red on a single HTTP 503 from irs.gov, and the next scheduled run
+# was green (re-plan JK2). A 200 or a 404 on any attempt is the answer; a 404 is never retried.
+RETRY_ATTEMPTS = 3
+RETRY_BACKOFF = (2.0, 6.0)
 
 
 @dataclass(frozen=True)
@@ -77,14 +83,25 @@ def watch_list(year: int, repo: Path = REPO) -> list[Watched]:
     return list(watched.values())
 
 
-def head_status(url: str) -> int:
-    """The HTTP status of a HEAD request (404 is an answer, not an error)."""
-    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": _USER_AGENT})
-    try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
-            return resp.getcode()
-    except urllib.error.HTTPError as exc:
-        return exc.code
+def head_status(url: str, sleep: Callable[[float], None] = time.sleep) -> int:
+    """The HTTP status of a HEAD request (404 is an answer, not an error); transient failures are retried.
+
+    ``sleep`` is the backoff's injection point (tests pass a recorder). After RETRY_ATTEMPTS a 5xx is returned
+    as the status and a connection failure is raised, so run_watch reports either as an ERROR.
+    """
+    for attempt in range(1, RETRY_ATTEMPTS + 1):
+        req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": _USER_AGENT})
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+                return resp.getcode()
+        except urllib.error.HTTPError as exc:
+            if attempt == RETRY_ATTEMPTS or not 500 <= exc.code <= 599:
+                return exc.code
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError):
+            if attempt == RETRY_ATTEMPTS:
+                raise
+        sleep(RETRY_BACKOFF[min(attempt, len(RETRY_BACKOFF)) - 1])
+    raise AssertionError("unreachable")  # pragma: no cover
 
 
 @dataclass

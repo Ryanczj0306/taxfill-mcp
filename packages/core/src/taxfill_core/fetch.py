@@ -25,8 +25,10 @@ what to do next.
 from __future__ import annotations
 
 import hashlib
+import math
 import os
 import re
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -56,6 +58,17 @@ _USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 )
+
+# Transient answers are retried (re-plan JK2): HTTP 429 and 5xx, a timeout, and a connection that never
+# completed (URLError / ConnectionError) get three attempts with a short backoff — about 2 s, then 6 s — and a
+# Retry-After header is honoured up to 30 s. HTTP 401/403 are NOT retried: they are the host's policy refusal,
+# which routes to the pack's digest-verified mirror. 404 is an answer, not a flake. The Wayback mirrors go
+# through the same loop, so a rate-limited (429) snapshot gets the retries too. ``_sleep`` is the injection
+# point: tests monkeypatch it so the retries are instant.
+_RETRY_ATTEMPTS = 3
+_RETRY_BACKOFF = (2.0, 6.0)  # seconds before attempt 2, before attempt 3
+_RETRY_AFTER_CAP = 30.0
+_sleep = time.sleep
 
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _SHA256_PLACEHOLDER = "..."  # pack-authoring placeholder; never verifiable
@@ -179,39 +192,79 @@ def cached_blank_path(url: str, sha256: str, *, cache_dir: str | Path | None = N
     return None
 
 
+def _is_transient(exc: BaseException) -> bool:
+    """A failure worth another attempt: HTTP 429 / 5xx, or no HTTP answer at all (timeout, refused, DNS)."""
+    if isinstance(exc, urllib.error.HTTPError):
+        return exc.code == 429 or 500 <= exc.code <= 599
+    return isinstance(exc, (urllib.error.URLError, TimeoutError, ConnectionError, OSError))
+
+
+def _retry_delay(attempt: int, exc: BaseException) -> float:
+    """Seconds to wait after failed attempt number ``attempt`` (1-based); Retry-After wins, capped."""
+    delay = _RETRY_BACKOFF[min(attempt, len(_RETRY_BACKOFF)) - 1]
+    headers = getattr(exc, "headers", None)
+    retry_after = headers.get("Retry-After") if headers is not None else None
+    if retry_after is not None:
+        try:
+            seconds = float(retry_after)
+        except ValueError:
+            seconds = None  # the HTTP-date form: keep the default backoff
+        if seconds is not None and math.isfinite(seconds):  # "nan" / "inf" parse as floats: keep the default too
+            delay = min(max(seconds, 0.0), _RETRY_AFTER_CAP)
+    return delay
+
+
+def _http_failure(url: str, exc: urllib.error.HTTPError, attempts: int) -> FetchError:
+    if exc.code == 404:
+        return FetchError(
+            f"HTTP 404 (not found) for {url} — the file name or revision is wrong, "
+            f"or the IRS moved it; {_OFFICIAL_PATTERNS_HINT}; find the exact file "
+            f"name on irs.gov and fix the pack's source_url"
+        )
+    if exc.code in (401, 403):
+        return RefusedFetchError(
+            f"HTTP {exc.code} ({exc.reason}) for {url} — the server refused the request; retry in a minute if it is "
+            f"transient. A host that refuses every non-browser fetcher has two remedies: "
+            f"(1) a pack's mirror_urls (an exact, digest-verified Wayback snapshot of this URL) are tried "
+            f"automatically — fetch through the pack (fetch_pack_blank) or pass mirrors=; (2) seed the cache by "
+            f"hand: open the URL in a browser, save the PDF, and run `taxfill seed-blank <saved.pdf> --url {url} "
+            f"--sha256 <the pack's pdf_sha256>` — the file is digest-checked before it is cached"
+        )
+    tried = f" (still failing after {attempts} attempts)" if attempts > 1 else ""
+    return FetchError(
+        f"HTTP {exc.code} ({exc.reason}) for {url}{tried} — retry later; if it persists, verify "
+        f"the URL in a browser and fix the pack's source_url ({_OFFICIAL_PATTERNS_HINT})"
+    )
+
+
 def _download(url: str, timeout: float) -> bytes:
-    request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
-    try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
-            return response.read()
-    except urllib.error.HTTPError as exc:
-        if exc.code == 404:
-            raise FetchError(
-                f"HTTP 404 (not found) for {url} — the file name or revision is wrong, "
-                f"or the IRS moved it; {_OFFICIAL_PATTERNS_HINT}; find the exact file "
-                f"name on irs.gov and fix the pack's source_url"
+    """GET ``url`` with a browser User-Agent; a transient failure is retried (``_RETRY_ATTEMPTS``, ``_sleep``)."""
+    # Only a network URL can fail transiently; a file:// miss is final on the first read.
+    attempts = _RETRY_ATTEMPTS if urllib.parse.urlparse(url).scheme in ("http", "https") else 1
+    for attempt in range(1, attempts + 1):
+        # A fresh Request per attempt: urllib's redirect handler keeps its visit counts on the Request it followed.
+        request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                return response.read()
+        except urllib.error.HTTPError as exc:
+            if attempt < attempts and _is_transient(exc):
+                _sleep(_retry_delay(attempt, exc))
+                continue
+            raise _http_failure(url, exc, attempt) from exc
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as exc:
+            if attempt < attempts:
+                _sleep(_retry_delay(attempt, exc))
+                continue
+            reason = getattr(exc, "reason", exc)
+            tried = f" after {attempt} attempts" if attempt > 1 else ""
+            raise OfflineFetchError(
+                f"could not reach {url} ({reason}){tried} — the network looks unreachable; connect "
+                f"to the internet and retry, or pre-populate the shared cache by copying an "
+                f"already-verified blank into place (fetch_blank tells you the cache path via "
+                f"its return value; default cache: {default_cache_dir()})"
             ) from exc
-        if exc.code in (401, 403):
-            raise RefusedFetchError(
-                f"HTTP {exc.code} ({exc.reason}) for {url} — the server refused the request; retry in a minute if it is "
-                f"transient. A host that refuses every non-browser fetcher has two remedies: "
-                f"(1) a pack's mirror_urls (an exact, digest-verified Wayback snapshot of this URL) are tried "
-                f"automatically — fetch through the pack (fetch_pack_blank) or pass mirrors=; (2) seed the cache by "
-                f"hand: open the URL in a browser, save the PDF, and run `taxfill seed-blank <saved.pdf> --url {url} "
-                f"--sha256 <the pack's pdf_sha256>` — the file is digest-checked before it is cached"
-            ) from exc
-        raise FetchError(
-            f"HTTP {exc.code} ({exc.reason}) for {url} — retry; if it persists, verify "
-            f"the URL in a browser and fix the pack's source_url ({_OFFICIAL_PATTERNS_HINT})"
-        ) from exc
-    except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as exc:
-        reason = getattr(exc, "reason", exc)
-        raise OfflineFetchError(
-            f"could not reach {url} ({reason}) — the network looks unreachable; connect "
-            f"to the internet and retry, or pre-populate the shared cache by copying an "
-            f"already-verified blank into place (fetch_blank tells you the cache path via "
-            f"its return value; default cache: {default_cache_dir()})"
-        ) from exc
+    raise AssertionError("unreachable")  # pragma: no cover
 
 
 _MIRROR_RE = re.compile(r"https://web\.archive\.org/web/\d{14}id_/(.+)")

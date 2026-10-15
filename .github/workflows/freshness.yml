@@ -60,6 +60,23 @@ jobs:
           python-version: "3.11"
       - name: Sync workspace
         run: uv sync
+      - name: Restore the blank-PDF cache
+        # .cache/blanks is where fetch_blank keeps every downloaded blank. A host that refuses the
+        # GitHub-hosted runner (mass.gov answers HTTP 403, and the pack's Wayback mirror 429 or
+        # "connection refused" — re-plan JK2) is served from a run that got through once. The cache
+        # is a performance / robustness aid and NEVER a trust boundary: fetch_blank re-checks every
+        # cached file against the pack's pdf_sha256 on every read, so a stale or foreign file is
+        # simply re-fetched. Explicit restore + save (not the plain actions/cache post step, which
+        # skips on a failed job — and this job fails on any red). The key carries the run id so a
+        # later run that fetched MORE can save it (a cache is immutable under its key); restore picks
+        # the newest cache for the same pack set first, then any older one.
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: .cache/blanks
+          key: blanks-v1-${{ hashFiles('formpacks/**/pack.yaml') }}-${{ github.run_id }}
+          restore-keys: |
+            blanks-v1-${{ hashFiles('formpacks/**/pack.yaml') }}-
+            blanks-v1-
       - name: Run network golden round-trips
         run: uv run pytest -m network
       - name: Run the ReadOnly sweep on the cache the round-trips just warmed
@@ -67,6 +84,13 @@ jobs:
         # .cache/blanks, so the offline CI job never exercises it; after the step above every pinned blank
         # is cached (Phase J JEa).
         run: uv run pytest packages/core/tests/test_verify_readonly_sweep.py
+      - name: Save the blank-PDF cache
+        # `always()`: the blanks that DID download are worth keeping even when a test went red.
+        if: always()
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: .cache/blanks
+          key: blanks-v1-${{ hashFiles('formpacks/**/pack.yaml') }}-${{ github.run_id }}
 
   report:
     # JT0c: any red (a NEW failure, or an expired quarantine row) opens a `freshness red` issue, or

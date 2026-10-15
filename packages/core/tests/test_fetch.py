@@ -389,3 +389,118 @@ def test_js1b_seed_blank_caches_only_the_pinned_bytes(tmp_path: Path, cache: Pat
     page.write_bytes(b"<html>Access denied</html>")
     with pytest.raises(FetchError, match="not a PDF"):
         seed_blank(page, OFFICIAL, digest, cache_dir=cache)
+
+
+# --- JK2: transient failures are retried; refusals and 404 are not ---------------------------------------------------
+
+
+@pytest.fixture(autouse=True)
+def sleeps(monkeypatch) -> list[float]:
+    """Every delay _download would have slept, recorded instead — the retries are instant under test."""
+    recorded: list[float] = []
+    monkeypatch.setattr("taxfill_core.fetch._sleep", recorded.append)
+    return recorded
+
+
+def _answers(script: list, seen: list[str]):
+    """urlopen that pops the next scripted answer: an exception instance to raise, or bytes to serve."""
+    def urlopen(request, timeout=None):
+        seen.append(request.full_url)
+        answer = script.pop(0)
+        if isinstance(answer, BaseException):
+            raise answer
+        return _Response(answer)
+    return urlopen
+
+
+def _http(code: int, reason: str, headers: dict | None = None) -> urllib.error.HTTPError:
+    import email.message  # noqa: PLC0415
+    msg = email.message.Message()
+    for k, v in (headers or {}).items():
+        msg[k] = v
+    return urllib.error.HTTPError(OFFICIAL, code, reason, msg, io.BytesIO())
+
+
+def test_jk2_a_429_then_200_succeeds_after_one_backoff(cache: Path, monkeypatch, sleeps):
+    seen: list[str] = []
+    monkeypatch.setattr(urllib.request, "urlopen", _answers([_http(429, "Too Many Requests"), PDF_BYTES], seen))
+    path = fetch_blank(OFFICIAL, cache_dir=cache)
+    assert path.read_bytes() == PDF_BYTES
+    assert seen == [OFFICIAL, OFFICIAL]
+    assert sleeps == [2.0]
+
+
+def test_jk2_a_503_then_a_timeout_then_200_uses_both_backoffs(cache: Path, monkeypatch, sleeps):
+    seen: list[str] = []
+    script = [_http(503, "Service Unavailable"), urllib.error.URLError(TimeoutError("timed out")), PDF_BYTES]
+    monkeypatch.setattr(urllib.request, "urlopen", _answers(script, seen))
+    assert fetch_blank(OFFICIAL, cache_dir=cache).read_bytes() == PDF_BYTES
+    assert seen == [OFFICIAL] * 3
+    assert sleeps == [2.0, 6.0]
+
+
+def test_jk2_three_5xx_answers_fail_as_an_http_error_naming_the_attempts(cache: Path, monkeypatch, sleeps):
+    seen: list[str] = []
+    monkeypatch.setattr(urllib.request, "urlopen", _answers([_http(503, "Service Unavailable")] * 3, seen))
+    with pytest.raises(FetchError, match=r"HTTP 503 .*3 attempts") as exc:
+        fetch_blank(OFFICIAL, cache_dir=cache)
+    assert not isinstance(exc.value, (OfflineFetchError, RefusedFetchError))
+    assert seen == [OFFICIAL] * 3 and sleeps == [2.0, 6.0]
+    assert not cache.exists()
+
+
+def test_jk2_three_connection_failures_are_offline_after_three_attempts(cache: Path, monkeypatch, sleeps):
+    seen: list[str] = []
+    script = [urllib.error.URLError(ConnectionRefusedError(111, "Connection refused")), ConnectionResetError("reset"),
+              urllib.error.URLError(OSError("Network is unreachable"))]
+    monkeypatch.setattr(urllib.request, "urlopen", _answers(script, seen))
+    with pytest.raises(OfflineFetchError, match="after 3 attempts"):
+        fetch_blank(OFFICIAL, cache_dir=cache)
+    assert seen == [OFFICIAL] * 3 and sleeps == [2.0, 6.0]
+
+
+@pytest.mark.parametrize(("retry_after", "expected"), [("5", 5.0), ("120", 30.0), ("0", 0.0),
+                                                       ("Wed, 21 Oct 2026 07:28:00 GMT", 2.0), ("nan", 2.0), ("inf", 2.0), ("-inf", 2.0)])
+def test_jk2_retry_after_is_honoured_up_to_the_cap(cache: Path, monkeypatch, sleeps, retry_after, expected):
+    script = [_http(429, "Too Many Requests", {"Retry-After": retry_after}), PDF_BYTES]
+    monkeypatch.setattr(urllib.request, "urlopen", _answers(script, []))
+    fetch_blank(OFFICIAL, cache_dir=cache)
+    assert sleeps == [expected]
+
+
+@pytest.mark.parametrize(("code", "reason", "error"), [(403, "Forbidden", RefusedFetchError), (401, "Unauthorized", RefusedFetchError),
+                                                       (404, "Not Found", FetchError)])
+def test_jk2_a_refusal_or_a_404_is_never_retried(cache: Path, monkeypatch, sleeps, code, reason, error):
+    seen: list[str] = []
+    monkeypatch.setattr(urllib.request, "urlopen", _answers([_http(code, reason), PDF_BYTES], seen))
+    with pytest.raises(error, match=str(code)):
+        fetch_blank(OFFICIAL, cache_dir=cache)
+    assert seen == [OFFICIAL] and sleeps == []
+
+
+def test_jk2_a_file_url_is_never_retried(tmp_path: Path, cache: Path, sleeps):
+    with pytest.raises(OfflineFetchError):
+        fetch_blank((tmp_path / "missing.pdf").as_uri(), cache_dir=cache)
+    assert sleeps == []
+
+
+def test_jk2_a_rate_limited_mirror_gets_the_retries_after_the_official_403(cache: Path, monkeypatch, sleeps):
+    seen: list[str] = []
+    forbidden = urllib.error.HTTPError(OFFICIAL, 403, "Forbidden", None, io.BytesIO())
+    too_many = urllib.error.HTTPError(MIRROR, 429, "Too Many Requests", None, io.BytesIO())
+    monkeypatch.setattr(urllib.request, "urlopen", _answers([forbidden, too_many, PDF_BYTES], seen))
+    digest = hashlib.sha256(PDF_BYTES).hexdigest()
+    path = fetch_blank(OFFICIAL, sha256=digest, cache_dir=cache, mirrors=[MIRROR])
+    assert path.read_bytes() == PDF_BYTES
+    assert seen == [OFFICIAL, MIRROR, MIRROR]  # the 403 once (no retry), the mirror's 429 retried
+    assert sleeps == [2.0]
+
+
+def test_jk2_a_mirror_refused_three_times_reports_the_attempts(cache: Path, monkeypatch, sleeps):
+    seen: list[str] = []
+    forbidden = urllib.error.HTTPError(OFFICIAL, 403, "Forbidden", None, io.BytesIO())
+    refused = [urllib.error.URLError(ConnectionRefusedError(111, "Connection refused")) for _ in range(3)]
+    monkeypatch.setattr(urllib.request, "urlopen", _answers([forbidden, *refused], seen))
+    with pytest.raises(FetchError, match=r"Every mirror failed too: .*after 3 attempts"):
+        fetch_blank(OFFICIAL, sha256=hashlib.sha256(PDF_BYTES).hexdigest(), cache_dir=cache, mirrors=[MIRROR])
+    assert seen == [OFFICIAL, MIRROR, MIRROR, MIRROR] and sleeps == [2.0, 6.0]
