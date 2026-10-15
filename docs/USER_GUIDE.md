@@ -121,23 +121,23 @@ For a complete fill-in checklist of everything to gather, use the [intake worksh
 
 ## Your first return in ~15 minutes
 
-An abbreviated, synthetic walkthrough (a hypothetical filer with demo numbers: simple W-2, single, 2023):
+An abbreviated, synthetic walkthrough (a hypothetical filer with demo numbers: a new-grad software engineer, one W-2, single, 2025). To follow along, attach the sample [W-2](samples/w2_2025_synthetic.png) ([PDF](samples/w2_2025_synthetic.pdf)) — a demo persona, never real data:
 
-> **You:** I need to file my 2023 federal taxes. I have one W-2.
+> **You:** I need to file my 2025 federal taxes. I have one W-2.
 >
-> **Agent:** *(calls `intake_checklist`)* Let's start. What's your full legal name and SSN? Are you a U.S. citizen or green-card holder? And your **current** mailing address — where you receive mail *today*, not where you lived in 2023?
+> **Agent:** *(calls `intake_checklist`)* Let's start. What's your full legal name and SSN? Are you a U.S. citizen or green-card holder? Where did you live and work in 2025? And your **current** mailing address — where you receive mail *today*, not where you lived in 2025?
 >
-> **You:** *(answers; uploads a photo of the W-2)*
+> **You:** *(answers — Washington all year; uploads a photo of the W-2; gives the routing and account numbers from a check, for direct deposit)*
 >
-> **Agent:** From your W-2 I read **wages $52,000** and **federal tax withheld $5,400** — can you confirm those two numbers? *(you confirm)* *(calls `estimate_refund`)* Preliminary **ESTIMATE: a refund of about $1,039** — assuming single, standard deduction, no other income or credits. I'll tighten it as we go.
+> **Agent:** *(calls `extract_document`, then `state_scope`)* From your W-2 I read **wages $168,100** and **federal tax withheld $30,487** — can you confirm those two numbers? Washington does not tax wages, so there is no state return. *(you confirm)* *(calls `estimate_refund`)* Preliminary **ESTIMATE: a refund of about $1,076** — assuming single, standard deduction, no other income or credits. I'll tighten it as we go.
 >
-> **Agent:** *(calls `calc`, `fill_form` for Form 1040, then `verify_form`)* Filled and verified — all math checks pass. *(calls `render_form`)* Here are your pages — please look them over. *(shows images)*
+> **Agent:** *(calls `calc`: the 2025 tax on $152,350 of taxable income is $29,411; then `fill_form` for Form 1040 and `verify_form`)* Filled and verified — all math checks pass. *(calls `render_form`)* Here are your pages — please look them over. *(shows images)*
 >
-> **Agent:** *(calls `filing_summary`)* **Bottom line — Federal 2023: refund $1,039**, because your employer withheld more than you owe. The refund-claim deadline is around 2027-04-15. Approve and I'll prepare the mailing checklist?
+> **Agent:** *(calls `filing_summary`)* **Bottom line — Federal 2025: refund $1,076 (direct deposit)**, because your employer withheld more than you owe. The refund-claim deadline is around 2029-04-15. Approve and I'll prepare the mailing checklist?
 >
 > **You:** Approved.
 >
-> **Agent:** *(calls `file_and_pay`)* Print only the form pages (not the instructions), single-sided; sign and date the return in ink; attach your W-2; and mail to **Ogden, UT 84201-0002** (California, refund). Photograph the signed pages and keep a copy. Done — you review, sign, and mail it yourself.
+> **Agent:** *(calls `file_and_pay`)* Print only the form pages (not the instructions), single-sided; sign and date the return in ink; attach your W-2; and mail to **Ogden, UT 84201-0002** (Washington, refund). Photograph the signed pages and keep a copy. Done — you review, sign, and mail it yourself.
 
 ## Privacy, in plain words
 

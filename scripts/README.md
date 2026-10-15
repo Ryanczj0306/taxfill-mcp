@@ -14,6 +14,7 @@ Run them from the repo root with `uv run python scripts/<name>.py`. None is need
 | `state_discovery_rows.json` | The verified blank-URL discoveries `scaffold_state_year.py --rows` consumes |
 | `introspect_pdf.py` | Dumps a blank AcroForm's widgets, for authoring a new pack |
 | `audit_pack.py` | Field-map audit harness for one pack |
+| `make_sample_w2.py` | Renders the demo-persona sample W-2 (`docs/samples/w2_2025_synthetic.pdf` / `.png`) the user guide's walkthrough, ACCEPTANCE and DEMO use, from the figures at its top; re-run it when the 2025 wage base or FICA rates change (`test_sample_w2.py` fails until you do) |
 | `stage_data.py` | Copies `knowledge/` and `formpacks/` into the core package before a build (release step) |
 | `release_smoke.py` | Checks an installed wheel against the checkout it was built from: packs per jurisdiction-year, every staged data file, the state knowledge years, the pinned tool set (CI's packaging job and `docs/dev/PUBLISHING.md`; run it with the wheel's interpreter, outside the repo) |
 | `assemble_state_sources.py` | Regenerates `knowledge/sources_states.yaml` from the state knowledge packs' own citations; re-run it after changing a state pack's citations (`--check` runs in the test suite) |
