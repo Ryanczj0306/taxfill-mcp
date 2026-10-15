@@ -1134,6 +1134,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # header.taxpayer_id it introduced are not address lines) equals the reviewed DE 2023 row.
     # JS5: MS 80-105 2025 (a PORTABLE port of MS 2023, every widget name and /Rect kept; the two new header-SSN mirror
     # lines are not address lines) equals the reviewed MS 2023 row (the four mailing_address lines).
+    # JS5: IN IT-40 2024 (a RE-MAP of IN 2023: every widget renamed, the Present Address / City / State / ZIP boxes kept
+    # their line keys; the Foreign Country Code box is not a selector line) equals the reviewed IN 2023 row.
     # JS5: WI Form 1 2025 (page 1 unchanged; pages 2-3 renumbered, new page 5) equals the reviewed WI 2023 row —
     # home_address / city_or_post_office / state / zip_code; the new Schedule 3 and anatomical-gift lines are not
     # address lines.
