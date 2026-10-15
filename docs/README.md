@@ -24,6 +24,7 @@ New here? Start with the [project README](../README.md), then the user guide.
 | [History](dev/HISTORY.md) | How the completed phases were built |
 | [Field notes](dev/FIELD_NOTES.md) | Gaps found by driving an agent end to end through hypothetical demo cases |
 | [Publishing](dev/PUBLISHING.md) | The release runbook (PyPI, the `.mcpb` bundle) |
+| [Changelog](CHANGELOG.md) | What each release contains |
 | [Acceptance test](dev/ACCEPTANCE.md) | The v0.1 ship gate: a non-developer reaches a filled form in under 20 minutes |
 | [Demo storyboard](dev/DEMO.md) | The planned demo GIF |
 | [Security policy](../.github/SECURITY.md) | How to report a vulnerability privately |

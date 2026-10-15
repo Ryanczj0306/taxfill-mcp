@@ -12,8 +12,10 @@ package docstrings said "IN DEVELOPMENT / not yet published", which would have s
 (b) no frozen surface carries pre-release wording; the four long ones state the release status and the same
     outbound-traffic sentence (an installed copy talks to the tax agencies' own sites or an exact Internet Archive
     copy of a blank, not only to ``.gov`` hosts: the MN packs live on revenue.state.mn.us);
-(c) the four version sites, the core pin in the server's dependencies and the .mcpb manifest agree, so a release
-    commit that bumps one and forgets another fails here, not on PyPI.
+(c) the four version sites, the core pin in the server's dependencies, the .mcpb manifest and the bundle's
+    pyproject (its version and its taxfill-mcp pin) agree, so a release commit that bumps one and forgets another
+    fails here, not on PyPI; and the bundle's manifest runs its own entry point with `uv run` (this module only reads
+    the files: release.yml launches the packed bundle against PyPI with scripts/bundle_probe.py).
 
 The repo-only surfaces (docs/dev/PUBLISHING.md's list: the root README, docs/USER_GUIDE.md, docs/TOOLS.md,
 .github/CONTRIBUTING.md, the bundle recipe and the root pyproject.toml) flip after the upload, in the follow-up
@@ -36,6 +38,7 @@ MCP_PYPROJECT = REPO / "packages" / "mcp-server" / "pyproject.toml"
 CORE_INIT = REPO / "packages" / "core" / "src" / "taxfill_core" / "__init__.py"
 MCP_INIT = REPO / "packages" / "mcp-server" / "src" / "taxfill_mcp" / "__init__.py"
 MANIFEST = REPO / "packages" / "mcp-server" / "bundle" / "manifest.json"
+BUNDLE_PYPROJECT = REPO / "packages" / "mcp-server" / "bundle" / "pyproject.toml"
 
 # A number followed by a countable noun: "23 tools", "40 calculation ops", "212 packs", "37 forms", "8 document kinds".
 # Years ("2019-2026", "the 2026 packs", "the 2026 Form 1040-ES") and "50 states + DC" are facts of scope, not counts
@@ -194,8 +197,36 @@ def test_every_version_site_agrees():
     pins = [d for d in _project(MCP_PYPROJECT)["dependencies"] if re.match(r"taxfill-core\b", d)]
     assert len(pins) == 1, f"taxfill-mcp must depend on taxfill-core exactly once, found {pins}"
     sites["packages/mcp-server/pyproject.toml taxfill-core pin"] = pins[0].split("==", 1)[1] if "==" in pins[0] else pins[0]
+    bundle = _project(BUNDLE_PYPROJECT)
+    sites["packages/mcp-server/bundle/pyproject.toml version"] = bundle["version"]
+    sites["packages/mcp-server/bundle/pyproject.toml taxfill-mcp pin"] = _bundle_pin(bundle)
     assert set(sites.values()) == {core}, "version sites disagree (bump them together — docs/dev/PUBLISHING.md):\n" + \
         "\n".join(f"  {k}: {v}" for k, v in sites.items())
+
+
+def _bundle_pin(bundle: dict) -> str:
+    pins = [d for d in bundle["dependencies"] if re.match(r"taxfill-mcp\b", d)]
+    assert len(pins) == 1 and "==" in pins[0], f"the bundle must pin taxfill-mcp exactly once with ==, found {pins}"
+    return pins[0].split("==", 1)[1].strip()
+
+
+def test_the_bundle_manifest_runs_its_entry_point_with_uv():
+    """manifest_version 0.4, server.type "uv" (Phase J JA1.5): the bundle ships src/server.py and a pyproject that
+    pins the published taxfill-mcp, and its mcp_config runs that entry point with `uv run` in the bundle directory.
+    The build recipe (README.md) stays out of the packed bundle. File and JSON checks only: nothing is launched here
+    (release.yml's github-release job launches the packed bundle with scripts/bundle_probe.py)."""
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    server = manifest["server"]
+    assert manifest["manifest_version"] == "0.4" and server["type"] == "uv", "the uv runtime needs manifest 0.4"
+    bundle_dir = MANIFEST.parent
+    entry = bundle_dir / server["entry_point"]
+    assert entry.is_file(), f"server.entry_point {server['entry_point']!r} is not in the bundle"
+    assert "from taxfill_mcp.server import main" in entry.read_text(encoding="utf-8")
+    assert server["mcp_config"]["command"] == "uv"
+    assert server["mcp_config"]["args"] == ["run", "--directory", "${__dirname}", server["entry_point"]]
+    assert _project(BUNDLE_PYPROJECT)["requires-python"] == manifest["compatibility"]["runtimes"]["python"]
+    ignored = (bundle_dir / ".mcpbignore").read_text(encoding="utf-8").split()
+    assert {"README.md", ".venv/", "uv.lock"} <= set(ignored), ".mcpbignore must keep the recipe and local envs out"
 
 
 # ── (d) the repo-only surfaces, flipped after the upload ─────────────────────

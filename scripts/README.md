@@ -5,7 +5,7 @@ Run them from the repo root with `uv run python scripts/<name>.py`. None is need
 | Script | What it does |
 |---|---|
 | `sync_test_count.py` | Keeps the test count quoted in the README badge and the roadmap equal to `pytest --collect-only` (`--write` / `--check`; CI runs `--check`) |
-| `sync_doc_counts.py` | Same for every other quoted number (tools, calc ops, document kinds, packs), and generates the tables in `docs/COVERAGE.md` |
+| `sync_doc_counts.py` | Same for every other quoted number (tools, calc ops, document kinds, packs), and generates the tables in `docs/COVERAGE.md` and the next release's coverage lines in `docs/CHANGELOG.md` |
 | `sync_bundle_manifest.py` | Keeps the `.mcpb` bundle manifest's calc entry equal to the running server (a test checks the tool names) |
 | `check_drift.py` | Freshness check: re-fetches the official sources, blanks and addresses (the weekly freshness workflow) |
 | `freshness_quarantine.py` + `.yaml` | Known freshness reds behind an expiring allowlist, so only a NEW red fails |
@@ -17,6 +17,8 @@ Run them from the repo root with `uv run python scripts/<name>.py`. None is need
 | `make_sample_w2.py` | Renders the demo-persona sample W-2 (`docs/samples/w2_2025_synthetic.pdf` / `.png`) the user guide's walkthrough, ACCEPTANCE and DEMO use, from the figures at its top; re-run it when the 2025 wage base or FICA rates change (`test_sample_w2.py` fails until you do) |
 | `stage_data.py` | Copies `knowledge/` and `formpacks/` into the core package before a build (release step) |
 | `release_smoke.py` | Checks an installed wheel against the checkout it was built from: packs per jurisdiction-year, every staged data file, the state knowledge years, the pinned tool set (CI's packaging job and `docs/dev/PUBLISHING.md`; run it with the wheel's interpreter, outside the repo) |
+| `release_notes.py` | Checks a release tag against the repo (every version site, a public version, a dated `docs/CHANGELOG.md` section) and prints that section as the GitHub release notes (the first step of `.github/workflows/release.yml`) |
+| `bundle_probe.py` | Launches an unpacked `.mcpb` bundle with its own manifest command and checks it answers MCP `initialize` + `tools/list` with exactly the manifest's tools (`.github/workflows/release.yml`, against the published server, before the bundle is attached) |
 | `assemble_state_sources.py` | Regenerates `knowledge/sources_states.yaml` from the state knowledge packs' own citations; re-run it after changing a state pack's citations (`--check` runs in the test suite) |
 | `assemble_state_knowledge.py`, `assemble_state_tax_blocks.py`, `assemble_state_credits.py` | Build state knowledge packs, their `tax:` blocks and their credits from a cited research fetch (JSON) given on the command line — how the state knowledge was first assembled |
 | `assemble_ca540.py`, `assemble_ca540nr.py` | One-time generators of the 2023 CA Form 540 / 540NR packs from a vision-mapping file that is not in the repo; kept as the record of how those packs were made |

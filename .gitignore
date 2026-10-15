@@ -21,6 +21,10 @@ build/
 # They must NEVER be committable.
 taxfill-workspace/
 
+# The .mcpb bundle: packed files are release assets, and a local `uv run` in the bundle leaves a lock and a venv
+*.mcpb
+packages/mcp-server/bundle/uv.lock
+
 # staged data copy for packaging (source of truth is repo-root knowledge/ + formpacks/)
 packages/core/src/taxfill_core/_data/
 

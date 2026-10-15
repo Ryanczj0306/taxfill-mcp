@@ -1,0 +1,12 @@
+# The .mcpb bundle's Python project (manifest_version 0.4, server.type "uv"): the bundle ships no server code and no
+# packages, only this dependency list and src/server.py. The manifest's mcp_config, `uv run --directory <bundle>
+# src/server.py`, creates the bundle's own environment and installs the PUBLISHED taxfill-mcp from PyPI (a host that
+# implements the uv runtime may manage that environment itself), so the bundle can only launch once that version is
+# uploaded.
+# The pin is a version site: it moves with the release (docs/dev/PUBLISHING.md step 1; test_release_surfaces.py).
+[project]
+name = "taxfill-mcpb"
+version = "0.1.0"
+description = "Launcher for the TaxFill .mcpb bundle: installs and runs the published taxfill-mcp server."
+requires-python = ">=3.11"
+dependencies = ["taxfill-mcp==0.1.0"]

@@ -1,0 +1,215 @@
+name: Release
+
+# Pushing a tag v<version> releases that version (Phase J JA1.6; runbook: docs/dev/PUBLISHING.md steps 4-6):
+#   build ........ checks the tag against the repo and docs/CHANGELOG.md, builds both packages from freshly staged
+#                  data, runs twine check and the clean-venv smoke, validates and packs taxfill.mcpb and checks the
+#                  packed file list -- read-only token, nothing is uploaded yet;
+#   publish-core . uploads taxfill-core to PyPI (Trusted Publishing);
+#   publish-mcp .. uploads taxfill-mcp, which pins taxfill-core==<version>, so core goes first;
+#   github-release waits until the published taxfill-mcp resolves from PyPI, launches the packed bundle with its
+#                  own manifest command (scripts/bundle_probe.py: MCP initialize + tools/list against that published
+#                  server) and creates the GitHub release from the CHANGELOG section, attaching the bundle the build
+#                  job packed. It packs nothing itself, and its checkout keeps no token.
+# The PyPI upload is IRREVERSIBLE: a version number can never be uploaded twice. Pushing the tag is the user's act;
+# no workflow or agent in this repo pushes one. Each upload is its own job, so "Re-run failed jobs" after a
+# failure in publish-mcp or github-release never tries to upload taxfill-core a second time; and both uploads set
+# skip-existing, so a re-run after a partial upload (one of a project's two files reached PyPI) uploads only the
+# file that is missing -- the re-run re-sends the same 'release' artifact, so the skipped file is the same file.
+#
+# One-time setup, by the user (Phase J JA2), before the first tag:
+#   1. On pypi.org, add a Trusted Publisher for EACH of the two projects -- before the first upload as a "pending
+#      publisher" (Your account -> Publishing -> Add a new pending publisher -> GitHub); once a project exists,
+#      under that project's Manage -> Publishing. Enter exactly:
+#          PyPI Project Name:  taxfill-core      (then a second publisher with: taxfill-mcp)
+#          Owner:              Ryanczj0306
+#          Repository name:    taxfill-mcp
+#          Workflow name:      release.yml
+#          Environment name:   pypi
+#   2. In this repo: Settings -> Environments -> New environment named `pypi` (adding yourself as a required
+#      reviewer makes every upload wait for an explicit approval in the Actions tab).
+# No API token or secret is stored anywhere: the OIDC token of the two publish jobs (id-token: write) is the
+# credential, and PyPI accepts it only from this repository, this workflow file and the `pypi` environment.
+#
+# Every action is pinned by commit SHA with its tag in a trailing comment (.github/dependabot.yml proposes bumps);
+# checkout, setup-uv and uv are the same pins as ci.yml. packages/mcp-server/tests/test_release_workflow.py checks
+# the pins, the job order and the permissions.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+        with:
+          fetch-depth: 0   # full history: the tagged commit must be on main
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
+        with:
+          version: "0.13.0"
+          python-version: "3.11"
+      - name: The tag is on main, matches every version site and has a dated CHANGELOG section
+        # scripts/release_notes.py refuses a tag that is not v<version>, a .dev version, or a docs/CHANGELOG.md
+        # section that is missing, undated or empty; its output is the GitHub release notes.
+        run: |
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main \
+            || { echo "::error::$GITHUB_REF_NAME does not point at a commit on main"; exit 1; }
+          uv run --no-project python scripts/release_notes.py --tag "$GITHUB_REF_NAME" --out release-notes.md
+      - name: Release-surface tests
+        run: |
+          uv sync
+          uv run pytest -p no:cacheprovider -q packages/mcp-server/tests/test_release_surfaces.py \
+            packages/mcp-server/tests/test_release_workflow.py
+      - name: Stage data + build both distributions
+        run: |
+          uv run --no-project python scripts/stage_data.py
+          rm -rf dist/
+          uv build --package taxfill-core
+          uv build --package taxfill-mcp
+      - name: twine check (PyPI metadata)
+        run: uvx twine check dist/*
+      - name: Install into a clean venv outside the repo and smoke-test
+        # The same check as ci.yml's packaging job: scripts/release_smoke.py derives every expectation from this
+        # checkout, and --dist refuses an sdist that carries the repo-only bundle/ recipe.
+        run: |
+          set -e
+          TMP="$(mktemp -d)"
+          uv venv "$TMP/venv" --python 3.11
+          uv pip install --python "$TMP/venv/bin/python" --no-cache --find-links dist/ "$(ls dist/taxfill_mcp-*.whl)"
+          cd "$TMP"
+          env -u TAXFILL_DATA_DIR "$TMP/venv/bin/python" "$GITHUB_WORKSPACE/scripts/release_smoke.py" \
+            --repo "$GITHUB_WORKSPACE" --dist "$GITHUB_WORKSPACE/dist"
+      - name: The .mcpb bundle validates, packs and holds exactly the recipe's three files (before any upload)
+        # Packed here, in the job whose token is read-only, and shipped in the 'release' artifact: github-release
+        # only attaches it. The same file-list check as ci.yml, plus a byte comparison with the checkout, so what
+        # ships is exactly the reviewed manifest.json, pyproject.toml and src/server.py.
+        run: |
+          set -e
+          npx --yes @anthropic-ai/mcpb@2.1.2 validate packages/mcp-server/bundle/manifest.json
+          mkdir -p mcpb
+          npx --yes @anthropic-ai/mcpb@2.1.2 pack packages/mcp-server/bundle mcpb/taxfill.mcpb
+          FILES="$(unzip -Z1 mcpb/taxfill.mcpb | sort | tr '\n' ' ')"
+          echo "taxfill.mcpb holds: $FILES"
+          test "$FILES" = "manifest.json pyproject.toml src/server.py " \
+            || { echo "::error::taxfill.mcpb holds unexpected files: $FILES"; exit 1; }
+          for f in manifest.json pyproject.toml src/server.py; do
+            unzip -p mcpb/taxfill.mcpb "$f" | cmp - "packages/mcp-server/bundle/$f" \
+              || { echo "::error::taxfill.mcpb's $f differs from the checkout"; exit 1; }
+          done
+          sha256sum mcpb/taxfill.mcpb
+      - name: One directory per PyPI project
+        run: |
+          mkdir -p upload/taxfill-core upload/taxfill-mcp
+          mv dist/taxfill_core-* upload/taxfill-core/
+          mv dist/taxfill_mcp-* upload/taxfill-mcp/
+          test -z "$(ls -A dist)" || { echo "::error::unexpected files in dist/: $(ls dist)"; exit 1; }
+          ls -l upload/*
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: release
+          path: |
+            upload/
+            mcpb/
+            release-notes.md
+          if-no-files-found: error
+
+  publish-core:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: pypi
+      url: https://pypi.org/project/taxfill-core/
+    permissions:
+      id-token: write   # Trusted Publishing: the job's OIDC token is the only credential
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: release
+          path: release
+      - name: Publish taxfill-core to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33  # v1.14.2
+        with:
+          packages-dir: release/upload/taxfill-core/
+          skip-existing: true   # a re-run after a partial upload sends only the missing file (header comment)
+
+  publish-mcp:
+    needs: publish-core
+    runs-on: ubuntu-24.04
+    environment:
+      name: pypi
+      url: https://pypi.org/project/taxfill-mcp/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: release
+          path: release
+      - name: Publish taxfill-mcp to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33  # v1.14.2
+        with:
+          packages-dir: release/upload/taxfill-mcp/
+          skip-existing: true
+
+  github-release:
+    needs: publish-mcp
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write   # gh release create
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+        with:
+          persist-credentials: false   # the write token reaches only the `gh release create` step, via GH_TOKEN
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
+        with:
+          version: "0.13.0"
+          python-version: "3.11"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: release
+          path: release
+      - name: The published taxfill-mcp resolves from PyPI
+        # The bundle installs the published server on the user's machine, so it ships only once a fresh resolve
+        # from PyPI works (the index can lag the upload by a few minutes).
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if (cd "$RUNNER_TEMP" && env -u TAXFILL_DATA_DIR uvx --no-cache --from "taxfill-mcp==$VERSION" taxfill tools > tools.txt); then
+              echo "taxfill-mcp==$VERSION resolves from PyPI (attempt $attempt): $(grep -c . "$RUNNER_TEMP/tools.txt") lines from taxfill tools"
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "::error::taxfill-mcp==$VERSION did not resolve from PyPI within 5 minutes"
+          exit 1
+      - name: The packed bundle starts the published server with its own manifest command
+        # Unpacked outside the repo, the bundle's mcp_config (`uv run --directory <bundle> src/server.py`) installs
+        # taxfill-mcp==<version> from PyPI and must answer MCP initialize + tools/list with exactly the manifest's
+        # tools. This proves the manifest's command, not what a given Claude Desktop build does with the bundle.
+        env:
+          UV_NO_CACHE: "1"
+        run: |
+          set -e
+          BUNDLE="$RUNNER_TEMP/taxfill-bundle"
+          rm -rf "$BUNDLE" && mkdir -p "$BUNDLE"
+          unzip -q release/mcpb/taxfill.mcpb -d "$BUNDLE"
+          cd "$RUNNER_TEMP"
+          env -u TAXFILL_DATA_DIR uv run --no-project python "$GITHUB_WORKSPACE/scripts/bundle_probe.py" "$BUNDLE"
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          PRE=""
+          case "$VERSION" in *a*|*b*|*rc*) PRE="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" --verify-tag $PRE --title "TaxFill $VERSION" \
+            --notes-file release/release-notes.md \
+            release/mcpb/taxfill.mcpb release/upload/taxfill-core/* release/upload/taxfill-mcp/*

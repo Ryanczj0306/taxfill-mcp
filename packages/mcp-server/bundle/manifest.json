@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.2",
+  "manifest_version": "0.4",
   "name": "taxfill",
   "display_name": "TaxFill",
   "version": "0.1.0",
@@ -22,12 +22,15 @@
     "nonresident"
   ],
   "server": {
-    "type": "binary",
-    "entry_point": "taxfill-mcp",
+    "type": "uv",
+    "entry_point": "src/server.py",
     "mcp_config": {
-      "command": "uvx",
+      "command": "uv",
       "args": [
-        "taxfill-mcp"
+        "run",
+        "--directory",
+        "${__dirname}",
+        "src/server.py"
       ]
     }
   },

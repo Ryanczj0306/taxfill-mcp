@@ -2,21 +2,51 @@
 
 This is the mechanical runbook for shipping a release. The packaging is already
 proven self-contained (CI `packaging` job builds, installs into a clean venv
-outside the repo, and exercises the loaders), so a release is: bump → build →
-verify → upload → tag → bundle → flip the repo-only docs.
+outside the repo, and exercises the loaders), so a release is: the release
+commit (version + CHANGELOG) → an optional local dry run → **the tag push**,
+after which `.github/workflows/release.yml` builds, verifies and packs the
+bundle, uploads to PyPI, launches the bundle against the upload and creates the
+GitHub release → flip the repo-only docs.
 
-> **Two steps are intentionally manual** — they are outward-facing and need
-> credentials, so a human runs them, not CI or an agent:
-> 1. the actual `twine upload` to PyPI (irreversible — a version cannot be
->    re-uploaded), and
-> 2. recording the demo GIF (see [`DEMO.md`](DEMO.md)).
+> **Three steps are intentionally the user's** — they are outward-facing, so a
+> human does them, not CI or an agent:
+> 1. the one-time PyPI Trusted Publisher setup (step 0),
+> 2. **pushing the release tag** (step 4): the workflow it starts uploads to
+>    PyPI, which is irreversible — a version can never be uploaded twice, and
+> 3. recording the demo GIF (see [`DEMO.md`](DEMO.md)).
+
+What the agent half (Phase J JA1) prepared, so that the tag push is the only
+outward act: `release.yml` and `scripts/release_notes.py` (the tag, version and
+CHANGELOG checks that run before any upload), `docs/CHANGELOG.md`, the bundle's
+uv runtime and its CI check, `scripts/release_smoke.py`,
+`scripts/bundle_probe.py`, and the tests that hold them
+(`test_release_surfaces.py`, `test_release_workflow.py`,
+`test_release_smoke.py`).
 
 ## 0. Prerequisites
 
-- Maintainer access to the `taxfill-core` and `taxfill-mcp` PyPI projects (and a
-  PyPI API token in `~/.pypirc` or `TWINE_*` env vars).
-- `uv` installed. `uvx twine` and `uvx` are used below (no global installs).
-- A clean working tree on `main`, CI green.
+- **PyPI Trusted Publishing, set up once by the user** (no API token anywhere).
+  On pypi.org, add a GitHub publisher for EACH of the two projects — before the
+  first upload as a *pending* publisher (Your account → Publishing → Add a new
+  pending publisher), afterwards under the project's Manage → Publishing —
+  with exactly these values (the header comment of `release.yml` repeats them):
+
+  | Field | taxfill-core | taxfill-mcp |
+  |---|---|---|
+  | PyPI Project Name | `taxfill-core` | `taxfill-mcp` |
+  | Owner | `Ryanczj0306` | `Ryanczj0306` |
+  | Repository name | `taxfill-mcp` | `taxfill-mcp` |
+  | Workflow name | `release.yml` | `release.yml` |
+  | Environment name | `pypi` | `pypi` |
+
+  Then, in the GitHub repo, Settings → Environments → New environment `pypi`.
+  Adding yourself as a required reviewer there makes each of the two upload jobs
+  wait for your approval in the Actions tab — a last look before the
+  irreversible step.
+- `uv` installed. `uvx twine` and `uvx` are used below (no global installs);
+  `npx` (Node.js) for the optional local `mcpb` check.
+- A clean working tree on `main`, CI green. `release.yml` refuses a tag that
+  does not point at a commit on `main`.
 
 ## 1. Version policy and the release commit
 
@@ -43,17 +73,35 @@ The version lives in four sites, plus the core pin and the bundle manifest:
 - `packages/mcp-server/pyproject.toml` → `dependencies` pin `taxfill-core==<version>`
   (in lock-step so `uvx taxfill-mcp` resolves the matching core)
 - `packages/mcp-server/bundle/manifest.json` → `version`
+- `packages/mcp-server/bundle/pyproject.toml` → `version` and the
+  `taxfill-mcp==<version>` pin (the bundle installs exactly this release)
 
-`packages/mcp-server/tests/test_release_surfaces.py` fails unless all six agree,
-so a release commit that bumps one and forgets another fails CI, not PyPI. Run
-`uv lock` after the bump so `uv.lock` records the new workspace versions
-(it lists both packages with their version).
+`packages/mcp-server/tests/test_release_surfaces.py` fails unless all eight
+agree, so a release commit that bumps one and forgets another fails CI, not
+PyPI; `scripts/release_notes.py` checks the same sites against the tag before
+`release.yml` builds anything. Run `uv lock` after the bump so `uv.lock` records
+the new workspace versions (it lists both packages with their version).
 
-**CHANGELOG.** In the release commit, give the release its own section in
-`CHANGELOG.md` (the version and the date) holding everything merged since the
-previous tag; the GitHub release notes for the tag are that section. This step
-applies once `CHANGELOG.md` exists (Phase J JA1 part C adds it); before that,
-draft the release notes from `git log` since the previous tag.
+**CHANGELOG.** [`docs/CHANGELOG.md`](../CHANGELOG.md) (Keep a Changelog; it
+lives under `docs/` because the repo root is held at 13 entries). Between
+releases the next version's section reads `## [<version>] - Unreleased` and
+collects what is merged; its coverage bullets sit between GENERATED markers and
+`scripts/sync_doc_counts.py --write` keeps them equal to the packs (CI's
+`--check` fails when they drift). In the release commit:
+
+1. change the heading to `## [<version>] - <YYYY-MM-DD>` (the release date):
+   from then on `sync_doc_counts` leaves that section alone, so the coverage
+   lines freeze as released;
+2. re-read the hand-written bullets against what is merged since the previous
+   tag (`git log v<previous>..HEAD`) and against the code;
+3. check it the way the workflow will:
+   `uv run python scripts/release_notes.py --tag v<version>` prints the notes,
+   or says why the tag would be refused.
+
+`release.yml` publishes that section as the GitHub release notes and stops
+before any upload if it is missing, undated or empty. The first commit after the
+tag (the `.dev0` bump) adds the next `## [<next>] - Unreleased` section with a
+fresh pair of GENERATED markers (`test_release_workflow.py` requires it).
 
 **The PyPI-immutable surfaces.** Once a version is on PyPI these can never be
 corrected without a new version number:
@@ -178,41 +226,99 @@ highest version of EVERY dependency from either index, so a squatted name there
 could replace a real dependency. Treat the dry run as running untrusted code
 (a throwaway VM or container), or skip it.
 
-## 4. Upload to PyPI  ⚠️ manual, irreversible
+## 4. Push the tag — the upload ⚠️ the user, irreversible
 
-```bash
-uvx twine upload dist/*
-```
-
-A given version number can never be reused on PyPI. Upload `taxfill-core` first
-(the server depends on it), then `taxfill-mcp` resolves at install time.
-
-Verify the public path:
-
-```bash
-uvx taxfill-mcp        # should start the stdio server with data bundled
-```
-
-## 5. Tag
+Steps 2 and 3 are what the workflow runs; doing them locally first is optional
+but cheap. Then, from the release commit on `main`:
 
 ```bash
 git tag -a v0.1.0 -m "TaxFill v0.1.0" && git push origin v0.1.0
 ```
 
-## 6. Build the MCPB bundle (publish-gated)
+This push is the release. It starts `.github/workflows/release.yml`, whose
+upload jobs put both packages on PyPI for good: a version number can never be
+reused there (a broken upload can only be yanked and superseded by a new
+version). If the `pypi` environment has required reviewers, each upload job
+waits for your approval in the Actions tab.
 
-Now that `uvx taxfill-mcp` works, follow [`packages/mcp-server/bundle/README.md`](../../packages/mcp-server/bundle/README.md):
+## 5. What `release.yml` does, and recovering from a failed run
+
+| Job | What it does | Uploads? |
+|---|---|---|
+| `build` | checks the tag is on `main`; `scripts/release_notes.py` (tag = `v<version>` for every version site, no `.dev`/local version, a dated non-empty CHANGELOG section); runs `test_release_surfaces.py` + `test_release_workflow.py`; stages data, builds both packages, `twine check`, the clean-venv smoke (`release_smoke.py --dist`); `mcpb validate` + `mcpb pack`, then checks that `taxfill.mcpb` holds exactly `manifest.json`, `pyproject.toml` and `src/server.py`, each byte-equal to the checkout. Read-only token | no |
+| `publish-core` | uploads `taxfill-core` (Trusted Publishing, environment `pypi`, `skip-existing`) | **yes** |
+| `publish-mcp` | uploads `taxfill-mcp` (it pins `taxfill-core==<version>`, so core goes first; `skip-existing`) | **yes** |
+| `github-release` | waits until `uvx --from taxfill-mcp==<version> taxfill tools` resolves from PyPI; unzips the bundle `build` packed and runs `scripts/bundle_probe.py` on it (its own `uv run` command installs the published server and must answer MCP `initialize` + `tools/list` with exactly the manifest's tools); creates the GitHub release from the CHANGELOG section with the bundle and the four distributions attached. Packs nothing; its checkout keeps no token (`persist-credentials: false`) | no |
+
+- **`build` failed:** nothing was uploaded. Delete the tag
+  (`git push --delete origin v0.1.0 && git tag -d v0.1.0`), fix on `main`, tag
+  again.
+- **`publish-core` failed:** nothing was uploaded unless PyPI shows the
+  version; fix the cause (usually the Trusted Publisher values in step 0) and
+  use "Re-run failed jobs".
+- **A partial upload** (PyPI shows one of a project's two files, the wheel or
+  the sdist, but not the other): "Re-run failed jobs" as well. Both upload steps
+  set `skip-existing: true`, and a re-run re-sends the same `release` artifact,
+  so the file PyPI already has is skipped (it is the same file) and only the
+  missing one is uploaded. Without that setting PyPI would answer
+  `400 File already exists` and the job could never pass.
+- **`publish-mcp` or `github-release` failed:** "Re-run failed jobs". Each
+  upload is its own job, so a re-run never uploads `taxfill-core` a second
+  time. If `github-release` fails in `bundle_probe.py`, the packages are on PyPI
+  but the bundle did not start from them: read the probe's stderr tail before
+  re-running. If the published version itself is broken, yank it on PyPI and
+  release the next patch version; the number is spent.
+
+Verify the public path afterwards:
 
 ```bash
-cd packages/mcp-server/bundle
-mcpb validate && mcpb pack   # manifest.json already finalized — just validate + pack -> taxfill.mcpb
+uvx taxfill-mcp        # should start the stdio server with data bundled
 ```
 
-`packages/mcp-server/bundle/manifest.json` is already finalized and **passes `mcpb validate`** against
-the current CLI schema (v0.2): the `$schema_note` draft marker was dropped,
-`server.entry_point` added, and the `permissions` block removed (the v0.2/v0.3
-schema has no permissions field — Claude Desktop prompts for file/network consent
-at install time). It declares the **23 tools**; the README disclaimer applies.
+## 6. The MCPB bundle (`taxfill.mcpb`)
+
+Nothing to do by hand: `release.yml`'s read-only `build` job packs
+[`packages/mcp-server/bundle/`](../../packages/mcp-server/bundle/README.md) with
+`npx --yes @anthropic-ai/mcpb@2.1.2 pack` and checks the packed file list and
+bytes; once the published `taxfill-mcp` resolves, `github-release` launches that
+bundle with `scripts/bundle_probe.py` and attaches `taxfill.mcpb` to the GitHub
+release. CI's `packaging` job validates and packs it on every push (and checks
+the packed file holds only `manifest.json`, `pyproject.toml` and
+`src/server.py`), so a schema problem shows up long before a tag.
+
+**Runtime (decided 2026-10-15).** The manifest is `manifest_version` 0.4 with
+`server.type "uv"`: the bundle ships a `pyproject.toml` pinning
+`taxfill-mcp==<version>` and a three-line `src/server.py`, and its
+`mcp_config` runs `uv run --directory ${__dirname} src/server.py`. Evidence: the
+schemas `@anthropic-ai/mcpb` 2.1.2 ships allow `python | node | binary` up to
+0.3 (the loose 0.3 schema too), and 0.4 adds `uv` ("installed by the host
+application using UV", "No user Python installation required"; the CLI README
+calls it "Experimental - v0.4+", and MANIFEST.md on mcpb's `main` branch still
+names 0.3 the current version). That spec text says `mcp_config` is optional
+for `uv` ("host manages execution"), but the 2.1.2 strict 0.4 schema requires
+it, so the manifest keeps the command of the `hello-world-uv` example on mcpb's
+`main` branch (2026-10-15; the example at the `v2.1.2` tag has no
+`mcp_config`). What a host does with it is **untested**:
+
+- a host that implements the uv runtime should need nothing installed first;
+- a host that accepts 0.4 but only runs `mcp_config` needs uv on `PATH`
+  (https://docs.astral.sh/uv/getting-started/installation/), which then
+  installs Python; without uv the launch fails because `uv` is not on `PATH`;
+- an older host that knows only the 0.3 (or earlier) schema may refuse the 0.4
+  manifest outright; installing uv does not help there, and the user runs
+  `uvx taxfill-mcp` instead.
+
+Proven so far is the manifest's own command: the packed bundle, unzipped outside
+the repo, answers MCP `initialize` and `tools/list` with exactly the manifest's
+tools through `scripts/bundle_probe.py` (locally against locally built wheels
+before the first upload; in `release.yml` against PyPI on every release). The
+host side is the first post-release check below. The bundle README has the
+details and the one-edit way back to the old `binary` + `uvx taxfill-mcp`
+manifest, which fits every schema version.
+
+The manifest already passes `mcpb validate` (no `permissions` field in the
+schema — Claude Desktop prompts for file/network consent at install time).
+It declares the **23 tools**; the README disclaimer applies.
 
 ## 7. Demo GIF
 
@@ -222,9 +328,19 @@ path the README references.
 ## Post-release checklist
 
 - [ ] `uvx taxfill-mcp` works on a machine that never had the repo.
-- [ ] One-click `.mcpb` installs in Claude Desktop and the tools appear.
+- [ ] One-click `taxfill.mcpb` (from the GitHub release) installs in Claude
+      Desktop and the tools appear — once on a machine WITH uv, once on a
+      machine WITHOUT uv (or Python), which proves the host's uv runtime, and
+      once in an older Claude Desktop build, which shows whether it refuses a
+      0.4 manifest. Record each result in the bundle README and the CHANGELOG.
+      If the bundle fails without uv, either keep `server.type "uv"` with uv as
+      the documented step 0, or go back to the `binary` manifest (bundle
+      README); if older builds refuse it, say which, or go back to `binary`.
 - [ ] No pre-release wording is left on the repo-only surfaces (the list in step 1): `grep -n -i -E "pre-release|pre--release|not on pypi yet|not yet (published|on pypi|available on pypi)|nothing is published|coming with v0\.1|once published|once (taxfill is )?installed from pypi|in development|until then" README.md docs/USER_GUIDE.md docs/TOOLS.md .github/CONTRIBUTING.md packages/mcp-server/bundle/README.md pyproject.toml` is empty, and `test_release_surfaces.py::test_no_repo_only_surface_still_reads_pre_release` has lost its xfail marker (the test holds this grep to that test's pattern and file list; the wheel-shipped surfaces are held by the rest of that module).
-- [ ] `main` moves to the next `.dev0` version (step 1).
-- [ ] Tag pushed; GitHub release notes drafted.
+- [ ] `main` moves to the next `.dev0` version, and `docs/CHANGELOG.md` gains
+      the next `## [<next>] - Unreleased` section with the GENERATED markers
+      (step 1).
+- [ ] The GitHub release for the tag exists, its notes are the CHANGELOG
+      section, and it carries `taxfill.mcpb` and the four distributions.
 - [ ] A non-developer reaches a filled sample form in <20 min from the README
       and the user guide it links (the §13 acceptance test — see [`ACCEPTANCE.md`](ACCEPTANCE.md)).

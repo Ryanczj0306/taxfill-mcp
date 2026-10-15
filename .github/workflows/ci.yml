@@ -102,6 +102,17 @@ jobs:
           cd "$TMP"   # leave the repo so the resolver cannot fall back to repo-root data
           env -u TAXFILL_DATA_DIR "$TMP/venv/bin/python" "$GITHUB_WORKSPACE/scripts/release_smoke.py" \
             --repo "$GITHUB_WORKSPACE" --dist "$GITHUB_WORKSPACE/dist"
+      - name: The .mcpb bundle validates and packs
+        # Phase J JA1.5. The mcpb CLI is pinned to an exact npm version (2.1.2, the latest on 2026-10-15; release.yml
+        # uses the same one, and test_release_workflow.py holds the two equal). Node comes with the runner image.
+        # Packing re-validates and proves .mcpbignore keeps the recipe out; the bundle itself is built and attached
+        # by release.yml, after the PyPI upload its server depends on.
+        run: |
+          npx --yes @anthropic-ai/mcpb@2.1.2 validate packages/mcp-server/bundle/manifest.json
+          npx --yes @anthropic-ai/mcpb@2.1.2 pack packages/mcp-server/bundle "$RUNNER_TEMP/taxfill.mcpb"
+          FILES="$(unzip -Z1 "$RUNNER_TEMP/taxfill.mcpb" | sort | tr '\n' ' ')"
+          echo "taxfill.mcpb holds: $FILES"
+          test "$FILES" = "manifest.json pyproject.toml src/server.py "
 
 # The drift + network-tests jobs moved to freshness.yml (weekly cron +
 # workflow_dispatch): scheduled monitoring must not repaint this workflow's
