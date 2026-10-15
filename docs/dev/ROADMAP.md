@@ -2031,6 +2031,7 @@ line items sum to the headline delta.
     - recruits a non-developer ACCEPTANCE tester;
     - makes any branch-protection change.
   - Then an agent does A6.
+- [x] **JK4 — Pin the CI runner image, the actions and uv — DONE 2026-10-15** (S; release prep of the 2026-10-09 re-plan) — ci.yml, freshness.yml and finals.yml run on ubuntu-24.04 in all eight jobs (GitHub moves ubuntu-latest to 26.04 from 2026-10-19, actions/runner-images#14748); actions/checkout is pinned to fbc6f399 (v5.1.0) and astral-sh/setup-uv to 1c37ad07 (v10.3.0, node24; v6.8.0 was node20), each by commit SHA with the tag in a trailing comment; setup-uv's `version` input pins uv 0.13.0. .github/dependabot.yml proposes the action bumps weekly; the ubuntu pin and the uv version move only by hand. The first CI run on the merged tree is the live proof (expect one cold `uv sync`: the action major changes the cache key).
 - [x] **JEa — SSN maxlen and reserved lines — DONE 2026-09-28** (M; deps J0) [G30 + PJ-13 rest]
   - *As built:*
     - **maxlen tracks the widget.** 41 federal SSN fields (identifying_number in f8606 / f8960 / f8962 / sched_2 / sched_a / sched_oi / sched_3a, and f8962 30b–33b; 2022–2026) move 9 → 11, their widget /MaxLen. NY IT-203 2025 line 35 moves 10 → 4: its widget holds 4, the one pack that let through more than its box.

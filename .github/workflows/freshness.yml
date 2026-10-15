@@ -34,11 +34,13 @@ jobs:
   drift:
     # Re-fetch every official source URL and form blank; fail on a moved page
     # or a revised form (scripts/check_drift.py — digest + reachability).
-    runs-on: ubuntu-latest
+    # ubuntu-24.04 on purpose, never the floating image: see the `test` job in ci.yml.
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
         with:
+          version: "0.13.0"
           python-version: "3.11"
       - name: Sync workspace
         run: uv sync
@@ -49,11 +51,12 @@ jobs:
     # The network-marked golden round-trips: live .gov blank downloads through
     # fetch -> fill -> verify. Kept out of the push-blocking `test` job so PR
     # CI stays fast and non-flaky; run here weekly instead of never.
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
         with:
+          version: "0.13.0"
           python-version: "3.11"
       - name: Sync workspace
         run: uv sync
@@ -70,7 +73,7 @@ jobs:
     # comments on the open one, so a red is a tracked item and not only a failure email.
     needs: [drift, network-tests]
     if: failure()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       issues: write
     steps:

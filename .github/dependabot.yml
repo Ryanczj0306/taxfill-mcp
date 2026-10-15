@@ -1,0 +1,17 @@
+# Dependabot keeps the SHA-pinned actions in .github/workflows/*.yml current (re-plan JK4,
+# 2026-10-15): every `uses:` is pinned to a 40-character commit with the release tag in a
+# trailing comment, and Dependabot rewrites both when a new release lands. Weekly, so the
+# pins get PRs instead of rotting. Python dependencies are NOT on this schedule: uv.lock is
+# re-resolved by hand (`uv lock --upgrade`) when a release is being prepared.
+# No `labels:` key on purpose: a label named here must already exist in the repository or
+# Dependabot silently ignores it, and naming any label replaces the defaults. Left out,
+# Dependabot applies `dependencies` + `github_actions` and creates both itself.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "ci(deps)"

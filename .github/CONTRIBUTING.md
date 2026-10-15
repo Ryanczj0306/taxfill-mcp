@@ -158,6 +158,11 @@ changes; it is the single source of truth for the design.
   verifier (assertions, relations, the clipping scan, the checkbox audit). There are NO render
   snapshot or perceptual-hash tests: visual review is the agent's `render_form` pass.
 - Pack schema validation and the repo-wide pack invariants run in CI on every push.
+- The CI environment is pinned, not floating (`.github/workflows/*.yml`): every job runs on
+  `ubuntu-24.04` (never the floating `latest` image, which moves under the suite), every action
+  is pinned to a commit SHA with the release tag in a trailing comment, and `astral-sh/setup-uv`
+  installs one named uv version. Dependabot (`.github/dependabot.yml`) proposes the bumps
+  weekly; review them like any other PR and let the suite rerun before merging.
 - Freshness runs WEEKLY (`.github/workflows/freshness.yml`, Mondays, plus on demand): it
   re-fetches the official sources, blanks and addresses, and a red opens a `freshness red`
   issue; known reds wait in `scripts/freshness_quarantine.yaml` with an expiry. `finals.yml`

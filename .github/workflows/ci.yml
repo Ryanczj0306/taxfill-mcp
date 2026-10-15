@@ -10,11 +10,21 @@ on:
 jobs:
   test:
     if: github.event_name != 'schedule'
-    runs-on: ubuntu-latest
+    # ubuntu-24.04, never the floating `latest` image: the runner image is part of the test
+    # environment (system libraries under the PDF stack, the tools on PATH the jobs shell out
+    # to). GitHub rolls the floating image over to Ubuntu 26.04 between 2026-10-19 and
+    # 2026-11-19 (actions/runner-images#14748); bump this pin on purpose, in a PR that reruns
+    # the whole suite, not by surprise on a Monday. Every job in every workflow (freshness.yml,
+    # finals.yml too) pins the same image.
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+      # Pinned by commit SHA (Dependabot proposes bumps weekly, .github/dependabot.yml); the
+      # trailing tag is for humans. uv itself is pinned too: without `version` setup-uv falls
+      # back to whatever uv is newest that morning.
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
         with:
+          version: "0.13.0"
           python-version: "3.11"
       - name: Sync workspace
         run: uv sync
@@ -25,11 +35,12 @@ jobs:
 
   lint:
     if: github.event_name != 'schedule'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
         with:
+          version: "0.13.0"
           python-version: "3.11"
       - name: Ruff lint (config in pyproject.toml [tool.ruff])
         run: uvx ruff check .
@@ -43,11 +54,12 @@ jobs:
     # it, never type it: this fails the build with an exact fix instruction.
     # Uses --collect-only, so it imports test modules but runs no tests (seconds).
     if: github.event_name != 'schedule'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
         with:
+          version: "0.13.0"
           python-version: "3.11"
       - name: Sync workspace
         run: uv sync
@@ -62,11 +74,12 @@ jobs:
     # no repo checkout on the path. Build, install into a clean venv OUTSIDE the
     # repo, and exercise the loaders.
     if: github.event_name != 'schedule'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
         with:
+          version: "0.13.0"
           python-version: "3.11"
       - name: Stage data + build both distributions
         run: |
