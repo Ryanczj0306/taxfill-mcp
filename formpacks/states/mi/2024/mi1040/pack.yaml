@@ -27,8 +27,9 @@
 # Still flat, still no ReadOnly widget, no /CO calculation order and no XFA; the
 # only JavaScript is the Reset button's confirm-and-reset action, AFNumber /
 # AFSpecial format+keystroke, and an upper-casing validate on the name, address
-# and preparer boxes, so nothing on this form computes. The census counts 56 mapped names SAME and 29 GONE, and every GONE name is a pure
-# rename at the identical position:
+# and preparer boxes, so nothing on this form computes. The census counts 56
+# mapped names SAME and 29 GONE; 28 are pure renames at the identical position
+# and the 29th, 'Filing status', split into three single-widget fields:
 #   * Check Box5 -> "5b Checkbox Spouse"; "*" -> "Line 7 Spouse Full Name";
 #     Check Box11 / Check Box12 and the 8a "Residency status" ->
 #     "8b Checkbox Nonresident" / "8c Checkbox Part-Year Resident" / "8a Checkbox
@@ -105,7 +106,8 @@
 # exemption counts and date-of-death cells, were filled separately with distinct
 # short sentinels), not from field names.
 #
-# Unresolved: none.
+# Unresolved: the line 9f sum ('Add lines 9a, 9b, 9c, 9d and 9e') is not declared
+# as a relation; see Relations.
 # ===========================================================================
 #
 # Form MI-1040, 2024 — Michigan Individual Income Tax Return.
