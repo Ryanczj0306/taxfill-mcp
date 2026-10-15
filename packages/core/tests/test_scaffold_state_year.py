@@ -50,7 +50,7 @@ def test_a_revision_date_in_the_name_is_not_derived():
 def test_base_newest_triages_each_form_against_its_newest_shipped_year():
     newest = {str(p.relative_to(sc.STATES)).rsplit("/", 1)[0]: y for y, p in sc.base_packs(2025, "newest")}
     assert newest["ut/2024/tc40"] == 2024 and "ut/2023/tc40" not in newest
-    assert newest["al/2023/al40"] == 2023                       # no newer AL pack: its 2023 base stands
+    assert newest["al/2024/al40"] == 2024 and "al/2023/al40" not in newest   # AL 2024 shipped 2026-10-14 (JS5): it is the newest base below 2025
     fixed = sc.base_packs(2024, "2023")
     assert fixed and all(y == 2023 for y, _p in fixed)
 

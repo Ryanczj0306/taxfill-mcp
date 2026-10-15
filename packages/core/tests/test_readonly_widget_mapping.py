@@ -464,6 +464,20 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "you have more than one Schedule D/E', baked into the blank) are unmapped too",
     ),
     StateComputed(
+        "states/al/2024/al40/pack.yaml",
+        583,
+        "the 2023 row re-measured field by field on the 2024 blank (Phase J JS5): 566 - 11 - 1 - 1 + 30 (566 is the "
+        "2023 row as this port found it; once the 2023 pack's own P-031 pass unmapped the barcode helpers it reads "
+        "555 - 1 - 1 + 30). MINUS 11: the UltraForms barcode helpers UF_InfoA-UF_InfoK are unmapped here (the blank's "
+        "UF_SetStream() writes the barcode stream length / viewer version into them; no /TU, no Print flag, no printed "
+        "box: P-007 class 2, not a line). MINUS 1: SCHOCLINE9PR, a ReadOnly 2023 line the 2024 blank no longer has. "
+        "MINUS 1: SCHOCPRTYLINE1 lost the bit (Part Y is now the filer-entry Volunteer First Responder Mileage credit). "
+        "PLUS 30 new form-computed fields: Schedule OC Part R row R7e columns 3-5 and the R7f sum (4), Part X line X6, "
+        "its X7a-X7e columns 3-5 and the X7f sum (17), Part AA line AA1 (the Capital Credit the form copies from "
+        "Schedule KRCC-I) (1) and Section C rows C26 / C27 columns 3-6 (8). Each sits on a printed box the form's script "
+        "computes. The DOR banners and captions stay unmapped as in 2023",
+    ),
+    StateComputed(
         "states/al/2025/al40/pack.yaml",
         625,
         "the 2023 row re-measured field by field on the 2025 blank (Phase J JS5): 566 - 11 - 7 - 1 + 78. MINUS 11: "

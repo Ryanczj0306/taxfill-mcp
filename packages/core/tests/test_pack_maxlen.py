@@ -26,6 +26,73 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     **{(f"states/ar/{y}/ar1000f/pack.yaml", "direct_deposit_2.account.17"):
        "the 17th one-character account-number cell (14.6 pt at 9 pt, fits 3); cells 1-16 carry /MaxLen 1, this "
        "one the DOR's 10" for y in (2023, 2024, 2025)},
+    ("states/al/2024/al40/pack.yaml", "FIRSTNAME"):
+        "the taxpayer's first-name box (98.6 pt at Courier 12 fits 13); the widget says 20",
+    ("states/al/2024/al40/pack.yaml", "SPOUSEFIRSTNAME"):
+        "the spouse's first-name box (98.6 pt at Courier 12 fits 13); the widget says 20",
+    ("states/al/2024/al40/pack.yaml", "SCHHBCPTILINE2"):
+        "Schedule HBC line 2 Date Account Opened (147.8 pt at Courier 10 fits 24); the widget says 30",
+    ("states/al/2024/al40/pack.yaml", "SCHHBCPTILINE5"):
+        "Schedule HBC line 5 Financial Institution Name, a short box on a full-width row (128.0 pt at Courier 8 "
+        "fits 26); the widget says 30",
+    ("states/al/2024/al40/pack.yaml", "SCHHBCPTILINE6"):
+        "Schedule HBC line 6 Date Account Opened (147.9 pt at Courier 10 fits 24); the widget says 30",
+    ("states/al/2024/al40/pack.yaml", "SCHOCLINE1PC"):
+        "Schedule OC line C1 Department of Education certification number (117.5 pt at Courier 10 fits 19); the widget says 20",
+    ("states/al/2024/al40/pack.yaml", "SCHOCLINE2CPL"):
+        "Schedule OC line L2's second address-row cell (54.0 pt at Courier 10 fits 9); the widget says 15",
+    ("states/al/2024/al40/pack.yaml", "SCHAATCLN6"):
+        "Schedule AATC line 6 date of enrollment (147.8 pt at Courier 10 fits 24); the widget says 30",
+    **{("states/al/2024/al40/pack.yaml", k): f"a Schedule AAC Part I / II row cell ({w} pt at Courier 9 fits {n}); the widget says {m}"
+       for k, w, n, m in (
+           ("SCHAACPRTILN1", 116.7, 21, 30),
+           ("SCHAACPRTILN3", 81.7, 15, 30),
+           ("SCHAACPRTILN4", 118.6, 21, 30),
+           ("SCHAACPRTILN5", 149.6, 27, 30),
+           ("SCHAACPRTILN6", 180.8, 33, 60),
+           ("SCHAACPRTILN7", 116.7, 21, 30),
+           ("SCHAACPRTILN9", 81.7, 15, 30),
+           ("SCHAACPRTILN10", 118.6, 21, 30),
+           ("SCHAACPRTILN11", 149.6, 27, 30),
+           ("SCHAACPRTILN12", 180.8, 33, 60),
+           ("SCHAACPRTILN13", 116.7, 21, 30),
+           ("SCHAACPRTILN15", 81.7, 15, 60),
+           ("SCHAACPRTILN16", 118.6, 21, 30),
+           ("SCHAACPRTILN17", 149.6, 27, 30),
+           ("SCHAACPRTILN18", 180.8, 33, 60),
+           ("SCHAACPRTILN19", 116.7, 21, 30),
+           ("SCHAACPRTILN22", 118.6, 21, 30),
+           ("SCHAACPRTILN23", 149.6, 27, 30),
+           ("SCHAACPRTILN24", 180.8, 33, 60),
+           ("SCHAACPRTILN25", 116.7, 21, 30),
+           ("SCHAACPRTILN28", 118.6, 21, 30),
+           ("SCHAACPRTILN29", 149.6, 27, 30),
+           ("SCHAACPRTILN30", 180.8, 33, 60),
+           ("SCHAACPRTIILN1", 116.6, 21, 30),
+           ("SCHAACPRTIILN3", 81.7, 15, 30),
+           ("SCHAACPRTIILN4", 118.6, 21, 30),
+           ("SCHAACPRTIILN5", 149.6, 27, 30),
+           ("SCHAACPRTIILN6", 180.8, 33, 60),
+           ("SCHAACPRTIILN7", 116.6, 21, 30),
+           ("SCHAACPRTIILN9", 81.7, 15, 30),
+           ("SCHAACPRTIILN10", 118.6, 21, 30),
+           ("SCHAACPRTIILN11", 149.6, 27, 30),
+           ("SCHAACPRTIILN12", 180.8, 33, 60),
+           ("SCHAACPRTIILN13", 116.6, 21, 30),
+           ("SCHAACPRTIILN15", 81.7, 15, 60),
+           ("SCHAACPRTIILN16", 118.6, 21, 30),
+           ("SCHAACPRTIILN17", 149.6, 27, 30),
+           ("SCHAACPRTIILN18", 180.8, 33, 60),
+           ("SCHAACPRTIILN19", 116.6, 21, 30),
+           ("SCHAACPRTIILN22", 118.6, 21, 30),
+           ("SCHAACPRTIILN23", 149.6, 27, 30),
+           ("SCHAACPRTIILN24", 180.8, 33, 60),
+           ("SCHAACPRTIILN25", 116.6, 21, 30),
+           ("SCHAACPRTIILN28", 118.6, 21, 30),
+           ("SCHAACPRTIILN29", 149.6, 27, 30),
+           ("SCHAACPRTIILN30", 180.8, 33, 60))},
+    **{("states/al/2024/al40/pack.yaml", f"SCHRSILN{i}"): "Schedule RS Part I column I Reason Exempt (111.9 pt at Courier 8 fits 23); the widget says 30"
+       for i in range(1, 8)},
     ("states/ar/2023/ar1000nr/pack.yaml", "7b.count"):
         "the 7B dependent count (13.3 pt box, auto-size font); the 7A count box ARNR-49 carries /MaxLen 2, this one "
         "the DOR's 10",

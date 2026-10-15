@@ -1151,6 +1151,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: MS 80-105 2024 (a PORTABLE port of MS 2023, every widget name and /Rect kept; the two new header-SSN mirror
     # JS5: IL-1040 2025 (a RE-MAP port of IL 2024 — every header widget renamed, keys kept) equals the reviewed
     # IL 2024 row (mailing_address, city, state, zip_or_postal_code); the two renamed date-of-birth keys are not address lines.
+    # JS5: AL Form 40 2024 (a NEAR-PORT of AL 2023; the page-1 address widgets kept their names) equals the reviewed AL 2023
+    # row (ADDRESS, CITY, STATE, ZIP); the new Schedule OC rows and the Schedule HBC address boxes are not filer address lines.
     # JS5: NJ-1040 2025 (a PORTABLE port of NJ 2024 under the same widget names; the new digital_assets radio is
     # not an address line, and the four county_municipality_code_d* digits are rejected as before) equals the
     # reviewed NJ 2024 row (home_address, city_town_post_office, state, zip_code).
