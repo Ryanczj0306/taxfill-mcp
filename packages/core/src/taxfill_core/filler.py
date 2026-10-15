@@ -489,6 +489,10 @@ F_HIDDEN, F_PRINT, F_NOVIEW = 2, 4, 32
 _FF_READONLY, _FF_PUSHBUTTON = 1, 1 << 16
 # A widget covering at least this share of its page's VISIBLE area (the CropBox) is a candidate viewer guard.
 GUARD_PAGE_SHARE = 0.85
+# P-027b: a pushbutton flagged NoView + Print is invisible on screen and printed on paper, so one that covers at least this
+# share of the visible page is treated as a print lid. AL Form 40NR 2023's NOL-85A pages carry white lids over the top
+# 72.6-83.1% of the page, under GUARD_PAGE_SHARE, and those pages printed with the whole form body covered.
+LID_PAGE_SHARE = 0.5
 
 
 def _inherited_attr(annot: object, key: str) -> object | None:
@@ -525,6 +529,13 @@ def is_viewer_guard(annot: object, page_box: tuple[float, float, float, float]) 
     MediaBox: AL Form 40's worksheet pages crop a short window out of a full Letter MediaBox, and their print
     lids cover all of that window but under a third of the MediaBox — measured against the MediaBox they
     stayed printable and both worksheets printed blank (found by the JS5 AL 2025 port's re-verify).
+
+    P-027b: a pushbutton flagged NoView + Print (shown on no screen, printed on paper) is a print lid from
+    ``LID_PAGE_SHARE`` of the visible area up. AL Form 40NR's NOL-85A pages carry white lids over 72.6-83.1% of
+    the page, below ``GUARD_PAGE_SHARE``; under the 85% rule alone they stayed printable and those pages printed
+    with the form body covered (found by the JS6 AL 40NR 2023 placement verify). Only a ``/Btn`` pushbutton
+    qualifies: it holds no taxpayer value, so hiding one can never drop a line; a viewable pushbutton, or any
+    text panel, still needs the 85% coverage.
     """
     rect = annot.get("/Rect")  # type: ignore[attr-defined]
     if rect is None or len(rect) != 4:
@@ -534,11 +545,16 @@ def is_viewer_guard(annot: object, page_box: tuple[float, float, float, float]) 
     bx0, by0, bx1, by1 = page_box
     visible = max((bx1 - bx0) * (by1 - by0), 1.0)
     covered = max(0.0, min(xs[1], bx1) - max(xs[0], bx0)) * max(0.0, min(ys[1], by1) - max(ys[0], by0))
-    if covered < GUARD_PAGE_SHARE * visible:
+    if covered < LID_PAGE_SHARE * visible:
         return False
     flags = int(_inherited_attr(annot, "/Ff") or 0)
-    field_type = _inherited_attr(annot, "/FT")
-    return bool(flags & _FF_PUSHBUTTON) or (field_type == "/Tx" and bool(flags & _FF_READONLY))
+    pushbutton = bool(flags & _FF_PUSHBUTTON)
+    if covered >= GUARD_PAGE_SHARE * visible:
+        field_type = _inherited_attr(annot, "/FT")
+        return pushbutton or (field_type == "/Tx" and bool(flags & _FF_READONLY))
+    annot_flags = int(annot.get("/F", 0))  # type: ignore[attr-defined]
+    is_button = _inherited_attr(annot, "/FT") == "/Btn"
+    return pushbutton and is_button and bool(annot_flags & F_NOVIEW) and bool(annot_flags & F_PRINT)
 
 
 def _annotation_flag_pass(writer: PdfWriter, written: Mapping[str, str]) -> list[str]:

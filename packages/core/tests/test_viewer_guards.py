@@ -171,6 +171,60 @@ def test_p027_a_guard_is_measured_against_the_visible_cropbox(tmp_path: Path):
     assert not problems
 
 
+def _lid_page(tmp_path: Path, widgets: list[tuple[str, str, int, int, float]]) -> Path:
+    """A one-page blank with a data line and the given widgets: (name, /FT, /Ff, /F, share of the page height covered,
+    full width) — each a band from the top of the page down."""
+    plain = make_acroform_pdf(tmp_path / "plain.pdf", [{"name": "nol_line", "maxlen": 12}])
+    writer = PdfWriter(clone_from=str(plain))
+    page = writer.pages[0]
+    width, height = float(page.mediabox.width), float(page.mediabox.height)
+    for name, ft, ff, flags, share in widgets:
+        annot = DictionaryObject({
+            NameObject("/Type"): NameObject("/Annot"), NameObject("/Subtype"): NameObject("/Widget"),
+            NameObject("/FT"): NameObject(ft), NameObject("/Ff"): NumberObject(ff), NameObject("/T"): TextStringObject(name),
+            NameObject("/F"): NumberObject(flags),
+            NameObject("/Rect"): ArrayObject([FloatObject(v) for v in (0.0, height * (1 - share), width, height)]),
+            NameObject("/P"): page.indirect_reference,
+        })
+        ref = writer._add_object(annot)
+        page["/Annots"].append(ref)
+        writer._root_object["/AcroForm"]["/Fields"].append(ref)
+    out = tmp_path / "lids.pdf"
+    writer.write(out)
+    return out
+
+
+def test_p027b_a_noview_print_pushbutton_over_half_the_page_is_a_print_lid(tmp_path: Path):
+    """AL Form 40NR 2023's NOL-85A pages: white NoView + Print lids over the top 72.6-83.1% of the page — under the 85%
+    guard share, so they stayed printable and those pages printed with the form body covered. A NoView + Print pushbutton
+    over at least half the visible page is a lid; a viewable pushbutton, a ReadOnly panel of the same size, a non-/Btn
+    field with a stray pushbutton bit, and a small lid are not."""
+    blank = _lid_page(tmp_path, [
+        ("printlid.20", "/Btn", PUSHBUTTON, F_NOVIEW | F_PRINT, 0.787),   # AL 40NR page 20's share
+        ("banner", "/Btn", PUSHBUTTON, F_PRINT, 0.75),                      # viewable: a real button, not a lid
+        ("panel", "/Tx", READONLY, F_NOVIEW | F_PRINT, 0.75),               # a text panel needs the 85% share
+        ("stamp", "/Btn", PUSHBUTTON, F_NOVIEW | F_PRINT, 0.40),            # under half the page
+        ("odd", "/Tx", PUSHBUTTON, F_NOVIEW | F_PRINT, 0.70),               # a text field with a stray pushbutton bit
+    ])
+    page = PdfReader(str(blank)).pages[0]
+    verdicts = {str(a.get_object()["/T"]): is_viewer_guard(a.get_object(), visible_box(page)) for a in page["/Annots"]}
+    assert {k for k, v in verdicts.items() if v} == {"printlid.20"}, verdicts
+    pack = FormPack(form="X", jurisdiction="states/xx", tax_year=2023, source_url="https://example.gov/x.pdf",
+                    pdf_sha256="0" * 64, acroform_root="",
+                    fields=[PackField(line="nol_line", field="nol_line", type="text", maxlen=12)])
+    result = fill_form(pack, {"nol_line": "1250"}, blank, tmp_path / "filled.pdf")
+    assert result.guards_hidden == ["printlid.20 (page 1)"]
+    after = _flags(tmp_path / "filled.pdf")
+    assert after["printlid.20"] == F_HIDDEN and after["banner"] == F_PRINT and after["panel"] == F_NOVIEW | F_PRINT
+    assert after["odd"] == F_NOVIEW | F_PRINT
+    problems, checked = widget_flag_problems(tmp_path / "filled.pdf", ["nol_line"])
+    assert checked == 1 and not problems
+    # a file filled before P-027b, with the lid still NoView + Print, FAILs the check
+    stale = _set_flag(tmp_path / "filled.pdf", "printlid.20", F_NOVIEW | F_PRINT, tmp_path / "stale.pdf")
+    problems, _ = widget_flag_problems(stale, ["nol_line"])
+    assert problems == ["viewer guard 'printlid.20' covers page 1 and is still viewable or printable"]
+
+
 def test_p027_is_reported_only_when_the_pdf_itself_is_read():
     report = verify_form(PACK, {"name": "Tess Taxpayer"})
     assert [c.id for c in report.pitfall_checks] == ["P-001", "P-003"]

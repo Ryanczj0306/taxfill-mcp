@@ -510,6 +510,8 @@ run time; taxfill never runs it (P-007 class 4), so the filler does the viewer's
   PDF VIEWER" `VERCTRL` (viewable and printable) and its white `printlid.N` (NoView + Print, so it prints
   over the page), MO-1040's white `printlid.N` ("PLEASE, USE THE PRINT BUTTON ON THE FORM"). `fill_form`
   sets each one Hidden and lists it in `FillResult.guards_hidden`; `filler.is_viewer_guard` is the rule.
+  A `/Btn` pushbutton flagged NoView + Print counts from half the visible page up (P-027b): it shows on no screen and
+  prints on paper, so a large one is treated as a print lid — AL Form 40NR's NOL-85A lids cover 73-83% of the page.
 - **verify reads the flags back.** Pitfall check P-027 FAILs a filled PDF whose written widget is still
   Hidden, NoView or without Print, or whose viewer guard is still viewable or printable
   (`verify.widget_flag_problems`); the golden round trips assert it on every pack.

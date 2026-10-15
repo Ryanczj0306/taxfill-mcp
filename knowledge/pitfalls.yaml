@@ -1972,6 +1972,12 @@ pitfalls:
       short window out of a Letter MediaBox, so their print lids covered the
       whole window but under a third of the MediaBox and both worksheets
       printed blank — found by the JS5 AL 2025 port's re-verify (2026-10-02).
+      A pushbutton flagged NoView + Print (shown on no screen, printed on
+      paper) is a print lid from half the visible page up (P-027b,
+      filler.LID_PAGE_SHARE): AL Form 40NR 2023's NOL-85A pages carry white
+      lids over the top 72.6-83.1% of the page, under the 85% share, and
+      printed with the form body covered — found by the JS6 AL 40NR 2023
+      placement verify (2026-10-15).
       verify_form reads the filled PDF's flags back as pitfall check P-027
       (verify.widget_flag_problems): a written widget still Hidden, NoView
       or without Print, or a viewer guard still viewable or printable, FAILs
