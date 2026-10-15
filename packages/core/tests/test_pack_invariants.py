@@ -1529,12 +1529,20 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
         'INDEPENDENT: the annualization-method and farming-gross-income boxes are separate estimated-tax facts',
     ('states/mt/form2', 'dd'):
         'PARTIAL: checking / savings share group dd_account_type; the outside-US box is independent',
+    ('states/mt/form2', 'deceased'):
+        'INDEPENDENT: the 2025 face prints a "Deceased?" box on the taxpayer row and another on the spouse row; both may apply',
     ('states/mt/form2', 'exemptions.a'):
         'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply',
     ('states/mt/form2', 'exemptions.b'):
         'INDEPENDENT: the age / blindness boxes, one per condition per person; any combination may apply (and the spouse box)',
     ('states/mt/form2', 'residency'):
-        'PARTIAL: the three residency statuses share group residency_status; the military-spouse and ND-reciprocity boxes are independent',
+        'PARTIAL: the residency statuses (three in 2023; four in 2025, which adds "Mixed Residency") share group residency_status; the military-spouse and ND-reciprocity boxes are independent',
+    ('states/mt/form2', 'sched2'):
+        'INDEPENDENT: Schedule II prints "Alternative Method Filer (See instructions)" and "30 Day Nonresident Exclusion (See instructions)" as two boxes for two separate elections, each with its own instructions; the face does not make them alternatives',
+    ('states/mt/form2', 'sched2ec.attest'):
+        'INDEPENDENT: the five Schedule 2EC "Attestation" boxes (age 62, nine months in Montana, six months occupancy, household income under $45,000, only claimant) are separate facts; every one may be marked',
+    ('states/mt/form2', 'sched4.6'):
+        'INDEPENDENT: Schedule IV line 6 "Other penalties" prints three account boxes; the 2025 instructions say "Mark the box for the penalty you may owe and report the total of all penalties on line 6", so several may apply',
     ('states/nd/nd1', 'amended'):
         'INDEPENDENT: "Fill in if applicable: Amended: General / Amended: Federal NOL (See instructions)" — the face does not mark them alternatives',
     ('states/nd/nd1', 'deceased'):

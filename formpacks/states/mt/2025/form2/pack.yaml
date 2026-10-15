@@ -1,0 +1,1418 @@
+# ===========================================================================
+# TY2025 RE-MAP of formpacks/states/mt/2023/form2/pack.yaml (Phase J JS5,
+# 2026-10-04; triaged RE-MAP — 713 of the base pack's mapped fields are gone).
+# Form 2 was rebuilt between the two blanks. The 2025 face reaches federal
+# taxable income first (line 1 "Federal adjusted gross income from Form 1040,
+# line 11b", line 2 "Add Form 1040, lines 12e and 13b", line 3 subtracts them;
+# lines 4 and 5 adjust "federal taxable income"), prints one money column where
+# the 2023 face printed Column A and Column B, and carries its own Schedules
+# I-V and 2EC. (knowledge/states/mt/2025.yaml attributes this structure to
+# SB 399, in force from 2024; the face itself does not name the law.) This
+# pack is therefore a NEW map, built by
+# widget position and the printed label beside each widget, then proven on a
+# sentinel render of every page. Most 2023 line keys have no counterpart.
+#
+# URL. source_url below, on the DOR's own revenue.mt.gov host. Three separate
+# downloads (two on 2026-10-02, one on 2026-10-04) and the triage copy all hash
+# to 4671aef6…6ba2b37 (425,811 bytes, %PDF-1.7, an AcroForm; the DOR ships it
+# encrypted with an empty user password). 10 pages.
+#
+# PRINTED IDENTITY. Page 1 prints "2025 Montana Individual Income Tax Return",
+# "Form 2", the stamp "2025v3 12/2025", "For the year Jan 1 – Dec 31, 2025"
+# and the scan code *25CE0101*. Pages 2-10 print the footer "Form 2 – Page N –
+# 2025" (page 10's footer included) and the scan codes *25CE0201* ... *25CE1001*.
+# The schedules are titled "2025 Montana Form 2 Schedule I – Adjustments",
+# "Schedule II – Tax on Montana Source Income", "Schedule III – Tax Credits",
+# "Schedule IV – Contributions, Penalties, Interest, and Other Taxes",
+# "Schedule V – Amended Return Information" and "Schedule 2EC – Elderly
+# Homeowner/Renter Credit", each first page stamped 2025v3 12/2025.
+# printed_year_verified = 2025.
+#
+# PAGES (all 10 are the filed return; the DOR's instructions are a separate PDF):
+#   p1  identity, amended flag, federal filing status (5 options), residency
+#       status (4 options) plus the separate ND Reciprocity and Nonresident
+#       Military Spouse boxes, lines 1-26 (11a-11e in an inner column; 15 has
+#       a mid-row "Federal EIC" entry box, keyed 15.federal_eic).
+#   p2  the "Montana Individual Income Tax" worksheet (keys tax_calc.1-13),
+#       direct deposit 1-3 (dd.*), 529/529A deposits printed as rows 4 and 5
+#       (dd529.4.* / dd529.5.*; the DOR's field names still say "Line 2" /
+#       "Line 3"), signatures, preparer, third-party designee.
+#   p3  Schedule I Part I (sched1.1-24) and Part II, the Montana Medical
+#       Savings Account adjustment (sched1_part2.1-10).
+#   p4-5 Schedule II (sched2.*): the Alternative Method Filer / 30 Day
+#       Nonresident Exclusion boxes, residency-change date and states, the
+#       Mixed Residency spouse rows, lines 1-25 (6a/6b, 10a/10b, 11a/11b,
+#       16a-16c). The lower half of page 5 has no widgets.
+#   p6  Schedule III Part I (sched3.1-17) with its confirmation-code, CGR,
+#       UCRN, certificate and credit-code boxes.
+#   p7  Schedule III Part II, credit for taxes paid to another state or
+#       country (sched3_part2.1-21, 3a/3b).
+#   p8  Schedule IV (sched4.1a-1d voluntary contributions, 1-8).
+#   p9  Schedule V (amended.adjustment_type.* and six form / line / reason rows).
+#   p10 Schedule 2EC (sched2ec.*): claimant identity, physical address, five
+#       eligibility attestations, household size, lines 1-30.
+#
+# TOPOLOGY CENSUS against the 2023 blank (11 pages, 791 widgets / 755 fields).
+# The 2025 blank: 10 pages, 351 widgets / 314 fields, no ReadOnly widget.
+#   * 42 field names survive. 41 mapped ones (identity, address, the filing and
+#     residency status fields, the dd / 529 / signature / preparer / designee
+#     fields) moved /Rect with the new layout ("Date of Residency Change" moved
+#     from page 8 to page 4, "CGR Account ID" from page 9 to page 6); the
+#     42nd is the unmapped "Clear Form" pushbutton. Every one was re-read on
+#     the render, not carried by name. "Filing Status" changed its on_states
+#     from /1 /2a /2b /2c /3 /4 to /Single /2a /Married Filing Separately
+#     /Qualifying Surviving Spouse /Head of Household (the "Married Filing
+#     Jointly" kid really is /2a); "Residency Status" from /1 /2 /3 to
+#     /Resident /Part-year Resident /Mixed Residency /Nonresident.
+#   * 713 mapped fields (729 base lines) are GONE with the forms they sat on:
+#     the two-column lines 1-27 (Column A / Column B), dependents, exemptions,
+#     the 2a payment and refund schedules, the old Schedule 1, the additions,
+#     subtractions and tax-benefit recapture schedules, the pension / Social Security
+#     benefit / standard-deduction / itemized-deduction worksheets, the ratio
+#     and tax-liability schedules, the old nonrefundable-credit, other-state
+#     credit, elderly homeowner, long-term-care, payments, contribution,
+#     penalty and underpayment-interest sections. Their 2025 successors are
+#     the new pages listed above; no 2023 key is reused for a different line.
+#   * 285 NEW widgets (272 fields), all mapped. The only unbound field is the
+#     surviving "Clear Form" pushbutton (not a return entry): 313 of 314
+#     fields bound, 336 lines (56 checkbox lines).
+#   * /MaxLen. 62 fields carry one; every pack maxlen equals its widget's
+#     /MaxLen (none tighter). 56 of them are comb widgets (/Ff comb bit).
+#   * /Ff. 2023's plain text widgets carried 8388608 (DoNotScroll; 629
+#     widgets) or 0 (14); 2025's carry 12582912 (DoNotScroll + DoNotSpellCheck;
+#     109) or 8388608 (104). Combs keep the flag word 29360128 (63 widgets)
+#     and multiline cells 8392704 (the 18 Schedule V cells). /DA stays
+#     "/Cour 10 Tf 0 g" on every text widget.
+#
+# COMBS. Digit combs (SSNs, dates printed M M D D Y Y Y Y, phones, routing and
+# account numbers, ZIP+4, the CGR Account ID) are comb: true. Comb widgets
+# whose value is not digits only are NOT comb: true, because a comb line takes
+# digits only in the filler: the four state-abbreviation boxes, the PTIN, the
+# two-letter code boxes (Schedule I lines 6 and 21, Schedule IV line 7), the
+# Schedule III confirmation codes, UCRNs, certificate number and credit code
+# (the DOR's own keystroke masks take letters there), and the eight ratio
+# boxes (Schedule II 17 / 22, Schedule III Part II 6 / 8 / 16 / 18, 2EC 21 /
+# 29) whose second cell carries a printed decimal point. A ratio is entered
+# with its point and a UCRN with its dashes. A fill of 0.250000, 1.000000,
+# 0.123456, 0.654321, 0.500000 and 0.333333 in the six 8-cell boxes, 0.006 in
+# 2EC 21 (a Household Income Reduction Table rate) and 0.40 in 2EC 29 (a Credit
+# Multiplier Table rate), and two dashed UCRNs, was rendered: every character
+# sat in its own cell, the "." and "-" over the printed ones.
+#
+# FACE DELTAS vs 2023 (re-read on this face). Line 1 "Federal adjusted gross
+# income from Form 1040, line 11b"; line 2 "Add Form 1040, lines 12e and 13b";
+# line 3 subtracts them; line 6 "$5,660 subtraction for taxpayers 65 and older
+# ($11,320 if married filing jointly and both are 65 and older)"; line 8 "Tax
+# liability before tax credits", computed on the page-2 worksheet whose line 5
+# prints "$21,100 ... $42,200 ... $31,700" and whose lines 8 / 10 print "3%
+# (0.03)" and "4.1% (0.041)"; line 15 "Multiply Federal EIC by 10% (0.10)";
+# the years on lines 12 ("2025 estimated tax payments"), 13 ("Overpayment
+# applied from 2024 return") and 24 ("your 2026 estimated taxes"). Schedule I
+# Part II line 2 prints "up to $4,600 per taxpayer"; 2EC line 19 prints the
+# standard exclusion 12,600 with no widget, line 25 "15% (0.15)", line 28 "the
+# lesser of line 27 or $1,150", the attestation "less than $45,000". These
+# agree with knowledge/states/mt/2025.yaml wherever it records them.
+#
+# RELATIONS follow the printed arithmetic. Left out on purpose: page 1 line 8
+# (residents copy worksheet line 13; other filers use Schedule II), line 15
+# (Worksheet A can reduce the credit), worksheet line 1 (page 2 line 1 copies
+# page 1 line 7, but the instructions' refund-only paths for North Dakota
+# Reciprocity, Nonresident Military Spouse and the 30 Day Nonresident
+# Exclusion "Complete page 1, lines 1 through 3 and 7" and skip the
+# worksheet), worksheet line 4 (skipped with lines 2-10 when there is no net
+# long-term capital gain) and line 13 (nonresidents leave it blank), Schedule
+# II's copy lines 18 / 20 / 23, the Schedule II, Schedule III and Schedule 2EC
+# ratio products (2EC lines 22 and 30), Schedule IV line 1 (checkbox amounts
+# plus other amounts), Schedule III Part II line 3 and Part I line 1
+# (the total of every Part II page), and Schedule I Part I line 3 against
+# Part II line 8 (line 3 also carries the first-time homebuyer's account
+# distribution its second box names, so it equals Part II line 8 only when the
+# MSA box alone is marked). Schedule I Part I line 14 == Part II line 4 IS
+# declared: Part II line 4 prints "Enter the total on Part I, line 14", and the
+# instructions say "When reporting your MSA information, combine the amounts
+# for each spouse", so one Part II feeds line 14.
+# CROSS_FORM. Line 1 prints "Form 1040, line 11b"; the 2025 Form 1040 defines
+# AGI on line 11a and restates it on 11b, so the leg is 1 == f1040.11a.
+#
+# UNRESOLVED. None on this face. The on_state of the outside-US direct-deposit
+# box is /Savings and the Married Filing Jointly status is /2a: both dumped
+# from this blank's /AP /N, not guessed.
+# ===========================================================================
+form: "2"
+jurisdiction: states/mt
+tax_year: 2025
+source_url: https://revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf
+pdf_sha256: "4671aef667749732670c07fd51cbeed6bc824dc6466cfe19597787b3d6ba2b37"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- Form 2 main return: tax-year dates, amended flag, identity, filing and residency status, lines 1-26 (one money column)
+  - line: tax_year.begin  # "or the tax year beginning M M D D 2 0 2 5" (comb, 8 cells)
+    field: Tax Year Beginning
+    type: text
+    maxlen: 8
+    comb: true
+  - line: tax_year.end  # "and ending M M D D 2 0 Y Y" (comb, 8 cells)
+    field: Tax Year Ending
+    type: text
+    maxlen: 8
+    comb: true
+  - line: amended.yes  # "Mark if this is an amended return"
+    field: Amended Return Designation
+    type: checkbox
+    on_state: "/Yes"
+  - line: name.first  # "First Name"
+    field: "Primary Taxpayer's First Name"
+    type: text
+  - line: name.middle_initial  # "Initial"
+    field: "Primary Taxpayer's Middle Initial"
+    type: text
+    maxlen: 1
+  - line: name.last  # "Last Name" -- the SAME field prints in the "Name" header of pages 2, 3 and 5-9 (8 widgets with page 1, one field; page 4 has no header)
+    field: "Primary Taxpayer's Last Name"
+    type: text
+  - line: identifying_number  # "Social Security Number" -- one comb field, its widget repeats in the headers of pages 2, 3 and 5-9 (8 widgets with page 1; page 4 has no header)
+    field: "Primary Taxpayer's SSN"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: deceased.taxpayer  # "Deceased?" on the taxpayer row
+    field: Deceased 1
+    type: checkbox
+    on_state: "/Yes"
+  - line: spouse.name.first  # "Spouse's First Name"
+    field: "Spouse's First Name"
+    type: text
+  - line: spouse.name.middle_initial  # "Initial"
+    field: "Spouse's Middle Initial"
+    type: text
+    maxlen: 1
+  - line: spouse.name.last  # "Spouse's Last Name"
+    field: "Spouse's Last Name"
+    type: text
+  - line: spouse.identifying_number  # "Social Security Number" on the spouse row
+    field: "Spouse's SSN"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: deceased.spouse  # "Deceased?" on the spouse row
+    field: Deceased 2
+    type: checkbox
+    on_state: "/Yes"
+  - line: mailing_address.street  # "Current mailing address"
+    field: Mailing Address
+    type: text
+  - line: mailing_address.city  # "City"
+    field: City
+    type: text
+  - line: mailing_address.state  # "State" -- a comb widget, but a state abbreviation is letters, so the line is not comb: true (comb lines take digits only)
+    field: State
+    type: text
+    maxlen: 2
+  - line: mailing_address.zip  # "ZIP Code + 4" (comb, 9 cells)
+    field: Zip+4 Code
+    type: text
+    maxlen: 9
+    comb: true
+  - line: filing_status.single  # "Federal Filing Status  Single"
+    field: Filing Status
+    type: checkbox
+    on_state: "/Single"
+    group: filing_status
+  - line: filing_status.married_filing_jointly  # "Married Filing Jointly" -- the kid's on-state really is /2a (dumped from /AP /N)
+    field: Filing Status
+    type: checkbox
+    on_state: "/2a"
+    group: filing_status
+  - line: filing_status.married_filing_separately  # "Married Filing Separately"
+    field: Filing Status
+    type: checkbox
+    on_state: "/Married Filing Separately"
+    group: filing_status
+  - line: filing_status.qualifying_surviving_spouse  # "Qualifying Surviving Spouse"
+    field: Filing Status
+    type: checkbox
+    on_state: "/Qualifying Surviving Spouse"
+    group: filing_status
+  - line: filing_status.head_of_household  # "Head of Household"
+    field: Filing Status
+    type: checkbox
+    on_state: "/Head of Household"
+    group: filing_status
+  - line: residency.resident_full_year  # "Residency Status  Resident"
+    field: Residency Status
+    type: checkbox
+    on_state: "/Resident"
+    group: residency_status
+  - line: residency.resident_part_year  # "Part-year Resident"
+    field: Residency Status
+    type: checkbox
+    on_state: "/Part-year Resident"
+    group: residency_status
+  - line: residency.mixed_residency  # "Mixed Residency" (new for 2025)
+    field: Residency Status
+    type: checkbox
+    on_state: "/Mixed Residency"
+    group: residency_status
+  - line: residency.nonresident_full_year  # "Nonresident"
+    field: Residency Status
+    type: checkbox
+    on_state: "/Nonresident"
+    group: residency_status
+  - line: residency.nd_reciprocity  # "ND Reciprocity" -- its own field; the instructions mark it WITH "Nonresident"
+    field: North Dakota reciprocity
+    type: checkbox
+    on_state: "/Yes"
+  - line: residency.military_spouse  # "Nonresident Military Spouse" -- its own field; the instructions mark it WITH "Nonresident"
+    field: Nonresident Military Spouse
+    type: checkbox
+    on_state: "/Yes"
+  - line: "1"  # "Federal adjusted gross income from Form 1040, line 11b"
+    field: Page 1 Line 1
+    type: money
+  - line: "2"  # "Add Form 1040, lines 12e and 13b"
+    field: Page 1 Line 2
+    type: money
+  - line: "3"  # "Subtract line 2 from line 1. If zero or less, enter 0 (zero)."
+    field: Page 1 Line 3
+    type: money
+  - line: "4"  # "Montana additions to federal taxable income from Schedule I, Part I, line 7"
+    field: Page 1 Line 4
+    type: money
+  - line: "5"  # "Montana subtractions from federal taxable income from Schedule I, Part I, line 24"
+    field: Page 1 Line 5
+    type: money
+  - line: "6"  # "$5,660 subtraction for taxpayers 65 and older ($11,320 if married filing jointly and both are 65 and older)"
+    field: Page 1 Line 6
+    type: money
+  - line: "7"  # "Add lines 3 and 4. Then subtract lines 5 and 6. If zero or less, enter 0 (zero). This is your Montana taxable income."
+    field: Page 1 Line 7
+    type: money
+  - line: "8"  # "Tax liability before tax credits (See instructions)"
+    field: Page 1 Line 8
+    type: money
+  - line: "9"  # "Nonrefundable tax credits from Schedule III, Part I, line 14"
+    field: Page 1 Line 9
+    type: money
+  - line: "10"  # "Subtract line 9 from line 8. This is your tax after nonrefundable tax credits."
+    field: Page 1 Line 10
+    type: money
+  - line: 11a  # "Montana income tax withheld from: 11a Form(s) W-2" (inner column)
+    field: Page 1 Line 11a
+    type: money
+  - line: 11b  # "11b Form(s) 1099" (inner column)
+    field: Page 1 Line 11b
+    type: money
+  - line: 11c  # "11c Total pass-through entity tax credit from Montana Schedule(s) K-1" (inner column)
+    field: Page 1 Line 11c
+    type: money
+  - line: 11d  # "11d Total withholding from Montana Schedule(s) K-1" (inner column)
+    field: Page 1 Line 11d
+    type: money
+  - line: 11e  # "11e Loan-out withholding from Form LOWCERT" (inner column)
+    field: Page 1 Line 11e
+    type: money
+  - line: "11"  # "Add lines 11a through 11e"
+    field: Page 1 Line 11
+    type: money
+  - line: "12"  # "2025 estimated tax payments"
+    field: Page 1 Line 12
+    type: money
+  - line: "13"  # "Overpayment applied from 2024 return"
+    field: Page 1 Line 13
+    type: money
+  - line: "14"  # "Extension payment"
+    field: Page 1 Line 14
+    type: money
+  - line: 15.federal_eic  # "15 Earned Income Credit. Federal EIC" -- the mid-row entry box
+    field: Page 1 Line 15 EIC
+    type: money
+  - line: "15"  # "Multiply Federal EIC by 10% (0.10)" -- the line-15 credit box
+    field: Page 1 Line 15
+    type: money
+  - line: "16"  # "Elderly Homeowner/Renter Credit from Schedule 2EC, Line 30"
+    field: Page 1 Line 16
+    type: money
+  - line: "17"  # "Refundable tax credits from Schedule III, Part I, line 17"
+    field: Page 1 Line 17
+    type: money
+  - line: "18"  # "If filing an amended return: payments made with original return"
+    field: Page 1 Line 18
+    type: money
+  - line: "19"  # "Contributions, penalties, interest, and other taxes from Schedule IV, line 8"
+    field: Page 1 Line 19
+    type: money
+  - line: "20"  # "If filing an amended return: previous overpayment"
+    field: Page 1 Line 20
+    type: money
+  - line: "21"  # "Add lines 11 through 18, then subtract lines 19 and 20. This is your total payments."
+    field: Page 1 Line 21
+    type: money
+  - line: "22"  # "If line 21 is less than line 10, subtract line 21 from line 10. This is your tax due."
+    field: Page 1 Line 22
+    type: money
+  - line: "23"  # "If line 21 is more than line 10, subtract line 10 from line 21. This is your tax overpaid."
+    field: Page 1 Line 23
+    type: money
+  - line: "24"  # "Enter the amount from line 23 you would like applied to your 2026 estimated taxes"
+    field: Page 1 Line 24
+    type: money
+  - line: "25"  # "Enter the amount you want deposited into a 529 or 529A account"
+    field: Page 1 Line 25
+    type: money
+  - line: "26"  # "Add lines 24 and 25, then subtract from line 23. This is your refund."
+    field: Page 1 Line 26
+    type: money
+
+  # ============================================ page 2 -- "Montana Individual Income Tax" worksheet (tax_calc.1-13), direct deposit 1-3, 529/529A deposits 4-5, signatures, preparer, third-party designee
+  - line: tax_calc.1  # "Enter your total Montana taxable income from page 1, line 7."
+    field: Page 2 Line 1
+    type: money
+  - line: tax_calc.2  # "Enter your net long-term capital gains (See instructions)"
+    field: Page 2 Line 2
+    type: money
+  - line: tax_calc.3  # "Enter the lesser of line 1 or line 2"
+    field: Page 2 Line 3
+    type: money
+  - line: tax_calc.4  # "Subtract line 3 from line 1"
+    field: Page 2 Line 4
+    type: money
+  - line: tax_calc.5  # "Enter the amount for your federal filing status: $21,100 ... $42,200 ... $31,700"
+    field: Page 2 Line 5
+    type: money
+  - line: tax_calc.6  # "Subtract line 4 from line 5. If zero or less, enter 0 (zero)"
+    field: Page 2 Line 6
+    type: money
+  - line: tax_calc.7  # "Enter the lesser of line 3 or line 6"
+    field: Page 2 Line 7
+    type: money
+  - line: tax_calc.8  # "Multiply line 7 by 3% (0.03)"
+    field: Page 2 Line 8
+    type: money
+  - line: tax_calc.9  # "Subtract line 6 from line 3. If zero or less, enter 0 (zero)"
+    field: Page 2 Line 9
+    type: money
+  - line: tax_calc.10  # "Multiply line 9 by 4.1% (0.041)"
+    field: Page 2 Line 10
+    type: money
+  - line: tax_calc.11  # "Add lines 8 and 10. This is your Montana net long-term capital gains tax."
+    field: Page 2 Line 11
+    type: money
+  - line: tax_calc.12  # "... using the Montana Ordinary Income Tax Table. This is your Montana ordinary income tax."
+    field: Page 2 Line 12
+    type: money
+  - line: tax_calc.13  # "Residents add lines 11 and 12, and enter this amount on page 1, line 8. This is your Montana resident tax."
+    field: Page 2 Line 13
+    type: money
+  - line: dd.routing  # "1 Routing Number" (comb, 9 cells)
+    field: Bank Routing Number
+    type: text
+    maxlen: 9
+    comb: true
+  - line: dd.account  # "2 Account Number" (comb, 17 cells)
+    field: Bank Account Number
+    type: text
+    maxlen: 17
+    comb: true
+  - line: dd.checking  # "Checking"
+    field: Bank Account Type
+    type: checkbox
+    on_state: "/Checking"
+    group: dd_account_type
+  - line: dd.savings  # "Savings"
+    field: Bank Account Type
+    type: checkbox
+    on_state: "/Savings"
+    group: dd_account_type
+  - line: dd.outside_us  # "3 Mark this box if this refund is going to an account that is located outside of the United States or its territories." -- on-state /Savings (dumped)
+    field: Foreign bank account
+    type: checkbox
+    on_state: "/Savings"
+  - line: dd529.4.529  # "4 Account Type  529 Qualified Tuition Program" -- the DOR field name still says "Line 2"
+    field: Line 2 - 529 or 529A
+    type: checkbox
+    on_state: "/529"
+    group: dd529_4_type
+  - line: dd529.4.529a  # "529A Achieving a Better Life Experience" (row 4)
+    field: Line 2 - 529 or 529A
+    type: checkbox
+    on_state: "/529A"
+    group: dd529_4_type
+  - line: dd529.4.routing  # "RTN#" (row 4)
+    field: Line 2 - 529/529A Routing Number
+    type: text
+    maxlen: 9
+    comb: true
+  - line: dd529.4.account  # "ACCT#" (row 4)
+    field: Line 2 - 529/529A Bank Account Number
+    type: text
+    maxlen: 17
+    comb: true
+  - line: dd529.4.deposit_amount  # "529/529A deposit amount" (row 4)
+    field: Line 2 - 529/529A Deposit Amount
+    type: money
+  - line: dd529.5.529  # "5 Account Type  529 Qualified Tuition Program" -- the DOR field name still says "Line 3"
+    field: Line 3 - 529 or 529A
+    type: checkbox
+    on_state: "/529"
+    group: dd529_5_type
+  - line: dd529.5.529a  # "529A Achieving a Better Life Experience" (row 5)
+    field: Line 3 - 529 or 529A
+    type: checkbox
+    on_state: "/529A"
+    group: dd529_5_type
+  - line: dd529.5.routing  # "RTN#" (row 5)
+    field: Line 3 - 529/529A Routing Number
+    type: text
+    maxlen: 9
+    comb: true
+  - line: dd529.5.account  # "ACCT#" (row 5)
+    field: Line 3 - 529/529A Bank Account Number
+    type: text
+    maxlen: 17
+    comb: true
+  - line: dd529.5.deposit_amount  # "529/529A deposit amount" (row 5)
+    field: Line 3 - 529/529A Deposit Amount
+    type: money
+  - line: signature.taxpayer_date  # "Taxpayer ... Date M M D D Y Y Y Y"
+    field: Signature Date
+    type: text
+    maxlen: 8
+    comb: true
+  - line: signature.taxpayer_dob  # "Taxpayer ... Date of Birth M M D D Y Y Y Y"
+    field: Taxpayer Date of Birth
+    type: text
+    maxlen: 8
+    comb: true
+  - line: signature.taxpayer_phone  # "Phone" (taxpayer, comb 10)
+    field: Taxpayer daytime telephone number
+    type: text
+    maxlen: 10
+    comb: true
+  - line: signature.spouse_date  # "Spouse ... Date M M D D Y Y Y Y"
+    field: "Spouse's Signature Date"
+    type: text
+    maxlen: 8
+    comb: true
+  - line: signature.spouse_dob  # "Spouse ... Date of Birth M M D D Y Y Y Y"
+    field: "Spouse's Date of Birth"
+    type: text
+    maxlen: 8
+    comb: true
+  - line: signature.spouse_phone  # "Phone" (spouse, comb 10)
+    field: "Spouse's Taxpayer daytime telephone number"
+    type: text
+    maxlen: 10
+    comb: true
+  - line: preparer.date  # "Tax Preparer ... Date Signed M M D D Y Y Y Y"
+    field: Tax Preparer Signature Date
+    type: text
+    maxlen: 8
+    comb: true
+  - line: preparer.name  # "Print Name"
+    field: Tax Preparer Printed Name
+    type: text
+    maxlen: 55
+  - line: preparer.phone  # "Phone" (preparer, comb 10)
+    field: Preparer daytime telephone number
+    type: text
+    maxlen: 10
+    comb: true
+  - line: preparer.ptin  # "PTIN" (comb 9) -- a comb widget, but a PTIN begins with the letter P, so the line is not comb: true
+    field: "Preparer's PTIN"
+    type: text
+    maxlen: 9
+  - line: preparer.is_third_party_designee  # "Mark this box if you allow the DOR to discuss this tax return with your tax preparer."
+    field: Preparer as 3rd Party Designee
+    type: checkbox
+    on_state: "/Yes"
+  - line: third_party_designee.yes  # "Mark this box if you allow the DOR to discuss this tax return with someone other than your tax preparer."
+    field: 3rd Party Designee
+    type: checkbox
+    on_state: "/Yes"
+  - line: third_party_designee.name  # "Name"
+    field: Third-party Name
+    type: text
+    maxlen: 55
+  - line: third_party_designee.phone  # "Phone" (designee, comb 10)
+    field: Third-party daytime telephone number
+    type: text
+    maxlen: 10
+    comb: true
+
+  # ============================================ page 3 -- Schedule I, Part I (Montana adjustments, sched1.1-24) and Part II (Montana Medical Savings Account, sched1_part2.1-10)
+  - line: sched1.1  # "Interest and mutual fund dividends from state, county, or municipal bonds from other states"
+    field: "Schedule I, Part I, Line 1"
+    type: money
+  - line: sched1.2  # "Other recoveries of amounts deducted in earlier years that reduced Montana taxable income."
+    field: "Schedule I, Part I, Line 2"
+    type: money
+  - line: sched1.3.medical_savings_account  # "3 Taxable distribution from  Montana medical savings account Part II, line 8"
+    field: "Schedule 1, Part I, Taxable Distribution"
+    type: checkbox
+    on_state: "/Montana medical savings account"
+    group: sched1_3_account
+  - line: sched1.3.first_time_homebuyer_account  # "first-time homebuyer's account (See instructions)"
+    field: "Schedule 1, Part I, Taxable Distribution"
+    type: checkbox
+    on_state: "/first-time homebuyer's account"
+    group: sched1_3_account
+  - line: sched1.3  # "Taxable distribution from ..." (line 3 amount)
+    field: "Schedule I, Part I, Line 3"
+    type: money
+  - line: sched1.4  # "State income tax deduction included in federal taxable income (See instructions)"
+    field: "Schedule I, Part I, Line 4"
+    type: money
+  - line: sched1.5  # "Expenses used to claim a Montana tax credit"
+    field: "Schedule I, Part I, Line 5"
+    type: money
+  - line: sched1.6.code_1  # "6 Other additions Code" (first box) -- a comb widget whose DOR keystroke mask takes letters, so the line is not comb: true
+    field: "Schedule I, Part I, Line 6 Code 1"
+    type: text
+    maxlen: 2
+  - line: sched1.6.code_2  # "Code" (second box) -- a comb widget whose DOR keystroke mask takes letters, so the line is not comb: true
+    field: "Schedule I, Part I, Line 6 Code 2"
+    type: text
+    maxlen: 2
+  - line: sched1.6  # "Other additions"
+    field: "Schedule I, Part I, Line 6"
+    type: money
+  - line: sched1.7  # "Add lines 1 through 6, and enter the total on page 1, line 4. This is your Montana additions."
+    field: "Schedule I, Part I, Line 7"
+    type: money
+  - line: sched1.8  # "State income tax refunds included in federal taxable income (See instructions)"
+    field: "Schedule I, Part I, Line 8"
+    type: money
+  - line: sched1.9  # "Interest and mutual fund dividends from federal bonds, notes, and obligations"
+    field: "Schedule I, Part I, Line 9"
+    type: money
+  - line: sched1.10  # "Recoveries of amounts deducted in earlier years included in federal taxable income that did not reduce Montana income tax"
+    field: "Schedule I, Part I, Line 10"
+    type: money
+  - line: sched1.11  # "Exempt tribal income. Include Form ETM"
+    field: "Schedule I, Part I, Line 11"
+    type: money
+  - line: sched1.12  # "Military salary of active-duty service member"
+    field: "Schedule I, Part I, Line 12"
+    type: money
+  - line: sched1.13  # "Subtraction of military retirement income for working military retirees and military survivor benefits. Include Form WMRE"
+    field: "Schedule I, Part I, Line 13"
+    type: money
+  - line: sched1.14  # "Montana medical savings accounts deposits and earnings from Part II, line 4"
+    field: "Schedule I, Part I, Line 14"
+    type: money
+  - line: sched1.15  # "First-time homebuyer account deposits and earnings from deposits made before January 1, 2024"
+    field: "Schedule I, Part I, Line 15"
+    type: money
+  - line: sched1.16  # "Family education savings (529 plan) account deposits"
+    field: "Schedule I, Part I, Line 16"
+    type: money
+  - line: sched1.17  # "Achieving a Better Life Experience Act (ABLE) account deposits"
+    field: "Schedule I, Part I, Line 17"
+    type: money
+  - line: sched1.18  # "Business-related expenses for purchasing recycled material. Include Form RCYL"
+    field: "Schedule I, Part I, Line 18"
+    type: money
+  - line: sched1.19  # "Business expenses not included in federal taxable income due to an existing federal credit taken"
+    field: "Schedule I, Part I, Line 19"
+    type: money
+  - line: sched1.20  # "Certain expenses incurred by cannabis businesses"
+    field: "Schedule I, Part I, Line 20"
+    type: money
+  - line: sched1.21.code_1  # "21 Business sales and other miscellaneous subtractions. Code" (first box) -- a comb widget whose DOR keystroke mask takes letters, so the line is not comb: true
+    field: "Schedule I, Part I, Line 21 Code 1"
+    type: text
+    maxlen: 2
+  - line: sched1.21.code_2  # "Code" (second box) -- a comb widget whose DOR keystroke mask takes letters, so the line is not comb: true
+    field: "Schedule I, Part I, Line 21 Code 2"
+    type: text
+    maxlen: 2
+  - line: sched1.21  # "Business sales and other miscellaneous subtractions"
+    field: "Schedule I, Part I, Line 21"
+    type: money
+  - line: sched1.22  # "Tier I Railroad Retirement Benefits included on Form 1040, line 6b"
+    field: "Schedule I, Part I, Line 22"
+    type: money
+  - line: sched1.23  # "Tier II Railroad Retirement Benefits included on Form 1040, line 5b (See instructions)"
+    field: "Schedule I, Part I, Line 23"
+    type: money
+  - line: sched1.24  # "Add lines 8 through 23, and enter total on page 1, line 5. This is your Montana subtractions."
+    field: "Schedule I, Part I, Line 24"
+    type: money
+  - line: sched1_part2.1  # "Beginning balance. If this is a new account, enter 0"
+    field: "Schedule I, Part II, Line 1"
+    type: money
+  - line: sched1_part2.2  # "Total contributions for the year (up to $4,600 per taxpayer)"
+    field: "Schedule I, Part II, Line 2"
+    type: money
+  - line: sched1_part2.3.balance_below_beginning  # "Mark this box if your account balance is less than your beginning balance (See instructions)" -- on-state /Montana medical savings account (dumped)
+    field: "Schedule 1, Part II, Line 3"
+    type: checkbox
+    on_state: "/Montana medical savings account"
+  - line: sched1_part2.3  # "Earnings from the account: interest, dividends, capital gains, etc."
+    field: "Schedule I, Part II, Line 3"
+    type: money
+  - line: sched1_part2.4  # "Add lines 2 and 3. Enter the total on Part I, line 14"
+    field: "Schedule I, Part II, Line 4"
+    type: money
+  - line: sched1_part2.5  # "Ending balance. Enter your ending balance as shown on your year-end account statement."
+    field: "Schedule I, Part II, Line 5"
+    type: money
+  - line: sched1_part2.6  # "Total withdrawals made during the year"
+    field: "Schedule I, Part II, Line 6"
+    type: money
+  - line: sched1_part2.7  # "Withdrawals for eligible expenses. (See instructions)"
+    field: "Schedule I, Part II, Line 7"
+    type: money
+  - line: sched1_part2.8  # "Nonqualified withdrawals. Subtract line 7 from line 6. Enter the total on Part I, line 3"
+    field: "Schedule I, Part II, Line 8"
+    type: money
+  - line: sched1_part2.9  # "Nonqualified withdrawals not subject to penalty (See instructions)"
+    field: "Schedule I, Part II, Line 9"
+    type: money
+  - line: sched1_part2.10  # "Nonqualified withdrawals subject to penalty. Subtract line 9 from line 8"
+    field: "Schedule I, Part II, Line 10"
+    type: money
+
+  # ============================================ page 4 -- Schedule II, Tax on Montana Source Income: filer-type boxes, part-year and mixed-residency information, lines 1-16
+  - line: sched2.alternative_method_filer  # "Alternative Method Filer (See instructions)" -- on-state /Montana medical savings account (dumped)
+    field: Alternative Method Filer
+    type: checkbox
+    on_state: "/Montana medical savings account"
+  - line: sched2.thirty_day_nonresident_exclusion  # "30 Day Nonresident Exclusion (See instructions)" -- on-state /Montana medical savings account (dumped)
+    field: 30 Day Nonresident Exclusion (See instructions)
+    type: checkbox
+    on_state: "/Montana medical savings account"
+  - line: sched2.residency_change_date  # "Part-Year Resident Information  Date of Residency Change M M D D Y Y Y Y"
+    field: Date of Residency Change
+    type: text
+    maxlen: 8
+    comb: true
+  - line: sched2.state_moved_to  # "State moved to" -- a comb widget, but a state abbreviation is letters, so the line is not comb: true (comb lines take digits only)
+    field: "Schedule II, State moved to"
+    type: text
+    maxlen: 2
+  - line: sched2.state_moved_from  # "State moved from" -- a comb widget, but a state abbreviation is letters, so the line is not comb: true (comb lines take digits only)
+    field: "Schedule II, State moved from"
+    type: text
+    maxlen: 2
+  - line: sched2.mixed.resident_spouse_name  # "Mixed Residency ... Montana Resident Spouse"
+    field: Schedule II Montana Resident Spouse Name
+    type: text
+  - line: sched2.mixed.resident_spouse_ssn  # "Social Security Number" (resident spouse row)
+    field: Schedule II Montana Resident SSN
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: sched2.mixed.nonresident_spouse_name  # "Nonresident/Part-Year Resident Spouse"
+    field: Schedule II Nonresident Spouse Name
+    type: text
+  - line: sched2.mixed.nonresident_spouse_ssn  # "Social Security Number" (nonresident/part-year spouse row)
+    field: Schedule II Montana Nonresident SSN
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: sched2.1  # "Wages, salaries, tips, etc."
+    field: Schedule II Line 1
+    type: money
+  - line: sched2.2  # "Interest"
+    field: Schedule II Line 2
+    type: money
+  - line: sched2.3  # "Ordinary dividends"
+    field: Schedule II Line 3
+    type: money
+  - line: sched2.4  # "Refunds, credits, or offsets of local income taxes"
+    field: Schedule II Line 4
+    type: money
+  - line: sched2.5  # "Alimony received"
+    field: Schedule II Line 5
+    type: money
+  - line: sched2.6a  # "6a Montana source business income" (inner column)
+    field: Schedule II Line 6a
+    type: money
+  - line: sched2.6b  # "6b Additional Montana source business expenses" (inner column)
+    field: Schedule II Line 6b
+    type: money
+  - line: sched2.6  # "Subtract line 6b from line 6a. This is your net Montana source business income or (loss)"
+    field: Schedule II Line 6
+    type: money
+  - line: sched2.7  # "Short-term capital gain or (loss)"
+    field: Schedule II Line 7
+    type: money
+  - line: sched2.8  # "Other gains or (losses)"
+    field: Schedule II Line 8
+    type: money
+  - line: sched2.9  # "IRAs, pensions, and annuities"
+    field: Schedule II Line 9
+    type: money
+  - line: sched2.10.suspended_losses  # "Mark this box if you have Montana source suspended losses (See instructions)" -- on-state /Montana medical savings account (dumped)
+    field: "Schedule II, Part I, Line 10 - Montana source suspended losses indicator"
+    type: checkbox
+    on_state: "/Montana medical savings account"
+  - line: sched2.10a  # "10a Montana source income from rental real estate, royalties, partnerships, S corporations, trusts, etc." (inner column)
+    field: Schedule II Line 10a
+    type: money
+  - line: sched2.10b  # "10b Additional Montana source business expenses related to rental real estate ..." (inner column)
+    field: Schedule II Line 10b
+    type: money
+  - line: sched2.10  # "Subtract line 10b from line 10a. This is your net Montana source income from rental real estate ..."
+    field: Schedule II Line 10
+    type: money
+  - line: sched2.11a  # "11a Montana source farm income or (loss)" (inner column)
+    field: Schedule II Line 11a
+    type: money
+  - line: sched2.11b  # "11b Additional Montana source expenses related to farm income or (loss)" (inner column)
+    field: Schedule II Line 11b
+    type: money
+  - line: sched2.11  # "Subtract line 11b from line 11a. This is your net Montana source farm income or (loss)."
+    field: Schedule II Line 11
+    type: money
+  - line: sched2.12  # "Social Security Benefits"
+    field: Schedule II Line 12
+    type: money
+  - line: sched2.13  # "Other income and adjustments to income (See instructions)"
+    field: Schedule II Line 13
+    type: money
+  - line: sched2.14  # "Montana source additions to income (See instructions)"
+    field: Schedule II Line 14
+    type: money
+  - line: sched2.15  # "Add lines 1 through 14. This is your Montana source ordinary income."
+    field: Schedule II Line 15
+    type: money
+  - line: sched2.16a  # "16a Form 1040, line 9" (inner column)
+    field: Schedule II Line 16a
+    type: money
+  - line: sched2.16b  # "16b Certain federal adjustments (See instructions)" (inner column)
+    field: Schedule II Line 16b
+    type: money
+  - line: sched2.16c  # "16c Net long-term capital gains" (inner column)
+    field: Schedule II Line 16c
+    type: money
+  - line: sched2.16  # "Subtract lines 16b and 16c from line 16a. This is your everywhere ordinary income for Montana."
+    field: Schedule II Line 16
+    type: money
+
+  # ============================================ page 5 -- Schedule II (Continued): source ratios and tax, lines 17-25
+  - line: sched2.17  # "Divide line 15 by line 16. Round to 6 decimal places and do not enter more than 1.000000. This is your Montana source ordinary income ratio." -- an 8-cell comb widget; the printed "." sits in cell 2, so enter e.g. 0.250000 -- the value carries the decimal point, so the line is not comb: true
+    field: Schedule II Line 17
+    type: text
+    maxlen: 8
+  - line: sched2.18  # "Montana ordinary income tax from page 2, line 12"
+    field: Schedule II Line 18
+    type: money
+  - line: sched2.19  # "Multiply the tax on line 18 by the ratio on line 17. This is your Montana source ordinary income tax."
+    field: Schedule II Line 19
+    type: money
+  - line: sched2.20  # "Total net long-term capital gains from page 2, line 2"
+    field: Schedule II Line 20
+    type: money
+  - line: sched2.21  # "Montana source net long-term capital gains"
+    field: Schedule II Line 21
+    type: money
+  - line: sched2.22  # "Divide line 21 by line 20. Round to 6 decimal places and do not enter more than 1.000000. This is your Montana source net long-term capital gains ratio." -- an 8-cell comb widget, printed "." in cell 2 -- the value carries the decimal point, so the line is not comb: true
+    field: Schedule II Line 22
+    type: text
+    maxlen: 8
+  - line: sched2.23  # "Montana net long-term capital gains tax from page 2, line 11"
+    field: Schedule II Line 23
+    type: money
+  - line: sched2.24  # "Multiply the tax on line 23 by the ratio on line 22. This is your Montana source net long-term capital gains tax."
+    field: Schedule II Line 24
+    type: money
+  - line: sched2.25  # "Add lines 19 and 24. Enter here and on page 1, line 8. This is your total tax on Montana source income."
+    field: Schedule II Line 25
+    type: money
+
+  # ============================================ page 6 -- Schedule III, Part I, Tax Credits: nonrefundable 1-14, refundable 15-17
+  - line: sched3.1  # "Total credit for an income tax liability paid to another state or country from all Parts II, line 21"
+    field: Schedule III Part I Line 1
+    type: money
+  - line: sched3.2  # "Qualified endowment credit. Include Form QEC"
+    field: Schedule III Part I Line 2
+    type: money
+  - line: sched3.3  # "Recycle credit. Include Form RCYL"
+    field: Schedule III Part I Line 3
+    type: money
+  - line: sched3.4  # "Apprenticeship credit"
+    field: Schedule III Part I Line 4
+    type: money
+  - line: sched3.5  # "Trades education and training credit. Include Form TETC" -- the widget tooltip says "Line 6"; position and the field name say line 5
+    field: Schedule III Part I Line 5
+    type: money
+  - line: sched3.6.confirmation_code_1  # "Innovative educational program credit  Credit confirmation code" (first box, comb 10) -- a comb widget whose DOR keystroke mask takes letters or digits, so the line is not comb: true
+    field: Schedule III Part I Line 6 Credit confirmation code 1
+    type: text
+    maxlen: 10
+  - line: sched3.6.confirmation_code_2  # "Credit confirmation code" (second box, comb 10) -- a comb widget whose DOR keystroke mask takes letters or digits, so the line is not comb: true
+    field: Schedule III Part I Line 6 Credit confirmation code 2
+    type: text
+    maxlen: 10
+  - line: sched3.6  # "Innovative educational program credit"
+    field: Schedule III Part I Line 6
+    type: money
+  - line: sched3.7.confirmation_code_1  # "Student scholarship organization credit  Credit confirmation code" (first box, comb 10) -- a comb widget whose DOR keystroke mask takes letters or digits, so the line is not comb: true
+    field: Schedule III Part I Line 7 Credit confirmation code 1
+    type: text
+    maxlen: 10
+  - line: sched3.7.confirmation_code_2  # "Credit confirmation code" (second box, comb 10) -- a comb widget whose DOR keystroke mask takes letters or digits, so the line is not comb: true
+    field: Schedule III Part I Line 7 Credit confirmation code 2
+    type: text
+    maxlen: 10
+  - line: sched3.7  # "Student scholarship organization credit"
+    field: Schedule III Part I Line 7
+    type: money
+  - line: sched3.8.multiple_cgr_accounts  # "8 Contractor's gross receipts tax credit. If multiple CGR accounts, mark here" -- the DOR field name says "Line 9"; the box sits on the printed line-8 row
+    field: "Schedule III, Part I, Line 9 Checkbox"
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched3.8.cgr_account_id  # "CGR Account ID:" (comb 10; the "C G R" suffix is printed right of the box)
+    field: CGR Account ID
+    type: text
+    maxlen: 10
+    comb: true
+  - line: sched3.8  # "Contractor's gross receipts tax credit"
+    field: Schedule III Part I Line 8
+    type: money
+  - line: sched3.9  # "Historic property preservation credit. Include federal Form 3468"
+    field: Schedule III Part I Line 9
+    type: money
+  - line: sched3.10  # "Infrastructure users fee credit. Include Form IUFC"
+    field: Schedule III Part I Line 10
+    type: money
+  - line: sched3.11.ucrn_1  # "MEDIA Credit  UCRN" (first box, comb 24; the five printed dashes sit in cells 3, 8, 11, 15 and 20, so enter the UCRN with its dashes) -- the value carries letters and the dashes, so the line is not comb: true
+    field: Schedule III Part I Line 11 UCRN_1
+    type: text
+    maxlen: 24
+  - line: sched3.11.ucrn_2  # "UCRN" (second box, comb 24, same dash cells) -- the value carries letters and the dashes, so the line is not comb: true
+    field: Schedule III Part I Line 11 UCRN_2
+    type: text
+    maxlen: 24
+  - line: sched3.11  # "MEDIA Credit"
+    field: Schedule III Part I Line 11
+    type: money
+  - line: sched3.12.certificate_number  # "Jobs growth incentive credit ... Credit certificate number" (comb 16; printed dashes in cells 5 and 10) -- the value carries letters and the dashes, so the line is not comb: true
+    field: Schedule III Part I Line 12 Credit Certificate Number
+    type: text
+    maxlen: 16
+  - line: sched3.12  # "Jobs growth incentive credit. Include Form JGI"
+    field: Schedule III Part I Line 12
+    type: money
+  - line: sched3.13.tax_credit_code  # "Tax credit code" (comb 4) -- a comb widget whose DOR keystroke mask takes letters, so the line is not comb: true
+    field: "Schedule III Part I Line 13, Tax Credit Code"
+    type: text
+    maxlen: 4
+  - line: sched3.13  # "Carryforward amount from an expired or repealed tax credit (See instructions)"
+    field: Schedule III Part I Line 13
+    type: money
+  - line: sched3.14  # "Add lines 1 through 13 and enter the total on page 1, line 9. These are your nonrefundable credits."
+    field: Schedule III Part I Line 14
+    type: money
+  - line: sched3.15  # "Adoption credit. Include Form ADPT"
+    field: Schedule III Part I Line 15
+    type: money
+  - line: sched3.16  # "Unlocking public lands credit"
+    field: Schedule III Part I Line 16
+    type: money
+  - line: sched3.17  # "Add lines 15 and 16 and enter the total on page 1, line 17. These are your refundable credits."
+    field: Schedule III Part I Line 17
+    type: money
+
+  # ============================================ page 7 -- Schedule III, Part II, Credit for Income Taxes Paid to Another State or Country (one page per state; this pack maps the one page the PDF carries)
+  - line: sched3_part2.1  # "Enter your income sourced and taxable to another state or country ... excluding any net long-term capital gains."
+    field: Schedule III Part II Line 1
+    type: money
+  - line: sched3_part2.2.state  # "Enter state's abbreviation" (line 2) -- a comb widget, but a state abbreviation is letters, so the line is not comb: true (comb lines take digits only)
+    field: "Schedule III, Part II, Line 2, State"
+    type: text
+    maxlen: 2
+  - line: sched3_part2.2  # "Enter all income sourced and taxable to the other state or country"
+    field: Schedule III Part II Line 2
+    type: money
+  - line: sched3_part2.3a  # "3a If a full-year resident, enter Form 1040, line 9 excluding your net long-term capital gains" (inner column)
+    field: Schedule III Part II Line 3a
+    type: money
+  - line: sched3_part2.3b  # "3b If a full-year resident, enter expenses related to sourced and taxable income" (inner column)
+    field: Schedule III Part II Line 3b
+    type: money
+  - line: sched3_part2.3  # "Full-year residents subtract line 3b from line 3a. Part-year residents and mixed residency filers, enter Schedule II, line 16."
+    field: Schedule III Part II Line 3
+    type: money
+  - line: sched3_part2.4  # "Enter your total tax liability paid to the other state or country"
+    field: Schedule III Part II Line 4
+    type: money
+  - line: sched3_part2.5  # "Enter your Montana ordinary income tax (See instructions)"
+    field: Schedule III Part II Line 5
+    type: money
+  - line: sched3_part2.6  # "Divide line 1 by line 2. Round to 6 decimal places and do not enter more than 1.000000" -- an 8-cell comb widget, printed "." in cell 2 -- the value carries the decimal point, so the line is not comb: true
+    field: Schedule III Part II Line 6
+    type: text
+    maxlen: 8
+  - line: sched3_part2.7  # "Multiply line 4 by line 6"
+    field: Schedule III Part II Line 7
+    type: money
+  - line: sched3_part2.8  # "Divide line 1 by line 3. Round to 6 decimal places and do not enter more than 1.000000" -- an 8-cell comb widget, printed "." in cell 2 -- the value carries the decimal point, so the line is not comb: true
+    field: Schedule III Part II Line 8
+    type: text
+    maxlen: 8
+  - line: sched3_part2.9  # "Multiply line 5 by line 8"
+    field: Schedule III Part II Line 9
+    type: money
+  - line: sched3_part2.10  # "Enter the lesser of the amounts on lines 4, 7, or 9. This is your credit for income tax paid to another state or country for Montana ordinary income tax."
+    field: Schedule III Part II Line 10
+    type: money
+  - line: sched3_part2.11  # "Enter your net long-term capital gain sourced and taxable to another state or country ..."
+    field: Schedule III Part II Line 11
+    type: money
+  - line: sched3_part2.12.state  # "Enter state's abbreviation" (line 12) -- a comb widget, but a state abbreviation is letters, so the line is not comb: true (comb lines take digits only)
+    field: "Schedule III, Part II, Line 12, State"
+    type: text
+    maxlen: 2
+  - line: sched3_part2.12  # "Enter all income sourced and taxable to the other state or country"
+    field: Schedule III Part II Line 12
+    type: money
+  - line: sched3_part2.13  # "Enter federal net long-term capital gains. Part-year residents and mixed residency filers, enter Schedule II, line 21."
+    field: Schedule III Part II Line 13
+    type: money
+  - line: sched3_part2.14  # "Enter your income tax liability paid to the other state or country (See instructions)"
+    field: Schedule III Part II Line 14
+    type: money
+  - line: sched3_part2.15  # "Full-year residents enter page 2, line 11. Part-year residents and mixed residency filers enter Schedule II, line 24."
+    field: Schedule III Part II Line 15
+    type: money
+  - line: sched3_part2.16  # "Divide line 11 by line 12. Round to 6 decimal places and do not enter more than 1.000000" -- an 8-cell comb widget, printed "." in cell 2 -- the value carries the decimal point, so the line is not comb: true
+    field: Schedule III Part II Line 16
+    type: text
+    maxlen: 8
+  - line: sched3_part2.17  # "Multiply line 14 by line 16"
+    field: Schedule III Part II Line 17
+    type: money
+  - line: sched3_part2.18  # "Divide line 11 by line 13. Round to 6 decimal places and do not enter more than 1.000000" -- an 8-cell comb widget, printed "." in cell 2 -- the value carries the decimal point, so the line is not comb: true
+    field: Schedule III Part II Line 18
+    type: text
+    maxlen: 8
+  - line: sched3_part2.19  # "Multiply line 15 by line 18"
+    field: Schedule III Part II Line 19
+    type: money
+  - line: sched3_part2.20  # "Enter the lesser of the amounts on lines 14, 17, or 19. This is your credit for income tax paid to another state or country for Montana net long-term capital gains tax."
+    field: Schedule III Part II Line 20
+    type: money
+  - line: sched3_part2.21  # "Total Credit for Income Taxes Paid to Another State or Country  Add lines 10 and 20."
+    field: Schedule III Part II Line 21
+    type: money
+
+  # ============================================ page 8 -- Schedule IV, Contributions, Penalties, Interest, and Other Taxes, lines 1-8
+  - line: sched4.1a.usd5  # "1a Nongame Wildlife Program  $5"
+    field: Schedule IV Line 1a
+    type: checkbox
+    on_state: "/5"
+    group: sched4_1a
+  - line: sched4.1a.usd10  # "1a Nongame Wildlife Program  $10"
+    field: Schedule IV Line 1a
+    type: checkbox
+    on_state: "/10"
+    group: sched4_1a
+  - line: sched4.1a.usd20  # "1a Nongame Wildlife Program  $20"
+    field: Schedule IV Line 1a
+    type: checkbox
+    on_state: "/20"
+    group: sched4_1a
+  - line: sched4.1a.other_amount  # "1a Nongame Wildlife Program ... 00 other amount" (the box ending in the printed 00)
+    field: Schedule IV Line 1a Other Amount
+    type: money
+  - line: sched4.1b.usd5  # "1b Child Abuse Prevention  $5"
+    field: Schedule IV Line 1b
+    type: checkbox
+    on_state: "/5"
+    group: sched4_1b
+  - line: sched4.1b.usd10  # "1b Child Abuse Prevention  $10"
+    field: Schedule IV Line 1b
+    type: checkbox
+    on_state: "/10"
+    group: sched4_1b
+  - line: sched4.1b.usd20  # "1b Child Abuse Prevention  $20"
+    field: Schedule IV Line 1b
+    type: checkbox
+    on_state: "/20"
+    group: sched4_1b
+  - line: sched4.1b.other_amount  # "1b Child Abuse Prevention ... 00 other amount" (the box ending in the printed 00)
+    field: Schedule IV Line 1b Other Amount
+    type: money
+  - line: sched4.1c.usd5  # "1c Agriculture Literacy in Montana Schools  $5"
+    field: Schedule IV Line 1c
+    type: checkbox
+    on_state: "/5"
+    group: sched4_1c
+  - line: sched4.1c.usd10  # "1c Agriculture Literacy in Montana Schools  $10"
+    field: Schedule IV Line 1c
+    type: checkbox
+    on_state: "/10"
+    group: sched4_1c
+  - line: sched4.1c.usd20  # "1c Agriculture Literacy in Montana Schools  $20"
+    field: Schedule IV Line 1c
+    type: checkbox
+    on_state: "/20"
+    group: sched4_1c
+  - line: sched4.1c.other_amount  # "1c Agriculture Literacy in Montana Schools ... 00 other amount" (the box ending in the printed 00)
+    field: Schedule IV Line 1c Other Amount
+    type: money
+  - line: sched4.1d.usd5  # "1d Montana Military Family Relief Fund  $5"
+    field: Schedule IV Line 1d
+    type: checkbox
+    on_state: "/5"
+    group: sched4_1d
+  - line: sched4.1d.usd10  # "1d Montana Military Family Relief Fund  $10"
+    field: Schedule IV Line 1d
+    type: checkbox
+    on_state: "/10"
+    group: sched4_1d
+  - line: sched4.1d.usd20  # "1d Montana Military Family Relief Fund  $20"
+    field: Schedule IV Line 1d
+    type: checkbox
+    on_state: "/20"
+    group: sched4_1d
+  - line: sched4.1d.other_amount  # "1d Montana Military Family Relief Fund ... 00 other amount" (the box ending in the printed 00)
+    field: Schedule IV Line 1d Other Amount
+    type: money
+  - line: sched4.1  # "Total voluntary check-off contribution programs from lines 1a through 1d"
+    field: Schedule IV Line 1
+    type: money
+  - line: sched4.2  # "Interest on underpayment of estimated taxes (See instructions)"
+    field: Schedule IV Line 2
+    type: money
+  - line: sched4.2.farming_gross_income  # "If applicable, mark the appropriate box  2/3 farming gross income"
+    field: Interest on underpayment of estimated taxes type
+    type: checkbox
+    on_state: "/2/3 farming gross income"
+    group: sched4_2_basis
+  - line: sched4.2.annualization_method  # "Estimated payments made using the annualization method"
+    field: Interest on underpayment of estimated taxes type
+    type: checkbox
+    on_state: "/Annualization Method"
+    group: sched4_2_basis
+  - line: sched4.3  # "Late filing penalty"
+    field: Schedule IV Line 3
+    type: money
+  - line: sched4.4  # "Late payment penalty"
+    field: Schedule IV Line 4
+    type: money
+  - line: sched4.5  # "Interest"
+    field: Schedule IV Line 5
+    type: money
+  - line: sched4.6.first_time_homebuyer_account  # "6 Other penalties (See instructions)  First-Time Homebuyer Account"
+    field: First-Time Homebuyer Account
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched4.6.medical_savings_account  # "Montana Medical Savings Account"
+    field: Medical Care Savings Account
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched4.6.farm_ranch_risk_management_account  # "Farm and Ranch Risk Management Account"
+    field: Farm and Ranch Risk Management Account
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched4.6  # "Other penalties (See instructions)"
+    field: Schedule IV Line 6
+    type: money
+  - line: sched4.7.code_1  # "7 Lump-sum and recapture taxes (See instructions) Code" (first box) -- a comb widget whose DOR keystroke mask takes letters, so the line is not comb: true
+    field: "Schedule IV, Line 7 Code 1"
+    type: text
+    maxlen: 2
+  - line: sched4.7.code_2  # "Code" (second box) -- a comb widget whose DOR keystroke mask takes letters, so the line is not comb: true
+    field: "Schedule IV, Line 7 Code 2"
+    type: text
+    maxlen: 2
+  - line: sched4.7  # "Lump-sum and recapture taxes (See instructions)"
+    field: Schedule IV Line 7
+    type: money
+  - line: sched4.8  # "Add lines 1 through 7, and enter on page 1, line 19. These are your total contributions, penalties, interest, and other taxes."
+    field: Schedule IV Line 8
+    type: money
+
+  # ============================================ page 9 -- Schedule V, Amended Return Information: adjustment type and the six-row A/B/C table
+  - line: amended.adjustment_type.federal_audit  # "Adjustment Type:  Federal Audit"
+    field: Adjustment Type
+    type: checkbox
+    on_state: "/Federal audit"
+    group: amended_adjustment_type
+  - line: amended.adjustment_type.amended_federal_return  # "Adjustment Type:  Amended Federal Return"
+    field: Adjustment Type
+    type: checkbox
+    on_state: "/Amended federal return"
+    group: amended_adjustment_type
+  - line: amended.adjustment_type.montana_adjustment  # "Adjustment Type:  Montana Adjustment"
+    field: Adjustment Type
+    type: checkbox
+    on_state: "/Montana adjustment"
+    group: amended_adjustment_type
+  - line: amended.adjustment_type.other  # "Adjustment Type:  Other"
+    field: Adjustment Type
+    type: checkbox
+    on_state: "/Other"
+    group: amended_adjustment_type
+  - line: amended.table.1.form  # "A Form or Schedule" (row 1, multiline)
+    field: Schedule V Form or Schedule Line 1
+    type: text
+  - line: amended.table.1.line  # "B Line or Box" (row 1, multiline)
+    field: Schedule V Line or Box Line 1
+    type: text
+  - line: amended.table.1.reason  # "C Reason" (row 1, multiline)
+    field: Schedule V Reason Line 1
+    type: text
+  - line: amended.table.2.form  # "A Form or Schedule" (row 2, multiline)
+    field: Schedule V Form or Schedule Line 2
+    type: text
+  - line: amended.table.2.line  # "B Line or Box" (row 2, multiline)
+    field: Schedule V Line or Box Line 2
+    type: text
+  - line: amended.table.2.reason  # "C Reason" (row 2, multiline)
+    field: Schedule V Reason Line 2
+    type: text
+  - line: amended.table.3.form  # "A Form or Schedule" (row 3, multiline)
+    field: Schedule V Form or Schedule Line 3
+    type: text
+  - line: amended.table.3.line  # "B Line or Box" (row 3, multiline)
+    field: Schedule V Line or Box Line 3
+    type: text
+  - line: amended.table.3.reason  # "C Reason" (row 3, multiline)
+    field: Schedule V Reason Line 3
+    type: text
+  - line: amended.table.4.form  # "A Form or Schedule" (row 4, multiline)
+    field: Schedule V Form or Schedule Line 4
+    type: text
+  - line: amended.table.4.line  # "B Line or Box" (row 4, multiline)
+    field: Schedule V Line or Box Line 4
+    type: text
+  - line: amended.table.4.reason  # "C Reason" (row 4, multiline)
+    field: Schedule V Reason Line 4
+    type: text
+  - line: amended.table.5.form  # "A Form or Schedule" (row 5, multiline)
+    field: Schedule V Form or Schedule Line 5
+    type: text
+  - line: amended.table.5.line  # "B Line or Box" (row 5, multiline)
+    field: Schedule V Line or Box Line 5
+    type: text
+  - line: amended.table.5.reason  # "C Reason" (row 5, multiline)
+    field: Schedule V Reason Line 5
+    type: text
+  - line: amended.table.6.form  # "A Form or Schedule" (row 6, multiline)
+    field: Schedule V Form or Schedule Line 6
+    type: text
+  - line: amended.table.6.line  # "B Line or Box" (row 6, multiline)
+    field: Schedule V Line or Box Line 6
+    type: text
+  - line: amended.table.6.reason  # "C Reason" (row 6, multiline)
+    field: Schedule V Reason Line 6
+    type: text
+
+  # ============================================ page 10 -- Schedule 2EC, Elderly Homeowner/Renter Credit: claimant, attestation, household income 1-18, net household income 19-22, credit 23-30
+  - line: sched2ec.claimant.first_name  # "Claimant Name"
+    field: "2EC Eligible Taxpayer's First Name"
+    type: text
+  - line: sched2ec.claimant.middle_initial  # "Initial"
+    field: "2EC Eligible Taxpayer's Middle Initial"
+    type: text
+    maxlen: 1
+  - line: sched2ec.claimant.last_name  # "Last Name"
+    field: "2EC Eligible Taxpayer's Last Name"
+    type: text
+  - line: sched2ec.claimant.ssn  # "Social Security Number"
+    field: "2EC Eligible Taxpayer's SSN"
+    type: text
+    maxlen: 9
+    comb: true
+    format: ssn_digits_only
+  - line: sched2ec.claimant.date_of_death  # "Date of Death MM D D Y Y Y Y"
+    field: Date of Death
+    type: text
+    maxlen: 8
+    comb: true
+  - line: sched2ec.physical_address.street  # "Physical address"
+    field: Physical Address
+    type: text
+  - line: sched2ec.physical_address.city  # "City"
+    field: Physical City
+    type: text
+  - line: sched2ec.physical_address.state  # "State" -- a comb widget, but a state abbreviation is letters, so the line is not comb: true (comb lines take digits only)
+    field: Physical State
+    type: text
+    maxlen: 2
+  - line: sched2ec.physical_address.zip  # "ZIP Code + 4" (comb 9)
+    field: Physical ZIP+4 Code
+    type: text
+    maxlen: 9
+    comb: true
+  - line: sched2ec.attest.age_62  # "I reached age 62 by December 31, 2025" (the widget tooltip still says 2024)
+    field: Age 62
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched2ec.attest.nine_months_in_montana  # "I resided in Montana for a minimum of nine months during 2025"
+    field: 9 Months
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched2ec.attest.six_months_occupancy  # "I occupied a Montana residence as a renter, owner, or lessee for at least six months during 2025"
+    field: 6 months
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched2ec.attest.household_income_under_limit  # "The combined gross household income was less than $45,000 for 2025 (See instructions)"
+    field: Household Income
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched2ec.attest.only_claimant  # "I am the only member of my household claiming this credit"
+    field: Only claimant
+    type: checkbox
+    on_state: "/Yes"
+  - line: sched2ec.household_size  # "How many people lived in your household during 2025?" (/MaxLen 2, not a comb)
+    field: Household Occupants
+    type: text
+    maxlen: 2
+  - line: sched2ec.1  # "Wages, salaries, tips, etc."
+    field: 2EC Line 1
+    type: money
+  - line: sched2ec.2  # "Interest"
+    field: 2EC Line 2
+    type: money
+  - line: sched2ec.3  # "Dividends"
+    field: 2EC Line 3
+    type: money
+  - line: sched2ec.4  # "IRA distributions from Form 1099-R (See instructions)"
+    field: 2EC Line 4
+    type: money
+  - line: sched2ec.5  # "Pensions and annuities from Form 1099-R and Tier II Railroad Retirement benefits (See instructions)"
+    field: 2EC Line 5
+    type: money
+  - line: sched2ec.6  # "Social Security benefits and Tier I Railroad Retirement benefits (See instructions)"
+    field: 2EC Line 6
+    type: money
+  - line: sched2ec.7  # "Capital gain, including any exclusion"
+    field: 2EC Line 7
+    type: money
+  - line: sched2ec.8  # "Refundable credits received, including your elderly homeowner renter credit received in 2025"
+    field: 2EC Line 8
+    type: money
+  - line: sched2ec.9  # "Alimony"
+    field: 2EC Line 9
+    type: money
+  - line: sched2ec.10  # "Business income"
+    field: 2EC Line 10
+    type: money
+  - line: sched2ec.11  # "Other gains"
+    field: 2EC Line 11
+    type: money
+  - line: sched2ec.12  # "Rental real estate, royalties, partnerships, S corporations, trusts, etc."
+    field: 2EC Line 12
+    type: money
+  - line: sched2ec.13  # "Farm income"
+    field: 2EC Line 13
+    type: money
+  - line: sched2ec.14  # "Unemployment compensation"
+    field: 2EC Line 14
+    type: money
+  - line: sched2ec.15  # "Other income not included above (See instructions)"
+    field: 2EC Line 15
+    type: money
+  - line: sched2ec.16  # "Government assistance and support money"
+    field: 2EC Line 16
+    type: money
+  - line: sched2ec.17  # "Income received by other members of your household"
+    field: 2EC Line 17
+    type: money
+  - line: sched2ec.18  # "Add lines 1 through 17. This is your gross household income."
+    field: 2EC Line 18
+    type: money
+  - line: sched2ec.20  # "Subtract line 19 from line 18 and enter the result here, but not less than zero" (line 19 is the pre-printed 12,600 standard exclusion -- no widget)
+    field: 2EC Line 20
+    type: money
+  - line: sched2ec.21  # "Enter your multiplier rate from the Household Income Reduction Table. (See instructions)" -- a 5-cell comb widget, printed "." in cell 2, so enter e.g. 0.006 (a rate from the Household Income Reduction Table) -- the value carries the decimal point, so the line is not comb: true
+    field: 2EC Line 21
+    type: text
+    maxlen: 5
+  - line: sched2ec.22  # "Multiply line 20 by line 21. This is your net household income."
+    field: 2EC Line 22
+    type: money
+  - line: sched2ec.23  # "Enter the property tax you were billed for your Montana residence and up to one acre in 2025"
+    field: 2EC Line 23
+    type: money
+  - line: sched2ec.24  # "Enter the rent that you paid in 2025 for your Montana residence"
+    field: 2EC Line 24
+    type: money
+  - line: sched2ec.25  # "Multiply line 24 by 15% (0.15)"
+    field: 2EC Line 25
+    type: money
+  - line: sched2ec.26  # "Add lines 23 and 25"
+    field: 2EC Line 26
+    type: money
+  - line: sched2ec.27  # "Subtract line 22 from line 26 and enter the result here, but not less than zero"
+    field: 2EC Line 27
+    type: money
+  - line: sched2ec.28  # "Enter the lesser of line 27 or $1,150"
+    field: 2EC Line 28
+    type: money
+  - line: sched2ec.29  # "Enter the percentage from the Credit Multiplier Table that corresponds to your gross household income on line 18" -- a 4-cell comb widget, printed "." in cell 2, so enter e.g. 0.40 (a rate from the Credit Multiplier Table) -- the value carries the decimal point, so the line is not comb: true
+    field: 2EC Line 29
+    type: text
+    maxlen: 4
+  - line: sched2ec.30  # "Multiply line 28 by the percentage on line 29. Enter the total here and on page 1, line 16. This is your elderly homeowner/renter credit."
+    field: 2EC Line 30
+    type: money
+
+relations:
+  - "3 == max(0, 1 - 2)"  # 3 "Subtract line 2 from line 1. If zero or less, enter 0 (zero)."
+  - "4 == sched1.7"  # 4 "Montana additions ... from Schedule I, Part I, line 7"
+  - "5 == sched1.24"  # 5 "Montana subtractions ... from Schedule I, Part I, line 24"
+  - "7 == max(0, 3 + 4 - 5 - 6)"  # 7 "Add lines 3 and 4. Then subtract lines 5 and 6. If zero or less, enter 0 (zero)."
+  - "9 == sched3.14"  # 9 "Nonrefundable tax credits from Schedule III, Part I, line 14"
+  - "10 == 8 - 9"  # 10 "Subtract line 9 from line 8."
+  - "11 == 11a + 11b + 11c + 11d + 11e"  # 11 "Add lines 11a through 11e"
+  - "16 == sched2ec.30"  # 16 "Elderly Homeowner/Renter Credit from Schedule 2EC, Line 30"
+  - "17 == sched3.17"  # 17 "Refundable tax credits from Schedule III, Part I, line 17"
+  - "19 == sched4.8"  # 19 "Contributions, penalties, interest, and other taxes from Schedule IV, line 8"
+  - "21 == 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 - 19 - 20"  # 21 "Add lines 11 through 18, then subtract lines 19 and 20."
+  - "22 == max(0, 10 - 21)"  # 22 "If line 21 is less than line 10, subtract line 21 from line 10."
+  - "23 == max(0, 21 - 10)"  # 23 "If line 21 is more than line 10, subtract line 10 from line 21."
+  - "26 == 23 - 24 - 25"  # 26 "Add lines 24 and 25, then subtract from line 23."
+  - "tax_calc.3 == min(tax_calc.1, tax_calc.2)"  # page 2 line 3 "Enter the lesser of line 1 or line 2"
+  - "tax_calc.6 == max(0, tax_calc.5 - tax_calc.4)"  # page 2 line 6 "Subtract line 4 from line 5. If zero or less, enter 0 (zero)"
+  - "tax_calc.7 == min(tax_calc.3, tax_calc.6)"  # page 2 line 7 "Enter the lesser of line 3 or line 6"
+  - "tax_calc.8 == tax_calc.7 * 0.03"  # page 2 line 8 "Multiply line 7 by 3% (0.03)"
+  - "tax_calc.9 == max(0, tax_calc.3 - tax_calc.6)"  # page 2 line 9 "Subtract line 6 from line 3. If zero or less, enter 0 (zero)"
+  - "tax_calc.10 == tax_calc.9 * 0.041"  # page 2 line 10 "Multiply line 9 by 4.1% (0.041)"
+  - "tax_calc.11 == tax_calc.8 + tax_calc.10"  # page 2 line 11 "Add lines 8 and 10."
+  - "sched1.7 == sched1.1 + sched1.2 + sched1.3 + sched1.4 + sched1.5 + sched1.6"  # Schedule I line 7 "Add lines 1 through 6"
+  - "sched1.24 == sched1.8 + sched1.9 + sched1.10 + sched1.11 + sched1.12 + sched1.13 + sched1.14 + sched1.15 + sched1.16 + sched1.17 + sched1.18 + sched1.19 + sched1.20 + sched1.21 + sched1.22 + sched1.23"  # Schedule I line 24 "Add lines 8 through 23"
+  - "sched1.14 == sched1_part2.4"  # Schedule I Part I line 14 "Montana medical savings accounts deposits and earnings from Part II, line 4"; Part II line 4 "Enter the total on Part I, line 14"
+  - "sched1_part2.4 == sched1_part2.2 + sched1_part2.3"  # Schedule I Part II line 4 "Add lines 2 and 3."
+  - "sched1_part2.8 == sched1_part2.6 - sched1_part2.7"  # Part II line 8 "Nonqualified withdrawals. Subtract line 7 from line 6."
+  - "sched1_part2.10 == sched1_part2.8 - sched1_part2.9"  # Part II line 10 "Subtract line 9 from line 8"
+  - "sched2.6 == sched2.6a - sched2.6b"  # Schedule II line 6 "Subtract line 6b from line 6a."
+  - "sched2.10 == sched2.10a - sched2.10b"  # Schedule II line 10 "Subtract line 10b from line 10a."
+  - "sched2.11 == sched2.11a - sched2.11b"  # Schedule II line 11 "Subtract line 11b from line 11a."
+  - "sched2.15 == sched2.1 + sched2.2 + sched2.3 + sched2.4 + sched2.5 + sched2.6 + sched2.7 + sched2.8 + sched2.9 + sched2.10 + sched2.11 + sched2.12 + sched2.13 + sched2.14"  # Schedule II line 15 "Add lines 1 through 14."
+  - "sched2.16 == sched2.16a - sched2.16b - sched2.16c"  # Schedule II line 16 "Subtract lines 16b and 16c from line 16a."
+  - "sched2.25 == sched2.19 + sched2.24"  # Schedule II line 25 "Add lines 19 and 24."
+  - "sched3.14 == sched3.1 + sched3.2 + sched3.3 + sched3.4 + sched3.5 + sched3.6 + sched3.7 + sched3.8 + sched3.9 + sched3.10 + sched3.11 + sched3.12 + sched3.13"  # Schedule III line 14 "Add lines 1 through 13"
+  - "sched3.17 == sched3.15 + sched3.16"  # Schedule III line 17 "Add lines 15 and 16"
+  - "sched3_part2.10 == min(sched3_part2.4, sched3_part2.7, sched3_part2.9)"  # Part II line 10 "Enter the lesser of the amounts on lines 4, 7, or 9."
+  - "sched3_part2.20 == min(sched3_part2.14, sched3_part2.17, sched3_part2.19)"  # Part II line 20 "Enter the lesser of the amounts on lines 14, 17, or 19."
+  - "sched3_part2.21 == sched3_part2.10 + sched3_part2.20"  # Part II line 21 "Add lines 10 and 20."
+  - "sched4.8 == sched4.1 + sched4.2 + sched4.3 + sched4.4 + sched4.5 + sched4.6 + sched4.7"  # Schedule IV line 8 "Add lines 1 through 7"
+  - "sched2ec.18 == sched2ec.1 + sched2ec.2 + sched2ec.3 + sched2ec.4 + sched2ec.5 + sched2ec.6 + sched2ec.7 + sched2ec.8 + sched2ec.9 + sched2ec.10 + sched2ec.11 + sched2ec.12 + sched2ec.13 + sched2ec.14 + sched2ec.15 + sched2ec.16 + sched2ec.17"  # 2EC line 18 "Add lines 1 through 17."
+  - "sched2ec.20 == max(0, sched2ec.18 - 12600.0)"  # 2EC line 20 "Subtract line 19 from line 18 ... but not less than zero"; line 19 is printed "1 2 6 0 0 00" with no widget
+  - "sched2ec.25 == sched2ec.24 * 0.15"  # 2EC line 25 "Multiply line 24 by 15% (0.15)"
+  - "sched2ec.26 == sched2ec.23 + sched2ec.25"  # 2EC line 26 "Add lines 23 and 25"
+  - "sched2ec.27 == max(0, sched2ec.26 - sched2ec.22)"  # 2EC line 27 "Subtract line 22 from line 26 ... but not less than zero"
+  - "sched2ec.28 == min(sched2ec.27, 1150.0)"  # 2EC line 28 "Enter the lesser of line 27 or $1,150"
+cross_form:
+  - "1 == f1040.11a"  # 1 "Federal adjusted gross income from Form 1040, line 11b" -- the 2025 Form 1040 defines AGI on 11a (11b restates it)
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null
