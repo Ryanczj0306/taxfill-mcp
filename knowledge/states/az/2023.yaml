@@ -138,6 +138,11 @@ all_citations:
   url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140Booklet.pdf
 - source: AZ DOR - 2023 Form 140NR Nonresident Personal Income Tax Return booklet
   url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140NRBooklet.pdf
+- source: AZ DOR - 2023 Form 140NR Nonresident Personal Income Tax Return Instructions (lines 15-27 FEDERAL /
+    ARIZONA columns and the line-27 Arizona income ratio, p. 7-9; Line 51 Prorated Exemptions and the
+    standard-deduction proration caution, p. 19; Standard Deduction Worksheet, Line 54 31% charitable increase,
+    Line 56 2.5% tax and Dependent Tax Credit apportionment, p. 20; mailing addresses, p. 27)
+  url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140NRi.pdf
 - source: AZ DOR - Part-Year Resident Personal Income Tax Form (Form 140PY) page
   url: https://azdor.gov/forms/individual/part-year-resident-personal-income-tax-form-non-fillable-form
 - source: AZ DOR - Mailing Addresses
@@ -212,3 +217,15 @@ tax:
   - 'Exemptions on Form 140 lines 38-41 (age 65+ $2,100; blind $1,500; other $2,300; qualifying
     parent/grandparent $10,000) reduce Arizona AGI on the form — calc.state_tax does not apply them;
     a 65+/blind filer computes lines 38-41 on the form.'
+  - 'Nonresidents (Form 140NR) take the same figures but PRORATED by the line-27 Arizona income ratio
+    (Arizona gross income, line 26, divided by federal AGI, line 25, rounded to three decimal places, not
+    over 1.000): the age-65 ($2,100, line 47), blind ($1,500, line 48) and other ($2,300, line 49)
+    exemptions are totalled on line 50 and multiplied by the ratio on line 51 ("Line 51 - Prorated
+    Exemptions"); "CAUTION: You must prorate the standard deduction" — the standard deduction is
+    multiplied by the ratio on the Standard Deduction Worksheet before it is entered on line 53
+    (itemizers prorate on Schedule A(NR)); the 31% charitable increase is prorated on page 3 (line 9C =
+    line 7C x the line-8C ratio) before line 54; and "Nonresidents are required to apportion their
+    Dependent Tax Credit" (line 59) by the same ratio. The 2.5% rate (line 56, "Multiply line 55 by
+    2.5% (.025)") is not prorated. NOT modeled by calc.state_tax. Source: AZ DOR 2023 Form 140NR
+    Instructions p. 9 (line 27), p. 19 (lines 51 and 53), p. 20 (worksheet, line 54, line 56, line 59) —
+    https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140NRi.pdf'
