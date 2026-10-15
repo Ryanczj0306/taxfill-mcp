@@ -20,9 +20,10 @@ tax_year: 2024
 income_tax: true
 conforms_to_federal_treaties: false
 treaty_note: 'Alabama does NOT start the return from federal adjusted gross income. Both the resident Form 40 and
-  the nonresident Form 40NR build Alabama income from their own line items computed under Alabama law (Form 40 line
-  5 wages/salaries/tips from Schedule W-2, line 6 interest and dividends, line 7 other income; Form 40NR equivalents),
-  not by importing a federal AGI figure. Because the federal-AGI-conformity flow-through does not exist here, a treaty
+  the nonresident Form 40NR build Alabama income from their own line items computed under Alabama law (2024 Form 40
+  line 5b wages/salaries/tips from Schedule W-2 line 18 column I plus column J — line 5a, column A, is Alabama
+  income tax withheld from Schedule W-2 line 18 column G — line 6 interest and dividends, line 7 other income;
+  Form 40NR equivalents), not by importing a federal AGI figure. Because the federal-AGI-conformity flow-through does not exist here, a treaty
   exclusion that is already netted out of federal AGI does NOT automatically carry to the Alabama return. The 2024
   Form 40NR booklet (24f40nrbk.pdf, Other Income/Foreign Income Exclusion) is explicit on the only foreign-income
   mechanism it recognizes: ''All foreign income must be reported on your return, in order to receive any foreign
@@ -39,8 +40,8 @@ citation:
     (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.8); Line 17 Figuring Your Tax tax-table
     mandate (p.10); Where To File (p.12); Tax Table pp.25-30 and Over $100,000.00 worksheet (p.30)
   url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
-starts_from: 'Alabama gross income computed under Alabama law (separate line items: Form 40 line 5 wages/salaries/tips
-  from Schedule W-2, line 6 interest and dividend income, line 7 other income; Form 40NR equivalents) — it does NOT
+starts_from: 'Alabama gross income computed under Alabama law (separate line items: 2024 Form 40 line 5b
+  wages/salaries/tips from Schedule W-2 line 18 column I plus column J, line 6 interest and dividend income, line 7 other income; Form 40NR equivalents) — it does NOT
   start from federal adjusted gross income or federal taxable income.'
 residency:
   summary: Residency is domicile-based. A resident is anyone domiciled in (a resident of) Alabama — domicile being
@@ -160,7 +161,11 @@ all_citations:
   url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40bk.pdf
 - source: '2024 Alabama Form 40 (printed form) — second-pass verification: filing-status boxes print the personal
     exemptions ''1 $1,500 Single; 2 $3,000 Married filing joint; 3 $1,500 Married filing separate; 4 $3,000 Head
-    of Family (with qualifying person)''; line 16 ''Taxable income. Subtract line 15 from line 10''; line 17 ''Income
+    of Family (with qualifying person)''; line 5a ''Alabama Income Tax Withheld (from Schedule W-2, line 18,
+    column G)'' in column A and line 5b ''Wages, salaries, tips, etc. (from Schedule W-2, line 18, column I plus
+    J)'' in column B (the booklet''s Line 5 instruction, p.7, uses the same column I plus column J source); line 8
+    ''Total income. Add amounts in the income column for line 5b through line 7''; line 22 ''Alabama income tax
+    withheld (from column A, line 5a)''; line 16 ''Taxable income. Subtract line 15 from line 10''; line 17 ''Income
     Tax due. Enter amount from tax table or check if from Form NOL-85A'''
   url: https://www.revenue.alabama.gov/wp-content/uploads/2025/01/24f40.pdf
 - source: 2024 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart (same
@@ -239,7 +244,7 @@ tax:
     constants were each re-verified from the 2024 prints, not assumed.'
   - 'Base guidance: Supply 2024 Alabama Form 40, page 1, line 16 ''Taxable income. Subtract line 15 from line 10.''
     Alabama does NOT start from federal AGI: line 10 Alabama adjusted gross income is built from Alabama line items
-    (line 8 total income minus line 9 adjustments), and line 15 total deductions = line 11 (itemized OR sliding standard
+    (line 8 total income = line 5b wages + line 6 interest/dividends + line 7 other income, minus line 9 adjustments), and line 15 total deductions = line 11 (itemized OR sliding standard
     deduction) + line 12 (FEDERAL income tax deduction, from the Federal Income Tax Deduction Worksheet) + line 13
     (personal exemption $1,500/$3,000) + line 14 (income-dependent dependent exemption). All of those subtractions
     must already be taken on the form before line 16 — this op subtracts nothing further.'

@@ -148,6 +148,19 @@ all_citations:
   url: https://www.revenue.alabama.gov/individual-corporate/individual-income-tax-filing-information/
 - source: Form 40V 2023 (payment voucher; check payable to Alabama Department of Revenue; MyAlabamaTaxes)
   url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/f40vblk.pdf
+- source: 2023 Schedule RS (Retirement Schedule, Form 40 or Form 40NR) and Schedule AATC 2023 as printed in the
+    2023 Form 40NR fillable package — Schedule RS Part II/III line 10 'each taxpayer is eligible up to $6,000 not
+    to exceed the Retirement Income Taxable to Alabama on line 9' (PDF pp.32-33); Schedule AATC lines 7/16/25/34
+    '80% of the average annual cost of attendance for an Alabama public K-12 student' pre-printed $4,795.00 (PDF
+    p.14)
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2024/03/23f40nr.pdf
+- source: 2023 Schedule RS Instructions — Line 10 Retirement Exclusion, 'eligible for an exclusion of retirement
+    income up to $6,000, not to exceed the amount taxable to Alabama on Line 9' (65 or older)
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schrsinstr.pdf
+- source: 2023 Schedule OC Instructions — Part K Alabama Accountability Tax Credit – School Transfer Credit (p.3;
+    lesser of 80 percent of the average annual state cost of attendance or the actual cost; Schedule AATC must
+    be completed); Section F line F1 refundable portion
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf
 unverified:
 - 'TREATY CONFORMITY: No .gov page confirms whether income exempt under a U.S. income-tax TREATY is excluded for
   Alabama purposes. Alabama does not start from federal AGI, and the only foreign-income mechanism the Form 40NR
@@ -241,8 +254,27 @@ tax:
     before 2023 files Single or Head of Family in Alabama, so do not rely on the MFJ schedule for a federal QSS filer.
   - The 2%/4%/5% schedule text is printed on the ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' (https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/)
     and was verified numerically against the 2023 booklet's Tax Table rows and over-$100,000 worksheet.
+  - 'Retirement exclusion (NEW for 2023, Act 2022-294): 2023 Schedule RS (Form 40 or Form 40NR), Part II line 10
+    (primary) and Part III line 10 (spouse) — ''If "Yes", each taxpayer is eligible up to $6,000 not to exceed
+    the Retirement Income Taxable to Alabama on line 9'' — excludes up to $6,000 of taxable retirement income per
+    taxpayer who is 65 or older (2023 Schedule RS Instructions, Line 10: ''eligible for an exclusion of retirement
+    income up to $6,000, not to exceed the amount taxable to Alabama on Line 9''); the 2023 Form 40 and Form 40NR
+    booklets'' What''s New (p.2): ''exempts the first $6,000 of taxable retirement income for those 65 years of
+    age or older.'' The net figure (Schedule RS Part IV line 3) lands on Form 40 page 2 Part I line 4 / Form 40NR
+    page 2 Part I line 3 column B, so it is already inside the line 16 base this op consumes and is NOT shipped
+    as an engine exemption.'
+  - 'Alabama Accountability Tax Credit – School Transfer Credit (Schedule AATC, Schedule OC Part K): per the 2023
+    Schedule OC Instructions (p.3) the credit is ''the lesser of 80 percent of the average annual state cost attendance
+    for a public K-12 student during the applicable tax year or the actual cost of attending a nonfailing public
+    school or nonpublic school''; the 2023 Schedule AATC face pre-prints that 80% figure as $4,795.00 on lines 7,
+    16, 25 and 34 (one block per student, up to four; line 9 ''Enter the lesser of line 7 or line 8''), with line
+    37 carried to Schedule OC Section B Part K line K1 and the refundable amount through Schedule OC Section F line
+    F1 (summed on line F4) to page 1 line 25 of Form 40 or Form 40NR. The booklets and the Schedule OC Instructions
+    do not state the dollar figure; only the Schedule AATC face prints it. calc.state_tax applies no Alabama credits;
+    the constant is recorded here for the Schedule AATC port.'
 # Promoted from this pack's own prose on 2026-08-11 (DEV_PLAN section 7.2): the adoption-credit
-# delta recorded in the credits block and the booklet's What's New page. modeled: false because
+# delta recorded in the credits block and the booklet's What's New page. The Act 2022-294
+# retirement exclusion (same What's New page) was added 2026-10-15 (Phase J JS2c). modeled: false because
 # calc.state_tax reproduces only the Form 40 line 17 rate-schedule tax and applies no credits.
 effective_law_changes:
 - description: >-
@@ -267,3 +299,23 @@ effective_law_changes:
       Alabama Department of Revenue, 2023 Schedule OC Instructions, Part M - Alabama Adoption Tax Credit and
       Section F; corroborated by 2023 Form 40 Booklet 'What's New' (Act 2022-299).
     url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf
+- description: >-
+    Act 2022-294, effective January 1, 2023 (NEW for 2023): the first $6,000 of taxable retirement
+    income is exempt for each taxpayer 65 or older, computed on Schedule RS line 10 (Part II primary,
+    Part III spouse) and limited to the retirement income taxable to Alabama on line 9.
+  status: final_form_published
+  affects:
+  - Schedule RS (Part II / Part III line 10, Part IV line 3)
+  - Form 40 page 2 Part I line 4
+  - Form 40NR page 2 Part I line 3 column B
+  modeled: false
+  lookup_path: >-
+    2023 Schedule RS Instructions, Line 10 Retirement Exclusion; the exclusion is computed on Schedule
+    RS from the filer's own retirement income and is already inside the Form 40 line 16 base this
+    pack's op consumes.
+  citation:
+    source: >-
+      Alabama Department of Revenue, 2023 Form 40NR Booklet, What's New For 2023 (p.2): 'Retirement
+      Exemption - Act 2022-294 Effective Jan 1, 2023, exempts the first $6,000 of taxable retirement
+      income for those 65 years of age or older'; the 2023 Form 40 Booklet prints the same text (p.2).
+    url: https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf
