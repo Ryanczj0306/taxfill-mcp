@@ -63,13 +63,18 @@ credits:
     tax (Worksheet 18A line 1). Individuals filing single, head of household, or qualifying surviving spouse WITHOUT
     a qualifying child instead use Worksheet 18A.1 and may claim up to 100% of the federal EIC (refundable; amounts
     to Lines 22 and 42).'
-  income_limit_2024: No separate Maryland income cap; eligibility tracks the federal EITC income limits for tax
-    year 2024.
+  income_limit_2024: 'No separate Maryland income cap; eligibility tracks the federal EITC income limits for tax
+    year 2024. The 2024 Form 502 (page 2) asks on line 1e: "Place a "Y" in this box if the amount of your
+    investment income is more than $11,600" — the 2024 federal EIC investment-income limit (the 2023 face printed
+    $11,000, the 2025 face $11,950). Resident Booklet Instruction 11, Line 1e (printed page 5): "You DO NOT qualify
+    for the earned income tax credit" if the box is marked; "Investment income generally includes, but is not
+    limited to, interest, dividends, capital gains, and other types of distributions including mutual fund
+    distributions."'
   claimed_on: Form 502, line 22 (computed on State Earned Income Credit Worksheet 18A / 18A.1 in Resident Booklet
     Instruction 18).
   citation:
     source: Comptroller of Maryland - 2024 Resident Booklet (Form 502 Instructions), Instruction 18 and Worksheets
-      18A / 18A.1
+      18A / 18A.1, and Instruction 11 Line 1e (printed page 5; investment-income box, $11,600)
     url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
 - name: Maryland Refundable Earned Income Credit (refundable portion of state EITC)
   type: refundable
