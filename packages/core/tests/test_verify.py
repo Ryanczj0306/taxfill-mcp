@@ -1135,6 +1135,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: WI Form 1 2025 (page 1 unchanged; pages 2-3 renumbered, new page 5) equals the reviewed WI 2023 row —
     # home_address / city_or_post_office / state / zip_code; the new Schedule 3 and anatomical-gift lines are not
     # address lines.
+    # JS5: OK Form 511 2024 (a RE-MAP of OK 2023; the page-1 address row keeps the 2023 boxes, "Country" included)
+    # equals the reviewed OK 2023 row.
     # JS5: ID Form 40 2025 (a RE-MAP: the name row splits into first / middle initial / last / suffix boxes and the
     # preparer rows are renamed, none of them address lines) equals the reviewed ID 2024 row (the four mailing_address lines).
     # JS5: CA Schedule CA (540) 2025 (a RE-MAP of CA 2023 by position; the new 1h type, 8v and two divorce-date boxes
