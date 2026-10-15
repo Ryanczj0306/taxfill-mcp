@@ -160,7 +160,7 @@ all_citations:
 - source: Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Who Must File,
     Due Date, mailing addresses, line 1 Federal Taxable Income, Additions lines 2-8 (incl. NEW line 5 business meals
     addback), line 11 Colorado Taxable Income, line 12 Colorado Tax ("The income tax rate is currently 4.25%"),
-    2024 Colorado Income Tax Table ("with tax rate of 4.25%"), tax-over-$100,000 worksheet ("Multiply by 4.25% X
+    2024 Colorado Income Tax Table ("with tax rate of 4.25%"), over-$50,000 worksheet ("Multiply by 4.25% X
     .0425"), DR 0104CR credit instructions (COEITC 50%, child care $60,000 limit), TABOR Modified AGI tiers, payment
     options (payee, DR 0900, Revenue Online)
   url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf
@@ -193,14 +193,15 @@ unverified:
 # Flat-rate tax computation block (Phase G item G4) — consumed by calc.state_tax.
 # Figures verified two-pass against the cited 2024 DR 0104 Book (rate printed three
 # ways: Line 12 instructions "currently 4.25%", the 2024 tax table header, and the
-# over-$100,000 worksheet X .0425 — the 2024 rate is 4.25%, down from 4.4% in 2023)
+# over-$50,000 worksheet X .0425 — the 2024 rate is 4.25%, down from 4.4% in 2023)
 # and the standalone 2024 DR 0104 form PDF (tax.colorado.gov). Three test vectors
 # reproduce printed booklet tax-table rows exactly.
 tax:
   citation:
     source: '2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Line 12 instructions: "The
       income tax rate is currently 4.25%" (the document is the year-pinned 2024 filing guide); "2024 Colorado Income
-      Tax Table with tax rate of 4.25%"; tax-over-$100,000 worksheet "Multiply by 4.25% X .0425"; DR 0104 Line 1 = Federal
+      Tax Table with tax rate of 4.25%"; "Worksheet for taxable incomes over $50,000" (printed page 38; the printed
+      table ends at the $49,900-$50,000 row) "Multiply by 4.25% X .0425"; DR 0104 Line 1 = Federal
       Taxable Income from Form 1040/1040-SR/1040-SP line 15; "Colorado income tax is based on your federal taxable income,
       which has already considered your deductions"; Line 11 = Colorado Taxable Income (line 9 subtotal minus line 10
       subtractions). Booklet table rows verified at 4.25%: $5,100-$5,200 -> $219; $30,800-$30,900 -> $1,311; $49,900-$50,000
@@ -211,13 +212,14 @@ tax:
   flat_rate: 0.0425
   base: federal_taxable_income
   tax_line: 'DR 0104 Line 12 (Colorado Tax): full-year residents take the amount from the 2024 booklet tax table (built
-    at 4.25%) for Line 11 Colorado Taxable Income (= Line 9 subtotal minus Line 10 subtractions); the tax-over-$100,000
-    worksheet multiplies Line 11 by 4.25% (.0425); part-year residents and nonresidents use the apportioned tax from
+    at 4.25%, printed through $50,000) for Line 11 Colorado Taxable Income (= Line 9 subtotal minus Line 10
+    subtractions); for Line 11 over $50,000 the booklet "Worksheet for taxable incomes over $50,000" multiplies
+    Line 11 by 4.25% (.0425); part-year residents and nonresidents use the apportioned tax from
     the DR 0104PN.'
   exemptions: {}
   notes:
   - 'Rate change: the 2024 rate is 4.25% (down from 4.4% in 2023) — printed three ways in the 2024 DR 0104 Book (Line
-    12 instructions, the 2024 tax table header, and the over-$100,000 worksheet''s X .0425).'
+    12 instructions, the 2024 tax table header, and the over-$50,000 worksheet''s X .0425).'
   - Colorado starts from federal TAXABLE income (DR 0104 Line 1) — the federal standard/itemized deduction is already
     embedded, so Colorado has no exemptions or separate standard deduction.
   - '2024 line renumbering: additions are Lines 2-8 (new Line 5 business-meals addback), subtotal Line 9, subtractions
@@ -234,13 +236,13 @@ effective_law_changes:
 - description: >-
     RATE CUT: Colorado's flat income tax rate fell to 4.25% for 2024, down from 4.4% in 2023. The 2024 DR
     0104 Book prints it three ways — the Line 12 instructions ("The income tax rate is currently 4.25%"),
-    the "2024 Colorado Income Tax Table with tax rate of 4.25%" header, and the tax-over-$100,000
-    worksheet ("Multiply by 4.25% X .0425").
+    the "2024 Colorado Income Tax Table with tax rate of 4.25%" header, and the "Worksheet for
+    taxable incomes over $50,000" ("Multiply by 4.25% X .0425", printed page 38).
   status: final_form_published
   affects:
   - tax.flat_rate
   - DR 0104 Line 12 (Colorado Tax)
-  - 2024 Colorado Income Tax Table / over-$100,000 worksheet
+  - 2024 Colorado Income Tax Table (through $50,000) / over-$50,000 worksheet
   modeled: true
   citation:
     source: >-
@@ -269,7 +271,7 @@ effective_law_changes:
       Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Who Must File,
       Due Date, mailing addresses, line 1 Federal Taxable Income, Additions lines 2-8 (incl. NEW line 5 business meals
       addback), line 11 Colorado Taxable Income, line 12 Colorado Tax ("The income tax rate is currently 4.25%"),
-      2024 Colorado Income Tax Table ("with tax rate of 4.25%"), tax-over-$100,000 worksheet ("Multiply by 4.25% X
+      2024 Colorado Income Tax Table ("with tax rate of 4.25%"), over-$50,000 worksheet ("Multiply by 4.25% X
       .0425"), DR 0104CR credit instructions (COEITC 50%, child care $60,000 limit), TABOR Modified AGI tiers, payment
       options (payee, DR 0900, Revenue Online)
     url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf

@@ -16,8 +16,9 @@
 #     use", Other Additions moved to Line 9, subtotal Line 10, subtractions Line 11,
 #     Colorado Taxable Income Line 12, Colorado Tax Line 13 (2024: subtotal 9,
 #     subtractions 10, taxable income 11, tax 12).
-#   * The printed tax table now stops at $50,000 and the multiplication worksheet covers
-#     "taxable incomes over $50,000" (2024: table to $100,000, worksheet above that).
+#   (Unchanged, not a delta: as in 2024 the printed tax table stops at $50,000 and the
+#   "Worksheet for taxable incomes over $50,000" multiplies by the rate — 2024 DR 0104
+#   Book printed page 38, where the table ends at $49,900-$50,000 -> $2,123 at 4.25%.)
 #   * TABOR state sales tax refund amounts collapsed to $19/$25/$29/$35/$37/$59 single
 #     (double for joint) on re-tiered Modified AGI bands.
 jurisdiction: states/co
@@ -261,8 +262,8 @@ tax:
     Line 12, Colorado Tax Line 13 (2024: subtotal 9, subtractions 10, taxable income 11, tax 12; 2023: taxable income
     10, tax 11). Never carry a line number between years.'
   - 'The DR 0104 form itself does not print a multiplication — Line 13 says to use the tax table (or the DR 0104PN
-    apportionment). For 2025 the printed table stops at $50,000 (2024: $100,000) and the worksheet covers taxable
-    incomes over $50,000. The table is built at 4.4% but its $100-band midpoint rounding can differ from raw multiplication
+    apportionment). For 2025 the printed table stops at $50,000 and the worksheet covers taxable incomes
+    over $50,000 (the same cutoff as the 2024 DR 0104 Book, printed page 38). The table is built at 4.4% but its $100-band midpoint rounding can differ from raw multiplication
     by a dollar or two; the printed table row controls on the filed form.'
   - 'Not modeled by calc.state_tax: Line 14 Alternative Minimum Tax, Line 15 recapture of prior-year credits, the
     Line 17 nonrefundable credits (DR 0104CR line 65) and Line 31 refundable credits (DR 0104CR line 26), and the
