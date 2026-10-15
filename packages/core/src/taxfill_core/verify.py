@@ -621,7 +621,8 @@ def pdf_field_dicts(reader: object) -> dict[str, Mapping]:
     """``{fully_qualified_field_name: field dict}`` — pypdf's ``get_fields()``, or a walk when pypdf cannot build it.
 
     pypdf 6's ``get_fields()`` raises ``KeyError('/AP')`` on a radio field one of whose kid widgets carries no
-    /AP dictionary at all: AZ Form 140NR 2023's "Filing Status" (four kids, no appearance, no on-state name).
+    /AP dictionary at all: AZ Form 140NR 2023's "Filing Status" (four kids, no appearance, no on-state name), and AZ
+    Form 140PY 2023's "Filing Status" (four kids) and "Res Status" (two kids), likewise without /AP.
     Only that error falls back. The walk follows /AcroForm /Fields and /Kids and keys every node that carries a
     /T by its dotted qualified name, as ``get_fields()`` does; each value carries the node's own keys plus the
     inherited /FT, /Ff and /V, which is what the callers read.

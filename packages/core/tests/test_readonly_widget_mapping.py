@@ -1218,7 +1218,7 @@ def _nonzero_readonly_defaults(pack_path: Path) -> dict[str, str]:
         blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
-    # pdf_field_dicts: get_fields(), or a walk where pypdf cannot read the blank (AZ 140NR 2023's /AP-less radio)
+    # pdf_field_dicts: get_fields(), or a walk where pypdf cannot read the blank (AZ 140NR / 140PY 2023 /AP-less radios)
     fields = pdf_field_dicts(PdfReader(str(blank)))
     prefix = f"{pack.acroform_root}." if pack.acroform_root else ""
     out = {}

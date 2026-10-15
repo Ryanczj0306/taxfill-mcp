@@ -1,0 +1,668 @@
+# ===========================================================================
+# Arizona Form 140PY, 2023 — Part-Year Resident Personal Income Tax Return. A
+# NEW pack (Phase J JS5, 2026-10-04): no earlier year of this form shipped.
+# formpacks/states/az/2023/az140 (the same state's TY2023 resident return) set
+# the key conventions here — the printed-number keys, the tp_/spouse_ identity
+# keys, the home_address / city / state / zip_code block, the dependent-row,
+# parent-row and Other Exemptions keys — but no binding was carried over from
+# it: every row below was bound by the widget's position against the label
+# printed beside it (the blank's text layer) and then confirmed on a sentinel
+# render of all six pages.
+#
+# URL. The DOR's own file (source_url below). Digest 082ee7ac0e2b9a50… — two
+# independent downloads agree with each other and with the discovery run.
+#
+# PRINTED IDENTITY. Page 1 prints "Arizona Form 140PY", "Part-Year Resident
+# Personal Income Tax Return", "FOR CALENDAR YEAR 2023"; the footers print
+# "ADOR 10149 (23)" (pages 1-4) / "ADOR 10413 (23)" (pages 5-6) and "AZ Form
+# 140PY (2023) Page N of 6". The PDF's own Title is "Arizona Form 140PY".
+# printed_year_verified = 2023.
+#
+# Layout. FLAT AcroForm (acroform_root empty; the widgets carry short names —
+# "1a", "15Fed", "15State", "Res Status", "3_1c", "5Ga", "6Xa"). Six pages;
+# pages 1-2 are always filed and pages 3-6 are included when they apply (page
+# 3 to increase the standard deduction for charitable contributions, page 4
+# "if:" extra dependents, parents or Other Exemptions are listed, pages 5-6
+# "only if you are making any adjustments"):
+#   page 1 — header, filing status 4-7, exemption counts 8-11a, residency
+#            status 12-13, dependents 10c-10d, qualifying parents and
+#            grandparents 11b-11c, 14 dates of Arizona residency and other
+#            states, the two-column Arizona Income block 15-24 (2023 FEDERAL
+#            "Amount from Federal Return" | 2023 ARIZONA "Amount Only"), lines
+#            25-39;
+#   page 2 — lines 40-89, voluntary gifts, political party, penalty boxes,
+#            direct deposit, the signature and paid-preparer block and the
+#            two mailing addresses;
+#   page 3 — Standard Deduction Increase for Charitable Contributions, 1C-7C;
+#   page 4 — Dependent and Other Exemption Information: Part 1 dependents
+#            10e-10o, Part 2 qualifying parents and grandparents 11d-11i, Part
+#            3 Other Exemptions rows 1-10 (192 widgets; the part-year income
+#            allocation is the page-1 column block, not this page);
+#   page 5 — Other Additions to Arizona Gross Income (rows A-R, line 31);
+#   page 6 — Other Subtractions from Arizona Gross Income (rows A-Z, line 44).
+#
+# The Arizona allocation. Lines 15-24 carry a FEDERAL and an ARIZONA box each,
+# keyed <line>.federal / <line>.arizona. Line 25 (federal AGI) has only the
+# FEDERAL box and line 26 (Arizona gross income) only the ARIZONA box, so both
+# keep their bare numbers. Line 27, "Arizona income ratio: Divide line 26 by
+# line 25 and enter the result (not over 1.000)", is five printed cells on a
+# comb-flagged widget (/MaxLen 5), so it is `text` — money would round it to
+# 0 or 1. It is keyed comb: false: the filler's comb rule takes digits only
+# and refused "0.375" on a comb: true trial fill, while the widget's own comb
+# flag still sets one character per cell (a comb: false fill of "0.375"
+# rendered "0 . 3 7 5" in the five cells; the decimal point takes a cell).
+# The ratio is used once, on line 51 ("Multiply line 50 by the Arizona income
+# ratio on line 27"). Page 3 prints no ratio line: "Enter the amount shown on
+# line 7C on page 2, line 54."
+#
+# Coverage. The blank holds 436 widget entries on 418 field names: "1b" and
+# "1c" (name and SSN) each have six widgets, page 1 plus the "Your Name (as
+# shown on page 1)" / SSN header of pages 2-6, so one key fills all six (no
+# page-mirror key is needed). The header box is the same field as page 1's
+# "Last Name" box, so pages 2-6 show the last name only (tp_last_name), not the
+# first name. NOT mapped:
+#   * "Filing Status" (lines 4-7) — ONE radio field with four kid widgets, and
+#     "Res Status" (lines 12-13) — ONE radio field with two kid widgets. No kid
+#     of either carries an /AP dictionary (no appearance and no on-state
+#     name). fill_form cannot tell which kid shows which state and refuses
+#     such a field, so a key here could not mark one box. Filing status and
+#     residency status must be ticked by hand: a fill and a verify both report
+#     success with these two required page-1 choices still blank, because the
+#     pack has no key for them. These fields make pypdf's
+#     get_fields() raise KeyError('/AP') on this blank; fill_form and verify
+#     fall back to a walk of the field tree for exactly that error.
+#   * "cmdPrintForm" — the "Print Form" pushbutton at the foot of page 2.
+#   * "PAID PREPARER'S STREET ADDRESS" has no widget on this blank (its caption
+#     is printed with nothing above it), so there is no key for it.
+# No widget is ReadOnly. Nine more page-1 boxes carry no /AP either: "Check
+# Box82F", "4a", "10a_10b check box" (the dependents' more-space box) and
+# the six dependent-row boxes of 10c / 10d ((e) Box 10a / Box 10b and (f)).
+# Each is a single /Btn widget, so the filler writes /V and /AS /Yes to it
+# and they are mapped. With no appearance stream, the cross is drawn by the
+# viewer from the NeedAppearances flag the filler sets: a forms-aware pdfium
+# render and a poppler render each drew it in every one of the nine boxes,
+# while a pdfium render without its forms layer leaves the box empty.
+#
+# Money vs text. Every numbered dollar box prints a "00" cents cell and is
+# `money`, as is every lettered amount on pages 3, 5 and 6. The page-1 count
+# boxes 8, 9, 10a, 10b and 11a ("Enter the number claimed. Do not put a check
+# mark."), page 2's 48E ("Other Exemptions. See instructions.....48E"; page 4:
+# "Enter the total number of individuals listed in Part 3 in box 48E") and the
+# ratio box 27 are `text`. comb: true (comb flag set, /MaxLen, digits only): the
+# fiscal-year boxes (FY_Beg 4 cells printed "M M D D"; FY_End 8 cells printed
+# "M M D D Y Y Y Y"), the two line-14 residency dates (8 cells each, printed
+# "M M D D Y Y Y Y"), routing (9) and account (17) numbers; 27 carries the
+# flag too but is comb: false (above). maxlen equals each widget's /MaxLen
+# where it has one. Elsewhere a name or text box takes its width at the /DA's
+# Helvetica size (width / 5 pt at 10 pt; the eight parent-row relationship
+# boxes name no /DA and take the form default, auto-sized Helvetica, so the
+# 10 pt budget applies), and a box that holds digits takes the number of
+# digits a stress fill rendered whole (a Helvetica digit is 0.556 em, wider
+# than that 0.5 em budget): the count boxes 8, 9, 10a, 10b and 11a (15.6-16.0
+# pt) hold 2 ("100" clipped); every "no. of months" box (28.9-31.0 pt) holds 5
+# (six clipped); 48E (24.2 pt) holds 4; the daytime phone 2c (112.5 pt)
+# holds 20; the preparer phone 97 (106.5 pt, /DA 12 pt) holds 15. The two ZIP
+# boxes take the 5-digit ZIP: "ZIP Code" (46.9 pt, centred) renders 8 digits
+# whole, and a 9-digit ZIP+4 loses a digit (the filler's written appearance
+# cuts both end digits; a poppler render cuts the ninth), and the preparer's
+# 96 (45.3 pt, 12 pt) holds 6. SSN boxes take 11 (an SSN with its two dashes
+# fits each).
+#
+# Checkboxes. Each option is bound to the label printed beside it (P-030), and
+# every on_state was read from this blank's /AP /N, except the nine /AP-less
+# single boxes named under Coverage (82F, 4a, the 10a/10b more-space box and the
+# 10c / 10d (e) and (f) boxes): the blank defines no state for them, and their
+# /Yes is the filler's convention for a single widget without /AP:
+#   * "Itemized/Standard" (/Choice1 53I ITEMIZED, /Choice2 53S STANDARD),
+#     "Political Party" (/Choice1 841 Democratic, /Choice2 842 Libertarian,
+#     /Choice3 843 Republican) and "Refund" (/Choice5 Checking on the upper
+#     row, /Choice1 Savings on the lower) are radio fields, one `group` each;
+#   * each dependent row's "Dependent Age included in: (Box 10a) / (Box 10b)"
+#     pair is two fields answering one question: one group per row (rows
+#     10c / 10d: /Yes by the filler's convention, above);
+#   * 82F, 4a, the 10a/10b more-space box and the 10c / 10d educational-credit
+#     boxes are single fields with /Yes by that convention;
+#   * every other box is its own field with the single state /Yes read from
+#     its /AP: the 11a more-space box, the page-4 educational-credit boxes
+#     10e-10o, the parent rows' "IF AGE 65 OR OVER" / "IF DIED IN 2023"
+#     boxes, 28S, 54C, the 67 credit-form boxes (671 308-I, 672 334, 673 349 —
+#     several may apply), the 86 penalty boxes (861 Annualized/Other, 862
+#     Farmer or Fisherman, 863 Form 221 included), 88A, and Part 3's C1 / C2 /
+#     stillborn boxes.
+#
+# Page 5 L ("... Child Care Facility Before 1990") and page 6 T ("Exploration
+# Expenses Deferred before January 1, 1990") keep the statutory year out of
+# their keys: oa_l_childcare_facility_amortization,
+# os_t_exploration_expenses_deferred.
+#
+# Relations follow the face's printed arithmetic, per column for 23. Omitted,
+# with the reason:
+#   51 (line 50 x the line-27 ratio) — the ratio is a `text` box and verify
+#     reads only MONEY lines from the filled PDF, so "51 == 50 * 27" would see
+#     27 as blank (0) on an ordinary fill and FAIL a correct return; rewritten
+#     as 50 * 26 / 25 it divides by zero when line 25 is blank and skips the
+#     three-place rounding of the ratio;
+#   46, 47, 48, 49 (count x $2,100 / $1,500 / $2,300 / $10,000) — the counts
+#     are `text`;
+#   89 "AMOUNT OWED: Add lines 69 and 87" — when line 88 goes negative the
+#     amount owed is line 87 less line 72 (line 88's own text), so the printed
+#     sum does not hold on every path.
+# Floored lines carry the face's floor as max(0, ...). Line 33 "Total Arizona
+# net capital gain or (loss). Enter amount from line 20, Arizona column" is
+# declared as 33 == 20.arizona.
+#
+# Face figures against knowledge/states/az/2023.yaml: $2,100 (line 46), $1,500
+# (47), $2,300 (48), $10,000 (49), 2.5% (56), 31% (7C) and both mailing
+# addresses match. The page-6 A pension exclusion cap printed "(up to $2,500
+# per taxpayer)" is not in the knowledge pack.
+# ===========================================================================
+form: "140PY"
+jurisdiction: states/az
+tax_year: 2023
+source_url: https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140PY_f.pdf
+pdf_sha256: "082ee7ac0e2b9a50fc6bcde24751bf846a276cdceea7e936b507a7ea6a5bb2df"
+acroform_root: ''
+fields:
+  # ===================================================== page 1 — header
+  - { line: "82F_extension", field: "Check Box82F", type: checkbox, on_state: "/Yes" }  # "82F Check box 82F if filing under extension" (no /AP on the blank; a single box)
+  - { line: "fiscal_year_beginning", field: "FY_Beg", type: text, maxlen: 4, comb: true }  # "OR FISCAL YEAR BEGINNING M M D D 2 0 2 3" — four comb cells, MMDD
+  - { line: "fiscal_year_ending", field: "FY_End", type: text, maxlen: 8, comb: true }  # "AND ENDING M M D D Y Y Y Y" — eight comb cells, MMDDYYYY
+  - { line: "tp_first_name_and_initial", field: "1a", type: text, maxlen: 39 }  # 1 "Your First Name and Middle Initial"
+  - { line: "tp_last_name", field: "1b", type: text, maxlen: 28 }  # 1 "Last Name" (the same field fills "Your Name (as shown on page 1)" atop pages 2-6)
+  - { line: "tp_ssn", field: "1c", type: text, maxlen: 11 }  # 1 "Your Social Security Number" (the same field repeats atop pages 2-6)
+  - { line: "spouse_first_name_and_initial", field: "1d", type: text, maxlen: 39 }  # 1 "Spouse's First Name and Middle Initial (if box 4 or 6 checked)"
+  - { line: "spouse_last_name", field: "1e", type: text, maxlen: 28 }  # 1 "Last Name" (spouse)
+  - { line: "spouse_ssn", field: "1f", type: text, maxlen: 11 }  # 1 "Spouse's Social Security No."
+  - { line: "home_address", field: "2a", type: text, maxlen: 57 }  # 2 "Current Home Address - number and street, rural route"
+  - { line: "apartment_number", field: "2b", type: text, maxlen: 16 }  # 2 "Apt. No."
+  - { line: "daytime_phone", field: "2c", type: text, maxlen: 20 }  # 2 "Daytime Phone (with area code)"
+  - { line: "city", field: "City, Town, Post Office", type: text, maxlen: 30 }  # 3 "City, Town or Post Office"
+  - { line: "state", field: "State", type: text, maxlen: 5 }  # 3 "State"
+  - { line: "zip_code", field: "ZIP Code", type: text, maxlen: 5 }  # 3 "ZIP Code" — the 5-digit ZIP (a 9-digit ZIP+4 loses a digit in the 46.9 pt box; see the banner)
+  - { line: "last_names_prior_years", field: "Last Names 4 years", type: text, maxlen: 28 }  # 3 "Last Names Used in Last Four Prior Year(s) (if different)"
+  # Filing status 4-7 is NOT mapped: "Filing Status" is one radio field whose four kid widgets carry no /AP
+  # at all (see the banner) — the filler cannot tell which kid is which, so the boxes are ticked by hand.
+  - { line: "4a_injured_spouse", field: "4a", type: checkbox, on_state: "/Yes" }  # "4a Injured Spouse Protection of Joint Overpayment" (no /AP on the blank; a single box)
+  - { line: "5_hoh_qualifying_name", field: "Head of Household", type: text, maxlen: 50 }  # 5 "Head of household: Enter name of qualifying child or dependent on next line"
+  # ===================================================== page 1 — exemption counts ("Enter the number claimed. Do not put a check mark.")
+  - { line: "8", field: "8", type: text, maxlen: 2 }  # 8 "Age 65 or over (you and/or spouse)"
+  - { line: "9", field: "9", type: text, maxlen: 2 }  # 9 "Blind (you and/or spouse)"
+  - { line: "10a", field: "10a", type: text, maxlen: 2 }  # 10a "Dependents: Under age of 17."
+  - { line: "10b", field: "10b", type: text, maxlen: 2 }  # 10b "Dependents: Age 17 and over."
+  - { line: "11a", field: "11a", type: text, maxlen: 2 }  # 11a "Qualifying parents and grandparents"
+  # 12-13 "Residency Status (check one)" is NOT mapped: "Res Status" is one radio field whose two kid widgets
+  # carry no /AP (see the banner); 12 "Part-Year Resident Other than Active Military" / 13 "Part-Year Resident
+  # Active Military" are ticked by hand.
+  - { line: "10ab_more_space", field: "10a_10b check box", type: checkbox, on_state: "/Yes" }  # "(Box 10a and 10b) ... For more space, check the box and complete page 4, Part 1."
+  # ===================================================== page 1 — (Box 10a and 10b) Dependent Information, rows 10c-10d
+  # cols: (a) first / last name (b) SSN (c) relationship (d) no. of months lived in your home in 2023
+  #       (e) Dependent Age included in: 1 (Box 10a) / 2 (Box 10b) (f) if you did not claim this person on your
+  #       federal return due to educational credits
+  - { line: "10c_first_name", field: "10c First", type: text, maxlen: 17 }  # 10c (a) first name
+  - { line: "10c_last_name", field: "10c Last", type: text, maxlen: 21 }  # 10c (a) last name
+  - { line: "10c_ssn", field: "10c SSN", type: text, maxlen: 11 }  # 10c (b) social security number
+  - { line: "10c_relationship", field: "10c Relationship", type: text, maxlen: 11 }  # 10c (c) relationship
+  - { line: "10c_months_in_home", field: "10c Mo in Home", type: text, maxlen: 5 }  # 10c (d) no. of months lived in your home in 2023
+  - { line: "10c_dep_age_box10a", field: "10c_10a check box", type: checkbox, on_state: "/Yes", group: "10c_dep_age" }  # 10c (e) 1 "(Box 10a)"
+  - { line: "10c_dep_age_box10b", field: "10c_10b check box", type: checkbox, on_state: "/Yes", group: "10c_dep_age" }  # 10c (e) 2 "(Box 10b)"
+  - { line: "10c_educ_credit", field: "10c educ", type: checkbox, on_state: "/Yes" }  # 10c (f) not claimed on your federal return due to educational credits
+  - { line: "10d_first_name", field: "10d First", type: text, maxlen: 17 }  # 10d (a) first name
+  - { line: "10d_last_name", field: "10d Last", type: text, maxlen: 21 }  # 10d (a) last name
+  - { line: "10d_ssn", field: "10d SSN", type: text, maxlen: 11 }  # 10d (b) social security number
+  - { line: "10d_relationship", field: "10d Relationship", type: text, maxlen: 11 }  # 10d (c) relationship
+  - { line: "10d_months_in_home", field: "10d Mo in Home", type: text, maxlen: 5 }  # 10d (d) no. of months lived in your home in 2023
+  - { line: "10d_dep_age_box10a", field: "10d_10a check box", type: checkbox, on_state: "/Yes", group: "10d_dep_age" }  # 10d (e) 1 "(Box 10a)"
+  - { line: "10d_dep_age_box10b", field: "10d_10b check box", type: checkbox, on_state: "/Yes", group: "10d_dep_age" }  # 10d (e) 2 "(Box 10b)"
+  - { line: "10d_educ_credit", field: "10d educ", type: checkbox, on_state: "/Yes" }  # 10d (f) not claimed on your federal return due to educational credits
+  # ===================================================== page 1 — (Box 11a) Qualifying parents and grandparents, rows 11b-11c
+  - { line: "11a_more_space", field: "11a check box", type: checkbox, on_state: "/Yes" }  # "(Box 11a) ... For more space, check the box and complete page 4, Part 2."
+  - { line: "11b_first_name", field: "11b First", type: text, maxlen: 17 }  # 11b (a) first name
+  - { line: "11b_last_name", field: "11b Last", type: text, maxlen: 21 }  # 11b (a) last name
+  - { line: "11b_ssn", field: "11b SSN", type: text, maxlen: 11 }  # 11b (b) social security number
+  - { line: "11b_relationship", field: "11b Relationship", type: text, maxlen: 11 }  # 11b (c) relationship (the widget has no /DA; the form default is auto-size Helvetica)
+  - { line: "11b_months_in_home", field: "11b Mo in Home", type: text, maxlen: 5 }  # 11b (d) no. of months lived in your home in 2023
+  - { line: "11b_age65_over", field: "11b over 65", type: checkbox, on_state: "/Yes" }  # 11b (e) "IF AGE 65 OR OVER"
+  - { line: "11b_died", field: "11b died", type: checkbox, on_state: "/Yes" }  # 11b (f) "IF DIED IN 2023"
+  - { line: "11c_first_name", field: "11c First", type: text, maxlen: 17 }  # 11c (a) first name
+  - { line: "11c_last_name", field: "11c Last", type: text, maxlen: 21 }  # 11c (a) last name
+  - { line: "11c_ssn", field: "11c SSN", type: text, maxlen: 11 }  # 11c (b) social security number
+  - { line: "11c_relationship", field: "11c Relationship", type: text, maxlen: 11 }  # 11c (c) relationship (the widget has no /DA; the form default is auto-size Helvetica)
+  - { line: "11c_months_in_home", field: "11c Mo in Home", type: text, maxlen: 5 }  # 11c (d) no. of months lived in your home in 2023
+  - { line: "11c_age65_over", field: "11c over 65", type: checkbox, on_state: "/Yes" }  # 11c (e) "IF AGE 65 OR OVER"
+  - { line: "11c_died", field: "11c died", type: checkbox, on_state: "/Yes" }  # 11c (f) "IF DIED IN 2023"
+  # ===================================================== page 1 — 14 Dates of Arizona residency
+  - { line: "14_residency_from", field: "14 Res Begin", type: text, maxlen: 8, comb: true }  # 14 "Dates of Arizona residency: From M M D D Y Y Y Y" — eight comb cells
+  - { line: "14_residency_to", field: "14 Res Ending", type: text, maxlen: 8, comb: true }  # 14 "to M M D D Y Y Y Y" — eight comb cells
+  - { line: "14_other_states_of_residency", field: "14 List States", type: text, maxlen: 42 }  # 14 "List other state(s) of residency:"
+  # ===================================================== page 1 — Arizona Income: 2023 FEDERAL ("Amount from Federal Return") | 2023 ARIZONA ("Amount Only")
+  - { line: "15.federal", field: "15Fed", type: money }  # 15 "Wages, salaries, tips, etc." — FEDERAL column
+  - { line: "15.arizona", field: "15State", type: money }  # 15 — ARIZONA column
+  - { line: "16.federal", field: "16Fed", type: money }  # 16 "Interest" — FEDERAL column
+  - { line: "16.arizona", field: "16State", type: money }  # 16 — ARIZONA column
+  - { line: "17.federal", field: "17Fed", type: money }  # 17 "Dividends" — FEDERAL column
+  - { line: "17.arizona", field: "17State", type: money }  # 17 — ARIZONA column
+  - { line: "18.federal", field: "18Fed", type: money }  # 18 "Arizona income tax refunds" — FEDERAL column
+  - { line: "18.arizona", field: "18State", type: money }  # 18 — ARIZONA column
+  - { line: "19.federal", field: "19Fed", type: money }  # 19 "Business income (or loss) from federal Schedule C" — FEDERAL column
+  - { line: "19.arizona", field: "19State", type: money }  # 19 — ARIZONA column
+  - { line: "20.federal", field: "20Fed", type: money }  # 20 "Gains (or losses) from federal Schedule D. See instructions for ARIZONA column" — FEDERAL column
+  - { line: "20.arizona", field: "20State", type: money }  # 20 — ARIZONA column
+  - { line: "21.federal", field: "21Fed", type: money }  # 21 "Rents, royalties, partnerships, estates, trusts, small business corporations from federal Schedule E." — FEDERAL column
+  - { line: "21.arizona", field: "21State", type: money }  # 21 — ARIZONA column
+  - { line: "22.federal", field: "22Fed", type: money }  # 22 "Other income reported on your federal return — Include your own schedule" — FEDERAL column
+  - { line: "22.arizona", field: "22State", type: money }  # 22 — ARIZONA column
+  - { line: "23.federal", field: "23Fed", type: money }  # 23 "Total income — Add lines 15 through 22." — FEDERAL column
+  - { line: "23.arizona", field: "23State", type: money }  # 23 — ARIZONA column
+  - { line: "24.federal", field: "24Fed", type: money }  # 24 "Other federal adjustments — Include your own schedule" — FEDERAL column
+  - { line: "24.arizona", field: "24State", type: money }  # 24 — ARIZONA column
+  - { line: "25", field: "25Fed", type: money }  # 25 "Federal adjusted gross income — Subtract line 24 from line 23 in the FEDERAL column." (FEDERAL column only)
+  - { line: "26", field: "26", type: money }  # 26 "Arizona gross income — Subtract line 24 from line 23 in the ARIZONA column."
+  - { line: "27", field: "27", type: text, maxlen: 5 }  # 27 "Arizona income ratio — Divide line 26 by line 25 and enter the result (not over 1.000)" — five cells; the decimal point takes a cell
+  - { line: "28S_filing_140py_sbi", field: "28S", type: checkbox, on_state: "/Yes" }  # 28S "check the box if you are filing Form 140PY-SBI"
+  - { line: "28", field: "28", type: money }  # 28 "Small Business income ... enter the amount from Form 140PY-SBI, line 10"
+  # ===================================================== page 1 — Additions
+  - { line: "29", field: "29", type: money }  # 29 "Modified Arizona gross income. Subtract line 28 from line 26"
+  - { line: "30", field: "30", type: money }  # 30 "Total depreciation included in Arizona gross income."
+  - { line: "31", field: "31", type: money }  # 31 "Other Additions to Income. Complete Other Additions to Arizona Gross Income schedule on page 5"
+  - { line: "32", field: "32", type: money }  # 32 "Subtotal — Add lines 29, 30 and 31."
+  # ===================================================== page 1 — Subtractions (33-36 sit in the inner column)
+  - { line: "33", field: "33", type: money }  # 33 "Total Arizona net capital gain or (loss). Enter amount from line 20, Arizona column"
+  - { line: "34", field: "34", type: money }  # 34 "Total Arizona net short-term capital gain or (loss) included on line 33"
+  - { line: "35", field: "35", type: money }  # 35 "Total Arizona net long-term capital gain or (loss) included on line 33"
+  - { line: "36", field: "36", type: money }  # 36 "Net long-term capital gain from assets acquired after December 31, 2011. See instructions."
+  - { line: "37", field: "37", type: money }  # 37 "Multiply line 36 by 25% (.25) and enter the result"
+  - { line: "38", field: "38", type: money }  # 38 "Net capital gain derived from investment in qualified small business"
+  - { line: "39", field: "39", type: money }  # 39 "Subtract lines 37 and 38 from line 32. Enter the difference."
+  # ===================================================== page 2 — Subtractions cont. from page 1
+  - { line: "40", field: "40", type: money }  # 40 "Recalculated Arizona depreciation."
+  - { line: "41a", field: "41a", type: money }  # 41 "Contributions to" 41a "529 College Savings Plans"
+  - { line: "41b", field: "41b", type: money }  # 41b "529A (ABLE accounts)"
+  - { line: "41c", field: "41c", type: money }  # 41c "add 41a and 41b"
+  - { line: "42", field: "42", type: money }  # 42 "Interest on U.S. obligations such as U.S. savings bonds and treasury bills."
+  - { line: "43", field: "43", type: money }  # 43 "U.S. Social Security or Railroad Retirement Act benefits included in your Arizona income"
+  - { line: "44", field: "44", type: money }  # 44 "Other Subtractions from Income. Complete Other Subtractions from Arizona Gross Income schedule on page 6"
+  - { line: "45", field: "45", type: money }  # 45 "Subtract lines 40 through 44 from line 39. Enter the difference"
+  # ===================================================== page 2 — Exemptions (46-50 sit in the inner column)
+  - { line: "46", field: "46", type: money }  # 46 "Age 65 or over — Multiply the number in box 8 by $2,100."
+  - { line: "47", field: "47", type: money }  # 47 "Blind — Multiply the number in box 9 by $1,500"
+  - { line: "48E", field: "48E", type: text, maxlen: 4 }  # 48E "Other Exemptions. See instructions" — the count box
+  - { line: "48", field: "48", type: money }  # 48 "Multiply the number in box 48E by $2,300."
+  - { line: "49", field: "49", type: money }  # 49 "Qualifying parents and grandparents — Multiply the number in box 11a by $10,000."
+  - { line: "50", field: "50", type: money }  # 50 "Add lines 46 through 49. Enter the total"
+  - { line: "51", field: "51", type: money }  # 51 "Multiply line 50 by the Arizona income ratio on line 27."
+  - { line: "52", field: "52", type: money }  # 52 "Arizona adjusted gross income — Subtract line 51 from line 45. If less than zero, enter “0”"
+  # ===================================================== page 2 — 53 Deductions; ONE radio field "Itemized/Standard"
+  - { line: "53_deductions::itemized", field: "Itemized/Standard", type: checkbox, on_state: "/Choice1", group: "deductions_53" }  # 53I "ITEMIZED"
+  - { line: "53_deductions::standard", field: "Itemized/Standard", type: checkbox, on_state: "/Choice2", group: "deductions_53" }  # 53S "STANDARD"
+  - { line: "53", field: "53", type: money }  # 53 "Deductions — Check box and enter amount. See instructions"
+  - { line: "54C_charitable_with_standard", field: "54C", type: checkbox, on_state: "/Yes" }  # 54 "If you checked box 53S and claim charitable contributions check 54C"
+  - { line: "54", field: "54", type: money }  # 54 "... Complete page 3. See instructions" (the page-3 line 7C amount)
+  - { line: "55", field: "55", type: money }  # 55 "Arizona taxable income — Subtract lines 53 and 54 from line 52. If less than zero, enter “0”"
+  # ===================================================== page 2 — Balance of Tax
+  - { line: "56", field: "56", type: money }  # 56 "Tax — Multiply line 55 by 2.5% (.025). Enter the result"
+  - { line: "57", field: "57", type: money }  # 57 "Tax from recapture of credits from Arizona Form 301, Part 2, line 31"
+  - { line: "58", field: "58", type: money }  # 58 "Subtotal of tax — Add lines 56 and 57. Enter the total"
+  - { line: "59", field: "59", type: money }  # 59 "Dependent Tax Credit. See instructions"
+  - { line: "60", field: "60", type: money }  # 60 "Family income tax credit (from the worksheet - see instructions)"
+  - { line: "61", field: "61", type: money }  # 61 "Nonrefundable credits from Arizona Form 301, Part 2, line 62"
+  - { line: "62", field: "62", type: money }  # 62 "Balance of tax — Subtract lines 59, 60 and 61 from line 58. If the sum of lines 59, 60 and 61 is more than line 58, enter “0”"
+  # ===================================================== page 2 — Total Payments and Refundable Credits
+  - { line: "63", field: "63", type: money }  # 63 "2023 AZ income tax withheld"
+  - { line: "64a", field: "64a", type: money }  # 64a "2023 AZ estimated tax payments"
+  - { line: "64b", field: "64b", type: money }  # 64b "Claim of Right"
+  - { line: "64c", field: "64c", type: money }  # 64c "Add 64a and 64b"
+  - { line: "65", field: "65", type: money }  # 65 "2023 AZ extension payment (Form 204)"
+  - { line: "66", field: "66", type: money }  # 66 "Increased Excise Tax Credit (from the worksheet - see instructions)"
+  - { line: "67_credit_308i", field: "67_1", type: checkbox, on_state: "/Yes" }  # 671 "308-I"
+  - { line: "67_credit_334", field: "67_2", type: checkbox, on_state: "/Yes" }  # 672 "334"
+  - { line: "67_credit_349", field: "67_3", type: checkbox, on_state: "/Yes" }  # 673 "349"
+  - { line: "67", field: "67", type: money }  # 67 "Other refundable credits — Check the box(es) and enter the total amount"
+  - { line: "68", field: "68", type: money }  # 68 "Total payments and refundable credits — Add lines 63 through 67. Enter the total"
+  # ===================================================== page 2 — Tax Due or Overpayment
+  - { line: "69", field: "69", type: money }  # 69 "TAX DUE — If line 62 is larger than line 68, subtract line 68 from line 62. ..."
+  - { line: "70", field: "70", type: money }  # 70 "OVERPAYMENT — If line 68 is larger than line 62, subtract line 62 from line 68. ..."
+  - { line: "71", field: "71", type: money }  # 71 "Amount of line 70 to be applied to 2024 estimated tax"
+  - { line: "72", field: "72", type: money }  # 72 "Balance of overpayment — Subtract line 71 from line 70. Enter the difference"
+  # ===================================================== page 2 — 73-83 Voluntary Gifts
+  - { line: "73", field: "73", type: money }  # 73 "Solutions Teams Assigned to Schools"
+  - { line: "74", field: "74", type: money }  # 74 "Arizona Wildlife"
+  - { line: "75", field: "75", type: money }  # 75 "Child Abuse Prevention"
+  - { line: "76", field: "76", type: money }  # 76 "Domestic Violence Services"
+  - { line: "77", field: "77", type: money }  # 77 "Political Gift"
+  - { line: "78", field: "78", type: money }  # 78 "Neighbors Helping Neighbors"
+  - { line: "79", field: "79", type: money }  # 79 "Special Olympics"
+  - { line: "80", field: "80", type: money }  # 80 "Veterans’ Donations Fund"
+  - { line: "81", field: "81", type: money }  # 81 "I Didn’t Pay Enough Fund"
+  - { line: "82", field: "82", type: money }  # 82 "Sustainable State Parks and Road Fund"
+  - { line: "83", field: "83", type: money }  # 83 "Spay/Neuter of Animals"
+  # ===================================================== page 2 — 84 Political Party (if amount is entered on line 77 - check only one); ONE radio field
+  - { line: "84_political_party::democratic", field: "Political Party", type: checkbox, on_state: "/Choice1", group: "political_party_84" }  # 841 "Democratic"
+  - { line: "84_political_party::libertarian", field: "Political Party", type: checkbox, on_state: "/Choice2", group: "political_party_84" }  # 842 "Libertarian"
+  - { line: "84_political_party::republican", field: "Political Party", type: checkbox, on_state: "/Choice3", group: "political_party_84" }  # 843 "Republican"
+  # ===================================================== page 2 — Penalty
+  - { line: "85", field: "85", type: money }  # 85 "Estimated payment penalty"
+  - { line: "86_annualized_other", field: "86_1", type: checkbox, on_state: "/Yes" }  # 861 "Annualized/Other"
+  - { line: "86_farmer_or_fisherman", field: "86_2", type: checkbox, on_state: "/Yes" }  # 862 "Farmer or Fisherman"
+  - { line: "86_form221_included", field: "86_3", type: checkbox, on_state: "/Yes" }  # 863 "Form 221 included"
+  - { line: "87", field: "87", type: money }  # 87 "Add lines 73 through 83 and 85; enter the total"
+  # ===================================================== page 2 — Refund or Amount Owed
+  - { line: "88", field: "88", type: money }  # 88 "REFUND — Subtract line 87 from line 72. If less than zero, enter amount owed on line 89"
+  - { line: "88A_foreign_account", field: "88A", type: checkbox, on_state: "/Yes" }  # "Direct Deposit of Refund — Check box 88A if your deposit will be ultimately placed in a foreign account"
+  - { line: "88_account_type::checking", field: "Refund", type: checkbox, on_state: "/Choice5", group: "account_type_88" }  # "C Checking"
+  - { line: "88_account_type::savings", field: "Refund", type: checkbox, on_state: "/Choice1", group: "account_type_88" }  # "S Savings"
+  - { line: "88_routing_number", field: "Routing Number", type: text, maxlen: 9, comb: true }  # "ROUTING NUMBER" — nine comb cells
+  - { line: "88_account_number", field: "Account Number", type: text, maxlen: 17, comb: true }  # "ACCOUNT NUMBER" — seventeen comb cells
+  - { line: "89", field: "89", type: money }  # 89 "AMOUNT OWED — Add lines 69 and 87. ..."
+  # ===================================================== page 2 — signature block (the signatures and dates are hand-written: no widgets) and paid preparer
+  # Each caption is printed UNDER its box. "PAID PREPARER'S STREET ADDRESS" has no widget on this blank.
+  - { line: "occupation", field: "90", type: text, maxlen: 34 }  # "OCCUPATION"
+  - { line: "spouse_occupation", field: "91", type: text, maxlen: 34 }  # "SPOUSE’S OCCUPATION"
+  - { line: "preparer_firm_name", field: "92", type: text, maxlen: 50 }  # "FIRM’S NAME (PREPARER’S IF SELF-EMPLOYED)"
+  - { line: "preparer_tin", field: "93", type: text, maxlen: 30 }  # "PAID PREPARER’S TIN"
+  - { line: "preparer_city", field: "94", type: text, maxlen: 28 }  # "PAID PREPARER’S CITY"
+  - { line: "preparer_state", field: "95", type: text, maxlen: 6 }  # "STATE" (preparer)
+  - { line: "preparer_zip_code", field: "96", type: text, maxlen: 5 }  # "ZIP CODE" (preparer; /DA Helvetica 12; the 45.3 pt box holds 6 digits, so the 5-digit ZIP)
+  - { line: "preparer_phone", field: "97", type: text, maxlen: 15 }  # "PAID PREPARER’S PHONE NUMBER" (/DA Helvetica 12; the blank's rect reaches up into box 93's "PAID PREPARER’S TIN" caption, but a 12 pt value renders below that caption)
+  # ===================================================== page 3 — 2023 Form 140PY - Standard Deduction Increase for Charitable Contributions (1C-7C)
+  - { line: "ws3_1c_gifts_cash_or_check", field: "3_1c", type: money }  # 1C "2023 Gifts by cash or check"
+  - { line: "ws3_2c_other_than_cash_or_check", field: "3_2c", type: money }  # 2C "2023 Other than by cash or check"
+  - { line: "ws3_3c_carryover", field: "3_3c", type: money }  # 3C "Carryover from prior year"
+  - { line: "ws3_4c_add_1c_3c", field: "3_4c", type: money }  # 4C "Add lines 1C through 3C and enter the total"
+  - { line: "ws3_5c_credit_contributions", field: "3_5c", type: money }  # 5C "Total charitable contributions made in 2023 for which you are claiming a credit under Arizona law ..."
+  - { line: "ws3_6c_subtract_5c_from_4c", field: "3_6c", type: money }  # 6C "Subtract line 5C from line 4C and enter the difference. If less than zero, enter “0”"
+  - { line: "ws3_7c_multiply_by_31pct", field: "3_7c", type: money }  # 7C "Multiply line 6C by 31% (.31) and enter the result"
+  # ===================================================== page 4 — Part 1: Dependents (Box 10a and 10b) continued from page 1, rows 10e-10o
+  - { line: "10e_first_name", field: "10e First", type: text, maxlen: 13 }  # 10e (a) first name
+  - { line: "10e_last_name", field: "10e Last", type: text, maxlen: 15 }  # 10e (a) last name
+  - { line: "10e_ssn", field: "10e SSN", type: text, maxlen: 11 }  # 10e (b) social security number
+  - { line: "10e_relationship", field: "10e Relationship", type: text, maxlen: 12 }  # 10e (c) relationship
+  - { line: "10e_months_in_home", field: "10e Mo in Home", type: text, maxlen: 5 }  # 10e (d) no. of months lived in your home in 2023
+  - { line: "10e_dep_age_box10a", field: "10e_10a check box", type: checkbox, on_state: "/Yes", group: "10e_dep_age" }  # 10e (e) 1 "(Box 10a)"
+  - { line: "10e_dep_age_box10b", field: "10e_10b check box", type: checkbox, on_state: "/Yes", group: "10e_dep_age" }  # 10e (e) 2 "(Box 10b)"
+  - { line: "10e_educ_credit", field: "10e educ", type: checkbox, on_state: "/Yes" }  # 10e (f) not claimed on your federal return due to educational credits
+  - { line: "10f_first_name", field: "10f First", type: text, maxlen: 13 }  # 10f (a) first name
+  - { line: "10f_last_name", field: "10f Last", type: text, maxlen: 15 }  # 10f (a) last name
+  - { line: "10f_ssn", field: "10f SSN", type: text, maxlen: 11 }  # 10f (b) social security number
+  - { line: "10f_relationship", field: "10f Relationship", type: text, maxlen: 12 }  # 10f (c) relationship
+  - { line: "10f_months_in_home", field: "10f Mo in Home", type: text, maxlen: 5 }  # 10f (d) no. of months lived in your home in 2023
+  - { line: "10f_dep_age_box10a", field: "10f_10a check box", type: checkbox, on_state: "/Yes", group: "10f_dep_age" }  # 10f (e) 1 "(Box 10a)"
+  - { line: "10f_dep_age_box10b", field: "10f_10b check box", type: checkbox, on_state: "/Yes", group: "10f_dep_age" }  # 10f (e) 2 "(Box 10b)"
+  - { line: "10f_educ_credit", field: "10f educ", type: checkbox, on_state: "/Yes" }  # 10f (f) not claimed on your federal return due to educational credits
+  - { line: "10g_first_name", field: "10g First", type: text, maxlen: 13 }  # 10g (a) first name
+  - { line: "10g_last_name", field: "10g Last", type: text, maxlen: 15 }  # 10g (a) last name
+  - { line: "10g_ssn", field: "10g SSN", type: text, maxlen: 11 }  # 10g (b) social security number
+  - { line: "10g_relationship", field: "10g Relationship", type: text, maxlen: 12 }  # 10g (c) relationship
+  - { line: "10g_months_in_home", field: "10g Mo in Home", type: text, maxlen: 5 }  # 10g (d) no. of months lived in your home in 2023
+  - { line: "10g_dep_age_box10a", field: "10g_10a check box", type: checkbox, on_state: "/Yes", group: "10g_dep_age" }  # 10g (e) 1 "(Box 10a)"
+  - { line: "10g_dep_age_box10b", field: "10g_10b check box", type: checkbox, on_state: "/Yes", group: "10g_dep_age" }  # 10g (e) 2 "(Box 10b)"
+  - { line: "10g_educ_credit", field: "10g educ", type: checkbox, on_state: "/Yes" }  # 10g (f) not claimed on your federal return due to educational credits
+  - { line: "10h_first_name", field: "10h First", type: text, maxlen: 13 }  # 10h (a) first name
+  - { line: "10h_last_name", field: "10h Last", type: text, maxlen: 15 }  # 10h (a) last name
+  - { line: "10h_ssn", field: "10h SSN", type: text, maxlen: 11 }  # 10h (b) social security number
+  - { line: "10h_relationship", field: "10h Relationship", type: text, maxlen: 12 }  # 10h (c) relationship
+  - { line: "10h_months_in_home", field: "10h Mo in Home", type: text, maxlen: 5 }  # 10h (d) no. of months lived in your home in 2023
+  - { line: "10h_dep_age_box10a", field: "10h_10a check box", type: checkbox, on_state: "/Yes", group: "10h_dep_age" }  # 10h (e) 1 "(Box 10a)"
+  - { line: "10h_dep_age_box10b", field: "10h_10b check box", type: checkbox, on_state: "/Yes", group: "10h_dep_age" }  # 10h (e) 2 "(Box 10b)"
+  - { line: "10h_educ_credit", field: "10h educ", type: checkbox, on_state: "/Yes" }  # 10h (f) not claimed on your federal return due to educational credits
+  - { line: "10i_first_name", field: "10i First", type: text, maxlen: 13 }  # 10i (a) first name
+  - { line: "10i_last_name", field: "10i Last", type: text, maxlen: 15 }  # 10i (a) last name
+  - { line: "10i_ssn", field: "10i SSN", type: text, maxlen: 11 }  # 10i (b) social security number
+  - { line: "10i_relationship", field: "10i Relationship", type: text, maxlen: 12 }  # 10i (c) relationship
+  - { line: "10i_months_in_home", field: "10i Mo in Home", type: text, maxlen: 5 }  # 10i (d) no. of months lived in your home in 2023
+  - { line: "10i_dep_age_box10a", field: "10i_10a check box", type: checkbox, on_state: "/Yes", group: "10i_dep_age" }  # 10i (e) 1 "(Box 10a)"
+  - { line: "10i_dep_age_box10b", field: "10i_10b check box", type: checkbox, on_state: "/Yes", group: "10i_dep_age" }  # 10i (e) 2 "(Box 10b)"
+  - { line: "10i_educ_credit", field: "10i educ", type: checkbox, on_state: "/Yes" }  # 10i (f) not claimed on your federal return due to educational credits
+  - { line: "10j_first_name", field: "10j First", type: text, maxlen: 13 }  # 10j (a) first name
+  - { line: "10j_last_name", field: "10j Last", type: text, maxlen: 15 }  # 10j (a) last name
+  - { line: "10j_ssn", field: "10j SSN", type: text, maxlen: 11 }  # 10j (b) social security number
+  - { line: "10j_relationship", field: "10j Relationship", type: text, maxlen: 12 }  # 10j (c) relationship
+  - { line: "10j_months_in_home", field: "10j Mo in Home", type: text, maxlen: 5 }  # 10j (d) no. of months lived in your home in 2023
+  - { line: "10j_dep_age_box10a", field: "10j_10a check box", type: checkbox, on_state: "/Yes", group: "10j_dep_age" }  # 10j (e) 1 "(Box 10a)"
+  - { line: "10j_dep_age_box10b", field: "10j_10b check box", type: checkbox, on_state: "/Yes", group: "10j_dep_age" }  # 10j (e) 2 "(Box 10b)"
+  - { line: "10j_educ_credit", field: "10j educ", type: checkbox, on_state: "/Yes" }  # 10j (f) not claimed on your federal return due to educational credits
+  - { line: "10k_first_name", field: "10k First", type: text, maxlen: 13 }  # 10k (a) first name
+  - { line: "10k_last_name", field: "10k Last", type: text, maxlen: 15 }  # 10k (a) last name
+  - { line: "10k_ssn", field: "10k SSN", type: text, maxlen: 11 }  # 10k (b) social security number
+  - { line: "10k_relationship", field: "10k Relationship", type: text, maxlen: 13 }  # 10k (c) relationship
+  - { line: "10k_months_in_home", field: "10k Mo in Home", type: text, maxlen: 5 }  # 10k (d) no. of months lived in your home in 2023
+  - { line: "10k_dep_age_box10a", field: "10k_10a check box", type: checkbox, on_state: "/Yes", group: "10k_dep_age" }  # 10k (e) 1 "(Box 10a)"
+  - { line: "10k_dep_age_box10b", field: "10k_10b check box", type: checkbox, on_state: "/Yes", group: "10k_dep_age" }  # 10k (e) 2 "(Box 10b)"
+  - { line: "10k_educ_credit", field: "10k educ", type: checkbox, on_state: "/Yes" }  # 10k (f) not claimed on your federal return due to educational credits
+  - { line: "10l_first_name", field: "10l First", type: text, maxlen: 13 }  # 10l (a) first name
+  - { line: "10l_last_name", field: "10l Last", type: text, maxlen: 15 }  # 10l (a) last name
+  - { line: "10l_ssn", field: "10l SSN", type: text, maxlen: 11 }  # 10l (b) social security number
+  - { line: "10l_relationship", field: "10l Relationship", type: text, maxlen: 12 }  # 10l (c) relationship
+  - { line: "10l_months_in_home", field: "10l Mo in Home", type: text, maxlen: 5 }  # 10l (d) no. of months lived in your home in 2023
+  - { line: "10l_dep_age_box10a", field: "10l_10a check box", type: checkbox, on_state: "/Yes", group: "10l_dep_age" }  # 10l (e) 1 "(Box 10a)"
+  - { line: "10l_dep_age_box10b", field: "10l_10b check box", type: checkbox, on_state: "/Yes", group: "10l_dep_age" }  # 10l (e) 2 "(Box 10b)"
+  - { line: "10l_educ_credit", field: "10l educ", type: checkbox, on_state: "/Yes" }  # 10l (f) not claimed on your federal return due to educational credits
+  - { line: "10m_first_name", field: "10m First", type: text, maxlen: 13 }  # 10m (a) first name
+  - { line: "10m_last_name", field: "10m Last", type: text, maxlen: 15 }  # 10m (a) last name
+  - { line: "10m_ssn", field: "10m SSN", type: text, maxlen: 11 }  # 10m (b) social security number
+  - { line: "10m_relationship", field: "10m Relationship", type: text, maxlen: 12 }  # 10m (c) relationship
+  - { line: "10m_months_in_home", field: "10m Mo in Home", type: text, maxlen: 5 }  # 10m (d) no. of months lived in your home in 2023
+  - { line: "10m_dep_age_box10a", field: "10m_10a check box", type: checkbox, on_state: "/Yes", group: "10m_dep_age" }  # 10m (e) 1 "(Box 10a)"
+  - { line: "10m_dep_age_box10b", field: "10m_10b check box", type: checkbox, on_state: "/Yes", group: "10m_dep_age" }  # 10m (e) 2 "(Box 10b)"
+  - { line: "10m_educ_credit", field: "10m educ", type: checkbox, on_state: "/Yes" }  # 10m (f) not claimed on your federal return due to educational credits
+  - { line: "10n_first_name", field: "10n First", type: text, maxlen: 13 }  # 10n (a) first name
+  - { line: "10n_last_name", field: "10n Last", type: text, maxlen: 15 }  # 10n (a) last name
+  - { line: "10n_ssn", field: "10n SSN", type: text, maxlen: 11 }  # 10n (b) social security number
+  - { line: "10n_relationship", field: "10n Relationship", type: text, maxlen: 12 }  # 10n (c) relationship
+  - { line: "10n_months_in_home", field: "10n Mo in Home", type: text, maxlen: 5 }  # 10n (d) no. of months lived in your home in 2023
+  - { line: "10n_dep_age_box10a", field: "10n_10a check box", type: checkbox, on_state: "/Yes", group: "10n_dep_age" }  # 10n (e) 1 "(Box 10a)"
+  - { line: "10n_dep_age_box10b", field: "10n_10b check box", type: checkbox, on_state: "/Yes", group: "10n_dep_age" }  # 10n (e) 2 "(Box 10b)"
+  - { line: "10n_educ_credit", field: "10n educ", type: checkbox, on_state: "/Yes" }  # 10n (f) not claimed on your federal return due to educational credits
+  - { line: "10o_first_name", field: "10o First", type: text, maxlen: 13 }  # 10o (a) first name
+  - { line: "10o_last_name", field: "10o Last", type: text, maxlen: 15 }  # 10o (a) last name
+  - { line: "10o_ssn", field: "10o SSN", type: text, maxlen: 11 }  # 10o (b) social security number
+  - { line: "10o_relationship", field: "10o Relationship", type: text, maxlen: 12 }  # 10o (c) relationship
+  - { line: "10o_months_in_home", field: "10o Mo in Home", type: text, maxlen: 5 }  # 10o (d) no. of months lived in your home in 2023
+  - { line: "10o_dep_age_box10a", field: "10o_10a check box", type: checkbox, on_state: "/Yes", group: "10o_dep_age" }  # 10o (e) 1 "(Box 10a)"
+  - { line: "10o_dep_age_box10b", field: "10o_10b check box", type: checkbox, on_state: "/Yes", group: "10o_dep_age" }  # 10o (e) 2 "(Box 10b)"
+  - { line: "10o_educ_credit", field: "10o educ", type: checkbox, on_state: "/Yes" }  # 10o (f) not claimed on your federal return due to educational credits
+  # ===================================================== page 4 — Part 2: Qualifying parents and grandparents (Box 11a) continued from page 1, rows 11d-11i
+  - { line: "11d_first_name", field: "11d First", type: text, maxlen: 13 }  # 11d (a) first name
+  - { line: "11d_last_name", field: "11d Last", type: text, maxlen: 15 }  # 11d (a) last name
+  - { line: "11d_ssn", field: "11d SSN", type: text, maxlen: 11 }  # 11d (b) social security number
+  - { line: "11d_relationship", field: "11d Relationship", type: text, maxlen: 13 }  # 11d (c) relationship (the widget has no /DA; the form default is auto-size Helvetica)
+  - { line: "11d_months_in_home", field: "11d Mo in Home", type: text, maxlen: 5 }  # 11d (d) no. of months lived in your home in 2023
+  - { line: "11d_age65_over", field: "11d over 65", type: checkbox, on_state: "/Yes" }  # 11d (e) "IF AGE 65 OR OVER"
+  - { line: "11d_died", field: "11d died", type: checkbox, on_state: "/Yes" }  # 11d (f) "IF DIED IN 2023"
+  - { line: "11e_first_name", field: "11e First", type: text, maxlen: 13 }  # 11e (a) first name
+  - { line: "11e_last_name", field: "11e Last", type: text, maxlen: 15 }  # 11e (a) last name
+  - { line: "11e_ssn", field: "11e SSN", type: text, maxlen: 11 }  # 11e (b) social security number
+  - { line: "11e_relationship", field: "11e Relationship", type: text, maxlen: 13 }  # 11e (c) relationship (the widget has no /DA; the form default is auto-size Helvetica)
+  - { line: "11e_months_in_home", field: "11e Mo in Home", type: text, maxlen: 5 }  # 11e (d) no. of months lived in your home in 2023
+  - { line: "11e_age65_over", field: "11e over 65", type: checkbox, on_state: "/Yes" }  # 11e (e) "IF AGE 65 OR OVER"
+  - { line: "11e_died", field: "11e died", type: checkbox, on_state: "/Yes" }  # 11e (f) "IF DIED IN 2023"
+  - { line: "11f_first_name", field: "11f First", type: text, maxlen: 13 }  # 11f (a) first name
+  - { line: "11f_last_name", field: "11f Last", type: text, maxlen: 15 }  # 11f (a) last name
+  - { line: "11f_ssn", field: "11f SSN", type: text, maxlen: 11 }  # 11f (b) social security number
+  - { line: "11f_relationship", field: "11f Relationship", type: text, maxlen: 13 }  # 11f (c) relationship (the widget has no /DA; the form default is auto-size Helvetica)
+  - { line: "11f_months_in_home", field: "11f Mo in Home", type: text, maxlen: 5 }  # 11f (d) no. of months lived in your home in 2023
+  - { line: "11f_age65_over", field: "11f over 65", type: checkbox, on_state: "/Yes" }  # 11f (e) "IF AGE 65 OR OVER"
+  - { line: "11f_died", field: "11f died", type: checkbox, on_state: "/Yes" }  # 11f (f) "IF DIED IN 2023"
+  - { line: "11g_first_name", field: "11g First", type: text, maxlen: 13 }  # 11g (a) first name
+  - { line: "11g_last_name", field: "11g Last", type: text, maxlen: 15 }  # 11g (a) last name
+  - { line: "11g_ssn", field: "11g SSN", type: text, maxlen: 11 }  # 11g (b) social security number
+  - { line: "11g_relationship", field: "11g Relationship", type: text, maxlen: 13 }  # 11g (c) relationship (the widget has no /DA; the form default is auto-size Helvetica)
+  - { line: "11g_months_in_home", field: "11g Mo in Home", type: text, maxlen: 5 }  # 11g (d) no. of months lived in your home in 2023
+  - { line: "11g_age65_over", field: "11g over 65", type: checkbox, on_state: "/Yes" }  # 11g (e) "IF AGE 65 OR OVER"
+  - { line: "11g_died", field: "11g died", type: checkbox, on_state: "/Yes" }  # 11g (f) "IF DIED IN 2023"
+  - { line: "11h_first_name", field: "11h First", type: text, maxlen: 13 }  # 11h (a) first name
+  - { line: "11h_last_name", field: "11h Last", type: text, maxlen: 15 }  # 11h (a) last name
+  - { line: "11h_ssn", field: "11h SSN", type: text, maxlen: 11 }  # 11h (b) social security number
+  - { line: "11h_relationship", field: "11h Relationship", type: text, maxlen: 13 }  # 11h (c) relationship (the widget has no /DA; the form default is auto-size Helvetica)
+  - { line: "11h_months_in_home", field: "11h Mo in Home", type: text, maxlen: 5 }  # 11h (d) no. of months lived in your home in 2023
+  - { line: "11h_age65_over", field: "11h over 65", type: checkbox, on_state: "/Yes" }  # 11h (e) "IF AGE 65 OR OVER"
+  - { line: "11h_died", field: "11h died", type: checkbox, on_state: "/Yes" }  # 11h (f) "IF DIED IN 2023"
+  - { line: "11i_first_name", field: "11i First", type: text, maxlen: 13 }  # 11i (a) first name
+  - { line: "11i_last_name", field: "11i Last", type: text, maxlen: 15 }  # 11i (a) last name
+  - { line: "11i_ssn", field: "11i SSN", type: text, maxlen: 11 }  # 11i (b) social security number
+  - { line: "11i_relationship", field: "11i Relationship", type: text, maxlen: 13 }  # 11i (c) relationship (the widget has no /DA; the form default is auto-size Helvetica)
+  - { line: "11i_months_in_home", field: "11i Mo in Home", type: text, maxlen: 5 }  # 11i (d) no. of months lived in your home in 2023
+  - { line: "11i_age65_over", field: "11i over 65", type: checkbox, on_state: "/Yes" }  # 11i (e) "IF AGE 65 OR OVER"
+  - { line: "11i_died", field: "11i died", type: checkbox, on_state: "/Yes" }  # 11i (f) "IF DIED IN 2023"
+  # ===================================================== page 4 — Part 3: Other Exemptions, rows 1-10 ("Enter the total number of individuals listed in Part 3 in box 48E")
+  # cols: (a) first / last name (b) SSN (c) AGE 65 OR OVER (see instructions) C1 / C2 (d) STILLBORN CHILD IN 2023
+  - { line: "oe_1_first_name", field: "3_1 First", type: text, maxlen: 13 }  # Part 3 row 1 (a) first name
+  - { line: "oe_1_last_name", field: "3_1 Last", type: text, maxlen: 15 }  # Part 3 row 1 (a) last name
+  - { line: "oe_1_ssn", field: "3_1 SSN", type: text, maxlen: 11 }  # Part 3 row 1 (b) social security number
+  - { line: "oe_1_age65_c1", field: "c1_1", type: checkbox, on_state: "/Yes" }  # Part 3 row 1 (c) "C1"
+  - { line: "oe_1_age65_c2", field: "c2_1", type: checkbox, on_state: "/Yes" }  # Part 3 row 1 (c) "C2"
+  - { line: "oe_1_stillborn_child", field: "1 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 1 (d) stillborn child in 2023
+  - { line: "oe_2_first_name", field: "3_2 First", type: text, maxlen: 13 }  # Part 3 row 2 (a) first name
+  - { line: "oe_2_last_name", field: "3_2 Last", type: text, maxlen: 15 }  # Part 3 row 2 (a) last name
+  - { line: "oe_2_ssn", field: "3_2 SSN", type: text, maxlen: 11 }  # Part 3 row 2 (b) social security number
+  - { line: "oe_2_age65_c1", field: "c1_2", type: checkbox, on_state: "/Yes" }  # Part 3 row 2 (c) "C1"
+  - { line: "oe_2_age65_c2", field: "c2_2", type: checkbox, on_state: "/Yes" }  # Part 3 row 2 (c) "C2"
+  - { line: "oe_2_stillborn_child", field: "2 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 2 (d) stillborn child in 2023
+  - { line: "oe_3_first_name", field: "3_3 First", type: text, maxlen: 13 }  # Part 3 row 3 (a) first name
+  - { line: "oe_3_last_name", field: "3_3 Last", type: text, maxlen: 15 }  # Part 3 row 3 (a) last name
+  - { line: "oe_3_ssn", field: "3_3 SSN", type: text, maxlen: 11 }  # Part 3 row 3 (b) social security number
+  - { line: "oe_3_age65_c1", field: "c1_3", type: checkbox, on_state: "/Yes" }  # Part 3 row 3 (c) "C1"
+  - { line: "oe_3_age65_c2", field: "c2_3", type: checkbox, on_state: "/Yes" }  # Part 3 row 3 (c) "C2"
+  - { line: "oe_3_stillborn_child", field: "3 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 3 (d) stillborn child in 2023
+  - { line: "oe_4_first_name", field: "3_4 First", type: text, maxlen: 13 }  # Part 3 row 4 (a) first name
+  - { line: "oe_4_last_name", field: "3_4 Last", type: text, maxlen: 15 }  # Part 3 row 4 (a) last name
+  - { line: "oe_4_ssn", field: "3_4 SSN", type: text, maxlen: 11 }  # Part 3 row 4 (b) social security number
+  - { line: "oe_4_age65_c1", field: "c1_4", type: checkbox, on_state: "/Yes" }  # Part 3 row 4 (c) "C1"
+  - { line: "oe_4_age65_c2", field: "c2_4", type: checkbox, on_state: "/Yes" }  # Part 3 row 4 (c) "C2"
+  - { line: "oe_4_stillborn_child", field: "4 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 4 (d) stillborn child in 2023
+  - { line: "oe_5_first_name", field: "3_5 First", type: text, maxlen: 13 }  # Part 3 row 5 (a) first name
+  - { line: "oe_5_last_name", field: "3_5 Last", type: text, maxlen: 15 }  # Part 3 row 5 (a) last name
+  - { line: "oe_5_ssn", field: "3_5 SSN", type: text, maxlen: 11 }  # Part 3 row 5 (b) social security number
+  - { line: "oe_5_age65_c1", field: "c1_5", type: checkbox, on_state: "/Yes" }  # Part 3 row 5 (c) "C1"
+  - { line: "oe_5_age65_c2", field: "c2_5", type: checkbox, on_state: "/Yes" }  # Part 3 row 5 (c) "C2"
+  - { line: "oe_5_stillborn_child", field: "5 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 5 (d) stillborn child in 2023
+  - { line: "oe_6_first_name", field: "3_6 First", type: text, maxlen: 13 }  # Part 3 row 6 (a) first name
+  - { line: "oe_6_last_name", field: "3_6 Last", type: text, maxlen: 15 }  # Part 3 row 6 (a) last name
+  - { line: "oe_6_ssn", field: "3_6 SSN", type: text, maxlen: 11 }  # Part 3 row 6 (b) social security number
+  - { line: "oe_6_age65_c1", field: "c1_6", type: checkbox, on_state: "/Yes" }  # Part 3 row 6 (c) "C1"
+  - { line: "oe_6_age65_c2", field: "c2_6", type: checkbox, on_state: "/Yes" }  # Part 3 row 6 (c) "C2"
+  - { line: "oe_6_stillborn_child", field: "6 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 6 (d) stillborn child in 2023
+  - { line: "oe_7_first_name", field: "3_7 First", type: text, maxlen: 13 }  # Part 3 row 7 (a) first name
+  - { line: "oe_7_last_name", field: "3_7 Last", type: text, maxlen: 15 }  # Part 3 row 7 (a) last name
+  - { line: "oe_7_ssn", field: "3_7 SSN", type: text, maxlen: 11 }  # Part 3 row 7 (b) social security number
+  - { line: "oe_7_age65_c1", field: "c1_7", type: checkbox, on_state: "/Yes" }  # Part 3 row 7 (c) "C1"
+  - { line: "oe_7_age65_c2", field: "c2_7", type: checkbox, on_state: "/Yes" }  # Part 3 row 7 (c) "C2"
+  - { line: "oe_7_stillborn_child", field: "7 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 7 (d) stillborn child in 2023
+  - { line: "oe_8_first_name", field: "3_8 First", type: text, maxlen: 13 }  # Part 3 row 8 (a) first name
+  - { line: "oe_8_last_name", field: "3_8 Last", type: text, maxlen: 15 }  # Part 3 row 8 (a) last name
+  - { line: "oe_8_ssn", field: "3_8 SSN", type: text, maxlen: 11 }  # Part 3 row 8 (b) social security number
+  - { line: "oe_8_age65_c1", field: "c1_8", type: checkbox, on_state: "/Yes" }  # Part 3 row 8 (c) "C1"
+  - { line: "oe_8_age65_c2", field: "c2_8", type: checkbox, on_state: "/Yes" }  # Part 3 row 8 (c) "C2"
+  - { line: "oe_8_stillborn_child", field: "8 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 8 (d) stillborn child in 2023
+  - { line: "oe_9_first_name", field: "3_9 First", type: text, maxlen: 13 }  # Part 3 row 9 (a) first name
+  - { line: "oe_9_last_name", field: "3_9 Last", type: text, maxlen: 15 }  # Part 3 row 9 (a) last name
+  - { line: "oe_9_ssn", field: "3_9 SSN", type: text, maxlen: 11 }  # Part 3 row 9 (b) social security number
+  - { line: "oe_9_age65_c1", field: "c1_9", type: checkbox, on_state: "/Yes" }  # Part 3 row 9 (c) "C1"
+  - { line: "oe_9_age65_c2", field: "c2_9", type: checkbox, on_state: "/Yes" }  # Part 3 row 9 (c) "C2"
+  - { line: "oe_9_stillborn_child", field: "9 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 9 (d) stillborn child in 2023
+  - { line: "oe_10_first_name", field: "3_10 First", type: text, maxlen: 13 }  # Part 3 row 10 (a) first name
+  - { line: "oe_10_last_name", field: "3_10 Last", type: text, maxlen: 15 }  # Part 3 row 10 (a) last name
+  - { line: "oe_10_ssn", field: "3_10 SSN", type: text, maxlen: 11 }  # Part 3 row 10 (b) social security number
+  - { line: "oe_10_age65_c1", field: "c1_10", type: checkbox, on_state: "/Yes" }  # Part 3 row 10 (c) "C1"
+  - { line: "oe_10_age65_c2", field: "c2_10", type: checkbox, on_state: "/Yes" }  # Part 3 row 10 (c) "C2"
+  - { line: "oe_10_stillborn_child", field: "10 child", type: checkbox, on_state: "/Yes" }  # Part 3 row 10 (d) stillborn child in 2023
+  # ===================================================== page 5 — Other Additions to Arizona Gross Income - Line 31 (rows A-R)
+  - { line: "oa_a_non_arizona_municipal_interest", field: "5A", type: money }  # A "Non-Arizona Municipal Interest"
+  - { line: "oa_b_lump_sum_ordinary_income", field: "5B", type: money }  # B "Ordinary Income Portion of Lump-Sum Distributions Excluded on Your Federal Return"
+  - { line: "oa_c_fiduciary_adjustment_141az_k1", field: "5C", type: money }  # C "Fiduciary Adjustment from Arizona Form 141AZ Schedule K-1 and/or Schedule K-1(NR)"
+  - { line: "oa_d_partnership_income_adjustment", field: "5D", type: money }  # D "Partnership Income Adjustment"
+  - { line: "oa_e_items_previously_deducted", field: "5E", type: money }  # E "Items Previously Deducted for Arizona Purposes"
+  - { line: "oa_f_claim_of_right_repaid_current_year", field: "5F", type: money }  # F "Claim of Right Adjustment for Amounts Repaid in 2023"
+  - { line: "oa_ga_claim_of_right_repaid_prior_years", field: "5Ga", type: money }  # G(a) "Claim of Right Adjustment for Amounts Repaid in Prior Years"
+  - { line: "oa_gb_nol_claim_of_right", field: "5Gb", type: money }  # G(b) "Adjustment for Net Operating Loss due to Claim of Right"
+  - { line: "oa_ha_basis_qualified_small_business_credit", field: "5Ha", type: money }  # H(a) "... Credit for Investment in Qualified Small Businesses (Form 338) that was sold or otherwise disposed of during the tax year"
+  - { line: "oa_hb_basis_agri_pollution_control_credit", field: "5Hb", type: money }  # H(b) "Adjusted basis under IRC for Agricultural Pollution Control Equipment for which a credit was claimed (Form 325) ..."
+  - { line: "oa_hc_basis_pollution_control_credit", field: "5Hc", type: money }  # H(c) "Adjusted basis under IRC for Pollution Control Equipment for which a credit was claimed (Form 315) ..."
+  - { line: "oa_hd_agri_water_conservation_credit", field: "5Hd", type: money }  # H(d) "Addition Due to Claiming the Agricultural Water Conservation System (Credit 312)"
+  - { line: "oa_he_s_corp_agri_water_credit", field: "5He", type: money }  # H(e) "Addition to S Corporation Income Due to Claiming the Pass-Through Credit for Agricultural Water Conservation System (Credit 312)"
+  - { line: "oa_i_nonqualified_529_withdrawals", field: "5I", type: money }  # I "Nonqualified Withdrawals from 529 College Savings Plans"
+  - { line: "oa_j_medical_marijuana_dispensary_loss", field: "5J", type: money }  # J "Sole Proprietorship Loss of an Arizona Nonprofit Medical Marijuana Dispensary ..."
+  - { line: "oa_k_disabilities_access_expenditures", field: "5K", type: money }  # K "Americans with Disabilities Act - Access Expenditures"
+  - { line: "oa_l_childcare_facility_amortization", field: "5L", type: money }  # L "Amortization or Depreciation for Child Care Facility Before 1990"
+  - { line: "oa_m_net_capital_loss_legal_tender", field: "5M", type: money }  # M "Net capital loss derived from exchange of legal tender"
+  - { line: "oa_n_entity_level_income_tax", field: "5N", type: money }  # N "Entity-Level Income Tax Payment"
+  - { line: "oa_o_motion_picture_production_costs", field: "5O", type: money }  # O "Motion Picture Production Costs"
+  - { line: "oa_p_adjustments_tax_credits", field: "5P", type: money }  # P "Other Adjustments Related to Tax Credits"
+  - { line: "oa_q_other_adjustments", field: "5Q", type: money }  # Q "Other Adjustments"
+  - { line: "oa_r_total_other_additions", field: "5R", type: money }  # R "Total Other Additions — Add all amounts and enter the total here and on line 31"
+  # ===================================================== page 6 — Other Subtractions from Arizona Gross Income - Line 44 (rows A-Z)
+  - { line: "os_a_government_pension_exclusion", field: "6A", type: money }  # A "Exclusion for U.S. Government, Arizona State, or Local Government Pensions (up to $2,500 per taxpayer)"
+  - { line: "os_b_uniformed_services_retired_pay", field: "6B", type: money }  # B "Exclusion for Benefits, Annuities, and Pensions Received as Retired or Retainer Pay of the Uniformed Service of the United States ..."
+  - { line: "os_c_agricultural_crops_charity", field: "6C", type: money }  # C "Agricultural Crops Given to Arizona Charitable Organizations"
+  - { line: "os_d_american_indian_wages", field: "6D", type: money }  # D "Certain Wages of American Indians"
+  - { line: "os_e_active_service_reserves_guard_pay", field: "6E", type: money }  # E "Pay Received for Active Service as a Member of the Reserves, National Guard, or the U.S. Armed Forces"
+  - { line: "os_f_arizona_municipal_interest", field: "6F", type: money }  # F "Federally Taxable Arizona Municipal Interest as Evidenced by Bonds"
+  - { line: "os_g_adoption_expense", field: "6G", type: money }  # G "Adoption Expense"
+  - { line: "os_h_wood_stove_fireplace", field: "6H", type: money }  # H "Qualified Wood Stove, Wood Fireplace, or Gas Fired Fireplace"
+  - { line: "os_i_claim_of_right_repaid_prior_years", field: "6I", type: money }  # I "Claim of Right Adjustment for Amounts Repaid in Prior Tax Years"
+  - { line: "os_j_expenses_federal_credits", field: "6J", type: money }  # J "Certain Expenses Not Allowed for Federal Purposes"
+  - { line: "os_k_state_tuition_program_distributions", field: "6K", type: money }  # K "Qualified State Tuition Program Distributions"
+  - { line: "os_l_installment_sale_other_state", field: "6L", type: money }  # L "Installment Sale Income From Another State Taxed by the Other State in a Prior Taxable Year"
+  - { line: "os_m_basis_adjustment_property_disposed", field: "6M", type: money }  # M "Basis Adjustment for Property Sold or Otherwise Disposed of During the Taxable Year"
+  - { line: "os_n_fiduciary_adjustment_141az_k1", field: "6N", type: money }  # N "Fiduciary Adjustment from Arizona Form 141AZ Schedule K-1 and/or Schedule K-1(NR)"
+  - { line: "os_o_partnership_income_adjustment", field: "6O", type: money }  # O "Partnership Income Adjustment"
+  - { line: "os_p_net_operating_loss_adjustment", field: "6P", type: money }  # P "Net Operating Loss Adjustment"
+  - { line: "os_q_medical_marijuana_dispensary_income", field: "6Q", type: money }  # Q "Sole Proprietorship Income of an Arizona Nonprofit Medical Marijuana Dispensary ..."
+  - { line: "os_r_long_term_care_premiums", field: "6R", type: money }  # R "Long-Term Care Insurance Premiums"
+  - { line: "os_s_disabilities_access_expenditures", field: "6S", type: money }  # S "Americans with Disabilities Act - Access Expenditures"
+  - { line: "os_t_exploration_expenses_deferred", field: "6T", type: money }  # T "Exploration Expenses Deferred before January 1, 1990"
+  - { line: "os_u_sole_prop_marijuana_establishment", field: "6U", type: money }  # U "Sole Proprietorship of an Arizona Marijuana Establishment ... (Schedule DFE line 16)"
+  - { line: "os_v_s_corp_marijuana_establishment", field: "6V", type: money }  # V "S Corporation shareholders of an Arizona Marijuana Establishment ... (Form 120S Schedule K-1, line 7)"
+  - { line: "os_w_net_capital_gain_legal_tender", field: "6W", type: money }  # W "Net capital gain derived from exchange of legal tender"
+  - { line: "os_xa_virtual_currency_airdrop", field: "6Xa", type: money }  # X(a) "Value of Virtual Currency and Non-Fungible Tokens Received at the Time of the Airdrop"
+  - { line: "os_xb_gas_fees_virtual_currency", field: "6Xb", type: money }  # X(b) "Gas Fees Not Included in Virtual Currency or Non-Fungible Token Basis"
+  - { line: "os_y_other_adjustments", field: "6Y", type: money }  # Y "Other Adjustments - see instructions"
+  - { line: "os_z_total_other_subtractions", field: "6Z", type: money }  # Z "Total Other Subtractions — Add all amounts and enter the total here and on line 44"
+relations:
+  - "23.federal == 15.federal + 16.federal + 17.federal + 18.federal + 19.federal + 20.federal + 21.federal + 22.federal"  # 23 "Total income — Add lines 15 through 22." — FEDERAL column
+  - "23.arizona == 15.arizona + 16.arizona + 17.arizona + 18.arizona + 19.arizona + 20.arizona + 21.arizona + 22.arizona"  # — ARIZONA column
+  - "25 == 23.federal - 24.federal"  # 25 "Subtract line 24 from line 23 in the FEDERAL column"
+  - "26 == 23.arizona - 24.arizona"  # 26 "Subtract line 24 from line 23 in the ARIZONA column"
+  - "29 == 26 - 28"  # 29 "Subtract line 28 from line 26"
+  - "32 == 29 + 30 + 31"  # 32 "Add lines 29, 30 and 31"
+  - "33 == 20.arizona"  # 33 "Enter amount from line 20, Arizona column"
+  - "37 == 36 * 0.25"  # 37 "Multiply line 36 by 25% (.25)"
+  - "39 == 32 - 37 - 38"  # 39 "Subtract lines 37 and 38 from line 32"
+  - "41c == 41a + 41b"  # 41c "add 41a and 41b"
+  - "45 == 39 - 40 - 41c - 42 - 43 - 44"  # 45 "Subtract lines 40 through 44 from line 39" (line 41's amount is 41c)
+  - "50 == 46 + 47 + 48 + 49"  # 50 "Add lines 46 through 49"
+  - "52 == max(0, 45 - 51)"  # 52 "Subtract line 51 from line 45. If less than zero, enter 0"
+  - "55 == max(0, 52 - 53 - 54)"  # 55 "Subtract lines 53 and 54 from line 52. If less than zero, enter 0"
+  - "56 == 55 * 0.025"  # 56 "Multiply line 55 by 2.5% (.025)"
+  - "58 == 56 + 57"  # 58 "Add lines 56 and 57"
+  - "62 == max(0, 58 - 59 - 60 - 61)"  # 62 "Subtract lines 59, 60 and 61 from line 58. If the sum ... is more than line 58, enter 0"
+  - "64c == 64a + 64b"  # 64c "Add 64a and 64b"
+  - "68 == 63 + 64c + 65 + 66 + 67"  # 68 "Add lines 63 through 67" (line 64's amount is 64c)
+  - "69 == max(0, 62 - 68)"  # 69 "If line 62 is larger than line 68, subtract line 68 from line 62"
+  - "70 == max(0, 68 - 62)"  # 70 "If line 68 is larger than line 62, subtract line 62 from line 68"
+  - "72 == 70 - 71"  # 72 "Subtract line 71 from line 70"
+  - "87 == 73 + 74 + 75 + 76 + 77 + 78 + 79 + 80 + 81 + 82 + 83 + 85"  # 87 "Add lines 73 through 83 and 85"
+  - "88 == max(0, 72 - 87)"  # 88 "Subtract line 87 from line 72. If less than zero, enter amount owed on line 89"
+  - "ws3_4c_add_1c_3c == ws3_1c_gifts_cash_or_check + ws3_2c_other_than_cash_or_check + ws3_3c_carryover"  # 4C "Add lines 1C through 3C"
+  - "ws3_6c_subtract_5c_from_4c == max(0, ws3_4c_add_1c_3c - ws3_5c_credit_contributions)"  # 6C "Subtract line 5C from line 4C ... If less than zero, enter 0"
+  - "ws3_7c_multiply_by_31pct == ws3_6c_subtract_5c_from_4c * 0.31"  # 7C "Multiply line 6C by 31% (.31)"
+  - "54 == ws3_7c_multiply_by_31pct"  # page 3 "Enter the amount shown on line 7C on page 2, line 54"
+  - "oa_r_total_other_additions == oa_a_non_arizona_municipal_interest + oa_b_lump_sum_ordinary_income + oa_c_fiduciary_adjustment_141az_k1 + oa_d_partnership_income_adjustment + oa_e_items_previously_deducted + oa_f_claim_of_right_repaid_current_year + oa_ga_claim_of_right_repaid_prior_years + oa_gb_nol_claim_of_right + oa_ha_basis_qualified_small_business_credit + oa_hb_basis_agri_pollution_control_credit + oa_hc_basis_pollution_control_credit + oa_hd_agri_water_conservation_credit + oa_he_s_corp_agri_water_credit + oa_i_nonqualified_529_withdrawals + oa_j_medical_marijuana_dispensary_loss + oa_k_disabilities_access_expenditures + oa_l_childcare_facility_amortization + oa_m_net_capital_loss_legal_tender + oa_n_entity_level_income_tax + oa_o_motion_picture_production_costs + oa_p_adjustments_tax_credits + oa_q_other_adjustments"  # page 5 R "Add all amounts"
+  - "31 == oa_r_total_other_additions"  # page 5 R "... enter the total here and on line 31"
+  - "os_z_total_other_subtractions == os_a_government_pension_exclusion + os_b_uniformed_services_retired_pay + os_c_agricultural_crops_charity + os_d_american_indian_wages + os_e_active_service_reserves_guard_pay + os_f_arizona_municipal_interest + os_g_adoption_expense + os_h_wood_stove_fireplace + os_i_claim_of_right_repaid_prior_years + os_j_expenses_federal_credits + os_k_state_tuition_program_distributions + os_l_installment_sale_other_state + os_m_basis_adjustment_property_disposed + os_n_fiduciary_adjustment_141az_k1 + os_o_partnership_income_adjustment + os_p_net_operating_loss_adjustment + os_q_medical_marijuana_dispensary_income + os_r_long_term_care_premiums + os_s_disabilities_access_expenditures + os_t_exploration_expenses_deferred + os_u_sole_prop_marijuana_establishment + os_v_s_corp_marijuana_establishment + os_w_net_capital_gain_legal_tender + os_xa_virtual_currency_airdrop + os_xb_gas_fees_virtual_currency + os_y_other_adjustments"  # page 6 Z "Add all amounts"
+  - "44 == os_z_total_other_subtractions"  # page 6 Z "... enter the total here and on line 44"
+cross_form:
+  # Line 25 is printed "Federal adjusted gross income" (the FEDERAL column, headed "2023 FEDERAL Amount from
+  # Federal Return"). The 2023 Form 1040 prints AGI on line 11.
+  - "25 == f1040.11"
+identity_fields:
+  - tp_ssn
+  - tp_first_name_and_initial
+  - tp_last_name
+signature: { page: 2 }  # PLEASE SIGN HERE block; the signature and date lines are hand-written (no widgets)
+mailing:
+  # Printed at the foot of page 2: "If you are sending a payment with this return, mail to Arizona Department of
+  # Revenue, PO Box 52016, Phoenix, AZ 85072-2016." / "If you are expecting a refund or owe no tax, or owe tax but
+  # are not sending a payment, mail to Arizona Department of Revenue, PO Box 52138, Phoenix, AZ 85072-2138."
+  with_payment: "Arizona Department of Revenue, PO Box 52016, Phoenix, AZ 85072-2016"
+  no_payment: "Arizona Department of Revenue, PO Box 52138, Phoenix, AZ 85072-2138"
+  verify_url: https://azdor.gov/contact-us/mailing-addresses

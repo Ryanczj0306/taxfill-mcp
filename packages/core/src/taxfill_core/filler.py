@@ -257,7 +257,8 @@ def _field_names(writer: PdfWriter) -> set[str]:
     """Every qualified AcroForm field name — pypdf's ``get_fields()``, or a walk when pypdf cannot build it.
 
     pypdf 6's ``get_fields()`` raises ``KeyError('/AP')`` on a radio field one of whose kid widgets carries no
-    /AP dictionary at all: AZ Form 140NR 2023's "Filing Status" (four kids, no appearance, no on-state name).
+    /AP dictionary at all: AZ Form 140NR 2023's "Filing Status" (four kids, no appearance, no on-state name), and AZ
+    Form 140PY 2023's "Filing Status" (four kids) and "Res Status" (two kids), likewise without /AP.
     Only that error falls back, to a walk of /AcroForm /Fields and /Kids that names every /T-bearing node the
     way ``get_fields()`` does. (verify has its own copy on purpose: it never imports the filler.)
     """
