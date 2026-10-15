@@ -1,0 +1,366 @@
+# ===========================================================================
+# TY2024 PORT of formpacks/states/co/2023/dr0104/pack.yaml (ported 2026-10-04,
+# Phase J JS5; triaged RE-MAP — every one of the 90 field names the 2023 pack
+# mapped is gone). A full re-map by widget position and printed label; every
+# row below was confirmed on a sentinel render of this blank. The 2025 pack
+# (formpacks/states/co/2025/dr0104) was the second census source: its field
+# names (Last Name, Form Question N, RB*, C4-C8, dependents) mostly survive on
+# this blank, but "Form Question N" is the printed line N of each year's own
+# face and every line from 9 on differs (see FACE DELTAS), so no row was
+# carried by name — each was re-bound by position and printed label.
+#
+# URL. https://tax.colorado.gov/sites/tax/files/documents/DR_0104_2024.pdf
+# (tax.colorado.gov answers 403 to a non-browser User-Agent; fetched with a
+# desktop browser agent). Digest 24ea15465bde… — two separate downloads on
+# 2026-10-03 and the discovery copy agree; 1,181,586 bytes, %PDF-1.7,
+# AcroForm (no XFA), created 2024-10-21 and last modified 2024-10-30 per the
+# PDF metadata.
+#
+# PRINTED IDENTITY. Page 1 prints "DR 0104 (10/15/24)", "COLORADO DEPARTMENT
+# OF REVENUE", "Page 1 of 8", "(0013)", the barcode stamp 240104 19999 and the
+# title "2024 Colorado Individual Income Tax Return". Pages 2-8 print "DR 0104
+# (10/15/24)", "Page N of 8" and barcode stamps 240104 29999 … 89999; every
+# page prints "This page is required." printed_year_verified = 2024.
+#
+# TOPOLOGY CENSUS against the 2023 blank (DR 0104 (11/28/23), 4 pages, 98
+# widgets / 90 fields). This blank is 8 pages, 150 widgets / 122 fields, and
+# none of its field names occurs on the 2023 blank:
+#   * the opaque "TextNN" ids are replaced by descriptive names ("Last Name",
+#     "Form Question 1" … "Form Question 44", "Physical Street Address 2", …);
+#     each 2023 line was re-bound to the widget under its printed label here;
+#   * the three residency boxes (2023 Full-Year / Part-Year / "Mark if Abroad
+#     on due date–see instructions") are now plain /Btn fields C1 / C2 / C3
+#     (state /Yes, no scripts, /Ff 0). The 2024 Book 104 (DR0104_book_2024.pdf)
+#     says "Mark the appropriate box for your residency status" and sends a
+#     joint return with one full-year and one part-year or nonresident spouse
+#     to "the Part-Year Resident/Nonresident box", so Full-Year and Part-Year
+#     are alternatives and share group residency_status. "Abroad on due date"
+#     is a separate fact, not a third status: the Book's "Persons Traveling or
+#     Residing Abroad" says "mark the “Abroad on Due Date” box on Revenue
+#     Online or the paper return", so an abroad filer marks a status box AND
+#     this one. C3 is therefore an independent flag (2023's three boxes were
+#     independent too). The blank's own tooltips conflict with that reading:
+#     they number the boxes as one set — C1 "Full-Year Resident, 1 of 3", C2
+#     "… 2 of 2" (its own count differs), C3 "Abroad on due date. 3 of 3" —
+#     and the Book's abroad paragraph, not the tooltip count, decides the
+#     question. Two more tooltips (/TU) are DOR copy errors and the printed
+#     caption governs: "Form Question 34" reads "Sum of lines 30 through 33"
+#     where the face prints "31 through 33" (line 30 is the prepayment
+#     subtotal, not part of Modified AGI), and "Form Question 43" repeats
+#     line 42's "Delinquent Payment Interest" where the face prints
+#     "Estimated Tax Penalty, you must submit the DR 0204";
+#   * the 2023 shared /Btn "Direct Deposit" (/Checking /Savings /CollegeInvest)
+#     is now RB1 / RB2 / RB3 (/1 /2 /3) on page 6 and "Third Party Designee"
+#     (/No /Yes) is now RB4 (/1, No) / RB5 (/2, Yes) on page 7 — separate
+#     radio-style fields (/Ff 49152) whose /Bl scripts turn the other boxes Off
+#     when one is chosen (they run only in a viewer), so each set shares one
+#     group: direct_deposit_type, third_party_designee;
+#   * the name / SSN header: 2023 had a separate "Name" header field (Text31,
+#     line header_name) on pages 2-4. Here "Last Name", "First Name", "Middle
+#     Initial" and "Social Security Number" are each ONE field whose widgets
+#     sit on page 1 AND in the "(match page 1)" header of pages 2-8, so one
+#     write fills all eight pages; header_name is dropped (no widget left);
+#   * NEW widgets, all mapped: the page-2 Dependents block (five rows of Child
+#     Tax Credit / Deceased checkboxes, Last Name, First Name, SSN or ITIN,
+#     Year of Birth — 30 fields) and the money lines that did not exist in 2023
+#     (5, 18, 29; see FACE DELTAS). Line 8 "Other Additions" is a money widget
+#     ("Form Question 8") beside its own "Explain Other Additions" box. The
+#     2023 line-25 "DR 0108" prepayment box has no successor: line 25 prints
+#     only "DR 0104BEP" and "DR 1079".
+#   * MISNAMED WIDGETS. The two line-25 boxes are named "C7 - Deceased
+#     Dependent 6" (x 180 pt, left of "DR 0104BEP") and "C7 - Deceased
+#     Dependent 7" (x 288 pt, left of "DR 1079"); there are only five
+#     dependent rows, and these two sit on page 5 beside line 25, so they are
+#     the DOR's copy-and-paste names, mapped as line25_dr0104bep and
+#     line25_dr1079 (confirmed on renders with each one ticked alone).
+#   * Coverage: 122 of 122 fields mapped (122 line keys); nothing omitted.
+#   * /MaxLen: 2023's /MaxLen 1 (both Middle Initials) and 2 (both State boxes)
+#     are gone — no text widget here carries a /MaxLen except Routing Number 4
+#     (9) and "Acount Number 4" (17, the DOR's spelling). Those two set the
+#     comb bit and the face prints 9 and 17 cells, so both are comb: true. The
+#     pack keeps maxlen 1 / 2 on the initials and state codes and adds maxlen 4
+#     on the "Last 4 characters of ID number" boxes, as that caption prints,
+#     and on the "Year of Birth" boxes for a four-digit year (the caption
+#     prints no digit count; no widget /MaxLen to exceed in either case).
+#   * /Ff: the page-1 name, middle initial and SSN fields (and their page 2-8
+#     header copies) set DoNotSpellCheck + DoNotScroll (12582912) at the field
+#     level like every other text field, although their widget dictionaries
+#     (First Name, Last Name, Middle Initial, SSN) carry a stray /Ff 8388608;
+#     only the eight page-8 signature-date and preparer fields set DoNotScroll
+#     alone (8388608); "Explain Other Additions" stays multiline (12587008). No widget is ReadOnly. /DA stays Helv 10 for text (Helvetica
+#     10 on page 8; the two combs specify CMYK black); C1-C3
+#     are ZaDb 10 Tf, RB1-RB5 are ZaDb 0 Tf, and the other checkboxes carry no
+#     /DA. Money widgets are right-aligned (/Q 2) beside a printed "00" cents
+#     box; line 44 has no cents box and its widget runs to the right margin.
+#
+# FACE DELTAS vs 2023 (2024 numbering; read on this blank's text layer).
+#   * page order: Residency Status, Taxpayer and Spouse on page 1; Contact
+#     Information moves to page 2 with the new Dependents block ("If you have
+#     more than 5 dependents, you must file electronically."); the
+#     health-coverage box and lines 1-9 on page 3; 10-21 on page 4; 22-34 on
+#     page 5; the TABOR tier table, lines 35-39 and Direct Deposit on page 6;
+#     lines 40-44 and Third Party Designee on page 7; Sign Below, Paid
+#     Preparer and File and Pay on page 8.
+#   * line 1 now cites "1040, 1040 SR, or 1040 SP line 15" (2023 named no
+#     line); line 31 (2023 line 30) cites "line 11".
+#   * additions: 2 "… claimed on federal form 1040, Schedule A, line 5a"
+#     (2023 "… Schedule A."), 3 QBI addback, 4 "Standard or Itemized Federal
+#     Deduction Addback" (2023 4 "Federal Deduction addback"), NEW 5 "Business
+#     meals deducted pursuant to section 274(k) of the Internal Revenue
+#     Code", 6 CollegeInvest (2023 5), 7 ABLE (2023 6), 8 Other Additions
+#     (2023 7), 9 "Subtotal, sum of lines 1 through 8" (2023 8 "1 through 7").
+#   * 10 subtractions "DR 0104AD Schedule, line 25" (2023 9, "line 23"); 11
+#     Colorado Taxable Income (2023 10); 12 tax (2023 11); 13 AMT (2023 12); 14
+#     recapture (2023 13); 15 subtotal (2023 14); 16 "DR 0104CR line 63"
+#     (2023 15, "line 54"); 17 Enterprise Zone "DR 1366 line 26" (2023 16,
+#     "line 85"); NEW 18 "Nonrefundable CHIPS Zone Credit from 1370, line 22";
+#     19 Strategic Capital (2023 17); 20 Net Income Tax "sum of lines 16, 17,
+#     18, and 19. Subtract that sum from line 15" (2023 18).
+#   * 2023 line 19 "Use Tax reported on the DR 0104US" and 2023 line 20 "Net
+#     Colorado Tax, sum of lines 18 and 19" have no 2024 line: lines 36, 37
+#     and 40 compare against line 20 (Net Income Tax) directly.
+#   * 21-24 withholding / carryforward / estimates / extension (2023 21-24; 24
+#     still reads "DR 0158-I"); 25 Other Prepayments (2023 25); 26-28 (2023
+#     26-28; 28 "DR 0104CR line 23", 2023 "line 16"); NEW 29 "Additional
+#     credit from form DR 0619, line 3 and 10"; 30 "sum of lines 21 through
+#     29" (2023 29 "21 through 28").
+#   * TABOR: 31-34 Modified AGI (2023 30-33); 35 "TABOR State Sales Tax
+#     Refund … born before 2006 … Use the amount on line 34 and reference the
+#     table above" — the printed tier table reads $53,000 or less / $53,001 –
+#     $105,000 / $105,001 – $166,000 / $166,001 – $233,000 / $233,001 –
+#     $302,000 / $302,001 or more; Single Filers $177 / $240 / $277 / $323 /
+#     $350 / $565, Joint Filers $354 / $480 / $554 / $646 / $700 / $1,130
+#     (2023 line 34 "born before 2005 … Enter $800 … or $1,600").
+#     knowledge/states/co/2024.yaml records the same tiers, amounts and birth
+#     year.
+#   * 36 "Sum of lines 30 and 35" (2023 35); 37 Overpayment "if line 36 is
+#     greater than line 20" (2023 36); 38 "Estimated Tax Credit Carryforward
+#     to 2025 first quarter" (2023 37 "to 2024 first quarter"); 39 Refund
+#     (2023 38); 40 "Net Tax Due, subtract line 36 from line 20"; 41-43
+#     penalty / interest / estimated-tax penalty; 44 "Amount You Owe, sum of
+#     lines 40 through 43" (2023 39-43).
+#   * the residency caption now reads "Abroad on due date" (2023 "Mark if
+#     Abroad on due date – see instructions"); the line keys keep the 2023
+#     spelling so callers see one key across years.
+#
+# Line keys. Printed lines are keyed by THIS face's number, so "5" (2023
+# CollegeInvest) is now business meals — never carry a line number between
+# years. Identity and header keys keep the 2023 spelling; the 2023 keys
+# line7_explain, line25_dr0108 and header_name become line8_explain, nothing
+# and nothing (line25_dr0104bep and line25_dr1079 keep their spelling).
+#
+# Relations. The printed arithmetic of lines 9, 11, 15, 20, 30, 34, 36, 37,
+# 39, 40 and 44. Lines 37 and 40 are the two branches of one comparison:
+# 37 "Overpayment, if line 36 is greater than line 20 then subtract line 20
+# from line 36" and 40 "Net Tax Due, subtract line 36 from line 20" (the
+# 2024 Book 104 — "Compare lines 20 and 36. If line 20 is greater, skip to
+# line 40. If line 36 is greater, continue to line 37."). The branch not
+# taken is left blank, which reads as 0, so each is written with a floor —
+# 37 == max(0, 36 - 20) and 40 == max(0, 20 - 36) — and holds on a refund
+# return and on a balance-due return alike (2023 declared the net-tax-due
+# leg as "39 == 20 - 35").
+#
+# Cross_form. Line 1 prints "Federal Taxable Income from your federal income
+# tax form: 1040, 1040 SR, or 1040 SP line 15", and the 2024 Form 1040 line 15
+# is taxable income, so 1 == f1040.15. Line 31 prints "Federal Adjusted Gross
+# Income from your federal income tax form: 1040, 1040 SR, or 1040 SP line
+# 11", and the 2024 Form 1040 prints AGI on line 11, so 31 == f1040.11 (2023
+# declared no leg). Trade-off: the face says "Lines 31 through 34 are only
+# used to calculate your TABOR amount and do not affect your Colorado tax
+# liability", and a blank side reads as 0, so a return that leaves the TABOR
+# block empty fails this leg; the 2024 Book 104 prints no such exception
+# ("Enter your adjusted gross income from your federal income tax form1040,
+# 1040 SR, or 1040 SP line 11"), so the leg flags that omission rather than
+# hiding a mis-keyed AGI. A second edge: the 2024 Book 104 says a negative
+# federal taxable income is entered as a negative amount on line 1, but the
+# Form 1040 line 15 never prints below zero, so a return with a negative
+# line 1 fails the line-1 leg although it is correct. (Line 31 may also be
+# negative per the Book, and 1040 line 11 can be too, so that leg holds.)
+#
+# Layout. Flat AcroForm (acroform_root empty); `field` is the raw field name.
+# Checkboxes that are single /Btn fields with one /Yes state (C1-C3, the
+# deceased boxes, the health-coverage box, the dependents' boxes, the two
+# line-25 boxes) are independent flags except Full-Year / Part-Year (see
+# TOPOLOGY CENSUS). Money lines are whole dollars beside the printed "00"
+# cents box.
+form: Form DR 0104
+jurisdiction: states/co
+tax_year: 2024
+source_url: https://tax.colorado.gov/sites/tax/files/documents/DR_0104_2024.pdf
+pdf_sha256: 24ea15465bde7e93161f725f723a8686c6d6137463a9fceeda1213b3bb36f80a
+acroform_root: ''
+fields:
+
+  # ============================================ page 1 — Residency Status (three plain single-widget checkboxes C1 / C2 / C3, no scripts).
+  #  Full-Year / Part-Year are the two statuses (the 2024 Book 104: "Mark the appropriate box for your residency status"): group residency_status.
+  #  "Abroad on due date" is a separate due-date fact (the Book tells an abroad filer to mark it besides the status box), so C3 carries no group.
+  - { line: "full_year::yes", field: C1, type: checkbox, on_state: /Yes, group: residency_status }  # "Full-Year"
+  - { line: "part_year_or_nonresident::yes", field: C2, type: checkbox, on_state: /Yes, group: residency_status }  # "Part-Year or Nonresident (or combination of …). You must submit form DR 0104PN"
+  - { line: "mark_if_abroad_on_due_date::yes", field: C3, type: checkbox, on_state: /Yes }  # "Abroad on due date" (2023 printed "Mark if Abroad on due date – see instructions")
+
+  # ============================================ page 1 — Taxpayer Information. "Last Name" / "First Name" / "Middle Initial" /
+  #  "Social Security Number" are each ONE field whose widgets also fill the "(match page 1)" header on pages 2-8, so each is mapped once
+  - { line: your_last_name, field: Last Name, type: text }  # "Your Last Name" (+ the pages 2-8 header)
+  - { line: your_first_name, field: First Name, type: text }  # "Your First Name" (+ the pages 2-8 header)
+  - { line: your_middle_initial, field: Middle Initial, type: text, maxlen: 1 }  # "Your Middle Initial" (+ the pages 2-8 header)
+  - { line: your_date_of_birth, field: Date of Birth, type: text }  # "Date of Birth (MM/DD/YYYY)"
+  - { line: ssn_or_itin, field: Social Security Number, type: text }  # "S S N or I T I N" (+ the pages 2-8 header)
+  - { line: "you_deceased::yes", field: C4 - Deceased, type: checkbox, on_state: /Yes }  # "Deceased: Yes" (taxpayer)
+  - { line: your_id_card_state_of_issue, field: State of Issue, type: text }  # ID card: "State of Issue"
+  - { line: your_id_card_last_4, field: ID Number, type: text, maxlen: 4 }  # ID card: "Last 4 characters of ID number"
+  - { line: your_id_card_date_of_issuance, field: Date of Issuance, type: text }  # ID card: "Date of Issuance"
+
+  # ============================================ page 1 — Spouse's Information
+  - { line: spouse_last_name, field: Spouse Last Name, type: text }  # "If Joint, Spouse's Last Name"
+  - { line: spouse_first_name, field: Spouse First Name, type: text }  # "Spouse's First Name"
+  - { line: spouse_middle_initial, field: Spouse Middle Initial, type: text, maxlen: 1 }  # "Spouse's Middle Initial"
+  - { line: spouse_date_of_birth, field: Spouse Date of Birth, type: text }  # "Date of Birth (MM/DD/YYYY)" (spouse)
+  - { line: spouse_ssn_or_itin, field: Spouse Social Security Number, type: text }  # "S S N or I T I N" (spouse)
+  - { line: "spouse_deceased::yes", field: C5 - Deceased Spouse, type: checkbox, on_state: /Yes }  # "Deceased: Yes" (spouse)
+  - { line: spouse_id_card_state_of_issue, field: Spouse State of Issue, type: text }  # spouse ID card: "State of Issue"
+  - { line: spouse_id_card_last_4, field: Spouse ID Number, type: text, maxlen: 4 }  # spouse ID card: "Last 4 characters of ID number"
+  - { line: spouse_id_card_date_of_issuance, field: Spouse Date of Issuance, type: text }  # spouse ID card: "Date of Issuance"
+
+  # ============================================ page 2 — Contact Information (on page 1 in 2023)
+  - { line: mailing_address, field: Physical Street Address 2, type: text }  # "Mailing Address"
+  - { line: phone_number, field: Phone Number 3, type: text }  # "Phone Number"
+  - { line: city, field: City 4, type: text }  # "City"
+  - { line: state, field: State 5, type: text, maxlen: 2 }  # "State"
+  - { line: zip_code, field: ZIP Code 4, type: text }  # "ZIP Code"
+  - { line: foreign_country, field: Foreign Country, type: text }  # "Foreign Country (if applicable)"
+
+  # ============================================ page 2 — Dependents (NEW since 2023; "If you have more than 5 dependents,
+  #  you must file electronically.")
+  - { line: "dependent_1_child_tax_credit::yes", field: C6 - Qualifying Child 1, type: checkbox, on_state: /Yes }  # "Dependent 1: Child Tax Credit: Yes"
+  - { line: "dependent_1_deceased::yes", field: C7 - Deceased Dependent 1, type: checkbox, on_state: /Yes }  # "Dependent 1: … Deceased: Yes"
+  - { line: dependent_1_last_name, field: Last Name Dependent 1, type: text }  # dependent 1 "Last Name"
+  - { line: dependent_1_first_name, field: First Name Dependent 1, type: text }  # dependent 1 "First Name"
+  - { line: dependent_1_ssn_or_itin, field: Social Security Number Dependent 1, type: text }  # dependent 1 "S S N or I T I N"
+  - { line: dependent_1_year_of_birth, field: Year of Birth Dependent 1, type: text, maxlen: 4 }  # dependent 1 "Year of Birth"
+  - { line: "dependent_2_child_tax_credit::yes", field: C6 - Qualifying Child 2, type: checkbox, on_state: /Yes }  # "Dependent 2: Child Tax Credit: Yes"
+  - { line: "dependent_2_deceased::yes", field: C7 - Deceased Dependent 2, type: checkbox, on_state: /Yes }  # "Dependent 2: … Deceased: Yes"
+  - { line: dependent_2_last_name, field: Last Name Dependent 2, type: text }  # dependent 2 "Last Name"
+  - { line: dependent_2_first_name, field: First Name Dependent 2, type: text }  # dependent 2 "First Name"
+  - { line: dependent_2_ssn_or_itin, field: Social Security Number Dependent 2, type: text }  # dependent 2 "S S N or I T I N"
+  - { line: dependent_2_year_of_birth, field: Year of Birth Dependent 2, type: text, maxlen: 4 }  # dependent 2 "Year of Birth"
+  - { line: "dependent_3_child_tax_credit::yes", field: C6 - Qualifying Child 3, type: checkbox, on_state: /Yes }  # "Dependent 3: Child Tax Credit: Yes"
+  - { line: "dependent_3_deceased::yes", field: C7 - Deceased Dependent 3, type: checkbox, on_state: /Yes }  # "Dependent 3: … Deceased: Yes"
+  - { line: dependent_3_last_name, field: Last Name Dependent 3, type: text }  # dependent 3 "Last Name"
+  - { line: dependent_3_first_name, field: First Name Dependent 3, type: text }  # dependent 3 "First Name"
+  - { line: dependent_3_ssn_or_itin, field: Social Security Number Dependent 3, type: text }  # dependent 3 "S S N or I T I N"
+  - { line: dependent_3_year_of_birth, field: Year of Birth Dependent 3, type: text, maxlen: 4 }  # dependent 3 "Year of Birth"
+  - { line: "dependent_4_child_tax_credit::yes", field: C6 - Qualifying Child 4, type: checkbox, on_state: /Yes }  # "Dependent 4: Child Tax Credit: Yes"
+  - { line: "dependent_4_deceased::yes", field: C7 - Deceased Dependent 4, type: checkbox, on_state: /Yes }  # "Dependent 4: … Deceased: Yes"
+  - { line: dependent_4_last_name, field: Last Name Dependent 4, type: text }  # dependent 4 "Last Name"
+  - { line: dependent_4_first_name, field: First Name Dependent 4, type: text }  # dependent 4 "First Name"
+  - { line: dependent_4_ssn_or_itin, field: Social Security Number Dependent 4, type: text }  # dependent 4 "S S N or I T I N"
+  - { line: dependent_4_year_of_birth, field: Year of Birth Dependent 4, type: text, maxlen: 4 }  # dependent 4 "Year of Birth"
+  - { line: "dependent_5_child_tax_credit::yes", field: C6 - Qualifying Child 5, type: checkbox, on_state: /Yes }  # "Dependent 5: Child Tax Credit: Yes"
+  - { line: "dependent_5_deceased::yes", field: C7 - Deceased Dependent 5, type: checkbox, on_state: /Yes }  # "Dependent 5: … Deceased: Yes"
+  - { line: dependent_5_last_name, field: Last Name Dependent 5, type: text }  # dependent 5 "Last Name"
+  - { line: dependent_5_first_name, field: First Name Dependent 5, type: text }  # dependent 5 "First Name"
+  - { line: dependent_5_ssn_or_itin, field: Social Security Number Dependent 5, type: text }  # dependent 5 "S S N or I T I N"
+  - { line: dependent_5_year_of_birth, field: Year of Birth Dependent 5, type: text, maxlen: 4 }  # dependent 5 "Year of Birth"
+
+  # ============================================ page 3 — health-coverage box and lines 1-9
+  - { line: "reduced_cost_health_coverage::yes", field: C8 - DR 0104EE Qualification, type: checkbox, on_state: /Yes }  # "…free or reduced-cost health coverage, check this box if: …"
+  - { line: "1", field: Form Question 1, type: money }  # Federal Taxable Income from your federal income tax form — 1040, 1040 SR, or 1040 SP line 15
+  - { line: "2", field: Form Question 2, type: money }  # State and Local Income taxes or general sales taxes claimed on federal form 1040, Schedule A, line 5a (see instructions)
+  - { line: "3", field: Form Question 3, type: money }  # Qualified Business Income Deduction Addback (see instructions)
+  - { line: "4", field: Form Question 4, type: money }  # Standard or Itemized Federal Deduction Addback (see instructions)
+  - { line: "5", field: Form Question 5, type: money }  # Business meals deducted pursuant to section 274(k) of the Internal Revenue Code
+  - { line: "6", field: Form Question 6, type: money }  # Nonqualified CollegeInvest Tuition Savings Account distributions (see instructions)
+  - { line: "7", field: Form Question 7, type: money }  # Nonqualified Colorado ABLE Account distributions (see instructions)
+  - { line: "8", field: Form Question 8, type: money }  # Other Additions, explain (see instructions)
+  - { line: line8_explain, field: Explain Other Additions, type: text }  # "Explain:" box under line 8 (multiline widget)
+  - { line: "9", field: Form Question 9, type: money }  # Subtotal, sum of lines 1 through 8
+
+  # ============================================ page 4 — lines 10-21
+  - { line: "10", field: Form Question 10, type: money }  # Subtractions from the DR 0104AD Schedule, line 25
+  - { line: "11", field: Form Question 11, type: money }  # Colorado Taxable Income, subtract line 10 from line 9
+  - { line: "12", field: Form Question 12, type: money }  # Colorado Tax from tax table or the DR 0104PN line 36
+  - { line: "13", field: Form Question 13, type: money }  # Alternative Minimum Tax from the DR 0104AMT line 8
+  - { line: "14", field: Form Question 14, type: money }  # Recapture of prior year credits
+  - { line: "15", field: Form Question 15, type: money }  # Subtotal, sum of lines 12 through 14
+  - { line: "16", field: Form Question 16, type: money }  # Nonrefundable Credits from the DR 0104CR line 63
+  - { line: "17", field: Form Question 17, type: money }  # Nonrefundable Enterprise Zone credits used — as calculated, or from the DR 1366 line 26
+  - { line: "18", field: Form Question 18, type: money }  # Nonrefundable CHIPS Zone Credit from 1370, line 22
+  - { line: "19", field: Form Question 19, type: money }  # Strategic Capital Tax Credit from DR 1330
+  - { line: "20", field: Form Question 20, type: money }  # Net Income Tax, sum of lines 16, 17, 18, and 19; subtract that sum from line 15
+  - { line: "21", field: Form Question 21, type: money }  # Colorado Income Tax Withheld from W-2s and 1099s
+
+  # ============================================ page 5 — lines 22-34 (the two line-25 boxes are the blank's widgets "C7 - Deceased Dependent 6" / "7")
+  - { line: "22", field: Form Question 22, type: money }  # Prior-year Estimated Tax Carryforward
+  - { line: "23", field: Form Question 23, type: money }  # Estimated Tax Payments, enter the sum of the quarterly payments remitted for this tax year
+  - { line: "24", field: Form Question 24, type: money }  # Extension Payment remitted with the DR 0158-I
+  - { line: "line25_dr0104bep::yes", field: C7 - Deceased Dependent 6, type: checkbox, on_state: /Yes }  # line 25 Other Prepayments: "DR 0104BEP" (the DOR names this widget "C7 - Deceased Dependent 6")
+  - { line: "line25_dr1079::yes", field: C7 - Deceased Dependent 7, type: checkbox, on_state: /Yes }  # line 25 Other Prepayments: "DR 1079" (the DOR names this widget "C7 - Deceased Dependent 7")
+  - { line: "25", field: Form Question 25, type: money }  # Other Prepayments (amount)
+  - { line: "26", field: Form Question 26, type: money }  # Gross Conservation Easement Credit from the DR 1305G line 33
+  - { line: "27", field: Form Question 27, type: money }  # Innovative Motor Vehicle and Innovative Truck Credit for a vehicle you purchased or leased from form DR 0617
+  - { line: "28", field: Form Question 28, type: money }  # Refundable Credits from the DR 0104CR line 23
+  - { line: "29", field: Form Question 29, type: money }  # Additional credit from form DR 0619, line 3 and 10
+  - { line: "30", field: Form Question 30, type: money }  # Subtotal, sum of lines 21 through 29
+  - { line: "31", field: Form Question 31, type: money }  # Federal Adjusted Gross Income from your federal income tax form — 1040, 1040 SR, or 1040 SP line 11
+  - { line: "32", field: Form Question 32, type: money }  # Nontaxable Social Security Income
+  - { line: "33", field: Form Question 33, type: money }  # Nontaxable interest income from state and local bonds
+  - { line: "34", field: Form Question 34, type: money }  # Sum of lines 31 through 33 — Modified AGI for TABOR amount (the widget tooltip says "30 through 33": a DOR copy error; the printed caption and the relation 34 == 31 + 32 + 33 govern)
+
+  # ============================================ page 6 — TABOR lines 35-39 and Direct Deposit (RB1/RB2/RB3 are SEPARATE fields; the blank's /Bl
+  #  scripts make them exclusive: group direct_deposit_type)
+  - { line: "35", field: Form Question 35, type: money }  # TABOR State Sales Tax Refund (amount from the Modified A G I Tiers table)
+  - { line: "36", field: Form Question 36, type: money }  # Sum of lines 30 and 35
+  - { line: "37", field: Form Question 37, type: money }  # Overpayment, if line 36 is greater than line 20 then subtract line 20 from line 36
+  - { line: "38", field: Form Question 38, type: money }  # Estimated Tax Credit Carryforward to 2025 first quarter, if any
+  - { line: "39", field: Form Question 39, type: money }  # Refund, subtract line 38 from line 37
+  - { line: direct_deposit_routing_number, field: Routing Number 4, type: text, maxlen: 9, comb: true }  # "Routing Number" (comb, /MaxLen 9)
+  - { line: direct_deposit_account_number, field: Acount Number 4, type: text, maxlen: 17, comb: true }  # "Account Number" (comb, /MaxLen 17; "Acount" is the DOR's spelling)
+  - { line: "direct_deposit_type::checking", field: RB1, type: checkbox, on_state: /1, group: direct_deposit_type }  # "Type: Checking"
+  - { line: "direct_deposit_type::savings", field: RB2, type: checkbox, on_state: /2, group: direct_deposit_type }  # "Type: Savings"
+  - { line: "direct_deposit_type::collegeinvest", field: RB3, type: checkbox, on_state: /3, group: direct_deposit_type }  # "Type: CollegeInvest 529"
+
+  # ============================================ page 7 — lines 40-44
+  - { line: "40", field: Form Question 40, type: money }  # Net Tax Due, subtract line 36 from line 20
+  - { line: "41", field: Form Question 41, type: money }  # Delinquent Payment Penalty (see instructions)
+  - { line: "42", field: Form Question 42, type: money }  # Delinquent Payment Interest (see instructions)
+  - { line: "43", field: Form Question 43, type: money }  # Estimated Tax Penalty, you must submit the DR 0204 (the widget tooltip repeats line 42's "Delinquent Payment Interest": a DOR copy error; the printed caption governs)
+  - { line: "44", field: Form Question 44, type: money }  # Amount You Owe, sum of lines 40 through 43 (no printed cents box)
+
+  # ============================================ page 7 — Third Party Designee (RB4 / RB5 are SEPARATE fields; each one's /Bl
+  #  script turns the other Off: group third_party_designee)
+  - { line: "third_party_designee::no", field: RB4, type: checkbox, on_state: /1, group: third_party_designee }  # "No"
+  - { line: "third_party_designee::yes", field: RB5, type: checkbox, on_state: /2, group: third_party_designee }  # "Yes. Complete the following:"
+  - { line: designee_name, field: "Designee’s Name 2", type: text }  # "Designee's Name"
+  - { line: designee_phone_number, field: Phone Number of designee 2, type: text }  # designee "Phone Number"
+
+  # ============================================ page 8 — Sign Below (the signatures themselves are not widgets)
+  - { line: your_signature_date, field: Date of Your Signature 2, type: text }  # "Your Signature … Date (MM/DD/YY)" — the face and the tooltip ask for a two-digit year; the box also holds a four-digit one
+  - { line: spouse_signature_date, field: Date of Signature for Spouse 2, type: text }  # "Spouse's Signature … Date (MM/DD/YY)" — two-digit year on the face, as above
+
+  # ============================================ page 8 — paid preparer
+  - { line: preparer_name, field: "Paid Preparer’s Name 2", type: text }  # "Paid Preparer's Name"
+  - { line: preparer_phone, field: "Paid Preparer’s Phone Number 2", type: text }  # "Paid Preparer's Phone"
+  - { line: preparer_address, field: "Paid Preparer’s Address: Street 2", type: text }  # "Paid Preparer's Address"
+  - { line: preparer_city, field: City 6, type: text }  # preparer "City"
+  - { line: preparer_state, field: State 4, type: text, maxlen: 2 }  # preparer "State"
+  - { line: preparer_zip_code, field: ZIP Code 5, type: text }  # preparer "ZIP Code"
+
+relations:
+  - "9 == 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8"  # line 9 "Subtotal, sum of lines 1 through 8"
+  - "11 == 9 - 10"  # line 11 "Colorado Taxable Income, subtract line 10 from line 9"
+  - "15 == 12 + 13 + 14"  # line 15 "Subtotal, sum of lines 12 through 14"
+  - "20 == 15 - 16 - 17 - 18 - 19"  # line 20 "Net Income Tax, sum of lines 16, 17, 18, and 19. Subtract that sum from line 15"
+  - "30 == 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29"  # line 30 "Subtotal, sum of lines 21 through 29"
+  - "34 == 31 + 32 + 33"  # line 34 "Sum of lines 31 through 33: Modified AGI for TABOR amount" (printed; the widget tooltip's "30 through 33" is a DOR copy error — do not add line 30)
+  - "36 == 30 + 35"  # line 36 "Sum of lines 30 and 35"
+  - "37 == max(0, 36 - 20)"  # line 37 "Overpayment, if line 36 is greater than line 20 then subtract line 20 from line 36" (blank otherwise)
+  - "39 == 37 - 38"  # line 39 "Refund, subtract line 38 from line 37"
+  - "40 == max(0, 20 - 36)"  # line 40 "Net Tax Due, subtract line 36 from line 20" (blank when line 36 is greater)
+  - "44 == 40 + 41 + 42 + 43"  # line 44 "Amount You Owe, sum of lines 40 through 43"
+cross_form:
+  - "1 == f1040.15"  # line 1 "… 1040, 1040 SR, or 1040 SP line 15" (the 2024 Form 1040 line 15 is taxable income)
+  - "31 == f1040.11"  # line 31 "Federal Adjusted Gross Income from your federal income tax form: 1040, 1040 SR, or 1040 SP line 11" (2024 Form 1040 AGI is line 11)
+identity_fields:
+  - ssn_or_itin
+  - your_first_name
+  - your_last_name
