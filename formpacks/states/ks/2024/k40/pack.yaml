@@ -1,0 +1,769 @@
+# ===========================================================================
+# TY2024 PORT of formpacks/states/ks/2023/k40/pack.yaml (Phase J JS5; triaged
+# RE-MAP: 27 of the 134 base bindings are gone and 32 widgets are new).
+#
+# URL. https://www.ksrevenue.gov/pdf/k-4024.pdf. Two separate downloads on
+# 2026-10-02 returned HTTP 200, 2,255,123 bytes, and the same sha256
+# f5198ecbbe9f…, equal to the discovery copy. The file starts "%PDF-1.6" and is
+# a 2-page AcroForm, not encrypted, with no XFA and no NeedAppearances. The
+# server's Last-Modified is Fri 21 Feb 2025; the metadata Title reads "2024 K-40
+# - Kansas Individual Income Tax Return" and the Subject "..._Revised 7-24"
+# (CreationDate 2024-08-15, ModDate 2025-02-21), so this is a re-post of the
+# July 2024 revision.
+#
+# PRINTED IDENTITY. Page 1 prints "K-40", "(Rev. 7-24)", "KANSAS INDIVIDUAL
+# INCOME TAX", "2024", "DO NOT STAPLE" and, by the barcode, "K-40 Page 1
+# 114524" (2023: "(Rev. 7-23)", 114523). Page 2 prints "K-40 Page 2 114224".
+# printed_year_verified = 2024. Every face quote below is from this blank's own
+# text layer, checked against a 300 dpi render where the layer is clipped (the
+# layer ends line 33 at "through 4 .", starts the line-43 label at "istoric
+# Site Number", runs question C into "regardless of age .ES" and has no token
+# for the "33" row number; the render prints each in full), and every binding
+# was confirmed on a sentinel render.
+#
+# AcroForm topology against the 2023 blank (a widget census against the 2023
+# pack, then every row confirmed on a render). 139 widgets, 139 terminal
+# fields: 112 text + 27 checkbox (2023: 134 = 109 + 25). Six of them sit under
+# a one-kid parent whose name the filler joins with a period; the qualified
+# names are written below. Every checkbox's /AP /N on-state is /Yes. Every /Ff
+# is 0: no ReadOnly, comb or multiline widget. /DA is unchanged (/Cour 12 Tf on
+# the text boxes, none on the 3 signature boxes, /ZaDb 18 on the checkboxes).
+# /MaxLen 10 sits on the daytime phone (new; 2023 had none), the line-42
+# school-district box and the line-43 historic-site box (both as in 2023).
+# Census fates of the 134 base bindings: 74 SAME, 32 MOVED, 1 CHANGED (the
+# phone gained /MaxLen 10), 27 GONE. The 32 MOVED keep their names and are
+# re-confirmed by position: the three amended-return boxes (+11 pt up the
+# page), the four filing-status boxes (+17), the three residency checkboxes
+# (resident +29, nonresident +28.7, and part-year +29 with 30 pt to the left),
+# the two part-year date boxes (about +21 up the page and widened from 57 to
+# 77.3 / 76.0 pt; the from-box also moved 27.5 pt left), the deceased box (+1),
+# both middle-initial boxes (left edge 1.6 / 1.8 pt), dependent row 1 (name,
+# date of birth, relationship, SSN; about 40 pt down), the "Total Kansas
+# Exemptions" count box (moved 242 pt right into the new block) and the twelve
+# Food Sales Tax Credit widgets (10 to 11 pt down).
+# The 27 GONE:
+#   * the exemptions block's three widgets exemptions.federal_total ("enter the
+#     number of exemptions you claimed on your federal return"),
+#     exemptions.head_of_household_add ("... enter 1") and
+#     exemptions.disabled_veteran ("... enter the total here"). The face now
+#     prices the exemptions (see FACE DELTAS) and has a new block, below;
+#   * dependent rows 2-7 (24 widgets, named "... name 2" .. "name 7"). The
+#     table has 6 rows in 2024 (2023: 7), and its rows are now named by a
+#     "_1".."_5" series, so dependent_7 is dropped and rows 2-6 re-bound.
+# The 32 NEW, all mapped: 12 in the exemptions block (2 "Check One Box"
+# checkboxes, the joint and the single/separate count boxes and currency boxes,
+# the Head of Household currency box, the dependents count and currency boxes,
+# the disabled-veteran count and currency boxes, and the Total Kansas Exemption
+# Amount box; the "Total Kansas Exemptions" count box keeps its 2023 name) and
+# 20 in dependent rows 2-6. Nothing is deliberately left unmapped. The block
+# has no born-this-year or stillborn rows (the 2025 return adds them).
+# The one name trap: the widgets named "... Disabled Veteran Personal Exemption
+# Allowance, in the first box enter the total number of disabled veterand being
+# claimed ..." and "Multiply number of disabled veterans being claimed by
+# $2,250 ..." are the count and currency boxes of the disabled-veteran row, in
+# that order, by position (the printed multiplier is "X $2,250").
+# Re-keyed lines (only this pack refers to them): exemptions.disabled_veteran
+# -> exemptions.disabled_veteran_count, exemptions.head_of_household_add ->
+# exemptions.head_of_household_amount. exemptions.total_kansas (the count box)
+# keeps its key and gains exemptions.total_kansas_amount.
+#
+# FACE DELTAS vs 2023.
+#   * The exemptions block is priced in dollars. "Check One Box (This selection
+#     must match your Filing Status from above)": joint filers check a box,
+#     enter "2" and "$18,320"; "OR" separate, Single or Head of Household filers
+#     check the other box, enter "1" and "$9,160". "If Filing Status above is
+#     Head of Household, enter $2,320 ..." Dependents are "X $2,320 =" and each
+#     disabled veteran "X $2,250 =". "Total Kansas Exemptions" (a count) and
+#     "Total Kansas Exemption Amount" close the block: "Add all amounts and
+#     enter result in the Total Kansas Exemption Amount Box. Also enter this
+#     same amount on page 2, line 5 of this form." (2023 printed "Enter the
+#     total exemptions for you, your spouse (if applicable), and each person
+#     you claim as a dependent.")
+#   * Page 2 line 5 reads "Exemption allowance (From Total Kansas Exemption
+#     Amount, front of this form)" (2023: "$2,250 x number of exemptions
+#     claimed"). The numbering of lines 1-44 is unchanged; line 2 still cites
+#     "Schedule S, line A25" (the widget name says "a28").
+#   * Years: "AMENDED 2024 Kansas return", the Food Sales Tax Credit block
+#     ("resident for ALL of 2024", "born before January 1, 1969", F "born before
+#     January 1, 2007"), line 32 "commercial farming or fishing in 2024" and
+#     line 35 "applied to your 2025 estimated tax". The widget names keep older
+#     years ("2014", "2022", "2023") and stale line numbers (line H's name says
+#     "on line 17 of this form", the face prints "line 18"; line 19's name is a
+#     "subtract lines 20-26" phrase) and are matched by position, not name.
+#   * Dependent "Date of Birth (MMDDYYYY)" (2023: MMDDYY). The part-year dates
+#     print eight blanks each, grouped 2-2-4 (MM DD YYYY; 2023: three groups
+#     of three, "___ ___ ___"). Line E now reads "Number of
+#     exemptions claimed (from Total Kansas Exemptions above)".
+#   * The Food Sales Tax Credit block keeps its figures: D "If line D is more
+#     than $30,615, STOP HERE", H "multiply line G by $125 ... on line 18".
+#   * The line-9 (Nonresident percentage) box still prints a 7-cell grid about
+#     125 pt wide (dividers every 17-19 pt) but no longer prints the decimal
+#     point that 2023 printed after the third cell. The DOR's 106.5 pt widget
+#     covers only the first six cells: the sixth divider sits 1.5 pt outside
+#     its right edge and the seventh cell (level with the neighbouring lines'
+#     printed "00" cents cell) lies beyond it. The widget is the same plain
+#     right-aligned text field in both years (see "Money vs text").
+#   * knowledge/states/ks/2024.yaml agrees with every figure printed here
+#     ($18,320, $9,160, $2,320, $2,250, $30,615, $125, born before January 1,
+#     1969 and 2007); no mismatch.
+#
+# MAXLEN. Courier 12 advances 7.2 pt per glyph, so a box of width w holds
+# floor(w / 7.2). Every text maxlen is re-measured on this blank. The 2023
+# header budgets of 11 on the 69.9 pt school-district, 69.7 pt county and
+# 67.3 / 68.2 pt last-four-letters boxes exceeded that, and are 9 here. The
+# phone keeps the widget's /MaxLen 10. The line-42 and line-43 number boxes
+# (42.0 pt, /MaxLen 10) keep 2023's budget of 5, an adjudicated
+# TIGHTER_THAN_WIDGET row. The exemption count boxes: 15.6 / 15.7 pt (joint,
+# single) and 16.8 pt (disabled veteran) hold 2; the dependents (33.5 pt) and
+# Total Kansas Exemptions (33.7 pt) boxes hold 4. The Food Sales Tax Credit E,
+# F and G boxes (30.9 pt) hold 4 (2023: 5). Date-shaped boxes: the dependent
+# DOB and the part-year dates are 8 (MMDDYYYY, no slashes); the signature dates
+# stay 8 (MM/DD/YY in 71.6 / 68.2 pt). The relationship boxes (76.3 pt) are 10.
+#
+# RELATIONS. Declared: the exemption total ("Add all amounts"), line 5 = that
+# total ("Also enter this same amount on page 2, line 5"), 6 = 4 + 5, and
+# 19 = max(0, 16 - 17 - 18) ("subtract lines 17 and 18 from line 16; cannot be
+# less than zero"; 2023 left the floored line 19 out). 2023's "12 == 8 + 11" is
+# NOT carried. Line 12 prints "residents: add lines 8 & 11; nonresidents: enter
+# amount from line 10", so it fails on every nonresident return whose line 9
+# is under 100.0000. Omitted, as in 2023, because they branch or depend on a
+# negative box: 3 and 28 (shaded negative boxes), 7 (its operand 3 may be
+# negative), 10 (line 9 is a text percentage), 16 (no floor and no negative
+# box is printed), 29 / 33 / 34 / 44. The count x dollars products and the
+# Food Sales Tax Credit lines E - H are omitted because they are text.
+#
+# Unresolved: none.
+#
+# Form K-40, 2024 -- Kansas Individual Income Tax Return.
+#
+# Layout. FLAT AcroForm: acroform_root is empty. Every widget's field name is
+# the DOR's descriptive phrase (e.g. "your first name", "1 federal adjusted
+# gross income, ...", "Signature of taxpayer"). The six parent-chained names
+# are written in their qualified form.
+#
+# This is a single 2-page PDF and BOTH PAGES ARE THE FILED RETURN. Residents
+# and nonresidents share this form, and every widget is mapped.
+#   page 1 -- header (names, two SSNs, mailing address, school district, county,
+#             last-name-letters, daytime phone), name/address-changed and
+#             deceased flags, Amended Return (3 boxes), Filing Status (4 boxes),
+#             Residency Status (3 boxes + part-year date range), Exemptions and
+#             Dependents (the priced block above, then a 6-row dependents table:
+#             name / DOB / relationship / SSN), and the Food Sales Tax Credit
+#             worksheet (questions A-C yes/no, lines D-H).
+#   page 2 -- numbered lines 1-44 (Income 1-3, Deductions 4-7, Tax Computation
+#             8-12, Credits 13-19, Withholding/Payments 20-28, Balance Due
+#             29-33, Overpayment / Contributions 34-44) plus the Signature(s)
+#             block (authorize-discussion checkbox, taxpayer + spouse signature
+#             & date, preparer signature/phone/PTIN).
+#
+# Coverage. ALL 139 widgets are mapped (112 text + 27 checkbox).
+#
+# Widget geometry on page 2. The line-33 (AMOUNT YOU OWE) and line-34
+# (Overpayment) boxes sit against the heavy rule that separates the Balance Due
+# and Overpayment sections, so a value on line 33 touches the rule from above
+# and one on line 34 from below. Nothing is clipped, and each value stays in
+# its own row; the boxes are the DOR's, unchanged from 2023.
+#
+# Money vs text. Every numbered dollar line on page 2 and every currency box in
+# the exemptions block prints a ".00" suffix and is `money`. Line 9
+# (Nonresident percentage, "100.0000") stays `text` so the fraction is not
+# rounded away. Its box prints a 7-cell grid about 125 pt wide (six dividers
+# every 17-19 pt; 2023 also printed a decimal point after the third cell), but
+# the DOR's 106.5 pt widget covers only the first six cells (five dividers
+# inside it, the sixth 1.5 pt past its right edge, the seventh cell beyond
+# that) and is a plain right-aligned text field (/Q 2, no comb bit, no
+# /MaxLen, /Cour 12 Tf), so "100.0000" draws as one 57.6 pt run ending about
+# 3 pt inside the widget: it fills cells 3-6, its glyphs straddle three
+# printed dividers rather than one character per cell, and the seventh cell
+# stays blank; the value sits inside line 9's own box and is legible. Known
+# limitation: per-cell placement would need the
+# filler to stamp seven single characters (three digits, an implied decimal,
+# four digits) over the cells, which this pack does not do. The exemptions
+# count boxes, the header strings, dates,
+# signatures and the Food Sales Tax Credit worksheet counts E, F and G stay
+# `text`. Lines D (federal AGI) and H (credit amount) of that worksheet are
+# currency boxes with a printed ".00" cents cell, so they are `money` (2023
+# typed them text, which would write a value with cents or commas verbatim
+# beside the printed 00). Line D's shaded negative box is its own checkbox.
+#
+# Checkboxes. Every option is a SEPARATE single-state /Btn widget (on_state
+# /Yes). Filing status, residency status and amended return each carry one
+# group, as does the "Check One Box" pair of the exemptions block
+# (exemptions.personal, printed "OR" between the two rows) and each yes/no pair
+# of Food Sales Tax Credit questions A-C. The shade-for-negative boxes (lines
+# 1, 2, 3, 28 and the one beside D), the line-32 farming/fishing box, the
+# name/address-changed and deceased flags and the authorize-discussion box are
+# standalone flags. The five shade-for-negative widgets are 3.5-4.5 pt tall
+# white slits inside the printed orange squares (e.g. line 1: [445.3, 728.4,
+# 453.6, 732.0]), so their DOR /Yes appearance renders as a small dot or dash
+# in the slit rather than a full shade; the mark is the DOR's own and is
+# distinguishable from the blank slit.
+#
+# Cross_form. Line 1's printed label is "Federal adjusted gross income (as
+# reported on your federal income tax return)"; the 2024 Form 1040 prints AGI
+# on line 11, so the target is f1040.11.
+form: "K-40"
+jurisdiction: states/ks
+tax_year: 2024
+source_url: https://www.ksrevenue.gov/pdf/k-4024.pdf
+pdf_sha256: "f5198ecbbe9f2776f098b46e5ece78f6a00fd92f51779006f27d6cd1a29301bf"
+acroform_root: ''
+fields:
+  # ============================================ page 1 -- header (name / address)
+  - line: name.first                     # "Your First Name"
+    field: your first name
+    type: text
+  - line: name.middle_initial            # "Initial"
+    field: your middle initial
+    type: text
+    maxlen: 3
+  - line: name.last                      # "Last Name"
+    field: your last name
+    type: text
+  - line: spouse.name.first              # "Spouse's First Name"
+    field: spouses first name
+    type: text
+  - line: spouse.name.middle_initial     # "Initial"
+    field: spouses middle initial
+    type: text
+    maxlen: 3
+  - line: spouse.name.last               # "Last Name"
+    field: spouses last name
+    type: text
+  - line: mailing_address.street         # "Mailing Address (Number and Street, including Rural Route)"
+    field: mailing address
+    type: text
+  - line: school_district_number         # "School District No." — Courier 12 in 69.9 pt holds 9
+    field: school district number
+    type: text
+    maxlen: 9
+  - line: mailing_address.city           # "City, Town, or Post Office"
+    field: city town or post office
+    type: text
+  - line: mailing_address.state          # "State"
+    field: state - abbreviation
+    type: text
+    maxlen: 3
+  - line: mailing_address.zip            # "Zip Code"
+    field: zip code - 5 digit
+    type: text
+    maxlen: 6
+  - line: county_abbreviation            # "County Abbreviation" — Courier 12 in 69.7 pt holds 9
+    field: county - abbreviation
+    type: text
+    maxlen: 9
+  - line: name.last_four_letters         # "Enter the first four letters of your last name. Use ALL CAPITAL letters." — 67.3 pt holds 9
+    field: enter the first four letters of your last name - all CAPS
+    type: text
+    maxlen: 9
+  - line: identifying_number             # "Your Social Security Number"
+    field: your social security number
+    type: text
+  - line: spouse.name.last_four_letters  # "Enter the first four letters of your spouse's last name. Use ALL CAPITAL letters." — 68.2 pt holds 9
+    field: enter the first four letters of your spouses last name - all CAPS
+    type: text
+    maxlen: 9
+  - line: spouse.identifying_number      # "Spouse's Social Security Number"
+    field: your spouses social security number
+    type: text
+  - line: daytime_telephone_number       # "Daytime Telephone Number" — the widget carries /MaxLen 10
+    field: daytime telephone number
+    type: text
+    maxlen: 10
+
+  # ---- name/address-changed and deceased flags
+  - line: name_or_address_changed.yes    # "If your name or address has changed since last year, mark an “X” in this box."
+    field: check if your name or address has changed since last year
+    type: checkbox
+    on_state: /Yes
+  - line: deceased.yes                   # "If taxpayer (or spouse if filing joint) died during this tax year, mark an “X” in this box."
+    field: check if taxpayer or spouse if filing joint died during this tax year
+    type: checkbox
+    on_state: /Yes
+
+  # ---- Amended Return (Mark ONE)
+  - line: amended_return.kansas_only     # "Amended affects Kansas only"
+    field: amended return - amended affects kansas only
+    type: checkbox
+    group: amended_return
+    on_state: /Yes
+  - line: amended_return.federal         # "Amended Federal tax return"
+    field: amended return - amended federal tax return
+    type: checkbox
+    group: amended_return
+    on_state: /Yes
+  - line: amended_return.irs_adjustment  # "Adjustment by the IRS"
+    field: amended return - adjustment by the irs
+    type: checkbox
+    group: amended_return
+    on_state: /Yes
+
+  # ---- Filing Status (Mark ONE)
+  - line: filing_status.single           # "Single"
+    field: filing status - single
+    type: checkbox
+    group: filing_status
+    on_state: /Yes
+  - line: filing_status.married_filing_joint  # "Married filing joint (Even if only one had income)"
+    field: filing status - married filing joint
+    type: checkbox
+    group: filing_status
+    on_state: /Yes
+  - line: filing_status.married_filing_separate  # "Married filing separate"
+    field: filing status - married filing separate
+    type: checkbox
+    group: filing_status
+    on_state: /Yes
+  - line: filing_status.head_of_household  # "Head of household (Do not mark if filing a joint return)"
+    field: filing status - head of household
+    type: checkbox
+    group: filing_status
+    on_state: /Yes
+
+  # ---- Residency Status (Mark ONE)
+  - line: residency_status.resident      # "Resident"
+    field: residency status - resident
+    type: checkbox
+    group: residency_status
+    on_state: /Yes
+  - line: residency_status.part_year     # "Part-year resident from ... (Complete Sch. S, Part B)"
+    field: residency status - part-year resident
+    type: checkbox
+    group: residency_status
+    on_state: /Yes
+  - line: residency_status.part_year_from  # "from __ __ ____" — eight printed blanks grouped 2-2-4 (MMDDYYYY)
+    # Plain centred text widgets (/Ff 0, /Q 1, no comb), so the eight digits draw as one run over the blanks, not
+    # one digit per blank: the first printed blank and the last one or two stay visible on either side of the
+    # centred run (both boxes). Enter MMDDYYYY with no slashes.
+    field: part-year resident from
+    type: text
+    maxlen: 8
+  - line: residency_status.part_year_to    # "to __ __ ____" — eight printed blanks grouped 2-2-4 (MMDDYYYY)
+    field: part-year resident to
+    type: text
+    maxlen: 8
+  - line: residency_status.nonresident   # "Nonresident (Complete Sch. S, Part B)"
+    field: residency status - nonresident
+    type: checkbox
+    group: residency_status
+    on_state: /Yes
+
+  # ---- Exemptions and Dependents. "Check One Box (This selection must match your Filing Status from above)"
+  # Each row is a count box (text) and a currency box (money, printed .00). The two check boxes are the
+  # alternatives of one choice (printed "OR" between them), so they share one group.
+  - line: exemptions.personal.joint       # "Married individuals filing a joint return, check the box to the left, enter "2" in the box to the right and enter $18,320 in the currency box."
+    field: "Check Box - Married individuals filing a joint return, check the box to the left, enter 2 in the box to the right and enter $18,320 in the currency box"
+    type: checkbox
+    group: exemptions.personal
+    on_state: /Yes
+  - line: exemptions.personal.joint_count # "... enter "2" in the box to the right" — 15.7 pt holds 2
+    field: "Enter \"2\" in this box - Only if Married filing Joint"
+    type: text
+    maxlen: 2
+  - line: exemptions.personal.joint_amount # "... and enter $18,320 in the currency box."
+    field: "Enter $18,320 - Only if Married Filing Joint Return"
+    type: money
+  - line: exemptions.personal.single_or_separate # "Married individuals filing a separate return, individuals with a filing status of Single, or Head of Household, check the box to the left ..."
+    field: "Check Box - Married individuals filing a seperate return, individuals with a filing status of Single or Head of Household, check the box to the left, enter \"1\" in the box to the right and $9,160 in the currency box"
+    type: checkbox
+    group: exemptions.personal
+    on_state: /Yes
+  - line: exemptions.personal.single_or_separate_count # "... enter "1" in the box to the right" — 15.6 pt holds 2
+    field: "Enter \"1\" in this box - Only if married filing seperate, filing status of single, or Heads of Household"
+    type: text
+    maxlen: 2
+  - line: exemptions.personal.single_or_separate_amount # "... and $9,160 in the currency box."
+    field: "Enter $9,160 - Only if married filing seperate, filing status of single, or Heads of Household"
+    type: money
+  - line: exemptions.head_of_household_amount # "If Filing Status above is Head of Household, enter $2,320 in the currency box to the right. If not, leave blank."
+    field: "If filing status is Head of Household, enter $2,320. If not - leave blank"
+    type: money
+  - line: exemptions.dependents_count     # "Dependents, enter the number of individuals you may claim as a dependent in the first box" — 33.5 pt holds 4
+    field: "Dependents, enter the number of individuals you may claim as a dependent in the first box, multiply by $2,320 and enter total in the currency box to the right"
+    type: text
+    maxlen: 4
+  - line: exemptions.dependents_amount    # "... multiply by $2,320 and enter total in the currency box to the right. Do NOT include yourself or your spouse." (X $2,320 =)
+    field: "multiply number of dependents by $2,320 and enter total here"
+    type: money
+  - line: exemptions.disabled_veteran_count # "Disabled Veteran Personal Exemption allowance. In the first box, enter the total number of disabled veterans being claimed including yourself." — 16.8 pt holds 2
+    field: "If claiming the Disabled Veteran Personal Exemption Allowance, in the first box enter the total number of disabled veterand being claimed including yourself. Multiply by $2,250 and enter total in the currency box to the right"
+    type: text
+    maxlen: 2
+  - line: exemptions.disabled_veteran_amount # "X $2,250 =" (the face and the widget name both print $2,250)
+    field: "Multiply number of disabled veterans being claimed by $2,250 and enter result here"
+    type: money
+  - line: exemptions.total_kansas         # "Total Kansas Exemptions" (the count box) — 33.7 pt holds 4
+    field: total kansas exemptions
+    type: text
+    maxlen: 4
+  - line: exemptions.total_kansas_amount  # "Total Kansas Exemption Amount" — "Add all amounts and enter result in the Total Kansas Exemption Amount Box. Also enter this same amount on page 2, line 5 of this form."
+    field: Total Kansas Exemption Amount. Add all amounts and enter result here
+    type: money
+  # ---- dependents table (6 rows: name / DOB / relationship / SSN). The DOB column prints "Date of Birth
+  # (MMDDYYYY)" (2023: MMDDYY); the widgets are plain text, not combs, so maxlen 8 holds the eight digits.
+  - line: dependent_1.name
+    field: enter requested information for all persons claimed as a dependent - name
+    type: text
+  - line: dependent_1.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth
+    type: text
+    maxlen: 8
+  - line: dependent_1.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship
+    type: text
+    maxlen: 10
+  - line: dependent_1.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number
+    type: text
+  - line: dependent_2.name
+    field: enter requested information for all persons claimed as a dependent - name_1
+    type: text
+  - line: dependent_2.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth_1
+    type: text
+    maxlen: 8
+  - line: dependent_2.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship_1
+    type: text
+    maxlen: 10
+  - line: dependent_2.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number_1
+    type: text
+  - line: dependent_3.name
+    field: enter requested information for all persons claimed as a dependent - name_2
+    type: text
+  - line: dependent_3.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth_2
+    type: text
+    maxlen: 8
+  - line: dependent_3.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship_2
+    type: text
+    maxlen: 10
+  - line: dependent_3.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number_2
+    type: text
+  - line: dependent_4.name
+    field: enter requested information for all persons claimed as a dependent - name_3
+    type: text
+  - line: dependent_4.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth_3
+    type: text
+    maxlen: 8
+  - line: dependent_4.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship_3
+    type: text
+    maxlen: 10
+  - line: dependent_4.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number_3
+    type: text
+  - line: dependent_5.name
+    field: enter requested information for all persons claimed as a dependent - name_4
+    type: text
+  - line: dependent_5.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth_4
+    type: text
+    maxlen: 8
+  - line: dependent_5.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship_4
+    type: text
+    maxlen: 10
+  - line: dependent_5.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number_4
+    type: text
+  - line: dependent_6.name
+    field: enter requested information for all persons claimed as a dependent - name_5
+    type: text
+  - line: dependent_6.date_of_birth
+    field: enter requested information for all persons claimed as a dependent - date of birth_5
+    type: text
+    maxlen: 8
+  - line: dependent_6.relationship
+    field: enter requested information for all persons claimed as a dependent - relationship_5
+    type: text
+    maxlen: 10
+  - line: dependent_6.ssn
+    field: enter requested information for all persons claimed as a dependent - social security number_5
+    type: text
+
+  # ---- Food Sales Tax Credit worksheet (questions A-C yes/no, lines D-H)
+  - line: food_sales_tax_credit.a.yes    # "A. Had a dependent child who lived with you all year and was under the age of 18 all of 2024? YES"
+    field: a had a child who lived with you all year and was under the age of 18 all of 2014 - yes
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.a
+  - line: food_sales_tax_credit.a.no     # "A. ... NO"
+    field: a had a child who lived with you all year and was under the age of 18 all of 2014 - no
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.a
+  - line: food_sales_tax_credit.b.yes    # "B. Were you (or spouse) 55 years of age or older all of 2024 (born before January 1, 1969)? YES"
+    field: b were you or spouse 55 years of age or older al of 2014 born before january 1, 1959 - yes
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.b
+  - line: food_sales_tax_credit.b.no     # "B. ... NO"
+    field: b were you or spouse 55 years of age or older al of 2014 born before january 1, 1959 - no
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.b
+  - line: food_sales_tax_credit.c.yes    # "C. Were you (or spouse) totally and permanently disabled or blind all of 2024, regardless of age? YES"
+    field: c were you or spouse totally or permanently disabled or blind all of 2014 regardless of age - yes
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.c
+  - line: food_sales_tax_credit.c.no     # "C. ... NO"
+    field: c were you or spouse totally or permanently disabled or blind all of 2014 regardless of age - no
+    type: checkbox
+    on_state: /Yes
+    group: food_sales_tax_credit.c
+  - line: food_sales_tax_credit.d.negative  # shaded negative-amount box beside line D (the DOR names it "d if a negative click here is not skip")
+    field: d if a negative click here is not skip
+    type: checkbox
+    on_state: /Yes
+  - line: food_sales_tax_credit.d        # "D. If you answered “Yes” to A, B, or C, enter your federal adjusted gross income from line 1 of this return." (more than $30,615: stop)
+    field: "d if you answered yes to a, b, or c enter your federal adjusted gross income line 1 of this return. if it is more than $30,615 stop here, you do not qualify for this credit"
+    type: money
+  - line: food_sales_tax_credit.e        # "E. Number of exemptions claimed (from Total Kansas Exemptions above)." — 30.9 pt holds 4
+    field: e number of exemptions claimed on your federal income tax reutrn
+    type: text
+    maxlen: 4
+  - line: food_sales_tax_credit.f        # "F. Number of dependents that are 18 years of age or older (born before January 1, 2007)" — 30.9 pt holds 4
+    field: f number of dependents that are 18 years of age or older, born before january 1, 1997
+    type: text
+    maxlen: 4
+  - line: food_sales_tax_credit.g        # "G. Total qualifying exemptions (subtract line F from line E)" — 30.9 pt holds 4
+    field: g total qualifying exemptions - subtract line f from line e
+    type: text
+    maxlen: 4
+  - line: food_sales_tax_credit.h        # "H. Food Sales Tax Credit (multiply line G by $125). Enter the result here and on line 18 of this form."
+    field: "h food sales tax credit, multiply line g by $125. enter the result here and on line 17 of this form"
+    type: money
+
+  # ============================================ page 2 -- Income (lines 1-3)
+  - line: 1.negative                     # line 1 shade-box-for-negative marker
+    field: 1 if a negative check this field
+    type: checkbox
+    on_state: /Yes
+  - line: "1"                            # 1 Federal adjusted gross income (as reported on your federal income tax return)
+    field: 1 federal adjusted gross income, as reported on your federal income tax return
+    type: money
+  - line: 2.negative                     # line 2 shade-box-for-negative marker
+    field: 2 if a negative check this field
+    type: checkbox
+    on_state: /Yes
+  - line: "2"                            # 2 Modifications (from Schedule S, line A25; enclose Schedule S) -- the widget name still says "a28"
+    field: 2 modifications, frmo sch s line a28, enclose sch s
+    type: money
+  - line: 3.negative                     # line 3 shade-box-for-negative marker
+    field: 3 if a negative check this field
+    type: checkbox
+    on_state: /Yes
+  - line: "3"                            # 3 Kansas adjusted gross income (line 2 added to or subtracted from line 1)
+    field: 3 kansas adjusted gross income, line 2 added or subtracted from line 1
+    type: money
+
+  # ---- Deductions (lines 4-7)
+  - line: "4"                            # 4 Standard deduction OR itemized deductions
+    field: 4 standard deduction or itemized deductions
+    type: money
+  - line: "5"                            # 5 Exemption allowance (From Total Kansas Exemption Amount, front of this form)
+    field: 5 exemption allowance, $2,250 x number of exemptions claimed
+    type: money
+  - line: "6"                            # 6 Total deductions (add lines 4 and 5)
+    field: 6 total dudecutions, add lines 4 and 5
+    type: money
+  - line: "7"                            # 7 Taxable income (subtract line 6 from line 3; if less than zero, enter 0)
+    field: 7 taxable income, subtract line6 from line 3; if less than zero enter 0
+    type: money
+
+  # ---- Tax Computation (lines 8-12)
+  - line: "8"                            # 8 Tax (from Tax Tables or Tax Computation Schedule)
+    field: 8 tax, use tax tables ot tax computation schedule
+    type: money
+  - line: "9"                            # 9 Nonresident percentage (from Schedule S, line B23; or if 100%, enter 100.0000)
+    # The box prints a 7-cell grid about 125 pt wide (2023 also printed a decimal point after the third cell), but
+    # the DOR's 106.5 pt widget covers only the first six cells (the sixth divider is 1.5 pt past its right edge,
+    # the seventh cell beyond it) and is a plain right-aligned text field (/Q 2, no comb, no /MaxLen), so the value
+    # draws as one run over cells 3-6, straddling three dividers, not one character per cell; the seventh cell stays
+    # blank. Enter the printed form, e.g. "100.0000" or "42.1234".
+    field: "9 nonresident percentage, from sch s line b23 or if 100% enter 100.0000"
+    type: text
+  - line: "10"                           # 10 Nonresident tax (multiply line 8 by line 9)
+    field: 10 nonresident tax, multiply line 8 by line 9
+    type: money
+  - line: "11"                           # 11 Kansas tax on lump sum distributions (residents only)
+    field: 11 kansas tax on lump sum distributions, residents only
+    type: money
+  - line: "12"                           # 12 TOTAL INCOME TAX (residents: add lines 8 & 11; nonresidents: enter amount from line 10)
+    field: 12 total income tax, residnets add lines 8 and 11; nonresidents enter amount form line 10
+    type: money
+
+  # ---- Credits (lines 13-19)
+  - line: "13"                           # 13 Credit for taxes paid to other states
+    field: 13 credit for taxes paid to other states - enclose return(s) from other states
+    type: money
+  - line: "14"                           # 14 Credit for child and dependent care expenses (residents only)
+    field: 14 credit for child and dependent care expenses
+    type: money
+  - line: "15"                           # 15 Other credits (enclose all appropriate credit schedules)
+    field: 15 other credits
+    type: money
+  - line: "16"                           # 16 Subtotal (subtract lines 13, 14 and 15 from line 12)
+    field: 16 subtotal, subtract lines 13, 14 and 15 from line 12
+    type: money
+  - line: "17"                           # 17 Earned income tax credit (from worksheet on page 8 of instructions)
+    field: 17 earned income tax credit
+    type: money
+  - line: "18"                           # 18 Food sales tax credit (from line H, front of this form)
+    field: 18 food sales tax credit, from line h
+    type: money
+  - line: "19"                           # 19 Total tax balance (subtract lines 17 and 18 from line 16; cannot be less than zero) -- the widget name is a stale 20-26 / 27 phrase
+    field: 19 total tax balance, subtract lines 20-26, then subtract line 27
+    type: money
+
+  # ---- Withholding and Payments (lines 20-28)
+  - line: "20"                           # 20 Kansas income tax withheld from W-2s and/or 1099s
+    field: 20 kansas income tax withheld from w2, 1099 or k19
+    type: money
+  - line: "21"                           # 21 Estimated tax paid
+    field: 21 estimated tax paid
+    type: money
+  - line: "22"                           # 22 Amount paid with Kansas extension
+    field: 22 amount paid with kansas extension
+    type: money
+  - line: "23"                           # 23 Refundable portion of earned income credit
+    field: 23 refundable portion of earned income tax credit
+    type: money
+  - line: "24"                           # 24 Refundable portion of tax credits
+    field: 24 refundable portion of tax credits
+    type: money
+  - line: "25"                           # 25 Payments remitted with original return
+    field: 25 payments remitted with original return
+    type: money
+  - line: "26"                           # 26 Credit for tax paid on the K-120S (enclose K-9)
+    field: 26 credit for tax paid on the K-120S, enlcose K-9
+    type: money
+  - line: "27"                           # 27 Overpayment from original return (this figure is a subtraction)
+    field: 27 overpayment from original return - this figure is a subtraction
+    type: money
+  - line: 28.negative                    # line 28 shade-box-for-negative marker
+    field: 28 if a negative check this field
+    type: checkbox
+    on_state: /Yes
+  - line: "28"                           # 28 Total refundable credits (add lines 20 through 26; then subtract line 27)
+    field: 28 total refundable credits, add lines 20 - 26 and subtract line 27
+    type: money
+
+  # ---- Balance Due (lines 29-33)
+  - line: "29"                           # 29 Underpayment (if line 19 is greater than line 28, enter the difference)
+    field: 29 underpayment, if line 19 is greater than line 28 enter the difference here
+    type: money
+  - line: "30"                           # 30 Interest
+    field: 30 interest
+    type: money
+  - line: "31"                           # 31 Penalty
+    field: 31 penalty
+    type: money
+  - line: "32"                           # 32 Estimated Tax Penalty
+    field: 32 estimated tax penalty
+    type: money
+  - line: 32.commercial_farming_fishing  # 32 "Mark box if engaged in commercial farming or fishing in 2024" -- the widget name still says 2022
+    field: 32 mark box if engaged in commercial farming or fishing in 2022
+    type: checkbox
+    on_state: /Yes
+  - line: "33"                           # 33 AMOUNT YOU OWE (add lines 29 through 32 and any entries on lines 36 through 43)
+    field: 33 amount you owe, add lines 29 - 32 and any entries on lines 36 - 43
+    type: money
+
+  # ---- Overpayment / Contributions (lines 34-44)
+  - line: "34"                           # 34 Overpayment (if line 19 is less than line 28, enter the difference)
+    field: 34 overpayment, if line 19 is less than 28 enter differnce here
+    type: money
+  - line: "35"                           # 35 CREDIT FORWARD (amount applied to your 2025 estimated tax) -- the widget name still says 2023
+    field: 35 credit forward, enter amount you wish to be applied to your 2023 estimated tax
+    type: money
+  - line: "36"                           # 36 CHICKADEE CHECKOFF (Kansas Nongame Wildlife Improvement Program)
+    field: 36 chickadee checkoff
+    type: money
+  - line: "37"                           # 37 SENIOR CITIZENS MEALS ON WHEELS CONTRIBUTION PROGRAM
+    field: 37 senior citizens meals on wheels contribution program
+    type: money
+  - line: "38"                           # 38 BREAST CANCER RESEARCH FUND
+    field: 38 breast cancer research fund
+    type: money
+  - line: "39"                           # 39 MILITARY EMERGENCY RELIEF FUND
+    field: 39 military emergency relief fund
+    type: money
+  - line: "40"                           # 40 KANSAS HOMETOWN HEROES FUND
+    field: 40 kansas hometown heros fund
+    type: money
+  - line: "41"                           # 41 KANSAS CREATIVE ARTS INDUSTRY FUND
+    field: 41 kansas creative arts industry fund
+    type: money
+  - line: "42"                           # 42 LOCAL SCHOOL DISTRICT CONTRIBUTION FUND
+    field: 42 local school district contribution fund
+    type: money
+  - line: 42.school_district_number      # 42 "School District Number"
+    field: 42 school district number
+    type: text
+    maxlen: 5                            # Courier 12 in 42.0 pt holds 5 (widget /MaxLen 10)
+  - line: "43"                           # 43 KANSAS HISTORIC SITE CONTRIBUTION FUND
+    field: 43 Kansas Histric Site Contribution Fund
+    type: money
+  - line: 43.historic_site_number        # 43 "Historic Site Number"
+    field: 43 Historic Site number
+    type: text
+    maxlen: 5                            # Courier 12 in 42.0 pt holds 5 (widget /MaxLen 10)
+  - line: "44"                           # 44 REFUND (subtract lines 35 through 43 from line 34)
+    field: 44 refund, subtract lines 35 - 43 from line 34
+    type: money
+
+  # ---- Signature(s)
+  - line: signature.authorize_discussion  # "I authorize the Director of Taxation ... to discuss my return ... with my preparer."
+    field: i authorize the director of taxation or the directors designee to discuss my return and enclosures with my preparer
+    type: checkbox
+    on_state: /Yes
+  - line: signature.taxpayer             # "Signature of taxpayer"
+    field: Signature of taxpayer
+    type: text
+  - line: signature.taxpayer_date        # "DATE" — Courier 12 in 71.6 pt holds 9, so "MM/DD/YY"
+    field: date signed
+    type: text
+    maxlen: 8
+  - line: signature.spouse               # "Signature of spouse (If married filing joint)"
+    field: Signature of spouse
+    type: text
+  - line: signature.spouse_date          # "DATE" — Courier 12 in 68.2 pt holds 9, so "MM/DD/YY"
+    field: date signed 2
+    type: text
+    maxlen: 8
+  - line: preparer.signature             # "Signature of preparer other than taxpayer"
+    field: Signature of preparer
+    type: text
+  - line: preparer.phone                 # "Phone number of preparer"
+    field: preparers phone number
+    type: text
+  - line: preparer.id_number             # "Tax Preparer's PTIN, EIN or SSN"
+    field: preparers PTIN, ein or ssn
+    type: text
+relations:
+  # "Add all amounts and enter result in the Total Kansas Exemption Amount Box."
+  - "exemptions.total_kansas_amount == exemptions.personal.joint_amount + exemptions.personal.single_or_separate_amount + exemptions.head_of_household_amount + exemptions.dependents_amount + exemptions.disabled_veteran_amount"
+  - "5 == exemptions.total_kansas_amount"   # "Also enter this same amount on page 2, line 5 of this form."
+  - "6 == 4 + 5"                           # 6 "Total deductions (add lines 4 and 5)"
+  - "19 == max(0, 16 - 17 - 18)"           # 19 "subtract lines 17 and 18 from line 16; cannot be less than zero"
+cross_form:
+  # Line 1 "Federal adjusted gross income (as reported on your federal income
+  # tax return)" -- federal AGI, printed on line 11 of the 2024 Form 1040.
+  - "1 == f1040.11"
+identity_fields:
+  - name.first
+  - name.last
+  - identifying_number
+  - mailing_address.street
+  - mailing_address.city
+  - mailing_address.state
+  - mailing_address.zip
+signature: {page: 2}
+mailing: null

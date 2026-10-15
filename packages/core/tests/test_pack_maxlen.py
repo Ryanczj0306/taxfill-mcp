@@ -33,6 +33,8 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     ("states/id/2023/form40/pack.yaml", "preparer.state"): "31.5 pt at 10 pt fits 6; the widget says 10",
     ("states/ks/2023/k40/pack.yaml", "42.school_district_number"): "42 pt at Courier 12 fits 5; the widget says 10",
     ("states/ks/2023/k40/pack.yaml", "43.historic_site_number"): "42 pt at Courier 12 fits 5; the widget says 10",
+    ("states/ks/2024/k40/pack.yaml", "42.school_district_number"): "42.0 pt at Courier 12 (7.2 pt a glyph) fits 5; budget 5 as in 2023; the widget says 10",
+    ("states/ks/2024/k40/pack.yaml", "43.historic_site_number"): "42.0 pt at Courier 12 fits 5; budget 5 as in 2023 (the same box and /MaxLen); the widget says 10",
     ("states/ks/2025/k40/pack.yaml", "41.school_district_number"):
         "43.3 pt at Courier 12 (7.2 pt a glyph) fits 6 edge to edge with no inset; budget 5 as in 2023; the widget says 10",
     ("states/ks/2025/k40/pack.yaml", "42.historic_site_number"):

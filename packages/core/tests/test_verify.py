@@ -1198,6 +1198,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: ME Form 1040ME 2024 (a RE-MAP of ME 2023: the refund-deposit block moved to page 3 and was renumbered, no
     # header widget renamed) equals the reviewed ME 2023 row (the four mailing_address lines; foreign_country,
     # foreign_province and foreign_postal_code are not selected, as in 2023).
+    # JS5: KS K-40 2024 (a RE-MAP of KS 2023: the exemptions block and dependents table re-cut; the four address widgets keep
+    # their names and /Rects) equals the reviewed KS 2023 row (the four mailing_address lines).
     import json
     from pathlib import Path
 
