@@ -24,7 +24,7 @@ plan for what is **not yet done**, as of **2026-09-24** (re-planned 2026-09-23 �
 
 ## Where we are (verified)
 
-Done and on `main` (**9,235 tests** — offline 7,967 + live-.gov 1268; derived
+Done and on `main` (**9,243 tests** — offline 7,975 + live-.gov 1268; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -920,6 +920,7 @@ line items sum to the headline delta.
     - When it is True, `_classify_residency` returns a resident-shaped result: standard deduction, NIIT evaluated, deposit exclusion off. The worldwide-income and FICA caveats stay.
     - Mirror the rule in the residency tool and intake output.
     - **J0 re-verify follow-ups (2026-09-24):** the election flag must switch the deposit exclusion off on an MFS status too (Pub 519 ch. 1: after the election year the couple "can file joint or separate returns", both still residents — today only the MFJ gate is modeled); and the spouse's two-return MFS `_bottom_line` must take the SPOUSE'S own classification as `nonresident` (today it borrows the taxpayer's for every rule except the deposit exclusion: a US-citizen spouse's 1040 gets no standard deduction and ordinary rates — ~$3,050 overstated in the verifier's repro, disclosed only through P-013's not-modeled list).
+      - *Closed 2026-10-15 (re-plan JK3, verify first):* both were already fixed in dfe7dd8 (JF5a, 2026-09-27) — the recorded election reaches `_election_state` on an MFS status, so the deposit gate no longer fires, and `_mfs_pair` prices the spouse's return from the spouse's own facts. At dfe7dd8^ the same demo profiles gave -1,583 vs -29 for (a) and a 3,047 spouse-return gap for (b), the lost MFS standard deduction at 22%; on HEAD both equal the calc recomputation, and a 102-profile comparison changed no figure. packages/core/tests/test_estimate_p018_mfs.py pins both (a recorded election plus a confirmed MFS status, with a recorded decline as the control).
   - **Acceptance.**
     - On a timeline-bearing fixture, the election's MFJ "Less: standard deduction" equals the pack's MFJ figure for the year.
     - No 1040-NR label appears; NIIT is evaluated.
