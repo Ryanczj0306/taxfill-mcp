@@ -614,6 +614,48 @@ def _pdf_text(value: object) -> str:
     return str(value)
 
 
+_INHERITED_FIELD_KEYS = ("/FT", "/Ff", "/V")
+
+
+def pdf_field_dicts(reader: object) -> dict[str, Mapping]:
+    """``{fully_qualified_field_name: field dict}`` — pypdf's ``get_fields()``, or a walk when pypdf cannot build it.
+
+    pypdf 6's ``get_fields()`` raises ``KeyError('/AP')`` on a radio field one of whose kid widgets carries no
+    /AP dictionary at all: AZ Form 140NR 2023's "Filing Status" (four kids, no appearance, no on-state name).
+    Only that error falls back. The walk follows /AcroForm /Fields and /Kids and keys every node that carries a
+    /T by its dotted qualified name, as ``get_fields()`` does; each value carries the node's own keys plus the
+    inherited /FT, /Ff and /V, which is what the callers read.
+    """
+    try:
+        return reader.get_fields() or {}  # type: ignore[attr-defined]
+    except KeyError as exc:
+        if exc.args != ("/AP",):
+            raise
+    acroform = reader.trailer["/Root"].get("/AcroForm")  # type: ignore[attr-defined]
+    out: dict[str, Mapping] = {}
+    if acroform is None:
+        return out
+    fields = acroform.get_object().get("/Fields")
+    stack = [(ref, "", {}) for ref in reversed(fields.get_object() if fields is not None else [])]
+    seen: set[int] = set()
+    while stack:
+        ref, prefix, inherited = stack.pop()
+        node = ref.get_object()
+        if id(node) in seen:
+            continue
+        seen.add(id(node))
+        title = node.get("/T")
+        name = f"{prefix}.{title}" if prefix and title else (str(title) if title else prefix)
+        carried = dict(inherited)
+        carried.update({key: node[key] for key in _INHERITED_FIELD_KEYS if key in node})
+        if title:
+            out[name] = {**carried, **{key: node[key] for key in node.keys() if key != "/Kids"}}
+        kids = node.get("/Kids")
+        for kid in reversed(kids.get_object() if kids is not None else []):
+            stack.append((kid, name, carried))
+    return out
+
+
 def read_pdf_fields(pdf_path: str | Path) -> dict[str, str]:
     """Dump ``{fully_qualified_field_name: raw_value}`` from a filled PDF."""
     from pypdf import PdfReader  # local import keeps the pypdf layer isolated
@@ -625,7 +667,7 @@ def read_pdf_fields(pdf_path: str | Path) -> dict[str, str]:
             f"(check the workspace drafts/ directory) or a blank from fetch_blank"
         )
     reader = PdfReader(str(path))
-    raw_fields = reader.get_fields()
+    raw_fields = pdf_field_dicts(reader)
     if not raw_fields:
         raise ValueError(
             f"{path} has no AcroForm fields — it is not a fillable form; "

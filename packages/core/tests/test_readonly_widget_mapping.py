@@ -98,6 +98,7 @@ from pdf_fixtures import make_acroform_pdf
 from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.filler import fill_form
 from taxfill_core.schemas.formpack import load_pack
+from taxfill_core.verify import pdf_field_dicts
 
 from test_formpacks_federal import _read_only_widget_names
 
@@ -1217,7 +1218,8 @@ def _nonzero_readonly_defaults(pack_path: Path) -> dict[str, str]:
         blank = fetch_pack_blank(pack)
     except OfflineFetchError as exc:
         pytest.skip(f"cache empty and network unreachable: {exc}")
-    fields = PdfReader(str(blank)).get_fields() or {}
+    # pdf_field_dicts: get_fields(), or a walk where pypdf cannot read the blank (AZ 140NR 2023's /AP-less radio)
+    fields = pdf_field_dicts(PdfReader(str(blank)))
     prefix = f"{pack.acroform_root}." if pack.acroform_root else ""
     out = {}
     for f in pack.fields:

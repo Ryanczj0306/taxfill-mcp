@@ -162,7 +162,11 @@ def _triage(url: str, mapped: set[str], cache: Path, timeout: float = 45.0, *, s
     try:
         from pypdf import PdfReader
 
-        names = set((PdfReader(str(cache) if cache.is_file() else _spool(data, cache)).get_fields() or {}).keys())
+        sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
+        # get_fields(), or the field-tree walk where pypdf raises KeyError('/AP') (AZ 140NR 2023's radio kids)
+        from taxfill_core.verify import pdf_field_dicts  # noqa: PLC0415
+
+        names = set(pdf_field_dicts(PdfReader(str(cache) if cache.is_file() else _spool(data, cache))))
     except Exception as exc:  # noqa: BLE001
         return f"UNREADABLE ({type(exc).__name__})", {}
     if not names:

@@ -1398,6 +1398,28 @@ SEPARATE_OPTION_SETS_ADJUDICATED: dict[tuple[str, str], str] = {
         'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
     ('states/az/az140', 'oe_9_age65'):
         'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)"; the face does not print them as alternatives',
+    ('states/az/az140nr', '65_credit'):
+        'INDEPENDENT: line 65 "Check the box(es) and enter the total amount" (651 308-I, 652 334, 653 349); several may apply',
+    ('states/az/az140nr', 'oe_10_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_1_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_2_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_3_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_4_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_5_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_6_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_7_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_8_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
+    ('states/az/az140nr', 'oe_9_age65'):
+        'INDEPENDENT: C1 and C2 are two sub-boxes under "(c) AGE 65 OR OVER (see instructions)" on page 4 Part 2; the face does not print them as alternatives',
     ('states/ca/form540', '31'):
         'PARTIAL: Tax Table / Tax Rate Schedule share group 31.tax_method (one regular-tax method); the FTB 3800 and 3803 boxes add to it independently',
     ('states/ca/form540', '34'):

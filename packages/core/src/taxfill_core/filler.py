@@ -253,6 +253,41 @@ def _repair_empty_field_array(writer: PdfWriter) -> int:
     return len(roots)
 
 
+def _field_names(writer: PdfWriter) -> set[str]:
+    """Every qualified AcroForm field name — pypdf's ``get_fields()``, or a walk when pypdf cannot build it.
+
+    pypdf 6's ``get_fields()`` raises ``KeyError('/AP')`` on a radio field one of whose kid widgets carries no
+    /AP dictionary at all: AZ Form 140NR 2023's "Filing Status" (four kids, no appearance, no on-state name).
+    Only that error falls back, to a walk of /AcroForm /Fields and /Kids that names every /T-bearing node the
+    way ``get_fields()`` does. (verify has its own copy on purpose: it never imports the filler.)
+    """
+    try:
+        return set(writer.get_fields() or {})
+    except KeyError as exc:
+        if exc.args != ("/AP",):
+            raise
+    acroform = writer._root_object.get("/AcroForm")
+    names: set[str] = set()
+    if acroform is None:
+        return names
+    fields = acroform.get_object().get("/Fields")
+    stack = [(ref, "") for ref in (fields.get_object() if fields is not None else [])]
+    seen: set[int] = set()
+    while stack:
+        ref, prefix = stack.pop()
+        node = ref.get_object()
+        if id(node) in seen:
+            continue
+        seen.add(id(node))
+        title = node.get("/T")
+        name = f"{prefix}.{title}" if prefix and title else (str(title) if title else prefix)
+        if title:
+            names.add(name)
+        kids = node.get("/Kids")
+        stack.extend((kid, name) for kid in (kids.get_object() if kids is not None else []))
+    return names
+
+
 def _render_money(pf: PackField, value: object) -> tuple[str, str | None]:
     """Apply IRS whole-dollar rounding; returns (rendered, optional warning).
 
@@ -741,7 +776,7 @@ def fill_form(
         ) from exc
 
     _repair_empty_field_array(writer)
-    available = set(writer.get_fields() or {})
+    available = _field_names(writer)
     if written and not available:
         raise ValueError(
             f"{blank_pdf.name} has no AcroForm fields — this is not a fillable PDF; "
