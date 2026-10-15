@@ -1206,6 +1206,9 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # foreign_province and foreign_postal_code are not selected, as in 2023).
     # JS5: KS K-40 2024 (a RE-MAP of KS 2023: the exemptions block and dependents table re-cut; the four address widgets keep
     # their names and /Rects) equals the reviewed KS 2023 row (the four mailing_address lines).
+    # JS5: MI-1040 2024 (a RE-MAP of MI 2023 — widgets renamed on all three pages at identical /Rects, the 32a/32b
+    # boxes 1-2 pt taller, every line key kept) equals the reviewed MI 2023 row (home_address, city_or_town, state,
+    # zip_code); the four address boxes are the same widgets.
     import json
     from pathlib import Path
 
