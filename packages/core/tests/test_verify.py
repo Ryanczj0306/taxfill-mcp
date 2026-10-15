@@ -1193,6 +1193,9 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # Code -- keys kept) equals the reviewed NE 2023 row (the four mailing_address lines).
     # JS5: MD 502 2024 (a RE-MAP of MD 2023; the five mailing-address widgets kept their names, the MD physical-address
     # ZIP/county boxes were renamed and are still rejected) equals the reviewed MD 2023 row.
+    # JS5: ME Form 1040ME 2024 (a RE-MAP of ME 2023: the refund-deposit block moved to page 3 and was renumbered, no
+    # header widget renamed) equals the reviewed ME 2023 row (the four mailing_address lines; foreign_country,
+    # foreign_province and foreign_postal_code are not selected, as in 2023).
     import json
     from pathlib import Path
 
