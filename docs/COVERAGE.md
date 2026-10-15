@@ -83,7 +83,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 
 ## State forms
 
-State returns for **42 income-tax jurisdictions** — 42 in 2023, 35 in 2024, 42 in 2025 — from **118 fillable state packs** and **13 print-and-hand-fill worksheets**. Each row lists the resident return and, where mapped, the state's separate nonresident / part-year return (such as CA Form 540NR or NY IT-203).
+State returns for **42 income-tax jurisdictions** — 42 in 2023, 36 in 2024, 42 in 2025 — from **119 fillable state packs** and **13 print-and-hand-fill worksheets**. Each row lists the resident return and, where mapped, the state's separate nonresident / part-year return (such as CA Form 540NR or NY IT-203).
 
 | Jurisdiction | 2023 | 2024 | 2025 |
 |---|---|---|---|
@@ -126,7 +126,7 @@ State returns for **42 income-tax jurisdictions** — 42 in 2023, 35 in 2024, 42
 | SC — South Carolina | SC1040 ✎ | SC1040 ✎ | SC1040 ✎ |
 | UT — Utah | UT TC-40 | UT TC-40 | UT TC-40 |
 | VA — Virginia | Form 760 | Form 760 | Form 760 |
-| VT — Vermont | IN-111 | — | IN-111 |
+| VT — Vermont | IN-111 | IN-111 | IN-111 |
 | WI — Wisconsin | Form 1 | Form 1 | Form 1 |
 | WV — West Virginia | IT-140 | — | IT-140 ✎ |
 
