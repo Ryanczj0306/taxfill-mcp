@@ -1,0 +1,862 @@
+# ===========================================================================
+# TY2024 PORT of formpacks/states/md/2023/md502/pack.yaml (ported 2026-10-02,
+# Phase J JS5; triaged RE-MAP — 22 of the 2023 pack's widgets are gone and one
+# surviving NAME, "Text Box 102", now sits on a different printed row, so every
+# binding below was rebuilt by position + printed label from the 2024 blank and
+# confirmed on the sentinel renders, never carried over by name).
+#
+# URL. https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2024/502.pdf
+# (the old marylandtaxes.gov/forms/24_forms/502.pdf scheme 301s to a 404).
+# Digest e72500955f3c032c55896f32bdb3a14a09ef7cc4ca63303e2693eafa6ff80204 —
+# two separate curl downloads on 2026-10-02 (HTTP/2 200, application/pdf, no
+# redirect, Last-Modified Thu, 12 Jun 2025 20:41:20 GMT, ETag
+# "0x8DDA9F17CDD9789", 837,707 bytes) agree with each other and with the three
+# earlier discovery downloads. %PDF-1.7, AcroForm, no XFA, 4 pages.
+#
+# PRINTED IDENTITY. Page 1 prints "MARYLAND FORM 502 RESIDENT INCOME TAX
+# RETURN 2024", "OR FISCAL YEAR BEGINNING ____ 2024, ENDING ____" and the
+# revision stamp "COM/RAD-009 08/24" (2023: "COM/RAD-009" alone); pages 2-4
+# print "MARYLAND FORM RESIDENT INCOME TAX RETURN 2024 Page N" with the same
+# stamp. printed_year_verified = 2024.
+#
+# Port base. A widget census of this blank against the 2023 pack and against
+# the 2025 pack scores them alike (2023: GONE 22 / MOVED 120 / SAME 22 /
+# CHANGED 6, NEW 19; 2025: GONE 22 / MOVED 115 / SAME 28 / CHANGED 7, NEW 17),
+# but the 2024 face keeps the 2023 LINE NUMBERS (1 through 51d), while the 2025
+# face adds lines 17c, 20a, 21b, 39, 42 and 51a and renumbers 2023's 39-51d as
+# 40-53d. So the 2023 pack is the port base and every 2023 line key is kept.
+#
+# AcroForm topology against the 2023 blank. 175 widgets = 161 /FT fields
+# (pypdf get_fields 169 = 161 + 8 FT=None container parents; 2023: 176 widgets
+# = 170 fields). Six fields own several kid widgets: "Check One Box" (SIX
+# kids — the whole filing-status block, each kid's /AP /N state the status
+# name: /Single, /Married filing joint return or spouse had no income,
+# /Married Filing separately, /Head of household, /Qualifying surviving spouse
+# with dependent child (with a trailing space), /Dependent taxpayer (Enter 0 in
+# Exemption Box (A) -  See Instruction 7.)), "Check Box 34" (/1 on the
+# STANDARD row, /2 on the ITEMIZED row), "Check Box 36" (two kids whose states
+# are their printed sentences, the line-22 Maryland-EIC boxes), "Check Box 52"
+# (/Checking, /Savings), and the two page-header mirrors "Enter your last name"
+# / "Enter social security number" (one widget on each of pages 1-4, mapped
+# once). Every /FT field is mapped (169 lines); every kid state is bound once;
+# nothing is unmapped on purpose. No widget is ReadOnly, none is a comb, none a
+# pushbutton, and every widget carries /F 4 (Print).
+#   The 22 GONE fields and what holds their printed row now:
+#   * "Check Box - 1".."Check Box - 5" and "6. Check here" (filing status 1-6,
+#     six separate fields in 2023 with /Yes or /No) -> the six kids of the NEW
+#     "Check One Box" (states listed above). All six share group
+#     filing_status, since one field holds one /V.
+#   * "MARRIED FILING Enter spouse's social security number" -> "Enter
+#     spouse's social security number (SSN)" (same box, /MaxLen 9).
+#   * "2 Enter zip code + 4" -> "Enter part-year zip code + 4" (the ZIP Code + 4
+#     box of the Maryland physical address row, above the printed "City State
+#     ZIP Code + 4 Maryland County"; the new NAME says part-year, the face does
+#     not); "Enter zip code + 5" -> "Maryland County" (same box).
+#   * "Check Box 35" (itemized) -> the /2 kid of "Check Box 34" (the standard
+#     box, /Yes in 2023, is now its /1 kid).
+#   * "Check Box 37" (Maryland EIC with a qualifying child) -> the lower kid of
+#     "Check Box 36"; the upper kid (MD EIC without the federal EIC) was 2023's
+#     single-widget "Check Box 36". One field holds one /V, so the two share
+#     group 22_md_eic.
+#   * "Text Box 67" (39_cents) -> nothing: line 39 now prints "00" after its
+#     dollar box and has no cents widget.
+#   * "Check Box 39" / "Check Box 40" (direct deposit; refund to an account
+#     outside the US) -> the NEW "Check Box 54" (/1) / "Check Box 541" (/2),
+#     still two separate fields.
+#   * "Check Box 41" / "Check Box 42" (51a checking / savings) -> the /Checking
+#     and /Savings kids of the NEW "Check Box 52".
+#   * "Text Box 93" (51b routing) -> "Text Box 111" (/MaxLen 9); "Text Box 94"
+#     (51c account) -> "Text Box 110" (/MaxLen 17); "Text Box 95" (51d name on
+#     the account) -> "Text Box 102" — the NAME the 2023 blank gave the
+#     preparer's printed name, now some 206 pt higher on the 51d row. The preparer's
+#     printed name is the NEW "Text Box 108". A name-only port would print the
+#     preparer's name on the bank-account row.
+#   * "Check Box 45" (discuss with preparer) -> "Check Box 50"; "Check Box 46"
+#     (1099G electronically) -> "Check Box 48"; "Check Box 47" (paid preparer
+#     not to file electronically) -> "Check Box 49". On the face each box sits
+#     between "Check here" and the "if you ..." sentence it answers: Check Box
+#     50 at x 87 and Check Box 49 at x 418 on the upper row, Check Box 48 at
+#     x 238 on the lower row.
+#   The 19 NEW widgets are the replacements above ("Check One Box" x6, "Enter
+#   spouse's social security number (SSN)", "Enter part-year zip code + 4",
+#   "Maryland County", "Check Box 54", "Check Box 541", "Check Box 52" x2,
+#   "Text Box 111", "Text Box 110", "Check Box 50", "Check Box 49", "Check Box
+#   48", "Text Box 108"); all are mapped.
+#   /MaxLen: 64 widgets gained /MaxLen 10 (the 61 dollar boxes, the military
+#   income amount and the two signature dates, which also widened from 50.4 /
+#   48.2 pt to 71.9 pt, so MM/DD/YYYY now fits and both caps rise from 8 to
+#   10); the SSN boxes gained 9 (the SSN lines are now maxlen 9 with format
+#   ssn_digits_only; 2023 took 11 with dashes); the PTIN 9; the three line-49
+#   amount boxes (Text Box 86 / 87 / 88) 6 — the only money lines that carry a
+#   pack maxlen (6, = the widget: the filler renders a plain integer string, so
+#   a seventh digit is refused instead of clipped); the political-subdivision code 4;
+#   the local-tax-rate box 6; the foreign postal code 10; "Enter state" lost
+#   its 10 (the 2023 TIGHTER_THAN_WIDGET row for mailing_state does not apply
+#   to this blank). No pack maxlen is below its widget's /MaxLen.
+#   /DA: the code-letter boxes Text Field 5-12 "/CourierNewPSMT 10 Tf" -> 8;
+#   the local-tax-rate box 10 -> 7 (28.6 pt at 4.2 pt a glyph holds the
+#   widget's 6); Text Field 14 "/MinionPro-Regular 8 Tf" -> "/CourierNewPSMT
+#   10 Tf"; Text Field 15 and "B. Enter number exemptions checked B"
+#   "/CourierNew 8 Tf" -> "/CourierNewPSMT 10 Tf"; Text Field 16 / 17
+#   "/CourierNew 8 Tf" -> 10. /Ff: no widget sets a non-zero /Ff in either
+#   year (2024: /Ff 0 on 171 widgets; the four exemption dollar boxes "Enter A
+#   $" / "Enter B $ " / "Enter C $ " / "D. Enter Dollar Amount Total Exemptions"
+#   carry no /Ff key at all, which is the same default).
+#
+# FACE / LAW DELTAS vs the 2023 face (read off this blank's text layer): no
+# line was added, removed or renumbered. Year tokens moved (header 2024; the
+# physical address "as of December 31, 2024"; "If you began or ended legal
+# residence in Maryland in 2024"; 41 "2024 estimated tax payments, amount
+# applied from 2023 return, payment made with an extension request, and Form
+# MW506NRS"; 47 "TO BE APPLIED TO 2025 ESTIMATED TAX"); 1e now "investment
+# income is more than $11,600" (2023: $11,000); B still "X $1,000"; line 49
+# now reads "Enter interest charges from Line 18," and "or for late filing_ or
+# homebuyer withdrawal penalty" (the underscore is printed); line 39 gained a
+# printed "00"; the page-4 payment paragraph was reworded, the mailing address
+# is unchanged (Comptroller of Maryland, Revenue Administration Division, 110
+# Carroll Street, Annapolis, MD 21411-0001). Two widget NAMES still carry the
+# 2023 figures the face no longer prints: "Enter Y of income more than
+# $11,000" (the face says $11,600) and the legal-residence box named "If you
+# began or ended legal residence in Maryland in 2023 ..." (the face says
+# 2024). The line-1e key keeps its 2023 spelling
+# (1e_investment_income_over_11000) so every year's MD 502 key set stays the
+# same one the 2023 pack shipped; the comment carries the 2024 figure.
+# knowledge/states/md/2024.yaml agrees on the $1,000 65-or-over / blind
+# exemption and on Form 1040 line 11 as the line-1 source; it does not record
+# the line-1e $11,600 investment-income threshold (reported, not edited).
+# ===========================================================================
+# Form 502, 2024 — Maryland Resident Income Tax Return.
+#
+# Layout. Mostly-flat AcroForm (acroform_root empty). MOST field names are the
+# raw, human-readable sentinel ids the form ships with ("Enter your first
+# name", "Enter 1", "Text Box 30", "Check Box 15"). A handful of fields are
+# HIERARCHICAL (parent /T = a short tag, child /T = the rest) and pypdf
+# exposes them by their fully-qualified "<parent>.<child>" name — these are
+# kept verbatim ("B. Check this box if you are blind", "B. Enter number
+# exemptions checked B", "D. Enter Dollar Amount Total Exemptions (Add A, B
+# and C.) ", the four "Enter ... Address Line ..." fields, and the long
+# "If you began or ended legal residence in Maryland in 2023 place a P in the
+# box.\rMILITARY: If you or " field). The FT=None parent containers have no
+# appearance of their own and are NOT mapped — only their full-name child
+# widgets are.
+#
+# Coverage. 175 widget annotations over 161 distinct /FT fields; all 161 are
+# mapped (169 lines: 161 fields + the five extra filing-status kids, the second
+# deduction-method kid, the second line-22 EIC kid and the second account-type
+# kid). The page-2/3/4 repeats of "Enter your last name" and "Enter social
+# security number" are kids of the page-1 fields and fill together, so they
+# are mapped ONCE.
+#
+# Line 25 ("Business tax credits — You must file this form electronically to
+# claim business tax credits on Form 500CR.") has NO money widget on the paper
+# form (it is e-file only).
+#
+# Radio / checkbox groups. Filing status (1-6) is ONE six-kid /Btn field
+# (group filing_status); deduction method ONE two-kid field (group
+# deduction_method); the line-22 Maryland-EIC boxes ONE two-kid field (group
+# 22_md_eic — the face prints the two line-22 sentences as separate "Check
+# this box if ..." statements with no "or" between them, but this blank gives
+# both kids ONE /V, so it can record only one of them: a filer who claims the
+# Maryland EIC without the federal EIC AND has a qualifying child must
+# hand-mark the second box on the printed form); 51a account type ONE two-kid field (group 51a_account_type).
+# Every other checkbox is its own single-widget field with the on_state read
+# from this blank's /AP /N (the two direct-deposit boxes /1 and /2, everything
+# else /Yes). The you/spouse pairs (exemption A, B 65-or-over, B blind, 10a,
+# 10b) are independent boxes on one printed row and sit in
+# SEPARATE_OPTION_SETS_ADJUDICATED (year-free keys).
+#
+# Money vs text. Every dollar box prints a ".00" cents marker or a separate
+# cents cell and is mapped `money`, except four whole-dollar boxes that print
+# neither (also `money`): the three line-49 sub-amount boxes (Text Box 86 / 87
+# / 88) and the military income amount. On page 3 from line 40 on the dollars and
+# cents are SEPARATE widgets: the dollar box is `money` and its 2-digit
+# companion is a `text maxlen 2` line keyed "<line>_cents" (line 39 prints
+# "00" and has none). Genuine text widgets stay text: names, addresses,
+# city/state/ZIP, foreign fields, the political-subdivision code/name, the SSN
+# boxes (maxlen 9, digits only), residence dates (single boxes, not combs),
+# "other state of residence" (2), the P/M legal-residence flag (1), the email
+# box, the additions/subtractions 2-letter code boxes (Text Field 5-12), the
+# exemption count boxes, the local-tax-rate box, bank routing/account,
+# telephones, PTIN, preparer name/address, and the 3-digit code-number boxes.
+#
+# Relations. Only unconditional sums/subtractions whose every operand is a
+# mapped money line and whose arithmetic the face prints are declared (6, 7,
+# 15, 16, 18, 20, 32, 34, 39, 44, 48, 50 and exemption D). Line 15 "Total
+# subtractions (Add lines 8 through 14. See instructions.)" adds 8, 9, 10a,
+# 10b, 11, 12, 13 and 14 — all mapped `money` lines; exemption D "Enter Total
+# Exemptions (Add A, B and C.)" adds the three exemption dollar boxes. The
+# "See instructions" on lines 6 and 15 is the Resident Booklet's Form 502LU
+# (legislative update) note: 502LU line 4 is added to line 6 and 502LU line 8
+# to line 15. The TY2024 Form 502LU (COM/RAD-009.1 08/24) prints every operand
+# line (1-3, 5-7, 9-11) as "Reserved for future use", so its lines 4 and 8 are
+# 0 and lines 6 and 15 are plain sums for this year; a later year whose 502LU
+# carries amounts must revisit both relations. Lines whose printed instruction
+# is conditional/floored ("If less than 0, enter 0" — 27, 33; "If line 39 is
+# more / less than line 44" branches — 45, 46), or whose sum includes the
+# unmapped e-file-only line 25 (line 26), are OMITTED per the conservative
+# house style. Line 17 is omitted too: it is 17a - 17b only under the ITEMIZED
+# method (the face prints "Subtract line 17b from line 17a and enter amount on
+# line 17."); standard-method filers enter the Worksheet 16A amount instead,
+# and part-year residents prorate line 17 (Instruction 26 l/m), so the
+# relation is conditional. The 2023 and
+# 2025 sibling packs do not declare 15 / exemption D (same face arithmetic).
+#
+# Cross_form. Line 1's printed label is "Adjusted gross income from your
+# federal return", i.e. federal AGI; the 2024 Form 1040 prints AGI on line 11,
+# so the single cross_form equality is 1 == f1040.11.
+form: Form 502
+jurisdiction: states/md
+tax_year: 2024
+source_url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2024/502.pdf
+pdf_sha256: e72500955f3c032c55896f32bdb3a14a09ef7cc4ca63303e2693eafa6ff80204
+acroform_root: ''
+fields:
+  # ============================================ PAGE 1 — header (fiscal year)
+  - line: fiscal_year_beginning         # OR FISCAL YEAR BEGINNING ____ 2024 (/MaxLen 5)
+    field: Enter day and month of Fiscal Year beginning
+    type: text
+    maxlen: 5
+  - line: fiscal_year_ending            # ENDING ____ (/MaxLen 10)
+    field: Enter day and month of Fiscal Year Ending
+    type: text
+    maxlen: 10
+  # ---- taxpayer / spouse identity
+  - line: tp_ssn                        # Your Social Security Number — /MaxLen 9 in 2024 (2023: none), so digits only; the SAME field repeats on pages 2-4
+    field: Enter social security number
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: spouse_ssn                    # Spouse's Social Security Number (/MaxLen 9)
+    field: Enter spouse's social security number
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: tp_first_name                 # Your First Name
+    field: Enter your first name
+    type: text
+  - line: tp_middle_initial             # MI (/MaxLen 1)
+    field: Enter your middle initial
+    type: text
+    maxlen: 1
+  - line: tp_last_name                  # Your Last Name — the SAME field repeats on pages 2-4
+    field: Enter your last name
+    type: text
+  - line: spouse_first_name             # Spouse's First Name
+    field: Enter Spouse's First Name
+    type: text
+  - line: spouse_middle_initial         # MI (/MaxLen 1)
+    field: Enter Spouse's middle initial
+    type: text
+    maxlen: 1
+  - line: spouse_last_name              # Spouse's Last Name
+    field: Enter Spouse's last name
+    type: text
+  # ---- current mailing address (hierarchical field names)
+  - line: mailing_address_line1
+    field: Enter Current Mailing Address Line 1 (Street No. and Street Name or PO Box)
+    type: text
+  - line: mailing_address_line2         # face: Current Mailing Address Line 2 (Apt No., Suite No., Floor No.)
+    field: Enter Current Mailing Address Line 2 (Street No. and Street Name or PO Box)
+    type: text
+  - line: mailing_city_or_town
+    field: Enter city or town
+    type: text
+  - line: mailing_state                 # 2-letter state abbreviation (no /MaxLen in 2024; the 14.9 pt box holds 2 at Courier 10)
+    field: Enter state
+    type: text
+    maxlen: 2
+  - line: mailing_zip                   # ZIP Code + 4 (/MaxLen 9)
+    field: Enter zip code + 4
+    type: text
+    maxlen: 9
+  - line: foreign_country_name
+    field: Enter foreign country name
+    type: text
+  - line: foreign_province_state_county # Foreign Province/State/County
+    field: Enter foreign country name 3
+    type: text
+  - line: foreign_postal_code           # Foreign Postal Code (/MaxLen 10 in 2024)
+    field: Enter foreign postal code
+    type: text
+    maxlen: 10
+  # ---- political subdivision / Maryland physical address (as of December 31, 2024)
+  - line: political_subdivision_code    # 4 Digit Political Subdivision Code (/MaxLen 4 in 2024)
+    field: Enter 4 Digit Political Subdivision Code (See Instruction 6)
+    type: text
+    maxlen: 4
+  - line: political_subdivision_name
+    field: Enter Maryland Political Subdivision (See Instruction 6)
+    type: text
+  - line: md_physical_address_line1
+    field: Enter Maryland Physical Address Line 1 (Street No. and Street Name) (No PO Box)
+    type: text
+  - line: md_physical_address_line2     # face: Line 2 (Apt No., Suite No., Floor No.) (No PO Box)
+    field: Enter Maryland Physical Address Line 2 No. and Street Name) (No PO Box)
+    type: text
+  - line: md_physical_city              # City (the State column prints MD)
+    field: Enter city
+    type: text
+  - line: md_physical_zip               # ZIP Code + 4 of the MD physical address (x 317; NEW name, 2023 '2 Enter zip code + 4'; the name says part-year, the face does not)
+    field: Enter part-year zip code + 4
+    type: text
+    maxlen: 9
+  - line: md_physical_county            # Maryland County (x 389; NEW name, 2023 'Enter zip code + 5')
+    field: Maryland County
+    type: text
+  # ---- Filing status (CHECK ONE BOX) — ONE six-kid /Btn field in 2024; on_states re-dumped from this blank's /AP /N
+  - line: filing_status_1_single        # 1. Single
+    field: Check One Box
+    type: checkbox
+    group: filing_status
+    on_state: /Single
+  - line: filing_status_2_mfj           # 2. Married filing joint return or spouse had no income
+    field: Check One Box
+    type: checkbox
+    group: filing_status
+    on_state: /Married filing joint return or spouse had no income
+  - line: filing_status_3_mfs           # 3. Married filing separately, Spouse SSN
+    field: Check One Box
+    type: checkbox
+    group: filing_status
+    on_state: /Married Filing separately
+  - line: filing_status_3_spouse_ssn    # Spouse SSN on the MFS line (NEW name; /MaxLen 9)
+    field: Enter spouse's social security number (SSN)
+    type: text
+    maxlen: 9
+    format: ssn_digits_only
+  - line: filing_status_4_hoh           # 4. Head of household
+    field: Check One Box
+    type: checkbox
+    group: filing_status
+    on_state: /Head of household
+  - line: filing_status_5_qss           # 5. Qualifying surviving spouse with dependent child (the state name ends in a space)
+    field: Check One Box
+    type: checkbox
+    group: filing_status
+    on_state: '/Qualifying surviving spouse with dependent child '
+  - line: filing_status_6_dependent     # 6. Dependent taxpayer (Enter 0 in Exemption Box (A) - See Instruction 7.)
+    field: Check One Box
+    type: checkbox
+    group: filing_status
+    on_state: /Dependent taxpayer (Enter 0 in Exemption Box (A) -  See Instruction 7.)
+  # ---- Part-year resident
+  - line: md_residence_from             # Dates of Maryland Residence (MM DD YYYY) FROM — one box, not a comb (/MaxLen 10)
+    field: Enter dates of Maryland Residence from MM/DD/YYYY
+    type: text
+    maxlen: 10
+  - line: md_residence_to               # TO — the box after the printed TO (/MaxLen 10)
+    field: Enter dates of Maryland Residence to MM/DD/YYYY
+    type: text
+    maxlen: 10
+  - line: other_state_of_residence      # Other state of residence (/MaxLen 2)
+    field: Text Field 14
+    type: text
+    maxlen: 2
+  - line: legal_residence_pm_flag       # place a P (began or ended legal residence in Maryland in 2024) or an M (MILITARY) in the box; the widget NAME still says 2023 (/MaxLen 1)
+    field: "If you began or ended legal residence in Maryland in 2023 place a P in the box.\rMILITARY: If you or "
+    type: text
+    maxlen: 1
+  - line: military_income_amount        # Enter Military Income amount here:
+    field: Enter Military Income amount here
+    type: money
+  # ====================================== PAGE 2 — EXEMPTIONS (boxes A / B / C / D)
+  # OMITTED on pages 2-4: the page-2/3/4 kids of 'Enter your last name' and 'Enter social security number' — same fields as page 1.
+  - line: exemption_A_yourself          # A. Yourself
+    field: Check Box 15
+    type: checkbox
+    on_state: /Yes
+  - line: exemption_A_spouse            # A. Spouse
+    field: Check Box 18
+    type: checkbox
+    on_state: /Yes
+  - line: exemption_A_number_checked    # Enter number checked (13.9 pt count box)
+    field: Text Field 15
+    type: text
+    maxlen: 2
+  - line: exemption_A_amount            # A. $
+    field: Enter A $
+    type: money
+  - line: exemption_B_65_or_over_you    # B. 65 or over — you (left column)
+    field: Check Box 20
+    type: checkbox
+    on_state: /Yes
+  - line: exemption_B_65_or_over_spouse # B. 65 or over — spouse (right column)
+    field: Check Box 21
+    type: checkbox
+    on_state: /Yes
+  - line: exemption_B_blind_you         # B. Blind — you
+    field: B. Check this box if you are blind
+    type: checkbox
+    on_state: /Yes
+  - line: exemption_B_blind_spouse      # B. Blind — spouse
+    field: B. Check this box if your spouse is blind
+    type: checkbox
+    on_state: /Yes
+  - line: exemption_B_number_checked    # Enter number checked. X $1,000 (13.9 pt count box)
+    field: B. Enter number exemptions checked B
+    type: text
+    maxlen: 2
+  - line: exemption_B_amount            # B. $
+    field: 'Enter B $ '
+    type: money
+  - line: exemption_C_number_from_502B  # C. Enter number from line 3 of Dependent Form 502B (13.9 pt count box)
+    field: Text Field 16
+    type: text
+    maxlen: 2
+  - line: exemption_C_amount            # C. $
+    field: 'Enter C $ '
+    type: money
+  - line: exemption_D_total_number      # D. Enter Total Exemptions (Add A, B and C.) (13.9 pt count box)
+    field: Text Field 17
+    type: text
+    maxlen: 2
+  - line: exemption_D_amount            # Total Amount D. $
+    field: 'D. Enter Dollar Amount Total Exemptions (Add A, B and C.) '
+    type: money
+  # ---- Maryland Health Care Coverage
+  - line: healthcare_you_no_coverage    # Check here If you do not have health care coverage
+    field: Check Box 27
+    type: checkbox
+    on_state: /Yes
+  - line: healthcare_you_dob            # DOB (mm/dd/yyyy) (/MaxLen 10)
+    field: Enter DOB if you have no healthcare
+    type: text
+    maxlen: 10
+  - line: healthcare_spouse_no_coverage # Check here If your spouse does not have health care coverage
+    field: Check Box 28
+    type: checkbox
+    on_state: /Yes
+  - line: healthcare_spouse_dob         # DOB (mm/dd/yyyy) (/MaxLen 10)
+    field: Enter DOB if your spouse has no healthcare
+    type: text
+    maxlen: 10
+  - line: healthcare_authorize_comptroller # Check here — I authorize the Comptroller of Maryland to share information from this tax return with Maryland Health Connection
+    field: Check Box 29
+    type: checkbox
+    on_state: /Yes
+  - line: email_address                 # E-mail address
+    field: Enter email addressEnter DOB if your spouse has no healthcare 2
+    type: text
+  # ---- INCOME (See Instruction 11)
+  - line: "1"                           # Adjusted gross income from your federal return (federal AGI)
+    field: Enter 1
+    type: money
+  - line: 1a                            # Wages, salaries and/or tips
+    field: Enter 1a
+    type: money
+  - line: 1b                            # Earned income
+    field: Enter 1b
+    type: money
+  - line: 1c                            # Capital Gain or (loss)
+    field: Enter 1c
+    type: money
+  - line: 1d                            # Taxable Pensions, IRAs, Annuities (Attach Form 502R.)
+    field: Enter 1dEnter 1d
+    type: money
+  - line: 1e_investment_income_over_11000 # 1e. Place a "Y" in this box if the amount of your investment income is more than $11,600 (2024 face; the key and the widget NAME keep 2023's $11,000)
+    field: Enter Y of income more than $11,000
+    type: text
+    maxlen: 1
+  # ---- ADDITIONS TO MARYLAND INCOME (See Instruction 12)
+  - line: "2"                           # Tax-exempt interest on state and local obligations (bonds) other than Maryland
+    field: Enter 2
+    type: money
+  - line: "3"                           # State retirement pickup
+    field: Enter 3
+    type: money
+  - line: "4"                           # Lump sum distributions (from worksheet in Instruction 12.)
+    field: Enter 4
+    type: money
+  - line: 5_code_1                      # Other additions — code letter(s) from Instruction 12 (box 1)
+    field: Text Field 5
+    type: text
+    maxlen: 2
+  - line: 5_code_2
+    field: Text Field 6
+    type: text
+    maxlen: 2
+  - line: 5_code_3
+    field: Text Field 7
+    type: text
+    maxlen: 2
+  - line: 5_code_4
+    field: Text Field 8
+    type: text
+    maxlen: 2
+  - line: "5"                           # Other additions amount
+    field: Enter 5
+    type: money
+  - line: "6"                           # Total additions (Add lines 2 through 5. See instructions.)
+    field: Enter 6
+    type: money
+  - line: "7"                           # Total federal adjusted gross income and Maryland additions (Add lines 1 and 6.)
+    field: Enter 7
+    type: money
+  # ---- SUBTRACTIONS FROM MARYLAND INCOME (See Instruction 13)
+  - line: "8"                           # Taxable refunds, credits or offsets of state and local income taxes included in line 1
+    field: Enter 8
+    type: money
+  - line: "9"                           # Child and dependent care expenses
+    field: Enter 9
+    type: money
+  - line: 10a_pension_exclusion_you     # Pension exclusion (13A) Yourself
+    field: Check Box 30
+    type: checkbox
+    on_state: /Yes
+  - line: 10a_pension_exclusion_spouse  # Pension exclusion (13A) Spouse
+    field: Check Box 31
+    type: checkbox
+    on_state: /Yes
+  - line: 10a                           # Pension exclusion from worksheet (13A) amount
+    field: Enter 10a
+    type: money
+  - line: 10b_ranger_pension_you        # Ranger pension exclusion (13E) Yourself
+    field: Check Box 32
+    type: checkbox
+    on_state: /Yes
+  - line: 10b_ranger_pension_spouse     # Ranger pension exclusion (13E) Spouse
+    field: Check Box 33
+    type: checkbox
+    on_state: /Yes
+  - line: 10b                           # Ranger pension exclusion from worksheet (13E) amount
+    field: Enter 10b
+    type: money
+  - line: "11"                          # Taxable Social Security and RR benefits (Tier I, II and supplemental) included in line 1
+    field: Enter 11
+    type: money
+  - line: "12"                          # Income received during period of nonresidence (See Instruction 26.)
+    field: Enter 12
+    type: money
+  - line: 13_code_1                     # Subtractions from attached Form 502SU — code letter(s) (box 1)
+    field: Text Field 9
+    type: text
+    maxlen: 2
+  - line: 13_code_2
+    field: Text Field 10
+    type: text
+    maxlen: 2
+  - line: 13_code_3
+    field: Text Field 11
+    type: text
+    maxlen: 2
+  - line: 13_code_4
+    field: Text Field 12
+    type: text
+    maxlen: 2
+  - line: "13"                          # Subtractions from attached Form 502SU amount
+    field: Enter 13
+    type: money
+  - line: "14"                          # Two-income subtraction from worksheet in Instruction 13
+    field: Enter 14
+    type: money
+  - line: "15"                          # Total subtractions (Add lines 8 through 14. See instructions.)
+    field: Enter 15
+    type: money
+  - line: "16"                          # Maryland adjusted gross income (Subtract line 15 from line 7.)
+    field: Enter 16
+    type: money
+  # ---- DEDUCTION METHOD (See Instruction 16) — ONE two-kid /Btn field in 2024 (2023: two fields)
+  - line: deduction_method_standard     # STANDARD DEDUCTION METHOD (Enter amount on line 17.)
+    field: Check Box 34
+    type: checkbox
+    group: deduction_method
+    on_state: /1
+  - line: deduction_method_itemized     # ITEMIZED DEDUCTION METHOD (Complete lines 17a and 17b.)
+    field: Check Box 34
+    type: checkbox
+    group: deduction_method
+    on_state: /2
+  - line: 17a                           # Total federal itemized deductions (from line 17, federal Schedule A)
+    field: 'Enter 17a '
+    type: money
+  - line: 17b                           # State and local income taxes (See Instruction 14.)
+    field: Enter 17b
+    type: money
+  - line: "17"                          # Deduction amount (Part-year residents see Instruction 26 (l and m))
+    field: Enter 17
+    type: money
+  - line: "18"                          # Net income (Subtract line 17 from line 16.)
+    field: Enter 18
+    type: money
+  - line: "19"                          # Exemption amount from Exemptions area (See Instruction 10.)
+    field: 'Enter 19 '
+    type: money
+  - line: "20"                          # Taxable net income (Subtract line 19 from line 18.)
+    field: Enter 20
+    type: money
+  # ============================================ PAGE 3 — MARYLAND TAX COMPUTATION
+  - line: "21"                          # Maryland tax (from Tax Table or Computation Worksheet Schedules I or II)
+    field: Text Box 30
+    type: money
+  - line: 21a                           # Recaptured credit from Part DD, line 1 of Form 502CR. (Attach Form 502CR)
+    field: Text Box 32
+    type: money
+  - line: "22"                          # Earned income credit (EIC) (See Instruction 18.)
+    field: Text Box 34
+    type: money
+  - line: 22_md_eic_no_federal          # Check this box if you are claiming the Maryland Earned Income Credit, but do not qualify for the federal Earned Income Credit (upper kid)
+    field: Check Box 36
+    type: checkbox
+    group: 22_md_eic
+    on_state: /Check this box if you are claiming the Maryland Earned Income Credit, but do not qualify for the federal Earned Income Credit.
+  - line: 22_md_eic_qualifying_child    # Check this box if you are claiming the Maryland Earned Income Credit with a qualifying child (lower kid; 2023 'Check Box 37')
+    field: Check Box 36
+    type: checkbox
+    group: 22_md_eic
+    on_state: /Check this box if you are claiming the Maryland Earned Income Credit with a qualifying child.
+  - line: "23"                          # Poverty level credit (See Instruction 18.)
+    field: Text Box 36
+    type: money
+  - line: "24"                          # Other income tax credits for individuals from Part AA, line 14 of Form 502CR (Attach Form 502CR.)
+    field: Text Box 38
+    type: money
+  # line 25 (Business tax credits) — e-file only (Form 500CR), no money widget on the paper form (OMITTED)
+  - line: "26"                          # Total credits (Add lines 22 through 25.)
+    field: Text Box 40
+    type: money
+  - line: "27"                          # Maryland tax after credits (Add lines 21 and 21a, then subtract line 26.) If less than 0, enter 0
+    field: Text Box 42
+    type: money
+  # ---- LOCAL TAX COMPUTATION
+  - line: local_tax_rate                # line 28 'your local tax rate .0____' — the digits after the printed .0; 28.6 pt box at Courier 7 (4.2 pt a glyph) holds the widget's /MaxLen 6
+    field: Enter local tax rate
+    type: text
+    maxlen: 6
+  - line: "28"                          # Local tax (Multiply line 20 by your local tax rate or use the Local Tax Worksheet)
+    field: Text Box 44
+    type: money
+  - line: "29"                          # Local earned income credit (from Local Earned Income Credit Worksheet in Instruction 19.)
+    field: Text Box 46
+    type: money
+  - line: "30"                          # Local poverty level credit (from Local Poverty Level Credit Worksheet in Instruction 19.)
+    field: Text Box 48
+    type: money
+  - line: "31"                          # Local tax credit from Part BB, line 1 of Form 502CR (Attach Form 502CR.)
+    field: Text Box 50
+    type: money
+  - line: "32"                          # Total credits (Add lines 29 through 31.)
+    field: Text Box 52
+    type: money
+  - line: "33"                          # Local tax after credits (Subtract line 32 from line 28.) If less than 0, enter 0
+    field: Text Box 54
+    type: money
+  - line: "34"                          # Total Maryland and local tax (Add lines 27 and 33.)
+    field: Text Box 56
+    type: money
+  # ---- CONTRIBUTIONS (See Instruction 20)
+  - line: "35"                          # Contribution to Chesapeake Bay and Endangered Species Fund
+    field: Text Box 58
+    type: money
+  - line: "36"                          # Contribution to Developmental Disabilities Services and Support Fund
+    field: Text Box 60
+    type: money
+  - line: "37"                          # Contribution to Maryland Cancer Fund
+    field: Text Box 62
+    type: money
+  - line: "38"                          # Contribution to Fair Campaign Financing Fund
+    field: Text Box 64
+    type: money
+  # ---- totals & payments (lines 39-50; dollars + a separate 2-digit cents box from line 40 on)
+  - line: "39"                          # Total Maryland income tax, local income tax and contributions (Add lines 34 through 38.) — prints 00, no cents box in 2024 (2023's Text Box 67 is gone)
+    field: Text Box 66
+    type: money
+  - line: "40"                          # Total Maryland and local tax withheld (Enter total from your W-2 and 1099 forms and attach if MD tax is withheld.)
+    field: Text Box 68
+    type: money
+  - line: 40_cents
+    field: Text Box 69
+    type: text
+    maxlen: 2
+  - line: "41"                          # 2024 estimated tax payments, amount applied from 2023 return, payment made with an extension request, and Form MW506NRS
+    field: Text Box 70
+    type: money
+  - line: 41_cents
+    field: Text Box 71
+    type: text
+    maxlen: 2
+  - line: "42"                          # Refundable earned income credit (from worksheet in Instruction 21)
+    field: Text Box 72
+    type: money
+  - line: 42_cents
+    field: Text Box 73
+    type: text
+    maxlen: 2
+  - line: "43"                          # Refundable income tax credits from Part CC, line 10 of Form 502CR (Attach Form 502CR and/or Schedule K-1 (Forms 510/511), if applicable.)
+    field: Text Box 74
+    type: money
+  - line: 43_cents
+    field: Text Box 75
+    type: text
+    maxlen: 2
+  - line: "44"                          # Total payments and credits (Add lines 40 through 43.)
+    field: Text Box 76
+    type: money
+  - line: 44_cents
+    field: Text Box 77
+    type: text
+    maxlen: 2
+  - line: "45"                          # Balance due (If line 39 is more than line 44, subtract line 44 from line 39. See Instruction 22.)
+    field: Text Box 78
+    type: money
+  - line: 45_cents
+    field: Text Box 79
+    type: text
+    maxlen: 2
+  - line: "46"                          # Overpayment (If line 39 is less than line 44, subtract line 39 from line 44.)
+    field: Text Box 80
+    type: money
+  - line: 46_cents
+    field: Text Box 81
+    type: text
+    maxlen: 2
+  - line: "47"                          # Amount of overpayment TO BE APPLIED TO 2025 ESTIMATED TAX
+    field: Text Box 82
+    type: money
+  - line: 47_cents
+    field: Text Box 83
+    type: text
+    maxlen: 2
+  - line: "48"                          # Amount of overpayment TO BE REFUNDED TO YOU (Subtract line 47 from line 46.) See line 51. REFUND
+    field: Text Box 84
+    type: money
+  - line: 48_cents
+    field: Text Box 85
+    type: text
+    maxlen: 2
+  # ---- line 49 — Form 502UP / interest charges (three amount boxes on the printed row, then the line-49 total)
+  - line: 49_attach_502up               # Check here if you are attaching Form 502UP
+    field: Check Box 38
+    type: checkbox
+    on_state: /Yes
+  - line: 49_interest_from_line18       # Enter interest charges from Line 18, — the box that opens the second printed row (x 130; /MaxLen 6)
+    field: Text Box 86
+    type: money
+    maxlen: 6
+  - line: 49_late_filing                # or for late filing_ — (x 238; /MaxLen 6)
+    field: Text Box 87
+    type: money
+    maxlen: 6
+  - line: 49_homebuyer_penalty          # or homebuyer withdrawal penalty — (x 410; /MaxLen 6)
+    field: Text Box 88
+    type: money
+    maxlen: 6
+  - line: "49"                          # line 49 total
+    field: Text Box 89
+    type: money
+  - line: 49_cents
+    field: Text Box 90
+    type: text
+    maxlen: 2
+  - line: "50"                          # TOTAL AMOUNT DUE (Add lines 45 and 49.) IF $1 OR MORE, PAY IN FULL WITH THIS RETURN. INCLUDE FORM PV.
+    field: Text Box 91
+    type: money
+  - line: 50_cents
+    field: Text Box 92
+    type: text
+    maxlen: 2
+  # ============================================ PAGE 4 — DIRECT DEPOSIT (51a-51d) / SIGNATURE
+  - line: direct_deposit_authorize      # Check here if you authorize the State of Maryland to issue your refund by direct deposit (NEW name; on_state /1)
+    field: Check Box 54
+    type: checkbox
+    on_state: /1
+  - line: direct_deposit_outside_us     # Check here if this refund will go to an account outside of the United States (NEW name; its own field; on_state /2)
+    field: Check Box 541
+    type: checkbox
+    on_state: /2
+  - line: 51a_account_type_checking     # 51a. Type of account: Checking (one two-kid field with Savings)
+    field: Check Box 52
+    type: checkbox
+    group: 51a_account_type
+    on_state: /Checking
+  - line: 51a_account_type_savings      # 51a. Savings
+    field: Check Box 52
+    type: checkbox
+    group: 51a_account_type
+    on_state: /Savings
+  - line: 51b_routing_number            # 51b. Routing Number (9-digits) (NEW name; /MaxLen 9)
+    field: Text Box 111
+    type: text
+    maxlen: 9
+  - line: 51c_account_number            # 51c. Account Number (NEW name; /MaxLen 17)
+    field: Text Box 110
+    type: text
+    maxlen: 17
+  - line: 51d_account_name              # 51d. Name(s) as it appears on the bank account (the widget named 'Text Box 102' was 2023's preparer name)
+    field: Text Box 102
+    type: text
+  - line: daytime_telephone             # Daytime telephone no.
+    field: Text Box 96
+    type: text
+  - line: home_telephone                # Home telephone no.
+    field: Text Box 97
+    type: text
+  - line: code_number_1                 # CODE NUMBERS (3 digits per line) (/MaxLen 3)
+    field: Text Box 98
+    type: text
+    maxlen: 3
+  - line: code_number_2
+    field: Text Box 99
+    type: text
+    maxlen: 3
+  - line: code_number_3
+    field: Text Box 100
+    type: text
+    maxlen: 3
+  # ---- preparer / signature authorizations (each box sits between 'Check here' and its 'if you ...' sentence)
+  - line: authorize_preparer_discuss    # Check here if you authorize your preparer to discuss this return with us (x 87, upper row; 2023 'Check Box 45')
+    field: Check Box 50
+    type: checkbox
+    on_state: /Yes
+  - line: authorize_preparer_not_efile  # Check here if you authorize your paid preparer not to file electronically (x 418, upper row; 2023 'Check Box 47')
+    field: Check Box 49
+    type: checkbox
+    on_state: /Yes
+  - line: authorize_1099g_electronic    # Check here if you agree to receive your 1099G Income Tax Refund statement electronically (See Instruction 24.) (x 238, lower row; 2023 'Check Box 46')
+    field: Check Box 48
+    type: checkbox
+    on_state: /Yes
+  # The two date boxes carry /MaxLen 10 in 2024 and are 71.9 pt wide at Courier 10 (6 pt a character): MM/DD/YYYY fits (2023: 50.4 / 48.2 pt, no /MaxLen, capped at 8).
+  - line: your_signature_date           # Your signature — Date
+    field: Text Box 101
+    type: text
+    maxlen: 10
+  - line: spouse_signature_date         # Spouse's signature — Date
+    field: Text Box 103
+    type: text
+    maxlen: 10
+  - line: preparer_name                 # Printed name of the Preparer / or Firm's name (NEW widget; 2023 bound 'Text Box 102')
+    field: Text Box 108
+    type: text
+  - line: preparer_street_address       # Street address of preparer or Firm's address
+    field: Text Box 104
+    type: text
+  - line: preparer_city_state_zip       # City, State, ZIP Code + 4
+    field: Text Box 105
+    type: text
+  - line: preparer_telephone            # Telephone number of preparer
+    field: Text Box 106
+    type: text
+  - line: preparer_ptin                 # Preparer's PTIN (Required by Law) (/MaxLen 9)
+    field: Text Box 107
+    type: text
+    maxlen: 9
+relations:
+  - "6 == 2 + 3 + 4 + 5"                 # line 6 "Total additions (Add lines 2 through 5. See instructions.)"
+  - "7 == 1 + 6"                         # line 7 "(Add lines 1 and 6.)"
+  - "15 == 8 + 9 + 10a + 10b + 11 + 12 + 13 + 14"  # line 15 "Total subtractions (Add lines 8 through 14. See instructions.)"
+  - "16 == 7 - 15"                       # line 16 "Maryland adjusted gross income (Subtract line 15 from line 7.)"
+  - "18 == 16 - 17"                      # line 18 "Net income (Subtract line 17 from line 16.)"
+  - "20 == 18 - 19"                      # line 20 "Taxable net income (Subtract line 19 from line 18.)"
+  - "32 == 29 + 30 + 31"                 # line 32 "Total credits (Add lines 29 through 31.)"
+  - "34 == 27 + 33"                      # line 34 "Total Maryland and local tax (Add lines 27 and 33.)"
+  - "39 == 34 + 35 + 36 + 37 + 38"       # line 39 "(Add lines 34 through 38.)"
+  - "44 == 40 + 41 + 42 + 43"            # line 44 "Total payments and credits (Add lines 40 through 43.)"
+  - "48 == 46 - 47"                      # line 48 "Amount of overpayment TO BE REFUNDED TO YOU (Subtract line 47 from line 46.) See line 51."
+  - "50 == 45 + 49"                      # line 50 "TOTAL AMOUNT DUE (Add lines 45 and 49.)"
+  - "exemption_D_amount == exemption_A_amount + exemption_B_amount + exemption_C_amount"  # exemption D "Enter Total Exemptions (Add A, B and C.) ... Total Amount D. $"
+cross_form:
+  - "1 == f1040.11"                      # line 1 "Adjusted gross income from your federal return" = 2024 Form 1040 line 11 (AGI)
+identity_fields:
+  - tp_ssn
+  - tp_first_name
+  - tp_last_name
