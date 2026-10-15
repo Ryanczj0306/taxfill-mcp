@@ -109,15 +109,28 @@ credits:
     and live in a household where the total income of all its members is less than $45,000. Available even to those
     with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal under Individuals).
     One credit per household.
-  amount: Refundable credit of up to $1,150. The exact amount is determined by the household income / rent / property-tax
-    formula on Schedule 2EC (for 2025 the long-term care facility rent worksheet was renamed from Worksheet D to
-    Worksheet C).
+  amount: 'Refundable credit of up to $1,150, computed on Schedule 2EC (2025 Form 2, page 10): gross household income
+    (line 18, the sum of lines 1-17) minus the STANDARD EXCLUSION of $12,600 pre-printed on line 19 ("Your standard
+    exclusion is entered here for you"; instructions p.40: "You must first deduct $12,600 from your gross household
+    income"), not less than zero (line 20), times the Household Income Reduction Table multiplier (line 21: 0 when
+    line 20 is $0-$1,999, then 0.006 / 0.016 / 0.024 / 0.028 / 0.032 / 0.035 / 0.039 / 0.042 / 0.045 / 0.048 for
+    each $1,000 band from $2,000 through $11,999, and 0.05 at $12,000 and greater) = net household income (line 22).
+    Property tax billed on the Montana residence and up to one acre (line 23) plus 15% (0.15) of rent paid (lines
+    24-25), minus line 22, not less than zero (line 27), capped at $1,150 (line 28: "Enter the lesser of line 27 or
+    $1,150"), times the Credit Multiplier Table percentage keyed to gross household income on line 18 (line 29: 100%
+    below $35,000; 40% $35,000-$37,500; 30% $37,501-$40,000; 20% $40,001-$42,500; 10% $42,501-$44,999; 0% at $45,000
+    and greater) = the credit on line 30, carried to Form 2, page 1, line 16. For 2025 the long-term care facility
+    rent worksheet was renamed from Worksheet D to Worksheet C (What''s New); the p.41 Line 24 text still calls it
+    "Worksheet D".'
   income_limit_2025: Total household income of all household members must be less than $45,000.
   claimed_on: Schedule 2EC (Elderly Homeowner/Renter Credit), carried to Form 2, page 1, line 16
   citation:
     source: 2025 Montana Form 2 Instructions, Line 16 - Elderly Homeowner/Renter Credit ('a refundable tax credit
       of up to $1,150'; household income less than $45,000; age 62 or older; more than nine months in Montana; six
-      months or more as renter/owner/lessee) and the Schedule 2EC instructions
+      months or more as renter/owner/lessee) and the Schedule 2EC instructions, p.40-41 (Net Household Income 'You
+      must first deduct $12,600 from your gross household income', Household Income Reduction Table, Line 29 Credit
+      Multiplier Table); 2025 Form 2, page 10, Schedule 2EC line 19 pre-printed 12,600, line 25 'Multiply line 24 by
+      15% (0.15)', line 28 'Enter the lesser of line 27 or $1,150'
     url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
 - name: Montana Adoption Credit
   type: refundable
@@ -203,7 +216,9 @@ all_citations:
     amounts on line 5 ($21,100 single or married filing separately / $42,200 married filing jointly or qualifying
     surviving spouse / $31,700 head of household), the 3% (0.03) multiplier on line 8 and 4.1% (0.041) on line 10,
     the Montana Ordinary Income Tax Table reference on line 12, and the Montana resident tax on line 13; page 1 line
-    15 "Multiply Federal EIC by 10% (0.10)"'
+    15 "Multiply Federal EIC by 10% (0.10)"; page 3 Schedule I Part II line 2 "Total contributions for the year (up
+    to $4,600 per taxpayer)"; page 10 Schedule 2EC line 19 "Your standard exclusion is entered here for you" pre-printed
+    12,600, line 25 15% (0.15), line 28 "Enter the lesser of line 27 or $1,150"'
   url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf
 - source: Montana DOR — Montana Individual Income Tax Return (Form 2) publication page
   url: https://revenue.mt.gov/publications/montana-individual-income-tax-return-form-2
@@ -212,8 +227,10 @@ unverified:
   tax-treaty-exempt income; conformity is inferred (high confidence) from the federal-taxable-income starting point
   plus the absence of any treaty add-back among the enumerated Schedule I addition lines. Recommend confirming treaty
   treatment with the MT DOR for any case with treaty-specific facts.
-- The Elderly Homeowner/Renter Credit amount (up to $1,150) and $45,000 household-income limit are from the 2025
-  instructions Line 16 text; the full Schedule 2EC computation was not re-derived line-by-line this pass.
+- The Schedule 2EC computation was read line-by-line from the 2025 instructions p.40-41 and the 2025 Form 2 page
+  10 face (the $12,600 standard exclusion, the Household Income Reduction Table, the 15% rent factor, the $1,150
+  cap, the Credit Multiplier Table); the long-term care Worksheet C and the list of items excluded from rent
+  equivalent were captured by purpose only.
 - The full text of HB 337 was not pulled; the pack relies on the instructions' own What's New statement that its
   rate cut, wider brackets, and 20% EITC begin with tax year 2026 (with a further reduction in 2027), and on the
   2026/2027 tax tables printed on p.42 of the booklet (2026 top rate 5.65% at $47,500 single / $95,000 MFJ / $71,250
@@ -312,6 +329,18 @@ tax:
   - 'Age 65+ subtraction NOT applied by the op: the $5,660 ($11,320 MFJ both 65+) line 6 subtraction is disclosed
     as an informational ''age_65'' key but calc.state_tax does not subtract it — the supplied line 7 base must already
     reflect it (it is a return line, not an engine adjustment). The amount is adjusted annually for inflation.'
+  - 'Montana Medical Savings Account (MSA) subtraction NOT applied by the op: a Montana-resident account holder (self-
+    or employer-established account for eligible medical expenses) subtracts contributions plus the account''s earnings
+    on Schedule I, Part II — 2025 Form 2, page 3, line 2 "Total contributions for the year (up to $4,600 per taxpayer)";
+    2025 Montana Form 2 Instructions p.22 (Schedule I Part II): "In 2025 contributions are limited to $4,600" and
+    "limited to $4,600 for each taxpayer in 2025 ... Each spouse can contribute up to $4,600 to their own account"
+    (married-filing-jointly spouses must establish SEPARATE accounts; their amounts are combined on the return).
+    Line 3 adds the year''s earnings (not earnings tax-exempt for federal or Montana purposes); line 4 (lines 2 + 3)
+    goes to Schedule I, Part I, line 14 and so into Form 2, page 1, line 5 Montana subtractions — already inside
+    the supplied line 7 base. The amounts must be included in federal taxable income to be subtracted, and the MSA
+    is distinct from the federal HSA (Form 1040, Schedule 1, line 13): a taxpayer may have both, but one account
+    cannot be both. Nonqualified withdrawals (Part II line 8) are an ADDITION on Schedule I, Part I, line 3, and
+    those subject to penalty (line 10) carry a 10% penalty on Schedule IV, line 6.'
   - Montana EITC (Form 2, page 1, line 15 = 10% of the federal EITC for 2025) is a refundable CREDIT — NOT modeled
     by this op. Nonrefundable credits (Schedule III Part I, to page 1 line 9) and refundable credits (Schedule III
     Part I lines 15-16, e.g. the $7,500/$5,000 Adoption Credit, and the up-to-$1,150 Elderly Homeowner/Renter Credit
