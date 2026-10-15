@@ -1227,6 +1227,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # JS5: WV IT-140 2024 (a RE-MAP of WV 2023: page 2 and Schedule M renumbered, page-1 header widgets unchanged) equals
     # the reviewed WV 2023 row (mailing_address street / street2 / city / state / zip); Schedule H's physician address is
     # not a filer address line.
+    # JS6: AL Form 40NR 2023 (a NEW pack, no base year) selects exactly ADDRESS, CITY, STATE, ZIP — the reviewed AL Form 40
+    # 2023 row; FOREIGNCOUNTRY, PREPADDRESS / PREPZIP and the Part VI employer-address lines are not selected.
     import json
     from pathlib import Path
 

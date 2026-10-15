@@ -187,6 +187,45 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     ("states/nj/2025/nj1040/pack.yaml", "line65_nj_child_tax_credit_d01"):
         "the thousands digit, one printed cell (14.9 pt at 9 pt, fits 3); its row neighbours carry /MaxLen 1, this "
         "comb widget the DOR's 2",
+    # AL Form 40NR 2023 (JS5, a NEW pack): Courier boxes too narrow for the DOR's /MaxLen; the budget is verify's 0.6-em
+    # Courier metric, width / (0.6 x font size).
+    ("states/al/2023/al40nr/pack.yaml", "FIRSTNAME"): "the page-1 first name, 98.6 pt at Courier 12 fits 13; the widget says 20",
+    ("states/al/2023/al40nr/pack.yaml", "LASTNAME"): "the page-1 last name, 135.6 pt at Courier 12 fits 18; the widget says 20",
+    ("states/al/2023/al40nr/pack.yaml", "SPOUSEFIRSTNAME"): "the page-1 spouse's first name, 98.6 pt at Courier 12 fits 13; the widget says 20",
+    ("states/al/2023/al40nr/pack.yaml", "SPOUSELASTNAME"): "the page-1 spouse's last name, 135.6 pt at Courier 12 fits 18; the widget says 30",
+    ("states/al/2023/al40nr/pack.yaml", "SCHOCLINE1PC"): "a Schedule OC (page 7) text box, 117.5 pt at Courier 10 fits 19; the widget says 20",
+    ("states/al/2023/al40nr/pack.yaml", "SCHOCLINE2CPL"): "a Schedule OC (page 9) text box, 54.0 pt at Courier 10 fits 9; the widget says 15",
+    ("states/al/2023/al40nr/pack.yaml", "SCHAATCLN6"): "a Schedule AATC (page 14) text box, 147.8 pt at Courier 10 fits 24; the widget says 30",
+    # the Schedule AAC (page 15) Part I / II adoptee grid (Courier 9, centred): one glyph under verify's budget (two in
+    # column C) so the centred text clears the printed bullet at each cell's left edge on the render
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part I column A, 116.6 pt at Courier 9 fits 21, held to 20 to clear the bullet; the widget says 30"
+       for k in ("SCHAACPRTILN1", "SCHAACPRTILN7", "SCHAACPRTILN13", "SCHAACPRTILN19", "SCHAACPRTILN25")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part I column C, 81.7 pt at Courier 9 fits 15, held to 13 to clear the bullet; the widget says 30"
+       for k in ("SCHAACPRTILN3", "SCHAACPRTILN9")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part I column C, 81.7 pt at Courier 9 fits 15, held to 13 to clear the bullet; the widget says 60"
+       for k in ("SCHAACPRTILN15",)},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part I column D, 118.6 pt at Courier 9 fits 21, held to 20 to clear the bullet; the widget says 30"
+       for k in ("SCHAACPRTILN4", "SCHAACPRTILN10", "SCHAACPRTILN16", "SCHAACPRTILN22", "SCHAACPRTILN28")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part I column E, 149.6 pt at Courier 9 fits 27, held to 26 to clear the bullet; the widget says 30"
+       for k in ("SCHAACPRTILN5", "SCHAACPRTILN11", "SCHAACPRTILN17", "SCHAACPRTILN23", "SCHAACPRTILN29")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part I column F, 180.8 pt at Courier 9 fits 33, held to 32 to clear the bullet; the widget says 60"
+       for k in ("SCHAACPRTILN6", "SCHAACPRTILN12", "SCHAACPRTILN18", "SCHAACPRTILN24", "SCHAACPRTILN30")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part II column A, 116.6 pt at Courier 9 fits 21, held to 20 to clear the bullet; the widget says 30"
+       for k in ("SCHAACPRTIILN1", "SCHAACPRTIILN7", "SCHAACPRTIILN13", "SCHAACPRTIILN19", "SCHAACPRTIILN25")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part II column C, 81.7 pt at Courier 9 fits 15, held to 13 to clear the bullet; the widget says 30"
+       for k in ("SCHAACPRTIILN3", "SCHAACPRTIILN9")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part II column C, 81.7 pt at Courier 9 fits 15, held to 13 to clear the bullet; the widget says 60"
+       for k in ("SCHAACPRTIILN15",)},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part II column D, 118.6 pt at Courier 9 fits 21, held to 20 to clear the bullet; the widget says 30"
+       for k in ("SCHAACPRTIILN4", "SCHAACPRTIILN10", "SCHAACPRTIILN16", "SCHAACPRTIILN22", "SCHAACPRTIILN28")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part II column E, 149.6 pt at Courier 9 fits 27, held to 26 to clear the bullet; the widget says 30"
+       for k in ("SCHAACPRTIILN5", "SCHAACPRTIILN11", "SCHAACPRTIILN17", "SCHAACPRTIILN23", "SCHAACPRTIILN29")},
+    **{("states/al/2023/al40nr/pack.yaml", k): "Part II column F, 180.8 pt at Courier 9 fits 33, held to 32 to clear the bullet; the widget says 60"
+       for k in ("SCHAACPRTIILN6", "SCHAACPRTIILN12", "SCHAACPRTIILN18", "SCHAACPRTIILN24", "SCHAACPRTIILN30")},
+    **{("states/al/2023/al40nr/pack.yaml", f"SCHRSILN{i}"): (
+       "Schedule RS Part I (page 32) \"Reason Exempt\", 111.9 pt at Courier 8 fits 23, held to 22: the box is right-aligned "
+       "and its printed bullet (x 658.5-664.7) overlaps the box's left edge (x 662.4), so a 23rd glyph lands on it; the widget says 30")
+       for i in range(1, 8)},
 }
 
 

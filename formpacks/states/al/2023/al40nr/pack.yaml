@@ -1,0 +1,2009 @@
+# ===========================================================================
+# Form 40NR, 2023 - Alabama Individual Income Tax Return, NONRESIDENTS ONLY (full bundle).
+#
+# NEW pack (Phase J JS6, 2026-10-04). No earlier Form 40NR pack exists; the TY2023 resident pack
+# (states/al/2023/al40) was read for house conventions only (raw-name keys, identity fields, maxlen,
+# money typing) and no binding was copied from it: every row below was placed from THIS blank's widget
+# rects against its own printed labels and confirmed on a sentinel render.
+#
+# URL. https://www.revenue.alabama.gov/wp-content/uploads/2024/03/23f40nr.pdf. Digest a41dd6a3fef8… —
+# two downloads on 2026-10-02, the discovery copy and the recorded discovery digest all agree. 35 pages
+# (29 portrait letter; 5 landscape letter, pages 15 and 30-33; page 35 a 608 x 258 pt worksheet strip),
+# AcroForm with document JavaScript, RC4-encrypted (print allowed), produced by UltraForms SDK 3.0.5,
+# ModDate 2024-05-30.
+#
+# PRINTED IDENTITY. Page 1 prints "FORM 40NR Alabama 2023 Individual Income Tax Return NONRESIDENTS
+# ONLY" with the scan line *2311014N*; page 2 prints "Form 40NR (2023) Page 2" with *2300024N*; both
+# carry the footer "ADOR". printed_year_verified = 2023. Page 1's footer reads "MAIL FORM 40NR TO: SEE
+# INSTRUCTIONS", so no address is printed on the face (mailing: null).
+#
+# Layout. Like the resident Form 40, the PDF carries the whole booklet of fill-in schedules behind the
+# two-page return:
+#   pages 1-2   Form 40NR (page 1: header, filing status / exemptions, lines 5-33, signature block;
+#               page 2: Parts I-VI and the driver's-license block)
+#   pages 3-4   Schedules A, B, D and E (Form 40NR)
+#   pages 5-6   Schedules DS (dependents) and HOF (head of family)
+#   pages 7-13  Schedule OC (other available credits)
+#   page 14     Schedule AATC; page 15 Schedule AAC; pages 16-17 Schedule KRCC-I, two copies
+#   pages 18-19 Form NOL-85; pages 20-29 Form NOL-85A, five copies of its two pages
+#   page 30     Schedule W-2; page 31 Schedule CP; pages 32-33 Schedule RS
+#   page 34     Form 4952A; page 35 Federal Income Tax Deduction Worksheet
+# FLAT AcroForm: acroform_root is empty and every field name is the raw id the form ships with.
+#
+# Coverage (measured on this blank). 1987 widget annotations. 164 of them (162 names) are JavaScript
+# PUSHBUTTONS (Ff bit 17: the print / reset / GoTo navigation buttons, UF_Start / UF_Reset, the 50 UF_L*
+# UltraForms 2-D barcode slots - large printable rectangles at the top of pages 1, 7, 10, 14, 15, 16,
+# 18, 20, 30 and 32 - the yellow "PLEASE USE A DIFFERENT PDF VIEWER" VERCTRL guard and the printlid.1-35
+# white NoView + Print page covers) - no taxpayer data, omitted. fill_form hides the viewer guards:
+# P-027 hides VERCTRL and the lids on pages 1-19, which cover at least 85% of the visible page; the lids
+# on pages 20-29 (the NOL-85A copies) cover only 72.6-83.1% of it and are hidden by P-027b, which treats
+# a NoView + Print pushbutton over at least half the visible page as a print lid. Without P-027b those
+# ten pages would print blank, the lid painted over the face and every value. The other 1823 widgets
+# carry 1809 field names; 1786 are mapped here, one line each: 1537 text, 89 money, 160 checkboxes. The
+# 23 names (24 widgets) deliberately NOT mapped are not taxpayer lines:
+#   * the DOR instruction panels Instructions, Instructions1-3, 5-8 and 11 (Instructions3 has two
+#     widgets, pages 14 and 15) - each holds the baked-in text "-This form has been enhanced to
+#     complete all calculations and to compute the amount of tax due. ..." (class 1);
+#   * four white Helvetica-7 captions holding their own text: ITCTB "If true, Check the box" (page 2,
+#     Part IV), NonDriver / NonDriverSP "If no driver's license, check this box." / "... -spouse,
+#     check this box." and ITEMIZEDTP "Check the box If you want to enter different Itemized
+#     Deduction." (page 3) - class 1;
+#   * the ten UF_InfoA-K stamps: small ReadOnly Helvetica-6 boxes along the page edges (UF_InfoA at the
+#     foot of page 1, the rest on the top edge) with no label, no /TU and no value - form-software
+#     slots, not lines.
+# Three fields have more than one widget and one key fills all of them: LINE19 (key 19; its second
+# widget is Schedule OC line E1 on page 13, /TU "Tax Due from Page 1, Line 19"), SCHOCNAME and SCHOCSSN
+# (the Schedule OC page headers, seven widgets each).
+#
+# ReadOnly. 522 mapped fields carry the ReadOnly bit: the form's own running totals (page-1 lines 5-21,
+# 23, 25, 26, 28, 29, 31, 33; the page-2 part totals and the Part I / IV / V lines the schedules and the
+# worksheet carry in; the schedule totals and carried amounts) and the schedule-page name / SSN mirrors.
+# The blank's JavaScript fills them in Adobe Reader; taxfill runs no JavaScript, so they stay mapped for
+# the caller to write (P-007 class 4). Six of them hold a nonzero default: LINE10 and the five NOL-85A
+# Part III line 19 cells (SchNOL85ALN19, -1 ... -4) each hold "000.00", the formatted zero percentage
+# the form recomputes (adjudicated in NONZERO_READONLY_DEFAULTS).
+#
+# Viewer flags. 84 mapped widgets ship Hidden + Print (/F 6: every page-1 data widget except CKNRA, and
+# LINE19's page-13 widget) and 16 ship without Print (/F 0: the page-2 driver's-license block, NDL /
+# SPNDL and CHKPG2PT4; page 3's SCHACK24A/B and CHKAITEMZED). fill_form clears Hidden and sets Print on
+# every widget it writes (P-027).
+#
+# PRE-CHECKED BOXES. The blank ships two checkboxes ON (/V and /AS both /X): MFS (filing status 3,
+# hidden by /F 6) and CKNRA (the "NRA" box beside it, /F 4 - visible and printable). MFS is in the
+# filing_status group, so choosing any other status clears it (P-028). CKNRA is a separate fact with no
+# group, and the filler never invents a value for a line it was not given: a caller whose spouse is NOT
+# a nonresident alien must write CKNRA = false, or the printed return keeps the blank's tick (a fill
+# naming only S, the SSN and the name prints box 1 Single AND "NRA" checked).
+#
+# Maxlen. Every maxlen is the widget's /MaxLen except (a) the boxes held TIGHTER than it and (b) 33
+# boxes with no /MaxLen whose maxlen is measured. (a) 64 Courier boxes are too narrow to print the
+# widget's count (verify's 0.6-em Courier budget, width / (0.6 x font size)): the page-1 first / last
+# names (FIRSTNAME and SPOUSEFIRSTNAME 98.6 pt at 12 pt fit 13, LASTNAME and SPOUSELASTNAME 135.6 pt fit
+# 18), Schedule OC SCHOCLINE1PC and SCHOCLINE2CPL, Schedule AATC SCHAATCLN6, the 46 text cells of the
+# Schedule AAC Part I / II grids, the KRCC-I Part IV 3b / 3c cells (two per copy) and Schedule RS Part I
+# "Reason Exempt" SCHRSILN1-7. Where a printed bullet sits on a box's left edge the budget is held lower
+# so the text clears it: SCHRSILN1-7 (right-aligned, 111.9 pt at Courier 8 fits 23) take 22, because the
+# bullet at x 658.5-664.7 overlaps the box at x 662.4; the centred AAC cells take one glyph less than
+# verify's budget (two in column C, Social Security Number of Child, which keeps 13), so the text clears
+# each column's bullet: columns A / C / D / E / F hold 20 / 13 / 20 / 26 / 32; and four more KRCC-I
+# cells, Part IV line 3a and Part III line 5 in each copy (right-aligned, 60.4 / 61.5 pt at Courier 10,
+# /MaxLen 10), take 9, because at 10 the first glyph reaches the bullet. Each is a TIGHTER_THAN_WIDGET
+# row except the eight KRCC-I cells, which are ReadOnly form-computed values that the maxlen gate does
+# not read; verify's clipping scan still covers them once written. A fill of all 68 at their budgets
+# renders inside each box, clear of the printed marks. (b) The measured boxes: Schedule W-2 column E
+# State Code SCHW2E1-15 take 2 (22.4 pt at Courier 12, a 2-letter code); the KRCC-I ending-year suffix
+# SCHKRCCIEYEAR / -2 takes 2 (the 2 digits after the printed "20", 16.3 / 16.8 pt at Courier 10, as
+# BEGYEAR's own /MaxLen 2); and 16 SSN boxes take 9 - the page-header SSNs of Schedules DS, HOF, W-2, CP
+# and RS and Forms NOL-85 / NOL-85A (all five copies), and Schedule HOF's qualifying-dependent SSN (9
+# digits without dashes, as page 1's SSSN /MaxLen 9; each box is 91 pt or wider at Courier 10). The
+# maxlen gate reads only widgets that carry a /MaxLen, so these 33 are adjudicated here and in their row
+# comments.
+#
+# Bullet-edge overlaps (native to the blank, cosmetic). Several left-aligned widgets (no /Q) start on
+# the bullet the face prints at the box's left edge, so the first glyph of a value touches or overlaps
+# it while the value stays in its box and legible: the page-1 deceased dates DDate / DDateSP; the
+# Schedule AAC row-5 Effective Date of Adoption cells SCHAACPRTILN26 / SCHAACPRTIILN26 (the column's
+# rows 1-4 are centred and clear it); the NOL-85A "For Year Ending" date SchNOL85ADate, -1 ... -4 (x
+# 209.6, all five copies); the Schedule W-2 table cells SCHW2ALN* / SCHW2BLN* / SCHW2FLN*; and the
+# Schedule RS Part I / II table cells in columns A, C, D, F and G (SCHRSALN* / SCHRSC* / SCHRSDLN* /
+# SCHRSF* / SCHRSGLN* and their SCHRSPTII* twins). A shorter maxlen cannot move a left-aligned value off
+# the bullet, so these are left as the blank draws them.
+#
+# Keys. The 37 numbered amount boxes of the page-1 return are keyed by their printed line: 5.a / 5.b /
+# 5.c (columns A Alabama Tax Withheld, B All Sources, C Alabama Income), 6.b-9.c, 10, 11.b-12.c and
+# 13-33. Every other line keeps its raw field name, as in the resident pack.
+#
+# Money vs text. money = the page-1 amounts (not line 10), the page-2 dollar boxes of Parts I-V and Part
+# VI line 6, and the nine FIT worksheet lines (each prints a whole-dollar "00" cents cell). Kept text:
+# every PERCENTAGE - page-1 line 10, Part III line 5, Part IV lines 3 and 6, Part V line 3 - because
+# money rounds to whole dollars; Part V line 1 (a count); and every other schedule box, as in the
+# resident pack (many are ratios, dates or comb-like cells).
+#
+# Checkbox groups. On-states re-dumped from this blank's /AP /N: 156 use /X, 4 use /Yes (the NOL-85A
+# Part I box in copies 1, 2, 4 and 5; copy 3's SchNOL85APICKbox-2 uses /X). The one-answer sets are on
+# SEPARATE fields, so each set shares a group id, every option bound by the word printed beside it
+# (P-030): filing status 1-4 (S, MFJ, MFS, HOF); line 13 a / b ("Box a or b MUST be checked"); Part VI
+# questions 2, 3, 3 (spouse filing a separate Alabama return) and 4 (A = Yes, B = No); Schedule A 24a
+# ("either A line 15, or B line 16"); Schedule E Part II line 6 rows a-c ("Check One": Partnership /
+# Estate or Trust / S Corporation); HOF Rent / Own and its three Yes / No questions; Schedule OC C4, C5,
+# F and H Yes / No; Schedule OC J purchase vs construction ("You cannot select both" - the pro-rata box
+# "can be selected in addition to either" and stays ungrouped); NOL-85A 1b and 1c Yes / No in each of
+# the five copies; Schedule RS age-65 Yes / No (primary, spouse); Form 4952A Individual / Estate /
+# Trust.
+#
+# Relations. Only printed arithmetic whose every operand is a MONEY line is declared, because verify
+# reads relation operands from the filled PDF for money lines alone - a text line resolves to zero
+# unless the caller supplies it. So the allocation lines stay relation-free: line 10 "Divide line 9,
+# col. C, by line 9, col. B (not over 100%)" and Part IV line 3 "Divide line 2 by line 1" (a zero
+# denominator on any blank return; the booklet's line-10 note gives 100% when C exceeds B and 0% when C
+# is a loss, and no precision), and the products of a dollar line and a percentage - line 15, Part III
+# line 6, Part IV lines 5 and 7, Part V line 4 - each would FAIL every correct return verified from
+# disk. Line 18 "Subtract line 17 from line 12, column C" is declared without a floor: the face prints
+# none and the form's own calculation script writes LINE12C - LINE17 as is (a loss year's taxable
+# income is negative; Form NOL-85 starts from "the loss year return ... completed through the taxable
+# income line"). Also omitted: 20 ("Check box if computing tax using Schedule OC, otherwise enter amount
+# from line 19"), 29 ("If line 20 is larger than line 28 ...") and 33 ("If line 31 is greater than
+# zero ..."), which branch on a box or another line, and the schedules (raw-name text, as in the
+# resident pack).
+#
+# cross_form is empty. Neither page of the return cites a federal line number (Part IV line 2 and Part
+# VI line 6 ask for federal adjusted gross income without one). The FIT worksheet does cite 2023 Form
+# 1040 lines 22, 27, 28 and 29, Form 8960 line 17 and Schedule 3 line 13a, but it is a computation sheet
+# the filer may leave blank (Part IV line 4 takes "the Federal Income Tax Liability from worksheet"),
+# and a leg against a blank worksheet would FAIL.
+# ===========================================================================
+form: Form 40NR
+jurisdiction: states/al
+tax_year: 2023
+source_url: https://www.revenue.alabama.gov/wp-content/uploads/2024/03/23f40nr.pdf
+pdf_sha256: a41dd6a3fef84c0ab17fe3a110248498efa303b8de5318e680994d105c5dd7f3
+acroform_root: ''
+fields:
+  # --- page 1: Form 40NR page 1 — header, filing status / exemptions, income lines 5-12 in columns A (Alabama tax withheld),
+  # B (All Sources) and C (Alabama Income), deductions 13-17, tax 18-20, payments 21-28, owe / refund 29-33, signature.
+  - {line: "SSSN", field: "SSSN", type: text, maxlen: 9}
+  - {line: "SPSSN", field: "SPSSN", type: text, maxlen: 9}
+  - {line: "CHKDECEASED", field: "CHKDECEASED", type: checkbox, on_state: "/X"}
+  - {line: "CHKDECEASEDSP", field: "CHKDECEASEDSP", type: checkbox, on_state: "/X"}
+  - {line: "DDate", field: "DDate", type: text, maxlen: 10}
+  - {line: "DDateSP", field: "DDateSP", type: text, maxlen: 10}
+  - {line: "FIRSTNAME", field: "FIRSTNAME", type: text, maxlen: 13}
+  - {line: "MIDDLEINITIAL", field: "MIDDLEINITIAL", type: text, maxlen: 1}
+  - {line: "LASTNAME", field: "LASTNAME", type: text, maxlen: 18}
+  - {line: "SPOUSEFIRSTNAME", field: "SPOUSEFIRSTNAME", type: text, maxlen: 13}
+  - {line: "SPMIDDLEINITIAL", field: "SPMIDDLEINITIAL", type: text, maxlen: 1}
+  - {line: "SPOUSELASTNAME", field: "SPOUSELASTNAME", type: text, maxlen: 18}
+  - {line: "AMENDEDRETURN", field: "AMENDEDRETURN", type: checkbox, on_state: "/X"}
+  - {line: "ADDRESS", field: "ADDRESS", type: text, maxlen: 32}
+  - {line: "CITY", field: "CITY", type: text, maxlen: 15}
+  - {line: "STATE", field: "STATE", type: text, maxlen: 2}
+  - {line: "ZIP", field: "ZIP", type: text, maxlen: 9}
+  - {line: "ADDRESSOUTSIDEUS", field: "ADDRESSOUTSIDEUS", type: checkbox, on_state: "/X"}
+  - {line: "FOREIGNCOUNTRY", field: "FOREIGNCOUNTRY", type: text}
+  - {line: "S", field: "S", type: checkbox, on_state: "/X", group: "filing_status"}  # 1 $1,500 Single
+  - {line: "MFS", field: "MFS", type: checkbox, on_state: "/X", group: "filing_status"}  # 3 $1,500 Married filing separate
+  - {line: "QUAL/SPOUSESSN", field: "QUAL/SPOUSESSN", type: text, maxlen: 9}  # box 3 "Complete Spouse SSN"
+  - {line: "CKNRA", field: "CKNRA", type: checkbox, on_state: "/X"}  # NRA (beside box 3, spouse SSN); the blank ships it CHECKED and visible, so write false unless the spouse is a nonresident alien
+  - {line: "MFJ", field: "MFJ", type: checkbox, on_state: "/X", group: "filing_status"}  # 2 $3,000 Married filing joint
+  - {line: "HOF", field: "HOF", type: checkbox, on_state: "/X", group: "filing_status"}  # 4 $3,000 Head of Family
+  - {line: "5.a", field: "LINE5A", type: money, maxlen: 9}  # 5 Wages (Schedule W-2, line 18) — column A, Alabama Tax Withheld
+  - {line: "5.b", field: "LINE5B", type: money, maxlen: 9}  # 5 — column B, All Sources
+  - {line: "5.c", field: "LINE5C", type: money, maxlen: 9}  # 5 — column C, Alabama Income
+  - {line: "6.b", field: "LINE6B", type: money, maxlen: 9}  # 6 Other income (from page 2, Part I, line 9) — col B
+  - {line: "6.c", field: "LINE6C", type: money, maxlen: 9}  # 6 — col C
+  - {line: "7.b", field: "LINE7B", type: money, maxlen: 9}  # 7 Total income. Add col. B / col. C, lines 5 and 6 — col B
+  - {line: "7.c", field: "LINE7C", type: money, maxlen: 9}  # 7 — col C
+  - {line: "8.b", field: "LINE8B", type: money, maxlen: 9}  # 8 Adjustments to income (from page 2, Part II, line 8) — col B
+  - {line: "8.c", field: "LINE8C", type: money, maxlen: 9}  # 8 — col C
+  - {line: "9.b", field: "LINE9B", type: money, maxlen: 9}  # 9 Adjusted total income. Subtract line 8 from line 7 — col B
+  - {line: "9.c", field: "LINE9C", type: money, maxlen: 9}  # 9 — col C
+  - {line: "10", field: "LINE10", type: text, maxlen: 9}  # 10 Alabama percentage of adjusted total income (9C / 9B, not over 100%) — a percentage, kept text
+  - {line: "11.b", field: "LINE11B", type: money, maxlen: 9}  # 11 Other Adjustments (page 2, Part III, line 4) — col B
+  - {line: "11.c", field: "LINE11C", type: money, maxlen: 9}  # 11 Other Adjustments (page 2, Part III, line 6) — col C
+  - {line: "12.b", field: "LINE12B", type: money, maxlen: 9}  # 12 Adjusted Gross Income. Subtract line 11 from line 9 — col B
+  - {line: "12.c", field: "LINE12C", type: money, maxlen: 9}  # 12 — col C
+  - {line: "LINE13A", field: "LINE13A", type: checkbox, on_state: "/X", group: "deduction_method"}  # 13 a Itemized Deductions ("Box a or b MUST be checked")
+  - {line: "LINE13B", field: "LINE13B", type: checkbox, on_state: "/X", group: "deduction_method"}  # 13 b Standard Deduction
+  - {line: "13", field: "LINE13", type: money, maxlen: 9}  # 13 deduction amount
+  - {line: "14", field: "LINE14", type: money, maxlen: 9}  # 14 Federal Income Tax deduction (page 2, Part IV, line 7)
+  - {line: "15", field: "LINE15", type: money, maxlen: 9}  # 15 Personal exemption (line 1-4 amount x line 10 percentage)
+  - {line: "16", field: "LINE16", type: money, maxlen: 9}  # 16 Dependent exemption (page 2, Part V, line 4)
+  - {line: "17", field: "LINE17", type: money, maxlen: 9}  # 17 Total deductions. Add lines 13, 14, 15, and 16
+  - {line: "18", field: "LINE18", type: money, maxlen: 9}  # 18 Taxable income. Subtract line 17 from line 12, column C
+  - {line: "CKLINE19", field: "CKLINE19", type: checkbox, on_state: "/X"}  # 19 check if from Form NOL-85A
+  - {line: "19", field: "LINE19", type: money, maxlen: 9}  # 19 Tax due (one field: its second widget is Schedule OC line E1, page 13)
+  - {line: "CHKOC", field: "CHKOC", type: checkbox, on_state: "/X"}  # 20 check if computing tax using Schedule OC
+  - {line: "20", field: "LINE20", type: money, maxlen: 9}  # 20 Net tax due Alabama
+  - {line: "21", field: "LINE21", type: money, maxlen: 9}  # 21 Alabama Income Tax withheld (from column A, line 5)
+  - {line: "22", field: "LINE22", type: money, maxlen: 9}  # 22 2023 estimated tax payments/Automatic Extension Payment
+  - {line: "23", field: "LINE23", type: money, maxlen: 9}  # 23 Composite tax payments/Electing PTE credit (Schedule CP, Section B, line 1)
+  - {line: "24", field: "LINE24", type: money, maxlen: 9}  # 24 Amended Returns Only — Previous payments
+  - {line: "25", field: "LINE25", type: money, maxlen: 9}  # 25 Refundable Credits (Schedule OC, Section F, line F4)
+  - {line: "26", field: "LINE26", type: money, maxlen: 9}  # 26 Total payments. Add lines 21 through 25
+  - {line: "27", field: "LINE27", type: money, maxlen: 9}  # 27 Amended Returns Only — Previous refund
+  - {line: "28", field: "LINE28", type: money, maxlen: 9}  # 28 Adjusted total payments. Subtract line 27 from line 26
+  - {line: "29", field: "LINE29", type: money, maxlen: 9}  # 29 AMOUNT YOU OWE
+  - {line: "30", field: "LINE30", type: money, maxlen: 9}  # 30 Estimated tax penalty
+  - {line: "31", field: "LINE31", type: money, maxlen: 9}  # 31 AMOUNT OVERPAID
+  - {line: "32", field: "LINE32", type: money, maxlen: 9}  # 32 Amount of line 31 to be applied to the next year's estimated tax (printed "your 2024 estimated tax")
+  - {line: "33", field: "LINE33", type: money, maxlen: 9}  # 33 REFUNDED TO YOU
+  - {line: "CHKREPAUTH", field: "CHKREPAUTH", type: checkbox, on_state: "/X"}
+  - {line: "TPSIGNDTE", field: "TPSIGNDTE", type: text, maxlen: 10}
+  - {line: "TPPHONEAREACODE", field: "TPPHONEAREACODE", type: text, maxlen: 3}
+  - {line: "DAYPHONENO", field: "DAYPHONENO", type: text, maxlen: 7}
+  - {line: "OCCUPATION", field: "OCCUPATION", type: text}
+  - {line: "STPSIGNDTE", field: "STPSIGNDTE", type: text, maxlen: 10}
+  - {line: "STPPHONEAREACODE", field: "STPPHONEAREACODE", type: text, maxlen: 3}
+  - {line: "SDAYPHONENO", field: "SDAYPHONENO", type: text, maxlen: 7}
+  - {line: "SPOCCUPATION", field: "SPOCCUPATION", type: text}
+  - {line: "PREPSIGNDTE", field: "PREPSIGNDTE", type: text, maxlen: 10}
+  - {line: "CHKSELFEMP", field: "CHKSELFEMP", type: checkbox, on_state: "/X"}
+  - {line: "PREPSSN", field: "PREPSSN", type: text, maxlen: 9}
+  - {line: "PREPEIN", field: "PREPEIN", type: text, maxlen: 9}
+  - {line: "PREPFMNAME", field: "PREPFMNAME", type: text}
+  - {line: "TPPHONEAREACODE2", field: "TPPHONEAREACODE2", type: text, maxlen: 3}
+  - {line: "PREPPHONENO", field: "PREPPHONENO", type: text, maxlen: 7}
+  - {line: "PREPZIP", field: "PREPZIP", type: text, maxlen: 9}
+  - {line: "PREPADDRESS", field: "PREPADDRESS", type: text}
+  # --- page 2: Form 40NR page 2 — Part I other income, Part II adjustments, Part III other adjustments, Part IV federal income
+  # tax deduction, Part V dependents, Part VI general information, driver's-license block.
+  - {line: "PG2PT1LINEB1", field: "PG2PT1LINEB1", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEC1", field: "PG2PT1LINEC1", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEC4", field: "PG2PT1LINEC4", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEC5", field: "PG2PT1LINEC5", type: money, maxlen: 9}
+  - {line: "PG2PT1LINE8A2", field: "PG2PT1LINE8A2", type: text}
+  - {line: "PG2PT1LINEB4", field: "PG2PT1LINEB4", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEB2", field: "PG2PT1LINEB2", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEB3", field: "PG2PT1LINEB3", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEB6", field: "PG2PT1LINEB6", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEB5", field: "PG2PT1LINEB5", type: money, maxlen: 9}
+  - {line: "PG2PT1LINE9B", field: "PG2PT1LINE9B", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEC6", field: "PG2PT1LINEC6", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEB7", field: "PG2PT1LINEB7", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEC7", field: "PG2PT1LINEC7", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEB8", field: "PG2PT1LINEB8", type: money, maxlen: 9}
+  - {line: "PG2PT1LINEC8", field: "PG2PT1LINEC8", type: money, maxlen: 9}
+  - {line: "PG2PT1LINE9C", field: "PG2PT1LINE9C", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEB1", field: "PG2PT2LINEB1", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEB2", field: "PG2PT2LINEB2", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEC1", field: "PG2PT2LINEC1", type: money, maxlen: 9}
+  - {line: "PG2PT2LINE3A1", field: "PG2PT2LINE3A1", type: text}
+  - {line: "PG2PT2LINEB3", field: "PG2PT2LINEB3", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEC3", field: "PG2PT2LINEC3", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEB4", field: "PG2PT2LINEB4", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEC4", field: "PG2PT2LINEC4", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEB5", field: "PG2PT2LINEB5", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEC5", field: "PG2PT2LINEC5", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEB6", field: "PG2PT2LINEB6", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEC6", field: "PG2PT2LINEC6", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEB7", field: "PG2PT2LINEB7", type: money, maxlen: 9}
+  - {line: "PG2PT2LINEC7", field: "PG2PT2LINEC7", type: money, maxlen: 9}
+  - {line: "PG2PT2LINE8B", field: "PG2PT2LINE8B", type: money, maxlen: 9}
+  - {line: "PG2PT2LINE8C", field: "PG2PT2LINE8C", type: money, maxlen: 9}
+  - {line: "PG2PT3LINE1", field: "PG2PT3LINE1", type: money, maxlen: 9}
+  - {line: "PG2PT3LINE2", field: "PG2PT3LINE2", type: money, maxlen: 9}
+  - {line: "PG2PT3LINE3", field: "PG2PT3LINE3", type: money, maxlen: 9}
+  - {line: "PG2PT3LINE4", field: "PG2PT3LINE4", type: money, maxlen: 9}
+  - {line: "PG2PT3LINE5", field: "PG2PT3LINE5", type: text, maxlen: 9}  # III 5 percentage from page 1, line 10 — kept text
+  - {line: "PG2PT3LINE6", field: "PG2PT3LINE6", type: money, maxlen: 9}
+  - {line: "CHKPG2PT4", field: "CHKPG2PT4", type: checkbox, on_state: "/X"}  # IV 1 box beside "Your joint federal adjusted gross income"
+  - {line: "PG2PT4LINE1", field: "PG2PT4LINE1", type: money, maxlen: 9}
+  - {line: "PG2PT4LINE2", field: "PG2PT4LINE2", type: money, maxlen: 9}
+  - {line: "PG2PT4LINE3", field: "PG2PT4LINE3", type: text, maxlen: 9}  # IV 3 Divide line 2 by line 1 (percentage) — kept text
+  - {line: "PG2PT4LINE4", field: "PG2PT4LINE4", type: money, maxlen: 9}
+  - {line: "PG2PT4LINE5", field: "PG2PT4LINE5", type: money, maxlen: 9}
+  - {line: "PG2PT4LINE6", field: "PG2PT4LINE6", type: text, maxlen: 9}  # IV 6 percentage from page 1, line 10 — kept text
+  - {line: "PG2PT4LINE7", field: "PG2PT4LINE7", type: money, maxlen: 9}
+  - {line: "PG2PT5LINE1B", field: "PG2PT5LINE1B", type: text, maxlen: 2}  # V 1 Total number of dependents (Schedule DS, line 1b) — a count
+  - {line: "PG2PT5LINE2", field: "PG2PT5LINE2", type: money, maxlen: 9}
+  - {line: "PG2PT5LINE3", field: "PG2PT5LINE3", type: text, maxlen: 9}  # V 3 percentage from page 1, line 10 — kept text
+  - {line: "PG2PT5LINE4", field: "PG2PT5LINE4", type: money, maxlen: 9}
+  - {line: "PG2PT6LINE1", field: "PG2PT6LINE1", type: text}
+  - {line: "PG2PT6CHK2A", field: "PG2PT6CHK2A", type: checkbox, on_state: "/X", group: "pt6_filed_home_state_return"}  # VI 2 Yes
+  - {line: "PG2PT6CHK2B", field: "PG2PT6CHK2B", type: checkbox, on_state: "/X", group: "pt6_filed_home_state_return"}  # VI 2 No
+  - {line: "PG2PT6LINE2C", field: "PG2PT6LINE2C", type: text}
+  - {line: "PG2PT6CHK3A", field: "PG2PT6CHK3A", type: checkbox, on_state: "/X", group: "pt6_spouse_separate_income"}  # VI 3 Yes
+  - {line: "PG2PT6CHK3B", field: "PG2PT6CHK3B", type: checkbox, on_state: "/X", group: "pt6_spouse_separate_income"}  # VI 3 No
+  - {line: "PG2PT6CHK3C", field: "PG2PT6CHK3C", type: checkbox, on_state: "/X", group: "pt6_spouse_separate_al_return"}  # VI 3 spouse filing a separate Alabama return? Yes
+  - {line: "PG2PT6CHK3D", field: "PG2PT6CHK3D", type: checkbox, on_state: "/X", group: "pt6_spouse_separate_al_return"}  # VI 3 ... No
+  - {line: "PG2PT6LINE3E", field: "PG2PT6LINE3E", type: text}
+  - {line: "PG2PT6CHK4A", field: "PG2PT6CHK4A", type: checkbox, on_state: "/X", group: "pt6_filed_al_return_prior_year"}  # VI 4 Yes
+  - {line: "PG2PT6CHK4B", field: "PG2PT6CHK4B", type: checkbox, on_state: "/X", group: "pt6_filed_al_return_prior_year"}  # VI 4 No
+  - {line: "PG2PT6LINE4C", field: "PG2PT6LINE4C", type: text}
+  - {line: "PG2PT6LINE5A", field: "PG2PT6LINE5A", type: text}
+  - {line: "PG2PT6LINE5B", field: "PG2PT6LINE5B", type: text}
+  - {line: "PG2PT6LINE6", field: "PG2PT6LINE6", type: money, maxlen: 9}
+  - {line: "DOB", field: "DOB", type: text, maxlen: 10}
+  - {line: "DLState", field: "DLState", type: text, maxlen: 2}
+  - {line: "DLNumber", field: "DLNumber", type: text, maxlen: 20}
+  - {line: "IssDate", field: "IssDate", type: text, maxlen: 10}
+  - {line: "ExpDate", field: "ExpDate", type: text, maxlen: 10}
+  - {line: "DOBSp", field: "DOBSp", type: text, maxlen: 10}
+  - {line: "DLStateSp", field: "DLStateSp", type: text, maxlen: 2}
+  - {line: "IssDateSp", field: "IssDateSp", type: text, maxlen: 10}
+  - {line: "DLNumberSp", field: "DLNumberSp", type: text, maxlen: 20}
+  - {line: "ExpDateSp", field: "ExpDateSp", type: text, maxlen: 10}
+  - {line: "NDL", field: "NDL", type: checkbox, on_state: "/X"}
+  - {line: "SPNDL", field: "SPNDL", type: checkbox, on_state: "/X"}
+  # --- page 3: Schedule A (Form 40NR) — itemized deductions.
+  - {line: "NAME", field: "NAME", type: text}
+  - {line: "SSSNB", field: "SSSNB", type: text, maxlen: 9}
+  - {line: "SCHALINE1", field: "SCHALINE1", type: text, maxlen: 9}
+  - {line: "SCHALINE2", field: "SCHALINE2", type: text}
+  - {line: "SCHALINE3", field: "SCHALINE3", type: text}
+  - {line: "SCHALINE4", field: "SCHALINE4", type: text}
+  - {line: "SCHALINE5", field: "SCHALINE5", type: text, maxlen: 9}
+  - {line: "SCHALINE6", field: "SCHALINE6", type: text, maxlen: 9}
+  - {line: "SCHALINE7", field: "SCHALINE7", type: text, maxlen: 9}
+  - {line: "SCHALINE8A", field: "SCHALINE8A", type: text}
+  - {line: "SCHALINE8B", field: "SCHALINE8B", type: text}
+  - {line: "SCHALINE8", field: "SCHALINE8", type: text, maxlen: 9}
+  - {line: "SCHALINE9", field: "SCHALINE9", type: text}
+  - {line: "SCHALINE10A", field: "SCHALINE10A", type: text, maxlen: 9}
+  - {line: "SCHALINE10B1", field: "SCHALINE10B1", type: text}
+  - {line: "SCHALINE10B2", field: "SCHALINE10B2", type: text}
+  - {line: "SCHALINE10B3", field: "SCHALINE10B3", type: text}
+  - {line: "SCHALINE10B", field: "SCHALINE10B", type: text, maxlen: 9}
+  - {line: "SCHALINE12", field: "SCHALINE12", type: text, maxlen: 9}
+  - {line: "SCHALINE13", field: "SCHALINE13", type: text, maxlen: 9}
+  - {line: "SCHALINE14", field: "SCHALINE14", type: text, maxlen: 9}
+  - {line: "SCHALINE15", field: "SCHALINE15", type: text, maxlen: 9}
+  - {line: "SCHALINE16", field: "SCHALINE16", type: text, maxlen: 9}
+  - {line: "SCHALINE17", field: "SCHALINE17", type: text, maxlen: 9}
+  - {line: "SCHALINE18", field: "SCHALINE18", type: text, maxlen: 9}
+  - {line: "SCHALINE19", field: "SCHALINE19", type: text, maxlen: 9}
+  - {line: "SCHALINE20A", field: "SCHALINE20A", type: text}
+  - {line: "SCHALINE20B", field: "SCHALINE20B", type: text}
+  - {line: "SCHALINE20C", field: "SCHALINE20C", type: text}
+  - {line: "SCHALINE20D", field: "SCHALINE20D", type: text}
+  - {line: "SCHALINE20", field: "SCHALINE20", type: text, maxlen: 9}
+  - {line: "SCHALINE21", field: "SCHALINE21", type: text}
+  - {line: "SCHALINE22", field: "SCHALINE22", type: text, maxlen: 9}
+  - {line: "SCHALINE23", field: "SCHALINE23", type: text, maxlen: 9}
+  - {line: "SCHACK24A", field: "SCHACK24A", type: checkbox, on_state: "/X", group: "sch_a_24a_casualty_source"}  # 24a Form 4684 "either A line 15"
+  - {line: "SCHACK24B", field: "SCHACK24B", type: checkbox, on_state: "/X", group: "sch_a_24a_casualty_source"}  # 24a "or B line 16"
+  - {line: "SCHALINE24A", field: "SCHALINE24A", type: text}
+  - {line: "SCHALINE24B", field: "SCHALINE24B", type: text, maxlen: 9}
+  - {line: "SCHALINE24C", field: "SCHALINE24C", type: text, maxlen: 9}
+  - {line: "SCHALINE25A", field: "SCHALINE25A", type: text}
+  - {line: "SCHALINE25", field: "SCHALINE25", type: text, maxlen: 9}
+  - {line: "SCHALINE26A", field: "SCHALINE26A", type: text}
+  - {line: "SCHALINE26", field: "SCHALINE26", type: text, maxlen: 9}
+  - {line: "SCHALINE27", field: "SCHALINE27", type: text, maxlen: 9}
+  - {line: "SCHALINE28", field: "SCHALINE28", type: text, maxlen: 9}
+  - {line: "SCHALINE29", field: "SCHALINE29", type: text, maxlen: 9}
+  - {line: "SCHALINE30", field: "SCHALINE30", type: text, maxlen: 9}
+  - {line: "CHKAITEMZED", field: "CHKAITEMZED", type: checkbox, on_state: "/X"}
+  # --- page 4: Schedules B, D and E (Form 40NR) page 2.
+  - {line: "PG2NAME", field: "PG2NAME", type: text}
+  - {line: "SSSNB2A", field: "SSSNB2A", type: text, maxlen: 9}
+  - {line: "SCHBLINE1", field: "SCHBLINE1", type: text, maxlen: 9}
+  - {line: "SCHBLINE2A1", field: "SCHBLINE2A1", type: text}
+  - {line: "SCHBLINE2A", field: "SCHBLINE2A", type: text, maxlen: 9}
+  - {line: "SCHBLINE2B1", field: "SCHBLINE2B1", type: text}
+  - {line: "SCHBLINE2B", field: "SCHBLINE2B", type: text, maxlen: 9}
+  - {line: "SCHBLINE2C1", field: "SCHBLINE2C1", type: text}
+  - {line: "SCHBLINE2C", field: "SCHBLINE2C", type: text, maxlen: 9}
+  - {line: "SCHBLINE2D1", field: "SCHBLINE2D1", type: text}
+  - {line: "SCHBLINE2D", field: "SCHBLINE2D", type: text, maxlen: 9}
+  - {line: "SCHBLINE3", field: "SCHBLINE3", type: text, maxlen: 9}
+  - {line: "SCHBLINE4B", field: "SCHBLINE4B", type: text, maxlen: 9}
+  - {line: "SCHBLINE4C", field: "SCHBLINE4C", type: text, maxlen: 9}
+  - {line: "SCHDLINE1", field: "SCHDLINE1", type: text}
+  - {line: "SCHDLINE2A1", field: "SCHDLINE2A1", type: text}
+  - {line: "SCHDLINE2B1", field: "SCHDLINE2B1", type: text}
+  - {line: "SCHDLINE2C1", field: "SCHDLINE2C1", type: text}
+  - {line: "SCHDLINE2D1", field: "SCHDLINE2D1", type: text}
+  - {line: "SCHDLINE2E1", field: "SCHDLINE2E1", type: text}
+  - {line: "SCHDLINE2F1", field: "SCHDLINE2F1", type: text}
+  - {line: "SCHDLINE2A2", field: "SCHDLINE2A2", type: text}
+  - {line: "SCHDLINE2B2", field: "SCHDLINE2B2", type: text}
+  - {line: "SCHDLINE2C2", field: "SCHDLINE2C2", type: text}
+  - {line: "SCHDLINE2D2", field: "SCHDLINE2D2", type: text}
+  - {line: "SCHDLINE2E2", field: "SCHDLINE2E2", type: text}
+  - {line: "SCHDLINE2F2", field: "SCHDLINE2F2", type: text}
+  - {line: "SCHDLINE2A3", field: "SCHDLINE2A3", type: text}
+  - {line: "SCHDLINE2B3", field: "SCHDLINE2B3", type: text}
+  - {line: "SCHDLINE2C3", field: "SCHDLINE2C3", type: text}
+  - {line: "SCHDLINE2D3", field: "SCHDLINE2D3", type: text}
+  - {line: "SCHDLINE2E3", field: "SCHDLINE2E3", type: text}
+  - {line: "SCHDLINE2F3", field: "SCHDLINE2F3", type: text}
+  - {line: "SCHDLINE3C", field: "SCHDLINE3C", type: text}
+  - {line: "SCHDLINE3D", field: "SCHDLINE3D", type: text}
+  - {line: "SCHDLINE3E", field: "SCHDLINE3E", type: text}
+  - {line: "SCHDLINE3F", field: "SCHDLINE3F", type: text}
+  - {line: "SCHDLINE4B", field: "SCHDLINE4B", type: text}
+  - {line: "SCHDLINE4C", field: "SCHDLINE4C", type: text}
+  - {line: "SCHDLINE5B", field: "SCHDLINE5B", type: text}
+  - {line: "SCHDLINE5C", field: "SCHDLINE5C", type: text}
+  - {line: "SCHEPT1LINE1", field: "SCHEPT1LINE1", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2A1", field: "SCHEPT1LINE2A1", type: text}
+  - {line: "SCHEPT1LINE2B1", field: "SCHEPT1LINE2B1", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2C1", field: "SCHEPT1LINE2C1", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2D1", field: "SCHEPT1LINE2D1", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2E1", field: "SCHEPT1LINE2E1", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2A2", field: "SCHEPT1LINE2A2", type: text}
+  - {line: "SCHEPT1LINE2B2", field: "SCHEPT1LINE2B2", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2C2", field: "SCHEPT1LINE2C2", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2D2", field: "SCHEPT1LINE2D2", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2E2", field: "SCHEPT1LINE2E2", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2A3", field: "SCHEPT1LINE2A3", type: text}
+  - {line: "SCHEPT1LINE2B3", field: "SCHEPT1LINE2B3", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2C3", field: "SCHEPT1LINE2C3", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2D3", field: "SCHEPT1LINE2D3", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2E3", field: "SCHEPT1LINE2E3", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2A4", field: "SCHEPT1LINE2A4", type: text}
+  - {line: "SCHEPT1LINE2B4", field: "SCHEPT1LINE2B4", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2C4", field: "SCHEPT1LINE2C4", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2D4", field: "SCHEPT1LINE2D4", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE2E4", field: "SCHEPT1LINE2E4", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE3B", field: "SCHEPT1LINE3B", type: text}
+  - {line: "SCHEPT1LINE3C", field: "SCHEPT1LINE3C", type: text}
+  - {line: "SCHEPT1LINE3D", field: "SCHEPT1LINE3D", type: text}
+  - {line: "SCHEPT1LINE3E", field: "SCHEPT1LINE3E", type: text}
+  - {line: "SCHEPT1LINE4B", field: "SCHEPT1LINE4B", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE4C", field: "SCHEPT1LINE4C", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE5B", field: "SCHEPT1LINE5B", type: text, maxlen: 9}
+  - {line: "SCHEPT1LINE5C", field: "SCHEPT1LINE5C", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6A1", field: "SCHEPT2LINE6A1", type: text}
+  - {line: "SCHEPT2LINE6A2", field: "SCHEPT2LINE6A2", type: text}
+  - {line: "SCHEPT2CHK6A1", field: "SCHEPT2CHK6A1", type: checkbox, on_state: "/X", group: "sch_e_6a_entity_type"}  # 6a Partnership
+  - {line: "SCHEPT2CHK6A2", field: "SCHEPT2CHK6A2", type: checkbox, on_state: "/X", group: "sch_e_6a_entity_type"}  # 6a Estate or Trust
+  - {line: "SCHEPT2CHK6A3", field: "SCHEPT2CHK6A3", type: checkbox, on_state: "/X", group: "sch_e_6a_entity_type"}  # 6a S Corporation
+  - {line: "SCHEPT2LINE6A3", field: "SCHEPT2LINE6A3", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6AB", field: "SCHEPT2LINE6AB", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6AC", field: "SCHEPT2LINE6AC", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6B1", field: "SCHEPT2LINE6B1", type: text}
+  - {line: "SCHEPT2LINE6B2", field: "SCHEPT2LINE6B2", type: text}
+  - {line: "SCHEPT2CHK6B1", field: "SCHEPT2CHK6B1", type: checkbox, on_state: "/X", group: "sch_e_6b_entity_type"}  # 6b Partnership
+  - {line: "SCHEPT2CHK6B2", field: "SCHEPT2CHK6B2", type: checkbox, on_state: "/X", group: "sch_e_6b_entity_type"}  # 6b Estate or Trust
+  - {line: "SCHEPT2CHK6B3", field: "SCHEPT2CHK6B3", type: checkbox, on_state: "/X", group: "sch_e_6b_entity_type"}  # 6b S Corporation
+  - {line: "SCHEPT2LINE6B3", field: "SCHEPT2LINE6B3", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6BB", field: "SCHEPT2LINE6BB", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6BC", field: "SCHEPT2LINE6BC", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6C1", field: "SCHEPT2LINE6C1", type: text}
+  - {line: "SCHEPT2LINE6C2", field: "SCHEPT2LINE6C2", type: text}
+  - {line: "SCHEPT2CHK6C1", field: "SCHEPT2CHK6C1", type: checkbox, on_state: "/X", group: "sch_e_6c_entity_type"}  # 6c Partnership
+  - {line: "SCHEPT2CHK6C2", field: "SCHEPT2CHK6C2", type: checkbox, on_state: "/X", group: "sch_e_6c_entity_type"}  # 6c Estate or Trust
+  - {line: "SCHEPT2CHK6C3", field: "SCHEPT2CHK6C3", type: checkbox, on_state: "/X", group: "sch_e_6c_entity_type"}  # 6c S Corporation
+  - {line: "SCHEPT2LINE6C3", field: "SCHEPT2LINE6C3", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6CB", field: "SCHEPT2LINE6CB", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE6CC", field: "SCHEPT2LINE6CC", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE7B", field: "SCHEPT2LINE7B", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE7C", field: "SCHEPT2LINE7C", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE8B", field: "SCHEPT2LINE8B", type: text, maxlen: 9}
+  - {line: "SCHEPT2LINE8C", field: "SCHEPT2LINE8C", type: text, maxlen: 9}
+  # --- page 5: Schedule DS — dependents.
+  - {line: "SCHDSNAME", field: "SCHDSNAME", type: text}
+  - {line: "SCHDSSSN", field: "SCHDSSSN", type: text, maxlen: 9}  # Schedule DS header, your SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHDSSPSSN", field: "SCHDSSPSSN", type: text, maxlen: 9}  # Schedule DS header, spouse SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "DEP1FIRST NAME", field: "DEP1FIRST NAME", type: text}
+  - {line: "DEP1LAST NAME", field: "DEP1LAST NAME", type: text}
+  - {line: "DEP1SSN", field: "DEP1SSN", type: text, maxlen: 9}
+  - {line: "DEP1REL", field: "DEP1REL", type: text}
+  - {line: "DEP1SUPPORT", field: "DEP1SUPPORT", type: text}
+  - {line: "DEP2FIRSTNAME", field: "DEP2FIRSTNAME", type: text}
+  - {line: "DEP2LASTNAME", field: "DEP2LASTNAME", type: text}
+  - {line: "DEP2SSN", field: "DEP2SSN", type: text, maxlen: 9}
+  - {line: "DEP2REL", field: "DEP2REL", type: text}
+  - {line: "DEP2SUPPORT", field: "DEP2SUPPORT", type: text}
+  - {line: "DEP3FIRST NAME", field: "DEP3FIRST NAME", type: text}
+  - {line: "DEP3LASTNAME", field: "DEP3LASTNAME", type: text}
+  - {line: "DEP3SSN", field: "DEP3SSN", type: text, maxlen: 9}
+  - {line: "DEP3REL", field: "DEP3REL", type: text}
+  - {line: "DEP3SUPPORT", field: "DEP3SUPPORT", type: text}
+  - {line: "DEP4FIRSTNAME", field: "DEP4FIRSTNAME", type: text}
+  - {line: "DEP4LASTNAME", field: "DEP4LASTNAME", type: text}
+  - {line: "DEP4SSN", field: "DEP4SSN", type: text, maxlen: 9}
+  - {line: "DEP4REL", field: "DEP4REL", type: text}
+  - {line: "DEP4SUPPORT", field: "DEP4SUPPORT", type: text}
+  - {line: "DEP5FIRST NAME", field: "DEP5FIRST NAME", type: text}
+  - {line: "DEP5LAST NAME", field: "DEP5LAST NAME", type: text}
+  - {line: "DEP5SSN", field: "DEP5SSN", type: text, maxlen: 9}
+  - {line: "DEP5REL", field: "DEP5REL", type: text}
+  - {line: "DEP5SUPPORT", field: "DEP5SUPPORT", type: text}
+  - {line: "DEP6FIRSTNAME", field: "DEP6FIRSTNAME", type: text}
+  - {line: "DEP6LASTNAME", field: "DEP6LASTNAME", type: text}
+  - {line: "DEP6SSN", field: "DEP6SSN", type: text, maxlen: 9}
+  - {line: "DEP6REL", field: "DEP6REL", type: text}
+  - {line: "DEP6SUPPORT", field: "DEP6SUPPORT", type: text}
+  - {line: "DEP7FIRST NAME", field: "DEP7FIRST NAME", type: text}
+  - {line: "DEP7LASTNAME", field: "DEP7LASTNAME", type: text}
+  - {line: "DEP7SSN", field: "DEP7SSN", type: text, maxlen: 9}
+  - {line: "DEP7REL", field: "DEP7REL", type: text}
+  - {line: "DEP7SUPPORT", field: "DEP7SUPPORT", type: text}
+  - {line: "DEP8FIRSTNAME", field: "DEP8FIRSTNAME", type: text}
+  - {line: "DEP8LASTNAME", field: "DEP8LASTNAME", type: text}
+  - {line: "DEP8SSN", field: "DEP8SSN", type: text, maxlen: 9}
+  - {line: "DEP8REL", field: "DEP8REL", type: text}
+  - {line: "DEP8SUPPORT", field: "DEP8SUPPORT", type: text}
+  - {line: "DEP9FIRST NAME", field: "DEP9FIRST NAME", type: text}
+  - {line: "DEP9LAST NAME", field: "DEP9LAST NAME", type: text}
+  - {line: "DEP9SSN", field: "DEP9SSN", type: text, maxlen: 9}
+  - {line: "DEP9REL", field: "DEP9REL", type: text}
+  - {line: "DEP9SUPPORT", field: "DEP9SUPPORT", type: text}
+  - {line: "DEP10FIRSTNAME", field: "DEP10FIRSTNAME", type: text}
+  - {line: "DEP10LASTNAME", field: "DEP10LASTNAME", type: text}
+  - {line: "DEP10SSN", field: "DEP10SSN", type: text, maxlen: 9}
+  - {line: "DEP10REL", field: "DEP10REL", type: text}
+  - {line: "DEP10SUPPORT", field: "DEP10SUPPORT", type: text}
+  - {line: "DEP11FIRST NAME", field: "DEP11FIRST NAME", type: text}
+  - {line: "DEP11LASTNAME", field: "DEP11LASTNAME", type: text}
+  - {line: "DEP11SSN", field: "DEP11SSN", type: text, maxlen: 9}
+  - {line: "DEP11REL", field: "DEP11REL", type: text}
+  - {line: "DEP11SUPPORT", field: "DEP11SUPPORT", type: text}
+  - {line: "DEP12FIRSTNAME", field: "DEP12FIRSTNAME", type: text}
+  - {line: "DEP12LASTNAME", field: "DEP12LASTNAME", type: text}
+  - {line: "DEP12SSN", field: "DEP12SSN", type: text, maxlen: 9}
+  - {line: "DEP12REL", field: "DEP12REL", type: text}
+  - {line: "DEP12SUPPORT", field: "DEP12SUPPORT", type: text}
+  - {line: "NOOFDEP", field: "NOOFDEP", type: text, maxlen: 2}
+  # --- page 6: Schedule HOF — head of family.
+  - {line: "SCHHOFNAME", field: "SCHHOFNAME", type: text}
+  - {line: "SCHHOFSSN", field: "SCHHOFSSN", type: text, maxlen: 9}  # Schedule HOF header, your SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHHOFSPSSN", field: "SCHHOFSPSSN", type: text, maxlen: 9}  # Schedule HOF header, spouse SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHJHOFDEPNAME", field: "SCHJHOFDEPNAME", type: text}
+  - {line: "SCHHOFDEPSSN", field: "SCHHOFDEPSSN", type: text, maxlen: 9}  # Schedule HOF qualifying dependent SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHHOFDEPRE", field: "SCHHOFDEPRE", type: text}
+  - {line: "CHKHOFR", field: "CHKHOFR", type: checkbox, on_state: "/X", group: "hof_home_rent_own"}  # Rent
+  - {line: "CHKHOFO", field: "CHKHOFO", type: checkbox, on_state: "/X", group: "hof_home_rent_own"}  # Own
+  - {line: "CHKHOFY1", field: "CHKHOFY1", type: checkbox, on_state: "/X", group: "hof_q1"}
+  - {line: "CHKHOFN1", field: "CHKHOFN1", type: checkbox, on_state: "/X", group: "hof_q1"}
+  - {line: "SCHHOFDATEM", field: "SCHHOFDATEM", type: text}
+  - {line: "SCHHOFDATED", field: "SCHHOFDATED", type: text}
+  - {line: "SCHHOFDATES", field: "SCHHOFDATES", type: text}
+  - {line: "CHKHOFY2", field: "CHKHOFY2", type: checkbox, on_state: "/X", group: "hof_q2"}
+  - {line: "CHKHOFN2", field: "CHKHOFN2", type: checkbox, on_state: "/X", group: "hof_q2"}
+  - {line: "CHKHOFY3", field: "CHKHOFY3", type: checkbox, on_state: "/X", group: "hof_q3"}
+  - {line: "CHKHOFN3", field: "CHKHOFN3", type: checkbox, on_state: "/X", group: "hof_q3"}
+  # --- page 7: Schedule OC — other available credits (pages 7-13 of the bundle).
+  - {line: "SCHOCNAME", field: "SCHOCNAME", type: text}
+  - {line: "SCHOCSSN", field: "SCHOCSSN", type: text, maxlen: 9}
+  - {line: "SCHOCSECA", field: "SCHOCSECA", type: text, maxlen: 9}
+  - {line: "SCHOCLINEA1PA", field: "SCHOCLINEA1PA", type: text, maxlen: 9}
+  - {line: "SCHOCLINEA2PA", field: "SCHOCLINEA2PA", type: text, maxlen: 9}
+  - {line: "SCHOCLINEA3PA", field: "SCHOCLINEA3PA", type: text, maxlen: 6}
+  - {line: "SCHOCLINEA4PA", field: "SCHOCLINEA4PA", type: text, maxlen: 9}
+  - {line: "SCHOCLINEA5PA", field: "SCHOCLINEA5PA", type: text, maxlen: 9}
+  - {line: "SCHOCLINEA6PA", field: "SCHOCLINEA6PA", type: text, maxlen: 9}
+  - {line: "SCHOCLINE1PB", field: "SCHOCLINE1PB", type: text}
+  - {line: "SCHOCLINE1PC", field: "SCHOCLINE1PC", type: text, maxlen: 19}
+  - {line: "SCHOCLINE2PC", field: "SCHOCLINE2PC", type: text}
+  - {line: "SCHOCLINE3#1PC", field: "SCHOCLINE3#1PC", type: text}
+  - {line: "SCHOCLINE3#2PC", field: "SCHOCLINE3#2PC", type: text}
+  - {line: "SCHOCLINE4#1PC", field: "SCHOCLINE4#1PC", type: checkbox, on_state: "/X", group: "oc_c4"}  # C4 Yes
+  - {line: "SCHOCLINE4#2PC", field: "SCHOCLINE4#2PC", type: checkbox, on_state: "/X", group: "oc_c4"}  # C4 No
+  - {line: "SCHOCLINE5#1PC", field: "SCHOCLINE5#1PC", type: checkbox, on_state: "/X", group: "oc_c5"}  # C5 Yes
+  - {line: "SCHOCLINE5#2PC", field: "SCHOCLINE5#2PC", type: checkbox, on_state: "/X", group: "oc_c5"}  # C5 No
+  - {line: "SCHOCLINE6PC", field: "SCHOCLINE6PC", type: text, maxlen: 9}
+  - {line: "SCHOCLINE7PC", field: "SCHOCLINE7PC", type: text, maxlen: 9}
+  - {line: "SCHOCLINE1PD", field: "SCHOCLINE1PD", type: text}
+  - {line: "SCHOCLINE1APD", field: "SCHOCLINE1APD", type: text}
+  - {line: "SCHOCLINE2PD", field: "SCHOCLINE2PD", type: text, maxlen: 9}
+  - {line: "SCHOCLINE3PD", field: "SCHOCLINE3PD", type: text, maxlen: 9}
+  - {line: "COALCREDIT", field: "COALCREDIT", type: text, maxlen: 9}
+  - {line: "SCHOCPTFYES", field: "SCHOCPTFYES", type: checkbox, on_state: "/X", group: "oc_f_eligibility"}
+  - {line: "SCHOCPTFNO", field: "SCHOCPTFNO", type: checkbox, on_state: "/X", group: "oc_f_eligibility"}
+  - {line: "SCHOCLINE1PF", field: "SCHOCLINE1PF", type: text, maxlen: 9}
+  - {line: "SCHOCLINE2PF", field: "SCHOCLINE2PF", type: text, maxlen: 9}
+  - {line: "SCHOCLINE3PF", field: "SCHOCLINE3PF", type: text, maxlen: 9}
+  - {line: "SCHOCLINE4PF", field: "SCHOCLINE4PF", type: text, maxlen: 9}
+  - {line: "SCHOCLINE5PF", field: "SCHOCLINE5PF", type: text, maxlen: 9}
+  - {line: "SCHOCPTFFEIN", field: "SCHOCPTFFEIN", type: text}
+  - {line: "SCHOCLINE6PF", field: "SCHOCLINE6PF", type: text, maxlen: 9}
+  - {line: "SCHOCLINE7PF", field: "SCHOCLINE7PF", type: text, maxlen: 9}
+  - {line: "SCHOCLINE1PE", field: "SCHOCLINE1PE", type: text, maxlen: 9}
+  - {line: "SCHOCLINE2PE", field: "SCHOCLINE2PE", type: text, maxlen: 9}
+  - {line: "SCHOCPTEFEIN", field: "SCHOCPTEFEIN", type: text}
+  - {line: "SCHOCPTHYES", field: "SCHOCPTHYES", type: checkbox, on_state: "/X", group: "oc_h_startup"}  # H Yes
+  - {line: "SCHOCPTHNO", field: "SCHOCPTHNO", type: checkbox, on_state: "/X", group: "oc_h_startup"}  # H No
+  - {line: "SCHOCLINE1PH", field: "SCHOCLINE1PH", type: text}
+  - {line: "SCHOCLINE2PH", field: "SCHOCLINE2PH", type: text, maxlen: 9}
+  - {line: "SCHOCLINE4PH", field: "SCHOCLINE4PH", type: text, maxlen: 9}
+  - {line: "SCHOCPTHFEIN", field: "SCHOCPTHFEIN", type: text}
+  - {line: "SCHOCLINE5PH", field: "SCHOCLINE5PH", type: text, maxlen: 9}
+  - {line: "SCHOCLINE6PH", field: "SCHOCLINE6PH", type: text, maxlen: 9}
+  - {line: "SCHOCLINE1PI", field: "SCHOCLINE1PI", type: text, maxlen: 50}
+  - {line: "SCHOCPTIFEIN", field: "SCHOCPTIFEIN", type: text}
+  - {line: "SCHOCLINE3PI", field: "SCHOCLINE3PI", type: text, maxlen: 30}
+  - {line: "SCHOCLINE4PI", field: "SCHOCLINE4PI", type: text, maxlen: 11}
+  - {line: "SCHOCLINE5PI", field: "SCHOCLINE5PI", type: text, maxlen: 9}
+  - {line: "SCHOCLINE6PI", field: "SCHOCLINE6PI", type: text, maxlen: 9}
+  - {line: "SCHOCLINE7PI", field: "SCHOCLINE7PI", type: text, maxlen: 9}
+  - {line: "SCHOCLINE8PI", field: "SCHOCLINE8PI", type: text, maxlen: 9}
+  - {line: "SCHOCLINE9PI", field: "SCHOCLINE9PI", type: text, maxlen: 9}
+  - {line: "CHKSCHOCPPJ", field: "CHKSCHOCPPJ", type: checkbox, on_state: "/X", group: "oc_j_type"}  # J Purchase or conversion of irrigation system
+  - {line: "CHKSCHOCCPJ", field: "CHKSCHOCCPJ", type: checkbox, on_state: "/X", group: "oc_j_type"}  # J Construction of reservoir
+  - {line: "CHKSCHOCRPJ", field: "CHKSCHOCRPJ", type: checkbox, on_state: "/X"}  # J Pro-rata share of credit from Subchapter S or K ("can be selected in addition to either")
+  - {line: "SCHOCLINE1PJ", field: "SCHOCLINE1PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE2PJ", field: "SCHOCLINE2PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE3PJ", field: "SCHOCLINE3PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE4PJ", field: "SCHOCLINE4PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE5PJ", field: "SCHOCLINE5PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE6PJ", field: "SCHOCLINE6PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE7PJ", field: "SCHOCLINE7PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE9PJ", field: "SCHOCLINE9PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE10PJ", field: "SCHOCLINE10PJ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE11PJ", field: "SCHOCLINE11PJ", type: text, maxlen: 11}
+  - {line: "SCHOC10FEINPJ", field: "SCHOC10FEINPJ", type: text, maxlen: 12}
+  - {line: "SCHOCPTKLINE1", field: "SCHOCPTKLINE1", type: text, maxlen: 11}
+  - {line: "SCHOCLINE1PG", field: "SCHOCLINE1PG", type: text}
+  - {line: "SCHOCLINE2PG", field: "SCHOCLINE2PG", type: text, maxlen: 9}
+  - {line: "SCHOCPTGFEIN", field: "SCHOCPTGFEIN", type: text}
+  - {line: "SCHOCLINE3PG", field: "SCHOCLINE3PG", type: text, maxlen: 9}
+  - {line: "SCHOCLINE4PG", field: "SCHOCLINE4PG", type: text, maxlen: 9}
+  - {line: "SCHOCLINE1PL", field: "SCHOCLINE1PL", type: text, maxlen: 30}
+  - {line: "SCHOCLINE2APL", field: "SCHOCLINE2APL", type: text, maxlen: 30}
+  - {line: "SCHOCLINE2BPL", field: "SCHOCLINE2BPL", type: text, maxlen: 15}
+  - {line: "SCHOCLINE2CPL", field: "SCHOCLINE2CPL", type: text, maxlen: 9}
+  - {line: "SCHOCLINE2DPL", field: "SCHOCLINE2DPL", type: text, maxlen: 15}
+  - {line: "SCHOCLINE3PL", field: "SCHOCLINE3PL", type: text, maxlen: 9}
+  - {line: "SCHOCFEINPL", field: "SCHOCFEINPL", type: text, maxlen: 12}
+  - {line: "SCHOCLINE4PL", field: "SCHOCLINE4PL", type: text, maxlen: 9}
+  - {line: "SCHOCLINE5PL", field: "SCHOCLINE5PL", type: text, maxlen: 9}
+  - {line: "SCHOCLINE7PL", field: "SCHOCLINE7PL", type: text, maxlen: 9}
+  - {line: "SCHOCLINE1PO", field: "SCHOCLINE1PO", type: text, maxlen: 11}
+  - {line: "SCHOCLINE2PO", field: "SCHOCLINE2PO", type: text, maxlen: 11}
+  - {line: "SCHOCLINE3PO", field: "SCHOCLINE3PO", type: text, maxlen: 11}
+  - {line: "SCHOCLINE4PO", field: "SCHOCLINE4PO", type: text, maxlen: 11}
+  - {line: "SCHOCFEINPO", field: "SCHOCFEINPO", type: text}
+  - {line: "SCHOCLINE5PO", field: "SCHOCLINE5PO", type: text, maxlen: 11}
+  - {line: "SCHOCLINE7PO", field: "SCHOCLINE7PO", type: text, maxlen: 11}
+  - {line: "SCHOCPNumber1PN", field: "SCHOCPNumber1PN", type: text}
+  - {line: "SCHOCDate1PN", field: "SCHOCDate1PN", type: text, maxlen: 10}
+  - {line: "SCHOCAmount1PN", field: "SCHOCAmount1PN", type: text, maxlen: 11}
+  - {line: "SCHOCPNumber2PN", field: "SCHOCPNumber2PN", type: text}
+  - {line: "SCHOCDate2PN", field: "SCHOCDate2PN", type: text, maxlen: 10}
+  - {line: "SCHOCAmount2PN", field: "SCHOCAmount2PN", type: text, maxlen: 11}
+  - {line: "SCHOCPNumber3PN", field: "SCHOCPNumber3PN", type: text}
+  - {line: "SCHOCDate3PN", field: "SCHOCDate3PN", type: text, maxlen: 10}
+  - {line: "SCHOCAmount3PN", field: "SCHOCAmount3PN", type: text, maxlen: 11}
+  - {line: "SCHOCLINE2PN", field: "SCHOCLINE2PN", type: text, maxlen: 11}
+  - {line: "SCHOCLINE3PN", field: "SCHOCLINE3PN", type: text, maxlen: 11}
+  - {line: "SCHOCFEINPN", field: "SCHOCFEINPN", type: text}
+  - {line: "SCHOCLINE4PN", field: "SCHOCLINE4PN", type: text, maxlen: 11}
+  - {line: "SCHOCLINE1PM", field: "SCHOCLINE1PM", type: text, maxlen: 9}
+  - {line: "SCHOCLINE8PO", field: "SCHOCLINE8PO", type: text, maxlen: 11}
+  - {line: "SCHOCYEARPO1", field: "SCHOCYEARPO1", type: text}
+  - {line: "SCHOCYEARPO2", field: "SCHOCYEARPO2", type: text}
+  - {line: "SCHOCYEARPO3", field: "SCHOCYEARPO3", type: text}
+  - {line: "SCHOCCARRYFORWARD1PO", field: "SCHOCCARRYFORWARD1PO", type: text}
+  - {line: "SCHOCCARRYFORWARD2PO", field: "SCHOCCARRYFORWARD2PO", type: text}
+  - {line: "SCHOCCARRYFORWARD3PO", field: "SCHOCCARRYFORWARD3PO", type: text}
+  - {line: "SCHOCLIMITATION1PO", field: "SCHOCLIMITATION1PO", type: text}
+  - {line: "SCHOCLIMITATION2PO", field: "SCHOCLIMITATION2PO", type: text}
+  - {line: "SCHOCLIMITATION3PO", field: "SCHOCLIMITATION3PO", type: text}
+  - {line: "SCHOCPOMAXIMUM1", field: "SCHOCPOMAXIMUM1", type: text}
+  - {line: "SCHOCPOMAXIMUM2", field: "SCHOCPOMAXIMUM2", type: text}
+  - {line: "SCHOCPOMAXIMUM3", field: "SCHOCPOMAXIMUM3", type: text}
+  - {line: "SCHOCUNUSED1PO", field: "SCHOCUNUSED1PO", type: text}
+  - {line: "SCHOCUNUSED2PO", field: "SCHOCUNUSED2PO", type: text}
+  - {line: "SCHOCUNUSED3PO", field: "SCHOCUNUSED3PO", type: text}
+  - {line: "SCHOCLINE9PO", field: "SCHOCLINE9PO", type: text}
+  - {line: "SCHOCPNUMBERPP", field: "SCHOCPNUMBERPP", type: text}
+  - {line: "SCHOCLINE1PP", field: "SCHOCLINE1PP", type: text, maxlen: 11}
+  - {line: "SCHOCFEINPP", field: "SCHOCFEINPP", type: text}
+  - {line: "SCHOCLINE2PP", field: "SCHOCLINE2PP", type: text, maxlen: 11}
+  - {line: "SCHOCLINE3PP", field: "SCHOCLINE3PP", type: text, maxlen: 11}
+  - {line: "SCHOCCNAMEPS", field: "SCHOCCNAMEPS", type: text}
+  - {line: "SCHOCFEINPS", field: "SCHOCFEINPS", type: text}
+  - {line: "SCHOCLINE1PS", field: "SCHOCLINE1PS", type: text, maxlen: 9}
+  - {line: "SCHOCFEINPS2", field: "SCHOCFEINPS2", type: text}
+  - {line: "SCHOCLINE2PS", field: "SCHOCLINE2PS", type: text, maxlen: 9}
+  - {line: "SCHOCLINE3PS", field: "SCHOCLINE3PS", type: text, maxlen: 9}
+  - {line: "SCHOCCNAMEPQ", field: "SCHOCCNAMEPQ", type: text}
+  - {line: "SCHOCPFEINPQ", field: "SCHOCPFEINPQ", type: text}
+  - {line: "SCHOCLINE1PQ", field: "SCHOCLINE1PQ", type: text, maxlen: 11}
+  - {line: "SCHOCFEINPQ", field: "SCHOCFEINPQ", type: text}
+  - {line: "SCHOCLINE2PQ", field: "SCHOCLINE2PQ", type: text, maxlen: 11}
+  - {line: "SCHOCLINE3PQ", field: "SCHOCLINE3PQ", type: text, maxlen: 11}
+  - {line: "SCHOCNAMEPR", field: "SCHOCNAMEPR", type: text, maxlen: 35}
+  - {line: "SCHOCLINE1PR", field: "SCHOCLINE1PR", type: text, maxlen: 11}
+  - {line: "SCHOCLINE2PR", field: "SCHOCLINE2PR", type: text, maxlen: 11}
+  - {line: "SCHOCLINE3PR", field: "SCHOCLINE3PR", type: text, maxlen: 11}
+  - {line: "SCHOCLINE6PR", field: "SCHOCLINE6PR", type: text, maxlen: 11}
+  - {line: "SCHOCYEARPR1", field: "SCHOCYEARPR1", type: text}
+  - {line: "SCHOCYEARPR2", field: "SCHOCYEARPR2", type: text}
+  - {line: "SCHOCYEARPR3", field: "SCHOCYEARPR3", type: text}
+  - {line: "SCHOCCARRYFORWARD1PR", field: "SCHOCCARRYFORWARD1PR", type: text}
+  - {line: "SCHOCCARRYFORWARD2PR", field: "SCHOCCARRYFORWARD2PR", type: text}
+  - {line: "SCHOCCARRYFORWARD3PR", field: "SCHOCCARRYFORWARD3PR", type: text}
+  - {line: "SCHOCLIMITATION1PR", field: "SCHOCLIMITATION1PR", type: text}
+  - {line: "SCHOCLIMITATION2PR", field: "SCHOCLIMITATION2PR", type: text}
+  - {line: "SCHOCLIMITATION3PR", field: "SCHOCLIMITATION3PR", type: text}
+  - {line: "SCHOCPRMAXIMUM1", field: "SCHOCPRMAXIMUM1", type: text}
+  - {line: "SCHOCPRMAXIMUM2", field: "SCHOCPRMAXIMUM2", type: text}
+  - {line: "SCHOCPRMAXIMUM3", field: "SCHOCPRMAXIMUM3", type: text}
+  - {line: "SCHOCUNUSED1PR", field: "SCHOCUNUSED1PR", type: text}
+  - {line: "SCHOCUNUSED2PR", field: "SCHOCUNUSED2PR", type: text}
+  - {line: "SCHOCUNUSED3PR", field: "SCHOCUNUSED3PR", type: text}
+  - {line: "SCHOCYEARPR4", field: "SCHOCYEARPR4", type: text}
+  - {line: "SCHOCCARRYFORWARD4PR", field: "SCHOCCARRYFORWARD4PR", type: text}
+  - {line: "SCHOCLIMITATION4PR", field: "SCHOCLIMITATION4PR", type: text}
+  - {line: "SCHOCPRMAXIMUM4", field: "SCHOCPRMAXIMUM4", type: text}
+  - {line: "SCHOCUNUSED4PR", field: "SCHOCUNUSED4PR", type: text}
+  - {line: "SCHOCLINE9PR", field: "SCHOCLINE9PR", type: text}
+  - {line: "SCHOCFEINPR", field: "SCHOCFEINPR", type: text}
+  - {line: "SCHOCLINE4PR", field: "SCHOCLINE4PR", type: text, maxlen: 11}
+  - {line: "SCHOCLINE5PR", field: "SCHOCLINE5PR", type: text, maxlen: 11}
+  - {line: "SCHOCPNumber1PT", field: "SCHOCPNumber1PT", type: text}
+  - {line: "SCHOCPDate1PT", field: "SCHOCPDate1PT", type: text, maxlen: 10}
+  - {line: "SCHOCAmount1PT", field: "SCHOCAmount1PT", type: text, maxlen: 11}
+  - {line: "SCHOCPNumber2PT", field: "SCHOCPNumber2PT", type: text}
+  - {line: "SCHOCPDate2PT", field: "SCHOCPDate2PT", type: text, maxlen: 10}
+  - {line: "SCHOCAmount2PT", field: "SCHOCAmount2PT", type: text, maxlen: 11}
+  - {line: "SCHOCPNumber3PT", field: "SCHOCPNumber3PT", type: text}
+  - {line: "SCHOCPDate3PT", field: "SCHOCPDate3PT", type: text, maxlen: 10}
+  - {line: "SCHOCAmount3PT", field: "SCHOCAmount3PT", type: text, maxlen: 11}
+  - {line: "SCHOCLINE3PT", field: "SCHOCLINE3PT", type: text, maxlen: 11}
+  - {line: "SCHOCPRTULINE1", field: "SCHOCPRTULINE1", type: text, maxlen: 11}
+  - {line: "SCHOCPRTVLINE1", field: "SCHOCPRTVLINE1", type: text, maxlen: 11}
+  - {line: "SCHOCPRTYLINE1", field: "SCHOCPRTYLINE1", type: text, maxlen: 11}
+  - {line: "SCHOCPRTWLINE1", field: "SCHOCPRTWLINE1", type: text, maxlen: 11}
+  - {line: "SCHOCLINE3PX", field: "SCHOCLINE3PX", type: text, maxlen: 9}
+  - {line: "SCHOCFEINPX", field: "SCHOCFEINPX", type: text, maxlen: 12}
+  - {line: "SCHOCLINE4PX", field: "SCHOCLINE4PX", type: text, maxlen: 9}
+  - {line: "SCHOCLINE5PX", field: "SCHOCLINE5PX", type: text, maxlen: 9}
+  - {line: "SCHOCCNAMEPX", field: "SCHOCCNAMEPX", type: text}
+  - {line: "SCHOCLINE1PX", field: "SCHOCLINE1PX", type: text, maxlen: 9}
+  - {line: "SCHOCLINE2PX", field: "SCHOCLINE2PX", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC3C1", field: "SCHOCPG5SECC3C1", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C1", field: "SCHOCPG5SECC4C1", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C1", field: "SCHOCPG5SECC5C1", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C1", field: "SCHOCPG5SECC6C1", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C2", field: "SCHOCPG5SECC3C2", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C2", field: "SCHOCPG5SECC4C2", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C2", field: "SCHOCPG5SECC5C2", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C2", field: "SCHOCPG5SECC6C2", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C3", field: "SCHOCPG5SECC3C3", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C3", field: "SCHOCPG5SECC4C3", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C3", field: "SCHOCPG5SECC5C3", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C3", field: "SCHOCPG5SECC6C3", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C4", field: "SCHOCPG5SECC3C4", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C4", field: "SCHOCPG5SECC4C4", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C4", field: "SCHOCPG5SECC5C4", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C4", field: "SCHOCPG5SECC6C4", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C5", field: "SCHOCPG5SECC3C5", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C5", field: "SCHOCPG5SECC4C5", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C5", field: "SCHOCPG5SECC5C5", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C5", field: "SCHOCPG5SECC6C5", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C6", field: "SCHOCPG5SECC3C6", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C6", field: "SCHOCPG5SECC4C6", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C6", field: "SCHOCPG5SECC5C6", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C6", field: "SCHOCPG5SECC6C6", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C7", field: "SCHOCPG5SECC3C7", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C7", field: "SCHOCPG5SECC4C7", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C7", field: "SCHOCPG5SECC5C7", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C7", field: "SCHOCPG5SECC6C7", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C8", field: "SCHOCPG5SECC3C8", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C8", field: "SCHOCPG5SECC4C8", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C8", field: "SCHOCPG5SECC5C8", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C8", field: "SCHOCPG5SECC6C8", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C9", field: "SCHOCPG5SECC3C9", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C9", field: "SCHOCPG5SECC4C9", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C9", field: "SCHOCPG5SECC5C9", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C9", field: "SCHOCPG5SECC6C9", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C10", field: "SCHOCPG5SECC3C10", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C10", field: "SCHOCPG5SECC4C10", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C10", field: "SCHOCPG5SECC5C10", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C10", field: "SCHOCPG5SECC6C10", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C10", field: "SCHOCPG5SECC7C10", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C11", field: "SCHOCPG5SECC3C11", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C11", field: "SCHOCPG5SECC4C11", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C11", field: "SCHOCPG5SECC5C11", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C11", field: "SCHOCPG5SECC6C11", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C12", field: "SCHOCPG5SECC3C12", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C12", field: "SCHOCPG5SECC4C12", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C12", field: "SCHOCPG5SECC5C12", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C12", field: "SCHOCPG5SECC6C12", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C12", field: "SCHOCPG5SECC7C12", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C13", field: "SCHOCPG5SECC3C13", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C13", field: "SCHOCPG5SECC4C13", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C13", field: "SCHOCPG5SECC5C13", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C13", field: "SCHOCPG5SECC6C13", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C14", field: "SCHOCPG5SECC3C14", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C14", field: "SCHOCPG5SECC4C14", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C14", field: "SCHOCPG5SECC5C14", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C14", field: "SCHOCPG5SECC6C14", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C14", field: "SCHOCPG5SECC7C14", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC2C15", field: "SCHOCPG5SECC2C15", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C15", field: "SCHOCPG5SECC3C15", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C15", field: "SCHOCPG5SECC4C15", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C15", field: "SCHOCPG5SECC5C15", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C15", field: "SCHOCPG5SECC6C15", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C15", field: "SCHOCPG5SECC7C15", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C16", field: "SCHOCPG5SECC3C16", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C16", field: "SCHOCPG5SECC4C16", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C16", field: "SCHOCPG5SECC5C16", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C16", field: "SCHOCPG5SECC6C16", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C16", field: "SCHOCPG5SECC7C16", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C17", field: "SCHOCPG5SECC3C17", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C17", field: "SCHOCPG5SECC4C17", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C17", field: "SCHOCPG5SECC5C17", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C17", field: "SCHOCPG5SECC6C17", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C17", field: "SCHOCPG5SECC7C17", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC2C18", field: "SCHOCPG5SECC2C18", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C18", field: "SCHOCPG5SECC3C18", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C18", field: "SCHOCPG5SECC4C18", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C18", field: "SCHOCPG5SECC5C18", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C18", field: "SCHOCPG5SECC6C18", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C18", field: "SCHOCPG5SECC7C18", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C19", field: "SCHOCPG5SECC3C19", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C19", field: "SCHOCPG5SECC4C19", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C19", field: "SCHOCPG5SECC5C19", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C19", field: "SCHOCPG5SECC6C19", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C20", field: "SCHOCPG5SECC3C20", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C20", field: "SCHOCPG5SECC4C20", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C20", field: "SCHOCPG5SECC5C20", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C20", field: "SCHOCPG5SECC6C20", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C21", field: "SCHOCPG5SECC3C21", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C21", field: "SCHOCPG5SECC4C21", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C21", field: "SCHOCPG5SECC5C21", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C21", field: "SCHOCPG5SECC6C21", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C22", field: "SCHOCPG5SECC3C22", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C22", field: "SCHOCPG5SECC4C22", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C22", field: "SCHOCPG5SECC5C22", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C22", field: "SCHOCPG5SECC6C22", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5TOT", field: "SCHOCPG5SECC5TOT", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C23", field: "SCHOCPG5SECC3C23", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C23", field: "SCHOCPG5SECC4C23", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C23", field: "SCHOCPG5SECC5C23", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C23", field: "SCHOCPG5SECC6C23", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C25", field: "SCHOCPG5SECC3C25", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C25", field: "SCHOCPG5SECC4C25", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C25", field: "SCHOCPG5SECC5C25", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C25", field: "SCHOCPG5SECC6C25", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC2C24", field: "SCHOCPG5SECC2C24", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC3C24", field: "SCHOCPG5SECC3C24", type: text, maxlen: 9}
+  - {line: "SCHOCPG5SECC4C24", field: "SCHOCPG5SECC4C24", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC5C24", field: "SCHOCPG5SECC5C24", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC6C24", field: "SCHOCPG5SECC6C24", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C24", field: "SCHOCPG5SECC7C24", type: text, maxlen: 11}
+  - {line: "SCHOCPG5SECC7C5", field: "SCHOCPG5SECC7C5", type: text, maxlen: 11}
+  - {line: "SCHOCPG6SECDCA1", field: "SCHOCPG6SECDCA1", type: text}
+  - {line: "SECTIONDDATE1", field: "SECTIONDDATE1", type: text}  # Section D line 1, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC1", field: "SCHOCPG6SECDCC1", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD1", field: "SCHOCPG6SECDCD1", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE1", field: "SCHOCPG6SECDCE1", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF1", field: "SCHOCPG6SECDCF1", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG1", field: "SCHOCPG6SECDCG1", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA2", field: "SCHOCPG6SECDCA2", type: text}
+  - {line: "SECTIONDDATE2", field: "SECTIONDDATE2", type: text}  # Section D line 2, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC2", field: "SCHOCPG6SECDCC2", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD2", field: "SCHOCPG6SECDCD2", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE2", field: "SCHOCPG6SECDCE2", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF2", field: "SCHOCPG6SECDCF2", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG2", field: "SCHOCPG6SECDCG2", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA3", field: "SCHOCPG6SECDCA3", type: text}
+  - {line: "SECTIONDDATE3", field: "SECTIONDDATE3", type: text}  # Section D line 3, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC3", field: "SCHOCPG6SECDCC3", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD3", field: "SCHOCPG6SECDCD3", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE3", field: "SCHOCPG6SECDCE3", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF3", field: "SCHOCPG6SECDCF3", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG3", field: "SCHOCPG6SECDCG3", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA4", field: "SCHOCPG6SECDCA4", type: text}
+  - {line: "SECTIONDDATE4", field: "SECTIONDDATE4", type: text}  # Section D line 4, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC4", field: "SCHOCPG6SECDCC4", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD4", field: "SCHOCPG6SECDCD4", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE4", field: "SCHOCPG6SECDCE4", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF4", field: "SCHOCPG6SECDCF4", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG4", field: "SCHOCPG6SECDCG4", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA5", field: "SCHOCPG6SECDCA5", type: text}
+  - {line: "SECTIONDDATE5", field: "SECTIONDDATE5", type: text}  # Section D line 5, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC5", field: "SCHOCPG6SECDCC5", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD5", field: "SCHOCPG6SECDCD5", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE5", field: "SCHOCPG6SECDCE5", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF5", field: "SCHOCPG6SECDCF5", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG5", field: "SCHOCPG6SECDCG5", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA6", field: "SCHOCPG6SECDCA6", type: text}
+  - {line: "SECTIONDDATE6", field: "SECTIONDDATE6", type: text}  # Section D line 6, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC6", field: "SCHOCPG6SECDCC6", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD6", field: "SCHOCPG6SECDCD6", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE6", field: "SCHOCPG6SECDCE6", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF6", field: "SCHOCPG6SECDCF6", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG6", field: "SCHOCPG6SECDCG6", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA7", field: "SCHOCPG6SECDCA7", type: text}
+  - {line: "SECTIONDDATE7", field: "SECTIONDDATE7", type: text}  # Section D line 7, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC7", field: "SCHOCPG6SECDCC7", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD7", field: "SCHOCPG6SECDCD7", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE7", field: "SCHOCPG6SECDCE7", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF7", field: "SCHOCPG6SECDCF7", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG7", field: "SCHOCPG6SECDCG7", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA8", field: "SCHOCPG6SECDCA8", type: text}
+  - {line: "SECTIONDDATE8", field: "SECTIONDDATE8", type: text}  # Section D line 8, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC8", field: "SCHOCPG6SECDCC8", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD8", field: "SCHOCPG6SECDCD8", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE8", field: "SCHOCPG6SECDCE8", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF8", field: "SCHOCPG6SECDCF8", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG8", field: "SCHOCPG6SECDCG8", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA9", field: "SCHOCPG6SECDCA9", type: text}
+  - {line: "SECTIONDDATE9", field: "SECTIONDDATE9", type: text}  # Section D line 9, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC9", field: "SCHOCPG6SECDCC9", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD9", field: "SCHOCPG6SECDCD9", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE9", field: "SCHOCPG6SECDCE9", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF9", field: "SCHOCPG6SECDCF9", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG9", field: "SCHOCPG6SECDCG9", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA10", field: "SCHOCPG6SECDCA10", type: text}
+  - {line: "SECTIONDDATE10", field: "SECTIONDDATE10", type: text}  # Section D line 10, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC10", field: "SCHOCPG6SECDCC10", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD10", field: "SCHOCPG6SECDCD10", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE10", field: "SCHOCPG6SECDCE10", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF10", field: "SCHOCPG6SECDCF10", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG10", field: "SCHOCPG6SECDCG10", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCC11", field: "SCHOCPG6SECDCC11", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA11", field: "SCHOCPG6SECDCA11", type: text}
+  - {line: "SECTIONDDATE11", field: "SECTIONDDATE11", type: text}  # Section D line 11, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCD11", field: "SCHOCPG6SECDCD11", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE11", field: "SCHOCPG6SECDCE11", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF11", field: "SCHOCPG6SECDCF11", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG11", field: "SCHOCPG6SECDCG11", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA12", field: "SCHOCPG6SECDCA12", type: text}
+  - {line: "SECTIONDDATE12", field: "SECTIONDDATE12", type: text}  # Section D line 12, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC12", field: "SCHOCPG6SECDCC12", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD12", field: "SCHOCPG6SECDCD12", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE12", field: "SCHOCPG6SECDCE12", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF12", field: "SCHOCPG6SECDCF12", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG12", field: "SCHOCPG6SECDCG12", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA13", field: "SCHOCPG6SECDCA13", type: text}
+  - {line: "SECTIONDDATE13", field: "SECTIONDDATE13", type: text}  # Section D line 13, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC13", field: "SCHOCPG6SECDCC13", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD13", field: "SCHOCPG6SECDCD13", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE13", field: "SCHOCPG6SECDCE13", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF13", field: "SCHOCPG6SECDCF13", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG13", field: "SCHOCPG6SECDCG13", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA14", field: "SCHOCPG6SECDCA14", type: text}
+  - {line: "SECTIONDDATE14", field: "SECTIONDDATE14", type: text}  # Section D line 14, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC14", field: "SCHOCPG6SECDCC14", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD14", field: "SCHOCPG6SECDCD14", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE14", field: "SCHOCPG6SECDCE14", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF14", field: "SCHOCPG6SECDCF14", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG14", field: "SCHOCPG6SECDCG14", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA15", field: "SCHOCPG6SECDCA15", type: text}
+  - {line: "SECTIONDDATE15", field: "SECTIONDDATE15", type: text}  # Section D line 15, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC15", field: "SCHOCPG6SECDCC15", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD15", field: "SCHOCPG6SECDCD15", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE15", field: "SCHOCPG6SECDCE15", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF15", field: "SCHOCPG6SECDCF15", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG15", field: "SCHOCPG6SECDCG15", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA16", field: "SCHOCPG6SECDCA16", type: text}
+  - {line: "SECTIONDDATE16", field: "SECTIONDDATE16", type: text}  # Section D line 16, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC16", field: "SCHOCPG6SECDCC16", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD16", field: "SCHOCPG6SECDCD16", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE16", field: "SCHOCPG6SECDCE16", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF16", field: "SCHOCPG6SECDCF16", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG16", field: "SCHOCPG6SECDCG16", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA17", field: "SCHOCPG6SECDCA17", type: text}
+  - {line: "SECTIONDDATE17", field: "SECTIONDDATE17", type: text}  # Section D line 17, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC17", field: "SCHOCPG6SECDCC17", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD17", field: "SCHOCPG6SECDCD17", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE17", field: "SCHOCPG6SECDCE17", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF17", field: "SCHOCPG6SECDCF17", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG17", field: "SCHOCPG6SECDCG17", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA18", field: "SCHOCPG6SECDCA18", type: text}
+  - {line: "SECTIONDDATE18", field: "SECTIONDDATE18", type: text}  # Section D line 18, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC18", field: "SCHOCPG6SECDCC18", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD18", field: "SCHOCPG6SECDCD18", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE18", field: "SCHOCPG6SECDCE18", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF18", field: "SCHOCPG6SECDCF18", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG18", field: "SCHOCPG6SECDCG18", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA19", field: "SCHOCPG6SECDCA19", type: text}
+  - {line: "SECTIONDDATE19", field: "SECTIONDDATE19", type: text}  # Section D line 19, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC19", field: "SCHOCPG6SECDCC19", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD19", field: "SCHOCPG6SECDCD19", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE19", field: "SCHOCPG6SECDCE19", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF19", field: "SCHOCPG6SECDCF19", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG19", field: "SCHOCPG6SECDCG19", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCA20", field: "SCHOCPG6SECDCA20", type: text}
+  - {line: "SECTIONDDATE20", field: "SECTIONDDATE20", type: text}  # Section D line 20, column B "Year Carryforward Generated (YYYY)": a 4-digit year, not a date
+  - {line: "SCHOCPG6SECDCC20", field: "SCHOCPG6SECDCC20", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCD20", field: "SCHOCPG6SECDCD20", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE20", field: "SCHOCPG6SECDCE20", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCF20", field: "SCHOCPG6SECDCF20", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCG20", field: "SCHOCPG6SECDCG20", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECDCE21", field: "SCHOCPG6SECDCE21", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECEE2", field: "SCHOCPG6SECEE2", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECEE3", field: "SCHOCPG6SECEE3", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECEE4", field: "SCHOCPG6SECEE4", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECEE5", field: "SCHOCPG6SECEE5", type: text, maxlen: 9}
+  - {line: "SCHOCPG6SECFF1", field: "SCHOCPG6SECFF1", type: text, maxlen: 11}
+  - {line: "SCHOCPG6SECFF2", field: "SCHOCPG6SECFF2", type: text, maxlen: 11}
+  - {line: "SCHOCPG6SECFF3", field: "SCHOCPG6SECFF3", type: text, maxlen: 11}
+  - {line: "SCHOCPG6SECFF4", field: "SCHOCPG6SECFF4", type: text, maxlen: 11}
+  # --- page 14: Schedule AATC.
+  - {line: "SCHAATCNAME", field: "SCHAATCNAME", type: text}
+  - {line: "SCHAATCSSN", field: "SCHAATCSSN", type: text, maxlen: 9}
+  - {line: "SCHAATCSPSSN", field: "SCHAATCSPSSN", type: text, maxlen: 9}
+  - {line: "SCHAATCLN1", field: "SCHAATCLN1", type: text, maxlen: 30}
+  - {line: "SCHAATCLN2", field: "SCHAATCLN2", type: text, maxlen: 9}
+  - {line: "SCHAATCLN3", field: "SCHAATCLN3", type: text, maxlen: 30}
+  - {line: "SCHAATCLN4", field: "SCHAATCLN4", type: text, maxlen: 30}
+  - {line: "SCHAATCLN5", field: "SCHAATCLN5", type: text}
+  - {line: "SCHAATCLN6", field: "SCHAATCLN6", type: text, maxlen: 24}
+  - {line: "SCHAATCLN8", field: "SCHAATCLN8", type: text, maxlen: 9}
+  - {line: "SCHAATCLN9", field: "SCHAATCLN9", type: text, maxlen: 9}
+  - {line: "SCHAATCLN10", field: "SCHAATCLN10", type: text, maxlen: 30}
+  - {line: "SCHAATCLN11", field: "SCHAATCLN11", type: text, maxlen: 9}
+  - {line: "SCHAATCLN12", field: "SCHAATCLN12", type: text, maxlen: 30}
+  - {line: "SCHAATCLN13", field: "SCHAATCLN13", type: text, maxlen: 30}
+  - {line: "SCHAATCLN14", field: "SCHAATCLN14", type: text}
+  - {line: "SCHAATCLN15", field: "SCHAATCLN15", type: text}
+  - {line: "SCHAATCLN17", field: "SCHAATCLN17", type: text, maxlen: 9}
+  - {line: "SCHAATCLN18", field: "SCHAATCLN18", type: text, maxlen: 9}
+  - {line: "SCHAATCLN19", field: "SCHAATCLN19", type: text, maxlen: 30}
+  - {line: "SCHAATCLN20", field: "SCHAATCLN20", type: text, maxlen: 9}
+  - {line: "SCHAATCLN21", field: "SCHAATCLN21", type: text, maxlen: 30}
+  - {line: "SCHAATCLN22", field: "SCHAATCLN22", type: text, maxlen: 30}
+  - {line: "SCHAATCLN23", field: "SCHAATCLN23", type: text}
+  - {line: "SCHAATCLN24", field: "SCHAATCLN24", type: text}
+  - {line: "SCHAATCLN26", field: "SCHAATCLN26", type: text, maxlen: 9}
+  - {line: "SCHAATCLN27", field: "SCHAATCLN27", type: text, maxlen: 9}
+  - {line: "SCHAATCLN28", field: "SCHAATCLN28", type: text, maxlen: 30}
+  - {line: "SCHAATCLN29", field: "SCHAATCLN29", type: text, maxlen: 9}
+  - {line: "SCHAATCLN30", field: "SCHAATCLN30", type: text, maxlen: 30}
+  - {line: "SCHAATCLN31", field: "SCHAATCLN31", type: text, maxlen: 30}
+  - {line: "SCHAATCLN32", field: "SCHAATCLN32", type: text}
+  - {line: "SCHAATCLN33", field: "SCHAATCLN33", type: text}
+  - {line: "SCHAATCLN35", field: "SCHAATCLN35", type: text, maxlen: 9}
+  - {line: "SCHAATCLN36", field: "SCHAATCLN36", type: text, maxlen: 9}
+  - {line: "SCHAATCLN37", field: "SCHAATCLN37", type: text, maxlen: 9}
+  # --- page 15: Schedule AAC.
+  - {line: "SCHAACNAME", field: "SCHAACNAME", type: text}
+  - {line: "SCHAACSSN", field: "SCHAACSSN", type: text, maxlen: 9}
+  - {line: "SCHAACSPSSN", field: "SCHAACSPSSN", type: text, maxlen: 9}
+  - {line: "SCHAACPRTILN1", field: "SCHAACPRTILN1", type: text, maxlen: 20}  # Part I row 1, col A Name of Child
+  - {line: "SCHAACPRTILN2", field: "SCHAACPRTILN2", type: text}  # Part I row 1, col B Effective Date of Adoption
+  - {line: "SCHAACPRTILN3", field: "SCHAACPRTILN3", type: text, maxlen: 13}  # Part I row 1, col C Social Security Number of Child
+  - {line: "SCHAACPRTILN4", field: "SCHAACPRTILN4", type: text, maxlen: 20}  # Part I row 1, col D Name of Birth Mother
+  - {line: "SCHAACPRTILN5", field: "SCHAACPRTILN5", type: text, maxlen: 26}  # Part I row 1, col E Name of Adoption Agency
+  - {line: "SCHAACPRTILN6", field: "SCHAACPRTILN6", type: text, maxlen: 32}  # Part I row 1, col F Address of Adoption Agency
+  - {line: "SCHAACPRTILN7", field: "SCHAACPRTILN7", type: text, maxlen: 20}  # Part I row 2, col A Name of Child
+  - {line: "SCHAACPRTILN8", field: "SCHAACPRTILN8", type: text}  # Part I row 2, col B Effective Date of Adoption
+  - {line: "SCHAACPRTILN9", field: "SCHAACPRTILN9", type: text, maxlen: 13}  # Part I row 2, col C Social Security Number of Child
+  - {line: "SCHAACPRTILN10", field: "SCHAACPRTILN10", type: text, maxlen: 20}  # Part I row 2, col D Name of Birth Mother
+  - {line: "SCHAACPRTILN11", field: "SCHAACPRTILN11", type: text, maxlen: 26}  # Part I row 2, col E Name of Adoption Agency
+  - {line: "SCHAACPRTILN12", field: "SCHAACPRTILN12", type: text, maxlen: 32}  # Part I row 2, col F Address of Adoption Agency
+  - {line: "SCHAACPRTILN13", field: "SCHAACPRTILN13", type: text, maxlen: 20}  # Part I row 3, col A Name of Child
+  - {line: "SCHAACPRTILN14", field: "SCHAACPRTILN14", type: text}  # Part I row 3, col B Effective Date of Adoption
+  - {line: "SCHAACPRTILN15", field: "SCHAACPRTILN15", type: text, maxlen: 13}  # Part I row 3, col C Social Security Number of Child
+  - {line: "SCHAACPRTILN16", field: "SCHAACPRTILN16", type: text, maxlen: 20}  # Part I row 3, col D Name of Birth Mother
+  - {line: "SCHAACPRTILN17", field: "SCHAACPRTILN17", type: text, maxlen: 26}  # Part I row 3, col E Name of Adoption Agency
+  - {line: "SCHAACPRTILN18", field: "SCHAACPRTILN18", type: text, maxlen: 32}  # Part I row 3, col F Address of Adoption Agency
+  - {line: "SCHAACPRTILN19", field: "SCHAACPRTILN19", type: text, maxlen: 20}  # Part I row 4, col A Name of Child
+  - {line: "SCHAACPRTILN21", field: "SCHAACPRTILN21", type: text, maxlen: 9}  # Part I row 4, col C Social Security Number of Child
+  - {line: "SCHAACPRTILN22", field: "SCHAACPRTILN22", type: text, maxlen: 20}  # Part I row 4, col D Name of Birth Mother
+  - {line: "SCHAACPRTILN23", field: "SCHAACPRTILN23", type: text, maxlen: 26}  # Part I row 4, col E Name of Adoption Agency
+  - {line: "SCHAACPRTILN24", field: "SCHAACPRTILN24", type: text, maxlen: 32}  # Part I row 4, col F Address of Adoption Agency
+  - {line: "SCHAACPRTILN25", field: "SCHAACPRTILN25", type: text, maxlen: 20}  # Part I row 5, col A Name of Child
+  - {line: "SCHAACPRTILN26", field: "SCHAACPRTILN26", type: text}  # Part I row 5, col B Effective Date of Adoption (this widget ships left-aligned, /Q absent, so its value starts on the printed bullet; the column's other rows are centred)
+  - {line: "SCHAACPRTILN27", field: "SCHAACPRTILN27", type: text, maxlen: 9}  # Part I row 5, col C Social Security Number of Child
+  - {line: "SCHAACPRTILN28", field: "SCHAACPRTILN28", type: text, maxlen: 20}  # Part I row 5, col D Name of Birth Mother
+  - {line: "SCHAACPRTILN29", field: "SCHAACPRTILN29", type: text, maxlen: 26}  # Part I row 5, col E Name of Adoption Agency
+  - {line: "SCHAACPRTILN20", field: "SCHAACPRTILN20", type: text}  # Part I row 4, col B Effective Date of Adoption
+  - {line: "SCHAACPRTILN30", field: "SCHAACPRTILN30", type: text, maxlen: 32}  # Part I row 5, col F Address of Adoption Agency
+  - {line: "SCHAACPRTIILN1", field: "SCHAACPRTIILN1", type: text, maxlen: 20}  # Part II row 1, col A Name of Child
+  - {line: "SCHAACPRTIILN2", field: "SCHAACPRTIILN2", type: text}  # Part II row 1, col B Effective Date of Adoption
+  - {line: "SCHAACPRTIILN3", field: "SCHAACPRTIILN3", type: text, maxlen: 13}  # Part II row 1, col C Social Security Number of Child
+  - {line: "SCHAACPRTIILN4", field: "SCHAACPRTIILN4", type: text, maxlen: 20}  # Part II row 1, col D Name of Birth Mother
+  - {line: "SCHAACPRTIILN5", field: "SCHAACPRTIILN5", type: text, maxlen: 26}  # Part II row 1, col E Name of Adoption Agency
+  - {line: "SCHAACPRTIILN6", field: "SCHAACPRTIILN6", type: text, maxlen: 32}  # Part II row 1, col F Address of Adoption Agency
+  - {line: "SCHAACPRTIILN7", field: "SCHAACPRTIILN7", type: text, maxlen: 20}  # Part II row 2, col A Name of Child
+  - {line: "SCHAACPRTIILN8", field: "SCHAACPRTIILN8", type: text}  # Part II row 2, col B Effective Date of Adoption
+  - {line: "SCHAACPRTIILN9", field: "SCHAACPRTIILN9", type: text, maxlen: 13}  # Part II row 2, col C Social Security Number of Child
+  - {line: "SCHAACPRTIILN10", field: "SCHAACPRTIILN10", type: text, maxlen: 20}  # Part II row 2, col D Name of Birth Mother
+  - {line: "SCHAACPRTIILN11", field: "SCHAACPRTIILN11", type: text, maxlen: 26}  # Part II row 2, col E Name of Adoption Agency
+  - {line: "SCHAACPRTIILN12", field: "SCHAACPRTIILN12", type: text, maxlen: 32}  # Part II row 2, col F Address of Adoption Agency
+  - {line: "SCHAACPRTIILN13", field: "SCHAACPRTIILN13", type: text, maxlen: 20}  # Part II row 3, col A Name of Child
+  - {line: "SCHAACPRTIILN14", field: "SCHAACPRTIILN14", type: text}  # Part II row 3, col B Effective Date of Adoption
+  - {line: "SCHAACPRTIILN15", field: "SCHAACPRTIILN15", type: text, maxlen: 13}  # Part II row 3, col C Social Security Number of Child
+  - {line: "SCHAACPRTIILN16", field: "SCHAACPRTIILN16", type: text, maxlen: 20}  # Part II row 3, col D Name of Birth Mother
+  - {line: "SCHAACPRTIILN17", field: "SCHAACPRTIILN17", type: text, maxlen: 26}  # Part II row 3, col E Name of Adoption Agency
+  - {line: "SCHAACPRTIILN18", field: "SCHAACPRTIILN18", type: text, maxlen: 32}  # Part II row 3, col F Address of Adoption Agency
+  - {line: "SCHAACPRTIILN19", field: "SCHAACPRTIILN19", type: text, maxlen: 20}  # Part II row 4, col A Name of Child
+  - {line: "SCHAACPRTIILN21", field: "SCHAACPRTIILN21", type: text, maxlen: 9}  # Part II row 4, col C Social Security Number of Child
+  - {line: "SCHAACPRTIILN22", field: "SCHAACPRTIILN22", type: text, maxlen: 20}  # Part II row 4, col D Name of Birth Mother
+  - {line: "SCHAACPRTIILN23", field: "SCHAACPRTIILN23", type: text, maxlen: 26}  # Part II row 4, col E Name of Adoption Agency
+  - {line: "SCHAACPRTIILN24", field: "SCHAACPRTIILN24", type: text, maxlen: 32}  # Part II row 4, col F Address of Adoption Agency
+  - {line: "SCHAACPRTIILN25", field: "SCHAACPRTIILN25", type: text, maxlen: 20}  # Part II row 5, col A Name of Child
+  - {line: "SCHAACPRTIILN26", field: "SCHAACPRTIILN26", type: text}  # Part II row 5, col B Effective Date of Adoption (this widget ships left-aligned, /Q absent, so its value starts on the printed bullet; the column's other rows are centred)
+  - {line: "SCHAACPRTIILN27", field: "SCHAACPRTIILN27", type: text, maxlen: 9}  # Part II row 5, col C Social Security Number of Child
+  - {line: "SCHAACPRTIILN28", field: "SCHAACPRTIILN28", type: text, maxlen: 20}  # Part II row 5, col D Name of Birth Mother
+  - {line: "SCHAACPRTIILN29", field: "SCHAACPRTIILN29", type: text, maxlen: 26}  # Part II row 5, col E Name of Adoption Agency
+  - {line: "SCHAACPRTIILN20", field: "SCHAACPRTIILN20", type: text}  # Part II row 4, col B Effective Date of Adoption
+  - {line: "SCHAACPRTIILN30", field: "SCHAACPRTIILN30", type: text, maxlen: 32}  # Part II row 5, col F Address of Adoption Agency
+  - {line: "SCHAACPRTIIILN1", field: "SCHAACPRTIIILN1", type: text, maxlen: 9}
+  - {line: "SCHAACPRTIIILN2", field: "SCHAACPRTIIILN2", type: text, maxlen: 9}
+  - {line: "SCHAACPRTIIILN3", field: "SCHAACPRTIIILN3", type: text, maxlen: 9}
+  # --- page 16: Schedule KRCC-I, first copy.
+  - {line: "SCHKRCCIBDATE", field: "SCHKRCCIBDATE", type: text}  # tax year beginning: month/day only (mm/dd) - the face prints ", 20__" after it and BEGYEAR takes the 2-digit year
+  - {line: "BEGYEAR", field: "BEGYEAR", type: text, maxlen: 2}  # beginning year: the 2 digits after the printed "20"
+  - {line: "SCHKRCCIEDATE", field: "SCHKRCCIEDATE", type: text}  # tax year ending: month/day only (mm/dd) - the face prints ", 20__" after it and SCHKRCCIEYEAR takes the 2-digit year
+  - {line: "SCHKRCCIEYEAR", field: "SCHKRCCIEYEAR", type: text, maxlen: 2}  # ending "20______" year suffix — no /MaxLen; maxlen 2 measured (16.3 pt box, Courier 10), as BEGYEAR's own /MaxLen 2
+  - {line: "SCHKRCCIPNumber1", field: "SCHKRCCIPNumber1", type: text}
+  - {line: "SCHKRCCIPNumber2", field: "SCHKRCCIPNumber2", type: text}
+  - {line: "SCHKRCCIPNumber3", field: "SCHKRCCIPNumber3", type: text}
+  - {line: "SCHKRCCIDate1", field: "SCHKRCCIDate1", type: text}
+  - {line: "SCHKRCCIDate2", field: "SCHKRCCIDate2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIDate3", field: "SCHKRCCIDate3", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPENAME1", field: "SCHKRCCIPENAME1", type: text}
+  - {line: "SCHKRCCIDEFEIN1", field: "SCHKRCCIDEFEIN1", type: text, maxlen: 9}
+  - {line: "SCHKRCCIPENAME2", field: "SCHKRCCIPENAME2", type: text}
+  - {line: "SCHKRCCIPENAME3", field: "SCHKRCCIPENAME3", type: text}
+  - {line: "SCHKRCCIDENAME1", field: "SCHKRCCIDENAME1", type: text}
+  - {line: "SCHKRCCIDENAME2", field: "SCHKRCCIDENAME2", type: text}
+  - {line: "SCHKRCCIDENAME3", field: "SCHKRCCIDENAME3", type: text}
+  - {line: "SCHKRCCIPTIIILINE1a", field: "SCHKRCCIPTIIILINE1a", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE1b", field: "SCHKRCCIPTIIILINE1b", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE1c", field: "SCHKRCCIPTIIILINE1c", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE2a", field: "SCHKRCCIPTIIILINE2a", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE2b", field: "SCHKRCCIPTIIILINE2b", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE2c", field: "SCHKRCCIPTIIILINE2c", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE3a", field: "SCHKRCCIPTIIILINE3a", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE3b", field: "SCHKRCCIPTIIILINE3b", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE3c", field: "SCHKRCCIPTIIILINE3c", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE4a", field: "SCHKRCCIPTIIILINE4a", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE4b", field: "SCHKRCCIPTIIILINE4b", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE4c", field: "SCHKRCCIPTIIILINE4c", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE1a", field: "SCHKRCCIPTIVLINE1a", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE1b", field: "SCHKRCCIPTIVLINE1b", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE1c", field: "SCHKRCCIPTIVLINE1c", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE2a", field: "SCHKRCCIPTIVLINE2a", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE2b", field: "SCHKRCCIPTIVLINE2b", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE2c", field: "SCHKRCCIPTIVLINE2c", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE3a", field: "SCHKRCCIPTIVLINE3a", type: text, maxlen: 9}  # Part IV line 3a, Project 1 percentage: /MaxLen 10, held to 9 - at 10 the right-aligned text reaches the printed bullet at the box's left edge (60.4 pt at Courier 10)
+  - {line: "SCHKRCCIPTIVLINE3b", field: "SCHKRCCIPTIVLINE3b", type: text, maxlen: 9}
+  - {line: "SCHKRCCIPTIVLINE3c", field: "SCHKRCCIPTIVLINE3c", type: text, maxlen: 9}
+  - {line: "SCHKRCCIPTIVLINE4a", field: "SCHKRCCIPTIVLINE4a", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE4b", field: "SCHKRCCIPTIVLINE4b", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE4c", field: "SCHKRCCIPTIVLINE4c", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE5a", field: "SCHKRCCIPTIVLINE5a", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE5b", field: "SCHKRCCIPTIVLINE5b", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE5c", field: "SCHKRCCIPTIVLINE5c", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE5", field: "SCHKRCCIPTIIILINE5", type: text, maxlen: 9}  # Part III line 5: /MaxLen 10, held to 9 - at 10 the right-aligned text reaches the printed bullet at the box's left edge (61.5 pt at Courier 10)
+  - {line: "SCHKRCCINAME", field: "SCHKRCCINAME", type: text}
+  - {line: "SCHKRCCISSN", field: "SCHKRCCISSN", type: text, maxlen: 9}
+  - {line: "SCHKRCCIDEFEIN2", field: "SCHKRCCIDEFEIN2", type: text, maxlen: 9}
+  - {line: "SCHKRCCIDEFEIN3", field: "SCHKRCCIDEFEIN3", type: text, maxlen: 9}
+  # --- page 17: Schedule KRCC-I, a second full copy (field names suffixed -2).
+  - {line: "SCHKRCCIBDATE-2", field: "SCHKRCCIBDATE-2", type: text}  # tax year beginning: month/day only (mm/dd) - the face prints ", 20__" after it and BEGYEAR takes the 2-digit year
+  - {line: "BEGYEAR-2", field: "BEGYEAR-2", type: text, maxlen: 2}  # beginning year: the 2 digits after the printed "20"
+  - {line: "SCHKRCCIEDATE-2", field: "SCHKRCCIEDATE-2", type: text}  # tax year ending: month/day only (mm/dd) - the face prints ", 20__" after it and SCHKRCCIEYEAR takes the 2-digit year
+  - {line: "SCHKRCCIEYEAR-2", field: "SCHKRCCIEYEAR-2", type: text, maxlen: 2}  # as SCHKRCCIEYEAR (16.8pt box)
+  - {line: "SCHKRCCIPNumber1-2", field: "SCHKRCCIPNumber1-2", type: text}
+  - {line: "SCHKRCCIPNumber2-2", field: "SCHKRCCIPNumber2-2", type: text}
+  - {line: "SCHKRCCIPNumber3-2", field: "SCHKRCCIPNumber3-2", type: text}
+  - {line: "SCHKRCCIDate1-2", field: "SCHKRCCIDate1-2", type: text}
+  - {line: "SCHKRCCIDate2-2", field: "SCHKRCCIDate2-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIDate3-2", field: "SCHKRCCIDate3-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPENAME1-2", field: "SCHKRCCIPENAME1-2", type: text}
+  - {line: "SCHKRCCIDEFEIN1-2", field: "SCHKRCCIDEFEIN1-2", type: text, maxlen: 9}
+  - {line: "SCHKRCCIPENAME2-2", field: "SCHKRCCIPENAME2-2", type: text}
+  - {line: "SCHKRCCIPENAME3-2", field: "SCHKRCCIPENAME3-2", type: text}
+  - {line: "SCHKRCCIDENAME1-2", field: "SCHKRCCIDENAME1-2", type: text}
+  - {line: "SCHKRCCIDENAME2-2", field: "SCHKRCCIDENAME2-2", type: text}
+  - {line: "SCHKRCCIDENAME3-2", field: "SCHKRCCIDENAME3-2", type: text}
+  - {line: "SCHKRCCIPTIIILINE1a-2", field: "SCHKRCCIPTIIILINE1a-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE1b-2", field: "SCHKRCCIPTIIILINE1b-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE1c-2", field: "SCHKRCCIPTIIILINE1c-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE2a-2", field: "SCHKRCCIPTIIILINE2a-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE2b-2", field: "SCHKRCCIPTIIILINE2b-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE2c-2", field: "SCHKRCCIPTIIILINE2c-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE3a-2", field: "SCHKRCCIPTIIILINE3a-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE3b-2", field: "SCHKRCCIPTIIILINE3b-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE3c-2", field: "SCHKRCCIPTIIILINE3c-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE4a-2", field: "SCHKRCCIPTIIILINE4a-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE4b-2", field: "SCHKRCCIPTIIILINE4b-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE4c-2", field: "SCHKRCCIPTIIILINE4c-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE1a-2", field: "SCHKRCCIPTIVLINE1a-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE1b-2", field: "SCHKRCCIPTIVLINE1b-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE1c-2", field: "SCHKRCCIPTIVLINE1c-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE2a-2", field: "SCHKRCCIPTIVLINE2a-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE2b-2", field: "SCHKRCCIPTIVLINE2b-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE2c-2", field: "SCHKRCCIPTIVLINE2c-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE3a-2", field: "SCHKRCCIPTIVLINE3a-2", type: text, maxlen: 9}  # Part IV line 3a, Project 1 percentage: /MaxLen 10, held to 9 - at 10 the right-aligned text reaches the printed bullet at the box's left edge (60.4 pt at Courier 10)
+  - {line: "SCHKRCCIPTIVLINE3b-2", field: "SCHKRCCIPTIVLINE3b-2", type: text, maxlen: 9}
+  - {line: "SCHKRCCIPTIVLINE3c-2", field: "SCHKRCCIPTIVLINE3c-2", type: text, maxlen: 9}
+  - {line: "SCHKRCCIPTIVLINE4a-2", field: "SCHKRCCIPTIVLINE4a-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE4b-2", field: "SCHKRCCIPTIVLINE4b-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE4c-2", field: "SCHKRCCIPTIVLINE4c-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE5a-2", field: "SCHKRCCIPTIVLINE5a-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE5b-2", field: "SCHKRCCIPTIVLINE5b-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIVLINE5c-2", field: "SCHKRCCIPTIVLINE5c-2", type: text, maxlen: 10}
+  - {line: "SCHKRCCIPTIIILINE5-2", field: "SCHKRCCIPTIIILINE5-2", type: text, maxlen: 9}  # Part III line 5: /MaxLen 10, held to 9 - at 10 the right-aligned text reaches the printed bullet at the box's left edge (61.5 pt at Courier 10)
+  - {line: "SCHKRCCINAME-2", field: "SCHKRCCINAME-2", type: text}
+  - {line: "SCHKRCCISSN-2", field: "SCHKRCCISSN-2", type: text, maxlen: 9}
+  - {line: "SCHKRCCIDEFEIN2-2", field: "SCHKRCCIDEFEIN2-2", type: text, maxlen: 9}
+  - {line: "SCHKRCCIDEFEIN3-2", field: "SCHKRCCIDEFEIN3-2", type: text, maxlen: 9}
+  # --- page 18: Form NOL-85, page 1.
+  - {line: "SchNOL85Date", field: "SchNOL85Date", type: text, maxlen: 5}
+  - {line: "SchNOL85Year", field: "SchNOL85Year", type: text, maxlen: 4}
+  - {line: "SchNOL85NAME", field: "SchNOL85NAME", type: text}
+  - {line: "SchNOL85SSN", field: "SchNOL85SSN", type: text, maxlen: 9}  # Form NOL-85 header SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SchNOL85LN1a", field: "SchNOL85LN1a", type: text}
+  - {line: "SchNOL85LN1b", field: "SchNOL85LN1b", type: text}
+  - {line: "SchNOL85LN1c", field: "SchNOL85LN1c", type: text, maxlen: 10}
+  - {line: "SchNOL85LN1d", field: "SchNOL85LN1d", type: text, maxlen: 9}
+  - {line: "SchNOL85LN1e", field: "SchNOL85LN1e", type: text, maxlen: 10}
+  - {line: "SchNOL85LN1f", field: "SchNOL85LN1f", type: text, maxlen: 10}
+  - {line: "SchNOL85LN1g", field: "SchNOL85LN1g", type: text, maxlen: 10}
+  - {line: "SchNOL85LN2hOther", field: "SchNOL85LN2hOther", type: text}  # line 1(h) "Other (explain)" text (the raw name says 2h)
+  - {line: "SchNOL85LN1h", field: "SchNOL85LN1h", type: text, maxlen: 9}
+  - {line: "SchNOL85LN2a", field: "SchNOL85LN2a", type: text, maxlen: 9}
+  - {line: "SchNOL85LN2b", field: "SchNOL85LN2b", type: text, maxlen: 9}
+  - {line: "SchNOL85LN3a", field: "SchNOL85LN3a", type: text, maxlen: 10}
+  - {line: "SchNOL85LN3b", field: "SchNOL85LN3b", type: text, maxlen: 9}
+  - {line: "SchNOL85LN4", field: "SchNOL85LN4", type: text, maxlen: 9}
+  - {line: "SchNOL85LN5", field: "SchNOL85LN5", type: text, maxlen: 11}
+  - {line: "SchNOL85LN6", field: "SchNOL85LN6", type: text, maxlen: 10}
+  - {line: "SchNOL85LN7a", field: "SchNOL85LN7a", type: text, maxlen: 9}
+  - {line: "SchNOL85LN7b", field: "SchNOL85LN7b", type: text, maxlen: 10}
+  - {line: "SchNOL85LN7c", field: "SchNOL85LN7c", type: text, maxlen: 10}
+  - {line: "SchNOL85LN7d", field: "SchNOL85LN7d", type: text, maxlen: 10}
+  - {line: "SchNOL85LN7e", field: "SchNOL85LN7e", type: text, maxlen: 9}
+  - {line: "SchNOL85LN7f", field: "SchNOL85LN7f", type: text, maxlen: 10}
+  - {line: "SchNOL85LN17gOther", field: "SchNOL85LN17gOther", type: text, maxlen: 11}  # line 7(g) "Other (explain)" text (the raw name says 17g)
+  - {line: "SchNOL85LN7g", field: "SchNOL85LN7g", type: text, maxlen: 10}
+  - {line: "SchNOL85LN8", field: "SchNOL85LN8", type: text, maxlen: 10}
+  - {line: "SchNOL85LN9", field: "SchNOL85LN9", type: text, maxlen: 10}
+  # --- page 19: Form NOL-85, page 2.
+  - {line: "SchNOL85PTIILN1", field: "SchNOL85PTIILN1", type: text, maxlen: 9}
+  - {line: "SchNOL85PTIILN2", field: "SchNOL85PTIILN2", type: text, maxlen: 10}
+  - {line: "SchNOL85PTIILN3", field: "SchNOL85PTIILN3", type: text, maxlen: 9}
+  - {line: "SchNOL85PTIILN4", field: "SchNOL85PTIILN4", type: text, maxlen: 9}
+  - {line: "SchNOL85PTIILN5", field: "SchNOL85PTIILN5", type: text, maxlen: 10}
+  - {line: "SchNOL85PTIILN6", field: "SchNOL85PTIILN6", type: text, maxlen: 10}
+  - {line: "SchNOL85PTIILN7", field: "SchNOL85PTIILN7", type: text, maxlen: 9}
+  - {line: "SchNOL85PTIICKBox", field: "SchNOL85PTIICKBox", type: checkbox, on_state: "/X"}  # Part III "Election to Forfeit Carryback Provision" box (the raw name says PTII)
+  # --- page 20: Form NOL-85A, five copies of its two pages (pages 20-29; copies 2-5 suffix their names -1 ... -4).
+  - {line: "SchNOL85ADate", field: "SchNOL85ADate", type: text, maxlen: 5}
+  - {line: "SchNOL85AYear", field: "SchNOL85AYear", type: text, maxlen: 4}
+  - {line: "SchNOL85ANAME", field: "SchNOL85ANAME", type: text}
+  - {line: "SchNOL85ASSN", field: "SchNOL85ASSN", type: text, maxlen: 9}  # Form NOL-85A header SSN (copy 1) - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SchNOL85A1aBDate", field: "SchNOL85A1aBDate", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aBYear", field: "SchNOL85A1aBYear", type: text, maxlen: 4}
+  - {line: "SchNOL85A1aEDate", field: "SchNOL85A1aEDate", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aEYear", field: "SchNOL85A1aEYear", type: text, maxlen: 4}
+  - {line: "SchNOL85A1bY", field: "SchNOL85A1bY", type: checkbox, on_state: "/X", group: "nol85a_1_1b"}
+  - {line: "SchNOL85A1bN", field: "SchNOL85A1bN", type: checkbox, on_state: "/X", group: "nol85a_1_1b"}
+  - {line: "SchNOL85A1cY", field: "SchNOL85A1cY", type: checkbox, on_state: "/X", group: "nol85a_1_1c"}
+  - {line: "SchNOL85A1cN", field: "SchNOL85A1cN", type: checkbox, on_state: "/X", group: "nol85a_1_1c"}
+  - {line: "SchNOL85ALN2", field: "SchNOL85ALN2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN3", field: "SchNOL85ALN3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4a", field: "SchNOL85ALN4a", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4b", field: "SchNOL85ALN4b", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN5", field: "SchNOL85ALN5", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN6", field: "SchNOL85ALN6", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN7", field: "SchNOL85ALN7", type: text, maxlen: 9}
+  - {line: "SchNOL85APICKbox", field: "SchNOL85APICKbox", type: checkbox, on_state: "/Yes"}
+  - {line: "SchNOL85ALN8", field: "SchNOL85ALN8", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN9", field: "SchNOL85ALN9", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN10", field: "SchNOL85ALN10", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11a", field: "SchNOL85ALN11a", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11b", field: "SchNOL85ALN11b", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11c", field: "SchNOL85ALN11c", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11d", field: "SchNOL85ALN11d", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11e", field: "SchNOL85ALN11e", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN12", field: "SchNOL85ALN12", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN13", field: "SchNOL85ALN13", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN14", field: "SchNOL85ALN14", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN15", field: "SchNOL85ALN15", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN16", field: "SchNOL85ALN16", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN17", field: "SchNOL85ALN17", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN18", field: "SchNOL85ALN18", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN19", field: "SchNOL85ALN19", type: text, maxlen: 8}
+  - {line: "SchNOL85ADate-1", field: "SchNOL85ADate-1", type: text, maxlen: 5}
+  - {line: "SchNOL85AYear-1", field: "SchNOL85AYear-1", type: text, maxlen: 4}
+  - {line: "SchNOL85ANAME-1", field: "SchNOL85ANAME-1", type: text}
+  - {line: "SchNOL85ASSN-1", field: "SchNOL85ASSN-1", type: text, maxlen: 9}  # Form NOL-85A header SSN (copy 2) - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SchNOL85A1aBDate-1", field: "SchNOL85A1aBDate-1", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aBYear-1", field: "SchNOL85A1aBYear-1", type: text, maxlen: 4}
+  - {line: "SchNOL85A1aEDate-1", field: "SchNOL85A1aEDate-1", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aEYear-1", field: "SchNOL85A1aEYear-1", type: text, maxlen: 4}
+  - {line: "SchNOL85A1bY-1", field: "SchNOL85A1bY-1", type: checkbox, on_state: "/X", group: "nol85a_2_1b"}
+  - {line: "SchNOL85A1bN-1", field: "SchNOL85A1bN-1", type: checkbox, on_state: "/X", group: "nol85a_2_1b"}
+  - {line: "SchNOL85A1cY-1", field: "SchNOL85A1cY-1", type: checkbox, on_state: "/X", group: "nol85a_2_1c"}
+  - {line: "SchNOL85A1cN-1", field: "SchNOL85A1cN-1", type: checkbox, on_state: "/X", group: "nol85a_2_1c"}
+  - {line: "SchNOL85ALN2-1", field: "SchNOL85ALN2-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN3-1", field: "SchNOL85ALN3-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4a-1", field: "SchNOL85ALN4a-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4b-1", field: "SchNOL85ALN4b-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN5-1", field: "SchNOL85ALN5-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN6-1", field: "SchNOL85ALN6-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN7-1", field: "SchNOL85ALN7-1", type: text, maxlen: 9}
+  - {line: "SchNOL85APICKbox-1", field: "SchNOL85APICKbox-1", type: checkbox, on_state: "/Yes"}
+  - {line: "SchNOL85ALN8-1", field: "SchNOL85ALN8-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN9-1", field: "SchNOL85ALN9-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN10-1", field: "SchNOL85ALN10-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11a-1", field: "SchNOL85ALN11a-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11b-1", field: "SchNOL85ALN11b-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11c-1", field: "SchNOL85ALN11c-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11d-1", field: "SchNOL85ALN11d-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11e-1", field: "SchNOL85ALN11e-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN12-1", field: "SchNOL85ALN12-1", type: text, maxlen: 10}
+  - {line: "SchNOL85ALN13-1", field: "SchNOL85ALN13-1", type: text, maxlen: 10}
+  - {line: "SchNOL85ALN14-1", field: "SchNOL85ALN14-1", type: text, maxlen: 10}
+  - {line: "SchNOL85ALN15-1", field: "SchNOL85ALN15-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN16-1", field: "SchNOL85ALN16-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN17-1", field: "SchNOL85ALN17-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN18-1", field: "SchNOL85ALN18-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN19-1", field: "SchNOL85ALN19-1", type: text, maxlen: 9}
+  - {line: "SchNOL85ADate-2", field: "SchNOL85ADate-2", type: text, maxlen: 5}
+  - {line: "SchNOL85AYear-2", field: "SchNOL85AYear-2", type: text, maxlen: 4}
+  - {line: "SchNOL85ANAME-2", field: "SchNOL85ANAME-2", type: text}
+  - {line: "SchNOL85ASSN-2", field: "SchNOL85ASSN-2", type: text, maxlen: 9}  # Form NOL-85A header SSN (copy 3) - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SchNOL85A1aBDate-2", field: "SchNOL85A1aBDate-2", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aBYear-2", field: "SchNOL85A1aBYear-2", type: text, maxlen: 4}
+  - {line: "SchNOL85A1aEDate-2", field: "SchNOL85A1aEDate-2", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aEYear-2", field: "SchNOL85A1aEYear-2", type: text, maxlen: 4}
+  - {line: "SchNOL85A1bY-2", field: "SchNOL85A1bY-2", type: checkbox, on_state: "/X", group: "nol85a_3_1b"}
+  - {line: "SchNOL85A1bN-2", field: "SchNOL85A1bN-2", type: checkbox, on_state: "/X", group: "nol85a_3_1b"}
+  - {line: "SchNOL85A1cY-2", field: "SchNOL85A1cY-2", type: checkbox, on_state: "/X", group: "nol85a_3_1c"}
+  - {line: "SchNOL85A1cN-2", field: "SchNOL85A1cN-2", type: checkbox, on_state: "/X", group: "nol85a_3_1c"}
+  - {line: "SchNOL85ALN2-2", field: "SchNOL85ALN2-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN3-2", field: "SchNOL85ALN3-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4a-2", field: "SchNOL85ALN4a-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4b-2", field: "SchNOL85ALN4b-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN5-2", field: "SchNOL85ALN5-2", type: text, maxlen: 10}
+  - {line: "SchNOL85ALN6-2", field: "SchNOL85ALN6-2", type: text, maxlen: 10}
+  - {line: "SchNOL85ALN7-2", field: "SchNOL85ALN7-2", type: text, maxlen: 10}
+  - {line: "SchNOL85APICKbox-2", field: "SchNOL85APICKbox-2", type: checkbox, on_state: "/X"}
+  - {line: "SchNOL85ALN8-2", field: "SchNOL85ALN8-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN9-2", field: "SchNOL85ALN9-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN10-2", field: "SchNOL85ALN10-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11a-2", field: "SchNOL85ALN11a-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11b-2", field: "SchNOL85ALN11b-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11c-2", field: "SchNOL85ALN11c-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11d-2", field: "SchNOL85ALN11d-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11e-2", field: "SchNOL85ALN11e-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN12-2", field: "SchNOL85ALN12-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN13-2", field: "SchNOL85ALN13-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN14-2", field: "SchNOL85ALN14-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN15-2", field: "SchNOL85ALN15-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN16-2", field: "SchNOL85ALN16-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN17-2", field: "SchNOL85ALN17-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN18-2", field: "SchNOL85ALN18-2", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN19-2", field: "SchNOL85ALN19-2", type: text, maxlen: 8}
+  - {line: "SchNOL85ADate-3", field: "SchNOL85ADate-3", type: text, maxlen: 5}
+  - {line: "SchNOL85AYear-3", field: "SchNOL85AYear-3", type: text, maxlen: 4}
+  - {line: "SchNOL85ANAME-3", field: "SchNOL85ANAME-3", type: text}
+  - {line: "SchNOL85ASSN-3", field: "SchNOL85ASSN-3", type: text, maxlen: 9}  # Form NOL-85A header SSN (copy 4) - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SchNOL85A1aBDate-3", field: "SchNOL85A1aBDate-3", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aBYear-3", field: "SchNOL85A1aBYear-3", type: text, maxlen: 4}
+  - {line: "SchNOL85A1aEDate-3", field: "SchNOL85A1aEDate-3", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aEYear-3", field: "SchNOL85A1aEYear-3", type: text, maxlen: 4}
+  - {line: "SchNOL85A1bY-3", field: "SchNOL85A1bY-3", type: checkbox, on_state: "/X", group: "nol85a_4_1b"}
+  - {line: "SchNOL85A1bN-3", field: "SchNOL85A1bN-3", type: checkbox, on_state: "/X", group: "nol85a_4_1b"}
+  - {line: "SchNOL85A1cY-3", field: "SchNOL85A1cY-3", type: checkbox, on_state: "/X", group: "nol85a_4_1c"}
+  - {line: "SchNOL85A1cN-3", field: "SchNOL85A1cN-3", type: checkbox, on_state: "/X", group: "nol85a_4_1c"}
+  - {line: "SchNOL85ALN2-3", field: "SchNOL85ALN2-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN3-3", field: "SchNOL85ALN3-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4a-3", field: "SchNOL85ALN4a-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4b-3", field: "SchNOL85ALN4b-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN5-3", field: "SchNOL85ALN5-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN6-3", field: "SchNOL85ALN6-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN7-3", field: "SchNOL85ALN7-3", type: text, maxlen: 9}
+  - {line: "SchNOL85APICKbox-3", field: "SchNOL85APICKbox-3", type: checkbox, on_state: "/Yes"}
+  - {line: "SchNOL85ALN8-3", field: "SchNOL85ALN8-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN9-3", field: "SchNOL85ALN9-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN10-3", field: "SchNOL85ALN10-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11a-3", field: "SchNOL85ALN11a-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11b-3", field: "SchNOL85ALN11b-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11c-3", field: "SchNOL85ALN11c-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11d-3", field: "SchNOL85ALN11d-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11e-3", field: "SchNOL85ALN11e-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN12-3", field: "SchNOL85ALN12-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN13-3", field: "SchNOL85ALN13-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN14-3", field: "SchNOL85ALN14-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN15-3", field: "SchNOL85ALN15-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN16-3", field: "SchNOL85ALN16-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN17-3", field: "SchNOL85ALN17-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN18-3", field: "SchNOL85ALN18-3", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN19-3", field: "SchNOL85ALN19-3", type: text, maxlen: 8}
+  - {line: "SchNOL85ADate-4", field: "SchNOL85ADate-4", type: text, maxlen: 5}
+  - {line: "SchNOL85AYear-4", field: "SchNOL85AYear-4", type: text, maxlen: 4}
+  - {line: "SchNOL85ANAME-4", field: "SchNOL85ANAME-4", type: text}
+  - {line: "SchNOL85ASSN-4", field: "SchNOL85ASSN-4", type: text, maxlen: 9}  # Form NOL-85A header SSN (copy 5) - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SchNOL85A1aBDate-4", field: "SchNOL85A1aBDate-4", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aBYear-4", field: "SchNOL85A1aBYear-4", type: text, maxlen: 4}
+  - {line: "SchNOL85A1aEDate-4", field: "SchNOL85A1aEDate-4", type: text, maxlen: 5}
+  - {line: "SchNOL85A1aEYear-4", field: "SchNOL85A1aEYear-4", type: text, maxlen: 4}
+  - {line: "SchNOL85A1bY-4", field: "SchNOL85A1bY-4", type: checkbox, on_state: "/X", group: "nol85a_5_1b"}
+  - {line: "SchNOL85A1bN-4", field: "SchNOL85A1bN-4", type: checkbox, on_state: "/X", group: "nol85a_5_1b"}
+  - {line: "SchNOL85A1cY-4", field: "SchNOL85A1cY-4", type: checkbox, on_state: "/X", group: "nol85a_5_1c"}
+  - {line: "SchNOL85A1cN-4", field: "SchNOL85A1cN-4", type: checkbox, on_state: "/X", group: "nol85a_5_1c"}
+  - {line: "SchNOL85ALN2-4", field: "SchNOL85ALN2-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN3-4", field: "SchNOL85ALN3-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4a-4", field: "SchNOL85ALN4a-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN4b-4", field: "SchNOL85ALN4b-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN5-4", field: "SchNOL85ALN5-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN6-4", field: "SchNOL85ALN6-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN7-4", field: "SchNOL85ALN7-4", type: text, maxlen: 9}
+  - {line: "SchNOL85APICKbox-4", field: "SchNOL85APICKbox-4", type: checkbox, on_state: "/Yes"}
+  - {line: "SchNOL85ALN8-4", field: "SchNOL85ALN8-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN9-4", field: "SchNOL85ALN9-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN10-4", field: "SchNOL85ALN10-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11a-4", field: "SchNOL85ALN11a-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11b-4", field: "SchNOL85ALN11b-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11c-4", field: "SchNOL85ALN11c-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11d-4", field: "SchNOL85ALN11d-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN11e-4", field: "SchNOL85ALN11e-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN12-4", field: "SchNOL85ALN12-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN13-4", field: "SchNOL85ALN13-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN14-4", field: "SchNOL85ALN14-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN15-4", field: "SchNOL85ALN15-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN16-4", field: "SchNOL85ALN16-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN17-4", field: "SchNOL85ALN17-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN18-4", field: "SchNOL85ALN18-4", type: text, maxlen: 9}
+  - {line: "SchNOL85ALN19-4", field: "SchNOL85ALN19-4", type: text, maxlen: 8}
+  # --- page 30: Schedule W-2.
+  - {line: "SCHW2NAME", field: "SCHW2NAME", type: text}
+  - {line: "SCHW2SSN", field: "SCHW2SSN", type: text, maxlen: 9}  # Schedule W-2 header, your SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHW2SPSSN", field: "SCHW2SPSSN", type: text, maxlen: 9}  # Schedule W-2 header, spouse SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHW2ALN1", field: "SCHW2ALN1", type: text, maxlen: 9}
+  - {line: "SCHW2BLN1", field: "SCHW2BLN1", type: text, maxlen: 9}
+  - {line: "SCHW2C1", field: "SCHW2C1", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D1", field: "SCHW2D1", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E1", field: "SCHW2E1", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN1", field: "SCHW2FLN1", type: text, maxlen: 10}
+  - {line: "SCHW2GLN1", field: "SCHW2GLN1", type: text, maxlen: 9}
+  - {line: "SCHW2HLN1", field: "SCHW2HLN1", type: text, maxlen: 9}
+  - {line: "SCHW2ILN1", field: "SCHW2ILN1", type: text, maxlen: 9}
+  - {line: "SCHW2JLN1", field: "SCHW2JLN1", type: text, maxlen: 9}
+  - {line: "SCHW2ALN2", field: "SCHW2ALN2", type: text, maxlen: 9}
+  - {line: "SCHW2BLN2", field: "SCHW2BLN2", type: text, maxlen: 9}
+  - {line: "SCHW2C2", field: "SCHW2C2", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D2", field: "SCHW2D2", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E2", field: "SCHW2E2", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN2", field: "SCHW2FLN2", type: text, maxlen: 10}
+  - {line: "SCHW2GLN2", field: "SCHW2GLN2", type: text, maxlen: 9}
+  - {line: "SCHW2HLN2", field: "SCHW2HLN2", type: text, maxlen: 9}
+  - {line: "SCHW2ILN2", field: "SCHW2ILN2", type: text, maxlen: 9}
+  - {line: "SCHW2JLN2", field: "SCHW2JLN2", type: text, maxlen: 9}
+  - {line: "SCHW2ALN3", field: "SCHW2ALN3", type: text, maxlen: 9}
+  - {line: "SCHW2BLN3", field: "SCHW2BLN3", type: text, maxlen: 9}
+  - {line: "SCHW2C3", field: "SCHW2C3", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D3", field: "SCHW2D3", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E3", field: "SCHW2E3", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN3", field: "SCHW2FLN3", type: text, maxlen: 10}
+  - {line: "SCHW2GLN3", field: "SCHW2GLN3", type: text, maxlen: 9}
+  - {line: "SCHW2HLN3", field: "SCHW2HLN3", type: text, maxlen: 9}
+  - {line: "SCHW2ILN3", field: "SCHW2ILN3", type: text, maxlen: 9}
+  - {line: "SCHW2JLN3", field: "SCHW2JLN3", type: text, maxlen: 9}
+  - {line: "SCHW2ALN4", field: "SCHW2ALN4", type: text, maxlen: 9}
+  - {line: "SCHW2BLN4", field: "SCHW2BLN4", type: text, maxlen: 9}
+  - {line: "SCHW2C4", field: "SCHW2C4", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D4", field: "SCHW2D4", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E4", field: "SCHW2E4", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN4", field: "SCHW2FLN4", type: text, maxlen: 10}
+  - {line: "SCHW2GLN4", field: "SCHW2GLN4", type: text, maxlen: 9}
+  - {line: "SCHW2HLN4", field: "SCHW2HLN4", type: text, maxlen: 9}
+  - {line: "SCHW2ILN4", field: "SCHW2ILN4", type: text, maxlen: 9}
+  - {line: "SCHW2JLN4", field: "SCHW2JLN4", type: text, maxlen: 9}
+  - {line: "SCHW2ALN5", field: "SCHW2ALN5", type: text, maxlen: 9}
+  - {line: "SCHW2BLN5", field: "SCHW2BLN5", type: text, maxlen: 9}
+  - {line: "SCHW2C5", field: "SCHW2C5", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D5", field: "SCHW2D5", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E5", field: "SCHW2E5", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN5", field: "SCHW2FLN5", type: text, maxlen: 10}
+  - {line: "SCHW2GLN5", field: "SCHW2GLN5", type: text, maxlen: 9}
+  - {line: "SCHW2HLN5", field: "SCHW2HLN5", type: text, maxlen: 9}
+  - {line: "SCHW2ILN5", field: "SCHW2ILN5", type: text, maxlen: 9}
+  - {line: "SCHW2JLN5", field: "SCHW2JLN5", type: text, maxlen: 9}
+  - {line: "SCHW2ALN6", field: "SCHW2ALN6", type: text, maxlen: 9}
+  - {line: "SCHW2BLN6", field: "SCHW2BLN6", type: text, maxlen: 9}
+  - {line: "SCHW2C6", field: "SCHW2C6", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D6", field: "SCHW2D6", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E6", field: "SCHW2E6", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN6", field: "SCHW2FLN6", type: text, maxlen: 10}
+  - {line: "SCHW2GLN6", field: "SCHW2GLN6", type: text, maxlen: 9}
+  - {line: "SCHW2HLN6", field: "SCHW2HLN6", type: text, maxlen: 9}
+  - {line: "SCHW2ILN6", field: "SCHW2ILN6", type: text, maxlen: 9}
+  - {line: "SCHW2JLN6", field: "SCHW2JLN6", type: text, maxlen: 9}
+  - {line: "SCHW2ALN7", field: "SCHW2ALN7", type: text, maxlen: 9}
+  - {line: "SCHW2BLN7", field: "SCHW2BLN7", type: text, maxlen: 9}
+  - {line: "SCHW2C7", field: "SCHW2C7", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D7", field: "SCHW2D7", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E7", field: "SCHW2E7", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN7", field: "SCHW2FLN7", type: text, maxlen: 10}
+  - {line: "SCHW2GLN7", field: "SCHW2GLN7", type: text, maxlen: 9}
+  - {line: "SCHW2HLN7", field: "SCHW2HLN7", type: text, maxlen: 9}
+  - {line: "SCHW2ILN7", field: "SCHW2ILN7", type: text, maxlen: 9}
+  - {line: "SCHW2JLN7", field: "SCHW2JLN7", type: text, maxlen: 9}
+  - {line: "SCHW2ALN8", field: "SCHW2ALN8", type: text, maxlen: 9}
+  - {line: "SCHW2BLN8", field: "SCHW2BLN8", type: text, maxlen: 9}
+  - {line: "SCHW2C8", field: "SCHW2C8", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D8", field: "SCHW2D8", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E8", field: "SCHW2E8", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN8", field: "SCHW2FLN8", type: text, maxlen: 10}
+  - {line: "SCHW2GLN8", field: "SCHW2GLN8", type: text, maxlen: 9}
+  - {line: "SCHW2HLN8", field: "SCHW2HLN8", type: text, maxlen: 9}
+  - {line: "SCHW2ILN8", field: "SCHW2ILN8", type: text, maxlen: 9}
+  - {line: "SCHW2JLN8", field: "SCHW2JLN8", type: text, maxlen: 9}
+  - {line: "SCHW2ALN9", field: "SCHW2ALN9", type: text, maxlen: 9}
+  - {line: "SCHW2BLN9", field: "SCHW2BLN9", type: text, maxlen: 9}
+  - {line: "SCHW2C9", field: "SCHW2C9", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D9", field: "SCHW2D9", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E9", field: "SCHW2E9", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN9", field: "SCHW2FLN9", type: text, maxlen: 10}
+  - {line: "SCHW2GLN9", field: "SCHW2GLN9", type: text, maxlen: 9}
+  - {line: "SCHW2HLN9", field: "SCHW2HLN9", type: text, maxlen: 9}
+  - {line: "SCHW2ILN9", field: "SCHW2ILN9", type: text, maxlen: 9}
+  - {line: "SCHW2JLN9", field: "SCHW2JLN9", type: text, maxlen: 9}
+  - {line: "SCHW2ALN10", field: "SCHW2ALN10", type: text, maxlen: 9}
+  - {line: "SCHW2BLN10", field: "SCHW2BLN10", type: text, maxlen: 9}
+  - {line: "SCHW2C10", field: "SCHW2C10", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D10", field: "SCHW2D10", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E10", field: "SCHW2E10", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN10", field: "SCHW2FLN10", type: text, maxlen: 10}
+  - {line: "SCHW2GLN10", field: "SCHW2GLN10", type: text, maxlen: 9}
+  - {line: "SCHW2HLN10", field: "SCHW2HLN10", type: text, maxlen: 9}
+  - {line: "SCHW2ILN10", field: "SCHW2ILN10", type: text, maxlen: 9}
+  - {line: "SCHW2JLN10", field: "SCHW2JLN10", type: text, maxlen: 9}
+  - {line: "SCHW2ALN11", field: "SCHW2ALN11", type: text, maxlen: 9}
+  - {line: "SCHW2BLN11", field: "SCHW2BLN11", type: text, maxlen: 9}
+  - {line: "SCHW2C11", field: "SCHW2C11", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D11", field: "SCHW2D11", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E11", field: "SCHW2E11", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN11", field: "SCHW2FLN11", type: text, maxlen: 10}
+  - {line: "SCHW2GLN11", field: "SCHW2GLN11", type: text, maxlen: 9}
+  - {line: "SCHW2HLN11", field: "SCHW2HLN11", type: text, maxlen: 9}
+  - {line: "SCHW2ILN11", field: "SCHW2ILN11", type: text, maxlen: 9}
+  - {line: "SCHW2JLN11", field: "SCHW2JLN11", type: text, maxlen: 9}
+  - {line: "SCHW2ALN12", field: "SCHW2ALN12", type: text, maxlen: 9}
+  - {line: "SCHW2BLN12", field: "SCHW2BLN12", type: text, maxlen: 9}
+  - {line: "SCHW2C12", field: "SCHW2C12", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D12", field: "SCHW2D12", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E12", field: "SCHW2E12", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN12", field: "SCHW2FLN12", type: text, maxlen: 10}
+  - {line: "SCHW2GLN12", field: "SCHW2GLN12", type: text, maxlen: 9}
+  - {line: "SCHW2HLN12", field: "SCHW2HLN12", type: text, maxlen: 9}
+  - {line: "SCHW2ILN12", field: "SCHW2ILN12", type: text, maxlen: 9}
+  - {line: "SCHW2JLN12", field: "SCHW2JLN12", type: text, maxlen: 9}
+  - {line: "SCHW2ALN13", field: "SCHW2ALN13", type: text, maxlen: 9}
+  - {line: "SCHW2BLN13", field: "SCHW2BLN13", type: text, maxlen: 9}
+  - {line: "SCHW2C13", field: "SCHW2C13", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D13", field: "SCHW2D13", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E13", field: "SCHW2E13", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN13", field: "SCHW2FLN13", type: text, maxlen: 10}
+  - {line: "SCHW2GLN13", field: "SCHW2GLN13", type: text, maxlen: 9}
+  - {line: "SCHW2HLN13", field: "SCHW2HLN13", type: text, maxlen: 9}
+  - {line: "SCHW2ILN13", field: "SCHW2ILN13", type: text, maxlen: 9}
+  - {line: "SCHW2JLN13", field: "SCHW2JLN13", type: text, maxlen: 9}
+  - {line: "SCHW2ALN14", field: "SCHW2ALN14", type: text, maxlen: 9}
+  - {line: "SCHW2BLN14", field: "SCHW2BLN14", type: text, maxlen: 9}
+  - {line: "SCHW2C14", field: "SCHW2C14", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D14", field: "SCHW2D14", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E14", field: "SCHW2E14", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN14", field: "SCHW2FLN14", type: text, maxlen: 10}
+  - {line: "SCHW2GLN14", field: "SCHW2GLN14", type: text, maxlen: 9}
+  - {line: "SCHW2HLN14", field: "SCHW2HLN14", type: text, maxlen: 9}
+  - {line: "SCHW2ILN14", field: "SCHW2ILN14", type: text, maxlen: 9}
+  - {line: "SCHW2JLN14", field: "SCHW2JLN14", type: text, maxlen: 9}
+  - {line: "SCHW2ALN15", field: "SCHW2ALN15", type: text, maxlen: 9}
+  - {line: "SCHW2BLN15", field: "SCHW2BLN15", type: text, maxlen: 9}
+  - {line: "SCHW2C15", field: "SCHW2C15", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2D15", field: "SCHW2D15", type: checkbox, on_state: "/X"}
+  - {line: "SCHW2E15", field: "SCHW2E15", type: text, maxlen: 2}  # E State Code — no /MaxLen; maxlen 2 measured (22.4pt box, Courier 12 holds 3 glyphs)
+  - {line: "SCHW2FLN15", field: "SCHW2FLN15", type: text, maxlen: 10}
+  - {line: "SCHW2GLN15", field: "SCHW2GLN15", type: text, maxlen: 9}
+  - {line: "SCHW2HLN15", field: "SCHW2HLN15", type: text, maxlen: 9}
+  - {line: "SCHW2ILN15", field: "SCHW2ILN15", type: text, maxlen: 9}
+  - {line: "SCHW2JLN15", field: "SCHW2JLN15", type: text, maxlen: 9}
+  - {line: "SCHW2LN16", field: "SCHW2LN16", type: text, maxlen: 9}
+  - {line: "SCHW2LN17", field: "SCHW2LN17", type: text, maxlen: 9}
+  - {line: "SCHW2TOTALG", field: "SCHW2TOTALG", type: text, maxlen: 9}
+  - {line: "SCHW2TOTALH", field: "SCHW2TOTALH", type: text, maxlen: 9}
+  - {line: "SCHW2TOTALI", field: "SCHW2TOTALI", type: text, maxlen: 9}
+  - {line: "SCHW2TOTALJ", field: "SCHW2TOTALJ", type: text, maxlen: 9}
+  # --- page 31: Schedule CP — composite payments / electing PTE credits.
+  - {line: "SCHCPALN1", field: "SCHCPALN1", type: text, maxlen: 9}
+  - {line: "SCHCPALN2", field: "SCHCPALN2", type: text, maxlen: 9}
+  - {line: "SCHCPALN3", field: "SCHCPALN3", type: text, maxlen: 9}
+  - {line: "SCHCPALN4", field: "SCHCPALN4", type: text, maxlen: 9}
+  - {line: "SCHCPALN5", field: "SCHCPALN5", type: text, maxlen: 9}
+  - {line: "SCHCPALN6", field: "SCHCPALN6", type: text, maxlen: 9}
+  - {line: "SCHCPALN7", field: "SCHCPALN7", type: text, maxlen: 9}
+  - {line: "SCHCPALN8", field: "SCHCPALN8", type: text, maxlen: 9}
+  - {line: "SCHCPALN9", field: "SCHCPALN9", type: text, maxlen: 9}
+  - {line: "SCHCPALN10", field: "SCHCPALN10", type: text, maxlen: 9}
+  - {line: "SCHCPALN11", field: "SCHCPALN11", type: text, maxlen: 9}
+  - {line: "SCHCPALN12", field: "SCHCPALN12", type: text, maxlen: 9}
+  - {line: "SCHCPALN13", field: "SCHCPALN13", type: text, maxlen: 9}
+  - {line: "SCHCPALN14", field: "SCHCPALN14", type: text, maxlen: 9}
+  - {line: "SCHCPALN15", field: "SCHCPALN15", type: text, maxlen: 9}
+  - {line: "SCHCPALN16", field: "SCHCPALN16", type: text, maxlen: 9}
+  - {line: "SCHCPALN17", field: "SCHCPALN17", type: text, maxlen: 9}
+  - {line: "SCHCPALN18", field: "SCHCPALN18", type: text, maxlen: 9}
+  - {line: "SCHCPALN19", field: "SCHCPALN19", type: text, maxlen: 9}
+  - {line: "SCHCPB1", field: "SCHCPB1", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB2", field: "SCHCPB2", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB3", field: "SCHCPB3", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB4", field: "SCHCPB4", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB5", field: "SCHCPB5", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB6", field: "SCHCPB6", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB7", field: "SCHCPB7", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB8", field: "SCHCPB8", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB9", field: "SCHCPB9", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB10", field: "SCHCPB10", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB11", field: "SCHCPB11", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB12", field: "SCHCPB12", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB13", field: "SCHCPB13", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB14", field: "SCHCPB14", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB15", field: "SCHCPB15", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB16", field: "SCHCPB16", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB17", field: "SCHCPB17", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB18", field: "SCHCPB18", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPB19", field: "SCHCPB19", type: checkbox, on_state: "/X"}
+  - {line: "SCHCPCLN1", field: "SCHCPCLN1", type: text}
+  - {line: "SCHCPCLN2", field: "SCHCPCLN2", type: text}
+  - {line: "SCHCPCLN3", field: "SCHCPCLN3", type: text}
+  - {line: "SCHCPCLN4", field: "SCHCPCLN4", type: text}
+  - {line: "SCHCPCLN5", field: "SCHCPCLN5", type: text}
+  - {line: "SCHCPCLN6", field: "SCHCPCLN6", type: text}
+  - {line: "SCHCPCLN7", field: "SCHCPCLN7", type: text}
+  - {line: "SCHCPCLN8", field: "SCHCPCLN8", type: text}
+  - {line: "SCHCPCLN9", field: "SCHCPCLN9", type: text}
+  - {line: "SCHCPCLN10", field: "SCHCPCLN10", type: text}
+  - {line: "SCHCPCLN11", field: "SCHCPCLN11", type: text}
+  - {line: "SCHCPCLM12", field: "SCHCPCLM12", type: text}
+  - {line: "SCHCPCLN13", field: "SCHCPCLN13", type: text}
+  - {line: "SCHCPCLN14", field: "SCHCPCLN14", type: text}
+  - {line: "SCHCPCLN15", field: "SCHCPCLN15", type: text}
+  - {line: "SCHCPCLN16", field: "SCHCPCLN16", type: text}
+  - {line: "SCHCPCLN17", field: "SCHCPCLN17", type: text}
+  - {line: "SCHCPCLN18", field: "SCHCPCLN18", type: text}
+  - {line: "SCHCPCLN19", field: "SCHCPCLN19", type: text}
+  - {line: "SCHCPDLN1", field: "SCHCPDLN1", type: text, maxlen: 9}
+  - {line: "SCHCPDLN2", field: "SCHCPDLN2", type: text, maxlen: 9}
+  - {line: "SCHCPDLN3", field: "SCHCPDLN3", type: text, maxlen: 9}
+  - {line: "SCHCPDLN4", field: "SCHCPDLN4", type: text, maxlen: 9}
+  - {line: "SCHCPDLN5", field: "SCHCPDLN5", type: text, maxlen: 9}
+  - {line: "SCHCPDLN6", field: "SCHCPDLN6", type: text, maxlen: 9}
+  - {line: "SCHCPDLN7", field: "SCHCPDLN7", type: text, maxlen: 9}
+  - {line: "SCHCPDLN8", field: "SCHCPDLN8", type: text, maxlen: 9}
+  - {line: "SCHCPDLN9", field: "SCHCPDLN9", type: text, maxlen: 9}
+  - {line: "SCHCPDLN10", field: "SCHCPDLN10", type: text, maxlen: 9}
+  - {line: "SCHCPDLN11", field: "SCHCPDLN11", type: text, maxlen: 9}
+  - {line: "SCHCPDLN12", field: "SCHCPDLN12", type: text, maxlen: 9}
+  - {line: "SCHCPDLN13", field: "SCHCPDLN13", type: text, maxlen: 9}
+  - {line: "SCHCPDLN14", field: "SCHCPDLN14", type: text, maxlen: 9}
+  - {line: "SCHCPDLN15", field: "SCHCPDLN15", type: text, maxlen: 9}
+  - {line: "SCHCPDLN16", field: "SCHCPDLN16", type: text, maxlen: 9}
+  - {line: "SCHCPDLN17", field: "SCHCPDLN17", type: text, maxlen: 9}
+  - {line: "SCHCPDLN18", field: "SCHCPDLN18", type: text, maxlen: 9}
+  - {line: "SCHCPDLN19", field: "SCHCPDLN19", type: text, maxlen: 9}
+  - {line: "SCHCPELN1", field: "SCHCPELN1", type: text}
+  - {line: "SCHCPELN2", field: "SCHCPELN2", type: text}
+  - {line: "SCHCPELN3", field: "SCHCPELN3", type: text}
+  - {line: "SCHCPELN4", field: "SCHCPELN4", type: text}
+  - {line: "SCHCPELN5", field: "SCHCPELN5", type: text}
+  - {line: "SCHCPELN6", field: "SCHCPELN6", type: text}
+  - {line: "SCHCPELN7", field: "SCHCPELN7", type: text}
+  - {line: "SCHCPELN8", field: "SCHCPELN8", type: text}
+  - {line: "SCHCPELN9", field: "SCHCPELN9", type: text}
+  - {line: "SCHCPELN10", field: "SCHCPELN10", type: text}
+  - {line: "SCHCPELN11", field: "SCHCPELN11", type: text}
+  - {line: "SCHCPELM12", field: "SCHCPELM12", type: text}
+  - {line: "SCHCPELN13", field: "SCHCPELN13", type: text}
+  - {line: "SCHCPELN14", field: "SCHCPELN14", type: text}
+  - {line: "SCHCPELN15", field: "SCHCPELN15", type: text}
+  - {line: "SCHCPELN16", field: "SCHCPELN16", type: text}
+  - {line: "SCHCPELN17", field: "SCHCPELN17", type: text}
+  - {line: "SCHCPELN18", field: "SCHCPELN18", type: text}
+  - {line: "SCHCPELN19", field: "SCHCPELN19", type: text}
+  - {line: "SCHCPFLN1", field: "SCHCPFLN1", type: text, maxlen: 9}
+  - {line: "SCHCPFLN2", field: "SCHCPFLN2", type: text, maxlen: 9}
+  - {line: "SCHCPFLN3", field: "SCHCPFLN3", type: text, maxlen: 9}
+  - {line: "SCHCPFLN4", field: "SCHCPFLN4", type: text, maxlen: 9}
+  - {line: "SCHCPFLN5", field: "SCHCPFLN5", type: text, maxlen: 9}
+  - {line: "SCHCPFLN6", field: "SCHCPFLN6", type: text, maxlen: 9}
+  - {line: "SCHCPFLN7", field: "SCHCPFLN7", type: text, maxlen: 9}
+  - {line: "SCHCPFLN8", field: "SCHCPFLN8", type: text, maxlen: 9}
+  - {line: "SCHCPFLN9", field: "SCHCPFLN9", type: text, maxlen: 9}
+  - {line: "SCHCPFLN10", field: "SCHCPFLN10", type: text, maxlen: 9}
+  - {line: "SCHCPFLN11", field: "SCHCPFLN11", type: text, maxlen: 9}
+  - {line: "SCHCPFLN12", field: "SCHCPFLN12", type: text, maxlen: 9}
+  - {line: "SCHCPFLN13", field: "SCHCPFLN13", type: text, maxlen: 9}
+  - {line: "SCHCPFLN14", field: "SCHCPFLN14", type: text, maxlen: 9}
+  - {line: "SCHCPFLN15", field: "SCHCPFLN15", type: text, maxlen: 9}
+  - {line: "SCHCPFLN16", field: "SCHCPFLN16", type: text, maxlen: 9}
+  - {line: "SCHCPFLN17", field: "SCHCPFLN17", type: text, maxlen: 9}
+  - {line: "SCHCPFLN18", field: "SCHCPFLN18", type: text, maxlen: 9}
+  - {line: "SCHCPFLN19", field: "SCHCPFLN19", type: text, maxlen: 9}
+  - {line: "SCHCPGLN1", field: "SCHCPGLN1", type: text, maxlen: 9}
+  - {line: "SCHCPGLN2", field: "SCHCPGLN2", type: text, maxlen: 9}
+  - {line: "SCHCPGLN3", field: "SCHCPGLN3", type: text, maxlen: 9}
+  - {line: "SCHCPGLN4", field: "SCHCPGLN4", type: text, maxlen: 9}
+  - {line: "SCHCPGLN5", field: "SCHCPGLN5", type: text, maxlen: 9}
+  - {line: "SCHCPGLN6", field: "SCHCPGLN6", type: text, maxlen: 9}
+  - {line: "SCHCPGLN7", field: "SCHCPGLN7", type: text, maxlen: 9}
+  - {line: "SCHCPGLN8", field: "SCHCPGLN8", type: text, maxlen: 9}
+  - {line: "SCHCPGLN9", field: "SCHCPGLN9", type: text, maxlen: 9}
+  - {line: "SCHCPGLN10", field: "SCHCPGLN10", type: text, maxlen: 9}
+  - {line: "SCHCPGLN11", field: "SCHCPGLN11", type: text, maxlen: 9}
+  - {line: "SCHCPGLN12", field: "SCHCPGLN12", type: text, maxlen: 9}
+  - {line: "SCHCPGLN13", field: "SCHCPGLN13", type: text, maxlen: 9}
+  - {line: "SCHCPGLN14", field: "SCHCPGLN14", type: text, maxlen: 9}
+  - {line: "SCHCPGLN15", field: "SCHCPGLN15", type: text, maxlen: 9}
+  - {line: "SCHCPGLN16", field: "SCHCPGLN16", type: text, maxlen: 9}
+  - {line: "SCHCPGLN17", field: "SCHCPGLN17", type: text, maxlen: 9}
+  - {line: "SCHCPGLN18", field: "SCHCPGLN18", type: text, maxlen: 9}
+  - {line: "SCHCPGLN19", field: "SCHCPGLN19", type: text, maxlen: 9}
+  - {line: "SCHCPNAME", field: "SCHCPNAME", type: text}
+  - {line: "SCHCPSSN", field: "SCHCPSSN", type: text, maxlen: 9}  # Schedule CP header SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHCPGTOTAL", field: "SCHCPGTOTAL", type: text, maxlen: 9}
+  # --- page 32: Schedule RS — retirement (two pages).
+  - {line: "SCHRSNAME", field: "SCHRSNAME", type: text}
+  - {line: "SCHRSSSN", field: "SCHRSSSN", type: text, maxlen: 9}  # Schedule RS header, your SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHRSSPSSN", field: "SCHRSSPSSN", type: text, maxlen: 9}  # Schedule RS header, spouse SSN - no /MaxLen; maxlen 9 measured (9 digits without dashes, as page 1 SSSN /MaxLen 9; the box fits 15 or more at Courier 10)
+  - {line: "SCHRSALN1", field: "SCHRSALN1", type: text, maxlen: 9}
+  - {line: "SCHRSB1", field: "SCHRSB1", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSC1", field: "SCHRSC1", type: text, maxlen: 2}
+  - {line: "SCHRSDLN1", field: "SCHRSDLN1", type: text, maxlen: 20}
+  - {line: "SCHRSELN1", field: "SCHRSELN1", type: text, maxlen: 9}
+  - {line: "SCHRSF1", field: "SCHRSF1", type: text, maxlen: 2}
+  - {line: "SCHRSGLN1", field: "SCHRSGLN1", type: text, maxlen: 10}
+  - {line: "SCHRSHLN1", field: "SCHRSHLN1", type: text, maxlen: 9}
+  - {line: "SCHRSILN1", field: "SCHRSILN1", type: text, maxlen: 22}
+  - {line: "SCHRSALN2", field: "SCHRSALN2", type: text, maxlen: 9}
+  - {line: "SCHRSB2", field: "SCHRSB2", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSC2", field: "SCHRSC2", type: text, maxlen: 2}
+  - {line: "SCHRSDLN2", field: "SCHRSDLN2", type: text, maxlen: 20}
+  - {line: "SCHRSELN2", field: "SCHRSELN2", type: text, maxlen: 9}
+  - {line: "SCHRSF2", field: "SCHRSF2", type: text, maxlen: 2}
+  - {line: "SCHRSGLN2", field: "SCHRSGLN2", type: text, maxlen: 10}
+  - {line: "SCHRSHLN2", field: "SCHRSHLN2", type: text, maxlen: 9}
+  - {line: "SCHRSILN2", field: "SCHRSILN2", type: text, maxlen: 22}
+  - {line: "SCHRSALN3", field: "SCHRSALN3", type: text, maxlen: 9}
+  - {line: "SCHRSB3", field: "SCHRSB3", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSC3", field: "SCHRSC3", type: text, maxlen: 2}
+  - {line: "SCHRSDLN3", field: "SCHRSDLN3", type: text, maxlen: 20}
+  - {line: "SCHRSELN3", field: "SCHRSELN3", type: text, maxlen: 9}
+  - {line: "SCHRSF3", field: "SCHRSF3", type: text, maxlen: 2}
+  - {line: "SCHRSGLN3", field: "SCHRSGLN3", type: text, maxlen: 10}
+  - {line: "SCHRSHLN3", field: "SCHRSHLN3", type: text, maxlen: 9}
+  - {line: "SCHRSILN3", field: "SCHRSILN3", type: text, maxlen: 22}
+  - {line: "SCHRSALN4", field: "SCHRSALN4", type: text, maxlen: 9}
+  - {line: "SCHRSB4", field: "SCHRSB4", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSC4", field: "SCHRSC4", type: text, maxlen: 2}
+  - {line: "SCHRSDLN4", field: "SCHRSDLN4", type: text, maxlen: 20}
+  - {line: "SCHRSELN4", field: "SCHRSELN4", type: text, maxlen: 9}
+  - {line: "SCHRSF4", field: "SCHRSF4", type: text, maxlen: 2}
+  - {line: "SCHRSGLN4", field: "SCHRSGLN4", type: text, maxlen: 10}
+  - {line: "SCHRSHLN4", field: "SCHRSHLN4", type: text, maxlen: 9}
+  - {line: "SCHRSILN4", field: "SCHRSILN4", type: text, maxlen: 22}
+  - {line: "SCHRSALN5", field: "SCHRSALN5", type: text, maxlen: 9}
+  - {line: "SCHRSB5", field: "SCHRSB5", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSC5", field: "SCHRSC5", type: text, maxlen: 2}
+  - {line: "SCHRSDLN5", field: "SCHRSDLN5", type: text, maxlen: 20}
+  - {line: "SCHRSELN5", field: "SCHRSELN5", type: text, maxlen: 9}
+  - {line: "SCHRSF5", field: "SCHRSF5", type: text, maxlen: 2}
+  - {line: "SCHRSGLN5", field: "SCHRSGLN5", type: text, maxlen: 10}
+  - {line: "SCHRSHLN5", field: "SCHRSHLN5", type: text, maxlen: 9}
+  - {line: "SCHRSILN5", field: "SCHRSILN5", type: text, maxlen: 22}
+  - {line: "SCHRSALN6", field: "SCHRSALN6", type: text, maxlen: 9}
+  - {line: "SCHRSB6", field: "SCHRSB6", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSC6", field: "SCHRSC6", type: text, maxlen: 2}
+  - {line: "SCHRSDLN6", field: "SCHRSDLN6", type: text, maxlen: 20}
+  - {line: "SCHRSELN6", field: "SCHRSELN6", type: text, maxlen: 9}
+  - {line: "SCHRSF6", field: "SCHRSF6", type: text, maxlen: 2}
+  - {line: "SCHRSGLN6", field: "SCHRSGLN6", type: text, maxlen: 10}
+  - {line: "SCHRSHLN6", field: "SCHRSHLN6", type: text, maxlen: 9}
+  - {line: "SCHRSILN6", field: "SCHRSILN6", type: text, maxlen: 22}
+  - {line: "SCHRSALN7", field: "SCHRSALN7", type: text, maxlen: 9}
+  - {line: "SCHRSB7", field: "SCHRSB7", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSC7", field: "SCHRSC7", type: text, maxlen: 2}
+  - {line: "SCHRSDLN7", field: "SCHRSDLN7", type: text, maxlen: 20}
+  - {line: "SCHRSELN7", field: "SCHRSELN7", type: text, maxlen: 9}
+  - {line: "SCHRSF7", field: "SCHRSF7", type: text, maxlen: 2}
+  - {line: "SCHRSGLN7", field: "SCHRSGLN7", type: text, maxlen: 10}
+  - {line: "SCHRSHLN7", field: "SCHRSHLN7", type: text, maxlen: 9}
+  - {line: "SCHRSILN7", field: "SCHRSILN7", type: text, maxlen: 22}
+  - {line: "SCHRSLN8", field: "SCHRSLN8", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIALN1", field: "SCHRSPTIIALN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIB1", field: "SCHRSPTIIB1", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIC1", field: "SCHRSPTIIC1", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIDLN1", field: "SCHRSPTIIDLN1", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIELN1", field: "SCHRSPTIIELN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIF1", field: "SCHRSPTIIF1", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIGLN1", field: "SCHRSPTIIGLN1", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIHLN1", field: "SCHRSPTIIHLN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN1", field: "SCHRSPTIIILN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIALN2", field: "SCHRSPTIIALN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIB2", field: "SCHRSPTIIB2", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIC2", field: "SCHRSPTIIC2", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIDLN2", field: "SCHRSPTIIDLN2", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIELN2", field: "SCHRSPTIIELN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIF2", field: "SCHRSPTIIF2", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIGLN2", field: "SCHRSPTIIGLN2", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIHLN2", field: "SCHRSPTIIHLN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN2", field: "SCHRSPTIIILN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIALN3", field: "SCHRSPTIIALN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIB3", field: "SCHRSPTIIB3", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIC3", field: "SCHRSPTIIC3", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIDLN3", field: "SCHRSPTIIDLN3", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIELN3", field: "SCHRSPTIIELN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIF3", field: "SCHRSPTIIF3", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIGLN3", field: "SCHRSPTIIGLN3", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIHLN3", field: "SCHRSPTIIHLN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN3", field: "SCHRSPTIIILN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIALN4", field: "SCHRSPTIIALN4", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIB4", field: "SCHRSPTIIB4", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIC4", field: "SCHRSPTIIC4", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIDLN4", field: "SCHRSPTIIDLN4", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIELN4", field: "SCHRSPTIIELN4", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIF4", field: "SCHRSPTIIF4", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIGLN4", field: "SCHRSPTIIGLN4", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIHLN4", field: "SCHRSPTIIHLN4", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN4", field: "SCHRSPTIIILN4", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIALN5", field: "SCHRSPTIIALN5", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIB5", field: "SCHRSPTIIB5", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIC5", field: "SCHRSPTIIC5", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIDLN5", field: "SCHRSPTIIDLN5", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIELN5", field: "SCHRSPTIIELN5", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIF5", field: "SCHRSPTIIF5", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIGLN5", field: "SCHRSPTIIGLN5", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIHLN5", field: "SCHRSPTIIHLN5", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN5", field: "SCHRSPTIIILN5", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIALN6", field: "SCHRSPTIIALN6", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIB6", field: "SCHRSPTIIB6", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIC6", field: "SCHRSPTIIC6", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIDLN6", field: "SCHRSPTIIDLN6", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIELN6", field: "SCHRSPTIIELN6", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIF6", field: "SCHRSPTIIF6", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIGLN6", field: "SCHRSPTIIGLN6", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIHLN6", field: "SCHRSPTIIHLN6", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN6", field: "SCHRSPTIIILN6", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIALN7", field: "SCHRSPTIIALN7", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIB7", field: "SCHRSPTIIB7", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIC7", field: "SCHRSPTIIC7", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIDLN7", field: "SCHRSPTIIDLN7", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIELN7", field: "SCHRSPTIIELN7", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIF7", field: "SCHRSPTIIF7", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIGLN7", field: "SCHRSPTIIGLN7", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIHLN7", field: "SCHRSPTIIHLN7", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN7", field: "SCHRSPTIIILN7", type: text, maxlen: 9}
+  - {line: "SCHRSPTIILN8", field: "SCHRSPTIILN8", type: text, maxlen: 9}
+  - {line: "SCHRSPTIILN9", field: "SCHRSPTIILN9", type: text, maxlen: 9}
+  - {line: "SCHRSYES", field: "SCHRSYES", type: checkbox, on_state: "/X", group: "rs_primary_65"}
+  - {line: "SCHRSNO", field: "SCHRSNO", type: checkbox, on_state: "/X", group: "rs_primary_65"}
+  - {line: "SCHRSPTIILN10", field: "SCHRSPTIILN10", type: text, maxlen: 9}
+  - {line: "SCHRSPTIILN11", field: "SCHRSPTIILN11", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIALN1", field: "SCHRSPTIIIALN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIB1", field: "SCHRSPTIIIB1", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIIC1", field: "SCHRSPTIIIC1", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIDLN1", field: "SCHRSPTIIIDLN1", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIIELN1", field: "SCHRSPTIIIELN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIF1", field: "SCHRSPTIIIF1", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIGLN1", field: "SCHRSPTIIIGLN1", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIIHLN1", field: "SCHRSPTIIIHLN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIILN1", field: "SCHRSPTIIIILN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIALN2", field: "SCHRSPTIIIALN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIB2", field: "SCHRSPTIIIB2", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIIC2", field: "SCHRSPTIIIC2", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIDLN2", field: "SCHRSPTIIIDLN2", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIIELN2", field: "SCHRSPTIIIELN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIF2", field: "SCHRSPTIIIF2", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIGLN2", field: "SCHRSPTIIIGLN2", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIIHLN2", field: "SCHRSPTIIIHLN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIILN2", field: "SCHRSPTIIIILN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIALN3", field: "SCHRSPTIIIALN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIB3", field: "SCHRSPTIIIB3", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIIC3", field: "SCHRSPTIIIC3", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIDLN3", field: "SCHRSPTIIIDLN3", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIIELN3", field: "SCHRSPTIIIELN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIF3", field: "SCHRSPTIIIF3", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIGLN3", field: "SCHRSPTIIIGLN3", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIIHLN3", field: "SCHRSPTIIIHLN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIILN3", field: "SCHRSPTIIIILN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIALN4", field: "SCHRSPTIIIALN4", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIB4", field: "SCHRSPTIIIB4", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIIC4", field: "SCHRSPTIIIC4", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIDLN4", field: "SCHRSPTIIIDLN4", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIIELN4", field: "SCHRSPTIIIELN4", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIF4", field: "SCHRSPTIIIF4", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIGLN4", field: "SCHRSPTIIIGLN4", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIIHLN4", field: "SCHRSPTIIIHLN4", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIILN4", field: "SCHRSPTIIIILN4", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIALN5", field: "SCHRSPTIIIALN5", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIB5", field: "SCHRSPTIIIB5", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIIC5", field: "SCHRSPTIIIC5", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIDLN5", field: "SCHRSPTIIIDLN5", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIIELN5", field: "SCHRSPTIIIELN5", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIF5", field: "SCHRSPTIIIF5", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIGLN5", field: "SCHRSPTIIIGLN5", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIIHLN5", field: "SCHRSPTIIIHLN5", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIILN5", field: "SCHRSPTIIIILN5", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIALN6", field: "SCHRSPTIIIALN6", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIB6", field: "SCHRSPTIIIB6", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIIC6", field: "SCHRSPTIIIC6", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIDLN6", field: "SCHRSPTIIIDLN6", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIIELN6", field: "SCHRSPTIIIELN6", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIF6", field: "SCHRSPTIIIF6", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIGLN6", field: "SCHRSPTIIIGLN6", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIIHLN6", field: "SCHRSPTIIIHLN6", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIILN6", field: "SCHRSPTIIIILN6", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIALN7", field: "SCHRSPTIIIALN7", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIB7", field: "SCHRSPTIIIB7", type: checkbox, on_state: "/X"}
+  - {line: "SCHRSPTIIIC7", field: "SCHRSPTIIIC7", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIDLN7", field: "SCHRSPTIIIDLN7", type: text, maxlen: 20}
+  - {line: "SCHRSPTIIIELN7", field: "SCHRSPTIIIELN7", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIF7", field: "SCHRSPTIIIF7", type: text, maxlen: 2}
+  - {line: "SCHRSPTIIIGLN7", field: "SCHRSPTIIIGLN7", type: text, maxlen: 10}
+  - {line: "SCHRSPTIIIHLN7", field: "SCHRSPTIIIHLN7", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIIILN7", field: "SCHRSPTIIIILN7", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN8", field: "SCHRSPTIIILN8", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN9", field: "SCHRSPTIIILN9", type: text, maxlen: 9}
+  - {line: "SCHRSYES2", field: "SCHRSYES2", type: checkbox, on_state: "/X", group: "rs_spouse_65"}
+  - {line: "SCHRSNO2", field: "SCHRSNO2", type: checkbox, on_state: "/X", group: "rs_spouse_65"}
+  - {line: "SCHRSPTIIILN10", field: "SCHRSPTIIILN10", type: text, maxlen: 9}
+  - {line: "SCHRSPTIIILN11", field: "SCHRSPTIIILN11", type: text, maxlen: 9}
+  - {line: "SCHRSPTIVLN1", field: "SCHRSPTIVLN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTIVLN2", field: "SCHRSPTIVLN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTIVLN3", field: "SCHRSPTIVLN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTVLN1", field: "SCHRSPTVLN1", type: text, maxlen: 9}
+  - {line: "SCHRSPTVLN2", field: "SCHRSPTVLN2", type: text, maxlen: 9}
+  - {line: "SCHRSPTVLN3", field: "SCHRSPTVLN3", type: text, maxlen: 9}
+  - {line: "SCHRSPTVLN4", field: "SCHRSPTVLN4", type: text, maxlen: 9}
+  # --- page 34: Form 4952A — investment interest.
+  - {line: "SCH4952ANAME", field: "SCH4952ANAME", type: text}
+  - {line: "SSSNB7A", field: "SSSNB7A", type: text, maxlen: 9}
+  - {line: "CHK4952AIND", field: "CHK4952AIND", type: checkbox, on_state: "/X", group: "f4952a_return_type"}  # Individual
+  - {line: "CHK4952AEST", field: "CHK4952AEST", type: checkbox, on_state: "/X", group: "f4952a_return_type"}  # Estate
+  - {line: "CHK4952ATRST", field: "CHK4952ATRST", type: checkbox, on_state: "/X", group: "f4952a_return_type"}  # Trust
+  - {line: "4952ALINE1", field: "4952ALINE1", type: text, maxlen: 9}
+  - {line: "4952ALINE2", field: "4952ALINE2", type: text, maxlen: 9}
+  - {line: "4952ALINE3", field: "4952ALINE3", type: text, maxlen: 9}
+  - {line: "4952ALINE4", field: "4952ALINE4", type: text, maxlen: 9}
+  - {line: "4952ALINE5", field: "4952ALINE5", type: text, maxlen: 9}
+  - {line: "4952ALINE6", field: "4952ALINE6", type: text, maxlen: 10}
+  # --- page 35: Federal Income Tax Deduction Worksheet.
+  - {line: "FITDW1", field: "FITDW1", type: money, maxlen: 9}  # 1 tax on line 22 of 2023 Form 1040/1040-SR/1040NR
+  - {line: "FITDW2", field: "FITDW2", type: money, maxlen: 9}  # 2 Form 8960 line 17
+  - {line: "FITDW3", field: "FITDW3", type: money, maxlen: 9}  # 3 Add lines 1 and 2
+  - {line: "FITDW4a", field: "FITDW4a", type: money, maxlen: 9}  # 4a EIC (Form 1040 line 27)
+  - {line: "FITDW4b", field: "FITDW4b", type: money, maxlen: 9}  # 4b ACTC (line 28)
+  - {line: "FITDW4c", field: "FITDW4c", type: money, maxlen: 9}  # 4c AOC (line 29)
+  - {line: "FITDW4d", field: "FITDW4d", type: money, maxlen: 9}  # 4d Form 2439 credits (Schedule 3 line 13a)
+  - {line: "FITDW5", field: "FITDW5", type: money, maxlen: 9}  # 5 Add lines 4a, b, c and d
+  - {line: "FITDW6", field: "FITDW6", type: money, maxlen: 9}  # 6 Subtract line 5 from line 3 (negative -> zero)
+relations:
+  # Page 1 (money lines only; see the banner's Relations note for what is omitted and why).
+  - "7.b == 5.b + 6.b"                    # 7 "Total income. Add amounts in col. B then add amounts in col. C, lines 5 and 6" -- col B
+  - "7.c == 5.c + 6.c"                    # -- col C
+  - "9.b == 7.b - 8.b"                    # 9 "Adjusted total income. Subtract line 8 from line 7" -- col B
+  - "9.c == 7.c - 8.c"                    # -- col C
+  - "12.b == 9.b - 11.b"                  # 12 "Adjusted Gross Income. Subtract line 11 from line 9" -- col B
+  - "12.c == 9.c - 11.c"                  # -- col C
+  - "17 == 13 + 14 + 15 + 16"             # 17 "Total deductions. Add lines 13, 14, 15, and 16"
+  - "18 == 12.c - 17"                     # 18 "Taxable income. Subtract line 17 from line 12, column C" (no floor printed; may go negative)
+  - "21 == 5.a"                           # 21 "Alabama Income Tax withheld (from column A, line 5)"
+  - "26 == 21 + 22 + 23 + 24 + 25"        # 26 "Total payments. Add lines 21 through 25"
+  - "28 == 26 - 27"                       # 28 "Adjusted total payments. Subtract line 27 from line 26"
+  - "31 == max(0, 28 - 20)"               # 31 "If line 28 is larger than line 20, subtract line 20 from line 28 and enter AMOUNT OVERPAID"
+  # Page 2 -> page 1 carries, printed on both ends.
+  - "6.b == PG2PT1LINE9B"                 # 6 "Other income (from page 2, Part I, line 9)" / I 9 "Enter here and also on page 1, line 6"
+  - "6.c == PG2PT1LINE9C"
+  - "8.b == PG2PT2LINE8B"                 # 8 "(from page 2, Part II, line 8)" / II 8 "Enter here and also on page 1, line 8, columns B and C"
+  - "8.c == PG2PT2LINE8C"
+  - "11.b == PG2PT3LINE4"                 # III 4 "Add lines 1 through 3, enter here and on page 1, line 11, column B"
+  - "11.c == PG2PT3LINE6"                 # III 6 "Enter here and also page 1, line 11, column C"
+  - "14 == PG2PT4LINE7"                   # 14 "Federal Income Tax deduction (from page 2, Part IV, line 7)"
+  - "16 == PG2PT5LINE4"                   # V 4 "Enter here and on page 1, line 16"
+  # Page 2 part totals: I 9 "Add lines 1 through 8, column B, and lines 1, 4 through 8, column C";
+  # II 8 "Add lines 1 through 7, Column B, and lines 1, 3 through 7, Column C"; III 4 "Add lines 1 through 3".
+  - "PG2PT1LINE9B == PG2PT1LINEB1 + PG2PT1LINEB2 + PG2PT1LINEB3 + PG2PT1LINEB4 + PG2PT1LINEB5 + PG2PT1LINEB6 + PG2PT1LINEB7 + PG2PT1LINEB8"
+  - "PG2PT1LINE9C == PG2PT1LINEC1 + PG2PT1LINEC4 + PG2PT1LINEC5 + PG2PT1LINEC6 + PG2PT1LINEC7 + PG2PT1LINEC8"
+  - "PG2PT2LINE8B == PG2PT2LINEB1 + PG2PT2LINEB2 + PG2PT2LINEB3 + PG2PT2LINEB4 + PG2PT2LINEB5 + PG2PT2LINEB6 + PG2PT2LINEB7"
+  - "PG2PT2LINE8C == PG2PT2LINEC1 + PG2PT2LINEC3 + PG2PT2LINEC4 + PG2PT2LINEC5 + PG2PT2LINEC6 + PG2PT2LINEC7"
+  - "PG2PT3LINE4 == PG2PT3LINE1 + PG2PT3LINE2 + PG2PT3LINE3"
+  # Federal Income Tax Deduction Worksheet (page 35).
+  - "FITDW3 == FITDW1 + FITDW2"           # 3 "Federal Tax. Add Lines 1 and 2"
+  - "FITDW5 == FITDW4a + FITDW4b + FITDW4c + FITDW4d"  # 5 "Add lines 4a,b, c and d"
+  - "FITDW6 == max(0, FITDW3 - FITDW5)"   # 6 "Subtract line 5 from line 3. If amount is negative enter zero"
+cross_form: []
+identity_fields:
+  - SSSN
+  - FIRSTNAME
+  - LASTNAME
+signature: {page: 1}
+mailing: null

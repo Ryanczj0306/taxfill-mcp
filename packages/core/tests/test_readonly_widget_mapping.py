@@ -497,6 +497,16 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "VEHICLE 'check the box' caption) stay unmapped",
     ),
     StateComputed(
+        "states/al/2023/al40nr/pack.yaml",
+        522,
+        "Form 40NR 2023 (Phase J JS6, a new pack; measured on its sha-pinned blank): the same AL "
+        "UltraForms bundle shape as al40 — the page-1 running totals (lines 5-21, 23, 25, 26, 28, 29, 31, "
+        "33), the page-2 part totals, every schedule total / carried amount and the schedule-page "
+        "name / SSN mirrors carry /Ff ReadOnly and are filled by the blank's JavaScript, which taxfill "
+        "never runs (class 4). Unmapped and NOT counted: the nine Instructions* banners (ten widgets), "
+        "the ITCTB / NonDriver / NonDriverSP / ITEMIZEDTP captions and the ten UF_Info* stamps",
+    ),
+    StateComputed(
         "states/de/2023/pit_res/pack.yaml",
         16,
         "the eight two-column computed lines (4a/4b, 9a/9b, 10a/10b, 16a/16b, 18a/18b, "
@@ -810,6 +820,13 @@ def _keeps_by_pack() -> dict[str, dict[str, ReservedKeep]]:
 # is a printed constant, class 1, never mapped (Phase J JEa adjudicated the list below field by field against
 # the printed row and the widget's own /AA scripts). Keyed (pack, line) -> why the default is not a constant.
 NONZERO_READONLY_DEFAULTS: dict[tuple[str, str], str] = {
+    ("states/al/2023/al40nr/pack.yaml", "10"):
+        "line 10 'Alabama percentage of adjusted total income. Divide line 9, col. C, by line 9, col. B (not over "
+        "100%)' — the blank holds the formatted zero '000.00'; the form recomputes it from line 9",
+    **{("states/al/2023/al40nr/pack.yaml", f"SchNOL85ALN19{suffix}"):
+        "NOL-85A Part III line 19 'Divide the amount on line 18 by the amount on line 17 and enter percentage "
+        "here (but not over 100%)' — the blank holds the formatted zero '000.00'; the form recomputes it"
+       for suffix in ("", "-1", "-2", "-3", "-4")},
     ("states/al/2025/al40/pack.yaml", "VLIW4"):
         "'Enter $100,000 ($200,000 if married filing jointly)' — the blank's script sets 200000 when MFJ is checked, "
         "else 100000 (the shipped value)",
