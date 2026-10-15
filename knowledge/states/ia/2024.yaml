@@ -67,8 +67,14 @@ credits:
   eligibility: Available only to taxpayers who qualify for the federal Earned Income Tax Credit (EITC). Iowa simply
     piggybacks on federal EITC eligibility (earned income, AGI, investment-income, and qualifying-child rules are
     determined at the federal level). A taxpayer who qualifies for the Iowa low-income exemption may file an Iowa
-    return solely to claim a refund of this credit (check the box between Steps 4 and 5, skip lines 5-19, enter
-    zero on lines 20 and 22, and enter the EITC on lines 25, 30, 31, and 32).
+    return solely to claim a refund of this credit (check the alternate-tax / low-income-exemption box the 2024
+    IA 1040 face prints under the Step 5 heading, above line 5 — the Expanded Instructions p.44 still call it "the
+    box between Steps 4 and 5" — skip lines 5-19, enter zero on lines 20 and 22, and enter the EITC on lines 25,
+    30, 31a, and 32). The 2024 face splits line 31 into 31a (overpayment) and 31b ("AMENDED RETURN ONLY. Previous
+    refunds."); the p.44 EITC-only paragraph still says "lines 25, 30, 31, and 32" while p.53 documents 31a/31b.
+    An original (non-amended) return leaves 31b blank, so line 32 equals line 31a. (2024 IA 1040 fillable form
+    41-001, page 2 (41-001b) Step 5 checkbox and page 3 (41-001c) lines 31a/31b/32, https://revenue.iowa.gov/media/4090/download?inline;
+    2024 IA 1040 Expanded Instructions pp.44 and 53, https://revenue.iowa.gov/media/4152/download?inline)
   amount: 15% (.15) of the taxpayer's federal EITC (nonresidents/part-year residents multiply by the IA 126 Iowa
     income percentage)
   income_limit_2024: No separate Iowa income limit; bounded by the federal EITC income limits for 2024
@@ -137,10 +143,14 @@ credits:
     $5,000 if claimed as a dependent. Married filing jointly / head of household / qualifying surviving spouse:
     $13,500 or less ($32,000 or less if taxpayer or spouse is 65+ on 12/31/24). Married filing separately: each
     spouse $9,000 or less AND combined $13,500 or less. (Unchanged from 2023.)'
-  claimed_on: IA 1040 — check the low-income exemption box between Steps 4 and 5
+  claimed_on: 'IA 1040 Step 5 — check the box printed under the Step 5 heading, above line 5: "Check if using alternate
+    tax (line 5), tax reduction calculation (line 12), or low-income exemption. See instructions." (The 2024 Expanded
+    Instructions p.44 still describe it as "the box between Steps 4 and 5"; p.10, Line 4 / Step 4, explains the
+    box: "Check the box only if using low-income exemption, alternate tax, or tax reduction.")'
   citation:
     source: Iowa Department of Revenue — 2024 IA 1040 Expanded Instructions (PDF), low-income exemption instructions
-      (Step 5)
+      (Step 5), printed pp.10 and 44; box location from the 2024 IA 1040 fillable form (41-001) page 2 (41-001b
+      07/29/2024), https://revenue.iowa.gov/media/4090/download?inline
     url: https://revenue.iowa.gov/media/4152/download?inline
 filing_requirement:
   note: A resident or part-year resident must file if Iowa taxable income (IA 1040 line 4, with specified add-backs
@@ -179,6 +189,11 @@ all_citations:
     and line 4 Iowa taxable income; Step 5 line 5 tax line with alternate-tax/low-income-exemption checkbox; due
     date April 30, 2025; PO Box 9187; payee Iowa Department of Revenue
   url: https://revenue.iowa.gov/media/4091/download?inline
+- source: 2024 IA 1040 Iowa Individual Income Tax Return (form 41-001, fillable version, 249 AcroForm fields; same
+    face as the print version) — page 2 (41-001b 07/29/2024) Step 5 alternate-tax/low-income-exemption checkbox
+    printed under the Step 5 heading above line 5; page 3 (41-001c 10/22/2024) line 31a overpayment, line 31b
+    "AMENDED RETURN ONLY. Previous refunds.", line 32 "Subtract line 31b from line 31a, if applicable"
+  url: https://revenue.iowa.gov/media/4090/download?inline
 - source: 2024 IA 1040 Tax Calculation Worksheet (41-026) — non-joint (statuses 1, 3, 4, 5) and joint (status 2)
     three-bracket schedules with Column C constants and worked examples
   url: https://revenue.iowa.gov/media/4093/download?inline
