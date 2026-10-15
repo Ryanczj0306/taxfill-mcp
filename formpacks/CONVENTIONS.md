@@ -168,6 +168,15 @@ enforced by `test_year_bearing_line_keys_keep_their_offset_from_tax_year`
   line 6 prints its "Self" oval solid black because every filer takes it — and
   keying the remaining widgets left to right then shifts every key by one. A
   pre-printed, widget-less option gets no line.
+- **A widget's name is a hint, not a binding: bind by the caption printed on
+  its row (P-032).** Form 1040ME names three page-2 widgets "Nonresident
+  credit", "Total tax" and "Tax credits" and prints them rotated against those
+  captions ("Total tax" on the row printed 21 NONRESIDENT CREDIT, "Tax credits"
+  on 22 TOTAL TAX, "Nonresident credit" on 23 NONREFUNDABLE TAX CREDITS), so
+  binding by name put every filer's line-21 amount in the line-23 box. Measure
+  the widget rect against the printed line number before trusting a
+  descriptive name, and when the name and the row disagree, say so in the
+  field's comment ("the widget NAMED X sits on this row").
 
 ### The two topologies are not equally dangerous
 

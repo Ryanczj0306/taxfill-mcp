@@ -2068,3 +2068,31 @@ pitfalls:
       Tests, P-031-tagged, in packages/core/tests/test_al40_line_designators.py:
       on every shipped AL Form 40 year's own blank, each numbered page-1 key
       equals the number printed in the gutter beside its widget.
+  - id: P-032
+    incident: >-
+      Widget names rotated against their printed captions. Page 2 of the Form
+      1040ME blank names three money widgets "1040ME Nonresident credit",
+      "1040ME Total tax" and "1040ME Tax credits", but prints them on other
+      rows: "Total tax" sits on the row printed 21 (NONRESIDENT CREDIT), "Tax
+      credits" on 22 (TOTAL TAX) and "Nonresident credit" on 23 (NONREFUNDABLE
+      TAX CREDITS) — a 3-cycle, the first two names one row above their
+      captions and the third two rows below. The 2023 pack bound the three
+      lines by widget name, so a filer's line-21 amount landed in the line-23
+      box, 22's in 21's and 23's in 22's, while the relations 22 == 20 + 20a -
+      21 and 24 == 22 - 23, written against the keys, passed. Found by the JS5
+      1040ME 2024 port's semantic verifier (2026-10-04), which measured the
+      printed "21." / "22." / "23." against the widget rects (label 21. at y
+      600.7 inside the "Total tax" box 599.5-617.8, 22. at 577.2 inside "Tax
+      credits", 23. at 553.6 inside "Nonresident credit"); confirmed on a
+      sentinel render of the corrected 2023 pack.
+    countermeasure: >-
+      The 2023 pack binds lines 21-23 by position, matching the 2024 and 2025
+      ports: 21 -> "1040ME Total tax", 22 -> "1040ME Tax credits", 23 ->
+      "1040ME Nonresident credit", each comment naming the widget that merely
+      SITS on the row. Keys and relations are unchanged. formpacks/CONVENTIONS.md
+      gains the rule "a widget's name is a hint, not a binding: bind by the
+      caption printed on its row". Tests, P-032-tagged, in
+      packages/core/tests/test_me1040_lines_21_23.py: every shipped 1040ME
+      year pins the (key, widget) map and the two relations offline, and
+      (network) reads the number printed left of each bound widget on the
+      year's own blank.

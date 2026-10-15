@@ -23,8 +23,8 @@
 #             qualifying children/dependents count, lines 14-18 (federal AGI,
 #             income modifications, Maine AGI, deduction Standard/Itemized radio,
 #             exemption).
-#   page 2 -- lines 19-24 (taxable income, income tax, recapture, total tax, tax
-#             credits Schedule A, nonresident credit, net tax), line 25 tax
+#   page 2 -- lines 19-24 (taxable income, income tax, recapture, nonresident
+#             credit, total tax, nonrefundable credits Schedule A, net tax), line 25 tax
 #             payments 25a-25f, lines 26-29 (amended overpayment, 25f-26, overpaid,
 #             underpaid), lines 30/30a/31 (use tax, casual rental sales tax,
 #             charitable contributions), line 32 net overpayment, line 33 applied-
@@ -353,14 +353,22 @@ fields:
   - line: 20a                            # 20a TAX CREDIT RECAPTURE AMOUNTS
     field: 1040ME Tax credit recapture
     type: money
-  - line: "21"                           # 21 NONRESIDENT CREDIT (Schedule NR line 9 or NRH line 11)
-    field: 1040ME Nonresident credit
-    type: money
-  - line: "22"                           # 22 TOTAL TAX (Line 20 plus 20a minus 21)
+  # Lines 21-23 are bound by POSITION, not by widget name (P-032): on this blank the
+  # three widget names are rotated against their printed captions — "Total tax" is
+  # on the row printed 21 (NONRESIDENT CREDIT), "Tax credits" on 22 (TOTAL TAX) and
+  # "Nonresident credit" on 23 (NONREFUNDABLE TAX CREDITS); the first two names sit
+  # one row above their captions, the third two rows below (measured: label "21."
+  # bottom y 600.7 inside the "Total tax" rect 599.5-617.8, "22." 577.2 inside "Tax
+  # credits" 575.6-593.8, "23." 553.6 inside "Nonresident credit" 551.2-569.5).
+  # The 2024 and 2025 blanks carry the same names on the same rows.
+  - line: "21"                           # 21 NONRESIDENT CREDIT (Schedule NR line 9 or NRH line 11) -- the widget NAMED "Total tax" sits on this row
     field: 1040ME Total tax
     type: money
-  - line: "23"                           # 23 NONREFUNDABLE TAX CREDITS (Maine Schedule A line 23)
+  - line: "22"                           # 22 TOTAL TAX (Line 20 plus 20a minus 21) -- the widget NAMED "Tax credits" sits on this row
     field: 1040ME Tax credits
+    type: money
+  - line: "23"                           # 23 NONREFUNDABLE TAX CREDITS (Maine Schedule A line 23) -- the widget NAMED "Nonresident credit" sits on this row
+    field: 1040ME Nonresident credit
     type: money
   - line: "24"                           # 24 NET TAX (Line 22 minus line 23)
     field: 1040ME Net tax
