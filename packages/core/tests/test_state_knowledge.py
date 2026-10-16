@@ -112,43 +112,90 @@ def test_state_pack_has_cited_credits(code: str, year: int):
         assert c.get("type") in ("refundable", "nonrefundable"), f"{code}: {c['name']} bad type"
 
 
-# The AWS-backed document store that tax.newmexico.gov links to for its instruction PDFs —
-# a knowingly-accepted, self-disclosed exception (see the `unverified` note in nm/2023.yaml).
-# Any OTHER non-gov citation host is a defect.
-_ALLOWED_NONGOV_CITATION_HOSTS = {"klvg4oyd4j.execute-api.us-west-2.amazonaws.com"}
+def _iter_citation_shaped(node, path: str = "$", parent_key: str | None = None):
+    """Yield (path, mapping) for every mapping a consumer may turn into a Citation.
 
-
-def _iter_citation_urls(obj):
-    """Yield the url of every citation-shaped dict (has both 'source' and a string 'url')."""
-    if isinstance(obj, dict):
-        if isinstance(obj.get("url"), str) and "source" in obj:
-            yield obj["url"]
-        for v in obj.values():
-            yield from _iter_citation_urls(v)
-    elif isinstance(obj, list):
-        for v in obj:
-            yield from _iter_citation_urls(v)
+    That is: any mapping under a ``citation`` key, any element of ``all_citations``, and any
+    other mapping that carries both ``source`` and ``url``.
+    """
+    if isinstance(node, dict):
+        if parent_key in ("citation", "all_citations") or {"source", "url"} <= set(node):
+            yield path, node
+        for key, value in node.items():
+            yield from _iter_citation_shaped(value, f"{path}.{key}", key)
+    elif isinstance(node, list):
+        for i, item in enumerate(node):
+            yield from _iter_citation_shaped(item, f"{path}[{i}]", parent_key)
 
 
 @pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
-def test_all_citation_urls_are_gov_hosted(code: str, year: int):
+def test_every_citation_shaped_mapping_validates_as_a_citation(code: str, year: int):
     # Not just credits[].citation: EVERY citation-shaped block (deadlines, all_citations,
-    # residency, mailing, ...) must cite an official .gov/.mil/.us host. StateKnowledge uses
-    # extra='allow', so these untyped blocks are otherwise never host-validated. Service URLs
-    # (payment portals, etc.) are bare 'url:' with no 'source' sibling and are not authority.
+    # residency, mailing, ...). StateKnowledge uses extra='allow', so these untyped blocks are
+    # never validated at load, yet file_and_pay and filing_summary build Citation(**block) from
+    # mailing_addresses and deadlines at call time. JK27 (2026-10-16): this test used to check
+    # the url HOST only, and allow-listed New Mexico's AWS document-API host — a host the
+    # Citation model rejects. So nm/2025.yaml's mailing_addresses and deadlines citations passed
+    # here while filing_summary and file_and_pay raised a ValidationError on every NM 2025 return.
+    # Now each mapping must validate as the Citation model itself (government host, http(s),
+    # exactly source + url), with no allow-list. Service URLs (payment.web_pay_url, ...) are not
+    # citations and are not walked.
     import yaml
-    from urllib.parse import urlparse
+    from pydantic import ValidationError
 
-    from taxfill_core.knowledge import is_official_gov_host
+    from taxfill_core.knowledge import Citation
 
-    raw = yaml.safe_load((REPO_ROOT / "knowledge" / "states" / code / f"{year}.yaml").read_text())
-    for url in _iter_citation_urls(raw):
-        host = (urlparse(url).hostname or "").lower()
-        if host in _ALLOWED_NONGOV_CITATION_HOSTS:
-            continue
-        assert is_official_gov_host(host), (
-            f"{code}: citation URL host {host!r} ({url}) is not an official government source"
-        )
+    raw = yaml.safe_load((REPO_ROOT / "knowledge" / "states" / code / f"{year}.yaml").read_text(encoding="utf-8"))
+    found, rejected = 0, []
+    for path, mapping in _iter_citation_shaped(raw):
+        found += 1
+        try:
+            Citation.model_validate(mapping)
+        except ValidationError as exc:
+            rejected.append(f"{path} ({mapping.get('url')!r}): {exc.errors()[0]['msg']}")
+    assert found, f"{code} {year}: no citation-shaped mapping found — the walker no longer matches the pack shape"
+    assert not rejected, (
+        f"{code} {year}: citation-shaped mappings the Citation model rejects (cite an official government "
+        f"page or PDF instead):\n" + "\n".join(rejected)
+    )
+
+
+@pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
+def test_file_and_pay_and_filing_summary_run_on_every_state_pack(code: str, year: int):
+    # JK27 (2026-10-16): filing_summary and file_and_pay raised a pydantic ValidationError for
+    # every New Mexico 2025 return: nm/2025.yaml cited its mailing addresses and deadlines to the
+    # Department's AWS document-API host, and both tools build a Citation from those blocks at
+    # call time (the JK21 golden nm_2025.json recorded the error). Every shipped pack must survive
+    # both tools, for a refund and for an unpaid balance due (the two pick different addresses).
+    from taxfill_core.file_and_pay import FilingManifestItem, file_and_pay
+    from taxfill_core.filing_summary import filing_summary
+    from taxfill_core.knowledge import Citation
+
+    kb = REPO_ROOT / "knowledge"
+    pack = load_state_knowledge(code, year, base_dir=kb)
+    form = (getattr(pack, "forms", None) or {}).get("resident") or "state return"
+    manifest = [
+        FilingManifestItem(form=form, tax_year=year, jurisdiction=f"states/{code}", bottom_line=512),
+        FilingManifestItem(form=form, tax_year=year, jurisdiction=f"states/{code}", bottom_line=-347),
+    ]
+    returns = file_and_pay(manifest, knowledge_dir=kb).returns
+    items = filing_summary(manifest, today=date(year + 1, 3, 1), knowledge_dir=kb).items
+    assert [r.bottom_line for r in returns] == ["Refund of $512", "You owe $347."]
+    assert [(i.refund, i.owed) for i in items] == [(512, 0), (0, 347)]
+
+    mailing = getattr(pack, "mailing_addresses", None) or {}
+    deadlines = getattr(pack, "deadlines", None) or {}
+    assert returns[0].mailing_address == mailing.get("refund_or_no_payment")
+    assert returns[1].mailing_address == mailing.get("with_payment")
+    for block in (mailing, deadlines):
+        if block.get("citation"):
+            assert all(Citation(**block["citation"]) in r.citations for r in returns), f"{code} {year}"
+    if deadlines.get("filing_due_date"):
+        due = f"Due {deadlines['filing_due_date']}."
+        assert all(due in r.deadlines for r in returns), f"{code} {year}"
+        assert all(i.deadline_status == due for i in items), f"{code} {year}"
+        if deadlines.get("citation"):
+            assert all(Citation(**deadlines["citation"]) in i.citations for i in items), f"{code} {year}"
 
 
 @pytest.mark.parametrize("year", SHIPPED_YEARS)
@@ -516,6 +563,105 @@ def test_il_2025_schedule_il_e_eitc_caveats_reach_the_output():
     assert "Resolve via: 2025 Schedule IL-E/EITC Step 5 (Lines 11-12)" in child_credit[0]
 
 
+# ── IA 1040 face locations (JK27, 2026-10-16) ──
+# Every IA 1040 since the 2023 redesign prints the school district / EMS surtax as line 19, inside Step 5: "19. School
+# district surtax or EMS surtax. Multiply line 18 by the percentage from table." (2023; "from list" in 2024 and 2025).
+# Step 6 is "Refundable Credits and Payments", lines 23-30. The 2024 and 2025 faces print the alternate tax / tax
+# reduction / low-income exemption box on its own row under the Step 5 heading, above line 5 (page 2, 41-001b), and
+# the 2024 Schedule 1 prints line 17, the Iowa NOL, as one box. The instructions of both years still say "check the
+# box between Steps 4 and 5" (2024 p.44; the 2025 "Line 25" page), and the 2024 p.10 add-back list still says
+# "Schedule 1, line 17b": the packs keep that wording as quotes and state what the face prints.
+
+
+def _ia_pack_strings(year: int) -> list[str]:
+    """Every string value in the IA pack for ``year``: credits, notes, unverified, citations."""
+    pack = load_state_knowledge("ia", year, base_dir=REPO_ROOT / "knowledge")
+    found: list[str] = []
+
+    def walk(node) -> None:
+        if isinstance(node, str):
+            found.append(node)
+        elif isinstance(node, dict):
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+
+    walk(pack.model_dump(mode="json"))
+    return found
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2025])
+def test_ia_surtax_is_line_19_in_step_5(year: int):
+    from taxfill_core.calc import state_tax
+
+    work = state_tax("ia", 40_000, year=year, knowledge_dir=REPO_ROOT / "knowledge").work
+    assert (
+        'SCHOOL DISTRICT SURTAX and EMS surtax (line 19, in Step 5: "School district surtax or EMS surtax. '
+        "Multiply line 18 by the percentage from"
+    ) in work
+    assert 'Step 6 is "Refundable Credits and Payments", lines 23-30)' in work
+    # Nothing in the pack (notes, unverified) places the surtax in Step 6 any more.
+    assert not [s for s in _ia_pack_strings(year) if "surtax" in s and "(Step 6" in s]
+
+
+@pytest.mark.parametrize("year", [2024, 2025])
+def test_ia_low_income_box_is_placed_under_the_step_5_heading(year: int):
+    from taxfill_core.calc import state_tax
+
+    work = state_tax("ia", 40_000, year=year, knowledge_dir=REPO_ROOT / "knowledge").work
+    assert f"(check the box the {year} IA 1040 prints under the Step 5 heading, above line 5:" in work
+    pack = load_state_knowledge("ia", year, base_dir=REPO_ROOT / "knowledge")
+    (low,) = [c for c in pack.credits if c["name"].startswith("Low-Income Exemption")]
+    assert low["claimed_on"].startswith(
+        "IA 1040 Step 5 — check the box printed under the Step 5 heading, above line 5"
+    )
+    # "between Steps 4 and 5" is the instructions' wording; it survives only inside a quote of them.
+    strings = _ia_pack_strings(year)
+    said = sum(s.count("between Steps 4 and 5") for s in strings)
+    quoted = sum(
+        s.count('"the box between Steps 4 and 5"') + s.count('"check the box between Steps 4 and 5"') for s in strings
+    )
+    assert said and said == quoted
+
+
+def test_ia_2023_low_income_box_is_placed_on_the_step_5_heading_row():
+    # The 2023 face prints the box on the Step 5 heading row, after line 4 (the 2024 and 2025 faces moved it under the
+    # heading); "between Steps 4 and 5" is the 2023 instructions' wording, p.49, and survives only as their quote.
+    from taxfill_core.calc import state_tax
+
+    pack = load_state_knowledge("ia", 2023, base_dir=REPO_ROOT / "knowledge")
+    (low,) = [c for c in pack.credits if c["name"].startswith("Low-Income Exemption")]
+    assert low["claimed_on"].startswith("IA 1040 Step 5 — check the box the 2023 IA 1040 prints on the Step 5 heading row")
+    work = state_tax("ia", 40_000, year=2023, knowledge_dir=REPO_ROOT / "knowledge").work
+    assert '(check the Step 5 box "Check if using alternate tax (line 5)' in work
+    strings = _ia_pack_strings(2023)
+    said = sum(s.count("between Steps 4 and 5") for s in strings)
+    quoted = sum(s.count('"check the box between Steps 4 and 5"') for s in strings)
+    assert said and said == quoted
+
+
+def test_ia_2024_nol_add_back_is_the_one_box_schedule_1_line_17():
+    ia = state_scope(
+        Profile(state_footprint={2024: StateFootprintYear(
+            lived=[ResidencePeriod(state="IA", start=date(2024, 1, 1), end=date(2024, 12, 31), provenance=US)],
+        )}),
+        2024,
+        base_dir=REPO_ROOT / "knowledge",
+    ).states[0]
+    assert ia.state == "IA" and ia.filing_role == "resident"
+    (low,) = [b for b in ia.benefits_candidates if b.startswith("Low-Income Exemption")]
+    assert "lump-sum distributions, and the Schedule 1 line 17 NOL carryover)" in low
+    assert (
+        'The 2024 IA 1040 Schedule 1 prints line 17 as one box, "Iowa net operating loss prior to 1/1/23. '
+        'Include IA 124"'
+    ) in low
+    # "line 17b" is the p.10 add-back list's wording and appears only inside that quote.
+    assert sum(s.count("17b") for s in _ia_pack_strings(2024)) == 1
+    assert 'claimed on the IA 1040 Schedule 1, line 17b"' in low
+
+
 # ── G4 second tranche: the graduated-bracket StateTaxParams schema ──
 
 _ZZ_CITE = {"source": "synthetic", "url": "https://www.irs.gov/"}
@@ -599,3 +745,40 @@ def test_state_tax_params_zero_rate_floor_allowed_but_not_all_zero():
             _graduated_params(brackets={s: all_zero for s in (
                 "single", "married_filing_jointly", "married_filing_separately", "head_of_household")})
         )
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2025])
+def test_hi_nine_month_presence_test_names_the_pack_year(year: int):
+    # Phase K JK27: the TY2024 pack said "more than nine months during 2023" for the food/excise and renters credits,
+    # carried over from 2023 (the 2024 N-311 and Schedule X say "more than nine months in 2024").
+    pack = load_state_knowledge("hi", year, base_dir=REPO_ROOT / "knowledge")
+    texts = [str(c.get("eligibility", "")) for c in pack.credits if "nine months" in str(c.get("eligibility", ""))]
+    assert len(texts) >= 2
+    assert all(f"nine months during {year}" in text for text in texts), texts
+
+
+def test_hi_2024_due_date_and_citations_are_the_2024_documents():
+    # Phase K JK27 final review: the TY2024 pack carried the 2023 pack's labels. Its due date read 2025-04-22, but the
+    # 2024 N-11 and N-15 instructions say April 21, 2025 (April 20 was a Sunday), and its mailing and deadline citations
+    # named Form N-11 (Rev. 2023) lines 7 and 10 instead of the instructions that print them.
+    pack = load_state_knowledge("hi", 2024, base_dir=REPO_ROOT / "knowledge")
+    assert pack.deadlines["filing_due_date"] == "2025-04-21"
+    assert "April 21, 2025" in pack.deadlines["citation"]["source"]
+    assert pack.mailing_addresses["citation"]["url"].endswith("/2024/n11ins.pdf")
+    import yaml
+
+    raw = (REPO_ROOT / "knowledge" / "states" / "hi" / "2024.yaml").read_text(encoding="utf-8")
+    loaded = yaml.safe_load(raw)
+    stale = [c["source"] for c in _walk_sources(loaded) if "Rev. 2023" in c["source"] or "2023 N-1" in c["source"]]
+    assert stale == []
+
+
+def _walk_sources(node):
+    if isinstance(node, dict):
+        if isinstance(node.get("source"), str) and isinstance(node.get("url"), str):
+            yield node
+        for value in node.values():
+            yield from _walk_sources(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _walk_sources(value)

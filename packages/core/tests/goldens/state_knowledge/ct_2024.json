@@ -1,14 +1,20 @@
 {
  "_strings": {
+  "@@0f03f6a8a9c5": "annual (per tax year; the shipped CT 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@16cb9f81668c": "Personal Tax Credit (low-income credit, Table E) — Connecticut resident individuals whose Connecticut AGI falls within the Table E phase-out ranges for their filing status. Taxpayers below the no-tax threshold owe no income tax and need no credit; the personal credit reduces the income tax for low-to-moderate income filers just above that threshold.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@212ff082b9ef": "Treaty conformity — CT does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CT. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: CT's resident return (Form CT-1040) starts from federal AGI (Line 1 = \"Federal adjusted gross income from your 2024 federal income tax return\"), so treaty-exempt income is initially excluded. HOWEVER, CT has an EXPLICIT ADD-BACK: the 2024 CT-1040 instructions (Schedule 1 additions, Line 37 \"Other\") and the 2024 CT-1040NR/PY instructions (Schedule 1 additions, Line 39 \"Other\") both direct: \"1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien. Enter the words 'treaty income' in the space provided.\" Because CT requires nonresident aliens to add federally treaty-exempt income back into Connecticut adjusted gross income, CT does NOT conform to federal treaty exemptions for affected filers (analogous to California's Schedule CA add-back). Note: this add-back is scoped to nonresident aliens filing federal Form 1040NR; a filer with no treaty income / not a nonresident alien is unaffected, but the statutory rule re-taxes treaty income, so conforms_to_federal_treaties = false. (Unchanged from 2023 — the identical sentence appears in both 2024 instruction booklets.)",
   "@@3c5ab598b44f": "Law change NOT modeled by the engine (status final_form_published): TABLE C RENAMED AND RE-SET, TABLE D RESTRUCTURED — with the rate cut, Table C is the '2% Phase-Out Add-Back' (it phases the benefit of the 2% bracket back out as Connecticut AGI rises), and Table D tax recapture begins at much lower Connecticut AGI than in 2023. Both run on Connecticut AGI (Tax Calculation Schedule Line 1), not taxable income, so the shipped brackets understate the tax of a filer inside either phase-out. Resolve via: 2024 Form CT-1040 Instructions, Table C - 2% Phase-Out Add-Back and Table D - Tax Recapture (the citation URL); both are read by Connecticut AGI and filing status.",
+  "@@491bc74224f1": "The shipped CT 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@4a2138ec79e6": "Property Tax Credit (Schedule 3) — Connecticut residents who paid qualifying property tax during 2024 to a Connecticut political subdivision on their primary residence and/or a privately owned or leased motor vehicle. Single/MFS/HOH limited to one motor vehicle; MFJ/qualifying surviving spouse limited to two. Cannot be claimed if Form CT-1040 Line 10 is zero.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@645062f7c3f1": "Historic Homes Rehabilitation Tax Credit (Line 20d) — The 2024 Instructions, Line 20d: \"All tax credit vouchers shall be issued by The Department of Economic and Community Development to those eligible that are (1) owners rehabilitating historic homes; or (2) taxpayers making contributions to qualified rehabilitation expenditures on historic homes.\" The booklet prints no statute, no cap and no computation — the credit is whatever the DECD voucher shows. The form face captions the line \"20d. Historic Home Rehabilitation Credit\" (new on the 2024 face); the Instructions call it the \"Historic Homes Rehabilitation Tax Credit\".",
   "@@6ee9250d3acd": "https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf",
   "@@901d3ea70c1b": "2024 Form CT-1040 Connecticut Resident Income Tax Return, page 4 mailing box: 'For all tax forms with payment: PO Box 2977'; 'For refunds and all other tax forms without payment: PO Box 2976'",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a43858c40439": "2024 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 01/25) — Tax Calculation Schedule (page 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line 5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6); Table A - Personal Exemptions; Table B - Initial Tax Calculation (p. 20, all three schedules with the DRS worked examples $335/$32,998/$513/$69,490/$500/$51,748 — TY2024 cuts the bottom two rates to 2% and 4.5%, Connecticut's first rate cut since the mid-1990s); Table C - 2% Phase-Out Add-Back (p. 21); Table D - Tax Recapture (p. 22, now beginning at CT AGI over $105,000/$210,000/$168,000); Table E - Personal Tax Credits; Line 6 Income Tax (no-tax floors, optional tax tables at CT AGI <= $102,000). Second pass: the 2024 Form CT-1040NR/PY instructions (Rev. 01/25, https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040nrpy-instructions_1224.pdf) print identical Tables A-E — every bound, rate, printed constant, phase-out and recapture amount matches.",
   "@@a8108d205e94": "2024 Form CT-1040 Instructions (Rev. 01/25), Tax Calculation Schedule Line 5: 'Enter amount from Table C, 2% Tax Rate Phase-Out Add-Back.' Table C - 2% Phase-Out Add-Back: 'Enter the phase-out amount on the Tax Calculation Schedule, Line 5 and continue to Line 6.'",
   "@@c0e7931c928a": "Credit for Income Taxes Paid to Qualifying Jurisdictions (Schedule 2) — Connecticut residents (and part-year residents) whose income reported on the CT return is also subject to income tax in another qualifying jurisdiction (another U.S. state, a local jurisdiction within another state, or the District of Columbia) where the taxpayer filed a return and paid income tax. Prevents double taxation of the same income. A copy of the other jurisdiction's return must be attached.",
   "@@c36989692ea0": "Connecticut Earned Income Tax Credit (CT EITC) — Connecticut full-year residents who claimed and were allowed the 2024 federal Earned Income Credit. Taxpayer (and spouse/qualifying children, if applicable) must have valid Social Security Numbers by the return due date, must have earned income from employment or self-employment, and must meet all federal EITC rules. Either qualify with a qualifying child, or as a worker without a qualifying child aged 25-64.",
@@ -18,7 +24,8 @@
   "@@db95252fe84b": "If any income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties — that income is still taxable to CT.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@ef2cea20e765": "If any of your income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties, so that income is still taxable to CT — do not carry the federal exclusion onto the state return.",
-  "@@f147e392fe19": "2024 Form CT-1040, page 1: 'Due date: April 15, 2025 - Attach a copy of all applicable schedules and forms to this return.'"
+  "@@f147e392fe19": "2024 Form CT-1040, page 1: 'Due date: April 15, 2025 - Attach a copy of all applicable schedules and forms to this return.'",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -142,6 +149,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended CT 2024 return (Form CT-1040, Connecticut Resident Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "CT revenue department home page (read 2026-10-16)",
+      "url": "https://portal.ct.gov/drs"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "jurisdiction": "states/ct",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended CT return, and the CT 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the CT instructions for amended returns on the CT revenue department's site (https://portal.ct.gov/drs) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -205,9 +247,269 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "CT revenue department home page (read 2026-10-16)",
+      "url": "https://portal.ct.gov/drs"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the CT instructions for amended returns on the CT revenue department's site (https://portal.ct.gov/drs).",
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "headline": "CT 2024, amended (Form CT-1040, Connecticut Resident Income Tax Return): you owe $88",
+    "jurisdiction": "states/ct",
+    "notes": [
+     "@@db95252fe84b"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@491bc74224f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "CT DRS - 2024 Form CT-1040 Instructions (Rev. 01/25), Line 20a and Schedule CT-EITC line instructions (40% rate; $11,600 investment-income limit)",
+     "cadence": "@@0f03f6a8a9c5",
+     "topic": "credits",
+     "url": "@@6ee9250d3acd"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@491bc74224f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@901d3ea70c1b",
+     "cadence": "@@0f03f6a8a9c5",
+     "topic": "filing_logistics",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@491bc74224f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@c8a2ae9640fc",
+     "cadence": "@@0f03f6a8a9c5",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf"
+    },
+    {
+     "answers": "2024 Form CT-1040 Instructions (Rev. 01/25) - Schedule 1 Line 37 'Other' additions: '1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien'; Line 6 no-tax floors and optional tax tables at CT AGI <= $102,000; Tax Calculation Schedule and Tables A-E (2%/4.5% rate cut, 2% Phase-Out Add-Back, new Tax Recapture bands); CT EITC 40% / $11,600 investment-income limit; Property Tax Credit Table",
+     "cadence": "@@0f03f6a8a9c5",
+     "topic": "forms_and_instructions",
+     "url": "@@6ee9250d3acd"
+    },
+    {
+     "answers": "2024 Form CT-1040NR/PY Instructions (Rev. 01/25) - Schedule 1 Line 39 'Other' additions: '1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien'; second-pass source for Tables A-E (identical bounds, rates, printed constants, phase-out and recapture amounts)",
+     "cadence": "@@0f03f6a8a9c5",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040nrpy-instructions_1224.pdf"
+    },
+    {
+     "answers": "CT DRS Resident Income Tax - Tax Information (residency definitions: domicile, statutory resident permanent place of abode + 183 days; Gross Income Test thresholds)",
+     "cadence": "@@0f03f6a8a9c5",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@491bc74224f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 Form CT-1040 Instructions (Rev. 01/25), Table B - Initial Tax Calculation, Single or Married Filing Separately: 'More than $10,000, but less than or equal to' $50,000 — '$200 plus 4.5% of the excess over $10,000' (the first $10,000 at 2.00%).",
+     "cadence": "@@0f03f6a8a9c5",
+     "topic": "law_changes",
+     "url": "@@6ee9250d3acd"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@491bc74224f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@a43858c40439",
+     "cadence": "@@0f03f6a8a9c5",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@6ee9250d3acd"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@491bc74224f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/ct",
  "state_scope": {
@@ -608,7 +910,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: CT 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: CT 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -628,7 +930,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2024 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 01/25) — Tax Calculation Schedule (page 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line 5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6); Table A - Personal Exemptions; Table B - Initial Tax Calculation (p. 20, all three schedules with the DRS worked examples $335/$32,998/$513/$69,490/$500/$51,748 — TY2024 cuts the bottom two rates to 2% and 4.5%, Connecticut's first rate cut since the mid-1990s); Table C - 2% Phase-Out Add-Back (p. 21); Table D - Tax Recapture (p. 22, now beginning at CT AGI over $105,000/$210,000/$168,000); Table E - Personal Tax Credits; Line 6 Income Tax (no-tax floors, optional tax tables at CT AGI <= $102,000). Second pass: the 2024 Form CT-1040NR/PY instructions (Rev. 01/25, https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040nrpy-instructions_1224.pdf) print identical Tables A-E — every bound, rate, printed constant, phase-out and recapture amount matches.",
+    "source": "@@a43858c40439",
     "url": "@@6ee9250d3acd"
    },
    "rate": null,

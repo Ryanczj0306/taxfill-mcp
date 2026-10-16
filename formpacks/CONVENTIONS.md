@@ -1,7 +1,7 @@
 # Form pack conventions (binding)
 
-These rules are **binding** for every pack under `formpacks/`. Three test
-modules enforce them, and **which one enforces a given rule decides which packs
+These rules are **binding** for every pack under `formpacks/`. The test
+modules below enforce them, and **which one enforces a given rule decides which packs
 it actually covers** — read this before trusting the word "binding":
 
 | module | discovers | enforces |
@@ -10,6 +10,7 @@ it actually covers** — read this before trusting the word "binding":
 | `packages/core/tests/test_formpacks_states.py` | `formpacks/states/*/*/*/pack.yaml` | schema/jurisdiction, sha256, relations parse, golden round-trip |
 | `packages/core/tests/test_pack_invariants.py` | **every** pack, federal and state | `cross_form` target resolution, the checkbox `group` rules, identity page mirrors, year tokens in line keys |
 | `packages/core/tests/test_readonly_widget_mapping.py` | **every** pack, federal and state | which packs may bind an AcroForm ReadOnly widget |
+| `packages/core/tests/test_signature_widget_mapping.py` | **every** pack, federal and state | no line binds a digital-signature (`/FT /Sig`) widget |
 
 Until 2026-08-21 the `cross_form` and checkbox-`group` rules below lived in the
 FEDERAL module and so had never run over a single state pack, while this
@@ -246,7 +247,12 @@ as an adjudicated budget, when the printed box cannot physically hold the
 widget's count. Each such row is listed with the measured box in
 `TIGHTER_THAN_WIDGET` (`packages/core/tests/test_pack_maxlen.py`, network-
 marked, self-clearing). A text line whose widget carries a `/MaxLen` may omit
-`maxlen`, because verify's hard MaxLen check still guards it.
+`maxlen`, because verify's hard MaxLen check still guards it. A widget with NO
+`/MaxLen` gets the count a probe fill renders whole (digits, read on a high-dpi
+render: verify's 0.5-em scan does not catch a cut last glyph); pin it with the
+box it was measured on in `MEASURED_WITHOUT_MAXLEN` (same module), and give one
+box one budget in every year — the CA 540NR "Apt. no/ste. no." box, identical
+in 2023-2025, carried 14 / 12 / 13 until JK27 (2026-10-16) measured 12.
 
 Two traps worth knowing before you audit a blank: `pdfinfo`'s
 "JavaScript: yes" is satisfied by `AFNumber_Format`-style FORMATTING scripts
@@ -281,6 +287,27 @@ happened to ri1040 on 12 widgets and to it1040_oh on 11 pages).
   drives a cross-FORM check, so `page4_name_last == name.last` has no home. A
   caller that fills a mirror differently files an internally inconsistent
   return and no gate will catch it.
+
+### Lines filled only when the form is filed by itself (`standalone_only_lines`)
+
+Forms 8843, 8606 and 5329 print "Fill in your address(es) only if you are
+filing this form by itself and not with your (U.S.) tax return". Attached to
+the return those boxes are correctly blank, and verify must not call that an
+identity mismatch or a missing current address (P-002). Declare such lines in
+`standalone_only_lines` (Phase K JK27):
+
+- List every line the caption governs (`mailing_address`, `home_country_address`
+  on 8843; the `mailing_address.*` lines on 8606 and 5329), and quote the
+  caption in a comment. The schema refuses a key that names no line.
+- verify_filing honours it only when the filing holds a Form 1040, 1040-SR,
+  1040-NR or 1040-X (the Form 8606 instructions file a revised 8606 "with Form
+  1040-X"). Beside a claim (Form 843), an ITIN application (W-7), a state return
+  or another standalone form, the lines are required as usual, and a form
+  verified alone counts as filed by itself.
+- A filled value is still checked: against the confirmed current address, and
+  against any other form that maps the same line key.
+- test_standalone_only_lines.py pins the shipped declarations; a new form with
+  such a caption adds its packs there.
 
 ## Cross-form references (`cross_form`)
 
@@ -370,6 +397,17 @@ use reads as zeros), or it is not declared.
 | schedules (`sched_*`) | `null` (no signature block of their own) | `null` (mailed inside the parent return's envelope) |
 
 `mailing.verify_url` must be the official irs.gov where-to-file page.
+
+**Never map a digital-signature (`/FT /Sig`) widget.** Some DOR blanks put one
+on an ink-signature line (WV IT-140's "Preparer’s Signature", AR1000F's
+Signature1-3). fill_form writes the string as the field's `/V` and counts it
+written, but nothing renders it. Leave the line unmapped with a comment naming
+the widget: the filer signs on paper, and `signature: {page: N}` says where.
+Also check what a widget near a signature line really sits in: OK Form 538-S
+2023 / 2024 name their "Occupation" widgets for the box below, but place them
+inside the signature box (JK27, 2026-10-16;
+`packages/core/tests/test_signature_widget_mapping.py`,
+`test_ok538s_occupation_mapping.py`).
 
 ## Hand-fill packs (`handfill.yaml`)
 
@@ -475,6 +513,7 @@ state packs, so run them whichever lane you touched:
 ```
 uv run python -m pytest packages/core/tests/test_pack_invariants.py
 uv run python -m pytest packages/core/tests/test_readonly_widget_mapping.py
+uv run python -m pytest packages/core/tests/test_signature_widget_mapping.py
 ```
 
 Golden round-trip (downloads the blank, fills every mapped line with

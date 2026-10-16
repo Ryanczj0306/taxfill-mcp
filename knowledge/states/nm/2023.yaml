@@ -142,18 +142,35 @@ deadlines:
   citation:
     source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
     url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
+# JK27 (2026-10-16): the three 2023 documents below exist only in the Department's document library, served from its
+# AWS document-API host, which the Citation model rejects (realfile.tax.newmexico.gov, the Department's .gov file
+# host, answered 404 (NoSuchKey) for each file name). So each url is the .gov page that publishes them, the page the
+# 2023 PIT-1 instructions point to on page PIT-1-1 ("You can find PIT forms and instructions on our website at
+# www.tax.newmexico.gov. At the top of the page, click FORMS & PUBLICATIONS."); the file link stays in the source
+# text. The library has re-filed the three files under new fileIds (the links below now carry the ids its Prior
+# Years > 2023 folder lists: df85232c, f0c43b77, 531becc7); the old ids (f1146c5b, 5e4ea6f1, cb0dc85c) still serve
+# byte-identical files. Each fetched twice per id, sha256: 2023pit-1-ins.pdf
+# 040439b563a6afc09eec36607f6cc405768469d5eafbdcfaccd9276af9ac6c26, 2023pit-b-ins.pdf
+# 49514f73b4e9fe41144e56abc4d70f56314ae4da886d5ba94a77c9bdeccfc336, 2023pit-adj-ins.pdf
+# a09db86a21c0950c94c1117535282d171625da90c15859d9a0673d86ba688a7f.
 all_citations:
 - source: 2023 PIT-1 New Mexico Personal Income Tax Return Instructions (official, NM Taxation & Revenue Dept. public
     files) — Line 9 Federal AGI, Who Must File, residency definitions, filing due date (April 15, 2024 paper / April
     30, 2024 e-file+e-pay), mailing addresses (PO Box 25122 refund/no-payment; PO Box 8390 with payment), check
-    payee, TAP portal
-  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/f1146c5b-ac60-4015-bea4-11b1ea86449d/2023pit-1-ins.pdf
+    payee, TAP portal. Listed on Forms & Publications under Income Taxes > Personal Income Tax (PIT) > Prior Years >
+    2023 as "02. 2023 PIT-1 Personal Income Tax Return Instructions"; file link
+    https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/df85232c-e5b8-4225-800f-ad827c3829a9/2023pit-1-ins.pdf
+  url: https://www.tax.newmexico.gov/forms-publications/
 - source: 2023 PIT-B Instructions — Schedule of New Mexico Allocation and Apportionment of Income (nonresident/part-year
-    allocation form); points to PIT-1 'Who Must File' for resident/part-year/non-resident definitions
-  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/5e4ea6f1-93e0-48b5-ab42-2a51c82452d1/2023pit-b-ins.pdf
+    allocation form); points to PIT-1 'Who Must File' for resident/part-year/non-resident definitions. Listed on Forms
+    & Publications under Income Taxes > Personal Income Tax (PIT) > Prior Years > 2023 as "11. 2023 PIT-B
+    Instructions"; file link https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/f0c43b77-55e8-497b-b26a-2461d23f15ae/2023pit-b-ins.pdf
+  url: https://www.tax.newmexico.gov/forms-publications/
 - source: 2023 PIT-ADJ Instructions — Schedule of Additions, Deductions, and Exemptions; complete list of additions
-    to federal AGI (lines 1-5), with no treaty-exempt income add-back
-  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/cb0dc85c-5c28-45b1-a3f5-1e00fffaaf6b/2023pit-adj-ins.pdf
+    to federal AGI (lines 1-5), with no treaty-exempt income add-back. Listed on Forms & Publications under Income
+    Taxes > Personal Income Tax (PIT) > Prior Years > 2023 as "07. 2023 PIT-ADJ Instructions"; file link
+    https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/531becc7-f802-457f-8d74-bbcb791f89c1/2023pit-adj-ins.pdf
+  url: https://www.tax.newmexico.gov/forms-publications/
 - source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
   url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
 - source: New Mexico Taxpayer Access Point (TAP) — official online filing/payment portal
@@ -163,7 +180,9 @@ unverified:
   host (klvg4oyd4j.execute-api.us-west-2.amazonaws.com), which is the AWS-backed document store linked from tax.newmexico.gov
   rather than a tax.newmexico.gov URL itself; content matches the Department's official 2023 PIT booklet but the
   host domain is an AWS execute-api endpoint. Confirm at tax.newmexico.gov Forms & Publications if a tax.newmexico.gov-hosted
-  copy is required.
+  copy is required. (JK27, 2026-10-16 — every citation url now names a government host. These three entries cite the
+  tax.newmexico.gov Forms & Publications page that lists them, with the library file link in the source text,
+  because realfile.tax.newmexico.gov answered 404 (NoSuchKey) for their file names.)
 - Exact dollar filing-requirement thresholds (income amounts below which a return need not be filed) were not extracted
   line-by-line from the federal-filing-requirement charts; the requirement is stated as keyed to the federal filing
   requirement plus NM residency/NM-source income. Confirm specific dollar thresholds against the federal Form 1040
@@ -180,7 +199,7 @@ tax:
       of Form PIT-1 (Taxable Income) is over $96,000'': Single $4,422 + 4.9% of excess over $96,000 to $210,000, then
       $10,008 + 5.9%; MFJ/HoH $4,294 + 4.9% to $315,000, then $15,025 + 5.9%; MFS $4,498 + 4.9% to $157,500, then $7,512
       + 5.9%; footnote ''* This column must also be used by surviving spouse''), retrieved from the Department''s public-files
-      library, the AWS-backed document store linked from tax.newmexico.gov (the NM pack''s documented host exception):
+      library, listed on tax.newmexico.gov/forms-publications/ (no .gov copy of the file exists):
       https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/89e01cee-3d91-46d0-bd4b-72c8b0d6ed00/2023trt.pdf'
     url: https://www.nmlegis.gov/Sessions/19%20Regular/final/HB0006.pdf
   brackets:

@@ -8,14 +8,21 @@
   "@@4784802f4f12": "Renter's Refund (Renter's Property Tax Refund / circuit-breaker) — A North Dakota renter who is age 65 or older OR has a permanent and total disability (physician's certificate or SSA/agency determination required), whose income (including spouse and dependents) does not exceed $70,000 for the calendar year preceding the assessment date. Rent must be for the renter's place of residence or a mobile home lot (heat, water, lights, telephone, and furniture costs do not count as rent; properties exempt from property tax, such as nursing homes, do not qualify). There is no asset limitation for renters.",
   "@@49e6160b7b4e": "Form ND-1 (Individual Income Tax Return). A simplified Form ND-EZ is available for qualifying full-year residents who answer \"No\" to all the \"Which form to use\" questions (e.g., no additions/most subtractions, no nonresident/part-year status, no other-state credit).",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@556a0e90de78": "Treaty conformity — ND does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by ND. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: ND does NOT conform — it re-taxes federally treaty-exempt income. Although the ND-1 resident return starts from federal taxable income (Form 1040/1040-SR line 15, ND-1 line 1b), the 2024 ND-1 Individual Income Tax Booklet (p.5) states: \"Except where an income tax treaty between the United States and a foreign country specifically exempts income from taxation by a U.S. state, income tax treaties between the U.S. and foreign countries do not apply for North Dakota income tax purposes. Therefore, you may have to pay North Dakota income tax on gross income from North Dakota sources even though the income is exempt from U.S. income tax because of a treaty.\" The mechanism is in the Guideline: Income Taxation of Nonresident Aliens — the taxpayer must complete a Pro Forma U.S. Form 1040NR but \"you must disregard any instruction to the U.S. income tax return that refers to the treaty,\" then carry that pro-forma 1040NR line 15 (with treaty income NOT excluded) to ND-1 line 1b. So treaty-exempt income that drops out of the actual federal return is effectively added back (rebuilt) before flowing into ND income. This is the same non-conforming posture as CA/CT/MD/MS. The treaty pass-through applies ONLY where a treaty article specifically extends the exemption to the 50 U.S. states.",
   "@@61cd612ef5dd": "ND 2024 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions) — 'Mail your return to' (PO Box 5621), payment voucher and check-payee instructions; the 2024 Form ND-1 prints the same PO Box 5621 address",
   "@@8c3f23714250": "ND 2024 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions) — Who must file (pp.4-5), Statutory 7-month rule, treaty statement (p.5), file on or before April 15 2025, mailing PO Box 5621, payee 'ND State Tax Commissioner', 2024 Tax Table (pp.20-27) and 2024 Tax Rate Schedules (p.28)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9b28c6d02d20": "Schedule ND-1NR (Tax Calculation for Nonresidents and Part-Year Residents), filed with Form ND-1. (Nonresidents and part-year residents file Form ND-1 plus Schedule ND-1NR; they cannot use Form ND-EZ.)",
   "@@a5e4656a3756": "Homestead Property Tax Credit — A North Dakota homeowner who is age 65 or older OR has a permanent and total disability (no age requirement for disability; proof required), who lives at and has an ownership interest in the property (co-ownership prorates the credit), and whose income (including spouse and dependents) does not exceed $70,000 for the calendar year preceding the assessment date. There is no asset limitation for homeowners.",
   "@@c4e088fb3e96": "ND 2024 Individual Income Tax Booklet — 'File your return on or before April 15, 2025' (Steps to completing your return, step 7; extension and prepayment instructions pp.7-8)",
+  "@@d52f97533032": "annual (per tax year; the shipped ND 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f2d9c432b46e": "If any income was exempt from federal tax under a treaty: ND does not conform to federal tax treaties — that income is still taxable to ND."
+  "@@f2d9c432b46e": "If any income was exempt from federal tax under a treaty: ND does not conform to federal tax treaties — that income is still taxable to ND.",
+  "@@f595a324bbfa": "The shipped ND 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+  "@@fc68df991a37": "2024 North Dakota Individual Income Tax Booklet (Forms ND-EZ and ND-1 instructions, 28702/April 2025), ND Office of State Tax Commissioner — '2024 Tax Rate Schedules' (p.28): Single — $0-$47,150 0.00% of North Dakota taxable income; $47,150-$238,200 $0.00 + 1.95% of amount over $47,150; over $238,200 $3,725.48 + 2.50% of amount over $238,200; Married filing jointly and Qualifying surviving spouse — $78,775 / $289,975, top constant $4,118.40; Married filing separately — $39,375 / $144,975, top constant $2,059.20; Head of household — $63,175 / $264,100, top constant $3,918.04. 'Line 20 - Tax' instruction (full-year residents use the Tax Table, pp.20-27, below $100,000; the schedules print 'If your North Dakota taxable income is $100,000 or more, use the tax rate schedule'). Second pass: the 2024 Form ND-1 (SFN 28702, https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2024-iit/form-nd-1-2024.pdf) prints line 1b 'Federal taxable income from Form 1040 or 1040-SR, line 15', line 18 North Dakota taxable income, and line 20 'Tax - If full-year resident, enter tax on amount on line 19 from Tax Table in instructions'; Tax Table rows recompute against the schedules at band midpoints (e.g. single $50,100-$50,150 -> $58 = 1.95% x (50,125 - 47,150) = 58.01 rounded) — both passes agree."
  },
  "file_and_pay": {
   "overall_notes": [
@@ -139,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended ND 2024 return (Form ND-1 (Individual Income Tax Return). A simplified Form ND-EZ is available for qualifying full-year residents who answer \"No\" to all the \"Which form to use\" questions (e.g., no additions/most subtractions, no nonresident/part-year status, no other-state credit).): you owe $88 more.",
+    "citations": [
+     {
+      "source": "ND revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.nd.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@49e6160b7b4e",
+    "jurisdiction": "states/nd",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended ND return, and the ND 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the ND instructions for amended returns on the ND revenue department's site (https://www.tax.nd.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -202,9 +244,293 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "ND revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.nd.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the ND instructions for amended returns on the ND revenue department's site (https://www.tax.nd.gov/).",
+    "form": "@@49e6160b7b4e",
+    "headline": "ND 2024, amended (Form ND-1 (Individual Income Tax Return). A simplified Form ND-EZ is available for qualifying full-year residents who answer \"No\" to all the \"Which form to use\" questions (e.g., no additions/most subtractions, no nonresident/part-year status, no other-state credit).): you owe $88",
+    "jurisdiction": "states/nd",
+    "notes": [
+     "@@f2d9c432b46e"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f595a324bbfa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@36fdb82e5ae1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "ND Office of State Tax Commissioner — 2024 Individual Income Tax Booklet, 'Line 22 - Marriage penalty credit' and Marriage Penalty Credit Worksheet (thresholds $78,836 / $46,275; line 5 constant $14,600; line 13 maximum credit $303.00)",
+     "cadence": "@@d52f97533032",
+     "topic": "credits",
+     "url": "@@36fdb82e5ae1"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Renter's Refund web page (qualifications, $70,000 income limit, 20%-of-rent minus 4%-of-income formula, $600 maximum, application window)",
+     "cadence": "@@d52f97533032",
+     "topic": "credits",
+     "url": "https://www.tax.nd.gov/property-tax-credits/renters-refund"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Homestead Property Tax Credit web page (qualifications, $70,000 income limit, 100%/50% taxable-value reduction table, April 1 application)",
+     "cadence": "@@d52f97533032",
+     "topic": "credits",
+     "url": "https://www.tax.nd.gov/homestead-property-tax-credit"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f595a324bbfa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@36fdb82e5ae1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@61cd612ef5dd",
+     "cadence": "@@d52f97533032",
+     "topic": "filing_logistics",
+     "url": "@@36fdb82e5ae1"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f595a324bbfa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@36fdb82e5ae1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@8c3f23714250",
+     "cadence": "@@d52f97533032",
+     "topic": "forms_and_instructions",
+     "url": "@@36fdb82e5ae1"
+    },
+    {
+     "answers": "2024 Form ND-1 (SFN 28702) — second-pass verification of line 1a federal AGI (1040 line 11), line 1b federal taxable income (1040 line 15), additions lines 2-4, line 18 North Dakota taxable income, line 19 (page 2 carry), line 20 Tax (Tax Table / Schedule ND-1NR / farm income or research-credit-sale exceptions), mailing to Office of State Tax Commissioner PO Box 5621 Bismarck ND 58506-5621",
+     "cadence": "@@d52f97533032",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2024-iit/form-nd-1-2024.pdf"
+    },
+    {
+     "answers": "Guideline: Income Taxation of Nonresident Aliens — ND does not recognize treaties unless they specifically exempt income from state tax; Pro Forma 1040NR disregarding treaty provisions; enter 1040NR line 15 on ND-1 line 1b",
+     "cadence": "@@d52f97533032",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/sites/www/files/documents/guidelines/individual/income-taxation-of-nonresident-aliens-guideline.pdf"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Renter's Refund web page (65+/disabled, $70,000 income limit, 20% rent minus 4% income formula, $600 maximum)",
+     "cadence": "@@d52f97533032",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/property-tax-credits/renters-refund"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Homestead Property Tax Credit web page ($70,000 income limit, 100%/50% reduction table, April 1 application)",
+     "cadence": "@@d52f97533032",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/homestead-property-tax-credit"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Individual Income Tax overview page (ND TAP payment portal)",
+     "cadence": "@@d52f97533032",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/individual-income-tax"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f595a324bbfa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@36fdb82e5ae1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 North Dakota Individual Income Tax booklet (Forms ND-EZ and ND-1), Changes for 2024 (p.2)",
+     "cadence": "@@d52f97533032",
+     "topic": "law_changes",
+     "url": "@@36fdb82e5ae1"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f595a324bbfa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@36fdb82e5ae1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@fc68df991a37",
+     "cadence": "@@d52f97533032",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@36fdb82e5ae1"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f595a324bbfa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@36fdb82e5ae1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/nd",
  "state_scope": {
@@ -587,7 +913,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: ND 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: ND 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -607,7 +933,7 @@
   "common_result": {
    "base_kind": "federal_taxable_income",
    "citation": {
-    "source": "2024 North Dakota Individual Income Tax Booklet (Forms ND-EZ and ND-1 instructions, 28702/April 2025), ND Office of State Tax Commissioner — '2024 Tax Rate Schedules' (p.28): Single — $0-$47,150 0.00% of North Dakota taxable income; $47,150-$238,200 $0.00 + 1.95% of amount over $47,150; over $238,200 $3,725.48 + 2.50% of amount over $238,200; Married filing jointly and Qualifying surviving spouse — $78,775 / $289,975, top constant $4,118.40; Married filing separately — $39,375 / $144,975, top constant $2,059.20; Head of household — $63,175 / $264,100, top constant $3,918.04. 'Line 20 - Tax' instruction (full-year residents use the Tax Table, pp.20-27, below $100,000; the schedules print 'If your North Dakota taxable income is $100,000 or more, use the tax rate schedule'). Second pass: the 2024 Form ND-1 (SFN 28702, https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2024-iit/form-nd-1-2024.pdf) prints line 1b 'Federal taxable income from Form 1040 or 1040-SR, line 15', line 18 North Dakota taxable income, and line 20 'Tax - If full-year resident, enter tax on amount on line 19 from Tax Table in instructions'; Tax Table rows recompute against the schedules at band midpoints (e.g. single $50,100-$50,150 -> $58 = 1.95% x (50,125 - 47,150) = 58.01 rounded) — both passes agree.",
+    "source": "@@fc68df991a37",
     "url": "@@36fdb82e5ae1"
    },
    "rate": null,

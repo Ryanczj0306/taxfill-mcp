@@ -302,6 +302,10 @@ identity_fields: [name.first, name.last, identifying_number, mailing_address]
 # form is filed by itself ("only if you are filing this form by itself and
 # not with your tax return") -- attached to a 1040-NR it is NOT separately
 # signed.
+# The face prints "Fill in your addresses only if you are filing this form by itself and not with your tax return": attached to a Form 1040-NR,
+# these boxes are correctly BLANK. verify_filing honours that only in a filing that holds a Form 1040,
+# 1040-SR, 1040-NR or 1040-X; verified alone, the form counts as filed by itself (Phase K JK27, 2026-10-16).
+standalone_only_lines: [home_country_address, mailing_address]
 signature: { page: 2, standalone_only: true }
 # Standalone where-to-file, verified by READING the "When and Where To File"
 # section inside this exact revision's instructions (pages 3-4 of the

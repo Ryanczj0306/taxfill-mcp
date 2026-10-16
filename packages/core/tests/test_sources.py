@@ -855,3 +855,84 @@ def test_jt0c_the_draft_forms_change_channel():
     channels = get_sources("filing_basics", 2026).change_channels
     draft = [c for c in channels if c.url == "https://www.irs.gov/draft-tax-forms"]
     assert draft and "there are never any changes to the last posted draft of the form" in draft[0].answers
+
+
+# ── per-year state blocks (Phase K JK27) ────────────────────────────────────────
+# knowledge/sources_states.yaml holds each state's NEWEST pack, and get_sources used to hand that block to every year:
+# a TY2024 question about Alabama got the 2025 booklet. A year that ships a pack now gets that year's own citations;
+# a year without one gets the newest pack's, with a note saying whose they are.
+
+
+def _state_pack_years():
+    root = _repo_root() / "knowledge" / "states"
+    return sorted(
+        (d.name, int(p.stem)) for d in root.iterdir() if d.is_dir() for p in d.glob("*.yaml") if p.stem.isdigit()
+    )
+
+
+def _own_gov_urls(st, year):
+    import yaml
+
+    from taxfill_core.state_sources import is_gov, walk_citations
+
+    raw = yaml.safe_load((_repo_root() / "knowledge" / "states" / st / f"{year}.yaml").read_text(encoding="utf-8"))
+    return raw, {c["url"].strip() for _, c in walk_citations(raw) if is_gov(c["url"].strip())}
+
+
+def test_every_state_year_gets_its_own_packs_sources():
+    from taxfill_core.sources import _jurisdiction_block, _load_registry
+
+    base = _repo_root() / "knowledge"
+    registry = _load_registry(base)
+    wrong = []
+    for st, year in _state_pack_years():
+        block, note = _jurisdiction_block(registry, f"states/{st}", year, base)
+        raw, own = _own_gov_urls(st, year)
+        urls = {e["url"] for entries in (block.get("by_topic") or {}).values() for e in entries}
+        primary = (raw.get("citation") or {}).get("url", "").strip()
+        channel = block["change_channels"][0]["url"]
+        if not urls or not urls <= own or note is not None or (primary in own and channel != primary):
+            wrong.append((st, year, sorted(urls - own)[:2], note, channel))
+    assert not wrong, wrong[:5]
+
+
+def test_a_tax_year_2024_state_query_gets_the_2024_booklet():
+    _, own_2024 = _own_gov_urls("al", 2024)
+    _, own_2025 = _own_gov_urls("al", 2025)
+    r = get_sources("filing logistics", 2024, "states/al")
+    assert r.matched and r.year == 2024
+    got = {s.url for s in r.sources}
+    assert got <= own_2024 and got - own_2025, sorted(got)
+    assert all("shipped AL 2024 pack" in s.cadence for s in r.sources)
+    assert not r.notes
+
+
+def test_a_state_year_without_a_pack_says_whose_sources_these_are():
+    r = get_sources("forms and instructions", 2026, "states/ca")
+    assert r.matched
+    assert any("No CA knowledge pack ships for 2026" in n and "CA 2025 pack" in n for n in r.notes), r.notes
+
+
+def test_a_hand_authored_state_block_wins_for_every_year(tmp_path):
+    # sources.yaml's `states:` mapping overrides the generated registry, and since JK27 it also overrides the
+    # requested year's own pack. The shipped file has `states: {}`, so this builds a knowledge dir that uses it.
+    import shutil
+
+    import yaml
+
+    src = _repo_root() / "knowledge"
+    (tmp_path / "states" / "al").mkdir(parents=True)
+    for year in (2023, 2024, 2025):
+        shutil.copy(src / "states" / "al" / f"{year}.yaml", tmp_path / "states" / "al" / f"{year}.yaml")
+    shutil.copy(src / "sources_states.yaml", tmp_path / "sources_states.yaml")
+    registry = yaml.safe_load((src / "sources.yaml").read_text(encoding="utf-8"))
+    registry["states"] = {"al": {"by_topic": {"filing_logistics": [{
+        "url": "https://www.revenue.alabama.gov/individual-corporate/",
+        "answers": "Hand-authored Alabama filing logistics entry",
+        "cadence": "standing page",
+    }]}}}
+    (tmp_path / "sources.yaml").write_text(yaml.safe_dump(registry, sort_keys=False), encoding="utf-8")
+    for year in (2023, 2024, 2025, 2026):
+        r = get_sources("filing logistics", year, "states/al", base_dir=tmp_path)
+        assert [s.url for s in r.sources] == ["https://www.revenue.alabama.gov/individual-corporate/"], year
+        assert not r.notes, (year, r.notes)

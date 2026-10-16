@@ -118,7 +118,11 @@ credits:
     $5,000 if claimed as a dependent. Married filing jointly / head of household / qualifying surviving spouse:
     $13,500 or less ($32,000 or less if taxpayer or spouse is 65+ on 12/31/23). Married filing separately: each
     spouse $9,000 or less AND combined $13,500 or less.'
-  claimed_on: IA 1040 — check the low-income exemption box between Steps 4 and 5 (Step 5 area)
+  # The 2023 face prints the box on the Step 5 heading row, after line 4; the 2023 Expanded Instructions p.49 call
+  # it the box "between Steps 4 and 5", kept below as their quote (JK27, 2026-10-16).
+  claimed_on: 'IA 1040 Step 5 — check the box the 2023 IA 1040 prints on the Step 5 heading row: "Check if using
+    alternate tax (line 5), tax reduction calculation (line 12), or low-income exemption" (the 2023 Expanded
+    Instructions, p.49: "check the box between Steps 4 and 5")'
   citation:
     source: Iowa Department of Revenue — 2023 IA 1040 Expanded Instructions (PDF), low-income exemption instructions
     url: https://revenue.iowa.gov/media/2811/download?inline
@@ -261,12 +265,18 @@ tax:
     Income Tax Reduction Worksheet. Check these when income is just above the threshold.'
   - 'Low-income exemption (NOT modeled): filers whose Iowa taxable income plus specified add-backs is at or below
     $9,000 (single/married filing separately; $24,000 if 65+), or $13,500 (all other statuses; $32,000 if 65+), owe
-    no Iowa income tax (check the box between Steps 4 and 5); a dependent filer''s threshold is $5,000.'
+    no Iowa income tax (check the Step 5 box "Check if using alternate tax (line 5), tax reduction calculation
+    (line 12), or low-income exemption"); a dependent filer''s threshold is $5,000.'
+  # Re-read on the 2023 face (JK27, 2026-10-16): page 2 (41-001b) prints "19. School district surtax or EMS
+  # surtax. Multiply line 18 by the percentage from table." inside Step 5, and the 2023 instructions agree
+  # ("Line: 19 / Step: 5", p.45; "Multiply the amount on line 18 by the surtax rate", p.46). Step 6 starts at
+  # line 23 on page 3.
   - 'Not modeled — later lines: Iowa lump-sum tax (line 6), the Step 3 exemption credits (line 8), tuition and textbook
     credit (line 9), volunteer firefighter/EMS/reserve peace officer credit (line 10), the IA 126 nonresident/part-year
-    credit (line 13), out-of-state tax credit (line 15), SCHOOL DISTRICT SURTAX and EMS surtax (Step 6 — a local percentage
-    of the line 16 balance), the 15%-of-federal Iowa EITC (line 25), and the child and dependent care / early childhood
-    development credits (line 24).'
+    credit (line 13), out-of-state tax credit (line 15), SCHOOL DISTRICT SURTAX and EMS surtax (line 19, in Step 5:
+    "School district surtax or EMS surtax. Multiply line 18 by the percentage from table."; Step 6 is "Refundable
+    Credits and Payments", lines 23-30), the 15%-of-federal Iowa EITC (line 25), and the child and dependent care /
+    early childhood development credits (line 24).'
   - 'Rate provenance: 2022 Iowa Acts (HF 2317) consolidated the 2023 schedule to four brackets by status as printed
     on the 2023 41-026 worksheet; the pre-2023 nine-bracket schedule and the net-income starting point are GONE —
     do not carry pre-2023 figures forward.'

@@ -35,7 +35,9 @@
 #            flag; 12 no-use-tax flag; 14 NRSR-withholding flag; 24 donations
 #            24A/24B/24C + total), Direct Deposit (checking/savings radio +
 #            routing/account), discuss-with-preparer Yes/No, preparer NOT-to-
-#            efile flag, preparer EIN/signature/phone, signature block.
+#            efile flag, preparer EIN/phone (the preparer-signature widget is
+#            a /Sig field, signed by hand -- see "Money vs text"), signature
+#            block.
 #   pages 3-4 (printed -3-,-4-) = Schedule M "Modifications to Adjusted Gross
 #            Income" -- decreasing mods lines 27-49 (col A You / col B Spouse;
 #            31/44 have (a)/(b) sub-boxes; 32 has (a)/(b)/(c) social-security
@@ -125,6 +127,15 @@
 # boxes (ex1..ex6, maxlen 1/2), the RECAP "for what states?" combo boxes, the
 # Schedule E state-abbrev combo, dates of death/birth/move, names, addresses,
 # phones, email, EIN, and the two Amended/penalty free-text boxes stay `text`.
+# "Preparer’s Signature" (page 2, /Rect 189.7,146.0 - 319.0,168.4, on the rule
+# captioned "Signature of preparer other than above") is an /FT /Sig
+# digital-signature widget, not /Tx, and is NOT mapped (JK27, 2026-10-16).
+# Until then this pack mapped it as text: fill_form wrote the string as the
+# field's /V and counted it written, but a sentinel filled into it did not
+# render at all (pypdf logs "Signature forms not implemented yet"), while the
+# preparer telephone beside it rendered. The preparer signs that line by hand,
+# like the taxpayer and spouse signature lines (which carry no widget at all)
+# -- the treatment the 2024 pack already gives the same widget.
 #
 # Checkboxes / radio groups. Filing Status is ONE /Btn "it140_filingStatus_
 # radioGroup" with five distinct on_states -> shared group filing_status.
@@ -544,9 +555,8 @@ fields:
     field: "it140_PreparerEIN"
     type: text
     maxlen: 10
-  - line: preparer.signature               # "Signature of preparer other than above"
-    field: "Preparer’s Signature"
-    type: text
+  # preparer.signature: NOT mapped (JK27, 2026-10-16) -- "Preparer’s Signature" ("Signature of preparer other
+  # than above") is an /FT /Sig widget (see the header); a value written there never prints. Signed by hand.
   - line: preparer.telephone               # preparer "Telephone Number"
     field: "PreparerTelephone"
     type: text

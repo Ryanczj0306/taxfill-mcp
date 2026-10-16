@@ -4,14 +4,21 @@
   "@@2665882dea80": "Vermont Child and Dependent Care Credit — Full-year and part-year Vermont residents who earn income, pay dependent care expenses, and are eligible for the federal Child and Dependent Care Credit (federal Form 2441).",
   "@@282f956ed0be": "Elderly or Permanently Disabled Tax Credit — Taxpayers who qualify for and receive the federal Credit for the Elderly or the Disabled: you are age 65 or older, OR you retired on permanent and total disability and have taxable disability income, and your income is within the federal limits. Intended for seniors and disabled persons with little tax-exempt retirement or disability income.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@57b5120e87da": "Treaty conformity — VT conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from VT income (it flows through the federal starting point; do not add it back on the VT return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Vermont's resident return starts from federal adjusted gross income and does NOT add back federally treaty-exempt income; it explicitly SUBTRACTS it. Form IN-111 Line 1 is \"Federal Adjusted Gross Income — Enter the amount from your federal Form 1040.\" The DOR \"Resident\" page states: \"If you are a Vermont resident, your income starts with federal adjusted gross income minus the following: Income exempted from state taxation by the laws of the United States...\" Line 2 (Net Modifications to Federal AGI, via Schedule IN-112) contains the standard state additions/subtractions with no treaty-income add-back. Because treaty-exempt income is already excluded from federal AGI and is additionally listed as a Vermont subtraction (not an addition), it is not re-taxed -> conforms = true.",
   "@@69ffd69498ad": "Vermont Earned Income Tax Credit (EITC) — Full-year and part-year Vermont residents who qualify for and receive the federal Earned Income Tax Credit. As of 2023 it is available to all qualifying VT residents regardless of whether they, their spouse, or qualifying dependents have an SSN or ITIN (such returns must be paper-filed).",
   "@@8c5e7d288ecb": "VT Dept of Taxes — 2023 Form IN-111 Instructions (PDF): Line 1 = Federal Adjusted Gross Income; due date April 15, 2024; mailing addresses (PO Box 1881 refund/no tax due, PO Box 1779 balance due); check payable to Vermont Department of Taxes with Form IN-116; myVTax",
   "@@91de93464691": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Renter Credit (renter rebate / circuit-breaker).",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9595d2e5f0a2": "Renter Credit (renter rebate / circuit-breaker) — Vermont renters who, for 2023: (1) were domiciled in Vermont as their main home for the entire calendar year, (2) paid rent for at least six months in Vermont (need not be consecutive), (3) are not claimed as a dependent on another taxpayer's return, and (4) have income at or below the Renter Credit income limits, which vary by county of residence and number of household members.",
+  "@@b187e86039d2": "2023 Vermont Income Tax Return Booklet / Form IN-111 Instructions (Rev. 10/23), Vermont Dept. of Taxes — p.7 (Line 4 '2023 Vermont Standard Deduction' chart incl. $1,150-per-box additional deduction; Line 5e 'Multiply Line 5d by $4,850' personal exemption; Line 7 Vermont Taxable Income; Line 8 Vermont Income Tax incl. 3%-of-AGI minimum for federal AGI over $150,000) and p.12 '2023 Vermont Tax Rate Schedules' (Schedules X, Y-1, Y-2, Z; also published standalone at https://tax.vermont.gov/sites/tax/files/documents/RateSched-2023.pdf p.1); pp.13-17 '2023 Vermont Tax Tables'. Standard-deduction amounts also printed in the filing-status boxes of 2023 Form IN-111 itself (https://tax.vermont.gov/sites/tax/files/documents/IN-111-2023.pdf)",
   "@@c3c96f58ff07": "Vermont Child Tax Credit — Full-year and part-year Vermont resident families with a qualifying child age six or younger at the close of the tax year (children born 2018 through 2023 for tax year 2023). Available to all qualifying VT residents regardless of SSN/ITIN status of taxpayer, spouse, or dependents.",
+  "@@c948efcec920": "The shipped VT 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@ce0ce8dd9d9a": "annual (per tax year; the shipped VT 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@e5f3692754cd": "Form IN-111 (same return) plus Schedule IN-113, Vermont Income Adjustment Calculations (nonresidents and part-year residents complete IN-113 to apportion/allocate Vermont income; nonresidents complete Parts I and II)",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -135,6 +142,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended VT 2023 return (Form IN-111, Vermont Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "VT revenue department home page (read 2026-10-16)",
+      "url": "https://tax.vermont.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "jurisdiction": "states/vt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended VT return, and the VT 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the VT instructions for amended returns on the VT revenue department's site (https://tax.vermont.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -192,9 +234,255 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "VT revenue department home page (read 2026-10-16)",
+      "url": "https://tax.vermont.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the VT instructions for amended returns on the VT revenue department's site (https://tax.vermont.gov/).",
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "headline": "VT 2023, amended (Form IN-111, Vermont Income Tax Return): you owe $88",
+    "jurisdiction": "states/vt",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c948efcec920",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/vt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Vermont Department of Taxes - 2023 Schedule IN-112 (form) and 2023 Schedule IN-112 Instructions",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "credits",
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-112-2023.pdf"
+    },
+    {
+     "answers": "Vermont Department of Taxes - 2023 Schedule IN-112 Instructions (Child Tax Credit Table and phase-out rule) and Tax Credits and Adjustments for Individuals page",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "credits",
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2023.pdf"
+    },
+    {
+     "answers": "Vermont Department of Taxes - Renter Credit page and 2023 Form IN-111 Instructions (Renter Credit Claim section)",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "credits",
+     "url": "https://tax.vermont.gov/individuals/renter-credit"
+    },
+    {
+     "answers": "Vermont Department of Taxes - Tax Credits and Adjustments for Individuals page (credit amount/refundability) and 2023 Form IN-111 Instructions, Line 9 (Schedule IN-119, Part I)",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "credits",
+     "url": "https://tax.vermont.gov/individuals/personal-income-tax/tax-credits"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c948efcec920",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/vt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@8c5e7d288ecb",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "filing_logistics",
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c948efcec920",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/vt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@8c5e7d288ecb",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
+    },
+    {
+     "answers": "VT Dept of Taxes — Resident (Who Should File): residency definition (domicile or permanent home + 183 days); income starts with federal AGI minus income exempted from state taxation by the laws of the United States; $100 filing threshold",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.vermont.gov/individuals/who-should-file/resident"
+    },
+    {
+     "answers": "VT Dept of Taxes — Part-Year Resident (Who Should File): part-year definition and combined-income $100 threshold",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.vermont.gov/individuals/who-should-file/part-year-resident"
+    },
+    {
+     "answers": "VT Dept of Taxes — Nonresident with Earned Vermont Income (Who Should File): nonresident filing threshold (net income > $100 or gross income > $1,000); Vermont-source income rules",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.vermont.gov/individuals/who-should-file/nonresident"
+    },
+    {
+     "answers": "VT Dept of Taxes — 2023 Schedule IN-113 Instructions (PDF): nonresident/part-year income adjustment calculations",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2023.pdf"
+    },
+    {
+     "answers": "VT Dept of Taxes — 2023 Form IN-111 (document landing page)",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.vermont.gov/document/2023-form-111"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c948efcec920",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/vt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@b187e86039d2",
+     "cadence": "@@ce0ce8dd9d9a",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c948efcec920",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/vt",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/vt",
  "state_scope": {
@@ -692,7 +980,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 Vermont Income Tax Return Booklet / Form IN-111 Instructions (Rev. 10/23), Vermont Dept. of Taxes — p.7 (Line 4 '2023 Vermont Standard Deduction' chart incl. $1,150-per-box additional deduction; Line 5e 'Multiply Line 5d by $4,850' personal exemption; Line 7 Vermont Taxable Income; Line 8 Vermont Income Tax incl. 3%-of-AGI minimum for federal AGI over $150,000) and p.12 '2023 Vermont Tax Rate Schedules' (Schedules X, Y-1, Y-2, Z; also published standalone at https://tax.vermont.gov/sites/tax/files/documents/RateSched-2023.pdf p.1); pp.13-17 '2023 Vermont Tax Tables'. Standard-deduction amounts also printed in the filing-status boxes of 2023 Form IN-111 itself (https://tax.vermont.gov/sites/tax/files/documents/IN-111-2023.pdf)",
+    "source": "@@b187e86039d2",
     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2023.pdf"
    },
    "rate": null,

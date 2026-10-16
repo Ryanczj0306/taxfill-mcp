@@ -1,21 +1,28 @@
 {
  "_strings": {
   "@@0b1c7f958cff": "Earned Income Tax Credit (Delaware EITC) — Resident individuals who claimed (and qualified for) the federal Earned Income Credit. The taxpayer ELECTS one of two options: a REFUNDABLE credit equal to 4.5% of the federal EITC, OR a NONREFUNDABLE credit equal to 20% of the federal EITC (the return software/worksheet picks whichever yields the larger benefit: if 4.5% of federal EITC is greater than or equal to the Delaware tax on Line 32, take the refundable 4.5%; otherwise take the lesser of the Delaware tax or 20% of federal EITC as nonrefundable). Computed on DE Schedule II (Form PIT-RSS). Must attach DE Schedule II, Federal Form 1040 pages 1-2, and Federal Schedule EIC.",
+  "@@10ed7afccf2e": "The shipped DE 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@69856ff0195b": "Additional Personal Credit (age 60 or over) — Resident taxpayer and/or spouse who were 60 years of age or older on December 31, 2023. Check the appropriate box(es) for self/spouse. This is Delaware's main senior-relief credit on the income-tax return (separate senior relief is also provided via the pension exclusion and the Line 11 persons-60-or-over exclusion, which are income exclusions rather than credits).",
+  "@@70a84f556576": "annual (per tax year; the shipped DE 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@90808e2ceec2": "Form PIT-RES (Delaware Individual Income Tax Return - Resident; formerly Form 200-01)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@96a81bc8d50a": "Personal Credits (exemption credit) — Resident individuals are allowed a credit for each personal exemption. You receive the credit even if you do not recognize personal exemptions on your federal return. NOT available if you are claimed as a dependent on another person's federal return (enter 0).",
   "@@9c199395f5a0": "Credit for Income Taxes Paid to Another State — Delaware residents (or those electing to be taxed as residents) who paid income tax to another state on income earned in that state that is also included in Delaware taxable income. Must attach a signed copy of the other state's return. Does not include city wage taxes or county taxes; District of Columbia counts as a 'state' for this credit. Use Form PIT-RSS Schedule I if claiming credit for more than one state.",
   "@@a228e5fec4c9": "DE Division of Revenue - 2023 Form PIT-NON (Rev. 20231113), printed page 1 mailing box: \"BALANCE DUE WITH PAYMENT ENCLOSED (LINE 59) ... PO Box 508, Wilmington, DE 19899-0508\"; \"REFUND (LINE 60) ... PO Box 8710, Wilmington, DE 19899-8710\"; \"ALL OTHER RETURNS ... PO Box 8711, Wilmington, DE 19899-8711\"; the 2023 PIT-RES Instructions Step 5 table (printed page 3) for the PIT-RES Line 45/46 numbering.",
   "@@a39a77c3ea28": "Treaty conformity — DE conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from DE income (it flows through the federal starting point; do not add it back on the DE return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Delaware's resident return (PIT-RES) starts at Line 1 = \"Federal Adjusted Gross Income from Federal Form 1040, Line 11.\" Section A - Additions contains ONLY Line 2 (interest on non-Delaware state/local obligations) and Line 3 (fiduciary adjustments / oil percentage depletion). There is no add-back of federally treaty-exempt income anywhere in the additions schedule. The non-resident PIT-NON requires Column A Lines 1-17 to \"match each line of Federal Form 1040,\" with the same two additions (out-of-state muni interest, fiduciary/oil depletion). Because income excluded by treaty is already excluded from federal AGI and Delaware has no treaty add-back, that income flows through untaxed -> conforms. (Source: 2023 PIT-RES instructions, Section A - Additions, p.5; 2023 PIT-NON instructions, Column A.) Note: the resident form's Line 14 \"Foreign Taxes Paid\" addition is an itemized-deduction adjustment for those who took the federal Foreign Tax Credit, NOT a treaty-exempt-income add-back.",
   "@@a695df1cbb7f": "Volunteer Firefighter Credit — Delaware residents who are active volunteer firefighters on call to fight fires on a regular basis, members of a fire company auxiliary, or active members of an organized rescue squad in a Delaware volunteer company. Active status is verified annually with the volunteer fire companies; the Fire Company number must be entered on Line 28. Only one $1,000 credit may be claimed per spouse.",
   "@@a8ef199f563c": "Child Care Credit (Child and Dependent Care Credit) — Resident individuals who claimed the federal child and dependent care credit. Must attach a copy of Federal Form 2441. For spouses who file a joint federal return but file separate/combined-separate Delaware returns, the credit may only be applied against the tax of the spouse with the lower taxable income (Line 22). This is the child/dependent CARE credit, not the Child Tax Credit (the Child Tax Credit is not allowed on the Delaware return).",
+  "@@c2b2bba68493": "Delaware Division of Revenue, 2023 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions — Line 19a Standard Deduction table, PDF p.8 ('Delaware Filing Status / Standard Deduction: 1 $3,250; 2 $6,500; 3 $3,250; 4 $3,250 Columns A & B; 5 $3,250'); Line 20 Additional Standard Deduction, PDF p.8 ($2,500 per 65-or-older/blind box, max $5,000 per individual, standard-deduction electors only); Line 23 Tax Liability From Tax Rate Table/Schedule, PDF p.8 ('If Line 22 is less than $60,000, use the tax table... If line 22 is $60,000 or greater, use the tax schedule at the end of the tax table'); Rounding Off Dollars, PDF p.4; Filing Status 1-5 definitions, PDF p.5. Rate schedule: Delaware 2023 State Income Tax Table & Schedule (https://revenuefiles.delaware.gov/2023/TY23_taxtable.pdf), last page: 'If taxable income on Line 22 of DE PIT-RES or Line 41 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) for the portion over $60,000.' Sub-$60,000 marginal rates: 30 Del. C. § 1102(a)(14) (taxable years beginning after December 31, 2013), official Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html. 2023 Form PIT-RES (form PDF, Lines 1-24 and Section D) at https://revenuefiles.delaware.gov/2023/PIT-RES_2023-01_PaperInteractive.pdf",
   "@@d009c3b9f7fc": "Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02). Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident treatment), whichever is more advantageous.",
   "@@e7e68abcdae4": "DE Division of Revenue - 2023 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must File, residency definition, When to File (due 4/30/2024), Section A Additions (Line 1 federal AGI from 1040 Line 11; Lines 2-3 only), mailing addresses, check payee 'DE Division of Revenue', portal tax.delaware.gov",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@edda6ba85ea2": "Refund due (PIT-RES Line 46 / PIT-NON Line 60): State of Delaware, Division of Revenue, P.O. Box 8710, Wilmington, DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division of Revenue, P.O. Box 8711, Wilmington, DE 19899-8711."
+  "@@edda6ba85ea2": "Refund due (PIT-RES Line 46 / PIT-NON Line 60): State of Delaware, Division of Revenue, P.O. Box 8710, Wilmington, DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division of Revenue, P.O. Box 8711, Wilmington, DE 19899-8711.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -139,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended DE 2023 return (Form PIT-RES (Delaware Individual Income Tax Return - Resident; formerly Form 200-01)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "DE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.delaware.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@90808e2ceec2",
+    "jurisdiction": "states/de",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended DE return, and the DE 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the DE instructions for amended returns on the DE revenue department's site (https://revenue.delaware.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -196,9 +238,231 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "DE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.delaware.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the DE instructions for amended returns on the DE revenue department's site (https://revenue.delaware.gov/).",
+    "form": "@@90808e2ceec2",
+    "headline": "DE 2023, amended (Form PIT-RES (Delaware Individual Income Tax Return - Resident; formerly Form 200-01)): you owe $88",
+    "jurisdiction": "states/de",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10ed7afccf2e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Delaware Division of Revenue, 2023 Delaware Individual Resident Income Tax Return Instructions (Form PIT-RES), Line 33 Earned Income Tax Credit and DE Schedule II",
+     "cadence": "@@70a84f556576",
+     "topic": "credits",
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10ed7afccf2e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@a228e5fec4c9",
+     "cadence": "@@70a84f556576",
+     "topic": "filing_logistics",
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-NON_2023-01_PaperInteractive.pdf"
+    },
+    {
+     "answers": "@@e7e68abcdae4",
+     "cadence": "@@70a84f556576",
+     "topic": "filing_logistics",
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10ed7afccf2e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@e7e68abcdae4",
+     "cadence": "@@70a84f556576",
+     "topic": "forms_and_instructions",
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    },
+    {
+     "answers": "DE Division of Revenue - 2023 Individual Income Tax Return NON-Resident (Form PIT-NON) Instructions: part-year/non-resident filing, Column A must match Federal Form 1040 line-by-line, additions (out-of-state muni interest, fiduciary/oil depletion), mailing addresses, due 4/30/2024",
+     "cadence": "@@70a84f556576",
+     "topic": "forms_and_instructions",
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-NON_TY23_2023-01_Instructions.pdf"
+    },
+    {
+     "answers": "DE Division of Revenue - Personal Income Tax Forms and Instructions (forms index)",
+     "cadence": "@@70a84f556576",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.delaware.gov/personal-income-tax-forms/personal-income-tax-forms-instructions/"
+    },
+    {
+     "answers": "DE Division of Revenue - Personal Income Tax FAQs",
+     "cadence": "@@70a84f556576",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.delaware.gov/frequently-asked-questions/personal-income-tax-faqs/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10ed7afccf2e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@c2b2bba68493",
+     "cadence": "@@70a84f556576",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10ed7afccf2e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/de",
  "state_scope": {
@@ -663,7 +927,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "Delaware Division of Revenue, 2023 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions — Line 19a Standard Deduction table, PDF p.8 ('Delaware Filing Status / Standard Deduction: 1 $3,250; 2 $6,500; 3 $3,250; 4 $3,250 Columns A & B; 5 $3,250'); Line 20 Additional Standard Deduction, PDF p.8 ($2,500 per 65-or-older/blind box, max $5,000 per individual, standard-deduction electors only); Line 23 Tax Liability From Tax Rate Table/Schedule, PDF p.8 ('If Line 22 is less than $60,000, use the tax table... If line 22 is $60,000 or greater, use the tax schedule at the end of the tax table'); Rounding Off Dollars, PDF p.4; Filing Status 1-5 definitions, PDF p.5. Rate schedule: Delaware 2023 State Income Tax Table & Schedule (https://revenuefiles.delaware.gov/2023/TY23_taxtable.pdf), last page: 'If taxable income on Line 22 of DE PIT-RES or Line 41 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) for the portion over $60,000.' Sub-$60,000 marginal rates: 30 Del. C. § 1102(a)(14) (taxable years beginning after December 31, 2013), official Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html. 2023 Form PIT-RES (form PDF, Lines 1-24 and Section D) at https://revenuefiles.delaware.gov/2023/PIT-RES_2023-01_PaperInteractive.pdf",
+    "source": "@@c2b2bba68493",
     "url": "https://revenuefiles.delaware.gov/2023/PIT-RES_TY23_2023-01_Instructions.pdf"
    },
    "rate": null,

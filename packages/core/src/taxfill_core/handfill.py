@@ -22,6 +22,7 @@ from typing import Literal, Mapping
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
+from taxfill_core.datadir import display_path, formpacks_dir
 from taxfill_core.redact import redact
 from taxfill_core.schemas.handfill import HandFillLine, HandFillPack
 from taxfill_core.verify import evaluate_expression
@@ -94,7 +95,7 @@ def load_hand_fill_pack_for(
     path = hand_fill_pack_path(form, year, jurisdiction, base_dir)
     if not path.is_file():
         raise FileNotFoundError(
-            f"no hand-fill pack for form '{form}', {jurisdiction} {year} — looked for {path}. "
+            f"no hand-fill pack for form '{form}', {jurisdiction} {year} — looked for {display_path(path, base_dir or formpacks_dir())}. "
             f"Hand-fill packs exist only where there is no fillable AcroForm to write into: the "
             f"print-only state returns (ct1040, n11, pit1, sc1040) and FinCEN Form 114, the FBAR "
             f"('fincen114', jurisdiction 'federal'), which is e-file only and has no PDF blank at "

@@ -22,7 +22,8 @@
   "@@c39430a0f043": "Indiana DOR - 2026 Tax Chapter for the 2025 Filing Year (revised October 2025) — \"Individual Income tax rate is lowered to 3% for tax year 2025 and 2.95% for tax year 2026\" (independent live-host confirmation of the 3% rate)",
   "@@c5aeeb4aa74b": "Indiana529 Education Savings Plan Credit (credit code 837) — Any Indiana taxpayer who makes a contribution to an Indiana529 (formerly CollegeChoice 529) Education Savings Plan account during the tax year; the taxpayer need not be the account owner. You may make a contribution before the regular due date of your 2025 tax return (April 15, 2026) and claim the credit for that contribution on the 2025 return. Claimed on Schedule IN-529.",
   "@@c690d347a7d0": "Adoption Credit — You are eligible to claim the Indiana adoption credit if you claimed an adoption credit on your federal tax return (federal Form 8839). A credit may also be allowed based on a federal adoption credit carryforward from the preceding five tax years.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -140,6 +141,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended IN 2025 return (Form IT-40, Indiana Full-Year Resident Individual Income Tax Return (2025, State Form 154)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "IN revenue department home page (read 2026-10-16)",
+      "url": "https://www.in.gov/dor/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@4108a566cb50",
+    "jurisdiction": "states/in",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended IN return, and the IN 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the IN instructions for amended returns on the IN revenue department's site (https://www.in.gov/dor/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -194,6 +230,27 @@
     "jurisdiction": "states/in",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "IN revenue department home page (read 2026-10-16)",
+      "url": "https://www.in.gov/dor/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the IN instructions for amended returns on the IN revenue department's site (https://www.in.gov/dor/).",
+    "form": "@@4108a566cb50",
+    "headline": "IN 2025, amended (Form IT-40, Indiana Full-Year Resident Individual Income Tax Return (2025, State Form 154)): you owe $88",
+    "jurisdiction": "states/in",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

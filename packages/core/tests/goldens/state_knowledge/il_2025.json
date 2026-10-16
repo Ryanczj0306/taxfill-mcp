@@ -28,7 +28,8 @@
   "@@e12d21306313": "IL state income tax (2025, flat rate): taxable_base $40,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; tax = 0.0495 x $40,000 = $1,98",
   "@@e6a62a75634a": "K-12 Education Expense Credit — Parent or legal guardian of a full-time student who was under age 21 at the close of the school year, where the taxpayer and student were Illinois residents when the expenses were paid, and the student attended kindergarten through 12th grade at a public or nonpublic school in Illinois during 2025. Must complete Section B of Schedule ICR including the K-12 Education Expense Credit Worksheet and keep school receipts.",
   "@@e9f3916cac1b": "2025 Form IL-1040 Instructions — \"The due date for filing your 2025 Form IL-1040 and paying any tax you owe is April 15, 2026\"; extended due date to file October 15, 2026",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -146,6 +147,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended IL 2025 return (Form IL-1040, Illinois Individual Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "IL revenue department home page (read 2026-10-16)",
+      "url": "https://tax.illinois.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "jurisdiction": "states/il",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended IL return, and the IL 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the IL instructions for amended returns on the IL revenue department's site (https://tax.illinois.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -200,6 +236,27 @@
     "jurisdiction": "states/il",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "IL revenue department home page (read 2026-10-16)",
+      "url": "https://tax.illinois.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the IL instructions for amended returns on the IL revenue department's site (https://tax.illinois.gov/).",
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "headline": "IL 2025, amended (Form IL-1040, Illinois Individual Income Tax Return): you owe $88",
+    "jurisdiction": "states/il",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

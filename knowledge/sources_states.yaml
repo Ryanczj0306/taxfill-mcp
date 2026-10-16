@@ -745,6 +745,24 @@ states:
           / with payment PO Box 740399; 500X PO Box 740318)
         cadence: annual (per tax year; the newest shipped GA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://dor.georgia.gov/document/document/2025-500x-amended-individual-income-tax-return-blank-form-printing/download
+        answers: 'Georgia DOR 2025 Form 500X, Amended Individual Income Tax Return (blank for printing): "Mail To:
+          GEORGIA DEPARTMENT OF REVENUE PROCESSING CENTER, PO BOX 740318 ATLANTA, GA 30374-0318"; lines 36-38; the
+          attachment and line 8 instructions'
+        cadence: annual (per tax year; the newest shipped GA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://dor.georgia.gov/document/document/2025-525-payment-voucher-and-instructions/download
+        answers: 'Georgia DOR 525-TV Individual and Fiduciary Payment Voucher (Rev. 05/20/25): the "Amended Return"
+          type box; "Mail your return, payment voucher and payment to the address that appears on the return if
+          filing a paper return"'
+        cadence: annual (per tax year; the newest shipped GA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://dor.georgia.gov/mailing-address-individualfiduciary-income-tax
+        answers: 'Georgia DOR, Mailing Address - Individual/Fiduciary Income Tax: "500X Amended Georgia Dept. of
+          Revenue PO Box 740318 Atlanta, GA 30374-0318"; "Make checks payable to Georgia Department of Revenue";
+          the certified-mail note (read 2026-10-16)'
+        cadence: annual (per tax year; the newest shipped GA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       forms_and_instructions:
       - url: https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download
         answers: GA Form 500 (2025) blank return - Line 8 'Federal adjusted gross income (From Federal Form 1040)',
@@ -925,6 +943,16 @@ states:
           3, 'Do not include lines 1a through 1f'), Step 5 line 5 'Iowa tax. Multiply line 4 by 3.8% or amount from
           alternate tax calculation', Step 3 exemption credits ($40 personal, $20 per 65+/blind, $40 per dependent),
           due date April 30 2026, PO Box 9187, payee Iowa Department of Revenue
+        cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-taxable-income
+        answers: '2025 IA 1040 Expanded Instructions, "Line 04: Iowa Taxable Income" — "Check the box only if using
+          low-income exemption, alternate tax, or tax reduction."'
+        cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-earned-income-tax-credit
+        answers: '2025 IA 1040 Expanded Instructions, "Line 25: Iowa Earned Income Tax Credit" — a low-income-exemption
+          filer filing only to claim the Iowa EITC should "check the box between Steps 4 and 5"'
         cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
@@ -2746,10 +2774,42 @@ states:
           Packet (see `unverified` for the host note)
         cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      filing_logistics:
+      - url: https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf
+        answers: 2025 PIT-1 New Mexico Personal Income Tax Return Instructions — Where To Mail Paper Returns and
+          Payments (PO Box 25122 refund/no-payment; PO Box 8390 with payment/PIT-PV), page PIT-1-15
+        cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       forms_and_instructions:
       - url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
         answers: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official
           site)
+        cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf
+        answers: 2025 PIT-1 New Mexico Personal Income Tax Return Instructions (official, NM Taxation & Revenue
+          Department public files) — Line 9 Federal AGI, Who Must File / residency definitions (185-day rule), Filing
+          Due Date (April 15, 2026 for both paper and electronic returns; October 15, 2026 extended), Where To Mail
+          Paper Returns and Payments (PO Box 25122 refund/no-payment; PO Box 8390 with payment), check payee and
+          PIT-PV, TAP portal, Working Families Tax Credit 25%, lines 9-18 tax computation flow, line 16 'Reserved
+          for Future Use'
+        cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://realfile.tax.newmexico.gov/2025%20PIT%20Packet_Final.pdf
+        answers: 2025 Personal Income Tax Packet (the Department's combined 2025 PIT booklet — PIT-1, PIT-ADJ, PIT-RC,
+          PIT-B, PIT-CR, PIT-D, PIT-ES and PIT-X instructions plus the 2025 Tax Rate Table starting on page T-1)
+          — source for the 2025 PIT-TRT look-up table and its over-$100,000 continuation schedules, the PIT-ADJ
+          additions list (lines 1-5), the PIT-RC 2025 rebate/credit tables (Table 1 LICTR, Table 4 Child Income
+          Tax Credit, Table 2 maximum property tax liability), and the Modified Gross Income Limitations for 2025
+          table
+        cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.tax.newmexico.gov/all-nm-taxes/personal-income-tax-rates/
+        answers: NM Taxation and Revenue Department — 'Personal Income Tax Rates' publication (PIT rates_2005_2025.pdf),
+          page 1 'PERSONAL INCOME TAX RATES FOR TAX YEARS STARTING 2025', printing Section 7-2-7 NMSA 1978 as amended
+          (Laws 2024, Chapter 67, Section 5 — applicable to taxable years beginning on or after January 1, 2025).
+          Listed on the Department's Personal Income Tax Rates page; the file is served from the Department's document
+          library at https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/fd8f3075-42e7-4cdd-88db-7cab84ef72de/PIT%20rates_2005_2025.pdf
         cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf
@@ -2785,8 +2845,9 @@ states:
           schedules read ''If line 17 of Form PIT-1 (Taxable Income) is over $100,000'': Single $4,356 + 4.9% of
           excess over $100,000 to $210,000, then $9,746 + 5.9%; Married Filing Jointly and Head of Household $4,087
           + 4.9% to $315,000, then $14,622 + 5.9%; Married Filing Separately $4,492 + 4.9% to $157,500, then $7,310
-          + 5.9% (footnote ''* This column must also be used by surviving spouse''). Packet URL (Department AWS-backed
-          public-files library, the NM pack''s documented host exception): https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/0558a902-6362-47ca-8e3b-7cca3bc69b9d/2025%20PIT%20Packet_Final.pdf'
+          + 5.9% (footnote ''* This column must also be used by surviving spouse''). Packet URL at realfile.tax.newmexico.gov
+          (https://realfile.tax.newmexico.gov/2025%20PIT%20Packet_Final.pdf), byte-identical to the Department document
+          library copy: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/0558a902-6362-47ca-8e3b-7cca3bc69b9d/2025%20PIT%20Packet_Final.pdf'
         cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
     change_channels:
@@ -3594,11 +3655,27 @@ states:
           Schedule p. 35, Payment Options, mailing addresses, May 1 2026 due date
         cadence: annual (per tax year; the newest shipped VA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760py-instructions.pdf
+        answers: '2025 Virginia Form 760PY Part-Year Resident Individual Income Tax Instructions (Va. Dept. of Taxation
+          2614092 Rev. 5/2026), ''Which Form to File'' (p. 7): ''Part-Year Residents File Form 760PY'' — ''As a
+          general rule, part-year residents file Form 760PY.'''
+        cadence: annual (per tax year; the newest shipped VA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/760py-2025.pdf
+        answers: '2025 Form 760PY, Virginia Part-Year Resident Income Tax Return — the 2-page return itself (page
+          1: ''Due May 1, 2026'')'
+        cadence: annual (per tax year; the newest shipped VA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf
-        answers: 2025 Virginia Form 763 Nonresident Individual Income Tax Instructions (44 pages) - the independent
-          SECOND-PASS source; prints the identical TAX RATE SCHEDULE (2% to $3,000; $60 + 3%; $120 + 5%; $720 +
-          5.75% over $17,000) and the same increased standard deduction ($8,750 Filing Status 1 / $17,500 Filing
-          Status 2, with the same TY2025-2026 window and post-TY2026 sunset language)
+        answers: '2025 Virginia Form 763 Nonresident Individual Income Tax Instructions (Va. Dept. of Taxation 2614090
+          Rev. 5/2026), ''Which Form To File'' (p. 7): ''Nonresidents File Form 763'' — ''Generally, nonresidents
+          with income from Virginia sources must file a Virginia return if their income is at or above the filing
+          threshold.'''
+        cadence: annual (per tax year; the newest shipped VA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/763-2025.pdf
+        answers: '2025 Form 763, Virginia Nonresident Income Tax Return — the 2-page return itself (page 1: ''Due
+          May 1, 2026'')'
         cadence: annual (per tax year; the newest shipped VA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.tax.virginia.gov/payments

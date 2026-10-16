@@ -1,26 +1,33 @@
 {
  "_strings": {
+  "@@14c2202d7f26": "The shipped OH 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@1921175c4e3a": "IT 1040 without payment: Ohio Department of Taxation, PO Box 2679, Columbus, OH 43270-2679",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@1ebf7ccac627": "Retirement Income Credit — Taxpayer (and spouse, if filing jointly) who (a) has modified adjusted gross income less exemptions under $100,000; (b) received income from a pension, profit-sharing, or retirement plan (e.g., traditional IRA or 401(k)) on account of retirement; (c) the income is included in Ohio adjusted gross income; and (d) has not previously taken the Ohio lump sum retirement credit. Amounts deducted on the Ohio Schedule of Adjustments (e.g., Social Security, uniformed-services retirement) do not qualify.",
+  "@@26f4dd5037ae": "annual (per tax year; the shipped OH 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@2fcc0a99dd7f": "Joint Filing Credit — Married taxpayers filing a joint Ohio return where EACH spouse has at least $500 of 'qualifying income' (income included in Ohio AGI other than interest, dividends/distributions, capital gains, and rents/royalties; amounts deducted on the Ohio Schedule of Adjustments such as business income, state and local tax refunds, Social Security, and certain military compensation/retirement do not count). Include a separate statement listing the qualifying income for each spouse.",
   "@@327bd905baa9": "Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.",
   "@@330955011049": "Exemption Credit — Taxpayer whose modified adjusted gross income less exemptions is less than $30,000; a credit is allowed for each personal/dependent exemption claimed on the return. This functions as Ohio's low-income credit tied to the number of exemptions.",
   "@@3f0f9f3e44a4": "Ohio Earned Income Credit (EIC) — Taxpayers who qualified for and claimed the federal Earned Income Tax Credit for tax year 2024 (federal Form 1040/1040-SR, line 27). Eligibility tracks the federal EIC.",
   "@@416d79993bbd": "Senior Citizen Credit — Taxpayer who (a) has modified adjusted gross income less exemptions under $100,000; (b) was 65 or older at the end of the tax year; and (c) has not previously taken the Ohio lump sum distribution credit.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@4fde1f3f089d": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation), p. 3 \"Where Should I Mail My Return and/or Payment?\" — \"Important: Always include a properly completed OUPC ... anytime you mail a check or money order\"",
   "@@7e92a301c2f7": "Law change NOT modeled by the engine (status final_form_published): NEW credits for 2024 (Highlights for Tax Year 2024): the Commercial Vehicle Training credit and the Film/Theater Capital Improvements credits. Ohio credits are claimed through the Ohio Schedule of Credits and subtracted from tax (IT 1040 line 9), never from income, so neither changes the income base or the rate schedule; this pack's `credits` list does not carry them. Resolve via: 2024 Ohio IT 1040 / SD 100 Instruction Booklet Highlights for Tax Year 2024 and the Ohio Schedule of Credits instructions (the citation URL) for each credit's certificate requirements and amount; calc.state_tax applies no Ohio credits.",
   "@@849b86078c18": "Treaty conformity — OH conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OH income (it flows through the federal starting point; do not add it back on the OH return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Ohio IT 1040 line 1 starts from federal adjusted gross income (\"Enter the amount from line 11 of your 2024 federal 1040, 1040-SR, or 1040-NR. Line 1 of your Ohio income tax return must match your federal adjusted gross income as defined in the Internal Revenue Code.\"). Ohio AGI = line 1 + additions (Schedule of Adjustments, line 2a) - deductions (line 2b). The 2024 Schedule of Adjustments additions list (lines 1-11: non-Ohio state/local government interest and dividends; pass-through entity add-back; state/local taxes deducted; non-qualified 529 college tuition expense distributions; Ohio public obligation losses; medical savings account nonmedical withdrawals; reimbursement of previously deducted expenses; Ohio Homebuyer Plus non-eligible withdrawals (new for 2024); IRC 168(k)/179 depreciation add-back; U.S. obligation interest/dividends exempt federally but not by the state; federal conformity additions) contains NO add-back of federally treaty-exempt income. Therefore income excluded from federal AGI under a U.S. tax treaty flows through and is not re-taxed by Ohio. Federal-AGI common case, no treaty addback -> conforms.",
   "@@92d2cc58170e": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2024/it1040-booklet.pdf",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a2dc6fe6b046": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) - Line 1 federal AGI, Schedule of Adjustments additions/deductions, Who Must File, Ohio Residency, mailing addresses, due date April 15 2025, payment/check payee, 2024 Ohio Income Tax Brackets (p. 18), personal/dependent exemption table (p. 17)",
   "@@ab357a529e3e": "No separate nonresident/part-year return; nonresidents and part-year residents file the same Ohio IT 1040 and check the part-year resident or nonresident box. They compute the Nonresident Credit on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. (Optional residency status election: form IT NRS, Ohio Nonresident Statement.)",
   "@@bf0b592ffb65": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 (Highlights for Tax Year 2024): the Ohio Homebuyer Plus deduction, with a matching new addition line — the 2024 Schedule of Adjustments additions list carries \"Ohio Homebuyer Plus non-eligible withdrawals (new for 2024)\" alongside the pre-existing add-back lines. It changes Ohio adjusted gross income (IT 1040 line 3 = line 1 federal AGI + line 2a additions - line 2b deductions), not the rate schedule, and does not touch treaty-exempt income (see treaty_note). Resolve via: 2024 Ohio IT 1040 / SD 100 Instruction Booklet, Schedule of Adjustments additions and deductions pp. 19-26 (the citation URL) for the deduction amount and the non-eligible-withdrawal add-back; this pack ships no Schedule of Adjustments figures and calc.state_tax applies none.",
   "@@d63f950dac92": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) - Highlights for Tax Year 2024 (brackets reduced from three to two, one rate reduced; new Ohio Homebuyer Plus deduction; new Commercial Vehicle Training and Film/Theater Capital Improvements credits), Line 1 federal AGI, exemption table p. 17 ($2,400/$2,150/$1,900 by MAGI), 2024 Ohio Income Tax Brackets p. 18, Schedule of Adjustments additions/deductions pp. 19-26, Who Must File p. 12, Ohio Residency pp. 13-14, mailing addresses p. 3, due date April 15 2025, check payee Ohio Treasurer of State + OUPC",
   "@@d9bf8f4a739d": "Child Care and Dependent Care Credit — Taxpayer whose modified adjusted gross income is less than $40,000 AND who claimed the federal 'credit for child and dependent care expenses' on federal Form 2441.",
+  "@@e0b166bd1b5d": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) — p. 18 table '2024 Ohio Income Tax Brackets for Ohio IT 1040' (0.00% of Ohio taxable nonbusiness income up to $26,050; '$360.69 plus 2.75% of the amount in excess of $26,050' for $26,050-$100,000; '$2,394.32 plus 3.50% of the amount in excess of $100,000' over $100,000); p. 17 'Line 8a – Tax on Line 7a' instruction ('Calculate your tax on your Ohio income tax base less business income using the Income Tax Brackets found on page 18... the Department provides a tool to assist you with this calculation at tax.ohio.gov/taxcalculator', R.C. 5747.02(A)(3)) and personal/dependent exemption table ($2,400/$2,150/$1,900 by MAGI). Second pass: form line labels (lines 1-8c) and Schedule of Business Income lines 12-16 (3% business tax, $250,000/$125,000 business income deduction) verified from the 2024 IT 1040 form bundle at https://tax.ohio.gov/static/forms/ohio_individual/individual/2024/1040-bundle-original-fi.pdf — both passes agree.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f0f5c806e709": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Tax Commissioner's cover letter 'The deadline to file both your Ohio and federal tax returns is April 15, 2025. Please note that an extension to file does not extend the deadline for payment'; Line 23 'This amount must be paid by April 15, 2025'"
+  "@@f0f5c806e709": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Tax Commissioner's cover letter 'The deadline to file both your Ohio and federal tax returns is April 15, 2025. Please note that an extension to file does not extend the deadline for payment'; Line 23 'This amount must be paid by April 15, 2025'",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -144,6 +151,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended OH 2024 return (Form Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "OH revenue department home page (read 2026-10-16)",
+      "url": "https://tax.ohio.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@327bd905baa9",
+    "jurisdiction": "states/oh",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended OH return, and the OH 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the OH instructions for amended returns on the OH revenue department's site (https://tax.ohio.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -201,9 +243,261 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "OH revenue department home page (read 2026-10-16)",
+      "url": "https://tax.ohio.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the OH instructions for amended returns on the OH revenue department's site (https://tax.ohio.gov/).",
+    "form": "@@327bd905baa9",
+    "headline": "OH 2024, amended (Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.): you owe $88",
+    "jurisdiction": "states/oh",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@14c2202d7f26",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@92d2cc58170e"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "Ohio Department of Taxation - 2024 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits, Line 13 Earned Income Credit (R.C. 5747.71)",
+     "cadence": "@@26f4dd5037ae",
+     "topic": "credits",
+     "url": "@@92d2cc58170e"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@14c2202d7f26",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@92d2cc58170e"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@4fde1f3f089d",
+     "cadence": "@@26f4dd5037ae",
+     "topic": "filing_logistics",
+     "url": "@@92d2cc58170e"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@14c2202d7f26",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@92d2cc58170e"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@a2dc6fe6b046",
+     "cadence": "@@26f4dd5037ae",
+     "topic": "forms_and_instructions",
+     "url": "@@92d2cc58170e"
+    },
+    {
+     "answers": "2024 Ohio IT 1040 Individual Income Tax Return bundle (forms) — second-pass verification of the form line labels (lines 1-8c; line 7 'Taxable nonbusiness income (line 5 minus line 6)'; line 8a 'Nonbusiness income tax liability on line 7a (see tax.ohio.gov/taxcalculator or see the instructions for the tax brackets)'; line 8b business income tax; Schedule of Business Income line 16 'multiply line 15 by 3% (.03)'; Schedule of Credits line numbers)",
+     "cadence": "@@26f4dd5037ae",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.ohio.gov/static/forms/ohio_individual/individual/2024/1040-bundle-original-fi.pdf"
+    },
+    {
+     "answers": "Ohio Department of Taxation - online payment (tax.ohio.gov/pay) and OH|TAX eServices portal (tax.ohio.gov/OHTAX)",
+     "cadence": "@@26f4dd5037ae",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.ohio.gov/pay"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@14c2202d7f26",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@92d2cc58170e"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@d63f950dac92",
+     "cadence": "@@26f4dd5037ae",
+     "topic": "law_changes",
+     "url": "@@92d2cc58170e"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@14c2202d7f26",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@92d2cc58170e"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@e0b166bd1b5d",
+     "cadence": "@@26f4dd5037ae",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@92d2cc58170e"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@14c2202d7f26",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@92d2cc58170e"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/oh",
  "state_scope": {
@@ -622,7 +916,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: OH 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: OH 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -642,7 +936,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) — p. 18 table '2024 Ohio Income Tax Brackets for Ohio IT 1040' (0.00% of Ohio taxable nonbusiness income up to $26,050; '$360.69 plus 2.75% of the amount in excess of $26,050' for $26,050-$100,000; '$2,394.32 plus 3.50% of the amount in excess of $100,000' over $100,000); p. 17 'Line 8a – Tax on Line 7a' instruction ('Calculate your tax on your Ohio income tax base less business income using the Income Tax Brackets found on page 18... the Department provides a tool to assist you with this calculation at tax.ohio.gov/taxcalculator', R.C. 5747.02(A)(3)) and personal/dependent exemption table ($2,400/$2,150/$1,900 by MAGI). Second pass: form line labels (lines 1-8c) and Schedule of Business Income lines 12-16 (3% business tax, $250,000/$125,000 business income deduction) verified from the 2024 IT 1040 form bundle at https://tax.ohio.gov/static/forms/ohio_individual/individual/2024/1040-bundle-original-fi.pdf — both passes agree.",
+    "source": "@@e0b166bd1b5d",
     "url": "@@92d2cc58170e"
    },
    "rate": null,

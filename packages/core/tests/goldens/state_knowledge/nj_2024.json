@@ -6,17 +6,24 @@
   "@@2a943524b566": "Property Tax Deduction/Credit (homeowners and tenants) — Residents who were domiciled in NJ and maintained a principal residence (main home) as a homeowner or tenant during 2024 that was subject to property taxes (paid directly as a homeowner, or through rent for tenants — 18% of rent, or 18% of mobile-home site fees, counts as property taxes paid). Taxpayer takes EITHER the deduction OR the credit (whichever gives the greater benefit; Worksheet H decides). Seniors 65+ or blind/disabled persons below the filing threshold can claim the credit on Form NJ-1040-HW without filing NJ-1040.",
   "@@4437c6037806": "If any income was exempt from federal tax under a treaty: NJ does not conform to federal tax treaties — that income is still taxable to NJ.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4df086780705": "annual (per tax year; the shipped NJ 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@5059b6cae58f": "New Jersey Child Tax Credit — Resident taxpayers with NJ taxable income (line 42) of $80,000 or less, claiming a credit for each dependent who is age 5 or younger (born 2019 or later) on the last day of the tax year. The dependent must be claimed on Lines 10/11 of the NJ-1040. Married filing separately is not eligible. Part-year residents prorate by months of NJ residency.",
   "@@53e6a10947e7": "NJ grants a six-month extension (to October 15, 2025) if you file Form NJ-630 (or have a federal extension), pay at least 80% of the tax liability by April 15, 2025, and file the return by the extended date; the extension application can be filed online until 11:59 p.m. April 15, 2025.",
   "@@5753c4d01e36": "New Jersey Earned Income Tax Credit (NJEITC) — New Jersey residents who work and have earned income and who claimed and were allowed the federal Earned Income Credit (EIC). Residents at least 18 years old who meet all federal EIC requirements EXCEPT the age requirement, have no qualifying child, and are not listed as a dependent on another return may claim a fixed NJEITC ($253 for 2024) even without a federal EIC — the maximum age limit has been eliminated. Part-year residents prorate by months of NJ residency.",
   "@@832d875ee91e": "2024 NJ-1040 Resident Income Tax Return Instructions, 'Where to Mail Your Return' p.47 (Payment Due Label PO Box 111; Refund Label PO Box 555)",
   "@@866557a5b743": "NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their NJ residency period.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a1de11f74c93": "NJ-1040NR (New Jersey Nonresident Income Tax Return). Used by nonresidents with NJ-source income and by part-year nonresidents (indicate residency period). There is no separate part-year resident return.",
   "@@c90318ebb07a": "2024 NJ-1040 Resident Income Tax Return Instructions - 'Your 2024 New Jersey Income Tax return is due by April 15, 2025' (p.4) and extension-of-time text",
   "@@cb1b6c872f96": "Treaty conformity — NJ does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by NJ. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: New Jersey does NOT start from federal AGI. The NJ Gross Income Tax is a self-contained system that builds gross income from its own statutory categories. The 2024 NJ-1040 instructions explicitly direct: \"Use 'State Wages' from box 16 of your W-2, not federal wages (box 1)\" and note that New Jersey's inclusion rules (e.g. 401(k) is the only pre-tax plan excluded) \"cause your State wages (box 16) to be higher than your federal wages (box 1)\"; income taxable for NJ that is not in box 16 \"must [be] add[ed] ... back into your State wages.\" Because NJ never imports federal AGI, a federal tax-treaty exemption (which reduces federal box 1 / federal AGI) does NOT automatically pass through. The word \"treaty\" does not appear anywhere in the 2024 NJ-1040 instructions, and NJ's Gross Income Tax Act contains no provision recognizing federal income tax treaties, so federally treaty-exempt wages are generally still taxable for NJ purposes. This puts NJ in the \"builds income from scratch, no treaty pass-through\" category -> conforms_to_federal_treaties = false. (Conservative reading; the precise NJ treatment of a specific treaty article should be confirmed at the DOR.)",
+  "@@d8d448b8823f": "2024 Form NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) — New Jersey Tax Rate Schedules, booklet p.63 (Table A: Single / Married-CU partner filing separate; Table B: Married-CU couple filing joint / Head of household / Qualifying widow(er)-surviving CU partner); Line 43 Tax instruction and Line 42 New Jersey Taxable Income; Exemptions Lines 6-12, pp.6-7; Line 13 Total Exemption Amount; Line 29 New Jersey Gross Income and filing thresholds; Line 30 Exemption Amount and Lines 31-37c deductions; Line 38 Total Exemptions and Deductions and Line 39 Taxable Income. Second pass: the 2024 NJ-1040NR nonresident instructions print the identical 2024 Tax Rate Schedules (Tables A and B, p.43, https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040nri.pdf) — both passes agree on every bound, rate, and printed subtraction constant, including Table B's -$1,154.50.",
+  "@@db070fc401f1": "The shipped NJ 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@e73de5d02235": "If any of your income was exempt from federal tax under a treaty: NJ does not conform to federal tax treaties, so that income is still taxable to NJ — do not carry the federal exclusion onto the state return.",
   "@@e925fc7f2e9f": "2024 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) - Do You Have to File p.3 ($10,000 / $20,000 thresholds), Which Form to File / Domicile pp.4-5, Line 15 Wages (State wages box 16, not federal box 1), How to Pay / check payable to 'State of New Jersey - TGI' pp.46-47, Where to Mail Your Return (PO Box 555 refunds; PO Box 111 payments) p.47, When to File / April 15, 2025 p.4",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -143,6 +150,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NJ 2024 return (Form NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their NJ residency period.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NJ revenue department home page (read 2026-10-16)",
+      "url": "https://www.nj.gov/treasury/taxation/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@866557a5b743",
+    "jurisdiction": "states/nj",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NJ return, and the NJ 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NJ instructions for amended returns on the NJ revenue department's site (https://www.nj.gov/treasury/taxation/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -206,9 +248,275 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "NJ revenue department home page (read 2026-10-16)",
+      "url": "https://www.nj.gov/treasury/taxation/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NJ instructions for amended returns on the NJ revenue department's site (https://www.nj.gov/treasury/taxation/).",
+    "form": "@@866557a5b743",
+    "headline": "NJ 2024, amended (NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their NJ residency period.): you owe $88",
+    "jurisdiction": "states/nj",
+    "notes": [
+     "@@4437c6037806"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@db070fc401f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nj",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 NJ-1040 Resident Income Tax Return Instructions, Line 58 (New Jersey Division of Taxation)",
+     "cadence": "@@4df086780705",
+     "topic": "credits",
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@db070fc401f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nj",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@832d875ee91e",
+     "cadence": "@@4df086780705",
+     "topic": "filing_logistics",
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@db070fc401f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nj",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@e925fc7f2e9f",
+     "cadence": "@@4df086780705",
+     "topic": "forms_and_instructions",
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    },
+    {
+     "answers": "2024 NJ-1040NR Nonresident Income Tax Return Instructions (NJ Division of Taxation) — used as the independent second-pass source; prints the identical 2024 New Jersey Tax Rate Schedules (Tables A and B, p.43), including the Table B -$1,154.50 constant",
+     "cadence": "@@4df086780705",
+     "topic": "forms_and_instructions",
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040nri.pdf"
+    },
+    {
+     "answers": "2024 Form NJ-1040NR (nonresident return form)",
+     "cadence": "@@4df086780705",
+     "topic": "forms_and_instructions",
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040nr.pdf"
+    },
+    {
+     "answers": "NJ Division of Taxation Publication GIT-6, Part-Year Residents and Nonresidents - Domicile, Resident (30-day / 183-day statutory) definitions, Income Filing Thresholds, NJ-1040 vs NJ-1040NR",
+     "cadence": "@@4df086780705",
+     "topic": "forms_and_instructions",
+     "url": "https://www.nj.gov/treasury/taxation/pdf/pubs/tgi-ee/git6.pdf"
+    },
+    {
+     "answers": "NJ Division of Taxation - Income Tax Forms (Form NJ-1040-V payment voucher / blank vouchers)",
+     "cadence": "@@4df086780705",
+     "topic": "forms_and_instructions",
+     "url": "https://www.nj.gov/treasury/taxation/prntgit.shtml"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@db070fc401f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nj",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 NJ-1040 Resident Return Instructions, the Director's letter and the line instructions (compared with 2023's)",
+     "cadence": "@@4df086780705",
+     "topic": "law_changes",
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@db070fc401f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nj",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@d8d448b8823f",
+     "cadence": "@@4df086780705",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@db070fc401f1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nj",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/nj",
  "state_scope": {
@@ -647,7 +955,7 @@
   "common_result": {
    "base_kind": "state_gross_income",
    "citation": {
-    "source": "2024 Form NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) — New Jersey Tax Rate Schedules, booklet p.63 (Table A: Single / Married-CU partner filing separate; Table B: Married-CU couple filing joint / Head of household / Qualifying widow(er)-surviving CU partner); Line 43 Tax instruction and Line 42 New Jersey Taxable Income; Exemptions Lines 6-12, pp.6-7; Line 13 Total Exemption Amount; Line 29 New Jersey Gross Income and filing thresholds; Line 30 Exemption Amount and Lines 31-37c deductions; Line 38 Total Exemptions and Deductions and Line 39 Taxable Income. Second pass: the 2024 NJ-1040NR nonresident instructions print the identical 2024 Tax Rate Schedules (Tables A and B, p.43, https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040nri.pdf) — both passes agree on every bound, rate, and printed subtraction constant, including Table B's -$1,154.50.",
+    "source": "@@d8d448b8823f",
     "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2024/1040i.pdf"
    },
    "rate": null,

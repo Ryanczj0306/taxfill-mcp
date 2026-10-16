@@ -25,7 +25,8 @@
   "@@ec38e09d079a": "Keep Child Care Affordable Tax Credit (Schedule ELC) — DC taxpayer who paid eligible child-care expenses to a licensed \"child development facility\" for an eligible child — a dependent under age 4 as of 9/30/2025 — and whose DC taxable income does not exceed the limit. The child must not be a recipient of the District's subsidized child-care program; expenses reimbursed by a state social service agency and amounts for food, lodging, education or entertainment do not count.",
   "@@f012cc604777": "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Book_082026_v1.pdf",
   "@@f2e768dcf7da": "Law change NOT modeled by the engine (status final_form_published): CREDIT CHANGES FOR 2025: the DC Earned Income Tax Credit is NOW 100% of the federal EIC (up from 70% for 2024) — \"The District EITC is now 100% of the federal EITC amount\" — with the childless-filer worksheet maximum raised from $632 to $649 (earned-income floor $8,484, DC ceiling $30,941, phase-out start $23,288) and the investment-income limit raised from $11,600 to $11,950. In the same \"Tax Year 2025 Changes\" list the DC CHILD TAX CREDIT IS REPEALED for 2025. Resolve via: 2025 D-40 Lines 27a-27e and the DC EITC Worksheet For Filers Without a Qualifying Child in the booklet at the citation URL (this pack's `credits` block carries the transcribed figures).",
-  "@@f89fdff9cd72": "annual (per tax year; the newest shipped DC pack covers 2025 — for any newer year re-resolve at this URL family and cite)"
+  "@@f89fdff9cd72": "annual (per tax year; the newest shipped DC pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -149,6 +150,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended DC 2025 return (Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "DC revenue department home page (read 2026-10-16)",
+      "url": "https://otr.cfo.dc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@43ef79fb75e5",
+    "jurisdiction": "states/dc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended DC return, and the DC 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the DC instructions for amended returns on the DC revenue department's site (https://otr.cfo.dc.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -203,6 +239,27 @@
     "jurisdiction": "states/dc",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "DC revenue department home page (read 2026-10-16)",
+      "url": "https://otr.cfo.dc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the DC instructions for amended returns on the DC revenue department's site (https://otr.cfo.dc.gov/).",
+    "form": "@@43ef79fb75e5",
+    "headline": "DC 2025, amended (Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)): you owe $88",
+    "jurisdiction": "states/dc",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -917,7 +974,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: DC 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: DC 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

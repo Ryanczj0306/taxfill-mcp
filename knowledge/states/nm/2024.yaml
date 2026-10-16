@@ -4,8 +4,8 @@
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
 # Two-pass verification: every key figure was drafted from the 2024 PIT-1 instructions
-# and 2024 PIT-RC (retrieved from the Department's AWS-backed public-files library, the
-# documented host exception), then re-verified against the 2024 PIT-TRT look-up table,
+# and 2024 PIT-RC (retrieved from the Department's document library, listed on
+# tax.newmexico.gov/forms-publications/), then re-verified against the 2024 PIT-TRT look-up table,
 # the 2024 PIT-ADJ instructions, and the statutory schedules of Section 7-2-7 NMSA 1978.
 # TY2024 headline: the rate schedules are UNCHANGED from 2023 (the 2024 omnibus tax
 # bill restructures Section 7-2-7 into a new six-bracket schedule beginning tax year
@@ -165,21 +165,40 @@ deadlines:
       If you file and pay your New Mexico Personal Income Tax return online, your due date is April 30, 2025." (The
       April 30 date applies only when BOTH the return and payment are electronic.)'
     url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
+# JK27 (2026-10-16): the four 2024 documents below exist only in the Department's document library, served from its
+# AWS document-API host, which the Citation model rejects (realfile.tax.newmexico.gov, the Department's .gov file
+# host, answered 404 (NoSuchKey) for each file name). So each url is the .gov page that publishes them, the page the
+# 2024 PIT-1 instructions name on page PIT-1-1 ("You can find PIT forms and instructions on our website at
+# https://www.tax.newmexico.gov/forms-publications/"); the file link stays in the source text. Its document table
+# (filled from the library when the page loads) lists all four fileIds, unchanged, in Income Taxes > Personal Income
+# Tax (PIT) > Prior Years > 2024. Each file fetched twice, identical, sha256: 2024pit-1-ins.pdf
+# 891043732ba1f7dad5d1067b6e7cdce05ee0e26f647e4be80906ab7f9b22ffd7, 2024pit-trt.pdf
+# ceb43ac38ebedafa6d39856ed70610c497b4799c68c12e344b9f0689dce2efe4, 2024pit-adj-ins.pdf
+# cfa13578bce966fa9775c58a6ab72ffe810e718357e2b1ea2727b7c8683677e0, 2024pit-rc.pdf
+# 38d5aa49534bd87b8f201c9f40b340efa0789cfa730cdf8b7bf2922adab81180.
 all_citations:
 - source: 2024 PIT-1 New Mexico Personal Income Tax Return Instructions (official, NM Taxation & Revenue Dept. public
     files) — Line 9 Federal AGI, Who Must File, residency definitions (185-day rule), filing due dates (April 15,
     2025 paper / April 30, 2025 e-file+e-pay), mailing addresses (PO Box 25122 refund/no-payment; PO Box 8390 with
-    payment), check payee, TAP portal, WFTC 25%, lines 12-18 tax computation flow
-  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/eb517a58-1703-4772-97b9-0e7c54c6d4bb/2024pit-1-ins.pdf
+    payment), check payee, TAP portal, WFTC 25%, lines 12-18 tax computation flow. Listed on Forms & Publications
+    under Income Taxes > Personal Income Tax (PIT) > Prior Years > 2024 as "02. 2024 PIT-1 Personal Income Tax
+    Return Instructions"; file link https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/eb517a58-1703-4772-97b9-0e7c54c6d4bb/2024pit-1-ins.pdf
+  url: https://www.tax.newmexico.gov/forms-publications/
 - source: 2024 TAX RATE TABLE (PIT-TRT) — the mandated look-up table for PIT-1 line 18 and its over-$100,000 continuation
-    schedules; identical statutory brackets to 2023
-  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/8c12623f-2127-489a-886f-6efb1cd55d0e/2024pit-trt.pdf
+    schedules; identical statutory brackets to 2023. Listed on Forms & Publications under Income Taxes > Personal
+    Income Tax (PIT) > Prior Years > 2024 as "21. 2024 Tax Look Up Table"; file link
+    https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/8c12623f-2127-489a-886f-6efb1cd55d0e/2024pit-trt.pdf
+  url: https://www.tax.newmexico.gov/forms-publications/
 - source: 2024 PIT-ADJ Instructions — Schedule of Additions, Deductions, and Exemptions; complete list of additions
-    to federal AGI (lines 1-5), with no treaty-exempt income add-back
-  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/420b8ede-cc81-42c5-b149-32a7b2bf5042/2024pit-adj-ins.pdf
+    to federal AGI (lines 1-5), with no treaty-exempt income add-back. Listed on Forms & Publications under Income
+    Taxes > Personal Income Tax (PIT) > Prior Years > 2024 as "07. 2024 PIT-ADJ Instructions"; file link
+    https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/420b8ede-cc81-42c5-b149-32a7b2bf5042/2024pit-adj-ins.pdf
+  url: https://www.tax.newmexico.gov/forms-publications/
 - source: 2024 Schedule PIT-RC, New Mexico Rebate and Credit Schedule (LICTR Section II; child day care credit Section
-    5 with the $30,160 gate; Child Income Tax Credit line 25)
-  url: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/ea24d58f-b4bc-484b-ac38-ab2611d8f4e2/2024pit-rc.pdf
+    5 with the $30,160 gate; Child Income Tax Credit line 25). Listed on Forms & Publications under Income Taxes >
+    Personal Income Tax (PIT) > Prior Years > 2024 as "08. 2024 PIT-RC Rebate & Credit Schedule"; file link
+    https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/ea24d58f-b4bc-484b-ac38-ab2611d8f4e2/2024pit-rc.pdf
+  url: https://www.tax.newmexico.gov/forms-publications/
 - source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
   url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
 - source: New Mexico Taxpayer Access Point (TAP) — official online filing/payment portal
@@ -189,7 +208,9 @@ unverified:
   host (klvg4oyd4j.execute-api.us-west-2.amazonaws.com), which is the AWS-backed document store linked from tax.newmexico.gov
   rather than a tax.newmexico.gov URL itself; content matches the Department's official 2024 PIT booklet but the
   host domain is an AWS execute-api endpoint. Confirm at tax.newmexico.gov Forms & Publications if a tax.newmexico.gov-hosted
-  copy is required.
+  copy is required. (JK27, 2026-10-16 — every citation url now names a government host. These four entries cite the
+  tax.newmexico.gov Forms & Publications page that lists them, with the library file link in the source text,
+  because realfile.tax.newmexico.gov answered 404 (NoSuchKey) for their file names.)
 - The 2024 PIT-RC instructions (with the Child Income Tax Credit worksheet's 2024 per-child amounts and the LICTR
   2024 rebate table) were not present in the Department's public-files index at fetch time (only the 2024 PIT-RC
   form and the 2025 instructions were); the child-credit tiers quoted are the statutory 2023 amounts and the statute
@@ -210,8 +231,8 @@ tax:
       (''If line 17 of Form PIT-1 (Taxable Income) is over $100,000'': Single $4,618 + 4.9% of excess over $100,000
       to $210,000, then $10,008 + 5.9%; MFJ/HoH $4,490 + 4.9% to $315,000, then $15,025 + 5.9%; MFS $4,694 + 4.9% to
       $157,500, then $7,512 + 5.9%; footnote ''* This column must also be used by surviving spouse''), retrieved from
-      the Department''s public-files library, the AWS-backed document store linked from tax.newmexico.gov (the NM pack''s
-      documented host exception): https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/8c12623f-2127-489a-886f-6efb1cd55d0e/2024pit-trt.pdf
+      the Department''s document library, listed on tax.newmexico.gov/forms-publications/ (no .gov copy of the
+      file exists): https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/8c12623f-2127-489a-886f-6efb1cd55d0e/2024pit-trt.pdf
       — the 5.9% continuation constants (10,008/15,025/7,512) are digit-identical to 2023, confirming the schedules
       did not change.'
     url: https://www.nmlegis.gov/Sessions/19%20Regular/final/HB0006.pdf

@@ -18,12 +18,20 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field
 
 from taxfill_core.file_and_pay import (
+    _F1040X_CITATION,
     FilingManifestItem,
+    _as_list,
     _deadline_citation,
+    _is_1040x,
+    _is_amended,
+    _is_individual_return,
     _is_nr_form,
     _is_standalone_8843,
     _pack_address_entry,
     _plus_years,
+    _amended_pointer_citations,
+    _refund_window_anchor,
+    _STATE_REVENUE_SITES,
 )
 from taxfill_core.knowledge import Citation, load_knowledge, load_state_knowledge
 
@@ -81,6 +89,8 @@ def _federal_item(item: FilingManifestItem, today: date, knowledge_dir) -> Filin
         pack = None
     if _is_standalone_8843(item):
         return _standalone_8843_item(item, today, pack)
+    if _is_amended(item) and (_is_1040x(item.form) or _is_individual_return(item.form)):
+        return _amended_federal_item(item, today, pack)
     citations: list[Citation] = []
     notes: list[str] = []
     refund = item.bottom_line if item.bottom_line > 0 else 0
@@ -141,6 +151,57 @@ def _federal_item(item: FilingManifestItem, today: date, knowledge_dir) -> Filin
         form=item.form, jurisdiction="federal", tax_year=item.tax_year, headline=headline,
         refund=refund, owed=owed, plain_explanation=plain, deadline_status=deadline_status,
         citations=citations, notes=notes,
+    )
+
+
+def _amended_federal_item(item: FilingManifestItem, today: date, pack) -> FilingSummaryItem:
+    """Form 1040-X (Phase K JK27): the change in the bottom line, and the amended-return time limits.
+
+    Before JK27 an amended item read as an original return: "you owe because the tax withheld did not cover your
+    total tax", and "Past the <original> due date — late-filing/late-payment penalties" for a timely original.
+    """
+    y = item.tax_year
+    refund = item.bottom_line if item.bottom_line > 0 else 0
+    owed = -item.bottom_line if item.bottom_line < 0 else 0
+    citations: list[Citation] = [_F1040X_CITATION]
+    notes: list[str] = []
+    due = pack.deadlines.filing_due_date if pack is not None and pack.deadlines is not None else None
+    if refund:
+        headline = f"Federal {y}, amended (Form 1040-X): a further refund of {_money(refund)} (by check if filed on paper)"
+        plain = f"The corrected {y} return comes out more in your favor, so the IRS refunds the difference, with any interest it figures."
+        deadline_status = (
+            "Refund claim window: file Form 1040-X within 3 years after the original return was filed or 2 years "
+            "after the tax was paid, whichever is later (Form 1040-X instructions, When To File)."
+        )
+        # An original filed early or on time "is considered filed on the due date (generally April 15)" (Form
+        # 1040-X instructions, When To File): April 15, unless a postponement moved the due date itself.
+        expiry = _plus_years(_refund_window_anchor(y, due), 3)
+        if today.isoformat() <= expiry:
+            deadline_status += f" For an original filed on time that is ~{expiry}."
+        else:
+            deadline_status = (
+                f"⚠ For an original filed on time the 3-year window closed ~{expiry}; the refund survives only "
+                f"if the original was filed later or the tax was paid within the last 2 years — confirm before "
+                f"relying on it. " + deadline_status
+            )
+    elif owed:
+        headline = f"Federal {y}, amended (Form 1040-X): you owe {_money(owed)} more"
+        plain = f"The corrected {y} return leaves you owing more; you owe the difference."
+        since = f" from the original {due} due date" if due else ""
+        if due:
+            citations.append(pack.deadlines.citation)
+        until = "until it was paid (you paid online)." if item.paid_online else (
+            "until it is paid (Form 1040-X instructions, Interest and Penalties); pay with the amended return or sooner.")
+        deadline_status = f"Interest on the additional tax runs{since} {until}"
+        if item.paid_online:
+            notes.append("Already paid online — keep the confirmation number.")
+    else:
+        headline = f"Federal {y}, amended (Form 1040-X): no change in the amount owed or refunded"
+        plain = "The correction does not change the amount you owe or are refunded."
+        deadline_status = "No refund or balance due changes; file Form 1040-X to put the corrected return on record."
+    return FilingSummaryItem(
+        form=item.form, jurisdiction="federal", tax_year=y, headline=headline, refund=refund, owed=owed,
+        plain_explanation=plain, deadline_status=deadline_status, citations=citations, notes=notes,
     )
 
 
@@ -267,9 +328,28 @@ def _state_item(item: FilingManifestItem, knowledge_dir) -> FilingSummaryItem:
             else (f"{state} {item.tax_year}: you owe {_money(owed)}" if owed else f"{state} {item.tax_year}: balanced"))
     code = item.jurisdiction.split("/", 1)[1] if "/" in item.jurisdiction else ""
     citations, notes, deadline_status = [], [], "Confirm the state deadline at the state DOR."
+    amended = _is_amended(item)
+    if amended:
+        head = head.replace(f"{state} {item.tax_year}:", f"{state} {item.tax_year}, amended ({item.form}):", 1)
+        site = _STATE_REVENUE_SITES.get(state)
+        where = f" on the {state} revenue department's site ({site})" if site else ""
+        deadline_status = (
+            f"An amended return's time limit is not the original due date: confirm it in the {state} instructions "
+            f"for amended returns{where}."
+        )
     try:
         sk = load_state_knowledge(code, item.tax_year, knowledge_dir)
-        dl = getattr(sk, "deadlines", None) or {}
+        am = getattr(sk, "amended_return", None) or {}
+        dl = {} if amended else (getattr(sk, "deadlines", None) or {})
+        if amended and not am:
+            citations.extend(_amended_pointer_citations(state))
+        if amended and am:
+            timing = _as_list(am.get("timing"))
+            if timing:
+                deadline_status = " ".join(timing)
+            for raw in [am.get("citation"), *(am.get("citations") or [])]:
+                if isinstance(raw, dict):
+                    citations.append(Citation(**raw))
         if dl.get("filing_due_date"):
             deadline_status = f"Due {dl['filing_due_date']}."
             if dl.get("verification"):

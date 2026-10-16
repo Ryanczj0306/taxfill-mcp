@@ -1,20 +1,27 @@
 {
  "_strings": {
+  "@@146a835639da": "The shipped MO 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@21b6e7886c85": "Department of Revenue, P.O. Box 500, Jefferson City, MO 65105-0500 (refund or no amount due). Note: returns printed from the Department's 2-D barcode / fill-in auto-calculating forms use different addresses: refund returns to P.O. Box 3222, Jefferson City, MO 65105-3222; refund returns claiming a property tax credit to P.O. Box 3385, Jefferson City, MO 65105-3385.",
   "@@3f2620c962a6": "Food Pantry / Homeless Shelter / Soup Kitchen Tax Credit — Any taxpayer (individual, corporation, or trust) who donates cash or food supplies to a local food pantry, homeless shelter, or soup kitchen in the county where the taxpayer resides. If the donation is also reported as a federal Schedule A charitable contribution, the amount must be added back on Form MO-A, Part 1, Line 4. Program sunsets December 31, 2026 (fully terminates September 1, 2027).",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@4efd3abdaf34": "Form MO-NRI (Missouri Income Percentage), filed with Form MO-1040, for nonresidents and part-year residents. Part-year residents may alternatively use Form MO-CR (resident credit) with MO-1040, whichever is more beneficial.",
+  "@@520d5b3319d4": "annual (per tax year; the shipped MO 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@54a04c4eb2f3": "Form MO-1040 (Individual Income Tax Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income filers with no Missouri modifications.)",
   "@@5d1e22880b3f": "Missouri Working Family Tax Credit (state EITC) — Resident individual who was allowed a federal earned income credit (EIC) on the federal return for the same tax year; filing status must be single, head of household, qualifying widow(er), or married filing combined (married filing separately does not qualify); must have a tax liability remaining after the application of all other credits. Form MO-WFTC and a copy of the federal return must be attached or the credit may be disallowed.",
   "@@83cf05e738e2": "Law change NOT modeled by the engine (status final_form_published): The Missouri WORKING FAMILY TAX CREDIT (state EITC) DOUBLED for 2024 — \"The Missouri Working Family Tax Credit (WFTC) is a credit for 20 percent of what your federal earned income credit (EIC) would be under the EIC law as of January 1, 2021\" (2024 instructions, Line 44), up from 10 percent in 2023. It stays nonrefundable and limited to the MO tax liability remaining after all other credits, requires Form MO-WFTC plus a copy of the federal return, and is not available to married-filing-separately filers. Resolve via: Form MO-WFTC in the 2024 MO-1040 instruction booklet, pp.37-38 (the citation URL); the credit is applied against tax AFTER Line 30, which is where calc.state_tax stops.",
   "@@857256a9d82b": "Missouri Department of Revenue - 2024 Form MO-1040 instruction booklet, Line 44 Missouri Working Family Tax Credit and Form MO-WFTC",
   "@@8ac48fa2ac4c": "2024 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Calendar year taxpayers must file no later than April 15, 2025'; automatic extension to October 15, 2025 granted with a federal extension (attach Federal Form 4868) or by filing Form MO-60; an extension of time to file does not extend the time to pay",
   "@@8baa9fa38db6": "2024 Form MO-1040 Individual Income Tax Long Form & Instructions, Missouri Department of Revenue (Line 1 = Federal AGI; 'begin your Missouri return with your total federal adjusted gross income'; Form MO-A Part 1 additions; residency/domicile definitions; nonresident & part-year rules; April 15, 2025 due date; filing requirement thresholds; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; check payable to Missouri Department of Revenue; 2024 Tax Chart p.26)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a98196320c17": "2024 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p.26 '2024 Tax Chart' (Tax Rate Chart, Section A: $0 to $1,273 -> $0; over $1,273 not over $2,546 -> 2.00% of excess over $1,273; over $2,546 not over $3,819 -> $25 + 2.50%; over $3,819 not over $5,092 -> $57 + 3.00%; over $5,092 not over $6,365 -> $95 + 3.50%; over $6,365 not over $7,638 -> $140 + 4.00%; over $7,638 not over $8,911 -> $191 + 4.50%; over $8,911 -> $248 + 4.80% of excess over $8,911; 'A separate tax must be computed for you and your spouse'; 'Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and 30S'); Line 30 'Tax (see tax chart on page 26 of the instructions)'; Line 12 Federal Tax Percentage chart; Line 13 federal income tax deduction caps; Line 14 standard deduction; Line 15 head of household / qualifying widow(er) $1,400. Second pass: the 2024 Form MO-1040A short-form instructions print the IDENTICAL 2024 Tax Rate Chart and Tax Calculation Worksheet (p.10) — both passes agree.",
   "@@d3b6dff18778": "Treaty conformity — MO conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MO income (it flows through the federal starting point; do not add it back on the MO return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Missouri's resident return starts from federal adjusted gross income and has no treaty-exempt income add-back, so federally treaty-exempt income (already excluded from federal AGI) flows through untaxed -> conforms. Form MO-1040 Line 1 is captioned \"Federal adjusted gross income,\" and the 2024 MO-1040 instructions state \"You must begin your Missouri return with your total federal adjusted gross income, even if you have income from a state other than Missouri.\" The only additions to federal AGI are on Form MO-A, Part 1, Lines 1-6 (interest on state and local obligations other than Missouri source; partnership/fiduciary/S-corp/business-interest/NOL adjustments; nonqualified 529-plan distributions; Food Pantry contributions included on federal Schedule A; nonresident property tax modification; nonqualified ABLE-program distributions) — none of which add back federally treaty-exempt income or foreign-earned income. Corroborating: the \"Nonresident Alien\" special filing instructions direct the filer to \"Enter your federal adjusted gross income from U.S. Nonresident Alien Income Tax Return (Federal Form 1040NR), Line 11, on Form MO-1040, Line 1,\" meaning treaty-exempt income already excluded from 1040NR AGI carries to MO Line 1 unchanged with no reattachment. Unlike California (which adds treaty income back on Schedule CA), Missouri has no analogous addback. Cite: 2024 MO-1040 Instructions, Line 1 and Form MO-A Part 1.",
   "@@e7e97d58c856": "Property Tax Credit Claim (Circuit Breaker) — Missouri residents who fall into one of four qualification categories (2024 Form MO-PTS): (A) age 65 or older and a full-year MO resident; (B) 100% disabled veteran as a result of military service; (C) 100% disabled (per SSA letter or Form SSA-1099); or (D) age 60 or older and receiving surviving spouse Social Security benefits. Available to both renters/part-year owners and full-year homeowners. Renters who rent from a facility that does not pay real estate tax are not eligible.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@ed3ec01438b5": "2024 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Where to Mail Your Return' (P.O. Box 500 refund / P.O. Box 329 balance due; 2-D barcode boxes 3222/3370 and property-tax-credit boxes 3385/3395; also printed on the Form MO-1040 signature page)"
+  "@@ed3ec01438b5": "2024 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Where to Mail Your Return' (P.O. Box 500 refund / P.O. Box 329 balance due; 2-D barcode boxes 3222/3370 and property-tax-credit boxes 3385/3395; also printed on the Form MO-1040 signature page)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -132,6 +139,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MO 2024 return (Form MO-1040 (Individual Income Tax Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income filers with no Missouri modifications.)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MO revenue department home page (read 2026-10-16)",
+      "url": "https://dor.mo.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@54a04c4eb2f3",
+    "jurisdiction": "states/mo",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MO return, and the MO 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MO instructions for amended returns on the MO revenue department's site (https://dor.mo.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -189,9 +231,279 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "MO revenue department home page (read 2026-10-16)",
+      "url": "https://dor.mo.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MO instructions for amended returns on the MO revenue department's site (https://dor.mo.gov/).",
+    "form": "@@54a04c4eb2f3",
+    "headline": "MO 2024, amended (Form MO-1040 (Individual Income Tax Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income filers with no Missouri modifications.)): you owe $88",
+    "jurisdiction": "states/mo",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@146a835639da",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "Missouri Department of Revenue - 2024 Form MO-1040 instruction booklet, Form MO-PTS section (Qualifications A-D; Lines 9-14; $27,200/$30,000 net-household-income limits; $750 rent / $1,100 combined caps) and 2024 Property Tax Credit Chart pp.50-52",
+     "cadence": "@@520d5b3319d4",
+     "topic": "credits",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page and 2024 MO-1040 instruction booklet (Form MO-A Part 1 Line 4; MO-TC credit code FPT)",
+     "cadence": "@@520d5b3319d4",
+     "topic": "credits",
+     "url": "https://dor.mo.gov/tax-credits/fpt.html"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@146a835639da",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@ed3ec01438b5",
+     "cadence": "@@520d5b3319d4",
+     "topic": "filing_logistics",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@146a835639da",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@8baa9fa38db6",
+     "cadence": "@@520d5b3319d4",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "2024 Form MO-1040A Single/Married (Income from One Spouse) Short Form Instructions — independent second pass on the 2024 Tax Chart (identical Tax Rate Chart and Tax Calculation Worksheet, p.10) and the 2024 standard deduction amounts",
+     "cadence": "@@520d5b3319d4",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/forms/MO-1040A%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "Missouri DOR - Nonresidents and Residents with Other State Income (resident/nonresident/part-year definitions; MO-NRI / MO-CR usage with MO-1040)",
+     "cadence": "@@520d5b3319d4",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/taxation/individual/additional-resources/non-residents.html"
+    },
+    {
+     "answers": "Missouri DOR - Food Pantry Tax Credit (FPT) program page (50% of donations, $2,500/taxpayer/year, $1,750,000 statewide fiscal-year cap, 3-year carryforward, December 31, 2026 sunset)",
+     "cadence": "@@520d5b3319d4",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/tax-credits/fpt.html"
+    },
+    {
+     "answers": "Missouri DOR - Pay Individual Income Taxes Online (eCheck $0.50 fee; credit/debit card 2% + $0.25 convenience fee)",
+     "cadence": "@@520d5b3319d4",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/taxation/individual/pay-online.html"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@146a835639da",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; Form MO-A Part 1 additions Lines 1-6; residency/domicile definitions incl. 183-day statutory-resident and 30-day exception rules; filing requirement thresholds $1,200/$600/standard deduction; April 15, 2025 due date; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; rounding rule 'Round $32.50 up to $33.00'; 2024 Tax Chart p.26; Line 44 WFTC 20%; Form MO-PTS property tax credit section)",
+     "cadence": "@@520d5b3319d4",
+     "topic": "law_changes",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@146a835639da",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@a98196320c17",
+     "cadence": "@@520d5b3319d4",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@146a835639da",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/mo",
  "state_scope": {
@@ -586,7 +898,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: MO 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: MO 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -606,7 +918,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2024 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p.26 '2024 Tax Chart' (Tax Rate Chart, Section A: $0 to $1,273 -> $0; over $1,273 not over $2,546 -> 2.00% of excess over $1,273; over $2,546 not over $3,819 -> $25 + 2.50%; over $3,819 not over $5,092 -> $57 + 3.00%; over $5,092 not over $6,365 -> $95 + 3.50%; over $6,365 not over $7,638 -> $140 + 4.00%; over $7,638 not over $8,911 -> $191 + 4.50%; over $8,911 -> $248 + 4.80% of excess over $8,911; 'A separate tax must be computed for you and your spouse'; 'Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and 30S'); Line 30 'Tax (see tax chart on page 26 of the instructions)'; Line 12 Federal Tax Percentage chart; Line 13 federal income tax deduction caps; Line 14 standard deduction; Line 15 head of household / qualifying widow(er) $1,400. Second pass: the 2024 Form MO-1040A short-form instructions print the IDENTICAL 2024 Tax Rate Chart and Tax Calculation Worksheet (p.10) — both passes agree.",
+    "source": "@@a98196320c17",
     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf"
    },
    "rate": null,

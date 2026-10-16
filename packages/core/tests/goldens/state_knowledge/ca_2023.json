@@ -1,16 +1,23 @@
 {
  "_strings": {
+  "@@008929b2e8ee": "annual (per tax year; the shipped CA 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@18f84d2dbd04": "2023 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2023 California Tax Rate Schedules' (Schedules X/Y/Z), p. 75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Mental Health Services Tax worksheet, p. 16; Form 540 (2023) Side 1-2, lines 7-11 (X $144 / X $446 exemption credits), lines 17-19, 31-32, 61-62",
   "@@19f252dd199f": "Nonrefundable Renter's Credit — Full-year California resident who paid rent at least 6 months in 2023 on a non-tax-exempt principal residence; California AGI within the limit; not given a property-tax exemption; not claimable as someone else's dependent.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@205243ca2fd0": "Credit amounts/limits are not independently verified: Dollar limits below are transcribed from the cited 2023 FTB booklets; the adversarial re-fetch was blocked by ftb.ca.gov (HTTP 403), so confirm the exact 2023 limit at the cited URL before relying on it. (The live FTB pages now display current-year, inflation-adjusted figures.)",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@5c54c6c74f12": "If any income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties — that income is still taxable to CA.",
   "@@867ff33c438f": "California grants an automatic paper-filing extension to October 15 with no form required; tax owed must still be paid by April 15 to avoid penalties/interest.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@b41b9444b56d": "The shipped CA 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@b6897e002825": "Treaty conformity — CA does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CA. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: California does not conform to federal income tax treaties; tax treaties that expressly limit their application to federal income taxes do not apply to California. Income exempt from federal tax under a U.S. treaty is generally still taxable by California unless the treaty specifically excludes it from California tax. FTB Pub. 1031 worked example: a resident of China doing research at a California university received $15,000 in wages excludable for federal purposes under the U.S.-China treaty — those wages are nonetheless taxable by California and must be included on Schedule CA (540NR), Part II, Section A, line 1a, column C. California also disallows the foreign earned income exclusion and the foreign tax credit.",
   "@@c37613f27823": "Mailing address: Re-fetch returned HTTP 403 from ftb.ca.gov; confirm at the FTB mailing-addresses page before mailing.",
   "@@d4bf29810f68": "If any of your income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties, so that income is still taxable to CA — do not carry the federal exclusion onto the state return.",
   "@@e64bff9123af": "California Earned Income Tax Credit (CalEITC) — Requires earned income greater than zero (FTB 3514 line 19). 2023 maximum earned income approximately $30,950, across all qualifying-child counts.",
   "@@ea789d79a239": "FTB Publication 1031 (2023), Guidelines for Determining Resident Status — Tax Treaty section (pp. 9-10)",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -143,6 +150,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended CA 2023 return (Form 540): you owe $88 more.",
+    "citations": [
+     {
+      "source": "CA revenue department home page (read 2026-10-16)",
+      "url": "https://www.ftb.ca.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "540",
+    "jurisdiction": "states/ca",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended CA return, and the CA 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the CA instructions for amended returns on the CA revenue department's site (https://www.ftb.ca.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -209,9 +251,233 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "CA revenue department home page (read 2026-10-16)",
+      "url": "https://www.ftb.ca.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the CA instructions for amended returns on the CA revenue department's site (https://www.ftb.ca.gov/).",
+    "form": "540",
+    "headline": "CA 2023, amended (540): you owe $88",
+    "jurisdiction": "states/ca",
+    "notes": [
+     "@@5c54c6c74f12"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b41b9444b56d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "2023 Form 540 booklet, Nonrefundable Renter's Credit Qualification Record",
+     "cadence": "@@008929b2e8ee",
+     "topic": "credits",
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-540-booklet.html"
+    },
+    {
+     "answers": "FTB 2023 Schedule 3514 (CalEITC) booklet / CalEITC eligibility",
+     "cadence": "@@008929b2e8ee",
+     "topic": "credits",
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-3514-booklet.html"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b41b9444b56d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "2023 Form 540 booklet, 'Do I Have to File?'",
+     "cadence": "@@008929b2e8ee",
+     "topic": "filing_logistics",
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-540-booklet.html"
+    },
+    {
+     "answers": "FTB — Mailing addresses (Personal tax returns)",
+     "cadence": "@@008929b2e8ee",
+     "topic": "filing_logistics",
+     "url": "https://www.ftb.ca.gov/help/contact/mailing-addresses.html"
+    },
+    {
+     "answers": "FTB — Pay / Web Pay",
+     "cadence": "@@008929b2e8ee",
+     "topic": "filing_logistics",
+     "url": "https://www.ftb.ca.gov/pay"
+    },
+    {
+     "answers": "FTB — Extension to file (automatic 6-month extension)",
+     "cadence": "@@008929b2e8ee",
+     "topic": "filing_logistics",
+     "url": "https://www.ftb.ca.gov/file/when-to-file/extension-to-file.html"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b41b9444b56d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@ea789d79a239",
+     "cadence": "@@008929b2e8ee",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b41b9444b56d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@18f84d2dbd04",
+     "cadence": "@@008929b2e8ee",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-540-booklet.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b41b9444b56d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/ca",
  "state_scope": {
@@ -667,7 +933,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2023 California Tax Rate Schedules' (Schedules X/Y/Z), p. 75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Mental Health Services Tax worksheet, p. 16; Form 540 (2023) Side 1-2, lines 7-11 (X $144 / X $446 exemption credits), lines 17-19, 31-32, 61-62",
+    "source": "@@18f84d2dbd04",
     "url": "https://www.ftb.ca.gov/forms/2023/2023-540-booklet.pdf"
    },
    "rate": null,

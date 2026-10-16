@@ -2,20 +2,29 @@
  "_strings": {
   "@@12d2a53cf2ca": "Property Tax/Rent Rebate Program (PTRR) — Pennsylvania residents who are age 65 or older; widows/widowers age 50 or older; or people with disabilities age 18 or older, who owned and occupied a home (and paid property tax) or rented during the claim year. NOTE: This is a standalone rebate filed on Form PA-1000, not a credit on the PA-40 income tax return. For claim year 2023 (rebates paid in 2024) it was expanded by Act 7 of 2023.",
   "@@13eb495d9dec": "Tax Forgiveness Credit (Special Tax Forgiveness) — PA residents (and part-year/nonresidents with PA-taxable income) who meet the eligibility-income limits and are not claimed as a dependent on another person's federal return (a dependent child can still qualify if the claiming taxpayer also qualifies). Determined by filing status, number of dependent children, and total eligibility income (which includes some nontaxable income such as interest, dividends, and gifts).",
+  "@@1870e0203e45": "annual (per tax year; the shipped PA 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@1a93f90f4933": "2023 PA-40 Personal Income Tax Return Instructions (PA-40IN) — \"The state income tax rate for 2023 is 3.07 percent (0.0307)\"; Line 12 PA Tax Liability \"Multiply Line 11 by 3.07 percent (0.0307)\"; \"PA law does not allow standard deductions, deductions for personal exemptions, itemized deductions or deductions for personal expenses\"; the eight income classes (Lines 1a-8).",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@20c3f9b47c04": "Child and Dependent Care Enhancement Tax Credit — PA residents who qualified for and claimed the federal Child and Dependent Care Credit under IRC Section 21 on their federal Form 1040 (Form 2441). Must have paid care expenses for a qualifying child under 13 or a spouse/dependent incapable of self-care, and must attach federal Form 2441 and 1040 Schedule 3 to the PA-40.",
   "@@3aff4305ca9c": "PA state income tax (2023, flat rate): taxable_base $40,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; tax = 0.0307 x $40,000 = $1,228",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@598dcacb2be9": "If any income was exempt from federal tax under a treaty: PA does not conform to federal tax treaties — that income is still taxable to PA.",
   "@@7116a7ec801f": "Treaty conformity — PA does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by PA. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: PA does NOT start from federal adjusted gross income. Per the official Department of Revenue Personal Income Tax page and the 2023 PA-40 instructions, PA imposes a flat 3.07% tax on eight SEPARATELY-computed classes of income (\"Pennsylvania taxes eight classes of income: (1) compensation; (2) interest; (3) dividends; (4) net profits...; (5) net gains...dispositions of property; (6) net gains...rents, royalties, patents and copyrights; (7) income...through estates or trusts; and (8) gambling and lottery winnings\"). PA provides no standard deduction or personal exemption and the 2023 PA-40 instructions state filing requirements \"are different than federal requirements.\" Because PA computes taxable compensation from gross PA-source wages rather than inheriting federal AGI, there is NO automatic federal-AGI pass-through that would carry a federal tax-treaty exclusion into the state return, and neither the PA-40 instructions nor the PA Personal Income Tax Guide (Brief Overview/Filing Requirements) contain any treaty pass-through mechanism. Under the task rubric this is the \"state builds income from scratch (not federal AGI) with no treaty pass-through\" case -> conforms_to_federal_treaties = false. CAVEAT: In administrative practice PA generally does not tax compensation a federal treaty exempts (such wages typically are excluded from PA-taxable Box 16 compensation), so the precise treatment of treaty-exempt income should be confirmed with the PA DOR; flagged in unverified.",
   "@@79d3c4987049": "2023 PA-40 Personal Income Tax Return Instructions (PA-40IN) - due date, who must file ($33 threshold), residency status (R/N/P), 'Nonresidents and part-year residents use the same PA-40 form', PA-40 V reference",
   "@@92528fb58a49": "If any of your income was exempt from federal tax under a treaty: PA does not conform to federal tax treaties, so that income is still taxable to PA — do not carry the federal exclusion onto the state return.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9f9c0ba6ed86": "PA-40 (same form) - \"Nonresidents and part-year residents use the same PA-40 form as PA residents\"; fill in residency oval (N) Nonresident or (P) Part-Year Resident. Use PA Schedule NRH/PA Schedule SP as applicable; nonresident/part-year apportionment per PA-40 page 43 instructions.",
+  "@@a0cb0c972f9e": "61 Pa. Code § 109.8 (Compensation of nonresidents) — operative allowance sentence transcribed verbatim.",
   "@@a0f98c91e9d3": "PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident",
   "@@bd417cd9aacc": "Refund/credit requested: PA DEPT OF REVENUE, REFUND/CREDIT REQUESTED, 3 REVENUE PLACE, HARRISBURG PA 17129-0003. No payment/no refund: PA DEPT OF REVENUE, NO PAYMENT/NO REFUND, 2 REVENUE PLACE, HARRISBURG PA 17129-0002.",
+  "@@cbfb534d472b": "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/061/chapter109/s109.8.html",
+  "@@e0e22e98b111": "The shipped PA 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f38046203440": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40in.pdf",
-  "@@f61879df4caf": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Tax Forgiveness Credit (Special Tax Forgiveness)."
+  "@@f61879df4caf": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Tax Forgiveness Credit (Special Tax Forgiveness).",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -142,6 +151,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended PA 2023 return (Form PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident): you owe $88 more.",
+    "citations": [
+     {
+      "source": "PA revenue department home page (read 2026-10-16)",
+      "url": "https://www.pa.gov/agencies/revenue"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@a0f98c91e9d3",
+    "jurisdiction": "states/pa",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended PA return, and the PA 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the PA instructions for amended returns on the PA revenue department's site (https://www.pa.gov/agencies/revenue) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -205,9 +249,293 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "PA revenue department home page (read 2026-10-16)",
+      "url": "https://www.pa.gov/agencies/revenue"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the PA instructions for amended returns on the PA revenue department's site (https://www.pa.gov/agencies/revenue).",
+    "form": "@@a0f98c91e9d3",
+    "headline": "PA 2023, amended (PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident): you owe $88",
+    "jurisdiction": "states/pa",
+    "notes": [
+     "@@598dcacb2be9"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e22e98b111",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f38046203440"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/pa",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "PA Dept of Revenue – Tax Forgiveness page and 2023 PA-40 Schedule SP",
+     "cadence": "@@1870e0203e45",
+     "topic": "credits",
+     "url": "https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax/tax-forgiveness"
+    },
+    {
+     "answers": "PA Dept of Revenue – Child and Dependent Care Credit page and 2023 PA-40 Schedule DC (PA-40 DC) form/instructions",
+     "cadence": "@@1870e0203e45",
+     "topic": "credits",
+     "url": "https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax/child-and-dependent-care-credit"
+    },
+    {
+     "answers": "PA Dept of Revenue – 2023 Property Tax/Rent Rebate Program Statistical Report (rebate parameter table, claim year 2023)",
+     "cadence": "@@1870e0203e45",
+     "topic": "credits",
+     "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/news-and-statistics/reportsstats/ptrr/stats/documents/2023_ptrr_stats.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e22e98b111",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f38046203440"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/pa",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@79d3c4987049",
+     "cadence": "@@1870e0203e45",
+     "topic": "filing_logistics",
+     "url": "@@f38046203440"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e22e98b111",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f38046203440"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/pa",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@79d3c4987049",
+     "cadence": "@@1870e0203e45",
+     "topic": "forms_and_instructions",
+     "url": "@@f38046203440"
+    },
+    {
+     "answers": "PA DOR - Personal Income Tax (tax-types-and-information) - 3.07% flat rate, eight classes of income, no standard deduction/personal exemption",
+     "cadence": "@@1870e0203e45",
+     "topic": "forms_and_instructions",
+     "url": "https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax"
+    },
+    {
+     "answers": "PA DOR PIT Guide - Brief Overview and Filing Requirements - filing requirement ('$1 or more in tax'), April 15 due date, residency/domicile/statutory resident (183 days, permanent place of abode), eight classes taxed separately",
+     "cadence": "@@1870e0203e45",
+     "topic": "forms_and_instructions",
+     "url": "https://www.pa.gov/agencies/revenue/forms-and-publications/pa-personal-income-tax-guide/brief-overview-and-filing-requirements"
+    },
+    {
+     "answers": "PA DOR Mailing Addresses directory - PA-40 payment (1 Revenue Place 17129-0001), no payment/no refund (2 Revenue Place 17129-0002), refund/credit (3 Revenue Place 17129-0003)",
+     "cadence": "@@1870e0203e45",
+     "topic": "forms_and_instructions",
+     "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/contactus/documents/address_directory.pdf"
+    },
+    {
+     "answers": "2023 PA-40 V Payment Voucher - check payee 'PA DEPARTMENT OF REVENUE', payment-enclosed address 1 Revenue Place Harrisburg PA 17129-0001",
+     "cadence": "@@1870e0203e45",
+     "topic": "forms_and_instructions",
+     "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2023/2023_pa-40v.pdf"
+    },
+    {
+     "answers": "PA DOR - Make a Personal Income Tax Payment (myPATH online portal)",
+     "cadence": "@@1870e0203e45",
+     "topic": "forms_and_instructions",
+     "url": "https://www.pa.gov/services/revenue/make-a-personal-income-tax-payment"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "remote_work_sourcing": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e22e98b111",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f38046203440"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/pa",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@a0cb0c972f9e",
+     "cadence": "@@1870e0203e45",
+     "topic": "remote_work_sourcing",
+     "url": "@@cbfb534d472b"
+    }
+   ],
+   "topic": "remote_work_sourcing",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e22e98b111",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f38046203440"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/pa",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@1a93f90f4933",
+     "cadence": "@@1870e0203e45",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@f38046203440"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e22e98b111",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f38046203440"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/pa",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/pa",
  "state_scope": {
@@ -228,8 +556,8 @@
        "url": "@@f38046203440"
       },
       {
-       "source": "61 Pa. Code § 109.8 (Compensation of nonresidents) — operative allowance sentence transcribed verbatim.",
-       "url": "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/061/chapter109/s109.8.html"
+       "source": "@@a0cb0c972f9e",
+       "url": "@@cbfb534d472b"
       }
      ],
      "filing_role": "nonresident",
@@ -412,7 +740,7 @@
   "common_result": {
    "base_kind": "state_gross_income",
    "citation": {
-    "source": "2023 PA-40 Personal Income Tax Return Instructions (PA-40IN) — \"The state income tax rate for 2023 is 3.07 percent (0.0307)\"; Line 12 PA Tax Liability \"Multiply Line 11 by 3.07 percent (0.0307)\"; \"PA law does not allow standard deductions, deductions for personal exemptions, itemized deductions or deductions for personal expenses\"; the eight income classes (Lines 1a-8).",
+    "source": "@@1a93f90f4933",
     "url": "@@f38046203440"
    },
    "marginal_rate": "0.0307",

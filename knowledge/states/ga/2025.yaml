@@ -158,6 +158,66 @@ deadlines:
     source: Georgia DOR 2025 IT-511 booklet, 'When to File' — 'Calendar year taxpayers are required to file on or
       before April 15, 2026'
     url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+# Phase K JK27 (2026-10-16): the amended-return model file_and_pay and filing_summary read for a Form 500X item
+# (before it a 500X balance due got the Form 500 payment address and the original due date). Every line quotes
+# the 2025 Form 500X, the 2025 IT-511 booklet, the 525-TV voucher or the DOR's mailing-address page.
+amended_return:
+  form: Form 500X
+  mailing_address: PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740318, ATLANTA, GA 30374-0318
+  payment:
+  - 'Form 500X line 38 "Amount Owed Pay in full with this Return (Add Line 32, Line 35 through 37)": you add line
+    35 "Form 500 UET (Estimated tax penalty)", line 36 "Late Payment Penalty (1/2 of 1% per month from due
+    date)" and line 37 "Interest (See IT-511 Tax Booklet)" on the form yourself (2025 Form 500X).'
+  - 'Pay on the Georgia Tax Center (gtc.dor.ga.gov), or by check or money order "payable to: Georgia Department
+    of Revenue" with your SSN on it and Form 525-TV, its "Amended Return" box checked: "Mail your return,
+    payment voucher and payment to the address that appears on the return if filing a paper return"; do not
+    staple the payment and voucher together (525-TV, Rev. 05/20/25).'
+  assemble:
+  - '"Include any supporting documents and new or changed forms and schedules. In the space provided below, tell
+    us why you are filing Form 500X. Mail pages 1-5 and any applicable schedules, forms, and documentation. DO
+    NOT staple pages." (2025 Form 500X)'
+  - 'Line 8, federal adjusted gross income: "If the amount on Line 8 is $40,000 or more, or your gross income is
+    less than your W-2s you must include a copy of your Federal Form 1040 Pages 1, 2, and Schedule 1." (2025
+    Form 500X)'
+  timing:
+  - '"A claim for refund must be made within three (3) years from the later of the date the tax was paid or the
+    due date of the return, including extensions." (2025 IT-511, p. 3)'
+  - 'After a federal change: "Whenever a Federal audit or other Federal adjustment results in a change in net
+    income for any year, you are required to furnish, within 180 days, a Form 500X with supporting schedules and
+    a copy of Form 1040 to the Georgia Department of Revenue reflecting all changes. Additionally, if the
+    changes result in a refund, the refund must be claimed within one year from the date the changes are
+    submitted." (2025 IT-511, Federal Audits, p. 12) And (p. 9, "Update to Final Determination Date for
+    Reporting Federal Changes"): "Taxpayers must report any federal changes or corrections resulting from a
+    federal audit within 180 days of the final determination date. When those changes result from an amended
+    federal return, a federal refund claim, an administrative adjustment request, or a similar report filed
+    under Section 6225(c) of the Internal Revenue Code, the final determination date is the date the amended
+    return, claim, adjustment request, or related report is filed."'
+  mail:
+  - 'Georgia DOR: "Sending your return via certified mail or courier will NOT speed the processing of your
+    return. The postal service imposes special handling procedures for certified mail that may delay processing
+    your return" (Mailing Address - Individual/Fiduciary Income Tax).'
+  notes:
+  - '"File Form 500X to correct information reported on Form 500. Do not use Form 500 to correct a previously
+    filed return or use Form 500X as an original return." (2025 IT-511, Amended Returns, p. 10)'
+  - 'An amendment that follows an IRS audit checks the "Amended due to IRS Audit" box on the 2025 Form 500X
+    header.'
+  citation:
+    source: 'Georgia DOR 2025 Form 500X, Amended Individual Income Tax Return (blank for printing): "Mail To: GEORGIA
+      DEPARTMENT OF REVENUE PROCESSING CENTER, PO BOX 740318 ATLANTA, GA 30374-0318"; lines 36-38; the
+      attachment and line 8 instructions'
+    url: https://dor.georgia.gov/document/document/2025-500x-amended-individual-income-tax-return-blank-form-printing/download
+  citations:
+  - source: 'Georgia DOR 2025 IT-511 booklet: Mailing Address, "Form 500X Amended: ... PO BOX 740318" (p. 7); Amended
+      Returns (p. 10); claim for refund within three years (p. 3); Federal Audits, within 180 days (pp. 9, 12)'
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+  - source: 'Georgia DOR 525-TV Individual and Fiduciary Payment Voucher (Rev. 05/20/25): the "Amended Return" type
+      box; "Mail your return, payment voucher and payment to the address that appears on the return if filing a
+      paper return"'
+    url: https://dor.georgia.gov/document/document/2025-525-payment-voucher-and-instructions/download
+  - source: 'Georgia DOR, Mailing Address - Individual/Fiduciary Income Tax: "500X Amended Georgia Dept. of Revenue PO
+      Box 740318 Atlanta, GA 30374-0318"; "Make checks payable to Georgia Department of Revenue"; the
+      certified-mail note (read 2026-10-16)'
+    url: https://dor.georgia.gov/mailing-address-individualfiduciary-income-tax
 all_citations:
 - source: GA 2025 IT-511 Individual Income Tax Instruction Booklet - What's New ('Effective January 1, 2025, the
     income tax rate is 5.19%'; Form 500EZ discontinued for 2025); Standard Deductions chart ($24,000 MFJ; $12,000

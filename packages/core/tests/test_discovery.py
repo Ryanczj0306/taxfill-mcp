@@ -11,7 +11,8 @@ def test_list_all_packs():
     assert all(s.source_url.startswith("https://") for s in allf)
     # 26 federal (the M2 set) + Schedule SE + Schedule D/E + Form 8863/2555 (2023)
     # = 31, + Form 4868 (2023) = 32, + Form 1040-ES (2023) = 33, + Form 1040-X
-    # (2023, Rev. 2-2024) = 34, + Form W-7 (2023, Rev. 12-2024) = 35, + Forms
+    # (2023; Rev. 2-2024 then, Rev. 12-2025 since JK27) = 34, + Form W-7 (2023,
+    # Rev. 12-2024) = 35, + Forms
     # 8959/8960/8962 (2023, Phase F) = 38, + Schedule 8812 / Schedule A (1040-NR)
     # / Schedule NEC (2023, Tier 2) = 41, + Forms 2441/843/8316 (Phase G) = 44,
     # + the TY2025 set (f1040, scheds 1/1a/2/3/A/B/C, 8843, f1040nr,

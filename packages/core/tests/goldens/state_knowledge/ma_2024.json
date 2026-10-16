@@ -5,19 +5,26 @@
   "@@3d301b780e23": "Form 1-NR/PY — Massachusetts Nonresident or Part-Year Resident Income Tax Return (2024). Taxpayers who are both nonresident and part-year resident also complete Schedule R/NR (Resident/Nonresident Worksheet).",
   "@@499c22021ba4": "2024 Form 1 Instructions (MA DOR) — 'Filing Due Dates. Form 1 is due on or before April 15, 2025.'",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@57a2cdb5eb11": "The shipped MA 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@67219f8f41c0": "Treaty conformity — MA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MA income (it flows through the federal starting point; do not add it back on the MA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Net result: treaty-exempt income is NOT re-taxed by MA, so conforms = true — but the mechanism is an EXPLICIT DEDUCTION, not passive federal-AGI conformity. Important nuance: MA's Form 1 does NOT start from federal AGI. It builds Massachusetts gross income from its own categories. Line 3 (Wages) is taken from W-2 state wages (Box 16), and Massachusetts gross income can include items not subject to U.S. income tax. So treaty-exempt income that an employer reports in state wages would otherwise land in MA income. MA neutralizes this with the dedicated Schedule Y, Line 4 deduction: 'Amounts Excludible Under MGL Ch 41, § 111F or U.S. Tax Treaty Included in Form 1, Line 3' — the 2024 Form 1 instructions repeat the 2023 rule: a taxpayer with income exempt under a United States tax treaty enters the excludible amount that was included in Form 1, line 3 on Schedule Y line 4 and fills in the treaty oval. Because Schedule Y reduces income, the treaty-exempt amount is deducted back out and is not taxed. PRACTICAL NOTE: unlike a pure federal-AGI conformity state where treaty income flows out automatically, in MA the taxpayer must affirmatively claim the Schedule Y, Line 4 deduction (and fill the treaty oval) — if treaty wages appear in W-2 Box 16/Form 1 line 3 and the deduction is not claimed, the income would be taxed. Source: 2024 Form 1 Instructions, Schedule Y Line 4 (income exempt under a U.S. tax treaty) and Line 3 (Wages, Salaries, Tips).",
   "@@6d13cf5df3c9": "Child and Family Tax Credit — Resident (or part-year resident for the period of residency) maintaining a household that includes a qualifying individual: a dependent under age 13, a dependent age 65 or older or disabled, or a dependent or spouse physically or mentally incapable of self-care who principally lives with the taxpayer. NEW for 2024 (TIR 24-13): a noncustodial parent may claim the credit for a child dependent age 13 or older who is physically or mentally incapable of caring for himself or herself. Cannot be claimed by a full-year nonresident.",
   "@@7d2da77055bd": "2024 Form 1 Instructions (MA DOR) — mailing addresses (PO Box 7000 for refunds/no payments; PO Box 7003 for payments)",
   "@@8b420710ad07": "Massachusetts Department of Revenue, PO Box 7000, Boston, MA 02204 (Form 1, refunds / no payments)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9c51ae666bb8": "Massachusetts Earned Income Tax Credit (EITC) — Massachusetts residents (full- or part-year) who qualify for and claim the federal Earned Income Credit — earned income under $66,819 for 2024 (maximum may be lower depending on filing status and number of eligible children). MA adopts the federal expansion rules; a married person who is a victim of domestic abuse, living apart from their spouse at filing, may file married filing separately and still claim the MA EIC. Part-year residents prorate the credit by days resided in MA.",
   "@@a5475c243f8b": "Law change NOT modeled by the engine (status final_form_published): NEW joint-filing mandate for 2024 (TIR 24-4): married couples who file a joint FEDERAL return MUST file a joint Massachusetts return, unless an exception applies. This reverses the prior freedom to split MA filing status away from the federal one and changes which return (and which per-status exemption amount) a married couple may use.",
   "@@af2374f56c42": "2024 Form 1 Instructions (MA DOR), Line 46 Child and Family Tax Credit ($440 per qualifying individual; TIR 24-13 noncustodial-parent expansion)",
+  "@@bda26882bf5f": "annual (per tax year; the shipped MA 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@c21f6814ab87": "2024 Form 1 Instructions (MA DOR) — Major 2024 Tax Changes (bank-interest deduction repeal; joint-filing mandate TIR 24-4; 4% surtax threshold $1,053,750; Child and Family Tax Credit $440 with TIR 24-13 expansion; Circuit Breaker maximum $2,730), residency definitions, $8,000 threshold, MA gross income definition, Line 3 wages from W-2 state wages, Schedule Y Line 4 U.S. tax treaty deduction, Filing Due Dates (April 15, 2025), mailing PO Box 7000 / 7003, mass.gov/masstaxconnect. Retrieved via the Wayback Machine archive of the official mass.gov URL (mass.gov 403s non-browser fetchers).",
   "@@d9645abf05dc": "Senior Circuit Breaker Tax Credit (Real Estate Tax Credit for persons age 65+) — Taxpayer must be age 65 or older, own or rent and occupy a principal residence in Massachusetts, and meet income/valuation limits. Married taxpayers generally must file jointly to claim.",
   "@@e4bb8c8ee9d3": "Limited Income Credit (with No Tax Status) — Low-income MA filers whose Massachusetts AGI exceeds the No Tax Status threshold but falls within the Limited Income Credit range. 2024 No Tax Status: MA AGI $8,000 or less (single); $14,400 or less plus $1,000 per dependent (head of household); $16,400 or less plus $1,000 per dependent (married filing jointly). Limited Income Credit range: MA AGI up to $14,000 (single); $14,400-$25,200 plus $1,750 per dependent (head of household); $16,400-$28,700 plus $1,750 per dependent (married filing jointly). Married filing separately qualifies for neither. Computed via the Massachusetts AGI Worksheet / Line 29 worksheet in the Form 1 instructions.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f50a05b91859": "Law change NOT modeled by the engine (status final_form_published): The up-to-$100/$200 deduction for Massachusetts bank interest is REPEALED for tax years beginning on or after 1/1/2024 (Major 2024 Tax Changes). The 2024 Form 1 line 5 is now plain \"Massachusetts bank interest\" — the former exemption boxes are gone from the form, so the full amount of MA bank interest flows into Part B 5.0% income. Resolve via: 2024 Form 1 line 5 and its instruction in the 2024 Form 1 Instructions (Major 2024 Tax Changes) at the citation URL — the amount is the filer's own Massachusetts bank interest, which must already be inside the line 17 + line 20 base supplied to calc.state_tax with no $100/$200 exemption taken."
+  "@@f50a05b91859": "Law change NOT modeled by the engine (status final_form_published): The up-to-$100/$200 deduction for Massachusetts bank interest is REPEALED for tax years beginning on or after 1/1/2024 (Major 2024 Tax Changes). The 2024 Form 1 line 5 is now plain \"Massachusetts bank interest\" — the former exemption boxes are gone from the form, so the full amount of MA bank interest flows into Part B 5.0% income. Resolve via: 2024 Form 1 line 5 and its instruction in the 2024 Form 1 Instructions (Major 2024 Tax Changes) at the citation URL — the amount is the filer's own Massachusetts bank interest, which must already be inside the line 17 + line 20 base supplied to calc.state_tax with no $100/$200 exemption taken.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+  "@@fb90d61c265e": "MA DOR — 2024 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a 'Personal exemptions. If single or married filing separately, enter $4,400. If head of household, enter $6,800. If married filing jointly, enter $8,800'; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $700; line 2d blindness x $2,200; line 17 '5.0% INCOME AFTER DEDUCTIONS'; line 18 total exemption amount (from line 2g); line 19 '5.0% INCOME AFTER EXEMPTIONS... Not less than 0'; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line 21 'TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20'; line 22 'TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05'; line 28b '4% Surtax (from Schedule 4% Surtax, line 7)'. Second pass: 2024 Form 1 Instructions — Line 22: 'If line 21 is less than $24,000, find the proper tax by using the tax tables found in the back of this booklet. If line 21 is greater than $24,000 multiply by 0.05'; 'For the 2024 tax year, the threshold is $1,053,750' (4% surtax, TIR 23-12 and the 4% Surtax FAQs); Major 2024 Tax Changes (bank-interest deduction repeal; TIR 24-4 joint-filing mandate) — both passes agree. (mass.gov returns HTTP 403 to non-browser fetchers; both documents were retrieved from the Wayback Machine's archive of the SAME official mass.gov URLs, the same provenance path as the shipped MA form pack.)"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -141,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MA 2024 return (Form 1 — Massachusetts Resident Income Tax Return (2024)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MA revenue department home page (read 2026-10-16)",
+      "url": "https://www.mass.gov/orgs/massachusetts-department-of-revenue"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2024)",
+    "jurisdiction": "states/ma",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MA return, and the MA 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MA instructions for amended returns on the MA revenue department's site (https://www.mass.gov/orgs/massachusetts-department-of-revenue) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -198,9 +240,261 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "MA revenue department home page (read 2026-10-16)",
+      "url": "https://www.mass.gov/orgs/massachusetts-department-of-revenue"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MA instructions for amended returns on the MA revenue department's site (https://www.mass.gov/orgs/massachusetts-department-of-revenue).",
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2024)",
+    "headline": "MA 2024, amended (Form 1 — Massachusetts Resident Income Tax Return (2024)): you owe $88",
+    "jurisdiction": "states/ma",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57a2cdb5eb11",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 Form 1 Instructions (MA DOR), Line 43 Earned Income Credit — 40% of the federal amount; $66,819 earned-income ceiling; domestic-abuse MFS rule",
+     "cadence": "@@bda26882bf5f",
+     "topic": "credits",
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57a2cdb5eb11",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@7d2da77055bd",
+     "cadence": "@@bda26882bf5f",
+     "topic": "filing_logistics",
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57a2cdb5eb11",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@c21f6814ab87",
+     "cadence": "@@bda26882bf5f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    },
+    {
+     "answers": "2024 Form 1 Massachusetts Resident Income Tax Return (MA DOR; second-pass verification: line 2a personal exemptions $4,400/$6,800/$8,800; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $700; line 2d blindness x $2,200; line 5 plain 'Massachusetts bank interest' with the former exemption boxes REMOVED; line 17/18/19 deduction-exemption sequence; line 21 total taxable 5.0% income; line 22 'TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05'; line 23a/23b 8.5%/12% Schedule B tax; line 24 Schedule D tax; line 28b 4% Surtax from Schedule 4% Surtax line 7)",
+     "cadence": "@@bda26882bf5f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.mass.gov/doc/2024-form-1-massachusetts-resident-income-tax-return/download"
+    },
+    {
+     "answers": "2024 Massachusetts Personal Income Tax Forms and Instructions (MA DOR list page)",
+     "cadence": "@@bda26882bf5f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.mass.gov/lists/2024-massachusetts-personal-income-tax-forms-and-instructions"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57a2cdb5eb11",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@c21f6814ab87",
+     "cadence": "@@bda26882bf5f",
+     "topic": "law_changes",
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57a2cdb5eb11",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@fb90d61c265e",
+     "cadence": "@@bda26882bf5f",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57a2cdb5eb11",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/ma",
  "state_scope": {
@@ -621,7 +915,7 @@
   "common_result": {
    "base_kind": "state_gross_income",
    "citation": {
-    "source": "MA DOR — 2024 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a 'Personal exemptions. If single or married filing separately, enter $4,400. If head of household, enter $6,800. If married filing jointly, enter $8,800'; line 2b dependents x $1,000; line 2c age 65 or over before 2025 x $700; line 2d blindness x $2,200; line 17 '5.0% INCOME AFTER DEDUCTIONS'; line 18 total exemption amount (from line 2g); line 19 '5.0% INCOME AFTER EXEMPTIONS... Not less than 0'; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line 21 'TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20'; line 22 'TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05'; line 28b '4% Surtax (from Schedule 4% Surtax, line 7)'. Second pass: 2024 Form 1 Instructions — Line 22: 'If line 21 is less than $24,000, find the proper tax by using the tax tables found in the back of this booklet. If line 21 is greater than $24,000 multiply by 0.05'; 'For the 2024 tax year, the threshold is $1,053,750' (4% surtax, TIR 23-12 and the 4% Surtax FAQs); Major 2024 Tax Changes (bank-interest deduction repeal; TIR 24-4 joint-filing mandate) — both passes agree. (mass.gov returns HTTP 403 to non-browser fetchers; both documents were retrieved from the Wayback Machine's archive of the SAME official mass.gov URLs, the same provenance path as the shipped MA form pack.)",
+    "source": "@@fb90d61c265e",
     "url": "https://www.mass.gov/doc/2024-form-1-instructions/download"
    },
    "marginal_rate": "0.05",

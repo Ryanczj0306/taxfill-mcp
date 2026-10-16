@@ -222,6 +222,18 @@ class FormPack(BaseModel):
             "values printed, instead of the FAIL that rejected every correct spouse-owned filing."
         ),
     )
+    standalone_only_lines: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Lines the form carries only when it is filed BY ITSELF. Forms 8843, 8606 and 5329 print "
+            "'Fill in your address(es) only if you are filing this form by itself and not with your "
+            "(U.S.) tax return', so attached to a return their address boxes are correctly BLANK. In a "
+            "verify_filing that also holds a Form 1040, 1040-SR, 1040-NR or 1040-X, a blank value on these lines is "
+            "neither an identity mismatch nor a missing current address (P-002); a filled one is still checked "
+            "against the confirmed current address and against any other form that maps the same line. "
+            "Verified alone, the form is treated as filed by itself."
+        ),
+    )
     signature: Signature | None = Field(
         default=None,
         description="Omitted for attachment-only schedules that carry no signature block of their own.",
@@ -353,6 +365,12 @@ class FormPack(BaseModel):
                 f"do not. The flag RELAXES the cross-form comparison for a field, so a field that is "
                 f"not compared in the first place has nothing to relax"
             )
+        unknown_standalone = [k for k in self.standalone_only_lines if k not in lines]
+        if unknown_standalone:
+            raise ValueError(
+                f"standalone_only_lines entries must be logical line keys (the 'line:' values) — "
+                f"{unknown_standalone} match no line in this pack"
+            )
         return self
 
     @model_validator(mode="after")
@@ -396,9 +414,17 @@ def load_pack(path: str | Path) -> FormPack:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError(
-            f"{path}: a form pack must be a YAML mapping (key: value pairs), "
+            f"{_display(path)}: a form pack must be a YAML mapping (key: value pairs), "
             f"got {type(raw).__name__} — see docs/dev/DEV_PLAN.md section 5 for the schema"
         )
     pack = FormPack.model_validate(raw)
     _PACK_CACHE[key] = pack
     return pack.model_copy(deep=True)
+
+
+
+def _display(path) -> str:
+    """The data-relative form of a pack path for messages (Phase K JK27; a late import avoids a cycle)."""
+    from taxfill_core.datadir import display_path  # noqa: PLC0415
+
+    return display_path(path)

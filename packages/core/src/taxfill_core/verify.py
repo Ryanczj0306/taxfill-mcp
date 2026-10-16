@@ -2004,10 +2004,40 @@ def _cross_form_check(
     )
 
 
+# The returns a "fill in your address only if you are filing this form by itself and not with your (U.S.) tax return"
+# form can ride with: the individual income-tax returns. Not every signed pack is one: Form 843 (a claim), Form 8316
+# (an employer-refusal statement) and Form W-7 (an ITIN application) are filed without a return, and a state return
+# is not the U.S. tax return those captions name (Phase K JK27 final review).
+_INCOME_TAX_RETURN_FORMS = frozenset({"1040", "1040SR", "1040NR", "1040X"})
+
+
+def _return_keys(items: Sequence[FilingItem]) -> frozenset[str]:
+    """Form keys of the federal individual income-tax returns (Form 1040, 1040-SR, 1040-NR, 1040-X) in a filing.
+
+    Form 1040-X counts: the Form 8606 instructions file a revised 8606 "with Form 1040-X".
+    """
+    return frozenset(
+        item.form_key for item in items
+        if item.pack.jurisdiction == "federal"
+        and re.sub(r"[^0-9A-Z]", "", item.pack.form.upper()) in _INCOME_TAX_RETURN_FORMS
+    )
+
+
+def _filed_with_a_return(items: Sequence[FilingItem]) -> frozenset[str]:
+    """Form keys of the items that travel WITH a Form 1040, 1040-SR or 1040-NR of the same filing.
+
+    For these, the lines a pack declares in ``standalone_only_lines`` (the "Fill in your address only if you are
+    filing this form by itself" boxes of Forms 8843, 8606 and 5329) are correctly blank.
+    """
+    returns = _return_keys(items)
+    return frozenset(item.form_key for item in items if returns - {item.form_key})
+
+
 def _identity_checks(
     items: Sequence[FilingItem],
     fields_by_key: Mapping[str, Mapping[str, str]],
 ) -> list[IdentityCheck]:
+    attached = _filed_with_a_return(items)
     identity_names: list[str] = []
     for item in items:
         for name in item.pack.identity_fields:
@@ -2017,6 +2047,7 @@ def _identity_checks(
     checks: list[IdentityCheck] = []
     for name in identity_names:
         values_by_form: dict[str, str] = {}
+        blank_by_rule: list[str] = []
         for item in items:
             pack_field = next((f for f in item.pack.fields if f.line == name), None)
             if pack_field is None:
@@ -2042,7 +2073,29 @@ def _identity_checks(
                 # which is also why values_by_form can never come out empty here
                 # (identity_fields entries are schema-checked to be real lines).
                 continue
+            if not value and item.form_key in attached and name in item.pack.standalone_only_lines:
+                # The form prints "Fill in your address(es) only if you are filing this form by itself and not
+                # with your (U.S.) tax return", and this filing holds the return: the blank is what the form asks
+                # for. Form 8843 DECLARES mailing_address (a standalone 8843 must carry the current address,
+                # P-002), so the 8606 rule above never reached it, and every correct 1040-NR + 8843 filing FAILed
+                # here (Phase K JK27, found by the journey-2 golden). A filled value is still compared.
+                blank_by_rule.append(item.form_key)
+                continue
             values_by_form[item.form_key] = value
+        if not values_by_form and blank_by_rule:
+            checks.append(
+                IdentityCheck(
+                    field=name,
+                    status=SKIPPED,
+                    detail=(
+                        f"identity field '{name}' is blank on {', '.join(blank_by_rule)}, which carry it only "
+                        f"when filed by themselves; this filing holds a return "
+                        f"({', '.join(sorted(_return_keys(items)))}), so the blank is correct and there is "
+                        f"nothing to compare"
+                    ),
+                )
+            )
+            continue
         if not values_by_form:
             checks.append(
                 IdentityCheck(
@@ -2236,6 +2289,7 @@ def _is_filer_address_line(line: str) -> bool:
 def _confirmed_address_checks(
     forms: Sequence[tuple[str, FormPack, Mapping[str, str]]],
     confirmed_current_address: str,
+    attached: frozenset[str] = frozenset(),
 ) -> list[IdentityCheck]:
     """Compare each form's TAXPAYER MAILING address against the user-confirmed current address.
 
@@ -2250,7 +2304,9 @@ def _confirmed_address_checks(
     symmetric, so a wrong house number ('10' vs '100'), a missing city, an extra unit,
     or a stale street all FAIL, while 'Street' vs 'St' and 'Illinois' vs 'IL' PASS.
     A participating form whose address lines are all blank FAILs explicitly (a blank
-    return address is exactly the P-002 hazard).
+    return address is exactly the P-002 hazard). ``attached`` names the forms filed WITH a
+    return: their ``standalone_only_lines`` are correctly blank and do not make the form
+    participate (a filled one still does).
     """
     if not normalize_text(confirmed_current_address):
         raise ValueError(
@@ -2268,11 +2324,11 @@ def _confirmed_address_checks(
                 continue
             if _ZIP4_COMPONENT_RE.search(pack_field.line):
                 continue  # zip+4 is optional precision, not identity
-            participating.add(key)
             raw = _lookup_raw(pack, pack_field, fields)
-            if raw is None:
-                continue
-            value = normalize_on_disk(pack_field, raw)
+            value = normalize_on_disk(pack_field, raw) if raw is not None else ""
+            if not value and key in attached and pack_field.line in pack.standalone_only_lines:
+                continue  # "Fill in your address only if you are filing this form by itself" (Phase K JK27)
+            participating.add(key)
             if value:
                 per_form.setdefault(key, {})[pack_field.line] = value
 
@@ -2752,6 +2808,7 @@ def verify_filing(
             _confirmed_address_checks(
                 [(item.form_key, item.pack, fields_by_key[item.form_key]) for item in filing_items],
                 confirmed_current_address,
+                _filed_with_a_return(filing_items),
             )
         )
 

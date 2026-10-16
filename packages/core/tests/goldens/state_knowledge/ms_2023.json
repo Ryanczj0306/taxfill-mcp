@@ -2,23 +2,30 @@
  "_strings": {
   "@@02a2e55f240c": "If any of your income was exempt from federal tax under a treaty: MS does not conform to federal tax treaties, so that income is still taxable to MS — do not carry the federal exclusion onto the state return.",
   "@@05819b3ca9df": "https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions",
+  "@@179b3299fb5b": "annual (per tax year; the shipped MS 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@2546055790fa": "Treaty conformity — MS does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by MS. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: Mississippi does NOT conform to federal tax treaties and re-taxes treaty-exempt income. Two .gov findings establish this. (1) The MS DOR Individual Income Tax FAQ states verbatim: \"Does Mississippi honor federal income tax exemption treaties between the United States and other foreign counties? No, as a general rule, Mississippi does not follow federal income tax exemption treaties. Any income earned on a 1042S should be reported on the Mississippi return as taxable income.\" (2) Unlike most states, MS does NOT start from federal AGI — the 2023 Form 80-105 builds Mississippi income from scratch line-by-line (wages, business income, capital gain, interest, dividends, pensions, etc. on lines 38-48; \"Total income\" line 49) and then applies MS-specific adjustments (lines 50-65) to reach \"Mississippi adjusted gross income\" (line 66). Because the return is built from gross income items rather than inheriting the federal AGI exclusion, treaty-exempt wages/income (e.g., reported on a 1042-S) are pulled into Mississippi taxable income directly; no special add-back schedule is needed. Net effect: treaty-exempt income IS taxed by Mississippi, so conforms_to_federal_treaties = false.",
+  "@@2ec700e6a8d7": "The shipped MS 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@47151e8cffb2": "Child Adoption Credit (credit code 25) — A Mississippi taxpayer who legally adopts a dependent child under the laws of Mississippi, for qualified adoption expenses paid or incurred during the tax year for each child. The credit is claimed for the tax year in which the adoption becomes final.",
   "@@489c867a86d0": "Form 80-105, Mississippi Resident Individual Income Tax Return (2023; Form 80-105-23-8-1-000, Rev. 11/23)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@624509fec57b": "Dependent Care Credit (credit code 37) — Mississippi individuals who claim the federal Child and Dependent Care Credit on their federal return for certain dependent care expenses. The taxpayer must actually claim the federal credit and must have federal adjusted gross income (AGI) of not more than $50,000. New for tax year 2023.",
   "@@663f75566166": "Mississippi Department of Revenue, 2023 Individual Income Tax Instructions (Form 80-100-23), 'Dependent Care Credit' section",
   "@@934b382b83a3": "Law change NOT modeled by the engine (status final_form_published): The Mississippi CHILD ADOPTION CREDIT (credit code 25) was INCREASED effective calendar year 2023 and after (Senate Bill 2696): up to $10,000 per child for a dependent child residing in Mississippi before the adoption, increased from $5,000, and up to $5,000 per child for a dependent child residing outside Mississippi but legally adopted under Mississippi law. It is claimed for the tax year in which the adoption becomes final, is nonrefundable, and any unused credit may be carried forward 5 years. Resolve via: The 'Child Adoption Credit' section of the 2023 Individual Income Tax Instructions (Form 80-100-23, the citation URL) and the 2023 legislative summary of Senate Bill 2696; the credit is applied against the line 17 tax, after the rate schedule this pack models.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9a69f7b3bc3e": "Credit for Income Tax Paid to Another State — A legal resident of Mississippi who earns income in another state and is required to pay income tax to that other state, on income also taxed by Mississippi. The taxpayer MUST file a return with the other state and attach a copy (plus Form 80-160); W-2 withholding amounts alone are not sufficient. Not applicable on the Non-Resident return.",
   "@@9e598874f7da": "Returns requesting a REFUND: Mississippi Department of Revenue, P.O. Box 23058, Jackson, MS 39225-3058. (Per Form 80-105/80-205 footer and 2023 instructions Form 80-100.)",
   "@@a597019e7bec": "Mississippi Department of Revenue, 2023 Individual Income Tax Instructions (Form 80-100-23), 'Child Adoption Credit' section and 2023 legislative summary (Senate Bill 2696)",
   "@@a871e5af1ef0": "If any income was exempt from federal tax under a treaty: MS does not conform to federal tax treaties — that income is still taxable to MS.",
   "@@bb05f09a5f46": "Law change NOT modeled by the engine (status final_form_published): NEW for tax year 2023 — the Mississippi DEPENDENT CARE CREDIT (credit code 37): 25% of the federal Child and Dependent Care Credit actually claimed on the federal return, available only to filers with federal AGI of not more than $50,000, nonrefundable and limited to the taxpayer's total Mississippi income tax liability. Claimed on Form 80-401 (Tax Credit Summary Schedule) and carried to Form 80-105 line 19 (resident) or Form 80-205 line 21. Resolve via: The 'Dependent Care Credit' section of the 2023 Individual Income Tax Instructions (Form 80-100-23, the citation URL) plus Form 80-401; the amount depends on the federal credit claimed, and calc.state_tax computes only the line 17 tax before credits.",
   "@@db1ad2a47049": "Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return (2023; Form 80-205-23-8-1-000, Rev. 11/23)",
+  "@@e31da23d41d0": "2023 Mississippi Resident, Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-23-1-1-000, Rev. 09/23), MS DOR — 'Tax Rates' (p.22): 'Income Tax: 0% on the first $10,000.00 of taxable income and 5% on taxable income in excess of $10,000.00'; 'Schedule of Tax Computation' (Appendix, p.27): line 1 first $10,000 ($0-$10,000) x 0%, line 2 remaining balance x 5%, line 4 total to Form 80-105 page 1 line 17; 'Filing Status and Exemptions' table (p.6): exemption $12,000 married filing joint/combined and Married-Spouse Died 2023, $6,000 married filing separate (each), $8,000 Head of Family, $6,000 single; standard deduction $4,600 / $4,600 / $2,300 / $3,400 / $2,300; 'Additional Exemptions' chart (p.7): $1,500 each dependent, $1,500 age 65 or over (taxpayer/spouse only), $1,500 blind (taxpayer/spouse only); Deductions and Line 14/15/16/17 instructions (p.8); 'Round to the Nearest Dollar' (p.22). Corroborated by 2023 Form 80-105 (Form 80-105-23-8-1-000, Rev. 11/23) page 1, which prints the exemption amounts next to each filing-status box and the line 10 'Line 9 x $1,500' multiplication.",
   "@@e59e94f9886c": "Long Term Care Credit (credit code 17) — Mississippi individual taxpayers who pay premiums during the taxable year for certain qualified long-term care insurance policies as defined in IRC Section 7702B. If more than one person is carried on the same policy, the credit is available only for that one policy.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f166bc2cb5e6": "MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; due date; resident/nonresident/part-year forms; filing requirement; 1042-S taxable)"
+  "@@f166bc2cb5e6": "MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; due date; resident/nonresident/part-year forms; filing requirement; 1042-S taxable)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -142,6 +149,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MS 2023 return (Form 80-105, Mississippi Resident Individual Income Tax Return (2023; Form 80-105-23-8-1-000, Rev. 11/23)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MS revenue department home page (read 2026-10-16)",
+      "url": "https://www.dor.ms.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@489c867a86d0",
+    "jurisdiction": "states/ms",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MS return, and the MS 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MS instructions for amended returns on the MS revenue department's site (https://www.dor.ms.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -205,9 +247,287 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "MS revenue department home page (read 2026-10-16)",
+      "url": "https://www.dor.ms.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MS instructions for amended returns on the MS revenue department's site (https://www.dor.ms.gov/).",
+    "form": "@@489c867a86d0",
+    "headline": "MS 2023, amended (Form 80-105, Mississippi Resident Individual Income Tax Return (2023; Form 80-105-23-8-1-000, Rev. 11/23)): you owe $88",
+    "jurisdiction": "states/ms",
+    "notes": [
+     "@@a871e5af1ef0"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@2ec700e6a8d7",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@05819b3ca9df"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ms",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@663f75566166",
+     "cadence": "@@179b3299fb5b",
+     "topic": "credits",
+     "url": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@2ec700e6a8d7",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@05819b3ca9df"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ms",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@f166bc2cb5e6",
+     "cadence": "@@179b3299fb5b",
+     "topic": "filing_logistics",
+     "url": "@@05819b3ca9df"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@2ec700e6a8d7",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@05819b3ca9df"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ms",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@f166bc2cb5e6",
+     "cadence": "@@179b3299fb5b",
+     "topic": "forms_and_instructions",
+     "url": "@@05819b3ca9df"
+    },
+    {
+     "answers": "MS DOR — 2023 Form 80-105 Resident Individual Income Tax Return (income built from line items, not federal AGI; line 66 Mississippi adjusted gross income; mailing addresses)",
+     "cadence": "@@179b3299fb5b",
+     "topic": "forms_and_instructions",
+     "url": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105238.pdf"
+    },
+    {
+     "answers": "MS DOR — 2023 Form 80-205 Non-Resident / Part-Year Resident Individual Income Tax Return",
+     "cadence": "@@179b3299fb5b",
+     "topic": "forms_and_instructions",
+     "url": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80205238.pdf"
+    },
+    {
+     "answers": "MS DOR — 2023 Form 80-100 Resident, Non-Resident and Part-Year Resident Instructions (residency/domicile rules; filing thresholds; April 15 due date; mailing addresses)",
+     "cadence": "@@179b3299fb5b",
+     "topic": "forms_and_instructions",
+     "url": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf"
+    },
+    {
+     "answers": "MS DOR — 2023 Form 80-106 Individual/Fiduciary Income Tax Payment Voucher (check payee 'Department of Revenue'; with/without-return mailing; TAP payment)",
+     "cadence": "@@179b3299fb5b",
+     "topic": "forms_and_instructions",
+     "url": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80106238.pdf"
+    },
+    {
+     "answers": "MS DOR — Make Online Tax Payments / Taxpayer Access Point (TAP)",
+     "cadence": "@@179b3299fb5b",
+     "topic": "forms_and_instructions",
+     "url": "https://www.dor.ms.gov/forms-resources/make-online-tax-payments"
+    },
+    {
+     "answers": "MS DOR — Taxpayer Access Point (TAP) login system",
+     "cadence": "@@179b3299fb5b",
+     "topic": "forms_and_instructions",
+     "url": "https://tap.dor.ms.gov/_/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@2ec700e6a8d7",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@05819b3ca9df"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ms",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@e31da23d41d0",
+     "cadence": "@@179b3299fb5b",
+     "topic": "law_changes",
+     "url": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@2ec700e6a8d7",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@05819b3ca9df"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ms",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@e31da23d41d0",
+     "cadence": "@@179b3299fb5b",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@2ec700e6a8d7",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@05819b3ca9df"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ms",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/ms",
  "state_scope": {
@@ -686,7 +1006,7 @@
   "common_result": {
    "base_kind": "state_gross_income",
    "citation": {
-    "source": "2023 Mississippi Resident, Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-23-1-1-000, Rev. 09/23), MS DOR — 'Tax Rates' (p.22): 'Income Tax: 0% on the first $10,000.00 of taxable income and 5% on taxable income in excess of $10,000.00'; 'Schedule of Tax Computation' (Appendix, p.27): line 1 first $10,000 ($0-$10,000) x 0%, line 2 remaining balance x 5%, line 4 total to Form 80-105 page 1 line 17; 'Filing Status and Exemptions' table (p.6): exemption $12,000 married filing joint/combined and Married-Spouse Died 2023, $6,000 married filing separate (each), $8,000 Head of Family, $6,000 single; standard deduction $4,600 / $4,600 / $2,300 / $3,400 / $2,300; 'Additional Exemptions' chart (p.7): $1,500 each dependent, $1,500 age 65 or over (taxpayer/spouse only), $1,500 blind (taxpayer/spouse only); Deductions and Line 14/15/16/17 instructions (p.8); 'Round to the Nearest Dollar' (p.22). Corroborated by 2023 Form 80-105 (Form 80-105-23-8-1-000, Rev. 11/23) page 1, which prints the exemption amounts next to each filing-status box and the line 10 'Line 9 x $1,500' multiplication.",
+    "source": "@@e31da23d41d0",
     "url": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100231.pdf"
    },
    "rate": null,

@@ -167,7 +167,7 @@ An abbreviated, synthetic walkthrough (a hypothetical filer with demo numbers: a
 Yes. You are preparing and filing your own return — the same thing you'd do with pen and paper, with an AI assistant and verification tooling helping. taxfill is not a paid preparer and never signs anything; you do.
 
 **What if I already filed?**
-v0.1 targets original returns (including late back-filing). Amended returns ship too: Form 1040-X Rev. 2-2024 for TY2023–2024, Rev. 12-2025 for TY2025, and the Rev. 12-2026 draft for TY2026 (rehearsal-only until the final posts).
+v0.1 targets original returns (including late back-filing). Amended returns ship too: Form 1040-X Rev. 12-2025 for TY2023–2025 (the revision the current Form 1040-X instructions are used with; on a TY2023 or TY2024 amendment the qualified business income deduction goes on line 4a and line 4b, the 2025 Schedule 1-A deductions, stays blank), and the Rev. 12-2026 draft for TY2026 (rehearsal-only until the final posts). `file_and_pay` gives an amended return its own checklist: a Form 1040-X gets the address, payment and attachment rules of the current Form 1040-X instructions, and a state amended return gets the state's own rules where its knowledge pack carries them (Georgia's Form 500X today) or a pointer to the state revenue department, never the original return's address or due date.
 
 **What if I get audited?**
 The agent records every position decision and its cited authority in a `RECONCILIATION.md` — a line-by-line audit trail of what was claimed and why, which is exactly what you want to have on hand. (The skill instructs the agent to maintain it as you go.)

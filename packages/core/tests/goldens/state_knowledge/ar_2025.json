@@ -23,7 +23,8 @@
   "@@c988feddf7b0": "Arkansas 2025 Individual Income Tax Forms and Instructions booklet, 'Choose the appropriate address below to mail your return' (TAX DUE RETURN P.O. Box 2144; REFUND RETURN P.O. Box 1000; NO TAX DUE/REFUND RETURN P.O. Box 2144) - Arkansas Dept. of Finance and Administration",
   "@@d9d3a9fb03f2": "https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR2441_Child_andDependentCareExpenses.pdf",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f6c4fccdaabc": "Arkansas 2025 Individual Income Tax Forms and Instructions booklet, WHEN TO FILE ('You can file your calendar year original tax return any time after December 31, 2025, but NO LATER THAN April 15, 2026, (unless an extension has been granted)'); a federal extension (Form 4868) extends the Arkansas deadline to FILE until November 15th (an AR1055-IT grants at most 210 days, also to November 15th), but 'Any tax due must be paid by April 15, 2026 to avoid failure to pay penalty and interest'; back cover checklist repeats 'YOU MUST FILE BY APRIL 15, 2026'"
+  "@@f6c4fccdaabc": "Arkansas 2025 Individual Income Tax Forms and Instructions booklet, WHEN TO FILE ('You can file your calendar year original tax return any time after December 31, 2025, but NO LATER THAN April 15, 2026, (unless an extension has been granted)'); a federal extension (Form 4868) extends the Arkansas deadline to FILE until November 15th (an AR1055-IT grants at most 210 days, also to November 15th), but 'Any tax due must be paid by April 15, 2026 to avoid failure to pay penalty and interest'; back cover checklist repeats 'YOU MUST FILE BY APRIL 15, 2026'",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -147,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended AR 2025 return (Form AR1000F - Full Year Resident Individual Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "AR revenue department home page (read 2026-10-16)",
+      "url": "https://www.dfa.arkansas.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "jurisdiction": "states/ar",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended AR return, and the AR 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the AR instructions for amended returns on the AR revenue department's site (https://www.dfa.arkansas.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -207,6 +243,29 @@
      "@@81fbb800e9e1"
     ],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "AR revenue department home page (read 2026-10-16)",
+      "url": "https://www.dfa.arkansas.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the AR instructions for amended returns on the AR revenue department's site (https://www.dfa.arkansas.gov/).",
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "headline": "AR 2025, amended (AR1000F - Full Year Resident Individual Income Tax Return): you owe $88",
+    "jurisdiction": "states/ar",
+    "notes": [
+     "@@81fbb800e9e1"
+    ],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -921,7 +980,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: AR 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: AR 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

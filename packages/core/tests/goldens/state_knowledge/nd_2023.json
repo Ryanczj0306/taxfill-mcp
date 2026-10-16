@@ -1,20 +1,27 @@
 {
  "_strings": {
+  "@@06e55b8b6b4c": "The shipped ND 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@26a0591e1b57": "Family Member Care Tax Credit — A taxpayer who paid qualified care expenses for a qualifying family member who is (a) related to the taxpayer by blood or marriage, (b) at least 65 years old OR disabled per the Social Security Administration, and (c) has federal taxable income of $20,000 or less if unmarried, or combined federal taxable income of $35,000 or less if married. Care must be provided by an unrelated person/organization and not reimbursed by insurance or a government assistance program. (This is ND's analogue to a dependent-care credit, but it covers elderly/disabled family members, not children.)",
+  "@@270c9b0bb94d": "annual (per tax year; the shipped ND 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@3948af664099": "2023 North Dakota Individual Income Tax Booklet (Forms ND-EZ and ND-1 instructions), ND Office of State Tax Commissioner — '2023 Tax Rate Schedules', printed p.28 (PDF p.30); 2023 Tax Table pp.20-27; 'Line 20 - Tax' instruction p.15; 'Income tax rate reduction' p.2; 2023 Form ND-1 (SFN 28702), page 1 lines 1b/18 and page 2 lines 19-20",
   "@@46c0cd2c2f5a": "If any of your income was exempt from federal tax under a treaty: ND does not conform to federal tax treaties, so that income is still taxable to ND — do not carry the federal exclusion onto the state return.",
   "@@49e6160b7b4e": "Form ND-1 (Individual Income Tax Return). A simplified Form ND-EZ is available for qualifying full-year residents who answer \"No\" to all the \"Which form to use\" questions (e.g., no additions/most subtractions, no nonresident/part-year status, no other-state credit).",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@5877cb897948": "Renter's Refund (Renter's Property Tax Refund / circuit-breaker) — A North Dakota renter who is age 65 or older OR has a permanent and total disability, whose income (including spouse and dependents) does not exceed $70,000. Rent must be for the renter's place of residence or a mobile home lot (heat, water, lights, telephone, and furniture costs do not count as rent). For a married couple living together, only one spouse may apply. There is no asset limitation for renters.",
   "@@58fec5e10db1": "ND 2023 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions) — Who must file (pp.4-5), Statutory 7-month rule, treaty statement (p.5), When and where to file / mailing PO Box 5621 (p.7), assembly & check payee",
   "@@6576ce5c07a5": "Marriage Penalty Credit — Married couples filing a JOINT North Dakota return where both spouses have qualified income (wages, self-employment, taxable retirement/Social Security). Qualifies only if joint ND taxable income (Form ND-1 line 18) exceeds $74,862 AND the lower-earning spouse's qualified income exceeds $43,980. Designed to offset the higher tax that two-earner couples pay versus filing as singles.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9b28c6d02d20": "Schedule ND-1NR (Tax Calculation for Nonresidents and Part-Year Residents), filed with Form ND-1. (Nonresidents and part-year residents file Form ND-1 plus Schedule ND-1NR; they cannot use Form ND-EZ.)",
   "@@a3e2851aad33": "Treaty conformity — ND does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by ND. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: ND does NOT conform — it re-taxes federally treaty-exempt income. Although the ND-1 resident return starts from federal taxable income (Form 1040/1040-SR line 15, ND-1 line 1b), the 2023 ND-1 Individual Income Tax Booklet (p.5) states: \"Except where an income tax treaty between the United States and a foreign country specifically exempts income from taxation by a U.S. state, income tax treaties between the U.S. and foreign countries do not apply for North Dakota income tax purposes. Therefore, you may have to pay North Dakota income tax on gross income from North Dakota sources even though the income is exempt from U.S. income tax because of a treaty.\" The mechanism is in the Guideline: Income Taxation of Nonresident Aliens — the taxpayer must complete a Pro Forma U.S. Form 1040NR but \"you must disregard any instruction to the U.S. income tax return that refers to the treaty,\" then carry that pro-forma 1040NR line 15 (with treaty income NOT excluded) to ND-1 line 1b. So treaty-exempt income that drops out of the actual federal return is effectively added back (rebuilt) before flowing into ND income. This is the same non-conforming posture as CA/CT/MD/MS. The treaty pass-through applies ONLY where a treaty article specifically extends the exemption to the 50 U.S. states.",
   "@@a90893f07aef": "Homestead Property Tax Credit — A North Dakota homeowner who is age 65 or older OR has a permanent and total disability (no age requirement for disability), who lives in and owns the property, and whose income (including spouse and dependents) does not exceed $70,000. For a married couple living together, only one spouse may apply. There is no asset limitation for homeowners. Disability applicants must include a physician's certificate.",
   "@@e710ddc485f9": "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/2023-individual-income-tax-booklet.pdf",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f2d9c432b46e": "If any income was exempt from federal tax under a treaty: ND does not conform to federal tax treaties — that income is still taxable to ND."
+  "@@f2d9c432b46e": "If any income was exempt from federal tax under a treaty: ND does not conform to federal tax treaties — that income is still taxable to ND.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -141,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended ND 2023 return (Form ND-1 (Individual Income Tax Return). A simplified Form ND-EZ is available for qualifying full-year residents who answer \"No\" to all the \"Which form to use\" questions (e.g., no additions/most subtractions, no nonresident/part-year status, no other-state credit).): you owe $88 more.",
+    "citations": [
+     {
+      "source": "ND revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.nd.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@49e6160b7b4e",
+    "jurisdiction": "states/nd",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended ND return, and the ND 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the ND instructions for amended returns on the ND revenue department's site (https://www.tax.nd.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -204,9 +246,263 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "ND revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.nd.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the ND instructions for amended returns on the ND revenue department's site (https://www.tax.nd.gov/).",
+    "form": "@@49e6160b7b4e",
+    "headline": "ND 2023, amended (Form ND-1 (Individual Income Tax Return). A simplified Form ND-EZ is available for qualifying full-year residents who answer \"No\" to all the \"Which form to use\" questions (e.g., no additions/most subtractions, no nonresident/part-year status, no other-state credit).): you owe $88",
+    "jurisdiction": "states/nd",
+    "notes": [
+     "@@f2d9c432b46e"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@06e55b8b6b4c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@e710ddc485f9"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "ND Office of State Tax Commissioner — 2023 Individual Income Tax Booklet (Marriage Penalty Credit Worksheet) and Marriage Penalty Tax Credit web page",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "credits",
+     "url": "@@e710ddc485f9"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — 2023 Schedule ND-1FC (Family Member Care Tax Credit) and 2023 Schedule ND-1TC",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "credits",
+     "url": "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/schedule-nd-1fc-2023.pdf"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Renter's Refund web page and Homestead Property Tax Credit and Renter's Refund web page",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "credits",
+     "url": "https://www.tax.nd.gov/property-tax-credits/renters-refund"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Homestead Property Tax Credit web page and Homestead Property Tax Credit and Renter's Refund web page",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "credits",
+     "url": "https://www.tax.nd.gov/homestead-property-tax-credit"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@06e55b8b6b4c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@e710ddc485f9"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@58fec5e10db1",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "filing_logistics",
+     "url": "@@e710ddc485f9"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@06e55b8b6b4c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@e710ddc485f9"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@58fec5e10db1",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "forms_and_instructions",
+     "url": "@@e710ddc485f9"
+    },
+    {
+     "answers": "Form ND-1 (2023) — line 1a federal AGI (1040 line 11), line 1b federal taxable income (1040 line 15), additions lines 2-4, mailing to Office of State Tax Commissioner PO Box 5621 Bismarck ND 58506-5621, pay to ND State Tax Commissioner",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/form-nd-1-2023.pdf"
+    },
+    {
+     "answers": "Schedule ND-1NR (2023) — Tax Calculation for Nonresidents and Part-Year Residents",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/schedule-nd-1nr-2023.pdf"
+    },
+    {
+     "answers": "Guideline: Income Taxation of Nonresident Aliens — ND does not recognize treaties unless they specifically exempt income from state tax; Pro Forma 1040NR disregarding treaty provisions; enter 1040NR line 15 on ND-1 line 1b",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/sites/www/files/documents/guidelines/individual/income-taxation-of-nonresident-aliens-guideline.pdf"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Individual Income Tax overview page (due date on/before April 15; ND TAP payment portal)",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/individual-income-tax"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Resident residency definition (full-time + 7-month/210-day rule)",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/news/resources/residency/resident"
+    },
+    {
+     "answers": "ND Office of State Tax Commissioner — Non-Resident residency definition and ND-source income",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.nd.gov/news/resources/residency/non-resident"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@06e55b8b6b4c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@e710ddc485f9"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@3948af664099",
+     "cadence": "@@270c9b0bb94d",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@e710ddc485f9"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@06e55b8b6b4c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@e710ddc485f9"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nd",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/nd",
  "state_scope": {
@@ -609,7 +905,7 @@
   "common_result": {
    "base_kind": "federal_taxable_income",
    "citation": {
-    "source": "2023 North Dakota Individual Income Tax Booklet (Forms ND-EZ and ND-1 instructions), ND Office of State Tax Commissioner — '2023 Tax Rate Schedules', printed p.28 (PDF p.30); 2023 Tax Table pp.20-27; 'Line 20 - Tax' instruction p.15; 'Income tax rate reduction' p.2; 2023 Form ND-1 (SFN 28702), page 1 lines 1b/18 and page 2 lines 19-20",
+    "source": "@@3948af664099",
     "url": "@@e710ddc485f9"
    },
    "rate": null,

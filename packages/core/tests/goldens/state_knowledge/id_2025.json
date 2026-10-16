@@ -22,7 +22,8 @@
   "@@dcde9a530bfe": "The newest shipped ID pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f1e6a258b9fd": "Form 43 (Part-year Resident and Nonresident Income Tax Return); part-year/nonresident filers claiming additions, subtractions, or certain credits also file Form 39NR (Part-year Resident and Nonresident Supplemental Schedule)",
-  "@@f8523cc62c7a": "Parental Choice Tax Credit (new for 2025) — You must have APPLIED FOR and been APPROVED for the credit through Idaho's Taxpayer Access Point (tax.idaho.gov/TAP) before claiming it; the credit is claimed for qualified education expenses incurred during 2025."
+  "@@f8523cc62c7a": "Parental Choice Tax Credit (new for 2025) — You must have APPLIED FOR and been APPROVED for the credit through Idaho's Taxpayer Access Point (tax.idaho.gov/TAP) before claiming it; the credit is claimed for qualified education expenses incurred during 2025.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -146,6 +147,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended ID 2025 return (Form 40 (Individual Income Tax Return); residents claiming additions, subtractions, or certain credits also file Form 39R (Resident Supplemental Schedule)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "ID revenue department home page (read 2026-10-16)",
+      "url": "https://tax.idaho.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@28ce6013def9",
+    "jurisdiction": "states/id",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended ID return, and the ID 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the ID instructions for amended returns on the ID revenue department's site (https://tax.idaho.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -200,6 +236,27 @@
     "jurisdiction": "states/id",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "ID revenue department home page (read 2026-10-16)",
+      "url": "https://tax.idaho.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the ID instructions for amended returns on the ID revenue department's site (https://tax.idaho.gov/).",
+    "form": "@@28ce6013def9",
+    "headline": "ID 2025, amended (Form 40 (Individual Income Tax Return); residents claiming additions, subtractions, or certain credits also file Form 39R (Resident Supplemental Schedule)): you owe $88",
+    "jurisdiction": "states/id",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -846,7 +903,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: ID 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65, blind). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: ID 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65, blind). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

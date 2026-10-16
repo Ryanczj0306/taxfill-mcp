@@ -57,6 +57,19 @@
 # Routing/account numbers, names, SSNs, occupations, phones, descriptions, and
 # retirement claim numbers stay `text`.
 #
+# Form 538-S occupations: NOT mapped (JK27, 2026-10-16). Page 51 prints a
+# two-row box under "Under penalty of perjury ...": "Taxpayer's Signature and
+# Date" / "Spouse's Signature and Date" on top (y 156.2-192.1) and "Occupation"
+# / "Occupation" below (y 119.2-155.2), split by a rule at y 155.2-156.2. The
+# only widgets in that box, "538-S Taxpayer Occupation" and "538-S Spouse
+# Occupation" (both y 159.43-178.37), sit in the SIGNATURE row: a sentinel
+# render printed both values inside the signature boxes, and the Occupation row
+# has no widget at all. Until JK27 this pack mapped f538s.taxpayer_occupation /
+# f538s.spouse_occupation onto them, which put the occupation where the filer
+# signs. The 538-S occupations are written by hand. The Form 511 page-44
+# occupation boxes (signature.taxpayer_occupation / .spouse_occupation) are
+# separate widgets and unaffected.
+#
 # Checkboxes / radio groups. Filing Status is ONE /Btn field named "Filing Status"
 # with five distinct on_states (/Single /Married Joint /Married Separate /HoH
 # /Widower); per CONVENTIONS each option is its own line sharing that field +
@@ -1195,12 +1208,12 @@ fields:
     field: "538-S Discuss Return"
     type: checkbox
     on_state: /Yes
-  - line: f538s.taxpayer_occupation          # Taxpayer's Occupation
-    field: "538-S Taxpayer Occupation"
-    type: text
-  - line: f538s.spouse_occupation            # Spouse's Occupation
-    field: "538-S Spouse Occupation"
-    type: text
+  # f538s.taxpayer_occupation / f538s.spouse_occupation: NOT mapped (JK27, 2026-10-16). The widgets named "538-S
+  # Taxpayer Occupation" [39.31, 159.43, 299.83, 178.37] and "538-S Spouse Occupation" [306.68, 159.43, 571.79,
+  # 178.37] lie wholly ABOVE the rule (y 155.2-156.2) that closes the "Taxpayer's Signature and Date" / "Spouse's
+  # Signature and Date" boxes (y 156.2-192.1), i.e. inside the signature boxes; the "Occupation" boxes below (y
+  # 119.2-155.2) carry no widget. A sentinel render printed both values where the filers sign. No widget is right
+  # for the occupations, so they are written by hand (see the header) -- as the 2024 pack, same rects, already has it.
 relations:
   # Core Form 511 on-face arithmetic (every operand mapped, unconditional).
   - "3 == 1 - 2"                            # 3 "Line 1 minus line 2"

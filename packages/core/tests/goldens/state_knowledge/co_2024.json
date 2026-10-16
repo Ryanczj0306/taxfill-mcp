@@ -10,15 +10,22 @@
   "@@36622aedad4d": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not re-verified for 2024 (dropped from this pack rather than carried unverified): the DR 0347 child-care-credit percentages (50% / low-income 25%) and the Property Tax/Rent/Heat (PTC) Rebate income limits — resolve them from the 2024 DR 0347 and 2024 DR 0104PTC Book before claiming.",
   "@@3a1d51c6f0a5": "Colorado DOR, 2024 Form DR 0104CN Colorado Child Tax Credit (11/07/24) — eligibility, Regular Child Tax Credit Table, Age 5 and Under / Age 6 to 16 Family Affordability Tax Credit Tables",
   "@@3bcd7792d3a4": "An automatic extension to file is granted until October 15, but there is no extension to pay (use form DR 0158-I to pay before filing). Taxpayers traveling or residing abroad on April 15 have until June 15 to file, and automatically until October 15 if more time is needed; interest applies from April 15.",
+  "@@420e41d608e0": "annual (per tax year; the shipped CO 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@435948df1fb7": "2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Line 12 instructions: \"The income tax rate is currently 4.25%\" (the document is the year-pinned 2024 filing guide); \"2024 Colorado Income Tax Table with tax rate of 4.25%\"; \"Worksheet for taxable incomes over $50,000\" (printed page 38; the printed table ends at the $49,900-$50,000 row) \"Multiply by 4.25% X .0425\"; DR 0104 Line 1 = Federal Taxable Income from Form 1040/1040-SR/1040-SP line 15; \"Colorado income tax is based on your federal taxable income, which has already considered your deductions\"; Line 11 = Colorado Taxable Income (line 9 subtotal minus line 10 subtractions). Booklet table rows verified at 4.25%: $5,100-$5,200 -> $219; $30,800-$30,900 -> $1,311; $49,900-$50,000 -> $2,123 (each = 4.25% of the band midpoint). Second pass: the standalone 2024 DR 0104 form PDF prints the same line structure (line 1 federal taxable income, line 11 Colorado Taxable Income, line 12 Colorado Tax from tax table or DR 0104PN line 36).",
   "@@47c442d49834": "DR 0104 with the DR 0104PN (Part-Year Resident/Nonresident Tax Calculation Schedule) attached — mark the \"Part-Year Resident/Nonresident\" box on the DR 0104 (also when filing jointly and one spouse is a full-year resident and the other is not).",
   "@@48bbd699d398": "Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book; includes DR 0104 form, instructions, 2024 tax table at 4.25%, DR 0104AD, DR 0104CR, DR 0104PN, DR 0900, DR 0158-I)",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@6380849bf15e": "Colorado Earned Income Tax Credit (COEITC) - SSN filers — Full-year or part-year Colorado residents who claim the federal Earned Income Tax Credit (EITC). Part-year residents apportion by the DR 0104PN line 34 percentage (capped at 100%). (ITIN filers, filers whose SSN is not valid for employment, and certain filers under 25 without qualifying children use form DR 0104TN and claim on DR 0104CR line 9 instead.)",
   "@@76e28ba46e67": "Colorado DOR — 2024 DR 0104 Book, \"Mailing Address For Form DR 0104\" (With Payment 80261-0006 / Without Payment 80261-0005)",
   "@@8fbe8729cfc5": "TABOR State Sales Tax Refund (claimed on the 2024 return) — Full-year Colorado residents born before 2006 (or full-year residents under eighteen who are required to file a return) who file a 2024 DR 0104 by the extension due date. Lines 31-34 of the 2024 DR 0104 compute a Modified AGI solely to size the refund; it does not affect the income tax computation.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@bcb5767ba56f": "The shipped CO 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@c26ed4a74451": "Colorado DOR — 2024 DR 0104 Book, \"Due Date\" (\"Your Colorado income tax return and payment for any tax owed are due April 15... An automatic extension to file is granted until October 15, but there is no extension to pay\") and \"Persons Traveling or Residing Abroad\"",
   "@@d4afc33be495": "Law change NOT modeled by the engine (status final_form_published): NEW ADDBACK for 2024: a business meals deduction addback under IRC 274(k) appears as NEW Line 5 of the DR 0104's Additions to Federal Taxable Income — a decoupling from the federal business-meals deduction. It arrives with a line renumbering: additions now run Lines 2-8, subtotal Line 9, subtractions Line 10, Colorado Taxable Income Line 11, Colorado Tax Line 12 (in 2023 taxable income was Line 10 and tax was Line 11). Resolve via: 2024 DR 0104 Book, Additions to Federal Taxable Income, Line 5 instructions (the citation URL); the added-back amount is the filer's own federal IRC 274(k) business-meals deduction. calc.state_tax multiplies the Line 11 base the caller supplies and computes no additions.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f1ed30994e1e": "Law change NOT modeled by the engine (status final_form_published): NEW REFUNDABLE CREDIT for 2024: the family affordability tax credit, computed on form DR 0104CN alongside the pre-existing regular Colorado child tax credit. It runs per qualifying child UNDER AGE 17 (born 2008 or later) and is unavailable once federal AGI exceeds $85,000 ($95,000 joint), with per-child amounts stepping down by AGI band — the under-6 table from $3,200 (AGI up to $15,000 single / $25,000 joint) down to $120, and the ages 6-16 table from $2,400 down to $90. Full-year and part-year residents only (nonresidents are NOT eligible); part-year residents apportion via DR 0104PN line 34. Resolve via: 2024 Form DR 0104CN, \"Age 5 and Under\" and \"Age 6 to 16\" Family Affordability Tax Credit Tables (the citation URL); calc.state_tax computes the DR 0104 Line 12 tax only and applies no Colorado credits.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fb8f582e96bc": "CO state income tax (2024, flat rate): taxable_base $40,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; tax = 0.0425 x $40,000 = $1,70"
  },
  "file_and_pay": {
@@ -140,6 +147,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended CO 2024 return (Form DR 0104 (Colorado Individual Income Tax Return) — full-year residents mark the \"Full-Year\" residency box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns (2024 booklet, \"Who Must File This Tax Return\" — full-year residents \"must file DR 0104 or DR 0104EZ\").): you owe $88 more.",
+    "citations": [
+     {
+      "source": "CO revenue department home page (read 2026-10-16)",
+      "url": "https://tax.colorado.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@31559a9dc16c",
+    "jurisdiction": "states/co",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended CO return, and the CO 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the CO instructions for amended returns on the CO revenue department's site (https://tax.colorado.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -197,9 +239,297 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "CO revenue department home page (read 2026-10-16)",
+      "url": "https://tax.colorado.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the CO instructions for amended returns on the CO revenue department's site (https://tax.colorado.gov/).",
+    "form": "@@31559a9dc16c",
+    "headline": "CO 2024, amended (DR 0104 (Colorado Individual Income Tax Return) — full-year residents mark the \"Full-Year\" residency box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns (2024 booklet, \"Who Must File This Tax Return\" — full-year residents \"must file DR 0104 or DR 0104EZ\").): you owe $88",
+    "jurisdiction": "states/co",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcb5767ba56f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "Colorado DOR, 2024 DR 0104 Book — DR 0104CR Individual Credit Schedule instructions, lines 3 through 6 (COEITC for SSN filers) and line 9 (COEITC for ITIN filers or certain filers under age 25)",
+     "cadence": "@@420e41d608e0",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "@@3a1d51c6f0a5",
+     "cadence": "@@420e41d608e0",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104CN_2024.pdf"
+    },
+    {
+     "answers": "Colorado DOR — 2024 DR 0104, Colorado Individual Income Tax Return, lines 31-35 and \"Modified A G I Tiers for TABOR State Sales Tax Refund\" table",
+     "cadence": "@@420e41d608e0",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR_0104_2024.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcb5767ba56f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@76e28ba46e67",
+     "cadence": "@@420e41d608e0",
+     "topic": "filing_logistics",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcb5767ba56f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@48bbd699d398",
+     "cadence": "@@420e41d608e0",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "Colorado DOR — standalone 2024 DR 0104, Colorado Individual Income Tax Return (form PDF; second-pass verification of line 1 'Federal Taxable Income ... 1040 ... line 15', additions lines 2-8, line 9 subtotal, line 10 subtractions, line 11 Colorado Taxable Income, line 12 'Colorado Tax from tax table or the DR 0104PN line 36', TABOR lines 31-35 tiers table)",
+     "cadence": "@@420e41d608e0",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR_0104_2024.pdf"
+    },
+    {
+     "answers": "Colorado DOR — 2024 Form DR 0104CN Colorado Child Tax Credit (regular credit + family affordability tax credit tables)",
+     "cadence": "@@420e41d608e0",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104CN_2024.pdf"
+    },
+    {
+     "answers": "Colorado DOR — DR 0104 Booklet landing page (names DR0104_book_2024.pdf as the 2024 edition)",
+     "cadence": "@@420e41d608e0",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/DR0104Booklet"
+    },
+    {
+     "answers": "Colorado DOR — Residency Status page (domicile + six-month rule)",
+     "cadence": "@@420e41d608e0",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/residency-status"
+    },
+    {
+     "answers": "Colorado DOR — Individual Income Tax Guide (federal taxable income starting point; residency)",
+     "cadence": "@@420e41d608e0",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/individual-income-tax-guide"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcb5767ba56f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@48bbd699d398",
+     "cadence": "@@420e41d608e0",
+     "topic": "law_changes",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "@@3a1d51c6f0a5",
+     "cadence": "@@420e41d608e0",
+     "topic": "law_changes",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104CN_2024.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcb5767ba56f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@435948df1fb7",
+     "cadence": "@@420e41d608e0",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcb5767ba56f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/co",
  "state_scope": {
@@ -414,7 +744,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: CO 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: CO 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -433,7 +763,7 @@
   "common_result": {
    "base_kind": "federal_taxable_income",
    "citation": {
-    "source": "2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Line 12 instructions: \"The income tax rate is currently 4.25%\" (the document is the year-pinned 2024 filing guide); \"2024 Colorado Income Tax Table with tax rate of 4.25%\"; \"Worksheet for taxable incomes over $50,000\" (printed page 38; the printed table ends at the $49,900-$50,000 row) \"Multiply by 4.25% X .0425\"; DR 0104 Line 1 = Federal Taxable Income from Form 1040/1040-SR/1040-SP line 15; \"Colorado income tax is based on your federal taxable income, which has already considered your deductions\"; Line 11 = Colorado Taxable Income (line 9 subtotal minus line 10 subtractions). Booklet table rows verified at 4.25%: $5,100-$5,200 -> $219; $30,800-$30,900 -> $1,311; $49,900-$50,000 -> $2,123 (each = 4.25% of the band midpoint). Second pass: the standalone 2024 DR 0104 form PDF prints the same line structure (line 1 federal taxable income, line 11 Colorado Taxable Income, line 12 Colorado Tax from tax table or DR 0104PN line 36).",
+    "source": "@@435948df1fb7",
     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
    },
    "marginal_rate": "0.0425",

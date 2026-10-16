@@ -6,12 +6,19 @@
   "@@42f64b691acf": "2023 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; 'begin your Missouri return with your total federal adjusted gross income'; Form MO-A Part 1 additions; residency/domicile definitions; nonresident & part-year rules; April 15, 2024 due date; filing requirement thresholds; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11; check payable to Missouri Department of Revenue)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@4efd3abdaf34": "Form MO-NRI (Missouri Income Percentage), filed with Form MO-1040, for nonresidents and part-year residents. Part-year residents may alternatively use Form MO-CR (resident credit) with MO-1040, whichever is more beneficial.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@59c4df5b2e25": "Missouri Department of Revenue, P.O. Box 500, Jefferson City, MO 65105-0500 (for a refund or no amount due). Note: returns printed from the Department's fill-in/auto-calculating forms carry a 2-D barcode and use a different address: refund returns to P.O. Box 3222, Jefferson City, MO 65105-3222 (refund returns claiming a property tax credit: P.O. Box 3385, Jefferson City, MO 65105-3385).",
+  "@@7bcb13cd3fce": "annual (per tax year; the shipped MO 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@91ac5c0387bc": "Form MO-1040 (Individual Income Tax Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9e4778f5d964": "Property Tax Credit Claim (Circuit Breaker) — Missouri residents who fall into one of four qualification categories: (A) age 65 or older and a full-year MO resident; (B) 100% disabled veteran as a result of military service; (C) 100% disabled (per SSA or SSA-1099); or (D) age 60 or older and receiving surviving spouse Social Security benefits. Available to both renters/part-year owners and full-year homeowners. Renters who rent from a facility that does not pay property tax are not eligible.",
   "@@aaa1cb118e8b": "Treaty conformity — MO conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MO income (it flows through the federal starting point; do not add it back on the MO return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Missouri's resident return starts from federal adjusted gross income and has no treaty-exempt income add-back, so federally treaty-exempt income (already excluded from federal AGI) flows through untaxed -> conforms. Form MO-1040 Line 1 is captioned \"FEDERAL ADJUSTED GROSS INCOME,\" and the 2023 MO-1040 instructions state \"You must begin your Missouri return with your total federal adjusted gross income.\" The only additions to federal AGI are on Form MO-A, Part 1, Lines 1-6 (interest on non-Missouri state/local obligations; partnership/fiduciary/S-corp adjustments and NOL carryback/carryforward; out-of-state/nonresident property-tax modification; nonqualified ABLE-program distributions) — none of which add back federally treaty-exempt income or foreign-earned income. Corroborating: the \"Nonresident Alien Special Filing Instructions\" direct the filer to \"Enter your federal adjusted gross income from U.S. Nonresident Alien Income Tax Return (Federal Form 1040NR), Line 11, on Form MO-1040, Line 1,\" meaning treaty-exempt income already excluded from 1040NR AGI carries to MO Line 1 unchanged with no reattachment. Unlike California (which adds treaty income back on Schedule CA), Missouri has no analogous addback. Cite: 2023 MO-1040 Instructions, Line 1 and Form MO-A Part 1.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@bbe9df28d184": "2023 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p. 26 '2023 Tax Chart' (Tax Rate Chart, Section A; Tax Calculation Worksheet, Section B; 'A separate tax must be computed for you and your spouse'; 'Round to the nearest whole dollar'); p. 9 'Line 30 - Missouri Tax'; p. 8 'Line 12 - Federal Tax Percentage', 'Line 13 - Federal Income Tax Deduction', 'Line 14 - Standard or Itemized Deductions', 'Line 15 - Head of Household and Qualifying Widow(er)'; Form MO-1040 (Revised 12-2023) Lines 6-30",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+  "@@f8d5e3717537": "The shipped MO 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal."
  },
  "file_and_pay": {
   "overall_notes": [
@@ -135,6 +142,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MO 2023 return (Form MO-1040 (Individual Income Tax Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MO revenue department home page (read 2026-10-16)",
+      "url": "https://dor.mo.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@91ac5c0387bc",
+    "jurisdiction": "states/mo",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MO return, and the MO 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MO instructions for amended returns on the MO revenue department's site (https://dor.mo.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -192,9 +234,237 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "MO revenue department home page (read 2026-10-16)",
+      "url": "https://dor.mo.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MO instructions for amended returns on the MO revenue department's site (https://dor.mo.gov/).",
+    "form": "@@91ac5c0387bc",
+    "headline": "MO 2023, amended (Form MO-1040 (Individual Income Tax Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR.): you owe $88",
+    "jurisdiction": "states/mo",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f8d5e3717537",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Missouri Department of Revenue - 2023 Form MO-PTC Property Tax Credit Claim Instructions (eligibility 'Am I Eligible?' diagram and Form MO-PTC Lines 7-12)",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "credits",
+     "url": "https://dor.mo.gov/forms/MO-PTC%20Instructions_2023.pdf"
+    },
+    {
+     "answers": "Missouri Department of Revenue - 2023 Form MO-WFTC and Missouri Working Family Tax Credit FAQs",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "credits",
+     "url": "https://dor.mo.gov/forms/MO-WFTC_2023.pdf"
+    },
+    {
+     "answers": "Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "credits",
+     "url": "https://dor.mo.gov/tax-credits/fpt.html"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f8d5e3717537",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@42f64b691acf",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "filing_logistics",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f8d5e3717537",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@42f64b691acf",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
+    },
+    {
+     "answers": "Missouri DOR - Nonresidents and Residents with Other State Income (resident/nonresident/part-year definitions; MO-NRI / MO-CR usage with MO-1040)",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/taxation/individual/additional-resources/non-residents.html"
+    },
+    {
+     "answers": "Missouri DOR - Form MO-NRI, 2023 Missouri Income Percentage",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/forms/MO-NRI_2023.pdf"
+    },
+    {
+     "answers": "Missouri DOR - Pay Individual Income Taxes Online (online payment portal URL; eCheck and credit/debit card methods)",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/taxation/individual/pay-online.html"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f8d5e3717537",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@bbe9df28d184",
+     "cadence": "@@7bcb13cd3fce",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f8d5e3717537",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/mo",
  "state_scope": {
@@ -594,7 +864,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2023 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p. 26 '2023 Tax Chart' (Tax Rate Chart, Section A; Tax Calculation Worksheet, Section B; 'A separate tax must be computed for you and your spouse'; 'Round to the nearest whole dollar'); p. 9 'Line 30 - Missouri Tax'; p. 8 'Line 12 - Federal Tax Percentage', 'Line 13 - Federal Income Tax Deduction', 'Line 14 - Standard or Itemized Deductions', 'Line 15 - Head of Household and Qualifying Widow(er)'; Form MO-1040 (Revised 12-2023) Lines 6-30",
+    "source": "@@bbe9df28d184",
     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2023.pdf"
    },
    "rate": null,

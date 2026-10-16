@@ -19,7 +19,8 @@
   "@@e35851df8e22": "The newest shipped MO pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@e82f4b1f5cc5": "Department of Revenue, P.O. Box 500, Jefferson City, MO 65105-0500 (refund or no amount due). Note — returns printed from the Department's 2-D barcode / fill-in auto-calculating forms use different boxes: refund returns to P.O. Box 3222, Jefferson City, MO 65105-3222; refund returns claiming a property tax credit to P.O. Box 3385, Jefferson City, MO 65105-3385.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f03d7638a996": "Form MO-1040 (2025 Individual Income Tax Return - Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income filers with no Missouri modifications.)"
+  "@@f03d7638a996": "Form MO-1040 (2025 Individual Income Tax Return - Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income filers with no Missouri modifications.)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -137,6 +138,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MO 2025 return (Form MO-1040 (2025 Individual Income Tax Return - Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income filers with no Missouri modifications.)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MO revenue department home page (read 2026-10-16)",
+      "url": "https://dor.mo.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@f03d7638a996",
+    "jurisdiction": "states/mo",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MO return, and the MO 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MO instructions for amended returns on the MO revenue department's site (https://dor.mo.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -191,6 +227,27 @@
     "jurisdiction": "states/mo",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "MO revenue department home page (read 2026-10-16)",
+      "url": "https://dor.mo.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MO instructions for amended returns on the MO revenue department's site (https://dor.mo.gov/).",
+    "form": "@@f03d7638a996",
+    "headline": "MO 2025, amended (Form MO-1040 (2025 Individual Income Tax Return - Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income filers with no Missouri modifications.)): you owe $88",
+    "jurisdiction": "states/mo",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -840,7 +897,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: MO 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: MO 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

@@ -39,6 +39,7 @@ DC_BOOKLET = ("https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publicati
 # JK2 (2026-10-15): the ten MA Form 1 network tests the GitHub-hosted runner cannot fetch for — mass.gov answers
 # 403 and the pack's Wayback mirror 429 / connection refused — until the CI blank cache has served them green on
 # two consecutive weekly runs. Pinned exactly, so deleting the rows (or adding one) must revisit this test.
+# JK27 (2026-10-16): twelve — the /FT /Sig every-pack sweep (test_signature_widget_mapping.py) adds its two MA cases.
 MA_FORM1_NETWORK_TESTS = frozenset(
     f"packages/core/tests/{module}::{func}[{param}]"
     for module, func, params in (
@@ -50,6 +51,8 @@ MA_FORM1_NETWORK_TESTS = frozenset(
         ("test_readonly_widget_mapping.py", "test_state_pack_readonly_mapped_count_matches_the_pinned_audit",
          ("states-ma-2023-form1", "states-ma-2025-form1")),
         ("test_readonly_widget_mapping.py", "test_every_nonzero_readonly_default_is_adjudicated_class_4",
+         ("states-ma-2023-form1", "states-ma-2025-form1")),
+        ("test_signature_widget_mapping.py", "test_pack_maps_no_digital_signature_widget",
          ("states-ma-2023-form1", "states-ma-2025-form1")),
     )
     for param in params
@@ -70,10 +73,10 @@ def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
         else:
             assert e.target in knowledge, f"quarantined URL no longer cited anywhere — delete the row: {e.target}"
     # JS1b's acceptance (every blank fetch green) holds on a developer machine; from the GitHub-hosted runner the
-    # two MA packs are served only by the CI blank cache, so exactly their ten node ids are quarantined (JK2).
+    # two MA packs are served only by the CI blank cache, so exactly their twelve node ids are quarantined (JK2, JK27).
     assert {e.target for e in entries if e.kind == "network_test"} == MA_FORM1_NETWORK_TESTS
     assert not any(e.kind == "drift" for e in entries)   # the MN M1 booklet move was FIXED (new URL), not quarantined
-    assert {e.added for e in entries} == {dt.date(2026, 10, 15)}
+    assert {e.added for e in entries} == {dt.date(2026, 10, 15), dt.date(2026, 10, 16)}
     assert all("mass.gov" in e.why and "mirror" in e.why and "cache" in e.why for e in entries)
 
 

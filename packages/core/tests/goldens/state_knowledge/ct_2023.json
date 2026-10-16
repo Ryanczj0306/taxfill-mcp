@@ -3,9 +3,15 @@
   "@@16cb9f81668c": "Personal Tax Credit (low-income credit, Table E) — Connecticut resident individuals whose Connecticut AGI falls within the Table E phase-out ranges for their filing status. Taxpayers below the no-tax threshold owe no income tax and need no credit; the personal credit reduces the income tax for low-to-moderate income filers just above that threshold.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@27ffd534203d": "Connecticut Earned Income Tax Credit (CT EITC) — Connecticut full-year residents who claimed and were allowed the 2023 federal Earned Income Credit. Taxpayer (and spouse/qualifying children, if applicable) must have valid Social Security Numbers by the return due date, must have earned income from employment or self-employment, and must meet all federal EITC rules. Either qualify with a qualifying child, or as a worker without a qualifying child aged 25-64.",
+  "@@39dcb106c0b1": "https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@523a5984785c": "annual (per tax year; the shipped CT 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@80bd3d061af3": "The shipped CT 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@9281e1cda019": "2023 Form CT-1040 Connecticut Resident Income Tax Return (Line 1 = federal AGI; Schedule 1 Line 31-38 additions; 'Due date: April 15, 2024'; mailing addresses PO Box 2976/2977; check payable to Commissioner of Revenue Services)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a97bea97e800": "Treaty conformity — CT does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CT. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: CT's resident return (Form CT-1040) starts from federal AGI (Line 1 = \"Federal adjusted gross income from federal Form 1040, Line 11\"), so treaty-exempt income is initially excluded. HOWEVER, CT has an EXPLICIT ADD-BACK: the 2023 CT-1040 instructions (Schedule 1 additions, Line 37 \"Other\") and the 2023 CT-1040NR/PY instructions (Schedule 1 additions, Line 39 \"Other\") both direct: \"1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien. Enter the words 'treaty income' in the space provided.\" Because CT requires nonresident aliens to add federally treaty-exempt income back into Connecticut adjusted gross income, CT does NOT conform to federal treaty exemptions for affected filers (analogous to California's Schedule CA add-back). Note: this add-back is scoped to nonresident aliens filing federal Form 1040NR; a filer with no treaty income / not a nonresident alien is unaffected, but the statutory rule re-taxes treaty income, so conforms_to_federal_treaties = false.",
   "@@c0e7931c928a": "Credit for Income Taxes Paid to Qualifying Jurisdictions (Schedule 2) — Connecticut residents (and part-year residents) whose income reported on the CT return is also subject to income tax in another qualifying jurisdiction (another U.S. state, a local jurisdiction within another state, or the District of Columbia) where the taxpayer filed a return and paid income tax. Prevents double taxation of the same income. A copy of the other jurisdiction's return must be attached.",
   "@@c2a03ce984ef": "Property Tax Credit (Schedule 3) — Connecticut residents who paid qualifying property tax during 2023 to a Connecticut political subdivision on their primary residence and/or a privately owned or leased motor vehicle. Single/MFS/HOH limited to one motor vehicle; MFJ/qualifying surviving spouse limited to two. (For 2023 there is no longer an age-65-or-dependent eligibility restriction; the credit is available to any resident who paid qualifying property tax.) Cannot be claimed if Form CT-1040 Line 10 is zero.",
@@ -13,7 +19,9 @@
   "@@c9b54c670dc9": "Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976 (for refunds and all other tax forms without payment)",
   "@@db95252fe84b": "If any income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties — that income is still taxable to CT.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@ef2cea20e765": "If any of your income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties, so that income is still taxable to CT — do not carry the federal exclusion onto the state return."
+  "@@ef2cea20e765": "If any of your income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties, so that income is still taxable to CT — do not carry the federal exclusion onto the state return.",
+  "@@f6b4ae8367ae": "2023 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 12/23) — Tax Calculation Schedule (page 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line 5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6); Table A - Personal Exemptions (p. 19); Table B - Initial Tax Calculation (p. 20, all three schedules with the DRS worked examples $450/$33,298/$725/$70,090/$680/$52,228); Table C - 3% Tax Rate Phase-Out Add-Back (p. 21); Table D - Tax Recapture (p. 22); Table E - Personal Tax Credits (p. 23); Line 6 Income Tax (no-tax floors, optional tax tables at CT AGI <= $102,000). Second pass: the 2023 Form CT-1040NR/PY instructions (Rev. 12/23, https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040nrpy-instructions_1223.pdf) print identical Tables A-E — every bound, rate, printed constant, phase-out and recapture amount matches.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -140,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended CT 2023 return (Form CT-1040, Connecticut Resident Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "CT revenue department home page (read 2026-10-16)",
+      "url": "https://portal.ct.gov/drs"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "jurisdiction": "states/ct",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended CT return, and the CT 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the CT instructions for amended returns on the CT revenue department's site (https://portal.ct.gov/drs) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -203,9 +246,239 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "CT revenue department home page (read 2026-10-16)",
+      "url": "https://portal.ct.gov/drs"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the CT instructions for amended returns on the CT revenue department's site (https://portal.ct.gov/drs).",
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "headline": "CT 2023, amended (Form CT-1040, Connecticut Resident Income Tax Return): you owe $88",
+    "jurisdiction": "states/ct",
+    "notes": [
+     "@@db95252fe84b"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@80bd3d061af3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "CT DRS - 2023 Form CT-1040 Instructions (Line 20a) and 2023 Schedule CT-EITC",
+     "cadence": "@@523a5984785c",
+     "topic": "credits",
+     "url": "@@39dcb106c0b1"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@80bd3d061af3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@9281e1cda019",
+     "cadence": "@@523a5984785c",
+     "topic": "filing_logistics",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@80bd3d061af3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@9281e1cda019",
+     "cadence": "@@523a5984785c",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+    },
+    {
+     "answers": "2023 Form CT-1040 Instructions (Rev. 12/23) - Schedule 1 Line 37 'Other' additions: '1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien'; gross income thresholds; April 15, 2024 references; myconneCT",
+     "cadence": "@@523a5984785c",
+     "topic": "forms_and_instructions",
+     "url": "@@39dcb106c0b1"
+    },
+    {
+     "answers": "2023 Form CT-1040NR/PY Nonresident and Part-Year Resident Income Tax Return",
+     "cadence": "@@523a5984785c",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040nrpy_1223.pdf"
+    },
+    {
+     "answers": "2023 Form CT-1040NR/PY Instructions (Rev. 12/23) - Schedule 1 Line 39 'Other' additions: '1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien'; gross income thresholds; nonresident/part-year filing rules",
+     "cadence": "@@523a5984785c",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040nrpy-instructions_1223.pdf"
+    },
+    {
+     "answers": "CT DRS Resident Income Tax - Tax Information (residency definitions: domicile, statutory resident permanent place of abode + 183 days; Gross Income Test thresholds)",
+     "cadence": "@@523a5984785c",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information"
+    },
+    {
+     "answers": "CT DRS Schedule CT-SI Nonresident or Part-Year Resident Schedule of Income 2023",
+     "cadence": "@@523a5984785c",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/schedule-ct-si_1223.pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@80bd3d061af3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@f6b4ae8367ae",
+     "cadence": "@@523a5984785c",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@39dcb106c0b1"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@80bd3d061af3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/ct",
  "state_scope": {
@@ -608,8 +881,8 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 12/23) — Tax Calculation Schedule (page 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line 5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6); Table A - Personal Exemptions (p. 19); Table B - Initial Tax Calculation (p. 20, all three schedules with the DRS worked examples $450/$33,298/$725/$70,090/$680/$52,228); Table C - 3% Tax Rate Phase-Out Add-Back (p. 21); Table D - Tax Recapture (p. 22); Table E - Personal Tax Credits (p. 23); Line 6 Income Tax (no-tax floors, optional tax tables at CT AGI <= $102,000). Second pass: the 2023 Form CT-1040NR/PY instructions (Rev. 12/23, https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040nrpy-instructions_1223.pdf) print identical Tables A-E — every bound, rate, printed constant, phase-out and recapture amount matches.",
-    "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf"
+    "source": "@@f6b4ae8367ae",
+    "url": "@@39dcb106c0b1"
    },
    "rate": null,
    "rate_structure": "graduated",

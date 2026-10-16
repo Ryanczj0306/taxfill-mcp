@@ -25,8 +25,8 @@ treaty_note: 'Hawaii''s resident return (Form N-11) line 7 starts from "Federal 
   when filing the Hawaii resident return and still begins from federal AGI, with no instruction to add back treaty
   income. Conclusion: treaty-exempt income is NOT re-taxed -> conforms = true.'
 citation:
-  source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
-    income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
+  source: Hawaii Form N-11 (Rev. 2024) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
+    income (AGI)' and line 10 'Other Hawaii additions to federal AGI'
   url: https://files.hawaii.gov/tax/forms/2024/n11_i.pdf
 starts_from: 'federal AGI (Form N-11, line 7: "Federal adjusted gross income (AGI)")'
 residency:
@@ -42,8 +42,8 @@ residency:
     year and a nonresident for the other part (e.g., moved into or out of Hawaii during the year); taxed on all
     income during the residency period and on Hawaii-source income only during the nonresidency period.'
 forms:
-  resident: Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)
-  part_year_or_nonresident: Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2023)
+  resident: Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)
+  part_year_or_nonresident: Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2024)
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
   figure): Credit for Low-Income Household Renters; Credit for Child and Dependent Care Expenses.'
@@ -51,7 +51,7 @@ credits:
 - name: Refundable Food/Excise Tax Credit
   type: refundable
   eligibility: Each individual income tax filer (including those with no taxable income) who is a Hawaii resident
-    physically present in Hawaii more than nine months during 2023, who is not (and is not eligible to be) claimed
+    physically present in Hawaii more than nine months during 2024, who is not (and is not eligible to be) claimed
     as a dependent by another taxpayer for federal or Hawaii purposes, and who is not incarcerated for the entire
     year. Credit is computed per qualified exemption (taxpayer, spouse, dependents, plus certain minor children
     receiving public support).
@@ -64,7 +64,10 @@ credits:
     filing separately must combine both spouses' federal AGI; if $60,000 or more, no credit.
   claimed_on: Form N-311; result entered on Form N-11, line 28 (or Form N-15, line 45)
   citation:
-    source: Hawaii Department of Taxation, Form N-311 (Rev. 2023), Refundable Food/Excise Tax Credit
+    # JK27 (2026-10-16): the year and the revision were carried over from the 2023 pack. The 2024 N-311 (REV. 2024)
+    # lists persons "Present in Hawaii for more than nine months in 2024", and Schedule X (REV. 2024) line 2 asks
+    # "Are you a resident who was present in Hawaii more than nine months in 2024?"
+    source: Hawaii Department of Taxation, Form N-311 (Rev. 2024), Refundable Food/Excise Tax Credit
     url: https://files.hawaii.gov/tax/forms/2024/n311_i.pdf
 - name: Refundable Earned Income Tax Credit (Hawaii EITC)
   type: refundable
@@ -79,11 +82,11 @@ credits:
     under IRC section 32.
   claimed_on: Form N-356; new credit amount carried to Schedule CR (refundable credits section)
   citation:
-    source: Hawaii Department of Taxation, Form N-356 (Rev. 2023), Earned Income Tax Credit
+    source: Hawaii Department of Taxation, Form N-356 (Rev. 2024), Earned Income Tax Credit
     url: https://files.hawaii.gov/tax/forms/2024/n356_i.pdf
 - name: Credit for Low-Income Household Renters
   type: refundable
-  eligibility: Hawaii resident present in Hawaii more than nine months during 2023 who occupies and pays rent for
+  eligibility: Hawaii resident present in Hawaii more than nine months during 2024 who occupies and pays rent for
     real property in Hawaii used as a residence, whose rental unit was fully subject to real property tax (units
     wholly or partially exempt do not qualify), and who is not (and is not eligible to be) claimed as a dependent
     by another taxpayer. Net rent paid (after exclusions such as utilities, parking, ground rent, and rental subsidies/public
@@ -114,8 +117,8 @@ credits:
     of 15% once AGI exceeds $50,000); credit is limited to the lesser of qualified expenses or earned income.
   claimed_on: Schedule X (Form N-11/N-15), Part II; result entered on Form N-11, line 30 (or Form N-15, line 47)
   citation:
-    source: Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2023), Part II; and 2023 Form N-11
-      Instructions, Line 30
+    source: Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2024), Part II; and 2024 Form N-11, line
+      30
     url: https://files.hawaii.gov/tax/forms/2024/schx_i.pdf
   unverified: true
 filing_requirement:
@@ -133,42 +136,48 @@ mailing_addresses:
     enclosing a check or money order)
   with_payment: 'Hawaii Department of Taxation, Attn: Payment Section, P.O. Box 1530, Honolulu, Hawaii 96806-1530
     (use when enclosing a check or money order)'
+  # JK27 (2026-10-16): this citation named form lines 7 and 10 under "Rev. 2023"; the addresses are the 2024 N-11
+  # instructions' (two fetches agree).
   citation:
-    source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
-      income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
-    url: https://files.hawaii.gov/tax/forms/2024/n11_i.pdf
+    source: 'Hawaii 2024 N-11 Resident Income Tax Instructions: "If you are enclosing a check or money order with your
+      tax return, mail your return with payment to: Hawaii Department of Taxation Attn: Payment Section P. O. Box 1530
+      Honolulu, Hawaii 96806-1530"; "If you are NOT enclosing a check or money order with your tax return, mail your
+      return to: Hawaii Department of Taxation P. O. Box 3559 Honolulu, Hawaii 96811-3559"'
+    url: https://files.hawaii.gov/tax/forms/2024/n11ins.pdf
   verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
     at the cited DOR source before relying on a specific figure/address.
 payment:
   check_payee: Hawaii State Tax Collector
   web_pay_url: https://hitax.hawaii.gov
 deadlines:
-  filing_due_date: '2025-04-22'
+  # JK27 (2026-10-16): the date was 2025-04-22 and the citation named form lines 7 and 10. April 20, 2025 was a
+  # Sunday, so the 2024 instructions move the due date to Monday, April 21.
+  filing_due_date: '2025-04-21'
   citation:
-    source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
-      income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
-    url: https://files.hawaii.gov/tax/forms/2024/n11_i.pdf
+    source: 'Hawaii 2024 N-11 Resident Income Tax Instructions: "Form N-11, Individual Income Tax Return (Resident
+      Form), is due on or before April 21, 2025."; the 2024 N-15 instructions print "DUE DATE: APRIL 21, 2025"'
+    url: https://files.hawaii.gov/tax/forms/2024/n11ins.pdf
 all_citations:
-- source: Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
-    income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'
+- source: Hawaii Form N-11 (Rev. 2024) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross
+    income (AGI)' and line 10 'Other Hawaii additions to federal AGI'
   url: https://files.hawaii.gov/tax/forms/2024/n11_i.pdf
-- source: Hawaii 2023 N-11 Resident Income Tax Instructions — residency/domicile definitions, 200-day presumption,
-    which form to file, due date April 22 2024, mailing addresses, check payee 'Hawaii State Tax Collector', hitax.hawaii.gov
+- source: Hawaii 2024 N-11 Resident Income Tax Instructions — residency/domicile definitions, 200-day presumption,
+    which form to file, due date April 21, 2025, mailing addresses, check payee 'Hawaii State Tax Collector', hitax.hawaii.gov
     portal, Line 10 additions list, filing thresholds
   url: https://files.hawaii.gov/tax/forms/2024/n11ins.pdf
-- source: Hawaii Form N-15 (Rev. 2023) Individual Income Tax Return — Nonresident and Part-Year Resident
+- source: Hawaii Form N-15 (Rev. 2024) Individual Income Tax Return — Nonresident and Part-Year Resident
   url: https://files.hawaii.gov/tax/forms/2024/n15_f.pdf
-- source: Hawaii 2023 N-15 Nonresident/Part-Year Resident Instructions
+- source: Hawaii 2024 N-15 Nonresident/Part-Year Resident Instructions
   url: https://files.hawaii.gov/tax/forms/2024/n15ins.pdf
 - source: Hawaii Department of Taxation — Individual Income Tax (Resident and Nonresident) forms page
   url: https://tax.hawaii.gov/forms/a1_b1_1income/
+# JK27 (2026-10-16): the 2024 N-15 instructions (n15ins.pdf, two fetches agree) print the same due date, April 21,
+# 2025, and the same P. O. Box 1530 (96806-1530) and P. O. Box 3559 (96811-3559) addresses as the N-11, so the
+# note that they were unconfirmed (and gave April 22, 2024) is gone.
 unverified:
 - Whether hitax.hawaii.gov is the precise canonical payment URL versus tax.hawaii.gov/eservices/ — the N-11 instructions
   cite the State Internet portal as 'hitax.hawaii.gov' for Form N-200V electronic payment and 'tax.hawaii.gov/eservices/'
   for general e-services; the exact deep-link payment page was not separately confirmed.
-- The N-15 nonresident/part-year due date and mailing addresses were not independently re-extracted from the N-15
-  instructions PDF in this session; they are presumed identical to the N-11 (April 22, 2024; same Box 1530 / Box
-  3559 addresses) but should be confirmed against n15ins.pdf at the DOR.
 tax:
   citation:
     source: 'HI DOTAX — 2024 Form N-11 Instructions (files.hawaii.gov/tax/forms/2024/n11ins.pdf), Tax Rate Schedules

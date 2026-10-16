@@ -22,7 +22,8 @@
   "@@eae9318e4e91": "Credit for Low-Income Household Renters — Hawaii resident present in Hawaii more than nine months during 2025 who occupies and pays rent for real property in Hawaii used as a residence, whose rental unit was fully subject to real property tax (units wholly or partially exempt do not qualify), and who is not (and is not eligible to be) claimed as a dependent by another taxpayer. Net rent paid (after exclusions such as utilities, parking, ground rent and rental subsidies/public assistance) must EXCEED $1,000 — Schedule X Part I line 7: \"If this amount is $1,000, or less, STOP. You cannot claim this credit.\"",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f3530016e0ba": "annual (per tax year; the newest shipped HI pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
-  "@@f5650b6feadf": "Hawaii 2025 N-11 Resident Income Tax Instructions — \"DUE DATE: APRIL 20, 2026\" on the cover and \"Form N-11, Individual Income Tax Return (Resident Form), is due on or before April 20, 2026.\" Extension: \"If you are unable to file by April 20, 2026, you are granted an automatic 6-month extension of time to file your return through October 20, 2026. You do not have to file a form to request an extension. The extension of time to file is not an extension of time for payment of tax\" — a balance due must be paid in full by April 20, 2026 with Form N-200V. Hawaii's deadline is April 20, NOT the federal April 15."
+  "@@f5650b6feadf": "Hawaii 2025 N-11 Resident Income Tax Instructions — \"DUE DATE: APRIL 20, 2026\" on the cover and \"Form N-11, Individual Income Tax Return (Resident Form), is due on or before April 20, 2026.\" Extension: \"If you are unable to file by April 20, 2026, you are granted an automatic 6-month extension of time to file your return through October 20, 2026. You do not have to file a form to request an extension. The extension of time to file is not an extension of time for payment of tax\" — a balance due must be paid in full by April 20, 2026 with Form N-200V. Hawaii's deadline is April 20, NOT the federal April 15.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -146,6 +147,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended HI 2025 return (Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "HI revenue department home page (read 2026-10-16)",
+      "url": "https://tax.hawaii.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)",
+    "jurisdiction": "states/hi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended HI return, and the HI 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the HI instructions for amended returns on the HI revenue department's site (https://tax.hawaii.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -200,6 +236,27 @@
     "jurisdiction": "states/hi",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "HI revenue department home page (read 2026-10-16)",
+      "url": "https://tax.hawaii.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the HI instructions for amended returns on the HI revenue department's site (https://tax.hawaii.gov/).",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)",
+    "headline": "HI 2025, amended (Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)): you owe $88",
+    "jurisdiction": "states/hi",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

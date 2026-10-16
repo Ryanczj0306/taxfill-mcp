@@ -21,7 +21,8 @@
   "@@c1c78882979c": "Nonresident: Arizona Form 140NR - Nonresident Personal Income Tax Return. Part-year resident: Arizona Form 140PY - Part-Year Resident Personal Income Tax Return.",
   "@@d5589d303913": "Property Tax Credit (Form 140PTC) — Must have been an Arizona resident for the full year in 2025 and have paid property tax on an Arizona home, rent on taxable property for the entire year, or a combination of both during 2025. Must be either (a) age 65 or older in 2025, or (b) under 65 but receiving SSI Title 16 income from the Social Security Administration (NOT normal Social Security disability). Total household income must be under the limits below. The claim (or an extension request) must be filed by April 15, 2026.",
   "@@dde540df6443": "Law change NOT modeled by the engine (status final_form_published): The Increased Standard Deduction for charitable contributions (Form 140 Line 44) rose to 34% (.34) of the qualified charitable contributions a non-itemizer could have deducted had they itemized — RAISED for 2025 from 33% (2024), and 31% in 2022. Claimed via the Form 140 page-3 worksheet (line 7C) with box 44C checked, or the increase may be denied. Resolve via: 2025 Form 140 instructions, Line 44, and the page-3 Standard Deduction Increase for Charitable Contributions worksheet on the 2025 Form 140 itself (https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf) — the amount depends on the filer's own qualified charitable contributions.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -145,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended AZ 2025 return (Form Arizona Form 140 - Resident Personal Income Tax Return (ADOR 10413 (25); full-year residents; short forms Form 140A and Form 140EZ are also available for eligible residents — Form 140 is REQUIRED if Arizona taxable income is $50,000 or more regardless of filing status, you make adjustments to income, you itemize, you claim credits other than the family income tax credit / increased excise tax credit / property tax credit, you claim estimated payments, or you received and are subtracting the 2025 Arizona Families Tax Rebate)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "AZ revenue department home page (read 2026-10-16)",
+      "url": "https://azdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@4dff4fc483a6",
+    "jurisdiction": "states/az",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended AZ return, and the AZ 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the AZ instructions for amended returns on the AZ revenue department's site (https://azdor.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -199,6 +235,27 @@
     "jurisdiction": "states/az",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "AZ revenue department home page (read 2026-10-16)",
+      "url": "https://azdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the AZ instructions for amended returns on the AZ revenue department's site (https://azdor.gov/).",
+    "form": "@@4dff4fc483a6",
+    "headline": "AZ 2025, amended (Arizona Form 140 - Resident Personal Income Tax Return (ADOR 10413 (25); full-year residents; short forms Form 140A and Form 140EZ are also available for eligible residents — Form 140 is REQUIRED if Arizona taxable income is $50,000 or more regardless of filing status, you make adjustments to income, you itemize, you claim credits other than the family income tax credit / increased excise tax credit / property tax credit, you claim estimated payments, or you received and are subtracting the 2025 Arizona Families Tax Rebate)): you owe $88",
+    "jurisdiction": "states/az",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -765,7 +822,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: AZ 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65, blind, other, qualifying_parent_grandparent). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: AZ 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65, blind, other, qualifying_parent_grandparent). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

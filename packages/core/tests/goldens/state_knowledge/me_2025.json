@@ -29,7 +29,8 @@
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@ee9168053da0": "Maine Earned Income Credit (EIC) — Maine residents and part-year residents who properly claim the federal earned income tax credit (including filers using an IRS-issued ITIN who would otherwise qualify, and filers at least age 18 with no qualifying children who would otherwise qualify for the federal EIC). For nonresidents the credit is nonrefundable and may not reduce the Maine income tax to less than zero.",
   "@@f0d1102f46b2": "https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/child-care-credit",
-  "@@f6f9d8845c4a": "Child Care Credit — Maine residents and part-year residents (a nonrefundable portion is also available to nonresidents) who claimed the federal credit for child and dependent care expenses. The credit doubles if the expenses are related to a quality child care provider. Maine also allows a separate adult dependent care credit, refundable up to $500 for residents and part-year residents."
+  "@@f6f9d8845c4a": "Child Care Credit — Maine residents and part-year residents (a nonrefundable portion is also available to nonresidents) who claimed the federal credit for child and dependent care expenses. The credit doubles if the expenses are related to a quality child care provider. Maine also allows a separate adult dependent care credit, refundable up to $500 for residents and part-year residents.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -153,6 +154,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended ME 2025 return (Form 1040ME (Maine Individual Income Tax Return) — resident return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "ME revenue department home page (read 2026-10-16)",
+      "url": "https://www.maine.gov/revenue/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "jurisdiction": "states/me",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended ME return, and the ME 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the ME instructions for amended returns on the ME revenue department's site (https://www.maine.gov/revenue/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -207,6 +243,27 @@
     "jurisdiction": "states/me",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "ME revenue department home page (read 2026-10-16)",
+      "url": "https://www.maine.gov/revenue/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the ME instructions for amended returns on the ME revenue department's site (https://www.maine.gov/revenue/).",
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "headline": "ME 2025, amended (Form 1040ME (Maine Individual Income Tax Return) — resident return): you owe $88",
+    "jurisdiction": "states/me",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -1030,7 +1087,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: ME 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: personal). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: ME 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: personal). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

@@ -32,7 +32,7 @@ from urllib.parse import urlparse
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from taxfill_core.datadir import knowledge_dir
+from taxfill_core.datadir import DATA_DIR_ENV, display_path, knowledge_dir
 
 
 _STATE_GOV_US_RE = re.compile(r"\.state\.[a-z]{2}\.us$")
@@ -2663,13 +2663,14 @@ def load_knowledge(
     base = Path(base_dir) if base_dir is not None else _repo_knowledge_dir()
     if not base.is_dir():
         raise FileNotFoundError(
-            f"knowledge base directory not found: {base} — pass base_dir=<path to the repo's knowledge/ "
+            f"knowledge base directory not found: {display_path(base)} (set ${DATA_DIR_ENV} to a directory holding "
+            f"knowledge/ and formpacks/) — pass base_dir=<path to the repo's knowledge/ "
             f"directory> (the default only works from a source checkout of taxfill-mcp)"
         )
     path = base / jurisdiction / f"{year}.yaml"
     if not path.is_file():
         raise FileNotFoundError(
-            f"no knowledge pack for jurisdiction '{jurisdiction}', tax year {year} — looked for {path}. "
+            f"no knowledge pack for jurisdiction '{jurisdiction}', tax year {year} — looked for {display_path(path, base)}. "
             f"If this year should be supported, author that file (copy the schema of knowledge/federal/2023.yaml). "
             f"For a year newer than the newest shipped pack, follow the freshness protocol "
             f"(docs/dev/DEV_PLAN.md section 7): resolve every number from the official sources listed in "
@@ -2679,13 +2680,13 @@ def load_knowledge(
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError(
-            f"{path}: a knowledge pack must be a YAML mapping (key: value pairs), got "
+            f"{display_path(path, base)}: a knowledge pack must be a YAML mapping (key: value pairs), got "
             f"{type(raw).__name__} — see knowledge/federal/2023.yaml for the schema"
         )
     pack = KnowledgePack.model_validate(raw)
     if pack.jurisdiction != jurisdiction or pack.tax_year != year:
         raise ValueError(
-            f"{path}: file declares jurisdiction '{pack.jurisdiction}', tax_year {pack.tax_year} but was "
+            f"{display_path(path, base)}: file declares jurisdiction '{pack.jurisdiction}', tax_year {pack.tax_year} but was "
             f"loaded as jurisdiction '{jurisdiction}', year {year} — fix the file's jurisdiction/tax_year "
             f"fields or move the file to knowledge/{pack.jurisdiction}/{pack.tax_year}.yaml"
         )
@@ -3164,17 +3165,17 @@ def load_state_knowledge(
     path = base / "states" / state / f"{year}.yaml"
     if not path.is_file():
         raise FileNotFoundError(
-            f"no state knowledge pack for '{state}', tax year {year} — looked for {path}. "
+            f"no state knowledge pack for '{state}', tax year {year} — looked for {display_path(path, base)}. "
             f"State packs ship per dev plan section 6 (CA first); resolve any figure from the state DOR "
             f"(.gov) and cite it — never invent a state rule or amount."
         )
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
-        raise ValueError(f"{path}: a state knowledge pack must be a YAML mapping, got {type(raw).__name__}")
+        raise ValueError(f"{display_path(path, base)}: a state knowledge pack must be a YAML mapping, got {type(raw).__name__}")
     pack = StateKnowledge.model_validate(raw)
     if pack.jurisdiction != f"states/{state}" or pack.tax_year != year:
         raise ValueError(
-            f"{path}: file declares jurisdiction '{pack.jurisdiction}', tax_year {pack.tax_year} but was loaded "
+            f"{display_path(path, base)}: file declares jurisdiction '{pack.jurisdiction}', tax_year {pack.tax_year} but was loaded "
             f"as state '{state}', year {year} — fix the file or move it to knowledge/states/{state}/{year}.yaml"
         )
     return pack
@@ -3438,7 +3439,7 @@ def load_treaty(country: str, base_dir: str | Path | None = None) -> TreatyKnowl
     if not path.is_file():
         available = list_treaty_countries(base)
         raise FileNotFoundError(
-            f"no treaty knowledge pack for country {country!r} — looked for {path}. "
+            f"no treaty knowledge pack for country {country!r} — looked for {display_path(path, base)}. "
             f"Shipped treaty countries: {', '.join(available) if available else '(none)'}. "
             f"For any other treaty country, resolve the article and limits from the official treaty "
             f"text and Pub 901 via get_sources (irs.gov only), cite them, and decide the position with "
@@ -3447,13 +3448,13 @@ def load_treaty(country: str, base_dir: str | Path | None = None) -> TreatyKnowl
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError(
-            f"{path}: a treaty knowledge pack must be a YAML mapping, got {type(raw).__name__} — "
+            f"{display_path(path, base)}: a treaty knowledge pack must be a YAML mapping, got {type(raw).__name__} — "
             f"see knowledge/treaties/china.yaml for the schema"
         )
     pack = TreatyKnowledge.model_validate(raw)
     if pack.country != key:
         raise ValueError(
-            f"{path}: file declares country '{pack.country}' but was loaded as '{key}' — fix the file's "
+            f"{display_path(path, base)}: file declares country '{pack.country}' but was loaded as '{key}' — fix the file's "
             f"country field or move it to knowledge/treaties/{pack.country}.yaml"
         )
     return pack

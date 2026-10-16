@@ -1,17 +1,26 @@
 {
  "_strings": {
   "@@09b83f7f2442": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Credit for Low-Income Household Renters; Credit for Child and Dependent Care Expenses.",
+  "@@187d0c597fad": "Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2024)",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1c9766dc5bb0": "Hawaii 2024 N-11 Resident Income Tax Instructions: \"Form N-11, Individual Income Tax Return (Resident Form), is due on or before April 21, 2025.\"; the 2024 N-15 instructions print \"DUE DATE: APRIL 21, 2025\"",
   "@@3dd41a76cc7b": "Refundable Earned Income Tax Credit (Hawaii EITC) — A qualifying individual taxpayer who (a) files a federal return and claims the federal earned income credit under IRC section 32 for the tax year, (b) uses the same filing status on the Hawaii return as on the federal return, and (c) claims the same dependents on the Hawaii return as on the federal return. Part-year residents and nonresidents prorate by the ratio of Hawaii AGI to federal AGI.",
-  "@@42a5342f7d0a": "Hawaii Form N-11 (Rev. 2023) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross income (AGI)' and line 10 'Other Hawaii Additions to federal AGI'",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@63efe6840577": "Hawaii 2024 N-11 Resident Income Tax Instructions: \"If you are enclosing a check or money order with your tax return, mail your return with payment to: Hawaii Department of Taxation Attn: Payment Section P. O. Box 1530 Honolulu, Hawaii 96806-1530\"; \"If you are NOT enclosing a check or money order with your tax return, mail your return to: Hawaii Department of Taxation P. O. Box 3559 Honolulu, Hawaii 96811-3559\"",
   "@@7325e141f0b6": "Hawaii Department of Taxation, P.O. Box 3559, Honolulu, Hawaii 96811-3559 (use when NOT enclosing a check or money order)",
+  "@@7c36b85b1cd0": "Hawaii Form N-11 (Rev. 2024) Individual Income Tax Return (Resident) — line 7 'Federal adjusted gross income (AGI)' and line 10 'Other Hawaii additions to federal AGI'",
+  "@@81cceded021c": "HI DOTAX — 2024 Form N-11 Instructions (files.hawaii.gov/tax/forms/2024/n11ins.pdf), Tax Rate Schedules p.36: Schedule I (Single/MFS) 12 brackets 1.40%..11.00% at 2,400/4,800/9,600/14,400/19,200/24,000/36,000/48,000/150,000/175,000/200,000; Schedule II (MFJ/QSS) exactly double; Schedule III (HoH) exactly 1.5x; printed base-tax constants are whole-dollar roundings of exact sums (34 vs 33.60 etc.). SD increased by Act 45 SLH 2024 to $4,400/$8,800/$6,424 (What's New). Personal exemption $1,144 per exemption ($2,288 age 65+, disclosed).",
+  "@@8c2619bf7078": "annual (per tax year; the shipped HI 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@9421a905f5b3": "Credit for Low-Income Household Renters — Hawaii resident present in Hawaii more than nine months during 2024 who occupies and pays rent for real property in Hawaii used as a residence, whose rental unit was fully subject to real property tax (units wholly or partially exempt do not qualify), and who is not (and is not eligible to be) claimed as a dependent by another taxpayer. Net rent paid (after exclusions such as utilities, parking, ground rent, and rental subsidies/public assistance) must exceed $1,000.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a2f3f69ba762": "Credit for Child and Dependent Care Expenses — Taxpayers who paid qualified expenses for the care of a qualifying person (e.g., dependent child or disabled dependent/spouse) to enable them (and a spouse, if married) to work or look for work, including payments to the State of Hawaii A+ Program. Generally married persons must file jointly; married-filing-separately taxpayers may claim only if they meet the separate-filer requirements in the instructions. Provider information must be reported on Schedule X, Part II.",
-  "@@a7f838172c61": "Credit for Low-Income Household Renters — Hawaii resident present in Hawaii more than nine months during 2023 who occupies and pays rent for real property in Hawaii used as a residence, whose rental unit was fully subject to real property tax (units wholly or partially exempt do not qualify), and who is not (and is not eligible to be) claimed as a dependent by another taxpayer. Net rent paid (after exclusions such as utilities, parking, ground rent, and rental subsidies/public assistance) must exceed $1,000.",
-  "@@af5076e0dfcb": "Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2023)",
-  "@@b4482444b5e8": "Refundable Food/Excise Tax Credit — Each individual income tax filer (including those with no taxable income) who is a Hawaii resident physically present in Hawaii more than nine months during 2023, who is not (and is not eligible to be) claimed as a dependent by another taxpayer for federal or Hawaii purposes, and who is not incarcerated for the entire year. Credit is computed per qualified exemption (taxpayer, spouse, dependents, plus certain minor children receiving public support).",
+  "@@b751927e2948": "The shipped HI 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@c918be354b24": "Treaty conformity — HI conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from HI income (it flows through the federal starting point; do not add it back on the HI return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Hawaii's resident return (Form N-11) line 7 starts from \"Federal adjusted gross income (AGI)\" reported from federal Form 1040/1040-SR. Treaty-exempt income excluded at the federal level is therefore already excluded from the Hawaii starting amount. Hawaii's additions to federal AGI are an explicit, enumerated list on Form N-11 line 10 (\"Other Hawaii Additions to Federal AGI\"): differences in the taxable portion of the Hawaii tax refund, Individual Housing Account distributions, Peace Corps compensation, depreciation/gain differences, compensation from temporary employment outside the United States, student-loan-interest differences, employer-provided adoption-benefit differences, qualified tuition program distributions for K-12, distributions from certain foreign corporations, and \"other adjustments.\" None of these is an add-back of federal tax-treaty-exempt income (unlike California's Schedule CA). The N-11 instructions' \"Special Instructions for Nonresident Aliens\" further state that a person who is a nonresident alien for federal purposes but a Hawaii resident applies the federal nonresident-alien rules when filing the Hawaii resident return and still begins from federal AGI, with no instruction to add back treaty income. Conclusion: treaty-exempt income is NOT re-taxed -> conforms = true.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@cc613203e0a3": "Refundable Food/Excise Tax Credit — Each individual income tax filer (including those with no taxable income) who is a Hawaii resident physically present in Hawaii more than nine months during 2024, who is not (and is not eligible to be) claimed as a dependent by another taxpayer for federal or Hawaii purposes, and who is not incarcerated for the entire year. Credit is computed per qualified exemption (taxpayer, spouse, dependents, plus certain minor children receiving public support).",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -26,18 +35,18 @@
     "bottom_line": "Refund of $512",
     "citations": [
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@63efe6840577",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      },
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@1c9766dc5bb0",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      }
     ],
     "deadlines": [
-     "Due 2025-04-22."
+     "Due 2025-04-21."
     ],
-    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)",
     "jurisdiction": "states/hi",
     "mail": [
      "Use a separate envelope from the federal return.",
@@ -64,18 +73,18 @@
     "bottom_line": "You owe $347.",
     "citations": [
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@63efe6840577",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      },
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@1c9766dc5bb0",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      }
     ],
     "deadlines": [
-     "Due 2025-04-22."
+     "Due 2025-04-21."
     ],
-    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)",
     "jurisdiction": "states/hi",
     "mail": [
      "Use a separate envelope from the federal return.",
@@ -104,18 +113,18 @@
     "bottom_line": "You owe $1,205. Already paid.",
     "citations": [
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@63efe6840577",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      },
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@1c9766dc5bb0",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      }
     ],
     "deadlines": [
-     "Due 2025-04-22."
+     "Due 2025-04-21."
     ],
-    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)",
     "jurisdiction": "states/hi",
     "mail": [
      "Use a separate envelope from the federal return.",
@@ -135,6 +144,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended HI 2024 return (Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "HI revenue department home page (read 2026-10-16)",
+      "url": "https://tax.hawaii.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)",
+    "jurisdiction": "states/hi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended HI return, and the HI 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the HI instructions for amended returns on the HI revenue department's site (https://tax.hawaii.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -145,12 +189,12 @@
    {
     "citations": [
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@1c9766dc5bb0",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      }
     ],
-    "deadline_status": "Due 2025-04-22.",
-    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)",
+    "deadline_status": "Due 2025-04-21.",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)",
     "headline": "HI 2024: refund $512",
     "jurisdiction": "states/hi",
     "notes": [],
@@ -162,12 +206,12 @@
    {
     "citations": [
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@1c9766dc5bb0",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      }
     ],
-    "deadline_status": "Due 2025-04-22.",
-    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)",
+    "deadline_status": "Due 2025-04-21.",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)",
     "headline": "HI 2024: you owe $347",
     "jurisdiction": "states/hi",
     "notes": [],
@@ -179,12 +223,12 @@
    {
     "citations": [
      {
-      "source": "@@42a5342f7d0a",
-      "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+      "source": "@@1c9766dc5bb0",
+      "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
      }
     ],
-    "deadline_status": "Due 2025-04-22.",
-    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)",
+    "deadline_status": "Due 2025-04-21.",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)",
     "headline": "HI 2024: you owe $1,205",
     "jurisdiction": "states/hi",
     "notes": [],
@@ -192,9 +236,285 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "HI revenue department home page (read 2026-10-16)",
+      "url": "https://tax.hawaii.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the HI instructions for amended returns on the HI revenue department's site (https://tax.hawaii.gov/).",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)",
+    "headline": "HI 2024, amended (Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)): you owe $88",
+    "jurisdiction": "states/hi",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b751927e2948",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "Hawaii Department of Taxation, Form N-311 (Rev. 2024), Refundable Food/Excise Tax Credit",
+     "cadence": "@@8c2619bf7078",
+     "topic": "credits",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n311_i.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation, Form N-356 (Rev. 2024), Earned Income Tax Credit",
+     "cadence": "@@8c2619bf7078",
+     "topic": "credits",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n356_i.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2024), Part I, line 12 ('enter the result here and on Form N-11, line 29; or Form N-15, line 46')",
+     "cadence": "@@8c2619bf7078",
+     "topic": "credits",
+     "url": "https://files.hawaii.gov/tax/forms/2024/schx_i.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b751927e2948",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@63efe6840577",
+     "cadence": "@@8c2619bf7078",
+     "topic": "filing_logistics",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b751927e2948",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@7c36b85b1cd0",
+     "cadence": "@@8c2619bf7078",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+    },
+    {
+     "answers": "Hawaii 2024 N-11 Resident Income Tax Instructions — residency/domicile definitions, 200-day presumption, which form to file, due date April 21, 2025, mailing addresses, check payee 'Hawaii State Tax Collector', hitax.hawaii.gov portal, Line 10 additions list, filing thresholds",
+     "cadence": "@@8c2619bf7078",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
+    },
+    {
+     "answers": "Hawaii Form N-15 (Rev. 2024) Individual Income Tax Return — Nonresident and Part-Year Resident",
+     "cadence": "@@8c2619bf7078",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n15_f.pdf"
+    },
+    {
+     "answers": "Hawaii 2024 N-15 Nonresident/Part-Year Resident Instructions",
+     "cadence": "@@8c2619bf7078",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n15ins.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation — Individual Income Tax (Resident and Nonresident) forms page",
+     "cadence": "@@8c2619bf7078",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.hawaii.gov/forms/a1_b1_1income/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b751927e2948",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@81cceded021c",
+     "cadence": "@@8c2619bf7078",
+     "topic": "law_changes",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b751927e2948",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@81cceded021c",
+     "cadence": "@@8c2619bf7078",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b751927e2948",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/hi",
  "state_scope": {
@@ -205,20 +525,20 @@
    "states": [
     {
      "benefits_candidates": [
-      "@@b4482444b5e8",
+      "@@cc613203e0a3",
       "@@3dd41a76cc7b",
-      "@@a7f838172c61",
+      "@@9421a905f5b3",
       "@@a2f3f69ba762"
      ],
      "citations": [
       {
-       "source": "@@42a5342f7d0a",
+       "source": "@@7c36b85b1cd0",
        "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
       }
      ],
      "filing_role": "nonresident",
      "forms": [
-      "@@af5076e0dfcb"
+      "@@187d0c597fad"
      ],
      "income_tax": true,
      "must_file": true,
@@ -256,20 +576,20 @@
    "states": [
     {
      "benefits_candidates": [
-      "@@b4482444b5e8",
+      "@@cc613203e0a3",
       "@@3dd41a76cc7b",
-      "@@a7f838172c61",
+      "@@9421a905f5b3",
       "@@a2f3f69ba762"
      ],
      "citations": [
       {
-       "source": "@@42a5342f7d0a",
+       "source": "@@7c36b85b1cd0",
        "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
       }
      ],
      "filing_role": "part_year",
      "forms": [
-      "@@af5076e0dfcb"
+      "@@187d0c597fad"
      ],
      "income_tax": true,
      "must_file": true,
@@ -306,20 +626,20 @@
    "states": [
     {
      "benefits_candidates": [
-      "@@b4482444b5e8",
+      "@@cc613203e0a3",
       "@@3dd41a76cc7b",
-      "@@a7f838172c61",
+      "@@9421a905f5b3",
       "@@a2f3f69ba762"
      ],
      "citations": [
       {
-       "source": "@@42a5342f7d0a",
+       "source": "@@7c36b85b1cd0",
        "url": "https://files.hawaii.gov/tax/forms/2024/n11_i.pdf"
       }
      ],
      "filing_role": "resident",
      "forms": [
-      "Form N-11, Individual Income Tax Return (Resident) (Rev. 2023)"
+      "Form N-11, Individual Income Tax Return (Resident) (Rev. 2024)"
      ],
      "income_tax": true,
      "must_file": true,
@@ -689,7 +1009,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "HI DOTAX — 2024 Form N-11 Instructions (files.hawaii.gov/tax/forms/2024/n11ins.pdf), Tax Rate Schedules p.36: Schedule I (Single/MFS) 12 brackets 1.40%..11.00% at 2,400/4,800/9,600/14,400/19,200/24,000/36,000/48,000/150,000/175,000/200,000; Schedule II (MFJ/QSS) exactly double; Schedule III (HoH) exactly 1.5x; printed base-tax constants are whole-dollar roundings of exact sums (34 vs 33.60 etc.). SD increased by Act 45 SLH 2024 to $4,400/$8,800/$6,424 (What's New). Personal exemption $1,144 per exemption ($2,288 age 65+, disclosed).",
+    "source": "@@81cceded021c",
     "url": "https://files.hawaii.gov/tax/forms/2024/n11ins.pdf"
    },
    "rate": null,

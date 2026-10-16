@@ -33,6 +33,7 @@
   "@@d1efad059a9d": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40dc.pdf",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f888cf7ee6e1": "2025 PA-40 Personal Income Tax Return Instructions (PA-40 IN 04-25) — \"The state income tax rate for 2025 is 3.07 percent (0.0307)\"; Line 12 PA Tax Liability \"Multiply Line 11 by 3.07 percent (0.0307)\"; \"PA law does not allow standard deductions, deductions for personal exemptions, itemized deductions, or deductions for personal expenses\"; the eight income classes (Lines 1a-8). Second pass: the 2025 Form PA-40 itself (PA-40 2025 04-25) prints Line 12 \"PA Tax Liability. Multiply Line 11 by 3.07 percent (0.0307)\" and Line 9 \"Total PA Taxable Income. Add only the positive income amounts from Lines 1c, 2, 3, 4, 5, 6, 7, and 8\" — both passes agree.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@facd9cdc4d20": "annual (per tax year; the newest shipped PA pack covers 2025 — for any newer year re-resolve at this URL family and cite)"
  },
  "file_and_pay": {
@@ -157,6 +158,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended PA 2025 return (Form PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident): you owe $88 more.",
+    "citations": [
+     {
+      "source": "PA revenue department home page (read 2026-10-16)",
+      "url": "https://www.pa.gov/agencies/revenue"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@a0f98c91e9d3",
+    "jurisdiction": "states/pa",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended PA return, and the PA 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the PA instructions for amended returns on the PA revenue department's site (https://www.pa.gov/agencies/revenue) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -217,6 +253,29 @@
      "@@598dcacb2be9"
     ],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "PA revenue department home page (read 2026-10-16)",
+      "url": "https://www.pa.gov/agencies/revenue"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the PA instructions for amended returns on the PA revenue department's site (https://www.pa.gov/agencies/revenue).",
+    "form": "@@a0f98c91e9d3",
+    "headline": "PA 2025, amended (PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident): you owe $88",
+    "jurisdiction": "states/pa",
+    "notes": [
+     "@@598dcacb2be9"
+    ],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -776,7 +835,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: PA 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: PA 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

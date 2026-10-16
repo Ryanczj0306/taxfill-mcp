@@ -4,18 +4,25 @@
   "@@13eaa9076589": "Form PIT-1 filed with Schedule PIT-B (Schedule of New Mexico Allocation and Apportionment of Income); nonresidents and part-year residents use PIT-B to allocate/apportion NM-source income. Mark residency status R (resident), N (non-resident), or P/F (part-year/first-year) on PIT-1; PIT-B is required when there is income from sources both inside and outside New Mexico.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@22c615401041": "Working Families Tax Credit (New Mexico's state EITC) — New Mexico residents who file an individual NM income tax return and qualify for the federal Earned Income Tax Credit (or would qualify but for an SSN/ITIN identification-number requirement, or but for the federal age limit if at least 18 but under 25). Low-to-moderate-income working individuals and families.",
+  "@@3270f906fc9f": "annual (per tax year; the shipped NM 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@32a1ae57414a": "Treaty conformity — NM conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NM income (it flows through the federal starting point; do not add it back on the NM return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: NM's resident return (PIT-1) starts from federal adjusted gross income: \"LINE 9. Federal Adjusted Gross Income — Enter the federal adjusted gross income as reported on your federal Form 1040 or 1040SR, line 11\" (2023 PIT-1 instructions, p. PIT-1-23). Income exempt from federal tax under a US tax treaty is already excluded from federal AGI and therefore flows through to NM. NM's additions to federal AGI are enumerated exclusively on Schedule PIT-ADJ lines 1-5: (1) interest/dividends from federal tax-exempt bonds, (2) federal net operating loss carryover, (3) refunded NM Section 529 contributions, (4) charitable land-donation deduction tied to the NM land conservation credit, and (5) tax paid by a pass-through entity. None of these is an add-back of federally tax-treaty-exempt income, foreign treaty income, or any income exempt under a US tax treaty (the word \"treaty\" does not appear in the PIT-1, PIT-B, or PIT-ADJ instructions). Because there is no treaty add-back, federally treaty-exempt income is NOT re-taxed by New Mexico -> conforms.",
   "@@34062d638bf2": "https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/",
   "@@437f3a12af29": "New Mexico Child Day Care Credit — A New Mexico resident who (a) provided over half the cost of maintaining a household for one or more qualifying dependents, (b) was gainfully employed during the period claimed, (c) was not receiving TANF/New Mexico Works or similar public assistance during that period, and (d) paid unreimbursed, uncompensated child day care expenses. Use the PIT-Childcare worksheet and Form PIT-CG (caregiver statement).",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@542eabc4c559": "New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@5887d66b2045": "The shipped NM 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@73840e88e9ab": "Low-Income Comprehensive Tax Rebate (LICTR) — Any New Mexico resident who files an individual NM income tax return, is not a dependent of another individual, was not an inmate of a public institution for more than six months, and was physically present in NM for at least six months during the tax year. May be claimed even with no taxable income.",
   "@@739ad7b7e73f": "New Mexico Child Income Tax Credit — A taxpayer who is a New Mexico resident and is not a dependent of another individual, for each qualifying child (as defined under the federal Internal Revenue Code). Available for taxable years beginning January 1, 2023.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a0a5cdee0c2a": "Law change NOT modeled by the engine (status final_form_published): NEW refundable credit first available for tax year 2023 — the New Mexico Child Income Tax Credit, enacted by HB 144 (2023 Regular Session) amending Section 7-2-18.34 NMSA 1978 and available for taxable years beginning January 1, 2023. It is claimed by a New Mexico resident who is not a dependent of another individual, for each qualifying child as defined under the federal Internal Revenue Code, and steps down by adjusted gross income: $0-$25,000 = $600; over $25,000 to $50,000 = $400; over $50,000 to $75,000 = $200; over $75,000 to $100,000 = $100; over $100,000 to $200,000 = $75; over $200,000 to $350,000 = $50; over $350,000 = $25. Resolve via: Enacted HB 144 (2023 Regular Session) amending Section 7-2-18.34 NMSA 1978 (the citation URL) for the per-child tiers; the credit is claimed on Form PIT-1 and never reduces the taxable-income base this pack's tax block operates on.",
+  "@@a3ab39041d9b": "Statutory rate schedules of Section 7-2-7 NMSA 1978 as enacted by 2019 House Bill 6 (Laws 2019, ch. 270), 'for any taxable year beginning on or after January 1, 2021' and unchanged for 2023 — MFS 1.7% to $4,000 / $68 + 3.2% to $8,000 / $196 + 4.7% to $12,000 / $384 + 4.9% to $157,500 / $7,513.50 + 5.9%; HoH-QSS-MFJ 1.7% to $8,000 / $136 + 3.2% to $16,000 / $392 + 4.7% to $24,000 / $768 + 4.9% to $315,000 / $15,027 + 5.9%; Single (and estates/trusts) 1.7% to $5,500 / $93.50 + 3.2% to $11,000 / $269.50 + 4.7% to $16,000 / $504.50 + 4.9% to $210,000 / $10,010.50 + 5.9%. Second pass: the Department's 2023 TAX RATE TABLE (PIT-TRT) — the mandated tax look-up table for PIT-1 line 18 (worked example: MFJ taxable income $25,325 -> table $834) and its continuation schedules ('If line 17 of Form PIT-1 (Taxable Income) is over $96,000': Single $4,422 + 4.9% of excess over $96,000 to $210,000, then $10,008 + 5.9%; MFJ/HoH $4,294 + 4.9% to $315,000, then $15,025 + 5.9%; MFS $4,498 + 4.9% to $157,500, then $7,512 + 5.9%; footnote '* This column must also be used by surviving spouse'), retrieved from the Department's public-files library, listed on tax.newmexico.gov/forms-publications/ (no .gov copy of the file exists): https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/89e01cee-3d91-46d0-bd4b-72c8b0d6ed00/2023trt.pdf",
   "@@c19727b66fb9": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Low-Income Comprehensive Tax Rebate (LICTR); New Mexico Child Day Care Credit; Property Tax Rebate for Persons 65 or Older.",
   "@@cac2ef6513f0": "Property Tax Rebate for Persons 65 or Older — New Mexico residents who were age 65 or older on the last day of the tax year, were physically present in NM at least six months, are not eligible to be claimed as a dependent, and were not a public-institution inmate more than six months. Both homeowners (property tax billed) and renters (rent paid on principal residence) may qualify.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@efd9d5115985": "NM Taxation and Revenue Dept., P.O. Box 25122, Santa Fe, NM 87504-5122 (mail refund returns and returns without a payment attached here)"
+  "@@efd9d5115985": "NM Taxation and Revenue Dept., P.O. Box 25122, Santa Fe, NM 87504-5122 (mail refund returns and returns without a payment attached here)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -139,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NM 2023 return (Form PIT-1 (New Mexico Personal Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NM revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.newmexico.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "jurisdiction": "states/nm",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NM return, and the NM 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NM instructions for amended returns on the NM revenue department's site (https://www.tax.newmexico.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -196,9 +238,279 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "NM revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.newmexico.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NM instructions for amended returns on the NM revenue department's site (https://www.tax.newmexico.gov/).",
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "headline": "NM 2023, amended (Form PIT-1 (New Mexico Personal Income Tax Return)): you owe $88",
+    "jurisdiction": "states/nm",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5887d66b2045",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Enacted HB 291 (2021 Regular Session, final version) amending Section 7-2-18.15 NMSA 1978",
+     "cadence": "@@3270f906fc9f",
+     "topic": "credits",
+     "url": "https://www.nmlegis.gov/Sessions/21%20Regular/final/HB0291.pdf"
+    },
+    {
+     "answers": "@@12821c214078",
+     "cadence": "@@3270f906fc9f",
+     "topic": "credits",
+     "url": "https://www.nmlegis.gov/Sessions/23%20Regular/bills/house/HB0144.html"
+    },
+    {
+     "answers": "NM Taxation & Revenue Department PIT-Childcare Child Day Care Credit Worksheet; 2022 PIT-RC instructions",
+     "cadence": "@@3270f906fc9f",
+     "topic": "credits",
+     "url": "https://realfile.tax.newmexico.gov/pit-childcare.pdf"
+    },
+    {
+     "answers": "NM Taxation & Revenue 2022 PIT-RC instructions (Property Tax Rebate for Persons 65 or Older; Section 7-2-14.2/14.3 NMSA 1978)",
+     "cadence": "@@3270f906fc9f",
+     "topic": "credits",
+     "url": "https://realfile.tax.newmexico.gov/2022pit-rc-ins.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5887d66b2045",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@542eabc4c559",
+     "cadence": "@@3270f906fc9f",
+     "topic": "filing_logistics",
+     "url": "@@34062d638bf2"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5887d66b2045",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@542eabc4c559",
+     "cadence": "@@3270f906fc9f",
+     "topic": "forms_and_instructions",
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "2023 PIT-1 New Mexico Personal Income Tax Return Instructions (official, NM Taxation & Revenue Dept. public files) — Line 9 Federal AGI, Who Must File, residency definitions, filing due date (April 15, 2024 paper / April 30, 2024 e-file+e-pay), mailing addresses (PO Box 25122 refund/no-payment; PO Box 8390 with payment), check payee, TAP portal. Listed on Forms & Publications under Income Taxes > Personal Income Tax (PIT) > Prior Years > 2023 as \"02. 2023 PIT-1 Personal Income Tax Return Instructions\"; file link https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/df85232c-e5b8-4225-800f-ad827c3829a9/2023pit-1-ins.pdf",
+     "cadence": "@@3270f906fc9f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.newmexico.gov/forms-publications/"
+    },
+    {
+     "answers": "New Mexico Taxpayer Access Point (TAP) — official online filing/payment portal",
+     "cadence": "@@3270f906fc9f",
+     "topic": "forms_and_instructions",
+     "url": "https://tap.state.nm.us"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5887d66b2045",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@12821c214078",
+     "cadence": "@@3270f906fc9f",
+     "topic": "law_changes",
+     "url": "https://www.nmlegis.gov/Sessions/23%20Regular/bills/house/HB0144.html"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5887d66b2045",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@a3ab39041d9b",
+     "cadence": "@@3270f906fc9f",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.nmlegis.gov/Sessions/19%20Regular/final/HB0006.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5887d66b2045",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/nm",
  "state_scope": {
@@ -619,7 +931,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "Statutory rate schedules of Section 7-2-7 NMSA 1978 as enacted by 2019 House Bill 6 (Laws 2019, ch. 270), 'for any taxable year beginning on or after January 1, 2021' and unchanged for 2023 — MFS 1.7% to $4,000 / $68 + 3.2% to $8,000 / $196 + 4.7% to $12,000 / $384 + 4.9% to $157,500 / $7,513.50 + 5.9%; HoH-QSS-MFJ 1.7% to $8,000 / $136 + 3.2% to $16,000 / $392 + 4.7% to $24,000 / $768 + 4.9% to $315,000 / $15,027 + 5.9%; Single (and estates/trusts) 1.7% to $5,500 / $93.50 + 3.2% to $11,000 / $269.50 + 4.7% to $16,000 / $504.50 + 4.9% to $210,000 / $10,010.50 + 5.9%. Second pass: the Department's 2023 TAX RATE TABLE (PIT-TRT) — the mandated tax look-up table for PIT-1 line 18 (worked example: MFJ taxable income $25,325 -> table $834) and its continuation schedules ('If line 17 of Form PIT-1 (Taxable Income) is over $96,000': Single $4,422 + 4.9% of excess over $96,000 to $210,000, then $10,008 + 5.9%; MFJ/HoH $4,294 + 4.9% to $315,000, then $15,025 + 5.9%; MFS $4,498 + 4.9% to $157,500, then $7,512 + 5.9%; footnote '* This column must also be used by surviving spouse'), retrieved from the Department's public-files library, the AWS-backed document store linked from tax.newmexico.gov (the NM pack's documented host exception): https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/89e01cee-3d91-46d0-bd4b-72c8b0d6ed00/2023trt.pdf",
+    "source": "@@a3ab39041d9b",
     "url": "https://www.nmlegis.gov/Sessions/19%20Regular/final/HB0006.pdf"
    },
    "rate": null,

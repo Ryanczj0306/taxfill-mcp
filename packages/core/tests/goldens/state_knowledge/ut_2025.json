@@ -25,6 +25,7 @@
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@eee18be448d8": "Law change NOT modeled by the engine (status final_form_published): NEW credits for 2025 (What's New): HB 106 created two employer-provided-childcare credits — code AW for construction and code AX for expenses — claimed on TC-40A Part 3 and carried to TC-40 line 24. They come with a five-year recapture schedule that this pack does not transcribe (see `unverified`), and this pack's `credits` list does not carry them. Resolve via: 2025 Utah TC-40 Individual Income Tax Instructions, What's New and the (AW)/(AX) employer-provided childcare credit instructions (the citation URL) for the credit amounts and the five-year recapture schedule; calc.state_tax returns TC-40 line 10 and applies no TC-40A credits.",
   "@@f0ca5229d698": "Retirement Credit — You (and/or your spouse, if filing jointly) must have been born on or before Dec. 31, 1952. You may NOT claim it if you (or your spouse) claim either the Social Security Benefits Credit (code AH) or the Military Retirement Credit (code AJ). Nonrefundable: reduces tax to zero but no refund of excess; no carryforward/back. Because the maximum is only $450, the instructions note many filers do better with the Social Security Benefits Credit or the Military Retirement Credit.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@f906f12e251b": "TC-40 with Schedule TC-40B (Non or Part-year Resident Schedule). Attach TC-40 page 3, TC-40A, TC-40B, TC-40S and TC-40W as applicable.",
   "@@fe529e01e0d5": "Law change NOT modeled by the engine (status final_form_published): CHILD TAX CREDIT AGE WINDOW EXPANDED for 2025: HB 106 (2025) widened the Utah child tax credit (UC 59-10-1047, code AT) to cover any child who qualifies for the federal child tax credit under IRC 24 and was, on the last day of 2025, NO MORE THAN FIVE YEARS OLD — for 2024 the child had to be at least one and no more than three years old. The $1,000-per-child amount, the 10%-of-excess-MAGI phase-out and its thresholds ($27,000 MFS / 1040NR; $54,000 MFJ and QSS; $43,000 single and head of household) are unchanged from 2024. Resolve via: 2025 Utah TC-40 Individual Income Tax Instructions, (AT) Child Tax Credit (UCA 59-10-1047) and Child Tax Credit Worksheet (the citation URL) for the expanded age test and the MAGI phase-out; calc.state_tax returns TC-40 line 10 and applies no TC-40A credits.",
   "@@ff46cfe2b69b": "Social Security Benefits Credit — Available to filers (or spouses, if filing jointly) who received taxable Social Security retirement, disability or survivor benefits included in adjusted gross income on the return. You may NOT also claim the Retirement Credit (code 18). Nonrefundable: reduces tax to zero, no refund of excess, no carryforward/back."
@@ -151,6 +152,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended UT 2025 return (Form TC-40 (2025 Utah Individual Income Tax Return, form number 40501) — full-year residents file TC-40. Filing status codes on line 1 are 1 Single, 2 Married filing jointly, 3 Married filing separately, 4 Head of household, 5 Qualifying surviving spouse.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "UT revenue department home page (read 2026-10-16)",
+      "url": "https://tax.utah.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@5406a8dd5808",
+    "jurisdiction": "states/ut",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended UT return, and the UT 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the UT instructions for amended returns on the UT revenue department's site (https://tax.utah.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -205,6 +241,27 @@
     "jurisdiction": "states/ut",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "UT revenue department home page (read 2026-10-16)",
+      "url": "https://tax.utah.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the UT instructions for amended returns on the UT revenue department's site (https://tax.utah.gov/).",
+    "form": "@@5406a8dd5808",
+    "headline": "UT 2025, amended (TC-40 (2025 Utah Individual Income Tax Return, form number 40501) — full-year residents file TC-40. Filing status codes on line 1 are 1 Single, 2 Married filing jointly, 3 Married filing separately, 4 Head of household, 5 Qualifying surviving spouse.): you owe $88",
+    "jurisdiction": "states/ut",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -662,7 +719,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: UT 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: UT 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

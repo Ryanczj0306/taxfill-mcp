@@ -22,6 +22,7 @@
   "@@e64385894920": "2025 INSTRUCTIONS FOR FILING RI-1040 (for full year Rhode Island residents filing Form RI-1040), Revised 11/2025 — RI Division of Taxation: WHAT'S NEW FOR TAX YEAR 2025 (p. I-1, inflation adjustments + the new RI Schedule HR1 P.L. 119-21 add-backs), Who Must File / Resident & 183-day domicile definitions (p. I-1), Where and When to File (postmarked by Wednesday, April 15, 2026; refund returns to 02908-5806, with-payment returns to 02908-5807), Line 3 Modified Federal AGI, Line 4 standard-deduction list ($10,900 Single / $21,800 Married Joint / $21,800 Qualifying Widow(er) / $10,900 Married Separate / $16,350 Head of Household), Line 6 \"Exemption Amount: Multiply the number of exemptions in the box by $5,100\" with the $254,250 phase-out pointer, Line 7 RI Taxable Income, Line 8 \"Rhode Island Income Tax: Enter the RI income tax from the RI Tax Table or Computation Worksheet\", RI Schedule EIC Line 40 \"The Rhode Island percentage is 16%\", RI Schedule I Line 21 \"Multiply the amount on line 20 by 25%\"",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@ed8361aef63f": "2025 INSTRUCTIONS FOR FILING RI-1040 (Revised 11/2025) — RI Division of Taxation, Where and When to File: returns are \"considered timely filed if postmarked by Wednesday, April 15, 2026.\" Form RI-1040H must also be filed on or before April 15, 2026, and an extension to file the RI-1040 does not extend that date. An automatic six-month extension of time to FILE is available (Form RI-4868), but it does not extend the time for PAYMENT of any tax due.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@f8ec6ce4177e": "2025 INSTRUCTIONS FOR FILING RI-1040 (Revised 11/2025) — RI Division of Taxation, Where and When to File: returns are considered timely filed if postmarked by Wednesday, April 15, 2026; \"If you are claiming a refund, mail your return to: Rhode Island Division of Taxation, One Capitol Hill, Providence, RI 02908 - 5806\"; \"If you are making a payment, mail your return, payment and Form RI-1040V to: ... Providence, RI 02908 - 5807\""
  },
  "file_and_pay": {
@@ -146,6 +147,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended RI 2025 return (Form RI-1040 (Rhode Island Resident Individual Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "RI revenue department home page (read 2026-10-16)",
+      "url": "https://tax.ri.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form RI-1040 (Rhode Island Resident Individual Income Tax Return)",
+    "jurisdiction": "states/ri",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended RI return, and the RI 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the RI instructions for amended returns on the RI revenue department's site (https://tax.ri.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -200,6 +236,27 @@
     "jurisdiction": "states/ri",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "RI revenue department home page (read 2026-10-16)",
+      "url": "https://tax.ri.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the RI instructions for amended returns on the RI revenue department's site (https://tax.ri.gov/).",
+    "form": "Form RI-1040 (Rhode Island Resident Individual Income Tax Return)",
+    "headline": "RI 2025, amended (Form RI-1040 (Rhode Island Resident Individual Income Tax Return)): you owe $88",
+    "jurisdiction": "states/ri",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

@@ -96,9 +96,13 @@
 #     "PMB/private mailbox" box 1017 LOST its 6 and "Apt. no/ste. no." 1016
 #     still has none (the 2023 pack budgeted 14), so each carries the digit
 #     count its box renders whole at Helv 10 (a probe fill read on the render:
-#     13 digits fit the 72.5 / 73.0 pt boxes, a 14th clips; neither the filler
-#     nor verify warned at 14); and 7.count (1034) carries /MaxLen 11 on a 14.0
-#     pt box (two Helv 10 digits, 11.1 pt, would fit), so the pack keeps
+#     12 digits fit the 72.5 / 73.0 pt boxes and the 13th is cut 1 pt inside
+#     the right edge; neither the filler nor verify warns at 13 or 14).
+#     Corrected JK27 (2026-10-16): this port first read 13 digits as fitting
+#     and budgeted 13; a 600 dpi probe of this blank cuts the 13th digit's ink
+#     to 29 px in 1016 and 33 px in 1017 against 39 px whole, the same render
+#     as the identical 2023 and 2024 boxes. 7.count (1034) carries /MaxLen 11
+#     on a 14.0 pt box (two Helv 10 digits, 11.1 pt, would fit), so the pack keeps
 #     maxlen 1 as a TIGHTER_THAN_WIDGET budget because the face asks for a
 #     one-digit count ("enter 1 in the box ... enter 2 in the box"), as
 #     8.count / 9.count carry /MaxLen 1 themselves. Money boxes 12.
@@ -180,8 +184,8 @@ fields:
   - { line: "mailing_address.additional_info", field: "540NR_form_1013", type: text }  # "Additional information (see instructions)"
   - { line: "pba_code", field: "540NR_form_1014", type: text, maxlen: 6 }  # "PBA code"
   - { line: "mailing_address.street", field: "540NR_form_1015", type: text }  # "Street address (number and street) or PO box"
-  - { line: "mailing_address.apt_no", field: "540NR_form_1016", type: text, maxlen: 13 }  # "Apt. no/ste. no." — no /MaxLen (2023 pack budgeted 14); budget 13 = the digit count the 72.5 pt box renders whole at Helv 10, the 14th clips (a probe fill read on the render)
-  - { line: "mailing_address.pmb", field: "540NR_form_1017", type: text, maxlen: 13 }  # "PMB/private mailbox" — the 2023 /MaxLen 6 is gone; budget 13 = the digit count the 73.0 pt box renders whole at Helv 10, the 14th clips (a probe fill read on the render)
+  - { line: "mailing_address.apt_no", field: "540NR_form_1016", type: text, maxlen: 12 }  # "Apt. no/ste. no." — no /MaxLen; budget 12 = the digit count the 72.5 pt box renders whole at Helv 10: the 13th is cut 1 pt inside the right edge (re-measured JK27, 2026-10-16, on a 600 dpi probe render; this pack said 13 until then; the 2024 box is identical and budgets 12)
+  - { line: "mailing_address.pmb", field: "540NR_form_1017", type: text, maxlen: 12 }  # "PMB/private mailbox" — the 2023 /MaxLen 6 is gone; budget 12 = the digit count the 73.0 pt box renders whole at Helv 10: the 13th is cut 1 pt inside the right edge (re-measured JK27, 2026-10-16; this pack said 13 until then)
   - { line: "mailing_address.city", field: "540NR_form_1018", type: text }  # "City (If you have a foreign address, see instructions)"
   - { line: "mailing_address.state", field: "540NR_form_1019", type: text, maxlen: 2 }  # "State"
   - { line: "mailing_address.zip", field: "540NR_form_1020", type: text, maxlen: 10 }  # "ZIP code"

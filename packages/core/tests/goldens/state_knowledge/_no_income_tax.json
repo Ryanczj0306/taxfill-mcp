@@ -62,6 +62,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/ak",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "AK levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -107,6 +124,20 @@
        "AK levies no personal income tax — no state return to file."
       ],
       "owed": 1205,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "AK levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "AK 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/ak",
+      "notes": [
+       "AK levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025
@@ -196,6 +227,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/fl",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "FL levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -244,12 +292,47 @@
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "FL levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "FL 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/fl",
+      "notes": [
+       "FL levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
      }
     ],
     "label": "REVIEW DRAFT — approve the bottom line before printing"
    },
    "state_scope": {
-    "error": "ValidationError: 1 validation error for Citation\nurl\n  Value error, url must point to an official US government host — a federal/.gov site (irs.gov, treasury.gov), a .mil site, or a state-government .us host (*.state.<xx>.us, e.g. revenue.state.mn.us), got host 'floridarevenue.com'. Bare .us domains are an open registry and blogs/commercial sites are never authority for tax data. [type=value_error, input_value='https://floridarevenue.com', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+    "notes": [
+     "@@eb71823a243b"
+    ],
+    "states": [
+     {
+      "benefits_candidates": [],
+      "citations": [
+       {
+        "source": "Florida Constitution, Art. VII, s. 5(a), NATURAL PERSONS: \"No tax upon estates or inheritances or upon the income of natural persons who are residents or citizens of the state shall be levied by the state, or under its authority, in excess of the aggregate of amounts which may be allowed to be credited upon or deducted from any similar tax levied by the United States or any state.\"",
+        "url": "https://www.flsenate.gov/Laws/Constitution"
+       }
+      ],
+      "filing_role": "none",
+      "forms": [],
+      "income_tax": false,
+      "must_file": false,
+      "reason": "FL levies no personal income tax — no state return required. Revenue department: https://floridarevenue.com",
+      "state": "FL",
+      "warnings": []
+     }
+    ],
+    "year": 2025
    }
   },
   "NH": {
@@ -309,6 +392,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/nh",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "NH levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -354,6 +454,20 @@
        "NH levies no personal income tax — no state return to file."
       ],
       "owed": 1205,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "NH levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "NH 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/nh",
+      "notes": [
+       "NH levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025
@@ -445,6 +559,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/nv",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "NV levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -490,6 +621,20 @@
        "NV levies no personal income tax — no state return to file."
       ],
       "owed": 1205,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "NV levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "NV 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/nv",
+      "notes": [
+       "NV levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025
@@ -579,6 +724,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/sd",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "SD levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -624,6 +786,20 @@
        "SD levies no personal income tax — no state return to file."
       ],
       "owed": 1205,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "SD levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "SD 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/sd",
+      "notes": [
+       "SD levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025
@@ -713,6 +889,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/tn",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "TN levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -758,6 +951,20 @@
        "TN levies no personal income tax — no state return to file."
       ],
       "owed": 1205,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "TN levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "TN 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/tn",
+      "notes": [
+       "TN levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025
@@ -847,6 +1054,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/tx",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "TX levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -892,6 +1116,20 @@
        "TX levies no personal income tax — no state return to file."
       ],
       "owed": 1205,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "TX levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "TX 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/tx",
+      "notes": [
+       "TX levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025
@@ -981,6 +1219,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/wa",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "WA levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -1026,6 +1281,20 @@
        "WA levies no personal income tax — no state return to file."
       ],
       "owed": 1205,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "WA levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "WA 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/wa",
+      "notes": [
+       "WA levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025
@@ -1117,6 +1386,23 @@
       "records": [],
       "sign": [],
       "tax_year": 2025
+     },
+     {
+      "assemble": [],
+      "bottom_line": "You owe $88.",
+      "citations": [],
+      "deadlines": [],
+      "form": "state return",
+      "jurisdiction": "states/wy",
+      "mail": [],
+      "mailing_address": null,
+      "notes": [
+       "WY levies no personal income tax — there is no state return to file or mail."
+      ],
+      "payment": [],
+      "records": [],
+      "sign": [],
+      "tax_year": 2025
      }
     ]
    },
@@ -1162,6 +1448,20 @@
        "WY levies no personal income tax — no state return to file."
       ],
       "owed": 1205,
+      "plain_explanation": "State bottom line — review against your state return.",
+      "refund": 0,
+      "tax_year": 2025
+     },
+     {
+      "citations": [],
+      "deadline_status": "WY levies no personal income tax — no state return to file.",
+      "form": "state return",
+      "headline": "WY 2025, amended (state return): you owe $88",
+      "jurisdiction": "states/wy",
+      "notes": [
+       "WY levies no personal income tax — no state return to file."
+      ],
+      "owed": 88,
       "plain_explanation": "State bottom line — review against your state return.",
       "refund": 0,
       "tax_year": 2025

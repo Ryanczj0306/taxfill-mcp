@@ -89,7 +89,8 @@
 # serves its document library from an AWS API Gateway host
 # (klvg4oyd4j.execute-api.us-west-2.amazonaws.com) — the SAME knowingly-
 # accepted, self-disclosed exception host documented for NM in
-# knowledge/states/nm/2024.yaml and allow-listed in test_state_knowledge.py;
+# knowledge/states/nm/2024.yaml (JK27, 2026-10-16: no longer allow-listed for
+# knowledge citations, whose urls must now name a .gov page or file);
 # realfile.tax.newmexico.gov (the .gov alias) serves only the CURRENT year.
 # The library rotates the UUID path segments over time — pdf_sha256 is the
 # durable identity; re-locate via tax.newmexico.gov Forms & Publications if

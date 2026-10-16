@@ -6,6 +6,10 @@ A pack maxlen BELOW the widget's is a deliberate budget only when the printed bo
 one-character account cell with a DOR /MaxLen of 10); each such row is adjudicated below with the measured box, and
 the table self-clears. A text line whose widget has a /MaxLen but whose pack declares none is left to verify's hard
 MaxLen check. Network-marked like the ReadOnly sweeps: it reads each pinned blank (cache or download).
+
+A widget with NO /MaxLen is invisible to that sweep, so a budget measured on a probe render of its box is pinned in
+MEASURED_WITHOUT_MAXLEN with the box it was measured on (JK27, 2026-10-16): the pack must carry the pinned budget, one
+box carries one budget in every year, and the network layer re-reads the box so a re-issue forces a re-measure.
 """
 from __future__ import annotations
 
@@ -228,6 +232,29 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
        for i in range(1, 8)},
 }
 
+# (pack, line) -> (budget, box width pt, /DA font size, why) for a text line whose widget has NO /MaxLen (JK27,
+# 2026-10-16). The budget is the digit count a probe fill renders whole: the renderer's form layer (pdfium, render.py
+# init_forms) draws the value from the 1 pt border inward and clips 1 pt inside the right edge, and Helvetica digits
+# advance 0.556 em. The CA "Apt. no/ste. no." and "PMB/private mailbox" boxes keep one rect and /DA (Helv 10) in
+# 2023-2025 on the 540 and the 540NR alike, yet the 540NR packs budgeted 14 (2023), 12 (2024) and 13 (2025): a 600 dpi
+# probe of every blank renders 12 digits whole and cuts the 13th 1 pt inside the right edge (its ink 29 px in the Apt.
+# box, 33 px in the PMB box, against 39 px for the same digit whole), and a 14th never shows.
+_CA_BOX_WHY = "{w} pt at Helv 10: 12 digits (66.7 pt) render whole, the 13th is cut 1 pt inside the right edge"
+MEASURED_WITHOUT_MAXLEN: dict[tuple[str, str], tuple[int, float, float, str]] = {
+    **{(f"states/ca/{y}/form540nr/pack.yaml", "mailing_address.apt_no"): (12, 72.5, 10.0, _CA_BOX_WHY.format(w=72.5))
+       for y in (2023, 2024, 2025)},
+    # the 2023 540NR PMB box (and every 2023 540 address box) still carried a /MaxLen, which the sweep above tracks
+    **{(f"states/ca/{y}/form540nr/pack.yaml", "mailing_address.pmb"): (12, 73.0, 10.0, _CA_BOX_WHY.format(w=73.0))
+       for y in (2024, 2025)},
+    **{(f"states/ca/{y}/form540/pack.yaml", "mailing_address.apt_no"): (12, 72.5, 10.0, _CA_BOX_WHY.format(w=72.5))
+       for y in (2024, 2025)},
+    **{(f"states/ca/{y}/form540/pack.yaml", "mailing_address.pmb"): (12, 73.0, 10.0, _CA_BOX_WHY.format(w=73.0))
+       for y in (2024, 2025)},
+    **{(f"states/ca/{y}/form540/pack.yaml", "principal_residence.apt_no"):
+       (12, 70.7, 10.0, _CA_BOX_WHY.format(w=70.7)) for y in (2024, 2025)},
+}
+HELVETICA_DIGIT_EM = 0.556  # every Helvetica digit advances 556/1000 em
+
 
 def _key(pack_path: Path) -> str:
     return str(pack_path.relative_to(FORMPACKS))
@@ -274,3 +301,58 @@ def test_every_tighter_budget_row_is_still_tighter(row: tuple[str, str]):
     widget = maxlens.get(prefix + field.field)
     assert field.maxlen is not None and widget is not None and field.maxlen < widget, (
         f"{row}: no longer a tighter budget (pack {field.maxlen}, widget {widget}) — delete the row")
+
+
+def _measured_id(row: tuple[str, str]) -> str:
+    return f"{row[0].removesuffix('/pack.yaml')}-{row[1]}"
+
+
+@pytest.mark.parametrize("row", sorted(MEASURED_WITHOUT_MAXLEN), ids=_measured_id)
+def test_measured_budget_without_a_widget_maxlen_is_the_pack_maxlen(row: tuple[str, str]):
+    """JK27: the pack carries the budget measured on its box, and the digit arithmetic agrees with the render."""
+    budget, width, size, why = MEASURED_WITHOUT_MAXLEN[row]
+    pack_path = FORMPACKS / row[0]
+    assert pack_path.is_file(), f"MEASURED_WITHOUT_MAXLEN names {row[0]}, which no longer exists — delete the row"
+    field = next((f for f in load_pack(pack_path).fields if f.line == row[1]), None)
+    assert field is not None, f"{row}: the line is gone — delete the row"
+    assert field.maxlen == budget, (
+        f"{row}: pack maxlen {field.maxlen}, but the box was measured at {budget} ({why}). A higher budget lets the "
+        f"filler write digits the render cuts off, and neither the filler nor verify's 0.5-em scan warns")
+    digit = HELVETICA_DIGIT_EM * size
+    inner = width - 2.0  # drawn from the 1 pt border inward, clipped 1 pt inside the right edge
+    assert budget * digit <= inner < (budget + 1) * digit, (
+        f"{row}: {budget} digits ({budget * digit:.1f} pt) must fit the {inner:.1f} pt inside the {width} pt box and "
+        f"one more ({(budget + 1) * digit:.1f} pt) must not — re-measure the row")
+
+
+def test_one_box_carries_one_measured_budget_in_every_year():
+    """The defect JK27 fixed: the same CA box budgeted 14 / 12 / 13 in three years. A budget belongs to the box."""
+    by_box: dict[tuple[str, float, float], set[int]] = {}
+    for (_pack, line), (budget, width, size, _why) in MEASURED_WITHOUT_MAXLEN.items():
+        by_box.setdefault((line, width, size), set()).add(budget)
+    split = {box: budgets for box, budgets in by_box.items() if len(budgets) > 1}
+    assert not split, f"one box, several budgets: {split} — re-measure on a probe render and use one"
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("row", sorted(MEASURED_WITHOUT_MAXLEN), ids=_measured_id)
+def test_every_measured_budget_row_still_describes_its_widget(row: tuple[str, str]):
+    """The table self-clears: a widget that gains a /MaxLen, or a box that changes, must be re-measured."""
+    import re  # noqa: PLC0415
+
+    budget, width, size, _why = MEASURED_WITHOUT_MAXLEN[row]
+    pack = load_pack(FORMPACKS / row[0])
+    field = next(f for f in pack.fields if f.line == row[1])
+    try:
+        blank = fetch_pack_blank(pack)
+    except OfflineFetchError as exc:
+        pytest.skip(f"cache empty and network unreachable: {exc}")
+    prefix = f"{pack.acroform_root}." if pack.acroform_root else ""
+    widget = next((w for w in read_text_widgets(Path(blank)) if w.name == prefix + field.field), None)
+    assert widget is not None, f"{row}: no text widget '{prefix + field.field}' in the blank — re-derive the binding"
+    assert widget.max_len is None, (
+        f"{row}: the widget now carries /MaxLen {widget.max_len}; the sweep above tracks it — delete the row")
+    font = re.search(r"/(\S+)\s+([\d.]+)\s+Tf", widget.da or "")
+    assert abs(widget.rect_width - width) < 0.05 and font is not None and float(font.group(2)) == size, (
+        f"{row}: the box is now {widget.rect_width:.2f} pt with /DA {widget.da!r}, not the {width} pt at {size:g} pt "
+        f"the budget of {budget} was measured on — probe-fill the new box, read the render and update the row")

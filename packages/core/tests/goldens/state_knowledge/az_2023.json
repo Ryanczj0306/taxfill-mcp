@@ -1,18 +1,26 @@
 {
  "_strings": {
   "@@01cdbad8d462": "Arizona Form 140 - Resident Personal Income Tax Return (full-year residents; short forms Form 140A and Form 140EZ are also available for eligible residents)",
+  "@@0a9c29ca4294": "annual (per tax year; the shipped AZ 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@20710ba1e479": "Arizona Department of Revenue, PO Box 52138, Phoenix, AZ 85072-2138 (if expecting a refund, owe no tax, or owe tax but are not sending a payment)",
   "@@2bd5a030a060": "AZ DOR - 2023 Form 140 Resident Personal Income Tax Return (line 12 = Federal adjusted gross income; additions lines 14-18; mailing addresses; make check payable to Arizona Department of Revenue; AZTaxes.gov)",
+  "@@416817873fbf": "AZ DOR — 2023 Form 140 booklet: \"2023 New Tax Rate of 2.5% for All Income Levels and Filing Status\"; Line 46 \"Tax: Multiply line 45 by 2.5% (.025)\" (Line 45 = Arizona taxable income); Line 12 = federal AGI (\"Arizona uses federal adjusted gross income as a starting point\"); 2023 standard deduction $13,850 single/MFS, $27,700 MFJ, $20,800 HoH (Line 43 — matches the printed 2023 federal amounts); exemptions on lines 38-41 (age 65+ $2,100; blind $1,500; other exemptions $2,300; qualifying parents/grandparents $10,000); Dependent Tax Credit on Line 49.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@5fd688e23400": "The shipped AZ 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@79fffd856d81": "Family Income Tax Credit — Arizona residents whose total income does not exceed the maximum allowed for their filing status and number of dependents. The credit only reduces tax and cannot be refunded.",
+  "@@7d821d3200bd": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140Booklet.pdf",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a270c63eee7c": "Property Tax Credit (Form 140PTC) — Must be an Arizona resident for the entire year and have paid Arizona property tax or rent on a main home during 2023. Must be either (a) age 65 or older by Dec 31, 2023, or (b) under 65 but receiving Title 16 Supplemental Security Income (SSI) payments. Total household income must be under the limits below.",
   "@@a2cc0666938f": "Credit for Increased Excise Taxes — Taxpayer must have an SSN valid for employment, meet the income threshold for their filing status, not be claimed as a dependent by another taxpayer, and not have been sentenced to at least 60 days in a county/state/federal prison during 2023. Married joint filers may claim for a spouse with a valid SSN or ITIN.",
   "@@a579cb30449c": "Treaty conformity — AZ conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from AZ income (it flows through the federal starting point; do not add it back on the AZ return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Arizona's resident return (Form 140) starts from federal adjusted gross income: line 12 of the 2023 Form 140 is \"Federal adjusted gross income,\" and the AZ DOR instructions state \"Arizona gross income is your federal adjusted gross income.\" Because federally treaty-exempt income is already excluded from federal AGI, it flows through to the AZ return excluded. AZ then applies only specific statutory additions (Form 140 lines 14-18, including the \"Other Additions to Arizona Gross Income\" schedule on page 5, which lists items such as the ordinary-income portion of lump-sum distributions excluded federally, items previously deducted for Arizona purposes, and claim-of-right adjustments). No line on Form 140 or its additions schedule adds back federal tax-treaty-exempt income (unlike California's Schedule CA). Therefore treaty-exempt income is NOT re-taxed by Arizona -> conforms. (Caveat: the full page-5 additions schedule was read via .gov search snippets, not the full PDF page, because the form PDFs returned HTTP 403 — see unverified.)",
   "@@c1c78882979c": "Nonresident: Arizona Form 140NR - Nonresident Personal Income Tax Return. Part-year resident: Arizona Form 140PY - Part-Year Resident Personal Income Tax Return.",
   "@@c2a91cb05cc4": "Dependent Tax Credit — Available to taxpayers who claim qualifying dependents (a dependent for federal income tax purposes) on the Arizona return. Credit amount is higher for dependents under age 17. Cannot also claim the same individual as a qualifying parent/grandparent exemption (line 41) or Other Exemption (line 40).",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -136,6 +144,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended AZ 2023 return (Form Arizona Form 140 - Resident Personal Income Tax Return (full-year residents; short forms Form 140A and Form 140EZ are also available for eligible residents)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "AZ revenue department home page (read 2026-10-16)",
+      "url": "https://azdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@01cdbad8d462",
+    "jurisdiction": "states/az",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended AZ return, and the AZ 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the AZ instructions for amended returns on the AZ revenue department's site (https://azdor.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -193,9 +236,267 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "AZ revenue department home page (read 2026-10-16)",
+      "url": "https://azdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the AZ instructions for amended returns on the AZ revenue department's site (https://azdor.gov/).",
+    "form": "@@01cdbad8d462",
+    "headline": "AZ 2023, amended (Arizona Form 140 - Resident Personal Income Tax Return (full-year residents; short forms Form 140A and Form 140EZ are also available for eligible residents)): you owe $88",
+    "jurisdiction": "states/az",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5fd688e23400",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Arizona Department of Revenue, 2023 Form 140 Resident Personal Income Tax Return Instructions (Line 49 - Dependent Tax Credit)",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "credits",
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140i.pdf"
+    },
+    {
+     "answers": "Arizona Department of Revenue, 2023 Form 140PTC Property Tax Refund (Credit) Claim and Instructions (eligibility tests; Schedules 1 & 2 credit tables)",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "credits",
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140PTCi.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5fd688e23400",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@2bd5a030a060",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "filing_logistics",
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5fd688e23400",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@2bd5a030a060",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf"
+    },
+    {
+     "answers": "AZ DOR - Form 140 Arizona Resident Personal Income Tax Booklet (residency/domicile definition; who must file; filing thresholds; Other Additions to Arizona Gross Income schedule, page 5)",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/forms/individual/form-140-arizona-resident-personal-income-tax-booklet"
+    },
+    {
+     "answers": "AZ DOR - 2023 Form 140 Booklet PDF",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "@@7d821d3200bd"
+    },
+    {
+     "answers": "AZ DOR - 2023 Form 140NR Nonresident Personal Income Tax Return booklet",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140NRBooklet.pdf"
+    },
+    {
+     "answers": "AZ DOR - 2023 Form 140NR Nonresident Personal Income Tax Return Instructions (lines 15-27 FEDERAL / ARIZONA columns and the line-27 Arizona income ratio, p. 7-9; Line 51 Prorated Exemptions and the standard-deduction proration caution, p. 19; Standard Deduction Worksheet, Line 54 31% charitable increase, Line 56 2.5% tax and Dependent Tax Credit apportionment, p. 20; mailing addresses, p. 27)",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140NRi.pdf"
+    },
+    {
+     "answers": "AZ DOR - Part-Year Resident Personal Income Tax Form (Form 140PY) page",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/forms/individual/part-year-resident-personal-income-tax-form-non-fillable-form"
+    },
+    {
+     "answers": "AZ DOR - Mailing Addresses",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/contact-us/mailing-addresses"
+    },
+    {
+     "answers": "AZ DOR News Center - 2023 Income Tax Deadline (April 15, 2024 due date; Oct 15, 2024 extension)",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/news-center/2023-income-tax-deadline-one-month-away"
+    },
+    {
+     "answers": "AZ DOR News Center - Only One Week Away from the Deadline for Arizona Individual Income Tax Returns",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/news-center/only-one-week-away-deadline-arizona-individual-income-tax-returns"
+    },
+    {
+     "answers": "AZ DOR - Individual Income Tax Forms index",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/forms/individual"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5fd688e23400",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@416817873fbf",
+     "cadence": "@@0a9c29ca4294",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@7d821d3200bd"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5fd688e23400",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140_f.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/az",
  "state_scope": {
@@ -529,8 +830,8 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "AZ DOR — 2023 Form 140 booklet: \"2023 New Tax Rate of 2.5% for All Income Levels and Filing Status\"; Line 46 \"Tax: Multiply line 45 by 2.5% (.025)\" (Line 45 = Arizona taxable income); Line 12 = federal AGI (\"Arizona uses federal adjusted gross income as a starting point\"); 2023 standard deduction $13,850 single/MFS, $27,700 MFJ, $20,800 HoH (Line 43 — matches the printed 2023 federal amounts); exemptions on lines 38-41 (age 65+ $2,100; blind $1,500; other exemptions $2,300; qualifying parents/grandparents $10,000); Dependent Tax Credit on Line 49.",
-    "url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140Booklet.pdf"
+    "source": "@@416817873fbf",
+    "url": "@@7d821d3200bd"
    },
    "marginal_rate": "0.025",
    "rate": "0.025",

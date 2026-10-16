@@ -24,7 +24,8 @@
   "@@df5c90e914f8": "Colorado Earned Income Tax Credit (COEITC) - SSN filers — Full-year or part-year Colorado residents who claim the federal Earned Income Tax Credit (EITC). Part-year residents apportion by the DR 0104PN line 34 percentage (capped at 100%). (ITIN filers, filers whose SSN is not valid for employment, and certain filers under 25 without qualifying children use form DR 0104TN and claim on DR 0104CR line 9 instead — and a federal-EITC claimant who had to leave out dependents only because of an ITIN/invalid SSN may claim a HIGHER COEITC on line 9.)",
   "@@e987416ffd3a": "TABOR State Sales Tax Refund (claimed on the 2025 return) — Full-year Colorado residents born before 2007 (or full-year residents under eighteen who are required to file a return). The return must be postmarked or transmitted by the extension due date (October 15, 2026). In general you must be 18 or older as of January 1, 2025; if under 18 as of that date you must either have a Colorado tax liability (DR 0104 line 13 greater than 0) or be claiming a refund of Colorado wage withholding on a W-2. You must not have been convicted of a felony and incarcerated in a Colorado Department of Corrections or Federal Bureau of Prisons facility for 180 days or more during the year. A deceased person must have met all requirements as of the date of death. Lines 34-37 of the 2025 DR 0104 compute a Modified AGI solely to size the refund; they do not affect the income tax computation.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f0d1fb8990b9": "Treaty conformity — CO conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from CO income (it flows through the federal starting point; do not add it back on the CO return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Colorado's DR 0104 begins at \"Federal Taxable Income\" (2025 line 1, \"from your federal income tax form 1040, 1040 SR, or 1040 SP line 15\"). Federally treaty-exempt income is already excluded from federal taxable income, so it flows through to Colorado untaxed UNLESS Colorado has an explicit addback. The 2025 DR 0104's complete Additions to Federal Taxable Income are Lines 2-7 plus Line 9 (Line 8 is \"Reserved for future use\"): state income tax addback (Schedule A), Qualified Business Income Deduction addback, Standard/Itemized Federal Deduction addback (federal AGI over $300,000), business meals deducted under IRC 274(k), nonqualified CollegeInvest Tuition Savings Account distributions, nonqualified Colorado ABLE Account distributions, and Line 9 \"Other Additions\" — whose enumerated items in the 2025 booklet are: non-Colorado state/local bond interest (net of amortized premiums/expenses; Colorado bonds issued on or after May 1, 1980 are excluded from the addback), a federal charitable deduction for a conservation easement also claimed for a Colorado credit, expenses for unauthorized alien labor services, fiduciary adjustments and Colorado K-1 (DR 0106K) additions from a partnership or S corporation, expenses at/payments to a club that restricts membership on the basis of sex, sexual orientation, gender identity/expression, marital status, race, creed, religion, color, ancestry or national origin, and forfeited employer contributions to a home savings account previously subtracted. NONE of these is an addback of federally treaty-exempt or foreign-source income. Therefore treaty-exempt income is not re-taxed and Colorado conforms. (Confirmed against the official 2025 Book 104 and the standalone 2025 DR 0104 form PDF on tax.colorado.gov.)"
+  "@@f0d1fb8990b9": "Treaty conformity — CO conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from CO income (it flows through the federal starting point; do not add it back on the CO return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Colorado's DR 0104 begins at \"Federal Taxable Income\" (2025 line 1, \"from your federal income tax form 1040, 1040 SR, or 1040 SP line 15\"). Federally treaty-exempt income is already excluded from federal taxable income, so it flows through to Colorado untaxed UNLESS Colorado has an explicit addback. The 2025 DR 0104's complete Additions to Federal Taxable Income are Lines 2-7 plus Line 9 (Line 8 is \"Reserved for future use\"): state income tax addback (Schedule A), Qualified Business Income Deduction addback, Standard/Itemized Federal Deduction addback (federal AGI over $300,000), business meals deducted under IRC 274(k), nonqualified CollegeInvest Tuition Savings Account distributions, nonqualified Colorado ABLE Account distributions, and Line 9 \"Other Additions\" — whose enumerated items in the 2025 booklet are: non-Colorado state/local bond interest (net of amortized premiums/expenses; Colorado bonds issued on or after May 1, 1980 are excluded from the addback), a federal charitable deduction for a conservation easement also claimed for a Colorado credit, expenses for unauthorized alien labor services, fiduciary adjustments and Colorado K-1 (DR 0106K) additions from a partnership or S corporation, expenses at/payments to a club that restricts membership on the basis of sex, sexual orientation, gender identity/expression, marital status, race, creed, religion, color, ancestry or national origin, and forfeited employer contributions to a home savings account previously subtracted. NONE of these is an addback of federally treaty-exempt or foreign-source income. Therefore treaty-exempt income is not re-taxed and Colorado conforms. (Confirmed against the official 2025 Book 104 and the standalone 2025 DR 0104 form PDF on tax.colorado.gov.)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -151,6 +152,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended CO 2025 return (Form DR 0104 (2025 Colorado Individual Income Tax Return, DR 0104 (10/03/25)) — full-year residents mark the \"Full-Year\" residency box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns (2025 booklet, \"Who Must File This Tax Return\" — full-year residents \"must file DR 0104 or DR 0104EZ\").): you owe $88 more.",
+    "citations": [
+     {
+      "source": "CO revenue department home page (read 2026-10-16)",
+      "url": "https://tax.colorado.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@085b946aec86",
+    "jurisdiction": "states/co",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended CO return, and the CO 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the CO instructions for amended returns on the CO revenue department's site (https://tax.colorado.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -205,6 +241,27 @@
     "jurisdiction": "states/co",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "CO revenue department home page (read 2026-10-16)",
+      "url": "https://tax.colorado.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the CO instructions for amended returns on the CO revenue department's site (https://tax.colorado.gov/).",
+    "form": "@@085b946aec86",
+    "headline": "CO 2025, amended (DR 0104 (2025 Colorado Individual Income Tax Return, DR 0104 (10/03/25)) — full-year residents mark the \"Full-Year\" residency box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns (2025 booklet, \"Who Must File This Tax Return\" — full-year residents \"must file DR 0104 or DR 0104EZ\").): you owe $88",
+    "jurisdiction": "states/co",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -659,7 +716,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: CO 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: CO 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

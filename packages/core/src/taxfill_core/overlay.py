@@ -732,18 +732,32 @@ _FILLED_AT, _EMPTY_BELOW = 0.6, 0.2
 
 
 def _darkness(doc, page_no: int, rect: tuple[float, float, float, float], cache: dict, *, inset: float = 0.2) -> float:
-    """Share of dark pixels (< 128 grey) in the inner part of ``rect`` (x, bottom y, w, h) on a render of the page."""
+    """Share of dark pixels (< 128 grey) in the inner part of ``rect`` (x, bottom y, w, h) on a render of the page.
+
+    Reads the grey bitmap's buffer directly and maps from the CropBox, the box pdfium renders. The first version
+    converted the render to a Pillow image, and Pillow is not a taxfill-core dependency (it reached the dev environment through
+    reportlab), so on a clean install verify_overlay raised ImportError on every Hawaii N-11 check; it also mapped
+    from the MediaBox, wrong on a cropped page (Phase K JK27, found by the ADR-0002 review).
+    """
     if page_no not in cache:
         page = doc[page_no - 1]
-        left, bottom, right, top = page.get_mediabox()
-        cache[page_no] = (page.render(scale=3, grayscale=True).to_pil().convert("L"), left, top)
-    img, left, top = cache[page_no]
+        left, _bottom, _right, top = page.get_cropbox()
+        bitmap = page.render(scale=3, grayscale=True)
+        cache[page_no] = (bytes(bitmap.buffer), bitmap.width, bitmap.height, bitmap.stride, bitmap.n_channels, left, top)
+    buf, width, height, stride, channels, left, top = cache[page_no]
     x, y, w, h = rect
-    x0, x1 = (x + w * inset - left) * 3, (x + w * (1 - inset) - left) * 3
-    y0, y1 = (top - (y + h * (1 - inset))) * 3, (top - (y + h * inset)) * 3
-    crop = img.crop((int(x0), int(y0), max(int(x1), int(x0) + 1), max(int(y1), int(y0) + 1)))
-    hist = crop.histogram()  # 256 grey levels
-    return sum(hist[:128]) / max(1, sum(hist))
+    x0 = int((x + w * inset - left) * 3)
+    x1 = max(int((x + w * (1 - inset) - left) * 3), x0 + 1)
+    y0 = int((top - (y + h * (1 - inset))) * 3)
+    y1 = max(int((top - (y + h * inset)) * 3), y0 + 1)
+    total = dark = 0
+    for row in range(max(0, y0), min(height, y1)):
+        base = row * stride
+        for col in range(max(0, x0), min(width, x1)):
+            total += 1
+            if buf[base + col * channels] < 128:
+                dark += 1
+    return dark / max(1, total)
 
 
 def _check_box(ln, wl, box: OverlayBox, pack: HandFillPack, doc, n_pages: int, glyphs_by_page: dict,

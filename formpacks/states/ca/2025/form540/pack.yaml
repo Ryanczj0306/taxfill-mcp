@@ -90,6 +90,10 @@
 #     Helvetica digits advance 0.556 em, 66.7 pt), 13 fill 1016/1017 edge to
 #     edge and clip in 1031, 14 clip in all three — and neither the filler nor
 #     verify's clipping scan warns, since verify budgets 0.5 em per glyph.
+#     Corrected JK27 (2026-10-16): "13 fill 1016/1017 edge to edge" is a cut,
+#     not a fit — a 600 dpi probe of this blank shows the 13th digit's ink cut
+#     1 pt inside the right edge in all three boxes (29 / 33 / 13 px against
+#     39-40 px whole), and a 14th never shows. The budget of 12 stands.
 # All 184 widgets are bound (176 lines; name.full and
 # identifying_number.page6 are one field each with a widget on Sides 2-6).
 # NEW lines vs 2023: 91.no_use_tax_owed, 431, 447, 448, 449, 116.account_type.checking, 117.account_type.checking, health_care_coverage.yes, organ_donor.primary_taxpayer, organ_donor.spouse, paid_preparer.name, paid_preparer.phone, third_party_designee.allow_yes.
@@ -149,8 +153,8 @@ fields:
   - { line: "mailing_address.additional_info", field: "540_form_1013", type: text }  # "Additional information (see instructions)"
   - { line: "pba_code", field: "540_form_1014", type: text, maxlen: 6 }  # "PBA code"
   - { line: "mailing_address.street", field: "540_form_1015", type: text }  # "Street address (number and street) or PO box"
-  - { line: "mailing_address.apt_no", field: "540_form_1016", type: text, maxlen: 12 }  # "Apt. no/ste. no." — the widget dropped its 2023 /MaxLen 5; the 72.5 pt box at Helv 10 renders 12 digits whole, the 14th is clipped (a probe fill read on the render)
-  - { line: "mailing_address.pmb", field: "540_form_1017", type: text, maxlen: 12 }  # "PMB/private mailbox" — the widget dropped its 2023 /MaxLen 6; the 73.0 pt box renders 12 digits whole, the 14th is clipped
+  - { line: "mailing_address.apt_no", field: "540_form_1016", type: text, maxlen: 12 }  # "Apt. no/ste. no." — the widget dropped its 2023 /MaxLen 5; the 72.5 pt box at Helv 10 renders 12 digits whole, the 13th is cut (a probe fill read on the render; "the 14th" until JK27, 2026-10-16)
+  - { line: "mailing_address.pmb", field: "540_form_1017", type: text, maxlen: 12 }  # "PMB/private mailbox" — the widget dropped its 2023 /MaxLen 6; the 73.0 pt box renders 12 digits whole, the 13th is cut ("the 14th" until JK27, 2026-10-16)
   - { line: "mailing_address.city", field: "540_form_1018", type: text }  # "City (If you have a foreign address, see instructions)"
   - { line: "mailing_address.state", field: "540_form_1019", type: text, maxlen: 2 }  # "State"
   - { line: "mailing_address.zip", field: "540_form_1020", type: text, maxlen: 10 }  # "ZIP code"

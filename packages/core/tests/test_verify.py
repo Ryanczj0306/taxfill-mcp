@@ -1229,6 +1229,8 @@ def test_filer_address_line_selection_matches_reviewed_fixture():
     # not a filer address line.
     # JS6: AL Form 40NR 2023 (a NEW pack, no base year) selects exactly ADDRESS, CITY, STATE, ZIP — the reviewed AL Form 40
     # 2023 row; FOREIGNCOUNTRY, PREPADDRESS / PREPZIP and the Part VI employer-address lines are not selected.
+    # JK27 (2026-10-16): f1040x 2023 and 2024, re-pointed to the Rev. 12-2025 blank and the 2025 map, keep their
+    # rows unchanged — the reviewed five mailing_address lines, equal to the 2025 row (the foreign_* boxes rejected).
     import json
     from pathlib import Path
 

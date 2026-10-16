@@ -9,19 +9,26 @@
   "@@42e41a7d8cda": "Keep Child Care Affordable Tax Credit (Schedule ELC; formerly Early Learning Tax Credit) — DC taxpayer who paid eligible child-care expenses to a licensed 'child development facility' for an eligible child — a dependent under age 4 as of 9/30/2024 — and whose DC taxable income does not exceed the limit. Child must not be a recipient of the District's subsidized child-care program; expenses reimbursed by a state social service agency do not count.",
   "@@43ef79fb75e5": "Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@69f80d85cf3d": "DC OTR — 2024 D-40 booklet: DC Earned Income Tax Credit section p.10 ('The DC EITC is equal to 70% of federal EIC'; monthly-payment election for credits of $1,200+), D-40 Line 27d ('x .70' printed on the form), and the cover letter ('For the 2024 tax year, this credit continues to be 70%')",
   "@@6dc4fb3e0050": "Part-year residents file Form D-40 (prorating deductions/credits). DC has no general nonresident income tax return; a nonresident with DC tax erroneously withheld files Form D-40B, Nonresident Request for Refund.",
   "@@719e739645c5": "DC OTR — 2024 D-40 Individual Income Tax Forms and Instructions (Booklet PDF, 2024_D40_Booklet_062325.pdf): New for 2024 Income Tax Returns (filing deadline April 15, 2025; standard deduction increases to $14,600/$21,900/$29,200; childless EITC max $632; Schedule H max $1,375; Schedule ELC max $1,160), Who must file, When are your taxes due (April 15, 2025), By mail addresses (PO Box 96145 refund/no-money-due; PO Box 96169 with payment), check payable to DC Treasurer, Reminders Income Tax Rate Table + Calculation I/Tax Rate Schedule, Schedule I Calculation A additions (no treaty addback) and Calculation B subtractions, D-40 starts from federal adjusted gross income",
   "@@845b4a29add1": "Office of Tax and Revenue, PO Box 96145, Washington, DC 20090-6145 (use for a refund-request return or a no-money-due return).",
+  "@@868fd5dcf200": "annual (per tax year; the shipped DC 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@8a152116c163": "Schedule H — Homeowner and Renter Property Tax Credit ('circuit-breaker') — DC residents who owned or rented their DC home and were not claimed as a dependent (with an age-70 exception path). Renters' property tax is deemed = 20% of rent paid; homeowners use actual DC real property tax. One claim per tax filing unit; cannot claim for an exempt property owned by a government, house of worship, or nonprofit. Can be filed standalone (electronically via MyTax.DC.gov or by mail) if not required to file a D-40.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a65ab1e09c80": "DC Office of Tax and Revenue — 2024 D-40 Individual Income Tax Forms and Instructions booklet (2024_D40_Booklet_062325.pdf): 'Reminders — Income Tax Rate Table - For taxable years beginning January 1, 2022' (p.3) and 'Calculation I/Tax Rate Schedule' (p.17): 'Not over $10,000: 4% of the taxable income; Over $10,000 but not over $40,000: $400, plus 6% of the excess over $10,000; Over $40,000 but not over $60,000: $2,200, plus 6.5% of the excess over $40,000; Over $60,000 but not over $250,000: $3,500, plus 8.5% of the excess over $60,000; Over $250,000 but not over $500,000: $19,650, plus 9.25% of the excess over $250,000; Over $500,000 but not over $1,000,000: $42,775, plus 9.75% of the excess over $500,000; Over $1,000,000: $91,525, plus 10.75% of the excess over $1,000,000'; 'New for 2024' + 'Standard Deduction' section p.10 ($14,600 single and married/registered domestic partners filing separately; $21,900 head of household; $29,200 married/registered domestic partners filing jointly, qualifying widow(er)s with dependent children, and married/RDP filing separately on the same return — increased from $13,850/$20,800/$27,700 'based on the federal law'); Line 19 'DC taxable income — Subtract Line 18 from Line 16' and Line 20 'Tax' instructions p.18; tax tables for taxable income of $100,000 or less, pp.85-94. Second pass: the live OTR 'DC Individual and Fiduciary Income Tax Rates' page (otr.cfo.dc.gov/page/dc-individual-and-fiduciary-income-tax-rates) prints the identical post-12/31/2021 schedule — both passes agree. Recorded resolution: the p.3 Reminders print carries a typo '.8.5%' for the $60,000-$250,000 row; the p.17 Calculation I print and the live rates page both read 8.5%, and the printed constants ($19,650 = $3,500 + 8.5% x $190,000) prove 8.5% is correct.",
   "@@bba5232a7938": "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2024_D40_Booklet_062325.pdf",
   "@@cc80fcd7ebf9": "Law change NOT modeled by the engine (status final_form_published): REPEALED for 2024: the Qualified High Technology Company (QHTC) preferential 3% rate on capital gains is gone ('QHTC 3% capital-gain rate repealed', booklet 'New for 2024'). Affected capital gains now fall under DC's ordinary seven-bracket rate table (unchanged since taxable years beginning January 1, 2022). Resolve via: 2024 D-40 booklet, 'New for 2024' (the citation URL). The engine never modeled the QHTC 3% special rate, so a filer who previously used it must now be run through the ordinary schedule this pack ships; confirm the repeal's scope in the booklet before relying on it for a QHTC investor.",
   "@@d130ef5b9035": "Treaty conformity — DC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from DC income (it flows through the federal starting point; do not add it back on the DC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: DC's Form D-40 begins from federal adjusted gross income (D-40 Line 4 and Schedule I Calculation A are titled around 'Federal Adjusted Gross Income'), and DC's only mechanism for adding income back is Schedule I, Calculation A 'Additions to federal adjusted gross income.' The verified addition categories on the 2024 Schedule I (Cal. A, Revised 09/2024) are: (1) part-year resident adjustment, (2) income distributions eligible for federal income averaging (Form 4972), (3) 100% federal bonus depreciation / extra IRC sec.179, (4) discrimination award subject to income averaging, (5) S-corp deductions from Sch K-1 (1120-S), (6) pass-through losses from DC unincorporated businesses exceeding the $12,000 threshold, (7) 'Other ... items not subject to federal tax but subject to DC tax,' and (8) capital gains deferred on the federal return due to investment in a Qualified Opportunity Fund. There is NO line that adds back income that is exempt from federal tax under a U.S. income tax treaty (contrast California's explicit Schedule CA treaty addback). Because treaty-exempt income is already excluded from federal AGI and DC has no treaty addback, it flows through and is NOT re-taxed by DC. Therefore DC conforms (treaty-exempt income remains exempt). Source: 2024 D-40 Instruction Booklet, Schedule I Calculation A and line-by-line instructions.",
+  "@@e26d8ff29969": "The shipped DC 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@e6537bcda6d5": "DC Earned Income Tax Credit (DC EITC) — filers WITH a qualifying child — DC residents who qualify for the federal Earned Income Credit and have a qualifying child — or who would qualify but for lacking an SSN (ITIN filers compute the federal EIC amount ignoring the SSN requirement). Each qualifying child must have an SSN or ITIN. Cannot be claimed by a filer whose status is 'Dependent claimed by someone else.'",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@ee8b91023e9d": "Credit for Child and Dependent Care Expenses — DC full-year or statutory residents who claimed (or were eligible for) the federal child and dependent care credit on federal Form 2441 for the care of a qualifying dependent so the taxpayer could work or look for work. Part-year residents use DC Form D-2441 instead.",
-  "@@f38707b7e33f": "Law change NOT modeled by the engine (status final_form_published): NEW nonrefundable credit for 2024: a housing provider credit at Schedule U Line 6 (DHCD Rental Accommodations Division), listed on the booklet's 'New for 2024' page and carried to Form D-40 Line 22 with the other Schedule U non-refundable credits. Resolve via: 2024 D-40 booklet, 'New for 2024' and the Schedule U instructions (the citation URL); this pack ships no figure for the credit and calc.state_tax applies no DC credits."
+  "@@f38707b7e33f": "Law change NOT modeled by the engine (status final_form_published): NEW nonrefundable credit for 2024: a housing provider credit at Schedule U Line 6 (DHCD Rental Accommodations Division), listed on the booklet's 'New for 2024' page and carried to Form D-40 Line 22 with the other Schedule U non-refundable credits. Resolve via: 2024 D-40 booklet, 'New for 2024' and the Schedule U instructions (the citation URL); this pack ships no figure for the credit and calc.state_tax applies no DC credits.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -145,6 +152,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended DC 2024 return (Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "DC revenue department home page (read 2026-10-16)",
+      "url": "https://otr.cfo.dc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@43ef79fb75e5",
+    "jurisdiction": "states/dc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended DC return, and the DC 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the DC instructions for amended returns on the DC revenue department's site (https://otr.cfo.dc.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -202,9 +244,267 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "DC revenue department home page (read 2026-10-16)",
+      "url": "https://otr.cfo.dc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the DC instructions for amended returns on the DC revenue department's site (https://otr.cfo.dc.gov/).",
+    "form": "@@43ef79fb75e5",
+    "headline": "DC 2024, amended (Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)): you owe $88",
+    "jurisdiction": "states/dc",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e26d8ff29969",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@bba5232a7938"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@69f80d85cf3d",
+     "cadence": "@@868fd5dcf200",
+     "topic": "credits",
+     "url": "@@bba5232a7938"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e26d8ff29969",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@bba5232a7938"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@350f50c38dbd",
+     "cadence": "@@868fd5dcf200",
+     "topic": "filing_logistics",
+     "url": "@@bba5232a7938"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e26d8ff29969",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@bba5232a7938"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@719e739645c5",
+     "cadence": "@@868fd5dcf200",
+     "topic": "forms_and_instructions",
+     "url": "@@bba5232a7938"
+    },
+    {
+     "answers": "DC OTR — 2024 D-40 Booklet publication landing page",
+     "cadence": "@@868fd5dcf200",
+     "topic": "forms_and_instructions",
+     "url": "https://otr.cfo.dc.gov/publication/2024-d-40-booklet"
+    },
+    {
+     "answers": "DC OTR — DC Individual and Fiduciary Income Tax Rates (live page) — second-pass verification: 'The tax rates for tax years beginning after 12/31/2021' table matches the booklet exactly (4% / $400+6% / $2,200+6.5% / $3,500+8.5% / $19,650+9.25% / $42,775+9.75% / $91,525+10.75%)",
+     "cadence": "@@868fd5dcf200",
+     "topic": "forms_and_instructions",
+     "url": "https://otr.cfo.dc.gov/page/dc-individual-and-fiduciary-income-tax-rates"
+    },
+    {
+     "answers": "DC OTR — MyTax.DC.gov online tax portal (electronic filing and payment)",
+     "cadence": "@@868fd5dcf200",
+     "topic": "forms_and_instructions",
+     "url": "https://mytax.dc.gov"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e26d8ff29969",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@bba5232a7938"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@327589692437",
+     "cadence": "@@868fd5dcf200",
+     "topic": "law_changes",
+     "url": "@@bba5232a7938"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e26d8ff29969",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@bba5232a7938"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@a65ab1e09c80",
+     "cadence": "@@868fd5dcf200",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@bba5232a7938"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e26d8ff29969",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@bba5232a7938"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/dc",
  "state_scope": {
@@ -691,7 +991,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: DC 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: DC 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -711,7 +1011,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "DC Office of Tax and Revenue — 2024 D-40 Individual Income Tax Forms and Instructions booklet (2024_D40_Booklet_062325.pdf): 'Reminders — Income Tax Rate Table - For taxable years beginning January 1, 2022' (p.3) and 'Calculation I/Tax Rate Schedule' (p.17): 'Not over $10,000: 4% of the taxable income; Over $10,000 but not over $40,000: $400, plus 6% of the excess over $10,000; Over $40,000 but not over $60,000: $2,200, plus 6.5% of the excess over $40,000; Over $60,000 but not over $250,000: $3,500, plus 8.5% of the excess over $60,000; Over $250,000 but not over $500,000: $19,650, plus 9.25% of the excess over $250,000; Over $500,000 but not over $1,000,000: $42,775, plus 9.75% of the excess over $500,000; Over $1,000,000: $91,525, plus 10.75% of the excess over $1,000,000'; 'New for 2024' + 'Standard Deduction' section p.10 ($14,600 single and married/registered domestic partners filing separately; $21,900 head of household; $29,200 married/registered domestic partners filing jointly, qualifying widow(er)s with dependent children, and married/RDP filing separately on the same return — increased from $13,850/$20,800/$27,700 'based on the federal law'); Line 19 'DC taxable income — Subtract Line 18 from Line 16' and Line 20 'Tax' instructions p.18; tax tables for taxable income of $100,000 or less, pp.85-94. Second pass: the live OTR 'DC Individual and Fiduciary Income Tax Rates' page (otr.cfo.dc.gov/page/dc-individual-and-fiduciary-income-tax-rates) prints the identical post-12/31/2021 schedule — both passes agree. Recorded resolution: the p.3 Reminders print carries a typo '.8.5%' for the $60,000-$250,000 row; the p.17 Calculation I print and the live rates page both read 8.5%, and the printed constants ($19,650 = $3,500 + 8.5% x $190,000) prove 8.5% is correct.",
+    "source": "@@a65ab1e09c80",
     "url": "@@bba5232a7938"
    },
    "rate": null,

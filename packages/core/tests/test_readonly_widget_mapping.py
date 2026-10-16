@@ -231,36 +231,23 @@ class ReservedUnmapped(NamedTuple):
 # but already have dedicated tests in test_formpacks_federal.py — they are
 # deliberately not duplicated here.
 RESERVED_LINES_UNMAPPED: tuple[ReservedUnmapped, ...] = (
-    # Form 1040-X, Rev. 2-2024 (pinned by BOTH the 2023 and 2024 packs — one
-    # blank, sha256 a4bed38a..., so one verdict). Line 4a prints "Reserved for
-    # future use" and NOTHING names it: printed line 5 is "Subtract line 4b
-    # from line 3", the pack's relation is "5 == max(0, 3 - 4b)", and no calc
-    # op, cross_form rule or extractor in the repo produces or consumes it.
-    # The mapping was an internal contradiction — the same packs already
-    # excluded lines 9/24/26/28/29, which print the identical sentence.
-    # NOT contested: the 2025 pack maps 4a because Rev. 12-2025 RELABELLED
-    # that line "Qualified business income deduction" and CLEARED the ReadOnly
-    # bit on the same three widgets. (P-007 once claimed "the 2025 f1040x
-    # already excludes 4a" — it never did; test_reserved_line_tables_agree
-    # below is what now makes that claim uncheckable-in-prose impossible.)
-    ReservedUnmapped(
-        "federal/2023/f1040x/pack.yaml",
-        ("4a", "4a.original", "4a.net_change"),
-        ("4b", "4b.original", "4b.net_change", "5", "3"),
-        None,
-        "Rev. 2-2024 prints 4a 'Reserved for future use' and no printed sum, relation or "
-        "extractor names it; Rev. 12-2025 relabelled it QBI and cleared the flag",
-    ),
-    ReservedUnmapped(
-        "federal/2024/f1040x/pack.yaml",
-        ("4a", "4a.original", "4a.net_change"),
-        ("4b", "4b.original", "4b.net_change", "5", "3"),
-        None,
-        "same pinned Rev. 2-2024 blank as the 2023 pack — one blank, one verdict",
-    ),
+    # Form 1040-X line 4a: NO row (JK27, 2026-10-16). The 2023 and 2024 packs
+    # excluded it from 2026-08-20 while they pinned Rev. 2-2024 (sha256
+    # a4bed38a...), whose 4a printed "Reserved for future use" on ReadOnly
+    # widgets that nothing named. JK27 re-pointed both to Rev. 12-2025 — the
+    # Instructions for Form 1040-X (Rev. December 2025), p.2: "These
+    # instructions can be used with the December 2025 and later revisions of
+    # Form 1040-X" — where the 2025 pack already maps 4a: that revision
+    # RELABELLED the line "Qualified business income deduction", CLEARED the
+    # ReadOnly bit on the same three widgets and names 4a in the line-5
+    # formula. So all three years map 4a now (test_formpacks_federal.py's
+    # JK27 tests pin it). (P-007 once claimed "the 2025 f1040x already
+    # excludes 4a" — it never did; test_reserved_line_tables_agree below is
+    # what makes that claim uncheckable-in-prose impossible.)
     # Form 1040-X lines 9/24/26/28/29, all three columns each, in ALL years
-    # (15 widgets in Rev. 12-2025, 18 with the 4a trio in Rev. 2-2024). Each
-    # prints "Reserved for future use" and none is named by a printed sum.
+    # (the 15 ReadOnly widgets of Rev. 12-2025, the blank the 2023, 2024 and
+    # 2025 packs all pin since JK27). Each prints "Reserved for future use"
+    # and none is named by a printed sum.
     *(
         ReservedUnmapped(
             f"federal/{year}/f1040x/pack.yaml",

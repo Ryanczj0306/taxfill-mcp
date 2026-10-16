@@ -14,7 +14,7 @@ tool functions in ``taxfill_mcp.server`` return (the same functions the MCP host
 * ``state_scope`` (statescope.py) for three demo profiles: a full-year resident, a
   part-year treaty filer and a nonresident treaty filer with remote work.
 * ``filing_summary`` and ``file_and_pay`` (filing_summary.py / file_and_pay.py) for a
-  three-return demo manifest of the jurisdiction.
+  four-return demo manifest of the jurisdiction (three originals and, since JK27, one amended return).
 * ``get_sources`` (sources.py over knowledge/sources.yaml + sources_states.yaml) for every
   topic the jurisdiction's registry lists, plus one query that matches nothing.
 
@@ -216,13 +216,16 @@ def demo_profiles(st: str, year: int) -> dict[str, dict[str, Any]]:
 
 
 def demo_manifest(code: str, year: int, form: str) -> list[dict[str, Any]]:
-    """A refund (joint), an unpaid balance and a paid-online balance for one state return."""
+    """A refund (joint), an unpaid balance and a paid-online balance for one state return, and an amended return
+    with a balance due (Phase K JK27: the amended-return model reads the pack's ``amended_return`` block, and a
+    state without one gets the DOR pointer; both stay inside the byte-identical gate)."""
     j = f"states/{code}"
     return [
         {"form": form, "tax_year": year, "jurisdiction": j, "bottom_line": 512, "filing_jointly": True,
          "direct_deposit": True},
         {"form": form, "tax_year": year, "jurisdiction": j, "bottom_line": -347},
         {"form": form, "tax_year": year, "jurisdiction": j, "bottom_line": -1205, "paid_online": True},
+        {"form": form, "tax_year": year, "jurisdiction": j, "bottom_line": -88, "amended": True},
     ]
 
 
@@ -295,7 +298,7 @@ def _resident_form(pack) -> str:
     return str(forms.get("resident") or "state return")
 
 
-def snapshot_jurisdiction_year(code: str, year: int, *, with_sources: bool) -> dict[str, Any]:
+def snapshot_jurisdiction_year(code: str, year: int) -> dict[str, Any]:
     """The raw (uncompressed) tool output for one jurisdiction-year."""
     from taxfill_core.knowledge import load_state_knowledge  # noqa: PLC0415
 
@@ -306,8 +309,7 @@ def snapshot_jurisdiction_year(code: str, year: int, *, with_sources: bool) -> d
         "state_tax": _snapshot_state_tax(code, year, pack),
         **_snapshot_logistics(code, year, _resident_form(pack)),
     }
-    if with_sources:
-        raw["get_sources"] = _snapshot_sources(code, year)
+    raw["get_sources"] = _snapshot_sources(code, year)
     return raw
 
 
@@ -453,9 +455,9 @@ def build_all(
 
     ``only`` restricts the run to those file names (a quick look at one jurisdiction-year).
 
-    get_sources is snapshotted once per jurisdiction, in its newest-year file: the registry is not
-    year-specific (sources.py reads sources.yaml + sources_states.yaml, the latter generated from each
-    state's newest pack), and ``year`` only echoes into the result and its retrieval hint.
+    get_sources is snapshotted in every jurisdiction-year file: a state's registry block is per year
+    (sources_states.yaml holds each state's newest pack, and an older year that ships a pack gets that
+    year's own citations, Phase K JK27). Until then it was snapshotted in the newest-year file only.
     """
     from taxfill_core.datadir import data_root, knowledge_dir  # noqa: PLC0415
 
@@ -463,13 +465,12 @@ def build_all(
     root = str(data_root().resolve())
     files: dict[str, str] = {}
     pairs = jurisdiction_years(knowledge)
-    newest_per_state = {code: max(y for c, y in pairs if c == code) for code, _ in pairs}
     with _memoized_yaml():
         for code, year in pairs:
             name = f"{code}_{year}.json"
             if only is not None and name not in only:
                 continue
-            raw = snapshot_jurisdiction_year(code, year, with_sources=year == newest_per_state[code])
+            raw = snapshot_jurisdiction_year(code, year)
             files[name] = _render(raw, root)
             if progress:
                 progress(name)

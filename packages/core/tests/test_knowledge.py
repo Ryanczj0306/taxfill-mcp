@@ -137,7 +137,10 @@ def test_missing_year_names_exact_path_and_freshness_protocol():
     with pytest.raises(FileNotFoundError) as excinfo:
         load_knowledge("federal", 2099, base_dir=KNOWLEDGE_DIR)
     message = str(excinfo.value)
-    assert str(KNOWLEDGE_DIR / "federal" / "2099.yaml") in message
+    # The path is named relative to the knowledge tree, never absolutely (Phase K JK27: the message reaches the
+    # agent's transcript, and an installed copy's absolute path holds the user's home folder).
+    assert "knowledge/federal/2099.yaml" in message
+    assert str(KNOWLEDGE_DIR) not in message
     assert "freshness protocol" in message
     assert "sources.yaml" in message
 

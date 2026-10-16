@@ -66,9 +66,16 @@
 # the bottoms of the printed right-hand labels "21." / "22." / "23." at 574.1 /
 # 550.6 / 527.1). The sentinel render confirms it. The 2023 blank has the same
 # arrangement (widget bottoms 599.5 / 575.6 / 551.2 against label bottoms 599.0
-# / 575.5 / 552.0), yet the 2023 pack binds 21 / 22 / 23 by name: a fill of the 2023 pack
-# prints its line-21 value on the line-23 row, 22 on the 21 row and 23 on the
-# 22 row. That pack is not edited here.
+# / 575.5 / 552.0). The 2023 pack bound 21 / 22 / 23 by name when this port was
+# built (its line-21 value printed on the line-23 row, 22 on the 21 row and 23
+# on the 22 row); it was re-bound by position on 2026-10-14 (P-032), the same
+# way as here: 21 -> "1040ME Total tax", 22 -> "1040ME Tax credits", 23 ->
+# "1040ME Nonresident credit".
+# (JK27, 2026-10-16: this paragraph said the 2023 pack "binds 21 / 22 / 23 by
+# name" and "is not edited here"; re-read against
+# formpacks/states/me/2023/f1040me/pack.yaml, whose lines 21-23 carry the P-032
+# comment "Lines 21-23 are bound by POSITION, not by widget name (P-032)". No
+# key, field, maxlen, group, relation or digest of this pack changed.)
 #
 # FACE DELTAS vs 2023 (a diff of the printed text). Line 2 "during 2025"; 13a
 # "Also see Form 1040ME, Schedule A, line 1 or 10" (was line 8); 15a "From

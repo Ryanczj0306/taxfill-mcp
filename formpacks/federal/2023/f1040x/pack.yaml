@@ -1,26 +1,85 @@
-# Form 1040-X (Rev. February 2024) -- Amended U.S. Individual Income Tax Return.
+# Form 1040-X (Rev. December 2025) -- Amended U.S. Individual Income Tax Return,
+# serving a TY2023 amendment.
 #
-# REVISION CHOICE: Form 1040-X is NOT issued per tax year -- one revision serves
-# several years, and the filer enters the year being amended in the header. The
-# **Rev. February 2024** revision (Form 1040-X (Rev. 2-2024)) is the one used to
-# amend tax years 2021-2023: its line 4a is "Reserved", line 4b is the QBI
-# deduction, and line 5 = line 3 - line 4b. (The current irs-pdf/f1040x.pdf is the
-# Rev. December 2025 revision, which repurposes line 4b for the 2025 OBBBA
-# tips/overtime/car-loan deductions -- WRONG for a 2023 amendment.) So this 2023
-# pack pins the archived Feb-2024 revision via its irs-prior URL.
+# REVISION DECISION (JK27, 2026-10-16): RE-POINTED from Rev. February 2024
+# (irs-prior/f1040x--2024.pdf, sha256 a4bed38a...; pinned here until 2026-10-16)
+# to Rev. December 2025 -- the revision a TY2023 amendment filed now
+# (October 2026) uses. Form 1040-X is continuous-use: one revision serves
+# every year and the filer enters the amended year in the header ("This
+# return is for calendar year (enter year)"; there are no year checkboxes).
+# Read in the CURRENT Instructions for Form 1040-X (Rev. December 2025),
+# irs-pdf/i1040x.pdf, downloaded TWICE 2026-10-16, both copies sha256
+# eed8685fbdbfe362d2a25f3b1992aea1cef0aa12141c1caf1c0e47997e3474a6:
+#   p.1, under the title: "(Use With the December 2025 Revision of Form 1040-X)".
+#   p.2, Reminders: "When to use these instructions. These instructions can be
+#     used with the December 2025 and later revisions of Form 1040-X, unless
+#     later instructions state otherwise." and "Form 1040-X and its instructions
+#     were converted from an annual revision to continuous use in tax year 2021.
+#     The form and instructions will each be updated as required. For the most
+#     recent version, go to IRS.gov/Form1040X."
+#   p.7 and p.9 work their examples on a prior year's return: "For example,
+#     attach Schedule A (Form 1040) if you are amending a 2024 Form 1040 to
+#     itemize deductions." / "Example. You are filing Form 1040-X to amend your
+#     2024 tax return."
+#   p.8: "Line 4a—Qualified Business Income Deduction ... See the instructions
+#     for the year of the form you are amending." and, under Line 4b, "Schedule
+#     1-A and these deductions were introduced in 2025."
+#   p.1, What's New: "New attachment requirement. For paper-filed Forms 1040-X,
+#     you must attach, to your completed Form 1040-X, a completed and updated
+#     Form 1040, 1040-SR, or 1040-NR, with your changes."
+#   p.3, "Which Revision To Use", says only "Use these instructions with both the
+#     paper-filed Form 1040-X and the electronically filed amended return." It
+#     names no older revision for earlier years.
+# The Rev. 2-2024 blank has no current instructions: its own, Instructions for
+# Form 1040-X (Rev. September 2024) (irs-prior/i1040x--2024.pdf, downloaded
+# twice 2026-10-16, sha256
+# c0f189928282b2d565149b9dd0de61233f46286fbc2009a663167c392e0fdf0f), print
+# "(Use With the February 2024 Revision of Form 1040-X)". The About Form 1040-X
+# page (IRS.gov/Form1040X) links "Current revision" to irs-pdf/f1040x.pdf, and
+# the IRS prior-year listing names "Form 1040-X ... Dec 2025" at the source_url
+# below as the newest revision.
+# The pre-JK27 header called Rev. 12-2025 "WRONG for a 2023 amendment";
+# the p.2 and p.8 text above refutes that: one continuous-use revision
+# serves the year the filer enters, its line 4a takes the QBI deduction
+# ("See the instructions for the year of the form you are amending."),
+# and 4b stays blank before 2025 (YEAR RULE below).
 #
-# Provenance: blank downloaded from the official source_url below; pages 1 and 2
-# were rendered and READ to confirm the printed title, "Rev. February 2024", and
-# the line structure before pinning pdf_sha256 (freshness protocol, dev plan
-# section 7). Field map introspected from this exact revision (root
-# topmostSubform[0]).
+# YEAR RULE -- line 4b stays EMPTY on a TY2023 amendment (JK27, 2026-10-16).
+# This revision prints "4a Qualified business income deduction" and "b
+# Deductions for tips, overtime, car loan interest, and seniors from Schedule
+# 1-A (Form 1040). Attach your Schedule 1-A", and the p.8 tip above dates those
+# deductions to 2025. Rev. 2-2024 printed "4a Reserved for future use" and "b
+# Qualified business income deduction", so QBI was the only line-4 deduction
+# before 2025: on this blank a TY2023 return reports it on 4a and leaves 4b
+# blank in all three columns. Enforced in the relations below ("4b.original ==
+# 0", "4b.net_change == 0", "4b == 0"): verify reads a blank 4b as 0
+# (blank-means-zero) and FAILs any amount there.
+# TRAP for a caller of the pre-JK27 pack: the key "4b" kept its name and changed
+# its meaning (it was QBI on Rev. 2-2024), so a stale QBI-on-4b fill now lands
+# in the Schedule 1-A row and verify FAILs "4b == 0" -- move it to "4a". The
+# other pre-JK27 keys that changed: dependent_N.name -> dependent_N.first_name
+# + dependent_N.last_name; dependent_N.identifying_number -> dependent_N.ssn (a
+# 9-cell comb, digits only); new: 4a / 4a.original / 4a.net_change, the
+# per-dependent lived_with_you / lived_with_you_in_us / full_time_student /
+# permanently_disabled boxes and mfs_hoh_lived_apart. The 2025 pack's header
+# lists the whole Rev. 2-2024 -> Rev. 12-2025 diff (page 2 restructured, every
+# sign / preparer widget renumbered).
 #
-# Counts, each labeled with what it actually counts: WIDGET annotations, i.e.
-# terminal fields, 145 (92 on page 1 + 53 on page 2, counted directly off
-# /Annots) = 127 mapped + 18 unmapped reserved (see RESERVED LINES below). The
-# blank's other 40 AcroForm nodes are non-terminal container subforms, not
-# widgets — 145 + 40 = 185 FIELD-TREE NODES, which is exactly what
-# pypdf.get_fields() returns. 185 is NOT a widget count.
+# Digest provenance: blank downloaded TWICE (independent requests, 2026-10-16)
+# from the source_url below, and twice from irs-pdf/f1040x.pdf; all four copies
+# digest to the pdf_sha256 below -- the 2025 pack's own pin (same URL, same
+# bytes). Printed title "Form 1040-X (Rev. December 2025) Amended U.S.
+# Individual Income Tax Return" and footer "Form 1040-X (Rev. 12-2025) Created
+# 2/19/26" confirmed from the PDF text. The FIELD MAP below is the 2025 pack's,
+# verbatim (same blank, so the same widget names, checkbox states and caps),
+# whose sentinel-filled render was vision-audited page by page; a demo
+# amended-return fill of this blank was rendered and read again 2026-10-16
+# (the QBI amounts in the 4a row, 4b empty, the transposed dependents table
+# on page 2). Counts, each labeled with what it counts, re-read on this blank
+# 2026-10-16: WIDGET annotations, i.e. terminal fields, 166 (92 on page 1 +
+# 74 on page 2, counted off /Annots) = 151 mapped + 15 unmapped reserved; 221
+# AcroForm FIELD-TREE NODES (pypdf get_fields). Only tax_year, the line-4a/4b
+# notes and the year rule differ from the 2025 pack.
 #
 # COLUMN MODEL (the defining feature of 1040-X): lines 1-15 and 24-29 have three
 # columns -- A (original/as-previously-adjusted), B (net change), C (correct
@@ -33,48 +92,26 @@
 # Lines 16-23 are single-column (correct amount only).
 # Signature/date rows are ink-only (no widgets); the form IS signed on page 2.
 #
-# RESERVED LINES (P-007 adjudication, 2026-08-20). SIX printed lines on Rev.
-# 2-2024 read exactly "Reserved for future use" -- 4a and 9 on page 1, 24, 26,
-# 28 and 29 on page 2 -- and NONE of their 18 widgets (6 lines x 3 columns) is
-# mapped:
-#     4a f1_27/f1_28/f1_29    9 f1_46/f1_47/f1_48
-#     24 f2_01/f2_02/f2_03   26 f2_07/f2_08/f2_09
-#     28 f2_13/f2_14/f2_15   29 f2_16/f2_17/f2_18
-# Proof, from this pack's own pinned blank (sha256 a4bed38a...):
-#   (a) PRINTED TEXT, verbatim from the page-1 text layer:
-#       "4a Reserved for future use . . . . . . . . . . . . . . . . 4a"
-#       -- the same sentence the other five reserved lines print. The row is
-#       solid grey across all three columns on the rendered face.
-#   (b) /Ff FLAGS: all 18 carry /Ff = 8388609 (DoNotScroll|ReadOnly), and they
-#       are the ONLY 18 ReadOnly widgets among the blank's 145. On this form the
-#       IRS uses the ReadOnly bit exclusively to mark reserved rows; every other
-#       text widget is 8388608.
-#   (c) NOTHING NAMES 4a. Line 5 prints "Taxable income. Subtract line 4b from
-#       line 3", so no printed sum, no relation below, and no calc op,
-#       cross_form rule or extractor anywhere in this repo produces or consumes
-#       "4a"/"4a.original"/"4a.net_change" for Form 1040-X. (Oregon's knowledge
-#       files cite "Form 1040-X, line 1C" -- line 1 column C, key "1" -- only.)
-# This is a printed-text verdict, not a flag-only one, and the IRS's own later
-# revision proves the distinction: Rev. 12-2025 RELABELS 4a "Qualified business
-# income deduction", CLEARS the ReadOnly bit on those very same widgets
-# (f1_27/28/29 go 8388609 -> 8388608) and names 4a in its line-5 formula. So the
-# 2025 pack DOES map 4a and this one must not; the flag tracks the relabeling
-# exactly. Contrast with P-007's stays-mapped class (sched_1 line 22, sched_2
-# 2025 line 10, sched_8812 2025 line 15): those reserved lines are ReadOnly too,
-# but an enumerated printed sum NAMES them ("26 == ... + 22 + 23 + 25",
-# "21 == 4 + 7 + ... + 10 + ..."), so they must stay addressable to count
-# blank-as-zero. Nothing on Form 1040-X names 4a, so it is excluded outright.
-# HISTORY: 4a was mapped as 4a.original / 4a.net_change / 4a through 2026-08-20.
-# Reproduced before removal, not theorised: fill_form(pack, {"4a.original": 200,
-# "4a.net_change": 211, "4a": 222}) wrote all three with no warning, the values
-# survived a re-read of /V, and a 170-dpi render showed 200/211/222 printed
-# inside the greyed, locked row. fill_form now raises its prescriptive
-# "unknown line key" ValueError for all three keys.
+# RESERVED LINES (P-007 adjudication, 2026-08-20; re-read on this blank JK27,
+# 2026-10-16). FIVE printed lines on Rev. 12-2025 read "Reserved for future use"
+# -- 9 on page 1, and 24, 26, 28, 29 on page 2 -- and none of their 15 widgets is
+# mapped: 9 f1_46/f1_47/f1_48, 24 f2_01/02/03, 26 f2_07/08/09, 28 f2_13/14/15,
+# 29 f2_16/17/18. All 15 carry /Ff = 8388609 (DoNotScroll|ReadOnly) and are the
+# ONLY 15 ReadOnly widgets of this blank's 166; no printed sum names any of them.
+# Line 4a is a REAL line on this revision ("Qualified business income
+# deduction"): its widgets f1_27/f1_28/f1_29 carry the ordinary /Ff = 8388608
+# and the printed line-5 formula names 4a, so 4a IS mapped below. HISTORY: on
+# the Rev. 2-2024 blank this pack pinned until JK27, 4a printed "Reserved for
+# future use" on those same three widgets with the ReadOnly bit set; the pack
+# mapped it until 2026-08-20 (values printed inside the greyed, locked row --
+# P-007) and excluded it from then until the JK27 re-point. The ReadOnly bit
+# moved exactly when the printed label did; re-read both for any future
+# revision before copying this map.
 form: "1040-X"
 jurisdiction: federal
 tax_year: 2023
-source_url: https://www.irs.gov/pub/irs-prior/f1040x--2024.pdf
-pdf_sha256: "a4bed38aa74f7f0f84b6541287d273fcfa6612a81f5134fc5bf411c0b4daa819"
+source_url: https://www.irs.gov/pub/irs-prior/f1040x--2025.pdf
+pdf_sha256: "e4d8d7df37209218d0d63d06e988004306365354873481726e93916accf3013e"
 acroform_root: "topmostSubform[0]"
 fields:
   # ===== Header ============================================================
@@ -89,7 +126,7 @@ fields:
   - { line: "mailing_address.street", field: "Page1[0].Address_ReadOrder[0].f1_09[0]", type: text }
   - { line: "mailing_address.apt", field: "Page1[0].Address_ReadOrder[0].f1_10[0]", type: text, maxlen: 10 }   # narrow box -- cap to protect against clipping (P-001)
   - { line: "mailing_address.city", field: "Page1[0].Address_ReadOrder[0].f1_11[0]", type: text }
-  - { line: "mailing_address.state", field: "Page1[0].Address_ReadOrder[0].f1_12[0]", type: text }
+  - { line: "mailing_address.state", field: "Page1[0].Address_ReadOrder[0].f1_12[0]", type: text, maxlen: 12 }   # box narrowed 71pt -> 63pt in Rev. 12-2025 -- clipping guard (P-001); state is a 2-letter code
   - { line: "mailing_address.zip", field: "Page1[0].Address_ReadOrder[0].f1_13[0]", type: text }
   - { line: "mailing_address.foreign_country", field: "Page1[0].Address_ReadOrder[0].f1_14[0]", type: text }
   - { line: "mailing_address.foreign_province", field: "Page1[0].Address_ReadOrder[0].f1_15[0]", type: text }
@@ -117,15 +154,22 @@ fields:
   - { line: "3.original", field: "Page1[0].Table_IncomeDeductions[0].Line3[0].f1_24[0]", type: money }
   - { line: "3.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line3[0].f1_25[0]", type: money }
   - { line: "3", field: "Page1[0].Table_IncomeDeductions[0].Line3[0].f1_26[0]", type: money }
-  # Line 4a -- "Reserved for future use": greyed and ReadOnly (/Ff = 8388609) in
-  # all three columns, named by no printed sum. NOT mapped -- the bindings
-  # 4a.original / 4a.net_change / 4a lived here until 2026-08-20 (see RESERVED
-  # LINES in the header). Widgets left unmapped: f1_27 / f1_28 / f1_29.
-  # Line 4b -- Qualified business income deduction.
+  # Line 4a -- Qualified business income deduction. A TY2023 QBI deduction goes
+  # HERE on this revision (Rev. 2-2024 printed it on 4b). Mapped: ordinary
+  # fillable money boxes (/Ff = 8388608) named by the printed line-5 formula.
+  # See RESERVED LINES and YEAR RULE in the header.
+  - { line: "4a.original", field: "Page1[0].Table_IncomeDeductions[0].Line4a[0].f1_27[0]", type: money }
+  - { line: "4a.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line4a[0].f1_28[0]", type: money }
+  - { line: "4a", field: "Page1[0].Table_IncomeDeductions[0].Line4a[0].f1_29[0]", type: money }
+  # Line 4b -- Deductions for tips, overtime, car loan interest, and seniors from
+  # Schedule 1-A (Form 1040). Attach your Schedule 1-A. Introduced in 2025, so it
+  # stays EMPTY on a TY2023 amendment: the relations pin all three columns to 0
+  # (YEAR RULE in the header).
   - { line: "4b.original", field: "Page1[0].Table_IncomeDeductions[0].Line4b[0].f1_30[0]", type: money }
   - { line: "4b.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line4b[0].f1_31[0]", type: money }
   - { line: "4b", field: "Page1[0].Table_IncomeDeductions[0].Line4b[0].f1_32[0]", type: money }
-  # Line 5 -- Taxable income. Subtract line 4b from line 3 (column C floored at 0).
+  # Line 5 -- Taxable income. Subtract the total of lines 4a and 4b from line 3
+  # (column C floored at 0).
   - { line: "5.original", field: "Page1[0].Table_IncomeDeductions[0].Line5[0].f1_33[0]", type: money }
   - { line: "5.net_change", field: "Page1[0].Table_IncomeDeductions[0].Line5[0].f1_34[0]", type: money }
   - { line: "5", field: "Page1[0].Table_IncomeDeductions[0].Line5[0].f1_35[0]", type: money }
@@ -187,7 +231,7 @@ fields:
   - { line: "23.estimated_tax_year", field: "Page1[0].f1_75[0]", type: text, maxlen: 4 }  # "applied to your (enter year)"
   - { line: "23", field: "Page1[0].f1_76[0]", type: money }   # Amount of line 21 applied to estimated tax
   # ===== Page 2, Part I: Dependents (lines 24-29 = number of dependents) =====
-  # Line 25 -- Your dependent children who lived with you.
+  # Line 25 -- Your dependent children who lived with you more than half of the year.
   - { line: "25.original", field: "Page2[0].Table_Lines24-29[0].Line25[0].f2_04[0]", type: money }
   - { line: "25.net_change", field: "Page2[0].Table_Lines24-29[0].Line25[0].f2_05[0]", type: money }
   - { line: "25", field: "Page2[0].Table_Lines24-29[0].Line25[0].f2_06[0]", type: money }
@@ -197,57 +241,100 @@ fields:
   - { line: "27", field: "Page2[0].Table_Lines24-29[0].Line27[0].f2_12[0]", type: money }
   # Lines 24, 26, 28, 29 -- Reserved for future use (greyed + ReadOnly, not
   # mapped: f2_01/02/03, f2_07/08/09, f2_13/14/15, f2_16/17/18).
-  # Line 30 -- List ALL dependents.
+  # Line 30 -- List ALL dependents. TRANSPOSED table in Rev. 12-2025 (columns =
+  # Dependent 1..4; rows = attributes), mirroring the 2025 Form 1040.
   - { line: "dependents.more_than_four", field: "Page2[0].Dependents_ReadOrder[0].c2_1[0]", type: checkbox, on_state: "/1" }
-  - { line: "dependent_1.name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_19[0]", type: text }
-  - { line: "dependent_1.identifying_number", field: "Page2[0].Table_Dependents[0].Row1[0].f2_20[0]", type: text, maxlen: 11 }
-  - { line: "dependent_1.relationship", field: "Page2[0].Table_Dependents[0].Row1[0].f2_21[0]", type: text }
-  - { line: "dependent_1.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row1[0].c2_2[0]", type: checkbox, on_state: "/1", group: dependent_1_credit }
-  - { line: "dependent_1.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row1[0].c2_2[1]", type: checkbox, on_state: "/2", group: dependent_1_credit }
-  - { line: "dependent_2.name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_22[0]", type: text }
-  - { line: "dependent_2.identifying_number", field: "Page2[0].Table_Dependents[0].Row2[0].f2_23[0]", type: text, maxlen: 11 }
-  - { line: "dependent_2.relationship", field: "Page2[0].Table_Dependents[0].Row2[0].f2_24[0]", type: text }
-  - { line: "dependent_2.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row2[0].c2_3[0]", type: checkbox, on_state: "/1", group: dependent_2_credit }
-  - { line: "dependent_2.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row2[0].c2_3[1]", type: checkbox, on_state: "/2", group: dependent_2_credit }
-  - { line: "dependent_3.name", field: "Page2[0].Table_Dependents[0].Row3[0].f2_25[0]", type: text }
-  - { line: "dependent_3.identifying_number", field: "Page2[0].Table_Dependents[0].Row3[0].f2_26[0]", type: text, maxlen: 11 }
-  - { line: "dependent_3.relationship", field: "Page2[0].Table_Dependents[0].Row3[0].f2_27[0]", type: text }
-  - { line: "dependent_3.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row3[0].c2_4[0]", type: checkbox, on_state: "/1", group: dependent_3_credit }
-  - { line: "dependent_3.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row3[0].c2_4[1]", type: checkbox, on_state: "/2", group: dependent_3_credit }
-  - { line: "dependent_4.name", field: "Page2[0].Table_Dependents[0].Row4[0].f2_28[0]", type: text }
-  - { line: "dependent_4.identifying_number", field: "Page2[0].Table_Dependents[0].Row4[0].f2_29[0]", type: text, maxlen: 11 }
-  - { line: "dependent_4.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_30[0]", type: text }
-  - { line: "dependent_4.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row4[0].c2_5[0]", type: checkbox, on_state: "/1", group: dependent_4_credit }
-  - { line: "dependent_4.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row4[0].c2_5[1]", type: checkbox, on_state: "/2", group: dependent_4_credit }
+  # (1) First name / (2) Last name (split boxes in Rev. 12-2025; was one box).
+  - { line: "dependent_1.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_19[0]", type: text }
+  - { line: "dependent_2.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_20[0]", type: text }
+  - { line: "dependent_3.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_21[0]", type: text }
+  - { line: "dependent_4.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_22[0]", type: text }
+  - { line: "dependent_1.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_23[0]", type: text }
+  - { line: "dependent_2.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_24[0]", type: text }
+  - { line: "dependent_3.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_25[0]", type: text }
+  - { line: "dependent_4.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_26[0]", type: text }
+  # (3) SSN -- 9-cell combs in Rev. 12-2025 (were free-text boxes).
+  - { line: "dependent_1.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_27[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_2.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_28[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_3.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_29[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  - { line: "dependent_4.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_30[0]", type: text, maxlen: 9, comb: true, format: ssn_digits_only }
+  # (4) Relationship.
+  - { line: "dependent_1.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_31[0]", type: text, maxlen: 15 }
+  - { line: "dependent_2.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_32[0]", type: text, maxlen: 15 }
+  - { line: "dependent_3.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_33[0]", type: text, maxlen: 15 }
+  - { line: "dependent_4.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_34[0]", type: text, maxlen: 15 }
+  # (5) Check if lived with you more than half of return year: (a) Yes /
+  # (b) And in the U.S. -- independent boxes per dependent (NEW in Rev. 12-2025).
+  - { line: "dependent_1.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent1[0].c2_2[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent1[0].c2_3[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent2[0].c2_4[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent2[0].c2_5[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent3[0].c2_6[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent3[0].c2_7[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent4[0].c2_8[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent4[0].c2_9[0]", type: checkbox, on_state: "/1" }
+  # (6) Check if: Full-time student / Permanently and totally disabled --
+  # independent boxes per dependent (NEW in Rev. 12-2025).
+  - { line: "dependent_1.full_time_student", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent1[0].c2_10[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_1.permanently_disabled", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent1[0].c2_11[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.full_time_student", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent2[0].c2_12[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_2.permanently_disabled", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent2[0].c2_13[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.full_time_student", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent3[0].c2_14[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_3.permanently_disabled", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent3[0].c2_15[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.full_time_student", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent4[0].c2_16[0]", type: checkbox, on_state: "/1" }
+  - { line: "dependent_4.permanently_disabled", field: "Page2[0].Table_Dependents[0].Row6[0].Dependent4[0].c2_17[0]", type: checkbox, on_state: "/1" }
+  # (7) Credits: CTC/ODC is ONE /Btn radio per dependent in Rev. 12-2025
+  # (kid widgets /1 = child tax credit, /2 = credit for other dependents).
+  - { line: "dependent_1.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent1[0].c2_18[0]", type: checkbox, on_state: "/1", group: dependent_1_credit }
+  - { line: "dependent_1.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent1[0].c2_18[1]", type: checkbox, on_state: "/2", group: dependent_1_credit }
+  - { line: "dependent_2.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent2[0].c2_19[0]", type: checkbox, on_state: "/1", group: dependent_2_credit }
+  - { line: "dependent_2.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent2[0].c2_19[1]", type: checkbox, on_state: "/2", group: dependent_2_credit }
+  - { line: "dependent_3.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent3[0].c2_20[0]", type: checkbox, on_state: "/1", group: dependent_3_credit }
+  - { line: "dependent_3.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent3[0].c2_20[1]", type: checkbox, on_state: "/2", group: dependent_3_credit }
+  - { line: "dependent_4.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent4[0].c2_21[0]", type: checkbox, on_state: "/1", group: dependent_4_credit }
+  - { line: "dependent_4.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent4[0].c2_21[1]", type: checkbox, on_state: "/2", group: dependent_4_credit }
+  # NEW in Rev. 12-2025 (below the dependents table): "Check if your filing
+  # status is MFS or HOH and you lived apart from your spouse for the last
+  # 6 months of return year entered at top of page 1, or you are legally
+  # separated ... and you did not live in the same household ..."
+  - { line: "mfs_hoh_lived_apart", field: "Page2[0].c2_22[0]", type: checkbox, on_state: "/1" }
   # ===== Page 2, Part II: Explanation of changes ============================
-  - { line: "explanation", field: "Page2[0].f2_31[0]", type: text }
+  - { line: "explanation", field: "Page2[0].f2_35[0]", type: text }
   # ===== Sign Here (signature/date are ink-only; these are the typed fields) =
-  - { line: "occupation", field: "Page2[0].f2_32[0]", type: text }
-  - { line: "identity_protection_pin", field: "Page2[0].f2_33[0]", type: text, maxlen: 6, comb: true }
-  - { line: "spouse_occupation", field: "Page2[0].f2_34[0]", type: text }
-  - { line: "spouse_identity_protection_pin", field: "Page2[0].f2_35[0]", type: text, maxlen: 6, comb: true }
-  - { line: "phone", field: "Page2[0].f2_36[0]", type: text }
-  - { line: "email", field: "Page2[0].f2_37[0]", type: text }
+  - { line: "occupation", field: "Page2[0].f2_36[0]", type: text }
+  - { line: "identity_protection_pin", field: "Page2[0].f2_37[0]", type: text, maxlen: 6, comb: true }
+  - { line: "spouse_occupation", field: "Page2[0].f2_38[0]", type: text }
+  - { line: "spouse_identity_protection_pin", field: "Page2[0].f2_39[0]", type: text, maxlen: 6, comb: true }
+  - { line: "phone", field: "Page2[0].f2_40[0]", type: text }
+  - { line: "email", field: "Page2[0].f2_41[0]", type: text }
   # ===== Paid Preparer Use Only =============================================
-  - { line: "preparer.name", field: "Page2[0].f2_38[0]", type: text }
-  - { line: "preparer.ptin", field: "Page2[0].f2_39[0]", type: text, maxlen: 11 }
-  - { line: "preparer.self_employed", field: "Page2[0].c2_6[0]", type: checkbox, on_state: "/1" }
-  - { line: "preparer.firm_name", field: "Page2[0].f2_40[0]", type: text }
-  - { line: "preparer.firm_phone", field: "Page2[0].f2_41[0]", type: text }
-  - { line: "preparer.firm_address", field: "Page2[0].f2_42[0]", type: text }
-  - { line: "preparer.firm_ein", field: "Page2[0].f2_43[0]", type: text }
+  - { line: "preparer.name", field: "Page2[0].f2_42[0]", type: text }
+  - { line: "preparer.ptin", field: "Page2[0].f2_43[0]", type: text, maxlen: 11 }
+  - { line: "preparer.self_employed", field: "Page2[0].c2_23[0]", type: checkbox, on_state: "/1" }
+  - { line: "preparer.firm_name", field: "Page2[0].f2_44[0]", type: text }
+  - { line: "preparer.firm_phone", field: "Page2[0].f2_45[0]", type: text }
+  - { line: "preparer.firm_address", field: "Page2[0].f2_46[0]", type: text }
+  - { line: "preparer.firm_ein", field: "Page2[0].f2_47[0]", type: text }
 relations:
   # On-face arithmetic for the CORRECT (column C) amounts -- exactly as printed.
   - "3 == 1 - 2"                       # "Subtract line 2 from line 1"
-  - "5 == max(0, 3 - 4b)"              # "Taxable income. Subtract line 4b from line 3" (>=0)
+  - "5 == max(0, 3 - 4a - 4b)"         # "Taxable income. Subtract the total of lines 4a and 4b from line 3" (>=0)
   - "8 == max(0, 6 - 7)"               # "Subtract line 7 from line 6" (>=0)
   - "11 == 8 + 10"                     # "Total tax. Add lines 8 and 10"
   - "17 == 12 + 13 + 14 + 15 + 16"     # "Total payments. Add lines 12 through 15, column C, and line 16"
   - "19 == 17 - 18"                    # "Subtract line 18 from line 17"
   - "20 == max(0, 11 - 19)"            # "Amount you owe" (line 11 col C > line 19)
   - "21 == max(0, 19 - 11)"            # "overpaid on this return" (line 11 col C < line 19)
+  # YEAR RULE (JK27, 2026-10-16). Instructions for Form 1040-X (Rev. December
+  # 2025), p.8, Line 4b: "Schedule 1-A and these deductions were introduced in
+  # 2025." So a TY2023 amendment leaves line 4b blank in every column (a blank
+  # line reads 0); any amount there FAILs. QBI goes on 4a.
+  - "4b.original == 0"
+  - "4b.net_change == 0"
+  - "4b == 0"
 # The corrected amounts come from the amended Form 1040/1040-SR/1040-NR the filer
-# attaches; that attachment is a separate document, not an in-filing cross_form copy.
+# MUST attach (printed page-1 mandate of Rev. 12-2025); that attachment is a
+# separate document, not an in-filing cross_form copy.
 cross_form: []
 identity_fields: [name.first, name.last, identifying_number]
 # Form 1040-X is signed on page 2 (the "Sign Here" block; ink signature, no widget).

@@ -1456,7 +1456,9 @@ def filing_summary(manifest: list[dict]) -> dict:
     """Plain-language bottom line per return (refund/owed + deadline & refund-SOL status) for approval.
 
     Each manifest item: {form, tax_year, jurisdiction?, bottom_line (signed: +refund/-owed),
-    paid_online?, state?, direct_deposit?, filing_jointly?, section_6013_election? (adds the
+    paid_online?, state?, direct_deposit?, filing_jointly?, amended? (an amended return: Form 1040-X, a
+    state's amended form, or an original form with its amended box; a form number ending in X counts
+    without it), section_6013_election? (adds the
     signed-by-both-spouses NRA-spouse election statement to the assembly checklist),
     taxpayer? (label each return's owner — "me" / "Partner P" — and a 2+-person household gets
     `household_rollup`: per-person subtotals + the household net, framed as one budget across
@@ -1473,7 +1475,10 @@ def file_and_pay(manifest: list[dict]) -> dict:
     no-standard-deduction reminder, and the sign-the-return-not-the-statement rule. A FICA
     withheld-in-error claim is its own item: form "843" with attached_forms ["8316"] (bottom_line =
     the claimed W-2 box 4 + box 6 total) — it gets the claim's separate mailing checklist (Ogden per
-    the current Pub 519), never attached to the 1040-NR."""
+    the current Pub 519), never attached to the 1040-NR. An amended return gets its own checklist: a
+    Form 1040-X (list the corrected '1040' / '1040-NR' in attached_forms) follows the current Form
+    1040-X instructions for its address, payment, attachments and time limits; a state amended return
+    follows the state pack's amended-return rules, or points to the DOR when the pack has none."""
     return _dump(_file_and_pay([FilingManifestItem.model_validate(m) for m in manifest]))
 
 

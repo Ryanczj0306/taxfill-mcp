@@ -22,7 +22,8 @@
   "@@d7512e3b546a": "Massachusetts Earned Income Tax Credit (EITC) — Massachusetts residents (full- or part-year) who qualify for and claim the federal Earned Income Credit — earned income under $68,675 for 2025 (the maximum may be lower depending on filing status and number of eligible children). MA adopts the federal EIC expansion rules; a married person who is a victim of domestic abuse, living apart from their spouse at the time of filing and unable to file jointly, may file married filing separately and still claim the MA EIC (keep records such as a protective/restraining order or police report). Part-year residents prorate the credit.",
   "@@de383e775cbb": "Law change NOT modeled by the engine (status final_form_published): NEW real-estate-closing withholding regime for NON-RESIDENT sellers (830 CMR 62B.2.4), applying to closings on or after November 1, 2025 (Major 2025 Tax Changes). Massachusetts now takes withholding at the closing of a Massachusetts real-property sale by a non-resident, which the seller then reconciles on the Massachusetts return. Resolve via: 830 CMR 62B.2.4 and the Major 2025 Tax Changes section of the 2025 Form 1 instructions at the citation URL — this pack records the change but did NOT extract the regulation's rates or exemptions (see unverified), so resolve both there before relying on a figure.",
   "@@e09840509c11": "MA DOR — 2025 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a 'Personal exemptions. Single/Married filing separately ($4,400), Head of household ($6,800), Married filing jointly ($8,800)'; line 2b number of dependents x $1,000; line 2c age 65 or over before 2026 x $700; line 2d blindness x $2,200; line 17 '5.0% INCOME AFTER DEDUCTIONS. Subtract line 16 from line 10. Not less than 0'; line 18 total exemption amount (from line 2g); line 19 '5.0% INCOME AFTER EXEMPTIONS. Subtract line 18 from line 17. Not less than 0'; line 20 INTEREST AND DIVIDEND INCOME (from Schedule B, line 38); line 21 'TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20'; line 22 'TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05'; line 28b '4% Surtax (from Schedule 4% Surtax, line 7)'. Second pass: 2025 Form 1 Instructions — Line 22 'If line 21 is less than $24,000, find the proper tax by using the tax tables found in the back of this booklet. If line 21 is greater than $24,000 multiply by 0.05 and enter the result in line 22'; 4% Surtax 'Starting with tax year 2023, personal income taxpayers must pay an additional 4% on taxable income over $1,000,000, increased annually for inflation. For the 2025 tax year, the threshold is $1,083,150.' — both passes agree. (mass.gov returns HTTP 403 to non-browser fetchers; both documents were retrieved from the Wayback Machine's 200-status captures of the SAME official mass.gov URLs, the same provenance path as the shipped MA form pack.)",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -146,6 +147,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MA 2025 return (Form 1 — Massachusetts Resident Income Tax Return (2025)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MA revenue department home page (read 2026-10-16)",
+      "url": "https://www.mass.gov/orgs/massachusetts-department-of-revenue"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2025)",
+    "jurisdiction": "states/ma",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MA return, and the MA 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MA instructions for amended returns on the MA revenue department's site (https://www.mass.gov/orgs/massachusetts-department-of-revenue) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -200,6 +236,27 @@
     "jurisdiction": "states/ma",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "MA revenue department home page (read 2026-10-16)",
+      "url": "https://www.mass.gov/orgs/massachusetts-department-of-revenue"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MA instructions for amended returns on the MA revenue department's site (https://www.mass.gov/orgs/massachusetts-department-of-revenue).",
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2025)",
+    "headline": "MA 2025, amended (Form 1 — Massachusetts Resident Income Tax Return (2025)): you owe $88",
+    "jurisdiction": "states/ma",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

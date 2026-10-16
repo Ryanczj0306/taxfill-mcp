@@ -6,18 +6,26 @@
   "@@2902f3327019": "Nebraska Earned Income Credit (state EITC) — Full-year and partial-year Nebraska residents who qualify for and claim the federal Earned Income Credit. Nonresidents may not claim it. If filing Nebraska married-filing-separately, eligibility depends on whether the federal EIC is allowed on a federal MFS return. Paper filers must attach pages 1 and 2 of the federal return.",
   "@@391542fa43a8": "2024 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2024) — What's New (top rate reduced to 5.84% per LB 754; Form PTC community-college-only per LB 34), federal AGI starting point (Line 5), residency definitions, Who Must File, due date, check payee",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@519402878f27": "annual (per tax year; the shipped NE 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@590a55880908": "Nebraska Child/Dependent Care Nonrefundable Credit (AGI over $29,000) — Resident taxpayers with federal AGI greater than $29,000 who claim the federal child & dependent care credit. Must include a copy of federal Form 2441 (credit disallowed if not received). Taxpayers who file federal MFJ but Nebraska MFS cannot claim it; nonresidents may not claim it (partial-year residents use Schedule III line 6c).",
   "@@5a9c06c79bad": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_Individual_Income_Tax_Booklet.pdf",
   "@@76c7f2bac929": "2024 Nebraska Form 1040N (Individual Income Tax Return) — 'Mail returns requesting a refund to: Nebraska Department of Revenue, PO Box 98912, Lincoln NE 68509-8912. Mail returns not requesting a refund to: Nebraska Department of Revenue, PO Box 98934, Lincoln, NE 68509-8934.'",
   "@@78525e020f7e": "Treaty conformity — NE conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NE income (it flows through the federal starting point; do not add it back on the NE return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Nebraska's resident return (Form 1040N) starts from federal adjusted gross income: 2024 line 5 is \"Federal adjusted gross income (AGI) (line 11, Federal Form 1040 or 1040-SR) Do not leave blank.\" Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The only additions to federal AGI are on Nebraska Schedule I, Part A (\"Adjustments Increasing Federal AGI\"), whose nine 2024 line items are: (1) interest income from state/local obligations exempt from federal tax, (2) exempt interest from Nebraska obligations, (3) total taxable interest (line 1 minus line 2), (4) Financial Institution Tax Credit claimed, (5) Nebraska College Savings Program recapture, (6) Nebraska Enable plan recapture, (7) federal net operating loss deduction, (8) S corporation or LLC Non-Nebraska loss, and (9) Nebraska PTET deduction. NONE of these requires adding back income exempt under a U.S. income tax treaty. With no treaty add-back and a federal-AGI starting point, treaty-exempt income is not re-taxed -> Nebraska conforms.",
   "@@83534fb6c105": "Nebraska Personal Exemption Credit (residents only) — Nebraska residents may claim a credit for each Nebraska personal exemption reported on line 4, Form 1040N (taxpayer, spouse, and dependents). Nonresidents and partial-year residents claim a prorated version on Schedule III line 7.",
   "@@881bd52ef9ba": "Law change NOT modeled by the engine (status final_form_published): FORM PTC NARROWED TO COMMUNITY COLLEGE PROPERTY TAXES ONLY — for tax years beginning on or after January 1, 2024, Form PTC is used ONLY to claim a credit for qualified Nebraska community college property taxes; school district property tax relief is no longer claimed on the income tax return but is applied directly on the property tax statement under the School District Property Tax Relief Act (LB 34, 2024 special session). The 2024 Form PTC Part A line 1 equals the Part B line 2a total with no percentage multiplier. Resolve via: 2024 Nebraska Property Tax Credit, Form PTC and its instructions inside the 2024 Form 1040N booklet (the citation URL), plus the Department's Property Tax Look-up Tool, which computes the qualified community college amounts; school district relief must be read off the property tax statement instead. calc.state_tax applies no Nebraska credits.",
+  "@@8ee16365892b": "The shipped NE 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a6a8c36add9b": "2024 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2024), single page — all four filing-status rate tables (\"This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.\"): Single and Married Filing Separately — 2.46% of Nebraska Taxable Income not over $3,900; $95.94 + 3.51% of the excess over $3,900 to $23,370; $779.34 + 5.01% to $37,670; $1,495.77 + 5.84% over $37,670. Married Filing Jointly and Qualifying Surviving Spouses — 2.46% not over $7,790; $191.63 + 3.51% to $46,760; $1,559.48 + 5.01% to $75,340; $2,991.34 + 5.84% over $75,340. Head of Household — 2.46% not over $7,270; $178.84 + 3.51% to $37,400; $1,236.41 + 5.01% to $55,850; $2,160.75 + 5.84% over $55,850. Standard deduction and line instructions: 2024 Nebraska Individual Income Tax Booklet, Form 1040N (8-307-2024) — What's New ('For the 2024 taxable year, the highest rate for the Nebraska individual income tax is reduced to 5.84%', LB 754, 2023), Line 6 Nebraska Standard Deduction Chart (p.9: Single $8,350 / MFJ $16,700 / QSS $16,700 / MFS $8,350 / HoH $12,250 with zero boxes), Line 15 Nebraska Income Tax and Line 18 personal exemption credit $166 (p.10 area), 2024 Nebraska Tax Table and over-$75,360 worksheet, at https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_Individual_Income_Tax_Booklet.pdf. Second pass: the standalone 2024 Nebraska Tax Table (https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/2024_Tax_Tables.pdf) reproduces the identical math — its $13,060-$13,160 row prints $419/$378/$419/$384, exactly the four schedules at the $13,110 band midpoint, and its over-$75,360 worksheet constants ($3,697 single/MFS, $2,993 MFJ/QSS, $3,300 HoH, each + 5.84% of the excess) equal the schedule evaluated at $75,360 rounded to whole dollars — and the 2024 Form 1040N line 6 prints the same standard deduction amounts. Both passes agree.",
   "@@b26bb361360b": "2024 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2024) — 'Due Date. Your income tax return is due on the 15th day of the 4th month after the close of the tax year (April 15th for calendar-year filers)'; April 15, 2025 for calendar-year 2024 returns",
   "@@d32bc6575b28": "2024 Nebraska Property Tax Credit, Form PTC instructions (in the 2024 Form 1040N booklet, 8-307-2024) and What's New (Form PTC community-college-only; LB 34 School District Property Tax Relief Act)",
   "@@d672ebb3d44d": "Refund returns: Nebraska Department of Revenue, PO Box 98912, Lincoln, NE 68509-8912. (Note: Nebraska splits addresses by refund vs. no-refund, not refund vs. payment. Returns NOT requesting a refund — including balance-due/with-payment returns — go to PO Box 98934 below.)",
+  "@@dd0db67b9f03": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/2024_Tax_Calculation_Schedule.pdf",
   "@@e2b82daf5a53": "Credit for Community College Property Taxes (Form PTC) — Any individual (and other entities) who paid qualified Nebraska community college property taxes during the 2024 calendar year, directly or through a mortgage escrow. Qualified taxes exclude amounts for bonded indebtedness, voter-approved levy overrides, and property taxes 5+ years delinquent when paid. Must file Form PTC with the return; the DOR Property Tax Look-up Tool computes qualified amounts. NOTE 2024 CHANGE — for tax years beginning on or after January 1, 2024, Form PTC is used ONLY for community college property taxes; school district property tax relief is now applied directly on the property tax statement under the School District Property Tax Relief Act (LB 34, 2024 special session), not claimed on the income tax return.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -141,6 +149,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NE 2024 return (Form 1040N — Nebraska Individual Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.nebraska.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1040N — Nebraska Individual Income Tax Return",
+    "jurisdiction": "states/ne",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NE return, and the NE 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NE instructions for amended returns on the NE revenue department's site (https://revenue.nebraska.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -198,9 +241,303 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "NE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.nebraska.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NE instructions for amended returns on the NE revenue department's site (https://revenue.nebraska.gov/).",
+    "form": "Form 1040N — Nebraska Individual Income Tax Return",
+    "headline": "NE 2024, amended (Form 1040N — Nebraska Individual Income Tax Return): you owe $88",
+    "jurisdiction": "states/ne",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@8ee16365892b",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@5a9c06c79bad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 Nebraska Individual Income Tax Booklet (Form 1040N booklet, 8-307-2024), line 42 instructions and Nebraska Earned Income Worksheet (NOL)",
+     "cadence": "@@519402878f27",
+     "topic": "credits",
+     "url": "@@5a9c06c79bad"
+    },
+    {
+     "answers": "2024 Nebraska Form 2441N (Nebraska Child and Dependent Care Expenses) — lines 3-12 with the 2024 federal and state decimal tables — and 2024 Form 1040N booklet line 40 instructions",
+     "cadence": "@@519402878f27",
+     "topic": "credits",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_2441N.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@8ee16365892b",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@5a9c06c79bad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@76c7f2bac929",
+     "cadence": "@@519402878f27",
+     "topic": "filing_logistics",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_1040N.pdf"
+    },
+    {
+     "answers": "@@b26bb361360b",
+     "cadence": "@@519402878f27",
+     "topic": "filing_logistics",
+     "url": "@@5a9c06c79bad"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@8ee16365892b",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@5a9c06c79bad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@391542fa43a8",
+     "cadence": "@@519402878f27",
+     "topic": "forms_and_instructions",
+     "url": "@@5a9c06c79bad"
+    },
+    {
+     "answers": "2024 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2024) — all four filing-status rate tables (2.46%/3.51%/5.01%/5.84%; Single/MFS breakpoints $3,900/$23,370/$37,670; MFJ/QSS $7,790/$46,760/$75,340; HoH $7,270/$37,400/$55,850)",
+     "cadence": "@@519402878f27",
+     "topic": "forms_and_instructions",
+     "url": "@@dd0db67b9f03"
+    },
+    {
+     "answers": "2024 Nebraska Tax Table (standalone) — paper-filer table to $75,360 plus the over-$75,360 worksheet ($3,697 single/MFS, $2,993 MFJ/QSS, $3,300 HoH constants + 5.84%) — second-pass corroboration of the rate schedule",
+     "cadence": "@@519402878f27",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/2024_Tax_Tables.pdf"
+    },
+    {
+     "answers": "2024 Nebraska Form 1040N (Individual Income Tax Return) — line 5 federal AGI wording, line 6 printed standard deduction amounts ($8,350/$16,700/$8,350/$12,250), line 18 '$166 times the number on line 4', mailing addresses",
+     "cadence": "@@519402878f27",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_1040N.pdf"
+    },
+    {
+     "answers": "2024 Nebraska Schedules I, II, III (Form 1040N) — Part A Adjustments Increasing Federal AGI line items (no treaty add-back)",
+     "cadence": "@@519402878f27",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_1040N_Schs.pdf"
+    },
+    {
+     "answers": "2024 Nebraska Form 2441N (Nebraska Child and Dependent Care Expenses) — refundable-credit computation and 2024 federal/state decimal tables",
+     "cadence": "@@519402878f27",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_2441N.pdf"
+    },
+    {
+     "answers": "Nebraska DOR — Electronic Payment Options for Individual Income Tax (e-pay portal / online payment)",
+     "cadence": "@@519402878f27",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/individuals/electronic-payment-options-individual-income-tax"
+    },
+    {
+     "answers": "Nebraska DOR — 2024 Income Tax Forms index",
+     "cadence": "@@519402878f27",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/about/2024-income-tax-forms"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@8ee16365892b",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@5a9c06c79bad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2024) — What's New (LB 754 top-rate cut to 5.84%; LB 34 School District Property Tax Relief Act; Form PTC community-college-only), federal AGI starting point (Line 5), Standard Deduction Chart (Line 6, p.9), Line 15 Nebraska income tax, Line 18 personal exemption credit $166, residency definitions, Who Must File, due date, check payee, 2024 Nebraska Tax Table with over-$75,360 worksheet",
+     "cadence": "@@519402878f27",
+     "topic": "law_changes",
+     "url": "@@5a9c06c79bad"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@8ee16365892b",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@5a9c06c79bad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@a6a8c36add9b",
+     "cadence": "@@519402878f27",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@dd0db67b9f03"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@8ee16365892b",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@5a9c06c79bad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/ne",
  "state_scope": {
@@ -657,7 +994,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: NE 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: NE 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -677,8 +1014,8 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2024 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2024), single page — all four filing-status rate tables (\"This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.\"): Single and Married Filing Separately — 2.46% of Nebraska Taxable Income not over $3,900; $95.94 + 3.51% of the excess over $3,900 to $23,370; $779.34 + 5.01% to $37,670; $1,495.77 + 5.84% over $37,670. Married Filing Jointly and Qualifying Surviving Spouses — 2.46% not over $7,790; $191.63 + 3.51% to $46,760; $1,559.48 + 5.01% to $75,340; $2,991.34 + 5.84% over $75,340. Head of Household — 2.46% not over $7,270; $178.84 + 3.51% to $37,400; $1,236.41 + 5.01% to $55,850; $2,160.75 + 5.84% over $55,850. Standard deduction and line instructions: 2024 Nebraska Individual Income Tax Booklet, Form 1040N (8-307-2024) — What's New ('For the 2024 taxable year, the highest rate for the Nebraska individual income tax is reduced to 5.84%', LB 754, 2023), Line 6 Nebraska Standard Deduction Chart (p.9: Single $8,350 / MFJ $16,700 / QSS $16,700 / MFS $8,350 / HoH $12,250 with zero boxes), Line 15 Nebraska Income Tax and Line 18 personal exemption credit $166 (p.10 area), 2024 Nebraska Tax Table and over-$75,360 worksheet, at https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/f_Individual_Income_Tax_Booklet.pdf. Second pass: the standalone 2024 Nebraska Tax Table (https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/2024_Tax_Tables.pdf) reproduces the identical math — its $13,060-$13,160 row prints $419/$378/$419/$384, exactly the four schedules at the $13,110 band midpoint, and its over-$75,360 worksheet constants ($3,697 single/MFS, $2,993 MFJ/QSS, $3,300 HoH, each + 5.84% of the excess) equal the schedule evaluated at $75,360 rounded to whole dollars — and the 2024 Form 1040N line 6 prints the same standard deduction amounts. Both passes agree.",
-    "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2024/2024_Tax_Calculation_Schedule.pdf"
+    "source": "@@a6a8c36add9b",
+    "url": "@@dd0db67b9f03"
    },
    "rate": null,
    "rate_structure": "graduated",

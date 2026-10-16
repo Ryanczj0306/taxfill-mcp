@@ -21,6 +21,7 @@
   "@@cbbc60c60a50": "Law change NOT modeled by the engine (status final_form_published): NEW Schedule M1M subtractions for 2025 — coerced debt, consumer-enforcement public compensation, foreign-service retirement pay, and SEIU stipend payments. They are new subtraction lines inside the Schedule M1M total that Form M1 line 7 carries (renumbered for 2025 to Schedule M1M line 40 / Schedule M1MB line 22, from 2024's M1M line 35 / M1MB line 21). Resolve via: Schedule M1M and its instructions in the 2025 Form M1 instruction booklet (the citation URL); the engine subtracts only the shipped standard deduction and dependent exemption, so the supplied line 9 base must already reflect any M1M subtraction.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f4bd3e0b5581": "Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fae971a8cc50": "K-12 Education Credit — MN parents/guardians who paid education-related expenses in 2025 for a qualifying child in grades K-12 (a qualifying child is the same as for the federal Earned Income Credit). Qualifying expenses include tutoring by a qualified instructor, instructional materials, music lessons, and certain educational services (private school tuition does NOT qualify for the credit — it is a Schedule M1M subtraction only). Refundable.",
   "@@fc302c3d9b72": "Minnesota Working Family Credit (state Earned Income Tax Credit) — Full-year or part-year MN residents who earned income from a job or self-employment, were self-employed, or have qualifying children (qualifying children and qualifying older children determined on Schedule M1DQC). Combined with the Child Tax Credit on Schedule M1CWFC. ITINs may be used if you, your spouse, or your qualifying children have no SSN. Part-year residents qualify based on their percentage of income assignable to Minnesota."
  },
@@ -140,6 +141,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MN 2025 return (Form M1, Individual Income Tax): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MN revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.state.mn.us/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form M1, Individual Income Tax",
+    "jurisdiction": "states/mn",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MN return, and the MN 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MN instructions for amended returns on the MN revenue department's site (https://www.revenue.state.mn.us/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -194,6 +230,27 @@
     "jurisdiction": "states/mn",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "MN revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.state.mn.us/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MN instructions for amended returns on the MN revenue department's site (https://www.revenue.state.mn.us/).",
+    "form": "Form M1, Individual Income Tax",
+    "headline": "MN 2025, amended (Form M1, Individual Income Tax): you owe $88",
+    "jurisdiction": "states/mn",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

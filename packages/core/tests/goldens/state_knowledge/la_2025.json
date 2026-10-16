@@ -19,6 +19,7 @@
   "@@e0e6e5365951": "The newest shipped LA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@e56510847552": "Treaty conformity — LA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from LA income (it flows through the federal starting point; do not add it back on the LA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: LA's resident return (IT-540) starts from Federal Adjusted Gross Income: Line 7 is \"FEDERAL ADJUSTED GROSS INCOME\" and the 2025 instructions say \"Line 7 - Enter the amount of your Federal Adjusted Gross Income (Federal AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11. If your Federal AGI is less than zero, enter 0.\" Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The only \"additions\" to federal AGI are on Schedule E; there is NO add-back of tax-treaty-exempt income anywhere on the IT-540 form, Schedule E, or in the 2025 instructions. Because LA starts from federal AGI and has no treaty addback, treaty-exempt income is not re-taxed -> conforms. (Act 11's 2025 flat-rate reform did not change LA's federal-AGI starting point or add any treaty addback.)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fb5cbd3631b5": "Department of Revenue, P.O. Box 3440, Baton Rouge, LA 70821-3440 (\"All other individual income tax returns must be mailed to P.O. Box 3440\" — refund / no-payment)",
   "@@fc6d5c6bed65": "Louisiana Earned Income Credit (LA EIC) — Resident individuals who claimed a Federal Earned Income Credit (EIC) for 2025. Authorized by R.S. 47:297.8. The Louisiana Earned Income Credit Worksheet must be attached to the return."
  },
@@ -138,6 +139,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended LA 2025 return (Form IT-540 (2025 Louisiana Resident Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "LA revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.louisiana.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "IT-540 (2025 Louisiana Resident Income Tax Return)",
+    "jurisdiction": "states/la",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended LA return, and the LA 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the LA instructions for amended returns on the LA revenue department's site (https://revenue.louisiana.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -192,6 +228,27 @@
     "jurisdiction": "states/la",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "LA revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.louisiana.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the LA instructions for amended returns on the LA revenue department's site (https://revenue.louisiana.gov/).",
+    "form": "IT-540 (2025 Louisiana Resident Income Tax Return)",
+    "headline": "LA 2025, amended (IT-540 (2025 Louisiana Resident Income Tax Return)): you owe $88",
+    "jurisdiction": "states/la",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -764,7 +821,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: LA 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: LA 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

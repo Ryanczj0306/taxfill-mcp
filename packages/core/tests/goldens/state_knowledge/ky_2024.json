@@ -2,17 +2,24 @@
  "_strings": {
   "@@032c745bd3d5": "2024 Form 740 Instruction Packet (42A740(PKT)) — \"The income tax return for calendar year 2024 must be postmarked or submitted electronically no later than April 15, 2025, to avoid penalties and interest\"; six-month extensions via Form 740EXT or the federal automatic extension (enclose Form 4868 copy)",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@4206ed1300f1": "2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What's New — \"STANDARD DEDUCTION—For 2024, the standard deduction is $3,160\" and \"INDIVIDUAL INCOME TAX RATE—For 2024, the tax rate for individual income tax is 4%\"; Line 10 — \"Nonitemizers, enter the standard deduction of $3,160. If married filing separately on a combined return, enter $3,160 in both Columns A and B. If filing a joint return, only one $3,160 standard deduction is allowed\"; Line 5 = Federal Adjusted Gross Income; Line 9 = Kentucky AGI; Line 11 = Taxable Income; Line 12 \"Multiply line 11 by four percent (.04)\". Second pass: the 2024 Form 740 itself (42A740, 10-24) prints line 10 \"Nonitemizers: Enter $3,160 in Columns A and/or B\" and line 12 \"Tax Computation: Multiply line 11 by 4% (.04)\" — both passes agree.",
   "@@44cf3cd04649": "Child and Dependent Care Credit — Residents who qualified for and claimed the federal child and dependent care credit on federal Form 2441 (care expenses for a qualifying child/dependent so the taxpayer can work). If you did not meet federal filing requirements but would have been entitled to the federal credit, you may still claim the Kentucky credit by completing federal Form 2441 and stating on the form 'did not meet federal filing requirements.' Kentucky has no separate income limit; eligibility tracks the federal credit.",
+  "@@47de165f0b8c": "annual (per tax year; the shipped KY 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@4a20dce6c046": "Law change NOT modeled by the engine (status final_form_published): IRC REFERENCE DATE UPDATED to December 31, 2023 by HB 8 (from December 31, 2022), per the 2024 packet's What's New. Kentucky law requires the individual income tax return to begin with federal adjusted gross income and be adjusted for any differences to arrive at Kentucky adjusted gross income, so the conformity date governs which federal provisions flow through and which are modified on Schedule M (special depreciation/Section 179 differences, federal NOL, the Kentucky excess business loss limitation, etc.). Resolve via: 2024 Form 740 instruction packet (42A740(PKT)) at the citation URL — What's New (HB 8 IRC reference date December 31, 2023) and the Schedule M instructions, which enumerate the additions (lines 1-5, totaled on line 6) and subtractions that implement the conformity differences.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@6799d1f46b33": "Form 740-NP (Kentucky Individual Income Tax Return — Nonresident or Part-Year Resident). Reciprocal-state residents with only KY wages use Form 740-NP-R.",
   "@@7bf78ac42949": "Treaty conformity — KY conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from KY income (it flows through the federal starting point; do not add it back on the KY return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Kentucky's resident return (Form 740) starts from federal adjusted gross income — 2024 Form 740 line 5 is federal AGI (\"Enter the total amount of your federal adjusted gross income from your federal income tax return... Do not confuse federal adjusted gross income with federal taxable income\"), and the 2024 packet states Kentucky law \"requires that the individual income tax return begin with federal adjusted gross income and be adjusted for any differences to arrive at Kentucky adjusted gross income.\" Modifications are made on Schedule M. The 2024 Schedule M \"Additions to Federal Adjusted Gross Income\" (Part I, lines 1-5, totaled on line 6) are: (1) interest on other states' obligations / taxable mutual-fund dividends, (2) resident adjustment from Kentucky Schedule K-1, (3) special depreciation/Section 179 differences, (4) federal net operating loss, and (5) \"other additions\" (reservist/National Guard expenses, lump-sum distribution 20% capital-gains portion, passive activity loss adjustment, pension/IRA basis differences, intangible-asset and post-9/10/2001 depreciable-property gain differences, Armed Forces moving expenses, Kentucky excess business loss limitation). NONE of these add back federally tax-treaty-exempt income. Because treaty-exempt income is already excluded from federal AGI and KY has no add-back for it, it is not re-taxed by Kentucky — therefore KY conforms.",
   "@@81f3645a44de": "2024 Form 740 Instruction Packet (42A740(PKT)) — \"When and Where to File\" (postmark by April 15, 2025; Refund/Other Returns Frankfort 40618-0006; Pay Returns Frankfort 40619-0008)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9a805045eb17": "2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What's New (standard deduction $3,160; individual income tax rate 4%; Family Size Tax Credit 2024 thresholds; HB 8 IRC reference date December 31, 2023), starting point (\"the individual income tax return begin with federal adjusted gross income\"), Form 740 line 5 Federal AGI, Schedule M additions list, due date April 15 2025, mailing addresses (Refund 40618-0006 / Pay 40619-0008), check payable to Kentucky State Treasurer / Form 740-V",
   "@@a528bcefc4c5": "Personal Tax Credits (age 65+, blind, or Kentucky National Guard) — Taxpayer (and spouse, if filing jointly or married filing separately on a combined return) who, as of 12/31/2024, was age 65 or older, was legally blind, and/or was a member of the Kentucky National Guard. A taxpayer can claim more than one (e.g., 65+ AND blind). No income limit.",
+  "@@a620b32956ad": "The shipped KY 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@b88acf8e41ea": "Family Size Tax Credit — Resident individuals/families with modified gross income (MGI) at or below 133% of the federal poverty threshold for their family size. Family size is capped at 4 (yourself, spouse if living in same household, and qualifying children). Available even to someone claimed as a dependent on a parent's return (family size 1). To get ANY credit, 2024 MGI must be at or below $20,030 (family of 1), $27,185 (family of 2), $34,341 (family of 3), or $41,496 (family of 4+) — the packet's line 20/21 instructions say \"If your total MGI is $41,496 or less, you may qualify.\"",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -136,6 +143,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended KY 2024 return (Form 740 (Kentucky Individual Income Tax Return — Full-Year Resident)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "KY revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.ky.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 740 (Kentucky Individual Income Tax Return — Full-Year Resident)",
+    "jurisdiction": "states/ky",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended KY return, and the KY 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the KY instructions for amended returns on the KY revenue department's site (https://revenue.ky.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -193,9 +235,273 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "KY revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.ky.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the KY instructions for amended returns on the KY revenue department's site (https://revenue.ky.gov/).",
+    "form": "Form 740 (Kentucky Individual Income Tax Return — Full-Year Resident)",
+    "headline": "KY 2024, amended (Form 740 (Kentucky Individual Income Tax Return — Full-Year Resident)): you owe $88",
+    "jurisdiction": "states/ky",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a620b32956ad",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "Kentucky Department of Revenue — 2024 Form 740 instruction packet (42A740(PKT)) What's New + lines 20-21, and 2024 Schedule ITC (42A740-ITC), Section C Family Size Tax Credit Table (Tax Year 2024 bands)",
+     "cadence": "@@47de165f0b8c",
+     "topic": "credits",
+     "url": "https://revenue.ky.gov/Forms/Schedule%20ITC%20(2024).pdf"
+    },
+    {
+     "answers": "Kentucky Department of Revenue — 2024 Form 740 instruction packet (42A740(PKT)), instructions for line 24",
+     "cadence": "@@47de165f0b8c",
+     "topic": "credits",
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a620b32956ad",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@81f3645a44de",
+     "cadence": "@@47de165f0b8c",
+     "topic": "filing_logistics",
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a620b32956ad",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@9a805045eb17",
+     "cadence": "@@47de165f0b8c",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    },
+    {
+     "answers": "2024 Form 740 (42A740, 10-24) — second-pass verification: line 5 = federal Form 1040/1040-SR line 11, line 9 Kentucky AGI, line 10 \"Nonitemizers: Enter $3,160 in Columns A and/or B\", line 11 Taxable Income, line 12 \"Tax Computation: Multiply line 11 by 4% (.04)\", line 21 Family Size Tax Credit decimal",
+     "cadence": "@@47de165f0b8c",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.ky.gov/Forms/740%20(2024).pdf"
+    },
+    {
+     "answers": "2024 Schedule ITC (42A740-ITC) — Section B Personal Tax Credits ($40 age 65+/$40 blind/$20 Kentucky National Guard), Section C Family Size Tax Credit Table (Tax Year 2024 bands, 100% down to 0%)",
+     "cadence": "@@47de165f0b8c",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.ky.gov/Forms/Schedule%20ITC%20(2024).pdf"
+    },
+    {
+     "answers": "Kentucky Department of Revenue Electronic Payment portal (EPAY)",
+     "cadence": "@@47de165f0b8c",
+     "topic": "forms_and_instructions",
+     "url": "https://epayment.ky.gov/EPAY"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a620b32956ad",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@9a805045eb17",
+     "cadence": "@@47de165f0b8c",
+     "topic": "law_changes",
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a620b32956ad",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@4206ed1300f1",
+     "cadence": "@@47de165f0b8c",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a620b32956ad",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/ky",
  "state_scope": {
@@ -522,7 +828,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: KY 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: KY 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -541,7 +847,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What's New — \"STANDARD DEDUCTION—For 2024, the standard deduction is $3,160\" and \"INDIVIDUAL INCOME TAX RATE—For 2024, the tax rate for individual income tax is 4%\"; Line 10 — \"Nonitemizers, enter the standard deduction of $3,160. If married filing separately on a combined return, enter $3,160 in both Columns A and B. If filing a joint return, only one $3,160 standard deduction is allowed\"; Line 5 = Federal Adjusted Gross Income; Line 9 = Kentucky AGI; Line 11 = Taxable Income; Line 12 \"Multiply line 11 by four percent (.04)\". Second pass: the 2024 Form 740 itself (42A740, 10-24) prints line 10 \"Nonitemizers: Enter $3,160 in Columns A and/or B\" and line 12 \"Tax Computation: Multiply line 11 by 4% (.04)\" — both passes agree.",
+    "source": "@@4206ed1300f1",
     "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
    },
    "marginal_rate": "0.04",

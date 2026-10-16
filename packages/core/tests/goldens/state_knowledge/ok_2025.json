@@ -23,7 +23,8 @@
   "@@daabf38afa4f": "2025 Form 511 — Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission): Form 511 page 2, lines 10-14a (line 10 standard deduction 'Single or Married Filing Separate: $6,350 - Married Filing Joint or Qualifying Surviving Spouse: $12,700 - Head of Household: $9,350'; line 11 'Exemptions: Enter the total number of exemptions claimed on page 1 ... X $1,000'); Select Line Instructions and Top of Form Instructions (F EXEMPTIONS, incl. the Special 65-or-older federal-AGI limits and Legally Blind); 2025 Oklahoma Income Tax Table pp. 27-38, incl. the 'Tax Computation Worksheet' for taxable income of $100,000 or more ($4,562 plus 0.0475 of the excess over $100,000 for Single/Married Filing Separate; $4,373 plus 0.0475 for Married Filing Joint/Head of Household/Qualified Widow(er) — both constants IDENTICAL to 2024, confirming the schedule did not move). Second pass: the bracket-by-bracket schedule verified verbatim against 68 O.S. Section 2355(C) as amended by 2025 House Bill 2764 (ENROLLED text, oklegislature.gov), which retitles subsection C to 'tax years 2024 and 2025' and leaves the six brackets and the 4.75% top rate unchanged, while its NEW subsection D (three brackets, 4.5% top rate) applies only 'For tax year 2026 and for subsequent tax years'. Both passes agree, and printed table rows corroborate every boundary (e.g. the 12,300-12,350 row reads $397 Single / $229 MFJ, and the 16,300-16,350 row $587 / $398 — matching the MFJ 3.75% band that ends at $14,400).",
   "@@dd584f58f289": "2025 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission). Source for: Form 511 line 1 = Federal AGI starting point; Schedule 511-B additions list (no treaty add-back); resident/part-year/nonresident domicile definitions; What's New (poll-worker paid-leave exemption on Schedule 511-C line 6; Electric Vehicle Charging Tax Credit added to Form 511-CR); due date April 15, 2026 (April 20 e-file/e-pay); WHO MUST FILE thresholds; mailing to PO Box 26800, OKC 73126-0800; check payable to Oklahoma Tax Commission; OkTAP at oktap.tax.ok.gov.",
   "@@e539bf5780d4": "https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -147,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended OK 2025 return (Form 511 - Oklahoma Resident Individual Income Tax Return (2025)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "OK revenue department home page (read 2026-10-16)",
+      "url": "https://oklahoma.gov/tax.html"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 511 - Oklahoma Resident Individual Income Tax Return (2025)",
+    "jurisdiction": "states/ok",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended OK return, and the OK 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the OK instructions for amended returns on the OK revenue department's site (https://oklahoma.gov/tax.html) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -201,6 +237,27 @@
     "jurisdiction": "states/ok",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "OK revenue department home page (read 2026-10-16)",
+      "url": "https://oklahoma.gov/tax.html"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the OK instructions for amended returns on the OK revenue department's site (https://oklahoma.gov/tax.html).",
+    "form": "Form 511 - Oklahoma Resident Individual Income Tax Return (2025)",
+    "headline": "OK 2025, amended (Form 511 - Oklahoma Resident Individual Income Tax Return (2025)): you owe $88",
+    "jurisdiction": "states/ok",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

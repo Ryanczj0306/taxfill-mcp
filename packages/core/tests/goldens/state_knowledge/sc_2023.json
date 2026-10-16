@@ -2,15 +2,22 @@
  "_strings": {
   "@@00f4fb9f027d": "Schedule NR (Nonresident Schedule), attached to a completed SC1040. Nonresidents and part-year residents electing to file as a nonresident complete Schedule NR; Column A = income from the federal return, Column B = income earned while an SC resident or from SC sources.",
   "@@09ff50077a6d": "2023 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) - Line 1 'Enter your taxable income from your federal form'; Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back; IRC conformity through 12/31/2022; due date April 15, 2024",
+  "@@1acbbd4c2e53": "The shipped SC 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1b526f00b3f2": "annual (per tax year; the shipped SC 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@1e90561d597b": "Tuition Tax Credit — A SC resident student (or a parent/legal guardian/other person who can claim the student as a dependent and who paid the tuition) attending a qualifying SC 2-year or 4-year college/university. Student must have received an SC high school diploma (or qualifying homeschool/out-of-state prep diploma) during or after May 2018, enrolled within 12 months of graduating high school, qualify for in-state tuition, be a degree-seeking undergraduate (or in a qualifying 1-year certificate/diploma program), and complete at least 30 credit hours for the year (15 if attending only one semester; 12 at Converse/Wofford). Disqualifiers include being in student-loan default, receiving a LIFE or Palmetto Fellows Scholarship for both Spring and Fall, certain felony/alcohol/drug convictions, and claiming for more than four consecutive years after enrollment.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@5d8aba77dbaf": "Two Wage Earner Credit — Married couples filing jointly where both spouses have earned income taxed to South Carolina. Not allowed for filing statuses Single, Married Filing Separately, or Head of Household. If either spouse's qualified earned income is zero or less, the credit cannot be taken.",
+  "@@74fdcd4b0ca3": "2023 South Carolina Individual Income Tax Tables SC1040TT (Revised 4/4/23) — the mandatory tax tables for taxable income under $100,000 and the '2023 Tax Rate Schedule for taxable income of $100,000 or more' ('1. Multiply the amount on line 5 by 6.4%; 2. Subtract $670', with the worked example $101,000 -> $5,794); 2023 SC1040 Instructions Line 6 ('If your income subject to tax on line 5 is less than $100,000, use the SC1040TT... If ... $100,000 or more, use the tax rate schedule') and Line w (dependent exemption $4,610). Second pass (bracket bounds and constants): 2023 SC4972, '2023 Tax Computation Schedule' — $0 to $3,330: 0% times the amount; $3,330 to $16,680: 3% times the amount minus $100; $16,680 or more: 6.4% times the amount minus $670 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2023.pdf); corroborated by the SC Revenue and Fiscal Affairs Office 2023 State IIT Comparisons Report (Tax Year 2023: >$0 0%, >$3,330 3%, >$16,680 6.4%; rfa.sc.gov).",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@d8ee2b9ea0e0": "Child and Dependent Care Credit — Full-year SC residents who incurred federal child and dependent care expenses (reported on federal Form 2441). Part-year residents/nonresidents qualify only if they are residents of a state that offers a comparable credit to nonresidents, and then only on a prorated basis. Cannot be claimed if filing status is Married Filing Separately.",
   "@@eac696fb9f90": "South Carolina Earned Income Tax Credit (EITC) — Full-year South Carolina residents who were eligible for and claimed the federal Earned Income Tax Credit on their federal return for the same tax year. The TC-60 instructs the taxpayer to STOP (no credit) if they were not a full-year SC resident or were not eligible for the federal EITC.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f20915ce4653": "Treaty conformity — SC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from SC income (it flows through the federal starting point; do not add it back on the SC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: SC1040 line 1 starts from FEDERAL TAXABLE INCOME (\"Enter your taxable income from your federal form\" - 2023 SC1040 Instructions, p.2). Federally treaty-exempt income is already excluded from federal taxable income before the SC return begins. SC's additions to income (SC1040 lines a-e) do NOT include any add-back of tax-treaty-exempt income. The only foreign-related add-back is on line e (\"Add back foreign area allowances, cost of living allowances, and income from US possessions\"), which is distinct from income exempt under a federal income tax treaty and does not re-capture treaty income. Because treaty-exempt income is neither in the federal taxable-income starting point nor added back, it is NOT re-taxed by SC -> conforms. (SC also confirms conformity to the IRC as amended through 12/31/2022 except as otherwise provided.)"
+  "@@f20915ce4653": "Treaty conformity — SC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from SC income (it flows through the federal starting point; do not add it back on the SC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: SC1040 line 1 starts from FEDERAL TAXABLE INCOME (\"Enter your taxable income from your federal form\" - 2023 SC1040 Instructions, p.2). Federally treaty-exempt income is already excluded from federal taxable income before the SC return begins. SC's additions to income (SC1040 lines a-e) do NOT include any add-back of tax-treaty-exempt income. The only foreign-related add-back is on line e (\"Add back foreign area allowances, cost of living allowances, and income from US possessions\"), which is distinct from income exempt under a federal income tax treaty and does not re-capture treaty income. Because treaty-exempt income is neither in the federal taxable-income starting point nor added back, it is NOT re-taxed by SC -> conforms. (SC also confirms conformity to the IRC as amended through 12/31/2022 except as otherwise provided.)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -134,6 +141,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended SC 2023 return (Form SC1040 (South Carolina Individual Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "SC revenue department home page (read 2026-10-16)",
+      "url": "https://dor.sc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "jurisdiction": "states/sc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended SC return, and the SC 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the SC instructions for amended returns on the SC revenue department's site (https://dor.sc.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -191,9 +233,243 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "SC revenue department home page (read 2026-10-16)",
+      "url": "https://dor.sc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the SC instructions for amended returns on the SC revenue department's site (https://dor.sc.gov/).",
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "headline": "SC 2023, amended (SC1040 (South Carolina Individual Income Tax Return)): you owe $88",
+    "jurisdiction": "states/sc",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1acbbd4c2e53",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/sc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "SC DOR Form TC-60, South Carolina Earned Income Tax Credit (Rev. 5/8/23)",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "credits",
+     "url": "https://dor.sc.gov/forms-site/Forms/TC60_2023.pdf"
+    },
+    {
+     "answers": "SC DOR 2023 SC1040 Individual Income Tax Instructions (December 2023), Line 12: Two Wage Earner Credit",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "credits",
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf"
+    },
+    {
+     "answers": "SC DOR Form I-319, 2023 Tuition Tax Credit (Rev. 4/11/23)",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "credits",
+     "url": "https://dor.sc.gov/forms-site/Forms/I319_2023.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1acbbd4c2e53",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/sc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@09ff50077a6d",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "filing_logistics",
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1acbbd4c2e53",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/sc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@09ff50077a6d",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf"
+    },
+    {
+     "answers": "2023 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - MAIL TO addresses: Refunds/Zero Tax PO Box 101100; Balance Due PO Box 101105",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040_2023.pdf"
+    },
+    {
+     "answers": "2023 SC Individual Income Tax: General Information and FAQs (SC Dept. of Revenue) - who must file, resident/nonresident/part-year definitions, domicile, due date April 15, 2024, check payable to SCDOR",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "forms_and_instructions",
+     "url": "https://www.dor.sc.gov/sites/dor/files/forms/Geninfo_2023.pdf"
+    },
+    {
+     "answers": "2023 Schedule NR (Nonresident Schedule) form (SC Dept. of Revenue) - nonresident/part-year, attach to completed SC1040, Column A federal / Column B SC",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.sc.gov/forms-site/Forms/SchNRinst_2023.pdf"
+    },
+    {
+     "answers": "SCDOR Individual Income Tax FAQs / MyDORWAY payment portal (check payable to SCDOR; portal URL)",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.sc.gov/iit/prepare-you-file/iit-faqs"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1acbbd4c2e53",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/sc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@74fdcd4b0ca3",
+     "cadence": "@@1b526f00b3f2",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2023.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1acbbd4c2e53",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/sc",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/sc",
  "state_scope": {
@@ -642,7 +918,7 @@
   "common_result": {
    "base_kind": "federal_taxable_income",
    "citation": {
-    "source": "2023 South Carolina Individual Income Tax Tables SC1040TT (Revised 4/4/23) — the mandatory tax tables for taxable income under $100,000 and the '2023 Tax Rate Schedule for taxable income of $100,000 or more' ('1. Multiply the amount on line 5 by 6.4%; 2. Subtract $670', with the worked example $101,000 -> $5,794); 2023 SC1040 Instructions Line 6 ('If your income subject to tax on line 5 is less than $100,000, use the SC1040TT... If ... $100,000 or more, use the tax rate schedule') and Line w (dependent exemption $4,610). Second pass (bracket bounds and constants): 2023 SC4972, '2023 Tax Computation Schedule' — $0 to $3,330: 0% times the amount; $3,330 to $16,680: 3% times the amount minus $100; $16,680 or more: 6.4% times the amount minus $670 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2023.pdf); corroborated by the SC Revenue and Fiscal Affairs Office 2023 State IIT Comparisons Report (Tax Year 2023: >$0 0%, >$3,330 3%, >$16,680 6.4%; rfa.sc.gov).",
+    "source": "@@74fdcd4b0ca3",
     "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2023.pdf"
    },
    "rate": null,

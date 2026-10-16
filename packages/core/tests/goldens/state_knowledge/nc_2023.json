@@ -4,13 +4,20 @@
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@36ebbb27b540": "Treaty conformity — NC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NC income (it flows through the federal starting point; do not add it back on the NC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: NC conforms. The 2023 D-401 instructions state on Line 6: \"The starting point for determining North Carolina taxable income is federal adjusted gross income.\" Because federally treaty-exempt income is already excluded from federal AGI, it flows through to NC untaxed UNLESS NC adds it back. The complete list of Form D-400 Schedule S, Part A \"Additions to Federal Adjusted Gross Income\" (Lines 1-16, D-401 pp. 17-18) contains NO add-back of treaty-exempt income (additions are limited to items like non-NC state/local bond interest, bonus depreciation, IRC 179 expense, Opportunity Fund deferred gains, S-corp built-in gains, federal NOL, 529 withdrawals, employer education-loan payments, expenses allocable to exempt income, etc.). Since treaty-exempt income is not re-taxed, conforms_to_federal_treaties = true. Note one nuance to flag for filers: Schedule S Part A Line 12 requires adding back EXPENSES allocable to income exempt from NC tax, but it does not add back the exempt income itself.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@5b2e76897a69": "Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents",
   "@@5d6aa67cc831": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L).",
+  "@@6f1104f0efed": "annual (per tax year; the shipped NC 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@816074f82659": "Credit for Income Tax Paid to Another State or Country — N.C. residents (and part-year residents for the resident period) only. Available when income earned while a legal resident of North Carolina is taxed by both North Carolina and another U.S. state or a foreign country because it was earned in or derived from sources in that other state/country. No credit for tax paid to a city/county/other political subdivision or to the federal government. Nonresidents are NOT entitled to this credit. A copy of the return filed with the other state/country and proof of payment must be attached.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@aa1e6312a7d5": "The shipped NC 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@ac1de4204fcd": "Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L) — Narrow / not broadly applicable to ordinary residents. Available to taxpayers who incur qualified rehabilitation expenditures/expenses on a certified historic structure or historic mill facility placed in service under the requirements of Article 3D (expired for expenditures incurred by Jan 1, 2023; property must have been placed in service by Jan 1, 2023), Article 3H (historic mill facility; requires eligibility certification from the State Historic Preservation Officer), or Article 3L (current Historic Rehabilitation Tax Credits Investment Program; requires Form NC-Rehab). Distinguishes income-producing vs. non-income-producing structures.",
   "@@b62bf90cf3fe": "Form D-400 with Form D-400 Schedule PN (2023 Part-Year Resident and Nonresident Schedule) to compute the NC taxable percentage; if needed, Form D-400 Schedule PN-1 (Other Additions and Other Deductions). All filers, including part-year residents and nonresidents, file the same Form D-400.",
+  "@@bf7ddcb4fc30": "2023 D-401 North Carolina Individual Income Tax Instructions — \"For tax year 2023, the individual income tax rate is 4.75%... multiply your North Carolina taxable income by 4.75% (0.0475)\"; N.C. Standard Deduction Chart (D-400 Line 11): $12,750 single / $25,500 MFJ-QSS / $12,750 MFS ($0 if spouse itemizes) / $19,125 HoH; child deduction table (D-400 Line 10); D-400 Line 6 = federal AGI.",
   "@@cc95179c358e": "2023 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must File, residency, p.5-6), When Must I File (due date, p.7), Where Do I File / How Can I Pay (mailing addresses, payee, p.8), Line 6 federal AGI starting point (p.13), Line 7 Additions / Schedule S Part A list (p.13, 17-18), Filing Requirements Chart (p.6)",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -134,6 +141,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NC 2023 return (Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NC revenue department home page (read 2026-10-16)",
+      "url": "https://www.ncdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@5b2e76897a69",
+    "jurisdiction": "states/nc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NC return, and the NC 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NC instructions for amended returns on the NC revenue department's site (https://www.ncdor.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -191,9 +233,231 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "NC revenue department home page (read 2026-10-16)",
+      "url": "https://www.ncdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NC instructions for amended returns on the NC revenue department's site (https://www.ncdor.gov/).",
+    "form": "@@5b2e76897a69",
+    "headline": "NC 2023, amended (Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents): you owe $88",
+    "jurisdiction": "states/nc",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@aa1e6312a7d5",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "NCDOR 2023 D-401 Individual Income Tax Instructions (Instructions for Form D-400TC, Part 1) and 2023 Form D-400TC",
+     "cadence": "@@6f1104f0efed",
+     "topic": "credits",
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "NCDOR 2023 Form D-400TC and 2023 D-401 Instructions (Part 2, Credits for Rehabilitating Historic Structures)",
+     "cadence": "@@6f1104f0efed",
+     "topic": "credits",
+     "url": "https://www.ncdor.gov/2023-d-400tc-individual-income-tax-credits"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@aa1e6312a7d5",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@cc95179c358e",
+     "cadence": "@@6f1104f0efed",
+     "topic": "filing_logistics",
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@aa1e6312a7d5",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@cc95179c358e",
+     "cadence": "@@6f1104f0efed",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "NCDOR — 2023 D-400 Individual Income Tax Return page",
+     "cadence": "@@6f1104f0efed",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ncdor.gov/2023-d-400-individual-income-tax-return"
+    },
+    {
+     "answers": "NCDOR — File & Pay for Individuals (online payment by bank draft no fee; Visa/MasterCard $2 per $100)",
+     "cadence": "@@6f1104f0efed",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ncdor.gov/file-pay/file-pay-individuals"
+    },
+    {
+     "answers": "NCDOR — eServices (online payment options, availability)",
+     "cadence": "@@6f1104f0efed",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ncdor.gov/file-pay/eservices"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@aa1e6312a7d5",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@bf7ddcb4fc30",
+     "cadence": "@@6f1104f0efed",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@aa1e6312a7d5",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/nc",
  "state_scope": {
@@ -521,7 +785,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 D-401 North Carolina Individual Income Tax Instructions — \"For tax year 2023, the individual income tax rate is 4.75%... multiply your North Carolina taxable income by 4.75% (0.0475)\"; N.C. Standard Deduction Chart (D-400 Line 11): $12,750 single / $25,500 MFJ-QSS / $12,750 MFS ($0 if spouse itemizes) / $19,125 HoH; child deduction table (D-400 Line 10); D-400 Line 6 = federal AGI.",
+    "source": "@@bf7ddcb4fc30",
     "url": "https://www.ncdor.gov/2023-d-401-individual-income-tax-instructions/open"
    },
    "marginal_rate": "0.0475",

@@ -174,9 +174,11 @@ ineligible; 2021 used the ARPA $8,000/$16,000 caps and was refundable with a US 
 > `sched_8812`, `f8962`, `f2441`, `f8863`, `f8959`, `f8960`, plus `f843`,
 > `f8316`, `fw7`, `f1040x`, `f1040es`, `f4868`, `f2555`, `f5329`) ship for **2023, 2024
 > AND 2025** (and as drafts for 2026). `f8843` spans 2019–2026. The revision-dated
-> forms are pinned per year deliberately (`f1040x` takes Rev. 2-2024 for TY2024,
-> Rev. 12-2025 for TY2025 and the Rev. 12-2026 draft for TY2026), so ask for the year you are filing rather than reusing a
-> pack across years. Still: never assume — `list_forms(jurisdiction, year)` is
+> forms are pinned per year deliberately (`f1040x` takes Rev. 12-2025 for TY2023–2025, the revision the current
+> Form 1040-X instructions are used with, but only the 2025 pack lets line 4b (Schedule 1-A) carry an amount: on a
+> TY2023/2024 amendment the QBI deduction goes on line 4a and verify fails any amount on 4b; TY2026 takes the
+> Rev. 12-2026 draft), so ask for the year you are filing rather than reusing a pack across years.
+> Still: never assume — `list_forms(jurisdiction, year)` is
 > the authority, and when a needed pack really is missing, say so up front and
 > fall back to `get_sources` + the official blank; never silently truncate a
 > filing.
@@ -233,6 +235,30 @@ discloses the recoverable amount when `ss_withheld_by_employer` is supplied).
    signed — Form 843 on page 2, Form 8316 in its own page-1 signature area.
 4. It is a recorded position: `workspace_record_position` citing Pub 519. Do NOT
    use Form 843 for Additional Medicare Tax (that is Form 8959 on the return).
+
+### Recipe B5 — amend a filed return (Form 1040-X, a state's amended return)
+
+Form 1040-X is a continuous-use form: an amendment filed today uses the CURRENT revision and its
+instructions, whatever year it amends.
+
+1. Recompute the corrected year (`estimate_refund`, `calc`), fill the year's `f1040x` pack (columns
+   A original / B net change / C correct; Part II explains every change), and fill a completed,
+   UPDATED Form 1040 / 1040-SR / 1040-NR for that year: since the December 2025 revision a paper
+   Form 1040-X must have it behind it. Amending a Form 1040-NR on paper (or switching between Form 1040
+   and Form 1040-NR) is different: fill only the name, current address and SSN/ITIN on page 1 and the
+   Part II explanation, NOT the columns or Part I, and write "Amended" across the top of the new
+   return attached to the back (instructions p. 2).
+2. `file_and_pay([{form: "1040-X", tax_year: <year>, bottom_line: <line 22 refund, or minus line 20>,
+   state: <where the filer lives now>, attached_forms: ["1040"]}])` → the 1040-X checklist: the Form
+   1040-X Where To File address (NOT the Form 1040 one; a 1040-NR amendment, a dual-status alien or a
+   Form 2555/4563 filer goes to Austin 73301-0215; a W-7 package goes to the ITIN Operation), the
+   check to "U.S. Treasury" ENCLOSED loose with no voucher, the refund by check on paper, the
+   refund-claim window, and the §6013 election and dual-status steps when the manifest flags them.
+3. A state amendment is its own item. Pass `amended: true` on EVERY amended item, federal or state: a
+   form number ending in X (`500X`, `IT-201-X`, `MI-1040X-12`) is read as amended without it, but a state
+   amended on its original form with a box is not. Where the state pack has
+   amended-return rules (Georgia's Form 500X) the checklist follows them; otherwise it names no address
+   or due date and points to the DOR. Never reuse the original return's address or due date.
 
 ### Recipe P — a planning-year projection (TY2026 today)
 

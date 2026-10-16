@@ -5,15 +5,23 @@
   "@@1b01fb3d7bf9": "Form 1040N with Nebraska Schedule III (Computation of Nebraska Tax for Nonresidents and Partial-Year Residents); there is no separate nonresident form number — nonresidents and partial-year residents file the same Form 1040N and must attach Schedule III.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@24bb929482c3": "Nebraska Child/Dependent Care Credit (refundable, AGI $29,000 or less) — Full-year and partial-year residents whose federal AGI (Form 1040N, line 5) is $29,000 or less and who have qualifying federal child & dependent care expenses. Must complete and attach Nebraska Form 2441N (the federal Form 2441 alone is not accepted). Taxpayers who file federal MFJ but Nebraska MFS cannot claim it; nonresidents cannot claim it.",
+  "@@24cf7f237c26": "annual (per tax year; the shipped NE 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@4cee92dd262d": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/Tax_Calculation_Schedule_2023_Final.pdf",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@5161492acfc2": "The shipped NE 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@83534fb6c105": "Nebraska Personal Exemption Credit (residents only) — Nebraska residents may claim a credit for each Nebraska personal exemption reported on line 4, Form 1040N (taxpayer, spouse, and dependents). Nonresidents and partial-year residents claim a prorated version on Schedule III line 7.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a07ab8ab2ac2": "2023 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2023), single page — all four filing-status rate tables (\"This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.\"). Standard deduction and line instructions: 2023 Nebraska Individual Income Tax Booklet, Form 1040N (8-307-2023) — Line 6 \"Nebraska Standard Deduction Chart\" (p.9), Line 15 Nebraska Income Tax and Line 18 personal exemption credit (p.10), 2023 Nebraska Tax Table header and over-$71,560 worksheet (pp.38-41), at https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf",
   "@@a2cd16d06bea": "Nebraska Child/Dependent Care Nonrefundable Credit (AGI over $29,000) — Resident taxpayers with federal AGI greater than $29,000 who claim the federal child & dependent care credit. Must include a copy of federal Form 2441 (credit disallowed if not received). Taxpayers who file federal MFJ but Nebraska MFS cannot claim it; nonresidents cannot claim it (partial-year residents use Schedule III line 6c).",
   "@@b9d695f91530": "Nebraska Earned Income Credit (state EITC) — Full-year and partial-year Nebraska residents who qualify for and claim the federal Earned Income Credit. Nonresidents may not claim it. If filing Nebraska married-filing-separately, eligibility depends on whether the federal EIC is allowed on a federal MFS return.",
   "@@d672ebb3d44d": "Refund returns: Nebraska Department of Revenue, PO Box 98912, Lincoln, NE 68509-8912. (Note: Nebraska splits addresses by refund vs. no-refund, not refund vs. payment. Returns NOT requesting a refund — including balance-due/with-payment returns — go to PO Box 98934 below.)",
   "@@d6adbbe1587b": "2023 Nebraska Individual Income Tax Booklet (Form 1040N instructions, 8-307-2023) — federal AGI starting point (Line 5), residency definitions, Who Must File, due date, check payee",
   "@@da653c365042": "Credit for School District & Community College Property Taxes (Form PTC) — Any individual (and other entities) who paid qualified Nebraska school district and/or community college property taxes during the 2023 calendar year, directly or through a mortgage escrow. Qualified taxes exclude amounts for bonded indebtedness, voter-approved levy overrides, and certain delinquent taxes. Must file Form PTC with the return; the DOR Property Tax Look-up Tool computes qualified amounts.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -137,6 +145,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NE 2023 return (Form 1040N — Nebraska Individual Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.nebraska.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1040N — Nebraska Individual Income Tax Return",
+    "jurisdiction": "states/ne",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NE return, and the NE 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NE instructions for amended returns on the NE revenue department's site (https://revenue.nebraska.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -194,9 +237,237 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "NE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.nebraska.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NE instructions for amended returns on the NE revenue department's site (https://revenue.nebraska.gov/).",
+    "form": "Form 1040N — Nebraska Individual Income Tax Return",
+    "headline": "NE 2023, amended (Form 1040N — Nebraska Individual Income Tax Return): you owe $88",
+    "jurisdiction": "states/ne",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5161492acfc2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@1a7e6f9900fc"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "2023 Nebraska Individual Income Tax Booklet (Form 1040N booklet), line 35 instructions and Nebraska Earned Income Worksheet",
+     "cadence": "@@24cf7f237c26",
+     "topic": "credits",
+     "url": "https://revenue.nebraska.gov/sites/revenue.nebraska.gov/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf"
+    },
+    {
+     "answers": "2023 Nebraska Form 2441N (Nebraska Child and Dependent Care Expenses) and 2023 Form 1040N booklet line 33 instructions",
+     "cadence": "@@24cf7f237c26",
+     "topic": "credits",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_2441N_2023_Final.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5161492acfc2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@1a7e6f9900fc"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@d6adbbe1587b",
+     "cadence": "@@24cf7f237c26",
+     "topic": "filing_logistics",
+     "url": "@@1a7e6f9900fc"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5161492acfc2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@1a7e6f9900fc"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@d6adbbe1587b",
+     "cadence": "@@24cf7f237c26",
+     "topic": "forms_and_instructions",
+     "url": "@@1a7e6f9900fc"
+    },
+    {
+     "answers": "2023 Nebraska Schedule I, II, III (Form 1040N) — Part A Adjustments Increasing Federal AGI line items (no treaty add-back)",
+     "cadence": "@@24cf7f237c26",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040N_Schedules_2023_Final.pdf"
+    },
+    {
+     "answers": "2023 Nebraska Form 1040N (Individual Income Tax Return) — form title, mailing addresses (PO Box 98912 refund / PO Box 98934 not requesting refund)",
+     "cadence": "@@24cf7f237c26",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040N_2023_Final.pdf"
+    },
+    {
+     "answers": "Nebraska DOR — Electronic Payment Options for Individual Income Tax (e-pay portal / online payment)",
+     "cadence": "@@24cf7f237c26",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/individuals/electronic-payment-options-individual-income-tax"
+    },
+    {
+     "answers": "Nebraska DOR — 2023 Income Tax Forms index",
+     "cadence": "@@24cf7f237c26",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.nebraska.gov/about/2023-income-tax-forms"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5161492acfc2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@1a7e6f9900fc"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@a07ab8ab2ac2",
+     "cadence": "@@24cf7f237c26",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@4cee92dd262d"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5161492acfc2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@1a7e6f9900fc"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ne",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/ne",
  "state_scope": {
@@ -658,8 +929,8 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2023), single page — all four filing-status rate tables (\"This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.\"). Standard deduction and line instructions: 2023 Nebraska Individual Income Tax Booklet, Form 1040N (8-307-2023) — Line 6 \"Nebraska Standard Deduction Chart\" (p.9), Line 15 Nebraska Income Tax and Line 18 personal exemption credit (p.10), 2023 Nebraska Tax Table header and over-$71,560 worksheet (pp.38-41), at https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/f_1040n_booklet_2023_Final.pdf",
-    "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2023/incometax/Tax_Calculation_Schedule_2023_Final.pdf"
+    "source": "@@a07ab8ab2ac2",
+    "url": "@@4cee92dd262d"
    },
    "rate": null,
    "rate_structure": "graduated",

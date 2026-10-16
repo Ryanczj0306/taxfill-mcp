@@ -4,15 +4,22 @@
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@21f5d5abd293": "Treaty conformity — ME conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from ME income (it flows through the federal starting point; do not add it back on the ME return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Maine's resident return (Form 1040ME) starts from federal adjusted gross income: Line 14 instructs \"Enter the federal adjusted gross income shown on your federal Form 1040, line 11 or Form 1040-SR, line 11.\" Maine's only income additions are on Schedule 1A (per 36 M.R.S. § 5122(1)), and the full Schedule 1A list contains NO add-back of federally treaty-exempt income — the additions are limited to specific items (non-Maine municipal/state bond interest, NOL recovery adjustment, MainePERS contributions, bonus depreciation add-back, fiduciary adjustments, nonresident installment-sale gain election, and pass-through financial-institution adjustments). Because treaty-exempt income is already excluded from federal AGI and there is no Maine add-back, it flows through and is not re-taxed. Maine therefore conforms to federal treaty exclusions (unlike California, which adds treaty income back on Schedule CA). Basis: 2023 Form 1040ME instructions, Line 14 and Schedule 1A (23_1040me_book_gen_instr.pdf).",
   "@@49e71adfa3af": "Child Care Credit — Maine residents and part-year residents (a nonrefundable portion is also available to nonresidents) who claimed the federal credit for child and dependent care expenses on federal Form 2441 / Schedule 3, line 2. An enhanced rate applies if expenses were paid to a Step 4 / Star 5 quality-certified Maine child care provider.",
+  "@@4a029301f084": "The shipped ME 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@5acdd4c2c323": "Dependent Exemption Tax Credit — Taxpayers with qualifying children and dependents (the number reported on Form 1040ME, line 13a) for whom the federal child tax credit under IRC Section 24 was claimed for the same taxable year. Nonrefundable for tax years beginning before 2024 (which includes 2023).",
   "@@5d83d007759c": "Maine Revenue Services, P.O. Box 1066, Augusta, ME 04332-1066 (Form 1040ME without a payment / refund or no balance due)",
   "@@7d09b15a8d5f": "Form 1040ME with Schedule NR (Form 1040ME), \"Schedule for Calculating the Nonresident Credit\"; married taxpayers electing to file as single may use Schedule NRH (Form 1040ME) instead. Used by nonresidents, part-year residents, and safe harbor residents. (Full-year residents may not file Schedule NR.)",
   "@@8202972e410d": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_book_gen_instr.pdf",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@ba8b9d730c15": "annual (per tax year; the shipped ME 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@c8baadfae7de": "2023 MAINE Individual Income Tax Booklet — Form 1040ME General Instructions (23_1040me_book_gen_instr.pdf): \"2023 TAX RATE SCHEDULES\" (p. 12, three schedules: #1 Single/MFS, #2 Head of Household, #3 Married/Surviving Spouses Filing Jointly); Line 13 Personal exemptions chart (p. 3); Line 17 Deduction instruction + Worksheet for Standard/Itemized Deductions (p. 4); Line 18 Exemption instruction ($4,700) + Worksheet for Phaseout of Personal Exemption Deduction Amount (p. 4); \"2023 Tax Year Quick Facts\" standard-deduction base amounts (p. 10); 2023 MAINE INCOME TAX TABLE (pp. 11-12). Cross-confirmed by the standalone MRS document \"State of Maine - Individual Income Tax, 2023 Rates\" (Sept 15, 2022) and by the 2023 tax tables file (rate schedules on its last page).",
   "@@ea078fbae943": "2023 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — Line 14 federal AGI starting point, Schedule 1A income additions (no treaty add-back), Who-must-file, due date Apr 17 2024, payee 'Treasurer, State of Maine', Maine Tax Portal revenue.maine.gov, nonresident $3,000/12-day threshold",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f644a49afed9": "Maine Earned Income Credit (EIC) — Maine residents and part-year residents who properly claim the federal earned income tax credit on federal Form 1040/1040-SR (including filers using an ITIN, and filers age 18+ with no qualifying children). For nonresidents the credit is nonrefundable and may not reduce Maine tax below zero.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@f8dc8ee216d9": "Property Tax Fairness Credit (PTFC) — Maine residents and part-year residents who owned or rented a home in Maine during any part of 2023 and lived in it as their principal residence, and who paid property tax greater than 4% of total income OR rent greater than 26.67% of total income. Cannot be claimed if filing status is married filing separately."
  },
  "file_and_pay": {
@@ -137,6 +144,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended ME 2023 return (Form 1040ME (Maine Individual Income Tax Return) — resident return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "ME revenue department home page (read 2026-10-16)",
+      "url": "https://www.maine.gov/revenue/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "jurisdiction": "states/me",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended ME return, and the ME 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the ME instructions for amended returns on the ME revenue department's site (https://www.maine.gov/revenue/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -194,9 +236,255 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "ME revenue department home page (read 2026-10-16)",
+      "url": "https://www.maine.gov/revenue/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the ME instructions for amended returns on the ME revenue department's site (https://www.maine.gov/revenue/).",
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "headline": "ME 2023, amended (Form 1040ME (Maine Individual Income Tax Return) — resident return): you owe $88",
+    "jurisdiction": "states/me",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a029301f084",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8202972e410d"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/me",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Maine Revenue Services - Maine Earned Income Credit (EIC) page; and 2023 Form 1040ME Schedule A",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "credits",
+     "url": "https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/earned-income-credit"
+    },
+    {
+     "answers": "2023 Form 1040ME, Schedule PTFC/STFC (Property Tax Fairness Credit / Sales Tax Fairness Credit) and instructions; Maine Revenue Services Property Tax Fairness Credit page",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "credits",
+     "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_sched_pstfc_ff.pdf"
+    },
+    {
+     "answers": "2023 Form 1040ME, Schedule A and Worksheet for Child Care Credit; Maine Revenue Services Child Care Credit page",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "credits",
+     "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_sched_a_ff.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a029301f084",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8202972e410d"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/me",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@ea078fbae943",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "filing_logistics",
+     "url": "@@8202972e410d"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a029301f084",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8202972e410d"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/me",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@ea078fbae943",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "forms_and_instructions",
+     "url": "@@8202972e410d"
+    },
+    {
+     "answers": "Maine Revenue Services — Mailing Addresses for Forms and Applications (1040ME with payment = PO Box 1067; without payment/refund = PO Box 1066)",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "forms_and_instructions",
+     "url": "https://www.maine.gov/revenue/about/contact/mailing-addresses"
+    },
+    {
+     "answers": "INDIVIDUAL INCOME TAX — Determining Residency Status, Guidance Document (2023): domicile definition, statutory/183-day resident, part-year, nonresident, safe harbor",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "forms_and_instructions",
+     "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/residency_guidance_2023.pdf"
+    },
+    {
+     "answers": "2023 Schedule NR (Form 1040ME) — nonresident credit schedule for nonresidents/part-year/safe harbor residents",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "forms_and_instructions",
+     "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/2023_sch_nr_ff.pdf"
+    },
+    {
+     "answers": "2023 Schedule NRH (Form 1040ME) — schedule for married individuals electing to file single",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "forms_and_instructions",
+     "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/2023_sch_nrh_ff.pdf"
+    },
+    {
+     "answers": "Maine Revenue Services — Individual Income Tax (1040ME) program page",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "forms_and_instructions",
+     "url": "https://www.maine.gov/revenue/taxes/income-estate-tax/individual-income-tax-1040me"
+    },
+    {
+     "answers": "Maine Revenue Services — Individual Income Tax FAQ",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "forms_and_instructions",
+     "url": "https://www.maine.gov/revenue/faq/individual-income-tax"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a029301f084",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8202972e410d"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/me",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@c8baadfae7de",
+     "cadence": "@@ba8b9d730c15",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@8202972e410d"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a029301f084",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8202972e410d"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/me",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/me",
  "state_scope": {
@@ -704,7 +992,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 MAINE Individual Income Tax Booklet — Form 1040ME General Instructions (23_1040me_book_gen_instr.pdf): \"2023 TAX RATE SCHEDULES\" (p. 12, three schedules: #1 Single/MFS, #2 Head of Household, #3 Married/Surviving Spouses Filing Jointly); Line 13 Personal exemptions chart (p. 3); Line 17 Deduction instruction + Worksheet for Standard/Itemized Deductions (p. 4); Line 18 Exemption instruction ($4,700) + Worksheet for Phaseout of Personal Exemption Deduction Amount (p. 4); \"2023 Tax Year Quick Facts\" standard-deduction base amounts (p. 10); 2023 MAINE INCOME TAX TABLE (pp. 11-12). Cross-confirmed by the standalone MRS document \"State of Maine - Individual Income Tax, 2023 Rates\" (Sept 15, 2022) and by the 2023 tax tables file (rate schedules on its last page).",
+    "source": "@@c8baadfae7de",
     "url": "@@8202972e410d"
    },
    "rate": null,

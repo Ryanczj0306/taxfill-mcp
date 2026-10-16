@@ -10,19 +10,28 @@
   "@@418644c31f4b": "Nonresident: Form 763 (Nonresident Individual Income Tax Return). Part-year resident: Form 760PY (Part-Year Resident Individual Income Tax Return).",
   "@@430f75625907": "https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf",
   "@@4349df4a304e": "annual (per tax year; the newest shipped VA pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@456acd95dacf": "https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/763-2025.pdf",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@57bb0a84eff6": "Law change NOT modeled by the engine (status final_form_published): Refundable Virginia Earned Income Tax Credit RAISED from 15% to 20% of the federal EITC: \"For taxable years Taxable Years 2025 and 2026, new legislation increased the refundable portion of the Virginia Earned Income Tax Credit from 15% to 20%\". Nonresidents and part-year residents are INELIGIBLE for the refundable credit, and it stays mutually exclusive with the Credit for Low-Income Individuals and the nonrefundable 20% option — claim whichever of the three gives the greatest benefit. Resolve via: The credit is 20% of the federal EITC claimed on the filer's federal return; resolve the federal EITC from the federal return and the Schedule ADJ earned income credit computation in the cited 2025 Form 760 instructions. calc.state_tax computes Form 760 Line 16 only and applies no credits (see tax.notes, \"Credits are NOT modeled\").",
   "@@5858ae24c214": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice - confirm each amount and your eligibility at the cited source before claiming it. Two 2025 figures CHANGED from 2024: the refundable Virginia EITC rose from 15% to 20% (for Taxable Years 2025 and 2026), and the poverty guideline table used for the Credit for Low-Income Individuals was re-indexed.",
   "@@6b691703ada6": "Virginia Earned Income Tax Credit (nonrefundable option) — Taxpayers who claimed an Earned Income Tax Credit on their federal return. Mutually exclusive with the Credit for Low-Income Individuals and with the refundable Virginia EITC — the instructions direct the filer to claim whichever of the three gives the greatest tax benefit. A married-filing-separately taxpayer must first determine their proportion of the earned income used to qualify for the federal credit and apply that proportion to the Virginia credit.",
   "@@6ba8338a07e0": "Refundable Virginia Earned Income Tax Credit — Full-year Virginia residents who claimed a federal Earned Income Tax Credit. Nonresidents and part-year residents are INELIGIBLE for the refundable credit. Mutually exclusive with the Credit for Low-Income Individuals and the nonrefundable 20% option.",
+  "@@81a3c10bb3e3": "2025 Form 760PY, Virginia Part-Year Resident Income Tax Return — the 2-page return itself (page 1: 'Due May 1, 2026')",
+  "@@920a0162dec1": "2025 Virginia Form 760PY Part-Year Resident Individual Income Tax Instructions (Va. Dept. of Taxation 2614092 Rev. 5/2026), 'Which Form to File' (p. 7): 'Part-Year Residents File Form 760PY' — 'As a general rule, part-year residents file Form 760PY.'",
   "@@93d617b82668": "2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — What's New (standard deduction increased to $8,750/$17,500 for Taxable Years 2025 and 2026; refundable Virginia EITC raised to 20%; fixed IRC conformity date of December 31, 2025), Line 1 Federal Adjusted Gross Income, Line 9 filing thresholds, Line 11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options, mailing addresses, May 1 2026 due date",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9c3a0e0e87a2": "2025 Form 760 Resident Individual Income Tax Instructions - 'your individual income tax return must be postmarked no later than May 1, 2026, to avoid penalties and interest'; Reminders, 'Extension for Filing Income Tax Returns' (automatic 6 months, Form 760IP); 'The due date for filing a calendar year return is May 1, and the automatic extension provisions apply to returns filed by November 1'; the July 1, 2026 out-of-country date",
   "@@a536a78c983e": "2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — TAX RATE SCHEDULE, p. 35: 'Not over $3,000, your tax is 2% of your Virginia taxable income; $3,000-$5,000: $60 + 3%; $5,000-$17,000: $120 + 5%; over $17,000: $720 + 5.75% of excess over $17,000'; What's New 'Increase in Standard Deduction' and the Line 11 chart (Filing Status 1 $8,750 / Filing Status 2 $17,500 / Filing Status 3 $8,750, for Taxable Years 2025 and 2026, sunsetting after TY2026 to $3,000/$6,000); Line 12 Exemptions ('Multiply the sum of exemptions claimed in the You, Spouse and Dependents boxes by $930' and 'Multiply the sum of exemptions claimed for 65 or over and Blind by $800'); Line 9 VAGI filing threshold; Spouse Tax Adjustment Worksheet ($259 cap). Second pass: the 2025 Form 763 nonresident instructions independently print the identical TAX RATE SCHEDULE and the same $8,750/$17,500 standard deduction chart (https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf) — both passes agree on every bound, rate, printed constant, and deduction amount.",
+  "@@b9f6b20ccce7": "2025 Form 763, Virginia Nonresident Income Tax Return — the 2-page return itself (page 1: 'Due May 1, 2026')",
+  "@@bc896043e3ee": "https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/760py-2025.pdf",
   "@@cd3c4013578d": "The newest shipped VA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@cdb99f5e5e3a": "https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760py-instructions.pdf",
   "@@cef675d11150": "REFUND RETURNS: Virginia Department of Taxation, P.O. Box 1498, Richmond, VA 23218-1498. Alternatively, returns may be filed with the Commissioner of the Revenue / Director of Finance / Director of Tax Administration of the locality where the taxpayer lives, per the booklet's 'List of Localities and Mailing Addresses'.",
+  "@@d5b4438e42d0": "2025 Virginia Form 763 Nonresident Individual Income Tax Instructions (Va. Dept. of Taxation 2614090 Rev. 5/2026), 'Which Form To File' (p. 7): 'Nonresidents File Form 763' — 'Generally, nonresidents with income from Virginia sources must file a Virginia return if their income is at or above the filing threshold.'",
+  "@@e2fae9302e1b": "https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f541cbf1780f": "All taxpayers are granted an AUTOMATIC 6-month extension of time to file (to November 1, 2026) — no application is required; however, any tentative tax due must be paid with extension voucher Form 760IP by the original May 1, 2026 due date. An extension penalty of 2% per month (maximum 12%) applies if the return is filed within 6 months of the due date and the balance due exceeds 10% of total tax liability; a late filing penalty of 30% applies if filed more than 6 months late. Taxpayers living or traveling outside the United States and Puerto Rico (or in naval service on duty outside the U.S. and Puerto Rico) must file by July 1, 2026."
+  "@@f541cbf1780f": "All taxpayers are granted an AUTOMATIC 6-month extension of time to file (to November 1, 2026) — no application is required; however, any tentative tax due must be paid with extension voucher Form 760IP by the original May 1, 2026 due date. An extension penalty of 2% per month (maximum 12%) applies if the return is filed within 6 months of the due date and the balance due exceeds 10% of total tax liability; a late filing penalty of 30% applies if filed more than 6 months late. Taxpayers living or traveling outside the United States and Puerto Rico (or in naval service on duty outside the U.S. and Puerto Rico) must file by July 1, 2026.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -143,6 +152,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended VA 2025 return (Form 760 (Resident Individual Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "VA revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.virginia.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 760 (Resident Individual Income Tax Return)",
+    "jurisdiction": "states/va",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended VA return, and the VA 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the VA instructions for amended returns on the VA revenue department's site (https://www.tax.virginia.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -197,6 +241,27 @@
     "jurisdiction": "states/va",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "VA revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.virginia.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the VA instructions for amended returns on the VA revenue department's site (https://www.tax.virginia.gov/).",
+    "form": "Form 760 (Resident Individual Income Tax Return)",
+    "headline": "VA 2025, amended (Form 760 (Resident Individual Income Tax Return)): you owe $88",
+    "jurisdiction": "states/va",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -313,10 +378,28 @@
      "url": "@@430f75625907"
     },
     {
-     "answers": "2025 Virginia Form 763 Nonresident Individual Income Tax Instructions (44 pages) - the independent SECOND-PASS source; prints the identical TAX RATE SCHEDULE (2% to $3,000; $60 + 3%; $120 + 5%; $720 + 5.75% over $17,000) and the same increased standard deduction ($8,750 Filing Status 1 / $17,500 Filing Status 2, with the same TY2025-2026 window and post-TY2026 sunset language)",
+     "answers": "@@920a0162dec1",
      "cadence": "@@4349df4a304e",
      "topic": "forms_and_instructions",
-     "url": "https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf"
+     "url": "@@cdb99f5e5e3a"
+    },
+    {
+     "answers": "@@81a3c10bb3e3",
+     "cadence": "@@4349df4a304e",
+     "topic": "forms_and_instructions",
+     "url": "@@bc896043e3ee"
+    },
+    {
+     "answers": "@@d5b4438e42d0",
+     "cadence": "@@4349df4a304e",
+     "topic": "forms_and_instructions",
+     "url": "@@e2fae9302e1b"
+    },
+    {
+     "answers": "@@b9f6b20ccce7",
+     "cadence": "@@4349df4a304e",
+     "topic": "forms_and_instructions",
+     "url": "@@456acd95dacf"
     },
     {
      "answers": "Virginia Tax - individual income tax payment options (eForms / Individual Online Services / web payments)",
@@ -477,6 +560,14 @@
       {
        "source": "@@93d617b82668",
        "url": "@@430f75625907"
+      },
+      {
+       "source": "@@d5b4438e42d0",
+       "url": "@@e2fae9302e1b"
+      },
+      {
+       "source": "@@b9f6b20ccce7",
+       "url": "@@456acd95dacf"
       }
      ],
      "filing_role": "nonresident",
@@ -538,6 +629,14 @@
       {
        "source": "@@93d617b82668",
        "url": "@@430f75625907"
+      },
+      {
+       "source": "@@920a0162dec1",
+       "url": "@@cdb99f5e5e3a"
+      },
+      {
+       "source": "@@81a3c10bb3e3",
+       "url": "@@bc896043e3ee"
       }
      ],
      "filing_role": "part_year",

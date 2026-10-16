@@ -1,9 +1,13 @@
 {
  "_strings": {
+  "@@06bb57295cc4": "2025 PIT-1 New Mexico Personal Income Tax Return Instructions — Where To Mail Paper Returns and Payments (PO Box 25122 refund/no-payment; PO Box 8390 with payment/PIT-PV), page PIT-1-15",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@22dae2e7d779": "New Mexico Child Day Care Credit — A New Mexico resident who provided over half the cost of maintaining a household for one or more qualifying dependent children who received day care during 2025, was gainfully employed during the period claimed, and paid unreimbursed, uncompensated day care expenses. Requires the completed Child Day Care Credit Worksheet (PIT-Childcare) plus Form PIT-CG, New Mexico Caregiver's Statement, for each caregiver — an incomplete PIT-RC or a missing PIT-CG results in denial of the credit.",
+  "@@2cec52ee43f6": "Statutory rate schedules of Section 7-2-7 NMSA 1978 as RESTRUCTURED by 2024 House Bill 252 (Laws 2024, Chapter 67, Section 5), 'for any taxable year beginning on or after January 1, 2025' — six brackets replacing the 1.7-5.9% five-bracket schedule that ran TY2021-TY2024: MFJ/HoH/surviving spouse 1.5% to $8,000 / $120 + 3.2% to $25,000 / $664 + 4.3% to $50,000 / $1,739 + 4.7% to $100,000 / $4,089 + 4.9% to $315,000 / $14,624 + 5.9%; Single (and estates/trusts) 1.5% to $5,500 / $82.50 + 3.2% to $16,500 / $434.50 + 4.3% to $33,500 / $1,165.50 + 4.7% to $66,500 / $2,716.50 + 4.9% to $210,000 / $9,748 + 5.9%; MFS 1.5% to $4,000 / $60.00 + 3.2% to $12,500 / $332 + 4.3% to $25,000 / $869.50 + 4.7% to $50,000 / $2,044.50 + 4.9% to $157,500 / $7,312 + 5.9%. Second pass: the Department's own 'Personal Income Tax Rates' publication (PIT rates_2005_2025.pdf, page 1 'PERSONAL INCOME TAX RATES FOR TAX YEARS STARTING 2025') prints the same schedules digit-for-digit, and the Department's 2025 PIT-TRT Tax Rate Table (2025 Personal Income Tax Packet, page T-1 ff.) implements them: the look-up table now runs through $100,000 and its continuation schedules read 'If line 17 of Form PIT-1 (Taxable Income) is over $100,000': Single $4,356 + 4.9% of excess over $100,000 to $210,000, then $9,746 + 5.9%; Married Filing Jointly and Head of Household $4,087 + 4.9% to $315,000, then $14,622 + 5.9%; Married Filing Separately $4,492 + 4.9% to $157,500, then $7,310 + 5.9% (footnote '* This column must also be used by surviving spouse'). Packet URL at realfile.tax.newmexico.gov (https://realfile.tax.newmexico.gov/2025%20PIT%20Packet_Final.pdf), byte-identical to the Department document library copy: https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/0558a902-6362-47ca-8e3b-7cca3bc69b9d/2025%20PIT%20Packet_Final.pdf",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@34062d638bf2": "https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/",
   "@@347ec624bac8": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. For 2025 the PIT-RC instructions WERE retrievable, so the Child Income Tax Credit per-child table, the Low Income Comprehensive Tax Rebate table, the property tax rebate for persons 65 or older, and the child day care credit mechanics below are all quoted from the Department's own 2025 printing (this closes the three 2024 gaps). Not carried here (verify at the source if you need it): the additional Low Income Property Tax Rebate for Los Alamos, Santa Fe, Dona Ana, and Bernalillo county residents (PIT-RC Section 4, 2025 modified-gross-income gate $24,000 or less), and the PIT-CR business-related income tax credits.",
+  "@@38d15fbc5b84": "NM Taxation and Revenue Dept., P.O. Box 25122, Santa Fe, NM 87504-5122 ('Mail refund returns and returns without a payment attached to' — 2025 PIT-1 instructions, Where To Mail Paper Returns and Payments)",
   "@@409abfdf0218": "Low Income Comprehensive Tax Rebate (LICTR) — A New Mexico resident who files a PIT-1, was physically present in NM for at least six months during 2025, is not eligible to be claimed as a dependent of another taxpayer for 2025, and was not an inmate of a public institution for more than six months of 2025. May be claimed even with no taxable income.",
   "@@40cbb8b52af0": "The newest shipped NM pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
@@ -17,21 +21,249 @@
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@98a52845c8e5": "Working Families Tax Credit (New Mexico's state EITC) — A New Mexico resident during any part of 2025 who files a PIT-1 and is eligible for the federal Earned Income Credit for the same tax year.",
   "@@c56a9c17064a": "New Mexico Legislature — 2024 House Bill 252 (HTRC/HB 252/a, final version), Section 5 amending Section 7-2-7 NMSA 1978 (INDIVIDUAL INCOME TAX RATES) for taxable years beginning on or after January 1, 2025",
-  "@@c8c39a2e10d5": "ValidationError: 1 validation error for Citation\nurl\n  Value error, url must point to an official US government host — a federal/.gov site (irs.gov, treasury.gov), a .mil site, or a state-government .us host (*.state.<xx>.us, e.g. revenue.state.mn.us), got host 'klvg4oyd4j.execute-api.us-west-2.amazonaws.com'. Bare .us domains are an open registry and blogs/commercial sites are never authority for tax data. [type=value_error, input_value='https://klvg4oyd4j.execu...9da0f/2025pit-1-ins.pdf', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+  "@@d020a97a3678": "2025 PIT-1 New Mexico Personal Income Tax Return Instructions — Filing Due Date (page PIT-1-1): \"Both paper and electronic PIT returns are due on or before April 15, 2026.\" (CHANGE from TY2024: there is no longer a later April 30 due date for returns that are both e-filed and e-paid — the instructions state \"April 15, 2026 is the deadline for filing both electronic\" and paper returns, and \"Electronically-filed returns are due April 15, 2026\" (page PIT-1-14). If April 15 falls on a weekend or observed holiday the return is due the next business day. New Mexico accepts the IRS automatic six-month extension: with a federal Form 4868 for tax year 2025, October 15, 2026 is the extended due date for calendar-year filers; an extension of time to file does not extend the time to pay, so pay with a PIT-EXT voucher to avoid the accrual of interest (page PIT-1-15).)",
   "@@d1e630f1fbdc": "Special Needs Adopted Child Tax Credit — A taxpayer who files a New Mexico PIT-1, is not a dependent of another taxpayer, adopted a special needs child (certified as a 'difficult to place child' by the NM Children, Youth and Families Department or a licensed child placement agency), and claimed that child as a dependent on the federal return. Attach the certificate in the first year claimed for each qualifying child.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@fe79985fa838": "Statutory rate schedules of Section 7-2-7 NMSA 1978 as RESTRUCTURED by 2024 House Bill 252 (Laws 2024, Chapter 67, Section 5), 'for any taxable year beginning on or after January 1, 2025' — six brackets replacing the 1.7-5.9% five-bracket schedule that ran TY2021-TY2024: MFJ/HoH/surviving spouse 1.5% to $8,000 / $120 + 3.2% to $25,000 / $664 + 4.3% to $50,000 / $1,739 + 4.7% to $100,000 / $4,089 + 4.9% to $315,000 / $14,624 + 5.9%; Single (and estates/trusts) 1.5% to $5,500 / $82.50 + 3.2% to $16,500 / $434.50 + 4.3% to $33,500 / $1,165.50 + 4.7% to $66,500 / $2,716.50 + 4.9% to $210,000 / $9,748 + 5.9%; MFS 1.5% to $4,000 / $60.00 + 3.2% to $12,500 / $332 + 4.3% to $25,000 / $869.50 + 4.7% to $50,000 / $2,044.50 + 4.9% to $157,500 / $7,312 + 5.9%. Second pass: the Department's own 'Personal Income Tax Rates' publication (PIT rates_2005_2025.pdf, page 1 'PERSONAL INCOME TAX RATES FOR TAX YEARS STARTING 2025') prints the same schedules digit-for-digit, and the Department's 2025 PIT-TRT Tax Rate Table (2025 Personal Income Tax Packet, page T-1 ff.) implements them: the look-up table now runs through $100,000 and its continuation schedules read 'If line 17 of Form PIT-1 (Taxable Income) is over $100,000': Single $4,356 + 4.9% of excess over $100,000 to $210,000, then $9,746 + 5.9%; Married Filing Jointly and Head of Household $4,087 + 4.9% to $315,000, then $14,622 + 5.9%; Married Filing Separately $4,492 + 4.9% to $157,500, then $7,310 + 5.9% (footnote '* This column must also be used by surviving spouse'). Packet URL (Department AWS-backed public-files library, the NM pack's documented host exception): https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/0558a902-6362-47ca-8e3b-7cca3bc69b9d/2025%20PIT%20Packet_Final.pdf"
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
-  "error": "@@c8c39a2e10d5"
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@06bb57295cc4",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     },
+     {
+      "source": "@@d020a97a3678",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "jurisdiction": "states/nm",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@38d15fbc5b84",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@06bb57295cc4",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     },
+     {
+      "source": "@@d020a97a3678",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "jurisdiction": "states/nm",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "NM Taxation and Revenue Dept., P.O. Box 8390, Santa Fe, NM 87504-8390 ('Mail returns with a payment and voucher attached or payments and vouchers without a return to' — with Form PIT-PV payment voucher)",
+    "notes": [],
+    "payment": [
+     "Pay online via NM Web Pay: https://tap.state.nm.us (no processor fee).",
+     "By check: make it payable to \"New Mexico Taxation and Revenue Department (2025 PIT-1 instructions, Mailing a Payment and Voucher: \"Make it payable to New Mexico Taxation and Revenue Department\" and \"Write your social security number, PIT-PV, and 2025 PIT-1 on it\"; the filing checklist repeats \"Did you make your check or money order payable to New Mexico Taxation and Revenue Department?\"). Mail the PIT-PV voucher with the payment, and never combine a 2025 balance-due payment with a 2026 estimated payment on one check.\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@06bb57295cc4",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     },
+     {
+      "source": "@@d020a97a3678",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "jurisdiction": "states/nm",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@38d15fbc5b84",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NM 2025 return (Form PIT-1 (New Mexico Personal Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NM revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.newmexico.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "jurisdiction": "states/nm",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NM return, and the NM 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NM instructions for amended returns on the NM revenue department's site (https://www.tax.newmexico.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
  },
  "filing_summary": {
-  "error": "@@c8c39a2e10d5"
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@d020a97a3678",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "headline": "NM 2025: refund $512",
+    "jurisdiction": "states/nm",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@d020a97a3678",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "headline": "NM 2025: you owe $347",
+    "jurisdiction": "states/nm",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@d020a97a3678",
+      "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "headline": "NM 2025: you owe $1,205",
+    "jurisdiction": "states/nm",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "NM revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.newmexico.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NM instructions for amended returns on the NM revenue department's site (https://www.tax.newmexico.gov/).",
+    "form": "Form PIT-1 (New Mexico Personal Income Tax Return)",
+    "headline": "NM 2025, amended (Form PIT-1 (New Mexico Personal Income Tax Return)): you owe $88",
+    "jurisdiction": "states/nm",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
  },
  "get_sources": {
   "credits": {
    "available_topics": [
     "credits",
+    "filing_logistics",
     "forms_and_instructions",
     "law_changes",
     "tax_rates_and_brackets"
@@ -65,9 +297,47 @@
    "topic": "credits",
    "year": 2025
   },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@40cbb8b52af0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@06bb57295cc4",
+     "cadence": "@@5ced19348c64",
+     "topic": "filing_logistics",
+     "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
   "forms_and_instructions": {
    "available_topics": [
     "credits",
+    "filing_logistics",
     "forms_and_instructions",
     "law_changes",
     "tax_rates_and_brackets"
@@ -98,6 +368,24 @@
      "url": "@@34062d638bf2"
     },
     {
+     "answers": "2025 PIT-1 New Mexico Personal Income Tax Return Instructions (official, NM Taxation & Revenue Department public files) — Line 9 Federal AGI, Who Must File / residency definitions (185-day rule), Filing Due Date (April 15, 2026 for both paper and electronic returns; October 15, 2026 extended), Where To Mail Paper Returns and Payments (PO Box 25122 refund/no-payment; PO Box 8390 with payment), check payee and PIT-PV, TAP portal, Working Families Tax Credit 25%, lines 9-18 tax computation flow, line 16 'Reserved for Future Use'",
+     "cadence": "@@5ced19348c64",
+     "topic": "forms_and_instructions",
+     "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+    },
+    {
+     "answers": "2025 Personal Income Tax Packet (the Department's combined 2025 PIT booklet — PIT-1, PIT-ADJ, PIT-RC, PIT-B, PIT-CR, PIT-D, PIT-ES and PIT-X instructions plus the 2025 Tax Rate Table starting on page T-1) — source for the 2025 PIT-TRT look-up table and its over-$100,000 continuation schedules, the PIT-ADJ additions list (lines 1-5), the PIT-RC 2025 rebate/credit tables (Table 1 LICTR, Table 4 Child Income Tax Credit, Table 2 maximum property tax liability), and the Modified Gross Income Limitations for 2025 table",
+     "cadence": "@@5ced19348c64",
+     "topic": "forms_and_instructions",
+     "url": "https://realfile.tax.newmexico.gov/2025%20PIT%20Packet_Final.pdf"
+    },
+    {
+     "answers": "NM Taxation and Revenue Department — 'Personal Income Tax Rates' publication (PIT rates_2005_2025.pdf), page 1 'PERSONAL INCOME TAX RATES FOR TAX YEARS STARTING 2025', printing Section 7-2-7 NMSA 1978 as amended (Laws 2024, Chapter 67, Section 5 — applicable to taxable years beginning on or after January 1, 2025). Listed on the Department's Personal Income Tax Rates page; the file is served from the Department's document library at https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/fd8f3075-42e7-4cdd-88db-7cab84ef72de/PIT%20rates_2005_2025.pdf",
+     "cadence": "@@5ced19348c64",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.newmexico.gov/all-nm-taxes/personal-income-tax-rates/"
+    },
+    {
      "answers": "@@c56a9c17064a",
      "cadence": "@@5ced19348c64",
      "topic": "forms_and_instructions",
@@ -116,6 +404,7 @@
   "law_changes": {
    "available_topics": [
     "credits",
+    "filing_logistics",
     "forms_and_instructions",
     "law_changes",
     "tax_rates_and_brackets"
@@ -152,6 +441,7 @@
   "tax_rates_and_brackets": {
    "available_topics": [
     "credits",
+    "filing_logistics",
     "forms_and_instructions",
     "law_changes",
     "tax_rates_and_brackets"
@@ -176,7 +466,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@fe79985fa838",
+     "answers": "@@2cec52ee43f6",
      "cadence": "@@5ced19348c64",
      "topic": "tax_rates_and_brackets",
      "url": "https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf"
@@ -188,6 +478,7 @@
   "zzqx unmatched probe": {
    "available_topics": [
     "credits",
+    "filing_logistics",
     "forms_and_instructions",
     "law_changes",
     "tax_rates_and_brackets"
@@ -607,7 +898,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: NM 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: NM 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -627,7 +918,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "@@fe79985fa838",
+    "source": "@@2cec52ee43f6",
     "url": "https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf"
    },
    "rate": null,

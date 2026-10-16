@@ -238,15 +238,15 @@
 #     separately (AR-K1 withholding, for instance, is now explicitly 39B). The
 #     face names the attachments but no cross_form rule is derivable from it, so
 #     cross_form stays [] exactly as in 2023.
-#   * INHERITED, not introduced here: signature.primary / signature.spouse /
-#     preparer.signature bind Signature1 / Signature2 / Signature3, which are
-#     /FT /Sig widgets (digital-signature fields), not /Tx. pypdf refuses them
-#     ("Signature forms not implemented yet") so those three lines render BLANK
-#     on the audit fill even though fill_form counts them as written. The 2023
-#     base blank has the identical three /Sig widgets, so this is a property of
-#     the base pack, not of the port; and since taxfill is print-and-mail, the
-#     filer signs those three boxes with a pen. Left as mapped, exactly as the
-#     base pack has it -- changing the typing is a reviewed edit for all years.
+#   * FIXED (JK27, 2026-10-16), inherited from the base pack: signature.primary /
+#     signature.spouse / preparer.signature bound Signature1 / Signature2 /
+#     Signature3, which are /FT /Sig widgets (digital-signature fields), not
+#     /Tx. pypdf refuses them ("Signature forms not implemented yet") so those
+#     three lines rendered BLANK on the audit fill even though fill_form counted
+#     them as written. The 2023 base blank has the identical three /Sig widgets,
+#     and since taxfill is print-and-mail, the filer signs those three boxes with
+#     a pen: the three keys are dropped in 2023, 2024 and 2025 alike, and
+#     test_signature_widget_mapping.py keeps every pack off /Sig widgets.
 #   * INHERITED, not introduced here: the 17th cell of both account-number
 #     combs (F_NR-3-45, F_NR-3-73) carries /MaxLen 10 in the blank while the
 #     pack declares maxlen 1, in 2023, 2024 and 2025 alike. A one-character
@@ -254,9 +254,10 @@
 #   * the inherited header below states "the blank exposes 228 fillable
 #     AcroForm widget ENTRIES ... Mapped here: 211 lines". Those counts
 #     describe the 2023 blank. Measured on the 2025 blank: 232 widget
-#     annotations, 220 distinct AcroForm field names, 218 of them mapped here
-#     (228 pack entries; the only omissions are the two JS pushbuttons "Print
-#     Button" and "Clear Button", exactly as in 2023).
+#     annotations, 220 distinct AcroForm field names, 215 of them mapped here
+#     (225 pack entries; the omissions are the two JS pushbuttons "Print
+#     Button" and "Clear Button", exactly as in 2023, and -- since JK27,
+#     2026-10-16 -- the three /Sig signature boxes).
 #
 # OBSERVATION carried forward, deliberately NOT changed by this port: the
 # relations list still omits "7c == 7a + 7b" even though the face prints "7C ...
@@ -317,14 +318,18 @@
 # skeleton); the filing-status /Btn (F_NR-1-33) contributes 6 entries on one
 # field, the two checking/savings /Btn (F_NR-3-19, F_NR-3-47) 2 each, and the
 # may-discuss /Btn (F_NR-3-80) 2, while F_NR-1-8 repeats as the SSN header on
-# all 3 pages (one field, 3 widget entries). Mapped here: 211 lines.
-# Intentionally OMITTED (2 distinct fields): "Print Button" and "Clear Button"
+# all 3 pages (one field, 3 widget entries). Mapped in the 2023 pack (re-measured JK27, 2026-10-16): 221
+# lines on 211 of 216 field names; this pack's own counts are in the caveat above.
+# Intentionally OMITTED (5 distinct fields): "Print Button" and "Clear Button"
 # -- JS PUSHBUTTONS at the top of page 1 (their on_states are appearance-dict
-# keys /BBox /Filter /Type ..., not fillable export values), not data fields.
+# keys /BBox /Filter /Type ..., not fillable export values), not data fields;
+# and (JK27, 2026-10-16) Signature1 / Signature2 / Signature3, the page-3
+# signature boxes, which are /FT /Sig fields a value never prints in -- signed
+# by hand (see the FIXED caveat above).
 #
 # Money vs text. Every numbered dollar line prints a ".00" cents suffix and is
-# mapped `money`. Identity / name / address / email / date / signature /
-# preparer strings stay `text`. The line-7A and 7B "X $29 =" count boxes
+# mapped `money`. Identity / name / address / email / date / preparer strings
+# stay `text`. The line-7A and 7B "X $29 =" count boxes
 # (F_NR-1-48 maxlen 2, F_NR-1-65 maxlen 2) hold a COUNT (no schema int type) ->
 # `text`. The DL "Your state"/"Spouse state" 2-char boxes, the ",20__" 2-digit
 # fiscal-year box, the early-childhood certification number, and the 52A UEP
@@ -1137,26 +1142,20 @@ fields:
     type: money
 
   # ---- Sign Here / Paid Preparer
-  - line: signature.primary              # Primary's signature
-    field: Signature1
-    type: text
+  # signature.primary / signature.spouse / preparer.signature: NOT mapped (JK27, 2026-10-16) -- "Primary's
+  # signature", "Spouse's signature" and "Paid preparer's signature" are the /FT /Sig widgets Signature1 /
+  # Signature2 / Signature3 (see the FIXED caveat in the header); a value written there never prints. Signed by hand.
   - line: signature.primary_date         # Date
     field: F_NR-3-75
     type: text
   - line: signature.primary_phone        # Telephone
     field: F_NR-3-76
     type: text
-  - line: signature.spouse               # Spouse's signature
-    field: Signature2
-    type: text
   - line: signature.spouse_date          # Date
     field: F_NR-3-77
     type: text
   - line: signature.spouse_phone         # Telephone
     field: F_NR-3-78
-    type: text
-  - line: preparer.signature             # Paid preparer's signature
-    field: Signature3
     type: text
   - line: preparer.ptin                  # PTIN/ID number
     field: F_NR-3-79

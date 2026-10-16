@@ -212,7 +212,15 @@ pitfalls:
       line 4b from line 3", and no relation, calc op, cross_form rule or
       extractor in the repo produces or consumes it — while the same packs
       already excluded lines 9/24/26/28/29, which print the identical
-      sentence); 145 widgets = 127 mapped + 18 unmapped reserved. KEPT
+      sentence); 145 widgets = 127 mapped + 18 unmapped reserved.
+      SUPERSEDED (JK27, 2026-10-16): both packs now pin Rev. 12-2025 — the
+      Instructions for Form 1040-X (Rev. December 2025), p.2: "These
+      instructions can be used with the December 2025 and later revisions
+      of Form 1040-X, unless later instructions state otherwise." — where 4a
+      is the live QBI line, so every f1040x year maps 4a and that exclusion
+      row is gone; a year rule ("4b == 0" and its two columns) keeps the
+      2025 Schedule 1-A line empty on a TY2023/2024 amendment (p.8:
+      "Schedule 1-A and these deductions were introduced in 2025."). KEPT
       MAPPED as class 3, with leave-blank comments plus printed-text and
       /Ff proof written into the headers: f1040 2023/2024 line 30, f1040nr
       2025 lines 1i/1j/6/27, sched_a 2025 line 8d. CORRECTION to this
@@ -294,7 +302,8 @@ pitfalls:
       on the widget's own baseline and requires it to still read "Reserved
       for future use", so a line going live forces its row out instead of
       being rubber-stamped. RESERVED_LINES_UNMAPPED pins the exclusions
-      (f1040x 4a and 9/24/26/28/29, sched_3 6e, sched_2 2023 line 19,
+      (f1040x 9/24/26/28/29 (the 2023/2024 4a rows left with the JK27
+      re-point), sched_3 6e, sched_2 2023 line 19,
       sched_c 2022 line 27b, and the contested f1040nr / sched_a years) with
       fill_form-refuses-the-key assertions and surviving-sibling over-reach
       guards; test_reserved_line_tables_agree_about_every_contested_line

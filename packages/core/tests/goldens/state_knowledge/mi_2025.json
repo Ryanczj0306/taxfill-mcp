@@ -27,7 +27,8 @@
   "@@e4051662456a": "Refund, credit, or zero returns: Michigan Department of Treasury, Lansing, MI 48956",
   "@@e8b7395b8a67": "https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040.pdf",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f092430065f6": "2025 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 'Adjusted Gross Income from your U.S. Form 1040', line 11 'Additions from Schedule 1, line 9', line 17 'Tax. Multiply line 16 by 4.25% (0.0425)', the printed exemption amounts (9a x $5,800, 9b x $3,400, 9c x $500, 9d x $5,800, 9e $1,500), and the printed mailing addresses (Lansing, MI 48956 refund; Lansing, MI 48929 with payment)"
+  "@@f092430065f6": "2025 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 'Adjusted Gross Income from your U.S. Form 1040', line 11 'Additions from Schedule 1, line 9', line 17 'Tax. Multiply line 16 by 4.25% (0.0425)', the printed exemption amounts (9a x $5,800, 9b x $3,400, 9c x $500, 9d x $5,800, 9e $1,500), and the printed mailing addresses (Lansing, MI 48956 refund; Lansing, MI 48929 with payment)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -151,6 +152,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MI 2025 return (Form MI-1040 (Michigan Individual Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MI revenue department home page (read 2026-10-16)",
+      "url": "https://www.michigan.gov/treasury"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "MI-1040 (Michigan Individual Income Tax Return)",
+    "jurisdiction": "states/mi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MI return, and the MI 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MI instructions for amended returns on the MI revenue department's site (https://www.michigan.gov/treasury) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -205,6 +241,27 @@
     "jurisdiction": "states/mi",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "MI revenue department home page (read 2026-10-16)",
+      "url": "https://www.michigan.gov/treasury"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MI instructions for amended returns on the MI revenue department's site (https://www.michigan.gov/treasury).",
+    "form": "MI-1040 (Michigan Individual Income Tax Return)",
+    "headline": "MI 2025, amended (MI-1040 (Michigan Individual Income Tax Return)): you owe $88",
+    "jurisdiction": "states/mi",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

@@ -4,11 +4,17 @@
   "@@1d6314a82bb6": "Oregon Kids Credit — Low-income taxpayers with one or more dependents age 5 or younger at the end of 2024 listed on the Oregon return. You must use a filing status other than married filing separately. A child listed as a dependent only because the custodial parent released the child's dependent exemption to you does NOT qualify.",
   "@@229296734ee6": "2024 Form OR-40 Instructions (150-101-040-1, Rev. 12-13-24) — cover ('April 15, 2025 is the due date for filing your return and paying your tax due') and Federal tax law section ('Oregon doesn''t allow an extension of time to pay your tax, even if the IRS allows an extension. Your 2024 Oregon tax is due April 15, 2025.')",
   "@@2982a8bca499": "Treaty conformity — OR conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OR income (it flows through the federal starting point; do not add it back on the OR return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Oregon's resident return (Form OR-40) starts from federal adjusted gross income: 2024 Form OR-40 line 7 is \"Federal adjusted gross income (AGI). Enter your federal AGI from Form 1040, 1040-SR, or 1040-NR, line 11; or Form 1040-X, line 1C.\" Oregon taxable income is then built by applying additions (Schedule OR-ASC) and subtractions to that federal AGI. The 2024 OR-40 instruction booklet contains no general addition/add-back of federally treaty-exempt income (unlike California's Schedule CA, or CT/MD/MS). Because federally treaty-exempt income is already excluded from federal AGI on the 1040 and there is no Oregon add-back code restoring it, the treaty exclusion flows through and is NOT re-taxed by Oregon -> conforms. Caveat: confirm against the full Schedule OR-ASC / OR-ASC-NP addition code list and Publication OR-17 for any niche addition that could touch a specific treaty article.",
+  "@@3e95d0c4f703": "https://www.oregon.gov/dor/forms/FormsPubs/schedule-or-wfhdc-inst_101-195-1_2024.pdf",
   "@@4717e29e51f4": "Law change NOT modeled by the engine (status final_form_published): FIRST-TIME HOME BUYER SAVINGS ACCOUNT SUBTRACTION NOW INDEXED — the FTHBSA subtraction limits are adjusted for inflation from 2024: $11,865 for joint account holders filing jointly, $5,930 for all others. Resolve via: 2024 Form OR-40 Instructions, New information — First-time home buyer savings account (FTHBSA) subtraction; Publication OR-17.",
+  "@@4c36282b3102": "annual (per tax year; the shipped OR 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d7df908a72a": "Law change NOT modeled by the engine (status final_form_published): NEW WILDFIRE SETTLEMENT SUBTRACTION — income from a settlement or judgment related to a wildfire, not deducted elsewhere, may be subtracted, with the related legal expenses; returns for 2018-2021 may be amended to claim it if filed by May 14, 2025. Resolve via: 2024 Form OR-40 Instructions, New information — Wildfire settlement or judgment subtractions; Publication OR-17.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@556dd43052ab": "2024 Form OR-40 Instructions (150-101-040-1, Rev. 12-13-24), 'Tax return mailing addresses' p.25 (PO Box 14700 refund / PO Box 14555 tax-to-pay), and the 2024 Form OR-40 itself (150-101-040, Rev. 08-08-24), 'Mail your return' block (non-2-D barcode: 14555/14700; 2-D barcode: 14720/14710)",
+  "@@62e8d3751988": "The shipped OR 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@932c18816084": "Working Family Household and Dependent Care Credit (WFHDC) — Low- and middle-income working families who paid qualified expenses for household services or dependent care for one or more qualifying individuals (generally a dependent under age 13, or a disabled dependent or disabled spouse) so the taxpayer (and spouse, if filing jointly) could work, look for work, or attend school. Tied to IRC Section 21; federal Form 2441 must be completed even if the federal credit is not claimed. The care provider cannot be your spouse, the parent of the qualifying individual, or a person you can claim as a dependent.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@aa4aa7318071": "Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040, Rev. 08-08-24)",
   "@@ad64c4e2dde5": "2024 Form OR-40 Instructions, New information: 'Wildfire settlement or judgment subtractions. You may be able to subtract income from a settlement or judgment related to a wildfire that hasn't been deducted elsewhere on your federal or Oregon return.'",
   "@@b68a326439b9": "Nonresident: Form OR-40-N (150-101-048). Part-year resident: Form OR-40-P (150-101-055). Both share the same instruction booklet (150-101-048-1, Rev. 10-16-24).",
@@ -17,7 +23,9 @@
   "@@d061a970d01c": "2024 Form OR-40 Instructions, New information: 'First-time home buyer savings account (FTHBSA) subtraction. The limits for this subtraction are now adjusted for inflation.'",
   "@@d2e5b41a9bbb": "Oregon Department of Revenue, PO Box 14700, Salem OR 97309-0930 (refund or no-tax-due returns without a 2-D barcode). If the form's 2-D barcode box is filled in: PO Box 14710, Salem OR 97309-0460.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@ebef57d8f72a": "Oregon Earned Income Credit (EIC) — You must qualify for the federal Earned Income Tax Credit (EITC). Low- to moderate-income working individuals and families. ITIN filers who cannot claim any or all of the federal EITC because the taxpayer, spouse, or child(ren) do not have an SSN valid for work or use an ITIN may still qualify (see Schedule OR-EIC-ITIN, available in English and Spanish). RDPs may claim it if they would otherwise qualify for the EITC using their 'as if' federal return."
+  "@@ebef57d8f72a": "Oregon Earned Income Credit (EIC) — You must qualify for the federal Earned Income Tax Credit (EITC). Low- to moderate-income working individuals and families. ITIN filers who cannot claim any or all of the federal EITC because the taxpayer, spouse, or child(ren) do not have an SSN valid for work or use an ITIN may still qualify (see Schedule OR-EIC-ITIN, available in English and Spanish). RDPs may claim it if they would otherwise qualify for the EITC using their 'as if' federal return.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+  "@@fd674f67bac6": "2024 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 12-13-24) — p.16 line 20 tax computation (tax tables if line 19 < $50,000; rate-chart formula if $50,000 or more; booklet Examples 1 and 2), p.28 '2024 Tax rate charts' (Chart S / Chart J, $50,000-and-over segments: Chart S '$4,073 plus 8.75% of excess over $50,000' / '$10,636 plus 9.9% of excess over $125,000'; Chart J '$3,774 plus 8.75%' / '$21,274 plus 9.9% of excess over $250,000'), p.16 Table 5 'Standard deduction' ($2,745 single; $5,495 MFJ; $2,745/$0 MFS; $4,420 HoH; $5,495 QSS) plus age-65/blind additions, p.14 Table 4 federal tax liability subtraction AGI phaseout ($8,250/$4,125 2024 limits), pp.17-18 line 25 exemption credit worksheet ($249/exemption CREDIT). Full four-bracket 2024 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,300/$10,750/$125,000 and $8,600/$21,500/$250,000) as printed in the 2024 Form OR-40-N and OR-40-P Instructions (150-101-048-1, Rev. 10-16-24), '2024 Tax rate charts', https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2024.pdf — independently confirmed by 2024 Publication OR-ESTIMATE (150-101-026, Rev. 10-12-23), p.3, https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2024.pdf; both print identical breakpoints, rates, and constants."
  },
  "file_and_pay": {
   "overall_notes": [
@@ -135,6 +143,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended OR 2024 return (Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040, Rev. 08-08-24)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "OR revenue department home page (read 2026-10-16)",
+      "url": "https://www.oregon.gov/dor/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@aa4aa7318071",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended OR return, and the OR 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the OR instructions for amended returns on the OR revenue department's site (https://www.oregon.gov/dor/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -192,9 +235,291 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "OR revenue department home page (read 2026-10-16)",
+      "url": "https://www.oregon.gov/dor/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the OR instructions for amended returns on the OR revenue department's site (https://www.oregon.gov/dor/).",
+    "form": "@@aa4aa7318071",
+    "headline": "OR 2024, amended (Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040, Rev. 08-08-24)): you owe $88",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@62e8d3751988",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "Oregon DOR 2024 Form OR-40 Instructions (Full-year Resident), publication 150-101-040-1, Rev. 12-13-24, p.19 (line 36, Table 6 EITC percentage — 9 percent (0.09) / 12 percent (0.12)).",
+     "cadence": "@@4c36282b3102",
+     "topic": "credits",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    },
+    {
+     "answers": "Oregon DOR 2024 Schedule OR-WFHDC Instructions, publication 150-101-195-1, Rev. 10-16-24, pages 1 (refundable status, $12,000/$24,000 caps, AGI-limit table by household size — $61,320 to $158,160) and 3 (student AGI-limit table — $22,484 to $57,992).",
+     "cadence": "@@4c36282b3102",
+     "topic": "credits",
+     "url": "@@3e95d0c4f703"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@62e8d3751988",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@556dd43052ab",
+     "cadence": "@@4c36282b3102",
+     "topic": "filing_logistics",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@62e8d3751988",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@cbd894d04b1d",
+     "cadence": "@@4c36282b3102",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    },
+    {
+     "answers": "2024 Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040, Rev. 08-08-24) — second-pass verification: line 25 printed 'multiply your total exemptions on line 6e by $249'; 'Pay the amount due ... Payable to the Oregon Department of Revenue. Write \"2024 Oregon Form OR-40\" and the last four digits of your SSN or ITIN'; mailing addresses (non-2-D barcode 14555/14700; 2-D barcode 14720/14710)",
+     "cadence": "@@4c36282b3102",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40_101-040_2024.pdf"
+    },
+    {
+     "answers": "2024 Form OR-40-N and OR-40-P Instructions (150-101-048-1, Rev. 10-16-24) — independent second pass; prints the FULL four-bracket 2024 tax rate charts (Chart S 4.75% to $4,300 / $204 + 6.75% to $10,750 / $639 + 8.75% to $125,000 / $10,636 + 9.9%; Chart J 4.75% to $8,600 / $409 + 6.75% to $21,500 / $1,280 + 8.75% to $250,000 / $21,274 + 9.9%), the identical Table 5 standard deduction, and the $249 exemption credit worksheet",
+     "cadence": "@@4c36282b3102",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2024.pdf"
+    },
+    {
+     "answers": "2024 Publication OR-ESTIMATE, Oregon Estimated Income Tax Instructions (150-101-026, Rev. 10-12-23) — third source for the full 2024 Chart S / Chart J and the 2024 standard deduction; worked example uses the $249 personal exemption credit and an $8,250 federal tax subtraction",
+     "cadence": "@@4c36282b3102",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2024.pdf"
+    },
+    {
+     "answers": "Oregon DOR 2024 Schedule OR-WFHDC Instructions (150-101-195-1, Rev. 10-16-24) — refundable status, $12,000/$24,000 expense caps, 2024 AGI-limit tables by household size (regular $61,320-$158,160; student $22,484-$57,992)",
+     "cadence": "@@4c36282b3102",
+     "topic": "forms_and_instructions",
+     "url": "@@3e95d0c4f703"
+    },
+    {
+     "answers": "Oregon DOR - Do I need to file? (Individuals) - filing requirement / residency status",
+     "cadence": "@@4c36282b3102",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/programs/individuals/pages/file-requirements.aspx"
+    },
+    {
+     "answers": "Oregon DOR - What form do I use? (Individuals) - residency definitions and form selection",
+     "cadence": "@@4c36282b3102",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/programs/individuals/pages/what-form.aspx"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@62e8d3751988",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@ad64c4e2dde5",
+     "cadence": "@@4c36282b3102",
+     "topic": "law_changes",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@62e8d3751988",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@fd674f67bac6",
+     "cadence": "@@4c36282b3102",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@62e8d3751988",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/or",
  "state_scope": {
@@ -663,7 +988,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: OR 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: OR 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -683,7 +1008,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2024 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 12-13-24) — p.16 line 20 tax computation (tax tables if line 19 < $50,000; rate-chart formula if $50,000 or more; booklet Examples 1 and 2), p.28 '2024 Tax rate charts' (Chart S / Chart J, $50,000-and-over segments: Chart S '$4,073 plus 8.75% of excess over $50,000' / '$10,636 plus 9.9% of excess over $125,000'; Chart J '$3,774 plus 8.75%' / '$21,274 plus 9.9% of excess over $250,000'), p.16 Table 5 'Standard deduction' ($2,745 single; $5,495 MFJ; $2,745/$0 MFS; $4,420 HoH; $5,495 QSS) plus age-65/blind additions, p.14 Table 4 federal tax liability subtraction AGI phaseout ($8,250/$4,125 2024 limits), pp.17-18 line 25 exemption credit worksheet ($249/exemption CREDIT). Full four-bracket 2024 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,300/$10,750/$125,000 and $8,600/$21,500/$250,000) as printed in the 2024 Form OR-40-N and OR-40-P Instructions (150-101-048-1, Rev. 10-16-24), '2024 Tax rate charts', https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2024.pdf — independently confirmed by 2024 Publication OR-ESTIMATE (150-101-026, Rev. 10-12-23), p.3, https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2024.pdf; both print identical breakpoints, rates, and constants.",
+    "source": "@@fd674f67bac6",
     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
    },
    "rate": null,

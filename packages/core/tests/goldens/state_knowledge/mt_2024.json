@@ -5,20 +5,27 @@
   "@@27eb316bc814": "Montana Adoption Credit — Montana residents who complete an adoption. Form ADPT and paperwork documenting the adoption (for foster-care adoptions, the signed adoption confirmation letter from Montana DPHHS) must be included with the return.",
   "@@2c87c89257dc": "Montana Form 2 — Individual Income Tax Return (2024 redesign — most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@5263523c966f": "2024 Montana Form 2 Instructions, How to File / Paper Filing ('If you do not owe taxes or are expecting a refund... PO Box 6577... If you are making a payment with your tax return... PO Box 6308')",
   "@@5aa3cd0a200c": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 — NET LONG-TERM CAPITAL GAINS are taxed on their own schedule, 3.0% up to the filing-status breakpoint ($20,500 single/MFS, $41,000 MFJ/QSS, $30,750 HoH, measured after stacking on ordinary income) and 4.1% above, computed on Form 2 page 2 lines 2-11; the old Resident Capital Gains Credit (2% of net capital gains) is REPEALED. The two-rate 4.7%/5.9% schedule therefore applies only to \"taxable income without long-term capital gains\" (Montana Ordinary Income, which includes qualified dividends). Running a filer's whole line 7 through the ordinary brackets OVERSTATES the tax whenever there are net long-term capital gains. Resolve via: The Montana Individual Income Tax worksheet on page 2 of the 2024 Form 2 itself (the citation URL), lines 2-11 with the printed $20,500/$41,000/$30,750 breakpoints on line 5 and the 3% (0.03) / 4.1% (0.041) multipliers; calc.state_tax has no capital-gains split.",
   "@@6499d63029e0": "There is no separate nonresident/part-year individual form for 2024. Nonresidents and part-year residents also file Montana Form 2 and complete Schedule II, \"Tax on Montana Source Income\" (which replaced the old Nonresident/Part-Year Resident Ratio Schedule), to apportion the tax. (The new Form DE covers Montana-source business income of single-member LLCs / sole proprietorships owned by nonresidents.)",
+  "@@71def50f4b9e": "Elderly Homeowner/Renter Credit — Montana taxpayers age 62 or older who lived in Montana for at least nine months during the tax year (Schedule 2EC attestation: \"I resided in Montana for a minimum of nine months during 2024\"), occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year, and live in a household where the total income of all its members is less than $45,000. Available even to those with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal). One credit per household.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9c8e8e275944": "Montana Earned Income Tax Credit (EITC) — Full-year Montana residents who claimed the federal Earned Income Tax Credit on their federal return. Nonresidents do NOT qualify. Part-year residents, enrolled tribal members living on their reservation, members of IRC section 501(d) agricultural organizations, and resident active-duty servicemembers use Worksheet B (Montana EITC Reduction Worksheet) to reduce the credit by the Montana-earned-income ratio.",
   "@@a364e71f8237": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf",
+  "@@a4ea63bd3fe9": "The shipped MT 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@aeed06e6a05f": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf",
   "@@b2ef4ff5f6a4": "Credit for Income Taxes Paid to Another State or Country — Full-year or part-year Montana residents who paid income tax to another state or country on income that is also taxed by Montana. Not available if the other state allowed a credit against its own tax for the Montana tax on the same income, or for taxes paid on Montana-source income. Pass-through entity owners may claim their share of qualifying entity-level income taxes (including composite and pass-through entity taxes).",
   "@@b382b9e41cf5": "2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024) — What's New / Income Tax Simplification (SB 399 redesign, federal-taxable-income base, two rates, federal filing statuses, $5,500 65+ subtraction, repealed deductions), 2024 Montana Ordinary Income Tax Rates (p.14), Filing Requirements, Residency Status, Due Dates (April 15, 2025), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check payable to the Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)",
   "@@c0ee562db517": "2024 Montana Individual Income Tax Return Form 2 (2024v5 11/2024) — second-pass verification: federal filing statuses printed (Single / MFJ / MFS / Qualifying Surviving Spouse / Head of Household); page 1 lines 1-7 (federal AGI, federal standard deduction or adjusted federal itemized deductions, federal taxable income for Montana, Schedule I additions/subtractions, $5,500/$11,000 65+ subtraction, Montana taxable income); page 2 Montana Individual Income Tax worksheet lines 1-13 (net long-term capital gains lines 2-11 with the printed $20,500/$41,000/$30,750 filing-status amounts on line 5, 3% (0.03) and 4.1% (0.041) multipliers, ordinary income tax on line 12, resident tax line 13); page 1 line 15 'Multiply Federal EIC by 10% (0.10)'",
   "@@c7620ae5fb78": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 — a $5,500 subtraction for taxpayers 65 and older ($11,000 if married filing jointly and both are 65 and older), taken on Form 2 page 1 line 6 against federal taxable income in arriving at line 7 Montana taxable income. It replaces the repealed $2,960 age-65/blind exemptions and is inflation-adjusted beginning tax year 2025. Resolve via: Form 2 page 1 line 6 and the corresponding line instruction in the 2024 Form 2 instructions (the citation URL); the engine applies only personal/dependent exemption keys, so the caller's line 7 base must already net this subtraction out.",
-  "@@d3c12d325b9c": "Elderly Homeowner/Renter Credit — Montana taxpayers age 62 or older who lived in Montana for more than nine months during the tax year, occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year, and live in a household where the total income of all its members is less than $45,000. Available even to those with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal). One credit per household.",
+  "@@e38efde3ce33": "2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024), p.14 — '2024 Montana Ordinary Income Tax Rates': Single and Married Filing Separately — $0 to less than $20,500 multiply by 4.7% less $0, $20,500 or greater multiply by 5.9% less $246; Married Filing Jointly and Qualifying Surviving Spouse — breakpoint $41,000, 5.9% less $492; Head of Household — breakpoint $30,750, 5.9% less $369. The rates apply to Montana ORDINARY income (taxable income without net long-term capital gains). Worked example (instructions p.12): $50,000 single -> 'Her Montana Ordinary Income Tax is $2,704' — matching marginal bracket math (4.7% x 20,500 + 5.9% x 29,500 = 963.50 + 1,740.50 = 2,704). Second pass: the 2024 Form 2 itself (https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf) prints the $20,500/$41,000/$30,750 filing-status amounts on page 2, line 5, and the What's New confirms the two-rate structure (SB 399 (2021); SB 121 (2023) reduced the top rate 6.5% -> 5.9%) — both passes agree.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@fac72039bf4f": "2024 Montana Form 2 Instructions, Due Dates ('File Form 2 and pay the tax due by April 15, 2025. An automatic extension of six months applies for filing your return, but this extension does not apply to payments.')"
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+  "@@fac72039bf4f": "2024 Montana Form 2 Instructions, Due Dates ('File Form 2 and pay the tax due by April 15, 2025. An automatic extension of six months applies for filing your return, but this extension does not apply to payments.')",
+  "@@fee326ba4ad3": "annual (per tax year; the shipped MT 2024 pack's own citation — for another year re-resolve at this URL family and cite)"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -142,6 +149,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MT 2024 return (Form Montana Form 2 — Individual Income Tax Return (2024 redesign — most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MT revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.mt.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@2c87c89257dc",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MT return, and the MT 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MT instructions for amended returns on the MT revenue department's site (https://revenue.mt.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -199,9 +241,267 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "MT revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.mt.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MT instructions for amended returns on the MT revenue department's site (https://revenue.mt.gov/).",
+    "form": "@@2c87c89257dc",
+    "headline": "MT 2024, amended (Montana Form 2 — Individual Income Tax Return (2024 redesign — most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).): you owe $88",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a4ea63bd3fe9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@aeed06e6a05f"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 Montana Form 2 Instructions, Line 15 - Montana earned income tax credit ('You are allowed a Montana earned income tax credit (EITC) of 10 percent of the federal EITC... refundable'), and What's New (credit increased from 3% to 10%)",
+     "cadence": "@@fee326ba4ad3",
+     "topic": "credits",
+     "url": "@@aeed06e6a05f"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a4ea63bd3fe9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@aeed06e6a05f"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@5263523c966f",
+     "cadence": "@@fee326ba4ad3",
+     "topic": "filing_logistics",
+     "url": "@@aeed06e6a05f"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a4ea63bd3fe9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@aeed06e6a05f"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@b382b9e41cf5",
+     "cadence": "@@fee326ba4ad3",
+     "topic": "forms_and_instructions",
+     "url": "@@aeed06e6a05f"
+    },
+    {
+     "answers": "@@c0ee562db517",
+     "cadence": "@@fee326ba4ad3",
+     "topic": "forms_and_instructions",
+     "url": "@@a364e71f8237"
+    },
+    {
+     "answers": "Montana DOR — Montana Individual Income Tax Return (Form 2) publication page",
+     "cadence": "@@fee326ba4ad3",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.mt.gov/publications/montana-individual-income-tax-return-form-2"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a4ea63bd3fe9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@aeed06e6a05f"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024) — What's New (SB 399 Income Tax Simplification, federal filing statuses, two rates, federal-taxable-income base with no QBI deduction, $5,500/$11,000 65+ subtraction, repealed deductions, Montana NOL repealed, transition adjustments; SB 121 top rate 6.5% -> 5.9%; EITC 3% -> 10%; SB 104 military retirement exemption; HB 447 30-day nonresident exclusion), Filing Requirements, Residency Status, North Dakota Reciprocity, Page 1 and tax-calculation line instructions, 2024 Montana Ordinary Income Tax Rates (p.14), Schedule I-V and Schedule 2EC instructions, Due Dates, mailing addresses, payment instructions",
+     "cadence": "@@fee326ba4ad3",
+     "topic": "law_changes",
+     "url": "@@aeed06e6a05f"
+    },
+    {
+     "answers": "@@c0ee562db517",
+     "cadence": "@@fee326ba4ad3",
+     "topic": "law_changes",
+     "url": "@@a364e71f8237"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a4ea63bd3fe9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@aeed06e6a05f"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@e38efde3ce33",
+     "cadence": "@@fee326ba4ad3",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@aeed06e6a05f"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a4ea63bd3fe9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@aeed06e6a05f"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/mt",
  "state_scope": {
@@ -213,7 +513,7 @@
     {
      "benefits_candidates": [
       "@@9c8e8e275944",
-      "@@d3c12d325b9c",
+      "@@71def50f4b9e",
       "@@27eb316bc814",
       "@@b2ef4ff5f6a4"
      ],
@@ -274,7 +574,7 @@
     {
      "benefits_candidates": [
       "@@9c8e8e275944",
-      "@@d3c12d325b9c",
+      "@@71def50f4b9e",
       "@@27eb316bc814",
       "@@b2ef4ff5f6a4"
      ],
@@ -334,7 +634,7 @@
     {
      "benefits_candidates": [
       "@@9c8e8e275944",
-      "@@d3c12d325b9c",
+      "@@71def50f4b9e",
       "@@27eb316bc814",
       "@@b2ef4ff5f6a4"
      ],
@@ -558,7 +858,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: MT 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: MT 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -578,7 +878,7 @@
   "common_result": {
    "base_kind": "federal_taxable_income",
    "citation": {
-    "source": "2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024), p.14 — '2024 Montana Ordinary Income Tax Rates': Single and Married Filing Separately — $0 to less than $20,500 multiply by 4.7% less $0, $20,500 or greater multiply by 5.9% less $246; Married Filing Jointly and Qualifying Surviving Spouse — breakpoint $41,000, 5.9% less $492; Head of Household — breakpoint $30,750, 5.9% less $369. The rates apply to Montana ORDINARY income (taxable income without net long-term capital gains). Worked example (instructions p.12): $50,000 single -> 'Her Montana Ordinary Income Tax is $2,704' — matching marginal bracket math (4.7% x 20,500 + 5.9% x 29,500 = 963.50 + 1,740.50 = 2,704). Second pass: the 2024 Form 2 itself (https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf) prints the $20,500/$41,000/$30,750 filing-status amounts on page 2, line 5, and the What's New confirms the two-rate structure (SB 399 (2021); SB 121 (2023) reduced the top rate 6.5% -> 5.9%) — both passes agree.",
+    "source": "@@e38efde3ce33",
     "url": "@@aeed06e6a05f"
    },
    "rate": null,

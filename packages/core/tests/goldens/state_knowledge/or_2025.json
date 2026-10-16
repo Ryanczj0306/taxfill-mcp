@@ -25,7 +25,8 @@
   "@@cdf7470bd7bd": "2025 Form OR-40 Instructions, New information: 'Oregon surplus (kicker). Oregon's surplus, known as the \"kicker,\" will be claimed as a credit on your 2025 tax return. See the instructions for line 32.'",
   "@@de3e6295f4fe": "Law change NOT modeled by the engine (status final_form_published): FEDERAL TIP, OVERTIME AND CAR-LOAN INTEREST DEDUCTIONS CARRY OVER — a filer may claim on the Oregon return the same deductions for tip income, overtime wages and passenger vehicle loan interest claimed on the 2025 federal return (Publication OR-17, Other items). Resolve via: 2025 Form OR-40 Instructions, New information — New federal deductions; Publication OR-17, Other items.",
   "@@ea632709ac2f": "Oregon Earned Income Credit — Filers who claimed the federal earned income tax credit (EITC) on their federal return. Oregon RDPs may claim it if they would otherwise qualify using their 'as if' federal return. Filers who cannot claim some or all of the federal EITC because they, their spouse, or their children lack an SSN valid for work (ITIN filers) may instead qualify for Oregon's earned income credit for ITIN filers on Schedule OR-EIC-ITIN.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -143,6 +144,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended OR 2025 return (Form OR-40 - Oregon Individual Income Tax Return for Full-year Residents (2025)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "OR revenue department home page (read 2026-10-16)",
+      "url": "https://www.oregon.gov/dor/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form OR-40 - Oregon Individual Income Tax Return for Full-year Residents (2025)",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended OR return, and the OR 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the OR instructions for amended returns on the OR revenue department's site (https://www.oregon.gov/dor/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -197,6 +233,27 @@
     "jurisdiction": "states/or",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "OR revenue department home page (read 2026-10-16)",
+      "url": "https://www.oregon.gov/dor/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the OR instructions for amended returns on the OR revenue department's site (https://www.oregon.gov/dor/).",
+    "form": "Form OR-40 - Oregon Individual Income Tax Return for Full-year Residents (2025)",
+    "headline": "OR 2025, amended (Form OR-40 - Oregon Individual Income Tax Return for Full-year Residents (2025)): you owe $88",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -914,7 +971,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: OR 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: OR 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

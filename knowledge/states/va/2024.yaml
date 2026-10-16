@@ -45,6 +45,32 @@ forms:
   resident: Form 760 (Resident Individual Income Tax Return)
   part_year_or_nonresident: 'Nonresident: Form 763 (Nonresident Individual Income Tax Return). Part-year resident:
     Form 760PY (Part-Year Resident Individual Income Tax Return).'
+  # JK27 (2026-10-16): each role's own form and its instructions, which state_scope adds to a part-year or nonresident
+  # filer's citations — the top-level `citation` is the RESIDENT Form 760 booklet, so this entry named Form 760PY and
+  # Form 763 but pointed only at Form 760. The four URLs are the "760PY", "760PY Instructions", "763" and "763
+  # Instructions" links on Virginia Tax's 2024 forms search (www.tax.virginia.gov/forms/search?category=1&year=641);
+  # each PDF was downloaded twice on 2026-10-16 with identical sha256 (760PY instructions 3b638f30aeb72214..., 760PY
+  # ad42bf6aba1d105a..., 763 instructions e55ebc129a0cc352..., 763 811fdb0a74101b75...).
+  citations:
+    part_year:
+    - source: >-
+        2024 Virginia Form 760PY Part-Year Resident Individual Income Tax Instructions (Va. Dept. of Taxation 2614092
+        Rev. 12/24), 'WHICH FORM TO FILE' (p. 7): 'Part-Year Residents File Form 760PY' — 'As a general rule,
+        part-year residents file Form 760PY.'
+      url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2024-760py-instructions.pdf
+    - source: >-
+        2024 Form 760PY, Virginia Part-Year Resident Income Tax Return — the 2-page return itself (page 1: 'Due May 1,
+        2025')
+      url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2024/760py-2024.pdf
+    nonresident:
+    - source: >-
+        2024 Virginia Form 763 Nonresident Individual Income Tax Instructions (Va. Dept. of Taxation 2614090 Rev.
+        09/24), 'Which Form To File' (p. 7): 'Nonresidents File Form 763' — 'Generally, nonresidents with income from
+        Virginia sources must file a Virginia return if their income is at or above the filing threshold.'
+      url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2024-763-instructions.pdf
+    - source: >-
+        2024 Form 763, Virginia Nonresident Income Tax Return — the 2-page return itself (page 1: 'Due May 1, 2025')
+      url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2024/763-2024.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

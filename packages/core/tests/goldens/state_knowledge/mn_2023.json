@@ -4,14 +4,21 @@
   "@@21e77ca4cc05": "Minnesota Child and Dependent Care Credit — MN taxpayers (Single, Head of Household, Qualifying Surviving Spouse, or Married Filing Jointly) who had earned income and paid someone (not a spouse, the qualifying child's parent, or a dependent) to care for a qualifying person (e.g., a child under 13 or a disabled dependent/spouse) so they could work or look for work. Also available to certain licensed family daycare operators caring for their own young child, and for a child born in 2023 even without actual expenses. Unlike the federal credit, the MN credit is refundable.",
   "@@250c1db41950": "Minnesota Working Family Credit (state Earned Income Tax Credit) — Full-year or part-year MN residents who earned income from a job or self-employment (mirrors federal EIC). Must not be claimed as a dependent; investment income must be under $11,000; if no qualifying children, you (or spouse) must be age 19-64 and have a U.S. main home for more than half of 2023. Not available to full-year nonresidents, those with a 2- or 10-year federal EIC ban, or (generally) Married Filing Separately. Combined with the Child Tax Credit and the Credit for Qualifying Older Children on Schedule M1CWFC.",
   "@@32c8baa30551": "Renter's Property Tax Refund (renter's credit / 'circuit-breaker') — MN renters who in 2023 lived in a building where property taxes were payable (or payments in lieu of property taxes were payable) and received a CRP (Certificate of Rent Paid) from their landlord. Not available to anyone who can be claimed as a dependent on someone else's 2023 federal return. For tax year 2023 this was claimed on a separate return (Form M1PR), not the M1 income tax return (it moved onto the income tax return starting in 2024).",
+  "@@486bcaef6f39": "annual (per tax year; the shipped MN 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@581810a2465f": "Minnesota Child Tax Credit — Full-year or part-year MN residents with one or more qualifying children under age 18 at the end of 2023 (qualifying child determined on Schedule M1DQC). Same base eligibility as the Working Family Credit (not a dependent of another, investment income under $11,000, not a full-year nonresident, generally not Married Filing Separately). ITIN may be used if no SSN.",
+  "@@6a1105868f89": "2023 Minnesota Individual Income Tax Forms and Instructions (Form M1), Minnesota Department of Revenue — Tax Rate Schedules, p.32 (Single / Married filing jointly or qualifying widow(er) / Married filing separately / Head of household); 2023 Tax Tables pp.25-31 with mandate 'If line 9 of Form M1 is less than $90,000, you must use the tax table'; Standard Deduction Table for Line 4, p.13; Worksheets A & B for Line 4 - Standard Deduction Limitation, p.14; Worksheet for Line 5 - Dependent Exemptions ($4,800), p.14; Line 10 - Tax From Table, p.16; 2023 Form M1 lines 1-10",
+  "@@864bf0be432c": "The shipped MN 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@873de0498f6f": "2023 Minnesota Individual Income Tax Forms and Instructions (Form M1) — Line 1 = Federal Adjusted Gross Income; Line 2 additions from Schedule M1M; residency rules (domicile + 183-day); due date April 15, 2024; Schedule M1NR; treaty references favor taxpayer only",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@e019ddb96b57": "K-12 Education Credit — MN parents/guardians who paid education-related expenses in 2023 for a qualifying child in grades K-12 (a qualifying child is the same as for the federal Earned Income Credit). Qualifying expenses include things like tutoring by a qualified instructor, instructional materials, and certain educational services (private/parochial school tuition does NOT qualify for the credit). Refundable, so it can produce a refund even with no tax liability.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@ef8b6764c7bc": "Treaty conformity — MN conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MN income (it flows through the federal starting point; do not add it back on the MN return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Minnesota's resident return (Form M1) starts from federal adjusted gross income: the 2023 M1 instructions for Line 1 state \"Line 1—Federal Adjusted Gross Income. Enter your 2023 federal adjusted gross income from: Line 11 of Form 1040 or 1040-SR, or 1040-NR.\" Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The Minnesota additions schedules (Schedule M1M lines 1-9, and Schedule M1MB) contain NO line that adds back income exempt under a U.S. income tax treaty. The complete 2023 M1M additions list is: out-of-state municipal bond interest (line 1), out-of-state mutual fund tax-exempt dividends (line 2), expenses attributable to income not taxed by MN (line 3), capital gain portion of a lump-sum distribution (line 4), M1HOME first-time homebuyer addition (line 5), and 529 distributions used for K-12 tuition (line 6) — lines 7-9 are intentionally blank. The only treaty references in the MN M1 instructions are FAVORABLE to the taxpayer (a nonresident alien may claim the standard deduction if allowed by a U.S. income tax treaty). Because there is no treaty addback, treaty-exempt income is not re-taxed -> conforms.",
-  "@@f4bd3e0b5581": "Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010"
+  "@@f4bd3e0b5581": "Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -135,6 +142,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MN 2023 return (Form M1, Individual Income Tax): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MN revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.state.mn.us/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form M1, Individual Income Tax",
+    "jurisdiction": "states/mn",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MN return, and the MN 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MN instructions for amended returns on the MN revenue department's site (https://www.revenue.state.mn.us/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -192,9 +234,255 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "MN revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.state.mn.us/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MN instructions for amended returns on the MN revenue department's site (https://www.revenue.state.mn.us/).",
+    "form": "Form M1, Individual Income Tax",
+    "headline": "MN 2023, amended (Form M1, Individual Income Tax): you owe $88",
+    "jurisdiction": "states/mn",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@864bf0be432c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mn",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "2023 Schedule M1CWFC, Minnesota Child and Working Family Credits (form + instructions), MN Department of Revenue",
+     "cadence": "@@486bcaef6f39",
+     "topic": "credits",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-23.pdf"
+    },
+    {
+     "answers": "2023 Schedule M1CD, Child and Dependent Care Credit (form + instructions), MN Department of Revenue",
+     "cadence": "@@486bcaef6f39",
+     "topic": "credits",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2023-12/m1cd-23.pdf"
+    },
+    {
+     "answers": "2023 Form M1PR instructions (Homestead Credit Refund and Renter's Property Tax Refund), MN Department of Revenue",
+     "cadence": "@@486bcaef6f39",
+     "topic": "credits",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1pr-inst-23.pdf"
+    },
+    {
+     "answers": "2023 Schedule M1ED, K-12 Education Credit (form + instructions) and 2023 Form M1 instructions, MN Department of Revenue",
+     "cadence": "@@486bcaef6f39",
+     "topic": "credits",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-02/m1ed-23.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@864bf0be432c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mn",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@873de0498f6f",
+     "cadence": "@@486bcaef6f39",
+     "topic": "filing_logistics",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@864bf0be432c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mn",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@873de0498f6f",
+     "cadence": "@@486bcaef6f39",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
+    },
+    {
+     "answers": "2023 Schedule M1M, Income Additions and Subtractions — complete additions list (lines 1-9); no treaty add-back line",
+     "cadence": "@@486bcaef6f39",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2024-04/m1m-23_0.pdf"
+    },
+    {
+     "answers": "2023 Schedule M1NR, Nonresidents/Part-Year Residents",
+     "cadence": "@@486bcaef6f39",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-07/m1nr-23.pdf"
+    },
+    {
+     "answers": "Filing a Paper Income Tax Return — mailing address Mail Station 0010, St. Paul, MN 55146-0010",
+     "cadence": "@@486bcaef6f39",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.state.mn.us/filing-paper-income-tax-return"
+    },
+    {
+     "answers": "Paying Your Individual Income Tax / Make a Payment — online payment options and Payment Voucher System",
+     "cadence": "@@486bcaef6f39",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.state.mn.us/make-payment"
+    },
+    {
+     "answers": "2023 Form M1 (the form itself)",
+     "cadence": "@@486bcaef6f39",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2024-12/m1-23.pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@864bf0be432c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mn",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@6a1105868f89",
+     "cadence": "@@486bcaef6f39",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@864bf0be432c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mn",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/mn",
  "state_scope": {
@@ -702,7 +990,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 Minnesota Individual Income Tax Forms and Instructions (Form M1), Minnesota Department of Revenue — Tax Rate Schedules, p.32 (Single / Married filing jointly or qualifying widow(er) / Married filing separately / Head of household); 2023 Tax Tables pp.25-31 with mandate 'If line 9 of Form M1 is less than $90,000, you must use the tax table'; Standard Deduction Table for Line 4, p.13; Worksheets A & B for Line 4 - Standard Deduction Limitation, p.14; Worksheet for Line 5 - Dependent Exemptions ($4,800), p.14; Line 10 - Tax From Table, p.16; 2023 Form M1 lines 1-10",
+    "source": "@@6a1105868f89",
     "url": "https://www.revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf"
    },
    "rate": null,

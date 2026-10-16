@@ -20,6 +20,7 @@
   "@@c23a7cc43693": "Law change NOT modeled by the engine (status final_form_published): NEW DISCLOSURE for 2025 — NC DECOUPLES from the 2025 federal reconciliation act (\"OBBBA\"): the 2025 booklet keeps the January 1, 2023 IRC conformity date (\"The starting point for North Carolina taxable income is federal adjusted gross income as of January 1, 2023\") and states expressly that the federal changes made by the reconciliation act do NOT apply for NC tax year 2025 — NC \"does not conform to the federal standard deduction amount, to the federal itemized deduction amount, or to the federal additional deductions reported on federal Schedule 1-A.\" Post-2023 federal changes do not apply unless NC specifically conforms; never substitute a federal 2025 standard deduction for the NC chart amount. NC also did not adopt IRC 168(k) or the new IRC 168(n) (Schedule S Part A Line 3 adds back 85% of bonus depreciation). Resolve via: 2025 D-401 Schedule S instructions and the Form D-400 Schedule S, Part A \"Additions to Federal Adjusted Gross Income\" line list (Lines 1-16) inside the cited booklet; the add-back amounts come from the filer's own federal return, and the NC deduction amounts come from the D-401 Line 11 NC Standard Deduction Chart — not from any federal 2025 figure.",
   "@@d1870484eb7e": "NC DEPARTMENT OF REVENUE, PO BOX R, RALEIGH, NC 27634-0001 (if due a refund and filing on paper — original returns only)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fd34f996a649": "The newest shipped NC pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal."
  },
  "file_and_pay": {
@@ -144,6 +145,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NC 2025 return (Form D-400 (North Carolina Individual Income Tax Return, \"D-400 Web-Fill 9-25\") — used by all individuals including residents): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NC revenue department home page (read 2026-10-16)",
+      "url": "https://www.ncdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@72a0315c8c8a",
+    "jurisdiction": "states/nc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NC return, and the NC 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NC instructions for amended returns on the NC revenue department's site (https://www.ncdor.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -198,6 +234,27 @@
     "jurisdiction": "states/nc",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "NC revenue department home page (read 2026-10-16)",
+      "url": "https://www.ncdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NC instructions for amended returns on the NC revenue department's site (https://www.ncdor.gov/).",
+    "form": "@@72a0315c8c8a",
+    "headline": "NC 2025, amended (Form D-400 (North Carolina Individual Income Tax Return, \"D-400 Web-Fill 9-25\") — used by all individuals including residents): you owe $88",
+    "jurisdiction": "states/nc",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -758,7 +815,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: NC 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: NC 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

@@ -64,10 +64,13 @@ fields:
 - line: mailing_address.street
   field: '1015'
   type: text
+# "Apt. no/ste. no." (JK27, 2026-10-16): the widget has no /MaxLen, so the budget is the digit count its 72.5 pt
+# box renders whole at Helv 10 -- 12; a 600 dpi probe render cuts the 13th digit 1 pt inside the right edge, and a
+# 14th never shows. This pack budgeted 14 until then; the 2024 and 2025 boxes are identical and budget 12.
 - line: mailing_address.apt_no
   field: '1016'
   type: text
-  maxlen: 14
+  maxlen: 12
 - line: mailing_address.pmb
   field: '1017'
   type: text

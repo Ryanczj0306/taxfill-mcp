@@ -4,13 +4,21 @@
   "@@2a7bbe10f0a3": "New York State Household Credit — New York State resident (full-year or part-year) who cannot be claimed as a dependent on another individual's federal income tax return. Amount depends on filing status and number of exemptions claimed on the federal return, looked up in the household credit tables in the Form IT-201 instructions.",
   "@@2b9409856202": "Treaty conformity — NY conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NY income (it flows through the federal starting point; do not add it back on the NY return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: NY Form IT-201 begins from the federal return's income items (line 1 = \"wages, salaries, tips, etc.\" from federal Form 1040 line 1z) and arrives at federal adjusted gross income on line 19. Because the return starts from federal AGI, income that is exempt from federal tax under a U.S. income tax treaty is already excluded from federal AGI and flows through to NY. NY's additions to federal AGI (IT-201 lines 20-23, with \"other additions\" detailed on Form IT-225) do not include any modification that adds back treaty-exempt income. The 2023 IT-201 instructions reference treaties only in an unrelated context (Item G code M4, military servicemember residency election), and the IT-225 addition-modification chart (codes A-101 through ~A-222) contains no code referencing a federal tax treaty, treaty-exempt wages/income, or nonresident-alien treaty exclusions. Net effect: starts from federal AGI and has no treaty addback, so treaty-exempt income is NOT re-taxed -> conforms = true. (Unlike CA, which adds treaty-exempt income back on Schedule CA, NY has no analogous addback.)",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@5fd0b67701d4": "annual (per tax year; the shipped NY 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@68991b011704": "STATE PROCESSING CENTER, PO BOX 61000, ALBANY NY 12261-0001 (paper return with no payment / refund return)",
   "@@8e04c7a62422": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Child and Dependent Care Credit (New York State).",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@acefd3ee779c": "Empire State Child Credit — Full-year New York State resident (or married to a full-year resident filing jointly) with at least one qualifying child under age 17 on December 31, 2023, who lived with you more than half the year, is claimed as a dependent on your federal return, and is a U.S. citizen/national/resident. Valid SSN or ITIN required for you and each child.",
   "@@b9eba3e6498f": "Real Property Tax Credit (circuit-breaker, homeowners and renters) — New York State resident for all of 2023 who occupied the same NY residence for at least six months, was not claimed as a dependent on another taxpayer's federal return, and whose residence was not fully exempt from real property taxes. Homeowners: owned property with current market value of $85,000 or less and paid real property taxes. Renters: average monthly rent of $450 or less (excluding charges for heat, gas, electricity, furnishings, or board).",
   "@@c3b9655e6156": "New York State Earned Income Credit (EITC) — You must have qualified for and claimed the federal earned income credit, and not have claimed the Noncustodial parent earned income credit. Valid SSNs required for you and each qualifying child by the return due date. Full-year residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.",
+  "@@c64ecd586968": "Instructions for Form IT-201, Full-Year Resident Income Tax Return, New York State, tax year 2023 (IT-201-I) — sections 'New York State tax rate schedule' (Married filing jointly and qualifying surviving spouse—filing status 2 and 5; Single and married filing separately—filing status 1 and 3; Head of household—filing status 4), 'New York State standard deduction table' (Line 34), 'Line 36: Dependent exemptions' ($1,000 each), 'Line 39: New York State tax', and 'Tax computation—New York adjusted gross income of more than $107,650' (Tax computation worksheets 1-6). Cross-checked against the official 2023 Form IT-201 PDF, page 2 lines 33-37 and page 3 lines 38-39 (https://www.tax.ny.gov/pdf/2023/inc/it201_2023_fill_in.pdf).",
+  "@@c67883ec7c92": "The shipped NY 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@c7d3b9d67dae": "Child and Dependent Care Credit (New York State) — You are entitled to this credit if you qualified to claim the federal child and dependent care credit (whether or not you actually claimed the federal credit). Full-year residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.",
+  "@@eb1c955e4126": "TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), \"New York Tax Treatment of Nonresidents and Part-Year Residents — Application of the Convenience of the Employer Test to Telecommuters and Others\", quoting 20 NYCRR 132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor test.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fe64fddb9737": "Instructions for Form IT-201, Full-Year Resident Income Tax Return (2023) - starting point (line 1 = federal 1040 line 1z; line 19 federal AGI), additions lines 20-23, due date April 15 2024, filing threshold"
  },
  "file_and_pay": {
@@ -135,6 +143,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NY 2023 return (Form IT-201, Resident Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NY revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.ny.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form IT-201, Resident Income Tax Return",
+    "jurisdiction": "states/ny",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NY return, and the NY 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NY instructions for amended returns on the NY revenue department's site (https://www.tax.ny.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -192,9 +235,309 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "NY revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.ny.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NY instructions for amended returns on the NY revenue department's site (https://www.tax.ny.gov/).",
+    "form": "Form IT-201, Resident Income Tax Return",
+    "headline": "NY 2023, amended (Form IT-201, Resident Income Tax Return): you owe $88",
+    "jurisdiction": "states/ny",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c67883ec7c92",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "NY Dept. of Taxation and Finance - Earned income credit (New York State)",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pit/credits/earned_income_credit.htm"
+    },
+    {
+     "answers": "NY Dept. of Taxation and Finance - 2023 Instructions for Form IT-213",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it213i-2023.htm"
+    },
+    {
+     "answers": "NY Dept. of Taxation and Finance - Real property tax credit (and 2023 Form IT-214)",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pit/credits/real_property_tax_credit.htm"
+    },
+    {
+     "answers": "NY Dept. of Taxation and Finance - Child and dependent care credit",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pit/credits/child_and_dependent_care_credit.htm"
+    },
+    {
+     "answers": "NY Dept. of Taxation and Finance - New York State household credit (and 2023 Instructions for Form IT-201)",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pit/credits/household_credit.htm"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c67883ec7c92",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@fe64fddb9737",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "filing_logistics",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c67883ec7c92",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@fe64fddb9737",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    },
+    {
+     "answers": "Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return (2023) - filing requirement, Federal amount column starting from federal income/AGI",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it203i-2023.htm"
+    },
+    {
+     "answers": "Income tax definitions (resident, nonresident, part-year resident, domicile, statutory resident 184-day rule, permanent place of abode, substantially all of the taxable year)",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pit/file/pit_definitions.htm"
+    },
+    {
+     "answers": "Instructions for Form IT-225, New York State Modifications (2023) - addition modifications chart, no treaty-exempt-income addback",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it225i-2023.htm"
+    },
+    {
+     "answers": "Mailing addresses (personal income tax returns) - refund/no-payment vs with-payment PO Box addresses",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pit/file/return-assembly-mail.htm"
+    },
+    {
+     "answers": "Make a personal income tax return payment online (Individual Online Services / Quick Pay)",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pay/ind/pay-income-tax-online.htm"
+    },
+    {
+     "answers": "Form IT-201-V Payment Voucher for Income Tax Returns - check payee 'New York State Income Tax'",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/current_forms/it/it201v_fill_in.pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "remote_work_sourcing": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c67883ec7c92",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@eb1c955e4126",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "remote_work_sourcing",
+     "url": "https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf"
+    }
+   ],
+   "topic": "remote_work_sourcing",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c67883ec7c92",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@c64ecd586968",
+     "cadence": "@@5fd0b67701d4",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c67883ec7c92",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/ny",
  "state_scope": {
@@ -217,7 +560,7 @@
        "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
       },
       {
-       "source": "TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), \"New York Tax Treatment of Nonresidents and Part-Year Residents — Application of the Convenience of the Employer Test to Telecommuters and Others\", quoting 20 NYCRR 132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor test.",
+       "source": "@@eb1c955e4126",
        "url": "https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf"
       }
      ],
@@ -706,7 +1049,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "Instructions for Form IT-201, Full-Year Resident Income Tax Return, New York State, tax year 2023 (IT-201-I) — sections 'New York State tax rate schedule' (Married filing jointly and qualifying surviving spouse—filing status 2 and 5; Single and married filing separately—filing status 1 and 3; Head of household—filing status 4), 'New York State standard deduction table' (Line 34), 'Line 36: Dependent exemptions' ($1,000 each), 'Line 39: New York State tax', and 'Tax computation—New York adjusted gross income of more than $107,650' (Tax computation worksheets 1-6). Cross-checked against the official 2023 Form IT-201 PDF, page 2 lines 33-37 and page 3 lines 38-39 (https://www.tax.ny.gov/pdf/2023/inc/it201_2023_fill_in.pdf).",
+    "source": "@@c64ecd586968",
     "url": "https://www.tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm"
    },
    "rate": null,

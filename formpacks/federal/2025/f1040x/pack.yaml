@@ -18,7 +18,9 @@
 # An identical copy also sits at irs-pdf/f1040x.pdf; the year-stable irs-prior
 # URL is pinned instead.
 #
-# Topology verdict: NEAR (vs the 2023/2024 pack's Rev. 2-2024 blank). Counts,
+# Topology verdict: NEAR (vs the Rev. 2-2024 blank the 2023/2024 packs pinned
+# until JK27; since 2026-10-16 they pin THIS blank and this map, with line 4b
+# held empty by a year rule -- see their headers). Counts,
 # each labeled with what it actually counts: AcroForm FIELD-TREE NODES (terminal
 # fields PLUS container subforms) 185 -> 221; WIDGET annotations, i.e. terminal
 # fields, 145 -> 166 (page 1 unchanged at 92, page 2 53 -> 74).
@@ -76,9 +78,10 @@
 # revision 4a is a REAL line ("Qualified business income deduction"), its three
 # widgets f1_27/f1_28/f1_29 are NOT ReadOnly (/Ff = 8388608, the ordinary money
 # flag) and the printed line-5 formula NAMES it -- so 4a IS mapped below. On the
-# predecessor Rev. 2-2024 blank that the 2023/2024 packs pin, 4a prints
-# "Reserved for future use", those same three widgets carry 8388609, and nothing
-# names 4a -- so those packs correctly leave it unmapped. The ReadOnly bit moved
+# predecessor Rev. 2-2024 blank (pinned by the 2023/2024 packs until JK27,
+# 2026-10-16), 4a prints "Reserved for future use", those same three widgets
+# carry 8388609, and nothing names 4a -- so those packs correctly left it
+# unmapped while they pinned it. The ReadOnly bit moved
 # exactly when the printed label did; re-read both for any future revision
 # before copying this map.
 form: "1040-X"

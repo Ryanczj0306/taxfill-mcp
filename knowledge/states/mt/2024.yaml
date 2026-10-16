@@ -93,13 +93,21 @@ credits:
       earned income tax credit (EITC) of 10 percent of the federal EITC... refundable'), and What's New (credit
       increased from 3% to 10%)
     url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+# JK27 (2026-10-16): the residency test is AT LEAST nine months. This entry said "more than nine months", the
+# wording of the Line 16 summary (2024 Form 2 Instructions, p.10: "have lived in Montana for more than nine months
+# during the tax year"); the Schedule 2EC the filer signs prints "I resided in Montana for a minimum of nine months
+# during 2024" (2024 Form 2, page 10, Attestation), the Schedule 2EC instructions list "You lived in Montana for at
+# least nine months during the tax year." (p.38), and the statute reads "must have resided in Montana for at least
+# 9 months of that period" (MCA 15-30-2338(1)(b); its History line's last amendment is "amd. Sec. 5, Ch. 147, L.
+# 2009"). Instructions and Form 2 each downloaded twice on 2026-10-16 with identical sha256 (a31a761150b7b092...,
+# 126be01d436a0b6e...).
 - name: Elderly Homeowner/Renter Credit
   type: refundable
-  eligibility: Montana taxpayers age 62 or older who lived in Montana for more than nine months during the tax year,
-    occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year,
-    and live in a household where the total income of all its members is less than $45,000. Available even to those
-    with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal). One credit
-    per household.
+  eligibility: 'Montana taxpayers age 62 or older who lived in Montana for at least nine months during the tax year
+    (Schedule 2EC attestation: "I resided in Montana for a minimum of nine months during 2024"), occupied a Montana
+    residence as a renter, owner, or lessee for a total of six months or more during the year, and live in a household
+    where the total income of all its members is less than $45,000. Available even to those with no other filing
+    requirement (Schedule 2EC may be filed directly on the TransAction Portal). One credit per household.'
   amount: Refundable credit of up to $1,150. The exact amount is determined by the household income / rent / property-tax
     formula on Schedule 2EC (the 2024 What's New notes the calculation and amount are unchanged from 2023; the schedule
     added an attestation section and a household-member count).

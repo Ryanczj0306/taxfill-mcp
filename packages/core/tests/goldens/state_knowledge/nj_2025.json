@@ -22,7 +22,8 @@
   "@@b8592d51bc42": "annual (per tax year; the newest shipped NJ pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@e73de5d02235": "If any of your income was exempt from federal tax under a treaty: NJ does not conform to federal tax treaties, so that income is still taxable to NJ — do not carry the federal exclusion onto the state return.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@ee2adb78ec40": "2025 NJ-1040 Resident Income Tax Return Instructions - 'When to File' and 'Extension of Time to File' p. 4 (April 15, 2026 due date; six-month extension conditioned on 80% paid and NJ-630 / federal extension)"
+  "@@ee2adb78ec40": "2025 NJ-1040 Resident Income Tax Return Instructions - 'When to File' and 'Extension of Time to File' p. 4 (April 15, 2026 due date; six-month extension conditioned on 80% paid and NJ-630 / federal extension)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -149,6 +150,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NJ 2025 return (Form NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their NJ residency period.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NJ revenue department home page (read 2026-10-16)",
+      "url": "https://www.nj.gov/treasury/taxation/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@866557a5b743",
+    "jurisdiction": "states/nj",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NJ return, and the NJ 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NJ instructions for amended returns on the NJ revenue department's site (https://www.nj.gov/treasury/taxation/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -209,6 +245,29 @@
      "@@4437c6037806"
     ],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "NJ revenue department home page (read 2026-10-16)",
+      "url": "https://www.nj.gov/treasury/taxation/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NJ instructions for amended returns on the NJ revenue department's site (https://www.nj.gov/treasury/taxation/).",
+    "form": "@@866557a5b743",
+    "headline": "NJ 2025, amended (NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their NJ residency period.): you owe $88",
+    "jurisdiction": "states/nj",
+    "notes": [
+     "@@4437c6037806"
+    ],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

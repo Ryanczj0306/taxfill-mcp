@@ -7,20 +7,24 @@ the server half of the freshness protocol: for any year newer than the newest
 pack, or any benefit a pack does not cover, the agent resolves the number from
 these .gov URLs and cites it — and refuses to fill a line it cannot cite.
 
-The registry is intentionally NOT year-specific (one URL family per topic across
+The federal registry is intentionally NOT year-specific (one URL family per topic across
 years); ``year`` shapes the retrieval hint (prior-year revisions live under
-``irs.gov/pub/irs-prior/<form>--<year>.pdf``) and is echoed back for the caller.
+``irs.gov/pub/irs-prior/<form>--<year>.pdf``) and is echoed back for the caller. A state's
+block IS per year: the generated registry holds each state's newest pack, and an older year
+that ships a pack gets that year's own citations (taxfill_core.state_sources; Phase K JK27).
 """
 from __future__ import annotations
 
 import re
+from functools import lru_cache
 from pathlib import Path
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from taxfill_core.datadir import knowledge_dir
+from taxfill_core.datadir import DATA_DIR_ENV, display_path, knowledge_dir
 from taxfill_core.knowledge import validate_gov_url
+from taxfill_core.state_sources import state_block
 
 __all__ = ["Source", "SourcesResult", "get_sources"]
 
@@ -47,6 +51,8 @@ _MATCH_THRESHOLD = 2
 # "2026 ..." query went to whichever topic names or quotes 2026 most ("2026 tax brackets" routed to
 # the charitable non-itemizer entry, whose answers quote the 2026 effective date).
 _YEAR_TOKEN = re.compile(r"(19|20)\d\d")
+# The registry key that records which states' blocks are hand-authored in sources.yaml (they win, for every year).
+_HAND_AUTHORED = "_hand_authored_states"
 
 
 def _repo_knowledge_dir() -> Path:
@@ -95,30 +101,69 @@ def _load_registry(base_dir: str | Path | None) -> dict:
     path = base / "sources.yaml"
     if not path.is_file():
         raise FileNotFoundError(
-            f"source registry not found: {path} — pass base_dir=<repo knowledge/ dir> "
+            f"source registry not found: {display_path(path, base)} (set ${DATA_DIR_ENV} to a directory holding "
+            f"knowledge/ and formpacks/) — pass base_dir=<repo knowledge/ dir> "
             f"(the default only works from a source checkout)"
         )
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
-        raise ValueError(f"{path}: sources.yaml must be a YAML mapping, got {type(raw).__name__}")
+        raise ValueError(f"{display_path(path, base)}: sources.yaml must be a YAML mapping, got {type(raw).__name__}")
     # The per-state registry is GENERATED from the state packs' own verified
     # citations (scripts/assemble_state_sources.py) and lives in its own file so
     # the hand-authored registry stays reviewable. Hand-authored entries in
     # sources.yaml's `states:` mapping win over the generated block per state.
     generated = base / "sources_states.yaml"
+    hand = dict(raw.get("states") or {})
     if generated.is_file():
         gen_raw = yaml.safe_load(generated.read_text(encoding="utf-8")) or {}
         merged = dict(gen_raw.get("states") or {})
-        merged.update(raw.get("states") or {})
+        merged.update(hand)
         raw["states"] = merged
+    raw[_HAND_AUTHORED] = frozenset(hand)
     return raw
 
 
-def _jurisdiction_block(registry: dict, jurisdiction: str) -> dict:
+@lru_cache(maxsize=256)
+def _state_pack_raw(path: str, mtime_ns: int, size: int) -> dict:
+    """One state pack's raw mapping (cached per file version; only read, never mutated)."""
+    return yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+
+
+def _jurisdiction_block(registry: dict, jurisdiction: str, year: int, base: Path) -> tuple[dict, str | None]:
+    """The registry block for ``jurisdiction`` and ``year``, plus a note when it is another year's.
+
+    Federal: sources.yaml's one block. A state: a hand-authored sources.yaml entry wins; otherwise the requested
+    year's own pack when one ships, built the way the generator builds the newest one (the generated registry holds
+    only each state's newest pack, so before Phase K JK27 a TY2024 query got the TY2025 booklet); for a year with no
+    pack, the newest pack's block and a note that says so.
+    """
     if jurisdiction == "federal":
-        return registry.get("federal") or {}
-    state_code = jurisdiction.split("/", 1)[1]
-    return (registry.get("states") or {}).get(state_code) or {}
+        return registry.get("federal") or {}, None
+    st = jurisdiction.split("/", 1)[1]
+    block = (registry.get("states") or {}).get(st) or {}
+    if st in registry.get(_HAND_AUTHORED, frozenset()):
+        return block, None
+    state_dir = base / "states" / st
+    years = sorted(int(p.stem) for p in state_dir.glob("*.yaml") if p.stem.isdigit()) if state_dir.is_dir() else []
+    if not years or year == years[-1]:
+        return block, None
+    if year in years:
+        path = state_dir / f"{year}.yaml"
+        stat = path.stat()
+        built = state_block(st, year, _state_pack_raw(str(path), stat.st_mtime_ns, stat.st_size), newest=False)
+        if built is not None:
+            return built, None
+        return {}, (
+            f"The {st.upper()} {year} pack cites no government source, so no {year} sources are listed; resolve the "
+            f"{year} documents at the state's site and cite them."
+        )
+    if not block:
+        return block, None
+    return block, (
+        f"No {st.upper()} knowledge pack ships for {year}, so these are the sources of the {st.upper()} "
+        f"{years[-1]} pack (the newest shipped). Find the {year} revision of each document at the state's site "
+        f"and cite that, never the {years[-1]} figure."
+    )
 
 
 def _tokens(text: str) -> list[str]:
@@ -228,7 +273,9 @@ def get_sources(
             registry's by_topic keys and their ``answers`` text, so a natural
             phrase resolves to the right block.
         year: the tax year being worked; shapes the retrieval hint (prior-year
-            revisions live under ``irs.gov/pub/irs-prior/``).
+            revisions live under ``irs.gov/pub/irs-prior/``). For a state it also
+            picks the block: that year's own pack's citations when one ships, else
+            the newest pack's, with a note naming the year they belong to.
         jurisdiction: ``"federal"`` (default) or ``"states/<xx>"``.
 
     Returns:
@@ -247,7 +294,8 @@ def get_sources(
             f"jurisdiction must be 'federal' or 'states/<two-letter lowercase code>', got {jurisdiction!r}"
         )
     registry = _load_registry(base_dir)
-    block = _jurisdiction_block(registry, jurisdiction)
+    base = Path(base_dir) if base_dir is not None else _repo_knowledge_dir()
+    block, year_note = _jurisdiction_block(registry, jurisdiction, year, base)
     by_topic: dict = block.get("by_topic") or {}
     change_channels = [Source(**c) for c in (block.get("change_channels") or [])]
 
@@ -257,7 +305,7 @@ def get_sources(
         for entry in by_topic.get(key) or []:
             sources.append(Source(topic=key, **entry))
 
-    notes: list[str] = []
+    notes: list[str] = [year_note] if year_note else []
     if not sources:
         if not by_topic:
             notes.append(

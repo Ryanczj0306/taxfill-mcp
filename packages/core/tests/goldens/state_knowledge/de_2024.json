@@ -2,17 +2,23 @@
  "_strings": {
   "@@01ca6b3e8a7f": "Child Care Credit (Child and Dependent Care Credit) — Resident individuals who claimed the federal child and dependent care credit. Must attach a copy of federal Form 2441. For spouses who file a joint federal return but separate/combined-separate Delaware returns, the credit may only be applied against the tax of the spouse with the LOWER Line 23 taxable income. This is the child/dependent CARE credit — the federal Child Tax Credit is not an allowable credit on the Delaware return.",
   "@@04445fd7f87c": "Refund due (PIT-RES Line 47 NET REFUND): State of Delaware, Division of Revenue, P.O. Box 8710, Wilmington, DE 19899-8710. Zero-due returns or returns without payment (\"ALL OTHER RETURNS\"): State of Delaware, Division of Revenue, P.O. Box 8711, Wilmington, DE 19899-8711.",
+  "@@1406975c1492": "The shipped DE 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@247d816f7d84": "Volunteer Firefighter Credit — Delaware residents who are active volunteer firefighters on call to fight fires on a regular basis, members of a fire company auxiliary, or active members of an organized rescue squad in a Delaware volunteer company. Active status is verified annually with the volunteer fire companies; the Fire Company number must be entered on Line 29 (Spouse Column A and/or Self Column B). Only one $1,000 credit may be claimed per spouse.",
   "@@2892d231ada6": "DE Division of Revenue - 2024 Form PIT-RES Instructions, When to File: 'Individual income tax returns are due on or before April 30, 2025 for all taxpayers filing on a calendar year basis.' Extension: file Form PIT-EXT with payment of the estimated balance by April 30, 2025 to extend the filing date to October 15, 2025 (no extension of time for payment).",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@5136961adc32": "Delaware Division of Revenue, 2024 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions (PIT-RES_TY24_2024-01_Instructions.pdf) — Line 24 Tax Liability From Tax Rate Table/Schedule: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table'; Rounding Off Dollars; Who Must File thresholds. Standard deduction and renumbered lines second-passed on the printed 2024 Form PIT-RES (Rev. 20240821): Line 20 'Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column A and in Column B'; Line 21 additional standard deductions (x $2,500, standard-deduction electors only); Line 23 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'; Line 24 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Rate schedule: Delaware 2024 State Income Tax Table & Schedule (https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/TY24_taxtable.pdf), last page: 'If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) for the portion over $60,000' with worked example $67,751 -> $3,455.06 (Round to $3,455). Sub-$60,000 marginal rates: 30 Del. C. sec. 1102(a)(14) (taxable years beginning after December 31, 2013), official Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html, re-fetched live this session — cross-checks exactly against the 2024 table's band values (e.g. $26,550-$26,600 -> $1,088; $10,100-$10,150 -> $267) and the printed $2,943.50 constant. Three sources agree; no 2024 change.",
   "@@5cb8b28cd227": "Treaty conformity — DE conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from DE income (it flows through the federal starting point; do not add it back on the DE return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Delaware's resident return (PIT-RES) starts at Section A, Line 1 = \"FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040.\" Section A - Additions contains ONLY Line 2 (INTEREST ON STATE & LOCAL OBLIGATIONS OTHER THAN DELAWARE) and Line 3 (FIDUCIARY ADJUSTMENT, OIL DEPLETION). There is no add-back of federally treaty-exempt income anywhere in the additions schedule. Because income excluded by treaty is already excluded from federal AGI and Delaware has no treaty add-back, that income flows through untaxed -> conforms. (Source: 2024 Form PIT-RES, Section A, and 2024 PIT-RES instructions.) Note: the resident form's Line 14 \"Foreign Taxes Paid\" is an itemized-deduction adjustment for those who took the federal Foreign Tax Credit, NOT a treaty-exempt-income add-back.",
   "@@5cf41fb7c350": "https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/PIT-RES_2024-01_PaperInteractive.pdf",
   "@@7b513a5978a9": "2024 Delaware Resident Individual Income Tax Return Instructions (PIT-RES, revised 11/01/24), Line 16 — Active Labor Organization Dues Instructions: 'may add up to $500 or the actual amount paid, which ever is less, to stay in the union to your federal itemized deductions to calculate your allowable Delaware itemized deductions.'",
   "@@847bc52486d3": "DE Division of Revenue - 2024 Form PIT-RES (Rev. 20240821), printed page 3 mailing box: \"BALANCE DUE WITH PAYMENT ENCLOSED (LINE 46) ... PO Box 508, Wilmington, DE 19899-0508\"; \"REFUND (LINE 47) ... PO Box 8710, Wilmington, DE 19899-8710\"; \"ALL OTHER RETURNS ... PO Box 8711, Wilmington, DE 19899-8711\"; confirmed by the 2024 PIT-RES Instructions, Line 46 Net Balance Due / Line 47 Net Refund (printed page 11). CAUTION: the Instructions' Step 5 mailing table (printed page 3) still prints the 2023 line numbers (\"Balance Due (from Line 45)\", \"Refund Due (from Line 46)\") and the ZIP as \"19899-508\" — the renumbered form face governs.",
   "@@90808e2ceec2": "Form PIT-RES (Delaware Individual Income Tax Return - Resident; formerly Form 200-01)",
   "@@915d80dc92b3": "Earned Income Tax Credit (Delaware EITC) — Resident individuals who claimed (and qualified for) the federal Earned Income Credit. The taxpayer ELECTS one of two options: a REFUNDABLE credit equal to 4.5% of the federal EITC, OR a NONREFUNDABLE credit equal to 20% of the federal EITC. Computed on DE Schedule II (Form PIT-RSS); check the Refundable box on Line 34 if the refundable amount is entered on PIT-RSS Line 16, or Non-Refundable if from PIT-RSS Line 17. Do NOT complete PIT-RSS Schedule II if you did not take the Earned Income Credit on your federal return. For spouses filing separate/combined-separate Delaware returns from a joint federal return, the credit may only be applied against the tax of the spouse with the HIGHER Line 23 taxable income.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9e3da0ddcf79": "annual (per tax year; the shipped DE 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@a7756fd297e8": "Law change NOT modeled by the engine (status final_form_published): NEW ITEMIZED ADDITION FOR LABOR UNION DUES — an active union member who itemizes may add the dues paid to stay in the union, up to $500, to federal itemized deductions (new Form PIT-RES line 16), except dues already in the federal total or used for benefits, lobbying or political activity, or legal costs. Resolve via: 2024 PIT-RES Instructions, Line 16 — Active Labor Organization Dues Instructions (p.7).",
   "@@ad9704ab5c27": "DE Division of Revenue - 2024 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must File thresholds (unchanged: under-60 $9,400 single / $15,450 joint), Who is a Resident (domicile any part of year, or abode + more than 183 days), When to File (due 4/30/2025; PIT-EXT extension to 10/15/2025), Section A Additions (federal AGI start; Lines 2-3 only), Line 24 tax table/schedule mandate, mailing addresses (P.O. Box 508 / 8710 / 8711), check payee 'DE Division of Revenue', portal tax.delaware.gov",
   "@@c69ea6a7aed5": "https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/PIT_Instructions/PIT-RES_TY24_2024-01_Instructions.pdf",
@@ -20,7 +26,8 @@
   "@@e312ca493fad": "Credit for Income Taxes Paid to Another State — Delaware residents (or those electing to be taxed as residents) who paid income tax to another state on income earned in that state that is also included in Delaware taxable income. Must attach a signed copy of the other state's return. Does not include city wage taxes or county taxes paid directly to the county; the District of Columbia counts as a 'State' for this credit. Use Form PIT-RSS Schedule I if claiming credit for more than one state (list states highest-to-lowest credit).",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@ef388cf21371": "Personal Credits (exemption credit) — Resident individuals are allowed a credit for each personal exemption. If you were not required to file a federal return, enter $110 for each spouse reporting income plus $110 for each person who could have been listed as a dependent. NOT available if you are claimed as a dependent on another person's return. The number of personal credits is verified against the federal return with the IRS.",
-  "@@f3a0fa807b8b": "Additional Personal Credit (age 60 or over) — Resident taxpayer and/or spouse who were 60 years of age or over on December 31, 2024. Check the appropriate box(es) for self/spouse on Line 27b. This is Delaware's main senior-relief credit on the income-tax return (separate senior relief is also provided via the pension exclusion and the Line 11 persons-60-or-over exclusion, which are income exclusions rather than credits)."
+  "@@f3a0fa807b8b": "Additional Personal Credit (age 60 or over) — Resident taxpayer and/or spouse who were 60 years of age or over on December 31, 2024. Check the appropriate box(es) for self/spouse on Line 27b. This is Delaware's main senior-relief credit on the income-tax return (separate senior relief is also provided via the pension exclusion and the Line 11 persons-60-or-over exclusion, which are income exclusions rather than credits).",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -144,6 +151,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended DE 2024 return (Form PIT-RES (Delaware Individual Income Tax Return - Resident; formerly Form 200-01)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "DE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.delaware.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@90808e2ceec2",
+    "jurisdiction": "states/de",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended DE return, and the DE 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the DE instructions for amended returns on the DE revenue department's site (https://revenue.delaware.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -201,9 +243,279 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "DE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.delaware.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the DE instructions for amended returns on the DE revenue department's site (https://revenue.delaware.gov/).",
+    "form": "@@90808e2ceec2",
+    "headline": "DE 2024, amended (Form PIT-RES (Delaware Individual Income Tax Return - Resident; formerly Form 200-01)): you owe $88",
+    "jurisdiction": "states/de",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1406975c1492",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@c69ea6a7aed5"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "Delaware Division of Revenue, 2024 Form PIT-RES Instructions, Line 34 Earned Income Tax Credit ('a refundable credit of 4.5% of the federal earned income credit or a nonrefundable credit of 20%') and DE Schedule II (PIT-RSS)",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "credits",
+     "url": "@@c69ea6a7aed5"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1406975c1492",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@c69ea6a7aed5"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@847bc52486d3",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "filing_logistics",
+     "url": "@@5cf41fb7c350"
+    },
+    {
+     "answers": "@@2892d231ada6",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "filing_logistics",
+     "url": "@@c69ea6a7aed5"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1406975c1492",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@c69ea6a7aed5"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@ad9704ab5c27",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "forms_and_instructions",
+     "url": "@@c69ea6a7aed5"
+    },
+    {
+     "answers": "2024 Form PIT-RES (Rev. 20240821, paper interactive) — second-pass verification of the renumbered form: Section A Line 1 'FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040', Line 12 Delaware AGI, Line 20 standard deduction election ('Filing Statuses 1, 3, & 5 enter $3250 ... Filing Status 2 enter $6500 ... Filing Status 4 enter $3250 in Column A and in Column B'), Line 21 additional standard deductions (x $2500), Line 23 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount', Line 24 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE', Line 27a personal credits (x $110), Line 27b 60-or-over credits (x $110), Line 29 volunteer firefighter, Line 31 child care (50% of federal), Line 34 EITC refundable/non-refundable boxes",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "forms_and_instructions",
+     "url": "@@5cf41fb7c350"
+    },
+    {
+     "answers": "Delaware 2024 State Income Tax Table & Schedule (TY24_taxtable.pdf) — '2024 STATE INCOME TAX SCHEDULE: If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) for the portion over $60,000' with worked example $67,751 -> $3,455.06 -> $3,455; table for taxable incomes of less than $60,000 in $50 bands",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "forms_and_instructions",
+     "url": "https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/TY24_taxtable.pdf"
+    },
+    {
+     "answers": "30 Del. C. sec. 1102(a)(14) (official Delaware Code) — 'For taxable years beginning after December 31, 2013 ... 2.2% of taxable income in excess of $2,000 but not in excess of $5,000; 3.9% ... $5,000-$10,000; 4.8% ... $10,000-$20,000; 5.2% ... $20,000-$25,000; 5.55% ... $25,000-$60,000; and 6.6% of taxable income in excess of $60,000' — statutory second pass on the sub-$60,000 rates, re-fetched live this session",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "forms_and_instructions",
+     "url": "https://delcode.delaware.gov/title30/c011/sc01/index.html"
+    },
+    {
+     "answers": "DE Division of Revenue - 2024-2025 Personal Income Tax Forms index (source of the 2024 file URLs)",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.delaware.gov/prior-year-personal-income-tax-forms/2024-2025-personal-income-tax-forms/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1406975c1492",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@c69ea6a7aed5"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@7b513a5978a9",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "law_changes",
+     "url": "@@c69ea6a7aed5"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1406975c1492",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@c69ea6a7aed5"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@5136961adc32",
+     "cadence": "@@9e3da0ddcf79",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@c69ea6a7aed5"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1406975c1492",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@c69ea6a7aed5"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/de",
  "state_scope": {
@@ -663,7 +975,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: DE 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: DE 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -683,7 +995,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "Delaware Division of Revenue, 2024 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions (PIT-RES_TY24_2024-01_Instructions.pdf) — Line 24 Tax Liability From Tax Rate Table/Schedule: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table'; Rounding Off Dollars; Who Must File thresholds. Standard deduction and renumbered lines second-passed on the printed 2024 Form PIT-RES (Rev. 20240821): Line 20 'Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column A and in Column B'; Line 21 additional standard deductions (x $2,500, standard-deduction electors only); Line 23 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'; Line 24 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Rate schedule: Delaware 2024 State Income Tax Table & Schedule (https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/TY24_taxtable.pdf), last page: 'If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) for the portion over $60,000' with worked example $67,751 -> $3,455.06 (Round to $3,455). Sub-$60,000 marginal rates: 30 Del. C. sec. 1102(a)(14) (taxable years beginning after December 31, 2013), official Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html, re-fetched live this session — cross-checks exactly against the 2024 table's band values (e.g. $26,550-$26,600 -> $1,088; $10,100-$10,150 -> $267) and the printed $2,943.50 constant. Three sources agree; no 2024 change.",
+    "source": "@@5136961adc32",
     "url": "@@c69ea6a7aed5"
    },
    "rate": null,

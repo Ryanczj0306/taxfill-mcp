@@ -48,11 +48,12 @@ independent recompute, render page 1), J2 Form 1040-NR + Schedule OI (verify_fil
 (verify_form), J3 Form 540NR, J5 Form 1040-X (2024, with the recompute). With no network and a cold blank cache they
 skip. J4 runs offline only (its IT 1040 pack is held by the Ohio pack's own golden).
 
-KNOWN DEFECTS the journeys found are held as strict xfails (each turns red when the tool is fixed, so the mark comes
-off): file_and_pay prices a Form 1040-X as a Form 1040 and returns the 1040 address (offline); it also routes a Georgia
-Form 500X like an original Form 500 (offline); Virginia's state_scope entry names Form 760PY but cites only the resident
-Form 760 instructions (offline); and verify_filing fails an attached Form 8843 whose address boxes are blank as the form
-instructs (network). Phase K JK27 fixes them.
+KNOWN DEFECTS the journeys found were held as strict xfails until Phase K JK27 fixed them (2026-10-16): file_and_pay
+priced a Form 1040-X as a Form 1040 and routed a Georgia Form 500X like an original Form 500 (both now follow the
+amended-return model); Virginia's state_scope entry cited only the resident Form 760 instructions for Form 760PY; and
+verify_filing failed an attached Form 8843 whose address boxes are blank as the form instructs. Each is an ordinary test
+now. A defect a journey finds goes in as a strict xfail naming the tranche that fixes it, and the mark comes off with
+the fix.
 """
 from __future__ import annotations
 
@@ -569,11 +570,10 @@ def test_journey_2_network_fill_and_verify_the_1040nr_filing(tmp_path):
 
 
 @pytest.mark.network
-@pytest.mark.xfail(strict=True, reason=(
-    "verify_filing's identity check (P-002) requires the Form 8843 address box even when the 8843 is attached to the "
-    "1040-NR, where the 2025 form itself prints 'Fill in your addresses only if you are filing this form by itself and "
-    "not with your U.S. tax return' — it fails the blank box. Remove this mark when the identity check honours it."))
 def test_journey_2_network_verify_filing_accepts_the_attached_8843_without_an_address(tmp_path):
+    # The 2025 Form 8843 prints "Fill in your addresses only if you are filing this form by itself and not with your
+    # U.S. tax return". Until Phase K JK27 the identity check (P-002) failed that correct blank; the pack now declares
+    # the boxes in standalone_only_lines (packages/core/tests/test_standalone_only_lines.py).
     _fill_run, paths = _journey_2_filled(tmp_path)
 
     async def go():
@@ -649,8 +649,8 @@ async def _journey_3(j: Recorder, fig: dict) -> None:
         "form": "va760py", "year": 2025, "jurisdiction": "states/va", "values": {},
         "out_path": str(Path(tempfile.mkdtemp(prefix="journey3-")) / "unused.pdf")})
     pointer = j.record("Virginia Form 760PY: where it is", "pointer", "state_scope", by_state["VA"])
-    # The entry names Form 760PY and cites Virginia's own site, but only the RESIDENT Form 760 instructions (strict xfail
-    # test_journey_3_the_760py_pointer_cites_the_760py_instructions below; Phase K JK27).
+    # The entry names Form 760PY and cites Virginia's own site, the 760PY instructions among them (Phase K JK27; pinned
+    # by test_journey_3_the_760py_pointer_cites_the_760py_instructions below).
     assert all(c["url"].startswith("https://www.tax.virginia.gov/") for c in pointer["citations"]) and pointer["citations"]
     fig.update(agi=agi, ca_std=ca_std, ca_taxable=ca["base_after_exemptions"])
 
@@ -660,11 +660,9 @@ def _journey_3_run() -> JourneyRun:
     return _run_journey(_journey_3)
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "Virginia's state_scope entry names Form 760PY but cites only the resident Form 760 instructions, so a part-year "
-    "filer gets no pointer to the 760PY form or its instructions. Remove this mark when knowledge/states/va cites the "
-    "760PY instructions (Phase K JK27)."))
 def test_journey_3_the_760py_pointer_cites_the_760py_instructions():
+    # Until Phase K JK27 Virginia's state_scope entry named Form 760PY but cited only the resident Form 760
+    # instructions; the VA packs now carry forms.citations.part_year (the 760PY instructions and return).
     pointer = next(s for s in _journey_3_run().steps if s.name == "Virginia Form 760PY: where it is").output
     assert any("760py" in json.dumps(c).lower() for c in pointer["citations"])
 
@@ -844,9 +842,9 @@ async def _journey_5(j: Recorder, fig: dict) -> None:
     paid = await j.call("Georgia Form 500X: where it goes", "pointer", "file_and_pay", {"manifest": [
         {"form": "500X", "tax_year": 2024, "jurisdiction": "states/ga", "bottom_line": -ga_more}]})
     ret = paid["returns"][0]
-    # Scoped on purpose: this proves only that the answer carries the IT-511's 500X box. It leads with the Form 500
-    # address and the original due date instead (strict xfail test_journey_5_file_and_pay_routes_the_500x_as_an_amendment).
-    assert "Form 500X amended: PO BOX 740318" in ret["mailing_address"]
+    # The amended-return model (Phase K JK27): the Form 500X box, not the Form 500 ones; the rest of the 500X rules are
+    # pinned by test_journey_5_file_and_pay_routes_the_500x_as_an_amendment below.
+    assert ret["mailing_address"] == "PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740318, ATLANTA, GA 30374-0318"
     assert any("2024-it-511" in c["url"] and c["url"].startswith("https://dor.georgia.gov/") for c in ret["citations"])
     fig.update(std=std["amount"], taxable_o=taxable_o, taxable_c=taxable_c, tax_o=tax_o["tax"], tax_c=tax_c["tax"],
                overpaid_original=overpaid_original, line19=line19, line20=line20, ga_more=ga_more)
@@ -862,29 +860,33 @@ def test_journey_5_amended_prior_year_return():
     assert [(s.name, s.path) for s in run.steps] == J5_EXPECTED_PATHS
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "file_and_pay has no Form 1040-X model: it prices a 1040-X as a Form 1040 and returns the 1040 address "
-    "(Charlotte, NC for a Georgia balance due). Instructions for Form 1040-X (Rev. December 2025), Where To File: "
-    "a Georgia resident mails Form 1040-X to Austin, TX 73301-0052. Remove this mark when file_and_pay learns 1040-X."))
 def test_journey_5_file_and_pay_sends_the_1040x_to_the_1040x_address():
+    # Until Phase K JK27 file_and_pay priced a 1040-X as a Form 1040 and returned the 1040 address (Charlotte, NC for a
+    # Georgia balance due). Instructions for Form 1040-X (Rev. December 2025), Where To File: a Georgia resident mails
+    # Form 1040-X to Austin, TX 73301-0052.
     owed = _journey_5_run().figures["line20"]
 
     async def go():
         async with connect(mcp) as client:
             return _data(await client.call_tool("file_and_pay", {"manifest": [
-                {"form": "1040-X", "tax_year": 2024, "bottom_line": -owed, "state": "GA"}]}))
-    assert "Austin, TX 73301-0052" in asyncio.run(go())["returns"][0]["mailing_address"]
+                {"form": "1040-X", "tax_year": 2024, "bottom_line": -owed, "state": "GA", "attached_forms": ["1040"]}]}))
+    ret = asyncio.run(go())["returns"][0]
+    assert ret["mailing_address"] == "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0052"
+    assert any('"U.S. Treasury"' in p and "2024 Form 1040-X" in p for p in ret["payment"])
+    assert not any("1040-V and the check" in a for a in ret["assemble"])
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "file_and_pay has no state amended-return model either: for a Georgia Form 500X balance due it leads with the "
-    "Form 500 payment address (PO BOX 740399), gives the original return's due date and names the 525-TV voucher; "
-    "the 500X box (PO BOX 740318) appears only as a trailing note. Remove this mark when file_and_pay learns amended "
-    "state returns (Phase K JK27)."))
 def test_journey_5_file_and_pay_routes_the_500x_as_an_amendment():
+    # Until Phase K JK27 a Georgia Form 500X balance due led with the Form 500 payment address (PO BOX 740399) and the
+    # original return's due date, with the 500X box (PO BOX 740318) only inside that address. The 525-TV voucher the
+    # old answer named was right: each 525-TV (Rev. 06/05/23, 08/14/24, 05/20/25) has an "Amended Return" box and says
+    # "Mail your return, payment voucher and payment to the address that appears on the return if filing a paper
+    # return".
     ret = next(s for s in _journey_5_run().steps if s.name == "Georgia Form 500X: where it goes").output["returns"][0]
     assert "740399" not in ret["mailing_address"]
     assert "2025-04-15" not in json.dumps(ret.get("deadlines"))
+    assert any('"Amended Return" box checked' in p for p in ret["payment"])
+    assert any("180 days" in d for d in ret["deadlines"])
 
 
 @pytest.mark.network

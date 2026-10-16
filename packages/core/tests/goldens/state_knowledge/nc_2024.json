@@ -2,16 +2,23 @@
  "_strings": {
   "@@1054bfcfad28": "2024 D-401 North Carolina Individual Income Tax Instructions — \"When Must I File?\" (\"the 2024 return is due on or before April 15th, 2025\"); automatic four-month extension if out of the country on the due date; federal automatic extension honored when the \"Federal Extension\" circle on D-400 page 1 is filled in (else Form D-410)",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@5218169b03e7": "2024 D-401 North Carolina Individual Income Tax Instructions — \"Where Do I File?\" (refund P.O. Box R; payment P.O. Box 25000 with Form D-400V)",
   "@@5b2e76897a69": "Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents",
   "@@5d6aa67cc831": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L).",
   "@@6959b40e9726": "N.C. DEPARTMENT OF REVENUE, P.O. BOX R, RALEIGH, NC 27634-0001 (if due a refund and filing on paper)",
   "@@8f63f754a3a3": "Form D-400 with Form D-400 Schedule PN (2024 Part-Year Resident and Nonresident Schedule) to compute the NC taxable percentage (D-400 Line 13); if needed, Form D-400 Schedule PN-1 (Other Additions and Other Deductions). All filers, including part-year residents and nonresidents, file the same Form D-400.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a02b244cbdfa": "Credit for Income Tax Paid to Another State or Country — N.C. residents (and part-year residents for the resident period) only. Available when income earned while a legal resident of North Carolina is taxed by both North Carolina and another U.S. state or a foreign country because it was earned in or derived from sources in that other state/country. No credit for tax paid to a city/county/other political subdivision or to the federal government. Nonresidents are NOT entitled to this credit. A copy of the return filed with the other state/country and proof of payment must be attached (the 2024 D-401 \"What You Should Send Us\" list requires a copy of the other state's return when the credit is claimed on Form D-400TC, Part 1, Line 7a).",
   "@@a6c77a7280fd": "Treaty conformity — NC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NC income (it flows through the federal starting point; do not add it back on the NC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: NC conforms. The 2024 D-401 instructions state on Line 6: \"The starting point for determining North Carolina taxable income is federal adjusted gross income\" (IRC as of January 1, 2023 — the 2024 booklet keeps the January 1, 2023 conformity date). Because federally treaty-exempt income is already excluded from federal AGI, it flows through to NC untaxed UNLESS NC adds it back. The Form D-400 Schedule S, Part A \"Additions to Federal Adjusted Gross Income\" list in the 2024 D-401 (Lines 1-16: non-NC state/local bond interest, Opportunity Fund deferred gains, 85% bonus depreciation, 85% of the IRC 179 difference, S-corp built-in gains, federal-over-state basis on 2024 dispositions, federal NOL, pass-through state/local/foreign income tax under IRC 164, non-qualifying N.C. 529 withdrawals, discharge of qualified principal residence indebtedness, employer education-loan payments under IRC 127(c), expenses allocable to exempt income, discharge of certain student loan debt, etc.) contains NO add-back of treaty-exempt income. Since treaty-exempt income is not re-taxed, conforms_to_federal_treaties = true. Note one nuance to flag for filers: Schedule S Part A Line 12 requires adding back EXPENSES allocable to income exempt from NC tax, but it does not add back the exempt income itself.",
+  "@@b8f5f5fbc283": "The shipped NC 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@dbddd157f5ae": "2024 D-401 North Carolina Individual Income Tax Instructions — \"For tax year 2024, the individual income tax rate is 4.5%. To calculate your North Carolina tax liability, multiply your North Carolina taxable income by 4.5% (0.0450)\"; N.C. Standard Deduction Chart (D-400 Line 11): $12,750 single / $25,500 MFJ-QSS / $12,750 MFS ($0 if spouse itemizes) / $19,125 HoH; child deduction table (D-400 Line 10); D-400 Line 6 = federal AGI. Second pass: the 2024 Form D-400 (web-fill 9-24) itself prints Line 15 \"Multiply Line 14 by 4.5% (0.0450). If zero or less, enter a zero.\" — both passes agree (the form does not print the standard-deduction chart; see pack unverified).",
   "@@de57f30661b2": "Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L) — Narrow / not broadly applicable to ordinary residents. Available to taxpayers who incur qualified rehabilitation expenditures/expenses on a certified historic structure or historic mill facility under Article 3D, Article 3H (historic mill facility), or Article 3L (Historic Rehabilitation Tax Credits Investment Program; requires Form NC-Rehab attached to the front of Form D-400). Distinguishes income-producing vs. non-income-producing structures.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f2e0d5e48d3b": "annual (per tax year; the shipped NC 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@f9224b8b0ad6": "2024 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must File, residency), When Must I File (\"the 2024 return is due on or before April 15th, 2025\"), What is the Tax Rate? (\"For tax year 2024, the individual income tax rate is 4.5%... multiply your North Carolina taxable income by 4.5% (0.0450)\"), Where Do I File / How Can I Pay (mailing addresses, payee), Line 6 federal AGI starting point, Line 7 Additions / Schedule S Part A list, Filing Requirements Chart (p.6)"
  },
  "file_and_pay": {
@@ -136,6 +143,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NC 2024 return (Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NC revenue department home page (read 2026-10-16)",
+      "url": "https://www.ncdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@5b2e76897a69",
+    "jurisdiction": "states/nc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NC return, and the NC 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NC instructions for amended returns on the NC revenue department's site (https://www.ncdor.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -193,9 +235,261 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "NC revenue department home page (read 2026-10-16)",
+      "url": "https://www.ncdor.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NC instructions for amended returns on the NC revenue department's site (https://www.ncdor.gov/).",
+    "form": "@@5b2e76897a69",
+    "headline": "NC 2024, amended (Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents): you owe $88",
+    "jurisdiction": "states/nc",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b8f5f5fbc283",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "NCDOR 2024 D-401 Individual Income Tax Instructions (Instructions for Form D-400TC, Part 1) and 2024 Form D-400 Line 16",
+     "cadence": "@@f2e0d5e48d3b",
+     "topic": "credits",
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b8f5f5fbc283",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@5218169b03e7",
+     "cadence": "@@f2e0d5e48d3b",
+     "topic": "filing_logistics",
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b8f5f5fbc283",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@f9224b8b0ad6",
+     "cadence": "@@f2e0d5e48d3b",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "2024 Form D-400 (web-fill, D-400 Web-Fill 9-24) — Line 6 Federal Adjusted Gross Income, Line 7 additions (Schedule S Part A Line 16), Line 9 deductions (Schedule S Part B Line 41), Line 10 child deduction, Line 11 standard/itemized deduction, Line 14 N.C. Taxable Income, Line 15 \"Multiply Line 14 by 4.5% (0.0450)\" (second-pass verification of the rate), Line 16 Tax Credits (From Form D-400TC, Part 3, Line 20)",
+     "cadence": "@@f2e0d5e48d3b",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ncdor.gov/2024-d-400-web-fill-version/open"
+    },
+    {
+     "answers": "NCDOR — File & Pay for Individuals (online payment by bank draft free; Mastercard/Visa $2 convenience fee per $100 paid, per the 2024 D-401 \"How Can I Pay?\")",
+     "cadence": "@@f2e0d5e48d3b",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ncdor.gov/file-pay/file-pay-individuals"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b8f5f5fbc283",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@f9224b8b0ad6",
+     "cadence": "@@f2e0d5e48d3b",
+     "topic": "law_changes",
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b8f5f5fbc283",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@dbddd157f5ae",
+     "cadence": "@@f2e0d5e48d3b",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@b8f5f5fbc283",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nc",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/nc",
  "state_scope": {
@@ -504,7 +798,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: NC 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: NC 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -523,7 +817,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2024 D-401 North Carolina Individual Income Tax Instructions — \"For tax year 2024, the individual income tax rate is 4.5%. To calculate your North Carolina tax liability, multiply your North Carolina taxable income by 4.5% (0.0450)\"; N.C. Standard Deduction Chart (D-400 Line 11): $12,750 single / $25,500 MFJ-QSS / $12,750 MFS ($0 if spouse itemizes) / $19,125 HoH; child deduction table (D-400 Line 10); D-400 Line 6 = federal AGI. Second pass: the 2024 Form D-400 (web-fill 9-24) itself prints Line 15 \"Multiply Line 14 by 4.5% (0.0450). If zero or less, enter a zero.\" — both passes agree (the form does not print the standard-deduction chart; see pack unverified).",
+    "source": "@@dbddd157f5ae",
     "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
    },
    "marginal_rate": "0.045",

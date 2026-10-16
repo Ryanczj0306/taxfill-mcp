@@ -25,6 +25,7 @@
   "@@d009c3b9f7fc": "Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02). Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident treatment), whichever is more advantageous.",
   "@@e7da96f5baec": "Personal Credits (exemption credit) — Resident individuals are allowed a credit for each personal exemption. If you were not required to file a federal return, \"enter $110 for each spouse reporting income plus $110 for each person who could have been listed as a dependent.\" NOT available if you are claimed as a dependent on another person's return. The number of personal credits is verified against the federal return with the IRS.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@f9c149071f3b": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf"
  },
  "file_and_pay": {
@@ -149,6 +150,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended DE 2025 return (Form PIT-RES (Delaware Individual Resident Income Tax Return; formerly Form 200-01)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "DE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.delaware.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@b636c51098b7",
+    "jurisdiction": "states/de",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended DE return, and the DE 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the DE instructions for amended returns on the DE revenue department's site (https://revenue.delaware.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -203,6 +239,27 @@
     "jurisdiction": "states/de",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "DE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.delaware.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the DE instructions for amended returns on the DE revenue department's site (https://revenue.delaware.gov/).",
+    "form": "@@b636c51098b7",
+    "headline": "DE 2025, amended (Form PIT-RES (Delaware Individual Resident Income Tax Return; formerly Form 200-01)): you owe $88",
+    "jurisdiction": "states/de",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -944,7 +1001,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: DE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: DE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

@@ -8,14 +8,21 @@
   "@@2d1a37673859": "Law change NOT modeled by the engine (status final_form_published): Claimable only on the 2023 return: the Oregon surplus (\"kicker\") credit — a refundable credit equal to 44.28% of the filer's 2022 total Oregon personal income tax liability (before payments and before credits other than the credit for taxes paid to another state). It exists for 2023 with that year-specific percentage and is reported in the OR-40 refundable-credits area (instructions p. 19); it is not part of the rate schedule and is not modeled. Resolve via: 2023 Form OR-40 Instructions (150-101-040-1, Rev. 12-06-23) p. 19 kicker instructions (the citation URL) for the 44.28% rate and where to report it; the 2022 tax figure it multiplies comes from the filer's own 2022 Oregon return, and calc.state_tax applies no Oregon credits.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@52d828ea973a": "annual (per tax year; the shipped OR 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@54b144c345ce": "Oregon DOR 2023 Form OR-40 Instructions (Full-year Resident), publication 150-101-040-1, Rev. 12-06-23, pages 18-19 (line 37, credit amount up to $1,000 per dependent, age 5 or younger, qualifying income under $30,000, $25,000 phaseout amount, max 5 children).",
   "@@555eb6593a7b": "Nonresident: Form OR-40-N (150-101-048). Part-year resident: Form OR-40-P (150-101-055). Both share the same instruction booklet (150-101-048-1).",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@5ea02e491e6d": "2023 Form OR-40 Instructions, Full-year Resident (150-101-040-1, Rev. 12-06-23) - line 7 federal AGI starting point, residency definitions, 200-day rule, April 15 2024 due date, filing thresholds (Table 1), mailing addresses (PO Box 14700 / PO Box 14555), check payee and Revenue Online payment",
   "@@6274f77e9dc9": "Oregon Kids Credit — Low-income taxpayers with one or more dependents age 5 or younger at the end of 2023 listed on the Oregon return. Filing status must be single, married filing jointly, head of household, or qualifying surviving spouse (married filing separately does not qualify). New for tax year 2023.",
   "@@8a25a0b175b6": "Exemption credit — Available to the taxpayer, spouse (if filing jointly), and qualifying dependents (a personal exemption credit per allowed exemption). Phased out for higher-income filers.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a08831467f26": "Treaty conformity — OR conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OR income (it flows through the federal starting point; do not add it back on the OR return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Oregon's resident return (Form OR-40) starts from federal adjusted gross income: Line 7 instruction reads \"Federal adjusted gross income (AGI). Enter your federal AGI from Form 1040, 1040-SR or 1040-NR, line 11; or Form 1040-X, line 1C.\" Oregon taxable income is then built by applying additions (Schedule OR-ASC) and subtractions to that federal AGI. The 2023 OR-40 instruction booklet contains no general addition/add-back of federally treaty-exempt income (unlike California's Schedule CA, or CT/MD/MS). Because federally treaty-exempt income is already excluded from federal AGI on the 1040 and there is no Oregon add-back code restoring it, the treaty exclusion flows through and is NOT re-taxed by Oregon. Therefore Oregon conforms to federal treaty treatment for the common case (conforms_to_federal_treaties = true). Caveat: confirm against the full Schedule OR-ASC / OR-ASC-NP addition code list and Publication OR-17 for any niche addition that could touch a specific treaty article.",
+  "@@a8e9b8dc49df": "The shipped OR 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@c0ff7546e1b4": "Oregon Earned Income Credit (EIC) — You must qualify for the federal Earned Income Tax Credit (EITC). Low- to moderate-income working individuals and families. ITIN filers who cannot claim the federal EITC because the taxpayer, spouse, or child has an ITIN rather than a work-eligible SSN may still qualify (see Schedule OR-EIC-ITIN). RDPs may claim it using their 'as if' federal return.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@ddf16f662485": "2023 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 12-06-23) — p. 16 line 20 tax computation (tax tables if line 19 < $50,000; rate-chart formula if $50,000 or more; booklet Examples 1 and 2), p. 30 \"2023 Tax rate charts\" (Chart S / Chart J, $50,000-and-over segments) and 2023 Tax Tables, p. 15 Table 5 \"Standard deduction\" ($2,605 single; $5,210 MFJ; $2,605/$0 MFS; $4,195 HoH; $5,210 QSS) plus age-65/blind additions, p. 14 Table 4 federal tax liability subtraction AGI phaseout, p. 17 line 25 exemption credit worksheet ($236/exemption CREDIT). Full four-bracket 2023 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,050/$10,200/$125,000 and $8,100/$20,400/$250,000) as printed in 2023 Publication OR-ESTIMATE, Oregon Estimated Income Tax Instructions (150-101-026, Rev. 02-15-23), p. 3 of 6, https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2023.pdf",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -139,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended OR 2023 return (Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "OR revenue department home page (read 2026-10-16)",
+      "url": "https://www.oregon.gov/dor/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@0912f1885e46",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended OR return, and the OR 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the OR instructions for amended returns on the OR revenue department's site (https://www.oregon.gov/dor/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -196,9 +238,291 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "OR revenue department home page (read 2026-10-16)",
+      "url": "https://www.oregon.gov/dor/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the OR instructions for amended returns on the OR revenue department's site (https://www.oregon.gov/dor/).",
+    "form": "@@0912f1885e46",
+    "headline": "OR 2023, amended (Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040)): you owe $88",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a8e9b8dc49df",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Oregon DOR 2023 Form OR-40 Instructions (Full-year Resident), publication 150-101-040-1, Rev. 12-06-23, page 18 (line 36, Table 6).",
+     "cadence": "@@52d828ea973a",
+     "topic": "credits",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    },
+    {
+     "answers": "Oregon DOR 2023 Schedule OR-WFHDC Instructions, publication 150-101-195-1, Rev. 10-12-23, pages 1 (refundable status, $12,000/$24,000 caps, AGI-limit table by household size), 4 (student AGI-limit table), and 7 (line 29 reporting via Schedule OR-ASC Section F, code 895).",
+     "cadence": "@@52d828ea973a",
+     "topic": "credits",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/schedule-or-wfhdc-inst_101-195-1_2023.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a8e9b8dc49df",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@5ea02e491e6d",
+     "cadence": "@@52d828ea973a",
+     "topic": "filing_logistics",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a8e9b8dc49df",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@5ea02e491e6d",
+     "cadence": "@@52d828ea973a",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    },
+    {
+     "answers": "2023 Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040)",
+     "cadence": "@@52d828ea973a",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40_101-040_2023.pdf"
+    },
+    {
+     "answers": "2023 Form OR-40-N, Oregon Individual Income Tax Return for Nonresidents (150-101-048)",
+     "cadence": "@@52d828ea973a",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_101-048_2023.pdf"
+    },
+    {
+     "answers": "2023 Form OR-40-P, Oregon Individual Income Tax Return for Part-year Residents (150-101-055)",
+     "cadence": "@@52d828ea973a",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-p_101-055_2023.pdf"
+    },
+    {
+     "answers": "2023 Form OR-40-N and OR-40-P Instructions (150-101-048-1)",
+     "cadence": "@@52d828ea973a",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2023.pdf"
+    },
+    {
+     "answers": "Oregon DOR - Do I need to file? (Individuals) - filing requirement / residency status",
+     "cadence": "@@52d828ea973a",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/programs/individuals/pages/file-requirements.aspx"
+    },
+    {
+     "answers": "Oregon DOR - What form do I use? (Individuals) - residency definitions and form selection",
+     "cadence": "@@52d828ea973a",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/programs/individuals/pages/what-form.aspx"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a8e9b8dc49df",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@54b144c345ce",
+     "cadence": "@@52d828ea973a",
+     "topic": "law_changes",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a8e9b8dc49df",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@ddf16f662485",
+     "cadence": "@@52d828ea973a",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a8e9b8dc49df",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/or",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/or",
  "state_scope": {
@@ -687,7 +1011,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 12-06-23) — p. 16 line 20 tax computation (tax tables if line 19 < $50,000; rate-chart formula if $50,000 or more; booklet Examples 1 and 2), p. 30 \"2023 Tax rate charts\" (Chart S / Chart J, $50,000-and-over segments) and 2023 Tax Tables, p. 15 Table 5 \"Standard deduction\" ($2,605 single; $5,210 MFJ; $2,605/$0 MFS; $4,195 HoH; $5,210 QSS) plus age-65/blind additions, p. 14 Table 4 federal tax liability subtraction AGI phaseout, p. 17 line 25 exemption credit worksheet ($236/exemption CREDIT). Full four-bracket 2023 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,050/$10,200/$125,000 and $8,100/$20,400/$250,000) as printed in 2023 Publication OR-ESTIMATE, Oregon Estimated Income Tax Instructions (150-101-026, Rev. 02-15-23), p. 3 of 6, https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2023.pdf",
+    "source": "@@ddf16f662485",
     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
    },
    "rate": null,

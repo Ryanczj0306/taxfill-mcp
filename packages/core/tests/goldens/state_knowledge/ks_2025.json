@@ -24,6 +24,7 @@
   "@@e9005ca6495c": "annual (per tax year; the newest shipped KS pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@e91d93f221a7": "Credit for Child and Dependent Care Expenses — Kansas residents only - nonresidents and part-year residents are NOT eligible. Available to taxpayers who claimed the federal child and dependent care credit on federal Form 2441. A valid SSN for the entire year is required for the taxpayer, spouse (if MFJ), and each dependent claimed.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fec99964ce8b": "Same Form K-40, with Schedule S (Supplemental Schedule) Part B \"Income Allocation for Nonresidents and Part-Year Residents\" required to compute the nonresident percentage (K-40 line 9 / Schedule S line B23). Kansas does not have a separate standalone nonresident form."
  },
  "file_and_pay": {
@@ -148,6 +149,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended KS 2025 return (Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents complete K-40 (with Schedule S Part A only if they have modifications)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "KS revenue department home page (read 2026-10-16)",
+      "url": "https://www.ksrevenue.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@d264e27c652f",
+    "jurisdiction": "states/ks",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended KS return, and the KS 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the KS instructions for amended returns on the KS revenue department's site (https://www.ksrevenue.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -202,6 +238,27 @@
     "jurisdiction": "states/ks",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "KS revenue department home page (read 2026-10-16)",
+      "url": "https://www.ksrevenue.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the KS instructions for amended returns on the KS revenue department's site (https://www.ksrevenue.gov/).",
+    "form": "@@d264e27c652f",
+    "headline": "KS 2025, amended (Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents complete K-40 (with Schedule S Part A only if they have modifications)): you owe $88",
+    "jurisdiction": "states/ks",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

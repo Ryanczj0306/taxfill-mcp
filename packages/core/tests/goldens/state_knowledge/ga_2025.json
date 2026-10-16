@@ -2,6 +2,8 @@
  "_strings": {
   "@@077fe72c6013": "https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download",
   "@@1328afbb0047": "Form 500 with Schedule 3 (part-year residents and nonresidents file the same Form 500, omit Lines 9-14, and complete Form 500 Schedule 3 to calculate Georgia taxable income). The residency status box on Form 500 Line 4 (1=full-year resident, 2=part-year resident, 3=nonresident) designates status.",
+  "@@136f46014bfe": "Georgia DOR 525-TV Individual and Fiduciary Payment Voucher (Rev. 05/20/25): the \"Amended Return\" type box; \"Mail your return, payment voucher and payment to the address that appears on the return if filing a paper return\"",
+  "@@1780691b1640": "Georgia DOR, Mailing Address - Individual/Fiduciary Income Tax: \"500X Amended Georgia Dept. of Revenue PO Box 740318 Atlanta, GA 30374-0318\"; \"Make checks payable to Georgia Department of Revenue\"; the certified-mail note (read 2026-10-16)",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@37415a805b7f": "Qualified Caregiving Expense Credit (Credit Code 204) — Taxpayers who pay qualified caregiving expenses for a qualifying family member who is at least age 62 OR has been determined disabled by the Social Security Administration. Qualified services must be obtained from an organization or individual NOT related to the taxpayer or family member.",
@@ -12,6 +14,8 @@
   "@@70f8cb2237ab": "GA 2025 IT-511 Individual Income Tax Instruction Booklet - What's New ('Effective January 1, 2025, the income tax rate is 5.19%'; Form 500EZ discontinued for 2025); Standard Deductions chart ($24,000 MFJ; $12,000 Single/MFS/Head of household/Qualifying surviving spouse); Line 14 dependent exemption (Line 7c x $4,000); Line 16 tax (Line 15c x 5.19%, round to nearest dollar); Filing Requirements chart; 'file on or before April 15, 2026'; mailing addresses; Low Income Credit Worksheet; IND-CR 201/202/204",
   "@@7bd48f184e66": "Georgia DOR, 2025 IT-511 Individual Income Tax Instruction Booklet — What's New: 'Effective January 1, 2025, the income tax rate is 5.19%. Form 500EZ has been discontinued'; Standard Deductions chart (Married filing jointly $24,000; Single, Married filing separately, Head of household, Qualifying surviving spouse $12,000 each); Line 14 dependent exemption 'multiply by $4,000'; Line 16 'Multiply the amount on Line 15c by 5.19%. Round to nearest dollar.' Second pass: the 2025 Form 500 prints Line 11 'Enter $12,000 if the filing status from Line 5 is A, C, or D. If the filing status is B, enter $24,000', Line 14 'Enter the number from Line 7c. Multiply by $4,000', and Line 16 'Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar)' (https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download) — both passes agree. HB 111 (2025 session) accelerated the rate to 5.19% (from 2024's 5.39%); the $12,000/$24,000 standard deductions and the $4,000 dependent exemption are unchanged from 2024.",
   "@@7e568f1ab231": "Georgia DOR 2025 IT-511 booklet, 'Mailing Address' page (Form 500 without payment PO Box 740392 / with payment PO Box 740399; 500X PO Box 740318)",
+  "@@822dcb072b90": "https://dor.georgia.gov/document/document/2025-525-payment-voucher-and-instructions/download",
+  "@@90b8baa4c42c": "Georgia DOR 2025 Form 500X, Amended Individual Income Tax Return (blank for printing): \"Mail To: GEORGIA DEPARTMENT OF REVENUE PROCESSING CENTER, PO BOX 740318 ATLANTA, GA 30374-0318\"; lines 36-38; the attachment and line 8 instructions",
   "@@921fae3b30f3": "The newest shipped GA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9713be127ea0": "https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download",
@@ -20,10 +24,12 @@
   "@@b5eb681cda09": "Disabled Person Home Purchase or Retrofit Credit (Credit Code 201) — A permanently disabled person (the taxpayer or the taxpayer's spouse on a joint return) who has been issued a permanent parking permit by the Department of Revenue, and who purchases a new single-family home containing all four required accessibility features, or retrofits an existing single-family home with one or more of those features.",
   "@@b8af893acd57": "Georgia DOR 2025 IT-511 booklet, 'When to File' — 'Calendar year taxpayers are required to file on or before April 15, 2026'",
   "@@b8e8ec1cc483": "Low Income Tax Credit — Georgia residents whose Federal adjusted gross income (FAGI) is less than $20,000 and who are not claimed (or eligible to be claimed) as a dependent on another taxpayer's federal or Georgia return. Cannot be claimed by an inmate in a correctional facility. Part-year residents qualify only if they were Georgia residents at the end of the tax year.",
+  "@@cbe39407031e": "https://dor.georgia.gov/document/document/2025-500x-amended-individual-income-tax-return-blank-form-printing/download",
   "@@cf788a0edf10": "Georgia Eligible Itemizer Tax Credit — Full-year residents and part-year residents living in Georgia at the end of the year who itemized deductions on their returns.",
   "@@d94a5d9eb85a": "annual (per tax year; the newest shipped GA pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@e1b4560c91aa": "Treaty conformity — GA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from GA income (it flows through the federal starting point; do not add it back on the GA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Georgia conforms. The resident return (Form 500) starts from federal adjusted gross income (2025 Form 500, Line 8: \"Federal adjusted gross income (From Federal Form 1040)\" with the warning \"Do not use FEDERAL TAXABLE INCOME\"), and adjustments are made only on Form 500 Schedule 1. The Schedule 1 ADDITIONS do not include any add-back of federally treaty-exempt income (unlike California's Schedule CA add-back). To the contrary, the IT-511 booklet expressly lists as a SUBTRACTION item income specifically exempted by Federal law or treaty. Because treaty-exempt income is already excluded from federal AGI and GA neither adds it back nor otherwise re-taxes it (and explicitly recognizes the treaty exemption), it flows through untaxed.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f076048ee9c9": "Georgia DOR 2025 IT-511 booklet: Mailing Address, \"Form 500X Amended: ... PO BOX 740318\" (p. 7); Amended Returns (p. 10); claim for refund within three years (p. 3); Federal Audits, within 180 days (pp. 9, 12)",
   "@@feb9a1864881": "GA Form 500 (2025) blank return - Line 8 'Federal adjusted gross income (From Federal Form 1040)', Line 9 Schedule 1 adjustments, Line 5 filing statuses (A Single / B MFJ / C MFS / D Head of household or Qualifying surviving spouse), Line 11 standard deduction ($12,000 status A/C/D, $24,000 status B), Line 14 dependent exemption (Line 7c x $4,000), Line 16 tax (Line 15c x 5.19%, round to nearest dollar)"
  },
  "file_and_pay": {
@@ -148,6 +154,57 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "\"Include any supporting documents and new or changed forms and schedules. In the space provided below, tell us why you are filing Form 500X. Mail pages 1-5 and any applicable schedules, forms, and documentation. DO NOT staple pages.\" (2025 Form 500X)",
+     "Line 8, federal adjusted gross income: \"If the amount on Line 8 is $40,000 or more, or your gross income is less than your W-2s you must include a copy of your Federal Form 1040 Pages 1, 2, and Schedule 1.\" (2025 Form 500X)"
+    ],
+    "bottom_line": "Amended GA 2025 return (Form 500X): you owe $88 more.",
+    "citations": [
+     {
+      "source": "@@90b8baa4c42c",
+      "url": "@@cbe39407031e"
+     },
+     {
+      "source": "@@f076048ee9c9",
+      "url": "@@9713be127ea0"
+     },
+     {
+      "source": "@@136f46014bfe",
+      "url": "@@822dcb072b90"
+     },
+     {
+      "source": "@@1780691b1640",
+      "url": "https://dor.georgia.gov/mailing-address-individualfiduciary-income-tax"
+     }
+    ],
+    "deadlines": [
+     "\"A claim for refund must be made within three (3) years from the later of the date the tax was paid or the due date of the return, including extensions.\" (2025 IT-511, p. 3)",
+     "After a federal change: \"Whenever a Federal audit or other Federal adjustment results in a change in net income for any year, you are required to furnish, within 180 days, a Form 500X with supporting schedules and a copy of Form 1040 to the Georgia Department of Revenue reflecting all changes. Additionally, if the changes result in a refund, the refund must be claimed within one year from the date the changes are submitted.\" (2025 IT-511, Federal Audits, p. 12) And (p. 9, \"Update to Final Determination Date for Reporting Federal Changes\"): \"Taxpayers must report any federal changes or corrections resulting from a federal audit within 180 days of the final determination date. When those changes result from an amended federal return, a federal refund claim, an administrative adjustment request, or a similar report filed under Section 6225(c) of the Internal Revenue Code, the final determination date is the date the amended return, claim, adjustment request, or related report is filed.\""
+    ],
+    "form": "@@b4391634b953",
+    "jurisdiction": "states/ga",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Georgia DOR: \"Sending your return via certified mail or courier will NOT speed the processing of your return. The postal service imposes special handling procedures for certified mail that may delay processing your return\" (Mailing Address - Individual/Fiduciary Income Tax)."
+    ],
+    "mailing_address": "PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740318, ATLANTA, GA 30374-0318",
+    "notes": [
+     "\"File Form 500X to correct information reported on Form 500. Do not use Form 500 to correct a previously filed return or use Form 500X as an original return.\" (2025 IT-511, Amended Returns, p. 10)",
+     "An amendment that follows an IRS audit checks the \"Amended due to IRS Audit\" box on the 2025 Form 500X header."
+    ],
+    "payment": [
+     "Form 500X line 38 \"Amount Owed Pay in full with this Return (Add Line 32, Line 35 through 37)\": you add line 35 \"Form 500 UET (Estimated tax penalty)\", line 36 \"Late Payment Penalty (1/2 of 1% per month from due date)\" and line 37 \"Interest (See IT-511 Tax Booklet)\" on the form yourself (2025 Form 500X).",
+     "Pay on the Georgia Tax Center (gtc.dor.ga.gov), or by check or money order \"payable to: Georgia Department of Revenue\" with your SSN on it and Form 525-TV, its \"Amended Return\" box checked: \"Mail your return, payment voucher and payment to the address that appears on the return if filing a paper return\"; do not staple the payment and voucher together (525-TV, Rev. 05/20/25)."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -202,6 +259,35 @@
     "jurisdiction": "states/ga",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@90b8baa4c42c",
+      "url": "@@cbe39407031e"
+     },
+     {
+      "source": "@@f076048ee9c9",
+      "url": "@@9713be127ea0"
+     },
+     {
+      "source": "@@136f46014bfe",
+      "url": "@@822dcb072b90"
+     },
+     {
+      "source": "@@1780691b1640",
+      "url": "https://dor.georgia.gov/mailing-address-individualfiduciary-income-tax"
+     }
+    ],
+    "deadline_status": "\"A claim for refund must be made within three (3) years from the later of the date the tax was paid or the due date of the return, including extensions.\" (2025 IT-511, p. 3) After a federal change: \"Whenever a Federal audit or other Federal adjustment results in a change in net income for any year, you are required to furnish, within 180 days, a Form 500X with supporting schedules and a copy of Form 1040 to the Georgia Department of Revenue reflecting all changes. Additionally, if the changes result in a refund, the refund must be claimed within one year from the date the changes are submitted.\" (2025 IT-511, Federal Audits, p. 12) And (p. 9, \"Update to Final Determination Date for Reporting Federal Changes\"): \"Taxpayers must report any federal changes or corrections resulting from a federal audit within 180 days of the final determination date. When those changes result from an amended federal return, a federal refund claim, an administrative adjustment request, or a similar report filed under Section 6225(c) of the Internal Revenue Code, the final determination date is the date the amended return, claim, adjustment request, or related report is filed.\"",
+    "form": "@@b4391634b953",
+    "headline": "GA 2025, amended (Form 500 (Georgia Individual Income Tax Return) for tax year 2025. NOTE — Form 500-EZ is DISCONTINUED for tax years beginning on or after January 1, 2025; all filers use Form 500.): you owe $88",
+    "jurisdiction": "states/ga",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -279,6 +365,24 @@
      "cadence": "@@d94a5d9eb85a",
      "topic": "filing_logistics",
      "url": "@@9713be127ea0"
+    },
+    {
+     "answers": "@@90b8baa4c42c",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "filing_logistics",
+     "url": "@@cbe39407031e"
+    },
+    {
+     "answers": "@@136f46014bfe",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "filing_logistics",
+     "url": "@@822dcb072b90"
+    },
+    {
+     "answers": "@@1780691b1640",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "filing_logistics",
+     "url": "https://dor.georgia.gov/mailing-address-individualfiduciary-income-tax"
     }
    ],
    "topic": "filing_logistics",

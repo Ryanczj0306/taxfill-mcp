@@ -3,18 +3,24 @@
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@1f25dd82bb60": "Food Sales Tax Credit — Must be a Kansas resident for ALL of 2023, AND meet at least one taxpayer-status condition: (1) age 55 or older for all of 2023; or (2) permanently blind or disabled regardless of age; or (3) have a dependent child under age 18 who lived with you all year and whom you claim as a personal exemption. Booklet states it is nonrefundable: 'If you do not have a Kansas tax liability, this credit is not available to you.'",
   "@@3ac8f6a0e0ae": "Kansas Earned Income Tax Credit (EITC) — Kansas residents only (not part-year residents or nonresidents) who qualify for and claim the federal Earned Income Tax Credit. A valid SSN is required for the full year for the taxpayer, spouse (if MFJ), and each dependent claimed.",
+  "@@3b985eab212f": "The shipped KS 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@48f35fb078e4": "Kansas DOR — 2023 Individual Income Tax Booklet (ip23.pdf): K-40 Line 1 federal AGI starting point; Schedule S Part A additions list and line-by-line instructions (no treaty add-back); residency definitions (Who Must File); filing thresholds; Where to File mailing address; When to File due date April 15, 2024; payment options/payee",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@695fc2a680be": "INDIVIDUAL INCOME TAX, KANSAS DEPARTMENT OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260",
   "@@78a78ab3f670": "Homestead Refund (property tax / circuit-breaker relief) — Kansas resident the entire year of 2023 who OWNED and occupied a Kansas home (homeowners only - the booklet states the program is 'not available to renters'), AND meets one of: (1) born before January 1, 1968 (i.e., 55 or older); or (2) blind or totally and permanently disabled all of 2023; or (3) had a dependent child who lived with you the entire year, born before January 1, 2023 and under age 18 all of 2023.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a770330c950a": "Credit for Child and Dependent Care Expenses — Kansas residents only - nonresidents and part-year residents are NOT eligible. Available to taxpayers who claimed the federal child and dependent care credit on federal Form 2441.",
   "@@b964e20022c2": "Credit for Taxes Paid to Other States — Kansas residents whose Kansas adjusted gross income (KAGI, line 3 of K-40) includes income earned in another state and who were required to pay income tax to that other state on that income. (Part-year residents filing as nonresidents may claim a version via a separate worksheet.) No credit for income from a state with no income tax. A copy of the other state's tax return must be enclosed.",
+  "@@be7bbaa984d9": "annual (per tax year; the shipped KS 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@d264e27c652f": "Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents complete K-40 (with Schedule S Part A only if they have modifications)",
   "@@d6d1506031ae": "Kansas DOR, 2023 Individual Income Tax booklet (ip23.pdf): 2023 Tax Computation Worksheet (p. 32, printing the 3.1%/5.25%/5.7% schedule for Married Filing Joint and for Single/Head of Household/Married Filing Separate); 2023 Kansas Tax Table 'for taxable income to $100,000' (pp. 25-31); K-40 Instructions — Line 4 'Kansas Standard Deduction' chart and 'WORKSHEET - Standard Deduction for People 65 or Older and/or Blind' (p. 6), Line 5 exemption allowance ($2,250 per exemption, p. 7), Line 8 tax-table/worksheet mandate (p. 7), Filing Status QSS-to-HOH instruction (p. 6); 2023 Form K-40 lines 1-12 and exemption boxes (booklet forms section, pp. 19-20)",
   "@@df099215ffda": "Treaty conformity — KS conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from KS income (it flows through the federal starting point; do not add it back on the KS return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Kansas Form K-40 starts from federal adjusted gross income (K-40 Line 1: \"Federal adjusted gross income (as reported on your federal income tax return)\"), and Kansas modifications are made only on Schedule S Part A. The Schedule S Part A \"Additions to Federal Adjusted Gross Income\" are an enumerated, closed list (lines A1-A7): A1 state/municipal bond interest, A2 KPERS contributions, A3 Kansas expensing recapture, A4 low-income student scholarship contributions, A5 IRC 163(j) business interest expense carryforward, A6 unqualified First-Time Home Buyer savings account withdrawals, and A7 \"other additions\" (whose instructions list only federal income tax refunds and partnership/S-corp/fiduciary adjustments). There is NO add-back for federally tax-treaty-exempt income anywhere in Part A. Because income exempt under a U.S. tax treaty is already excluded from federal AGI and Kansas has no add-back, it flows through and is not re-taxed by Kansas -> conforms. (Source: 2023 Individual Income Tax Booklet, ip23.pdf, K-40 Line 1 and Schedule S Part A / line-by-line instructions.)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f5a1ffcb3d8b": "Law change NOT modeled by the engine (status final_form_published): NEW Disabled Veteran Personal Exemption for tax year 2023: an additional $2,250 Kansas exemption for an honorably discharged veteran certified by the VA as receiving disability compensation at the 100% rate (permanent, service-sustained). It is an extra exemption in the K-40 'Total Kansas exemptions' box, taken at the same $2,250 per exemption on K-40 Line 5 — a base reduction subtracted from Kansas AGI before the rate schedule applies, on top of the taxpayer/spouse/dependent exemptions (and the extra head-of-household exemption). Resolve via: 2023 Individual Income Tax Booklet (ip23.pdf, the citation URL) — K-40 Line 5 exemption allowance instructions and the Disabled Veteran Personal Exemption qualification (VA certification at the 100% disability-compensation rate). It is NOT auto-applied: add 1 to exemptions_count only if the filer qualifies, and the engine then allows the $2,250.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fec99964ce8b": "Same Form K-40, with Schedule S (Supplemental Schedule) Part B \"Income Allocation for Nonresidents and Part-Year Residents\" required to compute the nonresident percentage (K-40 line 9 / Schedule S line B23). Kansas does not have a separate standalone nonresident form."
  },
  "file_and_pay": {
@@ -139,6 +145,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended KS 2023 return (Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents complete K-40 (with Schedule S Part A only if they have modifications)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "KS revenue department home page (read 2026-10-16)",
+      "url": "https://www.ksrevenue.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@d264e27c652f",
+    "jurisdiction": "states/ks",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended KS return, and the KS 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the KS instructions for amended returns on the KS revenue department's site (https://www.ksrevenue.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -196,9 +237,291 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "KS revenue department home page (read 2026-10-16)",
+      "url": "https://www.ksrevenue.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the KS instructions for amended returns on the KS revenue department's site (https://www.ksrevenue.gov/).",
+    "form": "@@d264e27c652f",
+    "headline": "KS 2023, amended (Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents complete K-40 (with Schedule S Part A only if they have modifications)): you owe $88",
+    "jurisdiction": "states/ks",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@3b985eab212f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Kansas Department of Revenue, 2023 Individual Income Tax Booklet (Form K-40 instructions, ip23.pdf), Line 17 / Line 23 instructions and EITC Worksheet",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "credits",
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    },
+    {
+     "answers": "Kansas Department of Revenue, 2023 Homestead or Property Tax Refund for Homeowners booklet (k-40hbook23.pdf), Homestead refund overview, eligibility, and refund percentage table",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "credits",
+     "url": "https://www.ksrevenue.gov/pdf/k-40hbook23.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@3b985eab212f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@48f35fb078e4",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "filing_logistics",
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@3b985eab212f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@48f35fb078e4",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    },
+    {
+     "answers": "Kansas DOR — 2023 Income Tax Booklet landing page",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/incomebook23.html"
+    },
+    {
+     "answers": "Kansas DOR — 2023 Schedule S (Supplemental Schedule, schs23.pdf): Part A modifications to federal AGI and Part B income allocation for nonresidents/part-year residents",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/schs23.pdf"
+    },
+    {
+     "answers": "Kansas DOR — 2023 Form K-40 (k-4023.pdf)",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/k-4023.pdf"
+    },
+    {
+     "answers": "Kansas DOR — 2023 K-40V Individual Income Tax Payment Voucher (k-40v23.pdf): check payable to 'Kansas Income Tax', mailing address PO BOX 750260 TOPEKA KS 66699-0260, due April 15, 2024",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/k-40v23.pdf"
+    },
+    {
+     "answers": "Kansas DOR — Individual Income Tax Forms index",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/forms-ii.html"
+    },
+    {
+     "answers": "Kansas DOR — Electronic Services / Tax Payment vendor list (online payment portal)",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/taxpayment.html"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@3b985eab212f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@d6d1506031ae",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "law_changes",
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@3b985eab212f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@d6d1506031ae",
+     "cadence": "@@be7bbaa984d9",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@3b985eab212f",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip23.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/ks",
  "state_scope": {

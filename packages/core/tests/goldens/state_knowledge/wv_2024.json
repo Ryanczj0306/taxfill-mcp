@@ -2,22 +2,29 @@
  "_strings": {
   "@@1046e3f883d4": "Law change NOT modeled by the engine (status final_form_published): NEW CHILD AND DEPENDENT CARE CREDIT — 50% of the credit taken on federal Form 2441, claimed on line 18 of the Tax Credit Recap Schedule; paper filers attach federal Form 2441 or the credit is denied. Resolve via: 2024 IT-140 booklet, Important Information for 2024, and the Tax Credit Recap Schedule instructions (line 18).",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@284ce932f322": "annual (per tax year; the shipped WV 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@3ab845156066": "WV Tax Division — 2024 IT-140 Personal Income Tax Forms and Instructions booklet: TY2024 rate schedules printed verbatim and UNCHANGED from TY2023 (Less than $10,000 -> 2.36% of the taxable income; $236.00 plus 3.15% of excess over $10,000; $708.50 plus 3.54% over $25,000; $1,239.50 plus 4.72% over $40,000; $2,183.50 plus 5.12% over $60,000; Rate Schedule II for married filing separately at exactly half boundaries: 118.00/354.25/619.75/1,091.75); 'You can deduct $2,000 for every exemption claimed'; '$500 if you claim zero exemptions'; due April 15, 2025 (cover).",
   "@@49ad9ef8babb": "Law change NOT modeled by the engine (status final_form_published): SOCIAL SECURITY PHASE-OUT BEGINS — for 2024, a filer above the income limits (federal AGI over $100,000 joint, $50,000 otherwise) may subtract 35% of the social security benefits included in federal AGI; below the limits benefits stay fully exempt. A Schedule M decreasing modification. Resolve via: 2024 IT-140 booklet, Important Information for 2024, and the Schedule M social security benefits line.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@58a5ef579ebd": "https://tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf",
   "@@699aebd3115b": "Law change NOT modeled by the engine (status final_form_published): NEW REFUNDABLE PROPERTY TAX CREDITS against the income tax — the Disabled Veterans Real Property Tax Credit (homestead property tax of a disabled veteran), the Motor Vehicle Tax Credit (personal property tax on qualified vehicles) and the Small Business Property Tax Credit (50% of a small business's personal property tax); an excess over the income tax is refunded. Resolve via: 2024 IT-140 booklet, Property Tax Credits (p.20), IT-140 line 21 instructions (p.25), and TSD 454 (motor vehicle), TSD 455 (disabled veterans), TSD 456 (small business) at tax.wv.gov.",
   "@@6d9896330e09": "Senior Citizen Tax Credit (SCTC) — Restricted to homeowners who participate in the county Homestead Exemption program (generally age 65+ or permanently/totally disabled), who owe and pay a Class II property tax liability on a homestead-exemption-eligible home (assessed value greater than $20,000 before the $20,000 homestead exemption), and whose federal AGI is less than 150% of the federal poverty guidelines. The WV Tax Division mails Form WV SCTC-A to program participants; the original SCTC-A must be filed (preparer-created substitutes are denied).",
   "@@7faed9237982": "Form IT-140 (West Virginia Personal Income Tax Return) - check \"Resident\" status",
   "@@8134a1fcad48": "Form IT-140 (check \"Filing as Nonresident\" or \"Filing as Part-Year Resident\"), completed together with Schedule A (Form IT-140), \"Nonresidents/Part-Year Residents Schedule of Income.\" (Nonresident composite filers use Form IT-140NRC.)",
   "@@854f4299a9f8": "2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024: 'For taxable year 2024, 35% of social security benefits received and included in the federal adjusted gross income shall be allowed as a decreasing modification when determining West Virginia taxable income.'",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9d25dbcb6b8d": "Treaty conformity — WV conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from WV income (it flows through the federal starting point; do not add it back on the WV return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: WV's resident return (Form IT-140) starts from federal adjusted gross income (line 1). The 2024 instructions state plainly (p.24): \"The starting point for the West Virginia income tax return is your federal adjusted gross income.\" Federally treaty-exempt income is already excluded from FAGI and flows through. WV's Schedule M \"Modifications Increasing Federal Adjusted Gross Income\" (lines 53-60) lists ONLY: interest/dividends on federal obligations exempt from federal but not state tax; interest/dividends on non-WV state/local bonds; interest on money borrowed to buy WV-exempt bonds; 402(e) lump-sum distributions; \"other income deducted from FAGI but subject to state tax\" (example given is IRC Section 199 income); and savings-plan/ABLE/Jumpstart withdrawals. There is NO add-back for tax-treaty income, foreign/nonresident-alien treaty income, or income excluded under a US tax treaty. Therefore treaty-exempt income is NOT re-taxed by WV -> conforms = true.",
   "@@a6302abf497d": "WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI (p.24), Schedule M increasing modifications lines 53-60 (no treaty add-back), Who Must File & Residency Status (p.17), due date April 15, 2025 (cover, p.24), mailing addresses (Form IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)",
   "@@ab6ec6b14d82": "Family Tax Credit (FTC) — Low-income WV resident individuals/families who file with at least one exemption. Filers with zero exemptions cannot claim it, and persons who pay the federal Alternative Minimum Tax are ineligible. Eligibility and credit percentage depend on family size (number of exemptions, boxes a+b+c) and Modified Federal AGI. Computed on Schedule FTC-1 and attached to the return; if filing married-filing-separately use Table 2.",
   "@@b38642bd1215": "2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024 (p.15): 'New property tax credits are available this year.' Property Tax Credits (p.20) — Motor Vehicle Tax Credit: 'A credit may be claimed for timely paid personal property taxes on qualified motor vehicles. If the annual tax credit allowed is more than the income tax a refund will be issued for the difference.' Form IT-140 line 21 (p.2): 'WV Property Tax Adjustment Tax Credits (claim each separately below. Enter sum on line 21)' with boxes A MOTOR VEHICLE PROPERTY TAX, B DISABLED VETERAN REAL PROPERTY TAX, C SMALL BUSINESS PROPERTY TAX; instructions (p.25): 'LINE 21 WV PROPERTY TAX ADJUSTMENT TAX CREDIT. Enter the amount in the appropriate box for the credit being claimed. The schedule(s) must be submitted with tax return.'",
   "@@bf3edade7d26": "Homestead Excess Property Tax Credit (HEPTC) — Low-income owners of an owner-occupied WV residence whose WV real property tax paid (less any Senior Citizen Tax Credit) exceeds 4% of gross household income. Low-income means federal AGI of 300% or less of the federal poverty guideline for the household size. Homestead Exemption program participation is NOT required. No credit if any owner of the homestead is not a low-income person. Filers who pay federal AMT are flagged/excluded. Schedule HEPTC-1 and the Class 2 property tax receipt must be filed.",
+  "@@cfb27a7ddb97": "The shipped WV 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f722bd7b97bb": "2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024: 'The Child and Dependent Care Credit can be claimed on Line 18 of Tax Credit Recap Schedule (RECAP). The allowable credit is 50% of the credit taken on Form 2441 for the federal return.'"
+  "@@f722bd7b97bb": "2024 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2024: 'The Child and Dependent Care Credit can be claimed on Line 18 of Tax Credit Recap Schedule (RECAP). The allowable credit is 50% of the credit taken on Form 2441 for the federal return.'",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -141,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended WV 2024 return (Form IT-140 (West Virginia Personal Income Tax Return) - check \"Resident\" status): you owe $88 more.",
+    "citations": [
+     {
+      "source": "WV revenue department home page (read 2026-10-16)",
+      "url": "https://tax.wv.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@7faed9237982",
+    "jurisdiction": "states/wv",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended WV return, and the WV 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the WV instructions for amended returns on the WV revenue department's site (https://tax.wv.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -198,9 +240,279 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "WV revenue department home page (read 2026-10-16)",
+      "url": "https://tax.wv.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the WV instructions for amended returns on the WV revenue department's site (https://tax.wv.gov/).",
+    "form": "@@7faed9237982",
+    "headline": "WV 2024, amended (Form IT-140 (West Virginia Personal Income Tax Return) - check \"Resident\" status): you owe $88",
+    "jurisdiction": "states/wv",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@cfb27a7ddb97",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@58a5ef579ebd"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "WV Tax Division - 2024 personal income tax Forms & Instructions (IT-140 booklet), Schedule FTC-1 (p.11) and the 2024 Family Tax Credit Tables (p.12)",
+     "cadence": "@@284ce932f322",
+     "topic": "credits",
+     "url": "@@58a5ef579ebd"
+    },
+    {
+     "answers": "WV Tax Division - 2024 Schedule HEPTC-1 (Homestead Excess Property Tax Credit), Form IT-140",
+     "cadence": "@@284ce932f322",
+     "topic": "credits",
+     "url": "https://tax.wv.gov/Documents/PIT/2024/it140.schedule-HEPTC1.2024.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@cfb27a7ddb97",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@58a5ef579ebd"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@a6302abf497d",
+     "cadence": "@@284ce932f322",
+     "topic": "filing_logistics",
+     "url": "@@58a5ef579ebd"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@cfb27a7ddb97",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@58a5ef579ebd"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@a6302abf497d",
+     "cadence": "@@284ce932f322",
+     "topic": "forms_and_instructions",
+     "url": "@@58a5ef579ebd"
+    },
+    {
+     "answers": "WV Tax Division - 2024 Form IT-140 (Personal Income Tax Return): line 1 Federal Adjusted Gross Income; refund mail to P.O. Box 1071 Charleston WV 25324-1071; balance due mail to P.O. Box 3694 Charleston WV 25336-3694; electronic payment at mytaxes.wvtax.gov",
+     "cadence": "@@284ce932f322",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.wv.gov/Documents/PIT/2024/it140.2024.pdf"
+    },
+    {
+     "answers": "WV Tax Division - 2024 Schedule M (Form IT-140), Modifications to Adjusted Gross Income (increasing modifications, lines 53-60)",
+     "cadence": "@@284ce932f322",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.wv.gov/Documents/PIT/2024/it140.schedule-M.2024.pdf"
+    },
+    {
+     "answers": "WV Tax Division - 2024 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income",
+     "cadence": "@@284ce932f322",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.wv.gov/Documents/PIT/2024/it140.schedule-A.2024.pdf"
+    },
+    {
+     "answers": "WV Tax Division - Individuals page (forms portal)",
+     "cadence": "@@284ce932f322",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.wv.gov/Individuals"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@cfb27a7ddb97",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@58a5ef579ebd"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@854f4299a9f8",
+     "cadence": "@@284ce932f322",
+     "topic": "law_changes",
+     "url": "@@58a5ef579ebd"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@cfb27a7ddb97",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@58a5ef579ebd"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@3ab845156066",
+     "cadence": "@@284ce932f322",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@58a5ef579ebd"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@cfb27a7ddb97",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@58a5ef579ebd"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/wv",
  "state_scope": {
@@ -681,7 +993,7 @@
   "common_result": {
    "base_kind": "state_gross_income",
    "citation": {
-    "source": "WV Tax Division — 2024 IT-140 Personal Income Tax Forms and Instructions booklet: TY2024 rate schedules printed verbatim and UNCHANGED from TY2023 (Less than $10,000 -> 2.36% of the taxable income; $236.00 plus 3.15% of excess over $10,000; $708.50 plus 3.54% over $25,000; $1,239.50 plus 4.72% over $40,000; $2,183.50 plus 5.12% over $60,000; Rate Schedule II for married filing separately at exactly half boundaries: 118.00/354.25/619.75/1,091.75); 'You can deduct $2,000 for every exemption claimed'; '$500 if you claim zero exemptions'; due April 15, 2025 (cover).",
+    "source": "@@3ab845156066",
     "url": "@@58a5ef579ebd"
    },
    "rate": null,

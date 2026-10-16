@@ -20,7 +20,8 @@
   "@@cbfb3e3bcb52": "2025 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - MAIL TO addresses printed on the signature page: REFUNDS OR ZERO TAX DUE PO Box 101100; BALANCE DUE PO Box 101105",
   "@@d2ebbec48149": "Tuition Tax Credit — A SC resident student (or a parent/legal guardian/other person who can claim the student as a dependent and who paid the tuition) attending a qualifying SC 2-year or 4-year college/university, meeting the I-319 requirements (SC high school diploma or qualifying equivalent, enrollment within 12 months, in-state tuition rate, credit-hour minimums, no disqualifying scholarships/convictions/defaults; claimable at most four consecutive years).",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f0285f3f5ebe": "2025 South Carolina Individual Income Tax Tables SC1040TT (Revised 6/17/25) — the mandatory tax tables for taxable income under $100,000 and the '2025 Tax Rate Schedule for taxable income of $100,000 or more' ('1. Multiply the amount on line 5 by 6%; 2. Subtract $642; 3. Enter the difference on line 6', with the worked example $101,000 -> $5,418); 2025 SC1040 Instructions Line 6 ('If your income subject to tax on line 5 is less than $100,000, use the SC1040TT... If your income subject to tax on line 5 is $100,000 or more, use the tax rate schedule provided in the SC1040TT') and Line w (dependent exemption $4,930). Second pass (bracket bounds and constants): 2025 SC4972, Rev. 6/17/25, printed '2025 Tax Computation Schedule for Line 19 and Line 22' — $0 to $3,560: 0% times the amount; $3,560 to $17,830: 3% times the amount minus $107; $17,830 or more: 6% times the amount minus $642 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2025.pdf). TY2025 changes vs 2024: top rate 6.2% -> 6% (the Act 228 of 2022 step-down toward 6%), bounds indexed $3,460/$17,330 -> $3,560/$17,830, constants $104/$659 -> $107/$642, dependent exemption $4,790 -> $4,930."
+  "@@f0285f3f5ebe": "2025 South Carolina Individual Income Tax Tables SC1040TT (Revised 6/17/25) — the mandatory tax tables for taxable income under $100,000 and the '2025 Tax Rate Schedule for taxable income of $100,000 or more' ('1. Multiply the amount on line 5 by 6%; 2. Subtract $642; 3. Enter the difference on line 6', with the worked example $101,000 -> $5,418); 2025 SC1040 Instructions Line 6 ('If your income subject to tax on line 5 is less than $100,000, use the SC1040TT... If your income subject to tax on line 5 is $100,000 or more, use the tax rate schedule provided in the SC1040TT') and Line w (dependent exemption $4,930). Second pass (bracket bounds and constants): 2025 SC4972, Rev. 6/17/25, printed '2025 Tax Computation Schedule for Line 19 and Line 22' — $0 to $3,560: 0% times the amount; $3,560 to $17,830: 3% times the amount minus $107; $17,830 or more: 6% times the amount minus $642 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2025.pdf). TY2025 changes vs 2024: top rate 6.2% -> 6% (the Act 228 of 2022 step-down toward 6%), bounds indexed $3,460/$17,330 -> $3,560/$17,830, constants $104/$659 -> $107/$642, dependent exemption $4,790 -> $4,930.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -138,6 +139,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended SC 2025 return (Form SC1040 (South Carolina Individual Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "SC revenue department home page (read 2026-10-16)",
+      "url": "https://dor.sc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "jurisdiction": "states/sc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended SC return, and the SC 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the SC instructions for amended returns on the SC revenue department's site (https://dor.sc.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -192,6 +228,27 @@
     "jurisdiction": "states/sc",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "SC revenue department home page (read 2026-10-16)",
+      "url": "https://dor.sc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the SC instructions for amended returns on the SC revenue department's site (https://dor.sc.gov/).",
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "headline": "SC 2025, amended (SC1040 (South Carolina Individual Income Tax Return)): you owe $88",
+    "jurisdiction": "states/sc",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

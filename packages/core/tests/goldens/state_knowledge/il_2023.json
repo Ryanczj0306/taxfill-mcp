@@ -4,16 +4,23 @@
   "@@11795485b6fb": "2023 Form IL-1040 Instructions (IL-1040 Instructions R-12/23) — cover/mailing addresses, due date, income tax rate, exemption allowance",
   "@@18cee8419820": "Illinois Earned Income Tax Credit (EITC) — In general, anyone who qualified for the federal EITC also qualifies for the Illinois EITC. New for tax year 2023, eligibility was expanded (Public Act 102-0700): taxpayers who meet all federal EITC qualifications EXCEPT that they file with an IRS-issued ITIN (no valid SSN required for taxpayer, spouse, or qualifying children), and/or are age 18-24 or 65+ with no qualifying child, may now also claim it. Must have earned income under the federal limits in Table 1, investment income below $11,000, not have filed federal Form 2555, and have been a US resident for at least half of 2023.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1b89bebf5071": "The shipped IL 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@351f402a599a": "Form IL-1040 with Schedule NR (Nonresident and Part-Year Resident Computation of Illinois Tax)",
+  "@@4c6f33a7e539": "2023 Form IL-1040 Instructions (IL-1040 Instructions R-12/23) — \"The Illinois income tax rate is 4.95 percent (.0495)\"; Line 10 exemption allowance ($2,425 per P.A. 103-0009; $4,850 MFJ both; +$1,000 each 65-or-older / blind, Lines 10b/10c); Line 11 net income. Sourcing note: the booklet's own Line 12 instruction reads \"Illinois residents: Follow the instructions on the form\" — the 4.95% rate and the Line 11 net-income structure are what the booklet states; the Line 12 multiplication is printed on the form itself.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@6fb69e391e5c": "K-12 Education Expense Credit — Parent or legal guardian of a full-time student who was under age 21 at the close of the school year, where the taxpayer and student were Illinois residents when the expenses were paid, and the student attended kindergarten through 12th grade at a public or nonpublic school in Illinois during 2023. Must complete Section B of Schedule ICR including the K-12 Education Expense Credit Worksheet and attach school receipts.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a344e38434f8": "Illinois Property Tax Credit — Illinois residents who, during 2022, owned and lived at a principal residence located in Illinois and paid the Illinois property tax on it during the 2023 tax year. Not available for a vacation home, rental property, vacant lot, farmland, mobile home privilege tax, penalties/fees, or property outside Illinois. Nonresidents may not take this credit. The portion of property tax deductible as a business expense is excluded.",
   "@@ab4c6116d369": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-instr.pdf",
   "@@c0779f8e455a": "Volunteer Emergency Worker Credit — Created by Public Act 103-0009 for 2023. Available only to a person who received a 2023 Volunteer Emergency Worker Credit Certificate from IDOR. A volunteer emergency worker is a non-full-time member of a fire department, fire protection district, or fire protection association with a Fire Department Identification Number from the Office of the State Fire Marshal. Must have served as a volunteer emergency worker at least 9 months during the taxable year, not receive more than $5,000 in compensation for those services, submit a complete application with IDOR, and be one of the first 10,000 qualified applicants. Note: the income limit that applies to the property tax / K-12 credits does NOT apply to this credit.",
+  "@@ccf283d3745d": "annual (per tax year; the shipped IL 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@ce530ad98232": "IL state income tax (2023, flat rate): taxable_base $40,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; tax = 0.0495 x $40,000 = $1,98",
   "@@e0cd50fa73f9": "ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19041, SPRINGFIELD IL 62794-9041 (if no payment is enclosed)",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -137,6 +144,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended IL 2023 return (Form IL-1040, Illinois Individual Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "IL revenue department home page (read 2026-10-16)",
+      "url": "https://tax.illinois.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "jurisdiction": "states/il",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended IL return, and the IL 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the IL instructions for amended returns on the IL revenue department's site (https://tax.illinois.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -194,9 +236,231 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "IL revenue department home page (read 2026-10-16)",
+      "url": "https://tax.illinois.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the IL instructions for amended returns on the IL revenue department's site (https://tax.illinois.gov/).",
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "headline": "IL 2023, amended (Form IL-1040, Illinois Individual Income Tax Return): you owe $88",
+    "jurisdiction": "states/il",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1b89bebf5071",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ab4c6116d369"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Illinois Department of Revenue — 2023 Schedule IL-E/EIC (form) and 2023 Schedule IL-E/EIC Instructions",
+     "cadence": "@@ccf283d3745d",
+     "topic": "credits",
+     "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-schedule-il-e-eic-instr.pdf"
+    },
+    {
+     "answers": "Illinois Department of Revenue — 2023 Schedule ICR (form) and 2023 Schedule ICR Instructions",
+     "cadence": "@@ccf283d3745d",
+     "topic": "credits",
+     "url": "https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-icr-instr.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1b89bebf5071",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ab4c6116d369"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@11795485b6fb",
+     "cadence": "@@ccf283d3745d",
+     "topic": "filing_logistics",
+     "url": "@@ab4c6116d369"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1b89bebf5071",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ab4c6116d369"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@11795485b6fb",
+     "cadence": "@@ccf283d3745d",
+     "topic": "forms_and_instructions",
+     "url": "@@ab4c6116d369"
+    },
+    {
+     "answers": "IL DOR General Information (IL-1040 instructions, HTML) — residency, due date, what is Illinois income (federal AGI)",
+     "cadence": "@@ccf283d3745d",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.illinois.gov/forms/incometax/currentyear/individual/il-1040-instr/general-information.html"
+    },
+    {
+     "answers": "IL DOR Pub-119, Illinois Schedule NR for Individuals — part-year/nonresident computation",
+     "cadence": "@@ccf283d3745d",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.illinois.gov/research/publications/pubs/illinois-schedule-nr-for-individuals.html"
+    },
+    {
+     "answers": "2023 Schedule NR IL-1040 Instructions (PDF)",
+     "cadence": "@@ccf283d3745d",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-schedule-nr-instr.pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1b89bebf5071",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ab4c6116d369"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@4c6f33a7e539",
+     "cadence": "@@ccf283d3745d",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@ab4c6116d369"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@1b89bebf5071",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ab4c6116d369"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/il",
  "state_scope": {
@@ -403,7 +667,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 Form IL-1040 Instructions (IL-1040 Instructions R-12/23) — \"The Illinois income tax rate is 4.95 percent (.0495)\"; Line 10 exemption allowance ($2,425 per P.A. 103-0009; $4,850 MFJ both; +$1,000 each 65-or-older / blind, Lines 10b/10c); Line 11 net income. Sourcing note: the booklet's own Line 12 instruction reads \"Illinois residents: Follow the instructions on the form\" — the 4.95% rate and the Line 11 net-income structure are what the booklet states; the Line 12 multiplication is printed on the form itself.",
+    "source": "@@4c6f33a7e539",
     "url": "@@ab4c6116d369"
    },
    "marginal_rate": "0.0495",

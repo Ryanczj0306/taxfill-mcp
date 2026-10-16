@@ -4,18 +4,25 @@
   "@@187994f8d663": "Renter's and Homeowner's School Property Tax Credit — Wisconsin filers who paid rent during 2024 for living quarters used as their primary residence, OR who paid property taxes during 2024 on their home. Available whether or not the homestead credit is claimed. Cannot be claimed if you or your spouse claim the veterans and surviving spouses property tax credit. Rent for property-tax-exempt housing (e.g., university dorms, nonprofit senior housing, certain public housing) does not qualify.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@5377b6d0811b": "2024 Wisconsin Form 1 Instructions (I-111), Wisconsin Department of Revenue — p.44 '2024 Tax Computation Worksheet – Line 12' (Section A Single or Head of household: at least $100,000 but less than $315,310 x 5.3% (.053) minus $386.64, $315,310 or over x 7.65% (.0765) minus $7,796.43; Section B Married filing jointly: less than $420,420 x 5.3% minus $515.52, $420,420 or over x 7.65% minus $10,395.39; Section C Married filing separately: less than $210,210 x 5.3% minus $257.76, $210,210 or over x 7.65% minus $5,197.70); Line 12 Tax (Tax Table pp.38-43); p.35 2024 Standard Deduction Table; Line 10 Exemptions ($700 / $250). First- and second-bracket dollar boundaries: 2024 Form 1-ES Instructions, '2024 Tax Rate Schedules for Full-Year Residents' — Schedule A (Single, Head of Household, Estates and Trusts): $0-$14,320 at 3.5%, $501.20 + 4.4% to $28,640, $1,131.28 + 5.3% to $315,310, $16,324.79 + 7.65% over; Schedule B (MFJ): $0-$19,090, $668.15 + 4.4% to $38,190, $1,508.55 + 5.3% to $420,420, $21,766.74 + 7.65% over; Schedule C (MFS): $0-$9,550, $334.25 + 4.4% to $19,090, $754.01 + 5.3% to $210,210, $10,883.37 + 7.65% over (https://www.revenue.wi.gov/TaxForms2024/2024-Form1-ES-inst.pdf). Second pass: every Form 1 worksheet subtraction constant equals the cumulative marginal sum implied by the 1-ES schedules (max print-rounding divergence $0.005) — both documents agree.",
   "@@5ab6f3719f36": "Wisconsin Homestead Credit (property-tax / rent circuit-breaker) — Per the 2024 Form 1 instructions Special Instructions: at least 18 years old on December 31, 2024; if under age 62 and not disabled, must have earned income; a legal resident of Wisconsin for all of 2024; not claimed as a dependent on anyone's 2024 federal return (unless 62 or older); not living in tax-exempt public housing for all of 2024 (exceptions apply); not living in a nursing home receiving Title XIX medical assistance; and not claiming (self or spouse) the veterans and surviving spouses property tax credit or farmland preservation credit. Claimed on Schedule H (or simpler Schedule H-EZ).",
   "@@6fdd99357875": "Treaty conformity — WI conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from WI income (it flows through the federal starting point; do not add it back on the WI return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Wisconsin Form 1 starts from federal adjusted gross income (2024 Form 1, Line 1; the instructions: fill in federal AGI from line 11 of federal Form 1040 or 1040-SR). Federally treaty-exempt income is already excluded from federal AGI and is never added back on the Wisconsin return. The 2024 Schedule AD (Additions to Income) instructions enumerate all addition modifications (Line 1 state and municipal interest; 2 capital gain/loss addition; 3-4 nonqualified Edvest/Tomorrow's Scholar and ABLE distributions; 5 federal NOL deduction; 6 lump-sum distributions (federal Form 4972); 7 PFIC excess distributions; 8 related-entity expenses; 9 expenses for moving a business outside Wisconsin/the U.S.; 10 federal/Wisconsin basis differences; 12 marital-property reporting differences; 13-27 farmland preservation and other computed-credit addbacks; 28-31 tax-option (S) corporation and partnership entity-level adjustments; 32 other) and NONE adds back income exempt under a U.S. tax treaty. Form 1 Line 2 (additions via Schedule I) only converts for federal-law provisions Wisconsin has not adopted, not treaties. Therefore treaty-exempt income flows through and is NOT re-taxed -> conforms = true. (No explicit treaty provision text found at the DOR, so flagged in unverified.)",
   "@@806f1a35efca": "Law change NOT modeled by the engine (status final_form_published): Additional Child and Dependent Care Tax Credit INCREASED and restructured for 2024 — the What's New item reads \"The amount of qualifying expenses and maximum credit allowable have been increased\", and the credit is now computed on the NEW Schedule WI-2441 (its line 14 carried to Form 1 line 14) instead of being a flat 50% of the federal Form 2441 credit as in 2023. Resolve via: 2024 Schedule WI-2441 and its instructions for the increased qualifying-expense and maximum credit amounts — the schedule was NOT read line-by-line for this pack (see `unverified`); confirm the 2024 dollar caps there before computing the credit.",
   "@@8e20ba05ad6c": "Wisconsin Earned Income Credit (EITC) — Full-year Wisconsin resident who qualifies for the federal earned income credit AND has at least one qualifying child (federal definition of qualifying child applies). A married-filing-separate filer is ineligible unless they meet sec. 7703(b) IRC (then files as head of household, married). \"Federal earned income credit\" means the credit computed using the IRC as adopted by Wisconsin — filers with Schedule I adjustments recompute it on Schedule I Part III. A copy of federal Schedule EIC must be included (and Form 8867 if a paid preparer was used).",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9f1544fc693a": "2024 Form 1 Instructions (I-111), Wisconsin Department of Revenue - Line 1 federal adjusted gross income; Which Form to File / domicile; Who Must File thresholds; Where to File mailing addresses; due date April 15, 2025; 2024 Standard Deduction Table p.35; 2024 Tax Table pp.38-43; 2024 Tax Computation Worksheet p.44",
   "@@baa165af6e6a": "2024 Form 1 Instructions (I-111) - 'Where to File' (PO Box 268 payment / PO Box 59 refund / PO Box 34 homestead credit; private delivery services to 2135 Rimrock Rd., Madison WI 53713)",
+  "@@bcc15a9dcbaa": "The shipped WI 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@c6293b3c8df1": "Married Couple Credit — Married filing a joint return where both spouses have qualified earned income (taxable wages, salaries, tips, W-2-reported scholarships/fellowships, other employee compensation, and net self-employment earnings; deferred compensation and pensions excluded). Not available if federal Form 2555/2555-EZ (foreign earned income exclusion) or Form 4563 is filed. Computed on Schedule 2 of Form 1.",
   "@@cc4a76384af5": "Additional Child and Dependent Care Tax Credit — You must have claimed the federal child and dependent care tax credit on your federal return, and you must have been a legal resident of Wisconsin for the entire year (on a joint return, qualifies if at least one spouse is a full-year Wisconsin resident).",
+  "@@e19149dd1140": "annual (per tax year; the shipped WI 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@e2b7721deccc": "Law change NOT modeled by the engine (status final_form_published): NEW Blind Worker Transportation Services Credit for 2024 — a nonrefundable credit of up to $1,500, claimed on Form 1 Line 15 (a credit line that did not exist on the 2023 Form 1). Resolve via: 2024 Form 1 instructions (I-111), 'New in 2024' and the Line 15 instructions, for the credit's eligibility conditions and the computation behind the $1,500 maximum.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@ed4042b9204e": "2024 Form 1 Instructions (I-111) - Line 1 federal AGI; Who Must File thresholds; dependent filing thresholds ($1,300/$451); Where to File; due date April 15, 2025; New in 2024 (Schedule WI-2441 care credit, $5,000 college savings subtraction, $7,333 tuition subtraction, $1,500 blind worker transportation credit); Line 10 exemptions ($700/$250); Line 12 Tax (Tax Table pp.38-43, Tax Computation Worksheet p.44); Line 16 school property tax credit; Line 18 married couple credit; Line 30 EITC (4%/11%/34%); Line 33 homestead credit; 2024 Standard Deduction Table p.35 and Standard Deduction Worksheet for Dependents",
   "@@f43246e5b48c": "Wisconsin Department of Revenue, PO Box 59, Madison WI 53785-0001 (if refund or no payment enclosed). Note: if claiming homestead credit, mail to PO Box 34, Madison WI 53786-0001.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fead73db80b5": "2024 I-111 Form 1 Instructions (Wisconsin Department of Revenue), 'New in 2024' and Line 14 Additional Child and Dependent Care Tax Credit / Schedule WI-2441"
  },
  "file_and_pay": {
@@ -134,6 +141,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended WI 2024 return (Form 1 (Wisconsin Income Tax) - full-year residents): you owe $88 more.",
+    "citations": [
+     {
+      "source": "WI revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.wi.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "jurisdiction": "states/wi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended WI return, and the WI 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the WI instructions for amended returns on the WI revenue department's site (https://www.revenue.wi.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -191,9 +233,279 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "WI revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.wi.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the WI instructions for amended returns on the WI revenue department's site (https://www.revenue.wi.gov/).",
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "headline": "WI 2024, amended (Form 1 (Wisconsin Income Tax) - full-year residents): you owe $88",
+    "jurisdiction": "states/wi",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcc15a9dcbaa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 30 Earned Income Credit",
+     "cadence": "@@e19149dd1140",
+     "topic": "credits",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    },
+    {
+     "answers": "2024 Wisconsin Form 1 (Schedule 2 - Married Couple Credit When Both Spouses Are Employed, lines 6-8) and 2024 I-111 Form 1 Instructions, Line 18",
+     "cadence": "@@e19149dd1140",
+     "topic": "credits",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1f.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcc15a9dcbaa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@baa165af6e6a",
+     "cadence": "@@e19149dd1140",
+     "topic": "filing_logistics",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcc15a9dcbaa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@9f1544fc693a",
+     "cadence": "@@e19149dd1140",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    },
+    {
+     "answers": "2024 Wisconsin Form 1 (fillable) - second-pass verification: Line 11 \"Subtract line 10c from line 9. If line 10c is larger than line 9, fill in 0. This is taxable income\"; Line 12 \"Tax (see table on page 38)\"; Schedule 2 married couple credit ($16,000 cap, $480 max); credit line numbering (16/17/18/30/33)",
+     "cadence": "@@e19149dd1140",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1f.pdf"
+    },
+    {
+     "answers": "2024 Form 1-ES Instructions - '2024 Tax Rate Schedules for Full-Year Residents' (Schedules A/B/C, the only official document printing all four 2024 brackets with dollar boundaries; also the nonresident/part-year bracket-proration rule with worked example)",
+     "cadence": "@@e19149dd1140",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-ES-inst.pdf"
+    },
+    {
+     "answers": "2024 Schedule AD Instructions - Additions to Income, full list of addition modifications (no treaty-exempt income add-back)",
+     "cadence": "@@e19149dd1140",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-ScheduleAD-inst.pdf"
+    },
+    {
+     "answers": "WI DOR Make a Payment (Online Services) - tap.revenue.wi.gov/pay direct debit (free service)",
+     "cadence": "@@e19149dd1140",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/Pages/OnlineServices/Pay.aspx"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcc15a9dcbaa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@fead73db80b5",
+     "cadence": "@@e19149dd1140",
+     "topic": "law_changes",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcc15a9dcbaa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@5377b6d0811b",
+     "cadence": "@@e19149dd1140",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@bcc15a9dcbaa",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/wi",
  "state_scope": {
@@ -609,7 +921,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: WI 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: WI 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -629,7 +941,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2024 Wisconsin Form 1 Instructions (I-111), Wisconsin Department of Revenue — p.44 '2024 Tax Computation Worksheet – Line 12' (Section A Single or Head of household: at least $100,000 but less than $315,310 x 5.3% (.053) minus $386.64, $315,310 or over x 7.65% (.0765) minus $7,796.43; Section B Married filing jointly: less than $420,420 x 5.3% minus $515.52, $420,420 or over x 7.65% minus $10,395.39; Section C Married filing separately: less than $210,210 x 5.3% minus $257.76, $210,210 or over x 7.65% minus $5,197.70); Line 12 Tax (Tax Table pp.38-43); p.35 2024 Standard Deduction Table; Line 10 Exemptions ($700 / $250). First- and second-bracket dollar boundaries: 2024 Form 1-ES Instructions, '2024 Tax Rate Schedules for Full-Year Residents' — Schedule A (Single, Head of Household, Estates and Trusts): $0-$14,320 at 3.5%, $501.20 + 4.4% to $28,640, $1,131.28 + 5.3% to $315,310, $16,324.79 + 7.65% over; Schedule B (MFJ): $0-$19,090, $668.15 + 4.4% to $38,190, $1,508.55 + 5.3% to $420,420, $21,766.74 + 7.65% over; Schedule C (MFS): $0-$9,550, $334.25 + 4.4% to $19,090, $754.01 + 5.3% to $210,210, $10,883.37 + 7.65% over (https://www.revenue.wi.gov/TaxForms2024/2024-Form1-ES-inst.pdf). Second pass: every Form 1 worksheet subtraction constant equals the cumulative marginal sum implied by the 1-ES schedules (max print-rounding divergence $0.005) — both documents agree.",
+    "source": "@@5377b6d0811b",
     "url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1-Inst.pdf"
    },
    "rate": null,

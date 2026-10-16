@@ -8,9 +8,16 @@
   "@@43752cc4755a": "Treaty conformity — WI conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from WI income (it flows through the federal starting point; do not add it back on the WI return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Wisconsin Form 1 starts from federal adjusted gross income (Form 1, Line 1 instructions: \"Fill in your federal adjusted gross income from line 11 of your federal Form 1040 or 1040-SR\"). Federally treaty-exempt income is already excluded from federal AGI and is never added back on the Wisconsin return. The Schedule AD (Additions to Income) instructions list all addition modifications (lines 1-31: state/municipal interest, capital gain/loss, college savings & ABLE distributions, federal NOL deduction, lump-sum distributions, PFIC excess distributions, related-entity expenses, moving expenses outside WI/US, basis differences, marital property differences, farmland preservation credit, various computed credits, and tax-option (S) corporation adjustments) and NONE adds back income exempt under a U.S. tax treaty. Form 1 Line 2 (adjustments via Schedule I) only converts for federal law provisions Wisconsin has not adopted (e.g., bonus depreciation, business interest limitation), not treaties. Therefore treaty-exempt income flows through and is NOT re-taxed -> conforms = true. (Verified at WI DOR; no explicit treaty provision text found, so flagged in unverified.)",
   "@@466f31baaa5f": "2023 Form 1 Instructions (I-111) - Line 1 Federal Adjusted Gross Income; Which Form to File / domicile; Who Must File thresholds; Where to File mailing addresses; due date April 15, 2024",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@674e3b12fbdd": "The shipped WI 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@7045b8d05dc4": "2023 Wisconsin Form 1 Instructions (I-111), Wisconsin Department of Revenue — p.44 '2023 Tax Computation Worksheet – Line 12' (Section A Single or Head of household: at least $100,000 but less than $304,170 x 5.3% (.053) minus $372.96, $304,170 or over x 7.65% (.0765) minus $7,520.96; Section B Married filing jointly: less than $405,550 x 5.3% minus $497.34, $405,550 or over x 7.65% minus $10,027.77; Section C Married filing separately: less than $202,780 x 5.3% minus $248.67, $202,780 or over x 7.65% minus $5,014.00); p.1 'New for 2023 — Tax Rates Reduced' (\"The new tax rates for those brackets are 3.5% and 4.4% respectively\"); p.16 Line 12 Tax (Tax Table pp.38-43); p.35 2023 Standard Deduction Table; p.15 Line 10 Exemptions ($700 / $250). First- and second-bracket dollar boundaries: Wisconsin Tax Bulletin 222 (July 2023), Item 6 'Individual Income Tax Rate Decrease' (2023 Wis. Act 19, amend sec. 71.06, Wis. Stats.), https://www.revenue.wi.gov/WisconsinTaxBulletin/222-07-23-WTB.pdf",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a3c8c336e6d8": "Married Couple Credit — Married filing a joint return where both spouses have qualified earned income (taxable wages, salaries, tips, certain scholarships/fellowships reported on W-2, other employee compensation, disability income treated as wages, and net self-employment earnings). Not available if Form 2555/2555-EZ (foreign earned income exclusion) or Form 4563 is filed. Computed on Schedule 2 of Form 1.",
   "@@cc4a76384af5": "Additional Child and Dependent Care Tax Credit — You must have claimed the federal child and dependent care tax credit on your federal return, and you must have been a legal resident of Wisconsin for the entire year (on a joint return, qualifies if at least one spouse is a full-year Wisconsin resident).",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f04f0dc48802": "annual (per tax year; the shipped WI 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@ff2d1b106bbe": "Renter's and Homeowner's School Property Tax Credit — Wisconsin filers who paid rent during 2023 for living quarters used as their primary residence, OR who paid property taxes during 2023 on their home. Available whether or not the homestead credit is claimed. Cannot be claimed if you or your spouse claim the veterans and surviving spouses property tax credit. Rent for property-tax-exempt housing (e.g., university dorms, nonprofit senior housing, certain public housing) does not qualify."
  },
  "file_and_pay": {
@@ -135,6 +142,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended WI 2023 return (Form 1 (Wisconsin Income Tax) - full-year residents): you owe $88 more.",
+    "citations": [
+     {
+      "source": "WI revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.wi.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "jurisdiction": "states/wi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended WI return, and the WI 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the WI instructions for amended returns on the WI revenue department's site (https://www.revenue.wi.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -192,9 +234,285 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "WI revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.wi.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the WI instructions for amended returns on the WI revenue department's site (https://www.revenue.wi.gov/).",
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "headline": "WI 2023, amended (Form 1 (Wisconsin Income Tax) - full-year residents): you owe $88",
+    "jurisdiction": "states/wi",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@674e3b12fbdd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "2023 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 29 Earned Income Credit",
+     "cadence": "@@f04f0dc48802",
+     "topic": "credits",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    },
+    {
+     "answers": "2023 H & H-EZ Wisconsin Homestead Credit Instructions (Wisconsin Department of Revenue), Section A 'Do You Qualify?' and the homestead credit table",
+     "cadence": "@@f04f0dc48802",
+     "topic": "credits",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-ScheduleH-Inst.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@674e3b12fbdd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@466f31baaa5f",
+     "cadence": "@@f04f0dc48802",
+     "topic": "filing_logistics",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@674e3b12fbdd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@466f31baaa5f",
+     "cadence": "@@f04f0dc48802",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    },
+    {
+     "answers": "2023 Schedule AD Instructions (I-0102) - Additions to Income, full list of addition modifications (no treaty-exempt income add-back)",
+     "cadence": "@@f04f0dc48802",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-ScheduleAD-Inst.pdf"
+    },
+    {
+     "answers": "2023 Form 1NPR Instructions (I-152) - Nonresident & Part-Year Resident return; $2,000 gross income filing threshold; residency tax treatment",
+     "cadence": "@@f04f0dc48802",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1NPR-Inst.pdf"
+    },
+    {
+     "answers": "2023 Form 1-ES Instructions (D-101A) - 'Make your remittance payable to the Wisconsin Department of Revenue'; online payment at https://tap.revenue.wi.gov/pay (free service)",
+     "cadence": "@@f04f0dc48802",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-ES-Inst.pdf"
+    },
+    {
+     "answers": "WI DOR Make a Payment (Online Services) - QuickPay/My Tax Account online payment portal",
+     "cadence": "@@f04f0dc48802",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/Pages/OnlineServices/Pay.aspx"
+    },
+    {
+     "answers": "WI DOR Individual Income Tax - Part-Year and Nonresidents FAQ",
+     "cadence": "@@f04f0dc48802",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/Pages/FAQS/pcs-npr.aspx"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@674e3b12fbdd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@7045b8d05dc4",
+     "cadence": "@@f04f0dc48802",
+     "topic": "law_changes",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@674e3b12fbdd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@7045b8d05dc4",
+     "cadence": "@@f04f0dc48802",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@674e3b12fbdd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/wi",
  "state_scope": {
@@ -600,7 +918,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2023 Wisconsin Form 1 Instructions (I-111), Wisconsin Department of Revenue — p.44 '2023 Tax Computation Worksheet – Line 12' (Section A Single or Head of household: at least $100,000 but less than $304,170 x 5.3% (.053) minus $372.96, $304,170 or over x 7.65% (.0765) minus $7,520.96; Section B Married filing jointly: less than $405,550 x 5.3% minus $497.34, $405,550 or over x 7.65% minus $10,027.77; Section C Married filing separately: less than $202,780 x 5.3% minus $248.67, $202,780 or over x 7.65% minus $5,014.00); p.1 'New for 2023 — Tax Rates Reduced' (\"The new tax rates for those brackets are 3.5% and 4.4% respectively\"); p.16 Line 12 Tax (Tax Table pp.38-43); p.35 2023 Standard Deduction Table; p.15 Line 10 Exemptions ($700 / $250). First- and second-bracket dollar boundaries: Wisconsin Tax Bulletin 222 (July 2023), Item 6 'Individual Income Tax Rate Decrease' (2023 Wis. Act 19, amend sec. 71.06, Wis. Stats.), https://www.revenue.wi.gov/WisconsinTaxBulletin/222-07-23-WTB.pdf",
+    "source": "@@7045b8d05dc4",
     "url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf"
    },
    "rate": null,

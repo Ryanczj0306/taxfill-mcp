@@ -22,7 +22,8 @@
   "@@e8c9ace8a603": "Form IT-370 gives an automatic six-month extension of time to file (to October 15, 2026), but must be filed along with payment for any tax due on or before April 15, 2026. June 15, 2026 due date if you qualify to file your federal income tax return on June 15, 2026 (a U.S. citizen or resident noncitizen living outside the U.S. and Puerto Rico whose main place of business or post of duty is outside the U.S. and Puerto Rico, or in military service outside the U.S. and Puerto Rico when the return is due). 2026 estimated tax is due April 15, June 15, September 15, 2026 and January 15, 2027 (generally required if you expect to owe at least $300 of NYS, NYC, or Yonkers income tax after withholding and credits, or any MCTMT).",
   "@@eb1c955e4126": "TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), \"New York Tax Treatment of Nonresidents and Part-Year Residents — Application of the Convenience of the Employer Test to Telecommuters and Others\", quoting 20 NYCRR 132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor test.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f5fc3cab0dcf": "Instructions for Form IT-201 (2025), \"Where to file\" (p. 41) - both PO Box addresses printed in the instructions themselves; Publication 55 for designated private delivery services"
+  "@@f5fc3cab0dcf": "Instructions for Form IT-201 (2025), \"Where to file\" (p. 41) - both PO Box addresses printed in the instructions themselves; Publication 55 for designated private delivery services",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -143,6 +144,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NY 2025 return (Form IT-201, Resident Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NY revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.ny.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form IT-201, Resident Income Tax Return",
+    "jurisdiction": "states/ny",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NY return, and the NY 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NY instructions for amended returns on the NY revenue department's site (https://www.tax.ny.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -197,6 +233,27 @@
     "jurisdiction": "states/ny",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "NY revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.ny.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NY instructions for amended returns on the NY revenue department's site (https://www.tax.ny.gov/).",
+    "form": "Form IT-201, Resident Income Tax Return",
+    "headline": "NY 2025, amended (Form IT-201, Resident Income Tax Return): you owe $88",
+    "jurisdiction": "states/ny",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

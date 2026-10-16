@@ -6,20 +6,28 @@
   "@@334e7f5d0bc3": "NYS Department of Taxation and Finance, 2024 legislative changes — New York's 529 college saving program (Article 22): 'The definition of a qualified withdrawal has been expanded to include withdrawals made on or after September 5, 2024' — 'make a rollover to a Roth Individual Retirement Account, as provided for in Section 529(c)(3)(E) of the Internal Revenue Code.'",
   "@@3b101d501e0e": "New York State Earned Income Credit (EITC) — You must have claimed (or been able to claim based on your federal AGI) the federal earned income credit for 2024, and not claim the Noncustodial parent earned income credit (Form IT-209) for the same year. Valid SSNs required for you and each qualifying child by the return due date (including extensions). Full-year residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.",
   "@@3e41915e3f4c": "Law change NOT modeled by the engine (status final_form_published): NEW YORK 529 PROGRAM — qualified withdrawals now include, from September 5, 2024, payments of principal and interest on a qualified education loan (IRC 529(c)(9)) and rollovers to a Roth IRA (IRC 529(c)(3)(E)). A withdrawal that is qualified is not a nonqualified withdrawal the New York return adds back. Resolve via: The Department's 2024 legislative changes page, 'New York's 529 college saving program (Article 22)' (Chapter 310 of the Laws of 2024; Education Law § 695-b).",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4e0a60adf2d4": "NYS Department of Taxation and Finance, 2024 legislative changes — MCTMT rates for self-employed individuals (Article 23): '.60% (.0060) of the net earnings attributable to the MCTD within Zone 1, if such earnings exceed $50,000 for the tax year' — 'The $50,000 thresholds are computed on an individual basis for each zone, even if you file a joint income tax return.'",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@5d789f3d2af2": "Law change NOT modeled by the engine (status final_form_published): MCTMT RATES FOR SELF-EMPLOYED INDIVIDUALS — for tax years beginning on or after January 1, 2024, the metropolitan commuter transportation mobility tax on net earnings from self-employment in the MCTD is .60% in Zone 1 and .34% in Zone 2, each owed only when that zone's earnings exceed $50,000, and the $50,000 threshold is computed per individual even on a joint return. Resolve via: The Department's 2024 legislative changes page, 'Metropolitan commuter transportation mobility tax (MCTMT) rates for self-employed individuals (Article 23)' (Part C of Chapter 59 of the Laws of 2024; Tax Law § 801(a)); calc.state_tax computes the income tax only.",
   "@@68991b011704": "STATE PROCESSING CENTER, PO BOX 61000, ALBANY NY 12261-0001 (paper return with no payment / refund return)",
   "@@70a2a21fae22": "Treaty conformity — NY conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NY income (it flows through the federal starting point; do not add it back on the NY return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: NY Form IT-201 begins from the federal return's income items (line 1 = \"wages, salaries, tips, etc.\" from federal Form 1040 line 1z) and arrives at federal adjusted gross income on line 19. Because the return starts from federal AGI, income that is exempt from federal tax under a U.S. income tax treaty is already excluded from federal AGI and flows through to NY. NY's additions to federal AGI (IT-201 lines 20-23, with \"other additions\" detailed on Form IT-225) do not include any modification that adds back treaty-exempt income. The 2024 IT-225-I addition-modification chart (codes A-101 through A-222) contains no code referencing a federal tax treaty, treaty-exempt wages/income, or nonresident-alien treaty exclusions (the word \"treaty\" does not appear in the 2024 IT-225-I at all). Net effect: starts from federal AGI and has no treaty addback, so treaty-exempt income is NOT re-taxed -> conforms = true. (Unlike CA, which adds treaty-exempt income back on Schedule CA, NY has no analogous addback.)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@b055828a8e83": "Real Property Tax Credit (circuit-breaker, homeowners and renters) — New York State resident for all of 2024 who occupied the same NY residence for at least six months, was not claimed as a dependent on another taxpayer's federal return, and whose residence was not completely exempted from real property taxes. Homeowners: did not own real property with a current market value over $85,000 and paid real property taxes. Renters: average monthly rent (line 21) of $450 or less (excluding charges for heat, gas, electricity, furnishings, or board — the 2024 IT-214 subtracts 25% of rent when those are included).",
   "@@b1b5be71b9bb": "Instructions for Form IT-201 (2024), \"When to file/Important dates\" — April 15, 2025 filing/payment date; IT-370 six-month extension to October 15, 2025; June 16, 2025 special federal-qualifier date",
   "@@b9fd55832de3": "Form IT-370 gives an automatic six-month extension to October 15, 2025, but must be filed with payment of any tax due by April 15, 2025. June 16, 2025 due date if you qualify for the federal out-of-the-country /military June deadline.",
   "@@c42bfd33b7ee": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. (Unlike the 2023 pack, the IT-216 child and dependent care credit percentages are now source-verified from the 2024 IT-216-I limitation table.)",
   "@@ca2294257424": "Instructions for Form IT-201, Full-Year Resident Income Tax Return (2024) - starting point (line 1 = federal 1040 line 1z; line 19 federal AGI), additions lines 20-23, due date April 15 2025, filing threshold ($4,000 / $3,100 dependent-single)",
+  "@@cbb7576cb9ef": "Instructions for Form IT-201, Full-Year Resident Income Tax Return, New York State, tax year 2024 (IT-201-I) — sections 'New York State tax rate schedule' (Married filing jointly and qualifying surviving spouse—filing status 2 and 5; Single and married filing separately—filing status 1 and 3; Head of household—filing status 4), 'New York State standard deduction table' (Line 34), 'Line 36: Dependent exemptions' ($1,000 each), 'Line 39: New York State tax', and 'Tax computation—New York adjusted gross income of more than $107,650' (Tax computation worksheets 1-6). Second pass: the printer-friendly 2024 IT-201-I PDF (pp. 33-35, https://www.tax.ny.gov/pdf/2024/inc/it201i_2024.pdf) reproduces the same three schedules, worksheets, standard deduction table, and $1,000 dependent exemption; the 2024 Form IT-201 PDF pages 2-3 confirm the line 33-39 structure.",
   "@@dfb43bbdd3a2": "NYS Department of Taxation and Finance, 2024 legislative changes — Additional payments for Empire State child credit (Article 22): 'Resident taxpayers received an additional payment (beginning in August 2024)' — 'Taxpayers are not required to report these payments on their 2024 New York State income tax return.'",
+  "@@e048cb2598fe": "annual (per tax year; the shipped NY 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@e5856d8f8613": "New York State Household Credit — New York State resident (full-year or part-year) who cannot be claimed as a dependent on another taxpayer's federal income tax return (Form IT-201 item C marked No). Amount depends on filing status, federal AGI, and (for tables 2 and 3) the number of dependents from item H plus one for you (and one for your spouse on a joint return), looked up in the household credit tables in the Form IT-201 instructions.",
+  "@@e62de5356fab": "The shipped NY 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@eb1c955e4126": "TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), \"New York Tax Treatment of Nonresidents and Part-Year Residents — Application of the Convenience of the Employer Test to Telecommuters and Others\", quoting 20 NYCRR 132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor test.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f39a1fa0e4e2": "Child and Dependent Care Credit (New York State) — You are entitled to this credit if you qualified to claim the federal child and dependent care credit for 2024 (whether or not you actually claimed it). Full-year residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.",
-  "@@f7e173d00036": "Instructions for Form IT-201 (2024), \"Where to file\" — both PO Box addresses printed in the instructions themselves (also in the Step 11 filing checklist); Publication 55 for private delivery services"
+  "@@f7e173d00036": "Instructions for Form IT-201 (2024), \"Where to file\" — both PO Box addresses printed in the instructions themselves (also in the Step 11 filing checklist); Publication 55 for private delivery services",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -140,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NY 2024 return (Form IT-201, Resident Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NY revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.ny.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form IT-201, Resident Income Tax Return",
+    "jurisdiction": "states/ny",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NY return, and the NY 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NY instructions for amended returns on the NY revenue department's site (https://www.tax.ny.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -197,9 +240,377 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "NY revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.ny.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NY instructions for amended returns on the NY revenue department's site (https://www.tax.ny.gov/).",
+    "form": "Form IT-201, Resident Income Tax Return",
+    "headline": "NY 2024, amended (Form IT-201, Resident Income Tax Return): you owe $88",
+    "jurisdiction": "states/ny",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e62de5356fab",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "2024 Form IT-215, Claim for Earned Income Credit (lines 11-12, 16) and 2024 Form IT-215-I instructions; 2024 IT-201-I Line 65",
+     "cadence": "@@e048cb2598fe",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pdf/2024/inc/it215_2024_fill_in.pdf"
+    },
+    {
+     "answers": "NY Dept. of Taxation and Finance - 2024 Instructions for Form IT-213 (33% / $100-per-child amounts, under-17 qualifying child, Worksheet A thresholds); 2024 IT-201-I Line 63",
+     "cadence": "@@e048cb2598fe",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it213i-2024.htm"
+    },
+    {
+     "answers": "2024 Form IT-214 (lines 3, 16, 21-22, 26-33) and 2024 Form IT-214-I (credit limit chart, $375/$75 maxima)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pdf/2024/inc/it214_2024_fill_in.pdf"
+    },
+    {
+     "answers": "NY Dept. of Taxation and Finance - 2024 Form IT-216-I, Instructions for Form IT-216 (New York State child and dependent care credit limitation table, p. 7)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pdf/2024/inc/it216i_2024.pdf"
+    },
+    {
+     "answers": "Instructions for Form IT-201 (2024), Line 40 — New York State household credit tables 1, 2, and 3",
+     "cadence": "@@e048cb2598fe",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e62de5356fab",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@f7e173d00036",
+     "cadence": "@@e048cb2598fe",
+     "topic": "filing_logistics",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e62de5356fab",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@ca2294257424",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    },
+    {
+     "answers": "Instructions for Form IT-201 (2024), printer-friendly PDF (IT-201-I pp. 33-35) — used as the independent second-pass source for the NYS tax rate schedules, tax computation worksheets 1-6, standard deduction table, and dependent exemption",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2024/inc/it201i_2024.pdf"
+    },
+    {
+     "answers": "2024 Form IT-201, Resident Income Tax Return (fill-in PDF) — page 2 lines 33-38 (standard/itemized deduction, dependent exemptions box, taxable income) and page 3 line 39 'NYS tax on line 38 amount' (third-pass structure check)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2024/inc/it201_2024_fill_in.pdf"
+    },
+    {
+     "answers": "Income tax definitions (resident, nonresident, part-year resident, domicile, statutory resident 184-day rule, permanent place of abode, substantially all of the taxable year)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pit/file/pit_definitions.htm"
+    },
+    {
+     "answers": "Instructions for Form IT-225, New York State Modifications (2024) - addition modifications chart codes A-101 through A-222, no treaty-exempt-income addback (the word 'treaty' does not appear)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it225i-2024.htm"
+    },
+    {
+     "answers": "2024 Instructions for Form IT-213, Claim for Empire State Child Credit — 33% / $100-per-child amounts, under-17 qualifying child, SSN/ITIN requirement, Worksheet A phase-out thresholds ($110,000/$75,000/$55,000)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it213i-2024.htm"
+    },
+    {
+     "answers": "2024 Form IT-215, Claim for Earned Income Credit (fill-in PDF) — line 11 'NYS EIC rate 30% (.30)', line 16 carried to IT-201 line 65",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2024/inc/it215_2024_fill_in.pdf"
+    },
+    {
+     "answers": "2024 Form IT-214, Claim for Real Property Tax Credit (fill-in PDF), and 2024 IT-214-I — $85,000 property-value gate, $18,000 household-gross-income limit, $450 average-monthly-rent limit, $375/$75 credit limit chart",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2024/inc/it214_2024_fill_in.pdf"
+    },
+    {
+     "answers": "2024 Form IT-216-I, Instructions for Form IT-216 (Claim for Child and Dependent Care Credit) — New York State child and dependent care credit limitation table (1.100 at NYAGI <= $25,000 down to 0.200 over $150,000)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2024/inc/it216i_2024.pdf"
+    },
+    {
+     "answers": "New York State 2024 legislative changes summary (the IT-201-I 'What's new for 2024' pointer target)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/legal/2024/"
+    },
+    {
+     "answers": "New York State Department of Taxation and Finance, '2024 legislative changes' — Personal income tax and corporation tax changes (the detail page the /legal/2024/ summary links to; updated December 17, 2024)",
+     "cadence": "@@e048cb2598fe",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/legal/2024/pit-corp-changes.htm"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e62de5356fab",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@dfb43bbdd3a2",
+     "cadence": "@@e048cb2598fe",
+     "topic": "law_changes",
+     "url": "https://www.tax.ny.gov/legal/2024/pit-corp-changes.htm"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "remote_work_sourcing": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e62de5356fab",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@eb1c955e4126",
+     "cadence": "@@e048cb2598fe",
+     "topic": "remote_work_sourcing",
+     "url": "https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf"
+    }
+   ],
+   "topic": "remote_work_sourcing",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e62de5356fab",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@cbb7576cb9ef",
+     "cadence": "@@e048cb2598fe",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e62de5356fab",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/ny",
  "state_scope": {
@@ -234,7 +645,7 @@
        "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
       },
       {
-       "source": "TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), \"New York Tax Treatment of Nonresidents and Part-Year Residents — Application of the Convenience of the Employer Test to Telecommuters and Others\", quoting 20 NYCRR 132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor test.",
+       "source": "@@eb1c955e4126",
        "url": "https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf"
       }
      ],
@@ -756,7 +1167,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "Instructions for Form IT-201, Full-Year Resident Income Tax Return, New York State, tax year 2024 (IT-201-I) — sections 'New York State tax rate schedule' (Married filing jointly and qualifying surviving spouse—filing status 2 and 5; Single and married filing separately—filing status 1 and 3; Head of household—filing status 4), 'New York State standard deduction table' (Line 34), 'Line 36: Dependent exemptions' ($1,000 each), 'Line 39: New York State tax', and 'Tax computation—New York adjusted gross income of more than $107,650' (Tax computation worksheets 1-6). Second pass: the printer-friendly 2024 IT-201-I PDF (pp. 33-35, https://www.tax.ny.gov/pdf/2024/inc/it201i_2024.pdf) reproduces the same three schedules, worksheets, standard deduction table, and $1,000 dependent exemption; the 2024 Form IT-201 PDF pages 2-3 confirm the line 33-39 structure.",
+    "source": "@@cbb7576cb9ef",
     "url": "https://www.tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm"
    },
    "rate": null,

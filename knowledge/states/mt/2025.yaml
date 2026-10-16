@@ -102,13 +102,23 @@ credits:
       tax credit (EITC) of 10 percent of the federal EITC'; Worksheet A reduction examples 1-4) and What's New (HB
       337 increases the credit to 20% beginning in tax year 2026)
     url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+# JK27 (2026-10-16): the residency test is AT LEAST nine months. This entry said "more than nine months", the
+# wording of the Line 16 summary (2025 Form 2 Instructions, p.9: "have lived in Montana for more than nine months
+# during the tax year"); the Schedule 2EC the filer signs prints "I resided in Montana for a minimum of nine months
+# during 2025" (2025 Form 2, page 10, Attestation), the Schedule 2EC instructions list "You lived in Montana for at
+# least nine months during the tax year." (p.38), and the statute reads "must have resided in Montana for at least
+# 9 months of that period" (MCA 15-30-2338(1)(b), Montana Code Annotated 2025,
+# https://mca.legmt.gov/bills/mca/title_0150/chapter_0300/part_0230/section_0380/0150-0300-0230-0380.html).
+# Instructions and Form 2 each downloaded twice on 2026-10-16 with identical sha256 (bed29192ae2fb020...,
+# 4671aef667749732...).
 - name: Elderly Homeowner/Renter Credit
   type: refundable
-  eligibility: Montana taxpayers age 62 or older who lived in Montana for more than nine months during the tax year,
-    occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year,
-    and live in a household where the total income of all its members is less than $45,000. Available even to those
-    with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal under Individuals).
-    One credit per household.
+  eligibility: 'Montana taxpayers age 62 or older who lived in Montana for at least nine months during the tax year
+    (Schedule 2EC attestation: "I resided in Montana for a minimum of nine months during 2025"), occupied a Montana
+    residence as a renter, owner, or lessee for a total of six months or more during the year, and live in a household
+    where the total income of all its members is less than $45,000. Available even to those with no other filing
+    requirement (Schedule 2EC may be filed directly on the TransAction Portal under Individuals). One credit per
+    household.'
   amount: 'Refundable credit of up to $1,150, computed on Schedule 2EC (2025 Form 2, page 10): gross household income
     (line 18, the sum of lines 1-17) minus the STANDARD EXCLUSION of $12,600 pre-printed on line 19 ("Your standard
     exclusion is entered here for you"; instructions p.40: "You must first deduct $12,600 from your gross household
@@ -126,11 +136,13 @@ credits:
   claimed_on: Schedule 2EC (Elderly Homeowner/Renter Credit), carried to Form 2, page 1, line 16
   citation:
     source: 2025 Montana Form 2 Instructions, Line 16 - Elderly Homeowner/Renter Credit ('a refundable tax credit
-      of up to $1,150'; household income less than $45,000; age 62 or older; more than nine months in Montana; six
-      months or more as renter/owner/lessee) and the Schedule 2EC instructions, p.40-41 (Net Household Income 'You
-      must first deduct $12,600 from your gross household income', Household Income Reduction Table, Line 29 Credit
-      Multiplier Table); 2025 Form 2, page 10, Schedule 2EC line 19 pre-printed 12,600, line 25 'Multiply line 24 by
-      15% (0.15)', line 28 'Enter the lesser of line 27 or $1,150'
+      of up to $1,150'; household income less than $45,000; age 62 or older; at least nine months in Montana, per
+      the Schedule 2EC tests on p.38 'You lived in Montana for at least nine months during the tax year.' where the
+      Line 16 summary on p.9 says 'more than nine months'; six months or more as renter/owner/lessee) and the
+      Schedule 2EC instructions, p.40-41 (Net Household Income 'You must first deduct $12,600 from your gross
+      household income', Household Income Reduction Table, Line 29 Credit Multiplier Table); 2025 Form 2, page 10,
+      Schedule 2EC Attestation 'I resided in Montana for a minimum of nine months during 2025', line 19 pre-printed
+      12,600, line 25 'Multiply line 24 by 15% (0.15)', line 28 'Enter the lesser of line 27 or $1,150'
     url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
 - name: Montana Adoption Credit
   type: refundable

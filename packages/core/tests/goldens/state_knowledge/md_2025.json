@@ -29,6 +29,7 @@
   "@@ecf01cea56d6": "2025 Maryland State & Local Tax Forms & Instructions (Resident Booklet, 60 pages) - PASS 1 for every engine figure. NEW FOR 2025 page i (BRFA/HB 352 new brackets and rates, increased standard deduction, reduced itemized deductions, new 2% tax on net capital gain income, new Child Tax Credit phase-out; OBBBA decoupling); NEW LOCAL TAX BRACKETS FOR 2025 page ii; Instruction 1 Who Must File plus 2025 MINIMUM FILING LEVELS TABLES 1 and 2; Instruction 10 EXEMPTION AMOUNT CHART (10A); Instruction 11 Income (copy federal AGI from federal line 11a); Instruction 12 Additions, code letter g treaty addback; Instruction 13 subtractions (incl. the new Legislative Energy Relief Refund subtraction and the $1,200 two-income subtraction); Instruction 14 Itemized Deductions; Instruction 16 Figure your Maryland taxable net income (FLAT $3,350/$6,700 standard deduction); Instruction 17 Figure your Maryland tax plus 2025 Tax Rate Schedules I and II; Instruction 18 EIC/poverty/502CR credits plus 2025 POVERTY INCOME GUIDELINES; Instruction 19 2025 LOCAL TAX RATE CHART, LOCAL TAX WORKSHEET (19A), and the Anne Arundel/Frederick graduated brackets; Instruction 21 refundable credits (Worksheets 21A/21C); Instruction 24 mailing/payment; Instruction 26 part-year residents; MARYLAND TAX COMPUTATION WORKSHEET SCHEDULES (17A) on booklet p. 33; Anne Arundel County Tax Computation Worksheet Schedule (19D) on booklet p. 44",
   "@@f188d9e48642": "Nonresidents: Form 505 — Maryland Nonresident Income Tax Return, with Form 505NR (Nonresident Income Tax Calculation) attached; Form 515 is used by nonresidents subject to the special nonresident/local-jurisdiction rules. Part-year residents do NOT use 505 — they file the resident Form 502 with part-year adjustments (Instruction 26).",
   "@@f32e38caf8ab": "annual (per tax year; the newest shipped MD pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@feec3128960c": "The newest shipped MD pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal."
  },
  "file_and_pay": {
@@ -156,6 +157,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MD 2025 return (Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502 (per Instruction 26).): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MD revenue department home page (read 2026-10-16)",
+      "url": "https://www.marylandcomptroller.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@d94cdfe8781c",
+    "jurisdiction": "states/md",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MD return, and the MD 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MD instructions for amended returns on the MD revenue department's site (https://www.marylandcomptroller.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -216,6 +252,29 @@
      "@@711d4a646efe"
     ],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "MD revenue department home page (read 2026-10-16)",
+      "url": "https://www.marylandcomptroller.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MD instructions for amended returns on the MD revenue department's site (https://www.marylandcomptroller.gov/).",
+    "form": "@@d94cdfe8781c",
+    "headline": "MD 2025, amended (Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502 (per Instruction 26).): you owe $88",
+    "jurisdiction": "states/md",
+    "notes": [
+     "@@711d4a646efe"
+    ],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -895,7 +954,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: MD 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: MD 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

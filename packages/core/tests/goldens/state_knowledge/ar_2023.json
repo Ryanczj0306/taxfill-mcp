@@ -7,13 +7,20 @@
   "@@2e8cbbb0ab26": "Inflationary Relief Income Tax Credit (2023 one-time credit) — Arkansas full-year residents only, filing a full-year resident return for tax year beginning January 1, 2023. One-time credit for the 2023 tax year only. Not available to nonresidents/part-year residents.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@748c74a78862": "Personal Tax Credit (personal exemption credit) — Every Arkansas individual filer. One credit each for: yourself, spouse, and each dependent; plus extra credit boxes for age 65 or over, '65 Special' (low-income elderly), blind, deaf, and head of household/surviving spouse. Listed in the Personal Tax Credits section of the return.",
   "@@74e0e92430e9": "If any of your income was exempt from federal tax under a treaty: AR does not conform to federal tax treaties, so that income is still taxable to AR — do not carry the federal exclusion onto the state return.",
   "@@81fbb800e9e1": "If any income was exempt from federal tax under a treaty: AR does not conform to federal tax treaties — that income is still taxable to AR.",
   "@@91db866dc4ad": "Additional Tax Credit for Qualified Individuals (low-income credit) — An individual taxpayer with net taxable income up to the 2023 threshold who timely files an Arkansas income tax return. Phases out across the income table; allowed per individual (doubled for joint Filing Status 2, and computed separately per spouse for Filing Status 4).",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9bbb515c8d5f": "Credit for Individuals with Developmental Disabilities — Taxpayers who have a dependent (or self) who qualifies with a developmental disability, as certified on Form AR1000-DD (formerly AR1000RC5). Certifications valid on/after January 1, 2022 have no expiration date.",
   "@@ada1be7d1388": "https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf",
+  "@@c54c8d6c8224": "Arkansas DFA, Revenue Division — '2023 Indexed Tax Brackets' (Individual Income Tax): full bracket table (From / Less Than or Equal To / Percentage / Minus Adjustment: 0% to $5,299; 2% $5,300–$10,599 minus $105.98; 3% $10,600–$15,099 minus $211.97; 3.4% $15,100–$24,999 minus $272.37; 4.7% $25,000–$89,600 minus $597.35; then $10-per-$100 adjustment phase-down $89,601–$94,200; 4.7% minus $153.70 at $94,201+), midpoint-of-band formula examples, and Ark. Code Ann. 26-51-201(d)(1) indexing note. Cross-verified against the 2023 AR1000F and AR1000NR Instructions booklet (https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf): p.5 'Special Information for Tax Year 2023' (Act 532 top rate 4.7%), p.12 Personal Tax Credits ($29), p.14 Standard Deduction chart and Lines 26–29, pp.25–31 2023 Low Income Tax Tables (Rev 09/21/2023) and Regular Income Tax Table (Rev 10/4/2023) with 'For $100,001 and over, your tax is $4,544 + 4.7% of the excess over $100,000.'",
+  "@@de2ece8ef1fd": "The shipped AR 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@e90aaab560b7": "annual (per tax year; the shipped AR 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fdb4102b2717": "Arkansas 2023 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions booklet) - Arkansas Dept. of Finance and Administration. Contains: residency/domicile definitions (p.9), who-must-file thresholds and 'When to File' April 15, 2024 due date (p.10), tax-treaty foreign-student taxation language, line-by-line income section (Lines 8-25), mailing addresses, and check-payable instructions."
  },
  "file_and_pay": {
@@ -141,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended AR 2023 return (Form AR1000F - Full Year Resident Individual Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "AR revenue department home page (read 2026-10-16)",
+      "url": "https://www.dfa.arkansas.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "jurisdiction": "states/ar",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended AR return, and the AR 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the AR instructions for amended returns on the AR revenue department's site (https://www.dfa.arkansas.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -204,9 +246,239 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "AR revenue department home page (read 2026-10-16)",
+      "url": "https://www.dfa.arkansas.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the AR instructions for amended returns on the AR revenue department's site (https://www.dfa.arkansas.gov/).",
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "headline": "AR 2023, amended (AR1000F - Full Year Resident Individual Income Tax Return): you owe $88",
+    "jurisdiction": "states/ar",
+    "notes": [
+     "@@81fbb800e9e1"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@de2ece8ef1fd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ada1be7d1388"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ar",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Arkansas DFA - 2023 AR1000F Full Year Resident Individual Income Tax Return (form, P1) and 2023 AR1000F/AR1000NR Instructions (Line 34, p.15)",
+     "cadence": "@@e90aaab560b7",
+     "topic": "credits",
+     "url": "https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf"
+    },
+    {
+     "answers": "Arkansas DFA - 2023 AR2441 Child and Dependent Care Expenses (form, lines 8-10) and 2023 AR1000F/AR1000NR Instructions (Line 35, p.15)",
+     "cadence": "@@e90aaab560b7",
+     "topic": "credits",
+     "url": "https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR2441_Child_andDependentCareExpenses.pdf"
+    },
+    {
+     "answers": "Arkansas DFA - 2023 Individual Income Tax Forms and Instructions booklet, 'Additional Tax Credit For Qualified Individuals Worksheet' table (p.22)",
+     "cadence": "@@e90aaab560b7",
+     "topic": "credits",
+     "url": "@@ada1be7d1388"
+    },
+    {
+     "answers": "Arkansas DFA - Instructions for AR1000TC (2023), Line 8",
+     "cadence": "@@e90aaab560b7",
+     "topic": "credits",
+     "url": "https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000TC_Schedule_of_TaxCredits_andBusiness_IncentiveCredits_Instructions.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@de2ece8ef1fd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ada1be7d1388"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ar",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@fdb4102b2717",
+     "cadence": "@@e90aaab560b7",
+     "topic": "filing_logistics",
+     "url": "@@ada1be7d1388"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@de2ece8ef1fd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ada1be7d1388"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ar",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@fdb4102b2717",
+     "cadence": "@@e90aaab560b7",
+     "topic": "forms_and_instructions",
+     "url": "@@ada1be7d1388"
+    },
+    {
+     "answers": "2023 Tax Forms - Arkansas Department of Finance and Administration (confirms official 2023 form titles: AR1000F 'Full Year Resident Individual Income Tax Return' and AR1000NR 'Part Year or Non-Resident Individual Income Tax Return'; posted 01/04/2024).",
+     "cadence": "@@e90aaab560b7",
+     "topic": "forms_and_instructions",
+     "url": "https://www.dfa.arkansas.gov/office/taxes/income-tax-administration/individual-income-tax/forms/2023-tax-forms/"
+    },
+    {
+     "answers": "Arkansas Taxpayer Access Point (ATAP) - official DFA online payment/account portal (referenced in the 2023 instructions booklet for making payments).",
+     "cadence": "@@e90aaab560b7",
+     "topic": "forms_and_instructions",
+     "url": "https://www.atap.arkansas.gov"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@de2ece8ef1fd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ada1be7d1388"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ar",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@c54c8d6c8224",
+     "cadence": "@@e90aaab560b7",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.dfa.arkansas.gov/wp-content/uploads/TaxBrackets_2023.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@de2ece8ef1fd",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@ada1be7d1388"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ar",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/ar",
  "state_scope": {
@@ -668,7 +940,7 @@
   "common_result": {
    "base_kind": "state_gross_income",
    "citation": {
-    "source": "Arkansas DFA, Revenue Division — '2023 Indexed Tax Brackets' (Individual Income Tax): full bracket table (From / Less Than or Equal To / Percentage / Minus Adjustment: 0% to $5,299; 2% $5,300–$10,599 minus $105.98; 3% $10,600–$15,099 minus $211.97; 3.4% $15,100–$24,999 minus $272.37; 4.7% $25,000–$89,600 minus $597.35; then $10-per-$100 adjustment phase-down $89,601–$94,200; 4.7% minus $153.70 at $94,201+), midpoint-of-band formula examples, and Ark. Code Ann. 26-51-201(d)(1) indexing note. Cross-verified against the 2023 AR1000F and AR1000NR Instructions booklet (https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf): p.5 'Special Information for Tax Year 2023' (Act 532 top rate 4.7%), p.12 Personal Tax Credits ($29), p.14 Standard Deduction chart and Lines 26–29, pp.25–31 2023 Low Income Tax Tables (Rev 09/21/2023) and Regular Income Tax Table (Rev 10/4/2023) with 'For $100,001 and over, your tax is $4,544 + 4.7% of the excess over $100,000.'",
+    "source": "@@c54c8d6c8224",
     "url": "https://www.dfa.arkansas.gov/wp-content/uploads/TaxBrackets_2023.pdf"
    },
    "rate": null,

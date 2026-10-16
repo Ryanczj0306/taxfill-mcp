@@ -5,15 +5,22 @@
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@28ce6013def9": "Form 40 (Individual Income Tax Return); residents claiming additions, subtractions, or certain credits also file Form 39R (Resident Supplemental Schedule)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d1a27910f8a": "For tax year 2024: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2024 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@515a8e964d60": "2024 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 10-23-2024) — What's New for 2024 ('Effective January 1, 2024, the individual income tax rate is 5.695%'; IRC conformity as of January 1, 2024), Who Must File and resident filing requirements, Which Form to Use, When to File and Pay (April 15, 2025), Where to File mailing addresses, Line 20 Tax Worksheet ($4,673/$9,346 subtraction amounts), Standard Deduction Worksheet ($14,600/$29,200/$21,900), grocery credit and other credit instructions",
   "@@66889cb62622": "2024 Idaho Individual Income Tax instructions (EIN00046, 10-23-2024), Where to File — return and payment PO Box 83784; return only PO Box 56; physical-address delivery 11321 W Chinden Blvd, Boise",
+  "@@796cc9645399": "annual (per tax year; the shipped ID 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@ac42947c70bb": "Credit for Maintaining a Home for a Family Member Age 65 or Older or with a Developmental Disability — You maintained a household during 2024 for an immediate family member who is (a) age 65 or older (not counting yourself or your spouse), or (b) has a developmental disability (may include yourself or your spouse) AND you did NOT claim the $1,000-per-person deduction for that family member on Form 39R, Part B, line 15. You can claim this credit even if your gross income is below the filing requirement.",
   "@@ae6902a4a448": "Idaho Child Tax Credit — You must have a qualifying child (per the federal qualifying-child definition) who is age 16 or under as of December 31, 2024. For divorced parents or parents who don't live together, only one parent can claim a qualifying child — typically the custodial parent. No qualifying child means no credit.",
+  "@@b31b107cd6e1": "2024 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 10-23-2024) — Line 20 Tax Worksheet, page 9: '1. Enter the amount of Idaho taxable income from Form 40, line 19; 2. Enter the amount shown below for your filing status: Single or married filing separately, enter $4,673 — Married filing jointly, head of household, or qualifying surviving spouse, enter $9,346; 3. Subtract line 2 from line 1; 4. Multiply subtotal by 5.695%; 5. Idaho tax ... If zero or less, enter zero'; 'What's New for 2024 — Tax Rate Reduction: Effective January 1, 2024, the individual income tax rate is 5.695%' (page 1, CUT from 2023's 5.8%; subtraction amounts re-indexed from $4,489/$8,978); Standard Deduction Worksheet, page 8 ($14,600 single/MFS, $29,200 MFJ/QSS, $21,900 HOH — 2024 federal amounts). Second pass: the 2024 Form 40 face (EFO00089, 09-04-2024) — the line-16 margin prints $14,600/$21,900/$29,200, line 19 reads 'Idaho taxable income. Subtract line 18 from line 17. If less than zero, enter zero', and line 20 reads 'Tax from worksheet. See instructions, page 9'; the Form 43 line 42 worksheet (booklet p.34) prints the identical $4,673/$9,346 amounts and 5.695% — both passes agree.",
   "@@d5cc360162e2": "Return only / no payment: Idaho State Tax Commission, PO Box 56, Boise ID 83756-0056. (Delivery service requiring a physical address: Idaho State Tax Commission, 11321 W Chinden Blvd, Boise ID 83714.)",
   "@@db04e4592bdd": "Treaty conformity — ID conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from ID income (it flows through the federal starting point; do not add it back on the ID return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Idaho's resident return (Form 40) starts on line 7 from federal adjusted gross income (federal Form 1040/1040-SR, line 11), and the only statutory additions are on Form 39R, Part A (2024 instructions pp.30-31): federal NOL deduction, capital loss carryover incurred outside the state before becoming an Idaho resident, non-Idaho state/local bond interest and dividends, Idaho college savings account withdrawal, bonus depreciation, and other additions. There is NO add-back of federally treaty-exempt income (unlike CA's Schedule CA). Because treaty-exempt income is already excluded from federal AGI and is not added back, it flows through untaxed. Idaho also affirmatively confirms this in its Noncitizens guidance (re-fetched live this session): 'Idaho honors all tax treaties recognized by the United States' and 'Gross income amounts exempt by treaty are not included in the gross income filing requirement for Idaho.' Therefore Idaho conforms to federal treaty exemptions.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f1e6a258b9fd": "Form 43 (Part-year Resident and Nonresident Income Tax Return); part-year/nonresident filers claiming additions, subtractions, or certain credits also file Form 39NR (Part-year Resident and Nonresident Supplemental Schedule)"
+  "@@edd1b4c7aa07": "The shipped ID 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@f1e6a258b9fd": "Form 43 (Part-year Resident and Nonresident Income Tax Return); part-year/nonresident filers claiming additions, subtractions, or certain credits also file Form 39NR (Part-year Resident and Nonresident Supplemental Schedule)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -137,6 +144,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended ID 2024 return (Form 40 (Individual Income Tax Return); residents claiming additions, subtractions, or certain credits also file Form 39R (Resident Supplemental Schedule)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "ID revenue department home page (read 2026-10-16)",
+      "url": "https://tax.idaho.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@28ce6013def9",
+    "jurisdiction": "states/id",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended ID return, and the ID 2024 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the ID instructions for amended returns on the ID revenue department's site (https://tax.idaho.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2024
    }
   ]
  },
@@ -194,9 +236,261 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "ID revenue department home page (read 2026-10-16)",
+      "url": "https://tax.idaho.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the ID instructions for amended returns on the ID revenue department's site (https://tax.idaho.gov/).",
+    "form": "@@28ce6013def9",
+    "headline": "ID 2024, amended (Form 40 (Individual Income Tax Return); residents claiming additions, subtractions, or certain credits also file Form 39R (Resident Supplemental Schedule)): you owe $88",
+    "jurisdiction": "states/id",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@edd1b4c7aa07",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/id",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "Idaho State Tax Commission, 2024 Form 40 instructions (EIN00046, 10-23-2024), Line 43 Grocery Credit and Grocery Credit Worksheet ($120 / $140 if 65+; $10 or $11.67 per qualified month)",
+     "cadence": "@@796cc9645399",
+     "topic": "credits",
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2024
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@edd1b4c7aa07",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/id",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@66889cb62622",
+     "cadence": "@@796cc9645399",
+     "topic": "filing_logistics",
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2024
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@edd1b4c7aa07",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/id",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@515a8e964d60",
+     "cadence": "@@796cc9645399",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    },
+    {
+     "answers": "2024 Idaho Form 40 (EFO00089, 09-04-2024) — second-pass verification of the form face: line-16 margin prints the standard deduction amounts ($14,600 single/MFS, $21,900 HOH, $29,200 MFJ); line 19 'Idaho taxable income. Subtract line 18 from line 17. If less than zero, enter zero'; line 20 'Tax from worksheet. See instructions, page 9'",
+     "cadence": "@@796cc9645399",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_09-04-2024.pdf"
+    },
+    {
+     "answers": "Idaho State Tax Commission — Noncitizens guidance (re-fetched live this session): 'Idaho honors all tax treaties recognized by the United States'; 'Gross income amounts exempt by treaty are not included in the gross income filing requirement for Idaho'; worked example using the $2,500 nonresident filing threshold",
+     "cadence": "@@796cc9645399",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.idaho.gov/taxes/income-tax/individual-income/specific-guidance-for-individual-income-tax/specific-guidance-for-individuals-noncitizens/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2024
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@edd1b4c7aa07",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/id",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@515a8e964d60",
+     "cadence": "@@796cc9645399",
+     "topic": "law_changes",
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2024
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@edd1b4c7aa07",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/id",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [
+    {
+     "answers": "@@b31b107cd6e1",
+     "cadence": "@@796cc9645399",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2024
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@edd1b4c7aa07",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/id",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@4d1a27910f8a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2024
+  }
  },
  "jurisdiction": "states/id",
  "state_scope": {
@@ -576,7 +870,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: ID 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65, blind). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: ID 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65, blind). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,
@@ -596,7 +890,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2024 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 10-23-2024) — Line 20 Tax Worksheet, page 9: '1. Enter the amount of Idaho taxable income from Form 40, line 19; 2. Enter the amount shown below for your filing status: Single or married filing separately, enter $4,673 — Married filing jointly, head of household, or qualifying surviving spouse, enter $9,346; 3. Subtract line 2 from line 1; 4. Multiply subtotal by 5.695%; 5. Idaho tax ... If zero or less, enter zero'; 'What's New for 2024 — Tax Rate Reduction: Effective January 1, 2024, the individual income tax rate is 5.695%' (page 1, CUT from 2023's 5.8%; subtraction amounts re-indexed from $4,489/$8,978); Standard Deduction Worksheet, page 8 ($14,600 single/MFS, $29,200 MFJ/QSS, $21,900 HOH — 2024 federal amounts). Second pass: the 2024 Form 40 face (EFO00089, 09-04-2024) — the line-16 margin prints $14,600/$21,900/$29,200, line 19 reads 'Idaho taxable income. Subtract line 18 from line 17. If less than zero, enter zero', and line 20 reads 'Tax from worksheet. See instructions, page 9'; the Form 43 line 42 worksheet (booklet p.34) prints the identical $4,673/$9,346 amounts and 5.695% — both passes agree.",
+    "source": "@@b31b107cd6e1",
     "url": "https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_10-23-2024.pdf"
    },
    "rate": null,

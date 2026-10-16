@@ -21,7 +21,8 @@
   "@@e70fbf028f46": "Treaty conformity — KY conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from KY income (it flows through the federal starting point; do not add it back on the KY return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Kentucky's resident return (Form 740) starts from federal adjusted gross income — 2025 Form 740 line 5 is \"Enter amount from federal Form 1040 or 1040-SR, line 11a\", i.e. federal AGI, and Kentucky law requires the individual income tax return to begin with federal adjusted gross income and be adjusted for any differences to arrive at Kentucky adjusted gross income (Form 740 line 6 additions from Schedule M line 6, line 8 subtractions from Schedule M line 17, line 9 Kentucky AGI). The 2025 Schedule M \"Additions to Federal Adjusted Gross Income\" (Part I, lines 1-5, totaled on line 6) are: (1) interest on other states' obligations / taxable mutual-fund dividends, (2) resident adjustment from Kentucky Schedule K-1, (3) special depreciation/Section 179 differences, (4) federal net operating loss, and (5) \"other additions\" (reservist/National Guard expenses, the lump-sum distribution capital-gains portion, passive activity loss adjustment, pension/IRA basis differences, intangible-asset and depreciable-property gain differences, Armed Forces moving expenses, Kentucky excess business loss limitation). NONE of these add back federally tax-treaty-exempt income. Because treaty-exempt income is already excluded from federal AGI and KY has no add-back for it, it is not re-taxed by Kentucky — therefore KY conforms. (Kentucky's starting basis is the Internal Revenue Code in effect as of December 31, 2024, per the live KY DOR Individual Income Tax page.)",
   "@@e8c189982279": "Family Size Tax Credit — Resident individuals/families with modified gross income (MGI) at or below the Schedule ITC Section C table ceiling for their family size. Family size is capped at 4 (yourself, spouse if living in the same household, and qualifying children). Available even to someone claimed as a dependent on a parent's return (family size 1). The 2025 Form 740 line 5 prints the outer gate directly — \"If total of Columns A and B is $42,760 or less, you may qualify for the Family Size Tax Credit.\"",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f285068ad00e": "The newest shipped KY pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal."
+  "@@f285068ad00e": "The newest shipped KY pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -145,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended KY 2025 return (Form 740 (2025 Kentucky Individual Income Tax Return — Full-Year Resident, 42A740, 10-25). Filing statuses printed on the 2025 form are 1 Single, 2 Married filing separately on this combined return (if both had income), 3 Married filing joint return, 4 Married filing separate returns.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "KY revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.ky.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@a645bbc8baf6",
+    "jurisdiction": "states/ky",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended KY return, and the KY 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the KY instructions for amended returns on the KY revenue department's site (https://revenue.ky.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -199,6 +235,27 @@
     "jurisdiction": "states/ky",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "KY revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.ky.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the KY instructions for amended returns on the KY revenue department's site (https://revenue.ky.gov/).",
+    "form": "@@a645bbc8baf6",
+    "headline": "KY 2025, amended (Form 740 (2025 Kentucky Individual Income Tax Return — Full-Year Resident, 42A740, 10-25). Filing statuses printed on the 2025 form are 1 Single, 2 Married filing separately on this combined return (if both had income), 3 Married filing joint return, 4 Married filing separate returns.): you owe $88",
+    "jurisdiction": "states/ky",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -786,7 +843,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: KY 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: KY 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

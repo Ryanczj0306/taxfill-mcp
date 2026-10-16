@@ -1,5 +1,6 @@
 {
  "_strings": {
+  "@@0290a21f4c03": "Elderly Homeowner/Renter Credit — Montana taxpayers age 62 or older who lived in Montana for at least nine months during the tax year (Schedule 2EC attestation: \"I resided in Montana for a minimum of nine months during 2025\"), occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year, and live in a household where the total income of all its members is less than $45,000. Available even to those with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal under Individuals). One credit per household.",
   "@@0d315ee06d00": "2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (HB 845 and SB 53 529-plan subtraction to $4,500/$9,000; SB 93 permanent military retirement subtraction; SB 544 Montana NOL transition adjustment; Changes Beginning in Tax Year 2026 — HB 129 volunteer-responder subtraction, HB 337 lower top rate and wider brackets for 2026 with a further cut in 2027, EITC to 20% in 2026; Form Changes — Mixed Residency and Nonresident Military Spouse checkboxes, state income tax deduction moved from line 2 to Schedule I line 4 with Worksheet B, lines 1-2 updated for the One Big Beautiful Bill, Transition Schedule discontinued), Filing Requirements, Residency Status, North Dakota Reciprocity, Montana Individual Income Tax Calculation (p.10-12) with the worked Marla example, 2025 Montana Income Tax Rates (p.12), Schedule I-V and Schedule 2EC instructions, Due Dates, mailing addresses, payment instructions, and the 2026/2027 tax tables on p.42",
   "@@14ec0f539982": "2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (2025 legislative changes HB 845 / SB 53 / SB 93 / SB 544, and the notice that HB 337's rate cut and the 20% EITC begin in tax year 2026), 2025 Montana Income Tax Rates (p.12), Filing Requirements incl. the thirty-day nonresident worker exclusion, Residency Status and the new Mixed Residency checkbox, North Dakota Reciprocity, Due Dates (April 15, 2026), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check payable to the Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
@@ -15,7 +16,6 @@
   "@@805a19766c29": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, SB 93 made the Montana MILITARY RETIREMENT SUBTRACTION PERMANENT. It is a Schedule I subtraction inside Form 2 line 5. Resolve via: The What's New section and the Schedule I military-retirement subtraction instructions of the 2025 Montana Form 2 instructions (the citation URL).",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a06503879e66": "2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages), p.12 — '2025 Montana Income Tax Rates': Single and Married Filing Separately Ordinary Income Tax Rates — $0 to less than $21,100 tax rate 4.7% Less $0, $21,100 or greater 5.9% Less $253; Married Filing Jointly and Qualifying Surviving Spouse — breakpoint $42,200, 5.9% Less $506; Head of Household — breakpoint $31,700, 5.9% Less $380. The rates apply to Montana ORDINARY income ('taxable income without net long-term capital gains', which includes qualified dividends); net long-term capital gains are taxed separately at 3% up to the same breakpoint (measured after ordinary income) and 4.1% above. Worked example (instructions p.11, Marla): Montana taxable income $50,000, single, no net long-term capital gains -> 'Her Montana Ordinary Income Tax is $2,697' — matching marginal bracket math (4.7% x 21,100 + 5.9% x 28,900 = 991.70 + 1,705.10 = 2,696.80 -> 2,697) and the printed formula method (5.9% x 50,000 - 253 = 2,697.00). Second pass: the 2025 Form 2 itself (https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf) prints the $21,100 / $42,200 / $31,700 filing-status amounts on page 2, line 5, and the 0.03 / 0.041 capital-gains multipliers on lines 8 and 10 — both passes agree. The booklet's What's New confirms the 4.7%/5.9% structure is unchanged for 2025 and that HB 337's lower top rate (5.65%) and wider brackets begin in TAX YEAR 2026.",
-  "@@a7c6a11e1c91": "Elderly Homeowner/Renter Credit — Montana taxpayers age 62 or older who lived in Montana for more than nine months during the tax year, occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year, and live in a household where the total income of all its members is less than $45,000. Available even to those with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal under Individuals). One credit per household.",
   "@@b2ef4ff5f6a4": "Credit for Income Taxes Paid to Another State or Country — Full-year or part-year Montana residents who paid income tax to another state or country on income that is also taxed by Montana. Not available if the other state allowed a credit against its own tax for the Montana tax on the same income, or for taxes paid on Montana-source income. Pass-through entity owners may claim their share of qualifying entity-level income taxes (including composite and pass-through entity taxes).",
   "@@c17ec871359f": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, HB 845 and SB 53 raised the Montana 529-plan subtraction maximum to up to $4,500 ($9,000 joint). It is a Schedule I subtraction inside Form 2 line 5. Resolve via: The What's New section and the Schedule I subtraction instructions of the 2025 Montana Form 2 instructions (the citation URL); the engine subtracts nothing beyond what the supplied line 7 Montana taxable income already reflects.",
   "@@d0b7f306bb75": "annual (per tax year; the newest shipped MT pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
@@ -24,6 +24,7 @@
   "@@e9e3662fb4db": "Montana Form 2 — Individual Income Tax Return (most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).",
   "@@ea0988d4c150": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, SB 544 created a Montana NET-OPERATING-LOSS (NOL) TRANSITION ADJUSTMENT. Related 2025 form movement: the state income tax deduction moved off Form 2 line 2 and is now added back on Schedule I, Part I, line 4 via the new Worksheet B, and the tax-year-2024-only Transition Schedule has been discontinued. Resolve via: The What's New section, the Schedule I Part I line 4 instructions and Worksheet B in the 2025 Montana Form 2 instructions (the citation URL); Worksheet B was not transcribed line-by-line in this pack (see unverified).",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fc9477b89c24": "The newest shipped MT pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal."
  },
  "file_and_pay": {
@@ -148,6 +149,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MT 2025 return (Form Montana Form 2 — Individual Income Tax Return (most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MT revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.mt.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@e9e3662fb4db",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MT return, and the MT 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MT instructions for amended returns on the MT revenue department's site (https://revenue.mt.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -202,6 +238,27 @@
     "jurisdiction": "states/mt",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "MT revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.mt.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MT instructions for amended returns on the MT revenue department's site (https://revenue.mt.gov/).",
+    "form": "@@e9e3662fb4db",
+    "headline": "MT 2025, amended (Montana Form 2 — Individual Income Tax Return (most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).): you owe $88",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -450,7 +507,7 @@
     {
      "benefits_candidates": [
       "@@3e053dd2003f",
-      "@@a7c6a11e1c91",
+      "@@0290a21f4c03",
       "@@27eb316bc814",
       "@@b2ef4ff5f6a4"
      ],
@@ -516,7 +573,7 @@
     {
      "benefits_candidates": [
       "@@3e053dd2003f",
-      "@@a7c6a11e1c91",
+      "@@0290a21f4c03",
       "@@27eb316bc814",
       "@@b2ef4ff5f6a4"
      ],
@@ -581,7 +638,7 @@
     {
      "benefits_candidates": [
       "@@3e053dd2003f",
-      "@@a7c6a11e1c91",
+      "@@0290a21f4c03",
       "@@27eb316bc814",
       "@@b2ef4ff5f6a4"
      ],
@@ -810,7 +867,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: MT 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: MT 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

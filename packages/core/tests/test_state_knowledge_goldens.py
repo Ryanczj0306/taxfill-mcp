@@ -59,7 +59,7 @@ def test_the_stored_form_expands_to_the_live_output():
     g = _harness()
     stored = json.loads((GOLDENS / "oh_2025.json").read_text(encoding="utf-8"))
     with g._memoized_yaml():
-        live = g._jsonable(g.snapshot_jurisdiction_year("oh", 2025, with_sources=True), "<unused>")
+        live = g._jsonable(g.snapshot_jurisdiction_year("oh", 2025), "<unused>")
     assert g.expand(stored) == live
     # ... and the tail split really is in use (the OH notes are stored once, not per call).
     assert "$2,394.32" in stored["state_tax"]["work_common_tail"]
@@ -85,7 +85,36 @@ def test_a_one_character_knowledge_edit_fails_naming_the_file(tmp_path, monkeypa
 
 
 def test_the_snapshot_set_stays_small():
-    # ~5.2 MB at JK21 (127 files). A file over 256 KB, or a set over 6 MB, means the grid grew by accident.
+    # ~5.2 MB at JK21 (127 files); ~6.3 MB after JK27, which snapshots get_sources in every year (a state's
+    # registry block became per year) and adds an amended return to the demo manifest. A file over 256 KB, or a
+    # set over 7 MB, means the grid grew by accident.
     sizes = {p.name: p.stat().st_size for p in GOLDENS.glob("*.json")}
     assert max(sizes.values()) < 256 * 1024, max(sizes, key=sizes.get)
-    assert sum(sizes.values()) < 6_000_000
+    assert sum(sizes.values()) < 7_000_000
+
+
+# A tool's refusal is output (calc refuses an unsupported grid point with a ValueError naming why), so the harness
+# stores every raised error as data. A crash is not output: the JK21 snapshots stored three pydantic ValidationErrors
+# as the answers for Florida (state_scope) and New Mexico 2025 (filing_summary, file_and_pay), and nobody noticed until
+# JK27. Only a refusal may appear; a missing file is a crash too.
+_REFUSAL_TYPES = {"ValueError"}
+
+
+def test_no_snapshot_records_a_crash_as_the_answer():
+    g = _harness()
+    crashes = []
+
+    def walk(node, where):
+        if isinstance(node, dict):
+            err = node.get("error")
+            if isinstance(err, str) and err.split(":", 1)[0] not in _REFUSAL_TYPES:
+                crashes.append(f"{where}: {err[:160]}")
+            for key, value in node.items():
+                walk(value, f"{where}/{key}")
+        elif isinstance(node, list):
+            for i, value in enumerate(node):
+                walk(value, f"{where}[{i}]")
+
+    for path in sorted(GOLDENS.glob("*.json")):
+        walk(g.expand(json.loads(path.read_text(encoding="utf-8"))), path.name)
+    assert not crashes, "a snapshot stores a crash as a tool's answer:\n  " + "\n  ".join(crashes)

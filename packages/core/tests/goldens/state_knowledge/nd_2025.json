@@ -26,7 +26,8 @@
   "@@e7a90c211c1b": "ND 2025 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions, 28702 12-2025) — Who must file (pp.5-6), Statutory 7-month rule (210 days), treaty statement (p.5), Changes Affecting You and Your Income Tax (SB 2282 employer child care credit new for 2025; OBBBA perpetual conformity of the federal-taxable-income starting point; SB 2047 military pay withholding exemption beginning tax year 2026; military retirement benefit exclusion), April 15 2026 due date, PO Box 5621, payee 'ND State Tax Commissioner', Line 20 Tax (tax-table mandate), Line 21 other-state credit, Line 22 marriage penalty credit worksheet ($81,036/$47,550/$15,750/$312.00), 2025 Tax Table (pp.20-27), 2025 Tax Rate Schedules (p.28)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f1c6ad79713f": "Marriage Penalty Credit — Married couples filing a JOINT North Dakota return where both spouses have qualified income (wages/salaries/tips, net self-employment income, and taxable retirement/Social Security amounts). Qualifies only if joint ND taxable income (Form ND-1 line 18) is more than $81,036 AND the qualified income of the spouse with the lower qualified income is more than $47,550 (2025 indexed amounts — up from $78,836/$46,275 in 2024). Designed to offset the higher tax that two-earner couples pay versus filing as singles. Meeting all the conditions does not guarantee a credit — the worksheet formula may produce none.",
-  "@@f2d9c432b46e": "If any income was exempt from federal tax under a treaty: ND does not conform to federal tax treaties — that income is still taxable to ND."
+  "@@f2d9c432b46e": "If any income was exempt from federal tax under a treaty: ND does not conform to federal tax treaties — that income is still taxable to ND.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -150,6 +151,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended ND 2025 return (Form ND-1 (Individual Income Tax Return, SFN 28702). A simplified Form ND-EZ (SFN 28745) is available for qualifying full-year residents who answer \"No\" to all the \"Which form to use\" questions (e.g., no additions/most subtractions, no nonresident/part-year status, no other-state credit).): you owe $88 more.",
+    "citations": [
+     {
+      "source": "ND revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.nd.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@2dafaa9b7cfe",
+    "jurisdiction": "states/nd",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended ND return, and the ND 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the ND instructions for amended returns on the ND revenue department's site (https://www.tax.nd.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -210,6 +246,29 @@
      "@@f2d9c432b46e"
     ],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "ND revenue department home page (read 2026-10-16)",
+      "url": "https://www.tax.nd.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the ND instructions for amended returns on the ND revenue department's site (https://www.tax.nd.gov/).",
+    "form": "@@2dafaa9b7cfe",
+    "headline": "ND 2025, amended (Form ND-1 (Individual Income Tax Return, SFN 28702). A simplified Form ND-EZ (SFN 28745) is available for qualifying full-year residents who answer \"No\" to all the \"Which form to use\" questions (e.g., no additions/most subtractions, no nonresident/part-year status, no other-state credit).): you owe $88",
+    "jurisdiction": "states/nd",
+    "notes": [
+     "@@f2d9c432b46e"
+    ],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -892,7 +951,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: ND 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: ND 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

@@ -18,6 +18,13 @@ return, fixed Austin address), a return filed WITH Form W-7 (the Austin ITIN
 Operation), and — Phase G item G6 — a Form 843 FICA withheld-in-error claim
 (form '843' with attached_forms ['8316']): a separate mailing to the Ogden
 service center per the current Pub 519 ch. 8, never attached to the 1040-NR.
+
+Amended returns (Phase K JK27) have their own model, because nothing about the
+original return's mailing carries over: a Form 1040-X follows the CURRENT Form
+1040-X instructions (a continuous-use form) for its address, payment, attachments
+and timing, whatever year it amends; a state amended return follows the state
+pack's ``amended_return`` block, and a state pack without one gets a pointer to
+the DOR instead of the original return's address and due date.
 """
 from __future__ import annotations
 
@@ -94,6 +101,70 @@ def _is_8316(name: str) -> bool:
     return name.upper().replace(" ", "").replace("-", "") in ("8316", "F8316", "FORM8316")
 
 
+# Unicode hyphens and dashes a pasted form name may carry ("1040‑X", "1040–X").
+_DASHES = dict.fromkeys(map(ord, "\u2010\u2011\u2012\u2013\u2014\u2212"), "-")
+# Words a caller may put before the form number: "Form 1040-X", "IRS 1040-X", "Federal Form 1040-X", "U.S. 1040-X".
+_NAME_PREFIXES = frozenset({"form", "irs", "federal", "us", "state"})
+_STATE_CODES = frozenset(code.lower() for code in _STATE_NAMES)
+
+
+def _form_number(name: str) -> str:
+    """The form-number part of a form name: the text before the first comma, without the leading words above or a
+    leading two-letter state code ('Form 1040-X, Amended ...' -> '1040-X'; 'IA 1040X' -> '1040X')."""
+    head = name.translate(_DASHES).split(",", 1)[0]
+    tokens = [t.strip(".;:()") for t in head.split()]
+    while tokens and re.sub(r"[^a-z]", "", tokens[0].lower()) in _NAME_PREFIXES:
+        tokens = tokens[1:]
+    if len(tokens) > 1 and tokens[0].lower() in _STATE_CODES:
+        tokens = tokens[1:]
+    return " ".join(tokens)
+
+
+def _form_token(name: str) -> str:
+    """The first token of the form number: 'Form 1040-NR, U.S. ...' -> '1040-NR'."""
+    number = _form_number(name)
+    return number.split()[0] if number else ""
+
+
+def _norm_form(name: str) -> str:
+    """'Form 1040-X' / 'f1040x' / '1040 X' / 'IRS 1040-X' -> '1040x': the form number, lower-case letters and digits,
+    a leading pack-key 'f' dropped."""
+    f = re.sub(r"[^0-9a-z]", "", _form_number(name).lower())
+    if f.startswith("f") and f[1:2].isdigit():
+        return f[1:]
+    return f
+
+
+def _is_1040x(name: str) -> bool:
+    """True for Form 1040-X in any spelling ('1040-X', '1040X', 'f1040x', 'Form 1040-X', 'IRS 1040 X')."""
+    return _norm_form(name) == "1040x"
+
+
+def _is_individual_return(name: str) -> bool:
+    """True for the return a Form 1040-X corrects: Form 1040, 1040-SR, 1040-NR or 1040-NR-EZ, in any spelling."""
+    return _norm_form(name) in ("1040", "1040sr", "1040nr", "1040nrez")
+
+
+# An amended form number: digits (or a letter word and a hyphen) right before an X, then at most a revision suffix:
+# '1040-X', '1040 X', '500X', 'IT-201-X', 'M1X', 'MI-1040X-12', 'PIT-X', Nebraska's '1040XN', 'RI-1040X-R'. A letter between the digits and the X does
+# not count ('511-TX' is Oklahoma's credit for tax paid to another state). The whole number part is read, never the
+# descriptive words after a comma: "Form M1, Individual Income Tax" ends in an x too, and the first cut of this rule
+# (2026-10-16) read every Minnesota return as amended until the JK21 golden caught it; the final JK27 review then
+# found names the first-token rule missed ('MI-1040X-12', 'IA 1040X', 'DR 0104X', '1040 X').
+_AMENDED_NUMBER = re.compile(r"(?i)(?:^|[\s-])(?:[a-z]*-?\d+\s?-?x|[a-z]{2,}-x)(?:-\d{1,2}|n|-r|-nr)?$")
+
+
+def _is_amended(item: "FilingManifestItem") -> bool:
+    """An amended return: the manifest says so, or (when it is silent) the form number ends in X ('1040-X', '500X').
+
+    Pass ``amended: true`` for every amended item: a state amended on its original form with a box, or a name this
+    rule does not read, is otherwise checked as an original return.
+    """
+    if item.amended is not None:
+        return item.amended
+    return bool(_AMENDED_NUMBER.search(_form_number(item.form)))
+
+
 def _pack_address_entry(pack, key: str) -> tuple[str | None, Citation | None]:
     """Read a fixed-address extra entry ({address, citation}) from the pack's
     mailing_addresses block. These entries (ITIN Operation, standalone 8843) are
@@ -168,6 +239,15 @@ _SECTION_6013_CITATION = Citation(
     url=_SECTION_6013_URL,
 )
 
+_PUB_519_CITATION = Citation(
+    source=(
+        "IRS Publication 519, ch. 1, 'Amended return' — the §6013(g)/(h) choice made on a joint amended return "
+        "(Form 1040-X): attach Form 1040 or 1040-SR, enter 'Amended' across the top, amend any later returns; "
+        "file within 3 years of the original or 2 years of payment (read 2026-10-16)"
+    ),
+    url="https://www.irs.gov/publications/p519",
+)
+
 # The FICA-withheld-in-error claim last mile (G6, Forms 843 + 8316). The address
 # was VERIFIED LIVE against the current Pub 519 (2025 edition, HTTP 200, text
 # extracted) before pinning: chapter 8, "Refund of Taxes Withheld in Error",
@@ -229,6 +309,66 @@ _FS_2026_02_CITATION = Citation(
         "information gets a CP53E notice and \"could take longer to process\" (read 2026-09-25)"
     ),
     url=_FS_2026_02_URL,
+)
+
+
+_W7_PACKAGE_NOTE = (
+    "Form W-7 is filed with this return, so mail the WHOLE package — return, Form W-7, and the "
+    "applicant's original (or certified) identity documents — to the IRS ITIN Operation in Austin. "
+    "Returns with a W-7 attached go there regardless of your state and whether a payment is enclosed "
+    "(Form W-7 instructions); do NOT use the normal where-to-file address."
+)
+_W7_NO_ADDRESS_NOTE = (
+    "This filing includes Form W-7: mail it to the IRS ITIN Operation in Austin, NOT the normal "
+    "where-to-file address — the ITIN Operation address is not in this year's knowledge pack, so "
+    "confirm it in the Form W-7 instructions (https://www.irs.gov/instructions/iw7) before mailing."
+)
+
+
+def _w7_sign_line(attached: str) -> str:
+    """Form W-7 is the exception among attachments: its own 'Sign Here' block MUST be signed by the ITIN applicant
+    even when the W-7 rides attached to the return (an unsigned W-7 is rejected by the ITIN unit, which holds up the
+    whole return)."""
+    return (
+        f"Form {attached} IS signed separately even though it is attached: the ITIN applicant must sign "
+        f"and date the W-7's own 'Sign Here' block in ink (and include a daytime phone number) — an "
+        f"unsigned W-7 is rejected by the ITIN unit and holds up the whole return."
+    )
+
+
+def _w7_mailing(item: "FilingManifestItem", pack, citations: list[Citation], notes: list[str]) -> str | None:
+    """A return filed WITH a Form W-7 overrides the whole where-to-file table: the package (return + W-7 + the
+    applicant's identity documents) goes to the Austin ITIN Operation, regardless of the filer's state and of payment
+    (Form W-7 instructions). Shared by the Form 1040 and the Form 1040-X checklists."""
+    itin_address, itin_citation = _pack_address_entry(pack, "itin_w7_with_return")
+    if itin_address:
+        if itin_citation:
+            citations.append(itin_citation)
+        notes.append(_W7_PACKAGE_NOTE)
+        return itin_address
+    notes.append(_W7_NO_ADDRESS_NOTE)
+    return None
+
+
+_SECTION_6013_STATEMENT_STEP = (
+    "ATTACH THE §6013(g)/(h) ELECTION STATEMENT — required on the first joint return under the "
+    "election: a statement, SIGNED BY BOTH SPOUSES, declaring that on the last day of the tax year "
+    "one spouse was a nonresident alien and the other a U.S. citizen or resident, and that both "
+    "choose to be treated as U.S. residents for the entire tax year, with each spouse's full name, "
+    f"address, and SSN/ITIN ({_SECTION_6013_URL}). A joint return with a nonresident-alien spouse "
+    "is NOT a valid joint return without this statement. That is the IRC 6013(g) declaration; for "
+    "the IRC 6013(h) choice (both spouses U.S. citizens or residents on the last day of the year, one "
+    "a nonresident alien on the first — a dual-status year) the statement instead declares \"that you "
+    "both qualify to make the choice and that you choose to be treated as U.S. residents for the "
+    "entire tax year\", and the Filing Status entry names the dual-status spouse(s) (Pub 519 ch. 1, "
+    "Choosing Resident Alien Status). In a LATER year of an IRC 6013(g) election still in effect no new "
+    "statement is attached: \"check the box and enter their name if you and your nonresident spouse made "
+    "the choice to be treated as residents in a prior year and the choice remains in effect\" (Pub 519 "
+    "ch. 1)."
+)
+_SECTION_6013_SIGN_LINE = (
+    "The §6013(g)/(h) election statement is signed by BOTH spouses too — sign it in ink along with "
+    "the return itself."
 )
 
 
@@ -320,6 +460,18 @@ class FilingManifestItem(BaseModel):
             "— signed by BOTH spouses, with each spouse's name, address, and SSN/ITIN — attached."
         ),
     )
+    amended: bool | None = Field(
+        default=None,
+        description=(
+            "True for an AMENDED return: Form 1040-X, a state's amended form, or a state form filed with its "
+            "amended-return box checked. Left unset, a form name ending in X ('1040-X', '500X', 'IT-201-X') counts "
+            "as amended; set it for a state whose amended return is the original form with a box (and false for "
+            "the rare original form whose name ends in X). The checklist then follows the amended-return rules "
+            "(its own address, payment, attachments and timing), never the original return's address or due "
+            "date. A federal amended item gets the Form 1040-X checklist; list the corrected return that goes "
+            "behind it ('1040', '1040-SR' or '1040-NR') in attached_forms."
+        ),
+    )
     dual_status: bool = Field(
         default=False,
         description=(
@@ -386,7 +538,7 @@ def _money(amount: int) -> str:
     return f"${abs(amount):,}"
 
 
-def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions:
+def _federal_return(item: FilingManifestItem, knowledge_dir, today: date | None = None) -> ReturnInstructions:
     # Degrade gracefully for years whose knowledge pack isn't shipped (e.g. a
     # back-filed year older than the oldest shipped pack): the generic sign/assemble/
     # mail/records steps still apply; only address/payment/deadlines need the pack.
@@ -432,6 +584,8 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
         return _standalone_8843_return(item, pack, notes)
     if _is_843(item.form):
         return _form_843_return(item, pack, notes)
+    if _is_amended(item) and (_is_1040x(item.form) or _is_individual_return(item.form)):
+        return _form_1040x_return(item, pack, notes, today or date.today())
     is_nr = _is_nr_form(item.form)
     owes = item.bottom_line < 0
     refund = item.bottom_line > 0
@@ -489,23 +643,7 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
     # filer's state and regardless of payment (Form W-7 instructions).
     mailing_address = None
     if _filing_includes_w7(item):
-        itin_address, itin_citation = _pack_address_entry(pack, "itin_w7_with_return")
-        if itin_address:
-            mailing_address = itin_address
-            if itin_citation:
-                citations.append(itin_citation)
-            notes.append(
-                "Form W-7 is filed with this return, so mail the WHOLE package — return, Form W-7, and the "
-                "applicant's original (or certified) identity documents — to the IRS ITIN Operation in Austin. "
-                "Returns with a W-7 attached go there regardless of your state and whether a payment is enclosed "
-                "(Form W-7 instructions); do NOT use the normal where-to-file address."
-            )
-        else:
-            notes.append(
-                "This filing includes Form W-7: mail it to the IRS ITIN Operation in Austin, NOT the normal "
-                "where-to-file address — the ITIN Operation address is not in this year's knowledge pack, so "
-                "confirm it in the Form W-7 instructions (https://www.irs.gov/instructions/iw7) before mailing."
-            )
+        mailing_address = _w7_mailing(item, pack, citations, notes)
     elif pack is not None and pack.mailing_addresses is not None:
         ma = pack.mailing_addresses
         citations.append(ma.citation)
@@ -545,11 +683,7 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
             # block MUST be signed by the ITIN applicant even when the W-7 rides
             # attached to the return (an unsigned W-7 is rejected by the ITIN
             # unit, which holds up the whole return).
-            sign.append(
-                f"Form {attached} IS signed separately even though it is attached: the ITIN applicant must sign "
-                f"and date the W-7's own 'Sign Here' block in ink (and include a daytime phone number) — an "
-                f"unsigned W-7 is rejected by the ITIN unit and holds up the whole return."
-            )
+            sign.append(_w7_sign_line(attached))
         else:
             sign.append(f"Form {attached} is attached to this return — do NOT sign it separately.")
     for statement in item.attached_statements:
@@ -581,25 +715,9 @@ def _federal_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructio
     # WITHOUT the signed statement is not a valid joint return, so it leads the
     # assembly checklist rather than hiding among the generic steps.
     if item.section_6013_election:
-        assemble.insert(0, (
-            "ATTACH THE §6013(g)/(h) ELECTION STATEMENT — required on the first joint return under the "
-            "election: a statement, SIGNED BY BOTH SPOUSES, declaring that on the last day of the tax year "
-            "one spouse was a nonresident alien and the other a U.S. citizen or resident, and that both "
-            "choose to be treated as U.S. residents for the entire tax year, with each spouse's full name, "
-            f"address, and SSN/ITIN ({_SECTION_6013_URL}). A joint return with a nonresident-alien spouse "
-            "is NOT a valid joint return without this statement. That is the IRC 6013(g) declaration; for "
-            "the IRC 6013(h) choice (both spouses U.S. citizens or residents on the last day of the year, one "
-            "a nonresident alien on the first — a dual-status year) the statement instead declares \"that you "
-            "both qualify to make the choice and that you choose to be treated as U.S. residents for the "
-            "entire tax year\", and the Filing Status entry names the dual-status spouse(s) (Pub 519 ch. 1, "
-            "Choosing Resident Alien Status). In a LATER year of an IRC 6013(g) election still in effect no new "
-            "statement is attached: \"check the box and enter their name if you and your nonresident spouse made "
-            "the choice to be treated as residents in a prior year and the choice remains in effect\" (Pub 519 "
-            "ch. 1)."
-        ))
+        assemble.insert(0, _SECTION_6013_STATEMENT_STEP)
         sign.append(
-            "The §6013(g)/(h) election statement is signed by BOTH spouses too — sign it in ink along with "
-            "the return itself."
+            _SECTION_6013_SIGN_LINE
         )
         citations.append(_SECTION_6013_CITATION)
 
@@ -903,6 +1021,354 @@ def _form_843_return(item: FilingManifestItem, pack, notes: list[str]) -> Return
     )
 
 
+# ── Amended returns: Form 1040-X (Phase K JK27) ────────────────────────────────
+# Form 1040-X is a continuous-use form ("converted from an annual revision to continuous use in tax year 2021"), so an
+# amendment filed today follows the CURRENT instructions whatever year it amends; the instructions' own example of a
+# return being amended is a "2024 Form 1040" (p. 2). Everything below is read off the Instructions for Form 1040-X
+# (Rev. December 2025), irs.gov/pub/irs-pdf/i1040x.pdf, two downloads digest eed8685fbdbfe362 (read 2026-10-16):
+# What's New (p. 1), Which Revision To Use / Interest and Penalties / When To File (p. 3), Tracking Your Amended Return
+# (p. 5), Line 20 and Line 22 (p. 10), Sign Your Return and Assembling Your Return (p. 11), Where To File (p. 12).
+# A new revision can move any of it (the December 2025 one added the attached-return requirement): re-read the
+# instructions when irs.gov/Form1040X posts one, and update this table with them.
+_F1040X_INSTRUCTIONS_URL = "https://www.irs.gov/pub/irs-pdf/i1040x.pdf"
+_F1040X_CITATION = Citation(
+    source=(
+        "Instructions for Form 1040-X (Rev. December 2025): What's New, the new attachment requirement (p. 1); "
+        "Interest and Penalties and When To File (p. 3); Tracking Your Amended Return (p. 5); Line 20 and Line 22 "
+        "(p. 10); Sign Your Return and Assembling Your Return (p. 11); Where To File (p. 12)"
+    ),
+    url=_F1040X_INSTRUCTIONS_URL,
+)
+_PAY_BY_CHECK_URL = "https://www.irs.gov/payments/pay-by-check-or-money-order"
+_PAY_BY_CHECK_CITATION = Citation(
+    source=(
+        "IRS — Pay by check or money order: payable to \"U.S. Treasury\"; the check includes your name, address "
+        "and phone number, the tax form or notice number, the tax year and your SSN (read 2026-10-16)"
+    ),
+    url=_PAY_BY_CHECK_URL,
+)
+_AMENDED_FAQ_URL = "https://www.irs.gov/filing/amended-return-frequently-asked-questions"
+_AMENDED_FAQ_CITATION = Citation(
+    source=(
+        "IRS — Amended return frequently asked questions: Forms 1040, 1040-SR and 1040-NR for the current or two "
+        "prior tax periods can be amended electronically; direct deposit only on an electronically filed amended "
+        "return (read 2026-10-16)"
+    ),
+    url=_AMENDED_FAQ_URL,
+)
+_F1040X_AUSTIN = "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0052"
+_F1040X_OGDEN = "Department of the Treasury, Internal Revenue Service, Ogden, UT 84201-0052"
+_F1040X_KANSAS_CITY = "Department of the Treasury, Internal Revenue Service, Kansas City, MO 64999-0052"
+# "A foreign country, U.S. territory; or use an APO or FPO address, or file Form 2555 or 4563, or are a dual-status
+# alien", and "with Form 1040-NR or 1040-NR-EZ".
+_F1040X_AUSTIN_INTERNATIONAL = "Department of the Treasury, Internal Revenue Service, Austin, TX 73301-0215"
+_F1040X_BY_STATE: dict[str, str] = {
+    **dict.fromkeys(
+        ("Alabama", "Arkansas", "Florida", "Georgia", "Louisiana", "Mississippi", "Oklahoma", "Texas"),
+        _F1040X_AUSTIN,
+    ),
+    **dict.fromkeys(
+        ("Alaska", "Arizona", "California", "Colorado", "Hawaii", "Idaho", "Iowa", "Kansas", "Michigan", "Montana",
+         "Nebraska", "Nevada", "New Mexico", "North Dakota", "Ohio", "Oregon", "South Dakota", "Utah", "Washington",
+         "Wyoming"),
+        _F1040X_OGDEN,
+    ),
+    **dict.fromkeys(
+        ("Connecticut", "Delaware", "District of Columbia", "Illinois", "Indiana", "Kentucky", "Maine", "Maryland",
+         "Massachusetts", "Minnesota", "Missouri", "New Hampshire", "New Jersey", "New York", "North Carolina",
+         "Pennsylvania", "Rhode Island", "South Carolina", "Tennessee", "Vermont", "Virginia", "West Virginia",
+         "Wisconsin"),
+        _F1040X_KANSAS_CITY,
+    ),
+}
+
+
+def _refund_window_anchor(year: int, due: str | None) -> str:
+    """When an early or on-time original "is considered filed" (Form 1040-X instructions, When To File: "on the due
+    date (generally April 15)"). A weekend or holiday moves the due date a day or three, not the anchor; a postponement
+    (TY2019 to 2020-07-15, TY2020 to 2021-05-17) moves the due date itself, and the packs record the window moving with
+    it."""
+    april_15 = date(year + 1, 4, 15)
+    if due and date.fromisoformat(due) > date(year + 1, 4, 18):
+        return due
+    return april_15.isoformat()
+
+
+def _form_name(name: str) -> str:
+    """'Schedule 1' / 'Form 2555' stay as given; a bare number reads 'Form 2555'."""
+    return name if re.match(r"(?i)(form|schedule)\b", name.strip()) else f"Form {name}"
+
+
+def _form_1040x_return(item: FilingManifestItem, pack, notes: list[str], today: date) -> ReturnInstructions:
+    """Form 1040-X — an amended federal return, under the CURRENT Form 1040-X instructions (Phase K JK27).
+
+    Before JK27 a 1040-X item fell through to the Form 1040 checklist: the 1040 address (Charlotte, NC for a
+    Georgia balance due, where the 1040-X table says Austin), a "Form 1040" check memo, the Form 1040-V voucher, and
+    the original return's due date as the deadline. What the Form 1040 checklist does for a Form W-7, a §6013(g)/(h)
+    election or a dual-status year carries over here, aimed at the updated return behind the Form 1040-X.
+    """
+    y = item.tax_year
+    citations: list[Citation] = [_F1040X_CITATION]
+    corrected = next((a for a in item.attached_forms if _is_individual_return(a)), None)
+    if not _is_1040x(item.form):
+        if corrected is None and _is_individual_return(item.form):
+            corrected = item.form
+        notes.append(
+            f"A federal return is amended on Form 1040-X, not on another Form {item.form}: \"After the due date for "
+            f"an original return has passed, don't file any additional original returns for the same year\" (Form "
+            f"1040-X instructions, p. 3). File Form 1040-X with the completed, updated Form {item.form} behind it; "
+            f"this checklist is for that Form 1040-X."
+        )
+    amends_nr = corrected is not None and _is_nr_form(corrected)
+    owes, refund = item.bottom_line < 0, item.bottom_line > 0
+    enclosing_check = owes and not item.paid_online
+    due = pack.deadlines.filing_due_date if pack is not None and pack.deadlines is not None else None
+    # "If you filed your original return early (for example, March 1 for a calendar year return), your return is
+    # considered filed on the due date (generally April 15)" (When To File, p. 3): the claim window runs from April 15
+    # even in a year whose due date a weekend moved.
+    deemed_filed = _refund_window_anchor(y, due)
+    # "the current or two prior tax periods" (IRS amended-return FAQ): in processing year P, tax years P-1 .. P-3.
+    efile_ok = y >= today.year - 3
+
+    if refund:
+        bottom = f"Amended {y} return (Form 1040-X): a further refund of {_money(item.bottom_line)}."
+    elif owes:
+        bottom = f"Amended {y} return (Form 1040-X): you owe {_money(item.bottom_line)} more." + (
+            " Already paid online." if item.paid_online else "")
+    else:
+        bottom = f"Amended {y} return (Form 1040-X): no change in the amount you owe or are refunded."
+
+    payment: list[str] = []
+    if owes and item.paid_online:
+        payment.append("Balance already paid electronically — keep the confirmation number; do NOT enclose a check.")
+    elif owes:
+        payment.append(
+            "\"The IRS recommends paying the amount due on line 20 electronically whenever possible\": \"Online using "
+            "Direct Pay, cash, or your IRS online account; or Online or by phone using the Electronic Federal Tax "
+            "Payment System (EFTPS), a debit card, a credit card, or a digital wallet\" (Form 1040-X instructions, "
+            "Line 20, p. 10)."
+        )
+        payment.append(
+            f"By check or money order: make it payable to \"U.S. Treasury\" and write on it your name, address and "
+            f"phone number, your SSN, the tax year ({y}) and the form (\"{y} Form 1040-X\") (IRS, Pay by check or "
+            f"money order). \"If you owe tax and you don't want to pay electronically, enclose (don't attach) your "
+            f"check or money order in the envelope with your amended return\" (p. 12). The Form 1040-X instructions "
+            f"name no payment voucher: enclose the check by itself."
+        )
+        citations.append(_PAY_BY_CHECK_CITATION)
+    if owes:
+        since = f" from the {y} return's original due date ({due})" if due else " from the original due date"
+        until = "until it was paid (you paid online)" if item.paid_online else (
+            "until it is paid, so pay with the amended return or sooner")
+        payment.append(
+            f"Interest: \"The IRS will charge you interest on taxes not paid by their due date, even if you had an "
+            f"extension of time to file\" (Interest and Penalties, p. 3) — on this additional tax it runs{since} "
+            f"{until}."
+        )
+    if refund:
+        payment.append(
+            "The refund comes by check: \"You will receive a check for any refund due to you. A refund on a "
+            "paper-filed amended return can't be deposited directly to your bank account\"; \"We will figure any "
+            "interest and include it in your refund\" (Line 22, p. 10). Only a Form 1040-X filed electronically can "
+            "ask for direct deposit (IRS amended-return FAQ)."
+        )
+        citations.append(_AMENDED_FAQ_CITATION)
+        if item.direct_deposit:
+            notes.append(
+                "direct_deposit is set, but a paper Form 1040-X cannot request it — e-file the amended return through "
+                "tax software if you want the refund deposited."
+                if efile_ok else
+                f"direct_deposit is set, but a paper Form 1040-X cannot request it, and a {y} amendment can no longer "
+                f"be filed electronically, so the refund comes by check."
+            )
+
+    mailing_address = None
+    if _filing_includes_w7(item):
+        # The W-7 package goes to the ITIN Operation whatever the return (Form W-7 instructions: "don't use the
+        # mailing address in the instructions for your tax return"); it names an amended joint return among its cases.
+        mailing_address = _w7_mailing(item, pack, citations, notes)
+    elif amends_nr:
+        mailing_address = _F1040X_AUSTIN_INTERNATIONAL
+        notes.append("This Form 1040-X amends a Form 1040-NR: the Form 1040-X table sends it, \"with Form 1040-NR\", "
+                     "to Austin, TX 73301-0215, whatever your state.")
+    elif item.dual_status or any(_norm_form(a) in ("2555", "4563") for a in item.attached_forms):
+        mailing_address = _F1040X_AUSTIN_INTERNATIONAL
+        notes.append("A dual-status alien, or a filer of Form 2555 or 4563, mails Form 1040-X to Austin, TX "
+                     "73301-0215 (the Form 1040-X Where To File table).")
+    elif item.state:
+        wanted = _expand_state(item.state).strip().casefold()
+        mailing_address = next((a for st, a in _F1040X_BY_STATE.items() if st.casefold() == wanted), None)
+        if mailing_address is None:
+            notes.append(
+                f"{item.state!r} is not one of the 50 states or DC in the Form 1040-X table. For \"A foreign country, "
+                f"U.S. territory; or use an APO or FPO address\" the table gives {_F1040X_AUSTIN_INTERNATIONAL} "
+                f"(residents of American Samoa, Puerto Rico, Guam, the U.S. Virgin Islands or the Northern Mariana "
+                f"Islands: see Pub. 570); for a state, pass its two-letter code or full name."
+            )
+    else:
+        notes.append("No state given — the Form 1040-X address depends on where you live (Where To File, p. 12); "
+                     "provide it to resolve the exact address.")
+    notes.append(
+        "Filing Form 1040-X in response to a notice you received from the IRS? Mail it to the address shown in the "
+        "notice instead (Where To File, p. 12)."
+    )
+    if efile_ok:
+        notes.append(
+            "E-file alternative: Forms 1040, 1040-SR and 1040-NR \"for the current or two prior tax periods\" can be "
+            "amended electronically with tax software; but \"If amending a prior year return originally filed on paper "
+            "during the current processing year, then the amended return must also be filed on paper\" (IRS "
+            "amended-return FAQ)."
+        )
+    else:
+        notes.append(
+            f"A {y} amendment must be filed on paper: \"Amended returns for those earlier tax years must be filed by "
+            f"paper\" — only Forms 1040, 1040-SR and 1040-NR \"for the current or two prior tax periods\" can be "
+            f"amended electronically (IRS amended-return FAQ)."
+        )
+    citations.append(_AMENDED_FAQ_CITATION)
+
+    sign = [
+        "Sign and date Form 1040-X in ink and enter your occupation(s): \"Form 1040-X isn't considered a valid return "
+        "unless you sign it\", and \"You must handwrite your signature on your return if you file it on paper. "
+        "Digital, electronic, or typed-font signatures are not valid signatures for Forms 1040-X filed on paper\" "
+        "(Sign Your Return, p. 11).",
+    ]
+    if item.filing_jointly:
+        sign.append("Amended joint return: \"your spouse must also sign\" (p. 11).")
+    for attached in item.attached_forms:
+        if _is_individual_return(attached):
+            continue
+        if _is_w7(attached):
+            sign.append(_w7_sign_line(attached))
+        else:
+            sign.append(f"{_form_name(attached)} is attached to this amended return — do NOT sign it separately.")
+
+    behind = f"Form {corrected}" if corrected else "Form 1040, 1040-SR, or 1040-NR"
+    assemble = [
+        "Print Form 1040-X and complete Part II, Explanation of Changes — the form's own header: \"Attach any "
+        "supporting documents and new or changed forms and schedules and complete Part II\".",
+        f"Behind the Form 1040-X put a completed and updated {behind} for {y} with your changes — new in the "
+        f"December 2025 revision: \"You must place behind your completed paper-filed Form 1040-X a completed and "
+        f"updated Form 1040, 1040-SR, or 1040-NR with the changes you are submitting\" (Assembling Your Return, "
+        f"p. 11).",
+        "Behind that return, \"any new or changed schedules and forms ... in the order of the 'Attachment Sequence "
+        "No.'\"; supporting statements last, in the order of the forms they support. \"Don't attach a copy of your "
+        "original return, correspondence, or other items unless required to do so.\"",
+        "Attach to the FRONT of Form 1040-X a copy of any Form W-2, W-2c or 2439 that supports a change; Form W-2G "
+        "or 1099-R only if tax was withheld; any Form 1042-S, SSA-1042S, RRB-1042S or 8288-A that supports a change. "
+        "Attach any supporting Form 8805 to the BACK (p. 11-12).",
+    ]
+    if amends_nr:
+        # Resident and nonresident aliens, p. 2: the paper procedure for a Form 1040-NR (and for switching between
+        # Form 1040 and Form 1040-NR) replaces the column model.
+        assemble.insert(0, (
+            "Paper Form 1040-X amending a Form 1040-NR (Form 1040-X instructions, p. 2, \"Resident and nonresident "
+            "aliens\"): \"Enter your name, current address, and social security number (SSN) or individual taxpayer "
+            "identification number (ITIN) on the front of Form 1040-X\"; \"Don't enter any other information on "
+            "page 1. Also don't complete Part I on page 2 of Form 1040-X\"; \"Enter in Part II—Explanation of "
+            "Changes the reason you are filing Form 1040-X\"; \"Complete a new or corrected return\"; \"Across the "
+            "top of the new or corrected return, write 'Amended.'\"; \"Attach the new or corrected return to the "
+            "back of Form 1040-X.\" These steps are for paper filing only: an e-filed Form 1040-X that amends a "
+            "Form 1040-NR is completed \"in its entirety\"."
+        ))
+    else:
+        notes.append(
+            "Switching between Form 1040 and Form 1040-NR (\"Use Form 1040-X if you should have filed Form 1040 "
+            "instead of Form 1040-NR, or vice versa\")? Follow the paper steps under \"Resident and nonresident "
+            "aliens\" (Form 1040-X instructions, p. 2) instead of the column model."
+        )
+    if corrected is None:
+        notes.append(
+            "attached_forms names no corrected return: list '1040', '1040-SR' or '1040-NR' there — a paper Form "
+            "1040-X now needs the completed, updated return behind it."
+        )
+    if enclosing_check:
+        assemble.append("Put the check or money order loose in the envelope — enclosed, not attached.")
+    for statement in item.attached_statements:
+        assemble.append(f"Attach the {statement} after the forms (supporting statements go last).")
+
+    deadlines: list[str] = []
+    if item.section_6013_election:
+        # Pub 519 ch. 1, "Amended return": the choice can be made on a joint amended return.
+        assemble.insert(0, _SECTION_6013_STATEMENT_STEP)
+        assemble.insert(1, (
+            "Making the §6013(g)/(h) choice on an amended return (Pub 519 ch. 1, Amended return): \"you can also make "
+            "the choice by filing a joint amended return on Form 1040-X. Attach Form 1040 or 1040-SR and enter "
+            "'Amended' across the top of the corrected return. If you make the choice with an amended return, you "
+            "and your spouse must also amend any returns that you may have filed after the year for which you made "
+            "the choice.\""
+        ))
+        sign.append(_SECTION_6013_SIGN_LINE)
+        deadlines.append(
+            "\"You must generally file the amended joint return within 3 years from the date you filed your original "
+            "U.S. income tax return or 2 years from the date you paid your income tax for that year, whichever is "
+            "later\" (Pub 519 ch. 1, Amended return)."
+        )
+        citations.append(_SECTION_6013_CITATION)
+        citations.append(_PUB_519_CITATION)
+    if item.dual_status:
+        nr_return = corrected is not None and _is_nr_form(corrected)
+        statement_form = "Form 1040" if nr_return else "Form 1040-NR"
+        statement_part = "resident" if nr_return else "nonresident"
+        return_form = f"Form {corrected}" if corrected else "updated return"
+        assemble.insert(0, (
+            f'The updated {return_form} behind the Form 1040-X is a dual-status return: write "Dual-Status Return" '
+            f"across its top, attach {statement_form} as the DUAL-STATUS STATEMENT for the {statement_part} part of "
+            f'the year with "Dual-Status Statement" written across its top, and remember that a dual-status return '
+            f"takes NO standard deduction (Pub 519 ch. 6; {_DUAL_STATUS_URL})."
+        ))
+        sign.append(
+            f'The {statement_form} marked "Dual-Status Statement" is NOT signed separately; your signature covers the '
+            f"whole filing."
+        )
+        citations.append(_DUAL_STATUS_CITATION)
+
+    mail = [
+        "\"File a separate Form 1040-X for each year you are amending\" (p. 2) — one envelope per year, never with "
+        "another year's return.",
+        "Send by USPS Certified Mail with Return Receipt (PS Form 3800) and ask for a postmark — that receipt is your "
+        "proof of timely filing; the IRS won't otherwise confirm receipt.",
+        "A private delivery service needs the street address at IRS.gov/PDSStreetAddresses, not the address above "
+        "(Where To File, p. 12).",
+    ]
+    if mailing_address and "p.o. box" in mailing_address.lower():
+        mail[2] = ("This is a P.O. Box address — it must go by USPS (private couriers like FedEx/UPS can't deliver to "
+                   "a PO box); the Form W-7 instructions give the ITIN Operation's own street address for a private "
+                   "delivery service.")
+    records = [
+        "Photograph every signed page before mailing.",
+        "Keep the certified-mail receipt and tracking number, plus any payment confirmation.",
+        "Keep a copy of the Form 1040-X, the updated return behind it and your RECONCILIATION.md for at least 3 years.",
+        "Track it with Where's My Amended Return on IRS.gov: \"It can take up to 3 weeks from the date you mail it to "
+        "show up in our system\"; \"allow 8 to 12 weeks for Form 1040-X to be processed. However, in some cases, "
+        "processing could take up to 16 weeks\" (Tracking Your Amended Return, p. 5).",
+    ]
+
+    if refund:
+        deadlines.append(
+            "Refund claim window: \"Generally, for a credit or refund, you must file Form 1040-X within 3 years "
+            "(including extensions) after the date you filed your original return or within 2 years after the date "
+            "you paid the tax, whichever is later\" (When To File, p. 3). An original filed early or on time \"is "
+            f"considered filed on the due date (generally April 15)\", so for it the 3 years run to "
+            f"{_plus_years(deemed_filed, 3)}; an original filed later, or tax paid later, moves the date later."
+            + (" That date has passed: the refund survives only if the original was filed later or tax was paid "
+               "within the last 2 years." if _plus_years(deemed_filed, 3) < today.isoformat() else "")
+        )
+    elif owes:
+        deadlines.append(
+            "The Form 1040-X When To File limit (3 years from filing, or 2 from paying) is for \"a credit or "
+            "refund\"; on an amendment that adds tax, interest grows until the tax is paid, so file and pay soon."
+        )
+    if due and owes:
+        citations.append(pack.deadlines.citation)
+
+    return ReturnInstructions(
+        form=item.form, jurisdiction="federal", tax_year=y, bottom_line=bottom, payment=payment,
+        mailing_address=mailing_address, sign=sign, assemble=assemble, mail=mail, records=records,
+        deadlines=deadlines, citations=_dedupe_citations(citations), notes=notes,
+    )
+
+
 def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions:
     """Last-mile checklist for a state return, from the state knowledge pack.
 
@@ -932,6 +1398,8 @@ def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions
                    f"file and the deadline at the state DOR (state support grows per dev plan section 6)."],
         )
 
+    if _is_amended(item):
+        return _amended_state_return(item, sk, state)
     enclosing_check = owes and not item.paid_online
     citations: list[Citation] = []
     payment, mailing_address, deadlines, notes = [], None, [], []
@@ -986,16 +1454,142 @@ def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions
     )
 
 
+_IRS_STATE_SITES_CITATION = Citation(
+    source="IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+    url="https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+)
+
+
+# Each income-tax jurisdiction's revenue department home page, for the pointer an amended state return gets when its pack
+# carries no amended-return rules. Read 2026-10-16: each answered HTTP 200 with the department's name in its title, except
+# tax.colorado.gov, www.mass.gov and tax.ri.gov, which refuse scripted requests and are the hosts their own packs cite.
+# (A first cut took the host of the pack's primary citation, which for many states is a file CDN or a general portal;
+# Ohio's resolved to a non-government site. Found by the JK27 re-verification.)
+_STATE_REVENUE_SITES: dict[str, str] = {
+    "AL": "https://www.revenue.alabama.gov/", "AZ": "https://azdor.gov/", "AR": "https://www.dfa.arkansas.gov/",
+    "CA": "https://www.ftb.ca.gov/", "CO": "https://tax.colorado.gov/", "CT": "https://portal.ct.gov/drs",
+    "DE": "https://revenue.delaware.gov/", "DC": "https://otr.cfo.dc.gov/", "GA": "https://dor.georgia.gov/",
+    "HI": "https://tax.hawaii.gov/", "ID": "https://tax.idaho.gov/", "IL": "https://tax.illinois.gov/",
+    "IN": "https://www.in.gov/dor/", "IA": "https://revenue.iowa.gov/", "KS": "https://www.ksrevenue.gov/",
+    "KY": "https://revenue.ky.gov/", "LA": "https://revenue.louisiana.gov/", "ME": "https://www.maine.gov/revenue/",
+    "MD": "https://www.marylandcomptroller.gov/",
+    "MA": "https://www.mass.gov/orgs/massachusetts-department-of-revenue",
+    "MI": "https://www.michigan.gov/treasury", "MN": "https://www.revenue.state.mn.us/", "MS": "https://www.dor.ms.gov/",
+    "MO": "https://dor.mo.gov/", "MT": "https://revenue.mt.gov/", "NE": "https://revenue.nebraska.gov/",
+    "NJ": "https://www.nj.gov/treasury/taxation/", "NM": "https://www.tax.newmexico.gov/", "NY": "https://www.tax.ny.gov/",
+    "NC": "https://www.ncdor.gov/", "ND": "https://www.tax.nd.gov/", "OH": "https://tax.ohio.gov/",
+    "OK": "https://oklahoma.gov/tax.html", "OR": "https://www.oregon.gov/dor/", "PA": "https://www.pa.gov/agencies/revenue",
+    "RI": "https://tax.ri.gov/", "SC": "https://dor.sc.gov/", "UT": "https://tax.utah.gov/",
+    "VT": "https://tax.vermont.gov/", "VA": "https://www.tax.virginia.gov/", "WV": "https://tax.wv.gov/",
+    "WI": "https://www.revenue.wi.gov/",
+}
+
+
+def _amended_pointer_citations(code: str) -> list[Citation]:
+    """Where to read a state's amended-return rules when its pack has none: its revenue department, and the IRS list
+    of every state tax agency."""
+    cites = []
+    site = _STATE_REVENUE_SITES.get(code)
+    if site:
+        cites.append(Citation(source=f"{code} revenue department home page (read 2026-10-16)", url=site))
+    cites.append(_IRS_STATE_SITES_CITATION)
+    return cites
+
+
+def _as_list(value) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [value]
+    return [str(v) for v in value]
+
+
+def _amended_state_return(item: FilingManifestItem, sk, state: str) -> ReturnInstructions:
+    """A state AMENDED return (Phase K JK27): the pack's ``amended_return`` block, or a pointer to the DOR.
+
+    The block (an open extra on the state pack) carries ``form``, the address (``mailing_address``, or
+    ``with_payment`` / ``refund_or_no_payment`` where the state splits them), and lists ``payment``, ``assemble``,
+    ``timing``, ``mail`` and ``notes``, each quoting its source, plus ``citation`` / ``citations``. Before JK27 a
+    Georgia Form 500X balance due got the Form 500 payment address (PO Box 740399), the original return's due date
+    and the Form 525-TV voucher, with the 500X box (PO Box 740318) only inside that address string.
+    """
+    code = state.upper()
+    y = item.tax_year
+    owes, refund = item.bottom_line < 0, item.bottom_line > 0
+    enclosing_check = owes and not item.paid_online
+    am = getattr(sk, "amended_return", None) or {}
+    form = am.get("form") or _form_name(item.form)
+    if refund:
+        bottom = f"Amended {code} {y} return ({form}): a further refund of {_money(item.bottom_line)}."
+    elif owes:
+        bottom = f"Amended {code} {y} return ({form}): you owe {_money(item.bottom_line)} more." + (
+            " Already paid." if item.paid_online else "")
+    else:
+        bottom = f"Amended {code} {y} return ({form}): no change in the amount owed or refunded."
+
+    citations: list[Citation] = []
+    payment: list[str] = []
+    deadlines: list[str] = []
+    notes: list[str] = []
+    assemble: list[str] = []
+    mailing_address = None
+    mail = ["Use a separate envelope from the federal return.",
+            "Certified Mail with Return Receipt gives you proof of timely filing."]
+    if am:
+        mailing_address = (am.get("with_payment") if enclosing_check else am.get("refund_or_no_payment")) or am.get(
+            "mailing_address")
+        if owes and item.paid_online:
+            payment.append("Balance already paid — keep the confirmation; do not enclose a check.")
+        elif owes:
+            payment.extend(_as_list(am.get("payment")))
+        assemble.extend(_as_list(am.get("assemble")))
+        deadlines.extend(_as_list(am.get("timing")))
+        if am.get("mail"):
+            # The state's own mailing advice replaces the generic certified-mail line (Georgia: certified mail "may
+            # delay processing your return").
+            mail = ["Use a separate envelope from the federal return.", *_as_list(am.get("mail"))]
+        notes.extend(_as_list(am.get("notes")))
+        for raw in [am.get("citation"), *(am.get("citations") or [])]:
+            if isinstance(raw, dict):
+                citations.append(Citation(**raw))
+    else:
+        site = _STATE_REVENUE_SITES.get(code)
+        where = f" on the {code} revenue department's site ({site})" if site else ""
+        notes.append(
+            f"This is an amended {code} return, and the {code} {y} knowledge pack carries no amended-return rules, so "
+            f"this checklist gives no mailing address, payment method or deadline. Read them in the {code} "
+            f"instructions for amended returns{where} before mailing; do not reuse the original return's address, "
+            f"voucher or due date without checking them there."
+        )
+        citations.extend(_amended_pointer_citations(code))
+    if not assemble:
+        assemble.append("Print only the form pages (not instructions), single-sided, with the schedules and "
+                        "documents the amended form asks for.")
+
+    sign = ["Print the form pages, sign and date the amended return in ink."]
+    if item.filing_jointly:
+        sign.append("Joint return — BOTH spouses must sign.")
+    return ReturnInstructions(
+        form=item.form, jurisdiction=item.jurisdiction, tax_year=y, bottom_line=bottom, payment=payment,
+        mailing_address=mailing_address, sign=sign, assemble=assemble, mail=mail,
+        records=["Photograph the signed pages; keep a copy and the mailing receipt."],
+        deadlines=deadlines, citations=_dedupe_citations(citations), notes=notes,
+    )
+
+
 def file_and_pay(
     manifest: list[FilingManifestItem],
     *,
     knowledge_dir: str | Path | None = None,
+    today: date | None = None,
 ) -> FilingInstructions:
     """Build the per-return last-mile checklist for a finished filing.
 
     Args:
         manifest: one :class:`FilingManifestItem` per finished return.
         knowledge_dir: override the knowledge directory (installed-wheel use).
+        today: the date the checklist is for (default: today). It decides whether an amended year can still be
+            e-filed and whether a refund-claim window has passed (Phase K JK27).
 
     Returns:
         :class:`FilingInstructions` with a :class:`ReturnInstructions` per item.
@@ -1013,7 +1607,7 @@ def file_and_pay(
     returns: list[ReturnInstructions] = []
     for item in manifest:
         if item.jurisdiction == "federal":
-            returns.append(_federal_return(item, knowledge_dir))
+            returns.append(_federal_return(item, knowledge_dir, today))
         else:
             returns.append(_state_return(item, knowledge_dir))
 

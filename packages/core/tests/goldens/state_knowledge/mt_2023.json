@@ -1,18 +1,25 @@
 {
  "_strings": {
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1cfd6a36d112": "2023 Montana Form 2 Individual Income Tax Return Instructions (MT DOR), p.11 — 'Line 18–Tax Liability Before Credits' and the '2023 Montana Individual Income Tax Table' (If Your Taxable Income Is More Than / But Not More Than / Multiply Your Taxable Income By / And Subtract: $0–$3,600 1% (0.010) $0; $3,600–$6,300 2% (0.020) $36; $6,300–$9,700 3% (0.030) $99; $9,700–$13,000 4% (0.040) $196; $13,000–$16,800 5% (0.050) $326; $16,800–$21,600 6% (0.060) $494; More Than $21,600 6.75% (0.0675) $656); same schedule also printed on 2023 Form 2, page 8 ('2023 Montana Individual Income Tax Rates — If your taxable income (page 1, line 17) is'). Exemptions: instructions p.11 'Line 16–Exemptions. Multiply $2,960 times the number of exemptions'; standard deduction: 2023 Form 2, page 7, Standard Deduction Worksheet (20% of line 14; max $5,540 single/MFS, $11,080 MFJ/HoH; min $2,460 single/MFS, $4,920 MFJ/HoH).",
   "@@303a2fafca95": "Resident Capital Gains Credit — Full-year Montana residents with net capital gains. Net capital gains must first be reduced by any Montana capital-loss carryover reported on the Montana Subtractions Schedule (lines 19 or 27). Nonresidents and part-year residents instead use line 2 (Nonresident/Part-Year Resident Capital Gains Credit), 2% of Montana-source net capital gains.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@5f4c53919baf": "annual (per tax year; the shipped MT 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@698bfa61e0cd": "Elderly Homeowner/Renter Credit — Montana residents age 62 or older as of December 31, 2023, who lived in Montana at least 9 months during the tax year, occupied a Montana residence as a renter, owner, or lessee for at least 6 months during the year, and whose total gross household income (all household members) is under the limit. Available even to those with no other filing requirement. Only one claim per household. For married claimants, only one spouse must meet the age-62 test.",
   "@@7cf5963477fd": "Montana Earned Income Tax Credit (EITC) — Full-year Montana residents who claimed the federal Earned Income Tax Credit on their federal return. Nonresidents and taxpayers Married Filing Separately on separate forms do NOT qualify (enter 0). Enrolled tribal members living on their reservation, members of section 501(d) agricultural organizations, part-year residents, and servicemembers use the Montana EITC Reduction Worksheet to determine the Montana-earned-income portion.",
   "@@9291e1164dfa": "2023 Montana Form 2 Individual Income Tax Instructions (MT DOR) — starting point (\"begins with your Federal Adjusted Gross Income\"), Montana Additions Schedule line-by-line, residency definitions, filing thresholds chart, due date (April 15, 2024), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check payable to Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9e6f1ea13c78": "The shipped MT 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@a51fb3ae9eac": "Treaty conformity — MT conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MT income (it flows through the federal starting point; do not add it back on the MT return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: MT conforms. For tax year 2023, the Montana Form 2 instructions state plainly: \"Your income on your Montana tax return begins with your Federal Adjusted Gross Income\" (2023 Form 2 Instructions, \"Federal Adjusted Gross Income\" section, p.9). Federally treaty-exempt income (excluded from federal AGI under an applicable U.S. tax treaty) is therefore already absent from the MT starting figure. The Montana Additions Schedule defines additions as \"all items of income that are not included in Federal Adjusted Gross Income and that must be added\" (p.10/p.17), and its enumerated lines are: Line 1 Recovery of Federal Income Tax Deducted; Line 2 Other Recoveries; Line 5 Smaller Federal Estate/Trust Distributions; Line 6 Medical Savings Account nonqualified withdrawals; Line 7 First-Time Home-Buyer Account nonqualified withdrawals; Line 9 Federal Net Operating Loss Deduction; Line 10 Expenses used to claim a MT credit; Line 11 Farm/Ranch Risk Management distributions; Line 12 pass-through entity (K-1) additions; Line 13 Title Plant Depreciation/Amortization; Line 14 State Income Tax Deduction; Line 15 Other Additions. NONE is an add-back of treaty-exempt income. Line 15 (\"Other Additions\") examples are limited to passive/rental and capital loss carryover differences and uncredited S-corp federal income tax — not treaty income. Unlike California (Schedule CA), Montana has no treaty-income addback for 2023, so treaty-exempt income is not re-taxed.",
   "@@a73f6c20f71f": "Montana Form 2 — Individual Income Tax Return (full-year residents file Form 2).",
   "@@b0a7466831a1": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2023_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf",
   "@@b7715a31b250": "There is no separate nonresident/part-year individual form for 2023. Nonresidents and part-year residents also file Montana Form 2, and additionally complete the Nonresident/Part-Year Resident Ratio Schedule (Form 2, page 8) to apportion the tax. (The DER-1 referenced in the instructions is for single-member LLCs owned by nonresidents, not the individual return.)",
   "@@e4f9aea3d6b9": "Credit for Income Tax Paid to Another State or Country — Full-year or part-year Montana residents who paid income tax to another state or country on an item of income that is also included in their Montana Adjusted Gross Income while a Montana resident. Penalties and interest paid to the other state/country are excluded; a separate schedule must be completed for each state/country.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -136,6 +143,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MT 2023 return (Form Montana Form 2 — Individual Income Tax Return (full-year residents file Form 2).): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MT revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.mt.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@a73f6c20f71f",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MT return, and the MT 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MT instructions for amended returns on the MT revenue department's site (https://revenue.mt.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -193,9 +235,225 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "MT revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.mt.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MT instructions for amended returns on the MT revenue department's site (https://revenue.mt.gov/).",
+    "form": "@@a73f6c20f71f",
+    "headline": "MT 2023, amended (Montana Form 2 — Individual Income Tax Return (full-year residents file Form 2).): you owe $88",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9e6f1ea13c78",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@b0a7466831a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "2023 Montana Form 2 Individual Income Tax Return Instructions, page 11, 'Line 23 - Earned Income Tax Credit'",
+     "cadence": "@@5f4c53919baf",
+     "topic": "credits",
+     "url": "@@b0a7466831a1"
+    },
+    {
+     "answers": "2023 Montana Form 2 Instructions, pages 43-46 (Elderly Homeowner/Renter Credit Schedule) and page 45 line 7; also DOR Elderly Homeowner/Renter Credit web page",
+     "cadence": "@@5f4c53919baf",
+     "topic": "credits",
+     "url": "https://revenue.mt.gov/property/property-tax-help/montana-elderly-homeowner-renter-credit"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9e6f1ea13c78",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@b0a7466831a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@9291e1164dfa",
+     "cadence": "@@5f4c53919baf",
+     "topic": "filing_logistics",
+     "url": "@@b0a7466831a1"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9e6f1ea13c78",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@b0a7466831a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@9291e1164dfa",
+     "cadence": "@@5f4c53919baf",
+     "topic": "forms_and_instructions",
+     "url": "@@b0a7466831a1"
+    },
+    {
+     "answers": "Montana DOR — Individual Filing Requirements (who must file: resident/part-year/nonresident with MT source income who had a federal filing requirement; prior years use Form 2 booklet thresholds)",
+     "cadence": "@@5f4c53919baf",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.mt.gov/taxes/individual-income-tax/filing-requirements"
+    },
+    {
+     "answers": "Montana DOR — Montana Individual Income Tax Return (Form 2) publication page",
+     "cadence": "@@5f4c53919baf",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.mt.gov/publications/montana-individual-income-tax-return-form-2"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9e6f1ea13c78",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@b0a7466831a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@1cfd6a36d112",
+     "cadence": "@@5f4c53919baf",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@b0a7466831a1"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9e6f1ea13c78",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@b0a7466831a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/mt",
  "state_scope": {
@@ -598,7 +856,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2023 Montana Form 2 Individual Income Tax Return Instructions (MT DOR), p.11 — 'Line 18–Tax Liability Before Credits' and the '2023 Montana Individual Income Tax Table' (If Your Taxable Income Is More Than / But Not More Than / Multiply Your Taxable Income By / And Subtract: $0–$3,600 1% (0.010) $0; $3,600–$6,300 2% (0.020) $36; $6,300–$9,700 3% (0.030) $99; $9,700–$13,000 4% (0.040) $196; $13,000–$16,800 5% (0.050) $326; $16,800–$21,600 6% (0.060) $494; More Than $21,600 6.75% (0.0675) $656); same schedule also printed on 2023 Form 2, page 8 ('2023 Montana Individual Income Tax Rates — If your taxable income (page 1, line 17) is'). Exemptions: instructions p.11 'Line 16–Exemptions. Multiply $2,960 times the number of exemptions'; standard deduction: 2023 Form 2, page 7, Standard Deduction Worksheet (20% of line 14; max $5,540 single/MFS, $11,080 MFJ/HoH; min $2,460 single/MFS, $4,920 MFJ/HoH).",
+    "source": "@@1cfd6a36d112",
     "url": "@@b0a7466831a1"
    },
    "rate": null,

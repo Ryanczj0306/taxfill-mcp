@@ -125,7 +125,8 @@
 # "Occupation" captions — inside the SIGNATURE boxes; the Occupation boxes
 # below carry no widget. The sentinel render printed both values in the
 # signature boxes, so neither is mapped (the occupations are handwritten). The
-# 2023 pack mapped both into the signature boxes; the 2025 blank moved the
+# 2023 pack mapped both into the signature boxes (unmapped there too since JK27,
+# 2026-10-16); the 2025 blank moved the
 # widgets under "Occupation". The Form 511 page-44 occupation boxes are
 # unaffected.
 # Address budgets (no widget /MaxLen; the boxes are 2023's). Their /DA is
@@ -1406,7 +1407,7 @@ fields:
   # [39.31, 159.43, 299.83, 178.37], under the printed "Taxpayer's Signature and Date" caption and above the
   # "Occupation" caption, i.e. INSIDE the signature box (the sentinel render put the value there); the Occupation box
   # below has no widget. Filling it would print the occupation where the taxpayer signs, so the occupation is written
-  # by hand. The 2023 blank has the same rects (its pack mapped both occupations into the signature boxes); the 2025
+  # by hand. The 2023 blank has the same rects (its pack mapped both occupations into the signature boxes until JK27, 2026-10-16, which unmapped them); the 2025
   # blank moved the widgets under "Occupation".
   # f538s.spouse_occupation is DELIBERATELY UNMAPPED (see f538s.taxpayer_occupation above): "538-S Spouse
   # Occupation" is one widget at [306.68, 159.43, 571.79, 178.37], inside the "Spouse's Signature and Date" box.

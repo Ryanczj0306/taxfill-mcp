@@ -7,15 +7,23 @@
   "@@449ca2ea3e3a": "Maryland Senior Tax Credit — Resident individuals who are at least age 65 (created by SB405, Acts of 2022). Subject to federal AGI limits below.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@57039830fb1c": "The shipped MD 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@711d4a646efe": "If any income was exempt from federal tax under a treaty: MD does not conform to federal tax treaties — that income is still taxable to MD.",
+  "@@7b500d649e98": "2023 Maryland State & Local Tax Forms & Instructions (Resident Booklet, Form 502 instructions) — Instruction 17 'FIGURE YOUR MARYLAND TAX', 2023 Tax Rate Schedules I and II (printed p.13); MARYLAND TAX COMPUTATION WORKSHEET SCHEDULES (17A), Schedules I and II at the end of the 2023 Maryland Tax Table (printed p.31); Instruction 16 standard deduction (printed p.13); Instruction 10 EXEMPTION AMOUNT CHART (10A) (printed p.4); Instruction 19 2023 LOCAL TAX RATE CHART (printed p.16)",
   "@@7fcd92619ef9": "If any of your income was exempt from federal tax under a treaty: MD does not conform to federal tax treaties, so that income is still taxable to MD — do not carry the federal exclusion onto the state return.",
   "@@899e4ed35e9d": "Maryland State Poverty Level Credit — Residents whose earned income and federal adjusted gross income (plus additions) are below the poverty income guidelines for the number of persons in the family/household claimed on the federal return, and generally whose Maryland tax exceeds 50% of their federal earned income credit. NOT available if you checked filing status 6 (dependent taxpayer).",
+  "@@8a265540a43c": "annual (per tax year; the shipped MD 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a7370e940d2d": "https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2023/Resident-Booklet.pdf",
   "@@afff290b7028": "Maryland Refundable Earned Income Credit (refundable portion of state EITC) — Residents whose Maryland earned income credit exceeds their Maryland tax. Available to a married couple filing jointly or separately (with or without a qualifying child), or any taxpayer with at least one qualifying child; individuals without a qualifying child use Worksheet 18A.1 to check eligibility. Must have an entry on Form 502 line 22 and line 29 and zero on line 3 of Worksheet 18A.",
   "@@ca718d4c9877": "Maryland Earned Income Credit (state EITC) - nonrefundable portion — Maryland residents who qualify for the federal Earned Income Credit. Maryland also allows the state credit even if you do not qualify for the federal EIC in limited cases (a check box on Form 502 line 22 area). Dependent taxpayers (filing status 6) are excluded from related poverty credit but may claim the EIC per the worksheet.",
   "@@d0a2d5c91704": "Nonresidents: Form 505 — Maryland Nonresident Income Tax Return (COM/RAD-022), with Form 505NR (Nonresident Income Tax Calculation) attached; Form 515 is used by nonresidents who must file in a Maryland local jurisdiction. Part-year residents do NOT use 505 — they file the resident Form 502 with part-year adjustments (Instruction 26).",
   "@@d94cdfe8781c": "Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502 (per Instruction 26).",
   "@@e73b0366eef6": "Refundable Maryland Child Tax Credit — Residents with a federal AGI of $15,000 or less AND a qualified dependent who is either (1) a child under age 6 on the last day of the tax year, or (2) a child over age 5 and under age 17 who has a disability.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fc9c47c14162": "2023 Maryland Form 502 Resident Income Tax Return (COM/RAD-009) — line 1 'Adjusted gross income from your federal return'; Additions lines 2-5 incl. line 5 'Other additions (Enter code letter(s) from Instruction 12.)'"
  },
  "file_and_pay": {
@@ -143,6 +151,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MD 2023 return (Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502 (per Instruction 26).): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MD revenue department home page (read 2026-10-16)",
+      "url": "https://www.marylandcomptroller.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@d94cdfe8781c",
+    "jurisdiction": "states/md",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MD return, and the MD 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MD instructions for amended returns on the MD revenue department's site (https://www.marylandcomptroller.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -206,9 +249,245 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "MD revenue department home page (read 2026-10-16)",
+      "url": "https://www.marylandcomptroller.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MD instructions for amended returns on the MD revenue department's site (https://www.marylandcomptroller.gov/).",
+    "form": "@@d94cdfe8781c",
+    "headline": "MD 2023, amended (Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502 (per Instruction 26).): you owe $88",
+    "jurisdiction": "states/md",
+    "notes": [
+     "@@711d4a646efe"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57039830fb1c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/502.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/md",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Comptroller of Maryland - 2023 Resident Tax Forms and Instructions (Resident Booklet), Instruction 18, and 2023 Form 502",
+     "cadence": "@@8a265540a43c",
+     "topic": "credits",
+     "url": "@@a7370e940d2d"
+    },
+    {
+     "answers": "Comptroller of Maryland - 2023 Form 502CR (Part B, Credit for Child and Dependent Care Expenses Chart, and instructions)",
+     "cadence": "@@8a265540a43c",
+     "topic": "credits",
+     "url": "https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2023/502CR.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57039830fb1c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/502.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/md",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@fc9c47c14162",
+     "cadence": "@@8a265540a43c",
+     "topic": "filing_logistics",
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/502.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57039830fb1c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/502.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/md",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@fc9c47c14162",
+     "cadence": "@@8a265540a43c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/502.pdf"
+    },
+    {
+     "answers": "2023 Maryland Resident Booklet (Form 502 Instructions) — Due Date (Apr 15, 2024); Instruction 1 Who Must File + Minimum Filing Levels Tables; Who Is a Resident (domicile / abode + 183-day statutory resident); Instruction 11 Income (copy federal AGI); Instruction 12 Additions to Income, code letter g 'Income exempt from federal tax by federal law or treaty that is not exempt from Maryland tax'; Instruction 24 Mailing/Payment; Instruction 26 Part-Year Residents file Form 502",
+     "cadence": "@@8a265540a43c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/Resident-Booklet.pdf"
+    },
+    {
+     "answers": "2023 Maryland Resident Booklet (canonical redirect host marylandcomptroller.gov) — same Instruction 12 code-g treaty addback and Instruction 24 mailing addresses (Payment Processing PO Box 8888; Revenue Administration Division 110 Carroll Street)",
+     "cadence": "@@8a265540a43c",
+     "topic": "forms_and_instructions",
+     "url": "@@a7370e940d2d"
+    },
+    {
+     "answers": "2023 Maryland Form 505 Nonresident Income Tax Return (COM/RAD-022)",
+     "cadence": "@@8a265540a43c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/505.pdf"
+    },
+    {
+     "answers": "2023 Maryland Form 505NR Nonresident Income Tax Calculation",
+     "cadence": "@@8a265540a43c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/505NR.pdf"
+    },
+    {
+     "answers": "Maryland Comptroller Individual Bill Pay (online payment portal)",
+     "cadence": "@@8a265540a43c",
+     "topic": "forms_and_instructions",
+     "url": "https://interactive.marylandtaxes.gov/Individuals/Payment/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57039830fb1c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/502.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/md",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@7b500d649e98",
+     "cadence": "@@8a265540a43c",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/Resident-Booklet.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57039830fb1c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.marylandtaxes.gov/forms/23_forms/502.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/md",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/md",
  "state_scope": {
@@ -617,7 +896,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2023 Maryland State & Local Tax Forms & Instructions (Resident Booklet, Form 502 instructions) — Instruction 17 'FIGURE YOUR MARYLAND TAX', 2023 Tax Rate Schedules I and II (printed p.13); MARYLAND TAX COMPUTATION WORKSHEET SCHEDULES (17A), Schedules I and II at the end of the 2023 Maryland Tax Table (printed p.31); Instruction 16 standard deduction (printed p.13); Instruction 10 EXEMPTION AMOUNT CHART (10A) (printed p.4); Instruction 19 2023 LOCAL TAX RATE CHART (printed p.16)",
+    "source": "@@7b500d649e98",
     "url": "https://www.marylandtaxes.gov/forms/23_forms/Resident-Booklet.pdf"
    },
    "rate": null,

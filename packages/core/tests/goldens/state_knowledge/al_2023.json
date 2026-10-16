@@ -4,9 +4,14 @@
   "@@4518b9b4a6d4": "Rural Physician Credit — Licensed physicians who practice and reside in a small or rural Alabama community of fewer than 25,000 residents, with admission privileges to a 'small or rural hospital' that has an emergency room (acute care hospital with fewer than 105 beds, located more than 20 miles from another acute care facility, or receiving Medicare rural reimbursement). Does not apply to physicians who met the requirements on/before May 5, 1993, nor to a physician who previously practiced in such a community unless they return after practicing in a large/urban community for at least three years.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@4f300cb7706e": "Law change NOT modeled by the engine (status final_form_published): Act 2022-294, effective January 1, 2023 (NEW for 2023): the first $6,000 of taxable retirement income is exempt for each taxpayer 65 or older, computed on Schedule RS line 10 (Part II primary, Part III spouse) and limited to the retirement income taxable to Alabama on line 9. Resolve via: 2023 Schedule RS Instructions, Line 10 Retirement Exclusion; the exclusion is computed on Schedule RS from the filer's own retirement income and is already inside the Form 40 line 16 base this pack's op consumes.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@59380a3b8b10": "If any income was exempt from federal tax under a treaty: AL does not conform to federal tax treaties — that income is still taxable to AL.",
+  "@@633a77d260d2": "The shipped AL 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@75c411dc6207": "Law change NOT modeled by the engine (status final_form_published): Act 2022-299, effective January 1, 2023, RAISED the Alabama Adoption Tax Credit to $2,000 per child for a private adoption where the adopted child is an Alabama resident or a qualified foster child in the permanent legal custody of the Alabama Department of Human Resources; the amount for an out-of-state adoption (or where the adopted child is not otherwise an Alabama resident) stays at $1,000 per child. The credit is refundable. Resolve via: 2023 Schedule OC Instructions, Part M - Alabama Adoption Tax Credit and Section F (the citation URL); the claimed amount is computed on Schedule AAC from the filer's actual adoption, and calc.state_tax applies no Alabama credits.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a95a8e4caa2e": "annual (per tax year; the shipped AL 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@adf3d8778164": "Alabama Department of Revenue, 2023 Form 40NR Booklet, What's New For 2023 (p.2): 'Retirement Exemption - Act 2022-294 Effective Jan 1, 2023, exempts the first $6,000 of taxable retirement income for those 65 years of age or older'; the 2023 Form 40 Booklet prints the same text (p.2).",
   "@@aeb2652deff4": "Form 40NR — Alabama Individual Income Tax Return (Nonresidents Only). Part-year residents file the resident Form 40 (reporting only the resident-period income); a person who is part-year resident AND has nonresident-period Alabama-source income files BOTH Form 40 and Form 40NR.",
   "@@c4158fd647aa": "Alabama Adoption Tax Credit — Taxpayers who reside in Alabama and complete an adoption. Two cases: (1) a private adoption in which the adopted child is a resident of Alabama, or a qualified foster child in the permanent legal custody of the Alabama Department of Human Resources; (2) an out-of-state adoption or where the adopted child is not otherwise an Alabama resident. Schedule AAC must be completed.",
@@ -15,7 +20,9 @@
   "@@e192a8ff489e": "Credit for Taxes Paid to Another State — Legal residents of Alabama filing Form 40 who have income from sources outside Alabama that is taxed by BOTH Alabama and another U.S. state or territory in the same tax year. (Part-year residents only if the AL and other-state returns cover the same period. No credit for income from a state with no income tax, or where the out-of-state income is fully offset by a corresponding deduction. A separate procedure/Schedule OC Section B applies to foreign-country tax.)",
   "@@eab2ce4c8add": "If any of your income was exempt from federal tax under a treaty: AL does not conform to federal tax treaties, so that income is still taxable to AL — do not carry the federal exclusion onto the state return.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@ec95794b7118": "2023 Alabama Form 40 Booklet (Individual Income Tax — Long Return, Residents and Part-Year Residents) — Tax Table pp. 25-30 (based on Form 40 line 16 taxable income; one column for Single/Married-filing-separately/Head-of-Family, one for Married-filing-jointly) and 'Over $100,000.00' worksheet, p. 30 (tax = $4,958.00 [Single/MFS/HoF] or $4,918.00 [MFJ] plus .05 x taxable income over $100,000); Standard Deduction chart p. 9; dependent-exemption chart p. 8; personal exemption printed on Form 40 filing-status boxes 1-4. Rate schedule text (2% first $500/$1,000, 4% next $2,500/$5,000, 5% over $3,000/$6,000) corroborated by ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' (revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/).",
   "@@f76c921c1ed2": "Alabama Department of Revenue, 2023 Schedule OC Instructions, Part M - Alabama Adoption Tax Credit and Section F; corroborated by 2023 Form 40 Booklet 'What's New' (Act 2022-299).",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fdf98b371018": "Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional short form for full-year residents who do not itemize and have only wage/salary plus interest/dividend income; part-year residents use Form 40.)"
  },
  "file_and_pay": {
@@ -143,6 +150,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended AL 2023 return (Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional short form for full-year residents who do not itemize and have only wage/salary plus interest/dividend income; part-year residents use Form 40.)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "AL revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.alabama.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@fdf98b371018",
+    "jurisdiction": "states/al",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended AL return, and the AL 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the AL instructions for amended returns on the AL revenue department's site (https://www.revenue.alabama.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -206,9 +248,323 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "AL revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.alabama.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the AL instructions for amended returns on the AL revenue department's site (https://www.revenue.alabama.gov/).",
+    "form": "@@fdf98b371018",
+    "headline": "AL 2023, amended (Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional short form for full-year residents who do not itemize and have only wage/salary plus interest/dividend income; part-year residents use Form 40.)): you owe $88",
+    "jurisdiction": "states/al",
+    "notes": [
+     "@@59380a3b8b10"
+    ],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@633a77d260d2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Alabama Department of Revenue, 2023 Form 40 Booklet (instructions), 'Credit for Taxes Paid to Another State' and 'Credit for Taxes Paid To Other States' / Schedule CR sections.",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "credits",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23f40bk.pdf"
+    },
+    {
+     "answers": "@@f76c921c1ed2",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "credits",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@633a77d260d2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@d06f142b5504",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "filing_logistics",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@633a77d260d2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@d06f142b5504",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    },
+    {
+     "answers": "2023 Alabama Individual Income Tax Return – Residents & Part-Year Residents (Form 40 landing page + 23f40.pdf)",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/forms/2023-alabama-individual-income-tax-return-residents-part-year-residents/"
+    },
+    {
+     "answers": "2023 Alabama Individual Income Tax Return – Nonresidents Only (Form 40NR landing page)",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/forms/2023-alabama-individual-income-tax-return-nonresidents-only/"
+    },
+    {
+     "answers": "Forms Mailing Addresses — Form 40 / Form 40NR with-payment (Box 2401, 36140-0001) and refund/no-payment (Box 154, 36135-0001)",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/individual-corporate/forms-mailing-addresses/"
+    },
+    {
+     "answers": "Due Dates — individual income tax return 'due the same date as the corresponding federal income tax return'",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/individual-corporate/due-dates/"
+    },
+    {
+     "answers": "FAQ: When should I file my Alabama Individual Income Tax Return — 'due on April 15th, unless the 15th is a weekend or holiday'",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/faqs/when-should-i-file-my-alabama-individual-income-tax-return/"
+    },
+    {
+     "answers": "Individual Income Tax: General Information for Individuals (filing requirement, domicile-based residency)",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/individual-corporate/individual-income-tax-filing-information/"
+    },
+    {
+     "answers": "Form 40V 2023 (payment voucher; check payable to Alabama Department of Revenue; MyAlabamaTaxes)",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/f40vblk.pdf"
+    },
+    {
+     "answers": "2023 Schedule RS (Retirement Schedule, Form 40 or Form 40NR) and Schedule AATC 2023 as printed in the 2023 Form 40NR fillable package — Schedule RS Part II/III line 10 'each taxpayer is eligible up to $6,000 not to exceed the Retirement Income Taxable to Alabama on line 9' (PDF pp.32-33); Schedule AATC lines 7/16/25/34 '80% of the average annual cost of attendance for an Alabama public K-12 student' pre-printed $4,795.00 (PDF p.14)",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/03/23f40nr.pdf"
+    },
+    {
+     "answers": "2023 Schedule RS Instructions — Line 10 Retirement Exclusion, 'eligible for an exclusion of retirement income up to $6,000, not to exceed the amount taxable to Alabama on Line 9' (65 or older)",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schrsinstr.pdf"
+    },
+    {
+     "answers": "2023 Schedule OC Instructions — Part K Alabama Accountability Tax Credit – School Transfer Credit (p.3; lesser of 80 percent of the average annual state cost of attendance or the actual cost; Schedule AATC must be completed); Section F line F1 refundable portion",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@633a77d260d2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@f76c921c1ed2",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "law_changes",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf"
+    },
+    {
+     "answers": "@@adf3d8778164",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "law_changes",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@633a77d260d2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@ec95794b7118",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23f40bk.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@633a77d260d2",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/04/23f40nrbk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/al",
  "state_scope": {
@@ -638,7 +994,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2023 Alabama Form 40 Booklet (Individual Income Tax — Long Return, Residents and Part-Year Residents) — Tax Table pp. 25-30 (based on Form 40 line 16 taxable income; one column for Single/Married-filing-separately/Head-of-Family, one for Married-filing-jointly) and 'Over $100,000.00' worksheet, p. 30 (tax = $4,958.00 [Single/MFS/HoF] or $4,918.00 [MFJ] plus .05 x taxable income over $100,000); Standard Deduction chart p. 9; dependent-exemption chart p. 8; personal exemption printed on Form 40 filing-status boxes 1-4. Rate schedule text (2% first $500/$1,000, 4% next $2,500/$5,000, 5% over $3,000/$6,000) corroborated by ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' (revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/).",
+    "source": "@@ec95794b7118",
     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23f40bk.pdf"
    },
    "rate": null,

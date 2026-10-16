@@ -6,18 +6,25 @@
   "@@43ef79fb75e5": "Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@554e85283ea9": "annual (per tax year; the shipped DC 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@574ee429d083": "The shipped DC 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@5930df2c0a28": "Treaty conformity — DC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from DC income (it flows through the federal starting point; do not add it back on the DC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: DC's Form D-40 begins from federal adjusted gross income (the D-40 income computation line and Schedule I Calculation A are both titled around 'Federal Adjusted Gross Income'), and DC's only mechanism for adding income back is Schedule I, Calculation A 'Additions to federal adjusted gross income.' The verified addition categories on the 2023 Schedule I (Cal. A) are: (1) part-year resident adjustment, (2) income eligible for federal income averaging (Form 4972), (3) 100% federal bonus depreciation / extra IRC sec.179, (4) discrimination award subject to income averaging, (5) S-corp deductions from Sch K-1 (1120-S), (6) pass-through losses from DC unincorporated businesses exceeding the $12,000 threshold, (7) 'Other ... items not subject to federal tax but subject to DC tax,' and (8) capital gains deferred for Qualified Opportunity Funds. There is NO line that adds back income that is exempt from federal tax under a U.S. income tax treaty (contrast California's explicit Schedule CA treaty addback). Because treaty-exempt income is already excluded from federal AGI and DC has no treaty addback, it flows through and is NOT re-taxed by DC. Therefore DC conforms (treaty-exempt income remains exempt). Source: 2023 D-40 Instruction Booklet, Schedule I Calculation A and line-by-line instructions.",
   "@@6c20c433e4b4": "Credit for Child and Dependent Care Expenses — DC residents (or part-year residents, who use DC Form 2441) who claimed the federal child and dependent care credit on federal Form 2441 for the care of a qualifying dependent so the taxpayer could work or look for work.",
   "@@6dc4fb3e0050": "Part-year residents file Form D-40 (prorating deductions/credits). DC has no general nonresident income tax return; a nonresident with DC tax erroneously withheld files Form D-40B, Nonresident Request for Refund.",
   "@@7d9ac6fa94d3": "DC Earned Income Tax Credit (DC EITC) — filers WITHOUT a qualifying child — DC residents (age 25-64 if not otherwise qualifying federally; certain ITIN filers also eligible for TY2023) who do not have a qualifying child. Uses the DC EITC Worksheet for Filers Without a Qualifying Child in the D-40 instructions. Investment income must be $11,000 or less.",
   "@@8f15a2f3d3f5": "DC OTR — 2023 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Who must file, When are your taxes due (April 15, 2024), How to file / By mail addresses (PO Box 96145 refund/no-money-due; PO Box 96169 with payment), check payable to DC Treasurer, Schedule I Calculation A additions (no treaty addback) and Calculation B subtractions, D-40 starts from federal adjusted gross income",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@997f01ee6559": "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_041124.pdf",
   "@@9f28600f6f77": "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_012324.pdf",
   "@@a0a9080898b4": "Keep Child Care Affordable Tax Credit (Schedule ELC; formerly Early Learning Tax Credit) — DC taxpayer who paid eligible child-care expenses to a licensed/subsidized 'qualified child development facility' for an eligible child — a dependent under age 4 as of 9/30/2023 — and whose DC taxable income does not exceed the limit. Child must not be a recipient of the District's subsidized child-care program.",
   "@@bbd5c1c081e2": "Schedule H — Homeowner and Renter Property Tax Credit ('circuit-breaker') — DC residents who owned or rented their DC home for all of 2023 and were not claimed as a dependent (with an age-70 exception path). Renters use Section A (property tax deemed = 20% of rent paid); homeowners use Section B (actual DC real property tax). One claim per 'tax filing unit'; cannot claim for an exempt property owned by a government, house of worship, or nonprofit.",
+  "@@d59fc686034a": "DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax Forms and Instructions booklet (Revised 01/2024, file 2023_D40_Book_Final_041124.pdf): 'Reminders — Income Tax Rate Table' p.3 and 'Calculation I/Tax Rate Schedule' p.17 ('Not over $10,000: 4% of the taxable income; Over $10,000 but not over $40,000: $400, plus 6% of the excess over $10,000; Over $40,000 but not over $60,000: $2,200, plus 6.5% of the excess over $40,000; Over $60,000 but not over $250,000: $3,500, plus 8.5% of the excess over $60,000; Over $250,000 but not over $500,000: $19,650, plus 9.25% of the excess over $250,000; Over $500,000 but not over $1,000,000: $42,775, plus 9.75% of the excess over $500,000; Over $1,000,000: $91,525, plus 10.75% of the excess over $1,000,000'); 'Standard Deduction' section p.10 ($13,850 single and married/registered domestic partners filing separately; $20,800 head of household; $27,700 married/registered domestic partners filing jointly, qualifying widow(er)s with dependent children, and married/registered domestic partners filing separately on the same return); Line 19 'DC taxable income — Subtract Line 18 from Line 16' and Line 20 'Tax' instructions p.18; Standard Deduction Worksheet for Dependent Filers and Standard Deduction Chart for People Born before January 2, 1959 or Blind, p.20; tax tables pp.83-92; 2023 Form D-40 Lines 4-20 (form pages inside the booklet)",
   "@@d87eeef57296": "DC Earned Income Tax Credit (DC EITC) — filers WITH a qualifying child — DC residents who qualify for the federal Earned Income Credit and have a qualifying child. For TY2023 the credit was also expanded to certain ITIN filers (no SSN required). The DC EITC mirrors federal EIC eligibility.",
   "@@e0f7318befde": "Office of Tax and Revenue, PO Box 96145, Washington, DC 20090-6145 (use for a no-money-due return or a refund-request return). Nonresident refund Form D-40B is mailed separately to: Office of Tax and Revenue, PO Box 96147, Washington, DC 20090-6147.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -141,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended DC 2023 return (Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "DC revenue department home page (read 2026-10-16)",
+      "url": "https://otr.cfo.dc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@43ef79fb75e5",
+    "jurisdiction": "states/dc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended DC return, and the DC 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the DC instructions for amended returns on the DC revenue department's site (https://otr.cfo.dc.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -198,9 +240,279 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "DC revenue department home page (read 2026-10-16)",
+      "url": "https://otr.cfo.dc.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the DC instructions for amended returns on the DC revenue department's site (https://otr.cfo.dc.gov/).",
+    "form": "@@43ef79fb75e5",
+    "headline": "DC 2023, amended (Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)): you owe $88",
+    "jurisdiction": "states/dc",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@574ee429d083",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@997f01ee6559"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax booklet (D-40 form, Page 2, Line 27) and OTR DC EITC FAQs (percent-of-federal table: 2022-2024 = 70%)",
+     "cadence": "@@554e85283ea9",
+     "topic": "credits",
+     "url": "@@9f28600f6f77"
+    },
+    {
+     "answers": "DC Office of Tax and Revenue — 2023 Schedule ELC form and instructions (eligible child under age 4 as of 9/30/2023; income limits $167,400 / $83,700; max $1,115 per child on Line 11; refundable); 2023 Schedule U",
+     "cadence": "@@554e85283ea9",
+     "topic": "credits",
+     "url": "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_SCH_ELC_Final_011924.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@574ee429d083",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@997f01ee6559"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@8f15a2f3d3f5",
+     "cadence": "@@554e85283ea9",
+     "topic": "filing_logistics",
+     "url": "@@997f01ee6559"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@574ee429d083",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@997f01ee6559"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@8f15a2f3d3f5",
+     "cadence": "@@554e85283ea9",
+     "topic": "forms_and_instructions",
+     "url": "@@997f01ee6559"
+    },
+    {
+     "answers": "DC OTR — 2023 D-40 Booklet publication landing page",
+     "cadence": "@@554e85283ea9",
+     "topic": "forms_and_instructions",
+     "url": "https://otr.cfo.dc.gov/publication/2023-d-40-booklet"
+    },
+    {
+     "answers": "DC OTR — 2023 Form D-40B Nonresident Request for Refund (form + 'Who must file a Form D-40B', mailing to PO Box 96147, domicile/183-day note)",
+     "cadence": "@@554e85283ea9",
+     "topic": "forms_and_instructions",
+     "url": "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40B_0002_012324.pdf"
+    },
+    {
+     "answers": "DC OTR — Individual Income Tax Filing FAQ (residency / 183-day rule, who must file, file by April 15, payable to DC Treasurer, MyTax.DC.gov, D-40B for nonresident refund)",
+     "cadence": "@@554e85283ea9",
+     "topic": "forms_and_instructions",
+     "url": "https://otr.cfo.dc.gov/book/individual-income-tax-faqs/individual-income-tax-filing"
+    },
+    {
+     "answers": "DC OTR — MyTax.DC.gov online tax portal (electronic filing and payment)",
+     "cadence": "@@554e85283ea9",
+     "topic": "forms_and_instructions",
+     "url": "https://mytax.dc.gov"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@574ee429d083",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@997f01ee6559"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@36a21c9ed1e8",
+     "cadence": "@@554e85283ea9",
+     "topic": "law_changes",
+     "url": "@@9f28600f6f77"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@574ee429d083",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@997f01ee6559"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@d59fc686034a",
+     "cadence": "@@554e85283ea9",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@997f01ee6559"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@574ee429d083",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@997f01ee6559"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/dc",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/dc",
  "state_scope": {
@@ -677,7 +989,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax Forms and Instructions booklet (Revised 01/2024, file 2023_D40_Book_Final_041124.pdf): 'Reminders — Income Tax Rate Table' p.3 and 'Calculation I/Tax Rate Schedule' p.17 ('Not over $10,000: 4% of the taxable income; Over $10,000 but not over $40,000: $400, plus 6% of the excess over $10,000; Over $40,000 but not over $60,000: $2,200, plus 6.5% of the excess over $40,000; Over $60,000 but not over $250,000: $3,500, plus 8.5% of the excess over $60,000; Over $250,000 but not over $500,000: $19,650, plus 9.25% of the excess over $250,000; Over $500,000 but not over $1,000,000: $42,775, plus 9.75% of the excess over $500,000; Over $1,000,000: $91,525, plus 10.75% of the excess over $1,000,000'); 'Standard Deduction' section p.10 ($13,850 single and married/registered domestic partners filing separately; $20,800 head of household; $27,700 married/registered domestic partners filing jointly, qualifying widow(er)s with dependent children, and married/registered domestic partners filing separately on the same return); Line 19 'DC taxable income — Subtract Line 18 from Line 16' and Line 20 'Tax' instructions p.18; Standard Deduction Worksheet for Dependent Filers and Standard Deduction Chart for People Born before January 2, 1959 or Blind, p.20; tax tables pp.83-92; 2023 Form D-40 Lines 4-20 (form pages inside the booklet)",
+    "source": "@@d59fc686034a",
     "url": "@@997f01ee6559"
    },
    "rate": null,

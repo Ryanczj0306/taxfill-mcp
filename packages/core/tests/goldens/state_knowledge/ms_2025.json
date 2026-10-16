@@ -21,6 +21,7 @@
   "@@d6f250b171d4": "Child Adoption Credit (credit code 25) — A Mississippi taxpayer who legally adopts a dependent child, for qualified adoption expenses paid or incurred during the tax year for each child. Claimed for the tax year in which the adoption becomes final.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@ee475be0244e": "Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return (2025)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fcb467eb1b85": "MS DOR — 2025 Form 80-100 Resident, Non-Resident and Part-Year Resident Instructions (Form 80-100-25-1-1-000, Rev. 12/25): TAX RATES (p.22: 'Income Tax: 0% on the first $10,000.00 of taxable income and 4.4% on taxable income in excess of $10,000.00'); SCHEDULE OF TAX COMPUTATION (First $10,000 x 0%, Remaining balance x 4.4%); Filing Status and Exemptions table; LEGISLATIVE CHANGES (HB 1 Build Up Mississippi Act — 2027 3.75%, 2028 3.5%, 2029 3.25%, 2030+ 3%); April 15th due date; mailing addresses"
  },
  "file_and_pay": {
@@ -145,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended MS 2025 return (Form 80-105, Mississippi Resident Individual Income Tax Return (2025; Form 80-105-25-8-1-000, Rev. 09/25)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "MS revenue department home page (read 2026-10-16)",
+      "url": "https://www.dor.ms.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@860e79aa484d",
+    "jurisdiction": "states/ms",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended MS return, and the MS 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the MS instructions for amended returns on the MS revenue department's site (https://www.dor.ms.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -205,6 +241,29 @@
      "@@a871e5af1ef0"
     ],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "MS revenue department home page (read 2026-10-16)",
+      "url": "https://www.dor.ms.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the MS instructions for amended returns on the MS revenue department's site (https://www.dor.ms.gov/).",
+    "form": "@@860e79aa484d",
+    "headline": "MS 2025, amended (Form 80-105, Mississippi Resident Individual Income Tax Return (2025; Form 80-105-25-8-1-000, Rev. 09/25)): you owe $88",
+    "jurisdiction": "states/ms",
+    "notes": [
+     "@@a871e5af1ef0"
+    ],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025

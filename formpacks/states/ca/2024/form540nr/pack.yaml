@@ -91,8 +91,8 @@
 #     73.0 pt) still have no /MaxLen. A probe fill of this blank with 12, 13
 #     and 14 digits, read on a 300 dpi render, shows 12 whole and the 13th
 #     digit clipped in both boxes, so each carries maxlen 12 (the 2025 pack
-#     budgets 13 on the same rects and font; neither the filler nor verify
-#     warns at 13 or 14).
+#     budgeted 13 on the same rects and font until JK27, 2026-10-16, which set
+#     all three years to 12; neither the filler nor verify warns at 13 or 14).
 # 172 lines bind 164 of the 165 fields (every widget but 3018).
 # NEW lines vs 2023: 431, 447, 126.account_type.checking / .savings,
 # 127.account_type.checking / .savings, health_care_info.yes / .no,
@@ -173,8 +173,8 @@ fields:
   - { line: "mailing_address.additional_info", field: "540NR_form_1013", type: text }  # "Additional information (see instructions)"
   - { line: "pba_code", field: "540NR_form_1014", type: text, maxlen: 6 }  # "PBA code"
   - { line: "mailing_address.street", field: "540NR_form_1015", type: text }  # "Street address (number and street) or PO box"
-  - { line: "mailing_address.apt_no", field: "540NR_form_1016", type: text, maxlen: 12 }  # "Apt. no/ste. no." — no /MaxLen (the 2023 pack budgeted 14, the 2025 pack 13); budget 12 = the digit count the 72.5 pt box renders whole at Helv 10, the 13th clips (a probe fill of this blank, 12/13/14 digits, read on a 300 dpi render)
-  - { line: "mailing_address.pmb", field: "540NR_form_1017", type: text, maxlen: 12 }  # "PMB/private mailbox" — no /MaxLen (2023: 6; the 2025 pack budgets 13); budget 12 = the digit count the 73.0 pt box renders whole at Helv 10, the 13th clips (the same probe fill)
+  - { line: "mailing_address.apt_no", field: "540NR_form_1016", type: text, maxlen: 12 }  # "Apt. no/ste. no." — no /MaxLen (the 2023 / 2025 packs budgeted 14 / 13 until JK27, 2026-10-16; all three years carry 12 now); budget 12 = the digit count the 72.5 pt box renders whole at Helv 10, the 13th clips (a probe fill of this blank, 12/13/14 digits, read on a 300 dpi render)
+  - { line: "mailing_address.pmb", field: "540NR_form_1017", type: text, maxlen: 12 }  # "PMB/private mailbox" — no /MaxLen (2023: /MaxLen 6; the 2025 pack budgeted 13 until JK27, 2026-10-16); budget 12 = the digit count the 73.0 pt box renders whole at Helv 10, the 13th clips (the same probe fill)
   - { line: "mailing_address.city", field: "540NR_form_1018", type: text }  # "City (If you have a foreign address, see instructions)"
   - { line: "mailing_address.state", field: "540NR_form_1019", type: text, maxlen: 2 }  # "State"
   - { line: "mailing_address.zip", field: "540NR_form_1020", type: text, maxlen: 10 }  # "ZIP code"

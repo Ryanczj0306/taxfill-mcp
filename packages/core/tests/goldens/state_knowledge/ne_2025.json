@@ -28,6 +28,7 @@
   "@@bc6ede40ad6e": "2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — What's New (the 2025 credit slate), federal AGI starting point (Line 5), Nebraska Standard Deduction Chart (Line 6), Line 15 Nebraska Income Tax, Line 18 personal exemption credit $171, residency definitions, Who Must File, due date, check payee",
   "@@d2c5841d751f": "The newest shipped NE pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@f9c487f62fc6": "Law change NOT modeled by the engine (status final_form_published): A SLATE OF NEW OR NEWLY EFFECTIVE CREDITS arrives with tax year 2025 (booklet What's New, LB 650 / LB 208 / LB 937 / LB 1023 / LB 644): the $500 REFUNDABLE Intellectual and Developmental Disabilities Direct Support Professional credit created by LB 937 (2024) beginning with tax year 2025 (Form 1040N line 51, requiring DOR pre-approval on Forms 3157-A / 3157-E via eDASH), the Nebraska Pregnancy Help Act credit, the Shortline Rail Modernization credit, the Relocation Incentive Act refundable employer credit with its employee Nebraska wage exclusion, and the Food Bank / Food Pantry / Food Rescue Donation credit (2025 only). Nebraska Schedule I Part A also gains new add-back lines for 2025 — Relocation Incentive Act employee recapture, losses on the sale or exchange of gold or silver bullion, and the add-back of food-donation amounts deducted federally — and Form 1040N's credit lines are RENUMBERED (refundable child/dependent care 40 -> 42, Nebraska EITC 42 -> 44, community college property tax credit 43 -> 45). Resolve via: 2025 Nebraska Individual Income Tax Booklet, What's New plus the Lines 46-51 instructions, and the 2025 Nebraska Schedules I, II, III (Form 1040N) for the new Part A add-back lines (both at the cited booklet URL). This pack's `unverified` list records that the Pregnancy Help Act, Shortline Rail, Relocation Incentive Act and Food Bank credits were read only from What's New and the line summaries, and that the statutory fiscal-year cap on the LB 937 credit was not pulled — confirm amounts and application deadlines on their own forms before claiming."
  },
  "file_and_pay": {
@@ -152,6 +153,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended NE 2025 return (Form 1040N — Nebraska Individual Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "NE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.nebraska.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form 1040N — Nebraska Individual Income Tax Return",
+    "jurisdiction": "states/ne",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended NE return, and the NE 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the NE instructions for amended returns on the NE revenue department's site (https://revenue.nebraska.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -206,6 +242,27 @@
     "jurisdiction": "states/ne",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "NE revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.nebraska.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the NE instructions for amended returns on the NE revenue department's site (https://revenue.nebraska.gov/).",
+    "form": "Form 1040N — Nebraska Individual Income Tax Return",
+    "headline": "NE 2025, amended (Form 1040N — Nebraska Individual Income Tax Return): you owe $88",
+    "jurisdiction": "states/ne",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -1013,7 +1070,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: NE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: NE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

@@ -22,7 +22,8 @@
   "@@c183c73c2ec9": "Vermont Department of Taxes - 2025 Schedule IN-112 Instructions, Veteran Tax Credit ('signed into law on June 25, 2025, as part of Act 71 ... $250 refundable tax credit if their adjusted gross income is less than or equal to $25,000 ... No credit is available for veterans with an adjusted gross income equal to or greater than $30,000') and the 2025 Schedule IN-112 form, Part II Lines 8-12",
   "@@c912235bc4e8": "Law change NOT modeled by the engine (status final_form_published): NEW refundable Vermont Veteran Tax Credit, \"signed into law on June 25, 2025, as part of Act 71\", effective beginning with the 2025 tax year: any Vermont resident or part-year resident with a discharge record or other record of separation from active duty verifying service in the uniformed services gets a \"$250 refundable tax credit if their adjusted gross income is less than or equal to $25,000\", reduced by $5 for each full $100 of AGI over $25,000 — \"No credit is available for veterans with an adjusted gross income equal to or greater than $30,000\". Resolve via: Compute on the 2025 Schedule IN-112, Part II, Lines 8-12 from Form IN-111 Line 1 AGI (Line 9 = AGI - $25,000; Line 10 = Line 9 / 100 rounded DOWN to a whole number; Line 11 = Line 10 x $5; Line 12 = $250 - Line 11), per the cited 2025 Schedule IN-112 Instructions.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f8411ddf2c64": "Vermont Child Tax Credit — Full-year and part-year Vermont resident families with a qualifying child age six or younger at the close of the tax year — the 2025 Schedule IN-112 says to list only children born 2019 through 2025. Available to all qualifying VT residents regardless of SSN/ITIN status of taxpayer, spouse, or dependents."
+  "@@f8411ddf2c64": "Vermont Child Tax Credit — Full-year and part-year Vermont resident families with a qualifying child age six or younger at the close of the tax year — the 2025 Schedule IN-112 says to list only children born 2019 through 2025. Available to all qualifying VT residents regardless of SSN/ITIN status of taxpayer, spouse, or dependents.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -146,6 +147,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended VT 2025 return (Form IN-111, Vermont Income Tax Return): you owe $88 more.",
+    "citations": [
+     {
+      "source": "VT revenue department home page (read 2026-10-16)",
+      "url": "https://tax.vermont.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "jurisdiction": "states/vt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended VT return, and the VT 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the VT instructions for amended returns on the VT revenue department's site (https://tax.vermont.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -200,6 +236,27 @@
     "jurisdiction": "states/vt",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "VT revenue department home page (read 2026-10-16)",
+      "url": "https://tax.vermont.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the VT instructions for amended returns on the VT revenue department's site (https://tax.vermont.gov/).",
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "headline": "VT 2025, amended (Form IN-111, Vermont Income Tax Return): you owe $88",
+    "jurisdiction": "states/vt",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -1002,7 +1059,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: VT 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: personal). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: VT 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: personal). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

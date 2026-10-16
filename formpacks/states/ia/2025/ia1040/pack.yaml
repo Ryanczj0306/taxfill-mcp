@@ -104,7 +104,9 @@
 #     lines 1a through 1f".
 #   * Line 5 "Iowa tax. Multiply line 4 by 3.8% or amount from alternate tax
 #     calculation" (2023: "Iowa Tax from tax rate schedule or alternate tax");
-#     line 12 drops "If less than zero, enter zero"; line 19 "percentage from
+#     line 12 drops the printed "If less than zero, enter zero", but the 2025
+#     IA 1040 expanded instructions ("Line 12: Balance") keep the rule, so the
+#     relation keeps the floor; line 19 "percentage from
 #     list" (2023: "from table"); line 29 "Estimated and other payments made
 #     for tax year 2025. Amended returns see instructions" (2023: "... tax
 #     year 2023"); line 30 "Total
@@ -404,14 +406,23 @@ fields:
   - { line: "preparer.fein", field: "Firms Federal Employer Identification Number (FEIN)", type: text, maxlen: 9 }  # Firm's FEIN
   - { line: "preparer.phone", field: "Preparers phone number", type: text, maxlen: 10 }  # Preparer's phone number
 relations:
-  # Printed arithmetic of the 2025 face only. Dotted line ids are allowed in
-  # relations (the 2023 banner's "cannot appear" predates that).
+  # The printed arithmetic of the 2025 face, plus the one rule the face leaves
+  # to the 2025 IA 1040 instructions: line 12's zero floor. Dotted line ids are
+  # allowed in relations (the 2023 banner's "cannot appear" predates that).
   - "d == a + b + c"          # Step 3 d "Total. Add lines a, b and c"
   - "4 == 2 + 3"              # 4 "Add lines 2 and 3. Do not include lines 1a through 1f"
   - "7 == 5 + 6"              # 7 "Total tax. Add lines 5 and 6"
   - "8 == d"                  # 8 "Total exemption credit amount from Step 3"
   - "11 == 8 + 9 + 10"        # 11 "Total Credits. Add lines 8, 9, and 10"
-  - "12 == 7 - 11"            # 12 "BALANCE. Subtract line 11 from line 7"
+  # 12 prints "BALANCE. Subtract line 11 from line 7"; the 2025 IA 1040 expanded
+  # instructions (revenue.iowa.gov, "Line 12: Balance", Instruction Year 2025)
+  # read "Subtract line 11 from line 7. If less than zero, enter zero." The
+  # floor was missing here until 2026-10-16 (JK27). Lines 14, 16 and 18 carry no
+  # floor in the instructions either, so they stay plain subtraction. One case
+  # this relation does not model: a single filer who uses the Income Tax
+  # Reduction Worksheet (41-146, the Step 5 box checked) enters the worksheet's
+  # amount on line 12.
+  - "12 == max(7 - 11, 0)"
   - "14 == 12 - 13"           # 14 "BALANCE. Subtract line 13 from line 12"
   - "16 == 14 - 15"           # 16 "BALANCE. Subtract line 15 from line 14"
   - "18 == 16 - 17"           # 18 "BALANCE. Subtract line 17 from line 16"

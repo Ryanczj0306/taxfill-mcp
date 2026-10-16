@@ -10812,6 +10812,32 @@ def _states_with_tax_block(year: int, base_dir: str | Path | None) -> list[str]:
     return shipped
 
 
+# The dependent treatments a dependents_count refusal names as examples (JK27, 2026-10-16). Each is named
+# only for a year whose pack for that state ships no 'dependent' amount AND whose tax.notes carry the
+# phrase, so every example is read from that year's own data. IL's held for 2023 alone: the 2023 note
+# reads "Dependent exemptions (Line 10d, via Schedule IL-E/EIC) are NOT shipped", while the 2024 and 2025
+# packs ship the Schedule IL-E/EITC Step 2 Line 1 amount ("Multiply the total number of dependents you
+# are claiming by $2,775" / "$2,850"), so an IL 2024 or 2025 dependent is applied, never refused.
+_DEPENDENT_TREATMENT_EXAMPLES: tuple[tuple[str, str, str], ...] = (
+    ("az", "Line 49 Dependent Tax Credit", "AZ's Line 49 dependent CREDIT"),
+    ("nc", "child deduction", "NC's AGI-tiered child deduction"),
+    ("il", "via Schedule IL-E/EIC) are NOT shipped", "IL's unverified Schedule IL-E/EIC amount"),
+)
+
+
+def _dependent_treatment_examples(year: int, base_dir: str | Path | None) -> list[str]:
+    """The examples a dependents refusal names for ``year``, each confirmed by that year's own pack."""
+    named: list[str] = []
+    for code, phrase, example in _DEPENDENT_TREATMENT_EXAMPLES:
+        try:
+            tax = load_state_knowledge(code, year, base_dir=base_dir).tax
+        except (FileNotFoundError, ValueError):  # no pack, or one that does not load: name nothing from it
+            continue
+        if tax is not None and "dependent" not in tax.exemptions and any(phrase in n for n in tax.notes):
+            named.append(example)
+    return named
+
+
 class StateTaxResult(BaseModel):
     """Result of :func:`state_tax`: the state's tax line plus its audit trail."""
 
@@ -10962,13 +10988,14 @@ def state_tax(
             f"Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
         )
     if n_dependents and dependent is None:
+        examples = _dependent_treatment_examples(year, knowledge_dir)
         raise ValueError(
             f"{code.upper()} {year}: dependents_count was supplied but the pack ships no 'dependent' "
             f"exemption amount — this state does not model dependents as a verified per-dependent base "
             f"exemption (verified exemption kinds shipped: "
             f"{', '.join(sorted(params.exemptions)) or '(none)'}). Pass dependents_count=0 and handle "
-            f"dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered "
-            f"child deduction, IL's unverified Schedule IL-E/EIC amount)."
+            f"dependents per the pack's tax.notes"
+            + (f" (e.g. {', '.join(examples)})." if examples else ".")
         )
 
     inputs: dict[str, Any] = {

@@ -13,15 +13,16 @@
   "@@7faed9237982": "Form IT-140 (West Virginia Personal Income Tax Return) - check \"Resident\" status",
   "@@8134a1fcad48": "Form IT-140 (check \"Filing as Nonresident\" or \"Filing as Part-Year Resident\"), completed together with Schedule A (Form IT-140), \"Nonresidents/Part-Year Residents Schedule of Income.\" (Nonresident composite filers use Form IT-140NRC.)",
   "@@8b5eb7cea933": "Law change NOT modeled by the engine (status final_form_published): SOCIAL SECURITY PHASE-OUT, SECOND STEP — for 2025, a filer above the income limits (federal AGI over $100,000 joint, $50,000 otherwise) may subtract 65% of the social security benefits included in federal AGI (35% in 2024); below the limits benefits stay fully exempt. A Schedule M decreasing modification. Resolve via: 2025 IT-140 booklet, Important Information for 2025, and the Schedule M social security benefits line.",
+  "@@8f0aa52c469d": "2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025 (p.15): 'Widowed spouses may now claim Disabled Veteran’s Property Tax Credit if the deceased disabled veteran claimed claimed the credit in the prior year. Exceptions do apply see page Page 20.' Disabled Veterans Real Property Tax Credit (p.20): 'The widow(er) of a disabled veteran who previously claimed this credit may be eligible to claim this credit as long as: 1. The widow(er) has not remarried, 2. The qualifying property has not been reclassified, 3. The qualifying property has not been sold. If the amount of property tax timely paid exceeds tax amount, the excess will be refunded.' Form IT-140 line 21 (p.2): 'WV Property Tax Adjustment Tax Credits (claim each separately below. Enter sum on line 21)' with box B DISABLED VETERAN REAL PROPERTY TAX; instructions (p.25): 'LINE 21 WV PROPERTY TAX ADJUSTMENT TAX CREDIT. Enter the amount in the appropriate box for the credit being claimed.'",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a2f4c9eed571": "Treaty conformity — WV conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from WV income (it flows through the federal starting point; do not add it back on the WV return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: WV's resident return (Form IT-140) starts from federal adjusted gross income (line 1). The 2025 instructions state plainly (p.24): \"The starting point for the West Virginia income tax return is your federal adjusted gross income.\" Federally treaty-exempt income is already excluded from FAGI and flows through. WV's Schedule M \"Modifications Increasing Federal Adjusted Gross Income\" (lines 51-58) lists ONLY: interest/dividends on federal obligations exempt from federal but not state tax; interest/dividends on non-WV state/local bonds; interest on money borrowed to buy WV-exempt bonds; 402(e) lump-sum distributions; \"other income deducted from FAGI but subject to state tax\" (example given is IRC Section 199 income); and savings-plan/ABLE/Jumpstart withdrawals. There is NO add-back for tax-treaty income, foreign/nonresident-alien treaty income, or income excluded under a US tax treaty. Therefore treaty-exempt income is NOT re-taxed by WV -> conforms = true.",
   "@@ab6ec6b14d82": "Family Tax Credit (FTC) — Low-income WV resident individuals/families who file with at least one exemption. Filers with zero exemptions cannot claim it, and persons who pay the federal Alternative Minimum Tax are ineligible. Eligibility and credit percentage depend on family size (number of exemptions, boxes a+b+c) and Modified Federal AGI. Computed on Schedule FTC-1 and attached to the return; if filing married-filing-separately use Table 2.",
-  "@@ba0b73cce8a5": "Law change NOT modeled by the engine (status final_form_published): DISABLED VETERAN'S PROPERTY TAX CREDIT EXTENDED TO A WIDOWED SPOUSE — a widowed spouse may now claim the credit if the deceased disabled veteran claimed it in the prior year (exceptions apply). Resolve via: 2025 IT-140 booklet, Important Information for 2025, and the Property Tax Credits page (p.20); TSD 455.",
+  "@@b7b928148542": "Law change NOT modeled by the engine (status final_form_published): DISABLED VETERAN'S PROPERTY TAX CREDIT EXTENDED TO A WIDOWED SPOUSE — a widowed spouse may now claim the credit if the deceased disabled veteran claimed it in the prior year, as long as the widow(er) has not remarried and the qualifying property has not been reclassified or sold. A refundable credit, claimed on Form IT-140 line 21, box B. Resolve via: 2025 IT-140 booklet, Important Information for 2025 (p.15), Disabled Veterans Real Property Tax Credit (p.20), IT-140 line 21 instructions (p.25); TSD 455.",
   "@@bf3edade7d26": "Homestead Excess Property Tax Credit (HEPTC) — Low-income owners of an owner-occupied WV residence whose WV real property tax paid (less any Senior Citizen Tax Credit) exceeds 4% of gross household income. Low-income means federal AGI of 300% or less of the federal poverty guideline for the household size. Homestead Exemption program participation is NOT required. No credit if any owner of the homestead is not a low-income person. Filers who pay federal AMT are flagged/excluded. Schedule HEPTC-1 and the Class 2 property tax receipt must be filed.",
   "@@c021a81944a6": "The newest shipped WV pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
-  "@@e73c0102409d": "2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025: 'Widowed spouses may now claim Disabled Veteran's Property Tax Credit if the deceased disabled veteran claimed'",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@efd779ea731e": "WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI (p.24), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)"
+  "@@efd779ea731e": "WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI (p.24), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -145,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended WV 2025 return (Form IT-140 (West Virginia Personal Income Tax Return) - check \"Resident\" status): you owe $88 more.",
+    "citations": [
+     {
+      "source": "WV revenue department home page (read 2026-10-16)",
+      "url": "https://tax.wv.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@7faed9237982",
+    "jurisdiction": "states/wv",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended WV return, and the WV 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the WV instructions for amended returns on the WV revenue department's site (https://tax.wv.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -199,6 +235,27 @@
     "jurisdiction": "states/wv",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "WV revenue department home page (read 2026-10-16)",
+      "url": "https://tax.wv.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the WV instructions for amended returns on the WV revenue department's site (https://tax.wv.gov/).",
+    "form": "@@7faed9237982",
+    "headline": "WV 2025, amended (Form IT-140 (West Virginia Personal Income Tax Return) - check \"Resident\" status): you owe $88",
+    "jurisdiction": "states/wv",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -478,7 +535,7 @@
        "url": "@@164800a181a1"
       },
       {
-       "source": "@@e73c0102409d",
+       "source": "@@8f0aa52c469d",
        "url": "@@164800a181a1"
       },
       {
@@ -498,7 +555,7 @@
       "@@4cf945d1e9e4",
       "@@a2f4c9eed571",
       "@@8b5eb7cea933",
-      "@@ba0b73cce8a5",
+      "@@b7b928148542",
       "Remote-work trap: work performed from TX for an employer sitting in WV. If WV applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to WV and require a NONRESIDENT WV return that the physical footprint alone never shows — and the W-2's Box 15 often already names WV. This WV pack year carries no researched convenience rule: verify WV's nonresident wage-sourcing rule at its DOR before assuming no WV filing."
      ]
     }
@@ -538,7 +595,7 @@
        "url": "@@164800a181a1"
       },
       {
-       "source": "@@e73c0102409d",
+       "source": "@@8f0aa52c469d",
        "url": "@@164800a181a1"
       },
       {
@@ -558,7 +615,7 @@
       "@@4cf945d1e9e4",
       "@@a2f4c9eed571",
       "@@8b5eb7cea933",
-      "@@ba0b73cce8a5"
+      "@@b7b928148542"
      ]
     }
    ],
@@ -581,7 +638,7 @@
        "url": "@@164800a181a1"
       },
       {
-       "source": "@@e73c0102409d",
+       "source": "@@8f0aa52c469d",
        "url": "@@164800a181a1"
       },
       {
@@ -600,7 +657,7 @@
      "warnings": [
       "@@4cf945d1e9e4",
       "@@8b5eb7cea933",
-      "@@ba0b73cce8a5"
+      "@@b7b928148542"
      ]
     }
    ],

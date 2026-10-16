@@ -33,6 +33,13 @@ treaty_note: Iowa conforms. The 2024 IA 1040 keeps the 2023 redesign's starting 
   items). This is reinforced by Iowa Admin. Code rule 701—300.17, which states a resident is taxed on all income
   "except when an item of income is specifically exempted from taxation by a provision of federal or Iowa law."
   Therefore treaty-exempt income is not re-taxed.
+# media/4091 is the DOR's own print version of this return, so citing it is right (JK27, 2026-10-16). The
+# "2024 IA 1040 – Form Options" page (revenue.iowa.gov media/4092) offers "IA 1040 Return – Blank form / Use
+# this form if you would like to write your data on the return by hand" with the link "Continue to IA 1040
+# Return - Print Version" -> media/4091, beside "Continue to IA 1040 Return - Fillable Version" -> media/4090
+# (the blank the ia1040 2024 form pack fills). The two files print the same words and the same page stamps
+# (41-001a to 41-001f; 41-001c is 10/22/2024, the rest 07/29/2024), so each face fact cited to media/4091 below
+# reads the same on media/4090. Only the AcroForm facts (230 fields, 247 widgets) need media/4090, and they cite it.
 citation:
   source: '2024 IA 1040 Iowa Individual Income Tax Return (form 41-001, blank/print version) - Step 4 lines 1a-1e
     federal reference lines, line 2 Federal taxable income, line 3 Net Iowa modifications from IA 1040 Schedule
@@ -134,9 +141,13 @@ credits:
   eligibility: This is an exemption from Iowa income tax (not a dollar-amount credit) functioning as Iowa's primary
     low-income and senior relief on the IA 1040 — Iowa has no separate 'elderly credit' line. A taxpayer is exempt
     from Iowa income tax if Iowa taxable income (IA 1040 line 4, with required add-backs incl. the line 1d standard/itemized
-    deduction, line 1e QBI deduction, lump-sum distributions, and Schedule 1 line 17b NOL carryover) is at or below
-    the threshold for their filing status. Senior filers (taxpayer or spouse 65 or older on 12/31/24) qualify under
-    a substantially higher threshold.
+    deduction, line 1e QBI deduction, lump-sum distributions, and the Schedule 1 line 17 NOL carryover) is at or
+    below the threshold for their filing status. Senior filers (taxpayer or spouse 65 or older on 12/31/24) qualify
+    under a substantially higher threshold. The 2024 IA 1040 Schedule 1 prints line 17 as one box, "Iowa net operating
+    loss prior to 1/1/23. Include IA 124" (page 5, 41-001e; https://revenue.iowa.gov/media/4090/download?inline);
+    the Expanded Instructions p.10 add-back list still reads "Carryover of net operating loss claimed on the IA 1040
+    Schedule 1, line 17b", while p.5 ("Who Must File?") reads "line 17" and the p.12 alternate tax worksheet reads
+    "line 17, column B".
   amount: Not a dollar credit — it eliminates Iowa income-tax liability when income is at or below the threshold
     (income above the threshold is fully taxed).
   income_limit_2024: 'Single: Iowa taxable income $9,000 or less ($24,000 or less if age 65+ on 12/31/24); or under
@@ -189,7 +200,7 @@ all_citations:
     and line 4 Iowa taxable income; Step 5 line 5 tax line with alternate-tax/low-income-exemption checkbox; due
     date April 30, 2025; PO Box 9187; payee Iowa Department of Revenue
   url: https://revenue.iowa.gov/media/4091/download?inline
-- source: 2024 IA 1040 Iowa Individual Income Tax Return (form 41-001, fillable version, 249 AcroForm fields; same
+- source: 2024 IA 1040 Iowa Individual Income Tax Return (form 41-001, fillable version, 230 AcroForm fields, 247 widgets; same
     face as the print version) — page 2 (41-001b 07/29/2024) Step 5 alternate-tax/low-income-exemption checkbox
     printed under the Step 5 heading above line 5; page 3 (41-001c 10/22/2024) line 31a overpayment, line 31b
     "AMENDED RETURN ONLY. Previous refunds.", line 32 "Subtract line 31b from line 31a, if applicable"
@@ -219,8 +230,9 @@ unverified:
 - Whether Iowa publishes a separate lockbox for payment-enclosed returns was re-checked on the 2024 form, which
   again prints a single processing address (PO BOX 9187); no separate with-payment address was located on a .gov
   page.
-- The school district surtax / EMS surtax rate tables (Step 6) and the volunteer firefighter/EMS/reserve peace officer
-  credit amount (line 10) were not transcribed this pass; confirm at the cited instructions.
+- The school district surtax / EMS surtax rates (IA 1040 line 19, which the 2024 face prints in Step 5; the instructions'
+  "School District Surtax / EMS table (41-027)", p.41) and the volunteer firefighter/EMS/reserve peace officer credit
+  amount (line 10) were not transcribed this pass; confirm at the cited instructions.
 # Graduated-bracket tax computation block (Phase G item G4, formerly-C3 adoption
 # tranche) — consumed by calc.state_tax. Two-pass verification: brackets drafted from
 # the 2024 Tax Calculation Worksheet (41-026, joint vs non-joint schedules with Column
@@ -306,15 +318,24 @@ tax:
     older on 12/31/2024) — and enter the SMALLER amount on line 5 (check the Step 5 box); status-3 spouses prorate
     it. Single taxpayers may instead qualify for the Iowa Income Tax Reduction Worksheet (41-146). Check these when
     income is just above the threshold.'
+  # The low-income box and the surtax line below were re-read on the 2024 face (JK27, 2026-10-16). Page 2
+  # (41-001b) prints the box on its own row under the Step 5 heading, above line 5 (the 2023 face printed it
+  # beside the Step 5 heading); page 3 (41-001c) prints "19. School district surtax or EMS surtax. Multiply
+  # line 18 by the percentage from list" inside Step 5, and the instructions agree ("Line: 19 / Step: 5",
+  # p.41, "Multiply the amount on line 18 by the surtax rate"). Step 6 starts at line 23.
   - 'Low-income exemption (NOT modeled): filers whose Iowa taxable income plus specified add-backs is at or below
     $9,000 (single/married filing separately; $24,000 if 65+ on 12/31/24), or $13,500 (married filing jointly / head
-    of household / qualifying surviving spouse; $32,000 if 65+), owe no Iowa income tax (check the box between Steps
-    4 and 5); a dependent filer''s threshold is $5,000; MFS also requires combined income of $13,500 or less.'
+    of household / qualifying surviving spouse; $32,000 if 65+), owe no Iowa income tax (check the box the 2024 IA
+    1040 prints under the Step 5 heading, above line 5: "Check if using alternate tax (line 5), tax reduction calculation
+    (line 12), or low-income exemption. See instructions." The Expanded Instructions p.44 still call it "the box
+    between Steps 4 and 5"); a dependent filer''s threshold is $5,000; MFS also requires combined income of $13,500
+    or less.'
   - 'Not modeled — later lines: Iowa lump-sum tax (line 6), the Step 3 exemption credits (line 8), tuition and textbook
     credit (line 9 — 2024: Students First ESA purchases not eligible), volunteer firefighter/EMS/reserve peace officer
     credit (line 10), the IA 126 nonresident/part-year credit (line 13), out-of-state tax credit (line 15), SCHOOL
-    DISTRICT SURTAX and EMS surtax (Step 6 — a local percentage of the line 16 balance), the 15%-of-federal Iowa EITC
-    (line 25), and the child and dependent care / early childhood development credits (line 24).'
+    DISTRICT SURTAX and EMS surtax (line 19, in Step 5: "School district surtax or EMS surtax. Multiply line 18 by
+    the percentage from list"; Step 6 is "Refundable Credits and Payments", lines 23-30), the 15%-of-federal Iowa
+    EITC (line 25), and the child and dependent care / early childhood development credits (line 24).'
 # DEV_PLAN §7.2 effective_law_changes — promoted 2026-08-11 from THIS pack's own prose (the header's
 # "HEADLINE 2024 CHANGES (What's New)" list, the tax block's pre-block comment and the tax.notes
 # "2024 schedule change" / alternate-tax notes); transcription only, no new research and no new

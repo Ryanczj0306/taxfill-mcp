@@ -520,6 +520,10 @@ relations:
 cross_form: []
 identity_fields: [name, identifying_number]
 identity_per_person: [identifying_number]
+# The face prints "Fill in Your Address Only if You Are Filing This Form by Itself and Not With Your Tax Return": attached to the return,
+# these boxes are correctly BLANK. verify_filing honours that only in a filing that holds a Form 1040,
+# 1040-SR, 1040-NR or 1040-X; verified alone, the form counts as filed by itself (Phase K JK27, 2026-10-16).
+standalone_only_lines: [mailing_address.street, mailing_address.apt, mailing_address.city_state_zip, mailing_address.foreign_country, mailing_address.foreign_province, mailing_address.foreign_postal_code]
 signature:
   page: 3
   standalone_only: true

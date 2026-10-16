@@ -8,9 +8,16 @@
   "@@3a96ab53fd70": "Louisiana Nonrefundable Child Care Credit (federal AGI greater than $25,000) — Louisiana residents with federal adjusted gross income greater than $25,000 who incurred qualifying child and dependent care expenses (IRC Section 21) in Louisiana and claimed a federal child care credit. Unused credit may be carried forward up to five years. Authorized by R.S. 47:297.4.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@5ad04f079ca0": "The shipped LA 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@6f98cf7ab549": "2023 Louisiana Tax Table (resident IT-540 instructions booklet, printed pp. 17-24): '2023 LOUISIANA TAX TABLE - Single or Married Filing Separately (Filing Status Box 1 or 3)' / 'Married Filing Jointly or Qualifying Surviving Spouse (Filing Status Box 2 or 5)' / 'Head of Household (Filing Status Box 4)'; each header states 'The $4,500 [Single/MFS] / $9,000 [MFJ-QSS, HOH] combined personal exemption-standard deduction and $1,000 for each exemption over one [over two for MFJ-QSS] have been used in determining the tax shown in this table', with continuations 'Plus 4.25% of Tax Table Income in Excess of $51,000' (Single/MFS, HOH) and 'Plus 4.25% of Tax Table Income in Excess of $101,000' (MFJ/QSS). Rates and bracket boundaries cross-verified against the 2023 IT-540B instructions Tax Computation Worksheet, p. 4 (1.85% on the first $12,500/$25,000; 3.5% on the next $37,500/$75,000; 4.25% over $50,000/$100,000; Line C1 combined personal exemption-standard deduction $4,500 statuses 1/3, $9,000 statuses 2/4/5; Line C2 $1,000 per 65-or-over/blind box and per dependent; Lines E/F/G deduct it from the first bracket), https://dam.ldr.la.gov/taxforms/IT540Bi(2023).pdf, and the 2023 IT-540 instructions, Lines 6-10, https://dam.ldr.la.gov/taxforms/IT540i%20WEB(2023)%20INSTRUCTIONS.pdf",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a692c57a0c96": "annual (per tax year; the shipped LA 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
   "@@b6c075bbc728": "Treaty conformity — LA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from LA income (it flows through the federal starting point; do not add it back on the LA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: LA's resident return (IT-540) starts from Federal Adjusted Gross Income: Line 7 is \"FEDERAL ADJUSTED GROSS INCOME\" and the instructions say \"Line 7 - Enter the amount of your Federal Adjusted Gross Income (Federal AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11.\" Federally treaty-exempt income is already excluded from federal AGI (Form 1040 Line 11) and therefore flows through. The only \"additions\" to federal AGI are on Schedule E, Lines 2A-2D: (2A) interest and dividend income from other states and their political subdivisions, (2B) recapture of START contributions, (2C) recapture of START K12 contributions, and (2D) add-back of pass-through entity loss. There is NO add-back of tax-treaty-exempt income anywhere on the IT-540 form, Schedule E, or in the instructions (the word \"treaty\" appears zero times in both the 2023 IT-540 form PDF and the 2023 IT-540 instructions PDF). Because LA starts from federal AGI and has no treaty addback, treaty-exempt income is not re-taxed -> conforms.",
   "@@b73fe32d7a7f": "Louisiana School Readiness Child Care Expense Credit (refundable, federal AGI $25,000 or less) — Taxpayers who qualify for the Louisiana Child Care Credit and who had a qualified dependent under age six that attended a child care facility participating in the Quality Start Rating program (administered by the Louisiana Dept. of Education) rated at two stars or higher. Facility must provide Form R-10614. Refundable version requires federal AGI of $25,000 or less. Authorized by R.S. 47:6104.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -134,6 +141,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended LA 2023 return (Form IT-540 (2023 Louisiana Resident Income Tax Return)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "LA revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.louisiana.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "IT-540 (2023 Louisiana Resident Income Tax Return)",
+    "jurisdiction": "states/la",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended LA return, and the LA 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the LA instructions for amended returns on the LA revenue department's site (https://revenue.louisiana.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -191,9 +233,243 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "LA revenue department home page (read 2026-10-16)",
+      "url": "https://revenue.louisiana.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the LA instructions for amended returns on the LA revenue department's site (https://revenue.louisiana.gov/).",
+    "form": "IT-540 (2023 Louisiana Resident Income Tax Return)",
+    "headline": "LA 2023, amended (IT-540 (2023 Louisiana Resident Income Tax Return)): you owe $88",
+    "jurisdiction": "states/la",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5ad04f079ca0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Louisiana Department of Revenue – 2023 Form IT-540 Resident Income Tax Return (Louisiana Earned Income Credit Worksheet)",
+     "cadence": "@@a692c57a0c96",
+     "topic": "credits",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf"
+    },
+    {
+     "answers": "Louisiana Department of Revenue – School Readiness Credit page and 2023 Form IT-540 (Refundable School Readiness Credit Worksheet)",
+     "cadence": "@@a692c57a0c96",
+     "topic": "credits",
+     "url": "https://revenue.louisiana.gov/individuals/general-resources/school-readiness-credit/"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5ad04f079ca0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@1330904cbc5e",
+     "cadence": "@@a692c57a0c96",
+     "topic": "filing_logistics",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5ad04f079ca0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@1330904cbc5e",
+     "cadence": "@@a692c57a0c96",
+     "topic": "forms_and_instructions",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf"
+    },
+    {
+     "answers": "Louisiana DOR - 2023 IT-540 Resident Income Tax Return Instructions: 'Line 7 - Enter the amount of your Federal Adjusted Gross Income ... from Federal Form 1040 or 1040-SR, Line 11'; WHO MUST FILE A RETURN; WHEN TO FILE ('A 2023 calendar year return is due on or before May 15, 2024'); WHERE TO FILE AND PAY (P.O. Box 3550 with payment, P.O. Box 3440 all other); 'Make your check or money order payable to the Louisiana Department of Revenue'; LaTAP electronic payment",
+     "cadence": "@@a692c57a0c96",
+     "topic": "forms_and_instructions",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB(2023)%20INSTRUCTIONS.pdf"
+    },
+    {
+     "answers": "Louisiana DOR - Individual Income Tax (general resources): residency/domicile, IT-540 vs IT-540B, returns and payments due May 15th of the following year, filing requirement tied to federal filing obligation",
+     "cadence": "@@a692c57a0c96",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.louisiana.gov/individuals/general-resources/individual-income-tax/"
+    },
+    {
+     "answers": "Louisiana DOR - Tax Forms for Individuals (2023 IT-540 and IT-540B form/instruction listing and titles)",
+     "cadence": "@@a692c57a0c96",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.louisiana.gov/tax-forms/individuals/"
+    },
+    {
+     "answers": "Louisiana DOR - 2023 IT-540B Nonresident and Part-Year Resident Income Tax Return (form PDF)",
+     "cadence": "@@a692c57a0c96",
+     "topic": "forms_and_instructions",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540B(2023)WEB%20F.pdf"
+    },
+    {
+     "answers": "Louisiana DOR - 2023 IT-540B Nonresident/Part-Year Resident Instructions",
+     "cadence": "@@a692c57a0c96",
+     "topic": "forms_and_instructions",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540Bi(2023).pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5ad04f079ca0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@6f98cf7ab549",
+     "cadence": "@@a692c57a0c96",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540(2023)%20TT.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@5ad04f079ca0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540WEB(2023)%20F.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/la",
  "state_scope": {
@@ -642,7 +918,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "2023 Louisiana Tax Table (resident IT-540 instructions booklet, printed pp. 17-24): '2023 LOUISIANA TAX TABLE - Single or Married Filing Separately (Filing Status Box 1 or 3)' / 'Married Filing Jointly or Qualifying Surviving Spouse (Filing Status Box 2 or 5)' / 'Head of Household (Filing Status Box 4)'; each header states 'The $4,500 [Single/MFS] / $9,000 [MFJ-QSS, HOH] combined personal exemption-standard deduction and $1,000 for each exemption over one [over two for MFJ-QSS] have been used in determining the tax shown in this table', with continuations 'Plus 4.25% of Tax Table Income in Excess of $51,000' (Single/MFS, HOH) and 'Plus 4.25% of Tax Table Income in Excess of $101,000' (MFJ/QSS). Rates and bracket boundaries cross-verified against the 2023 IT-540B instructions Tax Computation Worksheet, p. 4 (1.85% on the first $12,500/$25,000; 3.5% on the next $37,500/$75,000; 4.25% over $50,000/$100,000; Line C1 combined personal exemption-standard deduction $4,500 statuses 1/3, $9,000 statuses 2/4/5; Line C2 $1,000 per 65-or-over/blind box and per dependent; Lines E/F/G deduct it from the first bracket), https://dam.ldr.la.gov/taxforms/IT540Bi(2023).pdf, and the 2023 IT-540 instructions, Lines 6-10, https://dam.ldr.la.gov/taxforms/IT540i%20WEB(2023)%20INSTRUCTIONS.pdf",
+    "source": "@@6f98cf7ab549",
     "url": "https://dam.ldr.la.gov/taxforms/IT540(2023)%20TT.pdf"
    },
    "rate": null,

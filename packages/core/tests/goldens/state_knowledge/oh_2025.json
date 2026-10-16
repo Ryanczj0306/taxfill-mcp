@@ -26,7 +26,8 @@
   "@@db9fe0fc6831": "The newest shipped OH pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@dd53debf612a": "No separate nonresident/part-year return; nonresidents and part-year residents file the same Ohio IT 1040 and check the part-year resident or nonresident box. They compute the Nonresident Credit on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. Beginning with tax year 2025 the optional nonresident-presumption statement is a CHECKBOX on form IT 10 or IT 1040 — form IT NRS is discontinued.",
   "@@e30845a09a0d": "2025 Ohio IT 1040 / SD 100 Instruction Booklet, p. 3 mailing-address table (IT 1040 without payment / with payment / payment only, and the parallel SD 100 addresses)",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -144,6 +145,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended OH 2025 return (Form Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "OH revenue department home page (read 2026-10-16)",
+      "url": "https://tax.ohio.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@327bd905baa9",
+    "jurisdiction": "states/oh",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended OH return, and the OH 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the OH instructions for amended returns on the OH revenue department's site (https://tax.ohio.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -198,6 +234,27 @@
     "jurisdiction": "states/oh",
     "notes": [],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "OH revenue department home page (read 2026-10-16)",
+      "url": "https://tax.ohio.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the OH instructions for amended returns on the OH revenue department's site (https://tax.ohio.gov/).",
+    "form": "@@327bd905baa9",
+    "headline": "OH 2025, amended (Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.): you owe $88",
+    "jurisdiction": "states/oh",
+    "notes": [],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -853,7 +910,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: OH 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: OH 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

@@ -26,7 +26,8 @@
   "@@c70678b89f8d": "The newest shipped AL pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@d71d2a05b94b": "Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional short form for full-year residents who do not itemize, claim no adjustments to income, have income only from salaries/wages plus up to $1,500 of interest and dividends, no Schedule C/D/E/F income, and no other-state credit; part-year residents use Form 40.)",
   "@@eab2ce4c8add": "If any of your income was exempt from federal tax under a treaty: AL does not conform to federal tax treaties, so that income is still taxable to AL — do not carry the federal exclusion onto the state return.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -153,6 +154,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended AL 2025 return (Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional short form for full-year residents who do not itemize, claim no adjustments to income, have income only from salaries/wages plus up to $1,500 of interest and dividends, no Schedule C/D/E/F income, and no other-state credit; part-year residents use Form 40.)): you owe $88 more.",
+    "citations": [
+     {
+      "source": "AL revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.alabama.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@d71d2a05b94b",
+    "jurisdiction": "states/al",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended AL return, and the AL 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the AL instructions for amended returns on the AL revenue department's site (https://www.revenue.alabama.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -213,6 +249,29 @@
      "@@59380a3b8b10"
     ],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "AL revenue department home page (read 2026-10-16)",
+      "url": "https://www.revenue.alabama.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the AL instructions for amended returns on the AL revenue department's site (https://www.revenue.alabama.gov/).",
+    "form": "@@d71d2a05b94b",
+    "headline": "AL 2025, amended (Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional short form for full-year residents who do not itemize, claim no adjustments to income, have income only from salaries/wages plus up to $1,500 of interest and dividends, no Schedule C/D/E/F income, and no other-state credit; part-year residents use Form 40.)): you owe $88",
+    "jurisdiction": "states/al",
+    "notes": [
+     "@@59380a3b8b10"
+    ],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -898,7 +957,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: AL 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: AL 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

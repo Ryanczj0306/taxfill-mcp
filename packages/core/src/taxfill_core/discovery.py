@@ -12,7 +12,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from taxfill_core.datadir import formpacks_dir
+from taxfill_core.datadir import DATA_DIR_ENV, display_path, formpacks_dir
 from taxfill_core.schemas.formpack import FormPack, load_pack
 
 __all__ = ["FormSummary", "LineMap", "FormMap", "list_forms", "get_form_map", "load_form_pack"]
@@ -46,7 +46,7 @@ def load_form_pack(
     if not path.is_file():
         available = sorted(s.form_key for s in list_forms(jurisdiction, year, base_dir=base_dir))
         raise FileNotFoundError(
-            f"no form pack for form '{form}', {jurisdiction} {year} — looked for {path}. "
+            f"no form pack for form '{form}', {jurisdiction} {year} — looked for {display_path(path, base_dir or formpacks_dir())}. "
             f"Available form keys for {jurisdiction} {year}: {available or 'none'}. Use list_forms()."
             + _handfill_hint(path, form, year, jurisdiction)
         )
@@ -148,7 +148,8 @@ def list_forms(
     base = Path(base_dir) if base_dir is not None else _repo_formpacks_dir()
     if not base.is_dir():
         raise FileNotFoundError(
-            f"formpacks directory not found: {base} — pass base_dir=<repo formpacks/ dir> "
+            f"formpacks directory not found: {display_path(base)} (set ${DATA_DIR_ENV} to a directory holding "
+            f"knowledge/ and formpacks/) — pass base_dir=<repo formpacks/ dir> "
             f"(the default only works from a source checkout)"
         )
     out: list[FormSummary] = []
@@ -208,7 +209,7 @@ def get_form_map(
     if not path.is_file():
         available = sorted(s.form_key for s in list_forms(jurisdiction, year, base_dir=base_dir))
         raise FileNotFoundError(
-            f"no form pack for form '{form}', {jurisdiction} {year} — looked for {path}. "
+            f"no form pack for form '{form}', {jurisdiction} {year} — looked for {display_path(path, base)}. "
             f"Available form keys for {jurisdiction} {year}: {available or 'none'}. "
             f"Use list_forms() to discover packs."
             + _handfill_hint(path, form, year, jurisdiction)

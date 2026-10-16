@@ -332,19 +332,38 @@ effective_law_changes:
       65% of social benefits received and included in the federal adjusted gross income shall be allowed as a decreasing
       modification.'
     url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+# JK27 (2026-10-16): this entry placed the credit on the Tax Credit Recap Schedule, the attribution JS2c corrected
+# in wv/2024 for the same credit. The 2025 return claims it on IT-140 line 21, box B ("WV Property Tax Adjustment
+# Tax Credits (claim each separately below. Enter sum on line 21)"; box B is captioned DISABLED VETERAN / REAL
+# PROPERTY TAX), and line 23 sums it with the other payments ("Payments and Refundable Credits (add lines 15 through
+# 22)"); the RECAP lists non-refundable credits only ("27. TOTAL NON REFUNDABLE CREDITS — add all recap lines.
+# Enter on IT-140 line 9"), and none of its lines 1-26 is this credit. Re-read in the 2025 booklet, downloaded twice
+# on 2026-10-16 with identical sha256 6383bf9748fde18c... (the digest formpacks/states/wv/2025/it140 pins).
 - description: >-
     DISABLED VETERAN'S PROPERTY TAX CREDIT EXTENDED TO A WIDOWED SPOUSE — a widowed spouse may now claim the credit
-    if the deceased disabled veteran claimed it in the prior year (exceptions apply).
+    if the deceased disabled veteran claimed it in the prior year, as long as the widow(er) has not remarried and the
+    qualifying property has not been reclassified or sold. A refundable credit, claimed on Form IT-140 line 21, box B.
   status: final_form_published
   affects:
-  - Tax Credit Recap Schedule (the Disabled Veterans Real Property Tax Credit)
+  - Form IT-140 line 21, WV Property Tax Adjustment Tax Credits — box B Disabled Veteran Real Property Tax; the sum
+    enters line 21 and is totalled on line 23 (Payments and Refundable Credits, lines 15-22). NOT the Tax Credit
+    Recap Schedule — its lines are non-refundable credits whose total (RECAP line 27) goes to IT-140 line 9.
   modeled: false
   lookup_path: >-
-    2025 IT-140 booklet, Important Information for 2025, and the Property Tax Credits page (p.20); TSD 455.
+    2025 IT-140 booklet, Important Information for 2025 (p.15), Disabled Veterans Real Property Tax Credit (p.20),
+    IT-140 line 21 instructions (p.25); TSD 455.
   citation:
     source: >-
-      2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025: 'Widowed
-      spouses may now claim Disabled Veteran's Property Tax Credit if the deceased disabled veteran claimed'
+      2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025 (p.15):
+      'Widowed spouses may now claim Disabled Veteran’s Property Tax Credit if the deceased disabled veteran claimed
+      claimed the credit in the prior year. Exceptions do apply see page Page 20.' Disabled Veterans Real Property
+      Tax Credit (p.20): 'The widow(er) of a disabled veteran who previously claimed this credit may be eligible to
+      claim this credit as long as: 1. The widow(er) has not remarried, 2. The qualifying property has not been
+      reclassified, 3. The qualifying property has not been sold. If the amount of property tax timely paid exceeds
+      tax amount, the excess will be refunded.' Form IT-140 line 21 (p.2): 'WV Property Tax Adjustment Tax Credits
+      (claim each separately below. Enter sum on line 21)' with box B DISABLED VETERAN REAL PROPERTY TAX;
+      instructions (p.25): 'LINE 21 WV PROPERTY TAX ADJUSTMENT TAX CREDIT. Enter the amount in the appropriate box
+      for the credit being claimed.'
     url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
 law_changes_checked:
   checked: 2026-09-28

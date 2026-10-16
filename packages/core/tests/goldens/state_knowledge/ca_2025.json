@@ -20,7 +20,8 @@
   "@@d4bf29810f68": "If any of your income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties, so that income is still taxable to CA — do not carry the federal exclusion onto the state return.",
   "@@e7c0b0724bfc": "California Earned Income Tax Credit (CalEITC) — Requires California wage income and/or net earnings from self-employment of less than $32,901 (2025). You do not need a child to qualify. Computed on form FTB 3514.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@eb79be1a5d3c": "2025 Personal Income Tax Booklet (Form 540), \"Mailing Your Tax Return\" (amount due -> PO Box 942867; refund or no amount due -> PO Box 942840)"
+  "@@eb79be1a5d3c": "2025 Personal Income Tax Booklet (Form 540), \"Mailing Your Tax Return\" (amount due -> PO Box 942867; refund or no amount due -> PO Box 942840)",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -147,6 +148,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended CA 2025 return (Form 540): you owe $88 more.",
+    "citations": [
+     {
+      "source": "CA revenue department home page (read 2026-10-16)",
+      "url": "https://www.ftb.ca.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "540",
+    "jurisdiction": "states/ca",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended CA return, and the CA 2025 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the CA instructions for amended returns on the CA revenue department's site (https://www.ftb.ca.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2025
    }
   ]
  },
@@ -207,6 +243,29 @@
      "@@5c54c6c74f12"
     ],
     "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "CA revenue department home page (read 2026-10-16)",
+      "url": "https://www.ftb.ca.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the CA instructions for amended returns on the CA revenue department's site (https://www.ftb.ca.gov/).",
+    "form": "540",
+    "headline": "CA 2025, amended (540): you owe $88",
+    "jurisdiction": "states/ca",
+    "notes": [
+     "@@5c54c6c74f12"
+    ],
+    "owed": 88,
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2025
@@ -915,7 +974,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: CA 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+    "error": "ValueError: CA 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
    },
    {
     "base_after_exemptions": 40000,

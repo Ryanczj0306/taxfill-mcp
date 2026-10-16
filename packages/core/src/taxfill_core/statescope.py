@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from taxfill_core.datadir import knowledge_dir
 from taxfill_core.knowledge import Citation, StateKnowledge, load_state_knowledge
@@ -78,6 +78,28 @@ def _load_no_income_tax(base_dir):
     for entry in raw.get("wages_only_exempt", []) or []:
         out[entry["state"].upper()] = {"kind": "wages_only", **entry}
     return out, raw.get("citation")
+
+
+def _no_tax_citations(st: str, info: dict) -> list[Citation]:
+    """A no-income-tax entry's own ``citation`` when it has one, plus its revenue-department page when that page is on
+    a government host.
+
+    Florida's Department of Revenue is at floridarevenue.com, which the Citation's government-host rule rejects: the
+    old one-liner built the Citation anyway, so state_scope raised a ValidationError for every Florida resident in every
+    year (Phase K JK27; the JK21 golden _no_income_tax.json had recorded the error). The entry now cites the Florida
+    Constitution on flsenate.gov, and the revenue site is named in the reason text instead.
+    """
+    cites: list[Citation] = []
+    raw = info.get("citation")
+    if isinstance(raw, dict):
+        cites.append(Citation(**raw))
+    dor = info.get("dor") or ""
+    if dor.startswith("http"):
+        try:
+            cites.append(Citation(source=f"{st} Department of Revenue", url=dor))
+        except ValidationError:
+            pass
+    return cites
 
 
 def _days_lived_in_year(periods, year: int) -> int:
@@ -169,9 +191,11 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
         # No-income-tax states: nothing to file (with the narrow caveats flagged).
         if st in no_tax:
             info = no_tax[st]
-            cites = [Citation(source=f"{st} Department of Revenue", url=info["dor"])] if info.get("dor", "").startswith("http") else []
+            cites = _no_tax_citations(st, info)
             if info["kind"] == "none":
                 reason = f"{st} levies no personal income tax — no state return required."
+                if info.get("dor") and not any(c.url == info["dor"] for c in cites):
+                    reason += f" Revenue department: {info['dor']}"
                 warnings = []
             else:
                 reason = f"{st} does not tax wages — generally no return required."
@@ -252,6 +276,15 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
                 cites.append(change.citation)
             if sk.citation:
                 cites.append(sk.citation)
+            # The role's own form, cited (JK27, 2026-10-16). A pack's top-level citation is its RESIDENT
+            # booklet, so a part-year or nonresident filer named a different form got no pointer to it:
+            # Virginia's entry named Form 760PY ("As a general rule, part-year residents file Form 760PY",
+            # 2025 Form 760PY Instructions, p. 7) and Form 763 ("Nonresidents File Form 763", 2025 Form 763
+            # Instructions, p. 7) but cited only the Form 760 instructions. ``forms.citations.<role>`` lists
+            # the citations for that role's form; they are added for that role only.
+            role_cites = forms_block.get("citations") or {}
+            for c in role_cites.get(role) or []:
+                cites.append(Citation.model_validate(c))
         else:
             notes.append(f"No {st} knowledge pack for {year} yet — confirm the filing requirement, forms, and "
                          f"credits at the state DOR before filing.")

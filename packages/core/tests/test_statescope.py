@@ -45,6 +45,30 @@ def test_no_income_tax_state_is_nothing_to_file():
     assert tx.income_tax is False and "no personal income tax" in tx.reason.lower()
 
 
+_NO_TAX_STATES = ("AK", "FL", "NV", "SD", "TX", "WY", "TN", "WA", "NH")
+
+
+def test_every_no_income_tax_state_scopes_with_a_citation_in_every_year():
+    """Regression, Phase K JK27: state_scope raised a ValidationError for every Florida resident in every year.
+
+    Florida's Department of Revenue is at floridarevenue.com, not a government host, and the old code built a Citation
+    from that URL unconditionally. The JK21 golden _no_income_tax.json had recorded the error as Florida's answer.
+    """
+    for st in _NO_TAX_STATES:
+        for year in (2023, 2024, 2025):
+            r = state_scope(_profile(year, lived=[_rp(st, date(year, 1, 1), date(year, 12, 31))]), year)
+            entry = _by_state(r)[st]
+            assert entry.must_file is False and entry.citations, (st, year)
+
+
+def test_florida_cites_its_constitution_and_names_its_revenue_site():
+    r = state_scope(_profile(2025, lived=[_rp("FL", date(2025, 1, 1), date(2025, 12, 31))]), 2025)
+    fl = _by_state(r)["FL"]
+    assert [c.url for c in fl.citations] == ["https://www.flsenate.gov/Laws/Constitution"]
+    assert "Art. VII, s. 5(a)" in fl.citations[0].source
+    assert "floridarevenue.com" in fl.reason
+
+
 def test_wages_only_exempt_state_flags_the_caveat():
     # Washington: no wage tax, but a capital-gains caveat must be surfaced, not skipped.
     r = state_scope(_profile(lived=[_rp("WA", date(2023, 1, 1), date(2023, 12, 31))]), 2023)

@@ -5,15 +5,22 @@
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@35dd61dd401b": "Low-Income Child Care Expenses Credit — Part- or full-year Colorado residents who were NOT required to file a federal return or were unable to claim the federal Child and Dependent Care Expenses Credit, paid care expenses for a qualifying person under age 13 so they could work/look for work, and had adjusted gross income of $25,000 or less. (Married-Filing-Separate cannot claim.)",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@4f1fea42edaa": "Colorado DOR — DR 0104, 2023 Colorado Individual Income Tax Return (form PDF; line 1 'Federal Taxable Income', Additions lines 2-7)",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@5a2b3cb4c06f": "Colorado Child Tax Credit — Qualifying resident individuals with an eligible child who was UNDER AGE 6 at the end of 2023 (born 2018 or later) and who qualified (or would qualify) for the federal child tax credit / additional child tax credit. Full-year residents enter the result directly; part-year residents apportion via DR 0104PN line 34. Children age 6 or older are not eligible.",
   "@@5b7a587c6e29": "DR 0104 (Colorado Individual Income Tax Return) — full-year residents mark the \"Full-Year\" box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9d3d59800817": "annual (per tax year; the shipped CO 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
+  "@@a05c24758a3a": "The shipped CO 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@aa23ba10a99e": "2023 Colorado 104 Book (DR 0104 instructions) — \"The income tax rate is currently 4.4%\" (the document is the year-pinned 2023 filing guide); DR 0104 Line 1 = Federal Taxable Income from Form 1040/1040-SR/1040-NR/1040-SP; \"Colorado income tax is based on your federal taxable income, which has already considered your deductions\"; Line 10 = Colorado Taxable Income; booklet tax table row $30,700-$30,800 -> $1,353 (= 4.4% of the $30,750 midpoint).",
   "@@bb3252d61e3d": "Colorado Earned Income Tax Credit (COEITC) - SSN filers — Full-year or part-year Colorado residents who claim the federal Earned Income Tax Credit (EITC) and have an SSN valid for employment. Part-year residents apportion by the DR 0104PN line 34 percentage. (ITIN filers and certain filers under 25 use a separate form, DR 0104TN.)",
   "@@c8ef6cf898f5": "Child Care Expenses Credit (Colorado child & dependent care credit) — Full-year or part-year Colorado residents (nonresidents and Married-Filing-Separate filers cannot claim) who paid someone to care for a dependent qualifying person under age 13 so the taxpayer (and spouse, if filing jointly) could work or look for work, AND who claimed the federal Child and Dependent Care Expenses Credit (federal Form 2441). Care must meet IRC Section 21 / IRS Pub 503 tests.",
   "@@db5a2cd3ea47": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Property Tax/Rent/Heat Rebate (PTC Rebate) - low-income seniors and disabled.",
   "@@e1b4121af611": "Property Tax/Rent/Heat Rebate (PTC Rebate) - low-income seniors and disabled — Full-year Colorado residents (lived in CO all of 2023) who paid property tax, rent, or heating bills in 2023, were not claimed as a dependent on another return, and met an age/disability test: age 65 or older on 12/31/2023; OR a surviving spouse (widow/widower) at least 58 years old on 12/31/2023; OR totally disabled for all of 2023 receiving full disability benefits. This is a standalone rebate application (not part of the income-tax return); 2023 applications were due by 12/31/2025.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@efc49d177e0e": "CO state income tax (2023, flat rate): taxable_base $40,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; tax = 0.044 x $40,000 = $1,76",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@fca4e6d97092": "DR 0104 with the DR 0104PN (Part-Year Resident/Nonresident Tax Calculation Schedule) attached — mark the \"Part-Year or Nonresident\" box on the DR 0104."
  },
  "file_and_pay": {
@@ -138,6 +145,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended CO 2023 return (Form DR 0104 (Colorado Individual Income Tax Return) — full-year residents mark the \"Full-Year\" box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "CO revenue department home page (read 2026-10-16)",
+      "url": "https://tax.colorado.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@5b7a587c6e29",
+    "jurisdiction": "states/co",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended CO return, and the CO 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the CO instructions for amended returns on the CO revenue department's site (https://tax.colorado.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -195,9 +237,261 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "CO revenue department home page (read 2026-10-16)",
+      "url": "https://tax.colorado.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the CO instructions for amended returns on the CO revenue department's site (https://tax.colorado.gov/).",
+    "form": "@@5b7a587c6e29",
+    "headline": "CO 2023, amended (DR 0104 (Colorado Individual Income Tax Return) — full-year residents mark the \"Full-Year\" box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns.): you owe $88",
+    "jurisdiction": "states/co",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a05c24758a3a",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Colorado DOR, 2023 Form DR 0104CR Individual Credit Schedule (PDF)",
+     "cadence": "@@9d3d59800817",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104CR_2023.pdf"
+    },
+    {
+     "answers": "Colorado DOR, 2023 Form DR 0104CN Colorado Child Tax Credit (PDF)",
+     "cadence": "@@9d3d59800817",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104CN_2023.pdf"
+    },
+    {
+     "answers": "Colorado DOR, 2023 Form DR 0347 Child Care Expenses Tax Credit (PDF)",
+     "cadence": "@@9d3d59800817",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0347_2023.pdf"
+    },
+    {
+     "answers": "Colorado DOR, 2023 104PTC Book / DR 0104PTC Property Tax/Rent/Heat Rebate Instructions and Application (PDF)",
+     "cadence": "@@9d3d59800817",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book0104PTC_2023.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a05c24758a3a",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@4f1fea42edaa",
+     "cadence": "@@9d3d59800817",
+     "topic": "filing_logistics",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a05c24758a3a",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@4f1fea42edaa",
+     "cadence": "@@9d3d59800817",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf"
+    },
+    {
+     "answers": "Colorado DOR — Full-Year, Part-Year and Nonresident DR 0104 Booklet 2023 (Who Must File, Due Date, Mailing addresses, Line 7 Other Additions, Pay by Mail / DR 0900 / Revenue Online)",
+     "cadence": "@@9d3d59800817",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book0104_2023.pdf"
+    },
+    {
+     "answers": "Colorado DOR — DR 0104 Booklet landing page",
+     "cadence": "@@9d3d59800817",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/DR0104Booklet"
+    },
+    {
+     "answers": "Colorado DOR — DR 0104PN Part-Year Resident/Nonresident Calculation Schedule",
+     "cadence": "@@9d3d59800817",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/DR0104PN"
+    },
+    {
+     "answers": "Colorado DOR — Residency Status page (domicile + six-month rule)",
+     "cadence": "@@9d3d59800817",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/residency-status"
+    },
+    {
+     "answers": "Colorado DOR — Individual Income Tax Guide (federal taxable income starting point; residency)",
+     "cadence": "@@9d3d59800817",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/individual-income-tax-guide"
+    },
+    {
+     "answers": "Colorado DOR — Individual Income Tax Filing Requirements",
+     "cadence": "@@9d3d59800817",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/individual-income-tax-filing-requirements"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a05c24758a3a",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@aa23ba10a99e",
+     "cadence": "@@9d3d59800817",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book0104_2023.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a05c24758a3a",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/co",
  "state_scope": {
@@ -404,7 +698,7 @@
   "common_result": {
    "base_kind": "federal_taxable_income",
    "citation": {
-    "source": "2023 Colorado 104 Book (DR 0104 instructions) — \"The income tax rate is currently 4.4%\" (the document is the year-pinned 2023 filing guide); DR 0104 Line 1 = Federal Taxable Income from Form 1040/1040-SR/1040-NR/1040-SP; \"Colorado income tax is based on your federal taxable income, which has already considered your deductions\"; Line 10 = Colorado Taxable Income; booklet tax table row $30,700-$30,800 -> $1,353 (= 4.4% of the $30,750 midpoint).",
+    "source": "@@aa23ba10a99e",
     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book0104_2023.pdf"
    },
    "marginal_rate": "0.044",

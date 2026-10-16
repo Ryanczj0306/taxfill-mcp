@@ -2,20 +2,27 @@
  "_strings": {
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@1ebf7ccac627": "Retirement Income Credit — Taxpayer (and spouse, if filing jointly) who (a) has modified adjusted gross income less exemptions under $100,000; (b) received income from a pension, profit-sharing, or retirement plan (e.g., traditional IRA or 401(k)) on account of retirement; (c) the income is included in Ohio adjusted gross income; and (d) has not previously taken the Ohio lump sum retirement credit. Amounts deducted on the Ohio Schedule of Adjustments (e.g., Social Security, uniformed-services retirement) do not qualify.",
+  "@@2d4f415cbaf4": "2023 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) — p. 46 table '2023 Ohio Income Tax Brackets for Ohio IT 1040' (0.000% to $26,050; $360.69 + 2.750% over $26,050; $2,394.32 + 3.688% over $100,000; $2,958.58 + 3.750% over $115,300); p. 17 'Line 8a – Tax on Line 7a' instruction and personal/dependent exemption table ($2,400/$2,150/$1,900 by MAGI); pp. 47-52 '2023 Income Tax Table for Ohio IT 1040'. Form line labels (lines 1-8c) and Schedule of Business Income lines 12-16 (3% business tax, $250,000/$125,000 business income deduction) verified from the 2023 IT 1040 form bundle at https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/1040-bundle-original.pdf",
   "@@327bd905baa9": "Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.",
   "@@330955011049": "Exemption Credit — Taxpayer whose modified adjusted gross income less exemptions is less than $30,000; a credit is allowed for each personal/dependent exemption claimed on the return. This functions as Ohio's low-income credit tied to the number of exemptions.",
   "@@416d79993bbd": "Senior Citizen Credit — Taxpayer who (a) has modified adjusted gross income less exemptions under $100,000; (b) was 65 or older at the end of the tax year; and (c) has not previously taken the Ohio lump sum distribution credit.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@4ef3fded02aa": "IT 1040 without payment: Ohio Department of Taxation, P.O. Box 2679, Columbus, OH 43270-2679",
+  "@@56fa8bb6e86a": "For tax year 2023: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2023 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@6a4b7b87005c": "Ohio Earned Income Credit (EIC) — Resident/part-year/nonresident taxpayers who qualified for and claimed the federal Earned Income Tax Credit for tax year 2023 (federal Form 1040/1040-SR, line 27). Eligibility tracks the federal EIC.",
   "@@763b3f95beb2": "2023 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Line 1 federal AGI, Schedule of Adjustments additions/deductions, Who Must File, Ohio Residency, mailing addresses, due date, payment/check payee",
   "@@88b8ba4a5d36": "Treaty conformity — OH conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OH income (it flows through the federal starting point; do not add it back on the OH return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Ohio IT 1040 line 1 starts from federal adjusted gross income (federal 1040/1040-SR/1040-NR line 11) and the instructions state \"Line 1 of your Ohio income tax return must match your federal adjusted gross income as defined in the Internal Revenue Code.\" Ohio AGI = line 1 + additions (Schedule of Adjustments) - deductions. The additions list (Sched. of Adjustments lines 8-11: 168(k)/179 depreciation add-backs, U.S. obligation interest/dividends exempt federally but not by the state, and federal conformity additions) contains NO add-back of federally treaty-exempt income. Therefore income excluded from federal AGI under a U.S. tax treaty flows through and is not re-taxed by Ohio. Federal-AGI common case, no treaty addback -> conforms.",
   "@@8a5c037a53ad": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/it1040-sd100-instructionbooklet.pdf",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@ab357a529e3e": "No separate nonresident/part-year return; nonresidents and part-year residents file the same Ohio IT 1040 and check the part-year resident or nonresident box. They compute the Nonresident Credit on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. (Optional residency status election: form IT NRS, Ohio Nonresident Statement.)",
+  "@@c0af61e000c0": "The shipped OH 2023 pack's primary authority (TY2023). A re-issue of this 2023 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@e0e93c516df0": "Child and Dependent Care Credit — Taxpayer whose modified adjusted gross income is less than $40,000 AND who claimed the federal 'credit for child and dependent care expenses' on federal Form 2441.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f2801f2b12e7": "Joint Filing Credit — Married taxpayers filing a joint Ohio return where EACH spouse has at least $500 of 'qualifying income' (income included in Ohio AGI other than interest, dividends/distributions, capital gains, and rents/royalties; amounts deducted on the Ohio Schedule of Adjustments such as business income, Social Security, and certain military pay do not count)."
+  "@@f2801f2b12e7": "Joint Filing Credit — Married taxpayers filing a joint Ohio return where EACH spouse has at least $500 of 'qualifying income' (income included in Ohio AGI other than interest, dividends/distributions, capital gains, and rents/royalties; amounts deducted on the Ohio Schedule of Adjustments such as business income, Social Security, and certain military pay do not count).",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+  "@@faa06db1643c": "annual (per tax year; the shipped OH 2023 pack's own citation — for another year re-resolve at this URL family and cite)"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -139,6 +146,41 @@
      "Print the form pages, sign and date the return in ink."
     ],
     "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "Print only the form pages (not instructions), single-sided, with the schedules and documents the amended form asks for."
+    ],
+    "bottom_line": "Amended OH 2023 return (Form Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.): you owe $88 more.",
+    "citations": [
+     {
+      "source": "OH revenue department home page (read 2026-10-16)",
+      "url": "https://tax.ohio.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadlines": [],
+    "form": "@@327bd905baa9",
+    "jurisdiction": "states/oh",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": null,
+    "notes": [
+     "This is an amended OH return, and the OH 2023 knowledge pack carries no amended-return rules, so this checklist gives no mailing address, payment method or deadline. Read them in the OH instructions for amended returns on the OH revenue department's site (https://tax.ohio.gov/) before mailing; do not reuse the original return's address, voucher or due date without checking them there."
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the amended return in ink."
+    ],
+    "tax_year": 2023
    }
   ]
  },
@@ -196,9 +238,237 @@
     "plain_explanation": "State bottom line — review against your state return.",
     "refund": 0,
     "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "OH revenue department home page (read 2026-10-16)",
+      "url": "https://tax.ohio.gov/"
+     },
+     {
+      "source": "@@f8d58d3084e1",
+      "url": "@@94cf5df52d86"
+     }
+    ],
+    "deadline_status": "An amended return's time limit is not the original due date: confirm it in the OH instructions for amended returns on the OH revenue department's site (https://tax.ohio.gov/).",
+    "form": "@@327bd905baa9",
+    "headline": "OH 2023, amended (Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.): you owe $88",
+    "jurisdiction": "states/oh",
+    "notes": [],
+    "owed": 88,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
    }
   ],
   "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c0af61e000c0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8a5c037a53ad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "Ohio Department of Taxation - 2023 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits, Line 13 Earned Income Credit (R.C. 5747.71)",
+     "cadence": "@@faa06db1643c",
+     "topic": "credits",
+     "url": "@@8a5c037a53ad"
+    }
+   ],
+   "topic": "credits",
+   "year": 2023
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c0af61e000c0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8a5c037a53ad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@763b3f95beb2",
+     "cadence": "@@faa06db1643c",
+     "topic": "filing_logistics",
+     "url": "@@8a5c037a53ad"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2023
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c0af61e000c0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8a5c037a53ad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@763b3f95beb2",
+     "cadence": "@@faa06db1643c",
+     "topic": "forms_and_instructions",
+     "url": "@@8a5c037a53ad"
+    },
+    {
+     "answers": "2023 Ohio IT 1040 Individual Income Tax Return bundle (forms)",
+     "cadence": "@@faa06db1643c",
+     "topic": "forms_and_instructions",
+     "url": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/1040-bundle-original.pdf"
+    },
+    {
+     "answers": "Ohio Department of Taxation - Income, General Information FAQ (Ohio AGI starts from federal AGI; Schedule of Adjustments)",
+     "cadence": "@@faa06db1643c",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.ohio.gov/help-center/faqs/income-general-information/income-general-information"
+    },
+    {
+     "answers": "Ohio Department of Taxation - Ohio Residency page",
+     "cadence": "@@faa06db1643c",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.ohio.gov/individual/ohio-residency"
+    },
+    {
+     "answers": "Ohio Department of Taxation - IT NRC Forms",
+     "cadence": "@@faa06db1643c",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.ohio.gov/individual/file-now/IT-NRC-Forms"
+    },
+    {
+     "answers": "Ohio Department of Taxation - online payment (tax.ohio.gov/pay) and OH|TAX eServices portal (tax.ohio.gov/myportal)",
+     "cadence": "@@faa06db1643c",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.ohio.gov/pay"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2023
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c0af61e000c0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8a5c037a53ad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [
+    {
+     "answers": "@@2d4f415cbaf4",
+     "cadence": "@@faa06db1643c",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@8a5c037a53ad"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2023
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c0af61e000c0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@8a5c037a53ad"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/oh",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@56fa8bb6e86a",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2023
+  }
  },
  "jurisdiction": "states/oh",
  "state_scope": {
@@ -607,7 +877,7 @@
   "common_result": {
    "base_kind": "state_taxable_income",
    "citation": {
-    "source": "2023 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) — p. 46 table '2023 Ohio Income Tax Brackets for Ohio IT 1040' (0.000% to $26,050; $360.69 + 2.750% over $26,050; $2,394.32 + 3.688% over $100,000; $2,958.58 + 3.750% over $115,300); p. 17 'Line 8a – Tax on Line 7a' instruction and personal/dependent exemption table ($2,400/$2,150/$1,900 by MAGI); pp. 47-52 '2023 Income Tax Table for Ohio IT 1040'. Form line labels (lines 1-8c) and Schedule of Business Income lines 12-16 (3% business tax, $250,000/$125,000 business income deduction) verified from the 2023 IT 1040 form bundle at https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2023/1040-bundle-original.pdf",
+    "source": "@@2d4f415cbaf4",
     "url": "@@8a5c037a53ad"
    },
    "rate": null,

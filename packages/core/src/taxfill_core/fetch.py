@@ -36,6 +36,8 @@ import uuid
 from collections.abc import Sequence
 from pathlib import Path
 
+from taxfill_core.datadir import home_display
+
 __all__ = [
     "FetchError",
     "OfflineFetchError",
@@ -262,7 +264,7 @@ def _download(url: str, timeout: float) -> bytes:
                 f"could not reach {url} ({reason}){tried} — the network looks unreachable; connect "
                 f"to the internet and retry, or pre-populate the shared cache by copying an "
                 f"already-verified blank into place (fetch_blank tells you the cache path via "
-                f"its return value; default cache: {default_cache_dir()})"
+                f"its return value; default cache: {home_display(default_cache_dir())})"
             ) from exc
     raise AssertionError("unreachable")  # pragma: no cover
 

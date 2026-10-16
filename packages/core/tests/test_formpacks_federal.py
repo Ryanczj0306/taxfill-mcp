@@ -2021,6 +2021,110 @@ def test_jt5f_schedule_3a_is_a_new_form_key_with_its_unconditional_legs():
     assert not (REPO_ROOT / "formpacks/federal/2025/sched_3a").exists()
 
 
+# ── Phase K JK27: the TY2023 / TY2024 Form 1040-X on the Rev. 12-2025 blank ──
+#
+# (JK27, 2026-10-16) Instructions for Form 1040-X (Rev. December 2025), p.2: "These instructions can be used with the
+# December 2025 and later revisions of Form 1040-X, unless later instructions state otherwise." and "Form 1040-X and
+# its instructions were converted from an annual revision to continuous use in tax year 2021." So the 2023 and 2024
+# packs pin the 2025 pack's blank and map; until JK27 they pinned Rev. 2-2024, whose own instructions are "(Use With
+# the February 2024 Revision of Form 1040-X)". p.8: "Line 4a—Qualified Business Income Deduction ... See the
+# instructions for the year of the form you are amending." and, under Line 4b, "Schedule 1-A and these deductions were
+# introduced in 2025." — so before 2025 the QBI deduction goes on 4a and line 4b stays empty in every column.
+
+_REV_12_2025 = ("https://www.irs.gov/pub/irs-prior/f1040x--2025.pdf",
+                "e4d8d7df37209218d0d63d06e988004306365354873481726e93916accf3013e")
+_1040X_YEAR_RULE_4B = ["4b.original == 0", "4b.net_change == 0", "4b == 0"]
+
+# A demo amended return (whole dollars, figures invented for the arithmetic): a missed $3,000 of business income
+# raises AGI, the QBI deduction rises by $600 with it ("QBI" is the line it is reported on), and the extra tax is owed.
+# Every on-face relation holds.
+_DEMO_1040X = {
+    "1.original": 70000, "1.net_change": 3000, "1": 73000, "2.original": 14000, "2": 14000,
+    "3.original": 56000, "3.net_change": 3000, "3": 59000,
+    "QBI.original": 1000, "QBI.net_change": 600, "QBI": 1600,
+    "5.original": 55000, "5.net_change": 2400, "5": 57400,
+    "6.original": 7000, "6.net_change": 528, "6": 7528, "8.original": 7000, "8.net_change": 528, "8": 7528,
+    "11.original": 7000, "11.net_change": 528, "11": 7528, "12.original": 8000, "12": 8000,
+    "17": 8000, "18": 1000, "19": 7000, "20": 528,
+}
+
+
+def _demo_1040x_values(qbi_line: str) -> dict[str, int]:
+    return {key.replace("QBI", qbi_line): amount for key, amount in _DEMO_1040X.items()}
+
+
+@pytest.mark.parametrize("year", [2023, 2024])
+def test_jk27_the_pre_2025_1040x_pins_the_rev_12_2025_blank_and_its_map(year: int):
+    base, pack = _fed_pack(2025, "f1040x"), _fed_pack(year, "f1040x")
+    assert (pack.tax_year, pack.source_url, pack.pdf_sha256) == (year, *_REV_12_2025)
+    assert (base.source_url, base.pdf_sha256) == _REV_12_2025
+    assert [pf.model_dump() for pf in pack.fields] == [pf.model_dump() for pf in base.fields]
+    assert pack.relations == base.relations + _1040X_YEAR_RULE_4B
+    assert (pack.acroform_root, pack.cross_form, pack.identity_fields, pack.signature, pack.mailing) == (
+        base.acroform_root, base.cross_form, base.identity_fields, base.signature, base.mailing)
+    by_line = {pf.line: pf.field for pf in pack.fields}
+    # "4a Qualified business income deduction" is a live, mapped line on this revision.
+    assert [by_line[k] for k in ("4a.original", "4a.net_change", "4a")] == [
+        f"Page1[0].Table_IncomeDeductions[0].Line4a[0].f1_{n}[0]" for n in (27, 28, 29)]
+    # The Rev. 2-2024 dependent keys are gone (first/last name and a 9-cell SSN comb replace them).
+    assert {"dependent_1.name", "dependent_1.identifying_number"}.isdisjoint(by_line)
+
+
+def test_jk27_the_2025_1040x_keeps_line_4b_live():
+    # Schedule 1-A is a 2025 schedule: the year rule must not travel forward with the map.
+    assert not [r for r in _fed_pack(2025, "f1040x").relations if r.startswith("4b")]
+
+
+@pytest.mark.parametrize("year", [2023, 2024])
+def test_jk27_verify_fails_a_pre_2025_1040x_with_an_amount_on_4b_and_passes_qbi_on_4a(year: int):
+    pack = _fed_pack(year, "f1040x")
+    by_line = {pf.line: pf.field for pf in pack.fields}
+
+    def dump(values: dict[str, int]) -> dict[str, str]:
+        raw = {f"{pack.acroform_root}.{by_line[line]}": str(amount) for line, amount in values.items()}
+        raw[f"{pack.acroform_root}.{by_line['filing_status.single']}"] = "/1"
+        return raw
+
+    good = verify_form(pack, dump(_demo_1040x_values("4a")))
+    assert good.ok is True, [c.detail for c in good.relations if c.status != "PASS"]
+    rule = {c.relation: c for c in good.relations if c.relation in _1040X_YEAR_RULE_4B}
+    assert [rule[r].status for r in _1040X_YEAR_RULE_4B] == ["PASS"] * 3
+    assert all(rule[r].blank_as_zero for r in _1040X_YEAR_RULE_4B)  # blank 4b reads 0
+
+    # The same deduction keyed "4b" (where Rev. 2-2024 printed QBI) breaks exactly the year rule: line 5's
+    # "Subtract the total of lines 4a and 4b from line 3" still holds, so only the three 4b checks catch it.
+    bad = verify_form(pack, dump(_demo_1040x_values("4b")))
+    assert bad.ok is False
+    assert [c.relation for c in bad.relations if c.status != "PASS"] == _1040X_YEAR_RULE_4B
+
+
+def test_jk27_the_2025_1040x_accepts_schedule_1a_deductions_on_4b():
+    pack = _fed_pack(2025, "f1040x")
+    checks = relations(pack, _demo_1040x_values("4b"))
+    assert checks and all(c.status == "PASS" for c in checks), [c.relation for c in checks if c.status != "PASS"]
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("year", [2023, 2024])
+def test_jk27_a_pre_2025_1040x_round_trips_on_the_rev_12_2025_blank(year: int, tmp_path: Path):
+    """fill the real blank -> verify: QBI on 4a passes; the same amount on 4b fails only the year rule."""
+    pack = _fed_pack(year, "f1040x")
+    try:
+        blank = fetch_pack_blank(pack)
+    except OfflineFetchError as exc:
+        pytest.skip(f"cache empty and network unreachable: {exc}")
+    for qbi_line, ok in (("4a", True), ("4b", False)):
+        values = {"amended_year": str(year), "filing_status.single": True, **_demo_1040x_values(qbi_line)}
+        out = tmp_path / f"f1040x_{year}_{qbi_line}.pdf"
+        filled = fill_form(pack, values, blank, out)
+        assert filled.warnings == [], filled.warnings
+        report = verify_form(pack, out, expected=values)
+        _assert_section_clean(report.assertions, "assertion diff")
+        _assert_section_clean(report.clipping, "clipping scan")
+        _assert_section_clean(report.checkboxes, "checkbox audit")
+        failing = [c.relation for c in report.relations if c.status != "PASS"]
+        assert (report.ok, failing) == (ok, [] if ok else _1040X_YEAR_RULE_4B)
+
 
 def test_conventions_lists_exactly_the_known_form_keys():
     """JD1: formpacks/CONVENTIONS.md's `<form_key>` list is KNOWN_FORM_KEYS, no more and no less."""
