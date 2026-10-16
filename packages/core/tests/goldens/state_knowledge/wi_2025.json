@@ -1,0 +1,903 @@
+{
+ "_strings": {
+  "@@07a362a4d59e": "2025 Form 1 Instructions (I-111), Wisconsin Department of Revenue - Line 1 federal adjusted gross income; New in 2025; Which Form to File / domicile; Who Must File thresholds; Where to File mailing addresses; due date Wednesday April 15, 2026; Line 10 exemptions ($700 / $250); Line 12 Tax; 2025 Standard Deduction Table p.35; 2025 Tax Table pp.38-43; 2025 Tax Computation Worksheet p.44",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@26cccea6eed5": "2025 Form 1 Instructions (I-111) - 'Where to File' (PO Box 268 payment / PO Box 59 refund / PO Box 34 homestead credit; private delivery services to 2135 Rimrock Rd., Madison WI 53713)",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@5015216a94f7": "2025 Wisconsin Income Tax Form 1 Instructions (I-111), New in 2025: 'New Retirement Income Subtraction – Individuals who are at least 67 years old at the end of 2025 may subtract up to $24,000 of retirement income. See the Schedule SB instructions.'",
+  "@@57b860b52e35": "Law change NOT modeled by the engine (status final_form_published): ADOPTION EXPENSES SUBTRACTION RAISED — the maximum subtraction for expenses paid for a qualifying adoption is now $15,000 per child (Schedule SB). Resolve via: 2025 Form 1 Instructions, New in 2025, and the Schedule SB instructions (adoption expenses).",
+  "@@5cd3e4b031f4": "Married Couple Credit — Married filing a joint return where both spouses have qualified earned income (taxable wages, salaries, tips, W-2-reported scholarships/fellowships, other employee compensation, and net self-employment earnings; deferred compensation, interest, dividends, pensions, unemployment compensation and other unearned income excluded). Not available if federal Form 2555/2555-EZ (foreign earned income exclusion) or Form 4563 is filed. Computed on Schedule 2 of Form 1.",
+  "@@8443b09faaee": "annual (per tax year; the newest shipped WI pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@8793c54e62e4": "2025 Wisconsin Form 1 Instructions (I-111), Wisconsin Department of Revenue — p.44 '2025 Tax Computation Worksheet – Line 12' (Section A Single or Head of household: at least $100,000 but less than $323,290 x 5.3% (.053) minus $586.44, $323,290 or over x 7.65% (.0765) minus $8,183.76; Section B Married filing jointly: less than $431,060 x 5.3% minus $781.92, $431,060 or over x 7.65% minus $10,911.83; Section C Married filing separately: less than $215,530 x 5.3% minus $390.96, $215,530 or over x 7.65% minus $5,455.92); Line 12 Tax (Tax Table pp.38-43, mandatory below $100,000); p.35 2025 Standard Deduction Table; Line 10 Exemptions ($700 / $250). FIRST TWO BRACKETS with dollar boundaries: 2025 Form 1-ES Instructions, '2025 Tax Rate Schedules for Full-Year Residents' — Schedule A (Single, Head of Household, Estates and Trusts): $0-$14,680 at 3.5%, $513.80 + 4.4% to $50,480, $2,089.00 + 5.3% to $323,290, $16,547.93 + 7.65% over; Schedule B (MFJ): $0-$19,580, $685.30 + 4.4% to $67,300, $2,784.98 + 5.3% to $431,060, $22,064.26 + 7.65% over; Schedule C (MFS): $0-$9,790, $342.65 + 4.4% to $33,650, $1,392.49 + 5.3% to $215,530, $11,032.13 + 7.65% over (https://www.revenue.wi.gov/TaxForms2025/2025-Form1-ES-inst.pdf), carrying the Instruction Updates banner '2025 Wisconsin Act 15 increased the income threshold for the top of the second and bottom of the third tax brackets for each filing status. The 2025 Tax Rate Schedules on page 3 have been updated to reflect that change.' SECOND PASS: every Form 1 worksheet subtraction constant equals the cumulative marginal sum implied by the 1-ES schedules exactly (Section A $586.44 and $8,183.76 vs exact $586.44 / $8,183.755; Section B $781.92 and $10,911.83 both exact; Section C $390.96 exact and $5,455.92 vs exact $5,455.915), and every 1-ES gross-tax constant equals the exact cumulative marginal sum ($513.80 = 3.5% x $14,680; $2,089.00 = $513.80 + 4.4% x $35,800; $16,547.93 = $2,089.00 + 5.3% x $272,810; likewise for B and C). The 1-ES proration example independently prints the bracket WIDTHS $14,680 / $35,800 / $272,810, which cumulate to $14,680 / $50,480 / $323,290.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9a802719de8e": "The newest shipped WI pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@9b76166b72d2": "Renter's and Homeowner's School Property Tax Credit — Wisconsin filers who paid rent during 2025 for living quarters used as their principal home, OR who paid property taxes during 2025 on their home. Available whether or not the homestead credit is claimed. Cannot be claimed if you or your spouse claim the veterans and surviving spouses property tax credit. Rent for property-tax-exempt housing (e.g. university dorms, nonprofit senior housing, certain public housing) does not qualify.",
+  "@@9cd987bfb5f5": "Treaty conformity — WI conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from WI income (it flows through the federal starting point; do not add it back on the WI return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Wisconsin Form 1 starts from federal adjusted gross income (2025 Form 1, Line 1; the instructions direct the filer to fill in federal AGI from line 11 of federal Form 1040 or 1040-SR). Federally treaty-exempt income is already excluded from federal AGI and is never added back on the Wisconsin return. The 2025 Schedule AD (Additions to Income) instructions enumerate every addition modification — state and municipal interest, the capital gain/loss addition, nonqualified Edvest/Tomorrow's Scholar and ABLE distributions, the federal NOL deduction, lump-sum distributions (federal Form 4972), PFIC excess distributions, related-entity expenses, expenses for moving a business outside Wisconsin or the U.S., federal/Wisconsin basis differences, marital-property reporting differences, farmland-preservation and other computed-credit addbacks, tax-option (S) corporation and partnership entity-level adjustments, and other additions — and NONE adds back income exempt under a U.S. tax treaty. Form 1 Line 2 (additions via Schedule I) only converts for federal-law provisions Wisconsin has not adopted, not treaties. Therefore treaty-exempt income flows through and is NOT re-taxed -> conforms = true. (No explicit treaty provision text was found at the DOR, so this is flagged in unverified.)",
+  "@@a3a9f3e72f50": "Wisconsin Homestead Credit (property-tax / rent circuit-breaker) — Per the 2025 Form 1 instructions Special Instructions: at least 18 years old on December 31, 2025; if under age 62 and not disabled, must have earned income; a legal resident of Wisconsin for all of 2025; not claimed as a dependent on anyone's 2025 federal return (unless 62 or older on December 31, 2025); not living in tax-exempt public housing for all of 2025 (exceptions apply); not living in a nursing home and receiving medical assistance (Title XIX) when filing; and not claiming (self or spouse) the veterans and surviving spouses property tax credit or farmland preservation credit. Claimed on Schedule H (or the simpler Schedule H-EZ).",
+  "@@a50bff30da8e": "Wisconsin Earned Income Credit (EITC) — Full-year Wisconsin resident who qualifies for the federal earned income credit AND has at least one qualifying child (the federal definition of qualifying child applies). A married-filing-separate filer is ineligible unless they meet sec. 7703(b), IRC (in which case the Wisconsin filing status should be head of household, married). 'Federal earned income credit' means the credit computed using the IRC as adopted by Wisconsin — filers with Schedule I Part I adjustments recompute it on Schedule I Part III. A copy of federal Schedule EIC must be included (and federal Form 8867 if a paid preparer was used).",
+  "@@a9410960b742": "2025 Wisconsin Income Tax Form 1 Instructions (I-111), New in 2025: 'Adoption Expenses Subtraction – The maximum subtraction for expenses paid for a qualifying adoption is now $15,000 per child.'",
+  "@@b5c1248e66c1": "Law change NOT modeled by the engine (status final_form_published): NEW RETIREMENT INCOME SUBTRACTION — an individual at least 67 at the end of 2025 may subtract up to $24,000 of retirement income (Schedule SB). Resolve via: 2025 Form 1 Instructions, New in 2025, and the Schedule SB instructions (retirement income subtraction).",
+  "@@cc4a76384af5": "Additional Child and Dependent Care Tax Credit — You must have claimed the federal child and dependent care tax credit on your federal return, and you must have been a legal resident of Wisconsin for the entire year (on a joint return, qualifies if at least one spouse is a full-year Wisconsin resident).",
+  "@@e3fc173b6f36": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed for 2025 (verify the figure): the maximum homestead credit dollar amount (not re-derived from the 2025 Schedule H tables) and the Schedule WI-2441 qualifying-expense and maximum-credit caps (not read line by line).",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f0be53b069f9": "2025 Form 1 Instructions (I-111) - 'Tax returns are due: Wednesday April 15, 2026' (cover); any federal extension provision may be used for Wisconsin",
+  "@@f43246e5b48c": "Wisconsin Department of Revenue, PO Box 59, Madison WI 53785-0001 (if refund or no payment enclosed). Note: if claiming homestead credit, mail to PO Box 34, Madison WI 53786-0001."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@26cccea6eed5",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     },
+     {
+      "source": "@@f0be53b069f9",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "jurisdiction": "states/wi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@f43246e5b48c",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@26cccea6eed5",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     },
+     {
+      "source": "@@f0be53b069f9",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "jurisdiction": "states/wi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Wisconsin Department of Revenue, PO Box 268, Madison WI 53790-0001 (if payment enclosed). For an e-filed return paid by check with Form PV, mail Form PV and payment to the address shown on Form PV.",
+    "notes": [],
+    "payment": [
+     "Pay online via WI Web Pay: https://tap.revenue.wi.gov/pay (no processor fee).",
+     "By check: make it payable to \"Wisconsin Department of Revenue (make check or money order payable to the Wisconsin Department of Revenue; if the taxpayer's name does not match the printed name on the check, print the taxpayer's name on the memo line; paper clip to the front of Form 1)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@26cccea6eed5",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     },
+     {
+      "source": "@@f0be53b069f9",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "jurisdiction": "states/wi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@f43246e5b48c",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@f0be53b069f9",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "headline": "WI 2025: refund $512",
+    "jurisdiction": "states/wi",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@f0be53b069f9",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "headline": "WI 2025: you owe $347",
+    "jurisdiction": "states/wi",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@f0be53b069f9",
+      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form 1 (Wisconsin Income Tax) - full-year residents",
+    "headline": "WI 2025: you owe $1,205",
+    "jurisdiction": "states/wi",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9a802719de8e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 30 Earned Income Credit (Step 3 percentage table 4% / 11% / 34%)",
+     "cadence": "@@8443b09faaee",
+     "topic": "credits",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    },
+    {
+     "answers": "2025 Wisconsin Form 1 (Schedule 2 - Married Couple Credit When Both Spouses Are Employed, lines 6-8) and 2025 I-111 Form 1 Instructions, Line 18",
+     "cadence": "@@8443b09faaee",
+     "topic": "credits",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1f.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9a802719de8e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@26cccea6eed5",
+     "cadence": "@@8443b09faaee",
+     "topic": "filing_logistics",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9a802719de8e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@07a362a4d59e",
+     "cadence": "@@8443b09faaee",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    },
+    {
+     "answers": "2025 Wisconsin Form 1 (fillable) - second-pass verification: Line 11 'Subtract line 10c from line 9. If line 10c is larger than line 9, fill in 0. This is taxable income'; Line 12 'Tax (see table on page 38)'; Schedule 2 married couple credit ($16,000 cap, .03 rate, $480 max); credit line numbering (13/14/15/16/17/18/30/33)",
+     "cadence": "@@8443b09faaee",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1f.pdf"
+    },
+    {
+     "answers": "2025 Form 1-ES Instructions - the 'Instruction Updates' banner ('2025 Wisconsin Act 15 increased the income threshold for the top of the second and bottom of the third tax brackets for each filing status. The 2025 Tax Rate Schedules on page 3 have been updated to reflect that change.'), the '2025 Tax Rate Schedules for Full-Year Residents' (Schedules A/B/C — the only official document printing all four 2025 brackets with dollar boundaries in one table), the 2025 Standard Deduction schedules, the $700/$250 exemption amounts, and the nonresident/part-year bracket-proration rule with a worked example. Applicable Laws and Rules: enacted as of July 8, 2025",
+     "cadence": "@@8443b09faaee",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-ES-inst.pdf"
+    },
+    {
+     "answers": "2025 Schedule AD Instructions - Additions to Income, full list of addition modifications (no treaty-exempt income add-back)",
+     "cadence": "@@8443b09faaee",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-ScheduleAD-inst.pdf"
+    },
+    {
+     "answers": "WI DOR Make a Payment (Online Services) - tap.revenue.wi.gov/pay direct debit (free service)",
+     "cadence": "@@8443b09faaee",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/Pages/OnlineServices/Pay.aspx"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9a802719de8e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 Form 1-ES Instructions, Instruction Updates: '2025 Wisconsin Act 15 increased the income threshold for the top of the second and bottom of the third tax brackets for each filing status. The 2025 Tax Rate Schedules on page 3 have been updated to reflect that change.'",
+     "cadence": "@@8443b09faaee",
+     "topic": "law_changes",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-ES-inst.pdf"
+    },
+    {
+     "answers": "@@5015216a94f7",
+     "cadence": "@@8443b09faaee",
+     "topic": "law_changes",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9a802719de8e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@8793c54e62e4",
+     "cadence": "@@8443b09faaee",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@9a802719de8e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wi",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/wi",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    },
+    {
+     "benefits_candidates": [
+      "@@a50bff30da8e",
+      "@@a3a9f3e72f50",
+      "@@9b76166b72d2",
+      "@@cc4a76384af5",
+      "@@5cd3e4b031f4"
+     ],
+     "citations": [
+      {
+       "source": "@@5015216a94f7",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      },
+      {
+       "source": "@@a9410960b742",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      },
+      {
+       "source": "@@07a362a4d59e",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "Form 1NPR (Nonresident and Part-Year Resident Wisconsin Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in WI in 2025 without living there — file a nonresident return on WI-source income.",
+     "state": "WI",
+     "warnings": [
+      "@@e3fc173b6f36",
+      "@@9cd987bfb5f5",
+      "@@b5c1248e66c1",
+      "@@57b860b52e35",
+      "Remote-work trap: work performed from TX for an employer sitting in WI. If WI applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to WI and require a NONRESIDENT WI return that the physical footprint alone never shows — and the W-2's Box 15 often already names WI. This WI pack year carries no researched convenience rule: verify WI's nonresident wage-sourcing rule at its DOR before assuming no WI filing."
+     ]
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    },
+    {
+     "benefits_candidates": [
+      "@@a50bff30da8e",
+      "@@a3a9f3e72f50",
+      "@@9b76166b72d2",
+      "@@cc4a76384af5",
+      "@@5cd3e4b031f4"
+     ],
+     "citations": [
+      {
+       "source": "@@5015216a94f7",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      },
+      {
+       "source": "@@a9410960b742",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      },
+      {
+       "source": "@@07a362a4d59e",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "Form 1NPR (Nonresident and Part-Year Resident Wisconsin Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in WI part of 2025 — file a part-year return on income while a resident (plus WI-source income while not).",
+     "state": "WI",
+     "warnings": [
+      "@@e3fc173b6f36",
+      "@@9cd987bfb5f5",
+      "@@b5c1248e66c1",
+      "@@57b860b52e35"
+     ]
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@a50bff30da8e",
+      "@@a3a9f3e72f50",
+      "@@9b76166b72d2",
+      "@@cc4a76384af5",
+      "@@5cd3e4b031f4"
+     ],
+     "citations": [
+      {
+       "source": "@@5015216a94f7",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      },
+      {
+       "source": "@@a9410960b742",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      },
+      {
+       "source": "@@07a362a4d59e",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form 1 (Wisconsin Income Tax) - full-year residents"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in WI all of 2025 — file a resident return on income from all sources.",
+     "state": "WI",
+     "warnings": [
+      "@@e3fc173b6f36",
+      "@@b5c1248e66c1",
+      "@@57b860b52e35"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "wi",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 0,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "wi",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 175,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [head_of_household schedule]: 0.035 x $5,000.00 (the $0-$14,680 bracket) = $175.00; total $175.00 -> $175"
+   },
+   {
+    "base_after_exemptions": 55480,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "wi",
+     "taxable_base": "55480",
+     "year": 2025
+    },
+    "marginal_rate": "0.053",
+    "tax": 2354,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $55,480.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $55,480 [head_of_household schedule]: 0.035 x $14,680.00 (the $0-$14,680 bracket) = $513.80; 0.044 x $35,800.00 (the $14,680-$50,480 bracket) = $1,575.20; 0.053 x $5,000.00 (the $50,480-$323,290 bracket) = $265.00; total $2,354.00 -> $2,354"
+   },
+   {
+    "base_after_exemptions": 333290,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "wi",
+     "taxable_base": "333290",
+     "year": 2025
+    },
+    "marginal_rate": "0.0765",
+    "tax": 17313,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $333,290.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $333,290 [head_of_household schedule]: 0.035 x $14,680.00 (the $0-$14,680 bracket) = $513.80; 0.044 x $35,800.00 (the $14,680-$50,480 bracket) = $1,575.20; 0.053 x $272,810.00 (the $50,480-$323,290 bracket) = $14,458.93; 0.0765 x $10,000.00 (the $323,290+ bracket) = $765.00; total $17,312.93 -> $17,313"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "wi",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 0,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "wi",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 175,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0.035 x $5,000.00 (the $0-$19,580 bracket) = $175.00; total $175.00 -> $175"
+   },
+   {
+    "base_after_exemptions": 72300,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "wi",
+     "taxable_base": "72300",
+     "year": 2025
+    },
+    "marginal_rate": "0.053",
+    "tax": 3050,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $72,300.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $72,300 [married_filing_jointly schedule]: 0.035 x $19,580.00 (the $0-$19,580 bracket) = $685.30; 0.044 x $47,720.00 (the $19,580-$67,300 bracket) = $2,099.68; 0.053 x $5,000.00 (the $67,300-$431,060 bracket) = $265.00; total $3,049.98 -> $3,050"
+   },
+   {
+    "base_after_exemptions": 441060,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "wi",
+     "taxable_base": "441060",
+     "year": 2025
+    },
+    "marginal_rate": "0.0765",
+    "tax": 22829,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $441,060.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $441,060 [married_filing_jointly schedule]: 0.035 x $19,580.00 (the $0-$19,580 bracket) = $685.30; 0.044 x $47,720.00 (the $19,580-$67,300 bracket) = $2,099.68; 0.053 x $363,760.00 (the $67,300-$431,060 bracket) = $19,279.28; 0.0765 x $10,000.00 (the $431,060+ bracket) = $765.00; total $22,829.26 -> $22,829"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "wi",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 0,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4895,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "wi",
+     "taxable_base": "4895",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 171,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $4,895.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $4,895 [married_filing_separately schedule]: 0.035 x $4,895.00 (the $0-$9,790 bracket) = $171.32; total $171.32 -> $171"
+   },
+   {
+    "base_after_exemptions": 38650,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "wi",
+     "taxable_base": "38650",
+     "year": 2025
+    },
+    "marginal_rate": "0.053",
+    "tax": 1657,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $38,650.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $38,650 [married_filing_separately schedule]: 0.035 x $9,790.00 (the $0-$9,790 bracket) = $342.65; 0.044 x $23,860.00 (the $9,790-$33,650 bracket) = $1,049.84; 0.053 x $5,000.00 (the $33,650-$215,530 bracket) = $265.00; total $1,657.49 -> $1,657"
+   },
+   {
+    "base_after_exemptions": 225530,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "wi",
+     "taxable_base": "225530",
+     "year": 2025
+    },
+    "marginal_rate": "0.0765",
+    "tax": 11797,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $225,530.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $225,530 [married_filing_separately schedule]: 0.035 x $9,790.00 (the $0-$9,790 bracket) = $342.65; 0.044 x $23,860.00 (the $9,790-$33,650 bracket) = $1,049.84; 0.053 x $181,880.00 (the $33,650-$215,530 bracket) = $9,639.64; 0.0765 x $10,000.00 (the $215,530+ bracket) = $765.00; total $11,797.13 -> $11,797"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "wi",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 0,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "wi",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 175,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [single schedule]: 0.035 x $5,000.00 (the $0-$14,680 bracket) = $175.00; total $175.00 -> $175"
+   },
+   {
+    "base_after_exemptions": 55480,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "wi",
+     "taxable_base": "55480",
+     "year": 2025
+    },
+    "marginal_rate": "0.053",
+    "tax": 2354,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $55,480.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $55,480 [single schedule]: 0.035 x $14,680.00 (the $0-$14,680 bracket) = $513.80; 0.044 x $35,800.00 (the $14,680-$50,480 bracket) = $1,575.20; 0.053 x $5,000.00 (the $50,480-$323,290 bracket) = $265.00; total $2,354.00 -> $2,354"
+   },
+   {
+    "base_after_exemptions": 333290,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "wi",
+     "taxable_base": "333290",
+     "year": 2025
+    },
+    "marginal_rate": "0.0765",
+    "tax": 17313,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $333,290.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $333,290 [single schedule]: 0.035 x $14,680.00 (the $0-$14,680 bracket) = $513.80; 0.044 x $35,800.00 (the $14,680-$50,480 bracket) = $1,575.20; 0.053 x $272,810.00 (the $50,480-$323,290 bracket) = $14,458.93; 0.0765 x $10,000.00 (the $323,290+ bracket) = $765.00; total $17,312.93 -> $17,313"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "wi",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: WI 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "wi",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: WI 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "wi",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "marginal_rate": "0.044",
+    "tax": 1584,
+    "work_head": "WI state income tax (2025, graduated brackets): taxable_base $40,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.035 x $19,580.00 (the $0-$19,580 bracket) = $685.30; 0.044 x $20,420.00 (the $19,580-$67,300 bracket) = $898.48; total $1,583.78 -> $1,584"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_taxable_income",
+   "citation": {
+    "source": "@@8793c54e62e4",
+    "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "wi"
+  },
+  "work_common_tail": ". Tax line: Form 1, Line 12 'Tax (see table on page 38)'. Instructions: 'Use the amount on line 11 to find your tax in the Tax Table on pages 38-43... EXCEPTION If line 11 is $100,000 or more, use the Tax Computation Worksheet on page 44 to compute your tax.' Line 11 (printed on the 2025 form): 'Subtract line 10c from line 9. If line 10c is larger than line 9, fill in 0. This is taxable income.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: TY2025 HEADLINE CHANGE — 2025 WISCONSIN ACT 15 EXPANDED THE 4.4% BRACKET (this is NOT mere indexation): the 2025 Form 1-ES instructions open with 'Instruction Updates: 2025 Wisconsin Act 15 increased the income threshold for the top of the second and bottom of the third tax brackets for each filing status. The 2025 Tax Rate Schedules on page 3 have been updated to reflect that change.' The 4.4% band now runs to $50,480 for single/head of household (2024: $28,640), $67,300 for married filing jointly (2024: $38,190), and $33,650 for married filing separately (2024: $19,090) — an increase of roughly 76% in each case, far beyond inflation indexation. The first-bracket tops moved only by indexation ($14,320 -> $14,680; $19,090 -> $19,580; $9,550 -> $9,790) and the 5.3%/7.65% crossover also re-indexed ($315,310 -> $323,290; $420,420 -> $431,060; $210,210 -> $215,530). The four rates 3.5% / 4.4% / 5.3% / 7.65% are UNCHANGED. Base guidance: Supply 2025 Wisconsin Form 1, Line 11 ('Subtract line 10c from line 9. If line 10c is larger than line 9, fill in 0. This is taxable income'). Line 11 = Wisconsin income (Line 7) minus the sliding-scale standard deduction (Line 8, from the 2025 Standard Deduction Table, p.35) minus Line 10c exemptions ($700 x exemptions on Line 10a + $250 x age-65 checkboxes on Line 10b). Those deductions/exemptions must be computed on the form BEFORE supplying the base — this pack ships no standard deduction and no exemptions, so nothing is re-subtracted here. SOURCE ASSEMBLY: the 2025 Form 1 booklet prints no single four-bracket rate schedule. Brackets 1-2 (rates and dollar boundaries $14,680/$50,480 single-HoH, $19,580/$67,300 MFJ, $9,790/$33,650 MFS) are from the 2025 Form 1-ES '2025 Tax Rate Schedules for Full-Year Residents'; brackets 3-4 (5.3% up to $323,290/$431,060/$215,530, then 7.65%) are corroborated by the Form 1 p.44 Tax Computation Worksheet. Cross-check: every worksheet subtraction constant equals the cumulative sum of the prior brackets — Single/HoH $586.44 exact and $8,183.76 vs exact $8,183.755; MFJ $781.92 and $10,911.83 both exact; MFS $390.96 exact and $5,455.92 vs exact $5,455.915 — and every 1-ES gross-tax constant ($513.80/$2,089.00/$16,547.93; $685.30/$2,784.98/$22,064.26; $342.65/$1,392.49/$11,032.13) equals the cumulative marginal sum exactly. Max divergence $0.005 (cent rounding), immaterial. Schedule C (MFS) is exactly half Schedule B (MFJ) at every bound. TABLE MANDATE below $100,000 — Form 1 Line 12 requires the Tax Table (instructions pp.38-43) when Line 11 is under $100,000; the table computes tax at the MIDPOINT of each income band (spot-verified: the $15,900-$16,000 row prints Single/HoH $570, MFJ $558, MFS $614, which reproduce from midpoint $15,950 as $569.68 / $558.25 / $613.69), so bracket math may differ by a few dollars within a table band and the filed form must use the table. At $100,000 or more the mandated Tax Computation Worksheet IS exact bracket math (identical to this pack, to within the half-cent constant rounding above). STANDARD DEDUCTION NOT SHIPPED (income-dependent): Wisconsin's standard deduction is a sliding amount from the 2025 Standard Deduction Table (p.35) based on Line 7 income — maximums $13,560 single / $25,110 married filing jointly / $11,930 married filing separately / $17,520 head of household, phasing to $0 as income rises (per the 2025 Form 1-ES schedules: single $13,560 less 12% of income over $19,550, zero above $132,549; MFJ $25,110 less 19.778% of income over $28,210, zero above $155,169; MFS $11,930 less 19.778% of income over $13,390, zero above $73,709; head of household $17,520 less 22.515% of income over $19,550 up to $57,210, then the single formula, zero above $132,549). Filers claimable as a dependent use the Standard Deduction Worksheet for Dependents (greater of $1,350 or earned income plus $450, capped at the table amount); short-period filers and federal Form 4563 filers get $0. Compute it on Form 1 Line 8 — the supplied Line 11 base is already net of it. EXEMPTIONS NOT SHIPPED (already inside the Line 11 base): Wisconsin's exemptions ARE base reductions — $700 per exemption on Line 10a (taxpayer, spouse, and each dependent listed on federal Form 1040/1040-SR; 0 exemptions for a filer claimable as a dependent on another return) plus $250 on Line 10b for taxpayer and/or spouse 65 or older on December 31, 2025 (only if allowed the $700 on Line 10a) — but they are subtracted on the form in arriving at Line 11, so this pack ships none; do NOT re-subtract them from the supplied base. Head of household uses the SAME rate schedule as single (2025 Tax Computation Worksheet Section A 'Single or Head of household'; 2025 Form 1-ES Schedule A 'Single, Head of Household, Estates and Trusts'). Estates and trusts (fiduciaries) also use this schedule. QUALIFYING SURVIVING SPOUSE — the engine's default mapping is WRONG for Wisconsin: Wisconsin has no QSS status; per the 2025 Form 1 instructions, 'If you file your federal return as a qualifying surviving spouse, you may file your Wisconsin return as head of household.' A federal QSS must therefore be passed as head_of_household here, NOT married_filing_jointly. (A taxpayer whose spouse died during 2025 may still file 2025 as married filing jointly.) FULL-YEAR RESIDENT Form 1 ONLY: nonresidents and part-year residents file Form 1NPR and must PRORATE the tax brackets by the ratio of Wisconsin income to federal adjusted gross income — the 2025 Form 1-ES instructions print the rule with a worked example ('for a single individual the tax brackets are $14,680, $35,800, and $272,810. Assuming the individual has a ratio of 20%, the first $2,936 ($14,680 x .20) is taxed at 3.5%, the next $7,160 ($35,800 x .20) is taxed at 4.4%, and the next $54,562 ($272,810 x .20) is taxed at 5.3%. Taxable income over $64,658 ($323,290 x .20) is taxed at 7.65%.'). Applying these brackets unprorated to a 1NPR filer is wrong. The standard deduction and exemptions must be prorated by the same ratio. Credits taken after Line 12 are NOT modeled (they are subtracted from tax, not from income): itemized deduction credit (Line 13, Schedule 1), additional child and dependent care credit (Line 14, Schedule WI-2441), blind worker transportation services credit (Line 15 — the 2025 face prints 'Qualifying expenses .00 x 50% = 15' and the instructions a 'credit for 50% of the expenses paid. The credit may not exceed $1,500 ($3,000 of expenses) per qualifying person'), school property tax credit (Line 16, max $300 / $150), Working Families Tax Credit (Line 17 — the 2025 instructions say 'Do not enter any amount on this line. No credit is allowable for any individual or couple filing this form, since any taxpayer(s) who would qualify will not have a tax to offset.'), married couple credit (Line 18, Schedule 2, 3% of up to $16,000, max $480), earned income credit (Line 30, 4% / 11% / 34% of the federal EIC), homestead credit (Line 33, Schedule H), and the other Form 1 credits. Line 25 'Penalties on IRAs, retirement plans, MSAs, etc.' adds 33% of the federal penalty to the tax: the 2025 face prints '.00 x .33 = 25' and the instructions say 'Multiply the amount filled in by .33 (33%)' — not modeled (it is added after Line 12, like the credits above). The 2025 Form 1 face and instructions cite federal AGI as 'line 11 of federal Form 1040 or 1040-SR'; the TY2025 federal Form 1040 prints AGI on line 11a (formpacks/federal/2025/f1040 keys it 11a and the WI pack's cross_form binds f1040.11a) — the DOR's wording lags the federal form, the amount is the same. 2025 subtraction changes affect the BASE the caller supplies, not this schedule (2025 Form 1 instructions, 'New in 2025'): a new retirement-income subtraction of up to $24,000 for individuals at least 67 years old at the end of 2025; the college savings account subtraction increased to $5,130 per beneficiary ($2,560 if married filing separately); the tuition and fee expenses subtraction increased to $7,649 per student with a wider phase-out; and the adoption expenses subtraction increased to $15,000 per child. Compute these on Schedule SB / Schedule CS before supplying Line 11."
+ },
+ "year": 2025
+}

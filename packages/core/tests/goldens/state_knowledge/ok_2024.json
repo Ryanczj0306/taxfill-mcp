@@ -1,0 +1,742 @@
+{
+ "_strings": {
+  "@@0cfcc4eacf0a": "2024 Form 511 packet - 'Generally, your return must be postmarked by April 15, 2025'; 'If you file your return electronically (through a preparer or the internet), your due date is extended to April 20th. Any payment of taxes due on April 20th must be remitted electronically in order to be considered timely paid.'",
+  "@@1797005c3b55": "Oklahoma Tax Commission, 2024 Form 511 packet - What's New and Line 29 instructions (Parental Choice Tax Credit for Homeschool Expenses, Form 591-D)",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@22c13609dfee": "2024 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission): What's New (top-two MFJ/HOH/surviving-spouse bracket income levels adjusted; Parental Choice credits; 511-A/B bonus depreciation lines); Form 511 lines 1-14a; line 10 standard deduction instructions ($6,350 single/MFS, $12,700 MFJ/QSS, $9,350 HOH); line 11 exemptions x $1,000; 2024 Income Tax Tables pp. 27-38 incl. the $100,000+ worksheets ($4,562 plus 0.0475 Single/MFS; $4,373 plus 0.0475 MFJ/HOH/QW); Who Must File; residency definitions; due date; mailing address; check payee",
+  "@@3a02365021cd": "Law change NOT modeled by the engine (status final_form_published): NEW on Form 511 for 2024 (packet What's New): the Parental Choice Tax Credit for Homeschool Expenses, a nonrefundable credit for qualified expenses paid to homeschool an eligible student, computed on Form 591-D and entered on Form 511 line 29. The 2024 packet prints no dollar maximum — it only directs filers to \"Complete Form 591-D to determine the amount to enter on line 29\". Resolve via: 2024 Form 511 packet What's New and Line 29 instructions (the citation URL) plus Form 591-D itself at tax.ok.gov for the credit computation and any per-student maximum — the packet does not print it (see `unverified`); calc.state_tax applies no Oklahoma credits.",
+  "@@45ceea011e70": "Sales Tax Relief Credit (Sales Tax Refund) — Must be an Oklahoma resident for the entire year. General income limit is $20,000 of total gross household income, raised to $50,000 if any one of the following applies: you can claim an exemption for a dependent; you and/or your spouse are 65 or older by 12/31/2024; or you have a physical disability constituting a substantial handicap to employment (proof required). Excluded: anyone who received TANF in any month of 2024; felons who were DOC inmates for any part of the year. Claimed on Form 538-S (included in the 2024 packet).",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@6a6d11a67a02": "Parental Choice Tax Credit for Homeschool Expenses (NEW on Form 511 for 2024) — Taxpayers who paid qualified expenses to homeschool an eligible student; compute on Form 591-D (available at tax.ok.gov). Added to Form 511 for 2024 per the packet's What's New.",
+  "@@6ef3f9045aba": "https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2024/511-Pkt-2024.pdf",
+  "@@a374892a89c9": "Credit for Property Tax Relief (Low Income Property Tax Credit) — Any person 65 years of age or older, or any totally disabled person, who is head of a household and was a resident of and domiciled in Oklahoma during the entire preceding calendar year, and whose gross household income for that year does not exceed $12,000. The claim is for property taxes paid on the household occupied during the preceding calendar year. Claim must be made on Form 538-H.",
+  "@@b3a26e48fc9e": "2024 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission). Source for: Form 511 line 1 = Federal AGI starting point; Schedule 511-B additions list (no treaty add-back); resident/part-year/nonresident domicile definitions; What's New (MFJ/HOH/surviving-spouse top-two bracket income levels adjusted; Parental Choice Tax Credit for Homeschool Expenses added to Form 511); due date April 15, 2025 (April 20 e-file/e-pay); WHO MUST FILE thresholds; 'When You Are Finished' mailing to PO Box 26800, OKC 73126-0800; check payable to Oklahoma Tax Commission; OkTAP at tax.ok.gov.",
+  "@@b8c5407c8caf": "Oklahoma Earned Income Credit (EIC) — Resident and part-year resident filers who qualify for the federal Earned Income Credit. The federal EIC is recalculated using the federal EITC eligibility/computation rules in effect for the 2020 tax year. A copy of the federal return and OTC Form 511-EIC must be provided.",
+  "@@bec09325df06": "Law change NOT modeled by the engine (status final_form_published): NEW add-back for 2024: the Oklahoma bonus depreciation add-back, Schedule 511-B line B8 \"(new for 2024)\" in this pack's enumerated 2024 additions list, with the matching Schedule 511-A line the packet's What's New calls the new \"511-A/B bonus depreciation lines\". It feeds the Schedule 511-B additions total behind Oklahoma AGI (Form 511 line 7) and therefore the line 9 figure calc.state_tax consumes; it does not touch treaty-exempt income (see treaty_note). Resolve via: 2024 Form 511 packet Schedule 511-A / Schedule 511-B instructions (the citation URL) for the bonus-depreciation add-back and its matching subtraction amounts; this pack ships no Schedule 511-A/B figures and calc.state_tax applies none.",
+  "@@c18557b38320": "Treaty conformity — OK conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OK income (it flows through the federal starting point; do not add it back on the OK return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Oklahoma's resident return (Form 511) starts at line 1 from \"Federal adjusted gross income (from Federal 1040 or 1040-SR)\" and then applies Schedule 511-A (Oklahoma subtractions) and Schedule 511-B (Oklahoma additions) to arrive at Oklahoma AGI. The complete Schedule 511-B additions list for 2024 is closed and enumerated: (B1) state and municipal bond interest, (B2) out-of-state losses, (B3) lump-sum distributions not in federal AGI, (B4) federal net operating loss, (B5) recapture of depletion / excess federal depletion, (B6) recapture of Oklahoma 529 contributions, (B7) Oklahoma loss distributed by an electing PTE, (B8) Oklahoma bonus depreciation add-back (new for 2024), (B9) miscellaneous other additions. There is NO add-back of federally treaty-exempt income anywhere in the 2024 resident packet (a full-text search of the packet for \"treaty\"/\"treaties\" returns zero hits). Because OK begins from federal AGI and does not add treaty income back (unlike CA Schedule CA), federally treaty-exempt income already excluded from federal AGI flows through and is NOT re-taxed by Oklahoma. Therefore conforms = true.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@edb627cd1792": "Child Care / Child Tax Credit — Filers whose Federal AGI is $100,000 or less and who are allowed either the federal credit for child care expenses or the federal child tax credit. Must provide a copy of the federal return and, if applicable, the federal child care credit schedule. If Oklahoma AGI (line 7) is less than Federal AGI (line 1), compute on Schedule 511-F (prorated).",
+  "@@fcfa9eed7ac9": "2024 Form 511 packet, 'When You Are Finished' (PO Box 26800, OKC 73126-0800; check payable to Oklahoma Tax Commission; do not send cash) and 2024 Form 511-V Individual Income Tax Payment Voucher (PO Box 26890)",
+  "@@ff43a3ade419": "Oklahoma Tax Commission, PO Box 26800, Oklahoma City, OK 73126-0800 (this is the single mailing address for the 2024 Form 511 return itself, whether refund, no-payment, or with payment enclosed)"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@fcfa9eed7ac9",
+      "url": "@@6ef3f9045aba"
+     },
+     {
+      "source": "@@0cfcc4eacf0a",
+      "url": "@@6ef3f9045aba"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form 511 - Oklahoma Resident Individual Income Tax Return (2024)",
+    "jurisdiction": "states/ok",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@ff43a3ade419",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@fcfa9eed7ac9",
+      "url": "@@6ef3f9045aba"
+     },
+     {
+      "source": "@@0cfcc4eacf0a",
+      "url": "@@6ef3f9045aba"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form 511 - Oklahoma Resident Individual Income Tax Return (2024)",
+    "jurisdiction": "states/ok",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Return with payment enclosed: Oklahoma Tax Commission, PO Box 26800, Oklahoma City, OK 73126-0800 (\"Mail your return, along with any payment due, to\" this address). NOTE: a separate payment made AFTER the return is already filed, using Form 511-V payment voucher, goes to Oklahoma Tax Commission, PO Box 26890, Oklahoma City, OK 73126-0890.",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via OK Web Pay: https://oktap.tax.ok.gov (OkTAP, accessed via tax.ok.gov - 'Make a Payment' link) (no processor fee).",
+     "By check: make it payable to \"Oklahoma Tax Commission (check or money order payable to 'Oklahoma Tax Commission'; do not send cash — 2024 packet 'When You Are Finished' and 2024 Form 511-V)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@fcfa9eed7ac9",
+      "url": "@@6ef3f9045aba"
+     },
+     {
+      "source": "@@0cfcc4eacf0a",
+      "url": "@@6ef3f9045aba"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form 511 - Oklahoma Resident Individual Income Tax Return (2024)",
+    "jurisdiction": "states/ok",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@ff43a3ade419",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@0cfcc4eacf0a",
+      "url": "@@6ef3f9045aba"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form 511 - Oklahoma Resident Individual Income Tax Return (2024)",
+    "headline": "OK 2024: refund $512",
+    "jurisdiction": "states/ok",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0cfcc4eacf0a",
+      "url": "@@6ef3f9045aba"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form 511 - Oklahoma Resident Individual Income Tax Return (2024)",
+    "headline": "OK 2024: you owe $347",
+    "jurisdiction": "states/ok",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0cfcc4eacf0a",
+      "url": "@@6ef3f9045aba"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form 511 - Oklahoma Resident Individual Income Tax Return (2024)",
+    "headline": "OK 2024: you owe $1,205",
+    "jurisdiction": "states/ok",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/ok",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b8c5407c8caf",
+      "@@edb627cd1792",
+      "@@45ceea011e70",
+      "@@a374892a89c9",
+      "@@6a6d11a67a02"
+     ],
+     "citations": [
+      {
+       "source": "@@1797005c3b55",
+       "url": "@@6ef3f9045aba"
+      },
+      {
+       "source": "@@22c13609dfee",
+       "url": "@@6ef3f9045aba"
+      },
+      {
+       "source": "@@b3a26e48fc9e",
+       "url": "@@6ef3f9045aba"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "Form 511-NR - Oklahoma Nonresident/Part-Year Resident Income Tax Return (2024)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in OK in 2024 without living there — file a nonresident return on OK-source income.",
+     "state": "OK",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@c18557b38320",
+      "@@3a02365021cd",
+      "@@bec09325df06",
+      "Remote-work trap: work performed from TX for an employer sitting in OK. If OK applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to OK and require a NONRESIDENT OK return that the physical footprint alone never shows — and the W-2's Box 15 often already names OK. This OK pack year carries no researched convenience rule: verify OK's nonresident wage-sourcing rule at its DOR before assuming no OK filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b8c5407c8caf",
+      "@@edb627cd1792",
+      "@@45ceea011e70",
+      "@@a374892a89c9",
+      "@@6a6d11a67a02"
+     ],
+     "citations": [
+      {
+       "source": "@@1797005c3b55",
+       "url": "@@6ef3f9045aba"
+      },
+      {
+       "source": "@@22c13609dfee",
+       "url": "@@6ef3f9045aba"
+      },
+      {
+       "source": "@@b3a26e48fc9e",
+       "url": "@@6ef3f9045aba"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "Form 511-NR - Oklahoma Nonresident/Part-Year Resident Income Tax Return (2024)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in OK part of 2024 — file a part-year return on income while a resident (plus OK-source income while not).",
+     "state": "OK",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@c18557b38320",
+      "@@3a02365021cd",
+      "@@bec09325df06"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b8c5407c8caf",
+      "@@edb627cd1792",
+      "@@45ceea011e70",
+      "@@a374892a89c9",
+      "@@6a6d11a67a02"
+     ],
+     "citations": [
+      {
+       "source": "@@1797005c3b55",
+       "url": "@@6ef3f9045aba"
+      },
+      {
+       "source": "@@22c13609dfee",
+       "url": "@@6ef3f9045aba"
+      },
+      {
+       "source": "@@b3a26e48fc9e",
+       "url": "@@6ef3f9045aba"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form 511 - Oklahoma Resident Individual Income Tax Return (2024)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in OK all of 2024 — file a resident return on income from all sources.",
+     "state": "OK",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@3a02365021cd",
+      "@@bec09325df06"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ok",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 0,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $9,350 = -$9,350.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ok",
+     "taxable_base": "9350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 0,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $9,350.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $9,350 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ok",
+     "taxable_base": "10350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 3,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $10,350.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $9,350 = $1,000.00; graduated tax on $1,000 [head_of_household schedule]: 0.0025 x $1,000.00 (the $0-$2,000 bracket) = $2.50; total $2.50 -> $3"
+   },
+   {
+    "base_after_exemptions": 8650,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ok",
+     "taxable_base": "18000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 103,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $18,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $9,350 = $8,650.00; graduated tax on $8,650 [head_of_household schedule]: 0.0025 x $2,000.00 (the $0-$2,000 bracket) = $5.00; 0.0075 x $3,000.00 (the $2,000-$5,000 bracket) = $22.50; 0.0175 x $2,500.00 (the $5,000-$7,500 bracket) = $43.75; 0.0275 x $1,150.00 (the $7,500-$9,800 bracket) = $31.62; total $102.88 -> $103"
+   },
+   {
+    "base_after_exemptions": 24400,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ok",
+     "taxable_base": "33750",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 782,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $33,750.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $9,350 = $24,400.00; graduated tax on $24,400 [head_of_household schedule]: 0.0025 x $2,000.00 (the $0-$2,000 bracket) = $5.00; 0.0075 x $3,000.00 (the $2,000-$5,000 bracket) = $22.50; 0.0175 x $2,500.00 (the $5,000-$7,500 bracket) = $43.75; 0.0275 x $2,300.00 (the $7,500-$9,800 bracket) = $63.25; 0.0375 x $4,600.00 (the $9,800-$14,400 bracket) = $172.50; 0.0475 x $10,000.00 (the $14,400+ bracket) = $475.00; total $782.00 -> $782"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ok",
+     "taxable_base": "51350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 1523,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $51,350.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $1,000 = $1,000.00, 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [head_of_household] = $9,350 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0025 x $2,000.00 (the $0-$2,000 bracket) = $5.00; 0.0075 x $3,000.00 (the $2,000-$5,000 bracket) = $22.50; 0.0175 x $2,500.00 (the $5,000-$7,500 bracket) = $43.75; 0.0275 x $2,300.00 (the $7,500-$9,800 bracket) = $63.25; 0.0375 x $4,600.00 (the $9,800-$14,400 bracket) = $172.50; 0.0475 x $25,600.00 (the $14,400+ bracket) = $1,216.00; total $1,523.00 -> $1,523"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ok",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 0,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $12,700 = -$12,700.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ok",
+     "taxable_base": "12700",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 0,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $12,700.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $12,700 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ok",
+     "taxable_base": "13700",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 3,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $13,700.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $12,700 = $1,000.00; graduated tax on $1,000 [married_filing_jointly schedule]: 0.0025 x $1,000.00 (the $0-$2,000 bracket) = $2.50; total $2.50 -> $3"
+   },
+   {
+    "base_after_exemptions": 8650,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ok",
+     "taxable_base": "21350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 103,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $21,350.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $12,700 = $8,650.00; graduated tax on $8,650 [married_filing_jointly schedule]: 0.0025 x $2,000.00 (the $0-$2,000 bracket) = $5.00; 0.0075 x $3,000.00 (the $2,000-$5,000 bracket) = $22.50; 0.0175 x $2,500.00 (the $5,000-$7,500 bracket) = $43.75; 0.0275 x $1,150.00 (the $7,500-$9,800 bracket) = $31.62; total $102.88 -> $103"
+   },
+   {
+    "base_after_exemptions": 24400,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ok",
+     "taxable_base": "37100",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 782,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $37,100.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $12,700 = $24,400.00; graduated tax on $24,400 [married_filing_jointly schedule]: 0.0025 x $2,000.00 (the $0-$2,000 bracket) = $5.00; 0.0075 x $3,000.00 (the $2,000-$5,000 bracket) = $22.50; 0.0175 x $2,500.00 (the $5,000-$7,500 bracket) = $43.75; 0.0275 x $2,300.00 (the $7,500-$9,800 bracket) = $63.25; 0.0375 x $4,600.00 (the $9,800-$14,400 bracket) = $172.50; 0.0475 x $10,000.00 (the $14,400+ bracket) = $475.00; total $782.00 -> $782"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 2,
+     "filing_status": "married_filing_jointly",
+     "state": "ok",
+     "taxable_base": "55700",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 1523,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $55,700.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 2 personal exemption(s) x $1,000 = $2,000.00, 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [married_filing_jointly] = $12,700 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0025 x $2,000.00 (the $0-$2,000 bracket) = $5.00; 0.0075 x $3,000.00 (the $2,000-$5,000 bracket) = $22.50; 0.0175 x $2,500.00 (the $5,000-$7,500 bracket) = $43.75; 0.0275 x $2,300.00 (the $7,500-$9,800 bracket) = $63.25; 0.0375 x $4,600.00 (the $9,800-$14,400 bracket) = $172.50; 0.0475 x $25,600.00 (the $14,400+ bracket) = $1,216.00; total $1,523.00 -> $1,523"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ok",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 0,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $6,350 = -$6,350.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ok",
+     "taxable_base": "6350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 0,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $6,350.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $6,350 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ok",
+     "taxable_base": "6850",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 1,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $6,850.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $6,350 = $500.00; graduated tax on $500 [married_filing_separately schedule]: 0.0025 x $500.00 (the $0-$1,000 bracket) = $1.25; total $1.25 -> $1"
+   },
+   {
+    "base_after_exemptions": 4325,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ok",
+     "taxable_base": "10675",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 51,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $10,675.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $6,350 = $4,325.00; graduated tax on $4,325 [married_filing_separately schedule]: 0.0025 x $1,000.00 (the $0-$1,000 bracket) = $2.50; 0.0075 x $1,500.00 (the $1,000-$2,500 bracket) = $11.25; 0.0175 x $1,250.00 (the $2,500-$3,750 bracket) = $21.88; 0.0275 x $575.00 (the $3,750-$4,900 bracket) = $15.81; total $51.44 -> $51"
+   },
+   {
+    "base_after_exemptions": 17200,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ok",
+     "taxable_base": "23550",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 629,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $23,550.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $6,350 = $17,200.00; graduated tax on $17,200 [married_filing_separately schedule]: 0.0025 x $1,000.00 (the $0-$1,000 bracket) = $2.50; 0.0075 x $1,500.00 (the $1,000-$2,500 bracket) = $11.25; 0.0175 x $1,250.00 (the $2,500-$3,750 bracket) = $21.88; 0.0275 x $1,150.00 (the $3,750-$4,900 bracket) = $31.62; 0.0375 x $2,300.00 (the $4,900-$7,200 bracket) = $86.25; 0.0475 x $10,000.00 (the $7,200+ bracket) = $475.00; total $628.50 -> $629"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "married_filing_separately",
+     "state": "ok",
+     "taxable_base": "48350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 1712,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $48,350.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $1,000 = $1,000.00, 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [married_filing_separately] = $6,350 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.0025 x $1,000.00 (the $0-$1,000 bracket) = $2.50; 0.0075 x $1,500.00 (the $1,000-$2,500 bracket) = $11.25; 0.0175 x $1,250.00 (the $2,500-$3,750 bracket) = $21.88; 0.0275 x $1,150.00 (the $3,750-$4,900 bracket) = $31.62; 0.0375 x $2,300.00 (the $4,900-$7,200 bracket) = $86.25; 0.0475 x $32,800.00 (the $7,200+ bracket) = $1,558.00; total $1,711.50 -> $1,712"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ok",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 0,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $6,350 = -$6,350.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ok",
+     "taxable_base": "6350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 0,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $6,350.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $6,350 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ok",
+     "taxable_base": "6850",
+     "year": 2024
+    },
+    "marginal_rate": "0.0025",
+    "tax": 1,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $6,850.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $6,350 = $500.00; graduated tax on $500 [single schedule]: 0.0025 x $500.00 (the $0-$1,000 bracket) = $1.25; total $1.25 -> $1"
+   },
+   {
+    "base_after_exemptions": 4325,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ok",
+     "taxable_base": "10675",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 51,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $10,675.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $6,350 = $4,325.00; graduated tax on $4,325 [single schedule]: 0.0025 x $1,000.00 (the $0-$1,000 bracket) = $2.50; 0.0075 x $1,500.00 (the $1,000-$2,500 bracket) = $11.25; 0.0175 x $1,250.00 (the $2,500-$3,750 bracket) = $21.88; 0.0275 x $575.00 (the $3,750-$4,900 bracket) = $15.81; total $51.44 -> $51"
+   },
+   {
+    "base_after_exemptions": 17200,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ok",
+     "taxable_base": "23550",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 629,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $23,550.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $6,350 = $17,200.00; graduated tax on $17,200 [single schedule]: 0.0025 x $1,000.00 (the $0-$1,000 bracket) = $2.50; 0.0075 x $1,500.00 (the $1,000-$2,500 bracket) = $11.25; 0.0175 x $1,250.00 (the $2,500-$3,750 bracket) = $21.88; 0.0275 x $1,150.00 (the $3,750-$4,900 bracket) = $31.62; 0.0375 x $2,300.00 (the $4,900-$7,200 bracket) = $86.25; 0.0475 x $10,000.00 (the $7,200+ bracket) = $475.00; total $628.50 -> $629"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "ok",
+     "taxable_base": "48350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 1712,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $48,350.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $1,000 = $1,000.00, 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [single] = $6,350 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.0025 x $1,000.00 (the $0-$1,000 bracket) = $2.50; 0.0075 x $1,500.00 (the $1,000-$2,500 bracket) = $11.25; 0.0175 x $1,250.00 (the $2,500-$3,750 bracket) = $21.88; 0.0275 x $1,150.00 (the $3,750-$4,900 bracket) = $31.62; 0.0375 x $2,300.00 (the $4,900-$7,200 bracket) = $86.25; 0.0475 x $32,800.00 (the $7,200+ bracket) = $1,558.00; total $1,711.50 -> $1,712"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ok",
+     "taxable_base": "52700",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 1523,
+    "work_head": "OK state income tax (2024, graduated brackets): taxable_base $52,700.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $12,700 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0025 x $2,000.00 (the $0-$2,000 bracket) = $5.00; 0.0075 x $3,000.00 (the $2,000-$5,000 bracket) = $22.50; 0.0175 x $2,500.00 (the $5,000-$7,500 bracket) = $43.75; 0.0275 x $2,300.00 (the $7,500-$9,800 bracket) = $63.25; 0.0375 x $4,600.00 (the $9,800-$14,400 bracket) = $172.50; 0.0475 x $25,600.00 (the $14,400+ bracket) = $1,216.00; total $1,523.00 -> $1,523"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_gross_income",
+   "citation": {
+    "source": "2024 Form 511 — Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission): Form 511 page 2, lines 10-14a (line 10 standard deduction instructions: 'single or married filing separate' $6,350, 'head of household' $9,350, 'married filing joint or qualifying surviving spouse' $12,700; line 11 'Exemptions ... X $1,000'); Select Line Instructions (lines 10-11) and Top of Form Instructions (F Exemptions, incl. Special 65+ AGI limits and Legally Blind); What's New ('Income levels are adjusted for the top two income tax rate brackets for income tax returns with a filing status of married filing joint, head of household or surviving spouse'); 2024 Oklahoma Income Tax Table pp. 27-38, incl. the worksheets 'Calculating Tax on Taxable Income of $100,000 or more' ($4,562 plus 0.0475 over $100,000 for Single/Married Filing Separate; $4,373 plus 0.0475 over $100,000 for Married Filing Joint/Head of Household/Qualified Widow(er) — 2023's constant was $4,395, confirming the widened 3.75% band). Second pass: bracket-by-bracket schedule verified verbatim against 68 O.S. § 2355(C) as in force 'For tax years 2024 and 2025' (see notes) — both passes agree.",
+    "url": "@@6ef3f9045aba"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ok"
+  },
+  "work_common_tail": ". Tax line: Form 511, line 14(a): 'Oklahoma Income Tax from Tax Table (see pages 27-38 of instructions)', computed on line 13 'Oklahoma Taxable Income (line 9 minus line 12)', where line 12 = 'Total deductions and exemptions (add lines 10 and 11 or amount from Sch. 511-E, line 5)'. Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($1,000 — 'Special' additional $1,000 exemption per taxpayer/spouse who is 65 or older at the close of the tax year, allowed ONLY if Form 511 line 1 Federal AGI does not exceed: $15,000 single / $25,000 joint / $12,500 married filing separate / $19,000 head of household (2024 packet, Top of Form Instructions). NOT applied by calc.state_tax — if eligible, claim it in the exemption boxes at the top of Form 511 and it flows into line 11.); blind ($1,000 — Additional $1,000 exemption per taxpayer/spouse who is legally blind; part of the top-of-form exemption count flowing into Form 511 line 11. NOT applied by calc.state_tax — claim it on the form.) This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2024 CHANGE — MFJ/HOH/SURVIVING-SPOUSE TOP-TWO BRACKETS RE-INDEXED: the packet's What's New states 'Income levels are adjusted for the top two income tax rate brackets for income tax returns with a filing status of married filing joint, head of household or surviving spouse.' The 3.75% band widened from $9,800-$12,200 (2023) to $9,800-$14,400, so 4.75% now starts at $14,400; verified against BOTH the packet's $100,000+ worksheet constant (now $4,373; 2023: $4,395) and printed table rows spanning the old/new breakpoints (e.g. $12,200-$12,250 -> $225 = 2024 math, not 2023's $226; $14,400-$14,450 -> $308), AND 68 O.S. § 2355(C) 'For tax years 2024 and 2025' (3.75% on 'next $4,600.00'). Single/MFS brackets and all six rates (0.25%-4.75%) are unchanged from 2023. Base guidance: Supply 2024 Form 511, line 9 'Oklahoma income after adjustments (line 7 minus line 8)'. Line 1 starts from federal AGI; lines 2-8 apply Oklahoma subtractions (Schedule 511-A), out-of-state income (line 4), Oklahoma additions (Schedule 511-B) and Oklahoma adjustments (Schedule 511-C) to reach line 9. The op then subtracts the shipped per-status standard deduction (Form 511 line 10) and $1,000 per exemption/dependent (Form 511 line 11) to reproduce line 13 'Oklahoma Taxable Income', and applies the brackets to reproduce line 14a. Do NOT pre-subtract deductions or exemptions from the figure you supply. If Form 511 line 4 (out-of-state income) is more than zero, or you itemize, the shipped fixed deduction/exemption amounts do not apply — see notes. Tax Table mandate below $100,000: Form 511 line 14a instructs 'Oklahoma Income Tax from Tax Table (see pages 27-38 of instructions)'. The table's $50-wide bands compute tax at the band midpoint, so plain bracket math may differ from the table by a few dollars within a band. The filed form must use the table below $100,000. Taxable income of $100,000 or more uses the packet's worksheets (p. 38): Single/MFS tax = $4,562 plus 0.0475 of the excess over $100,000; MFJ/HOH/Qualified Widow(er) tax = $4,373 plus 0.0475 of the excess over $100,000. Printed worksheet constants vs exact bracket sums (re-derived for 2024): the MFJ/HOH/QW constant $4,373 exactly equals the cumulative bracket sum at $100,000 ($307.00 through $14,400, plus 4.75% x $85,600 = $4,066); the Single/MFS constant $4,562 is the exact cumulative sum $4,561.50 rounded up $0.50, so above $100,000 the Single/MFS form worksheet can come out $1 higher than exact marginal bracket math after whole-dollar rounding. Bracket schedule source: the 2024 Form 511 packet prints only the Tax Table and the $100,000+ worksheets, not a marginal rate schedule. The brackets shipped here are copied verbatim from 68 O.S. § 2355(C) as in force for tax years 2024 and 2025 (current OSCN text, https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=92565 — the Oklahoma State Courts Network is the state courts' official statute publisher). Every bracket boundary was cross-checked against the packet's printed table rows and worksheet constants. NOTE for future maintainers: subsection D of the same section prints a DIFFERENT schedule 'For tax year 2026 and for subsequent tax years' (0%/2.5%/3.5%/4.5%) — do not use it for 2024/2025. One schedule covers Single and Married Filing Separately (identical thresholds — 68 O.S. § 2355(C)(1)); a second schedule covers Married Filing Jointly, surviving spouse, AND Head of Household (68 O.S. § 2355(C)(2)) — HOH is NOT a separate schedule; it is duplicated from MFJ here. The tax table likewise has only two columns: 'Single or married filing separate' and 'Married filing joint or head of household'. Qualifying surviving spouse uses the married-filing-jointly column and schedule (2024 tax table footnote: 'This column must also be used by a Qualified Surviving Spouse'; the statute includes surviving spouses in the MFJ paragraph; the line 10 instructions give QSS the $12,700 standard deduction) — the engine's QSS -> married_filing_jointly mapping is correct for Oklahoma. Out-of-state income gate: if Form 511 line 4 (out-of-state income, except wages) is more than zero, do NOT complete lines 10-11 — Schedule 511-E prorates deductions and exemptions instead, so the fixed standard deduction and $1,000 exemptions shipped here do not apply; compute on the form. Itemizers: if you claimed itemized deductions on your federal return you MUST claim Oklahoma itemized deductions (Schedule 511-D) instead of the standard deduction; Oklahoma itemized deductions are capped at $17,000 (charitable contributions and medical expenses are not subject to the cap). The shipped standard deduction applies only to federal standard-deduction claimants. You qualify for the Oklahoma standard deduction even when claimed as a dependent on another return. Form 511 line 14b add-ons are NOT modeled: the additional 10% tax on nonqualified Health Savings Account withdrawals, recapture of the Oklahoma Affordable Housing Tax Credit, and IRC Section 965(h) installment payments. Farm Income Averaging (Form 573, entered on line 14a with a '1' in the box) is also not modeled. Oklahoma's personal/dependent allowances are true income-base exemptions (Form 511 line 11 is subtracted from income before the rate applies via lines 12-13), not tax credits. Separately, Oklahoma's Child Care/Child Tax Credit (line 15, Schedule 511-F), Oklahoma EIC (line 28, Schedule 511-G, 5% of the federal EIC under 2020 rules), Sales Tax Relief Credit (line 25, Form 538-S, $40/exemption), Property Tax Relief credit (line 24, Form 538-H), and the NEW-for-2024 Parental Choice Tax Credit for Homeschool Expenses (line 29, Form 591-D) are CREDITS against tax and are not part of this computation. All Form 511 money entries are whole dollars ('00' boxes); the packet's rounding rule ('$2.50 to $2.99 - round up to $3.00') matches the engine's round-half-up to whole dollars."
+ },
+ "year": 2024
+}

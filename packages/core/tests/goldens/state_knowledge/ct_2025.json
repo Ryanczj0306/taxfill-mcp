@@ -1,0 +1,890 @@
+{
+ "_strings": {
+  "@@16cb9f81668c": "Personal Tax Credit (low-income credit, Table E) — Connecticut resident individuals whose Connecticut AGI falls within the Table E phase-out ranges for their filing status. Taxpayers below the no-tax threshold owe no income tax and need no credit; the personal credit reduces the income tax for low-to-moderate income filers just above that threshold.",
+  "@@18137f22a6ec": "Credit amounts/limits are not independently verified: State credits were researched from the cited DRS sources (the 2025 CT-1040 instructions Rev. 12/25, re-checked against the 2025 CT-1040NR/PY instructions Rev. 12/25 and the DRS Tax-Information page) and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2094cb756467": "Historic Homes Rehabilitation Tax Credit (Line 20d) — The 2025 Instructions, Line 20d: \"All tax credit vouchers shall be issued by The Department of Economic and Community Development to those eligible that are (1) owners rehabilitating historic homes; or (2) taxpayers making contributions to qualified rehabilitation expenditures on historic homes.\" The booklet prints no statute, no cap and no computation — the credit is whatever the DECD voucher shows. The form face captions the line \"20d. Historic Home Rehabilitation Credit\"; the Instructions call it the \"Historic Homes Rehabilitation Tax Credit\".",
+  "@@2c76830e971c": "2025 Form CT-1040 (Rev. 12/25), page 1: \"Due date: April 15, 2026 - Attach a copy of all applicable schedules and forms to this return. Do not use staples.\"",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@46c91757a10e": "2025 Form CT-1040 Connecticut Resident Income Tax Return (Rev. 12/25) — Line 1 = federal AGI; Line 2 additions from Schedule 1; 'Due date: April 15, 2026'; mailing addresses PO Box 2977 (with payment) / PO Box 2976 (refund or no payment); check payable to Commissioner of Revenue Services with '2025 Form CT-1040' written on it",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@5fe2318467b7": "Law change NOT modeled by the engine (status final_form_published): CT EITC EXPANDED for 2025: the credit remains 40% (.40) of the federal earned income credit claimed and allowed, but a new supplement was added — \"Any taxpayer eligible for CT EITC that has at least one qualifying child for federal income tax purposes for the same taxable year, is eligible to receive an additional two hundred fifty dollars ($250).\" The Schedule CT-EITC investment-income ceiling also rose to $11,950 for 2025 (from $11,600 for 2024). The DRS records the expansion on its \"What's New for 2025\" page. Resolve via: 2025 Form CT-1040 Instructions (Rev. 12/25), Line 20a and the Schedule CT-EITC line instructions (the citation URL); the credit amount derives from the filer's federal EIC. This pack's tax block computes Line 6 income tax only and applies no refundable credits. (The Schedule CT-EITC form itself was not fetched — see the pack's unverified list.)",
+  "@@68a3ff22642c": "The newest shipped CT pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@68b17d6df36e": "2025 Form CT-1040 (Rev. 12/25), page 4 mailing box: \"For all tax forms with payment: Department of Revenue Services, PO Box 2977, Hartford CT 06104-2977\"; \"For refunds and all other tax forms without payment: Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976\"",
+  "@@77c80b6e643e": "Connecticut Earned Income Tax Credit (CT EITC) — Connecticut full-year residents who claimed and were allowed the 2025 federal earned income credit (\"You must have claimed the 2025 federal earned income credit to claim the CT EITC\"). Taxpayer (and spouse/qualifying children, if applicable) must have valid Social Security Numbers by the return due date, must have earned income from employment or self-employment, and must meet all federal EITC rules. Either qualify with a qualifying child, or as a worker without a qualifying child aged 25-64.",
+  "@@8c9b898323e2": "CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 20a Connecticut Earned Income Tax Credit (40% of the federal EIC plus the additional $250 for a taxpayer with at least one federal qualifying child) and Schedule CT-EITC line instructions ($11,950 investment-income limit); confirmed against the DRS \"What's New for 2025\" EITC expansion note",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9b4e7cb70169": "annual (per tax year; the newest shipped CT pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@a64fd1bce23a": "Treaty conformity — CT does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CT. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: CT's resident return (Form CT-1040) starts from federal AGI (Line 1 = \"Federal adjusted gross income from your 2025 federal income tax return\"), so treaty-exempt income is initially excluded. HOWEVER, CT has an EXPLICIT ADD-BACK: the 2025 CT-1040 instructions (Schedule 1 additions, Line 37 \"Other\") and the 2025 CT-1040NR/PY instructions (Schedule 1 additions, \"Other\") both direct, verbatim and unchanged from 2023 and 2024: \"1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien. Enter the words 'treaty income' in the space provided.\" Because CT requires nonresident aliens to add federally treaty-exempt income back into Connecticut adjusted gross income, CT does NOT conform to federal treaty exemptions for affected filers (analogous to California's Schedule CA add-back). Reinforcing this, the DRS Tax-Information page states that nonresident aliens who are domiciled in Connecticut, or who keep a permanent place of abode there and spend more than 183 days in the state, \"are considered Connecticut residents even if federal Form 1040NR is filed for federal income tax purposes.\" Note: the add-back is scoped to nonresident aliens filing federal Form 1040NR; a filer with no treaty income is unaffected, but the statutory rule re-taxes treaty income, so conforms_to_federal_treaties = false.",
+  "@@c0e7931c928a": "Credit for Income Taxes Paid to Qualifying Jurisdictions (Schedule 2) — Connecticut residents (and part-year residents) whose income reported on the CT return is also subject to income tax in another qualifying jurisdiction (another U.S. state, a local jurisdiction within another state, or the District of Columbia) where the taxpayer filed a return and paid income tax. Prevents double taxation of the same income. A copy of the other jurisdiction's return must be attached.",
+  "@@c7f042b5ae16": "Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (use Schedule CT-SI to report Connecticut-source income)",
+  "@@c9b54c670dc9": "Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976 (for refunds and all other tax forms without payment)",
+  "@@da88d6df6db2": "https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf",
+  "@@db95252fe84b": "If any income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties — that income is still taxable to CT.",
+  "@@ea1be0afd547": "Property Tax Credit (Schedule 3) — Connecticut residents who paid qualifying property tax during 2025 to a Connecticut political subdivision on their primary residence and/or a privately owned or leased motor vehicle. Single/MFS/HoH limited to one motor vehicle; MFJ/qualifying surviving spouse limited to two. Cannot be claimed if Form CT-1040 Line 10 is zero, cannot be carried forward, and is not refundable — \"This credit can be used to offset only your 2025 income tax.\"",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@ef2cea20e765": "If any of your income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties, so that income is still taxable to CT — do not carry the federal exclusion onto the state return.",
+  "@@fc7f99b8bd51": "2025 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 12/25) — Tax Calculation Schedule (p. 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line 5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6); Table A Personal Exemptions (p. 19); Table B Initial Tax Calculation (p. 20, all three schedules with the DRS worked examples $335/$32,998/$513/$69,490/$500/$51,748); Table C 2% Phase-Out Add-Back (p. 21); Table D Tax Recapture (p. 22); Table E Personal Tax Credits (p. 23); Line 6 Income Tax (no-tax floors, optional DRS tax tables at CT AGI $102,000 or less). Second pass: the 2025 Form CT-1040NR/PY instructions (Rev. 12/25, https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf) print identical Tables A-E — Table A (221 numeric tokens), Table C (136) and Table D (450) are digit-identical multisets, all 28 Table E rows match row-by-row, and all 21 Table B rows print the same bounds, rates and constants."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@68b17d6df36e",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     },
+     {
+      "source": "@@2c76830e971c",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "jurisdiction": "states/ct",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@c9b54c670dc9",
+    "notes": [
+     "@@ef2cea20e765"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@68b17d6df36e",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     },
+     {
+      "source": "@@2c76830e971c",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "jurisdiction": "states/ct",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Department of Revenue Services, PO Box 2977, Hartford CT 06104-2977 (for all tax forms with payment)",
+    "notes": [
+     "@@ef2cea20e765"
+    ],
+    "payment": [
+     "Pay online via CT Web Pay: https://portal.ct.gov/DRS-myconneCT (no processor fee).",
+     "By check: make it payable to \"Commissioner of Revenue Services (2025 Form CT-1040, page 4 payment box — \"Make your check payable to: Commissioner of Revenue Services. To ensure proper posting, write your SSN(s) (optional) and '2025 Form CT-1040' on your check.\")\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@68b17d6df36e",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     },
+     {
+      "source": "@@2c76830e971c",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "jurisdiction": "states/ct",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@c9b54c670dc9",
+    "notes": [
+     "@@ef2cea20e765"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@2c76830e971c",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "headline": "CT 2025: refund $512",
+    "jurisdiction": "states/ct",
+    "notes": [
+     "@@db95252fe84b"
+    ],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@2c76830e971c",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "headline": "CT 2025: you owe $347",
+    "jurisdiction": "states/ct",
+    "notes": [
+     "@@db95252fe84b"
+    ],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@2c76830e971c",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "headline": "CT 2025: you owe $1,205",
+    "jurisdiction": "states/ct",
+    "notes": [
+     "@@db95252fe84b"
+    ],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@68a3ff22642c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@8c9b898323e2",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "credits",
+     "url": "@@da88d6df6db2"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@68a3ff22642c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "CT DRS Resident Income Tax — Tax Information, \"Gross Income Test\" section (2025 taxable-year dollar thresholds)",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "filing_logistics",
+     "url": "https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information"
+    },
+    {
+     "answers": "@@68b17d6df36e",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "filing_logistics",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@68a3ff22642c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@46c91757a10e",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+    },
+    {
+     "answers": "CT DRS Resident Income Tax — Tax Information (2025 edition: Who Must File a Connecticut Resident Return, Gross Income Test, residency/domicile and the 183-day statutory-resident rule, Special Information for Nonresident Aliens, What's New for 2025)",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information"
+    },
+    {
+     "answers": "2025 Form CT-1040 Instructions (Rev. 12/25, 28 pages) — Schedule 1 Line 37 \"Other\" additions (\"1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien\"); Line 6 no-tax floors and optional DRS tax tables at CT AGI $102,000 or less; Tax Calculation Schedule (p. 19) and Tables A-E (pp. 19-23); Line 20a CT EITC 40% plus the new $250 qualifying-child supplement and the $11,950 investment-income limit; Line 11 / Schedule 3 Property Tax Credit and Property Tax Credit Table (p. 27); Line 20d Historic Homes Rehabilitation Tax Credit (p. 4, the DECD voucher amount); Line 48d ABLE subtraction (p. 10, lesser of contributions or $5,000 / $10,000 joint); the Access Health CT authorization (p. 2); Line 1 federal Form 1040 Line 11a; Line 13 Schedule CT-IT Credit Part 1 Line 10",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "forms_and_instructions",
+     "url": "@@da88d6df6db2"
+    },
+    {
+     "answers": "2025 Form CT-1040NR/PY Instructions (Rev. 12/25, 28 pages) — Schedule 1 \"Other\" additions (\"1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien\"); INDEPENDENT SECOND-PASS source for Tables A-E: Table A (221 numeric tokens), Table C (136) and Table D (450) are digit-identical multisets, all 28 Table E rows match row-by-row, and all 21 Table B rows print the same bounds, rates and constants",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "forms_and_instructions",
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@68a3ff22642c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@8c9b898323e2",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "law_changes",
+     "url": "@@da88d6df6db2"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@68a3ff22642c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@fc7f99b8bd51",
+     "cadence": "@@9b4e7cb70169",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@da88d6df6db2"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@68a3ff22642c",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ct",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/ct",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@77c80b6e643e",
+      "@@ea1be0afd547",
+      "@@16cb9f81668c",
+      "@@c0e7931c928a",
+      "@@2094cb756467"
+     ],
+     "citations": [
+      {
+       "source": "@@8c9b898323e2",
+       "url": "@@da88d6df6db2"
+      },
+      {
+       "source": "@@46c91757a10e",
+       "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@c7f042b5ae16"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in CT in 2025 without living there — file a nonresident return on CT-source income.",
+     "state": "CT",
+     "warnings": [
+      "@@18137f22a6ec",
+      "@@a64fd1bce23a",
+      "@@5fe2318467b7",
+      "Remote-work trap: work performed from TX for an employer sitting in CT. If CT applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to CT and require a NONRESIDENT CT return that the physical footprint alone never shows — and the W-2's Box 15 often already names CT. This CT pack year carries no researched convenience rule: verify CT's nonresident wage-sourcing rule at its DOR before assuming no CT filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@77c80b6e643e",
+      "@@ea1be0afd547",
+      "@@16cb9f81668c",
+      "@@c0e7931c928a",
+      "@@2094cb756467"
+     ],
+     "citations": [
+      {
+       "source": "@@8c9b898323e2",
+       "url": "@@da88d6df6db2"
+      },
+      {
+       "source": "@@46c91757a10e",
+       "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@c7f042b5ae16"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CT part of 2025 — file a part-year return on income while a resident (plus CT-source income while not).",
+     "state": "CT",
+     "warnings": [
+      "@@18137f22a6ec",
+      "@@a64fd1bce23a",
+      "@@5fe2318467b7"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@77c80b6e643e",
+      "@@ea1be0afd547",
+      "@@16cb9f81668c",
+      "@@c0e7931c928a",
+      "@@2094cb756467"
+     ],
+     "citations": [
+      {
+       "source": "@@8c9b898323e2",
+       "url": "@@da88d6df6db2"
+      },
+      {
+       "source": "@@46c91757a10e",
+       "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form CT-1040, Connecticut Resident Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CT all of 2025 — file a resident return on income from all sources.",
+     "state": "CT",
+     "warnings": [
+      "@@18137f22a6ec",
+      "@@5fe2318467b7"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 100,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [head_of_household schedule]: 0.02 x $5,000.00 (the $0-$16,000 bracket) = $100.00; total $100.00 -> $100"
+   },
+   {
+    "base_after_exemptions": 165000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": "165000",
+     "year": 2025
+    },
+    "marginal_rate": "0.06",
+    "tax": 7900,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $165,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $165,000 [head_of_household schedule]: 0.02 x $16,000.00 (the $0-$16,000 bracket) = $320.00; 0.045 x $64,000.00 (the $16,000-$80,000 bracket) = $2,880.00; 0.055 x $80,000.00 (the $80,000-$160,000 bracket) = $4,400.00; 0.06 x $5,000.00 (the $160,000-$320,000 bracket) = $300.00; total $7,900.00 -> $7,900"
+   },
+   {
+    "base_after_exemptions": 810000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": "810000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0699",
+    "tax": 50699,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $810,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $810,000 [head_of_household schedule]: 0.02 x $16,000.00 (the $0-$16,000 bracket) = $320.00; 0.045 x $64,000.00 (the $16,000-$80,000 bracket) = $2,880.00; 0.055 x $80,000.00 (the $80,000-$160,000 bracket) = $4,400.00; 0.06 x $160,000.00 (the $160,000-$320,000 bracket) = $9,600.00; 0.065 x $80,000.00 (the $320,000-$400,000 bracket) = $5,200.00; 0.069 x $400,000.00 (the $400,000-$800,000 bracket) = $27,600.00; 0.0699 x $10,000.00 (the $800,000+ bracket) = $699.00; total $50,699.00 -> $50,699"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ct",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ct",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 100,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0.02 x $5,000.00 (the $0-$20,000 bracket) = $100.00; total $100.00 -> $100"
+   },
+   {
+    "base_after_exemptions": 205000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ct",
+     "taxable_base": "205000",
+     "year": 2025
+    },
+    "marginal_rate": "0.06",
+    "tax": 9800,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $205,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $205,000 [married_filing_jointly schedule]: 0.02 x $20,000.00 (the $0-$20,000 bracket) = $400.00; 0.045 x $80,000.00 (the $20,000-$100,000 bracket) = $3,600.00; 0.055 x $100,000.00 (the $100,000-$200,000 bracket) = $5,500.00; 0.06 x $5,000.00 (the $200,000-$400,000 bracket) = $300.00; total $9,800.00 -> $9,800"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ct",
+     "taxable_base": "1010000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0699",
+    "tax": 63199,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $1,010,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $1,010,000 [married_filing_jointly schedule]: 0.02 x $20,000.00 (the $0-$20,000 bracket) = $400.00; 0.045 x $80,000.00 (the $20,000-$100,000 bracket) = $3,600.00; 0.055 x $100,000.00 (the $100,000-$200,000 bracket) = $5,500.00; 0.06 x $200,000.00 (the $200,000-$400,000 bracket) = $12,000.00; 0.065 x $100,000.00 (the $400,000-$500,000 bracket) = $6,500.00; 0.069 x $500,000.00 (the $500,000-$1,000,000 bracket) = $34,500.00; 0.0699 x $10,000.00 (the $1,000,000+ bracket) = $699.00; total $63,199.00 -> $63,199"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ct",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ct",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 100,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_separately schedule]: 0.02 x $5,000.00 (the $0-$10,000 bracket) = $100.00; total $100.00 -> $100"
+   },
+   {
+    "base_after_exemptions": 105000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ct",
+     "taxable_base": "105000",
+     "year": 2025
+    },
+    "marginal_rate": "0.06",
+    "tax": 5050,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $105,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $105,000 [married_filing_separately schedule]: 0.02 x $10,000.00 (the $0-$10,000 bracket) = $200.00; 0.045 x $40,000.00 (the $10,000-$50,000 bracket) = $1,800.00; 0.055 x $50,000.00 (the $50,000-$100,000 bracket) = $2,750.00; 0.06 x $5,000.00 (the $100,000-$200,000 bracket) = $300.00; total $5,050.00 -> $5,050"
+   },
+   {
+    "base_after_exemptions": 510000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ct",
+     "taxable_base": "510000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0699",
+    "tax": 31949,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $510,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $510,000 [married_filing_separately schedule]: 0.02 x $10,000.00 (the $0-$10,000 bracket) = $200.00; 0.045 x $40,000.00 (the $10,000-$50,000 bracket) = $1,800.00; 0.055 x $50,000.00 (the $50,000-$100,000 bracket) = $2,750.00; 0.06 x $100,000.00 (the $100,000-$200,000 bracket) = $6,000.00; 0.065 x $50,000.00 (the $200,000-$250,000 bracket) = $3,250.00; 0.069 x $250,000.00 (the $250,000-$500,000 bracket) = $17,250.00; 0.0699 x $10,000.00 (the $500,000+ bracket) = $699.00; total $31,949.00 -> $31,949"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ct",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ct",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 100,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [single schedule]: 0.02 x $5,000.00 (the $0-$10,000 bracket) = $100.00; total $100.00 -> $100"
+   },
+   {
+    "base_after_exemptions": 105000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ct",
+     "taxable_base": "105000",
+     "year": 2025
+    },
+    "marginal_rate": "0.06",
+    "tax": 5050,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $105,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $105,000 [single schedule]: 0.02 x $10,000.00 (the $0-$10,000 bracket) = $200.00; 0.045 x $40,000.00 (the $10,000-$50,000 bracket) = $1,800.00; 0.055 x $50,000.00 (the $50,000-$100,000 bracket) = $2,750.00; 0.06 x $5,000.00 (the $100,000-$200,000 bracket) = $300.00; total $5,050.00 -> $5,050"
+   },
+   {
+    "base_after_exemptions": 510000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ct",
+     "taxable_base": "510000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0699",
+    "tax": 31949,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $510,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $510,000 [single schedule]: 0.02 x $10,000.00 (the $0-$10,000 bracket) = $200.00; 0.045 x $40,000.00 (the $10,000-$50,000 bracket) = $1,800.00; 0.055 x $50,000.00 (the $50,000-$100,000 bracket) = $2,750.00; 0.06 x $100,000.00 (the $100,000-$200,000 bracket) = $6,000.00; 0.065 x $50,000.00 (the $200,000-$250,000 bracket) = $3,250.00; 0.069 x $250,000.00 (the $250,000-$500,000 bracket) = $17,250.00; 0.0699 x $10,000.00 (the $500,000+ bracket) = $699.00; total $31,949.00 -> $31,949"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: CT 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: CT 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ct",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "marginal_rate": "0.045",
+    "tax": 1300,
+    "work_head": "CT state income tax (2025, graduated brackets): taxable_base $40,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.02 x $20,000.00 (the $0-$20,000 bracket) = $400.00; 0.045 x $20,000.00 (the $20,000-$100,000 bracket) = $900.00; total $1,300.00 -> $1,300"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@fc7f99b8bd51",
+    "url": "@@da88d6df6db2"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ct"
+  },
+  "work_common_tail": ". Tax line: 2025 Form CT-1040, Line 6: 'Income Tax'. Computed on the Tax Calculation Schedule (2025 CT-1040 instructions, p. 19): Line 1 = Connecticut AGI (Form CT-1040, Line 5); Line 2 = Table A personal exemption; Line 3 = 'Connecticut Taxable Income: Subtract Line 2 from Line 1. If less than zero, enter 0.'; Line 4 = Table B Initial Tax Calculation (the rate schedules this block ships); Lines 5-6 add Table C (2% Tax Rate Phase-Out Add-Back) and Table D (Tax Recapture); Lines 8-9 apply the Table E personal-credit decimal; Line 10 'Connecticut Income Tax: Subtract Line 9 from Line 7. Enter here and on Form CT-1040, Line 6.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: TY2025 RATES UNCHANGED — the TY2024 cut HELD: the 2024 reduction of the bottom two rates (3% -> 2% and 5% -> 4.5%, Connecticut's first income-tax rate cut since the mid-1990s) was NOT changed again for 2025. Table B for 2025 is digit-identical to TY2024 in every bound, rate and printed constant, and the DRS reprints the same four worked examples. Tables A, C, D and E are likewise unchanged from 2024 (Table C maxima still $250/$500/$250/$400; Table D still begins at CT AGI over $105,000/$210,000/$168,000 with maxima $3,400/$6,800/$5,320). Base guidance: supply Tax Calculation Schedule Line 3 (Connecticut Taxable Income) = Connecticut AGI (Form CT-1040 Line 5 = federal AGI + Schedule 1 additions - Schedule 1 subtractions) MINUS the Table A personal exemption. The Table A exemption (up to $15,000 single / $24,000 MFJ-QSS / $12,000 MFS / $19,000 HoH — unchanged for 2025) is INCOME-DEPENDENT — it falls $1,000 for each $1,000 (or part) of CT AGI over $30,000 / $48,000 / $24,000 / $38,000 and is $0 at CT AGI of $44,000 / $71,000 / $35,000 / $56,000 or more — so it is NOT shipped as a key; compute Table A on the form. At or above the zero point, Line 3 = CT AGI. Do NOT supply raw federal AGI when CT modifications apply, and do NOT subtract the exemption twice. Adjudication note (two-pass): drafted from the 2025 CT-1040 instructions (Rev. 12/25) Tables A-E and independently re-verified against the 2025 CT-1040NR/PY instructions (Rev. 12/25) — Table A (221 numeric tokens), Table C (136) and Table D (450) compare as digit-identical multisets, all 28 Table E rows match row-by-row, and all 21 Table B rows match; zero discrepancies. Every printed '$X plus Y% of the excess over $Z' constant in Table B equals the EXACT cumulative sum of the prior brackets (200/2,000/4,750/10,750/14,000/31,250 single-MFS; 400/4,000/9,500/21,500/28,000/62,500 MFJ-QSS; 320/3,200/7,600/17,200/22,400/50,000 HoH), so pure marginal accumulation reproduces Table B to the half-dollar; the only divergence is IRS half-up rounding of a trailing $.50, and the DRS's own printed examples round the same way ($2,500 x .045 = $112.50 shown as $113 at MFJ Line 3 $22,500 -> $513, and $25,000 x .0699 = $1,747.50 shown as $1,748 at single Line 3 $525,000 -> $32,998). CRITICAL — Table C 2% Phase-Out Add-Back NOT modeled: if CT AGI (Tax Calculation Schedule Line 1, NOT taxable income) exceeds $56,500 single / $100,500 MFJ-QSS / $50,250 MFS / $78,500 HoH, Line 5 ADDS BACK $25-to-$250 in $25 steps (single, maximum above $101,500), $25-to-$250 (MFS, maximum above $72,750), $50-to-$500 (MFJ-QSS, maximum above $145,500), or $40-to-$400 (HoH, maximum above $114,500), clawing back the benefit of the 2% bottom rate. Plain bracket math (this op) UNDERSTATES the filed tax by the Table C amount — compute Line 5 on the form. Bands and amounts are identical to 2024. CRITICAL — Table D Tax Recapture NOT modeled: recapture begins at CT AGI over $105,000 single/MFS / $210,000 MFJ-QSS / $168,000 HoH, recapturing the 4.5%-rate benefit in $25/$50/$40 steps to a first plateau of $250/$500/$400 at CT AGI $150,000-$200,000 / $300,000-$400,000 / $240,000-$320,000, then a second phase in $90/$180/$140 steps to a plateau of $2,950/$5,900/$4,600 (single at CT AGI $345,000-$500,000; MFJ-QSS $690,000-$1,000,000; HoH $552,000-$800,000), then a third phase in $50/$100/$80 steps to the maximum $3,400 (single/MFS, over $540,000), $6,800 (MFJ-QSS, over $1,080,000), $5,320 (HoH, over $864,000). Plain bracket math understates the filed tax by the Table D amount — CT's Tax Calculation Schedule is the filed method. All 450 Table D numeric tokens are unchanged from 2024. Table E Personal Tax Credits NOT modeled (a TAX CREDIT, not a base reduction): a CT-AGI-keyed decimal (.75 down to .01 in 28 steps) multiplies the Line 7 tax and is subtracted on Line 9 for low/moderate incomes — e.g. .75 for single CT AGI over $15,000 up to $18,800 — fully phased out above CT AGI $64,500 single / $100,500 MFJ-QSS / $52,500 MFS / $78,500 HoH (identical to 2023 and 2024). No-tax floor (2025 CT-1040 instructions, Line 6): 'For each filing status, if the amount on Line 5 is: $12,000 or less for married filing separately; $15,000 or less for single; $19,000 or less for head of household; or $24,000 or less for married filing jointly, or qualifying surviving spouse, enter 0 on Line 6. You do not owe any income tax.' This coincides with the full Table A exemption at those AGI levels (the engine's max(0, ...) floor matches). Tax tables are OPTIONAL, not mandated: at CT AGI of $102,000 or less the filer 'may use the Tax Tables on the DRS website at portal.ct.gov/DRS/DRS-Forms/Current-Year-Forms/Calculators-and-Tables'; above $102,000 the filer may use the myconneCT Income Tax Calculator or the Tax Calculation Schedule. The Tax Calculation Schedule is the universal filed method at any income (table bands can differ from schedule arithmetic by a few dollars). One Table B schedule covers 'Single or Married Filing Separately' — duplicated for both statuses here, copied, not derived (Table A/C/E amounts DO differ between single and MFS). The MFJ schedule is titled 'Married Filing Jointly/Qualifying Surviving Spouse', so qualifying surviving spouse maps exactly to married_filing_jointly as the engine assumes. Connecticut has no county or municipal income taxes and no standard deduction; the Table A personal exemption and the Table E personal credit are the only general-relief mechanisms, both income-dependent, both computed on the Tax Calculation Schedule. The CT EITC (Line 20a) was expanded for 2025 — still 40% of the federal EIC, plus an additional $250 for a taxpayer with at least one federal qualifying child — but it is a refundable payment/credit applied after Line 6 and is not part of this block. Schedule 1 subtractions are the caller's, not this block's — the 2025 face adds Line 48d \"Achieving Better Life Experience (ABLE)\", summed into Line 50 and Line 4. 2025 Instructions p. 10, Line 48d ABLE (Achieving a Better Life Experience) Account: \"Subtract the amount of your contributions made to an ABLE (Achieving a Better Life Experience) account. The modification cannot exceed the maximum allowable contribution. The maximum ABLE contribution that may be subtracted is the lesser of (1) the amount of contributions to all ABLE accounts during the taxable year; or (2)(A) $5,000 for each individual taxpayer, including individuals whose filing status on their Connecticut income tax return is single, head of household, filing separately, or (B) $10,000 for individuals whose filing status on their Connecticut income tax return is filing jointly or qualifying surviving spouse.\" The booklet prints no statute, effective year, carryforward or beneficiary rule, and is silent on whether the account must be Connecticut's. (Schedule CT-IT Credit Line 3 \"ABLE Account Tax Credit\" is a different item — an employer credit.) Line 1 of the 2025 face cites \"federal Form 1040, Line 11a, or federal Form 1040-SR, Line 11a\" (the TY2025 Form 1040 prints AGI on 11a); Line 13 \"Total allowable credits from Schedule CT-IT Credit, Part 1, Line 10\" (2023: Line 11). The page-1 \"Do you need health coverage?\" box has no tax effect: 2025 Instructions p. 2, \"By checking the box on Form CT-1040, Connecticut Resident Income Tax Return, you authorize the Department of Revenue Services to transmit certain demographic information about you and your household to Access Health CT. This election authorizes Access Health CT to contact you with information about health coverage options and financial assistance that may be available to you.\" — an authorization, so it is checked only when the filer asks for it."
+ },
+ "year": 2025
+}

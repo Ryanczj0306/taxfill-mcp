@@ -1,0 +1,920 @@
+{
+ "_strings": {
+  "@@164800a181a1": "https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf",
+  "@@1a10c58f0a5e": "2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025: 'For taxable year 2025, when the federal adjusted gross income of a married couple filing jointly exceeds $100,000 or $50,000 in the case of a single, head of household, widow(er), or married individual filing a separate return, 65% of social benefits received and included in the federal adjusted gross income shall be allowed as a decreasing modification.'",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@25af33a7def8": "annual (per tax year; the newest shipped WV pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@6d9896330e09": "Senior Citizen Tax Credit (SCTC) — Restricted to homeowners who participate in the county Homestead Exemption program (generally age 65+ or permanently/totally disabled), who owe and pay a Class II property tax liability on a homestead-exemption-eligible home (assessed value greater than $20,000 before the $20,000 homestead exemption), and whose federal AGI is less than 150% of the federal poverty guidelines. The WV Tax Division mails Form WV SCTC-A to program participants; the original SCTC-A must be filed (preparer-created substitutes are denied).",
+  "@@7c9f8a2e3037": "WV Tax Division — 2025 IT-140 Personal Income Tax Forms and Instructions booklet: TY2025 rate schedules print the REDUCED set (Less than $10,000 -> 2.22% of the taxable income; $222.00 plus 2.96% of excess over $10,000; $666.00 plus 3.33% over $25,000; $1,165.50 plus 4.44% over $40,000; $2,053.50 plus 4.82% over $60,000; Rate Schedule II for married filing separately at exactly half boundaries with constants 111.00/333.00/582.75/1,026.75). 'You can deduct $2,000 for every exemption claimed'; '$500 if you claim zero exemptions'; cover: '2025 PERSONAL INCOME TAX IS DUE APRIL 15, 2026'.",
+  "@@7faed9237982": "Form IT-140 (West Virginia Personal Income Tax Return) - check \"Resident\" status",
+  "@@8134a1fcad48": "Form IT-140 (check \"Filing as Nonresident\" or \"Filing as Part-Year Resident\"), completed together with Schedule A (Form IT-140), \"Nonresidents/Part-Year Residents Schedule of Income.\" (Nonresident composite filers use Form IT-140NRC.)",
+  "@@8b5eb7cea933": "Law change NOT modeled by the engine (status final_form_published): SOCIAL SECURITY PHASE-OUT, SECOND STEP — for 2025, a filer above the income limits (federal AGI over $100,000 joint, $50,000 otherwise) may subtract 65% of the social security benefits included in federal AGI (35% in 2024); below the limits benefits stay fully exempt. A Schedule M decreasing modification. Resolve via: 2025 IT-140 booklet, Important Information for 2025, and the Schedule M social security benefits line.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a2f4c9eed571": "Treaty conformity — WV conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from WV income (it flows through the federal starting point; do not add it back on the WV return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: WV's resident return (Form IT-140) starts from federal adjusted gross income (line 1). The 2025 instructions state plainly (p.24): \"The starting point for the West Virginia income tax return is your federal adjusted gross income.\" Federally treaty-exempt income is already excluded from FAGI and flows through. WV's Schedule M \"Modifications Increasing Federal Adjusted Gross Income\" (lines 51-58) lists ONLY: interest/dividends on federal obligations exempt from federal but not state tax; interest/dividends on non-WV state/local bonds; interest on money borrowed to buy WV-exempt bonds; 402(e) lump-sum distributions; \"other income deducted from FAGI but subject to state tax\" (example given is IRC Section 199 income); and savings-plan/ABLE/Jumpstart withdrawals. There is NO add-back for tax-treaty income, foreign/nonresident-alien treaty income, or income excluded under a US tax treaty. Therefore treaty-exempt income is NOT re-taxed by WV -> conforms = true.",
+  "@@ab6ec6b14d82": "Family Tax Credit (FTC) — Low-income WV resident individuals/families who file with at least one exemption. Filers with zero exemptions cannot claim it, and persons who pay the federal Alternative Minimum Tax are ineligible. Eligibility and credit percentage depend on family size (number of exemptions, boxes a+b+c) and Modified Federal AGI. Computed on Schedule FTC-1 and attached to the return; if filing married-filing-separately use Table 2.",
+  "@@ba0b73cce8a5": "Law change NOT modeled by the engine (status final_form_published): DISABLED VETERAN'S PROPERTY TAX CREDIT EXTENDED TO A WIDOWED SPOUSE — a widowed spouse may now claim the credit if the deceased disabled veteran claimed it in the prior year (exceptions apply). Resolve via: 2025 IT-140 booklet, Important Information for 2025, and the Property Tax Credits page (p.20); TSD 455.",
+  "@@bf3edade7d26": "Homestead Excess Property Tax Credit (HEPTC) — Low-income owners of an owner-occupied WV residence whose WV real property tax paid (less any Senior Citizen Tax Credit) exceeds 4% of gross household income. Low-income means federal AGI of 300% or less of the federal poverty guideline for the household size. Homestead Exemption program participation is NOT required. No credit if any owner of the homestead is not a low-income person. Filers who pay federal AMT are flagged/excluded. Schedule HEPTC-1 and the Class 2 property tax receipt must be filed.",
+  "@@c021a81944a6": "The newest shipped WV pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@e73c0102409d": "2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025: 'Widowed spouses may now claim Disabled Veteran's Property Tax Credit if the deceased disabled veteran claimed'",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@efd779ea731e": "WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI (p.24), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     },
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@7faed9237982",
+    "jurisdiction": "states/wv",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "WV Tax Division, P.O. Box 1071, Charleston, WV 25324-1071",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     },
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@7faed9237982",
+    "jurisdiction": "states/wv",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "WV Tax Division, P.O. Box 3694, Charleston, WV 25336-3694",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via WV Web Pay: https://mytaxes.wvtax.gov (no processor fee).",
+     "By check: make it payable to \"WV Tax Division\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     },
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@7faed9237982",
+    "jurisdiction": "states/wv",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "WV Tax Division, P.O. Box 1071, Charleston, WV 25324-1071",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@7faed9237982",
+    "headline": "WV 2025: refund $512",
+    "jurisdiction": "states/wv",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@7faed9237982",
+    "headline": "WV 2025: you owe $347",
+    "jurisdiction": "states/wv",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@efd779ea731e",
+      "url": "@@164800a181a1"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@7faed9237982",
+    "headline": "WV 2025: you owe $1,205",
+    "jurisdiction": "states/wv",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c021a81944a6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@164800a181a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet), Schedule FTC-1 (p.11) and the 2025 Family Tax Credit Tables (p.12)",
+     "cadence": "@@25af33a7def8",
+     "topic": "credits",
+     "url": "@@164800a181a1"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c021a81944a6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@164800a181a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@efd779ea731e",
+     "cadence": "@@25af33a7def8",
+     "topic": "filing_logistics",
+     "url": "@@164800a181a1"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c021a81944a6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@164800a181a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@efd779ea731e",
+     "cadence": "@@25af33a7def8",
+     "topic": "forms_and_instructions",
+     "url": "@@164800a181a1"
+    },
+    {
+     "answers": "WV Tax Division - 2025 Schedule M (Form IT-140), Modifications to Adjusted Gross Income (increasing modifications, lines 51-58)",
+     "cadence": "@@25af33a7def8",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.wv.gov/Documents/PIT/2025/it140.schedule-M.2025.pdf"
+    },
+    {
+     "answers": "WV Tax Division - 2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income",
+     "cadence": "@@25af33a7def8",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.wv.gov/Documents/PIT/2025/it140.schedule-A.2025.pdf"
+    },
+    {
+     "answers": "WV Tax Division - Individuals page (forms portal)",
+     "cadence": "@@25af33a7def8",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.wv.gov/Individuals"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c021a81944a6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@164800a181a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Rate Schedule I: 'Less than $10,000' — '2.22% of the taxable income' (Rate Schedule II the same at half the bounds).",
+     "cadence": "@@25af33a7def8",
+     "topic": "law_changes",
+     "url": "@@164800a181a1"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c021a81944a6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@164800a181a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@7c9f8a2e3037",
+     "cadence": "@@25af33a7def8",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@164800a181a1"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c021a81944a6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@164800a181a1"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/wv",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/wv",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    },
+    {
+     "benefits_candidates": [
+      "@@ab6ec6b14d82",
+      "@@bf3edade7d26",
+      "@@6d9896330e09"
+     ],
+     "citations": [
+      {
+       "source": "@@1a10c58f0a5e",
+       "url": "@@164800a181a1"
+      },
+      {
+       "source": "@@e73c0102409d",
+       "url": "@@164800a181a1"
+      },
+      {
+       "source": "@@efd779ea731e",
+       "url": "@@164800a181a1"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@8134a1fcad48"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in WV in 2025 without living there — file a nonresident return on WV-source income.",
+     "state": "WV",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a2f4c9eed571",
+      "@@8b5eb7cea933",
+      "@@ba0b73cce8a5",
+      "Remote-work trap: work performed from TX for an employer sitting in WV. If WV applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to WV and require a NONRESIDENT WV return that the physical footprint alone never shows — and the W-2's Box 15 often already names WV. This WV pack year carries no researched convenience rule: verify WV's nonresident wage-sourcing rule at its DOR before assuming no WV filing."
+     ]
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    },
+    {
+     "benefits_candidates": [
+      "@@ab6ec6b14d82",
+      "@@bf3edade7d26",
+      "@@6d9896330e09"
+     ],
+     "citations": [
+      {
+       "source": "@@1a10c58f0a5e",
+       "url": "@@164800a181a1"
+      },
+      {
+       "source": "@@e73c0102409d",
+       "url": "@@164800a181a1"
+      },
+      {
+       "source": "@@efd779ea731e",
+       "url": "@@164800a181a1"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@8134a1fcad48"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in WV part of 2025 — file a part-year return on income while a resident (plus WV-source income while not).",
+     "state": "WV",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a2f4c9eed571",
+      "@@8b5eb7cea933",
+      "@@ba0b73cce8a5"
+     ]
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@ab6ec6b14d82",
+      "@@bf3edade7d26",
+      "@@6d9896330e09"
+     ],
+     "citations": [
+      {
+       "source": "@@1a10c58f0a5e",
+       "url": "@@164800a181a1"
+      },
+      {
+       "source": "@@e73c0102409d",
+       "url": "@@164800a181a1"
+      },
+      {
+       "source": "@@efd779ea731e",
+       "url": "@@164800a181a1"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@7faed9237982"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in WV all of 2025 — file a resident return on income from all sources.",
+     "state": "WV",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@8b5eb7cea933",
+      "@@ba0b73cce8a5"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "wv",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.0222",
+    "tax": 0,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "wv",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0222",
+    "tax": 111,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [head_of_household schedule]: 0.0222 x $5,000.00 (the $0-$10,000 bracket) = $111.00; total $111.00 -> $111"
+   },
+   {
+    "base_after_exemptions": 30000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "wv",
+     "taxable_base": "30000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0333",
+    "tax": 833,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $30,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $30,000 [head_of_household schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $5,000.00 (the $25,000-$40,000 bracket) = $166.50; total $832.50 -> $833"
+   },
+   {
+    "base_after_exemptions": 70000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "wv",
+     "taxable_base": "70000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0482",
+    "tax": 2536,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $70,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $70,000 [head_of_household schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $15,000.00 (the $25,000-$40,000 bracket) = $499.50; 0.0444 x $20,000.00 (the $40,000-$60,000 bracket) = $888.00; 0.0482 x $10,000.00 (the $60,000+ bracket) = $482.00; total $2,535.50 -> $2,536"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "wv",
+     "taxable_base": "44000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0333",
+    "tax": 1166,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $44,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $2,000 = $2,000.00, 1 dependent exemption(s) x $2,000 = $2,000.00 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $15,000.00 (the $25,000-$40,000 bracket) = $499.50; total $1,165.50 -> $1,166"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "wv",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.0222",
+    "tax": 0,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "wv",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0222",
+    "tax": 111,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0.0222 x $5,000.00 (the $0-$10,000 bracket) = $111.00; total $111.00 -> $111"
+   },
+   {
+    "base_after_exemptions": 30000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "wv",
+     "taxable_base": "30000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0333",
+    "tax": 833,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $30,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $30,000 [married_filing_jointly schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $5,000.00 (the $25,000-$40,000 bracket) = $166.50; total $832.50 -> $833"
+   },
+   {
+    "base_after_exemptions": 70000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "wv",
+     "taxable_base": "70000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0482",
+    "tax": 2536,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $70,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $70,000 [married_filing_jointly schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $15,000.00 (the $25,000-$40,000 bracket) = $499.50; 0.0444 x $20,000.00 (the $40,000-$60,000 bracket) = $888.00; 0.0482 x $10,000.00 (the $60,000+ bracket) = $482.00; total $2,535.50 -> $2,536"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 2,
+     "filing_status": "married_filing_jointly",
+     "state": "wv",
+     "taxable_base": "46000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0333",
+    "tax": 1166,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $46,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 2 personal exemption(s) x $2,000 = $4,000.00, 1 dependent exemption(s) x $2,000 = $2,000.00 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $15,000.00 (the $25,000-$40,000 bracket) = $499.50; total $1,165.50 -> $1,166"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "wv",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.0222",
+    "tax": 0,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "wv",
+     "taxable_base": "2500",
+     "year": 2025
+    },
+    "marginal_rate": "0.0222",
+    "tax": 56,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $2,500.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $2,500 [married_filing_separately schedule]: 0.0222 x $2,500.00 (the $0-$5,000 bracket) = $55.50; total $55.50 -> $56"
+   },
+   {
+    "base_after_exemptions": 16250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "wv",
+     "taxable_base": "16250",
+     "year": 2025
+    },
+    "marginal_rate": "0.0333",
+    "tax": 458,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $16,250.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $16,250 [married_filing_separately schedule]: 0.0222 x $5,000.00 (the $0-$5,000 bracket) = $111.00; 0.0296 x $7,500.00 (the $5,000-$12,500 bracket) = $222.00; 0.0333 x $3,750.00 (the $12,500-$20,000 bracket) = $124.88; total $457.88 -> $458"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "wv",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0482",
+    "tax": 1509,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $40,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_separately schedule]: 0.0222 x $5,000.00 (the $0-$5,000 bracket) = $111.00; 0.0296 x $7,500.00 (the $5,000-$12,500 bracket) = $222.00; 0.0333 x $7,500.00 (the $12,500-$20,000 bracket) = $249.75; 0.0444 x $10,000.00 (the $20,000-$30,000 bracket) = $444.00; 0.0482 x $10,000.00 (the $30,000+ bracket) = $482.00; total $1,508.75 -> $1,509"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "married_filing_separately",
+     "state": "wv",
+     "taxable_base": "44000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0482",
+    "tax": 1509,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $44,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $2,000 = $2,000.00, 1 dependent exemption(s) x $2,000 = $2,000.00 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.0222 x $5,000.00 (the $0-$5,000 bracket) = $111.00; 0.0296 x $7,500.00 (the $5,000-$12,500 bracket) = $222.00; 0.0333 x $7,500.00 (the $12,500-$20,000 bracket) = $249.75; 0.0444 x $10,000.00 (the $20,000-$30,000 bracket) = $444.00; 0.0482 x $10,000.00 (the $30,000+ bracket) = $482.00; total $1,508.75 -> $1,509"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "wv",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.0222",
+    "tax": 0,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "wv",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0222",
+    "tax": 111,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [single schedule]: 0.0222 x $5,000.00 (the $0-$10,000 bracket) = $111.00; total $111.00 -> $111"
+   },
+   {
+    "base_after_exemptions": 30000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "wv",
+     "taxable_base": "30000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0333",
+    "tax": 833,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $30,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $30,000 [single schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $5,000.00 (the $25,000-$40,000 bracket) = $166.50; total $832.50 -> $833"
+   },
+   {
+    "base_after_exemptions": 70000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "wv",
+     "taxable_base": "70000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0482",
+    "tax": 2536,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $70,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $70,000 [single schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $15,000.00 (the $25,000-$40,000 bracket) = $499.50; 0.0444 x $20,000.00 (the $40,000-$60,000 bracket) = $888.00; 0.0482 x $10,000.00 (the $60,000+ bracket) = $482.00; total $2,535.50 -> $2,536"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "wv",
+     "taxable_base": "44000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0333",
+    "tax": 1166,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $44,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $2,000 = $2,000.00, 1 dependent exemption(s) x $2,000 = $2,000.00 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $15,000.00 (the $25,000-$40,000 bracket) = $499.50; total $1,165.50 -> $1,166"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "wv",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "marginal_rate": "0.0333",
+    "tax": 1166,
+    "work_head": "WV state income tax (2025, graduated brackets): taxable_base $40,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0222 x $10,000.00 (the $0-$10,000 bracket) = $222.00; 0.0296 x $15,000.00 (the $10,000-$25,000 bracket) = $444.00; 0.0333 x $15,000.00 (the $25,000-$40,000 bracket) = $499.50; total $1,165.50 -> $1,166"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_gross_income",
+   "citation": {
+    "source": "@@7c9f8a2e3037",
+    "url": "@@164800a181a1"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "wv"
+  },
+  "work_common_tail": ". Tax line: Form IT-140 line 8: 'Income Tax Due (Check One)' with method checkboxes 'Tax Table', 'Rate Schedule', 'Nonresident/Part-Year Resident Calculation Schedule'. Line 7 feeding it reads 'West Virginia Taxable Income (line 4 minus lines 5 & 6) IF LESS THAN ZERO, ENTER ZERO'. Instructions p.24: 'LINE 8 WEST VIRGINIA INCOME TAX. Check the appropriate box to indicate the method you used to calculate your tax.' Verified exemption kinds shipped but NOT applied by this op (compute them on the form): surviving_spouse ($2,000 — Exemptions box (d): 'A surviving spouse may claim an additional exemption for the two (2) taxable years following the year in which the spouse died, provided he/she has not remarried before the end of the taxable year' (instructions p.24). One more $2,000 exemption included in box (e). NOT applied by calc.state_tax (the engine applies only the personal/dependent keys) — claim it on the form, or reflect it by raising exemptions_count only if eligible.) This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: TY2025 verification (2026-08-04): West Virginia's trigger-based reduction DID reach TY2025 — the booklet prints 2.22/2.96/3.33/4.44/4.82% (2024 printed 2.36/3.15/3.54/4.72/5.12). All eight printed constants across both schedules were re-derived and equal EXACT cumulative marginal sums (222.00 = 2.22%x10,000; 666.00 = 222 + 2.96%x15,000; 1,165.50 = 666 + 3.33%x15,000; 2,053.50 = 1,165.50 + 4.44%x20,000; Schedule II mirrors at half boundaries), so there is no printed-constant divergence to disclose for either schedule. Base guidance: Supply Form IT-140 line 4, West Virginia Adjusted Gross Income = line 1 federal adjusted gross income ('Enter your federal adjusted gross income as shown on Federal Form 1040') plus line 2 additions to income (Schedule M line 59) minus line 3 subtractions from income (Schedule M line 50). If the filer has no Schedule M modifications, line 4 equals federal AGI. The op then subtracts the shipped $2,000-per-exemption amounts (standard_deduction is 0 — West Virginia has none) to reproduce line 7 West Virginia Taxable Income, assuming line 5 (Low-Income Earned Income Exclusion, only available when federal AGI is $10,000 or less / $5,000 MFS) is zero. Adjudication note (two-pass): standard_deduction is null — West Virginia allows neither a standard deduction nor itemized deductions on Form IT-140 (the only base reductions are the $2,000-per-exemption line 6 amounts, shipped as personal/dependent). Rate-schedule constants re-verified against the 2025 IT-140 booklet (222.00 / 666.00 / 1,165.50 / 2,053.50). THE 2025 RATE CUT (corrected 2026-09-28, Phase J JS2 — this note had quoted the 2023 statute and 2024's rates): the shipped rates (2.22%/2.96%/3.33%/4.44%/4.82%) are W. Va. Code §11-21-4i, 'Rate of tax — Taxable years beginning on and after January 1, 2025' (2024 Second Special Session SB 2033), which 'shall apply for all taxable years beginning on and after January 1, 2025, and shall be in lieu of the rates of tax specified in §11-21-4g of this code and as those rates were modified by the application of §11-21-4h of this code in 2024' (https://code.wvlegislature.gov/11-21-4I/, fetched 2026-09-28) — it supersedes the Tax Commissioner's August 2024 administrative notice under the §11-21-4h trigger. Do not use the 2023-2024 §11-21-4g rates (2.36%-5.12%). TWO RATE SCHEDULES: Rate Schedule I applies 'if you checked 1 (Single), 2 (Head of household), 3 (Married filing joint), or 5 (Widow[er] with dependent child)'; it is duplicated here for single, married_filing_jointly, and head_of_household. Rate Schedule II applies only to filing status 4 (Married filing separately); its bracket bounds ($5,000/$12,500/$20,000/$30,000) were copied directly from the published schedule, not derived. The printed constants ($236.00/$708.50/$1,239.50/$2,183.50 on Schedule I; $118.00/$354.25/$619.75/$1,091.75 on Schedule II) exactly equal the cumulative sums of the prior brackets — no rounding divergence. TAX TABLE MANDATE BELOW $100,000: Line 8 instructions (p.24) — 'If your filing status is single, head of household, widow(er) with a dependent child or married filing jointly and your taxable income is less than $100,000, apply the amount of taxable income shown on line 7 to the Tax Table on page 36 and enter your tax on this line'; the rate schedule is for taxable income over $100,000. The table (booklet pp.36–40, last row $99,950–100,000 = $4,230) is band-midpoint based, so bracket math may differ by a few dollars within table bands — the filed form must use the table. Married-filing-separately filers CANNOT use the table at any income: 'If your filing status is Married Filling Separately you MUST use RATE SCHEDULE II to compute your tax.' NO STANDARD OR ITEMIZED DEDUCTION: West Virginia allows neither a standard deduction nor federal itemized deductions on Form IT-140 — the only across-the-board deduction is the $2,000-per-exemption allowance ('You can deduct $2,000 for every exemption claimed in your exemption schedule', p.24). standard_deduction is shipped as 0 for every filing status so the engine subtracts exemptions only. ZERO-EXEMPTION $500 ALLOWANCE NOT MODELED: 'If you claimed zero exemptions, enter $500 on this line [line 6]' (box (e) = 0, e.g. a filer claimable as a dependent on another return). The engine with exemptions_count=0 subtracts $0, not $500, so it can overstate tax by up to about $26 (5.12% of $500) for such filers — use the form's line 6 in that case. LOW-INCOME EARNED INCOME EXCLUSION (LINE 5) NOT MODELED: filers with federal AGI of $10,000 or less ($5,000 or less MFS) who have earned income may exclude the smaller of federal AGI, earned income, or $10,000 ($5,000 MFS) on line 5 before line 7 (worksheet, booklet p.29). The engine assumes line 5 = 0; it only affects returns with federal AGI at or below $10,000/$5,000. SCHEDULE M MODIFICATIONS COME BEFORE THE SUPPLIED BASE: the senior-citizen modification (up to $8,000 of income per taxpayer age 65+ or permanently/totally disabled), the up-to-$8,000 surviving-spouse decreasing modification, Social Security benefit modification, and all other Schedule M items are line 2/line 3 adjustments taken BEFORE line 4 — the caller must supply line 4 WV AGI already reflecting them. QUALIFYING SURVIVING SPOUSE: the engine maps QSS to married_filing_jointly. West Virginia's own filing status 5, 'Widow(er) with dependent child', uses the SAME Rate Schedule I as married filing jointly and the same $2,000 exemptions, so the mapping reproduces the correct tax. ROUNDING: the booklet requires whole dollars ('Round off amounts to WHOLE DOLLARS – NO CENTS', Tips on Filing a Paper Return, printed page 16 / PDF page 18) and both rate-schedule examples say 'Round to nearest whole dollar' — consistent with the engine's half-up rounding to whole dollars. LINE 7 FLOOR: 'IF LESS THAN ZERO, ENTER ZERO' matches the engine's max(0, base_after). CREDITS ARE NOT EXEMPTIONS AND ARE NOT MODELED: line 8 tax is reduced on line 9 by the Tax Credit Recap Schedule credits — notably the Family Tax Credit (Schedule FTC-1), which can reduce the line 8 tax by up to 100% for low-income families based on family size and Modified Federal AGI, plus the refundable Senior Citizen Tax Credit (line 18) and Homestead Excess Property Tax Credit (line 19). The engine computes line 8 only; actual line 10 liability may be lower. No county or municipal income tax is collected through Form IT-140 — the return computes only the West Virginia state personal income tax."
+ },
+ "year": 2025
+}

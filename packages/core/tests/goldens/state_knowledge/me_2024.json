@@ -1,0 +1,770 @@
+{
+ "_strings": {
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2eac3fe33346": "2024 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — cover page 'Form 1040ME due date: Tuesday, April 15, 2025' and Who must file ('must be filed by April 15, 2025')",
+  "@@32fa4388e4a3": "Law change NOT modeled by the engine (status final_form_published): The $300 Dependent Exemption Tax Credit became REFUNDABLE for Maine residents and part-year residents: \"For tax years beginning on or after January 1, 2024, the dependent exemption tax credit is refundable and for tax years beginning after 2024, the credit is adjusted for inflation. The credit is subject to phaseout.\" (L.D. 258; P.L. 2023, c. 412, Pt. ZZZ; 36 M.R.S. § 5219-SS.) It remains NONREFUNDABLE for nonresidents (Schedule A, line 9), and it moved to Schedule A line 1 for residents/part-year residents. Phaseout applies when Form 1040ME line 16 Maine AGI exceeds $200,000 ($400,000 if married filing jointly). Resolve via: 2024 Form 1040ME Schedule A lines 1 and 9 plus the Worksheet for Dependent Exemption Tax Credit in the 2024 booklet at the citation URL — the credit is subtracted from TAX, not from income, so it sits entirely outside the base supplied to calc.state_tax.",
+  "@@493cacdbdae7": "2024 MAINE Individual Income Tax Booklet — IMPORTANT CHANGES for 2024 ('For tax years beginning on or after January 1, 2024, the dependent exemption tax credit is refundable and for tax years beginning after 2024, the credit is adjusted for inflation. The credit is subject to phaseout.') and Schedule A lines 1/9 instructions ($300 per line 13a dependent; $200,000/$400,000 caution)",
+  "@@4c4c1519167f": "2024 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — Line 14 federal AGI starting point, Schedule 1A income additions (no treaty add-back), Who-must-file, due date Tuesday April 15 2025, payee 'Treasurer, State of Maine', Maine Tax Portal revenue.maine.gov, IMPORTANT CHANGES for 2024 (refundable dependent exemption tax credit; PTFC 65+ increase; pension income deduction increase), 2024 Tax Year Quick Facts ($5,000 personal exemption; $14,600/$21,900/$29,200 standard deduction), 2024 MAINE INCOME TAX TABLE and 2024 TAX RATE SCHEDULES",
+  "@@4cee855deeee": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_Sch%20PTFC_ff_0.pdf",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@6308c8095a03": "Law change NOT modeled by the engine (status final_form_published): Property Tax Fairness Credit maximums for filers 65 or older were RAISED for 2024 by L.D. 258, P.L. 2023, c. 412, Pt. S: the age-65-or-older maximum went from $1,500 to $2,000, and the maximum for a 65-or-older filer who is (or whose spouse is) a U.S. Armed Forces veteran rated 100% permanently and totally disabled by the VA went to $4,000. A single $4,000 maximum benefit base now applies to any filer 65 or older regardless of status or dependent count, and a separate under-$100,000 income limit applies to 65-or-older filers. Resolve via: 2024 Schedule PTFC/STFC (Form 1040ME) lines 7-16 and the 2024 booklet's PTFC page / IMPORTANT CHANGES for 2024 at the citation URL — the credit is computed on the schedule and entered on Form 1040ME line 25d, outside anything calc.state_tax computes.",
+  "@@6cf3ff995b86": "Law change NOT modeled by the engine (status final_form_published): The 2024 booklet's IMPORTANT CHANGES for 2024 list also includes a PENSION INCOME DEDUCTION INCREASE (alongside the refundable dependent exemption tax credit and the PTFC 65+ increase). The pension income deduction is a Maine Schedule 1S income SUBTRACTION reached on Form 1040ME line 15b, so it changes the line 16 Maine AGI a caller supplies rather than anything the engine computes. This pack did NOT transcribe the new deduction amount. Resolve via: 2024 MAINE Individual Income Tax Booklet — IMPORTANT CHANGES for 2024 and the Schedule 1S instructions at the citation URL; resolve the 2024 pension income deduction amount there and take it on line 15b before supplying line 16 as taxable_base.",
+  "@@752be2251f58": "Maine Revenue Services, P.O. Box 1066, Augusta, ME 04332-1066 (Form 1040ME if you are expecting a refund / no balance due)",
+  "@@7d09b15a8d5f": "Form 1040ME with Schedule NR (Form 1040ME), \"Schedule for Calculating the Nonresident Credit\"; married taxpayers electing to file as single may use Schedule NRH (Form 1040ME) instead. Used by nonresidents, part-year residents, and safe harbor residents. (Full-year residents may not file Schedule NR.)",
+  "@@aabe085809be": "2024 Form 1040ME, Schedule PTFC/STFC (lines 7-16 and 'Who is eligible?' — $2,450/$3,200/$3,900 maximum benefit base, $4,000 if 65+, line 12 $1,000/$2,000 maximums, veteran $2,000/$4,000) and 2024 booklet PTFC page (income-limit table) + IMPORTANT CHANGES for 2024 (65+ maximums increased)",
+  "@@b39a7554d7b4": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_book_gen_instr.pdf",
+  "@@bcf7c43a7f07": "Property Tax Fairness Credit (PTFC) — Maine residents and part-year residents who owned or rented a home in Maine during any part of 2024 and lived in it as their principal residence, and who paid property tax greater than 4% of total income OR rent greater than 26.67% of total income. Cannot be claimed if filing status is married filing separately.",
+  "@@c73aaaeeba0e": "Dependent Exemption Tax Credit — Taxpayers with qualifying children and dependents (the number reported on Form 1040ME, line 13a) for whom they are eligible to claim the federal child tax credit or the credit for other dependents under IRC Section 24. NEW FOR 2024 — the credit is REFUNDABLE for Maine residents and part-year residents (L.D. 258; P.L. 2023, c. 412, Pt. ZZZ; 36 M.R.S. § 5219-SS); it remains nonrefundable for nonresidents (Schedule A, line 9).",
+  "@@cc35132d6b24": "Treaty conformity — ME conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from ME income (it flows through the federal starting point; do not add it back on the ME return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Maine's resident return (Form 1040ME) starts from federal adjusted gross income: 2024 Form 1040ME line 14 is \"FEDERAL ADJUSTED GROSS INCOME\" and the instructions (Line 14) say to enter the federal adjusted gross income shown on your federal return. Maine's only income additions are on Schedule 1A (per 36 M.R.S. § 5122(1)), and the full 2024 Schedule 1A list contains NO add-back of federally treaty-exempt income — the additions are limited to specific items (line 1 non-Maine municipal/state bond interest; line 2 NOL recovery adjustment; line 3 MainePERS contributions; lines 4-5 bonus depreciation / Maine capital investment credit add-backs; line 6 fiduciary adjustments; line 7 nonresident installment-sale gain election; line 8 pass-through financial-institution adjustments; line 9 wellness programs credit adjustment; line 10 enrolled tribal members; line 11 reserved). Because treaty-exempt income is already excluded from federal AGI and there is no Maine add-back, it flows through and is not re-taxed. Maine therefore conforms to federal treaty exclusions (unlike California, which adds treaty income back on Schedule CA). Basis: 2024 Form 1040ME instructions, Line 14 and Schedule 1A (24_1040me_book_gen_instr.pdf).",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@ef3b6f20339b": "Child Care Credit — Maine residents and part-year residents (a nonrefundable portion is also available to nonresidents, Schedule A line 10) who claimed the federal credit for child and dependent care expenses. The credit doubles if the expenses are related to a quality child care provider.",
+  "@@f28198e44b1d": "Maine Earned Income Credit (EIC) — Maine residents and part-year residents who properly claim the federal earned income tax credit (including filers using an IRS-issued ITIN who would otherwise qualify, and filers at least age 18 with no qualifying children who would otherwise qualify for the federal EIC). For nonresidents the credit is nonrefundable (Schedule A, line 12) and may not reduce Maine tax below zero.",
+  "@@f4285c685f1a": "Sales Tax Fairness Credit (STFC) — Individuals who were Maine residents during any part of the 2024 tax year, are not married filing separately, and cannot be claimed as a dependent on another person's return. Credit amount depends on the number of qualifying children and dependents claimed on Form 1040ME, line 13a.",
+  "@@f5a9c1aab6b4": "Maine Revenue Services — Mailing Addresses for Forms and Applications (Individual Income Tax Form 1040ME with a check for payment = P.O. Box 1067; expecting a refund = P.O. Box 1066)"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@f5a9c1aab6b4",
+      "url": "https://www.maine.gov/revenue/about/contact/mailing-addresses"
+     },
+     {
+      "source": "@@2eac3fe33346",
+      "url": "@@b39a7554d7b4"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "jurisdiction": "states/me",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@752be2251f58",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@f5a9c1aab6b4",
+      "url": "https://www.maine.gov/revenue/about/contact/mailing-addresses"
+     },
+     {
+      "source": "@@2eac3fe33346",
+      "url": "@@b39a7554d7b4"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "jurisdiction": "states/me",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Maine Revenue Services, P.O. Box 1067, Augusta, ME 04332-1067 (Form 1040ME if you are enclosing a check for payment)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via ME Web Pay: https://revenue.maine.gov (no processor fee).",
+     "By check: make it payable to \"Treasurer, State of Maine (2024 booklet, Line 35 Total Amount Due — 'enclose (do not staple or tape) a check or money order payable to Treasurer, State of Maine with your return. Include your complete name, address and telephone number on your check or money order.' Payments of $1.00 or more may instead be remitted via the Maine Tax Portal at revenue.maine.gov.)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@f5a9c1aab6b4",
+      "url": "https://www.maine.gov/revenue/about/contact/mailing-addresses"
+     },
+     {
+      "source": "@@2eac3fe33346",
+      "url": "@@b39a7554d7b4"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "jurisdiction": "states/me",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@752be2251f58",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@2eac3fe33346",
+      "url": "@@b39a7554d7b4"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "headline": "ME 2024: refund $512",
+    "jurisdiction": "states/me",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@2eac3fe33346",
+      "url": "@@b39a7554d7b4"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "headline": "ME 2024: you owe $347",
+    "jurisdiction": "states/me",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@2eac3fe33346",
+      "url": "@@b39a7554d7b4"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form 1040ME (Maine Individual Income Tax Return) — resident return",
+    "headline": "ME 2024: you owe $1,205",
+    "jurisdiction": "states/me",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/me",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f28198e44b1d",
+      "@@bcf7c43a7f07",
+      "@@f4285c685f1a",
+      "@@ef3b6f20339b",
+      "@@c73aaaeeba0e"
+     ],
+     "citations": [
+      {
+       "source": "@@493cacdbdae7",
+       "url": "@@b39a7554d7b4"
+      },
+      {
+       "source": "@@aabe085809be",
+       "url": "@@4cee855deeee"
+      },
+      {
+       "source": "@@4c4c1519167f",
+       "url": "@@b39a7554d7b4"
+      },
+      {
+       "source": "@@4c4c1519167f",
+       "url": "@@b39a7554d7b4"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@7d09b15a8d5f"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in ME in 2024 without living there — file a nonresident return on ME-source income.",
+     "state": "ME",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@cc35132d6b24",
+      "@@32fa4388e4a3",
+      "@@6308c8095a03",
+      "@@6cf3ff995b86",
+      "Remote-work trap: work performed from TX for an employer sitting in ME. If ME applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to ME and require a NONRESIDENT ME return that the physical footprint alone never shows — and the W-2's Box 15 often already names ME. This ME pack year carries no researched convenience rule: verify ME's nonresident wage-sourcing rule at its DOR before assuming no ME filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f28198e44b1d",
+      "@@bcf7c43a7f07",
+      "@@f4285c685f1a",
+      "@@ef3b6f20339b",
+      "@@c73aaaeeba0e"
+     ],
+     "citations": [
+      {
+       "source": "@@493cacdbdae7",
+       "url": "@@b39a7554d7b4"
+      },
+      {
+       "source": "@@aabe085809be",
+       "url": "@@4cee855deeee"
+      },
+      {
+       "source": "@@4c4c1519167f",
+       "url": "@@b39a7554d7b4"
+      },
+      {
+       "source": "@@4c4c1519167f",
+       "url": "@@b39a7554d7b4"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@7d09b15a8d5f"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in ME part of 2024 — file a part-year return on income while a resident (plus ME-source income while not).",
+     "state": "ME",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@cc35132d6b24",
+      "@@32fa4388e4a3",
+      "@@6308c8095a03",
+      "@@6cf3ff995b86"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f28198e44b1d",
+      "@@bcf7c43a7f07",
+      "@@f4285c685f1a",
+      "@@ef3b6f20339b",
+      "@@c73aaaeeba0e"
+     ],
+     "citations": [
+      {
+       "source": "@@493cacdbdae7",
+       "url": "@@b39a7554d7b4"
+      },
+      {
+       "source": "@@aabe085809be",
+       "url": "@@4cee855deeee"
+      },
+      {
+       "source": "@@4c4c1519167f",
+       "url": "@@b39a7554d7b4"
+      },
+      {
+       "source": "@@4c4c1519167f",
+       "url": "@@b39a7554d7b4"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form 1040ME (Maine Individual Income Tax Return) — resident return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in ME all of 2024 — file a resident return on income from all sources.",
+     "state": "ME",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@32fa4388e4a3",
+      "@@6308c8095a03",
+      "@@6cf3ff995b86"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "me",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 0,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = -$21,900.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "me",
+     "taxable_base": "21900",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 0,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $21,900.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "me",
+     "taxable_base": "26900",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 290,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $26,900.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.058 x $5,000.00 (the $0-$39,050 bracket) = $290.00; total $290.00 -> $290"
+   },
+   {
+    "base_after_exemptions": 44050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "me",
+     "taxable_base": "65950",
+     "year": 2024
+    },
+    "marginal_rate": "0.0675",
+    "tax": 2602,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $65,950.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = $44,050.00; graduated tax on $44,050 [head_of_household schedule]: 0.058 x $39,050.00 (the $0-$39,050 bracket) = $2,264.90; 0.0675 x $5,000.00 (the $39,050-$92,450 bracket) = $337.50; total $2,602.40 -> $2,602"
+   },
+   {
+    "base_after_exemptions": 102450,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "me",
+     "taxable_base": "124350",
+     "year": 2024
+    },
+    "marginal_rate": "0.0715",
+    "tax": 6584,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $124,350.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = $102,450.00; graduated tax on $102,450 [head_of_household schedule]: 0.058 x $39,050.00 (the $0-$39,050 bracket) = $2,264.90; 0.0675 x $53,400.00 (the $39,050-$92,450 bracket) = $3,604.50; 0.0715 x $10,000.00 (the $92,450+ bracket) = $715.00; total $6,584.40 -> $6,584"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "me",
+     "taxable_base": "66900",
+     "year": 2024
+    },
+    "marginal_rate": "0.0675",
+    "tax": 2329,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $66,900.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $5,000 = $5,000.00, standard deduction [head_of_household] = $21,900 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.058 x $39,050.00 (the $0-$39,050 bracket) = $2,264.90; 0.0675 x $950.00 (the $39,050-$92,450 bracket) = $64.12; total $2,329.02 -> $2,329"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "me",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 0,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,200 = -$29,200.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "me",
+     "taxable_base": "29200",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 0,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $29,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,200 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "me",
+     "taxable_base": "34200",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 290,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $34,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,200 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.058 x $5,000.00 (the $0-$52,100 bracket) = $290.00; total $290.00 -> $290"
+   },
+   {
+    "base_after_exemptions": 57100,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "me",
+     "taxable_base": "86300",
+     "year": 2024
+    },
+    "marginal_rate": "0.0675",
+    "tax": 3359,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $86,300.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,200 = $57,100.00; graduated tax on $57,100 [married_filing_jointly schedule]: 0.058 x $52,100.00 (the $0-$52,100 bracket) = $3,021.80; 0.0675 x $5,000.00 (the $52,100-$123,250 bracket) = $337.50; total $3,359.30 -> $3,359"
+   },
+   {
+    "base_after_exemptions": 133250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "me",
+     "taxable_base": "162450",
+     "year": 2024
+    },
+    "marginal_rate": "0.0715",
+    "tax": 8539,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $162,450.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,200 = $133,250.00; graduated tax on $133,250 [married_filing_jointly schedule]: 0.058 x $52,100.00 (the $0-$52,100 bracket) = $3,021.80; 0.0675 x $71,150.00 (the $52,100-$123,250 bracket) = $4,802.62; 0.0715 x $10,000.00 (the $123,250+ bracket) = $715.00; total $8,539.42 -> $8,539"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 2,
+     "filing_status": "married_filing_jointly",
+     "state": "me",
+     "taxable_base": "79200",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 2320,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $79,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 2 personal exemption(s) x $5,000 = $10,000.00, standard deduction [married_filing_jointly] = $29,200 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.058 x $40,000.00 (the $0-$52,100 bracket) = $2,320.00; total $2,320.00 -> $2,320"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "me",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 0,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,600 = -$14,600.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "me",
+     "taxable_base": "14600",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 0,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $14,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,600 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "me",
+     "taxable_base": "19600",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 290,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $19,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,600 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.058 x $5,000.00 (the $0-$26,050 bracket) = $290.00; total $290.00 -> $290"
+   },
+   {
+    "base_after_exemptions": 31050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "me",
+     "taxable_base": "45650",
+     "year": 2024
+    },
+    "marginal_rate": "0.0675",
+    "tax": 1848,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $45,650.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,600 = $31,050.00; graduated tax on $31,050 [married_filing_separately schedule]: 0.058 x $26,050.00 (the $0-$26,050 bracket) = $1,510.90; 0.0675 x $5,000.00 (the $26,050-$61,600 bracket) = $337.50; total $1,848.40 -> $1,848"
+   },
+   {
+    "base_after_exemptions": 71600,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "me",
+     "taxable_base": "86200",
+     "year": 2024
+    },
+    "marginal_rate": "0.0715",
+    "tax": 4626,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $86,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,600 = $71,600.00; graduated tax on $71,600 [married_filing_separately schedule]: 0.058 x $26,050.00 (the $0-$26,050 bracket) = $1,510.90; 0.0675 x $35,550.00 (the $26,050-$61,600 bracket) = $2,399.62; 0.0715 x $10,000.00 (the $61,600+ bracket) = $715.00; total $4,625.52 -> $4,626"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 1,
+     "filing_status": "married_filing_separately",
+     "state": "me",
+     "taxable_base": "59600",
+     "year": 2024
+    },
+    "marginal_rate": "0.0675",
+    "tax": 2453,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $59,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $5,000 = $5,000.00, standard deduction [married_filing_separately] = $14,600 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.058 x $26,050.00 (the $0-$26,050 bracket) = $1,510.90; 0.0675 x $13,950.00 (the $26,050-$61,600 bracket) = $941.62; total $2,452.52 -> $2,453"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "me",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 0,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,600 = -$14,600.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "me",
+     "taxable_base": "14600",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 0,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $14,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,600 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "me",
+     "taxable_base": "19600",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 290,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $19,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,600 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.058 x $5,000.00 (the $0-$26,050 bracket) = $290.00; total $290.00 -> $290"
+   },
+   {
+    "base_after_exemptions": 31050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "me",
+     "taxable_base": "45650",
+     "year": 2024
+    },
+    "marginal_rate": "0.0675",
+    "tax": 1848,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $45,650.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,600 = $31,050.00; graduated tax on $31,050 [single schedule]: 0.058 x $26,050.00 (the $0-$26,050 bracket) = $1,510.90; 0.0675 x $5,000.00 (the $26,050-$61,600 bracket) = $337.50; total $1,848.40 -> $1,848"
+   },
+   {
+    "base_after_exemptions": 71600,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "me",
+     "taxable_base": "86200",
+     "year": 2024
+    },
+    "marginal_rate": "0.0715",
+    "tax": 4626,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $86,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,600 = $71,600.00; graduated tax on $71,600 [single schedule]: 0.058 x $26,050.00 (the $0-$26,050 bracket) = $1,510.90; 0.0675 x $35,550.00 (the $26,050-$61,600 bracket) = $2,399.62; 0.0715 x $10,000.00 (the $61,600+ bracket) = $715.00; total $4,625.52 -> $4,626"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "me",
+     "taxable_base": "59600",
+     "year": 2024
+    },
+    "marginal_rate": "0.0675",
+    "tax": 2453,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $59,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $5,000 = $5,000.00, standard deduction [single] = $14,600 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.058 x $26,050.00 (the $0-$26,050 bracket) = $1,510.90; 0.0675 x $13,950.00 (the $26,050-$61,600 bracket) = $941.62; total $2,452.52 -> $2,453"
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "me",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: ME 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: personal). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "me",
+     "taxable_base": "69200",
+     "year": 2024
+    },
+    "marginal_rate": "0.058",
+    "tax": 2320,
+    "work_head": "ME state income tax (2024, graduated brackets): taxable_base $69,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $29,200 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.058 x $40,000.00 (the $0-$52,100 bracket) = $2,320.00; total $2,320.00 -> $2,320"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2024 MAINE Individual Income Tax Booklet — Form 1040ME General Instructions (24_1040me_book_gen_instr.pdf): '2024 TAX RATE SCHEDULES' (three schedules: #1 Single/MFS — less than $26,050 5.8%; $26,050-$61,600 $1,511 plus 6.75% of excess; $61,600 or more $3,911 plus 7.15% of excess; #2 Head of Household — $39,050 / $92,450, $2,265 / $5,870 constants; #3 Married/Surviving Spouses Filing Jointly — $52,100 / $123,250, $3,022 / $7,825 constants); Line 13 Personal exemptions chart; Line 17 Deduction instruction + Worksheet for Standard/Itemized Deductions ($97,150/$145,750/$194,300 thresholds); Line 18 Exemption instruction ('Multiply the amount shown on line 13 by $5,000') + Worksheet for Phaseout of Personal Exemption Deduction Amount ($323,900/$356,300/$388,650/$194,325); '2024 Tax Year Quick Facts' ($5,000 personal exemption; standard deduction base $14,600 single/MFS, $21,900 HoH, $29,200 MFJ/QSS); 2024 MAINE INCOME TAX TABLE. Second pass: the standalone MRS 'State of Maine - Individual Income Tax, 2024 Rates' sheet (Sept 15, 2023, https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2024.pdf) prints identical rate schedules, the $5,000 personal exemption, and the $14,600/$29,200/$21,900/$14,600 standard deductions (COLA 1.238/1.233 brackets, 1.215 exemption, 36 M.R.S. § 5403); the 2024 Form 1040ME itself prints 'EXEMPTION. (Multiply line 13 x $5,000.)' on line 18 — all passes agree.",
+    "url": "@@b39a7554d7b4"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "me"
+  },
+  "work_common_tail": ". Tax line: 2024 Form 1040ME, line 20: 'INCOME TAX. (Find the tax for the amount on line 19 in the tax table in this booklet or compute your tax using the tax table or tax rate schedules available at maine.gov/revenue/tax-return-forms.)' — where line 19 is 'TAXABLE INCOME. (Line 16 minus lines 17 and 18.)' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply Form 1040ME, line 16 (Maine adjusted gross income) = line 14 federal adjusted gross income + line 15a income addition modifications (Maine Schedule 1A) - line 15b income subtraction modifications (Maine Schedule 1S). The op then subtracts the shipped per-status standard deduction (Form 1040ME line 17) and $5,000 x exemptions_count (line 18) to reproduce line 19 TAXABLE INCOME, and applies the 2024 rate schedules to produce line 20. Do NOT pre-subtract the deduction or exemption from the figure you supply. If you itemize (Schedule 2) or your line 16 exceeds a phaseout threshold (deduction: $97,150 single/MFS, $145,750 HoH, $194,300 MFJ/QSS; exemption: $323,900 single, $356,300 HoH, $388,650 MFJ/QSS, $194,325 MFS), compute lines 17-18 on the form's worksheets instead — the op does not model those adjustments. Adjudication note (two-pass): base is federal_agi — 2024 Form 1040ME line 14 is FEDERAL ADJUSTED GROSS INCOME and line 16 Maine AGI = federal AGI +/- Schedule 1A/1S modifications; supply line 16 (the op subtracts the $5,000-per-exemption line 18 deduction and the federal-amount standard deduction). Dependent counts are zero by design: Maine dependents get the $300 Dependent Exemption Tax Credit (REFUNDABLE for 2024 residents/part-year residents), not an income exemption. 2024 re-indexation (What's New context): all three rate schedules keep the 5.8% / 6.75% / 7.15% rates but the bracket boundaries rose (single/MFS $24,500/$58,050 -> $26,050/$61,600; HoH $36,750/$87,100 -> $39,050/$92,450; MFJ/QSS $49,050/$116,100 -> $52,100/$123,250) — COLA 1.238 on the lowest dollar amounts and 1.233 on the highest (36 M.R.S. § 5403, MRS 2024 Rates sheet). The personal exemption rose $4,700 -> $5,000 (COLA 1.215) and the standard deduction tracks the FEDERAL 2024 amounts ($13,850/$27,700/$20,800 -> $14,600/$29,200/$21,900). Rate schedule sharing: 2024 Tax Rate Schedule #1 is titled 'For Single Individuals and Married Persons Filing Separate Returns' — one schedule covers BOTH single and MFS, so the identical brackets are duplicated per status (MFS is NOT half of MFJ in Maine; it equals single). Qualifying surviving spouse maps to married_filing_jointly: Tax Rate Schedule #3 is titled 'For Married Individuals and Surviving Spouses Filing Joint Returns', and the tax table's MFJ column is footnoted '*This column must also be used by a surviving spouse with dependent child.' QSS also uses the $29,200 standard deduction and the MFJ phaseout thresholds. Printed '$X plus Y% of excess over $Z' constants are rounded to whole dollars and do not exactly equal the cumulative marginal sums: Single/MFS constants $1,511 vs exact $1,510.90 (+$0.10) and $3,911 vs exact $3,910.525 (+$0.475); HoH constants $2,265 vs exact $2,264.90 (+$0.10) and $5,870 vs exact $5,869.40 (+$0.60); MFJ constants $3,022 vs exact $3,021.80 (+$0.20) and $7,825 vs exact $7,824.425 (+$0.575). Pure marginal bracket math (what this op does) can therefore differ from the printed-constant method by up to about $1 in the middle and top brackets. Tax table: the booklet prints a 2024 MAINE INCOME TAX TABLE for line 19 taxable income under $100,000 in $100 bands; Form 1040ME line 20 authorizes computing tax with EITHER 'the tax table or tax rate schedules', so bracket math is a permitted method, but within a $100 band the table (built on band midpoints) may differ from exact bracket math by a few dollars. At $100,000 and over the table itself directs the printed amount 'plus 7.15% of excess over 100,000' ($6,653 Single/MFS, $6,406 HoH) or the rate schedule (MFJ column). SUPERSEDED-TABLES CAUTION: maine.gov hosts TWO 2024 tax-table files — the original 24_1040me_tax_tables.pdf prints WRONG (2023-boundary) values and even reprints the 2023 rate schedules ($24,500/$58,050...) under a '2024 TAX RATE SCHEDULES' heading; the corrected revision 24_1040me_tax_tables_2.pdf matches the booklet and the 2024 Rates sheet. This pack's schedules were verified against the booklet, the 2024 Rates sheet, and the corrected _2 revision — do not source 2024 figures from the un-suffixed file. Standard/itemized deduction PHASEOUT is NOT modeled: if Form 1040ME line 16 (Maine AGI) is more than $97,150 (single or MFS), $145,750 (HoH), or $194,300 (MFJ/QSS), the Worksheet for Standard/Itemized Deductions reduces the line 17 deduction proportionally, reaching $0 once line 16 exceeds the threshold by $75,000 (single/MFS), $112,500 (HoH), or $150,000 (MFJ/QSS) — i.e. fully phased out at $172,150 / $258,250 / $344,300. Above the threshold, compute line 17 on the worksheet, not with the shipped standard deduction. Personal exemption PHASEOUT is NOT modeled: if line 16 exceeds $323,900 (single), $356,300 (HoH), $388,650 (MFJ/QSS), or $194,325 (MFS), the Worksheet for Phaseout of Personal Exemption Deduction Amount reduces the line 18 exemption proportionally over the next $125,000 ($62,500 MFS). DEPENDENTS GET A CREDIT, NOT AN EXEMPTION: Maine has no per-dependent income exemption. The Dependent Exemption Tax Credit is $300 per qualifying child/dependent (Form 1040ME, Schedule A, line 1 — REFUNDABLE for Maine residents and part-year residents beginning tax year 2024 per L.D. 258, P.L. 2023, c. 412, Pt. ZZZ; line 9 nonrefundable for nonresidents), limited when Maine AGI exceeds $200,000 ($400,000 MFJ). It is subtracted from TAX, not from income, and this op does not model it — dependents_count does not change the base. Maine's standard deduction is equal to the federal standard deduction amount (federal Form 1040, line 12); the shipped figures are the 2024 BASE amounts. Additional amounts for age 65+ or blindness are NOT shipped because they vary by marital status: $1,550 per occurrence if married (filing jointly or separately) or a qualified surviving spouse (MFS may count spouse occurrences only if an exemption is claimable for the spouse); $1,950 per occurrence if unmarried (single or HoH). Enter them via the federal standard deduction on the form. Itemizers are not modeled: taxpayers who itemized federally complete Form 1040ME Schedule 2 (Maine itemized deductions, limited to $35,250 for 2024 except medical expenses) and use the larger of that or the standard deduction on line 17 — except nonresident aliens MUST use itemized deductions. Part-year residents, nonresidents, and safe-harbor residents compute line 20 tax on full Maine taxable income, then subtract the nonresident credit on line 21 (Schedule NR or NRH) — not modeled by this op. Tax credit recapture (Form 1040ME line 20a) is added after line 20 and is not modeled. Rounding: use whole dollar amounts — 'Round down to the next lower dollar any amount less than 50 cents. Round up to the next higher dollar any amount 50 cents or more' (2024 booklet, Specific Instructions), matching the engine's half-up rounding. No mid-year 2024 rate change: rates 5.8% / 6.75% / 7.15% with bracket dollar amounts inflation-adjusted under 36 M.R.S. § 5403 (published by MRS Sept 15, 2023; 36 M.R.S. § 5111 sub-§§ 1-F, 2-F, 3-F). Cross-source confirmation: the standalone MRS document 'State of Maine - Individual Income Tax, 2024 Rates' prints identical rate schedules, the $5,000 personal exemption, and the standard deduction amounts (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2024.pdf); the corrected 2024 tax table file prints the same rate schedules on its final page (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_tax_tables_2.pdf); the line 18/19/20 wording is from the 2024 Form 1040ME (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_ff.pdf)."
+ },
+ "year": 2024
+}

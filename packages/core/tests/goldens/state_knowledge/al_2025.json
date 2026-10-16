@@ -1,0 +1,931 @@
+{
+ "_strings": {
+  "@@114fba9c5626": "2025 Alabama Form 40 Booklet (Individual Income Tax — Long Return, Residents and Part-Year Residents) — Tax Tables pp. 25-30 (based on Form 40 line 16 taxable income; one column for Single/Married-filing-separately/Head-of-Family, one for Married-filing-jointly; worked example p. 25: MFJ $23,360 -> $1,088) and the \"Over $100,000.00\" worksheet, p. 30 (tax = $4,958.00 [Single/MFS/Head of family] or $4,918.00 [MFJ] plus .05 x taxable income over $100,000 — both constants RE-DERIVED for 2025, unchanged from 2024); Standard Deduction chart p. 9; dependent-exemption chart p. 10; personal exemptions printed on the 2025 Form 40 filing-status boxes 1-4 ($1,500/$3,000/$1,500/$3,000). Rate schedule text (2% first $500/$1,000, 4% next $2,500/$5,000, 5% over $3,000/$6,000) corroborated by the live ADOR FAQ \"What is Alabama's Individual Income Tax Rate?\" (revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/). Second pass: the printed 2025 Form 40 (line 16 \"Taxable income. Subtract line 15 from line 10\", line 17 \"Income Tax due. Enter amount from tax table or check if from Form NOL-85A\", the \"$1,500 / $3,000\" filing-status boxes) and the 2025 Form 40NR booklet's identical tax-table rows and identical over-$100,000 worksheet — all passes agree; no 2025 rate or bracket change.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1df81947a462": "Law change NOT modeled by the engine (status final_form_published): NEW-VEHICLE LOAN INTEREST DEDUCTION — the 2025 Form 40 booklet's What's New For 2025 page adds a deduction for new-vehicle loan interest under Ala. Code Sec. 40-18-15, available for tax years 2025-2028. It is a base deduction taken on the Form 40 before line 16 taxable income, not a credit. Resolve via: 2025 Form 40 Booklet, What's New For 2025 (p.2) and the Sec. 40-18-15 deduction instructions in the same booklet (the citation URL); this pack ships no figure for the deduction and calc.state_tax subtracts nothing beyond the rate schedule's line 16 input.",
+  "@@20ce50806315": "2025 Form 40 Booklet (Alabama Department of Revenue, Long Return — Residents and Part-Year Residents, Forms and Instructions) — What's New For 2025 (p.2, credit/exclusion changes only); You Must File A Return If chart (p.5); When To File / automatic extension to October 15, 2026 (p.5); Filing Status and Personal Exemption Lines 1-4 (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.10, Line 14 instructions begin p.8); Line 17 Figuring Your Tax tax-table mandate (p.10); Amount You Owe / Form 40V (p.11); Where To File (p.12); Tax Tables pp.25-30 and Over $100,000.00 worksheet (p.30)",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@50466c2a4d3f": "https://www.revenue.alabama.gov/wp-content/uploads/2025/06/250529_NOTICE_IT_OvertimeExemptionSunset.pdf",
+  "@@59380a3b8b10": "If any income was exempt from federal tax under a treaty: AL does not conform to federal tax treaties — that income is still taxable to AL.",
+  "@@5c903e46fb09": "Law change NOT modeled by the engine (status final_form_published): SOUND MONEY TAX NEUTRALITY ACT (Act 2024-0447) — beginning January 1, 2025, net capital gains on precious metal bullion are EXCLUDED from Alabama income (2025 Form 40 booklet, What's New For 2025). A new income exclusion, not a credit: it reduces the Alabama income built up on the Form 40 before line 16. Resolve via: 2025 Form 40 Booklet, What's New For 2025 (p.2), Sound Money Tax Neutrality Act / Act 2024-0447 (the citation URL); the excluded amount is the filer's own net capital gain on precious metal bullion.",
+  "@@6239d6932d01": "Law change NOT modeled by the engine (status final_form_published): OVERTIME EXEMPTION SUNSET — the Alabama exclusion of overtime pay for full-time hourly employees (Act 2023-421, as amended by Act 2024-437) ENDED June 30, 2025: per the ADOR notice of May 29, 2025, \"The Alabama state income tax exemption applicable to overtime wages ends on June 30, 2025. After this date, any amounts paid/received as overtime compensation are subject to income tax.\" TY2025 is therefore a HALF-YEAR exclusion — overtime earned while the exemption was in effect is denoted in W-2 Box 14 as \"EX OT WAGES\" and is NOT included in Box 16 state wages, while overtime paid after June 30, 2025 is fully taxable. Neither 2025 booklet mentions overtime at all (the rule lives in the withholding/W-2 channel), and the successor Overtime Premium Deduction is a 2026-2028 provision that does NOT apply to TY2025. Resolve via: ADOR NOTICE of May 29, 2025, \"Overtime Exemption Ends June 30, 2025\" (the citation URL); the exempt amount comes from the filer's W-2 Box 14 \"EX OT WAGES\". The allocation rule for overtime straddling June 30, 2025 (paid-date versus earned-date) is NOT stated on any fetched .gov page — confirm with ADOR.",
+  "@@65a2e452b5cf": "2025 Form 40 Booklet, 'Where To File' (p.12) and the same block printed on the face of the 2025 Form 40 — refund P.O. Box 154 (36135-0001); payment P.O. Box 2401 (36140-0001) with Form 40V; neither P.O. Box 327469 (36132-7469); prior-year/amended/correspondence P.O. Box 327464 (36132-7464).",
+  "@@6f48cabbef05": "Receiving a refund (Form 40, line 35): Alabama Department of Revenue, P.O. Box 154, Montgomery, AL 36135-0001. Neither a refund nor a payment: Alabama Department of Revenue, P.O. Box 327469, Montgomery, AL 36132-7469.",
+  "@@6fb0fc8ad7ee": "ADOR NOTICE, May 29, 2025 — 'Overtime Exemption Ends June 30, 2025': 'The Alabama state income tax exemption applicable to overtime wages ends on June 30, 2025. After this date, any amounts paid/received as overtime compensation are subject to income tax.' Employers denote the exempt wages earned during the 2025 period in which the exemption was in effect in Box 14 of the W-2 using 'EX OT WAGES'; 'Do not include exempt overtime wages in Box 16 of the W-2.'",
+  "@@7f4522257115": "Rural Physician Credit — Licensed physicians who practice and reside in a small or rural Alabama community of less than 25,000 residents, with admission privileges to a 'small or rural hospital' having an emergency room (an acute care hospital with less than 105 beds, located more than 20 miles from another acute care facility, or which receives Medicare rural reimbursement from the federal government). No credit is allowed to physicians meeting the requirements on or before May 5, 1993, nor to a physician having previously practiced within a rural community unless he/she returns to such practice after having practiced in a large or urban community for at least three years.",
+  "@@8e8f47403cdf": "Credit for Taxes Paid to Another State — Legal residents of Alabama filing Form 40 who have income from sources outside Alabama that is taxed by BOTH Alabama and another U.S. state or territory in the same tax year. (Part-year residents only if the AL and other-state returns cover the same periods. Schedule CR must be completed with a copy of the other state's return attached — or W-2Gs if the taxing state does not allow a return to be filed for gambling winnings. The 2025 Schedule OC instructions add an explicit NOTE: residents who worked and received income/wages from a state that has NO income tax are not eligible. Taxes paid to a FOREIGN country use Schedule OC Section B, Part I — not Schedule CR.)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9bc83b51da56": "annual (per tax year; the newest shipped AL pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@9cce479f565d": "Form 40NR — Alabama Individual Income Tax Return (Nonresidents Only). Part-year residents file the resident Form 40 (reporting only the resident-period income); a person who is part-year resident AND has nonresident-period Alabama-source income files BOTH Form 40 and Form 40NR (personal and dependent exemptions all claimed on the part-year Form 40, none on the 40NR).",
+  "@@a3e9412d87b9": "2025 Form 40 Booklet, When To File (p.5) — 'You should file as soon as you can after January 1, 2026, but no later than the due date of the federal return' (April 15, 2026); 'You will automatically be granted an extension until October 15, 2026' (no application required; payment with Form 40V, 'Automatic Extension Payment' box checked, is still due by the due date of the federal return).",
+  "@@b6fc2cc211ee": "Alabama Adoption Tax Credit — Taxpayers who reside in Alabama and complete an adoption. Two cases: (1) a private adoption in which the adopted child is a resident of Alabama, or a qualified foster child in the custody of the Alabama Department of Human Resources; (2) an out-of-state adoption or where the adopted child is not otherwise an Alabama resident. Schedule AAC must be completed.",
+  "@@c58e7d1cb3cc": "Treaty conformity — AL does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by AL. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: Alabama does NOT start the return from federal adjusted gross income. Both the resident Form 40 and the nonresident Form 40NR build Alabama income from their own line items computed under Alabama law (2025 Form 40 line 5b wages/salaries/tips from Schedule W-2 line 18 column I plus column J, line 6 interest and dividends, line 7 other income; Form 40NR equivalents), not by importing a federal AGI figure. Because the federal-AGI-conformity flow-through does not exist here, a treaty exclusion that is already netted out of federal AGI does NOT automatically carry to the Alabama return. The 2025 Form 40NR booklet (25f40nrbk.pdf, Other Income / Foreign Income Exclusion) is explicit on the only foreign-income mechanism it recognizes: 'All foreign income must be reported on your return, in order to receive any foreign income exclusion,' and that exclusion is the IRC sec. 911 foreign EARNED income exclusion, claimed as a negative entry on line 8 Other Income with federal Form 2555 attached. There is NO Alabama line, schedule, or instruction that recognizes or excludes income exempt under a U.S. income-TAX TREATY. Given (a) the separate Alabama income build-up rather than a federal-AGI start, and (b) the affirmative 'report all foreign income' rule with only a sec. 911-style exclusion path, conformity to federal treaty exemptions is NOT established on any .gov page. Per conservative handling this is set false and flagged. See unverified/notes.",
+  "@@c70678b89f8d": "The newest shipped AL pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@d71d2a05b94b": "Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional short form for full-year residents who do not itemize, claim no adjustments to income, have income only from salaries/wages plus up to $1,500 of interest and dividends, no Schedule C/D/E/F income, and no other-state credit; part-year residents use Form 40.)",
+  "@@eab2ce4c8add": "If any of your income was exempt from federal tax under a treaty: AL does not conform to federal tax treaties, so that income is still taxable to AL — do not carry the federal exclusion onto the state return.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@65a2e452b5cf",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     },
+     {
+      "source": "@@a3e9412d87b9",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@d71d2a05b94b",
+    "jurisdiction": "states/al",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@6f48cabbef05",
+    "notes": [
+     "@@4d42ad525021",
+     "@@eab2ce4c8add"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@65a2e452b5cf",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     },
+     {
+      "source": "@@a3e9412d87b9",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@d71d2a05b94b",
+    "jurisdiction": "states/al",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Making a payment (Form 40, line 30): Alabama Department of Revenue, P.O. Box 2401, Montgomery, AL 36140-0001 (include the Form 40V payment voucher). Prior-year returns, amended returns, and all other correspondence go to Alabama Department of Revenue, P.O. Box 327464, Montgomery, AL 36132-7464.",
+    "notes": [
+     "@@4d42ad525021",
+     "@@eab2ce4c8add"
+    ],
+    "payment": [
+     "Pay online via AL Web Pay: https://myalabamataxes.alabama.gov (no processor fee).",
+     "By check: make it payable to \"Alabama Department of Revenue (2025 booklet, Amount You Owe — 'Pay the full amount by check or money order payable to the \"Alabama Department of Revenue.\" On your payment write your social security number, your daytime telephone number, and \"2025 Form 40,\" and remit your payment with Form 40V.')\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@65a2e452b5cf",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     },
+     {
+      "source": "@@a3e9412d87b9",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@d71d2a05b94b",
+    "jurisdiction": "states/al",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@6f48cabbef05",
+    "notes": [
+     "@@4d42ad525021",
+     "@@eab2ce4c8add"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@a3e9412d87b9",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@d71d2a05b94b",
+    "headline": "AL 2025: refund $512",
+    "jurisdiction": "states/al",
+    "notes": [
+     "@@59380a3b8b10"
+    ],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@a3e9412d87b9",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@d71d2a05b94b",
+    "headline": "AL 2025: you owe $347",
+    "jurisdiction": "states/al",
+    "notes": [
+     "@@59380a3b8b10"
+    ],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@a3e9412d87b9",
+      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@d71d2a05b94b",
+    "headline": "AL 2025: you owe $1,205",
+    "jurisdiction": "states/al",
+    "notes": [
+     "@@59380a3b8b10"
+    ],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c70678b89f8d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Alabama Department of Revenue, 2025 Schedule OC Instructions, 'Part A - Credit for Taxes Paid to Other States (Form 40 Only)' lines A1-A6, and 2025 Form 40 Booklet, 'Credit for Taxes Paid to Another State' (Line 17/18 credits discussion, p.10).",
+     "cadence": "@@9bc83b51da56",
+     "topic": "credits",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25schocinstr.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c70678b89f8d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@65a2e452b5cf",
+     "cadence": "@@9bc83b51da56",
+     "topic": "filing_logistics",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c70678b89f8d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@20ce50806315",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    },
+    {
+     "answers": "2025 Alabama Form 40 (printed form) — second-pass verification: the filing-status boxes print the personal exemptions '1 $1,500 Single; 2 $3,000 Married filing joint; 3 $1,500 Married filing separate; 4 $3,000 Head of Family (with qualifying person). Complete Schedule HOF'; line 5b 'Wages, salaries, tips, etc. (from Schedule W-2, line 18, column I plus J)'; line 16 'Taxable income. Subtract line 15 from line 10'; line 17 'Income Tax due. Enter amount from tax table or check if from Form NOL-85A'; and the Where To File block",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40blk.pdf"
+    },
+    {
+     "answers": "2025 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart (same $4,500/$8,200/$11,500/$5,750), the sliding Standard Deduction chart (same amounts and the same printed MFJ typo), the identical tax-table figures (e.g. $4,100-$4,200 row = $168 single / $146 MFJ; $16,000-$16,100 = $763/$723; $99,900-$100,000 = $4,958/$4,918), the identical Over $100,000.00 worksheet constants ($4,958.00 / $4,918.00), and the Foreign Income Exclusion text ('All foreign income must be reported on your return, in order to receive any foreign income exclusion' — IRC sec. 911 exclusion via federal Form 2555 only, reported as a negative line 8 entry, no treaty mechanism)",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nrbk.pdf"
+    },
+    {
+     "answers": "2025 Schedule OC Instructions — Part A other-state credit smaller-of computation (with the new NOTE denying the credit for wages from a no-income-tax state), Part D Rural Physician Credit ($5,000 / $10,000 MFJ), Part M Alabama Adoption Tax Credit ($2,000 / $1,000), Section F refundable credits (F2 adoption), and the 2025-new Act 2024-302/2024-303 credits (Workforce Housing, Childcare Facility, Employer, Employer Provider)",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25schocinstr.pdf"
+    },
+    {
+     "answers": "ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' — '2% First $500 of taxable income, 4% Next $2,500 of taxable income, 5% All taxable income over $3,000' (single persons, heads of families, married filing separate); '2% First $1,000 of taxable income, 4% Next $5,000 of taxable income, 5% All taxable income over $6,000' (married filing joint) — live re-fetch, matches the 2025 booklet tax table and worksheet numerically",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/"
+    },
+    {
+     "answers": "@@6fb0fc8ad7ee",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "@@50466c2a4d3f"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c70678b89f8d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@6fb0fc8ad7ee",
+     "cadence": "@@9bc83b51da56",
+     "topic": "law_changes",
+     "url": "@@50466c2a4d3f"
+    },
+    {
+     "answers": "@@20ce50806315",
+     "cadence": "@@9bc83b51da56",
+     "topic": "law_changes",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c70678b89f8d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@114fba9c5626",
+     "cadence": "@@9bc83b51da56",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@c70678b89f8d",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/al",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/al",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@8e8f47403cdf",
+      "@@b6fc2cc211ee",
+      "@@7f4522257115"
+     ],
+     "citations": [
+      {
+       "source": "@@6fb0fc8ad7ee",
+       "url": "@@50466c2a4d3f"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@9cce479f565d"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in AL in 2025 without living there — file a nonresident return on AL-source income.",
+     "state": "AL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@c58e7d1cb3cc",
+      "@@6239d6932d01",
+      "@@1df81947a462",
+      "@@5c903e46fb09",
+      "Remote-work trap: work performed from TX for an employer sitting in AL. If AL applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to AL and require a NONRESIDENT AL return that the physical footprint alone never shows — and the W-2's Box 15 often already names AL. This AL pack year carries no researched convenience rule: verify AL's nonresident wage-sourcing rule at its DOR before assuming no AL filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@8e8f47403cdf",
+      "@@b6fc2cc211ee",
+      "@@7f4522257115"
+     ],
+     "citations": [
+      {
+       "source": "@@6fb0fc8ad7ee",
+       "url": "@@50466c2a4d3f"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@9cce479f565d"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in AL part of 2025 — file a part-year return on income while a resident (plus AL-source income while not).",
+     "state": "AL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@c58e7d1cb3cc",
+      "@@6239d6932d01",
+      "@@1df81947a462",
+      "@@5c903e46fb09"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@8e8f47403cdf",
+      "@@b6fc2cc211ee",
+      "@@7f4522257115"
+     ],
+     "citations": [
+      {
+       "source": "@@6fb0fc8ad7ee",
+       "url": "@@50466c2a4d3f"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "@@20ce50806315",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@d71d2a05b94b"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in AL all of 2025 — file a resident return on income from all sources.",
+     "state": "AL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@6239d6932d01",
+      "@@1df81947a462",
+      "@@5c903e46fb09"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "al",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "al",
+     "taxable_base": "250",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 5,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $250.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $250 [head_of_household schedule]: 0.02 x $250.00 (the $0-$500 bracket) = $5.00; total $5.00 -> $5"
+   },
+   {
+    "base_after_exemptions": 1750,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "al",
+     "taxable_base": "1750",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 60,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $1,750.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $1,750 [head_of_household schedule]: 0.02 x $500.00 (the $0-$500 bracket) = $10.00; 0.04 x $1,250.00 (the $500-$3,000 bracket) = $50.00; total $60.00 -> $60"
+   },
+   {
+    "base_after_exemptions": 13000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "al",
+     "taxable_base": "13000",
+     "year": 2025
+    },
+    "marginal_rate": "0.05",
+    "tax": 610,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $13,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $13,000 [head_of_household schedule]: 0.02 x $500.00 (the $0-$500 bracket) = $10.00; 0.04 x $2,500.00 (the $500-$3,000 bracket) = $100.00; 0.05 x $10,000.00 (the $3,000+ bracket) = $500.00; total $610.00 -> $610"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "al",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "al",
+     "taxable_base": "500",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 10,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $500.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $500 [married_filing_jointly schedule]: 0.02 x $500.00 (the $0-$1,000 bracket) = $10.00; total $10.00 -> $10"
+   },
+   {
+    "base_after_exemptions": 3500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "al",
+     "taxable_base": "3500",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 120,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $3,500.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $3,500 [married_filing_jointly schedule]: 0.02 x $1,000.00 (the $0-$1,000 bracket) = $20.00; 0.04 x $2,500.00 (the $1,000-$6,000 bracket) = $100.00; total $120.00 -> $120"
+   },
+   {
+    "base_after_exemptions": 16000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "al",
+     "taxable_base": "16000",
+     "year": 2025
+    },
+    "marginal_rate": "0.05",
+    "tax": 720,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $16,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $16,000 [married_filing_jointly schedule]: 0.02 x $1,000.00 (the $0-$1,000 bracket) = $20.00; 0.04 x $5,000.00 (the $1,000-$6,000 bracket) = $200.00; 0.05 x $10,000.00 (the $6,000+ bracket) = $500.00; total $720.00 -> $720"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "al",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "al",
+     "taxable_base": "250",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 5,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $250.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $250 [married_filing_separately schedule]: 0.02 x $250.00 (the $0-$500 bracket) = $5.00; total $5.00 -> $5"
+   },
+   {
+    "base_after_exemptions": 1750,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "al",
+     "taxable_base": "1750",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 60,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $1,750.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $1,750 [married_filing_separately schedule]: 0.02 x $500.00 (the $0-$500 bracket) = $10.00; 0.04 x $1,250.00 (the $500-$3,000 bracket) = $50.00; total $60.00 -> $60"
+   },
+   {
+    "base_after_exemptions": 13000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "al",
+     "taxable_base": "13000",
+     "year": 2025
+    },
+    "marginal_rate": "0.05",
+    "tax": 610,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $13,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $13,000 [married_filing_separately schedule]: 0.02 x $500.00 (the $0-$500 bracket) = $10.00; 0.04 x $2,500.00 (the $500-$3,000 bracket) = $100.00; 0.05 x $10,000.00 (the $3,000+ bracket) = $500.00; total $610.00 -> $610"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "al",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "al",
+     "taxable_base": "250",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 5,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $250.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $250 [single schedule]: 0.02 x $250.00 (the $0-$500 bracket) = $5.00; total $5.00 -> $5"
+   },
+   {
+    "base_after_exemptions": 1750,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "al",
+     "taxable_base": "1750",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 60,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $1,750.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $1,750 [single schedule]: 0.02 x $500.00 (the $0-$500 bracket) = $10.00; 0.04 x $1,250.00 (the $500-$3,000 bracket) = $50.00; total $60.00 -> $60"
+   },
+   {
+    "base_after_exemptions": 13000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "al",
+     "taxable_base": "13000",
+     "year": 2025
+    },
+    "marginal_rate": "0.05",
+    "tax": 610,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $13,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $13,000 [single schedule]: 0.02 x $500.00 (the $0-$500 bracket) = $10.00; 0.04 x $2,500.00 (the $500-$3,000 bracket) = $100.00; 0.05 x $10,000.00 (the $3,000+ bracket) = $500.00; total $610.00 -> $610"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "al",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: AL 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "al",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: AL 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "al",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "marginal_rate": "0.05",
+    "tax": 1920,
+    "work_head": "AL state income tax (2025, graduated brackets): taxable_base $40,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.02 x $1,000.00 (the $0-$1,000 bracket) = $20.00; 0.04 x $5,000.00 (the $1,000-$6,000 bracket) = $200.00; 0.05 x $34,000.00 (the $6,000+ bracket) = $1,700.00; total $1,920.00 -> $1,920"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_taxable_income",
+   "citation": {
+    "source": "@@114fba9c5626",
+    "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "al"
+  },
+  "work_common_tail": ". Tax line: Form 40, line 17: 'Income Tax due. Enter amount from tax table or check if from Form NOL-85A' (line 16: 'Taxable income. Subtract line 15 from line 10.'); booklet Line 17 Figuring Your Tax (p.10): 'You must figure your tax from the Tax Tables unless you are claiming a carryover or carryback Net Operating Loss from another year.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 UNCHANGED: the 2025 booklet's What's New page carries only credits and income exclusions (Identity Quiz notice; new-vehicle loan interest deduction under Sec. 40-18-15 for 2025-2028; expanded military-pay exemption, Act 2024-0170; Sound Money Tax Neutrality Act, Act 2024-0447, excluding net capital gains on precious metal bullion beginning January 1, 2025; Alabama Workforce Housing Tax Credit, Act 2024-302; Childcare Facility / Employer / Employer Provider credits, Act 2024-303) — the 2%/4%/5% dual schedules, the sliding standard deduction chart, the $1,500/$3,000 personal exemptions, the income-tiered dependent exemption, and the over-$100,000 worksheet constants were each RE-VERIFIED from the 2025 prints (booklet, printed Form 40, and 40NR booklet), not assumed. Base guidance: Supply 2025 Alabama Form 40, page 1, line 16 'Taxable income. Subtract line 15 from line 10.' Alabama does NOT start from federal AGI: line 10 Alabama adjusted gross income is built from Alabama line items (line 8 total income minus line 9 adjustments), and line 15 total deductions = line 11 (itemized OR sliding standard deduction) + line 12 (FEDERAL income tax deduction, from the Federal Income Tax Deduction Worksheet) + line 13 (personal exemption $1,500/$3,000) + line 14 (income-dependent dependent exemption). All of those subtractions must already be taken on the form before line 16 — this op subtracts nothing further. Tax-table mandate: the 2025 Form 40 booklet (Line 17 Figuring Your Tax, p.10) states 'You must figure your tax from the Tax Tables unless you are claiming a carryover or carryback Net Operating Loss from another year.' The Tax Tables (booklet pp. 25-30) cover taxable income under $100,000 in $100-wide bands priced at the band midpoint, so bracket math may differ by a few dollars within a table band (booklet example: MFJ $23,360 -> table $1,088, which equals exact bracket math at that figure); the filed form must use the table. Over $100,000: the 2025 booklet's worksheet (p. 30) computes tax as $4,958.00 (Single/Married filing separately/Head of family) or $4,918.00 (Married filing jointly) plus 5% of taxable income over $100,000 — both constants re-derived for 2025 and unchanged. Those printed constants are each $2 LESS than the exact cumulative bracket sums ($4,960 = 500x.02 + 2,500x.04 + 97,000x.05; $4,920 = 1,000x.02 + 5,000x.04 + 94,000x.05) because they carry forward the last tax-table row's midpoint value (the $99,900-$100,000 row prints $4,958/$4,918); at and above $100,000 the tax the form produces is therefore $2 lower than this op's pure bracket math. FEDERAL income tax deduction quirk: Alabama allows a base deduction for federal income tax liability (Form 40 line 12; Federal Income Tax Deduction Worksheet, 2025 booklet: 2025 Form 1040/1040-SR/1040NR line 22 plus Form 8960 line 17 net investment income tax, minus refundable EIC, Additional Child Tax Credit, American Opportunity Credit, and Form 2439 credits). It is already inside the line 16 base this op consumes — do not re-subtract it. standard_deduction is NOT shipped because Alabama's standard deduction slides with Alabama AGI (2025 booklet p. 9 chart, amounts unchanged from 2024): MFJ $8,500 (AL AGI $0-$25,999) phasing down to $5,000 at $35,500 and above; MFS $4,250 ($0-$12,999) down to $2,500 at $17,750 and above; Head of Family $5,200 ($0-$25,999) down to $2,500 at $35,500 and above; Single $3,000 ($0-$25,999) down to $2,500 at $35,500 and above. Take it from the chart on Form 40 line 11; it is already inside line 16. (Both 2025 booklets reprint the same MFJ third-band typo '$25,500 - $26,999' for what the surrounding rows show is $26,500 - $26,999 — see the pack's unverified list.) Personal exemption (Form 40 line 13) is $1,500 (Single or Married Filing Separately) / $3,000 (Married Filing Jointly or Head of Family), printed on the 2025 Form 40 filing-status boxes 1-4 (box 4 now adds 'Complete Schedule HOF'). It is a base reduction, but it is already inside the line 16 base this op consumes, so it is NOT shipped as an engine exemption. Dependent exemption (Form 40 line 14, from page 2 Part III line 2) is income-dependent and NOT shipped: $1,000 per dependent when the amount on page 1, line 10 is $0-$50,000; $500 when $50,001-$100,000; $300 when over $100,000 (2025 booklet p. 10 chart, unchanged from 2024). It is already inside line 16 — claim it on the form, not through this op. One rate schedule covers Single, Married Filing Separately, and Head of Family (2% on the first $500, 4% on the next $2,500, 5% over $3,000); Married Filing Jointly has its own schedule (2% on the first $1,000, 4% on the next $5,000, 5% over $6,000). Alabama has no qualifying-surviving-spouse filing status (Form 40 boxes are Single / Married filing joint / Married filing separate / Head of Family, and the 2025 booklet's Head of Family definition requires that the individual 'is not a surviving spouse' and that the qualifying dependent is not a foster child). The engine's QSS-to-MFJ mapping does not correspond to an Alabama status — a filer widowed before 2025 files Single or Head of Family in Alabama, so do not rely on the MFJ schedule for a federal QSS filer. TY2025 WAGE-BASE CAVEAT (outside the rate schedule): the Alabama overtime exemption (Act 2023-421 as amended by Act 2024-437) ENDED June 30, 2025 per the ADOR notice of May 29, 2025, so TY2025 wages include only a HALF-YEAR of exempt overtime — reported in W-2 Box 14 as 'EX OT WAGES' and excluded from Box 16 state wages. That affects the Form 40 line 5b wage figure the caller builds line 16 from; this op models only the rate schedule. This op computes the state rate-schedule line only. Alabama credits (Schedule OC), the consumer use tax and Catastrophe Savings tax reported on Schedule ATP (Form 40 line 19), and the Alabama Election Campaign Fund contributions (lines 20a/20b) are NOT modeled."
+ },
+ "year": 2025
+}

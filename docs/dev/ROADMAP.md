@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**9,347 tests** — offline 8,078 + live-.gov 1269; derived
+Done and on `main` (**9,356 tests** — offline 8,087 + live-.gov 1269; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -219,7 +219,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 11 | JK13 Fallback surface + guardrail ADR | S | — | user may weigh in | 2026-11-02 |
 | 12 | JK14 Introspect + pack-less fetch | M | JK13 | — | 2026-11-09 |
 | 13 | JK15 Anchor + blind benchmark | L | JK14 | — | 2026-11-16 |
-| 14 | JK21 Golden-diff harness over every tool | M | — | — | 2026-11-05 |
+| 14 | JK21 Golden-diff harness over every tool | M | — | — | **done 2026-10-15** |
 | 15 | JK20 Hoist citations into `sources` | M | JK0, JS2c (done), JK21 | — | 2026-11-09 |
 | 16 | JK22 Drop never-read TY2025 blocks (zero-output) | M | JK20, JK21 | — | 2026-11-16 (must land by 11-30) |
 | 17 | JK16 Pack-less fill | L | JK14, JK15 | — | 2026-11-23 |
@@ -371,7 +371,7 @@ Every building block exists as a core or CLI authoring tool (fetch with sha256=N
 
 What the code reads: calc applies roughly 4% of state bytes and ~11% of federal leaf bytes. About 1.2 MB of state prose is read by nothing at runtime. All 25 JS2c mismatches sat in narrative, pointer labels or non-applied figures (2026-10-09 survey of main @ 063f293). Before 12-01 only **zero-output** work happens. The schema migration of TY2025 waits until after 2027-04-15 (KG8).
 
-- [ ] **JK21 — Golden-diff harness** (M; latest start 2026-11-05)
+- [x] **JK21 — Golden-diff harness — DONE 2026-10-15** (M; latest start 2026-11-05) — scripts/golden_snapshots.py snapshots every tool that reads state knowledge, through the same functions the MCP tools call: calc `state_tax` over a demo grid per filing status, `state_scope` for three demo profiles, `filing_summary`, `file_and_pay` and `get_sources`, for all 126 state jurisdiction-years plus the no-income-tax states, into packages/core/tests/goldens/state_knowledge/ (127 files, 5.3 MB). test_state_knowledge_goldens.py fails on any drift with the file and the first differing key, in about 5 seconds. The TY2025 pins are in test_state_knowledge.py: OH's $342.00 / $2,394.32 discontinuity, AZ line 49 and the IL IL-E / EIC caveats. Verified in the main loop because the verifier agent never outlived the service stalls: the snapshots are identical under two hash seeds and time zones; a California bracket-rate change and an Ohio tax.notes change are caught, and a YAML comment is not. It found a live bug on its first run: filing_summary and file_and_pay crash for New Mexico 2025 (JK27); the NM 2025 golden records that error until the fix regenerates it.
   - Snapshot the output of every MCP tool that reads state knowledge (state_tax via calc.py, state_scope via statescope.py, file_and_pay, filing_summary, and get_sources through sources_states.yaml, sources.py:107-112) over every jurisdiction and year. The residency tool is not included: it calls `_classify` only (server.py:1041-1078) and residency.py reads no state knowledge.
   - Add the missing TY2025 pins now: the OH $342.00 / $2,394.32 discontinuity (knowledge/states/oh/2025.yaml:293-303; no test pins "342.00" today), AZ Line 49 and the IL IL-E/EIC caveats for 2025. The existing pins test TY2023 only (packages/core/tests/test_state_knowledge.py:411-414 asserts OH 2023's "360.69"; :298 is AZ 2023; :319-324 is IL 2023).
   - **Acceptance:** the harness runs in CI. It is the gate for JK20, JK22, JK24 and JK26.

@@ -1,0 +1,819 @@
+{
+ "_strings": {
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@21da6026e3fb": "Law change NOT modeled by the engine (status final_form_published): IRC REFERENCE DATE ADVANCED to December 31, 2024 for 2025, from December 31, 2023 for 2024 — the live KY DOR Individual Income Tax page states \"Kentucky's individual income tax law is based on the Internal Revenue Code in effect as of December 31, 2024. The tax rate is four (4) percent and allows itemized deductions and certain income reducing deductions as defined in KRS 141.019\". The conformity date governs which federal provisions flow through federal AGI and which are modified on Schedule M (special depreciation/Section 179 differences, federal NOL, the Kentucky excess business loss limitation, etc.) to reach Kentucky adjusted gross income on Form 740 line 9. Resolve via: Live KY DOR Individual Income Tax page (the citation URL) for the December 31, 2024 conformity date, and the 2025 Schedule M (Kentucky Federal Adjusted Gross Income Modifications, https://revenue.ky.gov/Forms/Schedule%20M%20(2025).pdf) for the additions/subtractions that implement it. NOTE the 2025 Form 740 instruction packet — which carried \"What's New\" in prior years — was unretrievable this pass (see `unverified`), so the packet's own statement of the change could not be quoted.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@3584cd123f21": "Form 740-NP (Kentucky Individual Income Tax Return — Nonresident or Part-Year Resident). Reciprocal-state residents with only KY wages use Form 740-NP-R (mailed to Frankfort, KY 40620-0012 per the live DOR page).",
+  "@@4c7dbfa26852": "Kentucky Department of Revenue — Individual Income Tax page (Kentucky individual income tax law, Chapter 141 of the Kentucky Revised Statutes; a calendar-year individual return is due the fifteenth day of the fourth month after the close of the taxable year, i.e. April 15, 2026 for tax year 2025, with a six-month extension via Form 740EXT or the federal automatic extension). NOTE the exact \"postmarked or submitted electronically no later than April 15, 2026\" wording lives in the 2025 Form 740 instruction packet, which could not be retrieved this pass — see the pack's `unverified` list.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@777dea3a2669": "Kentucky Department of Revenue — 2025 Form 740, Kentucky Individual Income Tax Return, Full-Year Resident (42A740, 10-25): line 10 \"Itemizers: Enter itemized deductions from Kentucky Schedule A. Nonitemizers: Enter $3,270 in Columns A and/or B\"; line 11 \"Subtract line 10 from line 9. This is your Taxable Income\"; line 12 \"Tax Computation: Multiply line 11 by 4% (.04) or amount from Schedule J\"; line 5 = federal AGI (\"Enter amount from federal Form 1040 or 1040-SR, line 11a\"); line 9 = Kentucky Adjusted Gross Income (line 7 minus Schedule M subtractions). Second pass on the RATE: the live KY DOR Individual Income Tax page states \"Kentucky's individual income tax law is based on the Internal Revenue Code in effect as of December 31, 2024. The tax rate is four (4) percent and allows itemized deductions and certain income reducing deductions as defined in KRS 141.019\" — both sources give 4%. The 2025 Form 740 instruction packet (42A740(PKT)), which in prior years carried the \"What's New\" standard-deduction line, is unretrievable (HTTP 404 on every plausible URL), so $3,270 rests on the form itself — see the pack's `unverified` list.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a645bbc8baf6": "Form 740 (2025 Kentucky Individual Income Tax Return — Full-Year Resident, 42A740, 10-25). Filing statuses printed on the 2025 form are 1 Single, 2 Married filing separately on this combined return (if both had income), 3 Married filing joint return, 4 Married filing separate returns.",
+  "@@aa92ecb461a6": "annual (per tax year; the newest shipped KY pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@b18b3399d125": "Kentucky Department of Revenue — 2025 Form 740 (42A740, 10-25) page 3 \"Enclose / Payment\" block (Refund or No Payment Frankfort KY 40618-0006; With Payment Frankfort KY 40619-0008), corroborated by the live KY DOR Individual Income Tax page (which adds 740-NPR Frankfort KY 40620-0012 and the overnight address 501 High Street, Frankfort KY 40601)",
+  "@@bc948ed50ffb": "Personal Tax Credits (age 65+, blind, or Kentucky National Guard) — Taxpayer (and spouse, if filing jointly or married filing separately on a combined return) who, as of 12/31/2025, was age 65 or older, was legally blind, and/or was a member of the Kentucky National Guard. A taxpayer can claim more than one (e.g., 65+ AND blind). No income limit.",
+  "@@bebf81c0f060": "Kentucky Department of Revenue, Frankfort, KY 40618-0006 (Refund or No Payment — printed on page 3 of the 2025 Form 740 and on the live DOR page)",
+  "@@dad08552c1d1": "Kentucky Department of Revenue — Individual Income Tax page (live DOR page; second-pass verification of the rate — \"Kentucky's individual income tax law is based on the Internal Revenue Code in effect as of December 31, 2024. The tax rate is four (4) percent and allows itemized deductions and certain income reducing deductions as defined in KRS 141.019\"; Form 740 vs Form 740-NP split; mailing addresses; Schedule P pension exclusion over $31,110)",
+  "@@e43c6444dfc9": "Kentucky Department of Revenue — 2025 Form 740, Kentucky Individual Income Tax Return, Full-Year Resident (42A740, 10-25) — line 5 federal AGI (federal Form 1040/1040-SR line 11a) with the \"$42,760 or less\" Family Size Tax Credit note, line 9 Kentucky Adjusted Gross Income, line 10 \"Nonitemizers: Enter $3,270 in Columns A and/or B\", line 11 Taxable Income, line 12 \"Tax Computation: Multiply line 11 by 4% (.04) or amount from Schedule J\", lines 20-21 Family Size Tax Credit, line 24 Child and Dependent Care Credit x 20% (.20), page-3 Enclose/Payment block (Check Payable \"Kentucky State Treasurer\", \"KY Income Tax—2025\", Refund or No Payment Frankfort KY 40618-0006 / With Payment Frankfort KY 40619-0008)",
+  "@@e4fda91f7235": "Child and Dependent Care Credit — Residents who qualified for and claimed the federal child and dependent care credit on federal Form 2441 (care expenses for a qualifying child/dependent so the taxpayer can work). Kentucky has no separate income limit; eligibility tracks the federal credit.",
+  "@@e70fbf028f46": "Treaty conformity — KY conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from KY income (it flows through the federal starting point; do not add it back on the KY return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Kentucky's resident return (Form 740) starts from federal adjusted gross income — 2025 Form 740 line 5 is \"Enter amount from federal Form 1040 or 1040-SR, line 11a\", i.e. federal AGI, and Kentucky law requires the individual income tax return to begin with federal adjusted gross income and be adjusted for any differences to arrive at Kentucky adjusted gross income (Form 740 line 6 additions from Schedule M line 6, line 8 subtractions from Schedule M line 17, line 9 Kentucky AGI). The 2025 Schedule M \"Additions to Federal Adjusted Gross Income\" (Part I, lines 1-5, totaled on line 6) are: (1) interest on other states' obligations / taxable mutual-fund dividends, (2) resident adjustment from Kentucky Schedule K-1, (3) special depreciation/Section 179 differences, (4) federal net operating loss, and (5) \"other additions\" (reservist/National Guard expenses, the lump-sum distribution capital-gains portion, passive activity loss adjustment, pension/IRA basis differences, intangible-asset and depreciable-property gain differences, Armed Forces moving expenses, Kentucky excess business loss limitation). NONE of these add back federally tax-treaty-exempt income. Because treaty-exempt income is already excluded from federal AGI and KY has no add-back for it, it is not re-taxed by Kentucky — therefore KY conforms. (Kentucky's starting basis is the Internal Revenue Code in effect as of December 31, 2024, per the live KY DOR Individual Income Tax page.)",
+  "@@e8c189982279": "Family Size Tax Credit — Resident individuals/families with modified gross income (MGI) at or below the Schedule ITC Section C table ceiling for their family size. Family size is capped at 4 (yourself, spouse if living in the same household, and qualifying children). Available even to someone claimed as a dependent on a parent's return (family size 1). The 2025 Form 740 line 5 prints the outer gate directly — \"If total of Columns A and B is $42,760 or less, you may qualify for the Family Size Tax Credit.\"",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f285068ad00e": "The newest shipped KY pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@b18b3399d125",
+      "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+     },
+     {
+      "source": "@@4c7dbfa26852",
+      "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@a645bbc8baf6",
+    "jurisdiction": "states/ky",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@bebf81c0f060",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@b18b3399d125",
+      "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+     },
+     {
+      "source": "@@4c7dbfa26852",
+      "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@a645bbc8baf6",
+    "jurisdiction": "states/ky",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Kentucky Department of Revenue, Frankfort, KY 40619-0008 (With Payment)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via KY Web Pay: https://epayment.ky.gov/EPAY (no processor fee).",
+     "By check: make it payable to \"Kentucky State Treasurer (2025 Form 740 page 3 — \"Check Payable: Kentucky State Treasurer\"; \"Include: Your Social Security number and 'KY Income Tax—2025'\")\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@b18b3399d125",
+      "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+     },
+     {
+      "source": "@@4c7dbfa26852",
+      "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@a645bbc8baf6",
+    "jurisdiction": "states/ky",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@bebf81c0f060",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@4c7dbfa26852",
+      "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@a645bbc8baf6",
+    "headline": "KY 2025: refund $512",
+    "jurisdiction": "states/ky",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@4c7dbfa26852",
+      "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@a645bbc8baf6",
+    "headline": "KY 2025: you owe $347",
+    "jurisdiction": "states/ky",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@4c7dbfa26852",
+      "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@a645bbc8baf6",
+    "headline": "KY 2025: you owe $1,205",
+    "jurisdiction": "states/ky",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f285068ad00e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC, \"TAX CREDIT SCHEDULE 2025\"), Section C Family Size Tax Credit Table (Tax Year 2025 bands), and 2025 Form 740 lines 5, 20-21",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "credits",
+     "url": "https://revenue.ky.gov/Forms/Schedule%20ITC%20(2025).pdf"
+    },
+    {
+     "answers": "Kentucky Department of Revenue — 2025 Form 740 (42A740, 10-25), line 24",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "credits",
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f285068ad00e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@b18b3399d125",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "filing_logistics",
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    },
+    {
+     "answers": "@@4c7dbfa26852",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "filing_logistics",
+     "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f285068ad00e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@e43c6444dfc9",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    },
+    {
+     "answers": "@@dad08552c1d1",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+    },
+    {
+     "answers": "Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC, \"TAX CREDIT SCHEDULE 2025\") — Section B Personal Tax Credits ($40 age 65+ / $40 blind / $20 Kentucky National Guard as of 12/31/2025), Section C Family Size Tax Credit Table for Tax Year 2025 (100% ceilings $15,650/$21,150/$26,650/$32,150; 0% above $20,815/$28,130/$35,445/$42,760)",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.ky.gov/Forms/Schedule%20ITC%20(2025).pdf"
+    },
+    {
+     "answers": "Kentucky Department of Revenue — 2025 Schedule M (Kentucky Federal Adjusted Gross Income Modifications) — Part I additions lines 1-5 totaled on line 6, Part II subtractions totaled on line 17",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.ky.gov/Forms/Schedule%20M%20(2025).pdf"
+    },
+    {
+     "answers": "Kentucky Department of Revenue Electronic Payment portal (EPAY)",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "forms_and_instructions",
+     "url": "https://epayment.ky.gov/EPAY"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f285068ad00e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@dad08552c1d1",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "law_changes",
+     "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f285068ad00e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@777dea3a2669",
+     "cadence": "@@aa92ecb461a6",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@f285068ad00e",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ky",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/ky",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@e8c189982279",
+      "@@e4fda91f7235",
+      "@@bc948ed50ffb"
+     ],
+     "citations": [
+      {
+       "source": "@@dad08552c1d1",
+       "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+      },
+      {
+       "source": "@@e43c6444dfc9",
+       "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@3584cd123f21"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in KY in 2025 without living there — file a nonresident return on KY-source income.",
+     "state": "KY",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@e70fbf028f46",
+      "@@21da6026e3fb",
+      "Remote-work trap: work performed from TX for an employer sitting in KY. If KY applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to KY and require a NONRESIDENT KY return that the physical footprint alone never shows — and the W-2's Box 15 often already names KY. This KY pack year carries no researched convenience rule: verify KY's nonresident wage-sourcing rule at its DOR before assuming no KY filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@e8c189982279",
+      "@@e4fda91f7235",
+      "@@bc948ed50ffb"
+     ],
+     "citations": [
+      {
+       "source": "@@dad08552c1d1",
+       "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+      },
+      {
+       "source": "@@e43c6444dfc9",
+       "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@3584cd123f21"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in KY part of 2025 — file a part-year return on income while a resident (plus KY-source income while not).",
+     "state": "KY",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@e70fbf028f46",
+      "@@21da6026e3fb"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@e8c189982279",
+      "@@e4fda91f7235",
+      "@@bc948ed50ffb"
+     ],
+     "citations": [
+      {
+       "source": "@@dad08552c1d1",
+       "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+      },
+      {
+       "source": "@@e43c6444dfc9",
+       "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@a645bbc8baf6"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in KY all of 2025 — file a resident return on income from all sources.",
+     "state": "KY",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@21da6026e3fb"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ky",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,270 = -$3,270.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.04 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ky",
+     "taxable_base": "3270",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $3,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,270 = $0.00; tax = 0.04 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ky",
+     "taxable_base": "43270",
+     "year": 2025
+    },
+    "tax": 1600,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $43,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,270 = $40,000.00; tax = 0.04 x $40,000 = $1,60"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ky",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $3,270 = -$3,270.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.04 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ky",
+     "taxable_base": "3270",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $3,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $3,270 = $0.00; tax = 0.04 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ky",
+     "taxable_base": "43270",
+     "year": 2025
+    },
+    "tax": 1600,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $43,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $3,270 = $40,000.00; tax = 0.04 x $40,000 = $1,60"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ky",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,270 = -$3,270.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.04 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ky",
+     "taxable_base": "3270",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $3,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,270 = $0.00; tax = 0.04 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ky",
+     "taxable_base": "43270",
+     "year": 2025
+    },
+    "tax": 1600,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $43,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,270 = $40,000.00; tax = 0.04 x $40,000 = $1,60"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ky",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,270 = -$3,270.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.04 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ky",
+     "taxable_base": "3270",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $3,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,270 = $0.00; tax = 0.04 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ky",
+     "taxable_base": "43270",
+     "year": 2025
+    },
+    "tax": 1600,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $43,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,270 = $40,000.00; tax = 0.04 x $40,000 = $1,60"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ky",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: KY 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ky",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: KY 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ky",
+     "taxable_base": "43270",
+     "year": 2025
+    },
+    "tax": 1600,
+    "work_head": "KY state income tax (2025, flat rate): taxable_base $43,270.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $3,270 = $40,000.00; tax = 0.04 x $40,000 = $1,60"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@777dea3a2669",
+    "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
+   },
+   "marginal_rate": "0.04",
+   "rate": "0.04",
+   "rate_structure": "flat",
+   "state": "ky"
+  },
+  "work_common_tail": "0. Tax line: Form 740 Line 12 = Line 11 (Taxable Income = Line 9 Kentucky AGI minus Line 10 deduction) x 4% (.04) — printed on the 2025 form: \"Tax Computation: Multiply line 11 by 4% (.04) or amount from Schedule J\". Line 5 starts from federal AGI (federal Form 1040/1040-SR line 11a); Line 6 adds Schedule M line 6 additions and Line 8 subtracts Schedule M line 17 subtractions. This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Standard deduction change: $3,270 for 2025, up from $3,160 (2024) and $2,980 (2023). The rate is UNCHANGED at 4% (.04) — verified twice (2025 Form 740 line 12 and the live KY DOR Individual Income Tax page). Never carry a Kentucky rate or standard deduction to another tax year without re-verifying that year's own Form 740. Kentucky allows ONE $3,270 standard deduction per return — a joint return gets a single $3,270 (it is NOT doubled); spouses filing separately on a combined return (Filing Status 2) enter $3,270 in each of Columns A and B, which is why the form says \"in Columns A and/or B\". Kentucky has NO head-of-household filing status. The 2025 Form 740 prints only four statuses: 1 Single, 2 Married filing separately on this combined return, 3 Married filing joint return, 4 Married filing separate returns. The head_of_household column exists only because the engine's schema requires all four federal statuses; it carries the same single $3,270 — a filer who is head of household federally files Kentucky as Single (or married, as applicable). Kentucky has no personal or dependent exemptions; the nonrefundable personal tax credits ($40 age 65+, $40 blind, $20 Kentucky National Guard as of 12/31/2025 — 2025 Schedule ITC Section B, Form 740 line 17), the Family Size Tax Credit (Form 740 lines 20-21, from the Schedule ITC Section C Tax Year 2025 table; the form's line 5 gate is federal AGI of $42,760 or less), the Education Tuition Tax Credit (line 23, Form 8863-K) and the 20% Child and Dependent Care Credit (line 24) are all CREDITS against tax and are NOT modeled by calc.state_tax. Not modeled: Schedule J (farm income averaging) as an alternative to the line 12 multiplication, the line 13 add-ons (Form 4972-K lump-sum tax, Schedule RC-R / DS-R recapture, Angel Investor recapture), the line 27 Kentucky Use Tax, and Kentucky LOCAL occupational license taxes (county/city payroll taxes)."
+ },
+ "year": 2025
+}

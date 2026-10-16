@@ -1,0 +1,537 @@
+{
+ "_strings": {
+  "@@1054bfcfad28": "2024 D-401 North Carolina Individual Income Tax Instructions — \"When Must I File?\" (\"the 2024 return is due on or before April 15th, 2025\"); automatic four-month extension if out of the country on the due date; federal automatic extension honored when the \"Federal Extension\" circle on D-400 page 1 is filled in (else Form D-410)",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@5218169b03e7": "2024 D-401 North Carolina Individual Income Tax Instructions — \"Where Do I File?\" (refund P.O. Box R; payment P.O. Box 25000 with Form D-400V)",
+  "@@5b2e76897a69": "Form D-400 (North Carolina Individual Income Tax Return) — used by all individuals including residents",
+  "@@5d6aa67cc831": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L).",
+  "@@6959b40e9726": "N.C. DEPARTMENT OF REVENUE, P.O. BOX R, RALEIGH, NC 27634-0001 (if due a refund and filing on paper)",
+  "@@8f63f754a3a3": "Form D-400 with Form D-400 Schedule PN (2024 Part-Year Resident and Nonresident Schedule) to compute the NC taxable percentage (D-400 Line 13); if needed, Form D-400 Schedule PN-1 (Other Additions and Other Deductions). All filers, including part-year residents and nonresidents, file the same Form D-400.",
+  "@@a02b244cbdfa": "Credit for Income Tax Paid to Another State or Country — N.C. residents (and part-year residents for the resident period) only. Available when income earned while a legal resident of North Carolina is taxed by both North Carolina and another U.S. state or a foreign country because it was earned in or derived from sources in that other state/country. No credit for tax paid to a city/county/other political subdivision or to the federal government. Nonresidents are NOT entitled to this credit. A copy of the return filed with the other state/country and proof of payment must be attached (the 2024 D-401 \"What You Should Send Us\" list requires a copy of the other state's return when the credit is claimed on Form D-400TC, Part 1, Line 7a).",
+  "@@a6c77a7280fd": "Treaty conformity — NC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NC income (it flows through the federal starting point; do not add it back on the NC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: NC conforms. The 2024 D-401 instructions state on Line 6: \"The starting point for determining North Carolina taxable income is federal adjusted gross income\" (IRC as of January 1, 2023 — the 2024 booklet keeps the January 1, 2023 conformity date). Because federally treaty-exempt income is already excluded from federal AGI, it flows through to NC untaxed UNLESS NC adds it back. The Form D-400 Schedule S, Part A \"Additions to Federal Adjusted Gross Income\" list in the 2024 D-401 (Lines 1-16: non-NC state/local bond interest, Opportunity Fund deferred gains, 85% bonus depreciation, 85% of the IRC 179 difference, S-corp built-in gains, federal-over-state basis on 2024 dispositions, federal NOL, pass-through state/local/foreign income tax under IRC 164, non-qualifying N.C. 529 withdrawals, discharge of qualified principal residence indebtedness, employer education-loan payments under IRC 127(c), expenses allocable to exempt income, discharge of certain student loan debt, etc.) contains NO add-back of treaty-exempt income. Since treaty-exempt income is not re-taxed, conforms_to_federal_treaties = true. Note one nuance to flag for filers: Schedule S Part A Line 12 requires adding back EXPENSES allocable to income exempt from NC tax, but it does not add back the exempt income itself.",
+  "@@de57f30661b2": "Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L) — Narrow / not broadly applicable to ordinary residents. Available to taxpayers who incur qualified rehabilitation expenditures/expenses on a certified historic structure or historic mill facility under Article 3D, Article 3H (historic mill facility), or Article 3L (Historic Rehabilitation Tax Credits Investment Program; requires Form NC-Rehab attached to the front of Form D-400). Distinguishes income-producing vs. non-income-producing structures.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f9224b8b0ad6": "2024 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must File, residency), When Must I File (\"the 2024 return is due on or before April 15th, 2025\"), What is the Tax Rate? (\"For tax year 2024, the individual income tax rate is 4.5%... multiply your North Carolina taxable income by 4.5% (0.0450)\"), Where Do I File / How Can I Pay (mailing addresses, payee), Line 6 federal AGI starting point, Line 7 Additions / Schedule S Part A list, Filing Requirements Chart (p.6)"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@5218169b03e7",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     },
+     {
+      "source": "@@1054bfcfad28",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@5b2e76897a69",
+    "jurisdiction": "states/nc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@6959b40e9726",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@5218169b03e7",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     },
+     {
+      "source": "@@1054bfcfad28",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@5b2e76897a69",
+    "jurisdiction": "states/nc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "N.C. DEPARTMENT OF REVENUE, P.O. BOX 25000, RALEIGH, NC 27640-0640 (if not due a refund — mail the return, any payment due, and Form D-400V)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via NC Web Pay: https://www.ncdor.gov/file-pay/file-pay-individuals (no processor fee).",
+     "By check: make it payable to \"N.C. Department of Revenue (\"Make your check or money order payable to the N.C. Department of Revenue for the full amount due. Write ''2024 D-400'' and your name, address, and last 4 digits of your SSN on the payment\"; check/money order must be drawn on a U.S. (domestic) bank and payable in U.S. dollars; do not send cash)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@5218169b03e7",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     },
+     {
+      "source": "@@1054bfcfad28",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@5b2e76897a69",
+    "jurisdiction": "states/nc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@6959b40e9726",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@1054bfcfad28",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@5b2e76897a69",
+    "headline": "NC 2024: refund $512",
+    "jurisdiction": "states/nc",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@1054bfcfad28",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@5b2e76897a69",
+    "headline": "NC 2024: you owe $347",
+    "jurisdiction": "states/nc",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@1054bfcfad28",
+      "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@5b2e76897a69",
+    "headline": "NC 2024: you owe $1,205",
+    "jurisdiction": "states/nc",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/nc",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@a02b244cbdfa",
+      "@@de57f30661b2"
+     ],
+     "citations": [
+      {
+       "source": "@@f9224b8b0ad6",
+       "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@8f63f754a3a3"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in NC in 2024 without living there — file a nonresident return on NC-source income.",
+     "state": "NC",
+     "warnings": [
+      "@@5d6aa67cc831",
+      "@@a6c77a7280fd",
+      "Remote-work trap: work performed from TX for an employer sitting in NC. If NC applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to NC and require a NONRESIDENT NC return that the physical footprint alone never shows — and the W-2's Box 15 often already names NC. This NC pack year carries no researched convenience rule: verify NC's nonresident wage-sourcing rule at its DOR before assuming no NC filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@a02b244cbdfa",
+      "@@de57f30661b2"
+     ],
+     "citations": [
+      {
+       "source": "@@f9224b8b0ad6",
+       "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@8f63f754a3a3"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in NC part of 2024 — file a part-year return on income while a resident (plus NC-source income while not).",
+     "state": "NC",
+     "warnings": [
+      "@@5d6aa67cc831",
+      "@@a6c77a7280fd"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@a02b244cbdfa",
+      "@@de57f30661b2"
+     ],
+     "citations": [
+      {
+       "source": "@@f9224b8b0ad6",
+       "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@5b2e76897a69"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in NC all of 2024 — file a resident return on income from all sources.",
+     "state": "NC",
+     "warnings": [
+      "@@5d6aa67cc831"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nc",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $19,125 = -$19,125.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.045 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nc",
+     "taxable_base": "19125",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $19,125.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $19,125 = $0.00; tax = 0.045 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nc",
+     "taxable_base": "59125",
+     "year": 2024
+    },
+    "tax": 1800,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $59,125.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $19,125 = $40,000.00; tax = 0.045 x $40,000 = $1,80"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nc",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $25,500 = -$25,500.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.045 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nc",
+     "taxable_base": "25500",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $25,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $25,500 = $0.00; tax = 0.045 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nc",
+     "taxable_base": "65500",
+     "year": 2024
+    },
+    "tax": 1800,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $65,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $25,500 = $40,000.00; tax = 0.045 x $40,000 = $1,80"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nc",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,750 = -$12,750.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.045 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nc",
+     "taxable_base": "12750",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $12,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,750 = $0.00; tax = 0.045 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nc",
+     "taxable_base": "52750",
+     "year": 2024
+    },
+    "tax": 1800,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $52,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,750 = $40,000.00; tax = 0.045 x $40,000 = $1,80"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nc",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,750 = -$12,750.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.045 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nc",
+     "taxable_base": "12750",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $12,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,750 = $0.00; tax = 0.045 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nc",
+     "taxable_base": "52750",
+     "year": 2024
+    },
+    "tax": 1800,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $52,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,750 = $40,000.00; tax = 0.045 x $40,000 = $1,80"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "nc",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: NC 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "nc",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: NC 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "nc",
+     "taxable_base": "65500",
+     "year": 2024
+    },
+    "tax": 1800,
+    "work_head": "NC state income tax (2024, flat rate): taxable_base $65,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $25,500 = $40,000.00; tax = 0.045 x $40,000 = $1,80"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2024 D-401 North Carolina Individual Income Tax Instructions — \"For tax year 2024, the individual income tax rate is 4.5%. To calculate your North Carolina tax liability, multiply your North Carolina taxable income by 4.5% (0.0450)\"; N.C. Standard Deduction Chart (D-400 Line 11): $12,750 single / $25,500 MFJ-QSS / $12,750 MFS ($0 if spouse itemizes) / $19,125 HoH; child deduction table (D-400 Line 10); D-400 Line 6 = federal AGI. Second pass: the 2024 Form D-400 (web-fill 9-24) itself prints Line 15 \"Multiply Line 14 by 4.5% (0.0450). If zero or less, enter a zero.\" — both passes agree (the form does not print the standard-deduction chart; see pack unverified).",
+    "url": "https://www.ncdor.gov/2024-d-401-individual-income-tax-instructions/open"
+   },
+   "marginal_rate": "0.045",
+   "rate": "0.045",
+   "rate_structure": "flat",
+   "state": "nc"
+  },
+  "work_common_tail": "0. Tax line: D-400 Line 15: multiply Line 14 (N.C. taxable income, full-year residents) by the income tax rate of 4.5% (0.0450) — printed on the 2024 form: \"Multiply Line 14 by 4.5% (0.0450). If zero or less, enter a zero.\" Line 6 starts from federal AGI; Line 14 = federal AGI + additions - deductions - child deduction (Line 10) - N.C. standard/itemized deduction (Line 11). This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Rate change: the individual income tax rate dropped to 4.5% (0.0450) for tax year 2024 (from 4.75% in 2023) — 2024 D-401 \"What is the Tax Rate?\"; the standard deduction chart is unchanged from 2023. Standard-deduction gates NOT modeled by calc.state_tax: MFS gets $0 if the spouse itemizes, and the N.C. standard deduction is ZERO for anyone not eligible for the FEDERAL standard deduction (see federal Pub 501; the filing chart lists nonresident aliens at $0) — itemizers use D-400 Line 11 itemized deductions (Form D-400 Schedule A) instead; compute those cases on the form. N.C. child deduction (D-400 Line 10) is NOT modeled: up to $3,000 per qualifying child (a child for whom the federal child tax credit was allowed), stepping down $3,000/$2,500/$2,000/$1,500/$1,000/$500/$0 by federal AGI (MFJ/QSS brackets up to $40,000 ... over $140,000; HoH up to $30,000 ... over $105,000; Single/MFS up to $20,000 ... over $70,000) — the 2024 D-401 Child Deduction Table is unchanged from 2023; take it from the worksheet, not from a per-dependent exemption. North Carolina has no personal or dependent exemptions."
+ },
+ "year": 2024
+}

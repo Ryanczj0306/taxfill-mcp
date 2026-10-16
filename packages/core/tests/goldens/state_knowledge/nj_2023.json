@@ -1,0 +1,658 @@
+{
+ "_strings": {
+  "@@097282b1ae8f": "State of New Jersey, Division of Taxation, Revenue Processing Center - Refunds, PO Box 555, Trenton NJ 08647-0555",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@3784d2a288d5": "Property Tax Deduction/Credit (homeowners and renters) — Residents who were domiciled in NJ and maintained a primary residence as a homeowner or tenant during 2023 that was subject to property taxes (paid directly as a homeowner, or through rent for tenants). Taxpayer chooses EITHER the deduction OR the credit (whichever is more beneficial). For tenants, the residence must have a separate kitchen and bath. The credit (vs. deduction) is generally taken by those age 65+, blind/disabled, or whose income is below the filing threshold. 18% of rent paid during the year is treated as property taxes paid.",
+  "@@42581db63846": "Child and Dependent Care Credit — Resident taxpayers who have earned income, paid someone to care for one or more qualifying persons (a child under 13 or a dependent/spouse incapable of self-care) so they could work or look for work, and who were allowed the federal child and dependent care credit. Married filing separately generally not eligible unless federal exceptions are met. Civil union and non-joint-federal filers follow special worksheet rules.",
+  "@@4437c6037806": "If any income was exempt from federal tax under a treaty: NJ does not conform to federal tax treaties — that income is still taxable to NJ.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@646ae4ffc7bd": "New Jersey Child Tax Credit — Resident taxpayers with NJ taxable income of $80,000 or less, claiming a credit for each dependent who is age 5 or younger (born 2018 or later) on the last day of the tax year. The dependent must be claimed on Lines 10/11 of the NJ-1040. Married filing separately is not eligible. The per-child credit was increased for Tax Year 2023.",
+  "@@866557a5b743": "NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their NJ residency period.",
+  "@@a1de11f74c93": "NJ-1040NR (New Jersey Nonresident Income Tax Return). Used by nonresidents with NJ-source income and by part-year nonresidents (indicate residency period). There is no separate part-year resident return.",
+  "@@a4a988f695a7": "Treaty conformity — NJ does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by NJ. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: New Jersey does NOT start from federal AGI. The NJ Gross Income Tax is a self-contained system that builds gross income from its own statutory categories. The 2023 NJ-1040 instructions explicitly direct: \"Use 'State Wages' from box 16 of your W-2, not federal wages (box 1)\" and warn that \"State wages (box 16) [can be] higher than your federal wages (box 1),\" and that if income taxable for NJ is not in box 16 you \"must add that amount back into your State wages.\" Because NJ never imports federal AGI, a federal tax-treaty exemption (which reduces federal box 1 / federal AGI) does NOT automatically pass through. NJ's Gross Income Tax Act contains no provision recognizing federal income tax treaties, so federally treaty-exempt wages are generally still taxable for NJ purposes. This puts NJ in the \"builds income from scratch, no treaty pass-through\" category -> conforms_to_federal_treaties = false. (Conservative reading; the precise NJ treatment of a specific treaty article should be confirmed at the DOR.)",
+  "@@b187e320fc64": "New Jersey Earned Income Tax Credit (NJEITC) — New Jersey residents who work and have earned income and who claimed and were allowed the federal Earned Income Credit (EIC). Residents at least 18 years old (with or without a qualifying child) may apply even if they did not meet the federal age requirement; must meet federal EIC income limits and have a valid SSN. Claimed by filing Form NJ-1040.",
+  "@@d9e6a2fa0fd2": "2023 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) - Do You Have to File p.3, Which Form to File / Domicile p.4-5, Line 15 Wages (State wages box 16, not federal box 1) p.9, How to Pay / check payable to 'State of New Jersey - TGI' p.47, Where to Mail Your Return (PO Box 555 refunds; PO Box 111 payments) p.47-48, When to File / April 15, 2024 p.4",
+  "@@e73de5d02235": "If any of your income was exempt from federal tax under a treaty: NJ does not conform to federal tax treaties, so that income is still taxable to NJ — do not carry the federal exclusion onto the state return.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     },
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@866557a5b743",
+    "jurisdiction": "states/nj",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@097282b1ae8f",
+    "notes": [
+     "@@4d42ad525021",
+     "@@e73de5d02235"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     },
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@866557a5b743",
+    "jurisdiction": "states/nj",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "State of New Jersey, Division of Taxation, Revenue Processing Center - Payments, PO Box 111, Trenton NJ 08645-0111",
+    "notes": [
+     "@@4d42ad525021",
+     "@@e73de5d02235"
+    ],
+    "payment": [
+     "Pay online via NJ Web Pay: https://www.nj.gov/treasury/taxation/ (no processor fee).",
+     "By check: make it payable to \"State of New Jersey - TGI (write the taxpayer's Social Security number on the check or money order; enclose Form NJ-1040-V payment voucher)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     },
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@866557a5b743",
+    "jurisdiction": "states/nj",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@097282b1ae8f",
+    "notes": [
+     "@@4d42ad525021",
+     "@@e73de5d02235"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@866557a5b743",
+    "headline": "NJ 2023: refund $512",
+    "jurisdiction": "states/nj",
+    "notes": [
+     "@@4437c6037806"
+    ],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@866557a5b743",
+    "headline": "NJ 2023: you owe $347",
+    "jurisdiction": "states/nj",
+    "notes": [
+     "@@4437c6037806"
+    ],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@d9e6a2fa0fd2",
+      "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@866557a5b743",
+    "headline": "NJ 2023: you owe $1,205",
+    "jurisdiction": "states/nj",
+    "notes": [
+     "@@4437c6037806"
+    ],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/nj",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b187e320fc64",
+      "@@3784d2a288d5",
+      "@@42581db63846",
+      "@@646ae4ffc7bd"
+     ],
+     "citations": [
+      {
+       "source": "@@d9e6a2fa0fd2",
+       "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@a1de11f74c93"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in NJ in 2023 without living there — file a nonresident return on NJ-source income.",
+     "state": "NJ",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a4a988f695a7",
+      "Remote-work trap: work performed from TX for an employer sitting in NJ. If NJ applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to NJ and require a NONRESIDENT NJ return that the physical footprint alone never shows — and the W-2's Box 15 often already names NJ. This NJ pack year carries no researched convenience rule: verify NJ's nonresident wage-sourcing rule at its DOR before assuming no NJ filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b187e320fc64",
+      "@@3784d2a288d5",
+      "@@42581db63846",
+      "@@646ae4ffc7bd"
+     ],
+     "citations": [
+      {
+       "source": "@@d9e6a2fa0fd2",
+       "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@a1de11f74c93"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in NJ part of 2023 — file a part-year return on income while a resident (plus NJ-source income while not).",
+     "state": "NJ",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a4a988f695a7"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b187e320fc64",
+      "@@3784d2a288d5",
+      "@@42581db63846",
+      "@@646ae4ffc7bd"
+     ],
+     "citations": [
+      {
+       "source": "@@d9e6a2fa0fd2",
+       "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@866557a5b743"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in NJ all of 2023 — file a resident return on income from all sources.",
+     "state": "NJ",
+     "warnings": [
+      "@@4cf945d1e9e4"
+     ]
+    }
+   ],
+   "year": 2023
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nj",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nj",
+     "taxable_base": "5000",
+     "year": 2023
+    },
+    "marginal_rate": "0.014",
+    "tax": 70,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $5,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [head_of_household schedule]: 0.014 x $5,000.00 (the $0-$20,000 bracket) = $70.00; total $70.00 -> $70"
+   },
+   {
+    "base_after_exemptions": 85000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nj",
+     "taxable_base": "85000",
+     "year": 2023
+    },
+    "marginal_rate": "0.05525",
+    "tax": 1921,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $85,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $85,000 [head_of_household schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $30,000.00 (the $20,000-$50,000 bracket) = $525.00; 0.0245 x $20,000.00 (the $50,000-$70,000 bracket) = $490.00; 0.035 x $10,000.00 (the $70,000-$80,000 bracket) = $350.00; 0.05525 x $5,000.00 (the $80,000-$150,000 bracket) = $276.25; total $1,921.25 -> $1,921"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nj",
+     "taxable_base": "1010000",
+     "year": 2023
+    },
+    "marginal_rate": "0.1075",
+    "tax": 73733,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $1,010,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $1,010,000 [head_of_household schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $30,000.00 (the $20,000-$50,000 bracket) = $525.00; 0.0245 x $20,000.00 (the $50,000-$70,000 bracket) = $490.00; 0.035 x $10,000.00 (the $70,000-$80,000 bracket) = $350.00; 0.05525 x $70,000.00 (the $80,000-$150,000 bracket) = $3,867.50; 0.0637 x $350,000.00 (the $150,000-$500,000 bracket) = $22,295.00; 0.0897 x $500,000.00 (the $500,000-$1,000,000 bracket) = $44,850.00; 0.1075 x $10,000.00 (the $1,000,000+ bracket) = $1,075.00; total $73,732.50 -> $73,733"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "nj",
+     "taxable_base": "42500",
+     "year": 2023
+    },
+    "marginal_rate": "0.0175",
+    "tax": 630,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $42,500.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $1,000 = $1,000.00, 1 dependent exemption(s) x $1,500 = $1,500.00 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $20,000.00 (the $20,000-$50,000 bracket) = $350.00; total $630.00 -> $630"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nj",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nj",
+     "taxable_base": "5000",
+     "year": 2023
+    },
+    "marginal_rate": "0.014",
+    "tax": 70,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $5,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0.014 x $5,000.00 (the $0-$20,000 bracket) = $70.00; total $70.00 -> $70"
+   },
+   {
+    "base_after_exemptions": 85000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nj",
+     "taxable_base": "85000",
+     "year": 2023
+    },
+    "marginal_rate": "0.05525",
+    "tax": 1921,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $85,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $85,000 [married_filing_jointly schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $30,000.00 (the $20,000-$50,000 bracket) = $525.00; 0.0245 x $20,000.00 (the $50,000-$70,000 bracket) = $490.00; 0.035 x $10,000.00 (the $70,000-$80,000 bracket) = $350.00; 0.05525 x $5,000.00 (the $80,000-$150,000 bracket) = $276.25; total $1,921.25 -> $1,921"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nj",
+     "taxable_base": "1010000",
+     "year": 2023
+    },
+    "marginal_rate": "0.1075",
+    "tax": 73733,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $1,010,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $1,010,000 [married_filing_jointly schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $30,000.00 (the $20,000-$50,000 bracket) = $525.00; 0.0245 x $20,000.00 (the $50,000-$70,000 bracket) = $490.00; 0.035 x $10,000.00 (the $70,000-$80,000 bracket) = $350.00; 0.05525 x $70,000.00 (the $80,000-$150,000 bracket) = $3,867.50; 0.0637 x $350,000.00 (the $150,000-$500,000 bracket) = $22,295.00; 0.0897 x $500,000.00 (the $500,000-$1,000,000 bracket) = $44,850.00; 0.1075 x $10,000.00 (the $1,000,000+ bracket) = $1,075.00; total $73,732.50 -> $73,733"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 2,
+     "filing_status": "married_filing_jointly",
+     "state": "nj",
+     "taxable_base": "43500",
+     "year": 2023
+    },
+    "marginal_rate": "0.0175",
+    "tax": 630,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $43,500.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 2 personal exemption(s) x $1,000 = $2,000.00, 1 dependent exemption(s) x $1,500 = $1,500.00 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $20,000.00 (the $20,000-$50,000 bracket) = $350.00; total $630.00 -> $630"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nj",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nj",
+     "taxable_base": "5000",
+     "year": 2023
+    },
+    "marginal_rate": "0.014",
+    "tax": 70,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $5,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_separately schedule]: 0.014 x $5,000.00 (the $0-$20,000 bracket) = $70.00; total $70.00 -> $70"
+   },
+   {
+    "base_after_exemptions": 45000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nj",
+     "taxable_base": "45000",
+     "year": 2023
+    },
+    "marginal_rate": "0.05525",
+    "tax": 994,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $45,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $45,000 [married_filing_separately schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $15,000.00 (the $20,000-$35,000 bracket) = $262.50; 0.035 x $5,000.00 (the $35,000-$40,000 bracket) = $175.00; 0.05525 x $5,000.00 (the $40,000-$75,000 bracket) = $276.25; total $993.75 -> $994"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nj",
+     "taxable_base": "1010000",
+     "year": 2023
+    },
+    "marginal_rate": "0.1075",
+    "tax": 75649,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $1,010,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $1,010,000 [married_filing_separately schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $15,000.00 (the $20,000-$35,000 bracket) = $262.50; 0.035 x $5,000.00 (the $35,000-$40,000 bracket) = $175.00; 0.05525 x $35,000.00 (the $40,000-$75,000 bracket) = $1,933.75; 0.0637 x $425,000.00 (the $75,000-$500,000 bracket) = $27,072.50; 0.0897 x $500,000.00 (the $500,000-$1,000,000 bracket) = $44,850.00; 0.1075 x $10,000.00 (the $1,000,000+ bracket) = $1,075.00; total $75,648.75 -> $75,649"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "married_filing_separately",
+     "state": "nj",
+     "taxable_base": "42500",
+     "year": 2023
+    },
+    "marginal_rate": "0.035",
+    "tax": 718,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $42,500.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $1,000 = $1,000.00, 1 dependent exemption(s) x $1,500 = $1,500.00 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $15,000.00 (the $20,000-$35,000 bracket) = $262.50; 0.035 x $5,000.00 (the $35,000-$40,000 bracket) = $175.00; total $717.50 -> $718"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nj",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nj",
+     "taxable_base": "5000",
+     "year": 2023
+    },
+    "marginal_rate": "0.014",
+    "tax": 70,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $5,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [single schedule]: 0.014 x $5,000.00 (the $0-$20,000 bracket) = $70.00; total $70.00 -> $70"
+   },
+   {
+    "base_after_exemptions": 45000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nj",
+     "taxable_base": "45000",
+     "year": 2023
+    },
+    "marginal_rate": "0.05525",
+    "tax": 994,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $45,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $45,000 [single schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $15,000.00 (the $20,000-$35,000 bracket) = $262.50; 0.035 x $5,000.00 (the $35,000-$40,000 bracket) = $175.00; 0.05525 x $5,000.00 (the $40,000-$75,000 bracket) = $276.25; total $993.75 -> $994"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nj",
+     "taxable_base": "1010000",
+     "year": 2023
+    },
+    "marginal_rate": "0.1075",
+    "tax": 75649,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $1,010,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $1,010,000 [single schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $15,000.00 (the $20,000-$35,000 bracket) = $262.50; 0.035 x $5,000.00 (the $35,000-$40,000 bracket) = $175.00; 0.05525 x $35,000.00 (the $40,000-$75,000 bracket) = $1,933.75; 0.0637 x $425,000.00 (the $75,000-$500,000 bracket) = $27,072.50; 0.0897 x $500,000.00 (the $500,000-$1,000,000 bracket) = $44,850.00; 0.1075 x $10,000.00 (the $1,000,000+ bracket) = $1,075.00; total $75,648.75 -> $75,649"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "nj",
+     "taxable_base": "42500",
+     "year": 2023
+    },
+    "marginal_rate": "0.035",
+    "tax": 718,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $42,500.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 personal exemption(s) x $1,000 = $1,000.00, 1 dependent exemption(s) x $1,500 = $1,500.00 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $15,000.00 (the $20,000-$35,000 bracket) = $262.50; 0.035 x $5,000.00 (the $35,000-$40,000 bracket) = $175.00; total $717.50 -> $718"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "nj",
+     "taxable_base": "40000",
+     "year": 2023
+    },
+    "marginal_rate": "0.0175",
+    "tax": 630,
+    "work_head": "NJ state income tax (2023, graduated brackets): taxable_base $40,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.014 x $20,000.00 (the $0-$20,000 bracket) = $280.00; 0.0175 x $20,000.00 (the $20,000-$50,000 bracket) = $350.00; total $630.00 -> $630"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_gross_income",
+   "citation": {
+    "source": "2023 Form NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation) — New Jersey Tax Rate Schedules, booklet p.63 (Table A: Single / Married-CU partner filing separate; Table B: Married-CU couple filing joint / Head of household / Qualifying widow(er)-surviving CU partner); Line 43 Tax instruction and Line 42 New Jersey Taxable Income, p.31; Exemptions Lines 6-12, p.6; Line 13 Total Exemption Amount, p.7; Line 29 New Jersey Gross Income and filing thresholds, p.20; Line 30 Exemption Amount and Lines 31-37c deductions, pp.23-24; Line 38 Total Exemptions and Deductions and Line 39 Taxable Income, p.25",
+    "url": "https://www.nj.gov/treasury/taxation/pdf/other_forms/tgi-ee/2023/1040i.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "nj"
+  },
+  "work_common_tail": ". Tax line: Line 43 - Tax on Amount on Line 42: \"If the income on line 42 is less than $100,000, use the Tax Table on page 54. Otherwise, calculate the tax by using the Tax Rate Schedules on page 63. Use the correct column or schedule for your filing status. Enter the tax on line 43.\" (Line 42 - New Jersey Taxable Income: \"Subtract line 41 from line 39\"; Line 39 Taxable Income = Line 29 gross income minus Line 38 total exemptions and deductions; Line 38 = \"Add lines 30 through 37c\".) Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($1,000 — Line 7 Senior 65+: $1,000 each for taxpayer and (if filing jointly) spouse who were 65 or older on the last day of the tax year; NOT allowed for domestic partners or dependents. NOT applied by calc.state_tax — subtract it from the supplied base yourself or claim it on Line 7.); blind_or_disabled ($1,000 — Line 8 Blind or Disabled: $1,000 each for taxpayer and (if filing jointly) spouse who were blind or disabled on the last day of the tax year; NOT allowed for domestic partners or dependents. NOT applied by calc.state_tax — subtract it from the supplied base yourself or claim it on Line 8.); dependent_attending_college ($1,000 — Line 12 Dependents Attending Colleges: ADDITIONAL $1,000 per dependent student (must already be claimed on Line 10 or 11, under age 22, full-time at an accredited college, taxpayer paid half or more of tuition/maintenance). NOT applied by calc.state_tax — subtract it from the supplied base yourself or claim it on Line 12.); veteran ($6,000 — Line 9 Veteran Exemptions: $6,000 each for taxpayer and (if filing jointly) spouse who are honorably discharged military veterans; documentation required the first year. NOT applied by calc.state_tax — subtract it from the supplied base yourself or claim it on Line 9.) This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply Form NJ-1040 Line 29, New Jersey Gross Income (Line 27 total income minus Line 28c pension/retirement exclusion). NJ never starts from federal AGI — gross income is built from NJ's own categories (wages from W-2 box 16 State wages). The op subtracts $1,000 x exemptions_count (Line 6 regular exemptions: self, spouse/CU partner, or registered domestic partner) and $1,500 x dependents_count (Line 10 qualified dependent children plus Line 11 other dependents) to approximate Line 42 New Jersey Taxable Income. If any UNMODELED subtraction applies — Line 7 senior 65+ ($1,000 each), Line 8 blind/disabled ($1,000 each), Line 9 veteran ($6,000 each), Line 12 dependent attending college ($1,000 each), Lines 31-37c deductions (medical over 2% of gross income, alimony, qualified conservation, health enterprise zone, alternative business calculation, organ/bone marrow donation, NJBEST up to $10,000, NJCLASS up to $2,500, tuition up to $10,000), or the Line 41 Property Tax Deduction (up to $15,000; $7,500 MFS same home) — reduce the supplied base by those amounts too, or compute on the form; otherwise the result will overstate Line 43. Tax Table MANDATE below $100,000: Line 43 directs 'If the income on line 42 is less than $100,000, use the Tax Table on page 54. Otherwise, calculate the tax by using the Tax Rate Schedules on page 63.' Bracket math may differ by a few dollars within table bands; the filed form must use the table below $100,000. The Tax Rate Schedules (shipped here) govern at $100,000 and above. Filing threshold = no tax due: you are not required to file (and owe no NJ tax) if New Jersey gross income (Line 29) is at or below $10,000 (single; married/CU partner filing separate) or $20,000 (married/CU couple filing joint; head of household; qualifying widow(er)/surviving CU partner). NOT modeled — the brackets tax from the first dollar, so below-threshold filers would be overstated; file only to recover withholding or refundable credits. Printed-constant divergence (Table B only): the 70,000-80,000 bracket prints 'multiply by .035, subtract $1,154.50', but the exact cumulative constant is $1,155.00 — the printed schedule yields $0.50 MORE than exact marginal-bracket math everywhere inside that bracket, and rejoins exactly at $80,000 (the next constant, $2,775.00, is exact). Every other printed constant in Tables A and B equals the cumulative sum exactly. One schedule covers three statuses: Table B applies identically to married/CU couple filing joint, head of household, and qualifying widow(er)/surviving CU partner — the head_of_household brackets shipped here are Table B, identical to married_filing_jointly, and the engine's QSS->married_filing_jointly mapping is exact (no divergence). Table A applies to single and married/CU partner filing separate (MFS is NOT half of MFJ; copied as printed). Civil-union partners must use the corresponding married/CU filing statuses. New Jersey has NO standard deduction — standard_deduction is null because none exists, not because it is income-dependent. NJ instead allows specific deductions on Lines 31-37c (medical expenses over 2% of gross income, alimony, qualified conservation contribution, health enterprise zone, alternative business calculation adjustment, organ/bone marrow donation, up to $10,000 NJBEST 529 contributions, up to $2,500 NJCLASS loan principal and interest, up to $10,000 tuition) and the Line 41 Property Tax Deduction (property taxes paid or 18% of rent, capped at $15,000; $7,500 if married filing separately sharing the same main home). None of these are modeled. The op applies ONLY the $1,000 Line 6 regular exemption (x exemptions_count) and the $1,500 Line 10/11 dependent exemption (x dependents_count). The result equals Form NJ-1040 Line 43 only when no other exemption (senior, blind/disabled, veteran, college dependent) and no Lines 31-37c or Line 41 deduction applies; otherwise pre-subtract those amounts from the base you supply. NJ exemptions are genuine BASE reductions (Line 13 total -> Line 30, subtracted from gross income before the rates), not credits. Separately, NJ's refundable CREDITS are not modeled: NJ Earned Income Tax Credit (Line 58, 40% of federal EIC), $50 Property Tax Credit (Line 56), Child and Dependent Care Credit (Line 64), NJ Child Tax Credit (Line 65, up to $1,000 per child age 5 or younger), and the Credit for Income Taxes Paid to Other Jurisdictions (Line 44). Part-year residents must prorate the Line 13 exemption total on Line 30 by months of NJ residency (15+ days counts as a month) — NOT modeled; full-year exemption amounts are shipped. No 2023 rate change: the 2023 schedules (top rate 10.75% over $1,000,000) are the final published schedules used for the 2023 filing season; New Jersey had no mid-year retroactive rate legislation for 2023."
+ },
+ "year": 2023
+}

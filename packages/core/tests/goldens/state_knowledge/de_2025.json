@@ -1,0 +1,977 @@
+{
+ "_strings": {
+  "@@01ca6b3e8a7f": "Child Care Credit (Child and Dependent Care Credit) — Resident individuals who claimed the federal child and dependent care credit. Must attach a copy of federal Form 2441. For spouses who file a joint federal return but separate/combined-separate Delaware returns, the credit may only be applied against the tax of the spouse with the LOWER Line 23 taxable income. This is the child/dependent CARE credit — the federal Child Tax Credit is not an allowable credit on the Delaware return.",
+  "@@0318a7ccf5ce": "DE Division of Revenue - 2025 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must File thresholds (unchanged: under-60 $9,400 single / $15,450 joint), Who is a Resident (domicile any part of year, or abode + more than 183 days), When to File (due 4/30/2026; PIT-EXT extension to 10/15/2026), Section A Additions (federal AGI start; Lines 2-3 only), Line 24 tax table/schedule mandate, mailing addresses (P.O. Box 508 / 8710 / 8711), check payee 'DE Division of Revenue', portal tax.delaware.gov",
+  "@@0572dc8b7811": "The newest shipped DE pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1b67b5a856b9": "Volunteer Firefighter Credit — Delaware residents who are active volunteer firefighters, members of a fire company auxiliary, or active members of an organized rescue squad in a Delaware volunteer company. Active status is verified annually with the volunteer fire companies; the Fire Company number must be entered on Line 29 (Spouse Column A and/or Self Column B). Only one $1,000 credit may be claimed by each spouse.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@36d0013e5d5f": "annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@597e78f99a28": "DE Division of Revenue - 2025 Form PIT-RES Instructions, When to File: \"Individual income tax returns are due on or before April 30, 2026 for all taxpayers filing on a calendar year basis.\" Extension: submit Form PIT-EXT with payment of the estimated balance to the Division of Revenue no later than April 30, 2026 to extend the filing date from April 30, 2026 to October 15, 2026 (no extension of time for payment). Delaware's due date is April 30, NOT the federal April 15.",
+  "@@5cc6396bf45c": "2025 Delaware Schedule W — Apportionment Worksheet (Form PIT-SCW, Revision 20250515), page 1 apportionment instructions + page 2 days-worked-outside-Delaware log.",
+  "@@672e703af563": "Earned Income Tax Credit (Delaware EITC) — Resident individuals who claimed (and qualified for) the federal Earned Income Credit. The taxpayer ELECTS one of two options: a REFUNDABLE credit equal to 4.5% of the federal EITC, OR a NONREFUNDABLE credit equal to 20% of the federal EITC. Computed on DE Schedule II (Form PIT-RSS); check the Refundable or Non-Refundable box on Line 34. Do NOT complete PIT-RSS Schedule II if you did not take the Earned Income Credit on your federal return. For spouses filing separate/combined-separate Delaware returns from a joint federal return, the credit may only be applied against the tax of the spouse with the HIGHER Line 23 taxable income.",
+  "@@762a307c1e4b": "Refund due (2025 PIT-RES Line 47): State of Delaware, Division of Revenue, P.O. Box 8710, Wilmington, DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division of Revenue, P.O. Box 8711, Wilmington, DE 19899-8711.",
+  "@@81d1238df71f": "Credit for Income Taxes Paid to Another State — Delaware residents (or those electing to be taxed as residents) who paid income tax to another state on income earned in that state that is also included in Delaware taxable income. Must attach a signed copy of the income tax return filed with the other state(s). Does not include city wage taxes or county taxes paid directly to the county; the District of Columbia counts as a \"State\" for this credit. Use Form PIT-RSS DE Schedule I if claiming credit for more than one state (list states highest-to-lowest credit).",
+  "@@843db8af5620": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources (the 2025 PIT-RES instructions, with every rate and dollar amount confirmed against the printed 2025 Form PIT-RES itself) and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@90bcec6fab4c": "Additional Personal Credit (age 60 or over) — Resident taxpayer and/or spouse who were 60 years of age or over on December 31, 2025. Check the appropriate box(es) for Self (Column B) and/or Spouse (Column A) on Line 27b. This is Delaware's main senior-relief credit on the income-tax return (separate senior relief is also provided via the pension exclusion and the Section B exclusion for certain persons 60 or over, which are income exclusions rather than credits).",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@978e95dd513e": "DE Division of Revenue - 2025 Form PIT-RES Instructions, Step 5 mailing table: \"If Enclosing Payment w/ Balance Due (from Line 46): State of Delaware, Division of Revenue, P.O. Box 508, Wilmington, DE 19899-508\"; \"If Refund Due (from Line 47): ... P.O. Box 8710, Wilmington, DE 19899-8710\"; \"Zero Due returns or returns without payment: ... P.O. Box 8711, Wilmington, DE 19899-8711\" — the 2025 line numbers equal 2024's and are one higher than 2023's (the 2024 revision inserted Line 16)",
+  "@@9f6bbd0a0d07": "Delaware Division of Revenue, 2025 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions (PIT-RES_Instructions_2025-01.pdf) — Line 24 Tax Liability From Tax Rate Table/Schedule: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table'; Rounding Off Dollars; Who Must File thresholds. Standard deduction and line numbers second-passed on the printed 2025 Form PIT-RES (Revision 20260407): Line 20 'Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column A and in Column B'; Line 21 additional standard deductions (x $2500, standard-deduction electors only); Line 22 'TOTAL DEDUCTIONS'; Line 23 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'; Line 24 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Rate schedule: Delaware 2025 State Income Tax Table & Schedule (https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf), last page: '2025 STATE INCOME TAX SCHEDULE - If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) over, for the portion over $60,000' with worked example taxable income $67,751 -> $2,943.50 + $511.56 = $3,455.06 (Round to $3,455). Sub-$60,000 marginal rates: 30 Del. C. sec. 1102(a)(14) (taxable years beginning after December 31, 2013), official Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html, re-fetched live this session — cross-checks exactly against the 2025 table's band values (e.g. $43,500-$43,550 -> $2,029; $16,750-$16,800 -> $586; $2,750-$2,800 -> $17) and the printed $2,943.50 constant. Three sources agree; no 2025 change.",
+  "@@add01a4ba396": "Treaty conformity — DE conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from DE income (it flows through the federal starting point; do not add it back on the DE return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Delaware's resident return (PIT-RES) starts at Section A, Line 1 = \"FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040.\" Section A - Additions contains ONLY Line 2 (INTEREST ON STATE & LOCAL OBLIGATIONS OTHER THAN DELAWARE) and Line 3 (FIDUCIARY ADJUSTMENT, OIL DEPLETION) — verified verbatim on the 2025 form. There is no add-back of federally treaty-exempt income anywhere in the additions schedule, and the word \"treaty\" appears ZERO times in either the 2025 PIT-RES instructions or the 2025 PIT-RES form (re-counted this session). Because income excluded by treaty is already excluded from federal AGI and Delaware has no treaty add-back, that income flows through untaxed -> conforms. Note: the resident form's Section C \"Foreign Taxes Paid\" line is an itemized-deduction adjustment for those who took the federal Foreign Tax Credit, NOT a treaty-exempt-income add-back.",
+  "@@b636c51098b7": "Form PIT-RES (Delaware Individual Resident Income Tax Return; formerly Form 200-01)",
+  "@@bc706a328ff4": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-SCW_2025-01_PaperInteractiveIPM.pdf",
+  "@@d009c3b9f7fc": "Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02). Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident treatment), whichever is more advantageous.",
+  "@@e7da96f5baec": "Personal Credits (exemption credit) — Resident individuals are allowed a credit for each personal exemption. If you were not required to file a federal return, \"enter $110 for each spouse reporting income plus $110 for each person who could have been listed as a dependent.\" NOT available if you are claimed as a dependent on another person's return. The number of personal credits is verified against the federal return with the IRS.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f9c149071f3b": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@978e95dd513e",
+      "url": "@@f9c149071f3b"
+     },
+     {
+      "source": "@@597e78f99a28",
+      "url": "@@f9c149071f3b"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-30."
+    ],
+    "form": "@@b636c51098b7",
+    "jurisdiction": "states/de",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@762a307c1e4b",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@978e95dd513e",
+      "url": "@@f9c149071f3b"
+     },
+     {
+      "source": "@@597e78f99a28",
+      "url": "@@f9c149071f3b"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-30."
+    ],
+    "form": "@@b636c51098b7",
+    "jurisdiction": "states/de",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Enclosing payment / balance due (2025 PIT-RES Line 46): State of Delaware, Division of Revenue, P.O. Box 508, Wilmington, DE 19899-0508 (the ZIP+4 as the 2025 PIT-RES mailing boxes on pages 3 and 4 and the Instructions' own address list print it; the Instructions' Step 5 table drops the leading zero, '19899-508').",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via DE Web Pay: https://tax.delaware.gov (no processor fee).",
+     "By check: make it payable to \"DE Division of Revenue (\"Make check payable to: DE Division of Revenue\")\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@978e95dd513e",
+      "url": "@@f9c149071f3b"
+     },
+     {
+      "source": "@@597e78f99a28",
+      "url": "@@f9c149071f3b"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-30."
+    ],
+    "form": "@@b636c51098b7",
+    "jurisdiction": "states/de",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@762a307c1e4b",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@597e78f99a28",
+      "url": "@@f9c149071f3b"
+     }
+    ],
+    "deadline_status": "Due 2026-04-30.",
+    "form": "@@b636c51098b7",
+    "headline": "DE 2025: refund $512",
+    "jurisdiction": "states/de",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@597e78f99a28",
+      "url": "@@f9c149071f3b"
+     }
+    ],
+    "deadline_status": "Due 2026-04-30.",
+    "form": "@@b636c51098b7",
+    "headline": "DE 2025: you owe $347",
+    "jurisdiction": "states/de",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@597e78f99a28",
+      "url": "@@f9c149071f3b"
+     }
+    ],
+    "deadline_status": "Due 2026-04-30.",
+    "form": "@@b636c51098b7",
+    "headline": "DE 2025: you owe $1,205",
+    "jurisdiction": "states/de",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@0572dc8b7811",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 34 Earned Income Tax Credit (\"A Resident individual is allowed a refundable credit of 4.5% of the federal earned income credit or a nonrefundable credit of 20% of the federal earned income credit\") and DE Schedule II (PIT-RSS)",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "credits",
+     "url": "@@f9c149071f3b"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@0572dc8b7811",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "DE Division of Revenue - 2025 Form PIT-RES Instructions, \"Who Must File\" chart (\"If you are a Full-Year Resident of the State, you must file a tax return for 2025 if, based on your Age/Status, your individual Delaware adjusted gross income (AGI) exceeds the amount shown below\")",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "filing_logistics",
+     "url": "@@f9c149071f3b"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@0572dc8b7811",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@0318a7ccf5ce",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "forms_and_instructions",
+     "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "2025 Form PIT-RES (Revision 20260407, paper interactive) — second-pass verification of every line number and printed amount: Section A Line 1 \"FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040\", Line 2 interest on non-Delaware state/local obligations, Line 3 fiduciary adjustment/oil depletion, Line 12 Delaware AGI, Line 20 standard deduction election (\"Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column A and in Column B\"), Line 21 additional standard deductions (x $2500), Line 22 total deductions, Line 23 \"TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount\", Line 24 \"TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE\", Line 25 lump-sum tax, Line 26 total tax, Line 27a personal credits (x $110), Line 27b 60-or-over credits (x $110), Line 28 other states, Line 29 volunteer firefighter, Line 31 child care (50% of federal), Line 34 EITC refundable/non-refundable boxes, Line 39 capital gains tax payments (2023: Line 38), Lines 41-47 settle-up",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "forms_and_instructions",
+     "url": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf"
+    },
+    {
+     "answers": "Delaware 2025 State Income Tax Table & Schedule (TY25_taxtable.pdf) — \"2025 STATE INCOME TAX SCHEDULE: If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) over, for the portion over $60,000\" with worked example taxable income $67,751 -> Tax on $60,000 $2,943.50 + $511.56 = $3,455.06 (Round to $3,455); table for taxable incomes of less than $60,000 in $50 bands",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "forms_and_instructions",
+     "url": "https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf"
+    },
+    {
+     "answers": "30 Del. C. sec. 1102(a)(14) (official Delaware Code) — \"For taxable years beginning after December 31, 2013, the amount of tax shall be determined as follows: 2.2% of taxable income in excess of $2,000 but not in excess of $5,000; 3.9% ... $5,000-$10,000; 4.8% ... $10,000-$20,000; 5.2% ... $20,000-$25,000; 5.55% ... $25,000-$60,000; and 6.6% of taxable income in excess of $60,000\" — statutory second pass on the sub-$60,000 rates, re-fetched live this session and still the operative paragraph for 2025 (paragraph (13), which ended at 6.75%, remains the superseded prior-year rule)",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "forms_and_instructions",
+     "url": "https://delcode.delaware.gov/title30/c011/sc01/index.html"
+    },
+    {
+     "answers": "DE Division of Revenue - Personal Income Tax Forms index (source of the 2025 file URLs, including the 2025 PIT-RES instructions, the 2025 paper-interactive PIT-RES and TY25_taxtable.pdf)",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.delaware.gov/personal-income-tax-forms/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@0572dc8b7811",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 Delaware Resident Individual Income Tax Return Instructions (PIT-RES), with the 2024 and 2025 PIT-RES forms",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "law_changes",
+     "url": "@@f9c149071f3b"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "remote_work_sourcing": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@0572dc8b7811",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@5cc6396bf45c",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "remote_work_sourcing",
+     "url": "@@bc706a328ff4"
+    }
+   ],
+   "topic": "remote_work_sourcing",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@0572dc8b7811",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@9f6bbd0a0d07",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@f9c149071f3b"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@0572dc8b7811",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/de",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/de",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@672e703af563",
+      "@@01ca6b3e8a7f",
+      "@@e7da96f5baec",
+      "@@90bcec6fab4c",
+      "@@81d1238df71f",
+      "@@1b67b5a856b9"
+     ],
+     "citations": [
+      {
+       "source": "@@0318a7ccf5ce",
+       "url": "@@f9c149071f3b"
+      },
+      {
+       "source": "@@5cc6396bf45c",
+       "url": "@@bc706a328ff4"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@d009c3b9f7fc"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in DE in 2025 without living there — file a nonresident return on DE-source income.",
+     "state": "DE",
+     "warnings": [
+      "@@843db8af5620",
+      "@@add01a4ba396",
+      "Remote-work trap: work performed from TX for an employer sitting in DE, and DE HAS a convenience-of-the-employer sourcing rule. Delaware Schedule W (Form PIT-SCW): a nonresident whose Delaware-sourced employment includes income earned while working outside Delaware gets an allowance \"equivalent to the ratio of days worked outside of the State versus the total number of Delaware sourced employment working days. Any allowance claimed must be based on necessity of work outside the State of Delaware in performance of duties for the employer, as opposed to solely for the convenience of the employee.\" Trigger: A nonresident apportioning wages from Delaware-sourced employment on Schedule W; every out-of-state day must be itemized on page 2 with date, location and the purpose of the out-of-state business. Exceptions: Verbatim from the form: \"Working from an office out of your home does not satisfy the requirements of 'necessity' of duties for your employer and is considered for the convenience of the employee unless working from home is a requirement of employment with your employer.\" [2025 Delaware Schedule W — Apportionment Worksheet (Form PIT-SCW, Revision 20250515), page 1 apportionment instructions + page 2 days-worked-outside-Delaware log. — https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-SCW_2025-01_PaperInteractiveIPM.pdf] If the rule reaches these wages, a NONRESIDENT DE return is required that the physical footprint alone never shows."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@672e703af563",
+      "@@01ca6b3e8a7f",
+      "@@e7da96f5baec",
+      "@@90bcec6fab4c",
+      "@@81d1238df71f",
+      "@@1b67b5a856b9"
+     ],
+     "citations": [
+      {
+       "source": "@@0318a7ccf5ce",
+       "url": "@@f9c149071f3b"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@d009c3b9f7fc"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in DE part of 2025 — file a part-year return on income while a resident (plus DE-source income while not).",
+     "state": "DE",
+     "warnings": [
+      "@@843db8af5620",
+      "@@add01a4ba396"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@672e703af563",
+      "@@01ca6b3e8a7f",
+      "@@e7da96f5baec",
+      "@@90bcec6fab4c",
+      "@@81d1238df71f",
+      "@@1b67b5a856b9"
+     ],
+     "citations": [
+      {
+       "source": "@@0318a7ccf5ce",
+       "url": "@@f9c149071f3b"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@b636c51098b7"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in DE all of 2025 — file a resident return on income from all sources.",
+     "state": "DE",
+     "warnings": [
+      "@@843db8af5620"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "de",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "de",
+     "taxable_base": "3250",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "de",
+     "taxable_base": "4250",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $1,000.00; graduated tax on $1,000 [head_of_household schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 15000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "de",
+     "taxable_base": "18250",
+     "year": 2025
+    },
+    "marginal_rate": "0.048",
+    "tax": 501,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $15,000.00; graduated tax on $15,000 [head_of_household schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501"
+   },
+   {
+    "base_after_exemptions": 70000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "de",
+     "taxable_base": "73250",
+     "year": 2025
+    },
+    "marginal_rate": "0.066",
+    "tax": 3604,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $70,000.00; graduated tax on $70,000 [head_of_household schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "de",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = -$6,500.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "de",
+     "taxable_base": "6500",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $6,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "de",
+     "taxable_base": "7500",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $7,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $1,000.00; graduated tax on $1,000 [married_filing_jointly schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 15000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "de",
+     "taxable_base": "21500",
+     "year": 2025
+    },
+    "marginal_rate": "0.048",
+    "tax": 501,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $21,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $15,000.00; graduated tax on $15,000 [married_filing_jointly schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501"
+   },
+   {
+    "base_after_exemptions": 70000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "de",
+     "taxable_base": "76500",
+     "year": 2025
+    },
+    "marginal_rate": "0.066",
+    "tax": 3604,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $76,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $70,000.00; graduated tax on $70,000 [married_filing_jointly schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "de",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "de",
+     "taxable_base": "3250",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "de",
+     "taxable_base": "4250",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $1,000.00; graduated tax on $1,000 [married_filing_separately schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 15000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "de",
+     "taxable_base": "18250",
+     "year": 2025
+    },
+    "marginal_rate": "0.048",
+    "tax": 501,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $15,000.00; graduated tax on $15,000 [married_filing_separately schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501"
+   },
+   {
+    "base_after_exemptions": 70000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "de",
+     "taxable_base": "73250",
+     "year": 2025
+    },
+    "marginal_rate": "0.066",
+    "tax": 3604,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $70,000.00; graduated tax on $70,000 [married_filing_separately schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "de",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "de",
+     "taxable_base": "3250",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "de",
+     "taxable_base": "4250",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $1,000.00; graduated tax on $1,000 [single schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 15000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "de",
+     "taxable_base": "18250",
+     "year": 2025
+    },
+    "marginal_rate": "0.048",
+    "tax": 501,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $15,000.00; graduated tax on $15,000 [single schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501"
+   },
+   {
+    "base_after_exemptions": 70000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "de",
+     "taxable_base": "73250",
+     "year": 2025
+    },
+    "marginal_rate": "0.066",
+    "tax": 3604,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $70,000.00; graduated tax on $70,000 [single schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "de",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: DE 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "de",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: DE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "de",
+     "taxable_base": "46500",
+     "year": 2025
+    },
+    "marginal_rate": "0.0555",
+    "tax": 1834,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $46,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $6,500 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $15,000.00 (the $25,000-$60,000 bracket) = $832.50; total $1,833.50 -> $1,834"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@9f6bbd0a0d07",
+    "url": "@@f9c149071f3b"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "de"
+  },
+  "work_common_tail": ". Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 UNCHANGED TAX AND (for the tax lines) UNCHANGED FORM NUMBERING: the brackets, the $3,250/$6,500 standard deduction, the $2,500 additional standard deduction, and the $110 personal credits are all unchanged from 2024, and — unlike the 2023-to-2024 transition, which renumbered them — the 2025 PIT-RES keeps the deduction election on Line 20, additional standard deduction Line 21, total deductions Line 22, TAXABLE INCOME Line 23, TAX LIABILITY Line 24, lump-sum tax Line 25, total tax Line 26 and personal credits Lines 27a/27b. The settle-up tail is also 2024's: capital gains tax payments Line 39 (2023: 38), balance due 41, overpayment 42, contributions 43, applied-to-2026-estimated 44, penalties/interest 45, NET BALANCE DUE 46 (2023: 45) and NET REFUND 47 (2023: 46) — the +1 against 2023 came with the 2024 revision's inserted Line 16, and the 2025 mailing table cites these numbers. Base guidance: Supply 2025 Form PIT-RES Line 12, DELAWARE ADJUSTED GROSS INCOME = Line 1 federal AGI (from federal Form 1040) + Section A additions (Line 2 interest on non-Delaware state/local obligations; Line 3 fiduciary adjustment / oil depletion) - Section B subtractions (U.S.-obligation interest; pension/retirement exclusions; Delaware state tax refund, fiduciary adjustment, work opportunity credit, Delaware NOL carryforward; taxable Social Security / Railroad Retirement benefits, higher-education exclusion, certain lump-sum distributions; 529/ABLE contribution deduction) - the exclusion for certain persons 60 and over or disabled. If the filer has no Delaware additions or subtractions, Line 12 equals federal AGI. The op then subtracts the shipped per-status standard deduction to reproduce Line 23 taxable income (Line 23 = Line 12 - Line 22 total deductions). NO income-based exemptions are shipped (exemptions = {}): Delaware's per-person allowances are TAX CREDITS, not subtractions from income. 2025 Form PIT-RES Line 27a Personal Credits = $110 x the number of exemptions ('Enter number of exemptions ___ x $110'; e.g. MFJ with no dependents = $220), and Line 27b Additional Personal Credits = $110 per taxpayer/spouse age 60 or over on December 31, 2025 — both are subtracted from the Line 26 total tax, not from income. They are NOT applied by calc.state_tax; claim them on the form. exemptions_count and dependents_count must therefore be 0 for this pack. A filer claimed as a dependent on another person's return gets $0 personal credit. SINGLE rate schedule for ALL filing statuses: 30 Del. C. sec. 1102(a)(14) publishes one rate table with no filing-status variation, and the 2025 State Income Tax Table has no filing-status columns; the schedule is duplicated per status here. Only the standard deduction differs by status ($6,500 Filing Status 2 vs $3,250 Statuses 1, 3, 4, 5). TAX TABLE MANDATE below $60,000 — bracket math may differ by a dollar or two within table bands; the filed form must use the table: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability' (Line 24 instructions). The 2025 table uses $50-wide bands and every sampled band equals band-MIDPOINT bracket math rounded half-up: taxable $2,750-$2,800 prints $17 (midpoint $2,775 -> 2.2% x $775 = $17.05); $16,750-$16,800 prints $586 (midpoint -> $586.20); $43,500-$43,550 prints $2,029 (midpoint -> $2,029.14); $45,400-$45,450 prints $2,135; $49,500-$49,550 prints $2,362; $50,000-$50,050 prints $2,390. So at the BOTTOM of a band the op can read $1 lower than the table (e.g. exactly $43,500 computes $2,027.75 -> $2,028 vs the table's $2,029). At $60,000 or over the printed schedule ($2,943.50 + 6.60% of the portion over $60,000) IS exact marginal math. Printed-constant check (re-derived for 2025): the schedule's $2,943.50 at $60,000 exactly equals the cumulative sum of the prior brackets (0.022 x 3,000 = 66.00; + 0.039 x 5,000 = 195.00; + 0.048 x 10,000 = 480.00; + 0.052 x 5,000 = 260.00; + 0.0555 x 35,000 = 1,942.50; total 2,943.50) — no divergence. The DOR's own worked example then adds 6.6% x $7,751 = $511.56 for $3,455.06. Provenance of the sub-$60,000 rates: the 2025 DOR booklet and tax-table PDF print a rate schedule ONLY for taxable income of $60,000 or over (below that they mandate the table). The 2.2%/3.9%/4.8%/5.2%/5.55% marginal rates and their $2,000/$5,000/$10,000/$20,000/$25,000/$60,000 breakpoints are copied from 30 Del. C. sec. 1102(a)(14) (official Delaware Code site, 'For taxable years beginning after December 31, 2013' — re-fetched live and still the operative paragraph for 2025; the superseded paragraph (13) ended at 6.75%) and cross-check exactly against the 2025 DOR table's band values and the printed $2,943.50 constant. The first bracket is a zero-rate floor: sec. 1102(a)(14) imposes no tax on the first $2,000 of taxable income (the rate schedule starts at '2.2% of taxable income in excess of $2,000'), and the 2025 tax table shows $0 tax for taxable income under $2,000. Additional standard deduction NOT applied by the engine: Line 21 allows $2,500 per box checked for taxpayer/spouse age 65 or over and/or blind (maximum $5,000 per individual), ONLY for filers electing the Delaware standard deduction ('ADDITIONAL STANDARD DEDUCTIONS (Not Allowed with Itemized Deductions)' on the 2025 form). Enter it on the form; the shipped standard_deduction covers Line 20a only. Itemizers: the standard deduction is in lieu of itemizing. Filers may itemize on the Delaware return (Section C + Form PIT-RSA, checked on Line 20b) even if they took the federal standard deduction; the shipped standard_deduction applies only to standard-deduction electors. For Filing Status 3 or 4, if one spouse itemizes the other must itemize; if one takes the standard deduction the other must too. Delaware filing statuses are 1 Single/Divorced/Widow(er); 2 Married Filing Joint; 3 Married Filing Separate Forms; 4 Married Filing Combined Separate (two separate computations in Columns A and B of one form, $3,250 standard deduction per column); 5 Head of Household. The engine's married_filing_separately corresponds to Status 3 or per-column Status 4 (both $3,250). QUALIFYING SURVIVING SPOUSE caution: the engine maps QSS to married_filing_jointly ($6,500 standard deduction), but PIT-RES Filing Status 1 covers 'Single, Divorced, Widow(er)' and the 2025 booklet never mentions the federal QSS status. A widow(er) not remarried at year-end appears to file Delaware Status 1 ($3,250 standard deduction) — the brackets are identical either way, but the deduction differs by $3,250. Confirm the correct Delaware status at revenue.delaware.gov before relying on the QSS-to-MFJ mapping. Tax on lump-sum distributions is NOT modeled: 2025 Form PIT-RES Line 25 adds a separate tax on qualified lump-sum distributions computed on Form PIT-STC (30 Del. C. sec. 1102(b) separate tax, equal to the initial separate tax times the ordinary-income fraction); the engine computes Line 24 only (Line 26 TOTAL TAX = Line 24 + Line 25). Base subtractions taken BEFORE Line 12 are the caller's responsibility: the pension/retirement exclusion, the exclusion for certain persons 60 and over or disabled, the DE 529/ABLE contribution deduction, U.S.-obligation interest, and taxable Social Security / Railroad Retirement benefits — supply Line 12 Delaware AGI already reflecting them. Delaware EITC (elect refundable 4.5% or nonrefundable 20% of the federal EITC, Line 34), child care credit (50% of the federal Form 2441 credit, maximum $3,000, Line 31), other-state credit (Line 28), volunteer firefighter credit ($1,000 per spouse, Line 29), and the $110 personal credits (Lines 27a/27b) are all CREDITS against tax — none of them are exemptions and none are modeled by this op. All are unchanged for 2025. Rounding: 'Dollar amounts on your return must be rounded off to the nearest whole dollar. This means that amounts from 50 to 99 cents are increased to the next dollar' — matches the engine's half-up rounding, and the 2025 tax-schedule example rounds $3,455.06 to $3,455. No local income tax is collected on Form PIT-RES (the return has no local/county tax line). Part-year residents may elect to file either PIT-RES (full-year resident treatment) or PIT-NON, whichever is more advantageous; this pack models the resident form PIT-RES. Delaware's filing deadline is April 30, 2026 — NOT the federal April 15."
+ },
+ "year": 2025
+}

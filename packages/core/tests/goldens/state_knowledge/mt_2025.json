@@ -1,0 +1,843 @@
+{
+ "_strings": {
+  "@@0d315ee06d00": "2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (HB 845 and SB 53 529-plan subtraction to $4,500/$9,000; SB 93 permanent military retirement subtraction; SB 544 Montana NOL transition adjustment; Changes Beginning in Tax Year 2026 — HB 129 volunteer-responder subtraction, HB 337 lower top rate and wider brackets for 2026 with a further cut in 2027, EITC to 20% in 2026; Form Changes — Mixed Residency and Nonresident Military Spouse checkboxes, state income tax deduction moved from line 2 to Schedule I line 4 with Worksheet B, lines 1-2 updated for the One Big Beautiful Bill, Transition Schedule discontinued), Filing Requirements, Residency Status, North Dakota Reciprocity, Montana Individual Income Tax Calculation (p.10-12) with the worked Marla example, 2025 Montana Income Tax Rates (p.12), Schedule I-V and Schedule 2EC instructions, Due Dates, mailing addresses, payment instructions, and the 2026/2027 tax tables on p.42",
+  "@@14ec0f539982": "2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (2025 legislative changes HB 845 / SB 53 / SB 93 / SB 544, and the notice that HB 337's rate cut and the 20% EITC begin in tax year 2026), 2025 Montana Income Tax Rates (p.12), Filing Requirements incl. the thirty-day nonresident worker exclusion, Residency Status and the new Mixed Residency checkbox, North Dakota Reciprocity, Due Dates (April 15, 2026), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check payable to the Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@27eb316bc814": "Montana Adoption Credit — Montana residents who complete an adoption. Form ADPT and paperwork documenting the adoption (for foster-care adoptions, the signed adoption confirmation letter from Montana DPHHS) must be included with the return.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@3be0fefb08f3": "2025 Montana Form 2 Instructions, How to File / Paper Filing ('If you do not owe taxes or are expecting a refund, mail your tax return to ... PO Box 6577 ... If you are making a payment with your tax return, mail your tax return and check to ... PO Box 6308') and the assembly order (payment voucher, W-2s/1099s, Form 2 pages 1-2, Montana schedules, copy of the federal return)",
+  "@@3e053dd2003f": "Montana Earned Income Tax Credit (EITC) — Full-year Montana residents who claimed the federal Earned Income Tax Credit on their federal return. Nonresidents do NOT qualify (leave the line blank). Part-year residents, enrolled tribal members living on their reservation, members of IRC section 501(d) agricultural organizations, and resident active-duty servicemembers use Worksheet A (renamed for 2025 from the Earned Income Tax Credit Reduction Worksheet) to reduce the credit by the Montana-earned-income ratio.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@6b9dabf046c7": "Treaty conformity — MT conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MT income (it flows through the federal starting point; do not add it back on the MT return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: MT conforms. For tax year 2025 Montana starts from FEDERAL TAXABLE INCOME: 2025 Form 2, line 1 is \"Federal adjusted gross income from Form 1040, line 11b\", line 2 is \"Add Form 1040, lines 12e and 13b\" (the federal standard or itemized deduction plus the additional Schedule 1-A deductions), and line 3 is the resulting federal taxable income for Montana. Federally treaty-exempt income (excluded from federal AGI under an applicable U.S. tax treaty) is therefore already absent from the MT starting figure. Montana additions on Schedule I, Part I are items of income not included in federal taxable income that must be added back, and the enumerated 2025 addition lines are interest/mutual-fund dividends from other states' state/county/municipal bonds; other recoveries of amounts deducted in earlier years; Montana MSA / First-Time Homebuyer Account nonqualified withdrawals; state income taxes included in federal itemized deductions (line 4, computed on Worksheet B — NEW placement for 2025); expenses used to claim a Montana tax credit; and other additions by code. NONE is an add-back of treaty-exempt income. Unlike California (Schedule CA), Montana has no treaty-income addback for 2025, so treaty-exempt income is not re-taxed.",
+  "@@75aefed614cb": "2025 Montana Form 2 Instructions, Due Dates ('File Form 2 and pay the tax due by April 15, 2026. An automatic extension of six months applies for filing your return, but this extension does not apply to payments.')",
+  "@@805a19766c29": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, SB 93 made the Montana MILITARY RETIREMENT SUBTRACTION PERMANENT. It is a Schedule I subtraction inside Form 2 line 5. Resolve via: The What's New section and the Schedule I military-retirement subtraction instructions of the 2025 Montana Form 2 instructions (the citation URL).",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a06503879e66": "2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages), p.12 — '2025 Montana Income Tax Rates': Single and Married Filing Separately Ordinary Income Tax Rates — $0 to less than $21,100 tax rate 4.7% Less $0, $21,100 or greater 5.9% Less $253; Married Filing Jointly and Qualifying Surviving Spouse — breakpoint $42,200, 5.9% Less $506; Head of Household — breakpoint $31,700, 5.9% Less $380. The rates apply to Montana ORDINARY income ('taxable income without net long-term capital gains', which includes qualified dividends); net long-term capital gains are taxed separately at 3% up to the same breakpoint (measured after ordinary income) and 4.1% above. Worked example (instructions p.11, Marla): Montana taxable income $50,000, single, no net long-term capital gains -> 'Her Montana Ordinary Income Tax is $2,697' — matching marginal bracket math (4.7% x 21,100 + 5.9% x 28,900 = 991.70 + 1,705.10 = 2,696.80 -> 2,697) and the printed formula method (5.9% x 50,000 - 253 = 2,697.00). Second pass: the 2025 Form 2 itself (https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf) prints the $21,100 / $42,200 / $31,700 filing-status amounts on page 2, line 5, and the 0.03 / 0.041 capital-gains multipliers on lines 8 and 10 — both passes agree. The booklet's What's New confirms the 4.7%/5.9% structure is unchanged for 2025 and that HB 337's lower top rate (5.65%) and wider brackets begin in TAX YEAR 2026.",
+  "@@a7c6a11e1c91": "Elderly Homeowner/Renter Credit — Montana taxpayers age 62 or older who lived in Montana for more than nine months during the tax year, occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year, and live in a household where the total income of all its members is less than $45,000. Available even to those with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal under Individuals). One credit per household.",
+  "@@b2ef4ff5f6a4": "Credit for Income Taxes Paid to Another State or Country — Full-year or part-year Montana residents who paid income tax to another state or country on income that is also taxed by Montana. Not available if the other state allowed a credit against its own tax for the Montana tax on the same income, or for taxes paid on Montana-source income. Pass-through entity owners may claim their share of qualifying entity-level income taxes (including composite and pass-through entity taxes).",
+  "@@c17ec871359f": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, HB 845 and SB 53 raised the Montana 529-plan subtraction maximum to up to $4,500 ($9,000 joint). It is a Schedule I subtraction inside Form 2 line 5. Resolve via: The What's New section and the Schedule I subtraction instructions of the 2025 Montana Form 2 instructions (the citation URL); the engine subtracts nothing beyond what the supplied line 7 Montana taxable income already reflects.",
+  "@@d0b7f306bb75": "annual (per tax year; the newest shipped MT pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@d7e25c123754": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf",
+  "@@e71e08fdced6": "There is no separate nonresident/part-year individual form for 2025. Nonresidents, part-year residents, and mixed-residency filers also file Montana Form 2 and complete Schedule II, \"Tax on Montana Source Income,\" to apportion the tax. (The Transition Schedule used in 2024 has been discontinued — it applied only to tax year 2024.)",
+  "@@e9e3662fb4db": "Montana Form 2 — Individual Income Tax Return (most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).",
+  "@@ea0988d4c150": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, SB 544 created a Montana NET-OPERATING-LOSS (NOL) TRANSITION ADJUSTMENT. Related 2025 form movement: the state income tax deduction moved off Form 2 line 2 and is now added back on Schedule I, Part I, line 4 via the new Worksheet B, and the tax-year-2024-only Transition Schedule has been discontinued. Resolve via: The What's New section, the Schedule I Part I line 4 instructions and Worksheet B in the 2025 Montana Form 2 instructions (the citation URL); Worksheet B was not transcribed line-by-line in this pack (see unverified).",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@fc9477b89c24": "The newest shipped MT pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@3be0fefb08f3",
+      "url": "@@d7e25c123754"
+     },
+     {
+      "source": "@@75aefed614cb",
+      "url": "@@d7e25c123754"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@e9e3662fb4db",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Montana Department of Revenue, PO Box 6577, Helena, MT 59604-6577",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@3be0fefb08f3",
+      "url": "@@d7e25c123754"
+     },
+     {
+      "source": "@@75aefed614cb",
+      "url": "@@d7e25c123754"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@e9e3662fb4db",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Montana Department of Revenue, PO Box 6308, Helena, MT 59604-6308",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via MT Web Pay: https://tap.dor.mt.gov (no processor fee).",
+     "By check: make it payable to \"Montana Department of Revenue ('Make your check payable to the Montana Department of Revenue, sign your check, and write your Social Security Number and \"tax year 2025\" on the memo line'; include the payment voucher available at revenue.mt.gov. Also available — electronic funds withdrawal when e-filing, or e-check or credit/debit card via the TransAction Portal; card payments carry a fee.)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@3be0fefb08f3",
+      "url": "@@d7e25c123754"
+     },
+     {
+      "source": "@@75aefed614cb",
+      "url": "@@d7e25c123754"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@e9e3662fb4db",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Montana Department of Revenue, PO Box 6577, Helena, MT 59604-6577",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@75aefed614cb",
+      "url": "@@d7e25c123754"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@e9e3662fb4db",
+    "headline": "MT 2025: refund $512",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@75aefed614cb",
+      "url": "@@d7e25c123754"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@e9e3662fb4db",
+    "headline": "MT 2025: you owe $347",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@75aefed614cb",
+      "url": "@@d7e25c123754"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@e9e3662fb4db",
+    "headline": "MT 2025: you owe $1,205",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@fc9477b89c24",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@d7e25c123754"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 Montana Form 2 Instructions, Line 15 - Montana earned income tax credit ('a Montana earned income tax credit (EITC) of 10 percent of the federal EITC'; Worksheet A reduction examples 1-4) and What's New (HB 337 increases the credit to 20% beginning in tax year 2026)",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "credits",
+     "url": "@@d7e25c123754"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@fc9477b89c24",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@d7e25c123754"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@3be0fefb08f3",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "filing_logistics",
+     "url": "@@d7e25c123754"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@fc9477b89c24",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@d7e25c123754"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@14ec0f539982",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "forms_and_instructions",
+     "url": "@@d7e25c123754"
+    },
+    {
+     "answers": "2025 Montana Individual Income Tax Return Form 2 (the form itself) — second-pass verification: page 1 line 1 \"Federal adjusted gross income from Form 1040, line 11b\", line 2 \"Add Form 1040, lines 12e and 13b\", line 6 \"$5,660 subtraction for taxpayers 65 and older ($11,320 if married filing jointly and both are 65 and older)\", line 7 Montana taxable income; page 2 Montana Individual Income Tax worksheet with the printed filing-status amounts on line 5 ($21,100 single or married filing separately / $42,200 married filing jointly or qualifying surviving spouse / $31,700 head of household), the 3% (0.03) multiplier on line 8 and 4.1% (0.041) on line 10, the Montana Ordinary Income Tax Table reference on line 12, and the Montana resident tax on line 13; page 1 line 15 \"Multiply Federal EIC by 10% (0.10)\"; page 3 Schedule I Part II line 2 \"Total contributions for the year (up to $4,600 per taxpayer)\"; page 10 Schedule 2EC line 19 \"Your standard exclusion is entered here for you\" pre-printed 12,600, line 25 15% (0.15), line 28 \"Enter the lesser of line 27 or $1,150\"",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf"
+    },
+    {
+     "answers": "Montana DOR — Montana Individual Income Tax Return (Form 2) publication page",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.mt.gov/publications/montana-individual-income-tax-return-form-2"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@fc9477b89c24",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@d7e25c123754"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@0d315ee06d00",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "law_changes",
+     "url": "@@d7e25c123754"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@fc9477b89c24",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@d7e25c123754"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@a06503879e66",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@d7e25c123754"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@fc9477b89c24",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@d7e25c123754"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mt",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/mt",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3e053dd2003f",
+      "@@a7c6a11e1c91",
+      "@@27eb316bc814",
+      "@@b2ef4ff5f6a4"
+     ],
+     "citations": [
+      {
+       "source": "@@0d315ee06d00",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@14ec0f539982",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@0d315ee06d00",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@14ec0f539982",
+       "url": "@@d7e25c123754"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@e71e08fdced6"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in MT in 2025 without living there — file a nonresident return on MT-source income.",
+     "state": "MT",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@6b9dabf046c7",
+      "@@c17ec871359f",
+      "@@805a19766c29",
+      "@@ea0988d4c150",
+      "Remote-work trap: work performed from TX for an employer sitting in MT. If MT applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to MT and require a NONRESIDENT MT return that the physical footprint alone never shows — and the W-2's Box 15 often already names MT. This MT pack year carries no researched convenience rule: verify MT's nonresident wage-sourcing rule at its DOR before assuming no MT filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3e053dd2003f",
+      "@@a7c6a11e1c91",
+      "@@27eb316bc814",
+      "@@b2ef4ff5f6a4"
+     ],
+     "citations": [
+      {
+       "source": "@@0d315ee06d00",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@14ec0f539982",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@0d315ee06d00",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@14ec0f539982",
+       "url": "@@d7e25c123754"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@e71e08fdced6"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MT part of 2025 — file a part-year return on income while a resident (plus MT-source income while not).",
+     "state": "MT",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@6b9dabf046c7",
+      "@@c17ec871359f",
+      "@@805a19766c29",
+      "@@ea0988d4c150"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3e053dd2003f",
+      "@@a7c6a11e1c91",
+      "@@27eb316bc814",
+      "@@b2ef4ff5f6a4"
+     ],
+     "citations": [
+      {
+       "source": "@@0d315ee06d00",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@14ec0f539982",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@0d315ee06d00",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@14ec0f539982",
+       "url": "@@d7e25c123754"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@e9e3662fb4db"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MT all of 2025 — file a resident return on income from all sources.",
+     "state": "MT",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@c17ec871359f",
+      "@@805a19766c29",
+      "@@ea0988d4c150"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 0,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 235,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [head_of_household schedule]: 0.047 x $5,000.00 (the $0-$31,700 bracket) = $235.00; total $235.00 -> $235"
+   },
+   {
+    "base_after_exemptions": 41700,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": "41700",
+     "year": 2025
+    },
+    "marginal_rate": "0.059",
+    "tax": 2080,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $41,700.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $41,700 [head_of_household schedule]: 0.047 x $31,700.00 (the $0-$31,700 bracket) = $1,489.90; 0.059 x $10,000.00 (the $31,700+ bracket) = $590.00; total $2,079.90 -> $2,080"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mt",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 0,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mt",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 235,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0.047 x $5,000.00 (the $0-$42,200 bracket) = $235.00; total $235.00 -> $235"
+   },
+   {
+    "base_after_exemptions": 52200,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mt",
+     "taxable_base": "52200",
+     "year": 2025
+    },
+    "marginal_rate": "0.059",
+    "tax": 2573,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $52,200.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $52,200 [married_filing_jointly schedule]: 0.047 x $42,200.00 (the $0-$42,200 bracket) = $1,983.40; 0.059 x $10,000.00 (the $42,200+ bracket) = $590.00; total $2,573.40 -> $2,573"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mt",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 0,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mt",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 235,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_separately schedule]: 0.047 x $5,000.00 (the $0-$21,100 bracket) = $235.00; total $235.00 -> $235"
+   },
+   {
+    "base_after_exemptions": 31100,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mt",
+     "taxable_base": "31100",
+     "year": 2025
+    },
+    "marginal_rate": "0.059",
+    "tax": 1582,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $31,100.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $31,100 [married_filing_separately schedule]: 0.047 x $21,100.00 (the $0-$21,100 bracket) = $991.70; 0.059 x $10,000.00 (the $21,100+ bracket) = $590.00; total $1,581.70 -> $1,582"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mt",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 0,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mt",
+     "taxable_base": "5000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 235,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [single schedule]: 0.047 x $5,000.00 (the $0-$21,100 bracket) = $235.00; total $235.00 -> $235"
+   },
+   {
+    "base_after_exemptions": 31100,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mt",
+     "taxable_base": "31100",
+     "year": 2025
+    },
+    "marginal_rate": "0.059",
+    "tax": 1582,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $31,100.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $31,100 [single schedule]: 0.047 x $21,100.00 (the $0-$21,100 bracket) = $991.70; 0.059 x $10,000.00 (the $21,100+ bracket) = $590.00; total $1,581.70 -> $1,582"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: MT 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: age_65). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: MT 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "mt",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 1880,
+    "work_head": "MT state income tax (2025, graduated brackets): taxable_base $40,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.047 x $40,000.00 (the $0-$42,200 bracket) = $1,880.00; total $1,880.00 -> $1,880"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_taxable_income",
+   "citation": {
+    "source": "@@a06503879e66",
+    "url": "@@d7e25c123754"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "mt"
+  },
+  "work_common_tail": ". Tax line: Form 2, page 1, line 8 'Tax liability before tax credits', computed on the page 2 'Montana Individual Income Tax' worksheet: line 12 is the Montana Ordinary Income Tax figured from the Ordinary Income Tax Table on page 12 of the instructions, applied to page 2 line 1 (Montana taxable income from page 1, line 7) — or to line 4 (taxable income minus net long-term capital gains) if the filer has a net long-term capital gain — plus the line 11 net long-term capital gains tax; residents enter the line 13 sum on page 1, line 8. Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($5,660 — Not an exemption in the old sense — it is the Form 2, page 1, line 6 subtraction: '$5,660 subtraction for taxpayers 65 and older ($11,320 if married filing jointly and both are 65 and older)', subtracted from federal taxable income in computing line 7 Montana taxable income. INFLATION-ADJUSTED for 2025, up from 2024's $5,500/$11,000. NOT applied by calc.state_tax (the engine applies only personal/dependent keys) — claim it on the form; the caller's supplied line 7 base should already reflect it.) This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 CHANGES: the SB 399 (2021) structure is UNCHANGED in shape for 2025 — federal-taxable-income base, two ordinary-income rates of 4.7% and 5.9%, separate 3.0%/4.1% net-long-term-capital-gains rates, federal filing statuses, no Montana standard deduction and no Montana personal/dependent exemptions. What moved: the breakpoints were RE-INDEXED to $21,100 single/MFS, $42,200 MFJ/QSS, $31,700 HoH (2024: $20,500/$41,000/$30,750); the printed 'Less' constants became $253/$506/$380 (2024: $246/$492/$369); and the age-65 subtraction was inflation-adjusted to $5,660/$11,320 (2024: $5,500/$11,000). Pass exemptions_count=0 and dependents_count=0. CRITICAL — HB 337's RATE CUT IS TAX YEAR 2026, NOT 2025: the 2025 booklet's 'Changes Beginning in Tax Year 2026' section states 'House Bill 337 lowered the top marginal tax rate and increased the income brackets for tax year 2026. Beginning in tax year 2027, the bill lowers the top marginal ordinary income tax rate and increases the income brackets even further. The bill also increases the Montana earned income tax credit to 20% of the federal earned income tax credit beginning in tax year 2026.' The booklet prints those future tables on p.42 (2026: 5.65% over $47,500 single / $95,000 MFJ / $71,250 HoH; 2027: 5.4% over $65,000 / $130,000 / $97,500). The 2025 top rate is 5.9% and the 2025 EITC is 10% — do NOT apply the 2026 or 2027 figures to tax year 2025. Base guidance: Supply 2025 Form 2, page 1, line 7 — 'Montana taxable income' = line 3 federal taxable income for Montana + line 4 Montana additions (Schedule I) - line 5 Montana subtractions (Schedule I) - line 6 the $5,660/$11,320 age-65+ subtraction; 'Your Montana taxable income cannot be less than zero. If zero or less, enter zero.' Line 3 = line 1 federal AGI (Form 1040, line 11b) minus line 2 (Form 1040 lines 12e and 13b — the federal standard or itemized deduction PLUS the additional Schedule 1-A deductions for qualified tips and the other One Big Beautiful Bill items). CAVEAT that CHANGED for 2025: itemizers no longer remove state income taxes on line 2 — instead any state income tax deduction included in federal itemized deductions is ADDED BACK on Schedule I, Part I, line 4 (computed on Worksheet B), and only to the extent it does not reduce the deduction below the federal standard deduction. The op subtracts NOTHING further — line 7 already reflects every deduction and subtraction. CRITICAL — the shipped brackets tax ORDINARY income only: Montana's two-bracket 4.7%/5.9% schedule applies to 'taxable income without net long-term capital gains' (Montana Ordinary Income, which includes qualified dividends). NET LONG-TERM CAPITAL GAINS are taxed separately at 3.0% up to the same filing-status breakpoint (measured after stacking on ordinary income, Form 2 page 2 lines 2-10) and 4.1% above; if Montana Ordinary Income already exceeds the breakpoint ($21,100 / $42,200 / $31,700), ALL net long-term capital gains are taxed at 4.1%. If the filer has NO net long-term capital gains, this op's bracket math on line 7 reproduces the page 2 line 12 tax exactly. If they do, compute the split on the page 2 worksheet — running the full line 7 through these brackets OVERSTATES the tax (the LTCG portion would be taxed at 4.7%/5.9% instead of 3.0%/4.1%). The old Resident Capital Gains Credit (2% of gains) remains repealed. FEDERAL FILING STATUSES: taxpayers must use the same filing status as the federal return — including QUALIFYING SURVIVING SPOUSE, which shares the MFJ schedule (the 2025 rate table is titled 'Married Filing Jointly and Qualifying Surviving Spouse' and Form 2 page 2 line 5 prints $42,200 for both), so the engine's QSS-to-MFJ mapping is exactly correct. MARRIED FILING SEPARATELY uses the SINGLE-status schedule ($21,100 breakpoint), NOT half of MFJ. PRINTED-CONSTANT DIVERGENCE — NEW for 2025 (2024's constants were exact): the 'Less' constants are now ROUNDED DOWN from the exact (5.9% - 4.7%) x breakpoint. Exact: 1.2% x $21,100 = $253.20 (printed $253), 1.2% x $42,200 = $506.40 (printed $506), 1.2% x $31,700 = $380.40 (printed $380). So above the breakpoint the printed formula method (5.9% x income - constant) yields $0.20 MORE tax than pure marginal bracket math for single/MFS and $0.40 more for MFJ/QSS and HoH. Both methods round to the same whole dollar in most cases (including the booklet's own $50,000 single example: marginal 2,696.80 -> 2,697; printed 2,697.00 -> 2,697), but they can split by $1 when the marginal total lands just below a .50 boundary. For 2024 the same constants were exact ($246 / $492 / $369) and no divergence existed. No lookup-table mandate: the 'Ordinary Income Tax Rates' table (instructions p.12) is a rate FORMULA schedule ('Then your tax rate is ... Less'), not a row-lookup table, so bracket math applies at every income level. Age 65+ subtraction NOT applied by the op: the $5,660 ($11,320 MFJ both 65+) line 6 subtraction is disclosed as an informational 'age_65' key but calc.state_tax does not subtract it — the supplied line 7 base must already reflect it (it is a return line, not an engine adjustment). The amount is adjusted annually for inflation. Montana Medical Savings Account (MSA) subtraction NOT applied by the op: a Montana-resident account holder (self- or employer-established account for eligible medical expenses) subtracts contributions plus the account's earnings on Schedule I, Part II — 2025 Form 2, page 3, line 2 \"Total contributions for the year (up to $4,600 per taxpayer)\"; 2025 Montana Form 2 Instructions p.22 (Schedule I Part II): \"In 2025 contributions are limited to $4,600\" and \"limited to $4,600 for each taxpayer in 2025 ... Each spouse can contribute up to $4,600 to their own account\" (married-filing-jointly spouses must establish SEPARATE accounts; their amounts are combined on the return). Line 3 adds the year's earnings (not earnings tax-exempt for federal or Montana purposes); line 4 (lines 2 + 3) goes to Schedule I, Part I, line 14 and so into Form 2, page 1, line 5 Montana subtractions — already inside the supplied line 7 base. The amounts must be included in federal taxable income to be subtracted, and the MSA is distinct from the federal HSA (Form 1040, Schedule 1, line 13): a taxpayer may have both, but one account cannot be both. Nonqualified withdrawals (Part II line 8) are an ADDITION on Schedule I, Part I, line 3, and those subject to penalty (line 10) carry a 10% penalty on Schedule IV, line 6. Montana EITC (Form 2, page 1, line 15 = 10% of the federal EITC for 2025) is a refundable CREDIT — NOT modeled by this op. Nonrefundable credits (Schedule III Part I, to page 1 line 9) and refundable credits (Schedule III Part I lines 15-16, e.g. the $7,500/$5,000 Adoption Credit, and the up-to-$1,150 Elderly Homeowner/Renter Credit on line 16) reduce or supplement tax AFTER line 8 and are not modeled. Recapture taxes, lump-sum distribution taxes (10% of the federal tax calculated on the distribution), contributions, penalties, and interest are reported on Schedule IV and added later on page 1 — NOT modeled; if owed, the return total exceeds plain bracket math on line 7. Nonresidents, part-year residents, and MIXED-RESIDENCY filers (a resident filing jointly with a nonresident or part-year resident spouse — a new 2025 checkbox): bracket math on line 7 yields only the resident-equivalent tax (page 2 lines 11-12); the tax is then apportioned by the Montana-source ratio on Schedule II, Tax on Montana Source Income. The booklet's Marla example makes this explicit — $2,697 resident ordinary income tax x a 20% Montana-source ratio = $540 reported on Form 2, line 8. This op models the full-year RESIDENT computation (page 2, line 13). Rounding: the 2025 Form 2 is a whole-dollar return (every money field prints '00' cents); the engine's half-up rounding to whole dollars matches the form's presentation, and vector 1 below is the exact .50 half-up tie. Do not carry 2023-or-earlier figures forward: the seven-bracket 1%-6.75% schedule, the $2,960-per-person exemptions, and the 20%-of-AGI Montana standard deduction were repealed effective tax year 2024. This pack is for tax year 2025 only — the breakpoints and the age-65 subtraction differ from 2024, and the rates differ from 2026."
+ },
+ "year": 2025
+}

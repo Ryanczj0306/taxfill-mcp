@@ -1,0 +1,667 @@
+{
+ "_strings": {
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@257153f1e85c": "Louisiana DOR - 2024 IT-540 Resident Income Tax Return (form PDF, IT-540-WEB-BC-2024-F): Line 7 = Federal Adjusted Gross Income; Schedule E additions Lines 2A-2D; mailing Address 1 P.O. Box 3550 (with payment) and Address 2 P.O. Box 3440 (all other); 'Calendar year return due 5/15/2025'; Refundable Child Care / School Readiness / Nonrefundable Child Care credit worksheets",
+  "@@35f98422ba09": "Louisiana DOR - 2024 IT-540 Resident Income Tax Return (form PDF): Address 1 P.O. Box 3550 (with payment) and Address 2 P.O. Box 3440 (all other); 2024 IT-540 instructions WHERE TO FILE AND PAY TAX ('A return for which a payment is due must be mailed to P.O. Box 3550 ... All other individual income tax returns must be mailed to P.O. Box 3440')",
+  "@@38a7ee3902eb": "Louisiana DOR - 2024 IT-540 Resident Income Tax Return Instructions (IT540i WEB 2024): WHAT'S NEW FOR LOUISIANA 2024 (no rate/structure change; Schedule E education-deduction limits raised to $6,000 per dependent by Act 423 of 2023; Schedule J carryforward years 2019-2023); 'Line 7 - Enter the amount of your Federal Adjusted Gross Income ... from Federal Form 1040 or 1040-SR, Line 11'; Line 8C federal standard deduction $14,600 statuses 1/3, $29,200 statuses 2/5, $21,900 status 4; Lines 9-10 tax table income and tax; WHO MUST FILE A RETURN; WHEN TO FILE (May 15, 2025; automatic six-month extension to November 15, 2025); WHERE TO FILE AND PAY (P.O. Box 3550 / P.O. Box 3440); 'Make your check or money order payable to the Louisiana Department of Revenue'; Line 15 LA EIC 5%",
+  "@@395a3dd93b0f": "Louisiana DOR - 2024 IT-540 form ('Calendar year return due 5/15/2025') and 2024 IT-540 instructions WHEN TO FILE ('A 2024 calendar year return is due on or before May 15, 2025'); automatic six-month extension to November 15, 2025 (no extension form required; pay any tax due with voucher Form R-2868V by May 15, 2025)",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4ed4bd36689e": "Department of Revenue, P.O. Box 3440, Baton Rouge, LA 70821-3440 (form Address 2: \"Mail All Other Individual Income Tax Returns\" — refund / no-payment)",
+  "@@5f29b8cc8b1b": "Law change NOT modeled by the engine (status final_form_published): Schedule E education-deduction limits RAISED TO $6,000 PER DEPENDENT by Act 423 of the 2023 Regular Session, per WHAT'S NEW FOR LOUISIANA 2024 in the 2024 IT-540 instructions (the same What's New confirms there was NO 2024 rate or structure change). The deduction reduces Louisiana tax table income below federal AGI through Schedule E, so a filer claiming it must fold it into the IT-540 Line 9 figure supplied to the engine. Resolve via: 2024 IT-540 Resident Income Tax Return Instructions (IT540i WEB 2024, the citation URL) — WHAT'S NEW FOR LOUISIANA 2024 and the Schedule E education-deduction instructions for the $6,000-per-dependent limits and which school-expense categories qualify.",
+  "@@60b5f4d2cdae": "Louisiana Earned Income Credit (LA EIC) — Resident individuals who claimed a Federal Earned Income Credit (EIC) for 2024. Authorized by R.S. 47:297.8. The Louisiana Earned Income Credit Worksheet must be attached to the return.",
+  "@@ae895da724fd": "Louisiana Refundable Child Care Credit (federal AGI $25,000 or less) — Louisiana residents with federal adjusted gross income of $25,000 or less who incurred child and dependent care expenses in Louisiana (under IRC Section 21) for a qualifying person, to allow the taxpayer (and spouse if married filing jointly) to work or look for work. Refundable whether or not a federal child care credit was claimed. Authorized by R.S. 47:297.4. The worksheet must be attached to the return.",
+  "@@de03038918f6": "Louisiana School Readiness Child Care Expense Credit (refundable, federal AGI $25,000 or less) — Taxpayers who claimed the Louisiana Refundable Child Care Credit (IT-540 Line 13) and who had a qualified dependent under age six that attended a child care facility participating in the Quality Start Rating program (administered by the Louisiana Dept. of Education) — facility must provide Form R-10614, and the facility license number must be entered on the Refundable Child Care Credit Worksheet. Refundable version requires federal AGI of $25,000 or less. Authorized by R.S. 47:6104.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@fb00d460968b": "Treaty conformity — LA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from LA income (it flows through the federal starting point; do not add it back on the LA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: LA's resident return (IT-540) starts from Federal Adjusted Gross Income: Line 7 is \"FEDERAL ADJUSTED GROSS INCOME\" and the 2024 instructions say \"Line 7 – Enter the amount of your Federal Adjusted Gross Income (Federal AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11. If your Federal AGI is less than zero, enter 0.\" Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The only \"additions\" to federal AGI are on Schedule E, Lines 2A-2D: (2A) interest and dividend income from other states and their political subdivisions, (2B) recapture of START contributions, (2C) recapture of START K12 contributions, and (2D) add back of pass-through entity loss. There is NO add-back of tax-treaty-exempt income anywhere on the IT-540 form, Schedule E, or in the instructions (the word \"treaty\" appears zero times in both the 2024 IT-540 form PDF and the 2024 IT-540 instructions PDF). Because LA starts from federal AGI and has no treaty addback, treaty-exempt income is not re-taxed -> conforms.",
+  "@@fb671516727e": "Louisiana Nonrefundable Child Care Credit (federal AGI greater than $25,000) — Louisiana residents with federal adjusted gross income greater than $25,000 who incurred qualifying child and dependent care expenses (IRC Section 21) in Louisiana and claimed a federal child care credit. Unused credit may be carried forward up to five years (for 2024, carryforwards from 2019 through 2023 may be applied; 2018 amounts have expired). Authorized by R.S. 47:297.4."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@35f98422ba09",
+      "url": "https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf"
+     },
+     {
+      "source": "@@395a3dd93b0f",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-05-15."
+    ],
+    "form": "IT-540 (2024 Louisiana Resident Income Tax Return)",
+    "jurisdiction": "states/la",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@4ed4bd36689e",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@35f98422ba09",
+      "url": "https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf"
+     },
+     {
+      "source": "@@395a3dd93b0f",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-05-15."
+    ],
+    "form": "IT-540 (2024 Louisiana Resident Income Tax Return)",
+    "jurisdiction": "states/la",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Department of Revenue, P.O. Box 3550, Baton Rouge, LA 70821-3550 (form Address 1: balance-due return with payment). Print the last four digits of your SSN on the check/money order and attach it to the return. Do not send cash.",
+    "notes": [],
+    "payment": [
+     "Pay online via LA Web Pay: https://www.revenue.louisiana.gov/latap (no processor fee).",
+     "By check: make it payable to \"Louisiana Department of Revenue (2024 IT-540 instructions: \"Make your check or money order payable to the Louisiana Department of Revenue. Print the last four digits of your social security number on your check or money order and attach it to your return.\" Do not send cash. Credit card payments via www.revenue.louisiana.gov/MakeAPayment.)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@35f98422ba09",
+      "url": "https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf"
+     },
+     {
+      "source": "@@395a3dd93b0f",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-05-15."
+    ],
+    "form": "IT-540 (2024 Louisiana Resident Income Tax Return)",
+    "jurisdiction": "states/la",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@4ed4bd36689e",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@395a3dd93b0f",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-05-15.",
+    "form": "IT-540 (2024 Louisiana Resident Income Tax Return)",
+    "headline": "LA 2024: refund $512",
+    "jurisdiction": "states/la",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@395a3dd93b0f",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-05-15.",
+    "form": "IT-540 (2024 Louisiana Resident Income Tax Return)",
+    "headline": "LA 2024: you owe $347",
+    "jurisdiction": "states/la",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@395a3dd93b0f",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-05-15.",
+    "form": "IT-540 (2024 Louisiana Resident Income Tax Return)",
+    "headline": "LA 2024: you owe $1,205",
+    "jurisdiction": "states/la",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/la",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@60b5f4d2cdae",
+      "@@ae895da724fd",
+      "@@fb671516727e",
+      "@@de03038918f6"
+     ],
+     "citations": [
+      {
+       "source": "@@38a7ee3902eb",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+      },
+      {
+       "source": "@@257153f1e85c",
+       "url": "https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "IT-540B (2024 Louisiana Nonresident and Part-Year Resident Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in LA in 2024 without living there — file a nonresident return on LA-source income.",
+     "state": "LA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@fb00d460968b",
+      "@@5f29b8cc8b1b",
+      "Remote-work trap: work performed from TX for an employer sitting in LA. If LA applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to LA and require a NONRESIDENT LA return that the physical footprint alone never shows — and the W-2's Box 15 often already names LA. This LA pack year carries no researched convenience rule: verify LA's nonresident wage-sourcing rule at its DOR before assuming no LA filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@60b5f4d2cdae",
+      "@@ae895da724fd",
+      "@@fb671516727e",
+      "@@de03038918f6"
+     ],
+     "citations": [
+      {
+       "source": "@@38a7ee3902eb",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+      },
+      {
+       "source": "@@257153f1e85c",
+       "url": "https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "IT-540B (2024 Louisiana Nonresident and Part-Year Resident Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in LA part of 2024 — file a part-year return on income while a resident (plus LA-source income while not).",
+     "state": "LA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@fb00d460968b",
+      "@@5f29b8cc8b1b"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@60b5f4d2cdae",
+      "@@ae895da724fd",
+      "@@fb671516727e",
+      "@@de03038918f6"
+     ],
+     "citations": [
+      {
+       "source": "@@38a7ee3902eb",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf"
+      },
+      {
+       "source": "@@257153f1e85c",
+       "url": "https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "IT-540 (2024 Louisiana Resident Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in LA all of 2024 — file a resident return on income from all sources.",
+     "state": "LA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@5f29b8cc8b1b"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": "4500",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $4,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $4,500 [head_of_household schedule]: 0 x $4,500.00 (the $0-$9,000 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 17500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": "17500",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 240,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $17,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $17,500 [head_of_household schedule]: 0 x $9,000.00 (the $0-$9,000 bracket) = $0.00; 0.0185 x $3,500.00 (the $9,000-$12,500 bracket) = $64.75; 0.035 x $5,000.00 (the $12,500-$50,000 bracket) = $175.00; total $239.75 -> $240"
+   },
+   {
+    "base_after_exemptions": 60000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": "60000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0425",
+    "tax": 1802,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $60,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $60,000 [head_of_household schedule]: 0 x $9,000.00 (the $0-$9,000 bracket) = $0.00; 0.0185 x $3,500.00 (the $9,000-$12,500 bracket) = $64.75; 0.035 x $37,500.00 (the $12,500-$50,000 bracket) = $1,312.50; 0.0425 x $10,000.00 (the $50,000+ bracket) = $425.00; total $1,802.25 -> $1,802"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": "41000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 1027,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $41,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $1,000 = $1,000.00 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0 x $9,000.00 (the $0-$9,000 bracket) = $0.00; 0.0185 x $3,500.00 (the $9,000-$12,500 bracket) = $64.75; 0.035 x $27,500.00 (the $12,500-$50,000 bracket) = $962.50; total $1,027.25 -> $1,027"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "la",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "la",
+     "taxable_base": "4500",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $4,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $4,500 [married_filing_jointly schedule]: 0 x $4,500.00 (the $0-$9,000 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 30000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "la",
+     "taxable_base": "30000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 471,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $30,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $30,000 [married_filing_jointly schedule]: 0 x $9,000.00 (the $0-$9,000 bracket) = $0.00; 0.0185 x $16,000.00 (the $9,000-$25,000 bracket) = $296.00; 0.035 x $5,000.00 (the $25,000-$100,000 bracket) = $175.00; total $471.00 -> $471"
+   },
+   {
+    "base_after_exemptions": 110000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "la",
+     "taxable_base": "110000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0425",
+    "tax": 3346,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $110,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $110,000 [married_filing_jointly schedule]: 0 x $9,000.00 (the $0-$9,000 bracket) = $0.00; 0.0185 x $16,000.00 (the $9,000-$25,000 bracket) = $296.00; 0.035 x $75,000.00 (the $25,000-$100,000 bracket) = $2,625.00; 0.0425 x $10,000.00 (the $100,000+ bracket) = $425.00; total $3,346.00 -> $3,346"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "la",
+     "taxable_base": "41000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 821,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $41,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $1,000 = $1,000.00 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0 x $9,000.00 (the $0-$9,000 bracket) = $0.00; 0.0185 x $16,000.00 (the $9,000-$25,000 bracket) = $296.00; 0.035 x $15,000.00 (the $25,000-$100,000 bracket) = $525.00; total $821.00 -> $821"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "la",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "la",
+     "taxable_base": "2250",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $2,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $2,250 [married_filing_separately schedule]: 0 x $2,250.00 (the $0-$4,500 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 17500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "la",
+     "taxable_base": "17500",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 323,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $17,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $17,500 [married_filing_separately schedule]: 0 x $4,500.00 (the $0-$4,500 bracket) = $0.00; 0.0185 x $8,000.00 (the $4,500-$12,500 bracket) = $148.00; 0.035 x $5,000.00 (the $12,500-$50,000 bracket) = $175.00; total $323.00 -> $323"
+   },
+   {
+    "base_after_exemptions": 60000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "la",
+     "taxable_base": "60000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0425",
+    "tax": 1886,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $60,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $60,000 [married_filing_separately schedule]: 0 x $4,500.00 (the $0-$4,500 bracket) = $0.00; 0.0185 x $8,000.00 (the $4,500-$12,500 bracket) = $148.00; 0.035 x $37,500.00 (the $12,500-$50,000 bracket) = $1,312.50; 0.0425 x $10,000.00 (the $50,000+ bracket) = $425.00; total $1,885.50 -> $1,886"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "la",
+     "taxable_base": "41000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 1111,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $41,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $1,000 = $1,000.00 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0 x $4,500.00 (the $0-$4,500 bracket) = $0.00; 0.0185 x $8,000.00 (the $4,500-$12,500 bracket) = $148.00; 0.035 x $27,500.00 (the $12,500-$50,000 bracket) = $962.50; total $1,110.50 -> $1,111"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "la",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "la",
+     "taxable_base": "2250",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $2,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $2,250 [single schedule]: 0 x $2,250.00 (the $0-$4,500 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 17500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "la",
+     "taxable_base": "17500",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 323,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $17,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $17,500 [single schedule]: 0 x $4,500.00 (the $0-$4,500 bracket) = $0.00; 0.0185 x $8,000.00 (the $4,500-$12,500 bracket) = $148.00; 0.035 x $5,000.00 (the $12,500-$50,000 bracket) = $175.00; total $323.00 -> $323"
+   },
+   {
+    "base_after_exemptions": 60000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "la",
+     "taxable_base": "60000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0425",
+    "tax": 1886,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $60,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $60,000 [single schedule]: 0 x $4,500.00 (the $0-$4,500 bracket) = $0.00; 0.0185 x $8,000.00 (the $4,500-$12,500 bracket) = $148.00; 0.035 x $37,500.00 (the $12,500-$50,000 bracket) = $1,312.50; 0.0425 x $10,000.00 (the $50,000+ bracket) = $425.00; total $1,885.50 -> $1,886"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "la",
+     "taxable_base": "41000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 1111,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $41,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $1,000 = $1,000.00 = $40,000.00; graduated tax on $40,000 [single schedule]: 0 x $4,500.00 (the $0-$4,500 bracket) = $0.00; 0.0185 x $8,000.00 (the $4,500-$12,500 bracket) = $148.00; 0.035 x $27,500.00 (the $12,500-$50,000 bracket) = $962.50; total $1,110.50 -> $1,111"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: LA 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: age_65, blind, dependent). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "la",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 821,
+    "work_head": "LA state income tax (2024, graduated brackets): taxable_base $40,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0 x $9,000.00 (the $0-$9,000 bracket) = $0.00; 0.0185 x $16,000.00 (the $9,000-$25,000 bracket) = $296.00; 0.035 x $15,000.00 (the $25,000-$100,000 bracket) = $525.00; total $821.00 -> $821"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2024 Louisiana Tax Table (IT540(2024)D13 TT, printed with the resident IT-540): '2024 LOUISIANA TAX TABLE - Single or Married Filing Separately (Filing Status Box 1 or 3)' / 'Married Filing Jointly or Qualifying Surviving Spouse (Filing Status Box 2 or 5)' / 'Head of Household (Filing Status Box 4)'; each header states 'The $4,500 [Single/MFS] / $9,000 [MFJ-QSS, HOH] combined personal exemption-standard deduction and $1,000 for each exemption over one [over two for MFJ-QSS] have been used in determining the tax shown in this table', with continuations 'Plus 4.25% of Tax Table Income in Excess of $51,000' (Single/MFS, HOH) and 'Plus 4.25% of Tax Table Income in Excess of $101,000' (MFJ/QSS). Rates and bracket boundaries cross-verified against the 2024 IT-540B instructions Tax Computation Worksheet (1.85% on the first $12,500/$25,000; 3.5% on the next $37,500/$75,000; 4.25% over $50,000/$100,000; Line C1 combined personal exemption-standard deduction $4,500 statuses 1/3, $9,000 statuses 2/4/5; Line C2 $1,000 per 65-or-over/blind box and per dependent; Lines E/F/G deduct it from the first bracket), https://dam.ldr.la.gov/taxforms/IT540Bi(2024)D10.pdf, and the 2024 IT-540 instructions, Lines 6-10, https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf — 2024 rates and boundaries are UNCHANGED from 2023 (Louisiana's flat 3% applies only from tax year 2025).",
+    "url": "https://dam.ldr.la.gov/taxforms/IT540(2024)D13%20TT.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "la"
+  },
+  "work_common_tail": ". Tax line: IT-540 Line 10: 'YOUR LOUISIANA INCOME TAX'. 2024 instructions, Line 10: 'Use the tax table that corresponds with your filing status. Locate the amount of your tax table income from Line 9 in the first two columns of the tax table. Read across to the column numbered the same as the total number of exemptions claimed on Line 6F. The amount shown in that column is your Louisiana tax liability. Enter this amount on Line 10. If you have more than eight exemptions, refer to the instructions at the top of the tax tables.' Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($1,000 — $1,000 per '65 or older' box marked on IT-540 Lines 6A/6B (taxpayer and spouse each), counted in the Line 6F exemption total and deducted from the lowest bracket via the tax table column. NOT applied by calc.state_tax - claim it on the form through the Line 6F exemption count. Unchanged from 2023.); blind ($1,000 — $1,000 per 'Blind' box marked on IT-540 Lines 6A/6B (taxpayer and spouse each), counted in the Line 6F exemption total and deducted from the lowest bracket via the tax table column. NOT applied by calc.state_tax - claim it on the form through the Line 6F exemption count. Unchanged from 2023.) This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply 2024 Form IT-540, Line 9: 'Subtract Line 8D from Line 7. If less than zero, enter zero 0' (YOUR LOUISIANA TAX TABLE INCOME). Line 7 is Federal Adjusted Gross Income (Federal Form 1040/1040-SR, Line 11; if less than zero enter 0; if you have Louisiana additions/exempt income, Line 7 comes from Louisiana Schedule E, Line 5 instead). Line 8D, 'EXCESS FEDERAL ITEMIZED DEDUCTIONS,' applies only to federal itemizers and equals Line 8B (federal itemized deduction for medical and dental expenses, federal Schedule A Line 4) minus Line 8C (2024 federal standard deduction: $14,600 statuses 1/3, $29,200 statuses 2/5, $21,900 status 4), floor zero. IMPORTANT: supply Line 9 UNREDUCED - do NOT subtract Louisiana's $4,500/$9,000 combined personal exemption-standard deduction yourself; it is encoded in the zero-rate bottom bracket shipped here (standard_deduction is null for that reason). Adjudication note (two-pass): base is federal_agi — IT-540 Line 7 is federal adjusted gross income and Line 9 tax table income derives from it (see base-quirk note); supply Line 9. exemptions_count must be 0: the primary personal exemptions are BUILT INTO the zero-rate floor ($4,500 single/MFS; $9,000 MFJ/QSS and Head of Household per the printed 2024 table headers), never subtracted separately. 2024 rates, boundaries, and floors verified identical to 2023 in both the printed tax tables and the IT-540B Tax Computation Worksheet. 2024 IS THE LAST GRADUATED YEAR: Louisiana adopted a FLAT 3% individual income tax effective for tax years beginning on or after January 1, 2025 (2024 Third Extraordinary Session). The 2025 IT-540 documents print the flat structure — never source 2024 figures from them, and never use this 2024 pack for 2025. Table mandate below $51,000 ($101,000 for MFJ/QSS): IT-540 Line 10 requires taking the tax from the printed 2024 Louisiana Tax Table for your filing status and Line 6F exemption count - bracket math may differ by a few dollars within table bands (the printed cells equal the IT-540B worksheet math evaluated at the midpoint of each $250 income band in every cell sampled — e.g., Single 1-exemption $12,500-$12,750 cell prints 152 = 1.85% x 8,000 + 3.5% x 125 at midpoint 12,625 rounded; MFJ 2-exemption $89,750-$90,000 cell prints 2,567 = 296 + 3.5% x 64,875 at midpoint 89,875 rounded); the filed form must use the table. Above the table cap, the table itself prescribes 'Plus 4.25% of Tax Table Income in Excess of $51,000' ($101,000 MFJ/QSS) added to the last printed row, which was computed at that band's midpoint ($50,875/$100,875) - the official method therefore comes out about $5 below exact bracket math. Qualifying Surviving Spouse (filing status 5) shares the Married Filing Jointly tax table, brackets, and $9,000 combined deduction - the engine's QSS -> married_filing_jointly mapping is exact. Head of Household shares the Single/MFS bracket boundaries ($12,500/$50,000) but gets the $9,000 combined personal exemption-standard deduction ($4,500 more than Single) - hence its different zero-rate floor. The zero-rate floor covers only the base exemption count (one exemption for Single/MFS/HOH; two for MFJ/QSS - the MFJ/QSS table has no one-exemption column, and Line 6 requires the same exemptions as your federal return except for the dependent-on-another's-return, 65-or-over, and blind cases). Every additional Line 6F exemption ($1,000 each - dependents, 65-or-over boxes, blind boxes) is handled per the shipped 'dependent'/'age_65'/'blind' entries and their noted engine divergence. Louisiana credits are NOT modeled by this op and come off after Line 10: Nonrefundable Priority 1 credits (Schedule C) on Line 11; refundable child care credit (federal AGI <= $25,000, worksheet decimal .35-.30 x 50%), refundable school readiness credit (star-rated 200%/150%/100%/50%), and the Louisiana Earned Income Credit (5% of the federal EIC) on Lines 13-15; other refundable Priority 2/4 credits (Schedules F and I) and nonrefundable Priority 3 credits including the nonrefundable child care credit (Schedule J, 30%/10% with the $25 cap over $60,000 AGI) on Lines 16/20/25. Base quirk (affects the figure you supply, not this computation): Louisiana's only deduction between federal AGI and tax table income is Line 8D 'EXCESS FEDERAL ITEMIZED DEDUCTIONS' = federal itemized MEDICAL AND DENTAL deduction (Schedule A Line 4) minus the 2024 federal standard deduction ($14,600/$29,200/$21,900), floor zero, for federal itemizers only - non-itemizers skip Lines 8A-8D. Consumer Use Tax (Line 22A boxes) and the Electric/Hybrid Vehicle Road Usage Fee (Line 22B) are separate amounts added on the 2024 return after the income tax - NOT modeled. Source URLs: tax tables https://dam.ldr.la.gov/taxforms/IT540(2024)D13%20TT.pdf ; resident instructions https://dam.ldr.la.gov/taxforms/IT540i%20WEB%202024%20INSTRUCTIONS.pdf ; resident form https://dam.ldr.la.gov/taxforms/IT-540-WEB-BC-2024-F.pdf ; IT-540B instructions (Tax Computation Worksheet) https://dam.ldr.la.gov/taxforms/IT540Bi(2024)D10.pdf ."
+ },
+ "year": 2024
+}

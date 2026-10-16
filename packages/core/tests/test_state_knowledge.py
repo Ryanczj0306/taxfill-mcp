@@ -431,6 +431,91 @@ def test_graduated_state_verified_spot_data():
     assert any("HEAD OF HOUSEHOLD" in n for n in ks.notes)
 
 
+# ── TY2025 pins (Phase K JK21) ──
+# The three TY2023 caveat pins above (OH's $360.69 jump, AZ's Line 49, IL's IL-E/EIC) have TY2025
+# twins that JK26's notes triage must keep. These pin what calc.state_tax and state_scope EMIT,
+# not only what the pack holds, so a migration that keeps the YAML text but drops it from the
+# output still fails here.
+
+
+def test_oh_2025_discontinuity_is_surfaced_by_state_tax():
+    # knowledge/states/oh/2025.yaml:292-304 (the "CRITICAL — printed-constant divergence" note):
+    # the middle row prints "$342.00 plus 2.750%" over a $0.00 cumulative floor, and the top row's
+    # $2,394.32 was left unchanged, so the printed schedule runs $342.00 ahead of bracket math between
+    # $26,050 and $100,000 and $360.695 ahead above $100,000.
+    from taxfill_core.calc import state_tax
+
+    kb = REPO_ROOT / "knowledge"
+    middle = state_tax("oh", 68_050, year=2025, knowledge_dir=kb)
+    # The booklet's own example: $42,000 x 0.0275 = $1,155 by bracket math; the form says $1,497.
+    assert middle.tax == 1_155 and middle.marginal_rate == Decimal("0.0275")
+    assert "'$1,155 + $342 = $1,497'" in middle.work
+    assert "the jump is NOT 2024's $360.69" in middle.work
+    assert (
+        "add $342.00 to this op's result when line 7 is between $26,050 and $100,000, "
+        "and $360.695 when line 7 exceeds $100,000." in middle.work
+    )
+    assert "R.C. 5747.02(A)(3)(b) prints the same $342.00 and $2,394.32 pair" in middle.work
+    top = state_tax("oh", 110_000, year=2025, knowledge_dir=kb)
+    # $0 + 2.75% x $73,950 = $2,033.625, + 3.125% x $10,000 = $2,346.125 -> $2,346; the printed
+    # schedule gives $2,394.32 + $312.50 = $2,706.82, i.e. $360.695 more.
+    assert top.tax == 2_346 and top.marginal_rate == Decimal("0.03125")
+    assert "the printed top row starts at $2,394.32" in top.work
+
+
+def test_az_2025_line_49_dependent_credit_is_disclosed_not_applied():
+    # knowledge/states/az/2025.yaml:267-270: no personal exemption; the dependent exemption became the
+    # Line 49 Dependent Tax CREDIT, which calc.state_tax does not model.
+    from taxfill_core.calc import state_tax
+
+    kb = REPO_ROOT / "knowledge"
+    r = state_tax("az", 50_000, year=2025, knowledge_dir=kb)
+    # ($50,000 - the $15,750 single standard deduction) x 2.5% = $856.25 -> $856.
+    assert r.tax == 856 and r.base_after_exemptions == 34_250
+    assert (
+        "the plain dependent exemption was replaced by the Line 49 Dependent Tax Credit ($100 per qualifying "
+        "dependent under 17, $25 per dependent 17 or over" in r.work
+    )
+    assert "It is a CREDIT against tax, not a base reduction, and is NOT modeled by calc.state_tax." in r.work
+    # A dependents count is refused, never silently applied as a base exemption.
+    with pytest.raises(ValueError, match="AZ's Line 49 dependent CREDIT"):
+        state_tax("az", 50_000, year=2025, dependents_count=1, knowledge_dir=kb)
+
+
+def test_il_2025_schedule_il_e_eitc_caveats_reach_the_output():
+    # knowledge/states/il/2025.yaml:242-245 + :255-257: for 2025 the per-dependent $2,850 IS verified on
+    # Schedule IL-E/EITC Step 2 Line 1, so it ships and is applied (the TY2023 pin above checks the
+    # opposite, NOT-shipped caveat). :58-78 (the Illinois EITC, Schedule IL-E/EITC Step 4) and :271-293
+    # (the unmodeled Child Tax Credit increase to 40% of the Illinois EITC, Step 5) reach state_scope.
+    from taxfill_core.calc import state_tax
+
+    kb = REPO_ROOT / "knowledge"
+    r = state_tax("il", 60_000, year=2025, exemptions_count=1, dependents_count=1, knowledge_dir=kb)
+    # ($60,000 - $2,850 - $2,850) x 4.95% = $2,687.85 -> $2,688.
+    assert r.tax == 2_688 and r.base_after_exemptions == 54_300
+    assert "1 dependent exemption(s) x $2,850 = $2,850.00" in r.work
+    assert (
+        "Dependent exemptions (Line 10d) ship for 2025 at $2,850 each: the 2025 Schedule IL-E/EITC form prints "
+        "the per-dependent multiplication (Step 2 Line 1, $2,850 per dependent)" in r.work
+    )
+    il = state_scope(
+        Profile(state_footprint={2025: StateFootprintYear(
+            lived=[ResidencePeriod(state="IL", start=date(2025, 1, 1), end=date(2025, 12, 31), provenance=US)],
+        )}),
+        2025,
+        base_dir=REPO_ROOT / "knowledge",
+    ).states[0]
+    assert il.state == "IL" and il.filing_role == "resident"
+    assert any(
+        b.startswith("Illinois Earned Income Tax Credit (EITC) — In general, anyone who qualified for the federal EITC")
+        for b in il.benefits_candidates
+    )
+    child_credit = [w for w in il.warnings if "Illinois Child Tax Credit INCREASED to 40% of the Illinois Earned" in w]
+    assert len(child_credit) == 1
+    assert child_credit[0].startswith("Law change NOT modeled by the engine (status final_form_published):")
+    assert "Resolve via: 2025 Schedule IL-E/EITC Step 5 (Lines 11-12)" in child_credit[0]
+
+
 # ── G4 second tranche: the graduated-bracket StateTaxParams schema ──
 
 _ZZ_CITE = {"source": "synthetic", "url": "https://www.irs.gov/"}

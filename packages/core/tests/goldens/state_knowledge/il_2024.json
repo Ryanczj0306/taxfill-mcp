@@ -1,0 +1,442 @@
+{
+ "_strings": {
+  "@@08572705cd78": "Illinois Earned Income Tax Credit (EITC) — In general, anyone who qualified for the federal EITC also qualifies for the Illinois EITC. For tax year 2023 and after, eligibility is expanded beyond the federal qualifications: taxpayers who meet all federal EITC qualifications EXCEPT that they file with an IRS-issued ITIN (no valid SSN required for taxpayer, spouse, or qualifying children), and/or are age 18-24 or 65+ with no qualifying child, may also claim it. Must have earned income under the federal limits in Table 1, investment income below $11,600, not have filed federal Form 2555, and meet the other federal EITC rules.",
+  "@@0b06df74d119": "2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — \"The due date for filing your 2024 Form IL-1040 and paying any tax you owe is April 15, 2025\"",
+  "@@15c7d4d5ec55": "Illinois Property Tax Credit — Illinois residents who paid Illinois property tax in 2024 on their principal residence (not a vacation home or rental property) for the time they owned and lived at the property during 2023, where that residence was in Illinois. Not available for mobile home privilege tax, penalties/fees, property outside Illinois, or the portion of property tax deductible as a business expense. Nonresidents may not take this credit.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2babae259782": "2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — cover/mailing addresses, due date, income tax rate (\"The Illinois income tax rate is 4.95 percent (.0495)\"), exemption allowance (\"The personal exemption amount for tax year 2024 is $2,775\")",
+  "@@2d369346583c": "https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2024/individual/il-1040-schedule-il-e-eic.pdf",
+  "@@351f402a599a": "Form IL-1040 with Schedule NR (Nonresident and Part-Year Resident Computation of Illinois Tax)",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@5672d6b345b7": "Law change NOT modeled by the engine (status final_form_published): Volunteer Emergency Worker Credit EXPANDED for 2024 by Public Act 103-0592 to include volunteers registered with the Illinois Emergency Management Agency (IEMA) and Office of Homeland Security (OHS) who volunteered at least 100 hours during the immediately preceding calendar year, in addition to the previously covered non-full-time fire department / fire protection district / fire protection association volunteers. The credit remains $500 per awarded individual ($1,000 if married filing jointly and both spouses were awarded), certificate-based, capped statewide at $5,000,000 and at the first 10,000 qualified applicants. Resolve via: 2024 Schedule ICR Section C (Lines 10-11) and its instructions (R-12/24) — requires a 2024 Volunteer Emergency Worker Credit Certificate issued by IDOR; the nonrefundable total on Schedule ICR Line 13 is carried to Form IL-1040 Line 16 and cannot exceed tax due.",
+  "@@5d9b813c34ba": "IL state income tax (2024, flat rate): taxable_base $40,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; tax = 0.0495 x $40,000 = $1,98",
+  "@@7102c86cc868": "K-12 Education Expense Credit — Parent or legal guardian of a full-time student who was under age 21 at the close of the school year, where the taxpayer and student were Illinois residents when the expenses were paid, and the student attended kindergarten through 12th grade at a public or nonpublic school in Illinois during 2024. Must complete Section B of Schedule ICR including the K-12 Education Expense Credit Worksheet and keep school receipts.",
+  "@@7e241fba96f3": "Volunteer Emergency Worker Credit — Available only to a person who received a 2024 Volunteer Emergency Worker Credit Certificate from IDOR. Expanded for 2024 by Public Act 103-0592 to include volunteers registered with the Illinois Emergency Management Agency (IEMA) and Office of Homeland Security (OHS) who volunteered at least 100 hours during the immediately preceding calendar year, in addition to non-full-time fire department/fire protection district/fire protection association volunteers. Must have served as a volunteer emergency worker at least 9 months during the taxable year, not receive more than $5,000 in compensation for those services, apply with IDOR, and be one of the first 10,000 qualified applicants. Note: the income limit that applies to the property tax / K-12 credits does NOT apply to this credit.",
+  "@@96be9c8ef731": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-schedule-icr-instr.pdf",
+  "@@9efd04014d99": "Illinois Department of Revenue — 2024 Schedule IL-E/EITC (form, Step 5) and 2024 Form IL-1040 Instructions \"What's New for 2024?\" (Child Tax Credit added on Line 30 per P.A. 103-0592, calculated as 20% of the Illinois EITC)",
+  "@@ab02758d7c2b": "Illinois Child Tax Credit — NEW for tax year 2024 (Public Act 103-0592). Available to taxpayers who qualify for the Illinois EITC and have at least one child that is their dependent and under the age of 12 years old as of the last day of 2024.",
+  "@@b973100901f0": "2024 Schedule ICR Instructions (R-12/24) — property tax credit 5%, K-12 credit 25% over $250 max $750, Volunteer Emergency Worker Credit $500/$1,000 and IEMA/OHS expansion, $500,000/$250,000 AGI limits",
+  "@@bb2f89725849": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2024/individual/il-1040-instr.pdf",
+  "@@da65e6fa47e5": "2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — cover \"Mailing your income tax return\" (also repeated in the Step-by-Step signature instructions)",
+  "@@e0cd50fa73f9": "ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19041, SPRINGFIELD IL 62794-9041 (if no payment is enclosed)",
+  "@@ea4747dd0151": "Treaty conformity — IL conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from IL income (it flows through the federal starting point; do not add it back on the IL return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: IL-1040 starts from federal adjusted gross income: 2024 IL-1040 Step 2, Line 1 \"Adjusted gross income — Enter the adjusted gross income from your federal return.\" The instructions (\"What is Illinois income?\") confirm \"Your Illinois income includes the adjusted gross income (AGI) amount figured on your federal return, plus any additional income that must be added to your AGI.\" Income exempt from federal tax under a U.S. income tax treaty is already excluded from federal AGI, so it flows through and is not re-taxed. Illinois additions are limited: Line 2 \"Federally tax-exempt income\" applies ONLY to federally tax-exempt interest and dividend income reported on federal Form 1040 Line 2a (municipal bond interest), not to foreign treaty income; Line 3/Schedule M \"Other additions\" enumerates specific items (child's 8814 interest/dividends, pass-through additions, Section 529/ABLE earnings, IL-4562 special depreciation, business expense recapture, etc.) and contains no add-back of federal income-tax-treaty-exempt income. There is NO California-style Schedule CA treaty addback. Therefore treaty-exempt income is not re-taxed and IL conforms.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f568534dd771": "Law change NOT modeled by the engine (status final_form_published): NEW Illinois Child Tax Credit for tax year 2024 (Public Act 103-0592), added on Form IL-1040 Line 30: available to taxpayers who qualify for the Illinois EITC and have at least one dependent child under the age of 12 as of the last day of 2024, calculated as 20% of the taxpayer's Illinois EITC (2024 Schedule IL-E/EITC Step 5, Line 12 'Multiply the amount on Line 11 by 20% (0.2). This is your Illinois Child Tax Credit'). Refundable — the schedule notes the total Illinois EITC and Child Tax Credit may exceed the amount of tax. Resolve via: 2024 Schedule IL-E/EITC Step 5 (Lines 11-12) — 20% of the Illinois EITC computed in Step 4 — carried to Form IL-1040 Line 30. calc.state_tax computes only the Line 12 tax, so the credit is applied after it in Step 8 (Payments and Refundable Credit)."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@da65e6fa47e5",
+      "url": "@@bb2f89725849"
+     },
+     {
+      "source": "@@0b06df74d119",
+      "url": "@@bb2f89725849"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "jurisdiction": "states/il",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e0cd50fa73f9",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@da65e6fa47e5",
+      "url": "@@bb2f89725849"
+     },
+     {
+      "source": "@@0b06df74d119",
+      "url": "@@bb2f89725849"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "jurisdiction": "states/il",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19027, SPRINGFIELD IL 62794-9027 (if a payment is enclosed)",
+    "notes": [],
+    "payment": [
+     "Pay online via IL Web Pay: https://mytax.illinois.gov (no processor fee).",
+     "By check: make it payable to \"Illinois Department of Revenue (make check or money order payable to \"Illinois Department of Revenue\" (not IRS); write the taxpayer's SSN, spouse's SSN if joint, and the tax year in the lower left corner; payments must be U.S. negotiable currency drawn on a U.S. bank)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@da65e6fa47e5",
+      "url": "@@bb2f89725849"
+     },
+     {
+      "source": "@@0b06df74d119",
+      "url": "@@bb2f89725849"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "jurisdiction": "states/il",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e0cd50fa73f9",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@0b06df74d119",
+      "url": "@@bb2f89725849"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "headline": "IL 2024: refund $512",
+    "jurisdiction": "states/il",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0b06df74d119",
+      "url": "@@bb2f89725849"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "headline": "IL 2024: you owe $347",
+    "jurisdiction": "states/il",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0b06df74d119",
+      "url": "@@bb2f89725849"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "headline": "IL 2024: you owe $1,205",
+    "jurisdiction": "states/il",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/il",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@08572705cd78",
+      "@@ab02758d7c2b",
+      "@@15c7d4d5ec55",
+      "@@7102c86cc868",
+      "@@7e241fba96f3"
+     ],
+     "citations": [
+      {
+       "source": "@@9efd04014d99",
+       "url": "@@2d369346583c"
+      },
+      {
+       "source": "@@b973100901f0",
+       "url": "@@96be9c8ef731"
+      },
+      {
+       "source": "@@2babae259782",
+       "url": "@@bb2f89725849"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@351f402a599a"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in IL in 2024 without living there — file a nonresident return on IL-source income.",
+     "state": "IL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@ea4747dd0151",
+      "@@f568534dd771",
+      "@@5672d6b345b7",
+      "Remote-work trap: work performed from TX for an employer sitting in IL. If IL applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to IL and require a NONRESIDENT IL return that the physical footprint alone never shows — and the W-2's Box 15 often already names IL. This IL pack year carries no researched convenience rule: verify IL's nonresident wage-sourcing rule at its DOR before assuming no IL filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@08572705cd78",
+      "@@ab02758d7c2b",
+      "@@15c7d4d5ec55",
+      "@@7102c86cc868",
+      "@@7e241fba96f3"
+     ],
+     "citations": [
+      {
+       "source": "@@9efd04014d99",
+       "url": "@@2d369346583c"
+      },
+      {
+       "source": "@@b973100901f0",
+       "url": "@@96be9c8ef731"
+      },
+      {
+       "source": "@@2babae259782",
+       "url": "@@bb2f89725849"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@351f402a599a"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in IL part of 2024 — file a part-year return on income while a resident (plus IL-source income while not).",
+     "state": "IL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@ea4747dd0151",
+      "@@f568534dd771",
+      "@@5672d6b345b7"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@08572705cd78",
+      "@@ab02758d7c2b",
+      "@@15c7d4d5ec55",
+      "@@7102c86cc868",
+      "@@7e241fba96f3"
+     ],
+     "citations": [
+      {
+       "source": "@@9efd04014d99",
+       "url": "@@2d369346583c"
+      },
+      {
+       "source": "@@b973100901f0",
+       "url": "@@96be9c8ef731"
+      },
+      {
+       "source": "@@2babae259782",
+       "url": "@@bb2f89725849"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form IL-1040, Illinois Individual Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in IL all of 2024 — file a resident return on income from all sources.",
+     "state": "IL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@f568534dd771",
+      "@@5672d6b345b7"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "il",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "IL state income tax (2024, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; tax = 0.0495 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "il",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "tax": 1980,
+    "work_head": "@@5d9b813c34ba"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "il",
+     "taxable_base": "45550",
+     "year": 2024
+    },
+    "tax": 1980,
+    "work_head": "IL state income tax (2024, flat rate): taxable_base $45,550.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $2,775 = $2,775.00, 1 dependent exemption(s) x $2,775 = $2,775.00 = $40,000.00; tax = 0.0495 x $40,000 = $1,98"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "il",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "tax": 1980,
+    "work_head": "@@5d9b813c34ba"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2024 Form IL-1040 Instructions (IL-1040 Instructions R-02/25) — \"The Illinois income tax rate is 4.95 percent (.0495)\"; \"The personal exemption amount for tax year 2024 is $2,775\"; Line 10 exemption allowance chart ($2,775 per person, $5,550 MFJ both; +$1,000 each 65-or-older / blind, Lines 10b/10c; Line 10d dependents via Schedule IL-E/EITC); Line 11 net income. Second pass: the 2024 Form IL-1040 itself prints Line 12 \"Residents: Multiply Line 11 by 4.95% (.0495)\", and the 2024 Schedule IL-E/EITC form prints Step 2 Line 1 \"Multiply the total number of dependents you are claiming by $2,775\" — both passes agree.",
+    "url": "@@bb2f89725849"
+   },
+   "marginal_rate": "0.0495",
+   "rate": "0.0495",
+   "rate_structure": "flat",
+   "state": "il"
+  },
+  "work_common_tail": "0. Tax line: IL-1040 Line 12 (Tax) = Line 11 (net income = Line 9 base income minus Line 10 exemption allowance) x 4.95% (.0495) — printed on the 2024 form: \"Residents: Multiply Line 11 by 4.95% (.0495). Cannot be less than zero.\" Line 9 base income starts from federal AGI (Line 1) plus IL additions (Lines 2-3) minus IL subtractions. Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($1,000 — Additional $1,000 per 65-or-older checkbox, Line 10b (taxpayer and spouse each). NOT applied by calc.state_tax — enter it on the form's Line 10b.); blind ($1,000 — Additional $1,000 per legally-blind checkbox, Line 10c (taxpayer and spouse each). NOT applied by calc.state_tax — enter it on the form's Line 10c.) This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Dependent exemptions (Line 10d) ship for 2024: the 2024 Schedule IL-E/EITC form prints the per-dependent multiplication (Step 2 Line 1, $2,775 per dependent), so dependents_count is applied at $2,775 each. Attach Schedule IL-E/EITC when claiming dependents. Exemption phase-out: the entire Line 10 exemption allowance (including Lines 10b-10d) is $0 when federal AGI exceeds $500,000 (married filing jointly) or $250,000 (all other statuses) — the 'Income Exceptions' box in the Line 10 instructions. Claimed as a dependent by another: if base income exceeds $2,775, the filer's own exemption is $0 (Line 10a chart rows with the Step 1 Line C box checked)."
+ },
+ "year": 2024
+}

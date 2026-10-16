@@ -1,0 +1,690 @@
+{
+ "_strings": {
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@36a21c9ed1e8": "DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax booklet: 'New for 2023' (childless EITC max increased from $560 to $600; income test limit increased to $28,963; investment-income limit $11,000) and the DC EITC Worksheet For Filers Without A Qualifying Child",
+  "@@36b2d2281d75": "Law change NOT modeled by the engine (status final_form_published): DC EITC EXPANDED for TY2023: the credit was extended to certain ITIN filers (no SSN required); the maximum DC EITC for filers WITHOUT a qualifying child rose to $600 (up from $560) with DC's own childless income test raised to $28,963 (higher than the federal childless ceiling, so some filers over the federal limit still qualify) and an investment-income limit of $11,000. For filers WITH a qualifying child the credit stays at 70% of the federal EIC, but for TY2023 a DC EITC of $1,200 or more is paid in 12 equal monthly installments rather than a lump sum. Resolve via: 2023 D-40 Instruction Booklet, 'New for 2023' and the DC EITC Worksheet For Filers Without A Qualifying Child (the citation URL); the credit derives from the filer's federal EIC. calc.state_tax reproduces D-40 Line 20 tax only and applies no DC credits.",
+  "@@43ef79fb75e5": "Form D-40, Individual Income Tax Return (DC resident return; also used by part-year residents)",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@5930df2c0a28": "Treaty conformity — DC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from DC income (it flows through the federal starting point; do not add it back on the DC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: DC's Form D-40 begins from federal adjusted gross income (the D-40 income computation line and Schedule I Calculation A are both titled around 'Federal Adjusted Gross Income'), and DC's only mechanism for adding income back is Schedule I, Calculation A 'Additions to federal adjusted gross income.' The verified addition categories on the 2023 Schedule I (Cal. A) are: (1) part-year resident adjustment, (2) income eligible for federal income averaging (Form 4972), (3) 100% federal bonus depreciation / extra IRC sec.179, (4) discrimination award subject to income averaging, (5) S-corp deductions from Sch K-1 (1120-S), (6) pass-through losses from DC unincorporated businesses exceeding the $12,000 threshold, (7) 'Other ... items not subject to federal tax but subject to DC tax,' and (8) capital gains deferred for Qualified Opportunity Funds. There is NO line that adds back income that is exempt from federal tax under a U.S. income tax treaty (contrast California's explicit Schedule CA treaty addback). Because treaty-exempt income is already excluded from federal AGI and DC has no treaty addback, it flows through and is NOT re-taxed by DC. Therefore DC conforms (treaty-exempt income remains exempt). Source: 2023 D-40 Instruction Booklet, Schedule I Calculation A and line-by-line instructions.",
+  "@@6c20c433e4b4": "Credit for Child and Dependent Care Expenses — DC residents (or part-year residents, who use DC Form 2441) who claimed the federal child and dependent care credit on federal Form 2441 for the care of a qualifying dependent so the taxpayer could work or look for work.",
+  "@@6dc4fb3e0050": "Part-year residents file Form D-40 (prorating deductions/credits). DC has no general nonresident income tax return; a nonresident with DC tax erroneously withheld files Form D-40B, Nonresident Request for Refund.",
+  "@@7d9ac6fa94d3": "DC Earned Income Tax Credit (DC EITC) — filers WITHOUT a qualifying child — DC residents (age 25-64 if not otherwise qualifying federally; certain ITIN filers also eligible for TY2023) who do not have a qualifying child. Uses the DC EITC Worksheet for Filers Without a Qualifying Child in the D-40 instructions. Investment income must be $11,000 or less.",
+  "@@8f15a2f3d3f5": "DC OTR — 2023 D-40 Individual Income Tax Forms and Instructions (Booklet PDF): Who must file, When are your taxes due (April 15, 2024), How to file / By mail addresses (PO Box 96145 refund/no-money-due; PO Box 96169 with payment), check payable to DC Treasurer, Schedule I Calculation A additions (no treaty addback) and Calculation B subtractions, D-40 starts from federal adjusted gross income",
+  "@@997f01ee6559": "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_041124.pdf",
+  "@@9f28600f6f77": "https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2023_D40_Book_Final_012324.pdf",
+  "@@a0a9080898b4": "Keep Child Care Affordable Tax Credit (Schedule ELC; formerly Early Learning Tax Credit) — DC taxpayer who paid eligible child-care expenses to a licensed/subsidized 'qualified child development facility' for an eligible child — a dependent under age 4 as of 9/30/2023 — and whose DC taxable income does not exceed the limit. Child must not be a recipient of the District's subsidized child-care program.",
+  "@@bbd5c1c081e2": "Schedule H — Homeowner and Renter Property Tax Credit ('circuit-breaker') — DC residents who owned or rented their DC home for all of 2023 and were not claimed as a dependent (with an age-70 exception path). Renters use Section A (property tax deemed = 20% of rent paid); homeowners use Section B (actual DC real property tax). One claim per 'tax filing unit'; cannot claim for an exempt property owned by a government, house of worship, or nonprofit.",
+  "@@d87eeef57296": "DC Earned Income Tax Credit (DC EITC) — filers WITH a qualifying child — DC residents who qualify for the federal Earned Income Credit and have a qualifying child. For TY2023 the credit was also expanded to certain ITIN filers (no SSN required). The DC EITC mirrors federal EIC eligibility.",
+  "@@e0f7318befde": "Office of Tax and Revenue, PO Box 96145, Washington, DC 20090-6145 (use for a no-money-due return or a refund-request return). Nonresident refund Form D-40B is mailed separately to: Office of Tax and Revenue, PO Box 96147, Washington, DC 20090-6147.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     },
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@43ef79fb75e5",
+    "jurisdiction": "states/dc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e0f7318befde",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     },
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@43ef79fb75e5",
+    "jurisdiction": "states/dc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Office of Tax and Revenue, PO Box 96169, Washington, DC 20090-6169 (D-40 return with payment / D-40P payment voucher with check or money order).",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via DC Web Pay: https://mytax.dc.gov (no processor fee).",
+     "By check: make it payable to \"DC Treasurer (make check or money order, in U.S. dollars, payable to the 'DC Treasurer'; write your TIN, daytime phone, tax year '2023' and 'D-40' on the payment)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     },
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@43ef79fb75e5",
+    "jurisdiction": "states/dc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e0f7318befde",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@43ef79fb75e5",
+    "headline": "DC 2023: refund $512",
+    "jurisdiction": "states/dc",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@43ef79fb75e5",
+    "headline": "DC 2023: you owe $347",
+    "jurisdiction": "states/dc",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@8f15a2f3d3f5",
+      "url": "@@997f01ee6559"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@43ef79fb75e5",
+    "headline": "DC 2023: you owe $1,205",
+    "jurisdiction": "states/dc",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/dc",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@d87eeef57296",
+      "@@7d9ac6fa94d3",
+      "@@bbd5c1c081e2",
+      "@@a0a9080898b4",
+      "@@6c20c433e4b4"
+     ],
+     "citations": [
+      {
+       "source": "@@36a21c9ed1e8",
+       "url": "@@9f28600f6f77"
+      },
+      {
+       "source": "@@8f15a2f3d3f5",
+       "url": "@@997f01ee6559"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@6dc4fb3e0050"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in DC in 2023 without living there — file a nonresident return on DC-source income.",
+     "state": "DC",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@5930df2c0a28",
+      "@@36b2d2281d75",
+      "Remote-work trap: work performed from TX for an employer sitting in DC. If DC applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to DC and require a NONRESIDENT DC return that the physical footprint alone never shows — and the W-2's Box 15 often already names DC. This DC pack year carries no researched convenience rule: verify DC's nonresident wage-sourcing rule at its DOR before assuming no DC filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@d87eeef57296",
+      "@@7d9ac6fa94d3",
+      "@@bbd5c1c081e2",
+      "@@a0a9080898b4",
+      "@@6c20c433e4b4"
+     ],
+     "citations": [
+      {
+       "source": "@@36a21c9ed1e8",
+       "url": "@@9f28600f6f77"
+      },
+      {
+       "source": "@@8f15a2f3d3f5",
+       "url": "@@997f01ee6559"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@6dc4fb3e0050"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in DC part of 2023 — file a part-year return on income while a resident (plus DC-source income while not).",
+     "state": "DC",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@5930df2c0a28",
+      "@@36b2d2281d75"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@d87eeef57296",
+      "@@7d9ac6fa94d3",
+      "@@bbd5c1c081e2",
+      "@@a0a9080898b4",
+      "@@6c20c433e4b4"
+     ],
+     "citations": [
+      {
+       "source": "@@36a21c9ed1e8",
+       "url": "@@9f28600f6f77"
+      },
+      {
+       "source": "@@8f15a2f3d3f5",
+       "url": "@@997f01ee6559"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@43ef79fb75e5"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in DC all of 2023 — file a resident return on income from all sources.",
+     "state": "DC",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@36b2d2281d75"
+     ]
+    }
+   ],
+   "year": 2023
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "dc",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $20,800 = -$20,800.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "dc",
+     "taxable_base": "20800",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $20,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $20,800 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "dc",
+     "taxable_base": "25800",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 200,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $25,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $20,800 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.04 x $5,000.00 (the $0-$10,000 bracket) = $200.00; total $200.00 -> $200"
+   },
+   {
+    "base_after_exemptions": 65000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "dc",
+     "taxable_base": "85800",
+     "year": 2023
+    },
+    "marginal_rate": "0.085",
+    "tax": 3925,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $85,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $20,800 = $65,000.00; graduated tax on $65,000 [head_of_household schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; 0.065 x $20,000.00 (the $40,000-$60,000 bracket) = $1,300.00; 0.085 x $5,000.00 (the $60,000-$250,000 bracket) = $425.00; total $3,925.00 -> $3,925"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "dc",
+     "taxable_base": "1030800",
+     "year": 2023
+    },
+    "marginal_rate": "0.1075",
+    "tax": 92600,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $1,030,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $20,800 = $1,010,000.00; graduated tax on $1,010,000 [head_of_household schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; 0.065 x $20,000.00 (the $40,000-$60,000 bracket) = $1,300.00; 0.085 x $190,000.00 (the $60,000-$250,000 bracket) = $16,150.00; 0.0925 x $250,000.00 (the $250,000-$500,000 bracket) = $23,125.00; 0.0975 x $500,000.00 (the $500,000-$1,000,000 bracket) = $48,750.00; 0.1075 x $10,000.00 (the $1,000,000+ bracket) = $1,075.00; total $92,600.00 -> $92,600"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "dc",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $27,700 = -$27,700.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "dc",
+     "taxable_base": "27700",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $27,700.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $27,700 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "dc",
+     "taxable_base": "32700",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 200,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $32,700.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $27,700 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.04 x $5,000.00 (the $0-$10,000 bracket) = $200.00; total $200.00 -> $200"
+   },
+   {
+    "base_after_exemptions": 65000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "dc",
+     "taxable_base": "92700",
+     "year": 2023
+    },
+    "marginal_rate": "0.085",
+    "tax": 3925,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $92,700.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $27,700 = $65,000.00; graduated tax on $65,000 [married_filing_jointly schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; 0.065 x $20,000.00 (the $40,000-$60,000 bracket) = $1,300.00; 0.085 x $5,000.00 (the $60,000-$250,000 bracket) = $425.00; total $3,925.00 -> $3,925"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "dc",
+     "taxable_base": "1037700",
+     "year": 2023
+    },
+    "marginal_rate": "0.1075",
+    "tax": 92600,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $1,037,700.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $27,700 = $1,010,000.00; graduated tax on $1,010,000 [married_filing_jointly schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; 0.065 x $20,000.00 (the $40,000-$60,000 bracket) = $1,300.00; 0.085 x $190,000.00 (the $60,000-$250,000 bracket) = $16,150.00; 0.0925 x $250,000.00 (the $250,000-$500,000 bracket) = $23,125.00; 0.0975 x $500,000.00 (the $500,000-$1,000,000 bracket) = $48,750.00; 0.1075 x $10,000.00 (the $1,000,000+ bracket) = $1,075.00; total $92,600.00 -> $92,600"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "dc",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $13,850 = -$13,850.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "dc",
+     "taxable_base": "13850",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $13,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $13,850 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "dc",
+     "taxable_base": "18850",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 200,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $18,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $13,850 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.04 x $5,000.00 (the $0-$10,000 bracket) = $200.00; total $200.00 -> $200"
+   },
+   {
+    "base_after_exemptions": 65000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "dc",
+     "taxable_base": "78850",
+     "year": 2023
+    },
+    "marginal_rate": "0.085",
+    "tax": 3925,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $78,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $13,850 = $65,000.00; graduated tax on $65,000 [married_filing_separately schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; 0.065 x $20,000.00 (the $40,000-$60,000 bracket) = $1,300.00; 0.085 x $5,000.00 (the $60,000-$250,000 bracket) = $425.00; total $3,925.00 -> $3,925"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "dc",
+     "taxable_base": "1023850",
+     "year": 2023
+    },
+    "marginal_rate": "0.1075",
+    "tax": 92600,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $1,023,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $13,850 = $1,010,000.00; graduated tax on $1,010,000 [married_filing_separately schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; 0.065 x $20,000.00 (the $40,000-$60,000 bracket) = $1,300.00; 0.085 x $190,000.00 (the $60,000-$250,000 bracket) = $16,150.00; 0.0925 x $250,000.00 (the $250,000-$500,000 bracket) = $23,125.00; 0.0975 x $500,000.00 (the $500,000-$1,000,000 bracket) = $48,750.00; 0.1075 x $10,000.00 (the $1,000,000+ bracket) = $1,075.00; total $92,600.00 -> $92,600"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "dc",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $13,850 = -$13,850.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "dc",
+     "taxable_base": "13850",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $13,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $13,850 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "dc",
+     "taxable_base": "18850",
+     "year": 2023
+    },
+    "marginal_rate": "0.04",
+    "tax": 200,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $18,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $13,850 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.04 x $5,000.00 (the $0-$10,000 bracket) = $200.00; total $200.00 -> $200"
+   },
+   {
+    "base_after_exemptions": 65000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "dc",
+     "taxable_base": "78850",
+     "year": 2023
+    },
+    "marginal_rate": "0.085",
+    "tax": 3925,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $78,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $13,850 = $65,000.00; graduated tax on $65,000 [single schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; 0.065 x $20,000.00 (the $40,000-$60,000 bracket) = $1,300.00; 0.085 x $5,000.00 (the $60,000-$250,000 bracket) = $425.00; total $3,925.00 -> $3,925"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "dc",
+     "taxable_base": "1023850",
+     "year": 2023
+    },
+    "marginal_rate": "0.1075",
+    "tax": 92600,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $1,023,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $13,850 = $1,010,000.00; graduated tax on $1,010,000 [single schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; 0.065 x $20,000.00 (the $40,000-$60,000 bracket) = $1,300.00; 0.085 x $190,000.00 (the $60,000-$250,000 bracket) = $16,150.00; 0.0925 x $250,000.00 (the $250,000-$500,000 bracket) = $23,125.00; 0.0975 x $500,000.00 (the $500,000-$1,000,000 bracket) = $48,750.00; 0.1075 x $10,000.00 (the $1,000,000+ bracket) = $1,075.00; total $92,600.00 -> $92,600"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "dc",
+     "taxable_base": 40000,
+     "year": 2023
+    },
+    "error": "ValueError: DC 2023: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "dc",
+     "taxable_base": 40000,
+     "year": 2023
+    },
+    "error": "ValueError: DC 2023: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "dc",
+     "taxable_base": "67700",
+     "year": 2023
+    },
+    "marginal_rate": "0.06",
+    "tax": 2200,
+    "work_head": "DC state income tax (2023, graduated brackets): taxable_base $67,700.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $27,700 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.04 x $10,000.00 (the $0-$10,000 bracket) = $400.00; 0.06 x $30,000.00 (the $10,000-$40,000 bracket) = $1,800.00; total $2,200.00 -> $2,200"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "DC Office of Tax and Revenue — 2023 D-40 Individual Income Tax Forms and Instructions booklet (Revised 01/2024, file 2023_D40_Book_Final_041124.pdf): 'Reminders — Income Tax Rate Table' p.3 and 'Calculation I/Tax Rate Schedule' p.17 ('Not over $10,000: 4% of the taxable income; Over $10,000 but not over $40,000: $400, plus 6% of the excess over $10,000; Over $40,000 but not over $60,000: $2,200, plus 6.5% of the excess over $40,000; Over $60,000 but not over $250,000: $3,500, plus 8.5% of the excess over $60,000; Over $250,000 but not over $500,000: $19,650, plus 9.25% of the excess over $250,000; Over $500,000 but not over $1,000,000: $42,775, plus 9.75% of the excess over $500,000; Over $1,000,000: $91,525, plus 10.75% of the excess over $1,000,000'); 'Standard Deduction' section p.10 ($13,850 single and married/registered domestic partners filing separately; $20,800 head of household; $27,700 married/registered domestic partners filing jointly, qualifying widow(er)s with dependent children, and married/registered domestic partners filing separately on the same return); Line 19 'DC taxable income — Subtract Line 18 from Line 16' and Line 20 'Tax' instructions p.18; Standard Deduction Worksheet for Dependent Filers and Standard Deduction Chart for People Born before January 2, 1959 or Blind, p.20; tax tables pp.83-92; 2023 Form D-40 Lines 4-20 (form pages inside the booklet)",
+    "url": "@@997f01ee6559"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "dc"
+  },
+  "work_common_tail": ". Tax line: Form D-40 Line 20: \"Tax. If Line 19 is $100,000 or less, use tax tables to find the tax, if more, use Calculation I instructions.\" Instructions p.18, Line 20 Tax: \"If Line 19 is $100,000 or less, use the tax tables on pages 83-92 to determine your tax. If Line 19 is more than $100,000, use Calculation I on page 17.\" Line 19 DC taxable income = Line 16 (DC adjusted gross income) minus Line 18 (DC deduction amount). This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply 2023 Form D-40 Line 16, 'DC adjusted gross income, Line 7 minus Line 15.' Line 7 = Line 4 federal adjusted gross income ('From adjusted gross income lines on federal Forms 1040, 1040-SR, 1040-NR or 1040-NR-EZ') plus DC additions (Line 5 franchise tax deducted on federal forms; Line 6 other additions from DC Schedule I, Calculation A, Line 9); Lines 8-15 are DC subtractions (part-year nonresidence income, taxable state/local refunds, taxable Social Security and tier 1 railroad retirement, income taxed on a DC franchise/fiduciary return, DC/federal government survivor benefits, unemployment insurance benefits, other Schedule I Calculation B subtractions). A filer with no DC additions or subtractions has DC AGI equal to federal AGI. The engine then subtracts the shipped per-status standard deduction (Line 18 for a standard-deduction filer) to reproduce Line 19 DC taxable income, and applies the rate schedule to reproduce Line 20. Adjudication note (two-pass): base is federal_agi — the 2023 D-40 starts from a printed Federal adjusted gross income line with Calculation A additions and Calculation B subtractions producing Line 16 DC AGI; supply Line 16 as taxable_base (the op subtracts the Line 17/18 deduction). Rate table independently confirmed on the OTR rates page (4%/6%/6.5%/8.5%/9.25%/9.75%/10.75% with constants 400/2,200/3,500/19,650/42,775/91,525). SINGLE RATE SCHEDULE FOR ALL FILING STATUSES: DC publishes one 'Income Tax Rate Table' ('For taxable years beginning January 1, 2022', booklet p.3, repeated as 'Calculation I/Tax Rate Schedule' p.17) that applies to Line 19 DC taxable income regardless of filing status; it is duplicated per status here. Married filing separately is NOT half of married filing jointly — every status uses the identical schedule. PRINTED CONSTANTS VERIFIED EXACT: $400 = 4% x $10,000; $2,200 = $400 + 6% x $30,000; $3,500 = $2,200 + 6.5% x $20,000; $19,650 = $3,500 + 8.5% x $190,000; $42,775 = $19,650 + 9.25% x $250,000; $91,525 = $42,775 + 9.75% x $500,000 — each printed '$X plus Y% of the excess over $Z' constant equals the cumulative sum of the prior brackets with no rounding divergence. NO PERSONAL OR DEPENDENT EXEMPTIONS: the 2023 Form D-40 computes DC taxable income as Line 16 (DC adjusted gross income) minus Line 18 (DC deduction amount) only — 'Line 19 DC taxable income. Subtract Line 18 from Line 16.' There is no exemption line on the form and the booklet's DC Taxable Income instructions (p.17-18) name only the deduction, so this pack ships no exemption keys; test vectors use exemptions_count 0 and dependents_count 0. TAX TABLE MANDATE below $100,000: Form D-40 Line 20 and the p.18 instructions direct filers with Line 19 taxable income of $100,000 or less to 'use the tax tables on pages 83-92'; only above $100,000 is Calculation I (exact bracket math) used. The tables are built on $50 income bands, so bracket math may differ from the printed table by a few dollars within a band — the filed form must use the table when Line 19 is $100,000 or less. DEDUCTION TYPE MUST MATCH FEDERAL: Line 17 — 'Take the same type as you took on your federal return.' The shipped standard_deduction applies only to standard-deduction filers. Itemizers enter DC itemized deductions on Line 18 via Calculation F (full-year residents) or Calculation D (part-year): DC does NOT allow a deduction for state and local income taxes (state/local real estate taxes remain deductible), and if DC AGI exceeds $200,000 ($100,000 married filing separately) the itemized deduction (other than medical/dental, investment interest, and casualty/theft losses) is reduced by 5% of DC AGI over the threshold. ADDITIONAL STANDARD DEDUCTION for age/blindness NOT modeled: if born before January 2, 1959, or blind, an additional standard deduction of $1,500 per checkbox applies ($1,850 if single or head of household) via Schedule S, Calculation G-1 (booklet pp.3, 10, and the p.20 chart: e.g., single with 1 box = $15,700, 2 boxes = $17,550; MFJ up to 4 boxes = $33,700). Spouse boxes may be claimed when married filing separately only if the spouse had no gross income, is not filing, and cannot be claimed as a dependent. Claim it on the form — this pack ships only the base per-status amounts. DEPENDENT FILERS: a filer who can be claimed as a dependent (D-40 filing status 'Dependent claimed by someone else') must use the Standard Deduction Worksheet for Dependent Filers (booklet p.20): standard deduction = the smaller of (earned income + $400, or $1,250 if earned income is $850 or less) and the regular status amount, plus the age/blind add-on — an income-dependent amount NOT modeled by the shipped fixed standard_deduction. MARRIED/REGISTERED DOMESTIC PARTNERS FILING SEPARATELY ON THE SAME RETURN not modeled: this combined-return status takes a combined $27,700 standard deduction and computes each person's tax separately using Calculation J on Schedule S (each spouse's separate federal AGI, additions, subtractions and deductions), then combines Lines 21-35 — per-couple math the engine does not reproduce. The engine's married_filing_separately models a separate-return MFS filer with the $13,850 standard deduction. REGISTERED DOMESTIC PARTNERS: DC allows registered domestic partners to file jointly (use married_filing_jointly, $27,700) or separately on the same return — statuses that do not exist federally. QUALIFYING SURVIVING SPOUSE: DC's 'Qualifying widow(er) with dependent child' status takes the same $27,700 standard deduction as married filing jointly (booklet p.10 and the p.20 chart list it separately at $27,700) and the same universal rate schedule, so the engine's QSS -> married_filing_jointly mapping reproduces the correct tax. PART-YEAR RESIDENTS: must prorate the standard deduction (and credits) by days domiciled in DC divided by 365 (Part-Year Instructions, booklet p.15, and Calculation C) and subtract income received during the period of nonresidence on Line 8 — the shipped full-year standard_deduction amounts do not apply as-is to part-year filers. DC HEALTH CARE SHARED RESPONSIBILITY not modeled: Line 25 adds an individual-mandate payment (Schedule HSR, Part IV, Line 17) to Line 24, producing Line 26 'Total tax and DC Health Care Shared Responsibility.' The engine computes only Line 20 tax. CREDITS not modeled (they are credits against tax, not base reductions): Line 21 credit for child and dependent care expenses (federal Form 2441 amount x .32), Line 22 non-refundable credits from DC Schedule U, Line 27 DC EITC (70% of federal EIC with a qualifying child; separate worksheet, max $600, for filers without one), Line 28 Schedule H homeowner/renter property tax credit (max $1,325), and Line 29 refundable Schedule U credits. ROUNDING: the D-40 instructs 'Round cents to nearest dollar' (form header); the engine's round-half-up to whole dollars matches for the Calculation I computation. The 2023 standard deduction amounts track the federal amounts ('The standard deductions are increasing based on the federal law; beginning January 1, 2023', booklet p.3: $12,950 -> $13,850 single/MFS; $19,400 -> $20,800 HOH; $25,900 -> $27,700 MFJ and qualifying widow(er)). The rate schedule has been in effect since taxable years beginning January 1, 2022 (no 2023 mid-year rate change); the booklet lists it under 'Reminders.'"
+ },
+ "year": 2023
+}

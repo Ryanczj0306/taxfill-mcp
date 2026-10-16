@@ -1,0 +1,621 @@
+{
+ "_strings": {
+  "@@16cb9f81668c": "Personal Tax Credit (low-income credit, Table E) — Connecticut resident individuals whose Connecticut AGI falls within the Table E phase-out ranges for their filing status. Taxpayers below the no-tax threshold owe no income tax and need no credit; the personal credit reduces the income tax for low-to-moderate income filers just above that threshold.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@27ffd534203d": "Connecticut Earned Income Tax Credit (CT EITC) — Connecticut full-year residents who claimed and were allowed the 2023 federal Earned Income Credit. Taxpayer (and spouse/qualifying children, if applicable) must have valid Social Security Numbers by the return due date, must have earned income from employment or self-employment, and must meet all federal EITC rules. Either qualify with a qualifying child, or as a worker without a qualifying child aged 25-64.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@9281e1cda019": "2023 Form CT-1040 Connecticut Resident Income Tax Return (Line 1 = federal AGI; Schedule 1 Line 31-38 additions; 'Due date: April 15, 2024'; mailing addresses PO Box 2976/2977; check payable to Commissioner of Revenue Services)",
+  "@@a97bea97e800": "Treaty conformity — CT does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CT. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: CT's resident return (Form CT-1040) starts from federal AGI (Line 1 = \"Federal adjusted gross income from federal Form 1040, Line 11\"), so treaty-exempt income is initially excluded. HOWEVER, CT has an EXPLICIT ADD-BACK: the 2023 CT-1040 instructions (Schedule 1 additions, Line 37 \"Other\") and the 2023 CT-1040NR/PY instructions (Schedule 1 additions, Line 39 \"Other\") both direct: \"1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien. Enter the words 'treaty income' in the space provided.\" Because CT requires nonresident aliens to add federally treaty-exempt income back into Connecticut adjusted gross income, CT does NOT conform to federal treaty exemptions for affected filers (analogous to California's Schedule CA add-back). Note: this add-back is scoped to nonresident aliens filing federal Form 1040NR; a filer with no treaty income / not a nonresident alien is unaffected, but the statutory rule re-taxes treaty income, so conforms_to_federal_treaties = false.",
+  "@@c0e7931c928a": "Credit for Income Taxes Paid to Qualifying Jurisdictions (Schedule 2) — Connecticut residents (and part-year residents) whose income reported on the CT return is also subject to income tax in another qualifying jurisdiction (another U.S. state, a local jurisdiction within another state, or the District of Columbia) where the taxpayer filed a return and paid income tax. Prevents double taxation of the same income. A copy of the other jurisdiction's return must be attached.",
+  "@@c2a03ce984ef": "Property Tax Credit (Schedule 3) — Connecticut residents who paid qualifying property tax during 2023 to a Connecticut political subdivision on their primary residence and/or a privately owned or leased motor vehicle. Single/MFS/HOH limited to one motor vehicle; MFJ/qualifying surviving spouse limited to two. (For 2023 there is no longer an age-65-or-dependent eligibility restriction; the credit is available to any resident who paid qualifying property tax.) Cannot be claimed if Form CT-1040 Line 10 is zero.",
+  "@@c7f042b5ae16": "Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (use Schedule CT-SI to report Connecticut-source income)",
+  "@@c9b54c670dc9": "Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976 (for refunds and all other tax forms without payment)",
+  "@@db95252fe84b": "If any income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties — that income is still taxable to CT.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@ef2cea20e765": "If any of your income was exempt from federal tax under a treaty: CT does not conform to federal tax treaties, so that income is still taxable to CT — do not carry the federal exclusion onto the state return."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     },
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "jurisdiction": "states/ct",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@c9b54c670dc9",
+    "notes": [
+     "@@4d42ad525021",
+     "@@ef2cea20e765"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     },
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "jurisdiction": "states/ct",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Department of Revenue Services, PO Box 2977, Hartford CT 06104-2977 (for all tax forms with payment)",
+    "notes": [
+     "@@4d42ad525021",
+     "@@ef2cea20e765"
+    ],
+    "payment": [
+     "Pay online via CT Web Pay: https://portal.ct.gov/DRS-myconneCT (no processor fee).",
+     "By check: make it payable to \"Commissioner of Revenue Services (write SSN(s) and \"2023 Form CT-1040\" on the check)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     },
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "jurisdiction": "states/ct",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@c9b54c670dc9",
+    "notes": [
+     "@@4d42ad525021",
+     "@@ef2cea20e765"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "headline": "CT 2023: refund $512",
+    "jurisdiction": "states/ct",
+    "notes": [
+     "@@db95252fe84b"
+    ],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "headline": "CT 2023: you owe $347",
+    "jurisdiction": "states/ct",
+    "notes": [
+     "@@db95252fe84b"
+    ],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@9281e1cda019",
+      "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "Form CT-1040, Connecticut Resident Income Tax Return",
+    "headline": "CT 2023: you owe $1,205",
+    "jurisdiction": "states/ct",
+    "notes": [
+     "@@db95252fe84b"
+    ],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/ct",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@27ffd534203d",
+      "@@c2a03ce984ef",
+      "@@16cb9f81668c",
+      "@@c0e7931c928a"
+     ],
+     "citations": [
+      {
+       "source": "@@9281e1cda019",
+       "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@c7f042b5ae16"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in CT in 2023 without living there — file a nonresident return on CT-source income.",
+     "state": "CT",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a97bea97e800",
+      "Remote-work trap: work performed from TX for an employer sitting in CT. If CT applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to CT and require a NONRESIDENT CT return that the physical footprint alone never shows — and the W-2's Box 15 often already names CT. This CT pack year carries no researched convenience rule: verify CT's nonresident wage-sourcing rule at its DOR before assuming no CT filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@27ffd534203d",
+      "@@c2a03ce984ef",
+      "@@16cb9f81668c",
+      "@@c0e7931c928a"
+     ],
+     "citations": [
+      {
+       "source": "@@9281e1cda019",
+       "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@c7f042b5ae16"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CT part of 2023 — file a part-year return on income while a resident (plus CT-source income while not).",
+     "state": "CT",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a97bea97e800"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@27ffd534203d",
+      "@@c2a03ce984ef",
+      "@@16cb9f81668c",
+      "@@c0e7931c928a"
+     ],
+     "citations": [
+      {
+       "source": "@@9281e1cda019",
+       "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/ct-1040_1223.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form CT-1040, Connecticut Resident Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CT all of 2023 — file a resident return on income from all sources.",
+     "state": "CT",
+     "warnings": [
+      "@@4cf945d1e9e4"
+     ]
+    }
+   ],
+   "year": 2023
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 0,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": "5000",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 150,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [head_of_household schedule]: 0.03 x $5,000.00 (the $0-$16,000 bracket) = $150.00; total $150.00 -> $150"
+   },
+   {
+    "base_after_exemptions": 165000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": "165000",
+     "year": 2023
+    },
+    "marginal_rate": "0.06",
+    "tax": 8380,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $165,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $165,000 [head_of_household schedule]: 0.03 x $16,000.00 (the $0-$16,000 bracket) = $480.00; 0.05 x $64,000.00 (the $16,000-$80,000 bracket) = $3,200.00; 0.055 x $80,000.00 (the $80,000-$160,000 bracket) = $4,400.00; 0.06 x $5,000.00 (the $160,000-$320,000 bracket) = $300.00; total $8,380.00 -> $8,380"
+   },
+   {
+    "base_after_exemptions": 810000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": "810000",
+     "year": 2023
+    },
+    "marginal_rate": "0.0699",
+    "tax": 51179,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $810,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $810,000 [head_of_household schedule]: 0.03 x $16,000.00 (the $0-$16,000 bracket) = $480.00; 0.05 x $64,000.00 (the $16,000-$80,000 bracket) = $3,200.00; 0.055 x $80,000.00 (the $80,000-$160,000 bracket) = $4,400.00; 0.06 x $160,000.00 (the $160,000-$320,000 bracket) = $9,600.00; 0.065 x $80,000.00 (the $320,000-$400,000 bracket) = $5,200.00; 0.069 x $400,000.00 (the $400,000-$800,000 bracket) = $27,600.00; 0.0699 x $10,000.00 (the $800,000+ bracket) = $699.00; total $51,179.00 -> $51,179"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ct",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 0,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ct",
+     "taxable_base": "5000",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 150,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0.03 x $5,000.00 (the $0-$20,000 bracket) = $150.00; total $150.00 -> $150"
+   },
+   {
+    "base_after_exemptions": 205000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ct",
+     "taxable_base": "205000",
+     "year": 2023
+    },
+    "marginal_rate": "0.06",
+    "tax": 10400,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $205,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $205,000 [married_filing_jointly schedule]: 0.03 x $20,000.00 (the $0-$20,000 bracket) = $600.00; 0.05 x $80,000.00 (the $20,000-$100,000 bracket) = $4,000.00; 0.055 x $100,000.00 (the $100,000-$200,000 bracket) = $5,500.00; 0.06 x $5,000.00 (the $200,000-$400,000 bracket) = $300.00; total $10,400.00 -> $10,400"
+   },
+   {
+    "base_after_exemptions": 1010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ct",
+     "taxable_base": "1010000",
+     "year": 2023
+    },
+    "marginal_rate": "0.0699",
+    "tax": 63799,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $1,010,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $1,010,000 [married_filing_jointly schedule]: 0.03 x $20,000.00 (the $0-$20,000 bracket) = $600.00; 0.05 x $80,000.00 (the $20,000-$100,000 bracket) = $4,000.00; 0.055 x $100,000.00 (the $100,000-$200,000 bracket) = $5,500.00; 0.06 x $200,000.00 (the $200,000-$400,000 bracket) = $12,000.00; 0.065 x $100,000.00 (the $400,000-$500,000 bracket) = $6,500.00; 0.069 x $500,000.00 (the $500,000-$1,000,000 bracket) = $34,500.00; 0.0699 x $10,000.00 (the $1,000,000+ bracket) = $699.00; total $63,799.00 -> $63,799"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ct",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 0,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ct",
+     "taxable_base": "5000",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 150,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_separately schedule]: 0.03 x $5,000.00 (the $0-$10,000 bracket) = $150.00; total $150.00 -> $150"
+   },
+   {
+    "base_after_exemptions": 105000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ct",
+     "taxable_base": "105000",
+     "year": 2023
+    },
+    "marginal_rate": "0.06",
+    "tax": 5350,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $105,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $105,000 [married_filing_separately schedule]: 0.03 x $10,000.00 (the $0-$10,000 bracket) = $300.00; 0.05 x $40,000.00 (the $10,000-$50,000 bracket) = $2,000.00; 0.055 x $50,000.00 (the $50,000-$100,000 bracket) = $2,750.00; 0.06 x $5,000.00 (the $100,000-$200,000 bracket) = $300.00; total $5,350.00 -> $5,350"
+   },
+   {
+    "base_after_exemptions": 510000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ct",
+     "taxable_base": "510000",
+     "year": 2023
+    },
+    "marginal_rate": "0.0699",
+    "tax": 32249,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $510,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $510,000 [married_filing_separately schedule]: 0.03 x $10,000.00 (the $0-$10,000 bracket) = $300.00; 0.05 x $40,000.00 (the $10,000-$50,000 bracket) = $2,000.00; 0.055 x $50,000.00 (the $50,000-$100,000 bracket) = $2,750.00; 0.06 x $100,000.00 (the $100,000-$200,000 bracket) = $6,000.00; 0.065 x $50,000.00 (the $200,000-$250,000 bracket) = $3,250.00; 0.069 x $250,000.00 (the $250,000-$500,000 bracket) = $17,250.00; 0.0699 x $10,000.00 (the $500,000+ bracket) = $699.00; total $32,249.00 -> $32,249"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ct",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 0,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ct",
+     "taxable_base": "5000",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 150,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [single schedule]: 0.03 x $5,000.00 (the $0-$10,000 bracket) = $150.00; total $150.00 -> $150"
+   },
+   {
+    "base_after_exemptions": 105000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ct",
+     "taxable_base": "105000",
+     "year": 2023
+    },
+    "marginal_rate": "0.06",
+    "tax": 5350,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $105,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $105,000 [single schedule]: 0.03 x $10,000.00 (the $0-$10,000 bracket) = $300.00; 0.05 x $40,000.00 (the $10,000-$50,000 bracket) = $2,000.00; 0.055 x $50,000.00 (the $50,000-$100,000 bracket) = $2,750.00; 0.06 x $5,000.00 (the $100,000-$200,000 bracket) = $300.00; total $5,350.00 -> $5,350"
+   },
+   {
+    "base_after_exemptions": 510000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ct",
+     "taxable_base": "510000",
+     "year": 2023
+    },
+    "marginal_rate": "0.0699",
+    "tax": 32249,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $510,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $510,000 [single schedule]: 0.03 x $10,000.00 (the $0-$10,000 bracket) = $300.00; 0.05 x $40,000.00 (the $10,000-$50,000 bracket) = $2,000.00; 0.055 x $50,000.00 (the $50,000-$100,000 bracket) = $2,750.00; 0.06 x $100,000.00 (the $100,000-$200,000 bracket) = $6,000.00; 0.065 x $50,000.00 (the $200,000-$250,000 bracket) = $3,250.00; 0.069 x $250,000.00 (the $250,000-$500,000 bracket) = $17,250.00; 0.0699 x $10,000.00 (the $500,000+ bracket) = $699.00; total $32,249.00 -> $32,249"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": 40000,
+     "year": 2023
+    },
+    "error": "ValueError: CT 2023: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ct",
+     "taxable_base": 40000,
+     "year": 2023
+    },
+    "error": "ValueError: CT 2023: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ct",
+     "taxable_base": "40000",
+     "year": 2023
+    },
+    "marginal_rate": "0.05",
+    "tax": 1600,
+    "work_head": "CT state income tax (2023, graduated brackets): taxable_base $40,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.03 x $20,000.00 (the $0-$20,000 bracket) = $600.00; 0.05 x $20,000.00 (the $20,000-$100,000 bracket) = $1,000.00; total $1,600.00 -> $1,600"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2023 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 12/23) — Tax Calculation Schedule (page 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line 5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6); Table A - Personal Exemptions (p. 19); Table B - Initial Tax Calculation (p. 20, all three schedules with the DRS worked examples $450/$33,298/$725/$70,090/$680/$52,228); Table C - 3% Tax Rate Phase-Out Add-Back (p. 21); Table D - Tax Recapture (p. 22); Table E - Personal Tax Credits (p. 23); Line 6 Income Tax (no-tax floors, optional tax tables at CT AGI <= $102,000). Second pass: the 2023 Form CT-1040NR/PY instructions (Rev. 12/23, https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040nrpy-instructions_1223.pdf) print identical Tables A-E — every bound, rate, printed constant, phase-out and recapture amount matches.",
+    "url": "https://portal.ct.gov/-/media/drs/forms/2023/income/2023-ct-1040-instructions_1223.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ct"
+  },
+  "work_common_tail": ". Tax line: 2023 Form CT-1040, Line 6: 'Income Tax'. Computed on the Tax Calculation Schedule (2023 CT-1040 instructions, p. 19): Line 1 = Connecticut AGI (Form CT-1040, Line 5); Line 2 = Table A personal exemption; Line 3 = Connecticut Taxable Income (Line 1 - Line 2, not less than zero); Line 4 = Table B Initial Tax Calculation (the rate schedules this block ships); Lines 5-6 add Table C (3% phase-out) and Table D (recapture); Line 8-9 subtract the Table E personal-credit percentage; Line 10 'Connecticut Income Tax: Subtract Line 9 from Line 7. Enter here and on Form CT-1040, Line 6.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: supply Tax Calculation Schedule Line 3 (Connecticut Taxable Income) = Connecticut AGI (Form CT-1040 Line 5 = federal AGI + Schedule 1 additions - Schedule 1 subtractions) MINUS the Table A personal exemption. The Table A exemption (up to $15,000 single / $24,000 MFJ-QSS / $12,000 MFS / $19,000 HoH) is INCOME-DEPENDENT — it falls $1,000 for each $1,000 (or part) of CT AGI over $30,000 / $48,000 / $24,000 / $38,000 and is $0 at CT AGI of $44,000 / $71,000 / $35,000 / $56,000 or more — so it is NOT shipped as a key; compute Table A on the form. At or above the zero point, Line 3 = CT AGI. Do NOT supply raw federal AGI when CT modifications apply, and do NOT subtract the exemption twice. Adjudication note (two-pass): drafted from the 2023 CT-1040 instructions (Rev. 12/23) Tables A-E and independently re-verified against the 2023 CT-1040NR/PY instructions (Rev. 12/23) — identical tables, zero discrepancies. Every printed '$X plus Y% of the excess over $Z' constant in Table B equals the EXACT cumulative sum of the prior brackets (300/2,300/5,050/11,050/14,300/31,550 single-MFS; 600/4,600/10,100/22,100/28,600/63,100 MFJ; 480/3,680/8,080/17,680/22,880/50,480 HoH), so pure marginal accumulation reproduces Table B to the half-dollar; the only divergence is IRS half-up rounding of a trailing $.50 (e.g. the DRS's own printed examples $33,298 at single $525,000 and $52,228 at HoH $825,000 round 25,000 x .0699 = $1,747.50 up). CRITICAL — Table C 3% Tax Rate Phase-Out Add-Back NOT modeled: if CT AGI (Tax Calculation Schedule Line 1, NOT taxable income) exceeds $56,500 single / $100,500 MFJ-QSS / $50,250 MFS / $78,500 HoH, Line 5 ADDS BACK $20-to-$200 (single/MFS, max above $101,500/$72,750), $40-to-$400 (MFJ, max above $145,500), or $32-to-$320 (HoH, max above $114,500), clawing back the benefit of the 3% bottom rate. Plain bracket math (this op) UNDERSTATES the filed tax by the Table C amount — compute Line 5 on the form. CRITICAL — Table D Tax Recapture NOT modeled: if CT AGI exceeds $200,000 single/MFS / $400,000 MFJ-QSS / $320,000 HoH, Line 6 adds a recapture amount rising in steps ($90/$180/$140 per band) to a plateau of $2,700/$5,400/$4,200, then a second phase above $500,000/$1,000,000/$800,000 CT AGI to the maximum $3,150 (single/MFS, CT AGI over $540,000), $6,300 (MFJ, over $1,080,000), $4,920 (HoH, over $864,000). Plain bracket math understates the filed tax by the Table D amount at those AGI levels — CT's Tax Calculation Schedule is the filed method. Table E Personal Tax Credits NOT modeled (a TAX CREDIT, not a base reduction): a CT-AGI-keyed decimal (.75 down to .01) multiplies the Line 7 tax and is subtracted on Line 9 for low/moderate incomes — e.g. .75 for single CT AGI $15,000-$18,800 — fully phased out above CT AGI $64,500 single / $100,500 MFJ-QSS / $52,500 MFS / $78,500 HoH. No-tax floor (2023 CT-1040 instructions, Line 6): if CT AGI (Line 5) is $12,000 or less MFS / $15,000 or less single / $19,000 or less HoH / $24,000 or less MFJ-QSS, enter '0' on Line 6 — no income tax is owed. This coincides with the full Table A exemption at those AGI levels (the engine's max(0, ...) floor matches). Tax tables are OPTIONAL, not mandated: at CT AGI of $102,000 or less the filer 'may' use the DRS website Tax Tables (portal.ct.gov/DRS/DRS-Forms/Current-Year-Forms/Calculators-and-Tables); the Tax Calculation Schedule is the universal filed method at any income (table bands can differ from schedule arithmetic by a few dollars). One Table B schedule covers 'Single or Married Filing Separately' — duplicated for both statuses here, copied, not derived (Table A/C/E amounts DO differ between single and MFS). The MFJ schedule is titled 'Married Filing Jointly/Qualifying Surviving Spouse', so qualifying surviving spouse maps exactly to married_filing_jointly as the engine assumes. Connecticut has no county or municipal income taxes and no standard deduction; the Table A personal exemption and the personal credit are the only general-relief mechanisms, both income-dependent, both computed on the Tax Calculation Schedule."
+ },
+ "year": 2023
+}

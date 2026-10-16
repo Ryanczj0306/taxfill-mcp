@@ -1,0 +1,681 @@
+{
+ "_strings": {
+  "@@01de5dd4b570": "Refund return: Arkansas State Income Tax, P.O. Box 1000, Little Rock, AR 72203-1000. No Tax Due / Refund return: Arkansas State Income Tax, P.O. Box 2144, Little Rock, AR 72203-2144.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1e3fd849cf5d": "Treaty conformity — AR does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by AR. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: Arkansas does NOT conform to federal tax treaty exemptions. Two independent .gov-sourced facts establish this: (1) The AR1000F return does NOT start from federal adjusted gross income. It builds Arkansas income line-by-line from source documents — Line 8 'Add the wages, salaries, tips, etc. reported on your W-2(s)', Line 10 interest, Line 11 dividends, etc., summed to Line 23 'Total Income' and then to Arkansas AGI on Line 25. Because income is captured from the W-2/source level, a federal treaty exclusion taken on the federal return does NOT carry through. (2) The 2023 instructions state explicitly (p.~12): 'Foreign students who are exempt from federal taxes because of a tax treaty must file and pay tax on all income including non-qualified scholarship or fellowship income.' That is an affirmative requirement to tax treaty-exempt income, equivalent to a treaty add-back. Therefore treaty-exempt income IS re-taxed by Arkansas -> conforms_to_federal_treaties = false.",
+  "@@271d4411ae76": "Child and Dependent Care Credit — Resident taxpayers who paid for the care of a qualifying person (a dependent under age 13, or a spouse/dependent incapable of self-care) so the taxpayer (and spouse, if married) could work or look for work. Mirrors the federal child and dependent care credit (federal Form 2441). Filing status 5 (married filing separately on different returns) generally cannot claim it unless special conditions are met.",
+  "@@2e8cbbb0ab26": "Inflationary Relief Income Tax Credit (2023 one-time credit) — Arkansas full-year residents only, filing a full-year resident return for tax year beginning January 1, 2023. One-time credit for the 2023 tax year only. Not available to nonresidents/part-year residents.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@748c74a78862": "Personal Tax Credit (personal exemption credit) — Every Arkansas individual filer. One credit each for: yourself, spouse, and each dependent; plus extra credit boxes for age 65 or over, '65 Special' (low-income elderly), blind, deaf, and head of household/surviving spouse. Listed in the Personal Tax Credits section of the return.",
+  "@@74e0e92430e9": "If any of your income was exempt from federal tax under a treaty: AR does not conform to federal tax treaties, so that income is still taxable to AR — do not carry the federal exclusion onto the state return.",
+  "@@81fbb800e9e1": "If any income was exempt from federal tax under a treaty: AR does not conform to federal tax treaties — that income is still taxable to AR.",
+  "@@91db866dc4ad": "Additional Tax Credit for Qualified Individuals (low-income credit) — An individual taxpayer with net taxable income up to the 2023 threshold who timely files an Arkansas income tax return. Phases out across the income table; allowed per individual (doubled for joint Filing Status 2, and computed separately per spouse for Filing Status 4).",
+  "@@9bbb515c8d5f": "Credit for Individuals with Developmental Disabilities — Taxpayers who have a dependent (or self) who qualifies with a developmental disability, as certified on Form AR1000-DD (formerly AR1000RC5). Certifications valid on/after January 1, 2022 have no expiration date.",
+  "@@ada1be7d1388": "https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@fdb4102b2717": "Arkansas 2023 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions booklet) - Arkansas Dept. of Finance and Administration. Contains: residency/domicile definitions (p.9), who-must-file thresholds and 'When to File' April 15, 2024 due date (p.10), tax-treaty foreign-student taxation language, line-by-line income section (Lines 8-25), mailing addresses, and check-payable instructions."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     },
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "jurisdiction": "states/ar",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@01de5dd4b570",
+    "notes": [
+     "@@4d42ad525021",
+     "@@74e0e92430e9"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     },
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "jurisdiction": "states/ar",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Tax Due return: Arkansas State Income Tax, P.O. Box 2144, Little Rock, AR 72203-2144. (Attach Form AR1000V payment voucher with check or money order.)",
+    "notes": [
+     "@@4d42ad525021",
+     "@@74e0e92430e9"
+    ],
+    "payment": [
+     "Pay online via AR Web Pay: https://www.atap.arkansas.gov (no processor fee).",
+     "By check: make it payable to \"Department of Finance and Administration (make check or money order payable in U.S. Dollars; write the tax year and your SSN/account number on it; attach Form AR1000V)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     },
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "jurisdiction": "states/ar",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@01de5dd4b570",
+    "notes": [
+     "@@4d42ad525021",
+     "@@74e0e92430e9"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "headline": "AR 2023: refund $512",
+    "jurisdiction": "states/ar",
+    "notes": [
+     "@@81fbb800e9e1"
+    ],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "headline": "AR 2023: you owe $347",
+    "jurisdiction": "states/ar",
+    "notes": [
+     "@@81fbb800e9e1"
+    ],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@fdb4102b2717",
+      "url": "@@ada1be7d1388"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "AR1000F - Full Year Resident Individual Income Tax Return",
+    "headline": "AR 2023: you owe $1,205",
+    "jurisdiction": "states/ar",
+    "notes": [
+     "@@81fbb800e9e1"
+    ],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/ar",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@748c74a78862",
+      "@@271d4411ae76",
+      "@@91db866dc4ad",
+      "@@2e8cbbb0ab26",
+      "@@9bbb515c8d5f"
+     ],
+     "citations": [
+      {
+       "source": "@@fdb4102b2717",
+       "url": "@@ada1be7d1388"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "AR1000NR - Part Year or Non-Resident Individual Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in AR in 2023 without living there — file a nonresident return on AR-source income.",
+     "state": "AR",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@1e3fd849cf5d",
+      "Remote-work trap: work performed from TX for an employer sitting in AR. If AR applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to AR and require a NONRESIDENT AR return that the physical footprint alone never shows — and the W-2's Box 15 often already names AR. This AR pack year carries no researched convenience rule: verify AR's nonresident wage-sourcing rule at its DOR before assuming no AR filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@748c74a78862",
+      "@@271d4411ae76",
+      "@@91db866dc4ad",
+      "@@2e8cbbb0ab26",
+      "@@9bbb515c8d5f"
+     ],
+     "citations": [
+      {
+       "source": "@@fdb4102b2717",
+       "url": "@@ada1be7d1388"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "AR1000NR - Part Year or Non-Resident Individual Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in AR part of 2023 — file a part-year return on income while a resident (plus AR-source income while not).",
+     "state": "AR",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@1e3fd849cf5d"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@748c74a78862",
+      "@@271d4411ae76",
+      "@@91db866dc4ad",
+      "@@2e8cbbb0ab26",
+      "@@9bbb515c8d5f"
+     ],
+     "citations": [
+      {
+       "source": "@@fdb4102b2717",
+       "url": "@@ada1be7d1388"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "AR1000F - Full Year Resident Individual Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in AR all of 2023 — file a resident return on income from all sources.",
+     "state": "AR",
+     "warnings": [
+      "@@4cf945d1e9e4"
+     ]
+    }
+   ],
+   "year": 2023
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ar",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $2,340 = -$2,340.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ar",
+     "taxable_base": "2340",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $2,340.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $2,340 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2649,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ar",
+     "taxable_base": "4989",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $4,989.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $2,340 = $2,649.00; graduated tax on $2,649 [head_of_household schedule]: 0 x $2,649.00 (the $0-$5,299 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 12849,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ar",
+     "taxable_base": "15189",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 174,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $15,189.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $2,340 = $12,849.00; graduated tax on $12,849 [head_of_household schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $2,250.00 (the $10,599-$15,099 bracket) = $67.50; total $173.50 -> $174"
+   },
+   {
+    "base_after_exemptions": 34999,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ar",
+     "taxable_base": "37339",
+     "year": 2023
+    },
+    "marginal_rate": "0.047",
+    "tax": 1048,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $37,339.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $2,340 = $34,999.00; graduated tax on $34,999 [head_of_household schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $4,500.00 (the $10,599-$15,099 bracket) = $135.00; 0.034 x $9,900.00 (the $15,099-$24,999 bracket) = $336.60; 0.047 x $10,000.00 (the $24,999+ bracket) = $470.00; total $1,047.60 -> $1,048"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ar",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $4,680 = -$4,680.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ar",
+     "taxable_base": "4680",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $4,680.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $4,680 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2649,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ar",
+     "taxable_base": "7329",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $7,329.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $4,680 = $2,649.00; graduated tax on $2,649 [married_filing_jointly schedule]: 0 x $2,649.00 (the $0-$5,299 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 12849,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ar",
+     "taxable_base": "17529",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 174,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $17,529.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $4,680 = $12,849.00; graduated tax on $12,849 [married_filing_jointly schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $2,250.00 (the $10,599-$15,099 bracket) = $67.50; total $173.50 -> $174"
+   },
+   {
+    "base_after_exemptions": 34999,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ar",
+     "taxable_base": "39679",
+     "year": 2023
+    },
+    "marginal_rate": "0.047",
+    "tax": 1048,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $39,679.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $4,680 = $34,999.00; graduated tax on $34,999 [married_filing_jointly schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $4,500.00 (the $10,599-$15,099 bracket) = $135.00; 0.034 x $9,900.00 (the $15,099-$24,999 bracket) = $336.60; 0.047 x $10,000.00 (the $24,999+ bracket) = $470.00; total $1,047.60 -> $1,048"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ar",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $2,340 = -$2,340.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ar",
+     "taxable_base": "2340",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $2,340.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $2,340 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2649,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ar",
+     "taxable_base": "4989",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $4,989.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $2,340 = $2,649.00; graduated tax on $2,649 [married_filing_separately schedule]: 0 x $2,649.00 (the $0-$5,299 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 12849,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ar",
+     "taxable_base": "15189",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 174,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $15,189.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $2,340 = $12,849.00; graduated tax on $12,849 [married_filing_separately schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $2,250.00 (the $10,599-$15,099 bracket) = $67.50; total $173.50 -> $174"
+   },
+   {
+    "base_after_exemptions": 34999,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ar",
+     "taxable_base": "37339",
+     "year": 2023
+    },
+    "marginal_rate": "0.047",
+    "tax": 1048,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $37,339.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $2,340 = $34,999.00; graduated tax on $34,999 [married_filing_separately schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $4,500.00 (the $10,599-$15,099 bracket) = $135.00; 0.034 x $9,900.00 (the $15,099-$24,999 bracket) = $336.60; 0.047 x $10,000.00 (the $24,999+ bracket) = $470.00; total $1,047.60 -> $1,048"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ar",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $2,340 = -$2,340.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ar",
+     "taxable_base": "2340",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $2,340.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $2,340 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2649,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ar",
+     "taxable_base": "4989",
+     "year": 2023
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $4,989.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $2,340 = $2,649.00; graduated tax on $2,649 [single schedule]: 0 x $2,649.00 (the $0-$5,299 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 12849,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ar",
+     "taxable_base": "15189",
+     "year": 2023
+    },
+    "marginal_rate": "0.03",
+    "tax": 174,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $15,189.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $2,340 = $12,849.00; graduated tax on $12,849 [single schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $2,250.00 (the $10,599-$15,099 bracket) = $67.50; total $173.50 -> $174"
+   },
+   {
+    "base_after_exemptions": 34999,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ar",
+     "taxable_base": "37339",
+     "year": 2023
+    },
+    "marginal_rate": "0.047",
+    "tax": 1048,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $37,339.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $2,340 = $34,999.00; graduated tax on $34,999 [single schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $4,500.00 (the $10,599-$15,099 bracket) = $135.00; 0.034 x $9,900.00 (the $15,099-$24,999 bracket) = $336.60; 0.047 x $10,000.00 (the $24,999+ bracket) = $470.00; total $1,047.60 -> $1,048"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ar",
+     "taxable_base": 40000,
+     "year": 2023
+    },
+    "error": "ValueError: AR 2023: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ar",
+     "taxable_base": 40000,
+     "year": 2023
+    },
+    "error": "ValueError: AR 2023: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ar",
+     "taxable_base": "44680",
+     "year": 2023
+    },
+    "marginal_rate": "0.047",
+    "tax": 1283,
+    "work_head": "AR state income tax (2023, graduated brackets): taxable_base $44,680.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $4,680 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0 x $5,299.00 (the $0-$5,299 bracket) = $0.00; 0.02 x $5,300.00 (the $5,299-$10,599 bracket) = $106.00; 0.03 x $4,500.00 (the $10,599-$15,099 bracket) = $135.00; 0.034 x $9,900.00 (the $15,099-$24,999 bracket) = $336.60; 0.047 x $15,001.00 (the $24,999+ bracket) = $705.05; total $1,282.65 -> $1,283"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_gross_income",
+   "citation": {
+    "source": "Arkansas DFA, Revenue Division — '2023 Indexed Tax Brackets' (Individual Income Tax): full bracket table (From / Less Than or Equal To / Percentage / Minus Adjustment: 0% to $5,299; 2% $5,300–$10,599 minus $105.98; 3% $10,600–$15,099 minus $211.97; 3.4% $15,100–$24,999 minus $272.37; 4.7% $25,000–$89,600 minus $597.35; then $10-per-$100 adjustment phase-down $89,601–$94,200; 4.7% minus $153.70 at $94,201+), midpoint-of-band formula examples, and Ark. Code Ann. 26-51-201(d)(1) indexing note. Cross-verified against the 2023 AR1000F and AR1000NR Instructions booklet (https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_and_AR1000NR_Instructions.pdf): p.5 'Special Information for Tax Year 2023' (Act 532 top rate 4.7%), p.12 Personal Tax Credits ($29), p.14 Standard Deduction chart and Lines 26–29, pp.25–31 2023 Low Income Tax Tables (Rev 09/21/2023) and Regular Income Tax Table (Rev 10/4/2023) with 'For $100,001 and over, your tax is $4,544 + 4.7% of the excess over $100,000.'",
+    "url": "https://www.dfa.arkansas.gov/wp-content/uploads/TaxBrackets_2023.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ar"
+  },
+  "work_common_tail": ". Tax line: AR1000F Line 29: \"Using the appropriate tax table locate the tax for your income and enter here\" — the tax on Line 28 (\"Subtract Line 27 from Line 25. This is your Net Taxable Income.\"), per the 2023 AR1000F/AR1000NR Instructions, Tax Computation, p.14. This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply AR1000F Line 25, 'Adjusted Gross Income (AGI)' — Arkansas AGI, i.e. Line 23 Total Income (built line-by-line from source documents, Lines 8–22: W-2 wages, interest, dividends, etc.; Arkansas does NOT start from federal AGI or federal taxable income) minus Line 24 adjustments (Form AR1000ADJ). The op subtracts the shipped per-status standard deduction (Line 27) to reach Line 28 Net Taxable Income and applies the brackets (the Line 29 tax). If you itemize (Form AR3), the shipped standard deduction is wrong for you — compute Line 27 on the form instead. Test-vector counts are zero by construction: Arkansas ships NO personal/dependent exemption keys (the $29-per-person amounts are CREDITS against tax, AR1000F Line 7A) — the engine refuses nonzero counts for this state by design. Arkansas has ONE bracket schedule for every filing status — the published 2023 Indexed Tax Brackets and the tax tables do not vary by status, so all four statuses ship identical brackets. Filing Status 2 (married filing joint) runs the couple's COMBINED Line 28 net taxable income through the same un-widened schedule; Arkansas instead offers Filing Status 4 (married filing separately on the SAME return), where each spouse's own Line 28 income goes through the schedule in a separate column (tax = Line 29(A) + Line 29(B), summed on Line 30) — often less total tax than status 2. This op models a single run of one income through the schedule. Surviving Spouse is a SEPARATE Arkansas status (Filing Status 6) with a $2,340 standard deduction — NOT the $4,680 married-filing-joint amount. The engine maps qualifying surviving spouse to married_filing_jointly, which would wrongly apply $4,680; an Arkansas surviving spouse gets $2,340 (compute as single for the deduction). Table mandate at ALL income levels: AR1000F Line 29 takes the tax from the 2023 tax tables (booklet pp.25–31), which are computed at the MIDPOINT of each $100 income band and rounded to the whole dollar — 'If you use a formula to calculate Arkansas income tax, the results must match the table exactly' (2023 Indexed Tax Brackets). Bracket math may differ from the table by a few dollars within a $100 band; the filed form must use the table. CRITICAL — shipped brackets are exact ONLY for net taxable income up to $89,600. From $89,601 to $94,200 the official schedule phases the 4.7% bracket's 'minus adjustment' down from $597.35 to $153.70 in $10-per-$100-band steps (the $90,001–$90,200, $90,901–$91,100 and $93,601–$93,800 ranges intentionally span $200 per the Ark. Code Ann. 26-51-201(d)(1) rounding note), and at $94,201+ the tax is 4.7% x net taxable income - $153.70. The shipped bracket math (equivalent to 4.7% x income - $597.35) UNDERSTATES the true tax above $89,600 — by $443.65 once net taxable income reaches $94,201 — so above $89,600 compute from the official schedule/table, not from these brackets. The Regular Income Tax Table's printed top rule — 'For $100,001 and over, your tax is $4,544 + 4.7% of the excess over $100,000' (booklet p.31, Rev 10/4/2023) — equals 4.7% x income - $156.00, while the 2023 Indexed Tax Brackets constant for $100,001+ is $153.70 (4.7% x $100,000 - $153.70 = $4,546.30): a $2.30 divergence, because $4,544 is the midpoint-rounded last table row ($99,901–$100,000). The filed form follows the printed table/formula. The published 'minus adjustment' constants equal the cumulative sum of the prior brackets to the cent ($105.98 = 2% x $5,299 exactly; $211.97 exactly; $272.37 vs exact $272.366; $597.35 vs exact $597.353) — no material rounding divergence, so the shipped marginal brackets reproduce the official formula to within one cent below $89,601. EXEMPTIONS ARE CREDITS IN ARKANSAS — none are shipped: Arkansas has no personal or dependent exemption that reduces income. It gives $29-per-person PERSONAL TAX CREDITS instead (AR1000F Line 7A boxes: yourself, spouse, 65 or over, '65 Special', blind, deaf, head-of-household/surviving-spouse; Line 7B: $29 per dependent; totaled on Line 7C and subtracted from TAX on Line 34). These credits are not modeled by this op. Other nonrefundable credits reduce the computed tax on the form but are NOT modeled: the 'Additional Tax Credit for Qualified Individuals' (up to $60 per individual, net taxable income up to $26,100, worksheet p.22) and the one-time 2023 'Inflationary Relief Income Tax Credit' (Act 6, First Extraordinary Session of 2023: up to $150, or $300 for Filing Status 2, phasing out up to $103,600/$207,200 net income, worksheet p.21); also the 20%-of-federal Child and Dependent Care Credit (AR2441). Low Income Tax Table (NOT modeled): full-year residents whose total income from all sources is within the limits may take tax from the 2023 Low Income Tax Table applied to Line 25 AGI with NO deduction on Line 27 ('The Standard Deduction is already built into the table'), which yields LESS tax than the shipped math at low incomes — tax is $0 up to $13,849 (single), $19,691 / $23,472 (HoH or Surviving Spouse with 1-or-no / 2-or-more dependents), $23,356 / $28,110 (MFJ with 1-or-no / 2-or-more dependents), and the table is usable up to AGI of $16,500 (single), $23,900 / $27,400 (HoH/SS), $27,500 / $34,100 (MFJ). Married couples must file Status 2 to qualify; itemizers and filers claiming military-compensation, military-retirement or employment-related-pension/IRA exclusions do not qualify (unless they elect not to use the exclusion). Standard-deduction gates not modeled: the deduction is capped at income ('If the amount on Line 25 is less than the Standard Deduction, enter the amount from Line 25 on Line 27' — consistent with the engine's max(0, ...)); it 'does not apply to taxpayer's dependent(s)'; itemizers use Form AR3 itemized deductions on Line 27 instead; and for Filing Status 4 or 5, if one spouse itemizes both must itemize. Retroactive 2023 rate cut: Act 532 of the 2023 General Session — 'Marginal Income Tax rates for 2023 have been amended and the top rate will be reduced to 4.7%' (booklet p.5, Special Information for Tax Year 2023). The shipped schedule is the FINAL 2023 filing-season version: the 2023 Indexed Tax Brackets document and the tax tables (Low Income Rev 09/21/2023; Regular Rev 10/4/2023) all print the 4.7% top rate. Amounts not part of Line 29 bracket math are not modeled: Line 31 lump-sum distribution averaging (Form AR1000TD) and Line 32 additional 10%-of-federal tax on early IRA/retirement distributions are ADDED to reach Line 33 total tax on the form. Round all amounts to the nearest whole dollar on the return (booklet p.12)."
+ },
+ "year": 2023
+}

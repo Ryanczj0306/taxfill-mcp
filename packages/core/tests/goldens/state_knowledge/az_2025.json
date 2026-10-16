@@ -1,0 +1,798 @@
+{
+ "_strings": {
+  "@@03ff003f6968": "Arizona Department of Revenue, PO Box 52138, Phoenix, AZ 85072-2138 (if expecting a refund, owe no tax, or owe tax but are not including a payment)",
+  "@@04f80c4c15c2": "AZ DOR — 2025 Form 140 Instructions, \"Where Should I Mail my return?\" (PO Box 52016 with payment / PO Box 52138 refund or no payment; the same split applies when filing Form 140 together with Form 140-SBI, after the department applies any overpayment from one return to the other)",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1d4e7a87e89c": "AZ DOR — 2025 Form 140 Instructions: Line 46 \"Multiply line 45 by 2.5% (.025) and enter the result\" (Line 45 = Arizona taxable income); Line 12 = federal AGI (\"Arizona uses federal adjusted gross income as a starting point to determine Arizona taxable income. Your federal adjusted gross income is your Arizona gross income\"); \"Your Standard Deduction\" chart (Line 43) — $15,750 single, $31,500 married filing joint, $15,750 married filing separate, $23,625 head of household (the same figures set the \"Do You Have to File?\" thresholds); exemptions on lines 38-41 (age 65 or over $2,100; blind $1,500; other exemptions $2,300; qualifying parents and grandparents $10,000); Line 44 increased standard deduction for charitable contributions at 34% (.34); Dependent Tax Credit on Line 49. Second pass: the 2025 Form 140 itself (ADOR 10413 (25), \"AZ Form 140 (2025)\") prints line 46 \"Tax: Multiply line 45 by 2.5% (.025). Enter the result\", the line 38-41 multiplications ($2,100/$1,500/$2,300/$10,000), and the page-3 charitable standard-deduction-increase worksheet line 7C \"Multiply line 6C by 34% (.34)\" — both passes agree.",
+  "@@2b0137889d82": "Dependent Tax Credit — Available to taxpayers who claim qualifying dependents (an individual that qualifies as a dependent for federal purposes) on the Arizona return. Credit amount is higher for dependents under age 17. Cannot claim the same individual as a qualifying parent/grandparent exemption (line 41) or Other Exemption (line 40).",
+  "@@2b47b4be3e2a": "Credit for Increased Excise Taxes — Taxpayer must have an SSN valid for employment, meet the income threshold for their filing status, not be claimed as a dependent by another taxpayer, and not have been sentenced for at least 60 days of 2025 to a county/state/federal prison. Married joint filers may also claim for a spouse who has either a valid SSN or an ITIN; if the spouse has a valid SSN but the taxpayer does not, neither may claim it.",
+  "@@2c4e10708312": "annual (per tax year; the newest shipped AZ pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@36e210e8ff1e": "AZ DOR — 2025 Form 140 Instructions (\"E-file today and pay by April 15, 2026 to avoid penalties and interest\"; a calendar-year 2025 return is due by midnight April 15, 2026; state extension via Form 204 filed by April 15, 2026, or an extension payment at www.AZTaxes.gov)",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4dff4fc483a6": "Arizona Form 140 - Resident Personal Income Tax Return (ADOR 10413 (25); full-year residents; short forms Form 140A and Form 140EZ are also available for eligible residents — Form 140 is REQUIRED if Arizona taxable income is $50,000 or more regardless of filing status, you make adjustments to income, you itemize, you claim credits other than the family income tax credit / increased excise tax credit / property tax credit, you claim estimated payments, or you received and are subtracting the 2025 Arizona Families Tax Rebate)",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@522b0677de71": "Family Income Tax Credit — Arizona residents whose income (Worksheet I — Form 140 line 42 Arizona AGI plus the line 38-41 exemptions added back, plus any Form 140-SBI small business income from line 13) does not exceed the maximum allowed for their filing status and number of dependents. The credit only reduces tax and cannot be refunded.",
+  "@@619e5bc8a8af": "AZ DOR — 2025 Form 140 Resident Personal Income Tax Return Instructions (line 12 = Federal adjusted gross income; additions lines 14-18; exemptions lines 38-41; standard deduction chart $15,750/$31,500/$15,750/$23,625; line 44 increased standard deduction 34%; line 46 tax = 2.5% (.025); mailing addresses; make check payable to Arizona Department of Revenue; AZTaxes.gov; April 15, 2026 due date)",
+  "@@66c966f90c87": "The newest shipped AZ pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@b4ccfde5f61a": "Treaty conformity — AZ conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from AZ income (it flows through the federal starting point; do not add it back on the AZ return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Arizona's resident return (Form 140) starts from federal adjusted gross income: 2025 Form 140 line 12 is \"Federal adjusted gross income (from your federal return)\", and the 2025 instructions state \"Arizona uses federal adjusted gross income as a starting point to determine Arizona taxable income. Your federal adjusted gross income is your Arizona gross income.\" Because federally treaty-exempt income is already excluded from federal AGI, it flows through to the AZ return excluded. AZ then applies only specific statutory additions (2025 Form 140 lines 14-18): the small-business-income modification (lines 13-14), non-Arizona municipal interest (line 15), the partnership income adjustment (line 16), total federal depreciation (line 17, reversed via the line 26 recalculated-Arizona-depreciation subtraction), and line 18 \"Other Additions to Income\" — whose 2025 schedule (Form 140 page 5) enumerates items A through S: A married persons filing separate returns, B Form 141AZ Schedule K-1 fiduciary adjustment, C ordinary-income portion of federally excluded lump-sum distributions, D items previously deducted for Arizona purposes, E/F claim-of-right repayment adjustments (incl. the NOL variant), G agricultural water conservation expenses / S-corporation pass-through addition, H adjusted-basis add-backs for credit property (Forms 338/325/315), I nonqualified 529 withdrawals, J sole-proprietorship loss of an Arizona nonprofit medical marijuana dispensary, K federal NOL carryforward from non-Arizona sources accrued while a nonresident, L federal capital-loss carryforward from non-Arizona sources before Arizona residency, M ADA access expenditures, N pre-1990 child-care-facility amortization/depreciation, O net capital loss from exchanging one kind of legal tender for another, P entity-level income tax payment, Q motion picture production costs, R other adjustments related to tax credits, S other adjustments, T total. NO line on Form 140 or its additions schedule adds back federal tax-treaty-exempt income (unlike California's Schedule CA). Therefore treaty-exempt income is NOT re-taxed by Arizona -> conforms. (The 2025 list is longer than the 2024 A-J list — items K-S were read line-by-line off the fetched 2025 form and none is a treaty add-back.)",
+  "@@c1c78882979c": "Nonresident: Arizona Form 140NR - Nonresident Personal Income Tax Return. Part-year resident: Arizona Form 140PY - Part-Year Resident Personal Income Tax Return.",
+  "@@d5589d303913": "Property Tax Credit (Form 140PTC) — Must have been an Arizona resident for the full year in 2025 and have paid property tax on an Arizona home, rent on taxable property for the entire year, or a combination of both during 2025. Must be either (a) age 65 or older in 2025, or (b) under 65 but receiving SSI Title 16 income from the Social Security Administration (NOT normal Social Security disability). Total household income must be under the limits below. The claim (or an extension request) must be filed by April 15, 2026.",
+  "@@dde540df6443": "Law change NOT modeled by the engine (status final_form_published): The Increased Standard Deduction for charitable contributions (Form 140 Line 44) rose to 34% (.34) of the qualified charitable contributions a non-itemizer could have deducted had they itemized — RAISED for 2025 from 33% (2024), and 31% in 2022. Claimed via the Form 140 page-3 worksheet (line 7C) with box 44C checked, or the increase may be denied. Resolve via: 2025 Form 140 instructions, Line 44, and the page-3 Standard Deduction Increase for Charitable Contributions worksheet on the 2025 Form 140 itself (https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf) — the amount depends on the filer's own qualified charitable contributions.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@04f80c4c15c2",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     },
+     {
+      "source": "@@36e210e8ff1e",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@4dff4fc483a6",
+    "jurisdiction": "states/az",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@03ff003f6968",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@04f80c4c15c2",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     },
+     {
+      "source": "@@36e210e8ff1e",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@4dff4fc483a6",
+    "jurisdiction": "states/az",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Arizona Department of Revenue, PO Box 52016, Phoenix, AZ 85072-2016 (if including a payment with Form 140 and not filing Form 140-SBI)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via AZ Web Pay: https://www.AZTaxes.gov (no processor fee).",
+     "By check: make it payable to \"Arizona Department of Revenue (\"Make your check payable to Arizona Department of Revenue\"; write your SSN, Form 140 and tax year on the front of the check or money order; U.S. dollars only; do not send cash; do not staple the payment to the return)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@04f80c4c15c2",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     },
+     {
+      "source": "@@36e210e8ff1e",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@4dff4fc483a6",
+    "jurisdiction": "states/az",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@03ff003f6968",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@36e210e8ff1e",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@4dff4fc483a6",
+    "headline": "AZ 2025: refund $512",
+    "jurisdiction": "states/az",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@36e210e8ff1e",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@4dff4fc483a6",
+    "headline": "AZ 2025: you owe $347",
+    "jurisdiction": "states/az",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@36e210e8ff1e",
+      "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@4dff4fc483a6",
+    "headline": "AZ 2025: you owe $1,205",
+    "jurisdiction": "states/az",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@66c966f90c87",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Arizona Department of Revenue, 2025 Form 140 Resident Personal Income Tax Return Instructions (Line 49 - Dependent Tax Credit; 2025 Adjusted Dependent Tax Credit worksheets Tables III/IV/V)",
+     "cadence": "@@2c4e10708312",
+     "topic": "credits",
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@66c966f90c87",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@04f80c4c15c2",
+     "cadence": "@@2c4e10708312",
+     "topic": "filing_logistics",
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@66c966f90c87",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@619e5bc8a8af",
+     "cadence": "@@2c4e10708312",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    },
+    {
+     "answers": "AZ DOR — 2025 Form 140 (form PDF, ADOR 10413 (25), \"AZ Form 140 (2025)\"; second-pass verification: line 12 \"Federal adjusted gross income (from your federal return)\", line 38 \"Age 65 or over: Multiply the number in box 8 by $2,100\", line 39 \"Blind: Multiply the number in box 9 by $1,500\", line 40 \"Multiply the number in box 40E by $2,300\", line 41 \"Qualifying parents and grandparents: Multiply the number in box 11a by $10,000\", line 42 Arizona adjusted gross income, line 45 Arizona taxable income, line 46 \"Tax: Multiply line 45 by 2.5% (.025). Enter the result\", page-3 Standard Deduction Increase for Charitable Contributions worksheet line 7C \"Multiply line 6C by 34% (.34)\", page-5 Other Additions to Arizona Gross Income schedule items A-T)",
+     "cadence": "@@2c4e10708312",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf"
+    },
+    {
+     "answers": "AZ DOR — Form 140 Arizona Resident Personal Income Tax Booklet landing page",
+     "cadence": "@@2c4e10708312",
+     "topic": "forms_and_instructions",
+     "url": "https://azdor.gov/forms/individual/form-140-arizona-resident-personal-income-tax-booklet"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@66c966f90c87",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@619e5bc8a8af",
+     "cadence": "@@2c4e10708312",
+     "topic": "law_changes",
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@66c966f90c87",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@1d4e7a87e89c",
+     "cadence": "@@2c4e10708312",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@66c966f90c87",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/az",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/az",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@2b0137889d82",
+      "@@522b0677de71",
+      "@@2b47b4be3e2a",
+      "@@d5589d303913"
+     ],
+     "citations": [
+      {
+       "source": "@@619e5bc8a8af",
+       "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+      },
+      {
+       "source": "@@619e5bc8a8af",
+       "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@c1c78882979c"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in AZ in 2025 without living there — file a nonresident return on AZ-source income.",
+     "state": "AZ",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@b4ccfde5f61a",
+      "@@dde540df6443",
+      "Remote-work trap: work performed from TX for an employer sitting in AZ. If AZ applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to AZ and require a NONRESIDENT AZ return that the physical footprint alone never shows — and the W-2's Box 15 often already names AZ. This AZ pack year carries no researched convenience rule: verify AZ's nonresident wage-sourcing rule at its DOR before assuming no AZ filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@2b0137889d82",
+      "@@522b0677de71",
+      "@@2b47b4be3e2a",
+      "@@d5589d303913"
+     ],
+     "citations": [
+      {
+       "source": "@@619e5bc8a8af",
+       "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+      },
+      {
+       "source": "@@619e5bc8a8af",
+       "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@c1c78882979c"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in AZ part of 2025 — file a part-year return on income while a resident (plus AZ-source income while not).",
+     "state": "AZ",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@b4ccfde5f61a",
+      "@@dde540df6443"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@2b0137889d82",
+      "@@522b0677de71",
+      "@@2b47b4be3e2a",
+      "@@d5589d303913"
+     ],
+     "citations": [
+      {
+       "source": "@@619e5bc8a8af",
+       "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+      },
+      {
+       "source": "@@619e5bc8a8af",
+       "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@4dff4fc483a6"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in AZ all of 2025 — file a resident return on income from all sources.",
+     "state": "AZ",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@dde540df6443"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "az",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $23,625 = -$23,625.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.025 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "az",
+     "taxable_base": "23625",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $23,625.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $23,625 = $0.00; tax = 0.025 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "az",
+     "taxable_base": "63625",
+     "year": 2025
+    },
+    "tax": 1000,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $63,625.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $23,625 = $40,000.00; tax = 0.025 x $40,000 = $1,00"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "az",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $31,500 = -$31,500.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.025 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "az",
+     "taxable_base": "31500",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $31,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $31,500 = $0.00; tax = 0.025 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "az",
+     "taxable_base": "71500",
+     "year": 2025
+    },
+    "tax": 1000,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $71,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $31,500 = $40,000.00; tax = 0.025 x $40,000 = $1,00"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "az",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $15,750 = -$15,750.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.025 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "az",
+     "taxable_base": "15750",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $15,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $15,750 = $0.00; tax = 0.025 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "az",
+     "taxable_base": "55750",
+     "year": 2025
+    },
+    "tax": 1000,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $55,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $15,750 = $40,000.00; tax = 0.025 x $40,000 = $1,00"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "az",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $15,750 = -$15,750.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.025 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "az",
+     "taxable_base": "15750",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $15,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $15,750 = $0.00; tax = 0.025 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "az",
+     "taxable_base": "55750",
+     "year": 2025
+    },
+    "tax": 1000,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $55,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $15,750 = $40,000.00; tax = 0.025 x $40,000 = $1,00"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "az",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: AZ 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: age_65, blind, other, qualifying_parent_grandparent). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "az",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: AZ 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65, blind, other, qualifying_parent_grandparent). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "az",
+     "taxable_base": "71500",
+     "year": 2025
+    },
+    "tax": 1000,
+    "work_head": "AZ state income tax (2025, flat rate): taxable_base $71,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $31,500 = $40,000.00; tax = 0.025 x $40,000 = $1,00"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@1d4e7a87e89c",
+    "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf"
+   },
+   "marginal_rate": "0.025",
+   "rate": "0.025",
+   "rate_structure": "flat",
+   "state": "az"
+  },
+  "work_common_tail": "0. Tax line: Form 140 Line 46: \"Tax: Multiply line 45 by 2.5% (.025). Enter the result\" (Line 45 = Arizona taxable income = Line 42 Arizona AGI minus Lines 43-44; Line 42 = line 37 minus lines 38-41; Line 12 starts from federal AGI). Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($2,100 — Form 140 Line 38: $2,100 per age-65-or-over box (\"Age 65 or over: Multiply the number in box 8 by $2,100\") — subtracted before Arizona taxable income (Line 42 = line 37 minus lines 38-41). NOT applied by calc.state_tax — enter it on Line 38.); blind ($1,500 — Form 140 Line 39: $1,500 per blind box (\"Blind: Multiply the number in box 9 by $1,500\"). NOT applied by calc.state_tax — enter it on Line 39.); other ($2,300 — Form 140 Line 40: $2,300 per \"Other Exemptions\" person (box 40E; page 4 Part 3 required). Covers e.g. a person age 65 or over whose Arizona home health care or other medical costs you paid, and a stillborn child; only ONE $2,300 exemption per individual even if two boxes apply. NOT applied by calc.state_tax — enter it on Line 40.); qualifying_parent_grandparent ($10,000 — Form 140 Line 41: $10,000 per qualifying parent or grandparent (box 11a) — mutually exclusive with the Line 40 \"Other Exemption\" and the Line 49 dependent credit for the SAME individual. NOT applied by calc.state_tax — enter it on Line 41.) This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Rate unchanged for 2025: Arizona stays at the 2.5% flat rate for all income levels and filing statuses (first effective 2023). What CHANGED is the standard deduction, which rose to the 2025 federal amounts as raised by the federal reconciliation act (\"OBBBA\"): $15,750 single/MFS, $31,500 MFJ, $23,625 HoH (from $14,600/$29,200/$21,900 in 2024) — do NOT use the pre-OBBBA $15,000/$30,000/$22,500 projections. The lines 38-41 exemption amounts are unchanged. Arizona has NO personal exemption, and the plain dependent exemption was replaced by the Line 49 Dependent Tax Credit ($100 per qualifying dependent under 17, $25 per dependent 17 or over, phased down when federal AGI exceeds $200,000 — $400,000 MFJ — and gone once the excess tops $19,000). It is a CREDIT against tax, not a base reduction, and is NOT modeled by calc.state_tax. Increased Standard Deduction for charitable contributions (Line 44): non-itemizers may add 34% (.34) of the qualified charitable contributions that would have been allowed had they itemized — RAISED for 2025 from 33% (2024) and 31% (2022) — via the Form 140 page-3 worksheet (line 7C). NOT modeled; claim it on Line 44 with box 44C checked, or the increase may be denied. Exemptions on Form 140 lines 38-41 (age 65+ $2,100; blind $1,500; other $2,300; qualifying parent/grandparent $10,000) reduce Arizona AGI on the form — calc.state_tax does not apply them; a 65+/blind filer computes lines 38-41 on the form. A deceased-spouse special rule applies to Line 43: if you and your deceased spouse would have filed jointly for 2025 enter $31,500, if separately enter $15,750. Not modeled: the Line 47 tax from recapture of Form 301 credits (added to the Line 46 tax at Line 48), the Form 140-SBI small-business-income election (lines 13-14 remove SBI from the Form 140 base and tax it on a separate return), and every Arizona credit (lines 49-58)."
+ },
+ "year": 2025
+}

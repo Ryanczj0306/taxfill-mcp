@@ -1,0 +1,948 @@
+{
+ "_strings": {
+  "@@0ad15e7469e1": "2025 Personal Income Tax Booklet (Form 540), Important Dates, p. 3 — \"April 15, 2026: Last day to file and pay the 2025 amount you owe to avoid penalties and interest\"; \"October 15, 2026: Last day to file or e-file your 2025 tax return to avoid a late filing penalty and interest computed from the original due date of April 15, 2026\"",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@3145cdc6995b": "Law change NOT modeled by the engine (status final_form_published): The Mental Health Services Act was RENAMED the Behavioral Health Services Act, verbatim from the 2025 booklet's tax-law-changes/What's New section: \"Behavioral Health Services Act – For taxable years beginning on or after January 1, 2025, the Mental Health Services Act has been renamed to the Behavioral Health Services Act. Therefore, references to the Mental Health Services Tax have been renamed to Behavioral Health Services Tax.\" Form 540 line 62 is now the Behavioral Health Services Tax — same 1% rate, same $1,000,000 taxable-income threshold, same line as the 2024 Mental Health Services Tax. Resolve via: 2025 Personal Income Tax Booklet (Form 540), Line 62 Behavioral Health Services Tax worksheet (the citation URL): taxable income (line 19) less $1,000,000, times 1%, whole dollars only. This block reproduces line 31 only and never adds the surcharge.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@552241acf88e": "Treaty conformity — CA does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CA. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: California does not conform to federal income tax treaties. FTB Pub. 1031 (2025), Section on Tax Treaty, p. 10, verbatim: \"A tax treaty between the U.S. Government and a foreign country may exempt some types of income from federal taxation. Generally, unless the treaty specifically excludes the income from taxation by California, the income is taxable.\" Worked Example 1 (unchanged from the 2024 edition): a resident of China doing research at a California university received $15,000 of teaching/research wages excludable for federal purposes under the U.S.-China treaty — determination: \"Although the wages may be exempt from income for federal income tax purposes, the wages will be taxable by California... Tax treaties between the United States and other countries which expressly limit their application to federal income taxes do not apply to California.\" The $15,000 is included on Schedule CA (540NR), Part II, Section A, line 1a, column C. California also disallows the foreign tax credit and the foreign earned income exclusion (same publication, \"Foreign Tax Credit or Foreign Earned Income Exclusion\").",
+  "@@57577a225136": "The newest shipped CA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@5c54c6c74f12": "If any income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties — that income is still taxable to CA.",
+  "@@660cf3a53690": "2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2025 California Tax Rate Schedules' (Schedules X/Y/Z), pp. 74-75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Behavioral Health Services Tax worksheet; Form 540 (2025) Side 1-2, lines 7-11 (X $153 / X $475 exemption credits), lines 13-19, 31-32, 61-63. Second pass: the standalone '2025 California Tax Rate Schedules' PDF and the separately published HTML edition of the booklet reproduce all 24 bracket bounds, the $5,706/$11,412 standard deduction, and the $252,203/$504,411/$378,310 AGI limits; the standalone 2025 Form 540 PDF reproduces the $153/$475 credits and the printed standard deduction.",
+  "@@747e52046e32": "FTB Publication 1031 (2025), Guidelines for Determining Resident Status — Tax Treaty section (p. 10)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@99df689c470b": "California grants an automatic paper-filing extension to October 15, 2026 with no form required; tax owed must still be paid by April 15, 2026 (form FTB 3519) to avoid penalties and interest. Taxpayers living or traveling outside the United States on April 15, 2026 get the federal-style extended dates.",
+  "@@a855ee5e7016": "Young Child Tax Credit (YCTC) — Available if you qualified for the California EITC (or would have been allowed it but for earned income of zero dollars or less) and have at least one qualifying child younger than six years old as of the last day of the taxable year. Computed on form FTB 3514.",
+  "@@ab2274bb38ab": "Nonrefundable Renter's Credit — Full-year California resident who paid rent for at least half of 2025 on a non-property-tax-exempt principal residence in California; California AGI within the limit; did not claim (and spouse/RDP did not claim, subject to lived-apart exceptions) the homeowner's property tax exemption; not living for more than half the year in the home of a person who can claim them as a dependent.",
+  "@@c1369033fed5": "Credit amounts/limits are not independently verified: Dollar limits below are transcribed from the cited 2025 FTB booklet and re-confirmed against the FTB HTML edition of the same booklet (two-pass: the $53,994/$107,988 renter's-credit AGI ceilings and the $32,901 CalEITC earned-income ceiling were re-grepped out of the independently published HTML). Confirm your eligibility at the cited URL before relying on a figure.",
+  "@@c4a5951c662f": "annual (per tax year; the newest shipped CA pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@c7cf80b5f4cd": "2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — Important Dates p. 3, Do I Have to File charts p. 4, standard deduction chart/worksheet + line 18/19/31 instructions p. 13, line 32 exemption-credit AGI limits + AGI Limitation Worksheet p. 14, line 62 Behavioral Health Services Tax worksheet, renter's credit record pp. 25-26, mailing addresses, payment options, tax table pp. 69-74, 2025 California Tax Rate Schedules pp. 74-75",
+  "@@d4bf29810f68": "If any of your income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties, so that income is still taxable to CA — do not carry the federal exclusion onto the state return.",
+  "@@e7c0b0724bfc": "California Earned Income Tax Credit (CalEITC) — Requires California wage income and/or net earnings from self-employment of less than $32,901 (2025). You do not need a child to qualify. Computed on form FTB 3514.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@eb79be1a5d3c": "2025 Personal Income Tax Booklet (Form 540), \"Mailing Your Tax Return\" (amount due -> PO Box 942867; refund or no amount due -> PO Box 942840)"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@eb79be1a5d3c",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@0ad15e7469e1",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@99df689c470b"
+    ],
+    "form": "540",
+    "jurisdiction": "states/ca",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Franchise Tax Board, PO Box 942840, Sacramento CA 94240-0001",
+    "notes": [
+     "@@d4bf29810f68"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@eb79be1a5d3c",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@0ad15e7469e1",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@99df689c470b"
+    ],
+    "form": "540",
+    "jurisdiction": "states/ca",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Franchise Tax Board, PO Box 942867, Sacramento CA 94267-0001",
+    "notes": [
+     "@@d4bf29810f68"
+    ],
+    "payment": [
+     "Pay online via CA Web Pay: https://www.ftb.ca.gov/pay (no processor fee).",
+     "By check: make it payable to \"Franchise Tax Board (check or money order payable to the \"Franchise Tax Board\" in U.S. dollars drawn on a U.S. financial institution; write your SSN or ITIN and \"2025 Form 540\" on it; do not combine the 2025 payment with a 2026 estimated payment; if you e-filed, mail it with form FTB 3582)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@eb79be1a5d3c",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@0ad15e7469e1",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@99df689c470b"
+    ],
+    "form": "540",
+    "jurisdiction": "states/ca",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Franchise Tax Board, PO Box 942840, Sacramento CA 94240-0001",
+    "notes": [
+     "@@d4bf29810f68"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@0ad15e7469e1",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "540",
+    "headline": "CA 2025: refund $512",
+    "jurisdiction": "states/ca",
+    "notes": [
+     "@@5c54c6c74f12"
+    ],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0ad15e7469e1",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "540",
+    "headline": "CA 2025: you owe $347",
+    "jurisdiction": "states/ca",
+    "notes": [
+     "@@5c54c6c74f12"
+    ],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0ad15e7469e1",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "540",
+    "headline": "CA 2025: you owe $1,205",
+    "jurisdiction": "states/ca",
+    "notes": [
+     "@@5c54c6c74f12"
+    ],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57577a225136",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 Personal Income Tax Booklet (Form 540), Nonrefundable Renter's Credit Qualification Record, pp. 25-26; line 46 instructions",
+     "cadence": "@@c4a5951c662f",
+     "topic": "credits",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57577a225136",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 Personal Income Tax Booklet (Form 540), \"Do I Have to File?\" Steps 1-4 and the gross income / adjusted gross income chart, p. 4",
+     "cadence": "@@c4a5951c662f",
+     "topic": "filing_logistics",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57577a225136",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@747e52046e32",
+     "cadence": "@@c4a5951c662f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+    },
+    {
+     "answers": "@@c7cf80b5f4cd",
+     "cadence": "@@c4a5951c662f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+    },
+    {
+     "answers": "2025 Personal Income Tax Booklet, HTML edition (used as the independent second-pass source for all 24 bracket bounds, the standard deduction, the AGI limitation thresholds, the renter's-credit AGI ceilings and the CalEITC ceiling)",
+     "cadence": "@@c4a5951c662f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html"
+    },
+    {
+     "answers": "2025 California Tax Rate Schedules (standalone Schedule X/Y/Z PDF, identical to booklet pp. 74-75, including the worked $125,000 MFJ example that lands on $4,768)",
+     "cadence": "@@c4a5951c662f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-tax-rate-schedules.pdf"
+    },
+    {
+     "answers": "2025 Form 540, California Resident Income Tax Return — lines 7-9 personal/blind/senior exemption credits (X $153), line 10 dependent exemption credits (X $475), line 11 exemption amount, line 18 standard deduction amounts printed on the form ($5,706 / $11,412), lines 13-17, 19, 31-32, 46, 61-63, 75-76",
+     "cadence": "@@c4a5951c662f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540.pdf"
+    },
+    {
+     "answers": "2025 form FTB 3514 booklet, California Earned Income Tax Credit (CalEITC / YCTC / FYTC computation) — confirmed published and reachable for 2025",
+     "cadence": "@@c4a5951c662f",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-3514-booklet.html"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57577a225136",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@c7cf80b5f4cd",
+     "cadence": "@@c4a5951c662f",
+     "topic": "law_changes",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57577a225136",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@660cf3a53690",
+     "cadence": "@@c4a5951c662f",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@57577a225136",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ca",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/ca",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@ab2274bb38ab",
+      "@@e7c0b0724bfc",
+      "@@a855ee5e7016"
+     ],
+     "citations": [
+      {
+       "source": "@@c7cf80b5f4cd",
+       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+      },
+      {
+       "source": "@@747e52046e32",
+       "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "540NR",
+      "Schedule CA"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in CA in 2025 without living there — file a nonresident return on CA-source income.",
+     "state": "CA",
+     "warnings": [
+      "@@c1369033fed5",
+      "@@552241acf88e",
+      "@@3145cdc6995b",
+      "Remote-work trap: work performed from TX for an employer sitting in CA. If CA applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to CA and require a NONRESIDENT CA return that the physical footprint alone never shows — and the W-2's Box 15 often already names CA. This CA pack year carries no researched convenience rule: verify CA's nonresident wage-sourcing rule at its DOR before assuming no CA filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@ab2274bb38ab",
+      "@@e7c0b0724bfc",
+      "@@a855ee5e7016"
+     ],
+     "citations": [
+      {
+       "source": "@@c7cf80b5f4cd",
+       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+      },
+      {
+       "source": "@@747e52046e32",
+       "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "540NR",
+      "Schedule CA"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CA part of 2025 — file a part-year return on income while a resident (plus CA-source income while not).",
+     "state": "CA",
+     "warnings": [
+      "@@c1369033fed5",
+      "@@552241acf88e",
+      "@@3145cdc6995b"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@ab2274bb38ab",
+      "@@e7c0b0724bfc",
+      "@@a855ee5e7016"
+     ],
+     "citations": [
+      {
+       "source": "@@c7cf80b5f4cd",
+       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+      },
+      {
+       "source": "@@747e52046e32",
+       "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "540",
+      "Schedule CA"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CA all of 2025 — file a resident return on income from all sources.",
+     "state": "CA",
+     "warnings": [
+      "@@c1369033fed5",
+      "@@3145cdc6995b"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,412 = -$11,412.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "11412",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $11,412.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,412 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "16412",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 50,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $16,412.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,412 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.01 x $5,000.00 (the $0-$22,173 bracket) = $50.00; total $50.00 -> $50"
+   },
+   {
+    "base_after_exemptions": 88805,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "100217",
+     "year": 2025
+    },
+    "marginal_rate": "0.08",
+    "tax": 2802,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $100,217.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,412 = $88,805.00; graduated tax on $88,805 [head_of_household schedule]: 0.01 x $22,173.00 (the $0-$22,173 bracket) = $221.73; 0.02 x $30,357.00 (the $22,173-$52,530 bracket) = $607.14; 0.04 x $15,186.00 (the $52,530-$67,716 bracket) = $607.44; 0.06 x $16,089.00 (the $67,716-$83,805 bracket) = $965.34; 0.08 x $5,000.00 (the $83,805-$98,990 bracket) = $400.00; total $2,801.65 -> $2,802"
+   },
+   {
+    "base_after_exemptions": 1020417,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "1031829",
+     "year": 2025
+    },
+    "marginal_rate": "0.123",
+    "tax": 98703,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $1,031,829.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,412 = $1,020,417.00; graduated tax on $1,020,417 [head_of_household schedule]: 0.01 x $22,173.00 (the $0-$22,173 bracket) = $221.73; 0.02 x $30,357.00 (the $22,173-$52,530 bracket) = $607.14; 0.04 x $15,186.00 (the $52,530-$67,716 bracket) = $607.44; 0.06 x $16,089.00 (the $67,716-$83,805 bracket) = $965.34; 0.08 x $15,185.00 (the $83,805-$98,990 bracket) = $1,214.80; 0.093 x $406,218.00 (the $98,990-$505,208 bracket) = $37,778.27; 0.103 x $101,043.00 (the $505,208-$606,251 bracket) = $10,407.43; 0.113 x $404,166.00 (the $606,251-$1,010,417 bracket) = $45,670.76; 0.123 x $10,000.00 (the $1,010,417+ bracket) = $1,230.00; total $98,702.91 -> $98,703"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,412 = -$11,412.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "11412",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $11,412.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,412 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "16412",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 50,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $16,412.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,412 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.01 x $5,000.00 (the $0-$22,158 bracket) = $50.00; total $50.00 -> $50"
+   },
+   {
+    "base_after_exemptions": 120084,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "131496",
+     "year": 2025
+    },
+    "marginal_rate": "0.08",
+    "tax": 4375,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $131,496.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,412 = $120,084.00; graduated tax on $120,084 [married_filing_jointly schedule]: 0.01 x $22,158.00 (the $0-$22,158 bracket) = $221.58; 0.02 x $30,370.00 (the $22,158-$52,528 bracket) = $607.40; 0.04 x $30,376.00 (the $52,528-$82,904 bracket) = $1,215.04; 0.06 x $32,180.00 (the $82,904-$115,084 bracket) = $1,930.80; 0.08 x $5,000.00 (the $115,084-$145,448 bracket) = $400.00; total $4,374.82 -> $4,375"
+   },
+   {
+    "base_after_exemptions": 1495906,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "1507318",
+     "year": 2025
+    },
+    "marginal_rate": "0.123",
+    "tax": 145670,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $1,507,318.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,412 = $1,495,906.00; graduated tax on $1,495,906 [married_filing_jointly schedule]: 0.01 x $22,158.00 (the $0-$22,158 bracket) = $221.58; 0.02 x $30,370.00 (the $22,158-$52,528 bracket) = $607.40; 0.04 x $30,376.00 (the $52,528-$82,904 bracket) = $1,215.04; 0.06 x $32,180.00 (the $82,904-$115,084 bracket) = $1,930.80; 0.08 x $30,364.00 (the $115,084-$145,448 bracket) = $2,429.12; 0.093 x $597,510.00 (the $145,448-$742,958 bracket) = $55,568.43; 0.103 x $148,584.00 (the $742,958-$891,542 bracket) = $15,304.15; 0.113 x $594,364.00 (the $891,542-$1,485,906 bracket) = $67,163.13; 0.123 x $10,000.00 (the $1,485,906+ bracket) = $1,230.00; total $145,669.65 -> $145,670"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,706 = -$5,706.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "5706",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $5,706.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,706 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "10706",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 50,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $10,706.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,706 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.01 x $5,000.00 (the $0-$11,079 bracket) = $50.00; total $50.00 -> $50"
+   },
+   {
+    "base_after_exemptions": 62542,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "68248",
+     "year": 2025
+    },
+    "marginal_rate": "0.08",
+    "tax": 2387,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $68,248.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,706 = $62,542.00; graduated tax on $62,542 [married_filing_separately schedule]: 0.01 x $11,079.00 (the $0-$11,079 bracket) = $110.79; 0.02 x $15,185.00 (the $11,079-$26,264 bracket) = $303.70; 0.04 x $15,188.00 (the $26,264-$41,452 bracket) = $607.52; 0.06 x $16,090.00 (the $41,452-$57,542 bracket) = $965.40; 0.08 x $5,000.00 (the $57,542-$72,724 bracket) = $400.00; total $2,387.41 -> $2,387"
+   },
+   {
+    "base_after_exemptions": 752953,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "758659",
+     "year": 2025
+    },
+    "marginal_rate": "0.123",
+    "tax": 73450,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $758,659.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,706 = $752,953.00; graduated tax on $752,953 [married_filing_separately schedule]: 0.01 x $11,079.00 (the $0-$11,079 bracket) = $110.79; 0.02 x $15,185.00 (the $11,079-$26,264 bracket) = $303.70; 0.04 x $15,188.00 (the $26,264-$41,452 bracket) = $607.52; 0.06 x $16,090.00 (the $41,452-$57,542 bracket) = $965.40; 0.08 x $15,182.00 (the $57,542-$72,724 bracket) = $1,214.56; 0.093 x $298,755.00 (the $72,724-$371,479 bracket) = $27,784.22; 0.103 x $74,292.00 (the $371,479-$445,771 bracket) = $7,652.08; 0.113 x $297,182.00 (the $445,771-$742,953 bracket) = $33,581.57; 0.123 x $10,000.00 (the $742,953+ bracket) = $1,230.00; total $73,449.83 -> $73,450"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,706 = -$5,706.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "5706",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $5,706.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,706 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "10706",
+     "year": 2025
+    },
+    "marginal_rate": "0.01",
+    "tax": 50,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $10,706.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,706 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.01 x $5,000.00 (the $0-$11,079 bracket) = $50.00; total $50.00 -> $50"
+   },
+   {
+    "base_after_exemptions": 62542,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "68248",
+     "year": 2025
+    },
+    "marginal_rate": "0.08",
+    "tax": 2387,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $68,248.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,706 = $62,542.00; graduated tax on $62,542 [single schedule]: 0.01 x $11,079.00 (the $0-$11,079 bracket) = $110.79; 0.02 x $15,185.00 (the $11,079-$26,264 bracket) = $303.70; 0.04 x $15,188.00 (the $26,264-$41,452 bracket) = $607.52; 0.06 x $16,090.00 (the $41,452-$57,542 bracket) = $965.40; 0.08 x $5,000.00 (the $57,542-$72,724 bracket) = $400.00; total $2,387.41 -> $2,387"
+   },
+   {
+    "base_after_exemptions": 752953,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "758659",
+     "year": 2025
+    },
+    "marginal_rate": "0.123",
+    "tax": 73450,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $758,659.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,706 = $752,953.00; graduated tax on $752,953 [single schedule]: 0.01 x $11,079.00 (the $0-$11,079 bracket) = $110.79; 0.02 x $15,185.00 (the $11,079-$26,264 bracket) = $303.70; 0.04 x $15,188.00 (the $26,264-$41,452 bracket) = $607.52; 0.06 x $16,090.00 (the $41,452-$57,542 bracket) = $965.40; 0.08 x $15,182.00 (the $57,542-$72,724 bracket) = $1,214.56; 0.093 x $298,755.00 (the $72,724-$371,479 bracket) = $27,784.22; 0.103 x $74,292.00 (the $371,479-$445,771 bracket) = $7,652.08; 0.113 x $297,182.00 (the $445,771-$742,953 bracket) = $33,581.57; 0.123 x $10,000.00 (the $742,953+ bracket) = $1,230.00; total $73,449.83 -> $73,450"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: CA 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: CA 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ca",
+     "taxable_base": "51412",
+     "year": 2025
+    },
+    "marginal_rate": "0.02",
+    "tax": 578,
+    "work_head": "CA state income tax (2025, graduated brackets): taxable_base $51,412.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $11,412 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.01 x $22,158.00 (the $0-$22,158 bracket) = $221.58; 0.02 x $17,842.00 (the $22,158-$52,528 bracket) = $356.84; total $578.42 -> $578"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@660cf3a53690",
+    "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ca"
+  },
+  "work_common_tail": ". Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods and check the matching box(es) on line 31, as applicable: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (booklet p. 74): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y%] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or the California standard deduction); 'Subtract line 18 from line 17. This is your taxable income.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply California adjusted gross income — 2025 Form 540, line 17 ('California adjusted gross income. Combine line 15 and line 16'), i.e. federal AGI (line 13) plus California additions minus California subtractions per Schedule CA (540). Do NOT supply unmodified federal AGI: California does not conform to federal income tax treaties (treaty-exempt income is added back on Schedule CA) and has many other adjustments. The op subtracts the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and applies the rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32) and special credits. Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI = federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18 standard deduction). California exemptions are $153/$475 CREDITS (lines 7-10), so vectors pass zero counts by design. Bracket bounds were adjudicated three ways: the booklet pp. 74-75 schedules, the standalone 2025 Tax Rate Schedules PDF, and the HTML booklet edition all print the same 24 bounds; independently, every 2025 bound reproduces as round(2024 bound x 1.03) with Schedule Y = exactly 2x Schedule X, so the 3.0% indexing is confirmed rather than assumed. EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS — the op does not model them: California's personal exemption ($153 per exemption, 2025 Form 540 lines 7-9: personal, blind, senior) and dependent exemption ($475 per dependent, line 10) are exemption CREDITS totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce taxable income. This op reproduces line 31 (tax before exemption credits) only; subtract the line 32 credits (and any special credits, lines 40-47) on the form. Exemption-credit AGI limitation (not modeled): if federal AGI (Form 540 line 13) exceeds $252,203 (single or married/RDP filing separately), $504,411 (MFJ or qualifying surviving spouse/RDP), or $378,310 (head of household), the line 32 exemption credits are reduced via the AGI Limitation Worksheet (booklet p. 14). These 2025 thresholds replace the 2024 $244,857/$489,719/$367,291. Table mandate below $100,000 — 'Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69' and 'Use only if your taxable income on Form 540, line 19 is more than $100,000. If $100,000 or less, use the Tax Table' (booklet pp. 13, 74): bracket math may differ by a few dollars from the table amount within a $100 band; the filed form must use the Tax Table (booklet pp. 69-74). 1% surcharge over $1,000,000 taxable income is NOT modeled, and it was RENAMED for 2025: 'Behavioral Health Services Act – For taxable years beginning on or after January 1, 2025, the Mental Health Services Act has been renamed to the Behavioral Health Services Act. Therefore, references to the Mental Health Services Tax have been renamed to Behavioral Health Services Tax' (2025 booklet, 2025 Tax Law Changes/What's New). Form 540 line 62 is now the Behavioral Health Services Tax: taxable income (line 19) less $1,000,000, times 1%, whole dollars only. Same rate, same threshold, same line as the 2024 Mental Health Services Tax. Alternative Minimum Tax (Form 540 line 61, Schedule P (540)) and other taxes/credit recapture (line 63, e.g. FTB 3805P early-distribution tax, IRC 409A NQDC 5% tax) are NOT modeled. FTB 3800 (tax for certain children with unearned income) and FTB 3803 (parents' election to report a child's interest/dividends) change the line 31 computation and are NOT modeled. Standard-deduction gates NOT modeled: a person claimable as a dependent on another's return must use the California Standard Deduction Worksheet for Dependents (larger of earned income or the $1,350 minimum standard deduction for 2025, up from $1,300 for 2024, capped at the regular per-status amount) — not the chart amount; married/RDP filing separately, both spouses/RDPs must either both itemize or both take the standard deduction; itemizers enter California itemized deductions from Schedule CA (540) Part II line 30 on line 18 instead of the standard deduction. For California, deductions for net disaster losses are allowed only to itemizers (no standard-deduction add-on as federally). Qualifying surviving spouse/RDP uses Schedule Y — identical to married/RDP filing jointly (the engine's QSS-to-MFJ mapping matches the published schedule exactly). Married/RDP filing separately uses Schedule X, the same printed schedule as Single (copied from the schedule, not derived; note CA MFS is NOT half of MFJ at the bracket boundaries — it equals the Single schedule, and Schedule Y is exactly 2x Schedule X). Base caution: Form 540 line 17 (California AGI) differs from federal AGI via Schedule CA (540) adjustments — notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows the foreign earned income exclusion and the foreign tax credit, and subtracts items like Social Security benefits. Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts (FTB Pub. 737). Printed '$X + Y% of the amount over $Z' constants verified against cumulative bracket sums: all 27 constants (9 per schedule) reconcile, largest print-rounding divergence $0.01 (Schedule X's $30,986.19 / $38,638.27 / $72,219.84 half-cent chain) — bracket math and the printed schedules agree. Rounding: the booklet's worked example (p. 75) rounds the schedule result to whole dollars for line 31 — Chris and Pat Smith, MFJ, taxable income $125,000: $3,974.82 + 8% x $9,916 = $4,768.10, entered as $4,768 — consistent with this op's round-half-up-to-whole-dollars behavior. 2025 filing-season schedule confirmed final: California had no mid-year 2025 rate change; the nine rates 1/2/4/6/8/9.3/10.3/11.3/12.3% are unchanged from 2024 and only the bounds were indexed (3.0%). These are the schedules printed in the final 2025 booklet used for the 2026 filing season and republished unchanged in the standalone 2025 Tax Rate Schedules PDF. Schedule CA (540) 2025 Part II prints the itemized-deduction mechanics this block never models (Form 540 line 18 is the caller's): line 3 'Multiply line 2 by 7.5% (0.075)' (the medical floor); line 5e 'Enter the smaller of line 5d or $40,000 ($20,000 if married filing separately) in column A' (the federal state-and-local-tax cap as the 2025 face prints it; the 2023 face printed $10,000 / $5,000); line 24 'Multiply line 23 by 2% (0.02). If less than zero, enter 0.' (the 2% miscellaneous floor); and Part II lines 2 and 23 cite 'federal Form 1040 or 1040-SR, line 11b' (the TY2025 Form 1040 prints AGI on line 11a; 11b is its restatement). Lines 29 ($252,203 / $378,310 / $504,411) and 30 ($5,706 / $11,412) equal the figures above."
+ },
+ "year": 2025
+}

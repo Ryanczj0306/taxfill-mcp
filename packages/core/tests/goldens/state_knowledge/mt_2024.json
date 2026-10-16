@@ -1,0 +1,591 @@
+{
+ "_strings": {
+  "@@12190fc8b988": "Treaty conformity — MT conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MT income (it flows through the federal starting point; do not add it back on the MT return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: MT conforms. For tax year 2024 Montana starts from FEDERAL TAXABLE INCOME: 2024 Form 2, line 1 is \"Federal adjusted gross income from Form 1040, line 11\", line 2 the federal standard deduction or adjusted federal itemized deductions, and line 3 \"your federal taxable income for Montana.\" Federally treaty-exempt income (excluded from federal AGI under an applicable U.S. tax treaty) is therefore already absent from the MT starting figure. Montana additions are \"all items of income that are not included in federal taxable income and must be added back to determine Montana taxable income\" (2024 Schedule I instructions), and the enumerated addition lines are: Line 1 interest/mutual-fund dividends from other states' state/county/municipal bonds; Line 2 other recoveries of amounts deducted in earlier years; Line 3 Montana MSA / First-Time Homebuyer Account nonqualified withdrawals; Line 4 state income tax deduction included in federal taxable income; Line 5 expenses used to claim a Montana tax credit; Line 6 other additions (codes AC S-corporation federal taxes, AF Farm and Ranch Risk Management distributions, AG title plant depreciation, AZ other); Line 7 tax year 2024 transition adjustment. NONE is an add-back of treaty-exempt income. Unlike California (Schedule CA), Montana has no treaty-income addback for 2024, so treaty-exempt income is not re-taxed.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@27eb316bc814": "Montana Adoption Credit — Montana residents who complete an adoption. Form ADPT and paperwork documenting the adoption (for foster-care adoptions, the signed adoption confirmation letter from Montana DPHHS) must be included with the return.",
+  "@@2c87c89257dc": "Montana Form 2 — Individual Income Tax Return (2024 redesign — most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@5263523c966f": "2024 Montana Form 2 Instructions, How to File / Paper Filing ('If you do not owe taxes or are expecting a refund... PO Box 6577... If you are making a payment with your tax return... PO Box 6308')",
+  "@@5aa3cd0a200c": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 — NET LONG-TERM CAPITAL GAINS are taxed on their own schedule, 3.0% up to the filing-status breakpoint ($20,500 single/MFS, $41,000 MFJ/QSS, $30,750 HoH, measured after stacking on ordinary income) and 4.1% above, computed on Form 2 page 2 lines 2-11; the old Resident Capital Gains Credit (2% of net capital gains) is REPEALED. The two-rate 4.7%/5.9% schedule therefore applies only to \"taxable income without long-term capital gains\" (Montana Ordinary Income, which includes qualified dividends). Running a filer's whole line 7 through the ordinary brackets OVERSTATES the tax whenever there are net long-term capital gains. Resolve via: The Montana Individual Income Tax worksheet on page 2 of the 2024 Form 2 itself (the citation URL), lines 2-11 with the printed $20,500/$41,000/$30,750 breakpoints on line 5 and the 3% (0.03) / 4.1% (0.041) multipliers; calc.state_tax has no capital-gains split.",
+  "@@6499d63029e0": "There is no separate nonresident/part-year individual form for 2024. Nonresidents and part-year residents also file Montana Form 2 and complete Schedule II, \"Tax on Montana Source Income\" (which replaced the old Nonresident/Part-Year Resident Ratio Schedule), to apportion the tax. (The new Form DE covers Montana-source business income of single-member LLCs / sole proprietorships owned by nonresidents.)",
+  "@@9c8e8e275944": "Montana Earned Income Tax Credit (EITC) — Full-year Montana residents who claimed the federal Earned Income Tax Credit on their federal return. Nonresidents do NOT qualify. Part-year residents, enrolled tribal members living on their reservation, members of IRC section 501(d) agricultural organizations, and resident active-duty servicemembers use Worksheet B (Montana EITC Reduction Worksheet) to reduce the credit by the Montana-earned-income ratio.",
+  "@@a364e71f8237": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf",
+  "@@aeed06e6a05f": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf",
+  "@@b2ef4ff5f6a4": "Credit for Income Taxes Paid to Another State or Country — Full-year or part-year Montana residents who paid income tax to another state or country on income that is also taxed by Montana. Not available if the other state allowed a credit against its own tax for the Montana tax on the same income, or for taxes paid on Montana-source income. Pass-through entity owners may claim their share of qualifying entity-level income taxes (including composite and pass-through entity taxes).",
+  "@@b382b9e41cf5": "2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024) — What's New / Income Tax Simplification (SB 399 redesign, federal-taxable-income base, two rates, federal filing statuses, $5,500 65+ subtraction, repealed deductions), 2024 Montana Ordinary Income Tax Rates (p.14), Filing Requirements, Residency Status, Due Dates (April 15, 2025), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check payable to the Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)",
+  "@@c0ee562db517": "2024 Montana Individual Income Tax Return Form 2 (2024v5 11/2024) — second-pass verification: federal filing statuses printed (Single / MFJ / MFS / Qualifying Surviving Spouse / Head of Household); page 1 lines 1-7 (federal AGI, federal standard deduction or adjusted federal itemized deductions, federal taxable income for Montana, Schedule I additions/subtractions, $5,500/$11,000 65+ subtraction, Montana taxable income); page 2 Montana Individual Income Tax worksheet lines 1-13 (net long-term capital gains lines 2-11 with the printed $20,500/$41,000/$30,750 filing-status amounts on line 5, 3% (0.03) and 4.1% (0.041) multipliers, ordinary income tax on line 12, resident tax line 13); page 1 line 15 'Multiply Federal EIC by 10% (0.10)'",
+  "@@c7620ae5fb78": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 — a $5,500 subtraction for taxpayers 65 and older ($11,000 if married filing jointly and both are 65 and older), taken on Form 2 page 1 line 6 against federal taxable income in arriving at line 7 Montana taxable income. It replaces the repealed $2,960 age-65/blind exemptions and is inflation-adjusted beginning tax year 2025. Resolve via: Form 2 page 1 line 6 and the corresponding line instruction in the 2024 Form 2 instructions (the citation URL); the engine applies only personal/dependent exemption keys, so the caller's line 7 base must already net this subtraction out.",
+  "@@d3c12d325b9c": "Elderly Homeowner/Renter Credit — Montana taxpayers age 62 or older who lived in Montana for more than nine months during the tax year, occupied a Montana residence as a renter, owner, or lessee for a total of six months or more during the year, and live in a household where the total income of all its members is less than $45,000. Available even to those with no other filing requirement (Schedule 2EC may be filed directly on the TransAction Portal). One credit per household.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@fac72039bf4f": "2024 Montana Form 2 Instructions, Due Dates ('File Form 2 and pay the tax due by April 15, 2025. An automatic extension of six months applies for filing your return, but this extension does not apply to payments.')"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@5263523c966f",
+      "url": "@@aeed06e6a05f"
+     },
+     {
+      "source": "@@fac72039bf4f",
+      "url": "@@aeed06e6a05f"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@2c87c89257dc",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Montana Department of Revenue, PO Box 6577, Helena, MT 59604-6577",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@5263523c966f",
+      "url": "@@aeed06e6a05f"
+     },
+     {
+      "source": "@@fac72039bf4f",
+      "url": "@@aeed06e6a05f"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@2c87c89257dc",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Montana Department of Revenue, PO Box 6308, Helena, MT 59604-6308",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via MT Web Pay: https://tap.dor.mt.gov (no processor fee).",
+     "By check: make it payable to \"Montana Department of Revenue ('Make your check payable to the Montana Department of Revenue, sign your check, and write your Social Security Number and \"tax year 2024\" on the memo line'; include the payment voucher available at MTRevenue.gov. E-check or credit/debit card via the TransAction Portal — card payments carry a fee.)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@5263523c966f",
+      "url": "@@aeed06e6a05f"
+     },
+     {
+      "source": "@@fac72039bf4f",
+      "url": "@@aeed06e6a05f"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@2c87c89257dc",
+    "jurisdiction": "states/mt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Montana Department of Revenue, PO Box 6577, Helena, MT 59604-6577",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@fac72039bf4f",
+      "url": "@@aeed06e6a05f"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@2c87c89257dc",
+    "headline": "MT 2024: refund $512",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@fac72039bf4f",
+      "url": "@@aeed06e6a05f"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@2c87c89257dc",
+    "headline": "MT 2024: you owe $347",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@fac72039bf4f",
+      "url": "@@aeed06e6a05f"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@2c87c89257dc",
+    "headline": "MT 2024: you owe $1,205",
+    "jurisdiction": "states/mt",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/mt",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@9c8e8e275944",
+      "@@d3c12d325b9c",
+      "@@27eb316bc814",
+      "@@b2ef4ff5f6a4"
+     ],
+     "citations": [
+      {
+       "source": "@@c0ee562db517",
+       "url": "@@a364e71f8237"
+      },
+      {
+       "source": "@@b382b9e41cf5",
+       "url": "@@aeed06e6a05f"
+      },
+      {
+       "source": "@@b382b9e41cf5",
+       "url": "@@aeed06e6a05f"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@6499d63029e0"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in MT in 2024 without living there — file a nonresident return on MT-source income.",
+     "state": "MT",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@12190fc8b988",
+      "@@5aa3cd0a200c",
+      "@@c7620ae5fb78",
+      "Remote-work trap: work performed from TX for an employer sitting in MT. If MT applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to MT and require a NONRESIDENT MT return that the physical footprint alone never shows — and the W-2's Box 15 often already names MT. This MT pack year carries no researched convenience rule: verify MT's nonresident wage-sourcing rule at its DOR before assuming no MT filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@9c8e8e275944",
+      "@@d3c12d325b9c",
+      "@@27eb316bc814",
+      "@@b2ef4ff5f6a4"
+     ],
+     "citations": [
+      {
+       "source": "@@c0ee562db517",
+       "url": "@@a364e71f8237"
+      },
+      {
+       "source": "@@b382b9e41cf5",
+       "url": "@@aeed06e6a05f"
+      },
+      {
+       "source": "@@b382b9e41cf5",
+       "url": "@@aeed06e6a05f"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@6499d63029e0"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MT part of 2024 — file a part-year return on income while a resident (plus MT-source income while not).",
+     "state": "MT",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@12190fc8b988",
+      "@@5aa3cd0a200c",
+      "@@c7620ae5fb78"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@9c8e8e275944",
+      "@@d3c12d325b9c",
+      "@@27eb316bc814",
+      "@@b2ef4ff5f6a4"
+     ],
+     "citations": [
+      {
+       "source": "@@c0ee562db517",
+       "url": "@@a364e71f8237"
+      },
+      {
+       "source": "@@b382b9e41cf5",
+       "url": "@@aeed06e6a05f"
+      },
+      {
+       "source": "@@b382b9e41cf5",
+       "url": "@@aeed06e6a05f"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@2c87c89257dc"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MT all of 2024 — file a resident return on income from all sources.",
+     "state": "MT",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@5aa3cd0a200c",
+      "@@c7620ae5fb78"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 0,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 235,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [head_of_household schedule]: 0.047 x $5,000.00 (the $0-$30,750 bracket) = $235.00; total $235.00 -> $235"
+   },
+   {
+    "base_after_exemptions": 40750,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": "40750",
+     "year": 2024
+    },
+    "marginal_rate": "0.059",
+    "tax": 2035,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $40,750.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $40,750 [head_of_household schedule]: 0.047 x $30,750.00 (the $0-$30,750 bracket) = $1,445.25; 0.059 x $10,000.00 (the $30,750+ bracket) = $590.00; total $2,035.25 -> $2,035"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mt",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 0,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mt",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 235,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0.047 x $5,000.00 (the $0-$41,000 bracket) = $235.00; total $235.00 -> $235"
+   },
+   {
+    "base_after_exemptions": 51000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mt",
+     "taxable_base": "51000",
+     "year": 2024
+    },
+    "marginal_rate": "0.059",
+    "tax": 2517,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $51,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $51,000 [married_filing_jointly schedule]: 0.047 x $41,000.00 (the $0-$41,000 bracket) = $1,927.00; 0.059 x $10,000.00 (the $41,000+ bracket) = $590.00; total $2,517.00 -> $2,517"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mt",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 0,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mt",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 235,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_separately schedule]: 0.047 x $5,000.00 (the $0-$20,500 bracket) = $235.00; total $235.00 -> $235"
+   },
+   {
+    "base_after_exemptions": 30500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mt",
+     "taxable_base": "30500",
+     "year": 2024
+    },
+    "marginal_rate": "0.059",
+    "tax": 1554,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $30,500.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $30,500 [married_filing_separately schedule]: 0.047 x $20,500.00 (the $0-$20,500 bracket) = $963.50; 0.059 x $10,000.00 (the $20,500+ bracket) = $590.00; total $1,553.50 -> $1,554"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mt",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 0,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mt",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 235,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [single schedule]: 0.047 x $5,000.00 (the $0-$20,500 bracket) = $235.00; total $235.00 -> $235"
+   },
+   {
+    "base_after_exemptions": 30500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mt",
+     "taxable_base": "30500",
+     "year": 2024
+    },
+    "marginal_rate": "0.059",
+    "tax": 1554,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $30,500.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $30,500 [single schedule]: 0.047 x $20,500.00 (the $0-$20,500 bracket) = $963.50; 0.059 x $10,000.00 (the $20,500+ bracket) = $590.00; total $1,553.50 -> $1,554"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: MT 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: age_65). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "mt",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: MT 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: age_65). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "mt",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "marginal_rate": "0.047",
+    "tax": 1880,
+    "work_head": "MT state income tax (2024, graduated brackets): taxable_base $40,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.047 x $40,000.00 (the $0-$41,000 bracket) = $1,880.00; total $1,880.00 -> $1,880"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_taxable_income",
+   "citation": {
+    "source": "2024 Montana Form 2 Individual Income Tax Instructions (MT DOR, V5 12/17/2024), p.14 — '2024 Montana Ordinary Income Tax Rates': Single and Married Filing Separately — $0 to less than $20,500 multiply by 4.7% less $0, $20,500 or greater multiply by 5.9% less $246; Married Filing Jointly and Qualifying Surviving Spouse — breakpoint $41,000, 5.9% less $492; Head of Household — breakpoint $30,750, 5.9% less $369. The rates apply to Montana ORDINARY income (taxable income without net long-term capital gains). Worked example (instructions p.12): $50,000 single -> 'Her Montana Ordinary Income Tax is $2,704' — matching marginal bracket math (4.7% x 20,500 + 5.9% x 29,500 = 963.50 + 1,740.50 = 2,704). Second pass: the 2024 Form 2 itself (https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf) prints the $20,500/$41,000/$30,750 filing-status amounts on page 2, line 5, and the What's New confirms the two-rate structure (SB 399 (2021); SB 121 (2023) reduced the top rate 6.5% -> 5.9%) — both passes agree.",
+    "url": "@@aeed06e6a05f"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "mt"
+  },
+  "work_common_tail": ". Tax line: Form 2, page 1, line 8 'Tax liability before tax credits', computed on the page 2 'Montana Individual Income Tax' worksheet: line 12 'figure your tax on the amount on line 1 [Montana taxable income, page 1 line 7] using the Montana Ordinary Income Tax Table' (on line 4 — taxable income minus net long-term capital gains — if you have net LTCG), plus the line 11 net long-term capital gains tax; residents enter the line 13 sum on page 1, line 8. Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($5,500 — NEW 2024 subtraction, NOT an exemption in the old sense: Form 2, page 1, line 6 — '$5,500 subtraction for taxpayers 65 and older ($11,000 if married filing jointly and both are 65 and older)', subtracted from federal taxable income in computing line 7 Montana taxable income. NOT applied by calc.state_tax (the engine applies only personal/dependent keys) — claim it on the form; the caller's supplied line 7 base should already reflect it. Inflation-adjusted beginning tax year 2025.) This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2024 STRUCTURAL CHANGE (SB 399 (2021) + SB 121 (2023)) — DO NOT USE 2023 FIGURES: the seven-bracket 1%-6.75% schedule, the $2,960-per-person exemptions, and the 20%-of-AGI Montana standard deduction (max $5,540/$11,080) are ALL REPEALED. For 2024 Montana taxes ORDINARY income in two brackets — 4.7% to $20,500 (single/MFS), $41,000 (MFJ/QSS), $30,750 (HoH); 5.9% above — applied to Montana taxable income built from FEDERAL TAXABLE income. There are no Montana personal or dependent exemptions and no Montana standard deduction (the federal one is embedded in the base): pass exemptions_count=0 and dependents_count=0. Base guidance: Supply 2024 Form 2, page 1, line 7 — 'Montana taxable income' = line 3 federal taxable income for Montana + line 4 Montana additions (Schedule I) - line 5 Montana subtractions (Schedule I) - line 6 the $5,500/$11,000 age-65+ subtraction; floored at 0. For a filer with no Montana adjustments, under 65, who took the FEDERAL STANDARD deduction and has no federal QBI deduction, line 7 equals federal Form 1040, line 15 (federal taxable income). CAVEATS in deriving line 3: itemizers must use Worksheet A to remove state income taxes from federal itemized deductions (only to the extent the deduction stays above the federal standard deduction — MFS itemizers remove ALL of it), and the federal qualified business income (QBI) deduction under IRC 199A is NEVER included — so 1040 line 15 understates line 3 for QBI claimants. The op subtracts NOTHING further — line 7 already reflects every deduction and subtraction. CRITICAL — the shipped brackets tax ORDINARY income only: Montana's two-bracket 4.7%/5.9% schedule applies to 'taxable income without long-term capital gains' (Montana Ordinary Income, which includes qualified dividends). NET LONG-TERM CAPITAL GAINS are taxed separately at 3.0% up to the same filing-status breakpoint (measured after stacking on ordinary income, Form 2 page 2 lines 2-10) and 4.1% above. If the filer has NO net long-term capital gains, this op's bracket math on line 7 reproduces the page 2 line 12 tax exactly. If they do, compute the split on the page 2 worksheet — running the full line 7 through these brackets OVERSTATES the tax (the LTCG portion would be taxed at 4.7%/5.9% instead of 3.0%/4.1%). The old Resident Capital Gains Credit (2% of gains) is REPEALED. FEDERAL FILING STATUSES (new 2024): taxpayers must use the same filing status as the federal return — including QUALIFYING SURVIVING SPOUSE, which shares the MFJ schedule (the rate table is titled 'Married Filing Jointly and Qualifying Surviving Spouse' and the Form 2 line 5 prints $41,000 for both), so the engine's QSS-to-MFJ mapping is exactly correct. The old Montana statuses 2a/2b/2c (married filing separately on the same form, etc.) are gone; MFS is allowed only if the couple filed separate federal returns. MFS uses the single-status schedule ($20,500 breakpoint), NOT half of MFJ. The printed 'multiply by ... Less' constants are EXACT: $246 = (5.9% - 4.7%) x $20,500, $492 = (5.9% - 4.7%) x $41,000, and $369 = (5.9% - 4.7%) x $30,750 to the cent — no rounding divergence between the printed worksheet method (5.9% x income - constant) and pure marginal bracket math. The instructions' own example ($50,000 single -> $2,704) matches both methods exactly. No lookup-table mandate: the 'Montana Ordinary Income Tax Table' (p.14) is a rate FORMULA schedule ('Then your tax rate is ... Less'), not a row-lookup table, so bracket math is exact at every income level. Age 65+ subtraction NOT applied by the op: the $5,500 ($11,000 MFJ both 65+) line 6 subtraction is disclosed as an informational 'age_65' key but calc.state_tax does not subtract it — the supplied line 7 base must already reflect it (it is a return line, not an engine adjustment). Montana EITC (Form 2, page 1, line 15 = 10% of the federal EITC for 2024, up from 3% in 2023) is a refundable CREDIT — NOT modeled by this op. Nonrefundable credits (Schedule III Part I) and refundable credits (Schedule III lines 15-16, e.g. the $7,500/$5,000 Adoption Credit) reduce or supplement tax AFTER line 8 and are not modeled. Recapture taxes, lump-sum distribution taxes, penalties, and interest are reported on Schedule IV and added on page 1, line 19 — NOT modeled; if owed, the return total exceeds plain bracket math on line 7. Nonresidents and part-year residents (and Montana residents filing jointly with nonresident/part-year spouses): bracket math on line 7 yields only the resident tax (page 2 lines 11-12); the tax is then apportioned by the Montana-source ratio on Schedule II (Tax on Montana Source Income) — page 2 line 12 goes to Schedule II line 19 and line 11 to Schedule II line 24. This op models the full-year RESIDENT computation (page 2, line 13). Rounding: the 2024 Form 2 is a whole-dollar return (every money field prints '00' cents); the engine's half-up rounding to whole dollars matches the form's presentation. The instructions' worked examples round the same way ($2,704 exactly). 2024 is the FIRST year of this structure and there was NO mid-year 2024 rate change: SB 399 (2021) set the redesign effective tax year 2024 with a 6.5% top rate, and SB 121 (2023) lowered the top rate to 5.9% before the year began. The 2023 pack (7 brackets, $2,960 exemptions, 20% standard deduction) must not be used for 2024, and this pack must not be used for 2023 or earlier."
+ },
+ "year": 2024
+}

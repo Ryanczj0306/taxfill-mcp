@@ -1,0 +1,732 @@
+{
+ "_strings": {
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2665882dea80": "Vermont Child and Dependent Care Credit — Full-year and part-year Vermont residents who earn income, pay dependent care expenses, and are eligible for the federal Child and Dependent Care Credit (federal Form 2441).",
+  "@@282f956ed0be": "Elderly or Permanently Disabled Tax Credit — Taxpayers who qualify for and receive the federal Credit for the Elderly or the Disabled: you are age 65 or older, OR you retired on permanent and total disability and have taxable disability income, and your income is within the federal limits. Intended for seniors and disabled persons with little tax-exempt retirement or disability income.",
+  "@@35ebcb76270d": "Renter Credit (renter rebate / circuit-breaker) — Vermont renters who, for 2024 (2024 IN-111 Instructions, Renter Credit Claim): (1) were domiciled in Vermont for the entire calendar year 2024, (2) were not claimed in 2024 as a dependent of another taxpayer, (3) rented in Vermont for at least six months in 2024, and (4) have income within the Renter Credit limits, which depend on income, family size and county of residency.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@57b5120e87da": "Treaty conformity — VT conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from VT income (it flows through the federal starting point; do not add it back on the VT return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Vermont's resident return starts from federal adjusted gross income and does NOT add back federally treaty-exempt income; it explicitly SUBTRACTS it. Form IN-111 Line 1 is \"Federal Adjusted Gross Income — Enter the amount from your federal Form 1040.\" The DOR \"Resident\" page states: \"If you are a Vermont resident, your income starts with federal adjusted gross income minus the following: Income exempted from state taxation by the laws of the United States...\" Line 2 (Net Modifications to Federal AGI, via Schedule IN-112) contains the standard state additions/subtractions with no treaty-income add-back. Because treaty-exempt income is already excluded from federal AGI and is additionally listed as a Vermont subtraction (not an addition), it is not re-taxed -> conforms = true.",
+  "@@69ffd69498ad": "Vermont Earned Income Tax Credit (EITC) — Full-year and part-year Vermont residents who qualify for and receive the federal Earned Income Tax Credit. As of 2023 it is available to all qualifying VT residents regardless of whether they, their spouse, or qualifying dependents have an SSN or ITIN (such returns must be paper-filed).",
+  "@@806f8a838444": "Law change NOT modeled by the engine (status final_form_published): NEW CHILD CARE CONTRIBUTION (Act 76 of 2023) — from July 1, 2024 an individual with Vermont self-employment income owes a 0.11% child care contribution on it (new Form IN-111 line 21). For 2024 only the part earned on or after July 1 counts: the worksheet takes half of Schedule SE line 6 net of out-of-state work, unless an alternate method is attached. Resolve via: 2024 Form IN-111 Instructions, Line 21 and its Child Care Contribution Worksheet; the Department's guide GB-1326 (www.tax.vermont.gov/sites/tax/files/documents/GB-1326.pdf).",
+  "@@85a4c10b3b3d": "VT Dept of Taxes — 2024 Form IN-111 Instructions (PDF): Line 1 = Federal Adjusted Gross Income; due date April 15, 2025; mailing addresses (PO Box 1881 refund/no tax due, PO Box 1779 balance due); check payable to Vermont Department of Taxes with Form IN-116; myVTax",
+  "@@91de93464691": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Renter Credit (renter rebate / circuit-breaker).",
+  "@@9ea639af3e8b": "2024 Form IN-111 Instructions, Line 21 — Child Care Contributions: 'Act 76 of 2023, an act relating to child care, early education, workers' compensation, and unemployment insurance, created a child care contribution (CCC) in Vermont. Per the statutory directive, collection of the CCC commenced on July 1, 2024.' Worksheet line 6: 'Multiply Line 5 by 0.11% (0.0011).'",
+  "@@e5f3692754cd": "Form IN-111 (same return) plus Schedule IN-113, Vermont Income Adjustment Calculations (nonresidents and part-year residents complete IN-113 to apportion/allocate Vermont income; nonresidents complete Parts I and II)",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f116491890a8": "Vermont Child Tax Credit — Full-year and part-year Vermont resident families with a qualifying child age six or younger at the close of the tax year (children born 2019 through 2024 for tax year 2024 — 'Qualifying children are those born between 2019 and 2024'). Available to all qualifying VT residents regardless of SSN/ITIN status of taxpayer, spouse, or dependents."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     },
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "jurisdiction": "states/vt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Vermont Department of Taxes, PO Box 1881, Montpelier, VT 05601-1881",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     },
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "jurisdiction": "states/vt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Vermont Department of Taxes, PO Box 1779, Montpelier, VT 05601-1779 (attach check to the lower left side of the return)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via VT Web Pay: https://myvtax.vermont.gov (no processor fee).",
+     "By check: make it payable to \"Vermont Department of Taxes (pay by check or money order; include 2024 Form IN-116, Vermont Income Tax Payment Voucher)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     },
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "jurisdiction": "states/vt",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Vermont Department of Taxes, PO Box 1881, Montpelier, VT 05601-1881",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "headline": "VT 2024: refund $512",
+    "jurisdiction": "states/vt",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "headline": "VT 2024: you owe $347",
+    "jurisdiction": "states/vt",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@85a4c10b3b3d",
+      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form IN-111, Vermont Income Tax Return",
+    "headline": "VT 2024: you owe $1,205",
+    "jurisdiction": "states/vt",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/vt",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    },
+    {
+     "benefits_candidates": [
+      "@@69ffd69498ad",
+      "@@f116491890a8",
+      "@@2665882dea80",
+      "@@35ebcb76270d",
+      "@@282f956ed0be"
+     ],
+     "citations": [
+      {
+       "source": "@@9ea639af3e8b",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+      },
+      {
+       "source": "@@85a4c10b3b3d",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@e5f3692754cd"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in VT in 2024 without living there — file a nonresident return on VT-source income.",
+     "state": "VT",
+     "warnings": [
+      "@@91de93464691",
+      "@@57b5120e87da",
+      "@@806f8a838444",
+      "Remote-work trap: work performed from TX for an employer sitting in VT. If VT applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to VT and require a NONRESIDENT VT return that the physical footprint alone never shows — and the W-2's Box 15 often already names VT. This VT pack year carries no researched convenience rule: verify VT's nonresident wage-sourcing rule at its DOR before assuming no VT filing."
+     ]
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    },
+    {
+     "benefits_candidates": [
+      "@@69ffd69498ad",
+      "@@f116491890a8",
+      "@@2665882dea80",
+      "@@35ebcb76270d",
+      "@@282f956ed0be"
+     ],
+     "citations": [
+      {
+       "source": "@@9ea639af3e8b",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+      },
+      {
+       "source": "@@85a4c10b3b3d",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@e5f3692754cd"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in VT part of 2024 — file a part-year return on income while a resident (plus VT-source income while not).",
+     "state": "VT",
+     "warnings": [
+      "@@91de93464691",
+      "@@57b5120e87da",
+      "@@806f8a838444"
+     ]
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@69ffd69498ad",
+      "@@f116491890a8",
+      "@@2665882dea80",
+      "@@35ebcb76270d",
+      "@@282f956ed0be"
+     ],
+     "citations": [
+      {
+       "source": "@@9ea639af3e8b",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+      },
+      {
+       "source": "@@85a4c10b3b3d",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form IN-111, Vermont Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in VT all of 2024 — file a resident return on income from all sources.",
+     "state": "VT",
+     "warnings": [
+      "@@91de93464691",
+      "@@806f8a838444"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "vt",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 0,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,100 = -$11,100.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "vt",
+     "taxable_base": "11100",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 0,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $11,100.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,100 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "vt",
+     "taxable_base": "16100",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 168,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $16,100.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,100 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.0335 x $5,000.00 (the $0-$64,200 bracket) = $167.50; total $167.50 -> $168"
+   },
+   {
+    "base_after_exemptions": 170700,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "vt",
+     "taxable_base": "181800",
+     "year": 2024
+    },
+    "marginal_rate": "0.076",
+    "tax": 9230,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $181,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,100 = $170,700.00; graduated tax on $170,700 [head_of_household schedule]: 0.0335 x $64,200.00 (the $0-$64,200 bracket) = $2,150.70; 0.066 x $101,500.00 (the $64,200-$165,700 bracket) = $6,699.00; 0.076 x $5,000.00 (the $165,700-$268,300 bracket) = $380.00; total $9,229.70 -> $9,230"
+   },
+   {
+    "base_after_exemptions": 278300,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "vt",
+     "taxable_base": "289400",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 17522,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $289,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,100 = $278,300.00; graduated tax on $278,300 [head_of_household schedule]: 0.0335 x $64,200.00 (the $0-$64,200 bracket) = $2,150.70; 0.066 x $101,500.00 (the $64,200-$165,700 bracket) = $6,699.00; 0.076 x $102,600.00 (the $165,700-$268,300 bracket) = $7,797.60; 0.0875 x $10,000.00 (the $268,300+ bracket) = $875.00; total $17,522.30 -> $17,522"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "vt",
+     "taxable_base": "56200",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 1340,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $56,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $5,100 = $5,100.00, standard deduction [head_of_household] = $11,100 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0335 x $40,000.00 (the $0-$64,200 bracket) = $1,340.00; total $1,340.00 -> $1,340"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "vt",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 0,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $14,850 = -$14,850.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "vt",
+     "taxable_base": "14850",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 0,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $14,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $14,850 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "vt",
+     "taxable_base": "19850",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 168,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $19,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $14,850 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.0335 x $5,000.00 (the $0-$79,950 bracket) = $167.50; total $167.50 -> $168"
+   },
+   {
+    "base_after_exemptions": 198300,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "vt",
+     "taxable_base": "213150",
+     "year": 2024
+    },
+    "marginal_rate": "0.076",
+    "tax": 10539,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $213,150.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $14,850 = $198,300.00; graduated tax on $198,300 [married_filing_jointly schedule]: 0.0335 x $79,950.00 (the $0-$79,950 bracket) = $2,678.32; 0.066 x $113,350.00 (the $79,950-$193,300 bracket) = $7,481.10; 0.076 x $5,000.00 (the $193,300-$294,600 bracket) = $380.00; total $10,539.42 -> $10,539"
+   },
+   {
+    "base_after_exemptions": 304600,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "vt",
+     "taxable_base": "319450",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 18733,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $319,450.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $14,850 = $304,600.00; graduated tax on $304,600 [married_filing_jointly schedule]: 0.0335 x $79,950.00 (the $0-$79,950 bracket) = $2,678.32; 0.066 x $113,350.00 (the $79,950-$193,300 bracket) = $7,481.10; 0.076 x $101,300.00 (the $193,300-$294,600 bracket) = $7,698.80; 0.0875 x $10,000.00 (the $294,600+ bracket) = $875.00; total $18,733.22 -> $18,733"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 2,
+     "filing_status": "married_filing_jointly",
+     "state": "vt",
+     "taxable_base": "65050",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 1340,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $65,050.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 2 personal exemption(s) x $5,100 = $10,200.00, standard deduction [married_filing_jointly] = $14,850 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0335 x $40,000.00 (the $0-$79,950 bracket) = $1,340.00; total $1,340.00 -> $1,340"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "vt",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 0,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $7,400 = -$7,400.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "vt",
+     "taxable_base": "7400",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 0,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $7,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $7,400 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "vt",
+     "taxable_base": "12400",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 168,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $12,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $7,400 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.0335 x $5,000.00 (the $0-$39,975 bracket) = $167.50; total $167.50 -> $168"
+   },
+   {
+    "base_after_exemptions": 101650,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "vt",
+     "taxable_base": "109050",
+     "year": 2024
+    },
+    "marginal_rate": "0.076",
+    "tax": 5460,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $109,050.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $7,400 = $101,650.00; graduated tax on $101,650 [married_filing_separately schedule]: 0.0335 x $39,975.00 (the $0-$39,975 bracket) = $1,339.16; 0.066 x $56,675.00 (the $39,975-$96,650 bracket) = $3,740.55; 0.076 x $5,000.00 (the $96,650-$147,300 bracket) = $380.00; total $5,459.71 -> $5,460"
+   },
+   {
+    "base_after_exemptions": 157300,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "vt",
+     "taxable_base": "164700",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 9804,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $164,700.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $7,400 = $157,300.00; graduated tax on $157,300 [married_filing_separately schedule]: 0.0335 x $39,975.00 (the $0-$39,975 bracket) = $1,339.16; 0.066 x $56,675.00 (the $39,975-$96,650 bracket) = $3,740.55; 0.076 x $50,650.00 (the $96,650-$147,300 bracket) = $3,849.40; 0.0875 x $10,000.00 (the $147,300+ bracket) = $875.00; total $9,804.11 -> $9,804"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 1,
+     "filing_status": "married_filing_separately",
+     "state": "vt",
+     "taxable_base": "52500",
+     "year": 2024
+    },
+    "marginal_rate": "0.066",
+    "tax": 1341,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $52,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $5,100 = $5,100.00, standard deduction [married_filing_separately] = $7,400 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.0335 x $39,975.00 (the $0-$39,975 bracket) = $1,339.16; 0.066 x $25.00 (the $39,975-$96,650 bracket) = $1.65; total $1,340.81 -> $1,341"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "vt",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 0,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $7,400 = -$7,400.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "vt",
+     "taxable_base": "7400",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 0,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $7,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $7,400 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "vt",
+     "taxable_base": "12400",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 168,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $12,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $7,400 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.0335 x $5,000.00 (the $0-$47,900 bracket) = $167.50; total $167.50 -> $168"
+   },
+   {
+    "base_after_exemptions": 121000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "vt",
+     "taxable_base": "128400",
+     "year": 2024
+    },
+    "marginal_rate": "0.076",
+    "tax": 6479,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $128,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $7,400 = $121,000.00; graduated tax on $121,000 [single schedule]: 0.0335 x $47,900.00 (the $0-$47,900 bracket) = $1,604.65; 0.066 x $68,100.00 (the $47,900-$116,000 bracket) = $4,494.60; 0.076 x $5,000.00 (the $116,000-$242,000 bracket) = $380.00; total $6,479.25 -> $6,479"
+   },
+   {
+    "base_after_exemptions": 252000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "vt",
+     "taxable_base": "259400",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 16550,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $259,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $7,400 = $252,000.00; graduated tax on $252,000 [single schedule]: 0.0335 x $47,900.00 (the $0-$47,900 bracket) = $1,604.65; 0.066 x $68,100.00 (the $47,900-$116,000 bracket) = $4,494.60; 0.076 x $126,000.00 (the $116,000-$242,000 bracket) = $9,576.00; 0.0875 x $10,000.00 (the $242,000+ bracket) = $875.00; total $16,550.25 -> $16,550"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "vt",
+     "taxable_base": "52500",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 1340,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $52,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $5,100 = $5,100.00, standard deduction [single] = $7,400 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.0335 x $40,000.00 (the $0-$47,900 bracket) = $1,340.00; total $1,340.00 -> $1,340"
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "vt",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: VT 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: personal). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "vt",
+     "taxable_base": "54850",
+     "year": 2024
+    },
+    "marginal_rate": "0.0335",
+    "tax": 1340,
+    "work_head": "VT state income tax (2024, graduated brackets): taxable_base $54,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $14,850 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0335 x $40,000.00 (the $0-$79,950 bracket) = $1,340.00; total $1,340.00 -> $1,340"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "VT Dept. of Taxes — 2024 Form IN-111 instructions (archived official copy, Wayback 20250304 of the exact tax.vermont.gov URL; the standalone 2024 Tax Rate Schedules PDF, Wayback 20250117, prints identical schedules): Schedule X 47,900/116,000/242,000; Y-1 79,950/193,300/294,600; Y-2 (MFS) exactly half Y-1: 39,975/96,650/147,300; Z 64,200/165,700/268,300; rates 3.35/6.60/7.60/8.75%; printed base-tax constants (2,678/10,159/17,858 etc.) equal cumulative sums rounded to whole dollars; Line 4 standard deduction chart 7,400/14,850/7,400/11,100 (+$1,200 per federal box); Line 5e 'Multiply Line 5d by $5,100'; Line 8 3%-of-AGI minimum when federal AGI > $150,000; 'TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES'; official worked example: $82,000 MFJ -> $2,813.",
+    "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "vt"
+  },
+  "work_common_tail": ". Tax line: Form IN-111, Line 8: \"Vermont Income Tax from tax table or tax rate schedule (If Line 1 is greater than $150,000, see instructions)\". Line 7: \"Vermont Taxable Income (SUBTRACT Line 6 from Line 3. If less than zero, enter -0-)\", where Line 6 = Line 4 standard deduction + Line 5e personal exemption deduction. This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: TY2024 sourcing: tax.vermont.gov 403s every direct fetcher — figures verified from Wayback CDX 200-status captures of the two exact official URLs (independent documents, identical schedules). Printed base-tax constants are whole-dollar roundings of exact cumulative sums (e.g. Y-1 at 79,950: 3.35% x 79,950 = 2,678.325 -> printed 2,678). Printed-constant divergence: the 2024 schedules' VT Base Tax constants are whole-dollar roundings of exact cumulative sums (Y-1 at 79,950 prints 2,678 vs exact 2,678.325), so the filed worksheet can differ from exact marginal math by up to $1 (the booklet's own $82,000 example prints $2,813; exact math gives $2,814). The <$75,000 tax-table mandate governs most filers. Base guidance: Supply Form IN-111, Line 3 \"Federal AGI with Modifications\" = Line 1 federal AGI (federal Form 1040, Line 11) plus/minus Line 2 net modifications to federal AGI (Schedule IN-112, Part I, Line 18). With no Vermont modifications, Line 3 equals federal AGI, so plain federal AGI is the correct input for most filers. The op then subtracts the shipped Vermont standard deduction (IN-111 Line 4) and $5,100 per exemption (Lines 5a-5e; 2024 IN-111 Instr. p.7, Line 5e 'Multiply Line 5d by $5,100') to reproduce Line 7, Vermont Taxable Income. Tax-table mandate below $75,000: each 2024 Vermont Tax Rate Schedule prints 'TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES' across its sub-$75,000 rows. The 2024 Vermont Tax Tables (IN-111 Instr. pp.13-17) compute tax at the midpoint of each $100 band, rounded to whole dollars (spot-verified: Single $30,000-$30,100 band = $1,007 vs $1,005 exact bracket math at $30,000; $74,900-$75,000 band matches midpoint math for all four statuses), so bracket math may differ by a few dollars within table bands; the filed form must use the table below $75,000. CRITICAL - 3% minimum tax not modeled: IN-111 Instr. p.7, Line 8: 'Taxpayers who have a federal Adjusted Gross Income (AGI) greater than $150,000 must pay a minimum Vermont tax of 3% of federal AGI. If your federal AGI, Line 1, is greater than $150,000, enter the amount that is higher: 1) 3% of your federal AGI less interest from U.S. obligations, or 2) tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule.' This op computes only (2); when the 3% floor binds (typically large modifications/deductions relative to AGI), plain bracket math understates Line 8. Printed base-tax constants are rounded: the schedules' 'VT Base Tax' dollar constants are rounded to whole dollars and differ from the exact cumulative bracket sums by up to $0.50 (e.g., Single $1,521.00 printed vs $1,520.90 exact; MFS $4,820.00 printed vs $4,819.64 exact; HoH $2,038.00 printed vs $2,038.48 exact). Form arithmetic using the printed constants can therefore differ by $1 from this op's exact marginal-bracket math. The printed schedules break a row at exactly $75,000 solely to flag the tax-table mandate — the rate does NOT change at $75,000 (e.g., MFJ 3.35% actually runs $0-$75,850; Single 6.60% runs $45,400-$110,050). Same-rate rows are merged in the shipped brackets; the math is identical. Qualifying Widow(er)/surviving spouse: Schedule Y-1 is captioned 'Married Filing Jointly; Qualifying Widow(er); or Civil Union Filing Jointly' and the QW standard deduction is the same $14,850 (the 2024 IN-111 face, p.1, prints ($14,850) under both Married/CU Filing Jointly and Qualifying Widow(er); the Instr. p.7 Line 4 chart row is 'Married Filing Jointly or Qualifying Widow(er) 14,850'), so the engine's QSS-to-MFJ mapping matches Vermont exactly. Civil Union Filing Separately uses Schedule Y-2 (married_filing_separately); Civil Union Filing Jointly uses Y-1. Additional standard deduction not applied by the engine: $1,200 per standard-deduction box checked on federal Form 1040 (born before Jan. 2, 1960, or blind) is added to the Line 4 standard deduction per the chart on IN-111 Instr. p.7 ('You also receive an additional deduction of $1,200 for each standard deduction box checked on the federal Form 1040'; chart columns 1-4: Single 8,600/9,800; MFJ or QW 16,050/17,250/18,450/19,650; MFS 8,600/9,800/11,000/12,200; HoH 12,300/13,500). The form face (2024 IN-111, p.1) prints no per-box figure — Line 4 says only 'Please see instructions if you or your spouse checked any standard deduction boxes on federal Form 1040, page 1' — so compute those cases from the instructions' chart. Exemption gates not modeled: Line 5a counts yourself ONLY if no one can claim you as a dependent on a 2024 return; Line 5b (spouse/CU partner) must be left blank if filing status is Qualifying Widow(er) or Married Filing Separately. Vermont has no itemized-deduction option on the 2024 IN-111 — Line 4 offers only the Vermont standard deduction (there is no itemized line on the form). Steps between Line 8 and the final Line 14 'Vermont Income Tax' are NOT modeled: Line 9 Net Adjustment to Vermont Tax (Schedule IN-119 Part I — additions such as recapture of a Vermont tax credit and 24% of certain additional federal taxes on IRA/HSA/MSA distributions, federal ITC recapture, Form 4972 lump-sum distributions; subtractions such as the credit for the elderly or disabled, Vermont-based ITC, farm income averaging credit), and Lines 11-13 Vermont Charitable Contribution Deduction — despite the line caption, the instructions describe it as a nonrefundable tax CREDIT equal to 5% of the first $20,000 of eligible charitable contributions (max $1,000, Line 13) subtracted from tax on Line 14, not an income deduction. Part-year residents and nonresidents: Line 15 income adjustment percentage (Schedule IN-113, Line 35) multiplies Line 14 to get Line 16 Adjusted Vermont Income Tax — not modeled; full-year residents use 100%. FARMER / FISHERMAN box — the last box of the page-1 'Check all that apply' row (AMENDED, CANNABIS, RECOMPUTED, EXTENDED, FARMER / FISHERMAN), on the form since TY2024; NOT modeled. 2024 IN-111 Instructions, Farmer/Fisherman (p. 6): 'If you meet the definition of a qualified farmer or fisherman under 26 U.S.C. § 6654(i)(2), please check the box on Form IN-111. Generally, a qualified farmer or fisherman must earn at least 2/3 of their gross income from farming or fishing in either the current or proceeding tax year to be exempt from paying quarterly estimated taxes. Please see IRS Topic No. 416 for more information' ('proceeding' as printed). The booklet says only to check the box; its Line 31 (underpayment interest and penalty) text prints no farmer or fisherman exception — 'Estimated tax payments must either be: 1) equal to 100% of last year's tax liability OR 2) 90% of this year's tax liability. If the tax liability due, less withholding, is less than $500, you will not be subject to penalty or interest charges.' — so what the box changes on Worksheet IN-152 is not documented there."
+ },
+ "year": 2024
+}

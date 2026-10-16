@@ -1,0 +1,700 @@
+{
+ "_strings": {
+  "@@06b2f75ced70": "Oregon Department of Revenue, PO Box 14700, Salem OR 97309-0930 (refund returns or no-tax-due returns)",
+  "@@0912f1885e46": "Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040)",
+  "@@0f14f7af5264": "Law change NOT modeled by the engine (status final_form_published): NEW for tax year 2023: the Oregon Kids Credit, a REFUNDABLE credit of up to $1,000 per qualifying dependent age 5 or younger at the end of 2023, for up to five dependents. The full $1,000-per-child amount is allowed when qualifying income is $25,000 or less; it phases out between $25,000 and $30,000 and is unavailable at $30,000 or more (the worksheet STOPs there). Filing status must be single, married filing jointly, head of household, or qualifying surviving spouse — married filing separately does not qualify. Claimed on Form OR-40 line 37 via the Oregon Kids Credit Worksheet in the OR-40 instructions. Resolve via: 2023 Form OR-40 Instructions (150-101-040-1, Rev. 12-06-23) pp. 18-19, the Oregon Kids Credit Worksheet (the citation URL), for the per-child amount, the age test and the phase-out; this op returns Form OR-40 line 20 and applies no Oregon credits.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@294492b0769b": "Working Family Household and Dependent Care Credit (WFHDC) — Low- and middle-income working families who paid qualified expenses for household services or dependent care for one or more qualifying individuals (generally a dependent under age 13, or a disabled dependent or disabled spouse) so the taxpayer (and spouse, if filing jointly) could work, look for work, or attend school. Filing status must be single, head of household, qualifying surviving spouse, or married filing jointly (married filing separately only in limited circumstances). The care provider cannot be your spouse, the parent of the qualifying individual, or a person you can claim as a dependent. Tied to IRC Section 21; federal Form 2441 must be completed.",
+  "@@2d1a37673859": "Law change NOT modeled by the engine (status final_form_published): Claimable only on the 2023 return: the Oregon surplus (\"kicker\") credit — a refundable credit equal to 44.28% of the filer's 2022 total Oregon personal income tax liability (before payments and before credits other than the credit for taxes paid to another state). It exists for 2023 with that year-specific percentage and is reported in the OR-40 refundable-credits area (instructions p. 19); it is not part of the rate schedule and is not modeled. Resolve via: 2023 Form OR-40 Instructions (150-101-040-1, Rev. 12-06-23) p. 19 kicker instructions (the citation URL) for the 44.28% rate and where to report it; the 2022 tax figure it multiplies comes from the filer's own 2022 Oregon return, and calc.state_tax applies no Oregon credits.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@54b144c345ce": "Oregon DOR 2023 Form OR-40 Instructions (Full-year Resident), publication 150-101-040-1, Rev. 12-06-23, pages 18-19 (line 37, credit amount up to $1,000 per dependent, age 5 or younger, qualifying income under $30,000, $25,000 phaseout amount, max 5 children).",
+  "@@555eb6593a7b": "Nonresident: Form OR-40-N (150-101-048). Part-year resident: Form OR-40-P (150-101-055). Both share the same instruction booklet (150-101-048-1).",
+  "@@5ea02e491e6d": "2023 Form OR-40 Instructions, Full-year Resident (150-101-040-1, Rev. 12-06-23) - line 7 federal AGI starting point, residency definitions, 200-day rule, April 15 2024 due date, filing thresholds (Table 1), mailing addresses (PO Box 14700 / PO Box 14555), check payee and Revenue Online payment",
+  "@@6274f77e9dc9": "Oregon Kids Credit — Low-income taxpayers with one or more dependents age 5 or younger at the end of 2023 listed on the Oregon return. Filing status must be single, married filing jointly, head of household, or qualifying surviving spouse (married filing separately does not qualify). New for tax year 2023.",
+  "@@8a25a0b175b6": "Exemption credit — Available to the taxpayer, spouse (if filing jointly), and qualifying dependents (a personal exemption credit per allowed exemption). Phased out for higher-income filers.",
+  "@@a08831467f26": "Treaty conformity — OR conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OR income (it flows through the federal starting point; do not add it back on the OR return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Oregon's resident return (Form OR-40) starts from federal adjusted gross income: Line 7 instruction reads \"Federal adjusted gross income (AGI). Enter your federal AGI from Form 1040, 1040-SR or 1040-NR, line 11; or Form 1040-X, line 1C.\" Oregon taxable income is then built by applying additions (Schedule OR-ASC) and subtractions to that federal AGI. The 2023 OR-40 instruction booklet contains no general addition/add-back of federally treaty-exempt income (unlike California's Schedule CA, or CT/MD/MS). Because federally treaty-exempt income is already excluded from federal AGI on the 1040 and there is no Oregon add-back code restoring it, the treaty exclusion flows through and is NOT re-taxed by Oregon. Therefore Oregon conforms to federal treaty treatment for the common case (conforms_to_federal_treaties = true). Caveat: confirm against the full Schedule OR-ASC / OR-ASC-NP addition code list and Publication OR-17 for any niche addition that could touch a specific treaty article.",
+  "@@c0ff7546e1b4": "Oregon Earned Income Credit (EIC) — You must qualify for the federal Earned Income Tax Credit (EITC). Low- to moderate-income working individuals and families. ITIN filers who cannot claim the federal EITC because the taxpayer, spouse, or child has an ITIN rather than a work-eligible SSN may still qualify (see Schedule OR-EIC-ITIN). RDPs may claim it using their 'as if' federal return.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     },
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@0912f1885e46",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@06b2f75ced70",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     },
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@0912f1885e46",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Oregon Department of Revenue, PO Box 14555, Salem OR 97309-0940 (tax-to-pay returns), per the 2023 Form OR-40 instruction booklet. NOTE: the face of the 2023 Form OR-40 itself lists tax-due returns going to PO Box 14720, Salem OR 97309-0463 - a discrepancy between the form and the booklet; confirm the current address with the DOR before relying on it.",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via OR Web Pay: https://www.oregon.gov/dor (click the link for Revenue Online; pay free by direct debit from checking/savings, or by Discover/MasterCard/Visa credit card with a convenience fee) (no processor fee).",
+     "By check: make it payable to \"Oregon Department of Revenue (make check, cashier's check, or money order payable to \"Oregon Department of Revenue\"; write tax year 2023, \"Oregon Form OR-40,\" and last four digits of SSN/ITIN on the payment; use Form OR-40-V voucher only for a separate payment, not when payment is included with the return)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     },
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2024-04-15."
+    ],
+    "form": "@@0912f1885e46",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@06b2f75ced70",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2023
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@0912f1885e46",
+    "headline": "OR 2023: refund $512",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@0912f1885e46",
+    "headline": "OR 2023: you owe $347",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   },
+   {
+    "citations": [
+     {
+      "source": "@@5ea02e491e6d",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+     }
+    ],
+    "deadline_status": "Due 2024-04-15.",
+    "form": "@@0912f1885e46",
+    "headline": "OR 2023: you owe $1,205",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2023
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/or",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@c0ff7546e1b4",
+      "@@294492b0769b",
+      "@@6274f77e9dc9",
+      "@@8a25a0b175b6"
+     ],
+     "citations": [
+      {
+       "source": "@@54b144c345ce",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      },
+      {
+       "source": "@@5ea02e491e6d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      },
+      {
+       "source": "@@5ea02e491e6d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@555eb6593a7b"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in OR in 2023 without living there — file a nonresident return on OR-source income.",
+     "state": "OR",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a08831467f26",
+      "@@0f14f7af5264",
+      "@@2d1a37673859",
+      "Remote-work trap: work performed from TX for an employer sitting in OR. If OR applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to OR and require a NONRESIDENT OR return that the physical footprint alone never shows — and the W-2's Box 15 often already names OR. This OR pack year carries no researched convenience rule: verify OR's nonresident wage-sourcing rule at its DOR before assuming no OR filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@c0ff7546e1b4",
+      "@@294492b0769b",
+      "@@6274f77e9dc9",
+      "@@8a25a0b175b6"
+     ],
+     "citations": [
+      {
+       "source": "@@54b144c345ce",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      },
+      {
+       "source": "@@5ea02e491e6d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      },
+      {
+       "source": "@@5ea02e491e6d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@555eb6593a7b"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in OR part of 2023 — file a part-year return on income while a resident (plus OR-source income while not).",
+     "state": "OR",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a08831467f26",
+      "@@0f14f7af5264",
+      "@@2d1a37673859"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2023
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@c0ff7546e1b4",
+      "@@294492b0769b",
+      "@@6274f77e9dc9",
+      "@@8a25a0b175b6"
+     ],
+     "citations": [
+      {
+       "source": "@@54b144c345ce",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      },
+      {
+       "source": "@@5ea02e491e6d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      },
+      {
+       "source": "@@5ea02e491e6d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@0912f1885e46"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in OR all of 2023 — file a resident return on income from all sources.",
+     "state": "OR",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@0f14f7af5264",
+      "@@2d1a37673859"
+     ]
+    }
+   ],
+   "year": 2023
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,195 = -$4,195.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "4195",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $4,195.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,195 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "8245",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 192,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $8,245.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,195 = $4,050.00; graduated tax on $4,050 [head_of_household schedule]: 0.0475 x $4,050.00 (the $0-$8,100 bracket) = $192.38; total $192.38 -> $192"
+   },
+   {
+    "base_after_exemptions": 25400,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "29595",
+     "year": 2023
+    },
+    "marginal_rate": "0.0875",
+    "tax": 1653,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $29,595.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,195 = $25,400.00; graduated tax on $25,400 [head_of_household schedule]: 0.0475 x $8,100.00 (the $0-$8,100 bracket) = $384.75; 0.0675 x $12,300.00 (the $8,100-$20,400 bracket) = $830.25; 0.0875 x $5,000.00 (the $20,400-$250,000 bracket) = $437.50; total $1,652.50 -> $1,653"
+   },
+   {
+    "base_after_exemptions": 260000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "264195",
+     "year": 2023
+    },
+    "marginal_rate": "0.099",
+    "tax": 22295,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $264,195.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,195 = $260,000.00; graduated tax on $260,000 [head_of_household schedule]: 0.0475 x $8,100.00 (the $0-$8,100 bracket) = $384.75; 0.0675 x $12,300.00 (the $8,100-$20,400 bracket) = $830.25; 0.0875 x $229,600.00 (the $20,400-$250,000 bracket) = $20,090.00; 0.099 x $10,000.00 (the $250,000+ bracket) = $990.00; total $22,295.00 -> $22,295"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,210 = -$5,210.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "5210",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $5,210.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,210 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "9260",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 192,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $9,260.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,210 = $4,050.00; graduated tax on $4,050 [married_filing_jointly schedule]: 0.0475 x $4,050.00 (the $0-$8,100 bracket) = $192.38; total $192.38 -> $192"
+   },
+   {
+    "base_after_exemptions": 25400,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "30610",
+     "year": 2023
+    },
+    "marginal_rate": "0.0875",
+    "tax": 1653,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $30,610.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,210 = $25,400.00; graduated tax on $25,400 [married_filing_jointly schedule]: 0.0475 x $8,100.00 (the $0-$8,100 bracket) = $384.75; 0.0675 x $12,300.00 (the $8,100-$20,400 bracket) = $830.25; 0.0875 x $5,000.00 (the $20,400-$250,000 bracket) = $437.50; total $1,652.50 -> $1,653"
+   },
+   {
+    "base_after_exemptions": 260000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "265210",
+     "year": 2023
+    },
+    "marginal_rate": "0.099",
+    "tax": 22295,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $265,210.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,210 = $260,000.00; graduated tax on $260,000 [married_filing_jointly schedule]: 0.0475 x $8,100.00 (the $0-$8,100 bracket) = $384.75; 0.0675 x $12,300.00 (the $8,100-$20,400 bracket) = $830.25; 0.0875 x $229,600.00 (the $20,400-$250,000 bracket) = $20,090.00; 0.099 x $10,000.00 (the $250,000+ bracket) = $990.00; total $22,295.00 -> $22,295"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,605 = -$2,605.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "2605",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $2,605.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,605 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2025,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "4630",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 96,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $4,630.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,605 = $2,025.00; graduated tax on $2,025 [married_filing_separately schedule]: 0.0475 x $2,025.00 (the $0-$4,050 bracket) = $96.19; total $96.19 -> $96"
+   },
+   {
+    "base_after_exemptions": 15200,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "17805",
+     "year": 2023
+    },
+    "marginal_rate": "0.0875",
+    "tax": 1045,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $17,805.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,605 = $15,200.00; graduated tax on $15,200 [married_filing_separately schedule]: 0.0475 x $4,050.00 (the $0-$4,050 bracket) = $192.38; 0.0675 x $6,150.00 (the $4,050-$10,200 bracket) = $415.12; 0.0875 x $5,000.00 (the $10,200-$125,000 bracket) = $437.50; total $1,045.00 -> $1,045"
+   },
+   {
+    "base_after_exemptions": 135000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "137605",
+     "year": 2023
+    },
+    "marginal_rate": "0.099",
+    "tax": 11643,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $137,605.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,605 = $135,000.00; graduated tax on $135,000 [married_filing_separately schedule]: 0.0475 x $4,050.00 (the $0-$4,050 bracket) = $192.38; 0.0675 x $6,150.00 (the $4,050-$10,200 bracket) = $415.12; 0.0875 x $114,800.00 (the $10,200-$125,000 bracket) = $10,045.00; 0.099 x $10,000.00 (the $125,000+ bracket) = $990.00; total $11,642.50 -> $11,643"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "0",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,605 = -$2,605.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "2605",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $2,605.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,605 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2025,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "4630",
+     "year": 2023
+    },
+    "marginal_rate": "0.0475",
+    "tax": 96,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $4,630.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,605 = $2,025.00; graduated tax on $2,025 [single schedule]: 0.0475 x $2,025.00 (the $0-$4,050 bracket) = $96.19; total $96.19 -> $96"
+   },
+   {
+    "base_after_exemptions": 15200,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "17805",
+     "year": 2023
+    },
+    "marginal_rate": "0.0875",
+    "tax": 1045,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $17,805.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,605 = $15,200.00; graduated tax on $15,200 [single schedule]: 0.0475 x $4,050.00 (the $0-$4,050 bracket) = $192.38; 0.0675 x $6,150.00 (the $4,050-$10,200 bracket) = $415.12; 0.0875 x $5,000.00 (the $10,200-$125,000 bracket) = $437.50; total $1,045.00 -> $1,045"
+   },
+   {
+    "base_after_exemptions": 135000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "137605",
+     "year": 2023
+    },
+    "marginal_rate": "0.099",
+    "tax": 11643,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $137,605.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,605 = $135,000.00; graduated tax on $135,000 [single schedule]: 0.0475 x $4,050.00 (the $0-$4,050 bracket) = $192.38; 0.0675 x $6,150.00 (the $4,050-$10,200 bracket) = $415.12; 0.0875 x $114,800.00 (the $10,200-$125,000 bracket) = $10,045.00; 0.099 x $10,000.00 (the $125,000+ bracket) = $990.00; total $11,642.50 -> $11,643"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": 40000,
+     "year": 2023
+    },
+    "error": "ValueError: OR 2023: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": 40000,
+     "year": 2023
+    },
+    "error": "ValueError: OR 2023: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "or",
+     "taxable_base": "45210",
+     "year": 2023
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2930,
+    "work_head": "OR state income tax (2023, graduated brackets): taxable_base $45,210.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $5,210 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0475 x $8,100.00 (the $0-$8,100 bracket) = $384.75; 0.0675 x $12,300.00 (the $8,100-$20,400 bracket) = $830.25; 0.0875 x $19,600.00 (the $20,400-$250,000 bracket) = $1,715.00; total $2,930.00 -> $2,930"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2023 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 12-06-23) — p. 16 line 20 tax computation (tax tables if line 19 < $50,000; rate-chart formula if $50,000 or more; booklet Examples 1 and 2), p. 30 \"2023 Tax rate charts\" (Chart S / Chart J, $50,000-and-over segments) and 2023 Tax Tables, p. 15 Table 5 \"Standard deduction\" ($2,605 single; $5,210 MFJ; $2,605/$0 MFS; $4,195 HoH; $5,210 QSS) plus age-65/blind additions, p. 14 Table 4 federal tax liability subtraction AGI phaseout, p. 17 line 25 exemption credit worksheet ($236/exemption CREDIT). Full four-bracket 2023 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,050/$10,200/$125,000 and $8,100/$20,400/$250,000) as printed in 2023 Publication OR-ESTIMATE, Oregon Estimated Income Tax Instructions (150-101-026, Rev. 02-15-23), p. 3 of 6, https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2023.pdf",
+    "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2023.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "or"
+  },
+  "work_common_tail": ". Tax line: Form OR-40, line 20 \"Tax (see instructions)\". Instructions p. 16: \"Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.\" and \"Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.\" This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply 2023 Form OR-40, line 15 \"Income after subtractions\" (line 9 income after additions minus line 14 total subtractions). Line 15 already reflects Oregon additions (Schedule OR-ASC) and all subtractions, including the line 10 federal tax liability subtraction (2023 limit $7,800; $3,900 married filing separately; phased down by federal AGI per Table 4 — $0 at AGI of $145,000+ single/MFS or $290,000+ MFJ/HoH/QSS). The op subtracts only the Table 5 standard deduction to reach line 19 (Oregon taxable income) and applies the rate schedule. Filers who itemize for Oregon (line 16 Schedule OR-A amount larger than line 17) or who claim the age-65+/blind additional standard deduction must compute lines 18-19 on the form instead — the op models only the basic per-status standard deduction. Adjudication note (two-pass): base is federal_agi — Form OR-40 line 7 is federal adjusted gross income; supply the pre-deduction Oregon income figure (line 19 taxable income = line 15 minus the line 17/18 deduction is what the op reproduces by subtracting the standard deduction). Vector counts are zero by design: Oregon personal/dependent exemptions are the $236-per-exemption CREDIT on line 21, income-limited, never a base reduction. Tax-table mandate below $50,000: the 2023 OR-40 instructions (line 20, p. 16) REQUIRE the tax tables when Oregon taxable income (line 19) is less than $50,000 — bracket math may differ by a few dollars within the table's $100 bands (booklet Example 1: single, taxable income $19,525 — table tax $1,425 vs. pure bracket math $1,423); the filed form must use the table. The rate-chart formula applies only at $50,000 or more. Rounded printed constants (Chart S): the published '$X plus Y% of excess' constants $192, $607, and $10,652 are the exact cumulative bracket sums $192.375, $607.50, and $10,652.50 rounded DOWN, so pure marginal bracket math (what this op computes) can be up to $1 higher than the printed chart formula (e.g., single at $150,000: marginal math $13,127.50 -> $13,128 vs. chart $13,127). Chart J's printed $385 is the exact $384.75 rounded up $0.25; its $1,215 and $21,305 constants equal the exact cumulative sums. One schedule covers married filing jointly, head of household, AND qualifying surviving spouse (Chart J / tax-table Column J) — head of household brackets are identical to MFJ, and qualifying surviving spouse maps to married_filing_jointly with no divergence. Single and married filing separately share Chart S / Column S. Oregon registered domestic partners (RDPs) use the married statuses (Chart S is captioned 'single or married/RDP filing separately'). Oregon's personal/dependent exemption is a tax CREDIT, not a base reduction, and is NOT shipped as an exemption: Form OR-40 line 25 'Exemption credit' = $236 per exemption (taxpayer, spouse, dependents, plus severely-disabled and disabled-child exemptions), subtracted from tax after the rate applies; it is $0 when federal AGI exceeds $200,000 ($100,000 if single or married filing separately). The calc op does not model this credit. Standard-deduction gates NOT modeled: married filing separately gets $0 if the other spouse claims itemized deductions; a non-U.S. citizen without permanent resident status gets $0 (but may itemize); a person claimable as a dependent on another return is limited to the larger of earned income + $400 or $1,250, capped at the basic amount for their status. Compute those cases on the form. Age 65+/blind additional standard deduction NOT modeled: each applicable checkbox below line 17 adds $1,200 (single or head of household) or $1,000 (all other filers) to the Table 5 standard deduction — enter it on the form; this op applies only the basic per-status amount. Federal tax liability subtraction is already inside the caller-supplied base (OR-40 line 10 flows into line 15): 2023 limit $7,800 ($3,900 married filing separately), phased down by federal AGI per Table 4 (single: $7,800 under $125,000 stepping to $0 at $145,000+; MFS: $3,900 stepping to $0 at $145,000+; MFJ/HoH/QSS: $7,800 under $250,000 stepping to $0 at $290,000+). 2023 kicker (Oregon surplus) credit NOT modeled: a refundable credit equal to 44.28% of your 2022 total Oregon personal income tax liability (before payments and credits other than the credit for taxes paid to another state), claimed on the 2023 return (Schedule OR-ASC / line 36-39 area per the instructions, p. 19). Alternative tax computations on line 20 NOT modeled: Schedule OR-FIA-40 (farm income averaging, box 20a), Publication OR-FCG worksheet (farm asset capital gain rate, box 20b), and Schedule OR-PTE-FY (qualified business income reduced tax rate, box 20c) replace the table/chart math when elected. Bracket source: the OR-40 booklet (p. 30) prints Chart S/Chart J only for taxable income of $50,000 or more (the tables govern below); the full four-bracket 2023 Chart S/Chart J including the $4,050/$10,200 and $8,100/$20,400 breakpoints is printed in 2023 Publication OR-ESTIMATE (150-101-026, Rev. 02-15-23), p. 3: https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2023.pdf — spot-checks of the booklet's tax tables (e.g., Column J at $39,000-$39,100 = $2,847; Column S at $49,900-$50,000 = $4,085) match this schedule."
+ },
+ "year": 2023
+}

@@ -1,0 +1,715 @@
+{
+ "_strings": {
+  "@@0be87d003713": "Treaty conformity — VA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from VA income (it flows through the federal starting point; do not add it back on the VA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Virginia's individual income tax computation starts from federal adjusted gross income (2024 Form 760, Line 1: \"Adjusted Gross Income from federal return - Not federal taxable income\"). The 2024 Schedule ADJ additions are limited to Line 1 interest on obligations of other states, Line 2a conformity additions (bonus depreciation and other conformity items), and the enumerated Lines 2b-2c codes (10 interest on federally exempt U.S. obligations; 11 accumulation distribution income; 12 lump-sum distribution income; 19 federal partnership income addition; 20 pass-through entity tax add back; 99 other) — NO addback for income exempt from federal tax under a U.S. tax treaty. Because treaty-exempt income is already excluded from federal AGI and Virginia does not add it back, it flows through and is NOT re-taxed -> conforms.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1ef7b7972711": "2024 Form 760 Resident Individual Income Tax Instructions, pp.44-46 ('2024 Income Tax Return Mailing Addresses and Locality Codes' — 'REFUND RETURNS ... P.O. Box 1498 ... TAX DUE RETURNS ... P.O. Box 760'), Virginia Tax",
+  "@@2de92769f4b1": "Law change NOT modeled by the engine (status final_form_published): Also on the 2024 What's New page: a business interest deduction of 50%. It is a Virginia conformity/deduction item reaching the return through Schedule ADJ (the Line 2a conformity additions and the corresponding subtraction), so it changes Virginia adjusted gross income rather than the rate schedule or the standard deduction. This pack records only the What's New headline — it does not carry the deduction's mechanics or the prior-year percentage. Resolve via: 2024 Form 760 Resident Individual Income Tax Instructions What's New and the Schedule ADJ additions/subtractions line instructions (the citation URL) for the business interest deduction's computation; this pack ships no Schedule ADJ figures and calc.state_tax applies none.",
+  "@@32de2c623e47": "Credit for Low-Income Individuals (CLI) — Virginia residents whose family Virginia Adjusted Gross Income (family VAGI) is at or below the federal poverty guideline for their family size. May NOT be claimed if you, your spouse, or any dependent claims the age deduction, the blind/65-and-over exemption, the Virginia National Guard subtraction (Code 28), the basic military pay subtraction (Code 38), or the federal & state employee subtraction (Code 39), or if you are claimed as a dependent on another taxpayer's return. Mutually exclusive with both Virginia EITC options — claim only the one of the three credits that benefits you most.",
+  "@@36e4850cfc71": "Virginia Earned Income Credit (nonrefundable, 20% option) — Virginia residents who claimed an Earned Income Tax Credit on their 2024 federal return. Mutually exclusive with the Credit for Low-Income Individuals and with the 15% refundable EITC option — taxpayer claims only the one option that benefits them most.",
+  "@@418644c31f4b": "Nonresident: Form 763 (Nonresident Individual Income Tax Return). Part-year resident: Form 760PY (Part-Year Resident Individual Income Tax Return).",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@6a29b1739b83": "Refundable Virginia Earned Income Tax Credit (15% option) — Virginia residents who claimed an Earned Income Tax Credit on their 2024 federal return; available for taxable years beginning January 1, 2022, but before January 1, 2026. Mutually exclusive with the Credit for Low-Income Individuals and the 20% nonrefundable EITC — taxpayer claims only one of the three.",
+  "@@ae4ebed80eb9": "https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2024-760-instructions.pdf",
+  "@@bc3e67f33e01": "2024 Form 760 Resident Individual Income Tax Instructions ('your individual income tax return must be postmarked no later than May 1, 2025, to avoid penalties and interest') and 2024 Form 760 ('File by May 1, 2025'); automatic 6-month filing extension (no application; tentative tax due with Form 760IP by the original due date); taxpayers outside the U.S./Puerto Rico file by July 1, 2025",
+  "@@c1979b12d49a": "REFUND RETURNS: Virginia Department of Taxation, P.O. Box 1498, Richmond, VA 23218-1498. Alternatively, returns may be filed with the locality (Commissioner of the Revenue / Director of Finance / Director of Tax Administration) where the taxpayer lives, per the booklet's locality list (pp.45-46).",
+  "@@d8a327c5d110": "2024 Form 760 Resident Individual Income Tax Instructions (2614089 Rev. 09/24) — What's New (standard deduction increased to $8,500 single / $17,000 MFJ for TY2024, sunset after TY2025 reverting to pre-TY2019 $3,000/$6,000; business interest deduction 50%; credit changes), due date May 1, 2025, filing thresholds $11,950/$23,900",
+  "@@e74601e976b9": "Credit for Tax Paid to Another State — Virginia residents (and certain part-year residents) who paid income tax to another state on income that is also taxed by Virginia, to avoid double taxation. Special border-state and District of Columbia rules apply; computed on Schedule OSC with a copy of the other state's return enclosed.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f28f16ccaff4": "2024 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 2614089 Rev. 09/24) — What's New (standard deduction increase to $8,500/$17,000), Line 1 Federal Adjusted Gross Income, due date May 1, 2025, filing thresholds, Tax Rate Schedule p.35, payment options / check payee, mailing addresses"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@1ef7b7972711",
+      "url": "@@ae4ebed80eb9"
+     },
+     {
+      "source": "@@bc3e67f33e01",
+      "url": "@@ae4ebed80eb9"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-05-01."
+    ],
+    "form": "Form 760 (Resident Individual Income Tax Return)",
+    "jurisdiction": "states/va",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@c1979b12d49a",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@1ef7b7972711",
+      "url": "@@ae4ebed80eb9"
+     },
+     {
+      "source": "@@bc3e67f33e01",
+      "url": "@@ae4ebed80eb9"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-05-01."
+    ],
+    "form": "Form 760 (Resident Individual Income Tax Return)",
+    "jurisdiction": "states/va",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "TAX DUE RETURNS: Virginia Department of Taxation, P.O. Box 760, Richmond, VA 23218-0760. Alternatively, may be filed/paid with the locality where the taxpayer lives, per the booklet's locality list (pp.45-46).",
+    "notes": [],
+    "payment": [
+     "Pay online via VA Web Pay: https://www.tax.virginia.gov/payments (no processor fee).",
+     "By check: make it payable to \"Department of Taxation (make check payable to the Department of Taxation; make sure your Social Security Number is on your check and make a notation that it is your 2024 Virginia income tax payment). NOTE: If filing the return locally, make the check payable to the Treasurer or Director of Finance of the city or county in which you reside.\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@1ef7b7972711",
+      "url": "@@ae4ebed80eb9"
+     },
+     {
+      "source": "@@bc3e67f33e01",
+      "url": "@@ae4ebed80eb9"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-05-01."
+    ],
+    "form": "Form 760 (Resident Individual Income Tax Return)",
+    "jurisdiction": "states/va",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@c1979b12d49a",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@bc3e67f33e01",
+      "url": "@@ae4ebed80eb9"
+     }
+    ],
+    "deadline_status": "Due 2025-05-01.",
+    "form": "Form 760 (Resident Individual Income Tax Return)",
+    "headline": "VA 2024: refund $512",
+    "jurisdiction": "states/va",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@bc3e67f33e01",
+      "url": "@@ae4ebed80eb9"
+     }
+    ],
+    "deadline_status": "Due 2025-05-01.",
+    "form": "Form 760 (Resident Individual Income Tax Return)",
+    "headline": "VA 2024: you owe $347",
+    "jurisdiction": "states/va",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@bc3e67f33e01",
+      "url": "@@ae4ebed80eb9"
+     }
+    ],
+    "deadline_status": "Due 2025-05-01.",
+    "form": "Form 760 (Resident Individual Income Tax Return)",
+    "headline": "VA 2024: you owe $1,205",
+    "jurisdiction": "states/va",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/va",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    },
+    {
+     "benefits_candidates": [
+      "@@32de2c623e47",
+      "@@36e4850cfc71",
+      "@@6a29b1739b83",
+      "@@e74601e976b9"
+     ],
+     "citations": [
+      {
+       "source": "@@d8a327c5d110",
+       "url": "@@ae4ebed80eb9"
+      },
+      {
+       "source": "@@f28f16ccaff4",
+       "url": "@@ae4ebed80eb9"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@418644c31f4b"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in VA in 2024 without living there — file a nonresident return on VA-source income.",
+     "state": "VA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@0be87d003713",
+      "@@2de92769f4b1",
+      "Remote-work trap: work performed from TX for an employer sitting in VA. If VA applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to VA and require a NONRESIDENT VA return that the physical footprint alone never shows — and the W-2's Box 15 often already names VA. This VA pack year carries no researched convenience rule: verify VA's nonresident wage-sourcing rule at its DOR before assuming no VA filing."
+     ]
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    },
+    {
+     "benefits_candidates": [
+      "@@32de2c623e47",
+      "@@36e4850cfc71",
+      "@@6a29b1739b83",
+      "@@e74601e976b9"
+     ],
+     "citations": [
+      {
+       "source": "@@d8a327c5d110",
+       "url": "@@ae4ebed80eb9"
+      },
+      {
+       "source": "@@f28f16ccaff4",
+       "url": "@@ae4ebed80eb9"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@418644c31f4b"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in VA part of 2024 — file a part-year return on income while a resident (plus VA-source income while not).",
+     "state": "VA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@0be87d003713",
+      "@@2de92769f4b1"
+     ]
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@32de2c623e47",
+      "@@36e4850cfc71",
+      "@@6a29b1739b83",
+      "@@e74601e976b9"
+     ],
+     "citations": [
+      {
+       "source": "@@d8a327c5d110",
+       "url": "@@ae4ebed80eb9"
+      },
+      {
+       "source": "@@f28f16ccaff4",
+       "url": "@@ae4ebed80eb9"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form 760 (Resident Individual Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in VA all of 2024 — file a resident return on income from all sources.",
+     "state": "VA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@2de92769f4b1"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "va",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $8,500 = -$8,500.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "va",
+     "taxable_base": "8500",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $8,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $8,500 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "va",
+     "taxable_base": "10000",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 30,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $10,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $8,500 = $1,500.00; graduated tax on $1,500 [head_of_household schedule]: 0.02 x $1,500.00 (the $0-$3,000 bracket) = $30.00; total $30.00 -> $30"
+   },
+   {
+    "base_after_exemptions": 10000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "va",
+     "taxable_base": "18500",
+     "year": 2024
+    },
+    "marginal_rate": "0.05",
+    "tax": 370,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $18,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $8,500 = $10,000.00; graduated tax on $10,000 [head_of_household schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $5,000.00 (the $5,000-$17,000 bracket) = $250.00; total $370.00 -> $370"
+   },
+   {
+    "base_after_exemptions": 27000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "va",
+     "taxable_base": "35500",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 1295,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $35,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $8,500 = $27,000.00; graduated tax on $27,000 [head_of_household schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $10,000.00 (the $17,000+ bracket) = $575.00; total $1,295.00 -> $1,295"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "va",
+     "taxable_base": "50360",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 2043,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $50,360.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $930 = $930.00, 1 dependent exemption(s) x $930 = $930.00, standard deduction [head_of_household] = $8,500 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $23,000.00 (the $17,000+ bracket) = $1,322.50; total $2,042.50 -> $2,043"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "va",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,000 = -$17,000.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "va",
+     "taxable_base": "17000",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $17,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,000 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "va",
+     "taxable_base": "18500",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 30,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $18,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,000 = $1,500.00; graduated tax on $1,500 [married_filing_jointly schedule]: 0.02 x $1,500.00 (the $0-$3,000 bracket) = $30.00; total $30.00 -> $30"
+   },
+   {
+    "base_after_exemptions": 10000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "va",
+     "taxable_base": "27000",
+     "year": 2024
+    },
+    "marginal_rate": "0.05",
+    "tax": 370,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $27,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,000 = $10,000.00; graduated tax on $10,000 [married_filing_jointly schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $5,000.00 (the $5,000-$17,000 bracket) = $250.00; total $370.00 -> $370"
+   },
+   {
+    "base_after_exemptions": 27000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "va",
+     "taxable_base": "44000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 1295,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $44,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,000 = $27,000.00; graduated tax on $27,000 [married_filing_jointly schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $10,000.00 (the $17,000+ bracket) = $575.00; total $1,295.00 -> $1,295"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 2,
+     "filing_status": "married_filing_jointly",
+     "state": "va",
+     "taxable_base": "59790",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 2043,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $59,790.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 2 personal exemption(s) x $930 = $1,860.00, 1 dependent exemption(s) x $930 = $930.00, standard deduction [married_filing_jointly] = $17,000 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $23,000.00 (the $17,000+ bracket) = $1,322.50; total $2,042.50 -> $2,043"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "va",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,500 = -$8,500.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "va",
+     "taxable_base": "8500",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $8,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,500 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "va",
+     "taxable_base": "10000",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 30,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $10,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,500 = $1,500.00; graduated tax on $1,500 [married_filing_separately schedule]: 0.02 x $1,500.00 (the $0-$3,000 bracket) = $30.00; total $30.00 -> $30"
+   },
+   {
+    "base_after_exemptions": 10000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "va",
+     "taxable_base": "18500",
+     "year": 2024
+    },
+    "marginal_rate": "0.05",
+    "tax": 370,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $18,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,500 = $10,000.00; graduated tax on $10,000 [married_filing_separately schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $5,000.00 (the $5,000-$17,000 bracket) = $250.00; total $370.00 -> $370"
+   },
+   {
+    "base_after_exemptions": 27000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "va",
+     "taxable_base": "35500",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 1295,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $35,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,500 = $27,000.00; graduated tax on $27,000 [married_filing_separately schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $10,000.00 (the $17,000+ bracket) = $575.00; total $1,295.00 -> $1,295"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "married_filing_separately",
+     "state": "va",
+     "taxable_base": "50360",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 2043,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $50,360.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $930 = $930.00, 1 dependent exemption(s) x $930 = $930.00, standard deduction [married_filing_separately] = $8,500 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $23,000.00 (the $17,000+ bracket) = $1,322.50; total $2,042.50 -> $2,043"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "va",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,500 = -$8,500.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "va",
+     "taxable_base": "8500",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 0,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $8,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,500 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "va",
+     "taxable_base": "10000",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 30,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $10,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,500 = $1,500.00; graduated tax on $1,500 [single schedule]: 0.02 x $1,500.00 (the $0-$3,000 bracket) = $30.00; total $30.00 -> $30"
+   },
+   {
+    "base_after_exemptions": 10000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "va",
+     "taxable_base": "18500",
+     "year": 2024
+    },
+    "marginal_rate": "0.05",
+    "tax": 370,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $18,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,500 = $10,000.00; graduated tax on $10,000 [single schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $5,000.00 (the $5,000-$17,000 bracket) = $250.00; total $370.00 -> $370"
+   },
+   {
+    "base_after_exemptions": 27000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "va",
+     "taxable_base": "35500",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 1295,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $35,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,500 = $27,000.00; graduated tax on $27,000 [single schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $10,000.00 (the $17,000+ bracket) = $575.00; total $1,295.00 -> $1,295"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "va",
+     "taxable_base": "50360",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 2043,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $50,360.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $930 = $930.00, 1 dependent exemption(s) x $930 = $930.00, standard deduction [single] = $8,500 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $23,000.00 (the $17,000+ bracket) = $1,322.50; total $2,042.50 -> $2,043"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "va",
+     "taxable_base": "57000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0575",
+    "tax": 2043,
+    "work_head": "VA state income tax (2024, graduated brackets): taxable_base $57,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $17,000 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.02 x $3,000.00 (the $0-$3,000 bracket) = $60.00; 0.03 x $2,000.00 (the $3,000-$5,000 bracket) = $60.00; 0.05 x $12,000.00 (the $5,000-$17,000 bracket) = $600.00; 0.0575 x $23,000.00 (the $17,000+ bracket) = $1,322.50; total $2,042.50 -> $2,043"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2024 Virginia Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 2614089 Rev. 09/24) — Tax Rate Schedule, p.35: 'Not over $3,000, your tax is 2% of your Virginia taxable income; $3,000-$5,000: $60 + 3%; $5,000-$17,000: $120 + 5%; over $17,000: $720 + 5.75% of excess over $17,000'; What's New + Line 11 Standard Deduction: Filing Status 1 $8,500 / Status 2 $17,000 / Status 3 $8,500 (increased from $8,000/$16,000 by 2023 General Assembly session legislation, sunset after TY2025); Line 12 Exemptions: 'Multiply the sum of exemptions claimed in the You, Spouse and Dependents boxes by $930... Multiply the sum of exemptions claimed for 65 or older and Blind by $800'. Second pass: the 2024 Form 760 itself (Rev. 11/24) prints the 'X $930' and 'X $800' exemption multipliers and Line 16 'Amount of Tax from Tax Table or Tax Rate Schedule (round to whole dollars)', and the 2024 Form 763 instructions independently print the same $8,500/$17,000 standard deduction and identical rate schedule — both passes agree.",
+    "url": "@@ae4ebed80eb9"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "va"
+  },
+  "work_common_tail": ". Tax line: Form 760 Line 16: 'Amount of Tax from Tax Table or Tax Rate Schedule (round to whole dollars)'. Instructions, Line 16 Amount of Tax: 'To compute your tax, you can use either the tax table or the tax rate schedule on Page 35, or use the Tax Calculator on the Department's website.' Line 15 Virginia Taxable Income = Line 9 (VAGI) minus Line 14 (Line 10 itemized OR Line 11 standard deduction, + Line 12 exemptions + Line 13 Schedule ADJ deductions). Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($800 — Exemption Section B: 'Multiply the sum of exemptions claimed for 65 or older and Blind by $800.' Must be 65 or older on or before January 1, 2025. A base reduction via Line 12, but NOT applied by calc.state_tax (engine applies only personal/dependent keys) — claim it on the form. Cannot be claimed if the Credit for Low-Income Individuals is claimed on Line 23.); blind ($800 — Exemption Section B: $800 per blind exemption (blind for federal income tax purposes; taxpayer and spouse each). A base reduction via Line 12, but NOT applied by calc.state_tax — claim it on the form. Cannot be claimed if the Credit for Low-Income Individuals is claimed on Line 23.) This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2024 CHANGE — STANDARD DEDUCTION RAISED: $8,500 single/MFS and $17,000 MFJ for Taxable Year 2024 (up from $8,000/$16,000 in 2023), per 2023 General Assembly session legislation (booklet What's New + Line 11 chart; independently confirmed in the 2024 Form 763 instructions). The increase is scheduled to sunset after Taxable Year 2025 and revert to the pre-TY2019 amounts ($3,000 single / $6,000 MFJ). CAUTION: the live tax.virginia.gov/deductions page already shows the TY2025 $8,750/$17,500 amounts — do not use it for 2024. Base guidance: Supply Form 760 Line 9, Virginia Adjusted Gross Income (VAGI) = federal AGI (Line 1, 'Adjusted Gross Income from federal return - Not federal taxable income') + Virginia additions (Line 2, Schedule ADJ Line 3) - Line 8 subtractions (Line 4 age deduction of up to $12,000 each for 2024, Line 5 taxable Social Security/Tier 1 Railroad Retirement benefits, Line 6 state income tax refund reported as federal income, Line 7 Schedule ADJ subtractions). If the filer has no Virginia additions or subtractions, VAGI equals federal AGI. The op then subtracts the shipped $930-per-exemption amounts and the per-status standard deduction to reproduce Virginia taxable income (Line 15 = Line 9 - Line 14). Single rate schedule for ALL filing statuses, unchanged for 2024: Virginia publishes one Tax Rate Schedule (2% to $3,000; $60 + 3% $3,000-$5,000; $120 + 5% $5,000-$17,000; $720 + 5.75% over $17,000) that applies regardless of filing status; it is duplicated per status here. The printed constants $60/$120/$720 exactly equal the cumulative sums of the prior brackets — no rounding divergence. Virginia filing statuses are only 1 = Single, 2 = Joint, 3 = Married Filing Separately. Head of Household is NOT a separate Virginia status: the 2024 Form 760 prints 'Federal head of household? Filing Status 1 only' — HOH filers use Filing Status 1 (Single) and the $8,500 standard deduction, which is what this pack ships for head_of_household. ZERO-TAX FILING THRESHOLD not applied by the engine: the 2024 Form 760 Line 9 prints 'Note: If less than $11,950 for Filing Status 1 or 3; or $23,900 for Filing Status 2, your tax is $0.00', and the rate-schedule page instructs 'If your Virginia Adjusted Gross Income is less than the filing threshold, do not use the rate schedule or tax table below. Enter $0 as your tax instead.' If VAGI is below the threshold, the correct Virginia tax is $0 even though bracket math yields a positive number. Tax table: Virginia's 2024 tax table (booklet pp.35-43, covering taxable income up to $98,356) is OPTIONAL, not mandated — 'The tax table can be used if your Virginia taxable income is listed in the table. Otherwise, use the Tax Rate Schedule.' Within table bands the table (band-midpoint based) may differ from exact bracket math by about $1; Line 16 permits the table, the rate schedule, or the Department's online Tax Calculator. Spouse Tax Adjustment (STA) NOT modeled: couples filing jointly (Filing Status 2) may reduce their tax by up to $259 on Form 760 Line 17 if both spouses have taxable income (STA Worksheet, booklet p.12: 'The Spouse Tax Adjustment cannot exceed $259'). The engine computes Line 16 only; a joint filer's Line 18 net tax may be up to $259 lower. Age 65+/blind exemptions ($800 each, Exemption Section B) are base reductions included in Line 12 but are NOT applied by calc.state_tax (the op applies only the personal/dependent keys) — enter them on the form. They cannot be claimed together with the Credit for Low-Income Individuals. Itemizers: if you claimed itemized deductions on your federal return you MUST itemize on the Virginia return (Line 10, Virginia Schedule A) and the standard deduction does not apply — the shipped standard_deduction is only for standard-deduction filers. Dependent on another's return: the standard deduction is limited to the amount of earned income ('Enter the smaller of the amount of earned income or the standard deduction amount on Line 11') — not modeled. Credit for Low-Income Individuals ($300 per exemption, 2024 poverty guidelines $15,060 for 1 up to $52,720 for 8, +$5,380 each additional), the nonrefundable Virginia EITC (20% of federal EITC), and the refundable Virginia EITC (15%, TY2022 through TY2025) are CREDITS subtracted from tax on Form 760 Line 23 via Schedule ADJ Line 17 — they are NOT exemptions and are not modeled by this op. Rounding: Virginia rounds to whole dollars with 50-99 cents rounding up ('Amounts less than 50 cents should be rounded down while all amounts of 50 cents - 99 cents' round up); the 2024 booklet's own rate-schedule example rounds $4,917.50 to $4,918, matching the engine's half-up rounding. Qualifying surviving spouse: the engine maps QSS to married_filing_jointly. The 2024 booklet lists only Filing Statuses 1/2/3 and does not explicitly state which status a federal QSS filer uses; because Virginia has a single rate schedule, only the standard deduction ($17,000 vs $8,500) would differ — confirm the correct status at tax.virginia.gov."
+ },
+ "year": 2024
+}

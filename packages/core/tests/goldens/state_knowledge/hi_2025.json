@@ -1,0 +1,1010 @@
+{
+ "_strings": {
+  "@@130d9bf8c0dd": "Credit for Child and Dependent Care Expenses — Taxpayers who paid qualified expenses for the care of a qualifying person (e.g. a dependent child or a disabled dependent/spouse) to enable them (and a spouse, if married) to work or look for work, including payments to the State of Hawaii A+ Program. Generally married persons must file jointly; married-filing-separately taxpayers may claim only if they meet the separate-filer requirements in the instructions. Provider information must be reported on Schedule X, Part II.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@27fd08e4cd61": "Hawaii Form N-11 (Rev. 2025) Individual Income Tax Return (Resident) — line 7 \"Federal adjusted gross income (AGI)\", lines 8-11 Hawaii additions (line 10 \"Other Hawaii additions to federal AGI\"), line 23 Standard Deduction (\"If you checked filing status box: 1 or 3 enter $4,400; 2 or 5 enter $8,800; 4 enter $6,424\"), line 25 exemptions (\"Multiply $1,144 by the total number of exemptions claimed on line 6e\"), line 26 Taxable Income, line 27 Tax",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@3dd41a76cc7b": "Refundable Earned Income Tax Credit (Hawaii EITC) — A qualifying individual taxpayer who (a) files a federal return and claims the federal earned income credit under IRC section 32 for the tax year, (b) uses the same filing status on the Hawaii return as on the federal return, and (c) claims the same dependents on the Hawaii return as on the federal return. Part-year residents and nonresidents prorate by the ratio of Hawaii AGI to federal AGI.",
+  "@@49c707ef1cf3": "Treaty conformity — HI conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from HI income (it flows through the federal starting point; do not add it back on the HI return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Hawaii's resident return (Form N-11, Rev. 2025) line 7 starts from \"Federal adjusted gross income (AGI)\" reported from federal Form 1040 or 1040-SR. Treaty-exempt income excluded at the federal level is therefore already excluded from the Hawaii starting amount. Hawaii's additions to federal AGI are an explicit, enumerated list: line 8 (difference in state/federal wages due to COLA, ERS, etc.), line 9 (interest on out-of-state bonds including municipal bonds), and line 10 \"Other Hawaii additions to federal AGI\", whose instruction enumerates: differences in the taxable portion of the Hawaii tax refund, distributions and deemed distributions from Individual Housing Accounts, Peace Corps compensation, differences in depreciation and gain, compensation from temporary employment outside the United States, differences in the deduction for student loan interest, differences in the taxable portion of employer-provided adoption benefits, qualified tuition program distributions for elementary and secondary school expenses, distributions from certain foreign corporations, federal provisions not adopted with the Tax Cuts and Jobs Act of 2017, and \"other adjustments.\" None of these is an add-back of federal tax-treaty-exempt income (unlike California's Schedule CA). The word \"treaty\" appears ZERO times in the 2025 N-11 instructions (re-counted this session across all 4,504 extracted lines). Conclusion: treaty-exempt income is NOT re-taxed -> conforms = true.",
+  "@@4c5d3096e3d7": "HI DOTAX — 2025 Form N-11 Instructions (files.hawaii.gov/tax/forms/2025/n11ins.pdf), '2025 Tax Rate Schedules' p. 48: Schedule I (Single/MFS, filing status oval 1 or 3) 12 brackets 1.40%..11.00% with boundaries 9,600/14,400/19,200/24,000/36,000/48,000/125,000/175,000/225,000/275,000/325,000 and printed base-tax constants 134/288/552/859/1,675/2,539/8,391/12,341/16,466/20,966/25,966; Schedule II (MFJ/QSS, oval 2 or 5) exactly DOUBLE those boundaries with constants 269/576/1,104/1,718/3,350/5,078/16,782/24,682/32,932/41,932/51,932; Schedule III (Unmarried Heads of Household, oval 4) exactly 1.5x with constants 202/432/828/1,289/2,513/3,809/12,587/18,512/24,699/31,449/38,949. 'Changes to Note': 'For the 2025 taxable year beginning after December 31, 2024, the individual income tax bracket amounts were amended for all the filing statuses by increasing the income limits in each bracket. (Act 45, SLH 2024)'. Standard deduction (instructions Line 23 table and the printed Form N-11 line 23) UNCHANGED at $4,400 Single/MFS, $8,800 MFJ/QSS, $6,424 HoH. Personal exemption $1,144 per exemption ('Residents are allowed $1,144 for each exemption they can claim. Multiply $1,144 by the total number of exemptions you claimed on line 6e'), $2,288 for an individual 65 or older. Second pass: the 2025 Form N-15 Instructions (files.hawaii.gov/tax/forms/2025/n15ins.pdf) print all 36 rows of the three '2025 Tax Rate Schedules' digit-identically, plus the same standard-deduction table and the same $1,144 multiplier.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@5f04c987803a": "Law change NOT modeled by the engine (status final_form_published): NEW ADD-BACK for 2025 (Act 58, SLH 2025), per \"Changes to Note\": all qualified members claiming the Pass-Through Entity tax credit must ADD their share of the taxes paid by the electing PTE to taxable income. This is an addition to the Hawaii base that did not exist for 2024. Resolve via: 2025 N-11 instructions \"Changes to Note\" and the Hawaii additions instructions for lines 8-10 at the citation URL; the amount comes from the member's share of taxes paid by the electing pass-through entity.",
+  "@@65d3fb187c56": "Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2025)",
+  "@@7a75ba5fdf83": "The newest shipped HI pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@7e28940579a6": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOTAX source before relying on a specific figure/address.",
+  "@@8f7b5717598f": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOTAX sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. IMPROVEMENT over the 2024 pack: the 2025 Schedule X (Form N-11/N-15) was fetched and read directly this session, so the Low-Income Household Renters credit and the Child and Dependent Care Expenses credit are no longer flagged unverified — the $50-per-exemption renters figure and the .25-to-.15 care-credit decimal table were read off the 2025 form itself.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a568db7d6385": "Refundable Food/Excise Tax Credit — Each individual income tax filer (including those with no taxable income) who is a Hawaii resident physically present in Hawaii more than nine months during 2025, who is not (and is not eligible to be) claimed as a dependent by another taxpayer for federal or Hawaii purposes, and who is not incarcerated for the entire year. Credit is computed per qualified exemption (taxpayer, spouse, dependents, plus certain minor children receiving public support through the Department of Human Services).",
+  "@@b4ff7056b26a": "Hawaii 2025 N-11 Resident Income Tax Instructions — \"Where to File\": \"If you are enclosing a check or money order with your tax return, mail your return with payment to: Hawaii Department of Taxation, Attn: Payment Section, P. O. Box 1530, Honolulu, Hawaii 96806-1530. If you are NOT enclosing a check or money order with your tax return, mail your return to: Hawaii Department of Taxation, P. O. Box 3559, Honolulu, Hawaii 96811-3559.\" Enclose only one return per envelope.",
+  "@@d3ded304794d": "Hawaii 2025 N-11 Resident Income Tax Instructions — \"Changes to Note\" (Act 45 SLH 2024 bracket widening for TY2025; Act 123 SLH 2025 IRC conformity as of 12/31/2024; Act 25 SLH 2025 EITC carryforward change effective after 12/31/2025; Act 58 SLH 2025 PTE credit add-back; $8,636 military reserve/Hawaii National Guard duty pay exclusion), due date April 20 2026 and the automatic 6-month extension to October 20 2026, Who Must File threshold charts, Residency Status, Where to File, check payee \"Hawaii State Tax Collector\", hitax.hawaii.gov portal, line 7 federal AGI and line 10 additions list, Line 23 Standard Deduction table, Regular Exemptions $1,144, Line 27 Tax (tax table mandated below $100,000), Tax Table pp. 36-47, 2025 Tax Rate Schedules p. 48",
+  "@@e67d0829e124": "Hawaii Department of Taxation, P.O. Box 3559, Honolulu, Hawaii 96811-3559 (use when NOT enclosing a check or money order with your tax return)",
+  "@@e6e26bc268b0": "Law change NOT modeled by the engine (status final_form_published): NEW SUBTRACTION for 2025 per \"Changes to Note\": an exclusion of up to $8,636 of military reserve or Hawaii National Guard duty pay, taken among the Hawaii subtractions (Form N-11 lines 13-19) on the way from federal AGI to Hawaii AGI. It did not exist in the 2024 pack's subtraction list. Resolve via: 2025 N-11 instructions \"Changes to Note\" and the line 13-19 Hawaii subtraction instructions at the citation URL (the $8,636 ceiling is the booklet's own figure; the qualifying duty pay comes from the filer's records).",
+  "@@eae9318e4e91": "Credit for Low-Income Household Renters — Hawaii resident present in Hawaii more than nine months during 2025 who occupies and pays rent for real property in Hawaii used as a residence, whose rental unit was fully subject to real property tax (units wholly or partially exempt do not qualify), and who is not (and is not eligible to be) claimed as a dependent by another taxpayer. Net rent paid (after exclusions such as utilities, parking, ground rent and rental subsidies/public assistance) must EXCEED $1,000 — Schedule X Part I line 7: \"If this amount is $1,000, or less, STOP. You cannot claim this credit.\"",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f3530016e0ba": "annual (per tax year; the newest shipped HI pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@f5650b6feadf": "Hawaii 2025 N-11 Resident Income Tax Instructions — \"DUE DATE: APRIL 20, 2026\" on the cover and \"Form N-11, Individual Income Tax Return (Resident Form), is due on or before April 20, 2026.\" Extension: \"If you are unable to file by April 20, 2026, you are granted an automatic 6-month extension of time to file your return through October 20, 2026. You do not have to file a form to request an extension. The extension of time to file is not an extension of time for payment of tax\" — a balance due must be paid in full by April 20, 2026 with Form N-200V. Hawaii's deadline is April 20, NOT the federal April 15."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@b4ff7056b26a",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     },
+     {
+      "source": "@@f5650b6feadf",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-20."
+    ],
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)",
+    "jurisdiction": "states/hi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e67d0829e124",
+    "notes": [
+     "@@7e28940579a6"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@b4ff7056b26a",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     },
+     {
+      "source": "@@f5650b6feadf",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-20."
+    ],
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)",
+    "jurisdiction": "states/hi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Hawaii Department of Taxation, Attn: Payment Section, P.O. Box 1530, Honolulu, Hawaii 96806-1530 (use when enclosing a check or money order with your tax return)",
+    "notes": [
+     "@@7e28940579a6"
+    ],
+    "payment": [
+     "Pay online via HI Web Pay: https://hitax.hawaii.gov (no processor fee).",
+     "By check: make it payable to \"Hawaii State Tax Collector (the 2025 N-11 instruction cover reads \"Make your check payable to the 'Hawaii State Tax Collector'\"; a balance due must be paid in full by April 20, 2026 with Form N-200V — federal Form 4868 may NOT be used in lieu of Form N-200V)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@b4ff7056b26a",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     },
+     {
+      "source": "@@f5650b6feadf",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-20."
+    ],
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)",
+    "jurisdiction": "states/hi",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e67d0829e124",
+    "notes": [
+     "@@7e28940579a6"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@f5650b6feadf",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-20.",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)",
+    "headline": "HI 2025: refund $512",
+    "jurisdiction": "states/hi",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@f5650b6feadf",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-20.",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)",
+    "headline": "HI 2025: you owe $347",
+    "jurisdiction": "states/hi",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@f5650b6feadf",
+      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-20.",
+    "form": "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)",
+    "headline": "HI 2025: you owe $1,205",
+    "jurisdiction": "states/hi",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7a75ba5fdf83",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Hawaii Department of Taxation, Form N-311 (Rev. 2025), Refundable Food/Excise Tax Credit — line 1 AGI gate ($60,000 / $40,000 Single), line 2 nine-months-in-2025 and not-a-dependent tests, and the two per-exemption credit tables",
+     "cadence": "@@f3530016e0ba",
+     "topic": "credits",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n311_i.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation, Form N-356 (Rev. 2025), Earned Income Tax Credit — line 3 \"Multiply line 2 by 40%\" and the instruction \"The earned income tax credit is refundable and 40% of the federal earned income credit\"",
+     "cadence": "@@f3530016e0ba",
+     "topic": "credits",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n356_i.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2025), Part I — line 1 AGI under $30,000 gate, line 2 more-than-nine-months-in-2025 test, line 7 the $1,000 net-rent floor, line 12 \"Multiply the number of exemptions on line 11 by $50\"",
+     "cadence": "@@f3530016e0ba",
+     "topic": "credits",
+     "url": "https://files.hawaii.gov/tax/forms/2025/schx_i.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7a75ba5fdf83",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Hawaii 2025 N-11 Resident Income Tax Instructions — \"Who Must File\" (both gross-income threshold charts, the Form N-172 disability note, dependent/nonresident-alien/nonresident threshold rules, and the doing-business and recapture-form filing triggers)",
+     "cadence": "@@f3530016e0ba",
+     "topic": "filing_logistics",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7a75ba5fdf83",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@27fd08e4cd61",
+     "cadence": "@@f3530016e0ba",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+    },
+    {
+     "answers": "Hawaii 2025 N-11 Resident Income Tax Instructions — \"Residency Status\" (Resident / Nonresident / Part-Year Resident definitions, the more-than-200-days presumption, TIR No. 97-1 reference)",
+     "cadence": "@@f3530016e0ba",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+    },
+    {
+     "answers": "Hawaii 2025 N-15 Nonresident/Part-Year Resident Instructions — INDEPENDENT SECOND-PASS source for the tax block: its \"2025 Tax Rate Schedules\" print all 36 rows of Schedules I, II and III digit-identically to the N-11's (same boundaries, same rates, same base-tax constants), and its standard-deduction table prints the same $4,400 / $8,800 / $4,400 / $6,424 amounts and the same $1,144 per-exemption multiplier",
+     "cadence": "@@f3530016e0ba",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n15ins.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2025) — Part I Low-Income Household Renters credit and Part II Credit for Child and Dependent Care Expenses",
+     "cadence": "@@f3530016e0ba",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2025/schx_i.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation, Form N-311 (Rev. 2025), Refundable Food/Excise Tax Credit",
+     "cadence": "@@f3530016e0ba",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n311_i.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation, Form N-356 (Rev. 2025), Earned Income Tax Credit (40% of the federal EIC, refundable)",
+     "cadence": "@@f3530016e0ba",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n356_i.pdf"
+    },
+    {
+     "answers": "Hawaii Department of Taxation — Individual Income Tax (Resident and Nonresident) forms page",
+     "cadence": "@@f3530016e0ba",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.hawaii.gov/forms/a1_b1_1income/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7a75ba5fdf83",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@d3ded304794d",
+     "cadence": "@@f3530016e0ba",
+     "topic": "law_changes",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7a75ba5fdf83",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@4c5d3096e3d7",
+     "cadence": "@@f3530016e0ba",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7a75ba5fdf83",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/hi",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/hi",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@a568db7d6385",
+      "@@3dd41a76cc7b",
+      "@@eae9318e4e91",
+      "@@130d9bf8c0dd"
+     ],
+     "citations": [
+      {
+       "source": "@@d3ded304794d",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+      },
+      {
+       "source": "@@d3ded304794d",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+      },
+      {
+       "source": "@@27fd08e4cd61",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@65d3fb187c56"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in HI in 2025 without living there — file a nonresident return on HI-source income.",
+     "state": "HI",
+     "warnings": [
+      "@@8f7b5717598f",
+      "@@49c707ef1cf3",
+      "@@5f04c987803a",
+      "@@e6e26bc268b0",
+      "Remote-work trap: work performed from TX for an employer sitting in HI. If HI applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to HI and require a NONRESIDENT HI return that the physical footprint alone never shows — and the W-2's Box 15 often already names HI. This HI pack year carries no researched convenience rule: verify HI's nonresident wage-sourcing rule at its DOR before assuming no HI filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@a568db7d6385",
+      "@@3dd41a76cc7b",
+      "@@eae9318e4e91",
+      "@@130d9bf8c0dd"
+     ],
+     "citations": [
+      {
+       "source": "@@d3ded304794d",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+      },
+      {
+       "source": "@@d3ded304794d",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+      },
+      {
+       "source": "@@27fd08e4cd61",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@65d3fb187c56"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in HI part of 2025 — file a part-year return on income while a resident (plus HI-source income while not).",
+     "state": "HI",
+     "warnings": [
+      "@@8f7b5717598f",
+      "@@49c707ef1cf3",
+      "@@5f04c987803a",
+      "@@e6e26bc268b0"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@a568db7d6385",
+      "@@3dd41a76cc7b",
+      "@@eae9318e4e91",
+      "@@130d9bf8c0dd"
+     ],
+     "citations": [
+      {
+       "source": "@@d3ded304794d",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+      },
+      {
+       "source": "@@d3ded304794d",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+      },
+      {
+       "source": "@@27fd08e4cd61",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in HI all of 2025 — file a resident return on income from all sources.",
+     "state": "HI",
+     "warnings": [
+      "@@8f7b5717598f",
+      "@@5f04c987803a",
+      "@@e6e26bc268b0"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "hi",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,424 = -$6,424.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "hi",
+     "taxable_base": "6424",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $6,424.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,424 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "hi",
+     "taxable_base": "11424",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 70,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $11,424.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,424 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.014 x $5,000.00 (the $0-$14,400 bracket) = $70.00; total $70.00 -> $70"
+   },
+   {
+    "base_after_exemptions": 77000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "hi",
+     "taxable_base": "83424",
+     "year": 2025
+    },
+    "marginal_rate": "0.076",
+    "tax": 4189,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $83,424.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,424 = $77,000.00; graduated tax on $77,000 [head_of_household schedule]: 0.014 x $14,400.00 (the $0-$14,400 bracket) = $201.60; 0.032 x $7,200.00 (the $14,400-$21,600 bracket) = $230.40; 0.055 x $7,200.00 (the $21,600-$28,800 bracket) = $396.00; 0.064 x $7,200.00 (the $28,800-$36,000 bracket) = $460.80; 0.068 x $18,000.00 (the $36,000-$54,000 bracket) = $1,224.00; 0.072 x $18,000.00 (the $54,000-$72,000 bracket) = $1,296.00; 0.076 x $5,000.00 (the $72,000-$187,500 bracket) = $380.00; total $4,188.80 -> $4,189"
+   },
+   {
+    "base_after_exemptions": 497500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "hi",
+     "taxable_base": "503924",
+     "year": 2025
+    },
+    "marginal_rate": "0.11",
+    "tax": 40049,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $503,924.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,424 = $497,500.00; graduated tax on $497,500 [head_of_household schedule]: 0.014 x $14,400.00 (the $0-$14,400 bracket) = $201.60; 0.032 x $7,200.00 (the $14,400-$21,600 bracket) = $230.40; 0.055 x $7,200.00 (the $21,600-$28,800 bracket) = $396.00; 0.064 x $7,200.00 (the $28,800-$36,000 bracket) = $460.80; 0.068 x $18,000.00 (the $36,000-$54,000 bracket) = $1,224.00; 0.072 x $18,000.00 (the $54,000-$72,000 bracket) = $1,296.00; 0.076 x $115,500.00 (the $72,000-$187,500 bracket) = $8,778.00; 0.079 x $75,000.00 (the $187,500-$262,500 bracket) = $5,925.00; 0.0825 x $75,000.00 (the $262,500-$337,500 bracket) = $6,187.50; 0.09 x $75,000.00 (the $337,500-$412,500 bracket) = $6,750.00; 0.1 x $75,000.00 (the $412,500-$487,500 bracket) = $7,500.00; 0.11 x $10,000.00 (the $487,500+ bracket) = $1,100.00; total $40,049.30 -> $40,049"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "hi",
+     "taxable_base": "48712",
+     "year": 2025
+    },
+    "marginal_rate": "0.068",
+    "tax": 1561,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $48,712.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $1,144 = $1,144.00, 1 dependent exemption(s) x $1,144 = $1,144.00, standard deduction [head_of_household] = $6,424 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.014 x $14,400.00 (the $0-$14,400 bracket) = $201.60; 0.032 x $7,200.00 (the $14,400-$21,600 bracket) = $230.40; 0.055 x $7,200.00 (the $21,600-$28,800 bracket) = $396.00; 0.064 x $7,200.00 (the $28,800-$36,000 bracket) = $460.80; 0.068 x $4,000.00 (the $36,000-$54,000 bracket) = $272.00; total $1,560.80 -> $1,561"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "hi",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,800 = -$8,800.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "hi",
+     "taxable_base": "8800",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $8,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,800 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "hi",
+     "taxable_base": "13800",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 70,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $13,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,800 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.014 x $5,000.00 (the $0-$19,200 bracket) = $70.00; total $70.00 -> $70"
+   },
+   {
+    "base_after_exemptions": 101000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "hi",
+     "taxable_base": "109800",
+     "year": 2025
+    },
+    "marginal_rate": "0.076",
+    "tax": 5458,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $109,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,800 = $101,000.00; graduated tax on $101,000 [married_filing_jointly schedule]: 0.014 x $19,200.00 (the $0-$19,200 bracket) = $268.80; 0.032 x $9,600.00 (the $19,200-$28,800 bracket) = $307.20; 0.055 x $9,600.00 (the $28,800-$38,400 bracket) = $528.00; 0.064 x $9,600.00 (the $38,400-$48,000 bracket) = $614.40; 0.068 x $24,000.00 (the $48,000-$72,000 bracket) = $1,632.00; 0.072 x $24,000.00 (the $72,000-$96,000 bracket) = $1,728.00; 0.076 x $5,000.00 (the $96,000-$250,000 bracket) = $380.00; total $5,458.40 -> $5,458"
+   },
+   {
+    "base_after_exemptions": 660000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "hi",
+     "taxable_base": "668800",
+     "year": 2025
+    },
+    "marginal_rate": "0.11",
+    "tax": 53032,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $668,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,800 = $660,000.00; graduated tax on $660,000 [married_filing_jointly schedule]: 0.014 x $19,200.00 (the $0-$19,200 bracket) = $268.80; 0.032 x $9,600.00 (the $19,200-$28,800 bracket) = $307.20; 0.055 x $9,600.00 (the $28,800-$38,400 bracket) = $528.00; 0.064 x $9,600.00 (the $38,400-$48,000 bracket) = $614.40; 0.068 x $24,000.00 (the $48,000-$72,000 bracket) = $1,632.00; 0.072 x $24,000.00 (the $72,000-$96,000 bracket) = $1,728.00; 0.076 x $154,000.00 (the $96,000-$250,000 bracket) = $11,704.00; 0.079 x $100,000.00 (the $250,000-$350,000 bracket) = $7,900.00; 0.0825 x $100,000.00 (the $350,000-$450,000 bracket) = $8,250.00; 0.09 x $100,000.00 (the $450,000-$550,000 bracket) = $9,000.00; 0.1 x $100,000.00 (the $550,000-$650,000 bracket) = $10,000.00; 0.11 x $10,000.00 (the $650,000+ bracket) = $1,100.00; total $53,032.40 -> $53,032"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 2,
+     "filing_status": "married_filing_jointly",
+     "state": "hi",
+     "taxable_base": "52232",
+     "year": 2025
+    },
+    "marginal_rate": "0.064",
+    "tax": 1206,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $52,232.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 2 personal exemption(s) x $1,144 = $2,288.00, 1 dependent exemption(s) x $1,144 = $1,144.00, standard deduction [married_filing_jointly] = $8,800 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.014 x $19,200.00 (the $0-$19,200 bracket) = $268.80; 0.032 x $9,600.00 (the $19,200-$28,800 bracket) = $307.20; 0.055 x $9,600.00 (the $28,800-$38,400 bracket) = $528.00; 0.064 x $1,600.00 (the $38,400-$48,000 bracket) = $102.40; total $1,206.40 -> $1,206"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "hi",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,400 = -$4,400.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "hi",
+     "taxable_base": "4400",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $4,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,400 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4800,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "hi",
+     "taxable_base": "9200",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 67,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $9,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,400 = $4,800.00; graduated tax on $4,800 [married_filing_separately schedule]: 0.014 x $4,800.00 (the $0-$9,600 bracket) = $67.20; total $67.20 -> $67"
+   },
+   {
+    "base_after_exemptions": 53000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "hi",
+     "taxable_base": "57400",
+     "year": 2025
+    },
+    "marginal_rate": "0.076",
+    "tax": 2919,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $57,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,400 = $53,000.00; graduated tax on $53,000 [married_filing_separately schedule]: 0.014 x $9,600.00 (the $0-$9,600 bracket) = $134.40; 0.032 x $4,800.00 (the $9,600-$14,400 bracket) = $153.60; 0.055 x $4,800.00 (the $14,400-$19,200 bracket) = $264.00; 0.064 x $4,800.00 (the $19,200-$24,000 bracket) = $307.20; 0.068 x $12,000.00 (the $24,000-$36,000 bracket) = $816.00; 0.072 x $12,000.00 (the $36,000-$48,000 bracket) = $864.00; 0.076 x $5,000.00 (the $48,000-$125,000 bracket) = $380.00; total $2,919.20 -> $2,919"
+   },
+   {
+    "base_after_exemptions": 335000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "hi",
+     "taxable_base": "339400",
+     "year": 2025
+    },
+    "marginal_rate": "0.11",
+    "tax": 27066,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $339,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,400 = $335,000.00; graduated tax on $335,000 [married_filing_separately schedule]: 0.014 x $9,600.00 (the $0-$9,600 bracket) = $134.40; 0.032 x $4,800.00 (the $9,600-$14,400 bracket) = $153.60; 0.055 x $4,800.00 (the $14,400-$19,200 bracket) = $264.00; 0.064 x $4,800.00 (the $19,200-$24,000 bracket) = $307.20; 0.068 x $12,000.00 (the $24,000-$36,000 bracket) = $816.00; 0.072 x $12,000.00 (the $36,000-$48,000 bracket) = $864.00; 0.076 x $77,000.00 (the $48,000-$125,000 bracket) = $5,852.00; 0.079 x $50,000.00 (the $125,000-$175,000 bracket) = $3,950.00; 0.0825 x $50,000.00 (the $175,000-$225,000 bracket) = $4,125.00; 0.09 x $50,000.00 (the $225,000-$275,000 bracket) = $4,500.00; 0.1 x $50,000.00 (the $275,000-$325,000 bracket) = $5,000.00; 0.11 x $10,000.00 (the $325,000+ bracket) = $1,100.00; total $27,066.20 -> $27,066"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "married_filing_separately",
+     "state": "hi",
+     "taxable_base": "46688",
+     "year": 2025
+    },
+    "marginal_rate": "0.072",
+    "tax": 1963,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $46,688.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $1,144 = $1,144.00, 1 dependent exemption(s) x $1,144 = $1,144.00, standard deduction [married_filing_separately] = $4,400 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.014 x $9,600.00 (the $0-$9,600 bracket) = $134.40; 0.032 x $4,800.00 (the $9,600-$14,400 bracket) = $153.60; 0.055 x $4,800.00 (the $14,400-$19,200 bracket) = $264.00; 0.064 x $4,800.00 (the $19,200-$24,000 bracket) = $307.20; 0.068 x $12,000.00 (the $24,000-$36,000 bracket) = $816.00; 0.072 x $4,000.00 (the $36,000-$48,000 bracket) = $288.00; total $1,963.20 -> $1,963"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "hi",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $4,400 = -$4,400.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "hi",
+     "taxable_base": "4400",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 0,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $4,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $4,400 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4800,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "hi",
+     "taxable_base": "9200",
+     "year": 2025
+    },
+    "marginal_rate": "0.014",
+    "tax": 67,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $9,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $4,400 = $4,800.00; graduated tax on $4,800 [single schedule]: 0.014 x $4,800.00 (the $0-$9,600 bracket) = $67.20; total $67.20 -> $67"
+   },
+   {
+    "base_after_exemptions": 53000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "hi",
+     "taxable_base": "57400",
+     "year": 2025
+    },
+    "marginal_rate": "0.076",
+    "tax": 2919,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $57,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $4,400 = $53,000.00; graduated tax on $53,000 [single schedule]: 0.014 x $9,600.00 (the $0-$9,600 bracket) = $134.40; 0.032 x $4,800.00 (the $9,600-$14,400 bracket) = $153.60; 0.055 x $4,800.00 (the $14,400-$19,200 bracket) = $264.00; 0.064 x $4,800.00 (the $19,200-$24,000 bracket) = $307.20; 0.068 x $12,000.00 (the $24,000-$36,000 bracket) = $816.00; 0.072 x $12,000.00 (the $36,000-$48,000 bracket) = $864.00; 0.076 x $5,000.00 (the $48,000-$125,000 bracket) = $380.00; total $2,919.20 -> $2,919"
+   },
+   {
+    "base_after_exemptions": 335000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "hi",
+     "taxable_base": "339400",
+     "year": 2025
+    },
+    "marginal_rate": "0.11",
+    "tax": 27066,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $339,400.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $4,400 = $335,000.00; graduated tax on $335,000 [single schedule]: 0.014 x $9,600.00 (the $0-$9,600 bracket) = $134.40; 0.032 x $4,800.00 (the $9,600-$14,400 bracket) = $153.60; 0.055 x $4,800.00 (the $14,400-$19,200 bracket) = $264.00; 0.064 x $4,800.00 (the $19,200-$24,000 bracket) = $307.20; 0.068 x $12,000.00 (the $24,000-$36,000 bracket) = $816.00; 0.072 x $12,000.00 (the $36,000-$48,000 bracket) = $864.00; 0.076 x $77,000.00 (the $48,000-$125,000 bracket) = $5,852.00; 0.079 x $50,000.00 (the $125,000-$175,000 bracket) = $3,950.00; 0.0825 x $50,000.00 (the $175,000-$225,000 bracket) = $4,125.00; 0.09 x $50,000.00 (the $225,000-$275,000 bracket) = $4,500.00; 0.1 x $50,000.00 (the $275,000-$325,000 bracket) = $5,000.00; 0.11 x $10,000.00 (the $325,000+ bracket) = $1,100.00; total $27,066.20 -> $27,066"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "hi",
+     "taxable_base": "46688",
+     "year": 2025
+    },
+    "marginal_rate": "0.072",
+    "tax": 1963,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $46,688.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $1,144 = $1,144.00, 1 dependent exemption(s) x $1,144 = $1,144.00, standard deduction [single] = $4,400 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.014 x $9,600.00 (the $0-$9,600 bracket) = $134.40; 0.032 x $4,800.00 (the $9,600-$14,400 bracket) = $153.60; 0.055 x $4,800.00 (the $14,400-$19,200 bracket) = $264.00; 0.064 x $4,800.00 (the $19,200-$24,000 bracket) = $307.20; 0.068 x $12,000.00 (the $24,000-$36,000 bracket) = $816.00; 0.072 x $4,000.00 (the $36,000-$48,000 bracket) = $288.00; total $1,963.20 -> $1,963"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "hi",
+     "taxable_base": "48800",
+     "year": 2025
+    },
+    "marginal_rate": "0.064",
+    "tax": 1206,
+    "work_head": "HI state income tax (2025, graduated brackets): taxable_base $48,800.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $8,800 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.014 x $19,200.00 (the $0-$19,200 bracket) = $268.80; 0.032 x $9,600.00 (the $19,200-$28,800 bracket) = $307.20; 0.055 x $9,600.00 (the $28,800-$38,400 bracket) = $528.00; 0.064 x $1,600.00 (the $38,400-$48,000 bracket) = $102.40; total $1,206.40 -> $1,206"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@4c5d3096e3d7",
+    "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "hi"
+  },
+  "work_common_tail": ". Tax line: 2025 Form N-11 line 27 'Tax' — tax on line 26 'Taxable Income. Line 24 minus line 25 (but not less than zero)', where line 24 = line 20 (Hawaii AGI) minus line 22 (total itemized deductions) or line 23 (standard deduction), whichever applies, and line 25 = $1,144 x the total exemptions claimed on line 6e. Line 27 carries ovals for Tax Table, Tax Rate Schedule, or Capital Gains Tax Worksheet. Instructions: 'If your taxable income is less than $100,000, you MUST use the Tax Table on pages 36 through 47'; 'You must use the Tax Rate Schedules on page 48' otherwise. This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: TY2025 IS THE BRACKET-WIDENING YEAR — the schedules MOVED, verified verbatim: 2025 N-11 instructions 'Changes to Note': 'For the 2025 taxable year beginning after December 31, 2024, the individual income tax bracket amounts were amended for all the filing statuses by increasing the income limits in each bracket. (Act 45, SLH 2024)'. The 2024 pack's schedules (digit-identical to 2023) are therefore SUPERSEDED. Every 2025 boundary and every 2025 base-tax constant in this block was re-derived from the printed 2025 schedules, not carried forward. The TWELVE RATES did NOT change — 1.40 / 3.20 / 5.50 / 6.40 / 6.80 / 7.20 / 7.60 / 7.90 / 8.25 / 9.00 / 10.00 / 11.00 percent, the same twelve as 2023 and 2024. Only the boundaries widened. Schedule I: 2024's 2,400/4,800/9,600/14,400/19,200/24,000/36,000/48,000/150,000/175,000/200,000 became 2025's 9,600/14,400/19,200/24,000/36,000/48,000/125,000/175,000/225,000/275,000/325,000 — the 1.40% bracket alone widened from $2,400 to $9,600 and the 11% top threshold rose from $200,000 to $325,000. Effect at Single taxable income $20,000: the 2024 schedule produced $1,065.60 (-> $1,066); the 2025 schedule produces $603.20 (-> $603). Schedule structure: Schedule II (MFJ/QSS) boundaries are EXACTLY 2x Schedule I and Schedule III (HoH) EXACTLY 1.5x — verified boundary by boundary on the 2025 prints (9,600x2=19,200 ... 325,000x2=650,000; 9,600x1.5=14,400 ... 325,000x1.5=487,500). Schedule I is titled 'SINGLE TAXPAYERS AND MARRIED FILING SEPARATE RETURNS', so MFS is a copy of the Single schedule (not half of MFJ); Schedule II is titled 'MARRIED TAXPAYERS FILING JOINT RETURNS AND QUALIFYING SURVIVING SPOUSES', so the engine's QSS-to-MFJ mapping matches the published schedule exactly. ALL 33 PRINTED BASE-TAX CONSTANTS RECONCILED against cumulative bracket sums (re-derived for 2025). Schedule I: 9,600 x 1.4% = 134.40 (printed $134); +4,800 x 3.2% = 288.00 ($288); +4,800 x 5.5% = 552.00 ($552); +4,800 x 6.4% = 859.20 ($859); +12,000 x 6.8% = 1,675.20 ($1,675); +12,000 x 7.2% = 2,539.20 ($2,539); +77,000 x 7.6% = 8,391.20 ($8,391); +50,000 x 7.9% = 12,341.20 ($12,341); +50,000 x 8.25% = 16,466.20 ($16,466); +50,000 x 9% = 20,966.20 ($20,966); +50,000 x 10% = 25,966.20 ($25,966). Schedule II: 268.80 ($269); 576.00 ($576); 1,104.00 ($1,104); 1,718.40 ($1,718); 3,350.40 ($3,350); 5,078.40 ($5,078); 16,782.40 ($16,782); 24,682.40 ($24,682); 32,932.40 ($32,932); 41,932.40 ($41,932); 51,932.40 ($51,932). Schedule III: 201.60 ($202); 432.00 ($432); 828.00 ($828); 1,288.80 ($1,289); 2,512.80 ($2,513); 3,808.80 ($3,809); 12,586.80 ($12,587); 18,511.80 ($18,512); 24,699.30 ($24,699); 31,449.30 ($31,449); 38,949.30 ($38,949). Printed-constant divergence: the schedules print WHOLE-DOLLAR base-tax constants that are roundings of the exact cumulative sums (e.g. $134 vs exact $134.40; $269 vs $268.80; $1,289 vs $1,288.80), so a filed rate-schedule computation can differ from this op's exact marginal math by up to about $0.50 before rounding. Largest divergence observed: $0.40 (Schedule II's $269 vs $268.80). STANDARD DEDUCTION UNCHANGED FOR 2025 — this is the figure most likely to be assumed wrong. The 2025 N-11 instructions' Line 23 table reads: Single $4,400; Married filing jointly $8,800; Married filing separately $4,400; Head of Household $6,424; Qualifying Surviving Spouse $8,800 — identical to 2024. The printed 2025 Form N-11 line 23 says the same ('If you checked filing status box: 1 or 3 enter $4,400; 2 or 5 enter $8,800; 4 enter $6,424'), and the 2025 N-15 instructions print the same table. Act 45/46 SLH 2024's 2025 step was the BRACKET WIDENING, not another standard-deduction increase. The instructions also note 'Hawaii did not adopt the federal provision that increases the standard deduction amounts for tax years 2018 through 2025' — Hawaii's amounts are wholly its own. Base guidance: supply 2025 Form N-11 line 20 (Hawaii AGI) = line 7 federal AGI + lines 8-10 Hawaii additions (state/federal wage differences due to COLA/ERS, out-of-state bond interest, and the enumerated 'Other Hawaii additions') - the Hawaii subtractions (pensions taxed federally but not by Hawaii, the new-for-2025 exclusion of up to $8,636 of military reserve or Hawaii National Guard duty pay, and the other line 13-19 subtractions). The op then subtracts the shipped per-status standard deduction (line 23) and $1,144 x (exemptions_count + dependents_count) (line 25) to reproduce line 26 taxable income, floored at zero, and applies the rate schedule to reproduce line 27. EXEMPTIONS ARE A BASE REDUCTION here (unlike CA/DE): Hawaii's $1,144 per exemption is subtracted from income on line 25, so exemptions_count and dependents_count ARE applied by this op. Hawaii totals every exemption in one line 6e count, and an individual age 65 or older counts as TWO exemptions ($2,288) — pass the doubled count. The blind/deaf/totally-disabled exemption is a DIFFERENT mechanism (fill the line 25 ovals after filing Form N-172) and is NOT modeled. TAX TABLE MANDATE below $100,000 — 'CAUTION: If your taxable income is less than $100,000, you MUST use the Tax Table' (2025 instructions p. 48) and 'If your taxable income is less than $100,000, you MUST use the Tax Table on pages 36 through 47'. The table uses $50 bands whose values equal band-MIDPOINT schedule math rounded half-up, so at the bottom of a band this op can read a dollar or two lower than the mandated table: at taxable income exactly $20,000 the op computes $603 while the table's $20,000-$20,050 band prints $605 (Single/MFS), $295 (MFJ/QSS) and $382 (HoH). At $8,750 the op computes $123 and the table also prints $123. ALTERNATIVE TAX ON CAPITAL GAINS not modeled: line 27 offers a third oval for the Capital Gains Tax Worksheet (2025 instructions p. 33), which can yield a lower tax than the rate schedules for a filer with substantial net capital gain. Form N-168 (income averaging for farmers/fishermen) and Form N-615 (tax for children under 14 with unearned income over $1,000) also replace the line 27 computation and are NOT modeled. Dependent filers NOT modeled: 'If you can be claimed as a dependent by someone else and you do not itemize your deductions, your standard deduction is limited to the greater of $500 or your earned income' (up to the regular per-status amount) — an income-dependent amount the shipped fixed standard_deduction does not reproduce. Itemizers: the shipped standard_deduction applies only to filers who do not itemize (line 24 = line 20 minus line 22 OR line 23, 'whichever applies'). Hawaii itemized deductions are computed on the N-11 lines 21a-21f worksheets and are subject to Hawaii's own overall limitation (Hawaii did not adopt the federal suspension of the overall limitation on itemized deductions). CREDITS not modeled (they reduce tax, not the base): the refundable food/excise tax credit (Form N-311, $220 down to $70 per qualified exemption by federal AGI), the refundable Hawaii EITC (Form N-356, 40% of the federal EIC), the low-income household renters credit (Schedule X Part I, $50 per qualified exemption, AGI under $30,000, net rent over $1,000) and the child and dependent care credit (Schedule X Part II, .25 down to .15 of expenses capped at $10,000/$20,000). New for 2025 per 'Changes to Note': all qualified members claiming the Pass-Through Entity tax credit must ADD their share of taxes paid by the electing PTE to taxable income (Act 58, SLH 2025) — an addition this op does not apply; supply it in the base. Hawaii is print-only for filing (the render_mode hand_fill pack ships); this op powers the line 27 value. Hawaii's filing deadline is April 20, 2026 with an automatic 6-month extension to October 20, 2026 — NOT the federal April 15."
+ },
+ "year": 2025
+}

@@ -1,0 +1,761 @@
+{
+ "_strings": {
+  "@@02a5b675ad39": "Minnesota Child and Dependent Care Credit — MN taxpayers who paid someone (other than a dependent child or stepchild younger than 19) to care for a qualifying person while you (and your spouse if filing jointly) were working or looking for work — qualifying person and expenses are the same as for the federal child and dependent care credit. Also available to licensed family daycare operators caring for their own dependent child under age six, and for a child born in 2024 if you did not participate in a pre-tax dependent care assistance program. Refundable, unlike the federal credit.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@270ce383619f": "Law change NOT modeled by the engine (status final_form_published): HEADLINE 2024 CHANGE — the RENTER'S CREDIT moved ONTO the income tax return. Beginning with rent paid in tax year 2024, renters claim the credit on the NEW Schedule M1RENT filed WITH Form M1 (flowing to Schedule M1REF, then Form M1 line 22): \"Renter's Credit ... complete Schedule M1RENT ... Renters should not complete Form M1PR\", which now remains only for homeowners' Homestead Credit Refund. For tax year 2023 the same relief was claimed on the separate Form M1PR return (renter's property tax refund). CRP information must be provided with the return; for 2024 the maximum credit is $2,640 and household income must be less than $75,390. Resolve via: Renter's Credit Tables, pp.25-29 of the 2024 Form M1 instruction booklet (the citation URL), keyed to household income and rent constituting property taxes on Schedule M1RENT; calc.state_tax does not compute credits.",
+  "@@37f1b0c2a351": "Treaty conformity — MN conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MN income (it flows through the federal starting point; do not add it back on the MN return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Minnesota's resident return (Form M1) starts from federal adjusted gross income: the 2024 M1 instructions for Line 1 state \"Line 1—Federal Adjusted Gross Income. Enter your 2024 federal adjusted gross income from line 11 of Form 1040 or 1040-SR, or 1040-NR.\" Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The Minnesota additions (M1 line 2 = Schedule M1M line 10 and Schedule M1MB line 9) contain NO line that adds back income exempt under a U.S. income tax treaty. The only treaty references in the 2024 M1 instructions are FAVORABLE to the taxpayer (a nonresident alien may claim the standard deduction if allowed by a U.S. income tax treaty — repeated in the What's New standard-deduction section and the Line 4 Standard Deduction Table note). Because there is no treaty addback, treaty-exempt income is not re-taxed -> conforms.",
+  "@@4a8c431fe22b": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 filings — a taxpayer may ELECT ADVANCE PAYMENTS of their 2025 Child Tax Credit on Schedule M1CWFC; electing also makes them eligible for a 2025 Minimum Credit of up to 50% of the prior-year credit, and paper filers who elect mail the return to Mail Station 0015 instead of Mail Station 0010. The credit itself stays at $1,750 per qualifying child under age 18 with no cap on the number of qualifying children. Resolve via: 2024 Schedule M1CWFC and its instructions (the citation URL) — the election, the advance payment amounts and the 2025 Minimum Credit are administered by the MN DOR, not computed here.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@66a53789319b": "2024 Minnesota Individual Income Tax Return (M1) Instructions — 'Your 2024 Minnesota income tax return should be electronically filed, postmarked, or dropped off by April 15, 2025. Your tax payment is due in full by April 15, 2025, even if you file your return later. ... To avoid a late filing penalty, file your return by October 15, 2025.'",
+  "@@683e6780584e": "Renter's Credit (NEW on the income tax return for 2024) — Minnesota residents who paid rent in 2024 on a building where property taxes (or payments in lieu) were payable and who received a Certificate of Rent Paid (CRP). HEADLINE 2024 CHANGE: beginning with rent paid in tax year 2024, renters claim this credit on Schedule M1RENT WITH the Form M1 income tax return — renters should NOT complete Form M1PR (which remains only for homeowners' Homestead Credit Refund). CRP information must be provided with the return.",
+  "@@68d8681d9cbd": "2024 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted Gross Income; What's new for 2024 (Renter's Credit / Schedule M1RENT, Net Investment Income Tax / Schedule NIIT, advance Child Tax Credit payments, standard deduction $14,575/$29,150/$21,900, dependent exemption $5,050 with phase-out thresholds); Filing Requirements chart; residency (domicile + 183-day/abode); Line 4 Standard Deduction Table and Worksheets A/B; Worksheet for Line 5 — Dependent Exemptions; Line 10 Tax From Table; Tax Tables pp.30-36; Tax Rate Schedules p.37; Renter's Credit Tables pp.25-29; April 15, 2025 due date; Mail Station 0010; Payment Voucher System",
+  "@@727d4cc38c71": "Minnesota Child Tax Credit — Full-year or part-year MN residents with one or more qualifying children under age 18 at the end of 2024 (qualifying child determined on Schedule M1DQC). ITIN may be used if no SSN. NEW for 2024 filings — you may ELECT to receive advance payments of your 2025 Child Tax Credit on Schedule M1CWFC (electing also makes you eligible for a 2025 Minimum Credit of up to 50% of the prior-year credit; paper filers who elect mail to Mail Station 0015 instead of 0010).",
+  "@@770b094be207": "2024 Minnesota Individual Income Tax Return (M1) Instructions — Filing Instructions ('mail your forms to Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010'; Mail Station 0015 for the advance-CTC election) and Payment Options p.21 (Payment Voucher System; send voucher and check separately from the return)",
+  "@@97bb554225fe": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 — a Minnesota NET INVESTMENT INCOME TAX on individuals with net investment income greater than $1,000,000, computed on the new Schedule NIIT and reported among the Form M1 line 14 other taxes (alongside the M1HOME first-time-homebuyer recapture, the M1529 education-savings-account recapture and the M1LS lump-sum distribution tax). It is an amount ADDED AFTER line 10, so it is outside the rate schedule entirely. Resolve via: Schedule NIIT and the Form M1 line 14 instructions in the 2024 M1 instruction booklet (the citation URL); calc.state_tax stops at the line 10 tax and adds no line 14 other taxes.",
+  "@@c57ba2867f4e": "2024 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted Gross Income (federal Form 1040/1040-SR/1040-NR line 11); What's new for 2024 (Renter's Credit on Schedule M1RENT, NIIT, advance Child Tax Credit payments, standard deduction and $5,050 dependent exemption); residency rules (domicile + 183-day/abode); due date April 15, 2025; filing-requirement chart; Tax Tables pp.30-36 and Tax Rate Schedules p.37; payment options; Mail Station 0010 mailing address",
+  "@@cfb9a2c91350": "K-12 Education Credit — MN parents/guardians who paid education-related expenses in 2024 for a qualifying child in grades K-12 (a qualifying child is the same as for the federal Earned Income Credit). Qualifying expenses include tutoring by a qualified instructor, instructional materials, music lessons, and certain educational services (private school tuition does NOT qualify for the credit — it is a Schedule M1M subtraction only). Refundable.",
+  "@@d4aaedeb6b9d": "2024 Minnesota Individual Income Tax Return (M1) Instructions — What's new for 2024 ('Renter's Credit ... complete Schedule M1RENT ... Renters should not complete Form M1PR') and Line 22 section ('household income was less than $75,390 ... The maximum credit is $2,640'), Renter's Credit Tables pp.25-29, MN Department of Revenue",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f4bd3e0b5581": "Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010",
+  "@@f4e3d44ad808": "Minnesota Working Family Credit (state Earned Income Tax Credit) — Full-year or part-year MN residents who earned income from a job or self-employment, were self-employed, or have qualifying children (mirrors federal EIC concepts; qualifying children determined on Schedule M1DQC). Combined with the Child Tax Credit on Schedule M1CWFC. ITINs may be used if you, your spouse, or your qualifying children have no SSN. Part-year residents qualify based on their percentage of income assignable to Minnesota.",
+  "@@fa78109a42b3": "2024 Schedule M1CWFC, Minnesota Child and Working Family Credits ($1,750 per qualifying child; advance-payment election; phase-out) and Tax Year 2024 Tax Professional Desk Reference Chart (phase-out table), MN Department of Revenue"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@770b094be207",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     },
+     {
+      "source": "@@66a53789319b",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form M1, Individual Income Tax",
+    "jurisdiction": "states/mn",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@f4bd3e0b5581",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@770b094be207",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     },
+     {
+      "source": "@@66a53789319b",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form M1, Individual Income Tax",
+    "jurisdiction": "states/mn",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "There is NO separate payment-only mailing address. The Form M1 return is mailed to Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010. Payment by check/money order is made separately using a voucher created with the department's Payment Voucher System (\"If you are filing a paper return, send the voucher and your check or money order separately from your return\"). Special case: if electing advance payments of the 2025 child tax credit on Schedule M1CWFC, the paper return goes to Mail Station 0015, St. Paul, MN 55146-0015.",
+    "notes": [],
+    "payment": [
+     "Pay online via MN Web Pay: https://www.revenue.state.mn.us/make-payment (no processor fee).",
+     "By check: make it payable to \"Check payments are made through the MN DOR Payment Voucher System (go to www.revenue.state.mn.us, select Make a Payment under Individuals, then Check or Money Order, and create a voucher; the check authorizes a one-time electronic fund transfer). Exact check PAYEE wording is not printed in the 2024 M1 booklet — see unverified.\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@770b094be207",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     },
+     {
+      "source": "@@66a53789319b",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "Form M1, Individual Income Tax",
+    "jurisdiction": "states/mn",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@f4bd3e0b5581",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@66a53789319b",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form M1, Individual Income Tax",
+    "headline": "MN 2024: refund $512",
+    "jurisdiction": "states/mn",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@66a53789319b",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form M1, Individual Income Tax",
+    "headline": "MN 2024: you owe $347",
+    "jurisdiction": "states/mn",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@66a53789319b",
+      "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "Form M1, Individual Income Tax",
+    "headline": "MN 2024: you owe $1,205",
+    "jurisdiction": "states/mn",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/mn",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f4e3d44ad808",
+      "@@727d4cc38c71",
+      "@@02a5b675ad39",
+      "@@683e6780584e",
+      "@@cfb9a2c91350"
+     ],
+     "citations": [
+      {
+       "source": "@@d4aaedeb6b9d",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      },
+      {
+       "source": "@@68d8681d9cbd",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      },
+      {
+       "source": "@@fa78109a42b3",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-24.pdf"
+      },
+      {
+       "source": "@@c57ba2867f4e",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "Schedule M1NR, Nonresidents/Part-Year Residents (filed together with Form M1)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in MN in 2024 without living there — file a nonresident return on MN-source income.",
+     "state": "MN",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@37f1b0c2a351",
+      "@@270ce383619f",
+      "@@97bb554225fe",
+      "@@4a8c431fe22b",
+      "Remote-work trap: work performed from TX for an employer sitting in MN. If MN applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to MN and require a NONRESIDENT MN return that the physical footprint alone never shows — and the W-2's Box 15 often already names MN. This MN pack year carries no researched convenience rule: verify MN's nonresident wage-sourcing rule at its DOR before assuming no MN filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f4e3d44ad808",
+      "@@727d4cc38c71",
+      "@@02a5b675ad39",
+      "@@683e6780584e",
+      "@@cfb9a2c91350"
+     ],
+     "citations": [
+      {
+       "source": "@@d4aaedeb6b9d",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      },
+      {
+       "source": "@@68d8681d9cbd",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      },
+      {
+       "source": "@@fa78109a42b3",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-24.pdf"
+      },
+      {
+       "source": "@@c57ba2867f4e",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "Schedule M1NR, Nonresidents/Part-Year Residents (filed together with Form M1)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MN part of 2024 — file a part-year return on income while a resident (plus MN-source income while not).",
+     "state": "MN",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@37f1b0c2a351",
+      "@@270ce383619f",
+      "@@97bb554225fe",
+      "@@4a8c431fe22b"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f4e3d44ad808",
+      "@@727d4cc38c71",
+      "@@02a5b675ad39",
+      "@@683e6780584e",
+      "@@cfb9a2c91350"
+     ],
+     "citations": [
+      {
+       "source": "@@d4aaedeb6b9d",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      },
+      {
+       "source": "@@68d8681d9cbd",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      },
+      {
+       "source": "@@fa78109a42b3",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2025-01/m1cwfc-24.pdf"
+      },
+      {
+       "source": "@@c57ba2867f4e",
+       "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form M1, Individual Income Tax"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MN all of 2024 — file a resident return on income from all sources.",
+     "state": "MN",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@270ce383619f",
+      "@@97bb554225fe",
+      "@@4a8c431fe22b"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mn",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 0,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = -$21,900.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mn",
+     "taxable_base": "21900",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 0,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $21,900.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mn",
+     "taxable_base": "26900",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 268,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $26,900.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.0535 x $5,000.00 (the $0-$39,010 bracket) = $267.50; total $267.50 -> $268"
+   },
+   {
+    "base_after_exemptions": 161760,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mn",
+     "taxable_base": "183660",
+     "year": 2024
+    },
+    "marginal_rate": "0.0785",
+    "tax": 10487,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $183,660.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = $161,760.00; graduated tax on $161,760 [head_of_household schedule]: 0.0535 x $39,010.00 (the $0-$39,010 bracket) = $2,087.04; 0.068 x $117,750.00 (the $39,010-$156,760 bracket) = $8,007.00; 0.0785 x $5,000.00 (the $156,760-$256,880 bracket) = $392.50; total $10,486.54 -> $10,487"
+   },
+   {
+    "base_after_exemptions": 266880,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mn",
+     "taxable_base": "288780",
+     "year": 2024
+    },
+    "marginal_rate": "0.0985",
+    "tax": 18938,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $288,780.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $21,900 = $266,880.00; graduated tax on $266,880 [head_of_household schedule]: 0.0535 x $39,010.00 (the $0-$39,010 bracket) = $2,087.04; 0.068 x $117,750.00 (the $39,010-$156,760 bracket) = $8,007.00; 0.0785 x $100,120.00 (the $156,760-$256,880 bracket) = $7,859.42; 0.0985 x $10,000.00 (the $256,880+ bracket) = $985.00; total $18,938.46 -> $18,938"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mn",
+     "taxable_base": "66950",
+     "year": 2024
+    },
+    "marginal_rate": "0.068",
+    "tax": 2154,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $66,950.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $5,050 = $5,050.00, standard deduction [head_of_household] = $21,900 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0535 x $39,010.00 (the $0-$39,010 bracket) = $2,087.04; 0.068 x $990.00 (the $39,010-$156,760 bracket) = $67.32; total $2,154.36 -> $2,154"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mn",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 0,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,150 = -$29,150.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mn",
+     "taxable_base": "29150",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 0,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $29,150.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,150 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mn",
+     "taxable_base": "34150",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 268,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $34,150.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,150 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.0535 x $5,000.00 (the $0-$46,330 bracket) = $267.50; total $267.50 -> $268"
+   },
+   {
+    "base_after_exemptions": 189040,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mn",
+     "taxable_base": "218190",
+     "year": 2024
+    },
+    "marginal_rate": "0.0785",
+    "tax": 12235,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $218,190.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,150 = $189,040.00; graduated tax on $189,040 [married_filing_jointly schedule]: 0.0535 x $46,330.00 (the $0-$46,330 bracket) = $2,478.66; 0.068 x $137,710.00 (the $46,330-$184,040 bracket) = $9,364.28; 0.0785 x $5,000.00 (the $184,040-$321,450 bracket) = $392.50; total $12,235.44 -> $12,235"
+   },
+   {
+    "base_after_exemptions": 331450,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mn",
+     "taxable_base": "360600",
+     "year": 2024
+    },
+    "marginal_rate": "0.0985",
+    "tax": 23615,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $360,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $29,150 = $331,450.00; graduated tax on $331,450 [married_filing_jointly schedule]: 0.0535 x $46,330.00 (the $0-$46,330 bracket) = $2,478.66; 0.068 x $137,710.00 (the $46,330-$184,040 bracket) = $9,364.28; 0.0785 x $137,410.00 (the $184,040-$321,450 bracket) = $10,786.68; 0.0985 x $10,000.00 (the $321,450+ bracket) = $985.00; total $23,614.62 -> $23,615"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mn",
+     "taxable_base": "74200",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 2140,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $74,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $5,050 = $5,050.00, standard deduction [married_filing_jointly] = $29,150 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0535 x $40,000.00 (the $0-$46,330 bracket) = $2,140.00; total $2,140.00 -> $2,140"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mn",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 0,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,575 = -$14,575.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mn",
+     "taxable_base": "14575",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 0,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $14,575.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,575 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mn",
+     "taxable_base": "19575",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 268,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $19,575.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,575 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.0535 x $5,000.00 (the $0-$23,165 bracket) = $267.50; total $267.50 -> $268"
+   },
+   {
+    "base_after_exemptions": 97020,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mn",
+     "taxable_base": "111595",
+     "year": 2024
+    },
+    "marginal_rate": "0.0785",
+    "tax": 6314,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $111,595.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,575 = $97,020.00; graduated tax on $97,020 [married_filing_separately schedule]: 0.0535 x $23,165.00 (the $0-$23,165 bracket) = $1,239.33; 0.068 x $68,855.00 (the $23,165-$92,020 bracket) = $4,682.14; 0.0785 x $5,000.00 (the $92,020-$160,725 bracket) = $392.50; total $6,313.97 -> $6,314"
+   },
+   {
+    "base_after_exemptions": 170725,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mn",
+     "taxable_base": "185300",
+     "year": 2024
+    },
+    "marginal_rate": "0.0985",
+    "tax": 12300,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $185,300.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $14,575 = $170,725.00; graduated tax on $170,725 [married_filing_separately schedule]: 0.0535 x $23,165.00 (the $0-$23,165 bracket) = $1,239.33; 0.068 x $68,855.00 (the $23,165-$92,020 bracket) = $4,682.14; 0.0785 x $68,705.00 (the $92,020-$160,725 bracket) = $5,393.34; 0.0985 x $10,000.00 (the $160,725+ bracket) = $985.00; total $12,299.81 -> $12,300"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mn",
+     "taxable_base": "59625",
+     "year": 2024
+    },
+    "marginal_rate": "0.068",
+    "tax": 2384,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $59,625.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $5,050 = $5,050.00, standard deduction [married_filing_separately] = $14,575 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.0535 x $23,165.00 (the $0-$23,165 bracket) = $1,239.33; 0.068 x $16,835.00 (the $23,165-$92,020 bracket) = $1,144.78; total $2,384.11 -> $2,384"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mn",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 0,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,575 = -$14,575.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mn",
+     "taxable_base": "14575",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 0,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $14,575.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,575 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mn",
+     "taxable_base": "19575",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 268,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $19,575.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,575 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.0535 x $5,000.00 (the $0-$31,690 bracket) = $267.50; total $267.50 -> $268"
+   },
+   {
+    "base_after_exemptions": 109090,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mn",
+     "taxable_base": "123665",
+     "year": 2024
+    },
+    "marginal_rate": "0.0785",
+    "tax": 7011,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $123,665.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,575 = $109,090.00; graduated tax on $109,090 [single schedule]: 0.0535 x $31,690.00 (the $0-$31,690 bracket) = $1,695.42; 0.068 x $72,400.00 (the $31,690-$104,090 bracket) = $4,923.20; 0.0785 x $5,000.00 (the $104,090-$193,240 bracket) = $392.50; total $7,011.12 -> $7,011"
+   },
+   {
+    "base_after_exemptions": 203240,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mn",
+     "taxable_base": "217815",
+     "year": 2024
+    },
+    "marginal_rate": "0.0985",
+    "tax": 14602,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $217,815.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $14,575 = $203,240.00; graduated tax on $203,240 [single schedule]: 0.0535 x $31,690.00 (the $0-$31,690 bracket) = $1,695.42; 0.068 x $72,400.00 (the $31,690-$104,090 bracket) = $4,923.20; 0.0785 x $89,150.00 (the $104,090-$193,240 bracket) = $6,998.28; 0.0985 x $10,000.00 (the $193,240+ bracket) = $985.00; total $14,601.89 -> $14,602"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mn",
+     "taxable_base": "59625",
+     "year": 2024
+    },
+    "marginal_rate": "0.068",
+    "tax": 2260,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $59,625.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $5,050 = $5,050.00, standard deduction [single] = $14,575 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.0535 x $31,690.00 (the $0-$31,690 bracket) = $1,695.42; 0.068 x $8,310.00 (the $31,690-$104,090 bracket) = $565.08; total $2,260.50 -> $2,260"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "mn",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: MN 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: dependent). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "mn",
+     "taxable_base": "69150",
+     "year": 2024
+    },
+    "marginal_rate": "0.0535",
+    "tax": 2140,
+    "work_head": "MN state income tax (2024, graduated brackets): taxable_base $69,150.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $29,150 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0535 x $40,000.00 (the $0-$46,330 bracket) = $2,140.00; total $2,140.00 -> $2,140"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2024 Minnesota Individual Income Tax Return (M1) Instructions, Minnesota Department of Revenue — Tax Rate Schedules, p.37 (Single / Married filing jointly or qualifying widow(er) / Married filing separately / Head of household; 'You must use these schedules if line 9 of Form M1 is $90,000 or more'); 2024 Tax Tables pp.30-36 with mandate 'If line 9 of Form M1 is less than $90,000, you must use the tax table on pages 30 through 36'; Standard Deduction Table for Line 4 ($14,575/$29,150/$14,575/$21,900); Worksheets A & B for Line 4 - Standard Deduction Limitation ($232,500/$116,250 thresholds); Worksheet for Line 5 - Dependent Exemptions ($5,050); Line 10 - Tax From Table; 2024 Form M1 lines 1-10. Second pass: MN DOR press release 'Minnesota income tax brackets, standard deduction and dependent exemption amounts for 2024' (Dec 12, 2023, indexed +5.376%, https://www.revenue.state.mn.us/press-release/2023-12-12/minnesota-income-tax-brackets-standard-deduction-and-dependent-exemption) and the Tax Year 2024 Tax Professional Desk Reference Chart (https://www.revenue.state.mn.us/sites/default/files/2025-01/tax-year-2024-tax-professional-desk-reference-chart.pdf) — all three sources agree on every 2024 boundary, rate, standard deduction, and the $5,050 dependent exemption.",
+    "url": "https://www.revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "mn"
+  },
+  "work_common_tail": ". Tax line: Form M1 line 10: \"Tax from the table or schedules in the Form M1 instructions\". Instructions, Line 10 — Tax From Table: \"Using the amount on line 9, find the tax amount in the column under your filing status.\" Tax Rate Schedules, p.37: \"You must use these schedules if line 9 of Form M1 is $90,000 or more... If line 9 of Form M1 is less than $90,000, you must use the tax table on pages 30 through 36.\" This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply Form M1 line 1 = federal adjusted gross income (federal Form 1040/1040-SR/1040-NR line 11), adjusted for Minnesota items if any apply: ADD M1 line 2 additions (Schedule M1M line 10 and Schedule M1MB line 9) and SUBTRACT M1 line 6 (state income tax refund from federal Schedule 1 line 1) and M1 line 7 subtractions (Schedule M1M line 35 and Schedule M1MB line 21). The op then subtracts the shipped per-status standard deduction (M1 line 4) and $5,050 per dependent (M1 line 5) to reach M1 line 9, Minnesota taxable income, to which the rate schedule applies. Pass exemptions_count = 0 (Minnesota has no taxpayer/spouse personal exemption) and dependents_count = number of dependents claimed on Schedule M1DQC. Adjudication note (two-pass): the 2024 schedules were drafted from the M1 booklet's p.37 Tax Rate Schedules and re-verified digit-by-digit against the DOR's Dec 12, 2023 indexing press release AND the Tax Year 2024 Tax Professional Desk Reference Chart — all three agree on every boundary (single 31,690/104,090/193,240; MFJ 46,330/184,040/321,450; MFS 23,165/92,020/160,725 — exactly half of MFJ; HoH 39,010/156,760/256,880), the four rates (5.35%/6.80%/7.85%/9.85%, unchanged from 2023), the standard deduction ($14,575/$29,150/$14,575/$21,900), and the $5,050 dependent exemption. 2024 indexing factor: +5.376%, rounded to the nearest $10. TAX TABLE MANDATE below $90,000: 'If line 9 of Form M1 is less than $90,000, you must use the tax table on pages 30 through 36' (2024 M1 instructions, p.37); the rate schedules are only for line 9 of $90,000 or more. The table is built on $100-band midpoints chained from the printed schedule constants, so bracket math may differ by a few dollars within table bands — the filed form must use the table. (Spot-checked: table row $83,300-$83,400 prints 5,208 / 4,996 / 5,332 / 5,102 for Single/MFJ/MFS/HoH — all four equal midpoint bracket math at $83,350.) Qualifying Surviving Spouse: the p.37 rate-schedule column is titled 'Married filing jointly or qualifying widow(er)' — QSS uses the MFJ schedule exactly as mapped here, and the QSS standard deduction ($29,150 with 0 age/blind boxes) equals MFJ. Minnesota has NO personal exemption for the taxpayer or spouse: Form M1 line 5 is for DEPENDENTS only ($5,050 per dependent from Schedule M1DQC). Callers must pass exemptions_count = 0 and put dependents in dependents_count. Dependent-exemption phase-out NOT modeled (Worksheet for Line 5): the $5,050-per-dependent total is reduced by 2% for each $2,500 ($1,250 MFS) that M1 line 1 AGI exceeds $232,550 Single / $290,700 Head of Household / $348,850 MFJ-or-Surviving-Spouse / $174,425 MFS, and is $0 once the excess is more than $122,500 ($61,250 MFS). Standard-deduction limitation NOT modeled (Worksheets A & B for Line 4): if M1 line 1 AGI exceeds $232,500 ($116,250 MFS), the deduction is reduced by the LESSER of 80% of the deduction or [3% of the excess over $232,500/$116,250 (capped: enter $88,850, or $44,425 MFS, if AGI exceeds $321,350/$160,675) + 10% of the excess over $321,350 ($160,675 MFS)]; if AGI exceeds $1,053,750, the deduction is reduced by 80% (Worksheet B). Additional standard deduction for age 65+/blind NOT modeled (Standard Deduction Table for Line 4): +$1,950 per checked box for Single and Head of Household (up to 2 boxes); +$1,550 per checked box for Married Filing Jointly (up to 4), Married Filing Separately (up to 4), and Qualified Surviving Spouse (up to 2). Born before January 2, 1960 counts as 65 or older. Enter it on the form's line 4. Standard-deduction gates NOT modeled: Married Filing Separately gets NO standard deduction if the spouse claims itemized deductions ('Not allowed' row); nonresident aliens may claim it only if allowed by a U.S. income tax treaty; a filer claimable as another's dependent uses the Worksheet for Line 4 - Dependent Standard Deduction (greater of $1,300 or earned income + $400, capped at $14,575, plus $1,950/$1,550 age/blind additions) — itemizers use Schedule M1SA instead. Printed rate-schedule constants check: every '$X +' constant equals the exact cumulative sum of the prior brackets rounded to the cent (single 1,695.42/6,618.62 vs exact 1,695.415/6,618.615; MFJ 2,478.66/11,842.94 vs exact 2,478.655/11,842.935; MFS 1,239.33/5,921.47 vs exact 1,239.3275/5,921.4675; HoH 2,087.04/10,094.04 vs exact 2,087.035/10,094.035), EXCEPT the top-bracket constants, which chain the rounded prior constant: single $13,616.90 vs $13,616.89 exact, MFJ $22,629.63 vs $22,629.62, HoH $17,953.46 vs $17,953.455 (MFS $11,314.81 is exact). Maximum divergence from pure marginal math: $0.01. NOT modeled — amounts added after line 10: Minnesota Alternative Minimum Tax (Schedule M1MT, M1 line 11; can apply even without federal AMT) and M1 line 14 other taxes: Schedule M1HOME first-time-homebuyer recapture, Schedule M1529 education-savings-account recapture, Schedule M1LS tax on lump-sum distributions, and — NEW for 2024 — the Net Investment Income Tax (Schedule NIIT) on individuals with net investment income greater than $1,000,000. Part-year residents and nonresidents: tax is prorated by the Minnesota-source percentage on Schedule M1NR (M1 lines 13/13a/13b) — NOT modeled; this pack computes full-year-resident tax. M1 line 9 (Minnesota taxable income) = line 3 (federal AGI + line 2 additions) - line 4 (standard/itemized deduction) - line 5 (dependent exemptions) - line 6 (taxable state income tax refund) - line 7 (M1M/M1MB subtractions). If additions, subtractions, or a taxable state refund apply, adjust the supplied taxable_base per base_guidance. The form says 'If zero or less, leave blank' — the engine's max(0, ...) floor matches. Rounding: the M1 instructions say 'Round the dollar amounts to the nearest dollar. For example: 129.49 becomes 129, and 129.50 becomes 130' (Getting Started) — the engine's round-half-up to whole dollars matches."
+ },
+ "year": 2024
+}

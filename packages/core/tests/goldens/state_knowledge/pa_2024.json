@@ -1,0 +1,458 @@
+{
+ "_strings": {
+  "@@0be6d8d55509": "2024 PA-40 Personal Income Tax Return Instructions (PA-40 IN 07-24) - \"the due date for filing 2024 Pennsylvania tax returns will be on or before midnight, Tuesday, April 15, 2025\"; \"You must file before midnight, Tuesday, April 15, 2025\"",
+  "@@11eaf7c9855d": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2024/2024_pa-40in.pdf",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1ef77fdefe18": "PA state income tax (2024, flat rate): taxable_base $40,000.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; tax = 0.0307 x $40,000 = $1,228",
+  "@@2aa5c3c53490": "Law change NOT modeled by the engine (status final_form_published): DEPLETION DEDUCTION ALLOWED — under Act 56 of 2024 a person may deduct depletion of a mine, an oil and gas well or another natural deposit (PA-40 Schedule E, rents and royalties). Resolve via: 2024 PA-40 Instructions, 2024 State Tax Change, and the PA-40 Schedule E instructions (the Act 56 of 2024 note).",
+  "@@2f5e696eec26": "Child and Dependent Care Enhancement Tax Credit — PA residents who receive a credit under section 21 of the Internal Revenue Code (federal Child and Dependent Care Credit, federal Form 2441) may claim the credit; the expenses must also have been claimed on the federal 1040. Care expenses must be for a dependent child under age 13, a spouse incapable of self-care who lived with you more than half the year, or another individual incapable of self-care meeting the dependency tests. In general, married persons must file a joint return to claim it. A completed copy of federal Form 2441 and 1040 Schedule 3 must be included with the PA-40 or the credit will be removed.",
+  "@@32fe1e0b3a8c": "PA-40 (same form) - \"Nonresidents and part-year residents use the same PA-40 form as PA residents\"; fill in residency oval (N) Nonresident or (P) Part-Year Resident. Use PA Schedule NRH/PA Schedule SP as applicable; nonresident/part-year apportionment per the PA-40 instructions (Page 43).",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@5395876976fc": "Tax Forgiveness Credit (Special Tax Forgiveness) — PA residents (and part-year/nonresidents with PA-taxable income) who are subject to PA personal income tax, are not a dependent on another person's federal tax return (a dependent child can still qualify if listed as a dependent on the PA Schedule SP of their parents/grandparents/foster parents), and meet the eligibility-income limits. Determined by filing status, number of dependent children, and total eligibility income (which includes some nontaxable income). Married claimants must use their JOINT eligibility income and Table 2 even when filing separately — a married taxpayer cannot claim Tax Forgiveness independently of their spouse.",
+  "@@54bdd7e6e8cb": "Refund/credit requested (amount on Line 29): PA DEPT OF REVENUE, REFUND OR CREDIT REQUESTED, 3 REVENUE PLACE, HARRISBURG PA 17129-0003. Neither owe nor overpaid (zeros on Lines 28 and 29): PA DEPT OF REVENUE, NO PAYMENT OR NO REFUND, 2 REVENUE PLACE, HARRISBURG PA 17129-0002.",
+  "@@58be9b126e66": "2024 PA-40 Personal Income Tax Return Instructions, 2024 State Tax Change: 'A person may claim a deduction for depletion of a mine, oil and gas well, and other natural deposits.' Schedule E: 'IMPORTANT: Per Act 56 of 2024, a person may claim a deduction for depletion of a mine, oil and gas well, and other natural deposits.'",
+  "@@598dcacb2be9": "If any income was exempt from federal tax under a treaty: PA does not conform to federal tax treaties — that income is still taxable to PA.",
+  "@@59c0534a7001": "Treaty conformity — PA does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by PA. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: PA does NOT start from federal adjusted gross income. Per the 2024 PA-40 instructions and the PA PIT Guide, PA imposes a flat 3.07% tax on eight SEPARATELY-computed classes of income (2024 PA-40 lines 1a-8: compensation; interest income; dividend and capital gains distributions income; net income or loss from the operation of a business, profession, or farm; net gain or loss from the sale, exchange, or disposition of property; net income or loss from rents, royalties, patents, or copyrights; estate or trust income; gambling and lottery winnings). PA provides no standard deduction or personal exemption (\"PA law does not allow standard deductions, deductions for personal exemptions, itemized deductions, or deductions for personal expenses\" — 2024 PA-40IN) and the 2024 instructions state PA filing requirements \"are different than federal requirements.\" Because PA computes taxable compensation from gross PA-source wages rather than inheriting federal AGI, there is NO automatic federal-AGI pass-through that would carry a federal tax-treaty exclusion into the state return, and the 2024 PA-40 instructions contain zero occurrences of \"treaty\"/\"treaties\" (no treaty pass-through mechanism). Under the task rubric this is the \"state builds income from scratch (not federal AGI) with no treaty pass-through\" case -> conforms_to_federal_treaties = false. CAVEAT: In administrative practice PA generally does not tax compensation a federal treaty exempts (such wages typically are excluded from PA-taxable Box 16 compensation), so the precise treatment of treaty-exempt income should be confirmed with the PA DOR; flagged in unverified.",
+  "@@5dce31b26511": "2024 PA-40 Personal Income Tax Return Instructions, 2024 State Tax Change: 'The income threshold for when estimated payments are required to be made is $9,500.'",
+  "@@659104bdf2a5": "2024 PA-40 Personal Income Tax Return Instructions (PA-40 IN 07-24) - 'Follow these instructions for mailing your PA tax return' (1/2/3 Revenue Place addresses)",
+  "@@68ec0797edfc": "2024 PA-40 Personal Income Tax Return Instructions (PA-40 IN 07-24) - tax rate 3.07 percent (0.0307), due date April 15, 2025, who must file ($33 threshold), residency ovals (R/N/P), 'Nonresidents and part-year residents use the same PA-40 form as PA residents', no standard/personal-exemption deductions, mailing addresses, PA-40 V reference",
+  "@@71fe7a2b1b36": "Law change NOT modeled by the engine (status final_form_published): ESTIMATED-PAYMENT THRESHOLD — the income above which estimated payments are required is $9,500, listed among the 2024 state tax changes. Resolve via: 2024 PA-40 Instructions, 2024 State Tax Change, and the estimated tax instructions (REV-1630).",
+  "@@92528fb58a49": "If any of your income was exempt from federal tax under a treaty: PA does not conform to federal tax treaties, so that income is still taxable to PA — do not carry the federal exclusion onto the state return.",
+  "@@a0f98c91e9d3": "PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident",
+  "@@a322b6f9eb62": "Property Tax/Rent Rebate Program (PTRR) — Pennsylvania residents who are age 65 or older; widows/widowers age 50 or older; or people with disabilities age 18 or older, who owned and occupied a home (and paid property tax) or rented during the claim year. NOTE: This is a standalone rebate filed on Form PA-1000, not a credit on the PA-40 income tax return. Since Act 7 of 2023 the income limits are indexed to the cost of living annually.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@659104bdf2a5",
+      "url": "@@11eaf7c9855d"
+     },
+     {
+      "source": "@@0be6d8d55509",
+      "url": "@@11eaf7c9855d"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@a0f98c91e9d3",
+    "jurisdiction": "states/pa",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@54bdd7e6e8cb",
+    "notes": [
+     "@@92528fb58a49"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@659104bdf2a5",
+      "url": "@@11eaf7c9855d"
+     },
+     {
+      "source": "@@0be6d8d55509",
+      "url": "@@11eaf7c9855d"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@a0f98c91e9d3",
+    "jurisdiction": "states/pa",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "PA DEPT OF REVENUE, PAYMENT ENCLOSED, 1 REVENUE PLACE, HARRISBURG PA 17129-0001 (if you owe tax — an amount on Line 28; enclose Form PA-40 V payment voucher with your check)",
+    "notes": [
+     "@@92528fb58a49"
+    ],
+    "payment": [
+     "Pay online via PA Web Pay: https://mypath.pa.gov (no processor fee).",
+     "By check: make it payable to \"PA DEPARTMENT OF REVENUE (per the 2024 PA-40 V: \"Make the check or money order payable to the PA DEPARTMENT OF REVENUE\"; do not staple the check to the PA-40 V or the PA-40)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@659104bdf2a5",
+      "url": "@@11eaf7c9855d"
+     },
+     {
+      "source": "@@0be6d8d55509",
+      "url": "@@11eaf7c9855d"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@a0f98c91e9d3",
+    "jurisdiction": "states/pa",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@54bdd7e6e8cb",
+    "notes": [
+     "@@92528fb58a49"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@0be6d8d55509",
+      "url": "@@11eaf7c9855d"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@a0f98c91e9d3",
+    "headline": "PA 2024: refund $512",
+    "jurisdiction": "states/pa",
+    "notes": [
+     "@@598dcacb2be9"
+    ],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0be6d8d55509",
+      "url": "@@11eaf7c9855d"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@a0f98c91e9d3",
+    "headline": "PA 2024: you owe $347",
+    "jurisdiction": "states/pa",
+    "notes": [
+     "@@598dcacb2be9"
+    ],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0be6d8d55509",
+      "url": "@@11eaf7c9855d"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@a0f98c91e9d3",
+    "headline": "PA 2024: you owe $1,205",
+    "jurisdiction": "states/pa",
+    "notes": [
+     "@@598dcacb2be9"
+    ],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/pa",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@5395876976fc",
+      "@@2f5e696eec26",
+      "@@a322b6f9eb62"
+     ],
+     "citations": [
+      {
+       "source": "@@58be9b126e66",
+       "url": "@@11eaf7c9855d"
+      },
+      {
+       "source": "@@5dce31b26511",
+       "url": "@@11eaf7c9855d"
+      },
+      {
+       "source": "@@68ec0797edfc",
+       "url": "@@11eaf7c9855d"
+      },
+      {
+       "source": "61 Pa. Code § 109.8 (Compensation of nonresidents) — operative allowance sentence transcribed verbatim.",
+       "url": "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/061/chapter109/s109.8.html"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@32fe1e0b3a8c"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in PA in 2024 without living there — file a nonresident return on PA-source income.",
+     "state": "PA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@59c0534a7001",
+      "@@2aa5c3c53490",
+      "@@71fe7a2b1b36",
+      "Remote-work trap: work performed from TX for an employer sitting in PA, and PA HAS a convenience-of-the-employer sourcing rule. 61 Pa. Code § 109.8: \"Any allowance claimed for days worked outside of this Commonwealth shall be based upon the performance of services which, of necessity, obligate the employe or casual employe to perform out-of-State duties in the service of his employer.\" Out-of-state days reduce Pennsylvania-source compensation only when the employer's business NECESSITY — not the employee's convenience — puts the work out of state. Trigger: A nonresident allocating compensation from Pennsylvania-based employment between in-state and out-of-state working days. Exceptions: Days that of necessity obligate out-of-State duties in the employer's service qualify for the allowance; the regulation names no home-office factor test — necessity is the single standard. [61 Pa. Code § 109.8 (Compensation of nonresidents) — operative allowance sentence transcribed verbatim. — https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/061/chapter109/s109.8.html] If the rule reaches these wages, a NONRESIDENT PA return is required that the physical footprint alone never shows."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@5395876976fc",
+      "@@2f5e696eec26",
+      "@@a322b6f9eb62"
+     ],
+     "citations": [
+      {
+       "source": "@@58be9b126e66",
+       "url": "@@11eaf7c9855d"
+      },
+      {
+       "source": "@@5dce31b26511",
+       "url": "@@11eaf7c9855d"
+      },
+      {
+       "source": "@@68ec0797edfc",
+       "url": "@@11eaf7c9855d"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@32fe1e0b3a8c"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in PA part of 2024 — file a part-year return on income while a resident (plus PA-source income while not).",
+     "state": "PA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@59c0534a7001",
+      "@@2aa5c3c53490",
+      "@@71fe7a2b1b36"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@5395876976fc",
+      "@@2f5e696eec26",
+      "@@a322b6f9eb62"
+     ],
+     "citations": [
+      {
+       "source": "@@58be9b126e66",
+       "url": "@@11eaf7c9855d"
+      },
+      {
+       "source": "@@5dce31b26511",
+       "url": "@@11eaf7c9855d"
+      },
+      {
+       "source": "@@68ec0797edfc",
+       "url": "@@11eaf7c9855d"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@a0f98c91e9d3"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in PA all of 2024 — file a resident return on income from all sources.",
+     "state": "PA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@2aa5c3c53490",
+      "@@71fe7a2b1b36"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "pa",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "tax": 0,
+    "work_head": "PA state income tax (2024, flat rate): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — with no exemptions or standard deduction to subtract; tax = 0.0307 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "pa",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "tax": 1228,
+    "work_head": "@@1ef77fdefe18"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "pa",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: PA 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "single",
+     "state": "pa",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: PA 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "pa",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "tax": 1228,
+    "work_head": "@@1ef77fdefe18"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_gross_income",
+   "citation": {
+    "source": "2024 PA-40 Personal Income Tax Return Instructions (PA-40 IN 07-24) — \"The state income tax rate for 2024 is 3.07 percent (0.0307)\"; Line 12 PA Tax Liability \"Multiply Line 11 by 3.07 percent (0.0307)\"; \"PA law does not allow standard deductions, deductions for personal exemptions, itemized deductions, or deductions for personal expenses\"; the eight income classes (Lines 1a-8). Second pass: the 2024 Form PA-40 itself prints Line 12 \"PA Tax Liability. Multiply Line 11 by 3.07 percent (0.0307)\" and Line 9 \"Add only the positive income amounts from Lines 1c, 2, 3, 4, 5, 6, 7, and 8. DO NOT ADD any losses\" — both passes agree.",
+    "url": "@@11eaf7c9855d"
+   },
+   "marginal_rate": "0.0307",
+   "rate": "0.0307",
+   "rate_structure": "flat",
+   "state": "pa"
+  },
+  "work_common_tail": ". Tax line: PA-40 Line 12 (PA Tax Liability) = Line 11 (Adjusted PA Taxable Income = Line 9 minus Line 10 other deductions) x 3.07 percent (0.0307). This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: PA does NOT start from federal AGI: it taxes eight SEPARATELY-computed classes of income (2024 PA-40 Lines 1a-8 — compensation; interest income; dividend and capital gains distributions income; net income or loss from the operation of a business, profession, or farm; net gain or loss from the sale, exchange, or disposition of property; net income or loss from rents, royalties, patents, or copyrights; estate or trust income; gambling and lottery winnings). Line 9 adds ONLY the positive amounts — a loss in one class may never offset income in another class. \"PA law does not allow standard deductions, deductions for personal exemptions, itemized deductions, or deductions for personal expenses\" — calc.state_tax multiplies the supplied PA taxable-income base only. PA Tax Forgiveness (Schedule SP, PA-40 Line 21) and other low-income relief are OUTSIDE this flat-rate computation — check Schedule SP eligibility separately (2024 Eligibility Income Tables: unmarried base $6,500, married base $13,000, +$9,500 per dependent child, 100% down to 10%). Local earned-income taxes (PA municipalities/school districts) are NOT modeled here."
+ },
+ "year": 2024
+}

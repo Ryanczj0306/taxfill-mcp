@@ -1,0 +1,716 @@
+{
+ "_strings": {
+  "@@0d406d0f29b1": "Volunteer Emergency Worker Credit — Available only to a person who received a 2025 Volunteer Emergency Worker Credit Certificate from IDOR. Includes volunteers registered with the Illinois Emergency Management Agency (IEMA) and Office of Homeland Security (OHS) who volunteered at least 100 hours during the immediately preceding calendar year, in addition to non-full-time fire department/fire protection district/fire protection association volunteers. Must have served as a volunteer emergency worker at least 9 months during the taxable year, not receive more than $5,000 in compensation for those services, apply with IDOR, and be one of the first 10,000 qualified applicants. Note: the income limit that applies to the property tax / K-12 credits does NOT apply to this credit.",
+  "@@0f330f00ff9e": "Treaty conformity — IL conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from IL income (it flows through the federal starting point; do not add it back on the IL return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: IL-1040 starts from federal adjusted gross income: the 2025 IL-1040 face, Step 2 Line 1, prints \"Federal adjusted gross income from your federal Form 1040 or 1040-SR, Line 11a\", and the 2025 Instructions' Step 2 Line 1 read \"Adjusted gross income — Enter the adjusted gross income from your federal return.\" The instructions (\"What is Illinois income?\") confirm \"Your Illinois income includes the adjusted gross income (AGI) amount figured on your federal return, plus any additional income that must be added to your AGI.\" Income exempt from federal tax under a U.S. income tax treaty is already excluded from federal AGI, so it flows through and is not re-taxed. Illinois additions are limited: Line 2 \"Federally tax-exempt income\" applies ONLY to federally tax-exempt interest and dividend income reported on federal Form 1040 Line 2a (municipal bond interest), not to foreign treaty income; Line 3/Schedule M \"Other additions\" enumerates specific items (child's 8814 interest/dividends, pass-through additions, Section 529/ABLE earnings, IL-4562 special depreciation, business expense recapture, etc.) and contains no add-back of federal income-tax-treaty-exempt income. There is NO California-style Schedule CA treaty addback. Therefore treaty-exempt income is not re-taxed and IL conforms.",
+  "@@10b0394b539d": "2025 Form IL-1040 Instructions (PDF title \"2025 IL-1040 Instructions, Illinois Individual Income Tax\"; internal label \"IL-1040 Instructions (R-02/25)\") — What''s New for 2025 / cover / mailing addresses, due date (April 15, 2026), income tax rate (\"The Illinois income tax rate is 4.95 percent (.0495)\"), exemption allowance (\"The personal exemption amount for tax year 2025 is $2,850\")",
+  "@@1acafbca8a88": "Illinois Earned Income Tax Credit (EITC) — In general, anyone who qualified for the federal EITC also qualifies for the Illinois EITC. Eligibility is expanded beyond the federal qualifications: taxpayers who meet all federal EITC qualifications EXCEPT that they file with an IRS-issued ITIN (no valid SSN required for taxpayer, spouse, or qualifying children), and/or are age 18-24 or 65+ with no qualifying child, may also claim it. Must have earned income under the federal limits in Table 1, investment income below $11,950, not have filed federal Form 2555, and meet the other federal EITC rules.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2100d650ae6c": "annual (per tax year; the newest shipped IL pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@351f402a599a": "Form IL-1040 with Schedule NR (Nonresident and Part-Year Resident Computation of Illinois Tax)",
+  "@@47fb25ac5d2e": "Illinois Property Tax Credit — Illinois residents who paid Illinois property tax in 2025 on their principal residence (not a vacation home or rental property) for the time they owned and lived at the property during 2024, where that residence was in Illinois. Not available for mobile home privilege tax, penalties/fees, property outside Illinois, or the portion of property tax deductible as a business expense. Nonresidents may not take this credit.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@55bc87d5af81": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-il-e-eic.pdf",
+  "@@569e281c7b77": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf",
+  "@@5a18babd89f2": "Law change NOT modeled by the engine (status final_form_published): NEW Schedule M Line 18 subtraction for medical debt relief, named in the 2025 IL-1040 instructions' What's New for 2025 (this pack's `unverified` note records it as one of the 2025 Schedule M changes and classifies it as a SUBTRACTION, not an addition). It reduces Illinois base income below federal AGI on IL-1040 Line 7 / Schedule M, so a filer with medical debt relief must fold it into the base income supplied to the engine. Resolve via: 2025 Schedule M and its instructions, reached from the 2025 IL-1040 Instructions What's New for 2025 (the citation URL) — Line 18 medical debt relief subtraction; the pack did not open Schedule M line-by-line (see `unverified`), so resolve the amount and eligibility there before subtracting it.",
+  "@@7c495098de04": "The newest shipped IL pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@81a7a524e5e4": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-icr-instr.pdf",
+  "@@89c29ed994df": "Illinois Child Tax Credit — Available to taxpayers who qualify for the Illinois EITC and have at least one child that is their dependent and under the age of 12 years old as of the last day of 2025.",
+  "@@89d07503a926": "2025 Form IL-1040 Instructions (PDF title \"2025 IL-1040 Instructions\"; internal label R-02/25) — cover/mailing addresses, due date (April 15, 2026), income tax rate 4.95%, exemption allowance $2,850, What's New for 2025 (personal exemption $2,850, Child Tax Credit increased to 40% of the Illinois EITC, Schedule M Line 18 medical debt relief subtraction, full date of birth now required on Line A)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@adbea73c1187": "Law change NOT modeled by the engine (status final_form_published): Illinois Child Tax Credit INCREASED to 40% of the Illinois Earned Income Tax Credit for 2025, up from 20% for 2024 (What's New for 2025: \"Illinois Child Tax Credit amount was increased to 40 percent of the Illinois Earned Income Tax Credit\"). The 2025 Schedule IL-E/EITC Step 5, Line 12 prints \"Multiply the amount on Line 11 [the Illinois EITC from Line 9] by 40% (0.4). This is your Illinois Child Tax Credit.\" Eligibility is unchanged (qualify for the Illinois EITC and have at least one dependent child under age 12 as of the last day of 2025); the credit stays refundable. Resolve via: 2025 Schedule IL-E/EITC Step 5 (Lines 11-12) — 40% of the Illinois EITC from Step 4 — carried to Form IL-1040 Line 30. calc.state_tax computes only the Line 12 flat-rate tax, so the credit is applied after it in Step 8 (Payments and Refundable Credit).",
+  "@@b9af6a9d3417": "2025 Form IL-1040 Instructions — cover \"Mailing your income tax return\" (PO BOX 19041 no payment; PO BOX 19027 with payment)",
+  "@@bf3cb00e0865": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-il-e-eic-instr.pdf",
+  "@@c0ba92eaf8cd": "2025 Form IL-1040 Instructions (PDF title \"2025 IL-1040 Instructions\") — \"The Illinois income tax rate is 4.95 percent (.0495)\"; \"The personal exemption amount for tax year 2025 is $2,850\"; Line 10a Exemption Allowance Chart ($2,850 per person, $5,700 MFJ both; +$1,000 each 65-or-older / blind; $500,000 MFJ / $250,000 other AGI phase-out); Line 11 net income. Second pass: the 2025 Form IL-1040 itself (IL-1040 R-12/25) prints Line 12 \"Residents: Multiply Line 11 by 4.95% (.0495)\", and the 2025 Schedule IL-E/EITC form prints Step 2 Line 1 \"Multiply the total number of dependents you are claiming by $2,850\" — both passes agree.",
+  "@@ccc355e68711": "Illinois Department of Revenue — 2025 Schedule IL-E/EITC (form, Step 5, Line 12 \"by 40% (0.4)\") and 2025 Form IL-1040 Instructions \"What's New for 2025?\" (Illinois Child Tax Credit increased to 40 percent of the Illinois EITC)",
+  "@@e0cd50fa73f9": "ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19041, SPRINGFIELD IL 62794-9041 (if no payment is enclosed)",
+  "@@e12d21306313": "IL state income tax (2025, flat rate): taxable_base $40,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; tax = 0.0495 x $40,000 = $1,98",
+  "@@e6a62a75634a": "K-12 Education Expense Credit — Parent or legal guardian of a full-time student who was under age 21 at the close of the school year, where the taxpayer and student were Illinois residents when the expenses were paid, and the student attended kindergarten through 12th grade at a public or nonpublic school in Illinois during 2025. Must complete Section B of Schedule ICR including the K-12 Education Expense Credit Worksheet and keep school receipts.",
+  "@@e9f3916cac1b": "2025 Form IL-1040 Instructions — \"The due date for filing your 2025 Form IL-1040 and paying any tax you owe is April 15, 2026\"; extended due date to file October 15, 2026",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@b9af6a9d3417",
+      "url": "@@569e281c7b77"
+     },
+     {
+      "source": "@@e9f3916cac1b",
+      "url": "@@569e281c7b77"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "jurisdiction": "states/il",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e0cd50fa73f9",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@b9af6a9d3417",
+      "url": "@@569e281c7b77"
+     },
+     {
+      "source": "@@e9f3916cac1b",
+      "url": "@@569e281c7b77"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "jurisdiction": "states/il",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19027, SPRINGFIELD IL 62794-9027 (if a payment is enclosed)",
+    "notes": [],
+    "payment": [
+     "Pay online via IL Web Pay: https://mytax.illinois.gov (no processor fee).",
+     "By check: make it payable to \"Illinois Department of Revenue (make check or money order payable to \"Illinois Department of Revenue\" (not IRS); write the taxpayer's SSN, spouse's SSN if joint, and the tax year in the lower left corner; payments must be U.S. negotiable currency drawn on a U.S. bank)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@b9af6a9d3417",
+      "url": "@@569e281c7b77"
+     },
+     {
+      "source": "@@e9f3916cac1b",
+      "url": "@@569e281c7b77"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "jurisdiction": "states/il",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e0cd50fa73f9",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@e9f3916cac1b",
+      "url": "@@569e281c7b77"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "headline": "IL 2025: refund $512",
+    "jurisdiction": "states/il",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@e9f3916cac1b",
+      "url": "@@569e281c7b77"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "headline": "IL 2025: you owe $347",
+    "jurisdiction": "states/il",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@e9f3916cac1b",
+      "url": "@@569e281c7b77"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form IL-1040, Illinois Individual Income Tax Return",
+    "headline": "IL 2025: you owe $1,205",
+    "jurisdiction": "states/il",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7c495098de04",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@569e281c7b77"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Illinois Department of Revenue — 2025 Schedule IL-E/EITC (form, Steps 4-5) and 2025 Schedule IL-E/EITC Instructions (R-12/25) — Table 1 federal EITC income limits, $11,950 investment-income cap",
+     "cadence": "@@2100d650ae6c",
+     "topic": "credits",
+     "url": "@@bf3cb00e0865"
+    },
+    {
+     "answers": "@@ccc355e68711",
+     "cadence": "@@2100d650ae6c",
+     "topic": "credits",
+     "url": "@@55bc87d5af81"
+    },
+    {
+     "answers": "Illinois Department of Revenue — 2025 Schedule ICR (form) and 2025 Schedule ICR Instructions (R-12/25)",
+     "cadence": "@@2100d650ae6c",
+     "topic": "credits",
+     "url": "@@81a7a524e5e4"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7c495098de04",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@569e281c7b77"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@b9af6a9d3417",
+     "cadence": "@@2100d650ae6c",
+     "topic": "filing_logistics",
+     "url": "@@569e281c7b77"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7c495098de04",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@569e281c7b77"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@10b0394b539d",
+     "cadence": "@@2100d650ae6c",
+     "topic": "forms_and_instructions",
+     "url": "@@569e281c7b77"
+    },
+    {
+     "answers": "2025 Form IL-1040 (Individual Income Tax Return, IL-1040 R-12/25) — Step 4 Line 10 exemption lines, Step 5 Line 12 \"Residents: Multiply Line 11 by 4.95% (.0495)\" (second-pass verification of the rate and exemption structure)",
+     "cadence": "@@2100d650ae6c",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040.pdf"
+    },
+    {
+     "answers": "2025 Form IL-1040, Line 10a Exemption Allowance Chart — $2,850 single / $5,700 MFJ, +$1,000 65-or-older/blind, $500,000 MFJ / $250,000 other phase-out",
+     "cadence": "@@2100d650ae6c",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-exemption-allowance-chart.pdf"
+    },
+    {
+     "answers": "2025 Schedule IL-E/EITC (form) — Step 2 Line 1 dependent exemption 'Multiply the total number of dependents you are claiming by $2,850'; Step 4 Line 7 EITC 20% (0.2); Step 5 Line 12 Child Tax Credit 40% (0.4) of Illinois EITC",
+     "cadence": "@@2100d650ae6c",
+     "topic": "forms_and_instructions",
+     "url": "@@55bc87d5af81"
+    },
+    {
+     "answers": "2025 Schedule IL-E/EITC Instructions (R-12/25) — expanded eligibility (ITIN filers, 18-24/65+), Table 1 2025 federal EITC income limits ($19,104/$50,434/$57,310/$61,555 single-HoH; $26,214/$57,554/$64,430/$68,675 MFJ), investment income below $11,950, Child Tax Credit qualification (dependent under 12)",
+     "cadence": "@@2100d650ae6c",
+     "topic": "forms_and_instructions",
+     "url": "@@bf3cb00e0865"
+    },
+    {
+     "answers": "2025 Schedule ICR Instructions (R-12/25) — property tax credit 5%, K-12 credit 25% over $250 max $750, Volunteer Emergency Worker Credit $500/$1,000 and IEMA/OHS eligibility, $500,000/$250,000 AGI limits",
+     "cadence": "@@2100d650ae6c",
+     "topic": "forms_and_instructions",
+     "url": "@@81a7a524e5e4"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7c495098de04",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@569e281c7b77"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@ccc355e68711",
+     "cadence": "@@2100d650ae6c",
+     "topic": "law_changes",
+     "url": "@@55bc87d5af81"
+    },
+    {
+     "answers": "@@89d07503a926",
+     "cadence": "@@2100d650ae6c",
+     "topic": "law_changes",
+     "url": "@@569e281c7b77"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7c495098de04",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@569e281c7b77"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@c0ba92eaf8cd",
+     "cadence": "@@2100d650ae6c",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@569e281c7b77"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@7c495098de04",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@569e281c7b77"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/il",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/il",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@1acafbca8a88",
+      "@@89c29ed994df",
+      "@@47fb25ac5d2e",
+      "@@e6a62a75634a",
+      "@@0d406d0f29b1"
+     ],
+     "citations": [
+      {
+       "source": "@@ccc355e68711",
+       "url": "@@55bc87d5af81"
+      },
+      {
+       "source": "@@89d07503a926",
+       "url": "@@569e281c7b77"
+      },
+      {
+       "source": "@@10b0394b539d",
+       "url": "@@569e281c7b77"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@351f402a599a"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in IL in 2025 without living there — file a nonresident return on IL-source income.",
+     "state": "IL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@0f330f00ff9e",
+      "@@adbea73c1187",
+      "@@5a18babd89f2",
+      "Remote-work trap: work performed from TX for an employer sitting in IL. If IL applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to IL and require a NONRESIDENT IL return that the physical footprint alone never shows — and the W-2's Box 15 often already names IL. This IL pack year carries no researched convenience rule: verify IL's nonresident wage-sourcing rule at its DOR before assuming no IL filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@1acafbca8a88",
+      "@@89c29ed994df",
+      "@@47fb25ac5d2e",
+      "@@e6a62a75634a",
+      "@@0d406d0f29b1"
+     ],
+     "citations": [
+      {
+       "source": "@@ccc355e68711",
+       "url": "@@55bc87d5af81"
+      },
+      {
+       "source": "@@89d07503a926",
+       "url": "@@569e281c7b77"
+      },
+      {
+       "source": "@@10b0394b539d",
+       "url": "@@569e281c7b77"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@351f402a599a"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in IL part of 2025 — file a part-year return on income while a resident (plus IL-source income while not).",
+     "state": "IL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@0f330f00ff9e",
+      "@@adbea73c1187",
+      "@@5a18babd89f2"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@1acafbca8a88",
+      "@@89c29ed994df",
+      "@@47fb25ac5d2e",
+      "@@e6a62a75634a",
+      "@@0d406d0f29b1"
+     ],
+     "citations": [
+      {
+       "source": "@@ccc355e68711",
+       "url": "@@55bc87d5af81"
+      },
+      {
+       "source": "@@89d07503a926",
+       "url": "@@569e281c7b77"
+      },
+      {
+       "source": "@@10b0394b539d",
+       "url": "@@569e281c7b77"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form IL-1040, Illinois Individual Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in IL all of 2025 — file a resident return on income from all sources.",
+     "state": "IL",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@adbea73c1187",
+      "@@5a18babd89f2"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "il",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "IL state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — with no exemptions or standard deduction to subtract; tax = 0.0495 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "il",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "tax": 1980,
+    "work_head": "@@e12d21306313"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "il",
+     "taxable_base": "45700",
+     "year": 2025
+    },
+    "tax": 1980,
+    "work_head": "IL state income tax (2025, flat rate): taxable_base $45,700.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $2,850 = $2,850.00, 1 dependent exemption(s) x $2,850 = $2,850.00 = $40,000.00; tax = 0.0495 x $40,000 = $1,98"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "il",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "tax": 1980,
+    "work_head": "@@e12d21306313"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@c0ba92eaf8cd",
+    "url": "@@569e281c7b77"
+   },
+   "marginal_rate": "0.0495",
+   "rate": "0.0495",
+   "rate_structure": "flat",
+   "state": "il"
+  },
+  "work_common_tail": "0. Tax line: IL-1040 Line 12 (Tax) = Line 11 (net income = Line 9 base income minus Line 10 exemption allowance) x 4.95% (.0495) — printed on the 2025 form: \"Residents: Multiply Line 11 by 4.95% (.0495). Cannot be less than zero.\" Line 9 base income starts from federal AGI (Line 1) plus IL additions (Lines 2-3) minus IL subtractions. Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($1,000 — Additional $1,000 per 65-or-older checkbox, Line 10b (taxpayer and spouse each). NOT applied by calc.state_tax — enter it on the form's Line 10b.); blind ($1,000 — Additional $1,000 per legally-blind checkbox, Line 10c (taxpayer and spouse each). NOT applied by calc.state_tax — enter it on the form's Line 10c.) This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Dependent exemptions (Line 10d) ship for 2025 at $2,850 each: the 2025 Schedule IL-E/EITC form prints the per-dependent multiplication (Step 2 Line 1, $2,850 per dependent), so dependents_count is applied at $2,850 each. Attach Schedule IL-E/EITC when claiming dependents. Exemption phase-out: the entire Line 10 exemption allowance (including Lines 10b-10d) is $0 when federal AGI exceeds $500,000 (married filing jointly) or $250,000 (all other statuses) — the 'Income Exceptions' box in the Line 10 instructions / Exemption Allowance Chart. Claimed as a dependent by another: if base income exceeds $2,850, the filer's own exemption is $0 (Line 10a chart rows with the Step 1 Line C box checked). Rate is UNCHANGED at 4.95% (.0495) for 2025; the exemption amount is year-specific ($2,850 for 2025, $2,775 for 2024) — never carry an exemption amount to another year."
+ },
+ "year": 2025
+}

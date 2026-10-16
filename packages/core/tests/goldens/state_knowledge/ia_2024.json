@@ -1,0 +1,648 @@
+{
+ "_strings": {
+  "@@097b7c5105c0": "Tuition and Textbook Credit (K-12) — A parent/taxpayer who claims a dependent attending grades K-12 at an accredited Iowa school (nonprofit, Civil-Rights-Act-adherent) or receiving qualifying private instruction (Iowa Code 422.12), and who paid tuition and textbook expenses for that dependent. Only the spouse/parent claiming a given dependent may claim that dependent's expenses; expenses paid with 529-account distributions may qualify. NEW for 2024 — purchases made from Students First Educational Savings Account (ESA) funds under Iowa Code 257.11B are NOT eligible.",
+  "@@12808e7464d1": "2024 IA 1040 Expanded Instructions (archived PDF) — What's New (bracket rate decreases; 2025 single rate 3.8%; Schedule 1 renumbering; ISave 529 limit $5,500; federal tax refund reporting ends), Who Must File thresholds, low-income exemption, line 5 tax / 5.7% alternate tax over $13,500/$32,000, exemption credits, line 9 tuition and textbook credit, line 24 child and dependent care / early childhood credits, line 25 EITC 15%, rounding rules",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1c8d9d29cc11": "Early Childhood Development Credit — Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying early childhood development expenses for a dependent aged three through five. Claimed in lieu of (not in addition to) the Child and Dependent Care Credit — only one of the two may be taken per year. For married separate filers the $90,000 limit applies only to the income of the spouse claiming the dependent.",
+  "@@2e9e439efbc6": "2024 IA 1040 Iowa Individual Income Tax Return (form 41-001, blank/print version) - Step 4 lines 1a-1e federal reference lines, line 2 Federal taxable income, line 3 Net Iowa modifications from IA 1040 Schedule 1 line 21, line 4 Iowa taxable income (Add lines 2 and 3), Step 5 line 5 Iowa tax, Step 3 exemption credits, due date April 30 2025, mailing address and check payee",
+  "@@37fe6af9ddae": "IA 126 (Iowa Nonresident and Part-Year Resident Credit Schedule), form number 41-126, filed together with the IA 1040. (Iowa does not use a separate nonresident return; nonresidents/part-year residents file the IA 1040 and attach the IA 126.)",
+  "@@41bd77081ef8": "Treaty conformity — IA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from IA income (it flows through the federal starting point; do not add it back on the IA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Iowa conforms. The 2024 IA 1040 keeps the 2023 redesign's starting point — \"federal taxable income\" — with Step 4 computing Iowa taxable income as federal taxable income (IA 1040 line 2, from federal 1040 line 15) plus net Iowa modifications from IA 1040 Schedule 1 (line 3, from Schedule 1 line 21 for 2024). Lines 1a-1e (federal total income, adjustments, AGI, standard/itemized deduction, QBI deduction) are printed for reference only (\"Do not include lines 1a through 1e\"). Iowa applies rolling IRC conformity. Federally treaty-exempt income is excluded from federal AGI/federal taxable income before it ever reaches the Iowa return, and there is NO treaty/foreign-income re-inclusion among the 2024 Schedule 1 Column A additions (interest from non-exempt state/municipal securities, certain dividends, partnership/S-corp modifications, depreciation/Section 179 nonconformity, and NOL carryforward items). This is reinforced by Iowa Admin. Code rule 701—300.17, which states a resident is taxed on all income \"except when an item of income is specifically exempted from taxation by a provision of federal or Iowa law.\" Therefore treaty-exempt income is not re-taxed.",
+  "@@48c87d73ebf9": "2024 IA 1040 Iowa Individual Income Tax Return (form 41-001) - printed footer: 'This return is due April 30, 2025. Sign, include federal return, W-2s, and verify SSNs. MAILING ADDRESS: Iowa Income Tax Document Processing, PO BOX 9187, Des Moines IA 50306-9187. Make checks payable to Iowa Department of Revenue'",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@5c364b3bc55e": "Iowa Earned Income Tax Credit (EITC) — Available only to taxpayers who qualify for the federal Earned Income Tax Credit (EITC). Iowa simply piggybacks on federal EITC eligibility (earned income, AGI, investment-income, and qualifying-child rules are determined at the federal level). A taxpayer who qualifies for the Iowa low-income exemption may file an Iowa return solely to claim a refund of this credit (check the alternate-tax / low-income-exemption box the 2024 IA 1040 face prints under the Step 5 heading, above line 5 — the Expanded Instructions p.44 still call it \"the box between Steps 4 and 5\" — skip lines 5-19, enter zero on lines 20 and 22, and enter the EITC on lines 25, 30, 31a, and 32). The 2024 face splits line 31 into 31a (overpayment) and 31b (\"AMENDED RETURN ONLY. Previous refunds.\"); the p.44 EITC-only paragraph still says \"lines 25, 30, 31, and 32\" while p.53 documents 31a/31b. An original (non-amended) return leaves 31b blank, so line 32 equals line 31a. (2024 IA 1040 fillable form 41-001, page 2 (41-001b) Step 5 checkbox and page 3 (41-001c) lines 31a/31b/32, https://revenue.iowa.gov/media/4090/download?inline; 2024 IA 1040 Expanded Instructions pp.44 and 53, https://revenue.iowa.gov/media/4152/download?inline)",
+  "@@74917c13b93d": "2024 IA 1040 (form 41-001) printed footer: 'This return is due April 30, 2025'; Iowa DOR Individual Taxes page: 'Iowa tax returns are due April 30.' Iowa's individual due date is April 30, NOT the federal April 15.",
+  "@@8aa830d0e140": "Law change NOT modeled by the engine (status final_form_published): ALTERNATE TAX PERCENTAGE DROPPED to 5.7% (.057) for 2024, down from 6% in 2023: all filing statuses except single may compute the alternate tax on the alternate-tax-worksheet income above $13,500 ($32,000 if the taxpayer or spouse was 65 or older on 12/31/2024) and enter the SMALLER of that or the rate-schedule tax on IA 1040 line 5 (status-3 spouses prorate it). Resolve via: 2024 IA 1040 Expanded Instructions, line 5 alternate-tax instructions at the citation URL (and the Iowa Income Tax Reduction Worksheet 41-146 for single filers).",
+  "@@b38e348255ba": "Child and Dependent Care Credit — Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying child/dependent care expenses and qualify for the federal child and dependent care credit (must include completed federal Form 2441). For married filing jointly, both spouses' Iowa taxable income is combined to test the $90,000 limit. Only one of the Child & Dependent Care Credit OR the Early Childhood Development Credit may be claimed per year. Generally cannot be claimed if filing status is married filing separately (see IRS Pub. 503).",
+  "@@d7b45b5cc64a": "Low-Income Exemption (with elevated threshold for filers age 65+) — This is an exemption from Iowa income tax (not a dollar-amount credit) functioning as Iowa's primary low-income and senior relief on the IA 1040 — Iowa has no separate 'elderly credit' line. A taxpayer is exempt from Iowa income tax if Iowa taxable income (IA 1040 line 4, with required add-backs incl. the line 1d standard/itemized deduction, line 1e QBI deduction, lump-sum distributions, and Schedule 1 line 17b NOL carryover) is at or below the threshold for their filing status. Senior filers (taxpayer or spouse 65 or older on 12/31/24) qualify under a substantially higher threshold.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f546644cecfa": "Law change NOT modeled by the engine (status final_form_published): IA 1040 SCHEDULE 1 MODIFICATIONS REWORKED for 2024: the schedule was renumbered (net modifications now line 21, military retirement exclusion now line 4), a NEW surviving-spouse pension exemption and a NEW exemption for 529-to-Roth transfers were added, the ISave 529 deduction limit is $5,500 per beneficiary, federal income tax refunds received in 2024 and later are no longer reported, and two checkoffs were repealed. Separately, purchases made from Students First Educational Savings Account (ESA) funds under Iowa Code 257.11B became NOT eligible for the tuition and textbook credit. Resolve via: 2024 IA 1040 Schedule 1 and its instructions inside the 2024 IA 1040 Expanded Instructions at the citation URL; the net modification amount is the filer's own Schedule 1 line 21."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@48c87d73ebf9",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     },
+     {
+      "source": "@@74917c13b93d",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-30."
+    ],
+    "form": "IA 1040 (Iowa Individual Income Tax Return), form number 41-001",
+    "jurisdiction": "states/ia",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@48c87d73ebf9",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     },
+     {
+      "source": "@@74917c13b93d",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-30."
+    ],
+    "form": "IA 1040 (Iowa Individual Income Tax Return), form number 41-001",
+    "jurisdiction": "states/ia",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187 (include an IA 1040V Payment Voucher with a check/money order)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via IA Web Pay: https://govconnect.iowa.gov/ (no processor fee).",
+     "By check: make it payable to \"Iowa Department of Revenue (write the type of tax and tax year on the check; include the IA 1040V voucher; do not send cash)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@48c87d73ebf9",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     },
+     {
+      "source": "@@74917c13b93d",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-30."
+    ],
+    "form": "IA 1040 (Iowa Individual Income Tax Return), form number 41-001",
+    "jurisdiction": "states/ia",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@74917c13b93d",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     }
+    ],
+    "deadline_status": "Due 2025-04-30.",
+    "form": "IA 1040 (Iowa Individual Income Tax Return), form number 41-001",
+    "headline": "IA 2024: refund $512",
+    "jurisdiction": "states/ia",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@74917c13b93d",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     }
+    ],
+    "deadline_status": "Due 2025-04-30.",
+    "form": "IA 1040 (Iowa Individual Income Tax Return), form number 41-001",
+    "headline": "IA 2024: you owe $347",
+    "jurisdiction": "states/ia",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@74917c13b93d",
+      "url": "https://revenue.iowa.gov/media/4091/download?inline"
+     }
+    ],
+    "deadline_status": "Due 2025-04-30.",
+    "form": "IA 1040 (Iowa Individual Income Tax Return), form number 41-001",
+    "headline": "IA 2024: you owe $1,205",
+    "jurisdiction": "states/ia",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/ia",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@5c364b3bc55e",
+      "@@b38e348255ba",
+      "@@1c8d9d29cc11",
+      "@@097b7c5105c0",
+      "@@d7b45b5cc64a"
+     ],
+     "citations": [
+      {
+       "source": "@@12808e7464d1",
+       "url": "https://revenue.iowa.gov/media/4152/download?inline"
+      },
+      {
+       "source": "@@12808e7464d1",
+       "url": "https://revenue.iowa.gov/media/4152/download?inline"
+      },
+      {
+       "source": "@@2e9e439efbc6",
+       "url": "https://revenue.iowa.gov/media/4091/download?inline"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@37fe6af9ddae"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in IA in 2024 without living there — file a nonresident return on IA-source income.",
+     "state": "IA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@41bd77081ef8",
+      "@@8aa830d0e140",
+      "@@f546644cecfa",
+      "Remote-work trap: work performed from TX for an employer sitting in IA. If IA applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to IA and require a NONRESIDENT IA return that the physical footprint alone never shows — and the W-2's Box 15 often already names IA. This IA pack year carries no researched convenience rule: verify IA's nonresident wage-sourcing rule at its DOR before assuming no IA filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@5c364b3bc55e",
+      "@@b38e348255ba",
+      "@@1c8d9d29cc11",
+      "@@097b7c5105c0",
+      "@@d7b45b5cc64a"
+     ],
+     "citations": [
+      {
+       "source": "@@12808e7464d1",
+       "url": "https://revenue.iowa.gov/media/4152/download?inline"
+      },
+      {
+       "source": "@@12808e7464d1",
+       "url": "https://revenue.iowa.gov/media/4152/download?inline"
+      },
+      {
+       "source": "@@2e9e439efbc6",
+       "url": "https://revenue.iowa.gov/media/4091/download?inline"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@37fe6af9ddae"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in IA part of 2024 — file a part-year return on income while a resident (plus IA-source income while not).",
+     "state": "IA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@41bd77081ef8",
+      "@@8aa830d0e140",
+      "@@f546644cecfa"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@5c364b3bc55e",
+      "@@b38e348255ba",
+      "@@1c8d9d29cc11",
+      "@@097b7c5105c0",
+      "@@d7b45b5cc64a"
+     ],
+     "citations": [
+      {
+       "source": "@@12808e7464d1",
+       "url": "https://revenue.iowa.gov/media/4152/download?inline"
+      },
+      {
+       "source": "@@12808e7464d1",
+       "url": "https://revenue.iowa.gov/media/4152/download?inline"
+      },
+      {
+       "source": "@@2e9e439efbc6",
+       "url": "https://revenue.iowa.gov/media/4091/download?inline"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "IA 1040 (Iowa Individual Income Tax Return), form number 41-001"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in IA all of 2024 — file a resident return on income from all sources.",
+     "state": "IA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@8aa830d0e140",
+      "@@f546644cecfa"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ia",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.044",
+    "tax": 0,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 3105,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ia",
+     "taxable_base": "3105",
+     "year": 2024
+    },
+    "marginal_rate": "0.044",
+    "tax": 137,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $3,105.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $3,105 [head_of_household schedule]: 0.044 x $3,105.00 (the $0-$6,210 bracket) = $136.62; total $136.62 -> $137"
+   },
+   {
+    "base_after_exemptions": 11210,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ia",
+     "taxable_base": "11210",
+     "year": 2024
+    },
+    "marginal_rate": "0.0482",
+    "tax": 514,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $11,210.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $11,210 [head_of_household schedule]: 0.044 x $6,210.00 (the $0-$6,210 bracket) = $273.24; 0.0482 x $5,000.00 (the $6,210-$31,050 bracket) = $241.00; total $514.24 -> $514"
+   },
+   {
+    "base_after_exemptions": 41050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ia",
+     "taxable_base": "41050",
+     "year": 2024
+    },
+    "marginal_rate": "0.057",
+    "tax": 2041,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $41,050.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $41,050 [head_of_household schedule]: 0.044 x $6,210.00 (the $0-$6,210 bracket) = $273.24; 0.0482 x $24,840.00 (the $6,210-$31,050 bracket) = $1,197.29; 0.057 x $10,000.00 (the $31,050+ bracket) = $570.00; total $2,040.53 -> $2,041"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ia",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.044",
+    "tax": 0,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ia",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0.044",
+    "tax": 220,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0.044 x $5,000.00 (the $0-$12,420 bracket) = $220.00; total $220.00 -> $220"
+   },
+   {
+    "base_after_exemptions": 17420,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ia",
+     "taxable_base": "17420",
+     "year": 2024
+    },
+    "marginal_rate": "0.0482",
+    "tax": 787,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $17,420.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $17,420 [married_filing_jointly schedule]: 0.044 x $12,420.00 (the $0-$12,420 bracket) = $546.48; 0.0482 x $5,000.00 (the $12,420-$62,100 bracket) = $241.00; total $787.48 -> $787"
+   },
+   {
+    "base_after_exemptions": 72100,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ia",
+     "taxable_base": "72100",
+     "year": 2024
+    },
+    "marginal_rate": "0.057",
+    "tax": 3511,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $72,100.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $72,100 [married_filing_jointly schedule]: 0.044 x $12,420.00 (the $0-$12,420 bracket) = $546.48; 0.0482 x $49,680.00 (the $12,420-$62,100 bracket) = $2,394.58; 0.057 x $10,000.00 (the $62,100+ bracket) = $570.00; total $3,511.06 -> $3,511"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ia",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.044",
+    "tax": 0,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 3105,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ia",
+     "taxable_base": "3105",
+     "year": 2024
+    },
+    "marginal_rate": "0.044",
+    "tax": 137,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $3,105.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $3,105 [married_filing_separately schedule]: 0.044 x $3,105.00 (the $0-$6,210 bracket) = $136.62; total $136.62 -> $137"
+   },
+   {
+    "base_after_exemptions": 11210,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ia",
+     "taxable_base": "11210",
+     "year": 2024
+    },
+    "marginal_rate": "0.0482",
+    "tax": 514,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $11,210.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $11,210 [married_filing_separately schedule]: 0.044 x $6,210.00 (the $0-$6,210 bracket) = $273.24; 0.0482 x $5,000.00 (the $6,210-$31,050 bracket) = $241.00; total $514.24 -> $514"
+   },
+   {
+    "base_after_exemptions": 41050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ia",
+     "taxable_base": "41050",
+     "year": 2024
+    },
+    "marginal_rate": "0.057",
+    "tax": 2041,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $41,050.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $41,050 [married_filing_separately schedule]: 0.044 x $6,210.00 (the $0-$6,210 bracket) = $273.24; 0.0482 x $24,840.00 (the $6,210-$31,050 bracket) = $1,197.29; 0.057 x $10,000.00 (the $31,050+ bracket) = $570.00; total $2,040.53 -> $2,041"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ia",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.044",
+    "tax": 0,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 3105,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ia",
+     "taxable_base": "3105",
+     "year": 2024
+    },
+    "marginal_rate": "0.044",
+    "tax": 137,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $3,105.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $3,105 [single schedule]: 0.044 x $3,105.00 (the $0-$6,210 bracket) = $136.62; total $136.62 -> $137"
+   },
+   {
+    "base_after_exemptions": 11210,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ia",
+     "taxable_base": "11210",
+     "year": 2024
+    },
+    "marginal_rate": "0.0482",
+    "tax": 514,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $11,210.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $11,210 [single schedule]: 0.044 x $6,210.00 (the $0-$6,210 bracket) = $273.24; 0.0482 x $5,000.00 (the $6,210-$31,050 bracket) = $241.00; total $514.24 -> $514"
+   },
+   {
+    "base_after_exemptions": 41050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ia",
+     "taxable_base": "41050",
+     "year": 2024
+    },
+    "marginal_rate": "0.057",
+    "tax": 2041,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $41,050.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $41,050 [single schedule]: 0.044 x $6,210.00 (the $0-$6,210 bracket) = $273.24; 0.0482 x $24,840.00 (the $6,210-$31,050 bracket) = $1,197.29; 0.057 x $10,000.00 (the $31,050+ bracket) = $570.00; total $2,040.53 -> $2,041"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ia",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: IA 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ia",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: IA 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ia",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0482",
+    "tax": 1876,
+    "work_head": "IA state income tax (2024, graduated brackets): taxable_base $40,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.044 x $12,420.00 (the $0-$12,420 bracket) = $546.48; 0.0482 x $27,580.00 (the $12,420-$62,100 bracket) = $1,329.36; total $1,875.84 -> $1,876"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_taxable_income",
+   "citation": {
+    "source": "Iowa Department of Revenue — 2024 Tax Calculation Worksheet (41-026): NON-JOINT FILERS (filing status 1, 3, 4, or 5) $0-$6,210 at 4.40% (.044), $6,210-$31,050 at 4.82% (.0482) plus $273.24, $31,050-and-over at 5.70% (.057) plus $1,470.53; JOINT FILERS (filing status 2) $0-$12,420 at 4.40%, $12,420-$62,100 at 4.82% plus $546.48, $62,100-and-over at 5.70% plus $2,941.06; worked example $25,000 non-joint -> $1,178.92. Second pass: 2024 IA 1040 (41-001) Step 4 'Iowa taxable income. Add lines 2 and 3. Do not include lines 1a through 1e' (line 2 = federal taxable income from federal 1040 line 15; line 3 = net Iowa modifications from IA 1040 Schedule 1, line 21) and Step 5 line 5 'Iowa tax from tax rate schedule or alternate tax', Step 3 $40/$20/$40 exemption CREDITS; 2024 IA 1040 Expanded Instructions — What's New: 'Line 5: The tax rates for each tax bracket have decreased. For tax year 2025, Iowa will have a single tax rate of 3.8%' (the flat rate begins TY2025, NOT TY2024); alternate tax = 5.7% of income over $13,500/$32,000 — both passes agree.",
+    "url": "https://revenue.iowa.gov/media/4093/download?inline"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ia"
+  },
+  "work_common_tail": ". Tax line: IA 1040 (41-001) Step 5, line 5: 'Iowa tax from tax rate schedule or alternate tax' — computed on IA 1040 line 4 'Iowa taxable income' via the 2024 Tax Calculation Worksheet (41-026) or the IA 1040 Tax Calculator (line 4 = line 2 federal taxable income + line 3 net Iowa modifications; 'Do not include lines 1a through 1e'). This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2024 schedule change (VERIFIED): the four 2023 brackets consolidated to THREE — the 6.00% top bracket is gone and 5.70% now applies to all income over $31,050 (non-joint) / $62,100 (joint); bracket bounds indexed up from $6,000/$30,000 and $12,000/$60,000. Iowa's single flat rate of 3.8% (SF 2442) begins TAX YEAR 2025 — do NOT apply it to 2024. Base guidance: supply 2024 IA 1040 line 4 'Iowa taxable income' = line 2 federal taxable income (federal 1040, line 15) + line 3 net Iowa modifications (IA 1040 Schedule 1, line 21 — renumbered from line 22 in 2023). Lines 1a-1e (federal total income, adjustments, AGI, standard/itemized deduction, QBI deduction) are printed for reference only. The federal standard/itemized deduction and QBI deduction are already inside federal taxable income — Iowa has no state standard deduction or base personal exemptions, and this op subtracts nothing before the schedule. Two schedules only: the 2024 Tax Calculation Worksheet (41-026) prints one schedule for JOINT filers (Iowa filing status 2) and one for NON-JOINT filers (statuses 1, 3, 4, and 5) — single, married filing separately, and head of household ship the identical non-joint schedule; married_filing_jointly ships the joint schedule. CRITICAL — qualifying surviving spouse: Iowa status 5 (qualifying surviving spouse) is a NON-JOINT filer on the 41-026 worksheet, but this op's status aliasing resolves qualifying-surviving-spouse to the married_filing_jointly schedule, which would UNDERSTATE Iowa tax. For an Iowa QSS filer, pass filing_status='single' (the identical non-joint schedule). Printed-constant rounding (quantified): the 2024 top-bracket Column C constants are the exact cumulative sums rounded to the CENT — non-joint $1,470.53 vs exact $1,470.528 (+$0.002), joint $2,941.06 vs exact $2,941.056 (+$0.004); the first constants ($273.24 / $546.48) are exact. This op does exact marginal math, so worksheet results can exceed it by less than half a cent — immaterial after whole-dollar rounding. Cents vs whole dollars: the IA 1040 is captioned 'Enter Dollars and Cents' and the worksheet computes tax to the cent; whole-dollar rounding is OPTIONAL ('To round, drop amounts under 50 cents and increase amounts from 50 to 99 cents to the next dollar' — a .50 tie rounds UP, matching this op). No tax-table mandate: all filers use the 41-026 worksheet or the online IA 1040 Tax Calculator. Exemption CREDITS, not base exemptions (NOT modeled): IA 1040 Step 3 computes personal credits at $40 (enter 1 for statuses 1, 3, and 5; 2 for statuses 2 and 4), $20 per 65-or-older (on or before January 1, 2025) or blind condition, and $40 per dependent; the Step 3 total is a CREDIT against tax on line 8 — never a base reduction. exemptions ships empty; pass exemptions_count=0 and dependents_count=0. Alternate tax (NOT modeled): all statuses except single may compute an alternate tax — 5.7% (.057) for 2024 (down from 6% in 2023) of the alternate-tax-worksheet income above $13,500 ($32,000 if you or your spouse was 65 or older on 12/31/2024) — and enter the SMALLER amount on line 5 (check the Step 5 box); status-3 spouses prorate it. Single taxpayers may instead qualify for the Iowa Income Tax Reduction Worksheet (41-146). Check these when income is just above the threshold. Low-income exemption (NOT modeled): filers whose Iowa taxable income plus specified add-backs is at or below $9,000 (single/married filing separately; $24,000 if 65+ on 12/31/24), or $13,500 (married filing jointly / head of household / qualifying surviving spouse; $32,000 if 65+), owe no Iowa income tax (check the box between Steps 4 and 5); a dependent filer's threshold is $5,000; MFS also requires combined income of $13,500 or less. Not modeled — later lines: Iowa lump-sum tax (line 6), the Step 3 exemption credits (line 8), tuition and textbook credit (line 9 — 2024: Students First ESA purchases not eligible), volunteer firefighter/EMS/reserve peace officer credit (line 10), the IA 126 nonresident/part-year credit (line 13), out-of-state tax credit (line 15), SCHOOL DISTRICT SURTAX and EMS surtax (Step 6 — a local percentage of the line 16 balance), the 15%-of-federal Iowa EITC (line 25), and the child and dependent care / early childhood development credits (line 24)."
+ },
+ "year": 2024
+}

@@ -1,0 +1,651 @@
+{
+ "_strings": {
+  "@@00f4fb9f027d": "Schedule NR (Nonresident Schedule), attached to a completed SC1040. Nonresidents and part-year residents electing to file as a nonresident complete Schedule NR; Column A = income from the federal return, Column B = income earned while an SC resident or from SC sources.",
+  "@@0947dacbb6fb": "2024 SC1040 Individual Income Tax Instructions, Before You Begin: \"For tax year 2024, unless you have a valid extension, the due date is April 15, 2025, and the deadline to claim a refund is April 15, 2028.\"",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@28f9dea045c9": "2024 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - MAIL TO addresses printed on the signature page: Refunds/Zero Tax PO Box 101100; Balance Due PO Box 101105",
+  "@@49c9f8c49254": "2024 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) - Line 1 federal taxable income; Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back; IRC conformity through 12/31/2023; due date April 15, 2025; refund claim deadline April 15, 2028; Line w dependent exemption $4,790",
+  "@@77499ba2c8d6": "SC1040 Processing Center, PO Box 101100, Columbia, SC 29211-0100 (2024 SC1040, 'REFUNDS OR ZERO TAX DUE')",
+  "@@9964157f0bc9": "Two Wage Earner Credit — Married couples filing jointly when both spouses have earned income taxed to South Carolina. Not allowed for filing statuses Single, Married Filing Separately, or Head of Household. If either spouse's qualified earned income is zero or less, the credit cannot be taken.",
+  "@@d2ebbec48149": "Tuition Tax Credit — A SC resident student (or a parent/legal guardian/other person who can claim the student as a dependent and who paid the tuition) attending a qualifying SC 2-year or 4-year college/university, meeting the I-319 requirements (SC high school diploma or qualifying equivalent, enrollment within 12 months, in-state tuition rate, credit-hour minimums, no disqualifying scholarships/convictions/defaults; claimable at most four consecutive years).",
+  "@@d8ee2b9ea0e0": "Child and Dependent Care Credit — Full-year SC residents who incurred federal child and dependent care expenses (reported on federal Form 2441). Part-year residents/nonresidents qualify only if they are residents of a state that offers a comparable credit to nonresidents, and then only on a prorated basis. Cannot be claimed if filing status is Married Filing Separately.",
+  "@@e18bb75e0445": "Treaty conformity — SC conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from SC income (it flows through the federal starting point; do not add it back on the SC return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: SC1040 line 1 starts from FEDERAL TAXABLE INCOME (\"Enter federal taxable income from your federal form. If zero or less, enter zero\" - 2024 SC1040, line 1). Federally treaty-exempt income is already excluded from federal taxable income before the SC return begins. SC's additions to income (SC1040 lines a-e) do NOT include any add-back of tax-treaty-exempt income. The only foreign-related add-back is on line e (\"Add back foreign area allowances, cost of living allowances, and income from US possessions\" - 2024 SC1040 instructions), which is distinct from income exempt under a federal income tax treaty and does not re-capture treaty income. Because treaty-exempt income is neither in the federal taxable-income starting point nor added back, it is NOT re-taxed by SC -> conforms. (SC conforms to the IRC as amended through December 31, 2023, except as otherwise provided.)",
+  "@@e45fbc47869a": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed for 2024 (verify the figure): South Carolina Earned Income Tax Credit (the 2024 TC-60 revision was not retrievable); Tuition Tax Credit 2024 private-institution tuition cap.",
+  "@@eac696fb9f90": "South Carolina Earned Income Tax Credit (EITC) — Full-year South Carolina residents who were eligible for and claimed the federal Earned Income Tax Credit on their federal return for the same tax year. The TC-60 instructs the taxpayer to STOP (no credit) if they were not a full-year SC resident or were not eligible for the federal EITC.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@28f9dea045c9",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040_2024.pdf"
+     },
+     {
+      "source": "@@0947dacbb6fb",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "jurisdiction": "states/sc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@77499ba2c8d6",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@28f9dea045c9",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040_2024.pdf"
+     },
+     {
+      "source": "@@0947dacbb6fb",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "jurisdiction": "states/sc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Taxable Processing Center, PO Box 101105, Columbia, SC 29211-0105 (2024 SC1040, 'BALANCE DUE')",
+    "notes": [],
+    "payment": [
+     "Pay online via SC Web Pay: https://mydorway.dor.sc.gov (no processor fee).",
+     "By check: make it payable to \"SCDOR (South Carolina Department of Revenue). The 2024 SC1040 itself pushes electronic payment ('PAYMENT OPTIONS Have a balance due? Pay electronically! It's quick and easy!' - MyDORWAY at dor.sc.gov/pay, or ACH debit on line 37); mailed checks use the SC1040-V voucher payable to SCDOR.\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@28f9dea045c9",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040_2024.pdf"
+     },
+     {
+      "source": "@@0947dacbb6fb",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "jurisdiction": "states/sc",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@77499ba2c8d6",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@0947dacbb6fb",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "headline": "SC 2024: refund $512",
+    "jurisdiction": "states/sc",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0947dacbb6fb",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "headline": "SC 2024: you owe $347",
+    "jurisdiction": "states/sc",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0947dacbb6fb",
+      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "SC1040 (South Carolina Individual Income Tax Return)",
+    "headline": "SC 2024: you owe $1,205",
+    "jurisdiction": "states/sc",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/sc",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@eac696fb9f90",
+      "@@9964157f0bc9",
+      "@@d8ee2b9ea0e0",
+      "@@d2ebbec48149"
+     ],
+     "citations": [
+      {
+       "source": "@@49c9f8c49254",
+       "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@00f4fb9f027d"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in SC in 2024 without living there — file a nonresident return on SC-source income.",
+     "state": "SC",
+     "warnings": [
+      "@@e45fbc47869a",
+      "@@e18bb75e0445",
+      "Remote-work trap: work performed from TX for an employer sitting in SC. If SC applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to SC and require a NONRESIDENT SC return that the physical footprint alone never shows — and the W-2's Box 15 often already names SC. This SC pack year carries no researched convenience rule: verify SC's nonresident wage-sourcing rule at its DOR before assuming no SC filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@eac696fb9f90",
+      "@@9964157f0bc9",
+      "@@d8ee2b9ea0e0",
+      "@@d2ebbec48149"
+     ],
+     "citations": [
+      {
+       "source": "@@49c9f8c49254",
+       "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@00f4fb9f027d"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in SC part of 2024 — file a part-year return on income while a resident (plus SC-source income while not).",
+     "state": "SC",
+     "warnings": [
+      "@@e45fbc47869a",
+      "@@e18bb75e0445"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@eac696fb9f90",
+      "@@9964157f0bc9",
+      "@@d8ee2b9ea0e0",
+      "@@d2ebbec48149"
+     ],
+     "citations": [
+      {
+       "source": "@@49c9f8c49254",
+       "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2024.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "SC1040 (South Carolina Individual Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in SC all of 2024 — file a resident return on income from all sources.",
+     "state": "SC",
+     "warnings": [
+      "@@e45fbc47869a"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "sc",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1730,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "sc",
+     "taxable_base": "1730",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $1,730.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $1,730 [head_of_household schedule]: 0 x $1,730.00 (the $0-$3,460 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 8460,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "sc",
+     "taxable_base": "8460",
+     "year": 2024
+    },
+    "marginal_rate": "0.03",
+    "tax": 150,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $8,460.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $8,460 [head_of_household schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $5,000.00 (the $3,460-$17,330 bracket) = $150.00; total $150.00 -> $150"
+   },
+   {
+    "base_after_exemptions": 27330,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "sc",
+     "taxable_base": "27330",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1036,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $27,330.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $27,330 [head_of_household schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $10,000.00 (the $17,330+ bracket) = $620.00; total $1,036.10 -> $1,036"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "sc",
+     "taxable_base": "44790",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1822,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $44,790.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — minus 1 dependent exemption(s) x $4,790 = $4,790.00 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $22,670.00 (the $17,330+ bracket) = $1,405.54; total $1,821.64 -> $1,822"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "sc",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1730,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "sc",
+     "taxable_base": "1730",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $1,730.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $1,730 [married_filing_jointly schedule]: 0 x $1,730.00 (the $0-$3,460 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 8460,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "sc",
+     "taxable_base": "8460",
+     "year": 2024
+    },
+    "marginal_rate": "0.03",
+    "tax": 150,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $8,460.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $8,460 [married_filing_jointly schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $5,000.00 (the $3,460-$17,330 bracket) = $150.00; total $150.00 -> $150"
+   },
+   {
+    "base_after_exemptions": 27330,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "sc",
+     "taxable_base": "27330",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1036,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $27,330.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $27,330 [married_filing_jointly schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $10,000.00 (the $17,330+ bracket) = $620.00; total $1,036.10 -> $1,036"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "sc",
+     "taxable_base": "44790",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1822,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $44,790.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — minus 1 dependent exemption(s) x $4,790 = $4,790.00 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $22,670.00 (the $17,330+ bracket) = $1,405.54; total $1,821.64 -> $1,822"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "sc",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1730,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "sc",
+     "taxable_base": "1730",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $1,730.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $1,730 [married_filing_separately schedule]: 0 x $1,730.00 (the $0-$3,460 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 8460,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "sc",
+     "taxable_base": "8460",
+     "year": 2024
+    },
+    "marginal_rate": "0.03",
+    "tax": 150,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $8,460.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $8,460 [married_filing_separately schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $5,000.00 (the $3,460-$17,330 bracket) = $150.00; total $150.00 -> $150"
+   },
+   {
+    "base_after_exemptions": 27330,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "sc",
+     "taxable_base": "27330",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1036,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $27,330.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $27,330 [married_filing_separately schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $10,000.00 (the $17,330+ bracket) = $620.00; total $1,036.10 -> $1,036"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "sc",
+     "taxable_base": "44790",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1822,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $44,790.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — minus 1 dependent exemption(s) x $4,790 = $4,790.00 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $22,670.00 (the $17,330+ bracket) = $1,405.54; total $1,821.64 -> $1,822"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "sc",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 1730,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "sc",
+     "taxable_base": "1730",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $1,730.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $1,730 [single schedule]: 0 x $1,730.00 (the $0-$3,460 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 8460,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "sc",
+     "taxable_base": "8460",
+     "year": 2024
+    },
+    "marginal_rate": "0.03",
+    "tax": 150,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $8,460.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $8,460 [single schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $5,000.00 (the $3,460-$17,330 bracket) = $150.00; total $150.00 -> $150"
+   },
+   {
+    "base_after_exemptions": 27330,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "sc",
+     "taxable_base": "27330",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1036,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $27,330.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $27,330 [single schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $10,000.00 (the $17,330+ bracket) = $620.00; total $1,036.10 -> $1,036"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "sc",
+     "taxable_base": "44790",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1822,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $44,790.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — minus 1 dependent exemption(s) x $4,790 = $4,790.00 = $40,000.00; graduated tax on $40,000 [single schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $22,670.00 (the $17,330+ bracket) = $1,405.54; total $1,821.64 -> $1,822"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "sc",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: SC 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: dependent). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "sc",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "marginal_rate": "0.062",
+    "tax": 1822,
+    "work_head": "SC state income tax (2024, graduated brackets): taxable_base $40,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0 x $3,460.00 (the $0-$3,460 bracket) = $0.00; 0.03 x $13,870.00 (the $3,460-$17,330 bracket) = $416.10; 0.062 x $22,670.00 (the $17,330+ bracket) = $1,405.54; total $1,821.64 -> $1,822"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_taxable_income",
+   "citation": {
+    "source": "2024 South Carolina Individual Income Tax Tables SC1040TT (Revised 7/11/24) — the mandatory tax tables for taxable income under $100,000 and the '2024 Tax Rate Schedule for taxable income of $100,000 or more' ('1. Multiply the amount on line 5 by 6.2%; 2. Subtract $659', with the worked example $101,000 -> $5,603); 2024 SC1040 Instructions Line 6 ('If your income subject to tax on line 5 is less than $100,000, use the SC1040TT... If ... $100,000 or more, use the tax rate schedule') and Line w (dependent exemption $4,790). Second pass (bracket bounds and constants): 2024 SC4972, '2024 Tax Computation Schedule' — $0 to $3,460: 0% times the amount; $3,460 to $17,330: 3% times the amount minus $104; $17,330 or more: 6.2% times the amount minus $659 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2024.pdf). TY2024 changes vs 2023: top rate 6.4% -> 6.2% (Act 228 of 2022 step-down; SCDOR: '0 to a top rate of 6.2% for tax year 2024'), bounds indexed $3,330/$16,680 -> $3,460/$17,330, constants $100/$670 -> $104/$659.",
+    "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2024.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "sc"
+  },
+  "work_common_tail": ". Tax line: 2024 Form SC1040, line 6: 'TAX on your South Carolina Income Subject to Tax (see SC1040TT)'. Line 5 (South Carolina Income Subject to Tax) = line 1 federal taxable income ('Enter federal taxable income from your federal form') + line 2 SC additions (lines a-e) - line 4 SC subtractions (lines f-w, including the line w dependent exemption this block ships). This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: TY2024 RATE STEP-DOWN: the top rate fell from 6.4% to 6.2% (the annual Act 228 of 2022 reduction toward 6%; SCDOR: '0 to a top rate of 6.2% for tax year 2024'), the bracket bounds indexed to $3,460/$17,330 (from $3,330/$16,680), and the subtraction constants became $104/$659 (from $100/$670). Base guidance: supply SC1040 line 5 (South Carolina Income Subject to Tax) BEFORE the line w dependent exemption — i.e. line 1 federal TAXABLE income (federal 1040 line 15; the federal standard/itemized deduction is already embedded, never subtract it again) plus SC additions (lines a-e) minus the other SC subtractions (lines f-v) — and pass dependents_count so the op subtracts the shipped $4,790-per-dependent line w amount to reproduce line 5. South Carolina has NO personal exemption and NO state standard deduction of its own. Adjudication note (two-pass): pass 1 = the 2024 SC1040TT (mandatory tables below $100,000 + the printed $100,000-or-more schedule '6.2% minus $659'); pass 2 = the 2024 SC4972's printed '2024 Tax Computation Schedule' ($0-$3,460 0%; $3,460-$17,330 3% times the amount minus $104; $17,330+ 6.2% times the amount minus $659). Both passes agree on every bound and rate. NOTE: the SC1040 instruction booklet itself prints NO bracket dollar bounds — the SC4972 schedule is the official in-form statement of them. CRITICAL — SC's filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation is 'rate x ENTIRE income - constant', and the printed constants are ROUNDED in the taxpayer's favor ($104 vs the exact marginal $103.80; $659 vs the exact $658.36). Pure marginal accumulation (this engine) therefore comes out up to ~$1 HIGHER than the filed method above $17,330 — e.g. $101,000 -> engine $5,604 vs the SC1040TT's own printed example $5,603 (6.2% x $101,000 - $659). The filed return must use the SC1040TT table or the $100,000+ schedule; treat this block's output as an estimate within ~$1-3 (table bands add their own few-dollar spread). Tax-table mandate: taxable income under $100,000 MUST use the SC1040TT tax tables (2024 SC1040 instructions, Line 6); the tables are built in $50/$100 bands from the subtraction formulas at band midpoints (rounded), so a row can differ from exact arithmetic by a few dollars in either direction (e.g. exact $12,000 -> engine $256, but the $12,000-$12,100 row prints $258). Taxable income of $100,000 or more MUST use the rate schedule (6.2% x line 5 - $659). ONE rate schedule for every filing status — the SC1040TT states 'Use this Tax Rate Schedule for any filing status claimed on the SC1040'; the identical schedule is duplicated across all four statuses here, copied, not derived (qualifying surviving spouse included). Zero-rate floor: the first $3,460 of SC taxable income is taxed at 0% (the schema's zero-rate bottom bracket, like OH/MS) — a filer at or below $3,460 owes $0 with no exemption needed. Credits are NOT modeled (tax credits, not base reductions): Two Wage Earner Credit (line 12, .007 x up to $50,000 of the lower-earning spouse's qualified earned income, max $350), Child and Dependent Care Credit (line 11, 7% of the federal expense, max $210/$420), SC Earned Income Tax Credit (125% of the federal EITC via TC-60 -> SC1040TC -> line 13, nonrefundable), and the refundable Tuition Tax Credit (line 21, Form I-319). Out of scope on the same return: TAX on Lump-Sum Distribution (line 7, SC4972) is a separate additional tax; Active Trade or Business income electing the flat 3% rate (Form I-335) is excluded from this schedule; both are computed on their own forms."
+ },
+ "year": 2024
+}

@@ -1,0 +1,696 @@
+{
+ "_strings": {
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1d6314a82bb6": "Oregon Kids Credit — Low-income taxpayers with one or more dependents age 5 or younger at the end of 2024 listed on the Oregon return. You must use a filing status other than married filing separately. A child listed as a dependent only because the custodial parent released the child's dependent exemption to you does NOT qualify.",
+  "@@229296734ee6": "2024 Form OR-40 Instructions (150-101-040-1, Rev. 12-13-24) — cover ('April 15, 2025 is the due date for filing your return and paying your tax due') and Federal tax law section ('Oregon doesn''t allow an extension of time to pay your tax, even if the IRS allows an extension. Your 2024 Oregon tax is due April 15, 2025.')",
+  "@@2982a8bca499": "Treaty conformity — OR conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OR income (it flows through the federal starting point; do not add it back on the OR return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Oregon's resident return (Form OR-40) starts from federal adjusted gross income: 2024 Form OR-40 line 7 is \"Federal adjusted gross income (AGI). Enter your federal AGI from Form 1040, 1040-SR, or 1040-NR, line 11; or Form 1040-X, line 1C.\" Oregon taxable income is then built by applying additions (Schedule OR-ASC) and subtractions to that federal AGI. The 2024 OR-40 instruction booklet contains no general addition/add-back of federally treaty-exempt income (unlike California's Schedule CA, or CT/MD/MS). Because federally treaty-exempt income is already excluded from federal AGI on the 1040 and there is no Oregon add-back code restoring it, the treaty exclusion flows through and is NOT re-taxed by Oregon -> conforms. Caveat: confirm against the full Schedule OR-ASC / OR-ASC-NP addition code list and Publication OR-17 for any niche addition that could touch a specific treaty article.",
+  "@@4717e29e51f4": "Law change NOT modeled by the engine (status final_form_published): FIRST-TIME HOME BUYER SAVINGS ACCOUNT SUBTRACTION NOW INDEXED — the FTHBSA subtraction limits are adjusted for inflation from 2024: $11,865 for joint account holders filing jointly, $5,930 for all others. Resolve via: 2024 Form OR-40 Instructions, New information — First-time home buyer savings account (FTHBSA) subtraction; Publication OR-17.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d7df908a72a": "Law change NOT modeled by the engine (status final_form_published): NEW WILDFIRE SETTLEMENT SUBTRACTION — income from a settlement or judgment related to a wildfire, not deducted elsewhere, may be subtracted, with the related legal expenses; returns for 2018-2021 may be amended to claim it if filed by May 14, 2025. Resolve via: 2024 Form OR-40 Instructions, New information — Wildfire settlement or judgment subtractions; Publication OR-17.",
+  "@@556dd43052ab": "2024 Form OR-40 Instructions (150-101-040-1, Rev. 12-13-24), 'Tax return mailing addresses' p.25 (PO Box 14700 refund / PO Box 14555 tax-to-pay), and the 2024 Form OR-40 itself (150-101-040, Rev. 08-08-24), 'Mail your return' block (non-2-D barcode: 14555/14700; 2-D barcode: 14720/14710)",
+  "@@932c18816084": "Working Family Household and Dependent Care Credit (WFHDC) — Low- and middle-income working families who paid qualified expenses for household services or dependent care for one or more qualifying individuals (generally a dependent under age 13, or a disabled dependent or disabled spouse) so the taxpayer (and spouse, if filing jointly) could work, look for work, or attend school. Tied to IRC Section 21; federal Form 2441 must be completed even if the federal credit is not claimed. The care provider cannot be your spouse, the parent of the qualifying individual, or a person you can claim as a dependent.",
+  "@@aa4aa7318071": "Form OR-40, Oregon Individual Income Tax Return for Full-year Residents (150-101-040, Rev. 08-08-24)",
+  "@@ad64c4e2dde5": "2024 Form OR-40 Instructions, New information: 'Wildfire settlement or judgment subtractions. You may be able to subtract income from a settlement or judgment related to a wildfire that hasn't been deducted elsewhere on your federal or Oregon return.'",
+  "@@b68a326439b9": "Nonresident: Form OR-40-N (150-101-048). Part-year resident: Form OR-40-P (150-101-055). Both share the same instruction booklet (150-101-048-1, Rev. 10-16-24).",
+  "@@cbd894d04b1d": "2024 Form OR-40 Instructions, Full-year Resident (150-101-040-1, Rev. 12-13-24) — line 7 federal AGI starting point, residency definitions, 200-day rule, April 15 2025 due date, filing thresholds (Table 1), Table 5 standard deduction, line 20 tax computation and 2024 tax rate charts p.28, line 25 exemption credit worksheet ($249), New information (federal tax subtraction $8,250, Oregon Kids Credit limits), mailing addresses (PO Box 14700 / PO Box 14555), check payee and Revenue Online payment",
+  "@@cda360289ba9": "Exemption credit — Available to the taxpayer, spouse (if filing jointly), and qualifying dependents (a personal exemption credit per allowed exemption, plus severely-disabled and disabled-child exemptions). Phased out (to $0) for higher-income filers.",
+  "@@d061a970d01c": "2024 Form OR-40 Instructions, New information: 'First-time home buyer savings account (FTHBSA) subtraction. The limits for this subtraction are now adjusted for inflation.'",
+  "@@d2e5b41a9bbb": "Oregon Department of Revenue, PO Box 14700, Salem OR 97309-0930 (refund or no-tax-due returns without a 2-D barcode). If the form's 2-D barcode box is filled in: PO Box 14710, Salem OR 97309-0460.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@ebef57d8f72a": "Oregon Earned Income Credit (EIC) — You must qualify for the federal Earned Income Tax Credit (EITC). Low- to moderate-income working individuals and families. ITIN filers who cannot claim any or all of the federal EITC because the taxpayer, spouse, or child(ren) do not have an SSN valid for work or use an ITIN may still qualify (see Schedule OR-EIC-ITIN, available in English and Spanish). RDPs may claim it if they would otherwise qualify for the EITC using their 'as if' federal return."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@556dd43052ab",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     },
+     {
+      "source": "@@229296734ee6",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@aa4aa7318071",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@d2e5b41a9bbb",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@556dd43052ab",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     },
+     {
+      "source": "@@229296734ee6",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@aa4aa7318071",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Oregon Department of Revenue, PO Box 14555, Salem OR 97309-0940 (tax-to-pay returns without a 2-D barcode). If the form's 2-D barcode box is filled in: PO Box 14720, Salem OR 97309-0463. (This resolves the 2023 pack's address discrepancy: 14555 and 14720 are BOTH correct — non-2-D-barcode vs 2-D-barcode returns.)",
+    "notes": [],
+    "payment": [
+     "Pay online via OR Web Pay: https://www.oregon.gov/dor (click on Revenue Online; pay by direct debit from checking/savings, or by credit card with a service-provider fee) (no processor fee).",
+     "By check: make it payable to \"Oregon Department of Revenue (make check or money order payable to \"Oregon Department of Revenue\"; write the tax year (2024), the form you're filing (Oregon Form OR-40), and the last four digits of your SSN or ITIN on the payment; use blue or black ballpoint ink; don't send cash or a postdated check; if you include a payment with your return, don't include a payment voucher — Form OR-40-V is only for payments sent separately)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@556dd43052ab",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     },
+     {
+      "source": "@@229296734ee6",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@aa4aa7318071",
+    "jurisdiction": "states/or",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@d2e5b41a9bbb",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@229296734ee6",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@aa4aa7318071",
+    "headline": "OR 2024: refund $512",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@229296734ee6",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@aa4aa7318071",
+    "headline": "OR 2024: you owe $347",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@229296734ee6",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@aa4aa7318071",
+    "headline": "OR 2024: you owe $1,205",
+    "jurisdiction": "states/or",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/or",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@ebef57d8f72a",
+      "@@932c18816084",
+      "@@1d6314a82bb6",
+      "@@cda360289ba9"
+     ],
+     "citations": [
+      {
+       "source": "@@ad64c4e2dde5",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      },
+      {
+       "source": "@@d061a970d01c",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      },
+      {
+       "source": "@@cbd894d04b1d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@b68a326439b9"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in OR in 2024 without living there — file a nonresident return on OR-source income.",
+     "state": "OR",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@2982a8bca499",
+      "@@4d7df908a72a",
+      "@@4717e29e51f4",
+      "Remote-work trap: work performed from TX for an employer sitting in OR. If OR applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to OR and require a NONRESIDENT OR return that the physical footprint alone never shows — and the W-2's Box 15 often already names OR. This OR pack year carries no researched convenience rule: verify OR's nonresident wage-sourcing rule at its DOR before assuming no OR filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@ebef57d8f72a",
+      "@@932c18816084",
+      "@@1d6314a82bb6",
+      "@@cda360289ba9"
+     ],
+     "citations": [
+      {
+       "source": "@@ad64c4e2dde5",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      },
+      {
+       "source": "@@d061a970d01c",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      },
+      {
+       "source": "@@cbd894d04b1d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@b68a326439b9"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in OR part of 2024 — file a part-year return on income while a resident (plus OR-source income while not).",
+     "state": "OR",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@2982a8bca499",
+      "@@4d7df908a72a",
+      "@@4717e29e51f4"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@ebef57d8f72a",
+      "@@932c18816084",
+      "@@1d6314a82bb6",
+      "@@cda360289ba9"
+     ],
+     "citations": [
+      {
+       "source": "@@ad64c4e2dde5",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      },
+      {
+       "source": "@@d061a970d01c",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      },
+      {
+       "source": "@@cbd894d04b1d",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@aa4aa7318071"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in OR all of 2024 — file a resident return on income from all sources.",
+     "state": "OR",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@4d7df908a72a",
+      "@@4717e29e51f4"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,420 = -$4,420.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "4420",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $4,420.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,420 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4300,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "8720",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 204,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $8,720.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,420 = $4,300.00; graduated tax on $4,300 [head_of_household schedule]: 0.0475 x $4,300.00 (the $0-$8,600 bracket) = $204.25; total $204.25 -> $204"
+   },
+   {
+    "base_after_exemptions": 26500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "30920",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 1717,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $30,920.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,420 = $26,500.00; graduated tax on $26,500 [head_of_household schedule]: 0.0475 x $8,600.00 (the $0-$8,600 bracket) = $408.50; 0.0675 x $12,900.00 (the $8,600-$21,500 bracket) = $870.75; 0.0875 x $5,000.00 (the $21,500-$250,000 bracket) = $437.50; total $1,716.75 -> $1,717"
+   },
+   {
+    "base_after_exemptions": 260000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "264420",
+     "year": 2024
+    },
+    "marginal_rate": "0.099",
+    "tax": 22263,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $264,420.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,420 = $260,000.00; graduated tax on $260,000 [head_of_household schedule]: 0.0475 x $8,600.00 (the $0-$8,600 bracket) = $408.50; 0.0675 x $12,900.00 (the $8,600-$21,500 bracket) = $870.75; 0.0875 x $228,500.00 (the $21,500-$250,000 bracket) = $19,993.75; 0.099 x $10,000.00 (the $250,000+ bracket) = $990.00; total $22,263.00 -> $22,263"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,495 = -$5,495.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "5495",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $5,495.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,495 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4300,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "9795",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 204,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $9,795.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,495 = $4,300.00; graduated tax on $4,300 [married_filing_jointly schedule]: 0.0475 x $4,300.00 (the $0-$8,600 bracket) = $204.25; total $204.25 -> $204"
+   },
+   {
+    "base_after_exemptions": 26500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "31995",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 1717,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $31,995.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,495 = $26,500.00; graduated tax on $26,500 [married_filing_jointly schedule]: 0.0475 x $8,600.00 (the $0-$8,600 bracket) = $408.50; 0.0675 x $12,900.00 (the $8,600-$21,500 bracket) = $870.75; 0.0875 x $5,000.00 (the $21,500-$250,000 bracket) = $437.50; total $1,716.75 -> $1,717"
+   },
+   {
+    "base_after_exemptions": 260000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "265495",
+     "year": 2024
+    },
+    "marginal_rate": "0.099",
+    "tax": 22263,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $265,495.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,495 = $260,000.00; graduated tax on $260,000 [married_filing_jointly schedule]: 0.0475 x $8,600.00 (the $0-$8,600 bracket) = $408.50; 0.0675 x $12,900.00 (the $8,600-$21,500 bracket) = $870.75; 0.0875 x $228,500.00 (the $21,500-$250,000 bracket) = $19,993.75; 0.099 x $10,000.00 (the $250,000+ bracket) = $990.00; total $22,263.00 -> $22,263"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,745 = -$2,745.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "2745",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $2,745.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,745 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2150,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "4895",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 102,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $4,895.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,745 = $2,150.00; graduated tax on $2,150 [married_filing_separately schedule]: 0.0475 x $2,150.00 (the $0-$4,300 bracket) = $102.12; total $102.12 -> $102"
+   },
+   {
+    "base_after_exemptions": 15750,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "18495",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 1077,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $18,495.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,745 = $15,750.00; graduated tax on $15,750 [married_filing_separately schedule]: 0.0475 x $4,300.00 (the $0-$4,300 bracket) = $204.25; 0.0675 x $6,450.00 (the $4,300-$10,750 bracket) = $435.38; 0.0875 x $5,000.00 (the $10,750-$125,000 bracket) = $437.50; total $1,077.12 -> $1,077"
+   },
+   {
+    "base_after_exemptions": 135000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "137745",
+     "year": 2024
+    },
+    "marginal_rate": "0.099",
+    "tax": 11627,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $137,745.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,745 = $135,000.00; graduated tax on $135,000 [married_filing_separately schedule]: 0.0475 x $4,300.00 (the $0-$4,300 bracket) = $204.25; 0.0675 x $6,450.00 (the $4,300-$10,750 bracket) = $435.38; 0.0875 x $114,250.00 (the $10,750-$125,000 bracket) = $9,996.88; 0.099 x $10,000.00 (the $125,000+ bracket) = $990.00; total $11,626.50 -> $11,627"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,745 = -$2,745.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "2745",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 0,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $2,745.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,745 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2150,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "4895",
+     "year": 2024
+    },
+    "marginal_rate": "0.0475",
+    "tax": 102,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $4,895.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,745 = $2,150.00; graduated tax on $2,150 [single schedule]: 0.0475 x $2,150.00 (the $0-$4,300 bracket) = $102.12; total $102.12 -> $102"
+   },
+   {
+    "base_after_exemptions": 15750,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "18495",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 1077,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $18,495.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,745 = $15,750.00; graduated tax on $15,750 [single schedule]: 0.0475 x $4,300.00 (the $0-$4,300 bracket) = $204.25; 0.0675 x $6,450.00 (the $4,300-$10,750 bracket) = $435.38; 0.0875 x $5,000.00 (the $10,750-$125,000 bracket) = $437.50; total $1,077.12 -> $1,077"
+   },
+   {
+    "base_after_exemptions": 135000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "137745",
+     "year": 2024
+    },
+    "marginal_rate": "0.099",
+    "tax": 11627,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $137,745.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,745 = $135,000.00; graduated tax on $135,000 [single schedule]: 0.0475 x $4,300.00 (the $0-$4,300 bracket) = $204.25; 0.0675 x $6,450.00 (the $4,300-$10,750 bracket) = $435.38; 0.0875 x $114,250.00 (the $10,750-$125,000 bracket) = $9,996.88; 0.099 x $10,000.00 (the $125,000+ bracket) = $990.00; total $11,626.50 -> $11,627"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: OR 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: OR 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "or",
+     "taxable_base": "45495",
+     "year": 2024
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2898,
+    "work_head": "OR state income tax (2024, graduated brackets): taxable_base $45,495.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $5,495 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0475 x $8,600.00 (the $0-$8,600 bracket) = $408.50; 0.0675 x $12,900.00 (the $8,600-$21,500 bracket) = $870.75; 0.0875 x $18,500.00 (the $21,500-$250,000 bracket) = $1,618.75; total $2,898.00 -> $2,898"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2024 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 12-13-24) — p.16 line 20 tax computation (tax tables if line 19 < $50,000; rate-chart formula if $50,000 or more; booklet Examples 1 and 2), p.28 '2024 Tax rate charts' (Chart S / Chart J, $50,000-and-over segments: Chart S '$4,073 plus 8.75% of excess over $50,000' / '$10,636 plus 9.9% of excess over $125,000'; Chart J '$3,774 plus 8.75%' / '$21,274 plus 9.9% of excess over $250,000'), p.16 Table 5 'Standard deduction' ($2,745 single; $5,495 MFJ; $2,745/$0 MFS; $4,420 HoH; $5,495 QSS) plus age-65/blind additions, p.14 Table 4 federal tax liability subtraction AGI phaseout ($8,250/$4,125 2024 limits), pp.17-18 line 25 exemption credit worksheet ($249/exemption CREDIT). Full four-bracket 2024 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,300/$10,750/$125,000 and $8,600/$21,500/$250,000) as printed in the 2024 Form OR-40-N and OR-40-P Instructions (150-101-048-1, Rev. 10-16-24), '2024 Tax rate charts', https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2024.pdf — independently confirmed by 2024 Publication OR-ESTIMATE (150-101-026, Rev. 10-12-23), p.3, https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2024.pdf; both print identical breakpoints, rates, and constants.",
+    "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "or"
+  },
+  "work_common_tail": ". Tax line: Form OR-40, line 20 \"Tax (see instructions)\". Instructions p.16: \"Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.\" and \"Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.\" This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply 2024 Form OR-40, line 15 \"Income after subtractions\" (line 9 income after additions minus line 14 total subtractions). Line 15 already reflects Oregon additions (Schedule OR-ASC) and all subtractions, including the line 10 federal tax liability subtraction (2024 limit $8,250; $4,125 married filing separately; phased down by federal AGI per Table 4 — $0 at AGI of $145,000+ single/MFS or $290,000+ MFJ/HoH/QSS). The op subtracts only the Table 5 standard deduction to reach line 19 (Oregon taxable income) and applies the rate schedule. Filers who itemize for Oregon (line 16 Schedule OR-A amount larger than the standard deduction) or who claim the age-65+/blind additional standard deduction must compute lines 17-19 on the form instead — the op models only the basic per-status standard deduction. Adjudication note (two-pass): base is federal_agi — Form OR-40 line 7 is federal adjusted gross income; supply the pre-deduction Oregon income figure (line 19 taxable income = line 15 minus the line 16/17 deduction is what the op reproduces by subtracting the standard deduction). Vector counts are zero by design: Oregon personal/dependent exemptions are the $249-per-exemption CREDIT on line 25 (2024, up from $236 in 2023), income-limited, never a base reduction. 2024 indexing verified across three documents: OR-40 booklet charts ($50,000+ segments), OR-40-N/P instructions (full four-bracket charts), and Publication OR-ESTIMATE (full charts) — all agree on $4,300/$10,750/$125,000 (S) and $8,600/$21,500/$250,000 (J). Tax-table mandate below $50,000: the 2024 OR-40 instructions (line 20, p.16) REQUIRE the tax tables when Oregon taxable income (line 19) is less than $50,000 — the table is built from the rounded chart constants at $100-band midpoints, so bracket math may differ by a few dollars within a band (booklet Example 1: single, taxable income $19,525 — table tax $1,409 vs. pure bracket math $1,409.63 -> $1,410); the filed form must use the table. The rate-chart formula applies only at $50,000 or more. Rounded printed constants: Chart S's published '$X plus Y% of excess' constants are the exact cumulative bracket sums rounded DOWN ($204 vs $204.25; $639 vs $639.625; $10,636 vs $10,636.50; the $50,000+ segment prints $4,073 vs $4,074.00 exact), so pure marginal bracket math (what this op computes) can be up to $1 HIGHER than the printed chart formula. Chart J's constants are rounded UP ($409 vs $408.50; $1,280 vs $1,279.25; $21,274 vs $21,273.00; the $50,000+ segment prints $3,774 vs $3,773.00 exact), so chart-formula results can be up to $1 higher than marginal math (booklet Example 2: MFJ $75,500 — chart $6,005 vs marginal math $6,004.25 -> $6,004). One schedule covers married filing jointly, head of household, AND qualifying surviving spouse (Chart J / tax-table Column J) — head of household brackets are identical to MFJ, and qualifying surviving spouse maps to married_filing_jointly with no divergence. Single and married filing separately share Chart S / Column S. Oregon registered domestic partners (RDPs) use the married statuses. Oregon's personal/dependent exemption is a tax CREDIT, not a base reduction, and is NOT shipped as an exemption: Form OR-40 line 25 'Exemption credit' = $249 per exemption for 2024 (taxpayer, spouse, dependents, plus severely-disabled and disabled-child exemptions), subtracted from tax after the rate applies; it is $0 when federal AGI exceeds $200,000 ($100,000 if single or married filing separately). The calc op does not model this credit. Standard-deduction gates NOT modeled: married filing separately gets $0 if the other spouse claims itemized deductions; a non-U.S. citizen without permanent resident status gets $0 (but may itemize); a person claimable as a dependent on another return is limited to the larger of earned income + $450 or $1,300, capped at the basic amount for their status. Compute those cases on the form. Age 65+/blind additional standard deduction NOT modeled: each applicable checkbox below line 17 adds $1,200 (single or head of household) or $1,000 (all other filers) to the Table 5 standard deduction (booklet example: MFJ couple with one spouse 65+ enters $6,495 = $5,495 + $1,000) — enter it on the form; this op applies only the basic per-status amount. Federal tax liability subtraction is already inside the caller-supplied base (OR-40 line 10 flows into line 15): 2024 limit $8,250 ($4,125 married filing separately), phased down by federal AGI per Table 4 (single: $8,250 under $125,000 stepping to $0 at $145,000+; MFS: $4,125 stepping to $0 at $145,000+; MFJ/HoH/QSS: $8,250 under $250,000 stepping to $0 at $290,000+). NO kicker on the 2024 return: Oregon's surplus (kicker) credit is claimed on odd-year returns (44.28% on 2023 returns; the next on 2025 returns) — the 2024 booklet has no kicker line and the word does not appear. Alternative tax computations on line 20 NOT modeled: Schedule OR-FIA-40 (farm income averaging, box 20a), Worksheet FCG in Publication OR-FCG (farm asset capital gain rate, box 20b), and Schedule OR-PTE-FY (qualified business income reduced tax rate, box 20c — irrevocable election) replace the table/chart math when elected. Bracket source: the OR-40 booklet (p.28) prints Chart S/Chart J only for taxable income of $50,000 or more (the tables govern below); the full four-bracket 2024 Chart S/Chart J including the $4,300/$10,750 and $8,600/$21,500 breakpoints is printed in the 2024 Form OR-40-N/OR-40-P instructions (150-101-048-1, Rev. 10-16-24) and in 2024 Publication OR-ESTIMATE (150-101-026), p.3: https://www.oregon.gov/dor/forms/FormsPubs/publication-or-estimate_101-026_2024.pdf — spot-checks of the booklet's tax tables (e.g., Column S at $19,500-$19,600 = $1,409; Column S at $49,900-$50,000 = $4,069; Column J at $9,700-$9,800 = $487) match this schedule chained from the printed constants."
+ },
+ "year": 2024
+}

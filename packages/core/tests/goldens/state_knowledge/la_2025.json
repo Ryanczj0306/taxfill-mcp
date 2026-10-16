@@ -1,0 +1,797 @@
+{
+ "_strings": {
+  "@@07aaec87906d": "Louisiana Refundable School Readiness Child Care Expense Credit (federal AGI $25,000 or less) — Taxpayers who claimed the Louisiana Refundable Child Care Credit (IT-540 Line 14) and who had a qualified dependent under age six that attended a child care facility participating in the Quality Start Rating program. Refundable version requires federal AGI of $25,000 or less. Authorized by R.S. 47:6104.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@274fef353ccb": "Louisiana DOR - 2025 IT-540 instructions, WHERE TO FILE AND PAY TAX ('A return for which a payment is due must be mailed to P.O. Box 3550, Baton Rouge, LA 70821-3550 ... All other individual income tax returns must be mailed to P.O. Box 3440, Baton Rouge, LA 70821-3440')",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@3a96ab53fd70": "Louisiana Nonrefundable Child Care Credit (federal AGI greater than $25,000) — Louisiana residents with federal adjusted gross income greater than $25,000 who incurred qualifying child and dependent care expenses (IRC Section 21) in Louisiana and claimed a federal child care credit. Unused credit may be carried forward up to five years. Authorized by R.S. 47:297.4.",
+  "@@4a4dd5c4f497": "annual (per tax year; the newest shipped LA pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@9303524b31d3": "Louisiana DOR - 2025 IT-540 instructions WHEN TO FILE ('A 2025 calendar year return is due on or before May 15, 2026'); automatic six-month extension to November 15, 2026 (no extension form required; pay any tax due with voucher Form R-2868V by May 15, 2026)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9967a606b131": "Law change NOT modeled by the engine (status final_form_published): Act 11 also raised the Annual Retirement Income Exemption for taxpayers 65 or older (Schedule E code 06E) from $6,000 to $12,000 per person for 2025. This is a Schedule E base subtraction reached on IT-540 Line 7, not part of the Line 11 computation. Resolve via: 2025 IT-540 Schedule E (code 06E, Annual Retirement Income Exemption) and its instructions in IT540i-WEB-2025 (the citation URL); the exempt amount comes from the filer's own retirement income and must already be netted out of the Line 7 figure supplied as taxable_base.",
+  "@@b0cb4800e01c": "Louisiana DOR - 2025 IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025): WHAT'S NEW FOR LOUISIANA 2025 - Act 11 of the 2024 Third Extraordinary Legislative Session changed the income tax rate to a flat 3% (Line 11), increased the standard deduction to $12,500 single/MFS and $25,000 MFJ/QSS/HOH (Line 8), and repealed the additional $1,000 exemptions for dependents, 65-or-older, and blind (old Lines 6A/6B/6D/6E/6F removed); Line 7 Federal AGI; Line 10 = Line 7 minus Line 8 minus Line 9D; 'A 2025 calendar year return is due on or before May 15, 2026'",
+  "@@b490c4420a1f": "Louisiana DOR - Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform): Act 11 of the 2024 Third Extraordinary Session repeals the graduated rates/brackets (formerly 1.85%/3.5%/4.25%) in favor of a FLAT 3% tax effective for tax years beginning on or after 1/1/2025; nearly triples the standard deduction ($4,500 -> $12,500 single/MFS; $9,000 -> $25,000 surviving spouse / head of household — MFJ likewise $25,000) with an annual CPI-U inflation adjustment; the additional exemptions for dependents, blind, and 65-or-older were repealed; annual retirement income exemption for 65+ raised from $6,000 to $12,000",
+  "@@c399db297d7b": "Louisiana Refundable Child Care Credit (federal AGI $25,000 or less) — Louisiana residents with federal adjusted gross income of $25,000 or less who incurred child and dependent care expenses in Louisiana (under IRC Section 21) for a qualifying person. Refundable whether or not a federal child care credit was claimed. Authorized by R.S. 47:297.4. The worksheet must be attached.",
+  "@@d770a255b51e": "2025 Louisiana IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025), LA DOR - WHAT'S NEW FOR LOUISIANA 2025: 'Your Louisiana Income Tax - Line 11 - Act 11 of the 2024 Third Extraordinary Legislative Session changed the income tax rate to a flat tax rate of 3%'; 'Louisiana Standard Deduction - Line 8 ... The amount of the deduction is $12,500 for individuals filing single and married filing separate; $25,000 for individuals filing married filing joint, qualifying surviving spouse and head of household'; Line 8 instruction 'If your filing status is 1 or 3, enter $12,500; 2, 4, or 5, enter $25,000'; Line 10 'Subtract Lines 8 and 9D from Line 7. If less than zero, enter zero 0'; Line 11 'Multiply Line 10 by .03. Round to the nearest dollar'. Second pass: Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform) prints the pre/post rate tables (graduated 1.85%/3.5%/4.25% -> flat 3%) and the standard-deduction increase table ($4,500 -> $12,500 single/MFS; $9,000 -> $25,000 surviving spouse/head of household), and states the additional exemptions for dependents, blind, and 65-or-older were repealed - https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf - both passes agree.",
+  "@@dc170f609f05": "https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf",
+  "@@e0e6e5365951": "The newest shipped LA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@e56510847552": "Treaty conformity — LA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from LA income (it flows through the federal starting point; do not add it back on the LA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: LA's resident return (IT-540) starts from Federal Adjusted Gross Income: Line 7 is \"FEDERAL ADJUSTED GROSS INCOME\" and the 2025 instructions say \"Line 7 - Enter the amount of your Federal Adjusted Gross Income (Federal AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11. If your Federal AGI is less than zero, enter 0.\" Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The only \"additions\" to federal AGI are on Schedule E; there is NO add-back of tax-treaty-exempt income anywhere on the IT-540 form, Schedule E, or in the 2025 instructions. Because LA starts from federal AGI and has no treaty addback, treaty-exempt income is not re-taxed -> conforms. (Act 11's 2025 flat-rate reform did not change LA's federal-AGI starting point or add any treaty addback.)",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@fb5cbd3631b5": "Department of Revenue, P.O. Box 3440, Baton Rouge, LA 70821-3440 (\"All other individual income tax returns must be mailed to P.O. Box 3440\" — refund / no-payment)",
+  "@@fc6d5c6bed65": "Louisiana Earned Income Credit (LA EIC) — Resident individuals who claimed a Federal Earned Income Credit (EIC) for 2025. Authorized by R.S. 47:297.8. The Louisiana Earned Income Credit Worksheet must be attached to the return."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@274fef353ccb",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     },
+     {
+      "source": "@@9303524b31d3",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-05-15."
+    ],
+    "form": "IT-540 (2025 Louisiana Resident Income Tax Return)",
+    "jurisdiction": "states/la",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@fb5cbd3631b5",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@274fef353ccb",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     },
+     {
+      "source": "@@9303524b31d3",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-05-15."
+    ],
+    "form": "IT-540 (2025 Louisiana Resident Income Tax Return)",
+    "jurisdiction": "states/la",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Department of Revenue, P.O. Box 3550, Baton Rouge, LA 70821-3550 (\"A return for which a payment is due must be mailed to P.O. Box 3550\"). Print the last four digits of your SSN on the check/money order. Do not send cash.",
+    "notes": [],
+    "payment": [
+     "Pay online via LA Web Pay: https://www.revenue.louisiana.gov/latap (no processor fee).",
+     "By check: make it payable to \"Louisiana Department of Revenue (2025 IT-540 instructions: \"Make your check or money order payable to the Louisiana Department of Revenue. Print the last four digits of your social security number on your check or money order.\" Do not send cash.)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@274fef353ccb",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     },
+     {
+      "source": "@@9303524b31d3",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-05-15."
+    ],
+    "form": "IT-540 (2025 Louisiana Resident Income Tax Return)",
+    "jurisdiction": "states/la",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@fb5cbd3631b5",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@9303524b31d3",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-05-15.",
+    "form": "IT-540 (2025 Louisiana Resident Income Tax Return)",
+    "headline": "LA 2025: refund $512",
+    "jurisdiction": "states/la",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@9303524b31d3",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-05-15.",
+    "form": "IT-540 (2025 Louisiana Resident Income Tax Return)",
+    "headline": "LA 2025: you owe $347",
+    "jurisdiction": "states/la",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@9303524b31d3",
+      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-05-15.",
+    "form": "IT-540 (2025 Louisiana Resident Income Tax Return)",
+    "headline": "LA 2025: you owe $1,205",
+    "jurisdiction": "states/la",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e6e5365951",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Louisiana Department of Revenue – 2025 IT-540 instructions, Line 16 (LA EIC, 5 percent of the Federal EIC, R.S. 47:297.8)",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "credits",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e6e5365951",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@274fef353ccb",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "filing_logistics",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e6e5365951",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@b0cb4800e01c",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "forms_and_instructions",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    },
+    {
+     "answers": "@@b490c4420a1f",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "forms_and_instructions",
+     "url": "@@dc170f609f05"
+    },
+    {
+     "answers": "Louisiana DOR - Individual Income Tax (general resources): residency/domicile, IT-540 vs IT-540B, returns and payments due May 15th of the following year, filing requirement tied to federal filing obligation",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.louisiana.gov/individuals/general-resources/individual-income-tax/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e6e5365951",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Louisiana DOR - 2025 IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025): WHAT'S NEW FOR LOUISIANA 2025 (Act 11, 2024 Third Extraordinary Session — flat 3% rate at Line 11; standard deduction increased to $12,500 single/MFS and $25,000 MFJ/QSS/HOH at Line 8; additional $1,000 exemptions for dependents, 65-or-older, and blind REPEALED and old Lines 6A/6B/6D/6E/6F removed; annual retirement income exemption for 65+ raised from $6,000 to $12,000); Line 7 Federal AGI; Line 8 standard deduction; Line 9A-9D excess federal itemized deductions; Line 10 = Line 7 minus Lines 8 and 9D (floor 0); Line 11 = Line 10 x .03 (round to nearest dollar); Lines 14-16 refundable child care / school readiness / LA EIC (5%); WHO MUST FILE; WHEN TO FILE (May 15, 2026); mailing P.O. Box 3550 (with payment) / P.O. Box 3440 (all other); payee Louisiana Department of Revenue",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "law_changes",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    },
+    {
+     "answers": "@@b490c4420a1f",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "law_changes",
+     "url": "@@dc170f609f05"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e6e5365951",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@d770a255b51e",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e0e6e5365951",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/la",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/la",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@fc6d5c6bed65",
+      "@@c399db297d7b",
+      "@@07aaec87906d",
+      "@@3a96ab53fd70"
+     ],
+     "citations": [
+      {
+       "source": "@@b490c4420a1f",
+       "url": "@@dc170f609f05"
+      },
+      {
+       "source": "@@b0cb4800e01c",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "IT-540B (2025 Louisiana Nonresident and Part-Year Resident Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in LA in 2025 without living there — file a nonresident return on LA-source income.",
+     "state": "LA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@e56510847552",
+      "@@9967a606b131",
+      "Remote-work trap: work performed from TX for an employer sitting in LA. If LA applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to LA and require a NONRESIDENT LA return that the physical footprint alone never shows — and the W-2's Box 15 often already names LA. This LA pack year carries no researched convenience rule: verify LA's nonresident wage-sourcing rule at its DOR before assuming no LA filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@fc6d5c6bed65",
+      "@@c399db297d7b",
+      "@@07aaec87906d",
+      "@@3a96ab53fd70"
+     ],
+     "citations": [
+      {
+       "source": "@@b490c4420a1f",
+       "url": "@@dc170f609f05"
+      },
+      {
+       "source": "@@b0cb4800e01c",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "IT-540B (2025 Louisiana Nonresident and Part-Year Resident Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in LA part of 2025 — file a part-year return on income while a resident (plus LA-source income while not).",
+     "state": "LA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@e56510847552",
+      "@@9967a606b131"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@fc6d5c6bed65",
+      "@@c399db297d7b",
+      "@@07aaec87906d",
+      "@@3a96ab53fd70"
+     ],
+     "citations": [
+      {
+       "source": "@@b490c4420a1f",
+       "url": "@@dc170f609f05"
+      },
+      {
+       "source": "@@b0cb4800e01c",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "IT-540 (2025 Louisiana Resident Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in LA all of 2025 — file a resident return on income from all sources.",
+     "state": "LA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@9967a606b131"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $25,000 = -$25,000.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.03 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": "25000",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $25,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $25,000 = $0.00; tax = 0.03 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": "65000",
+     "year": 2025
+    },
+    "tax": 1200,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $65,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $25,000 = $40,000.00; tax = 0.03 x $40,000 = $1,20"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "la",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $25,000 = -$25,000.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.03 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "la",
+     "taxable_base": "25000",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $25,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $25,000 = $0.00; tax = 0.03 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "la",
+     "taxable_base": "65000",
+     "year": 2025
+    },
+    "tax": 1200,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $65,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $25,000 = $40,000.00; tax = 0.03 x $40,000 = $1,20"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "la",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,500 = -$12,500.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.03 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "la",
+     "taxable_base": "12500",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $12,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,500 = $0.00; tax = 0.03 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "la",
+     "taxable_base": "52500",
+     "year": 2025
+    },
+    "tax": 1200,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $52,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,500 = $40,000.00; tax = 0.03 x $40,000 = $1,20"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "la",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,500 = -$12,500.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.03 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "la",
+     "taxable_base": "12500",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $12,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,500 = $0.00; tax = 0.03 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "la",
+     "taxable_base": "52500",
+     "year": 2025
+    },
+    "tax": 1200,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $52,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,500 = $40,000.00; tax = 0.03 x $40,000 = $1,20"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: LA 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "la",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: LA 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "la",
+     "taxable_base": "65000",
+     "year": 2025
+    },
+    "tax": 1200,
+    "work_head": "LA state income tax (2025, flat rate): taxable_base $65,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $25,000 = $40,000.00; tax = 0.03 x $40,000 = $1,20"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@d770a255b51e",
+    "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+   },
+   "marginal_rate": "0.03",
+   "rate": "0.03",
+   "rate_structure": "flat",
+   "state": "la"
+  },
+  "work_common_tail": "0. Tax line: IT-540 Line 11: 'YOUR LOUISIANA INCOME TAX'. 2025 instructions, Line 11: 'Multiply Line 10 by .03. Round to the nearest dollar.' Line 10 = Line 7 Federal Adjusted Gross Income minus Line 8 standard deduction ($12,500 filing status 1/3; $25,000 filing status 2/4/5) minus Line 9D excess federal itemized deductions, floor zero ('Subtract Lines 8 and 9D from Line 7. If less than zero, enter zero 0'). This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 STRUCTURAL CHANGE (Act 11 of the 2024 Third Extraordinary Legislative Session): Louisiana went FLAT. The graduated 1.85%/3.5%/4.25% brackets and the combined personal exemption-standard-deduction zero-rate floor of 2023/2024 are GONE. For tax years beginning on or after 1/1/2025 the rate is a FLAT 3% (IT-540 Line 11 = Line 10 x .03). Do NOT use this pack for 2024 or earlier, and do NOT carry 2024 graduated figures into 2025. Base guidance: supply IT-540 Line 10 as taxable_base -> the op recomputes it here as Line 7 Federal AGI minus the per-status Line 8 standard deduction, so supply Line 7 FEDERAL ADJUSTED GROSS INCOME (Federal Form 1040/1040-SR, Line 11; if less than zero enter 0; if you have Louisiana additions/exempt income, Line 7 comes from Louisiana Schedule E instead) as taxable_base and the op subtracts the standard deduction. IMPORTANT: if you are a FEDERAL ITEMIZER you must also subtract Line 9D 'EXCESS FEDERAL ITEMIZED DEDUCTIONS' yourself before supplying the base (this op models only the standard deduction, not Line 9D). Non-itemizers skip Lines 9A-9D. Standard deduction (Line 8, Act 11): $12,500 for filing status 1 (single) or 3 (married filing separately); $25,000 for filing status 2 (married filing jointly), 4 (head of household), or 5 (qualifying surviving spouse) - nearly tripled from the 2024 $4,500/$9,000 combined floors. The op's QSS -> married_filing_jointly mapping is exact ($25,000). Head of Household ALSO gets $25,000 for 2025 (up from the old $9,000 combined floor and no longer sharing the single boundary) - the shipped head_of_household amount reflects this. The standard deduction is CPI-U indexed annually starting after 2025; these are the 2025 amounts. Exemptions REPEALED: Act 11 repealed the additional $1,000 deductions for dependents, persons 65 or older, and blind persons (old Lines 6A/6B/6D/6E/6F), and those lines were removed from the 2025 form. This pack ships NO exemption keys - pass exemptions_count=0 and dependents_count=0. (The prior graduated packs' 'dependent'/'age_65'/'blind' $1,000 entries do not exist for 2025.) No tax table: 2025 Line 11 is a straight multiplication printed on the form ('Multiply Line 10 by .03. Round to the nearest dollar') - the 2024 Louisiana Tax Table no longer applies. This op's irs_round matches the form's round-to-nearest-dollar. Louisiana credits are NOT modeled by this op and come off after Line 11: Nonrefundable Priority 1 credits (Schedule C) on Line 12; refundable child care credit (federal AGI <= $25,000) on Line 14; refundable school readiness credit (star-rated) on Line 15; Louisiana Earned Income Credit (5% of the federal EIC) on Line 16; other refundable Priority 2/4 and nonrefundable Priority 3 credits (Schedules F/I/J) on later lines. Annual Retirement Income Exemption for taxpayers 65 or older (Schedule E Code 06E) increased from $6,000 to $12,000 per person for 2025 (Act 11) - this is a Schedule E base subtraction reached on Line 7, not part of this Line 11 computation; supply Line 7 already net of any Schedule E exemptions. Consumer Use Tax (Line 23A) and the Electric/Hybrid Vehicle Road Usage Fee are separate amounts added on the 2025 return after the income tax - NOT modeled. Source URL: 2025 resident instructions https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf ; reform bulletin https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf ."
+ },
+ "year": 2025
+}

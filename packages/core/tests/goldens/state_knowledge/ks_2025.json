@@ -1,0 +1,944 @@
+{
+ "_strings": {
+  "@@0cb7a5894b32": "Kansas DOR — 2025 Individual Income Tax Booklet (ip25.pdf), Important Information: 'Due date for filing - April 15, 2026 is the due date for filing 2025 income tax returns.' (General Information also notes that if any due date falls on a Saturday, Sunday, or legal holiday, the next regular workday is substituted.)",
+  "@@0cf72415eb0e": "Credit for Taxes Paid to Other States — Kansas residents whose Kansas adjusted gross income (KAGI, line 3 of K-40) includes income earned in another state and who were required to pay income tax to that other state on that income. (Part-year residents filing as nonresidents use a separate worksheet.) The credit is NOT the amount withheld by the other state. A copy of the other state's tax return must be enclosed. 'State' includes the District of Columbia, Puerto Rico, U.S. territories/possessions, and foreign countries (foreign taxes run through the Worksheet for Foreign Tax Credit first, and no credit is allowed if the foreign tax was claimed as a federal itemized deduction).",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1f27f780fdca": "2025 Form K-40 (k-4025.pdf, 'Mail to' block — Kansas Income Tax, Kansas Dept. of Revenue, PO Box 750260, Topeka, KS 66699-0260) and 2025 Form K-40V payment voucher (k-40v25.pdf, PO BOX 750260)",
+  "@@258a28a3501c": "Kansas DOR, 2025 Individual Income Tax booklet (ip25.pdf): 2025 Tax Computation Worksheet, page 34 (printing the two-bracket schedule: Married Filing Joint '$0 - $46,000' at '5.2% (.052)' subtracting $0, '$46,001 and over' at '5.58% (.0558)' subtracting $175; Single/Head of Household/Married Filing Separate '$0 - $23,000' at 5.2% subtracting $0, '$23,001 and over' at 5.58% subtracting $87); 2025 Kansas Tax Table pp.27-33 (first row '$26 - $50 -> $2', columns for Single/Head of Household/Married Filing Separate and for Married Filing Joint) with the '$100,001 and over - use the Tax Computation Worksheet' rule; Important Information + K-40 instructions — Line 4 Kansas Standard Deduction ($3,605 Single / $8,240 Married Filing Joint / $6,180 Head of Household / $4,120 Married Filing Separate) and the 'WORKSHEET - Standard Deduction for People 65 or Older and/or Blind'; Exemptions and Dependents instructions ($18,320 MFJ / $9,160 single-HoH-MFS filing-status allowance, $2,320 per dependent, $2,320 additional for Head of Household, $2,320 per qualified disabled veteran 'for tax year 2025 and all tax years thereafter', plus new $2,320 exemptions for a child born in the tax year and for a stillbirth); Line 5 exemption allowance; Line 7 taxable income; Line 8 tax-table/worksheet mandate; the QSS-to-Head-of-Household filing status instruction. SECOND PASS (independent document): the 2025 K-40ES estimated-tax voucher worksheet (https://www.ksrevenue.gov/pdf/k-40es25.pdf, Rev. 7-24) prints its own STANDARD DEDUCTION CHART (Single $3,605 / MFJ $8,240 / MFS $4,120 / HoH $6,180) and its own TAX COMPUTATION SCHEDULES in exact marginal form — MFJ '5.2% of line 5' to $46,000 then '$2,392 plus 5.58% of excess over $46,000'; Single/HoH/MFS '5.2% of line 5' to $23,000 then '$1,196 plus 5.58% of excess over $23,000' ($2,392 = 5.2% x 46,000 and $1,196 = 5.2% x 23,000 exactly) — and the 2025 Form K-40 (k-4025.pdf) prints the three 'X $2,320' additional-exemption boxes. All passes agree; no 2025 rate, deduction, or allowance change.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4b58ded0012d": "2025 Kansas Individual Income Tax booklet, Exemptions and Dependents: 'such individual shall be allowed an additional Kansas exemption of $2,320 for tax year 2025 and all tax years thereafter.'",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@58d05279e7b8": "Kansas Earned Income Tax Credit (EITC) — Kansas residents only (not part-year residents or nonresidents) who qualify for and claim the federal Earned Income Tax Credit. A valid SSN is required for the entire year for the taxpayer, spouse (if MFJ), and each dependent claimed.",
+  "@@6f2abf63c6ca": "Law change NOT modeled by the engine (status final_form_published): DISABLED VETERAN EXEMPTION RAISED to $2,320 (from $2,250) for 2025 and later, for an honorably discharged veteran with a permanent service-connected disability compensated at the 100% rate. Resolve via: 2025 Kansas booklet, Exemptions and Dependents (disabled veteran personal exemption).",
+  "@@90ccb2d068e0": "KANSAS INCOME TAX, KANSAS DEPT. OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260 (printed on the face of the 2025 Form K-40 as the 'Mail to' block)",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a7da78c30e3e": "Treaty conformity — KS conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from KS income (it flows through the federal starting point; do not add it back on the KS return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Kansas Form K-40 starts from federal adjusted gross income (K-40 Line 1, \"Federal adjusted gross income (as reported on your federal income tax return)\"), and Kansas modifications are made only on Schedule S Part A. The 2025 Schedule S Part A \"Additions to Federal Adjusted Gross Income\" remains an enumerated, closed list: state/municipal bond interest, KPERS contributions, Kansas expensing recapture (K-120EX), charitable contributions used for the Low Income Student Scholarship credit, IRC 163(j) business interest expense carryforward, unqualified First-Time Home Buyer savings account withdrawals, and \"other additions\" (federal income tax refunds, partnership/S-corp/fiduciary adjustments, community service contribution credit add-back, LQESP nonqualified withdrawals, energy-credit amortization, nonresident ad valorem taxes). There is NO add-back for federally tax-treaty-exempt income anywhere in Part A. Because income exempt under a U.S. tax treaty is already excluded from federal AGI and Kansas has no add-back, it flows through and is not re-taxed by Kansas -> conforms. (Source: 2025 Individual Income Tax Booklet, ip25.pdf, K-40 Line 1 and the Schedule S Part A line-by-line instructions; 2025 Schedule S, schs25.pdf.)",
+  "@@a912b3cc8fbb": "The newest shipped KS pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@bf4cbc914238": "Homestead Refund (property tax / circuit-breaker relief) — Kansas resident residing in Kansas the ENTIRE year of 2025 who owned and occupied a Kansas home, AND is over 55 years old, or is blind or disabled, or has a dependent child under 18 who lived with them all year. Related claims: Form K-40PT property tax refund (homeowners at least 65 years old, household income $25,380 or less — refund is 75% of property taxes paid) and Form K-40SVR (seniors at least 65, disabled veterans, and spouses of veterans 65 or older, household income not more than $58,041). A claimant who receives the K-40PT refund cannot also claim a Homestead refund.",
+  "@@c318f4e99ed5": "2025 Kansas Individual Income Tax booklet, Important Information — Additional Exemptions: 'An additional personal exemption of $2,320 will be allowed for each child born in this tax year.' — 'A personal exemption of $2,320 will be allowed for the birth of a child in this tax year that does not result in a live birth (known as stillbirth).'",
+  "@@c379f0022d25": "Law change NOT modeled by the engine (status final_form_published): NEW EXEMPTIONS FOR A BIRTH IN THE YEAR — an additional $2,320 exemption for each child born in the tax year, and a $2,320 exemption for a birth that does not result in a live birth (stillbirth). Both flow into the K-40 total exemption amount (line 5). Resolve via: 2025 Kansas booklet, Important Information — Additional Exemptions (p.2), and the Exemptions and Dependents instructions.",
+  "@@d264e27c652f": "Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents complete K-40 (with Schedule S Part A only if they have modifications)",
+  "@@e113c12da63f": "Kansas DOR — 2025 Individual Income Tax Booklet (ip25.pdf): Important Information (April 15, 2026 due date; 2025 standard deductions $3,605/$8,240/$6,180/$4,120; exemption allowance $18,320 MFJ / $9,160 other statuses; $2,320 per dependent; new $2,320 exemptions for a child born in the tax year and for a stillbirth; $2,320 disabled veteran); Who Must File and 2025 filing thresholds; Homestead/property-tax relief limits; Exemptions and Dependents instructions (including the Head of Household additional $2,320 and the QSS-to-Head-of-Household filing status rule); Line 4 standard deduction and the 65-or-older/blind worksheet; Line 5 exemption allowance; Line 8 tax-table/worksheet mandate; 2025 Kansas Tax Table and 2025 Tax Computation Worksheet (5.2%/5.58%); Schedule S Part A additions; credits (EITC 17%, child and dependent care 50%, taxes paid to other states)",
+  "@@e9005ca6495c": "annual (per tax year; the newest shipped KS pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@e91d93f221a7": "Credit for Child and Dependent Care Expenses — Kansas residents only - nonresidents and part-year residents are NOT eligible. Available to taxpayers who claimed the federal child and dependent care credit on federal Form 2441. A valid SSN for the entire year is required for the taxpayer, spouse (if MFJ), and each dependent claimed.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@fec99964ce8b": "Same Form K-40, with Schedule S (Supplemental Schedule) Part B \"Income Allocation for Nonresidents and Part-Year Residents\" required to compute the nonresident percentage (K-40 line 9 / Schedule S line B23). Kansas does not have a separate standalone nonresident form."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@1f27f780fdca",
+      "url": "https://www.ksrevenue.gov/pdf/k-4025.pdf"
+     },
+     {
+      "source": "@@0cb7a5894b32",
+      "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@d264e27c652f",
+    "jurisdiction": "states/ks",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@90ccb2d068e0",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@1f27f780fdca",
+      "url": "https://www.ksrevenue.gov/pdf/k-4025.pdf"
+     },
+     {
+      "source": "@@0cb7a5894b32",
+      "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@d264e27c652f",
+    "jurisdiction": "states/ks",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "KANSAS INCOME TAX, KANSAS DEPT. OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260 (Kansas uses the same PO Box for both refund/no-balance returns and returns with payment; if paying by check or money order, enclose Form K-40V payment voucher, which prints the same PO BOX 750260 address)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via KS Web Pay: https://www.ksrevenue.gov/taxpayment.html (no processor fee).",
+     "By check: make it payable to \"Kansas Income Tax (2025 Form K-40V — 'Make your check or money order payable to \"Kansas Income Tax\" for the full amount'). Estimated-tax payments (Form K-40ES) also go to 'Kansas Income Tax' but at a different address, PO Box 3506, Topeka KS 66625-3506.\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@1f27f780fdca",
+      "url": "https://www.ksrevenue.gov/pdf/k-4025.pdf"
+     },
+     {
+      "source": "@@0cb7a5894b32",
+      "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@d264e27c652f",
+    "jurisdiction": "states/ks",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@90ccb2d068e0",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@0cb7a5894b32",
+      "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@d264e27c652f",
+    "headline": "KS 2025: refund $512",
+    "jurisdiction": "states/ks",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0cb7a5894b32",
+      "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@d264e27c652f",
+    "headline": "KS 2025: you owe $347",
+    "jurisdiction": "states/ks",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@0cb7a5894b32",
+      "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@d264e27c652f",
+    "headline": "KS 2025: you owe $1,205",
+    "jurisdiction": "states/ks",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a912b3cc8fbb",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Kansas Department of Revenue, 2025 Individual Income Tax Booklet (Form K-40 instructions, ip25.pdf), Line 17 / Line 22 instructions and EITC Worksheet (multiply federal EITC by 17%)",
+     "cadence": "@@e9005ca6495c",
+     "topic": "credits",
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a912b3cc8fbb",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@1f27f780fdca",
+     "cadence": "@@e9005ca6495c",
+     "topic": "filing_logistics",
+     "url": "https://www.ksrevenue.gov/pdf/k-4025.pdf"
+    },
+    {
+     "answers": "@@0cb7a5894b32",
+     "cadence": "@@e9005ca6495c",
+     "topic": "filing_logistics",
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a912b3cc8fbb",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@e113c12da63f",
+     "cadence": "@@e9005ca6495c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    },
+    {
+     "answers": "Kansas DOR — 2025 K-40ES Individual Estimated Income Tax Voucher (k-40es25.pdf, Rev. 7-24) — INDEPENDENT second-pass source for the rate schedule and standard deduction: its STANDARD DEDUCTION CHART prints Single $3,605 / Married Filing Joint $8,240 / Married Filing Separate $4,120 / Head of Household $6,180, and its TAX COMPUTATION SCHEDULES print the two brackets in exact marginal form — Schedule I MARRIED FILING JOINT '$0.00 to $46,000 ... 5.2% of line 5' and '$46,000 and over ... $2,392 plus 5.58% of excess over $46,000'; Schedule II SINGLE, HEAD OF HOUSEHOLD, OR MARRIED FILING SEPARATE '$0.00 to $23,000 ... 5.2% of line 5' and '$23,000 and over ... $1,196 plus 5.58% of excess over $23,000'. ($2,392 = 5.2% x $46,000 and $1,196 = 5.2% x $23,000 exactly, confirming the shipped marginal brackets.)",
+     "cadence": "@@e9005ca6495c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/k-40es25.pdf"
+    },
+    {
+     "answers": "Kansas DOR — 2025 Form K-40 (k-4025.pdf) — second-pass verification of the form face: the Additional Exemptions block prints three 'X $2,320 =' boxes (children born in the tax year; stillbirth; Disabled Veteran Personal Exemption allowance, 'enter the total number of disabled veterans being claimed including yourself'), the Total Kansas Exemptions / Total Kansas Exemption Amount boxes with 'Also enter this same amount on page 2, line 5 of this form', and the 'Mail to: Kansas Income Tax, Kansas Dept. of Revenue, PO Box 750260, Topeka, KS 66699-0260' block. The 2024 food-sales-tax-credit lines A-H are ABSENT from the 2025 form.",
+     "cadence": "@@e9005ca6495c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/k-4025.pdf"
+    },
+    {
+     "answers": "Kansas DOR — 2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part B income allocation for nonresidents/part-year residents",
+     "cadence": "@@e9005ca6495c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/schs25.pdf"
+    },
+    {
+     "answers": "Kansas DOR — 2025 K-40V Individual Income Tax Payment Voucher (k-40v25.pdf): 'Make your check or money order payable to \"Kansas Income Tax\" for the full amount'; mailing address PO BOX 750260, TOPEKA KS 66699-0260",
+     "cadence": "@@e9005ca6495c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/k-40v25.pdf"
+    },
+    {
+     "answers": "Kansas DOR — Electronic Services / Tax Payment vendor list (online payment portal)",
+     "cadence": "@@e9005ca6495c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/taxpayment.html"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a912b3cc8fbb",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@c318f4e99ed5",
+     "cadence": "@@e9005ca6495c",
+     "topic": "law_changes",
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a912b3cc8fbb",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@258a28a3501c",
+     "cadence": "@@e9005ca6495c",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@a912b3cc8fbb",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ks",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/ks",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@58d05279e7b8",
+      "@@e91d93f221a7",
+      "@@0cf72415eb0e",
+      "@@bf4cbc914238"
+     ],
+     "citations": [
+      {
+       "source": "@@c318f4e99ed5",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "@@4b58ded0012d",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "@@e113c12da63f",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@fec99964ce8b"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in KS in 2025 without living there — file a nonresident return on KS-source income.",
+     "state": "KS",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a7da78c30e3e",
+      "@@c379f0022d25",
+      "@@6f2abf63c6ca",
+      "Remote-work trap: work performed from TX for an employer sitting in KS. If KS applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to KS and require a NONRESIDENT KS return that the physical footprint alone never shows — and the W-2's Box 15 often already names KS. This KS pack year carries no researched convenience rule: verify KS's nonresident wage-sourcing rule at its DOR before assuming no KS filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@58d05279e7b8",
+      "@@e91d93f221a7",
+      "@@0cf72415eb0e",
+      "@@bf4cbc914238"
+     ],
+     "citations": [
+      {
+       "source": "@@c318f4e99ed5",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "@@4b58ded0012d",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "@@e113c12da63f",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@fec99964ce8b"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in KS part of 2025 — file a part-year return on income while a resident (plus KS-source income while not).",
+     "state": "KS",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@a7da78c30e3e",
+      "@@c379f0022d25",
+      "@@6f2abf63c6ca"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@58d05279e7b8",
+      "@@e91d93f221a7",
+      "@@0cf72415eb0e",
+      "@@bf4cbc914238"
+     ],
+     "citations": [
+      {
+       "source": "@@c318f4e99ed5",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "@@4b58ded0012d",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "@@e113c12da63f",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@d264e27c652f"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in KS all of 2025 — file a resident return on income from all sources.",
+     "state": "KS",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@c379f0022d25",
+      "@@6f2abf63c6ca"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ks",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 0,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,180 = -$6,180.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ks",
+     "taxable_base": "6180",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 0,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $6,180.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,180 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ks",
+     "taxable_base": "11180",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 260,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $11,180.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,180 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.052 x $5,000.00 (the $0-$23,000 bracket) = $260.00; total $260.00 -> $260"
+   },
+   {
+    "base_after_exemptions": 33000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ks",
+     "taxable_base": "39180",
+     "year": 2025
+    },
+    "marginal_rate": "0.0558",
+    "tax": 1754,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $39,180.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $6,180 = $33,000.00; graduated tax on $33,000 [head_of_household schedule]: 0.052 x $23,000.00 (the $0-$23,000 bracket) = $1,196.00; 0.0558 x $10,000.00 (the $23,000+ bracket) = $558.00; total $1,754.00 -> $1,754"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ks",
+     "taxable_base": "57660",
+     "year": 2025
+    },
+    "marginal_rate": "0.0558",
+    "tax": 2145,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $57,660.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $9,160 = $9,160.00, 1 dependent exemption(s) x $2,320 = $2,320.00, standard deduction [head_of_household] = $6,180 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.052 x $23,000.00 (the $0-$23,000 bracket) = $1,196.00; 0.0558 x $17,000.00 (the $23,000+ bracket) = $948.60; total $2,144.60 -> $2,145"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ks",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 0,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,240 = -$8,240.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ks",
+     "taxable_base": "8240",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 0,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $8,240.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,240 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ks",
+     "taxable_base": "13240",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 260,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $13,240.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,240 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.052 x $5,000.00 (the $0-$46,000 bracket) = $260.00; total $260.00 -> $260"
+   },
+   {
+    "base_after_exemptions": 56000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ks",
+     "taxable_base": "64240",
+     "year": 2025
+    },
+    "marginal_rate": "0.0558",
+    "tax": 2950,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $64,240.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $8,240 = $56,000.00; graduated tax on $56,000 [married_filing_jointly schedule]: 0.052 x $46,000.00 (the $0-$46,000 bracket) = $2,392.00; 0.0558 x $10,000.00 (the $46,000+ bracket) = $558.00; total $2,950.00 -> $2,950"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 2,
+     "filing_status": "married_filing_jointly",
+     "state": "ks",
+     "taxable_base": "68880",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 2080,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $68,880.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 2 personal exemption(s) x $9,160 = $18,320.00, 1 dependent exemption(s) x $2,320 = $2,320.00, standard deduction [married_filing_jointly] = $8,240 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.052 x $40,000.00 (the $0-$46,000 bracket) = $2,080.00; total $2,080.00 -> $2,080"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ks",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 0,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,120 = -$4,120.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ks",
+     "taxable_base": "4120",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 0,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $4,120.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,120 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ks",
+     "taxable_base": "9120",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 260,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $9,120.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,120 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.052 x $5,000.00 (the $0-$23,000 bracket) = $260.00; total $260.00 -> $260"
+   },
+   {
+    "base_after_exemptions": 33000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ks",
+     "taxable_base": "37120",
+     "year": 2025
+    },
+    "marginal_rate": "0.0558",
+    "tax": 1754,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $37,120.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $4,120 = $33,000.00; graduated tax on $33,000 [married_filing_separately schedule]: 0.052 x $23,000.00 (the $0-$23,000 bracket) = $1,196.00; 0.0558 x $10,000.00 (the $23,000+ bracket) = $558.00; total $1,754.00 -> $1,754"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "married_filing_separately",
+     "state": "ks",
+     "taxable_base": "55600",
+     "year": 2025
+    },
+    "marginal_rate": "0.0558",
+    "tax": 2145,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $55,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $9,160 = $9,160.00, 1 dependent exemption(s) x $2,320 = $2,320.00, standard deduction [married_filing_separately] = $4,120 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.052 x $23,000.00 (the $0-$23,000 bracket) = $1,196.00; 0.0558 x $17,000.00 (the $23,000+ bracket) = $948.60; total $2,144.60 -> $2,145"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ks",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 0,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,605 = -$3,605.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ks",
+     "taxable_base": "3605",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 0,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $3,605.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,605 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ks",
+     "taxable_base": "8605",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 260,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $8,605.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,605 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.052 x $5,000.00 (the $0-$23,000 bracket) = $260.00; total $260.00 -> $260"
+   },
+   {
+    "base_after_exemptions": 33000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ks",
+     "taxable_base": "36605",
+     "year": 2025
+    },
+    "marginal_rate": "0.0558",
+    "tax": 1754,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $36,605.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,605 = $33,000.00; graduated tax on $33,000 [single schedule]: 0.052 x $23,000.00 (the $0-$23,000 bracket) = $1,196.00; 0.0558 x $10,000.00 (the $23,000+ bracket) = $558.00; total $1,754.00 -> $1,754"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "ks",
+     "taxable_base": "55085",
+     "year": 2025
+    },
+    "marginal_rate": "0.0558",
+    "tax": 2145,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $55,085.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 personal exemption(s) x $9,160 = $9,160.00, 1 dependent exemption(s) x $2,320 = $2,320.00, standard deduction [single] = $3,605 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.052 x $23,000.00 (the $0-$23,000 bracket) = $1,196.00; 0.0558 x $17,000.00 (the $23,000+ bracket) = $948.60; total $2,144.60 -> $2,145"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ks",
+     "taxable_base": "48240",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 2080,
+    "work_head": "KS state income tax (2025, graduated brackets): taxable_base $48,240.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $8,240 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.052 x $40,000.00 (the $0-$46,000 bracket) = $2,080.00; total $2,080.00 -> $2,080"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@258a28a3501c",
+    "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ks"
+  },
+  "work_common_tail": ". Tax line: 2025 Form K-40, Line 8: 'Tax (from Tax Tables or Tax Computation Schedule)'. Instructions: 'LINE 8 (Tax): If line 7 is $100,000 or less, use the Tax Tables beginning on page 27 to find the amount of your tax. If line 7 is more than $100,000, you will need to use the Tax Computation Worksheet on page 34 to compute your tax.' Line 7 = Line 3 (KAGI) minus Line 6 (Line 4 standard/itemized deduction + Line 5 exemption allowance); 'if less than zero, enter 0'. Verified exemption kinds shipped but NOT applied by this op (compute them on the form): disabled_veteran ($2,320 — Disabled Veteran Personal Exemption: an additional $2,320 per honorably discharged veteran certified by the U.S. Department of Veterans Affairs as receiving disability compensation at the 100% rate (permanent, service-sustained), 'for tax year 2025 and all tax years thereafter' — RAISED from 2024's $2,250. Printed on the 2025 K-40 front as an 'X $2,320 =' box ('enter the total number of disabled veterans being claimed including yourself'). NOT applied by calc.state_tax; claim it on the form and it flows into Line 5 (or, since the amount now equals the per-dependent $2,320, capture it through dependents_count).) This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 IS A NO-CHANGE YEAR FOR THE RATE SCHEDULE, STANDARD DEDUCTION, AND ALLOWANCE: the 2024 SB 1 restructure carries forward exactly — two brackets, 5.2% on taxable income up to $23,000 ($46,000 married filing joint) and 5.58% above; standard deductions $3,605/$8,240/$6,180/$4,120 (single/MFJ/HoH/MFS); exemption allowance $18,320 (MFJ) or $9,160 (all other statuses) plus $2,320 per dependent and $2,320 additional for Head of Household. Filing thresholds are unchanged too. Verified against BOTH the 2025 booklet worksheet and the independent 2025 K-40ES schedules — no 2025-session rate change appears in either. Base guidance: Supply K-40 Line 3, Kansas adjusted gross income (KAGI) = Line 1 federal AGI ('as reported on your federal income tax return') plus or minus Line 2 net modifications from Schedule S Part A. Most filers have no Kansas modifications, in which case Line 3 equals federal AGI. The op then subtracts the shipped standard deduction (K-40 Line 4) and the exemption allowance (Line 5) to reach Line 7 taxable income, to which the two-bracket schedule applies. EXEMPTION COUNT CONVENTION (unchanged for 2025): pass exemptions_count=1 for single/MFS filers and 2 for married filing jointly — the $9,160-per-count math reproduces the form's $9,160/$18,320 filing-status allowance exactly. Pass dependents_count = number of federal dependents (each $2,320; never count yourself or your spouse). HEAD OF HOUSEHOLD: pass exemptions_count=1 AND add 1 to dependents_count — the form grants HoH an additional $2,320 exemption ('If your filing status is Head of Household, you are allowed an additional exemption of $2,320'), which equals the per-dependent amount. Example: HoH with 1 dependent -> exemptions_count=1, dependents_count=2 (= $9,160 + $4,640). Missing it understates the exemption by $2,320. (For 2025 there is no longer a food sales tax credit, so the 2024 caveat that the HoH extra did not count toward that credit no longer applies.) QUALIFYING SURVIVING SPOUSE maps to HEAD OF HOUSEHOLD in Kansas, not MFJ: the 2025 booklet Filing Status instruction says 'If your federal filing status is Qualifying Widow(er) with Dependent Child, check the Head of Household box.' Do not use a QSS->married_filing_jointly mapping for Kansas — compute QSS filers as head_of_household (single-status brackets, $6,180 standard deduction, $9,160 allowance + the extra $2,320 via dependents_count). Tax-table mandate below $100,000: K-40 Line 8 REQUIRES the Tax Tables when Line 7 taxable income is $100,000 or less; the Tax Computation Worksheet is used only above $100,000. The 2025 table uses $50-wide bands computed at band midpoints, so bracket math may differ by a dollar or two within a table band — the filed form must use the table. The table's first row is '$26 - $50 -> $2' in both columns. NO zero-tax cliff (since 2024): the 2025 Kansas Tax Table starts at '$26 - $50 -> $2' and the Tax Computation Worksheet brackets start at $0 — marginal bracket math applies from the first dollar of taxable income. Rounded worksheet constants (re-derived for 2025, unchanged): the Tax Computation Worksheet computes tax as 5.58% x the ENTIRE taxable income minus a subtraction amount. The exact continuity constants are $87.40 (Single/HoH/MFS: 5.58% x 23,000 - 5.2% x 23,000 = 1,283.40 - 1,196.00) and $174.80 (MFJ, at $46,000); the printed constants are $87 and $175. So above the breakpoint the filed worksheet result can be up to $0.40 HIGHER (Single/HoH/MFS) or $0.20 LOWER (MFJ) than exact marginal bracket math — up to $1 difference after whole-dollar rounding. The 2025 K-40ES schedules state the same brackets with EXACT constants ($1,196 / $2,392 plus 5.58% of the excess), which is what this op's marginal math reproduces. One rate schedule covers Single, Head of Household, and Married Filing Separate ($23,000 breakpoint — both the booklet worksheet and the K-40ES print a single combined schedule for all three); it is duplicated per status here. Married Filing Joint has its own schedule with the breakpoint at exactly twice that ($46,000). Standard deduction for people 65 or older and/or blind is NOT modeled: the 2025 booklet worksheet replaces the base amounts with $4,455/$5,305 (Single, 1/2 boxes), $8,940/$9,640/$10,340/$11,040 (MFJ, 1-4 boxes), $4,820/$5,520/$6,220/$6,920 (MFS, 1-4 boxes), $7,030/$7,880 (HOH, 1/2 boxes) — i.e., +$850 per checked box for Single/HOH and +$700 per box for MFJ/MFS (all unchanged from 2024). Compute K-40 Line 4 from that worksheet in those cases. Kansas itemized deductions (Kansas Schedule A, K-40 Line 4) may be claimed instead of the standard deduction even if the federal return did not itemize — itemizers are not modeled; MFS spouses must both use the same method (if one itemizes, both must). NEW 2025 ADDITIONAL EXEMPTIONS, NOT MODELED by the personal/dependent keys: $2,320 for each dependent child BORN in the tax year, and $2,320 for the parent(s) of a child who is STILLBORN during the tax year (2025 booklet, Additional Exemptions - Dependent Children / Stillborn Births; three 'X $2,320' boxes print on the 2025 K-40 front). Each is claimed on the form and flows into Line 5. If you want them reflected through this op, add one to dependents_count per qualifying exemption — the amount is identical ($2,320). Disabled Veteran Personal Exemption is shipped as verified DATA only and is NOT applied by calc.state_tax: an additional $2,320 per honorably discharged veteran certified by the U.S. Department of Veterans Affairs as receiving disability compensation at the 100% rate (permanent, service-sustained), 'for tax year 2025 and all tax years thereafter' — RAISED from 2024's $2,250. Claim it on the K-40 front ('enter the total number of disabled veterans being claimed including yourself'); it flows into Line 5. Because its amount now equals the per-dependent $2,320, it can alternatively be captured through dependents_count. Claimed as a dependent by another taxpayer: the 2025 instructions zero only the DEPENDENTS box ('enter \"0\" in the number of dependents box'); like 2024 they print no rule zeroing the filing-status allowance itself. Confirm the dependent-filer treatment at the DOR before relying on the $9,160 allowance for such a filer (see the pack's unverified list). THE FOOD SALES TAX CREDIT NO LONGER EXISTS FOR 2025 — do not carry 2024's $125-per-qualified-exemption credit forward. The 2025 booklet has no food-sales-tax-credit section and the 2025 K-40 front has no lines A-H block; K-40 line 17 is now the EITC and line 18 is the Total tax balance (in 2024, line 18 was the food sales credit and line 19 the balance), and the refundable EITC portion moved from line 23 to line 22. CREDITS are not modeled by this op (they subtract from tax, not from income): the Kansas EITC is 17% of the federal EITC (Line 17 nonrefundable use, Line 22 refundable remainder); the credit for child and dependent care expenses is 50% of the federal Form 2441 credit (Line 14); the credit for taxes paid to other states is the worksheet's lesser-of amount (Line 13); certificate credits (Apprenticeship K-24, Affordable Housing K-25, and the rest of the Line 15 list) are claimed on Line 15. Kansas tax on lump sum distributions is not modeled: residents add 13% of the federal Form 4972 tax on K-40 Line 11. Nonresidents and part-year residents are not modeled: they compute the full-year tax on Line 8, then multiply by the Schedule S line B23 nonresident allocation percentage (K-40 Lines 9-10) to get nonresident tax. All K-40 money entries are whole dollars; the engine's round-half-up to whole dollars matches the form's presentation."
+ },
+ "year": 2025
+}

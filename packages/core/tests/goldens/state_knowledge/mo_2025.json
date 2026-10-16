@@ -1,0 +1,873 @@
+{
+ "_strings": {
+  "@@09c7b87c76f2": "Form MO-NRI (Missouri Income Percentage), filed with Form MO-1040, for nonresidents and part-year residents (the percentage goes on MO-1040 Line 32). Part-year residents may alternatively use Form MO-CR (resident credit, Line 31) with MO-1040, whichever is more beneficial.",
+  "@@0a60c22bb697": "2025 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Where to Mail Your Return' (P.O. Box 500 refund / P.O. Box 329 balance due; 2-D barcode boxes 3222/3370 and property-tax-credit boxes 3385/3395; also printed on the Form MO-1040 signature page)",
+  "@@1a24d67a1c75": "Law change NOT modeled by the engine (status final_form_published): NEW for 2025 — a 100% CAPITAL GAIN SUBTRACTION on Form MO-A, Part 1, Line 18: \"The state of Missouri allows a subtraction from your federal adjusted gross income for 100 percent of your federally reported capital gains. Enter the amount of capital gains reported on your Federal Form 1040 or 1040-SR, Line 7a\" (enter $0 if Line 7a is negative). Total Form MO-A Part 1 subtractions moved from 2024's Line 18 to 2025's Line 19, and Form MO-1040 Line 4 now carries MO-A Part 1 Line 19. A 2025 Missouri taxable income computed without this subtraction will be OVERSTATED. Resolve via: Form MO-A Part 1 Line 18 and its instruction text in the 2025 MO-1040 instruction booklet (the citation URL); the subtraction amount comes from the filer's federal Form 1040/1040-SR Line 7a, and calc.state_tax starts from the already-reduced Line 29 taxable income.",
+  "@@1a6eec29172c": "Property Tax Credit Claim (Circuit Breaker) — Missouri residents who fall into one of four qualification categories (2025 Form MO-PTS): (A) 65 years of age or older and a full-year MO resident (attach Form SSA-1099); (B) 100% disabled veteran as a result of military service (attach a letter from the Department of Veterans Affairs); (C) 100% disabled (attach an SSA letter or Form SSA-1099); or (D) 60 years of age or older and received surviving spouse benefits (attach Form SSA-1099). Available to both renters/part-year owners and full-year homeowners. Renters who rent from a facility that does not pay property tax are not eligible.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@4393666145eb": "Treaty conformity — MO conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MO income (it flows through the federal starting point; do not add it back on the MO return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Missouri's resident return starts from federal adjusted gross income and has no treaty-exempt income add-back, so federally treaty-exempt income (already excluded from federal AGI) flows through untaxed -> conforms. Form MO-1040 Line 1 is captioned \"Federal adjusted gross income from federal return,\" and the 2025 MO-1040 instructions state \"You must begin your Missouri return with your total federal adjusted gross income, even if you have income from a state other than Missouri.\" The only additions to federal AGI are on Form MO-A, Part 1, Lines 1-6 (interest on state and local obligations other than Missouri source; partnership/fiduciary/S-corp adjustments; nonqualified 529-plan distributions; Food Pantry contributions included on federal Schedule A; nonresident property tax modification; nonqualified ABLE-program distributions) — none of which add back federally treaty-exempt income or foreign-earned income. Corroborating: the 2025 \"Nonresident Alien Special Filing Instructions\" direct the filer to \"Enter your federal adjusted gross income from U.S. Nonresident Alien Income Tax Return (Federal Form 1040NR), Line 11a, on Form MO-1040, Line 1,\" meaning treaty-exempt income already excluded from 1040NR AGI carries to MO Line 1 unchanged with no reattachment. Unlike California (which adds treaty income back on Schedule CA), Missouri has no analogous addback. Cite: 2025 MO-1040 Instructions, Line 1 and Form MO-A Part 1.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@50d52cf9fb26": "annual (per tax year; the newest shipped MO pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@6934d69f0c8b": "Food Pantry / Homeless Shelter / Soup Kitchen Tax Credit — Any taxpayer (individual, corporation, or trust) who donates cash or food supplies to a local food pantry, homeless shelter, or soup kitchen in the county where the taxpayer resides. If the donation is also reported as a federal Schedule A charitable contribution, the amount must be added back on Form MO-A, Part 1, Line 4 (2025 MO-A Line 4, 'Food Pantry contributions included on Federal Schedule A'). Program sunsets December 31, 2026 (fully terminates September 1, 2027), so tax year 2025 is still within the program.",
+  "@@75b414001994": "2025 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Calendar year taxpayers must file no later than April 15, 2026'; an automatic extension of time to file is granted until October 15, 2026 with a federal extension (attach Federal Form 4868) or by filing Form MO-60; an extension of time to file does not extend the time to pay (5% addition to tax if the tax is not paid by the original due date); payments must be postmarked by April 15, 2026",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a05dbdb15493": "2025 Form MO-1040 Individual Income Tax Long Form & Instructions, Missouri Department of Revenue (Line 1 = Federal AGI; 'begin your Missouri return with your total federal adjusted gross income'; Form MO-A Part 1 additions and the new Line 18 capital gain subtraction; residency/domicile definitions; nonresident & part-year rules; April 15, 2026 due date; filing requirement thresholds; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11a; check payable to Missouri Department of Revenue; 2025 Tax Chart p.21)",
+  "@@a13a158c21d3": "Missouri Working Family Tax Credit (state EITC) — Resident individual who was allowed a federal earned income credit (EIC) on the federal return for the same tax year; filing status must be single, head of household, qualifying widow(er), or married filing combined (married filing separately does not qualify); must have a tax liability after the application of all other credits. Form MO-WFTC and a copy of the federal return must be attached or the credit may be disallowed.",
+  "@@aa06043db423": "2025 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p.21 '2025 Tax Chart' (Tax Rate Chart, Section A: $0 to $1,313 -> $0; over $1,313 not over $2,626 -> 2.0% of the excess over $1,313; over $2,626 not over $3,939 -> $26 plus 2.5%; over $3,939 not over $5,252 -> $59 plus 3.0%; over $5,252 not over $6,565 -> $98 plus 3.5%; over $6,565 not over $7,878 -> $144 plus 4.0%; over $7,878 not over $9,191 -> $197 plus 4.5%; over $9,191 -> $256 plus 4.7% of the excess over $9,191; 'A separate tax must be computed for you and your spouse'; 'Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and 30S'); Line 30 - Missouri Tax ('Calculate your tax by using your taxable income from Form MO-1040, Line 29Y and 29S, the Tax Rate Chart (page 21, Section A), and Tax Calculation Worksheet (page 21, Section B)'); Line 12 Federal Tax Percentage chart; Line 13 federal income tax deduction caps; Line 14 standard deduction ($15,750/$23,625/$31,500); Line 15 head of household / qualifying widow(er) $1,400. Second pass: the 2025 Form MO-1040A short-form instructions print the IDENTICAL 2025 Tax Rate Chart and Tax Calculation Worksheet (https://dor.mo.gov/forms/MO-1040A%20Instructions_2025.pdf) — both passes agree digit for digit. Third corroboration of the top rate: the booklet's composite-return note, 'The tax rate for a composite return is 4.7 percent.'",
+  "@@e35851df8e22": "The newest shipped MO pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@e82f4b1f5cc5": "Department of Revenue, P.O. Box 500, Jefferson City, MO 65105-0500 (refund or no amount due). Note — returns printed from the Department's 2-D barcode / fill-in auto-calculating forms use different boxes: refund returns to P.O. Box 3222, Jefferson City, MO 65105-3222; refund returns claiming a property tax credit to P.O. Box 3385, Jefferson City, MO 65105-3385.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f03d7638a996": "Form MO-1040 (2025 Individual Income Tax Return - Long Form). The same MO-1040 is used by all filers; residents claiming credit for taxes paid to another state attach Form MO-CR. (A short Form MO-1040A exists for single / married-one-income filers with no Missouri modifications.)"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@0a60c22bb697",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     },
+     {
+      "source": "@@75b414001994",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@f03d7638a996",
+    "jurisdiction": "states/mo",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e82f4b1f5cc5",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@0a60c22bb697",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     },
+     {
+      "source": "@@75b414001994",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@f03d7638a996",
+    "jurisdiction": "states/mo",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Department of Revenue, P.O. Box 329, Jefferson City, MO 65105-0329 (balance due, with payment and all required attachments). Note — 2-D barcode (fill-in/auto-calculating) balance-due returns use P.O. Box 3370, Jefferson City, MO 65105-3370; balance-due returns claiming a property tax credit use P.O. Box 3395, Jefferson City, MO 65105-3395.",
+    "notes": [],
+    "payment": [
+     "Pay online via MO Web Pay: https://dor.mo.gov/taxation/payment-options/ (no processor fee).",
+     "By check: make it payable to \"Missouri Department of Revenue (check or money order, U.S. funds only; by submitting payment by check you authorize the Department to process it electronically upon receipt; do not postdate; the Department may electronically resubmit checks returned for insufficient funds; if you mail your payment after your return is filed, attach it to Form MO-1040V, Individual Income Tax Payment Voucher, on page 49 of the booklet)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@0a60c22bb697",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     },
+     {
+      "source": "@@75b414001994",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@f03d7638a996",
+    "jurisdiction": "states/mo",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@e82f4b1f5cc5",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@75b414001994",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@f03d7638a996",
+    "headline": "MO 2025: refund $512",
+    "jurisdiction": "states/mo",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@75b414001994",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@f03d7638a996",
+    "headline": "MO 2025: you owe $347",
+    "jurisdiction": "states/mo",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@75b414001994",
+      "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@f03d7638a996",
+    "headline": "MO 2025: you owe $1,205",
+    "jurisdiction": "states/mo",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e35851df8e22",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Missouri Department of Revenue - 2025 Form MO-1040 instruction booklet, Form MO-PTS section (Qualifications A-D; Lines 9-14; $27,200/$30,000 net-household-income limits; $750 rent / $1,100 combined caps) and 2025 Property Tax Credit Chart pp.50-52",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "credits",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page and 2025 MO-1040 instruction booklet (Form MO-A Part 1 Line 4; Form MO-TC credit code FPT / Form MO-FPT)",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "credits",
+     "url": "https://dor.mo.gov/tax-credits/fpt.html"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e35851df8e22",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@0a60c22bb697",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "filing_logistics",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e35851df8e22",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@a05dbdb15493",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "2025 Form MO-1040A Single/Married (Income from One Spouse) Short Form Instructions — independent second pass on the 2025 Tax Chart (identical Tax Rate Chart and Tax Calculation Worksheet, including the $1,313 steps and the 4.7% top rate) and the 2025 standard deduction amounts",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/forms/MO-1040A%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "Missouri DOR - Nonresidents and Residents with Other State Income (resident/nonresident/part-year definitions; MO-NRI / MO-CR usage with MO-1040)",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/taxation/individual/additional-resources/non-residents.html"
+    },
+    {
+     "answers": "Missouri DOR - Food Pantry Tax Credit (FPT) program page (50% of donations, $2,500/taxpayer/year, $1,750,000 statewide fiscal-year cap, 3-year carryforward, December 31, 2026 sunset)",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/tax-credits/fpt.html"
+    },
+    {
+     "answers": "Missouri DOR - Payment Options (electronic payment, check/money order, Form MO-1040V voucher)",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.mo.gov/taxation/payment-options/"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e35851df8e22",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; Form MO-A Part 1 additions Lines 1-6 and the NEW Line 18 capital gain subtraction with total subtractions at Line 19; residency/domicile definitions incl. 183-day statutory-resident and 30-day exception rules; filing requirement thresholds $1,200/$600/standard deduction; April 15, 2026 due date; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions Line 1 = 1040NR Line 11a; rounding rule 'Round $32.50 up to $33.00'; 2025 Tax Chart p.21; Line 12 Federal Tax Percentage chart; Line 14 standard deductions $15,750/$23,625/$31,500 with $2,000/$1,600 additional amounts; Line 15 $1,400 head-of-household/qualifying-widow(er) exemption; Line 42 MO-TC; Line 43 Property Tax Credit; Line 44 WFTC 20%; composite-return rate 4.7%)",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "law_changes",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e35851df8e22",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@aa06043db423",
+     "cadence": "@@50d52cf9fb26",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@e35851df8e22",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/mo",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/mo",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@1a6eec29172c",
+      "@@a13a158c21d3",
+      "@@6934d69f0c8b"
+     ],
+     "citations": [
+      {
+       "source": "@@a05dbdb15493",
+       "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+      },
+      {
+       "source": "@@a05dbdb15493",
+       "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@09c7b87c76f2"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in MO in 2025 without living there — file a nonresident return on MO-source income.",
+     "state": "MO",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@4393666145eb",
+      "@@1a24d67a1c75",
+      "Remote-work trap: work performed from TX for an employer sitting in MO. If MO applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to MO and require a NONRESIDENT MO return that the physical footprint alone never shows — and the W-2's Box 15 often already names MO. This MO pack year carries no researched convenience rule: verify MO's nonresident wage-sourcing rule at its DOR before assuming no MO filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@1a6eec29172c",
+      "@@a13a158c21d3",
+      "@@6934d69f0c8b"
+     ],
+     "citations": [
+      {
+       "source": "@@a05dbdb15493",
+       "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+      },
+      {
+       "source": "@@a05dbdb15493",
+       "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@09c7b87c76f2"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MO part of 2025 — file a part-year return on income while a resident (plus MO-source income while not).",
+     "state": "MO",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@4393666145eb",
+      "@@1a24d67a1c75"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@1a6eec29172c",
+      "@@a13a158c21d3",
+      "@@6934d69f0c8b"
+     ],
+     "citations": [
+      {
+       "source": "@@a05dbdb15493",
+       "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+      },
+      {
+       "source": "@@a05dbdb15493",
+       "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@f03d7638a996"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MO all of 2025 — file a resident return on income from all sources.",
+     "state": "MO",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@1a24d67a1c75"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mo",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 656,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mo",
+     "taxable_base": "656",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $656.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $656 [head_of_household schedule]: 0 x $656.00 (the $0-$1,313 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5908,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mo",
+     "taxable_base": "5908",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 121,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $5,908.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,908 [head_of_household schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $656.00 (the $5,252-$6,565 bracket) = $22.96; total $121.44 -> $121"
+   },
+   {
+    "base_after_exemptions": 19191,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "mo",
+     "taxable_base": "19191",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 726,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $19,191.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $19,191 [head_of_household schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $1,313.00 (the $5,252-$6,565 bracket) = $45.96; 0.04 x $1,313.00 (the $6,565-$7,878 bracket) = $52.52; 0.045 x $1,313.00 (the $7,878-$9,191 bracket) = $59.08; 0.047 x $10,000.00 (the $9,191+ bracket) = $470.00; total $726.04 -> $726"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mo",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 656,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mo",
+     "taxable_base": "656",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $656.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $656 [married_filing_jointly schedule]: 0 x $656.00 (the $0-$1,313 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5908,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mo",
+     "taxable_base": "5908",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 121,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $5,908.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,908 [married_filing_jointly schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $656.00 (the $5,252-$6,565 bracket) = $22.96; total $121.44 -> $121"
+   },
+   {
+    "base_after_exemptions": 19191,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "mo",
+     "taxable_base": "19191",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 726,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $19,191.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $19,191 [married_filing_jointly schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $1,313.00 (the $5,252-$6,565 bracket) = $45.96; 0.04 x $1,313.00 (the $6,565-$7,878 bracket) = $52.52; 0.045 x $1,313.00 (the $7,878-$9,191 bracket) = $59.08; 0.047 x $10,000.00 (the $9,191+ bracket) = $470.00; total $726.04 -> $726"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mo",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 656,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mo",
+     "taxable_base": "656",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $656.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $656 [married_filing_separately schedule]: 0 x $656.00 (the $0-$1,313 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5908,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mo",
+     "taxable_base": "5908",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 121,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $5,908.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,908 [married_filing_separately schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $656.00 (the $5,252-$6,565 bracket) = $22.96; total $121.44 -> $121"
+   },
+   {
+    "base_after_exemptions": 19191,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "mo",
+     "taxable_base": "19191",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 726,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $19,191.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $19,191 [married_filing_separately schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $1,313.00 (the $5,252-$6,565 bracket) = $45.96; 0.04 x $1,313.00 (the $6,565-$7,878 bracket) = $52.52; 0.045 x $1,313.00 (the $7,878-$9,191 bracket) = $59.08; 0.047 x $10,000.00 (the $9,191+ bracket) = $470.00; total $726.04 -> $726"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mo",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 656,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mo",
+     "taxable_base": "656",
+     "year": 2025
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $656.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $656 [single schedule]: 0 x $656.00 (the $0-$1,313 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5908,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mo",
+     "taxable_base": "5908",
+     "year": 2025
+    },
+    "marginal_rate": "0.035",
+    "tax": 121,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $5,908.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,908 [single schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $656.00 (the $5,252-$6,565 bracket) = $22.96; total $121.44 -> $121"
+   },
+   {
+    "base_after_exemptions": 19191,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "mo",
+     "taxable_base": "19191",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 726,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $19,191.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $19,191 [single schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $1,313.00 (the $5,252-$6,565 bracket) = $45.96; 0.04 x $1,313.00 (the $6,565-$7,878 bracket) = $52.52; 0.045 x $1,313.00 (the $7,878-$9,191 bracket) = $59.08; 0.047 x $10,000.00 (the $9,191+ bracket) = $470.00; total $726.04 -> $726"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "mo",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: MO 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "mo",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: MO 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "mo",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 1704,
+    "work_head": "MO state income tax (2025, graduated brackets): taxable_base $40,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0 x $1,313.00 (the $0-$1,313 bracket) = $0.00; 0.02 x $1,313.00 (the $1,313-$2,626 bracket) = $26.26; 0.025 x $1,313.00 (the $2,626-$3,939 bracket) = $32.82; 0.03 x $1,313.00 (the $3,939-$5,252 bracket) = $39.39; 0.035 x $1,313.00 (the $5,252-$6,565 bracket) = $45.96; 0.04 x $1,313.00 (the $6,565-$7,878 bracket) = $52.52; 0.045 x $1,313.00 (the $7,878-$9,191 bracket) = $59.08; 0.047 x $30,809.00 (the $9,191+ bracket) = $1,448.02; total $1,704.06 -> $1,704"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_taxable_income",
+   "citation": {
+    "source": "@@aa06043db423",
+    "url": "https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "mo"
+  },
+  "work_common_tail": ". Tax line: Form MO-1040 Line 30: 'Tax (see tax chart on page 21 of the instructions)', computed per column (30Y/30S) from Line 29Y/29S. Instructions p.21, '2025 Tax Chart': 'To identify your tax, use your Missouri taxable income from Form MO-1040, Line 29Y and 29S and the tax chart in Section A below. A separate tax must be computed for you and your spouse. Calculate your Missouri tax using the online tax calculator at dor.mo.gov/personal/individual/ or by using the worksheet in Section B below. Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y and 30S.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 CHANGES: the top rate fell AGAIN, to 4.7% (2024: 4.8%; 2023: 4.95%), and the chart's income steps re-indexed to $1,313 increments (2024: $1,273) — breakpoints $1,313 / $2,626 / $3,939 / $5,252 / $6,565 / $7,878 / $9,191, with the printed constants $26 / $59 / $98 / $144 / $197 / $256. Verified against BOTH the 2025 MO-1040 instructions p.21 and the 2025 MO-1040A short-form instructions (identical chart), and corroborated a third time by the booklet's composite-return note 'The tax rate for a composite return is 4.7 percent.' 2025 BASE CHANGE — NEW 100% CAPITAL GAIN SUBTRACTION (affects the taxable_base you must supply): Form MO-A, Part 1, Line 18 is new for 2025 — 'The state of Missouri allows a subtraction from your federal adjusted gross income for 100 percent of your federally reported capital gains. Enter the amount of capital gains reported on your Federal Form 1040 or 1040-SR, Line 7a' (if Line 7a is negative, enter $0). Total subtractions moved from 2024's MO-A Part 1 Line 18 to 2025's Line 19, and Form MO-1040 Line 4 now carries MO-A Part 1 Line 19. A 2025 Missouri taxable income computed without this subtraction will be OVERSTATED. Base guidance: Supply 2025 Form MO-1040 Line 29 'Taxable income' — one column at a time: Line 29Y (yourself) or Line 29S (spouse). Line 29 = total Missouri AGI (Line 6, which starts from federal AGI at Line 1 plus Form MO-A Part 1 additions at Line 2 and minus Form MO-A Part 1 total subtractions at Line 4, now MO-A Line 19 including the new 100% capital gain subtraction) minus total deductions (Line 25 = Line 8 plus Lines 13 through 24: the pension/Social Security exemption; the Lines 9-13 FEDERAL INCOME TAX DEDUCTION — Line 11 federal tax x a percentage set by Missouri AGI: 35% if Line 6 is $25,000 or less, 25% for $25,001-$50,000, 15% for $50,001-$100,000, 5% for $100,001-$125,000, 0% for $125,001 or more, capped at $5,000 per individual / $10,000 married filing combined; the Line 14 standard or itemized deduction; the Line 15 $1,400 head-of-household/qualifying-widow(er) exemption; and the other deductions on Lines 16-24, with Lines 20, 22, and 23 'Reserved' for 2025), giving Line 26; then apportioned by each spouse's income percentage (Line 7Y/7S, applied at Line 27), minus any Line 28 enterprise-zone/rural-empowerment modification = Line 29. Single, married filing separately, head of household, and qualifying widow(er) filers have one column — supply that Line 29 amount. MARRIED FILING COMBINED: Missouri taxes each spouse's column separately — run this op once with Line 29Y and once with Line 29S and add the two results (Form MO-1040 Lines 30Y + 30S); do NOT supply the couple's combined taxable income as one amount, or the tax will be overstated. One rate schedule for all filing statuses: the 2025 Tax Rate Chart (MO-1040 instructions p.21) makes no distinction by filing status, so the identical schedule is shipped for all four statuses. Qualifying widow(er) maps to married_filing_jointly here and uses the same chart. CRITICAL for married filing combined: Missouri computes tax SEPARATELY for each spouse — 'A separate tax must be computed for you and your spouse' (instructions p.21). Combined income is split by each spouse's income percentage (Line 7Y/7S, applied at Line 27), producing Line 29Y and 29S, each run through the chart (Line 30Y/30S), then added at Line 36. Running a couple's combined taxable income through the brackets as one amount OVERSTATES tax (a second pass through the below-4.7% brackets). Run this op once per spouse's Line 29 column and sum the results. Printed-constant rounding (quantified for 2025): the chart's flat add-on constants ($26 / $59 / $98 / $144 / $197 / $256) are rounded from the exact cumulative marginal sums ($26.26 / $59.085 / $98.475 / $144.43 / $196.95 / $256.035); the largest divergence is $0.475 at the $5,252 breakpoint. This op does exact marginal math, so its result can differ from the form worksheet's result by up to ~$1 after rounding. Both agree on the booklet's own worked examples (Example A, taxable income $3,090: worksheet 26 + 11.60 = 37.60 -> 38, exact marginal 26.26 + 11.60 = 37.86 -> 38; Example B, $12,000: worksheet 256 + 132.03 = 388.03 -> 388, exact marginal 256.035 + 132.023 = 388.058 -> 388). Where they can split is a top-bracket amount whose exact total lands on a .50 tie (exact = printed + $0.035 there), e.g. taxable income $9,286: exact 260.50 -> 261 while the worksheet's 256 + 4.465 = 260.465 -> 260. The filed return should use the p.21 Tax Calculation Worksheet's printed constants or the DOR online calculator at dor.mo.gov/personal/individual/. Federal income tax deduction (Missouri base quirk, NOT modeled): MO-1040 Lines 9-13 deduct Line 11 federal income tax times a Missouri-AGI-based percentage (Line 12 chart: 35% if Line 6 is $25,000 or less; 25% $25,001-$50,000; 15% $50,001-$100,000; 5% $100,001-$125,000; 0% $125,001 or more), capped at $5,000 per individual / $10,000 married filing combined. Because it is income-dependent it is not modeled — it must already be reflected in the Line 29 taxable income you supply. standard_deduction ships as null because the base is Line 29 taxable income, from which the Line 14 deduction was already subtracted — do not subtract it again. For reference, 2025 Missouri standard deductions (printed on Form MO-1040 Line 14): $15,750 single or married filing separate; $23,625 head of household; $31,500 married filing combined or qualifying widow(er). Additional standard deduction for each 65-or-older or blind condition (Line 14 instructions, CHANGED for 2025): $2,000 for single and head of household (2024: $1,950); $1,600 for married filing combined, married filing separately, or qualifying widow(er) (2024: $1,550). A net qualified disaster loss increase to the federal standard deduction increases the Missouri one by the same amount (paper filing required). Itemizers use Form MO-A Part 2 instead — the 2025 MO-A prints its Part 2 worksheet trigger as \"Complete this worksheet only if your total state and local taxes included in your federal itemized deductions exceeded $40,000 ($20,000 if married filing separately) or you were required to complete a federal worksheet to calculate Federal Schedule A, Line 5e.\" (no AGI figure of its own). Head of household / qualifying widow(er) additional exemption: $1,400 on MO-1040 Line 15 (unchanged for 2025) — a base reduction already included in the Line 29 base, so it is not shipped; the Missouri filing status must match the federal filing status to claim it. The 2025 MO-1040 has NO personal or dependent exemption lines — exemptions is intentionally empty; exemptions_count and dependents_count have no effect for Missouri. Zero-rate floor: Missouri taxable income of $0 to $1,313 owes $0 (shipped as a rate-'0' bottom bracket); the state is graduated, not flat, for 2025. Rounding rule (instructions 'Dollars and Cents': 'For 1 cent through 49 cents, round down to the previous whole dollar amount. For 50 cents through 99 cents, round up to the next whole dollar amount', with the booklet's own examples 'Round $32.49 down to $32.00' and 'Round $32.50 up to $33.00') — matches the engine's half-up rounding, and vector 1 below is the exact .50 half-up tie. No lookup-table mandate: Missouri publishes no tax table; all filers compute Line 30 from the Tax Rate Chart / Tax Calculation Worksheet (Section B) or the DOR online calculator. Not modeled — MO-1040 Line 34 other taxes: tax on lump-sum distributions (10% of the tax shown on Federal Form 4972) and recapture of low income housing credits (Federal Form 8611); these are added after Line 30 on the form. Not modeled — apportionment and credits after Line 30: nonresidents/part-year residents multiply Line 30 by the Missouri income percentage (Line 32, Form MO-NRI), and residents may take the resident credit for taxes paid to other states (Line 31, Form MO-CR); this op produces the pre-apportionment Line 30 amount. Also not modeled (they are CREDITS against tax, not base reductions): Property Tax Credit (Line 43; Form MO-PTS), Missouri Working Family Tax Credit (Line 44, Form MO-WFTC — still 20% of the federal EIC; the 2025 form's question 3, \"Do you have investment income greater than $4,400 (see instructions)?\", stops a filer who answers Yes), and miscellaneous credits (Line 42; Form MO-TC). The 2024 MO-1040 printed the same line numbers (42 MO-TC, 43 MO-PTS, 44 MO-WFTC). This pack follows the 2025 Form MO-1040 long form; the MO-1040A short form uses the same 2025 Tax Chart (its instructions were the second-pass source) but has its own line layout."
+ },
+ "year": 2025
+}

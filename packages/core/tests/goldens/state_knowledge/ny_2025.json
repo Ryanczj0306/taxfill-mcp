@@ -1,0 +1,1083 @@
+{
+ "_strings": {
+  "@@090c6082177e": "Child and Dependent Care Credit (New York State) — You are entitled to this credit if you qualified to claim the federal child and dependent care credit for 2025 (whether or not you actually claimed it). Full-year residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.",
+  "@@15c9716acac8": "Instructions for Form IT-201, Full-Year Resident Income Tax Return, New York State, tax year 2025 (IT-201-I, printer-friendly PDF, 41 pages) — p. 33 'New York State tax rate schedule' (Married filing jointly and qualifying surviving spouse—filing status 2 and 5; Single and married filing separately—filing status 1 and 3; Head of household—filing status 4), p. 11 'New York State standard deduction table' (Line 34) and 'Line 36: Dependent exemption amount' ($1,000 each), p. 12 'Line 39 – New York State tax', p. 32 'How to calculate your 2025 New York State tax' method table, and pp. 34-39 'Tax computation—New York adjusted gross income of more than $107,650' (tax computation worksheets 1-16). Second pass: the 2025 IT-201-I HTML edition (https://www.tax.ny.gov/forms/html-instructions/2025/it/it201i-2025.htm) reproduces the same three schedules, worksheets, standard deduction table, and $1,000 dependent exemption digit for digit; the 2025 Form IT-201 fill-in PDF pages 2-3 confirm the line 33-39 structure.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@39e03fe2b50c": "Empire State Child Credit — Full-year New York State resident with at least one qualifying child - your child, sibling, stepsibling or a descendant of any of them (including a stepchild, eligible foster child, adopted child, or a child placed with you for adoption) who is under 17 years old on December 31, 2025, lived with you more than half the year, did not provide over half of their own support, has not filed a joint return (except to claim a refund of withholding or estimated tax), and is a U.S. citizen/national or holds an ITIN issued by the IRS.",
+  "@@3e41672de27b": "New York State Earned Income Credit (EITC) — You must have claimed (or been able to claim based on your federal AGI) the federal earned income credit for 2025, and not claim the Noncustodial parent earned income credit (Form IT-209) for the same year. Valid SSNs required for you and each qualifying child by the return due date (including extensions). Full-year residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.",
+  "@@47769ad288fc": "STATE PROCESSING CENTER, PO BOX 61000, ALBANY NY 12261-0001 (paper return with no payment enclosed)",
+  "@@48f46cfcc8f1": "Treaty conformity — NY conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NY income (it flows through the federal starting point; do not add it back on the NY return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: NY Form IT-201 begins from the federal return's income items (line 1 = \"wages, salaries, tips, etc.\" from federal Form 1040 line 1z) and arrives at federal adjusted gross income on line 19. Because the return starts from federal AGI, income that is exempt from federal tax under a U.S. income tax treaty is already excluded from federal AGI and flows through to NY. NY's additions to federal AGI (IT-201 lines 20-23, with \"other additions\" detailed on Form IT-225) do not include any modification that adds back treaty-exempt income. The 2025 IT-225-I addition-modification chart (60 A-1xx plus 59 A-2xx codes) contains no code referencing a federal tax treaty, treaty-exempt wages/income, or nonresident-alien treaty exclusions (the word \"treaty\" appears ZERO times in the 2025 IT-225-I, re-counted this session). Net effect: starts from federal AGI and has no treaty addback, so treaty-exempt income is NOT re-taxed -> conforms = true. (Unlike CA, which adds treaty-exempt income back on Schedule CA, NY has no analogous addback.)",
+  "@@4a3860e0f6b9": "The newest shipped NY pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@6c05018f5bc3": "Real Property Tax Credit (circuit-breaker, homeowners and renters) — New York State resident for all of 2025 who occupied the same NY residence for at least six months, was not claimed as a dependent on another taxpayer's federal return, and whose residence was not completely exempted from real property taxes. Homeowners: did not own real property with a current market value of more than $85,000 during 2025 and paid real property taxes. Renters: average monthly rent (2025 IT-214 line 13) of $450 or less (the form takes 75% of rent when the rent includes charges for heat, gas, electricity, and furnishings).",
+  "@@7704fff2aaf3": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice - confirm each amount and your eligibility at the cited source before claiming it. Every 2025 amount below was read from the 2025 edition of the credit form or its instructions (IT-215, IT-213-I, IT-214, IT-216-I) or from the 2025 IT-201-I itself - none is carried over from the 2024 pack.",
+  "@@7a28d7063c58": "Instructions for Form IT-201, Full-Year Resident Income Tax Return (2025), printer-friendly PDF (IT-201-I, 41 pages) - starting point (line 1 = federal 1040 line 1z; line 19 federal AGI), additions lines 20-23, Who must file ($4,000 / $3,100 dependent-single), line 34 standard deduction table, line 36 dependent exemption ($1,000), line 39 tax computation, p. 33 rate schedules, pp. 34-39 tax computation worksheets, due date April 15 2026",
+  "@@8a3111dc9f24": "Law change NOT modeled by the engine (status final_form_published): NEW FOR 2025 — the Empire State child credit is DECOUPLED from the federal child tax credit. The 33%-of-the-federal-credit (computed under the rules in effect for tax year 2017, before Public Law 115-97) / $100-per-child computation used through 2024 no longer applies. The credit now equals $1,000 per qualifying child under four years old plus $330 per qualifying child at least four but less than 17 years old, reduced by $16.50 for every $1,000 (federal AGI rounded DOWN to the nearest $1,000 on Form IT-213 line 6) by which federal AGI exceeds the filing-status threshold — $110,000 married filing joint, $75,000 single / head of household / qualifying surviving spouse, $55,000 married filing a separate return. If the computed Form IT-213 line 9 amount is zero or less the taxpayer is not eligible and must not complete or submit the form. Resolve via: 2025 Instructions for Form IT-213 (IT-213-I), \"New for 2025\" and \"Credit Calculation\" at the citation URL — the per-child amounts, the $16.50-per-$1,000 phase-down and the line 6 round-down rule live there; the credit reduces tax on IT-201 line 63 and is never a base reduction, so calc.state_tax does not compute it.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9fb7f4877045": "Instructions for Form IT-201 (2025), \"When to file/Important dates\" (p. 41) - April 15, 2026 filing/payment date; IT-370 six-month extension to October 15, 2026; June 15, 2026 special federal-qualifier date; the four 2026 estimated-tax dates and the $300 threshold",
+  "@@aa473ca6116c": "2025 Instructions for Form IT-213, Claim for Empire State Child Credit - \"New for 2025\" DECOUPLING from the federal child tax credit, $1,000 per qualifying child under four / $330 per qualifying child age four to 16, $16.50-per-$1,000 phase-down, $110,000/$75,000/$55,000 thresholds, line 6 round-down rule",
+  "@@e5856d8f8613": "New York State Household Credit — New York State resident (full-year or part-year) who cannot be claimed as a dependent on another taxpayer's federal income tax return (Form IT-201 item C marked No). Amount depends on filing status, federal AGI, and (for tables 2 and 3) the number of dependents from item H plus one for you (and one for your spouse on a joint return), looked up in the household credit tables in the Form IT-201 instructions.",
+  "@@e5f26f4421cd": "annual (per tax year; the newest shipped NY pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@e8c9ace8a603": "Form IT-370 gives an automatic six-month extension of time to file (to October 15, 2026), but must be filed along with payment for any tax due on or before April 15, 2026. June 15, 2026 due date if you qualify to file your federal income tax return on June 15, 2026 (a U.S. citizen or resident noncitizen living outside the U.S. and Puerto Rico whose main place of business or post of duty is outside the U.S. and Puerto Rico, or in military service outside the U.S. and Puerto Rico when the return is due). 2026 estimated tax is due April 15, June 15, September 15, 2026 and January 15, 2027 (generally required if you expect to owe at least $300 of NYS, NYC, or Yonkers income tax after withholding and credits, or any MCTMT).",
+  "@@eb1c955e4126": "TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), \"New York Tax Treatment of Nonresidents and Part-Year Residents — Application of the Convenience of the Employer Test to Telecommuters and Others\", quoting 20 NYCRR 132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor test.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f5fc3cab0dcf": "Instructions for Form IT-201 (2025), \"Where to file\" (p. 41) - both PO Box addresses printed in the instructions themselves; Publication 55 for designated private delivery services"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@f5fc3cab0dcf",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     },
+     {
+      "source": "@@9fb7f4877045",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@e8c9ace8a603"
+    ],
+    "form": "Form IT-201, Resident Income Tax Return",
+    "jurisdiction": "states/ny",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@47769ad288fc",
+    "notes": [],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@f5fc3cab0dcf",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     },
+     {
+      "source": "@@9fb7f4877045",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@e8c9ace8a603"
+    ],
+    "form": "Form IT-201, Resident Income Tax Return",
+    "jurisdiction": "states/ny",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "STATE PROCESSING CENTER, PO BOX 15555, ALBANY NY 12212-5555 (paper return enclosing a check or money order with Form IT-201-V payment voucher)",
+    "notes": [],
+    "payment": [
+     "Pay online via NY Web Pay: https://www.tax.ny.gov/pay/ind/pay-income-tax-online.htm (no processor fee).",
+     "By check: make it payable to \"New York State Income Tax (2025 IT-201-I, \"Pay by check or money order\", verbatim - \"Make check or money order payable in U.S. funds to New York State Income Tax and write the last four digits of your Social Security number and 2025 Income Tax on it. Do not send cash.\"; submit Form IT-201-V with any check/money order, and include full payment with your return if you owe more than one dollar)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@f5fc3cab0dcf",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     },
+     {
+      "source": "@@9fb7f4877045",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@e8c9ace8a603"
+    ],
+    "form": "Form IT-201, Resident Income Tax Return",
+    "jurisdiction": "states/ny",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@47769ad288fc",
+    "notes": [],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@9fb7f4877045",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form IT-201, Resident Income Tax Return",
+    "headline": "NY 2025: refund $512",
+    "jurisdiction": "states/ny",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@9fb7f4877045",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form IT-201, Resident Income Tax Return",
+    "headline": "NY 2025: you owe $347",
+    "jurisdiction": "states/ny",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@9fb7f4877045",
+      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form IT-201, Resident Income Tax Return",
+    "headline": "NY 2025: you owe $1,205",
+    "jurisdiction": "states/ny",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a3860e0f6b9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 Form IT-215, Claim for Earned Income Credit (line 11 \"NYS EIC rate 30% (.30)\", line 18); 2025 IT-201-I Line 65 (including the \"write EIC in the box\" IRS-computed-credit path and the 21-days / April 15, 2026 bill wording)",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it215_2025_fill_in.pdf"
+    },
+    {
+     "answers": "NY Dept. of Taxation and Finance - 2025 Instructions for Form IT-213 (IT-213-I), \"New for 2025\" and \"Credit Calculation\" ($1,000 per qualifying child under four / $330 per qualifying child age four to 16; $16.50-per-$1,000 phase-down; $110,000/$75,000/$55,000 thresholds; line 6 round-down rule), updated December 10, 2025; 2025 IT-201-I Line 63",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm"
+    },
+    {
+     "answers": "2025 Form IT-214 (line 3 $85,000 property-value gate, line 8 $18,000 household-gross-income limit, lines 11/13 rent computation and $450 limit, credit limit chart $375/$150 and $75/$50) and the 2025 IT-214-I instructions; 2025 IT-201-I Line 67",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it214_2025_fill_in.pdf"
+    },
+    {
+     "answers": "NY Dept. of Taxation and Finance - 2025 Form IT-216-I, Instructions for Form IT-216 (New York State child and dependent care credit limitation table and the New York City child and dependent care credit limitation table, p. 7 of 7)",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it216i_2025.pdf"
+    },
+    {
+     "answers": "Instructions for Form IT-201 (2025), Line 40 - New York State household credit tables 1, 2, and 3 (p. 12 of the printer-friendly IT-201-I)",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "credits",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a3860e0f6b9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@f5fc3cab0dcf",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "filing_logistics",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a3860e0f6b9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@7a28d7063c58",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    },
+    {
+     "answers": "Instructions for Form IT-201 (2025), HTML edition - the independent SECOND-PASS source for the three rate schedules, the standard deduction table, the $1,000 dependent exemption, and the line 39 / method-table wording; agrees with the printer-friendly PDF on every bound, rate, and printed constant",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2025/it/it201i-2025.htm"
+    },
+    {
+     "answers": "2025 Form IT-201, Resident Income Tax Return (fill-in PDF) - page 2 lines 33-37 (New York adjusted gross income, standard/itemized deduction, dependent exemption amount \"multiply the number of dependents listed in item H by 1,000\", taxable income) and page 3 lines 38-39 \"NYS tax on line 38 amount\" (third-pass structure check)",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201_2025_fill_in.pdf"
+    },
+    {
+     "answers": "Income tax definitions (resident, nonresident, part-year resident, domicile, statutory resident 184-day rule, permanent place of abode, substantially all of the taxable year)",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pit/file/pit_definitions.htm"
+    },
+    {
+     "answers": "Instructions for Form IT-225, New York State Modifications (2025) - addition modification chart (60 A-1xx plus 59 A-2xx codes), no treaty-exempt-income addback (the word 'treaty' appears zero times)",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2025/it/it225i-2025.htm"
+    },
+    {
+     "answers": "@@aa473ca6116c",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm"
+    },
+    {
+     "answers": "2025 Form IT-215, Claim for Earned Income Credit (fill-in PDF) - line 11 'NYS EIC rate 30% (.30)', line 18 carried to IT-201 line 65",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it215_2025_fill_in.pdf"
+    },
+    {
+     "answers": "2025 Form IT-214, Claim for Real Property Tax Credit for Homeowners and Renters (fill-in PDF) - $85,000 property-value gate, $18,000 household-gross-income limit, $450 average-monthly-rent limit, $375/$150 and $75/$50 credit limit chart",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it214_2025_fill_in.pdf"
+    },
+    {
+     "answers": "2025 Form IT-214-I, Instructions for Form IT-214 (Claim for Real Property Tax Credit for Homeowners and Renters)",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it214i_2025.pdf"
+    },
+    {
+     "answers": "2025 Form IT-216-I, Instructions for Form IT-216 (Claim for Child and Dependent Care Credit) - New York State child and dependent care credit limitation table (1.100 at NYAGI of $25,000 or less, 1.000 across $40,000-$50,000, 0.600 over $65,000 to $150,000, 0.200 over $150,000) and the New York City limitation table (0.750 down to 0.000 over $30,000)",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "forms_and_instructions",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it216i_2025.pdf"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a3860e0f6b9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@aa473ca6116c",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "law_changes",
+     "url": "https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "remote_work_sourcing": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a3860e0f6b9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@eb1c955e4126",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "remote_work_sourcing",
+     "url": "https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf"
+    }
+   ],
+   "topic": "remote_work_sourcing",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a3860e0f6b9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@15c9716acac8",
+     "cadence": "@@e5f26f4421cd",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "remote_work_sourcing",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@4a3860e0f6b9",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ny",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/ny",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3e41672de27b",
+      "@@39e03fe2b50c",
+      "@@6c05018f5bc3",
+      "@@090c6082177e",
+      "@@e5856d8f8613"
+     ],
+     "citations": [
+      {
+       "source": "@@aa473ca6116c",
+       "url": "https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm"
+      },
+      {
+       "source": "@@7a28d7063c58",
+       "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+      },
+      {
+       "source": "@@eb1c955e4126",
+       "url": "https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "Form IT-203, Nonresident and Part-Year Resident Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in NY in 2025 without living there — file a nonresident return on NY-source income.",
+     "state": "NY",
+     "warnings": [
+      "@@7704fff2aaf3",
+      "@@48f46cfcc8f1",
+      "@@8a3111dc9f24",
+      "Remote-work trap: work performed from TX for an employer sitting in NY, and NY HAS a convenience-of-the-employer sourcing rule. 20 NYCRR 132.18(a): a nonresident employee who works both in and out of New York allocates wages by working days, BUT \"any allowance claimed for days worked outside New York State must be based upon the performance of services which of necessity, as distinguished from convenience, obligate the employee to out-of-state duties in the service of his employer\" (the convenience of the employer test). A normal work day spent at an out-of-state home office therefore counts as a NEW YORK day (New York-source wages) unless the home office qualifies as a bona fide employer office. Trigger: Applies to a nonresident or part-year resident whose ASSIGNED OR PRIMARY work location is an established office or other bona fide place of business of the employer IN New York State. If the assigned or primary work location is outside New York, a normal work day worked at home is treated as a day worked OUTSIDE New York (TSB-M-06(5)I). Exceptions: TSB-M-06(5)I (tax years 2006+): a home-office day counts as worked outside New York only if the home office is a \"bona fide employer office\" — met by the PRIMARY factor (the home office contains or is near specialized facilities that cannot be made available at the employer's place of business) OR at least 4 of the 6 secondary factors (home office is a requirement or condition of employment; bona fide employer business purpose for the location; some core duties performed there; regular and continuous client/customer meetings there; no designated office space at the employer's regular place of business; employer reimburses substantially all (80%+) home-office expenses) AND 3 of the 10 other factors. The same rules apply to the Yonkers nonresident earnings tax. [TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), \"New York Tax Treatment of Nonresidents and Part-Year Residents — Application of the Convenience of the Employer Test to Telecommuters and Others\", quoting 20 NYCRR 132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor test. — https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf] If the rule reaches these wages, a NONRESIDENT NY return is required that the physical footprint alone never shows."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3e41672de27b",
+      "@@39e03fe2b50c",
+      "@@6c05018f5bc3",
+      "@@090c6082177e",
+      "@@e5856d8f8613"
+     ],
+     "citations": [
+      {
+       "source": "@@aa473ca6116c",
+       "url": "https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm"
+      },
+      {
+       "source": "@@7a28d7063c58",
+       "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "Form IT-203, Nonresident and Part-Year Resident Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in NY part of 2025 — file a part-year return on income while a resident (plus NY-source income while not).",
+     "state": "NY",
+     "warnings": [
+      "@@7704fff2aaf3",
+      "@@48f46cfcc8f1",
+      "@@8a3111dc9f24"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3e41672de27b",
+      "@@39e03fe2b50c",
+      "@@6c05018f5bc3",
+      "@@090c6082177e",
+      "@@e5856d8f8613"
+     ],
+     "citations": [
+      {
+       "source": "@@aa473ca6116c",
+       "url": "https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm"
+      },
+      {
+       "source": "@@7a28d7063c58",
+       "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form IT-201, Resident Income Tax Return"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in NY all of 2025 — file a resident return on income from all sources.",
+     "state": "NY",
+     "warnings": [
+      "@@7704fff2aaf3",
+      "@@8a3111dc9f24"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ny",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,200 = -$11,200.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ny",
+     "taxable_base": "11200",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $11,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,200 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ny",
+     "taxable_base": "16200",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 200,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $16,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,200 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.04 x $5,000.00 (the $0-$12,800 bracket) = $200.00; total $200.00 -> $200"
+   },
+   {
+    "base_after_exemptions": 112650,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ny",
+     "taxable_base": "123850",
+     "year": 2025
+    },
+    "marginal_rate": "0.06",
+    "tax": 5972,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $123,850.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,200 = $112,650.00; graduated tax on $112,650 [head_of_household schedule]: 0.04 x $12,800.00 (the $0-$12,800 bracket) = $512.00; 0.045 x $4,850.00 (the $12,800-$17,650 bracket) = $218.25; 0.0525 x $3,250.00 (the $17,650-$20,900 bracket) = $170.62; 0.055 x $86,750.00 (the $20,900-$107,650 bracket) = $4,771.25; 0.06 x $5,000.00 (the $107,650-$269,300 bracket) = $300.00; total $5,972.12 -> $5,972"
+   },
+   {
+    "base_after_exemptions": 25010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ny",
+     "taxable_base": "25021200",
+     "year": 2025
+    },
+    "marginal_rate": "0.109",
+    "tax": 2495253,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $25,021,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,200 = $25,010,000.00; graduated tax on $25,010,000 [head_of_household schedule]: 0.04 x $12,800.00 (the $0-$12,800 bracket) = $512.00; 0.045 x $4,850.00 (the $12,800-$17,650 bracket) = $218.25; 0.0525 x $3,250.00 (the $17,650-$20,900 bracket) = $170.62; 0.055 x $86,750.00 (the $20,900-$107,650 bracket) = $4,771.25; 0.06 x $161,650.00 (the $107,650-$269,300 bracket) = $9,699.00; 0.0685 x $1,347,150.00 (the $269,300-$1,616,450 bracket) = $92,279.78; 0.0965 x $3,383,550.00 (the $1,616,450-$5,000,000 bracket) = $326,512.58; 0.103 x $20,000,000.00 (the $5,000,000-$25,000,000 bracket) = $2,060,000.00; 0.109 x $10,000.00 (the $25,000,000+ bracket) = $1,090.00; total $2,495,253.48 -> $2,495,253"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ny",
+     "taxable_base": "52200",
+     "year": 2025
+    },
+    "marginal_rate": "0.055",
+    "tax": 1951,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $52,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [head_of_household] = $11,200 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.04 x $12,800.00 (the $0-$12,800 bracket) = $512.00; 0.045 x $4,850.00 (the $12,800-$17,650 bracket) = $218.25; 0.0525 x $3,250.00 (the $17,650-$20,900 bracket) = $170.62; 0.055 x $19,100.00 (the $20,900-$107,650 bracket) = $1,050.50; total $1,951.38 -> $1,951"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ny",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $16,050 = -$16,050.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ny",
+     "taxable_base": "16050",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $16,050.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $16,050 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ny",
+     "taxable_base": "21050",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 200,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $21,050.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $16,050 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.04 x $5,000.00 (the $0-$17,150 bracket) = $200.00; total $200.00 -> $200"
+   },
+   {
+    "base_after_exemptions": 166550,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ny",
+     "taxable_base": "182600",
+     "year": 2025
+    },
+    "marginal_rate": "0.06",
+    "tax": 8853,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $182,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $16,050 = $166,550.00; graduated tax on $166,550 [married_filing_jointly schedule]: 0.04 x $17,150.00 (the $0-$17,150 bracket) = $686.00; 0.045 x $6,450.00 (the $17,150-$23,600 bracket) = $290.25; 0.0525 x $4,300.00 (the $23,600-$27,900 bracket) = $225.75; 0.055 x $133,650.00 (the $27,900-$161,550 bracket) = $7,350.75; 0.06 x $5,000.00 (the $161,550-$323,200 bracket) = $300.00; total $8,852.75 -> $8,853"
+   },
+   {
+    "base_after_exemptions": 25010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ny",
+     "taxable_base": "25026050",
+     "year": 2025
+    },
+    "marginal_rate": "0.109",
+    "tax": 2479353,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $25,026,050.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $16,050 = $25,010,000.00; graduated tax on $25,010,000 [married_filing_jointly schedule]: 0.04 x $17,150.00 (the $0-$17,150 bracket) = $686.00; 0.045 x $6,450.00 (the $17,150-$23,600 bracket) = $290.25; 0.0525 x $4,300.00 (the $23,600-$27,900 bracket) = $225.75; 0.055 x $133,650.00 (the $27,900-$161,550 bracket) = $7,350.75; 0.06 x $161,650.00 (the $161,550-$323,200 bracket) = $9,699.00; 0.0685 x $1,832,150.00 (the $323,200-$2,155,350 bracket) = $125,502.28; 0.0965 x $2,844,650.00 (the $2,155,350-$5,000,000 bracket) = $274,508.72; 0.103 x $20,000,000.00 (the $5,000,000-$25,000,000 bracket) = $2,060,000.00; 0.109 x $10,000.00 (the $25,000,000+ bracket) = $1,090.00; total $2,479,352.75 -> $2,479,353"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ny",
+     "taxable_base": "57050",
+     "year": 2025
+    },
+    "marginal_rate": "0.055",
+    "tax": 1868,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $57,050.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [married_filing_jointly] = $16,050 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.04 x $17,150.00 (the $0-$17,150 bracket) = $686.00; 0.045 x $6,450.00 (the $17,150-$23,600 bracket) = $290.25; 0.0525 x $4,300.00 (the $23,600-$27,900 bracket) = $225.75; 0.055 x $12,100.00 (the $27,900-$161,550 bracket) = $665.50; total $1,867.50 -> $1,868"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ny",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,000 = -$8,000.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ny",
+     "taxable_base": "8000",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $8,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,000 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ny",
+     "taxable_base": "12250",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 170,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $12,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,000 = $4,250.00; graduated tax on $4,250 [married_filing_separately schedule]: 0.04 x $4,250.00 (the $0-$8,500 bracket) = $170.00; total $170.00 -> $170"
+   },
+   {
+    "base_after_exemptions": 85650,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ny",
+     "taxable_base": "93650",
+     "year": 2025
+    },
+    "marginal_rate": "0.06",
+    "tax": 4571,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $93,650.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,000 = $85,650.00; graduated tax on $85,650 [married_filing_separately schedule]: 0.04 x $8,500.00 (the $0-$8,500 bracket) = $340.00; 0.045 x $3,200.00 (the $8,500-$11,700 bracket) = $144.00; 0.0525 x $2,200.00 (the $11,700-$13,900 bracket) = $115.50; 0.055 x $66,750.00 (the $13,900-$80,650 bracket) = $3,671.25; 0.06 x $5,000.00 (the $80,650-$215,400 bracket) = $300.00; total $4,570.75 -> $4,571"
+   },
+   {
+    "base_after_exemptions": 25010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ny",
+     "taxable_base": "25018000",
+     "year": 2025
+    },
+    "marginal_rate": "0.109",
+    "tax": 2511019,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $25,018,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,000 = $25,010,000.00; graduated tax on $25,010,000 [married_filing_separately schedule]: 0.04 x $8,500.00 (the $0-$8,500 bracket) = $340.00; 0.045 x $3,200.00 (the $8,500-$11,700 bracket) = $144.00; 0.0525 x $2,200.00 (the $11,700-$13,900 bracket) = $115.50; 0.055 x $66,750.00 (the $13,900-$80,650 bracket) = $3,671.25; 0.06 x $134,750.00 (the $80,650-$215,400 bracket) = $8,085.00; 0.0685 x $862,150.00 (the $215,400-$1,077,550 bracket) = $59,057.28; 0.0965 x $3,922,450.00 (the $1,077,550-$5,000,000 bracket) = $378,516.42; 0.103 x $20,000,000.00 (the $5,000,000-$25,000,000 bracket) = $2,060,000.00; 0.109 x $10,000.00 (the $25,000,000+ bracket) = $1,090.00; total $2,511,019.45 -> $2,511,019"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ny",
+     "taxable_base": "49000",
+     "year": 2025
+    },
+    "marginal_rate": "0.055",
+    "tax": 2035,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $49,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [married_filing_separately] = $8,000 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.04 x $8,500.00 (the $0-$8,500 bracket) = $340.00; 0.045 x $3,200.00 (the $8,500-$11,700 bracket) = $144.00; 0.0525 x $2,200.00 (the $11,700-$13,900 bracket) = $115.50; 0.055 x $26,100.00 (the $13,900-$80,650 bracket) = $1,435.50; total $2,035.00 -> $2,035"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ny",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,000 = -$8,000.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ny",
+     "taxable_base": "8000",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 0,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $8,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,000 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4250,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ny",
+     "taxable_base": "12250",
+     "year": 2025
+    },
+    "marginal_rate": "0.04",
+    "tax": 170,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $12,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,000 = $4,250.00; graduated tax on $4,250 [single schedule]: 0.04 x $4,250.00 (the $0-$8,500 bracket) = $170.00; total $170.00 -> $170"
+   },
+   {
+    "base_after_exemptions": 85650,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ny",
+     "taxable_base": "93650",
+     "year": 2025
+    },
+    "marginal_rate": "0.06",
+    "tax": 4571,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $93,650.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,000 = $85,650.00; graduated tax on $85,650 [single schedule]: 0.04 x $8,500.00 (the $0-$8,500 bracket) = $340.00; 0.045 x $3,200.00 (the $8,500-$11,700 bracket) = $144.00; 0.0525 x $2,200.00 (the $11,700-$13,900 bracket) = $115.50; 0.055 x $66,750.00 (the $13,900-$80,650 bracket) = $3,671.25; 0.06 x $5,000.00 (the $80,650-$215,400 bracket) = $300.00; total $4,570.75 -> $4,571"
+   },
+   {
+    "base_after_exemptions": 25010000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ny",
+     "taxable_base": "25018000",
+     "year": 2025
+    },
+    "marginal_rate": "0.109",
+    "tax": 2511019,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $25,018,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,000 = $25,010,000.00; graduated tax on $25,010,000 [single schedule]: 0.04 x $8,500.00 (the $0-$8,500 bracket) = $340.00; 0.045 x $3,200.00 (the $8,500-$11,700 bracket) = $144.00; 0.0525 x $2,200.00 (the $11,700-$13,900 bracket) = $115.50; 0.055 x $66,750.00 (the $13,900-$80,650 bracket) = $3,671.25; 0.06 x $134,750.00 (the $80,650-$215,400 bracket) = $8,085.00; 0.0685 x $862,150.00 (the $215,400-$1,077,550 bracket) = $59,057.28; 0.0965 x $3,922,450.00 (the $1,077,550-$5,000,000 bracket) = $378,516.42; 0.103 x $20,000,000.00 (the $5,000,000-$25,000,000 bracket) = $2,060,000.00; 0.109 x $10,000.00 (the $25,000,000+ bracket) = $1,090.00; total $2,511,019.45 -> $2,511,019"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ny",
+     "taxable_base": "49000",
+     "year": 2025
+    },
+    "marginal_rate": "0.055",
+    "tax": 2035,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $49,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [single] = $8,000 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.04 x $8,500.00 (the $0-$8,500 bracket) = $340.00; 0.045 x $3,200.00 (the $8,500-$11,700 bracket) = $144.00; 0.0525 x $2,200.00 (the $11,700-$13,900 bracket) = $115.50; 0.055 x $26,100.00 (the $13,900-$80,650 bracket) = $1,435.50; total $2,035.00 -> $2,035"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ny",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: NY 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: dependent). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ny",
+     "taxable_base": "56050",
+     "year": 2025
+    },
+    "marginal_rate": "0.055",
+    "tax": 1868,
+    "work_head": "NY state income tax (2025, graduated brackets): taxable_base $56,050.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $16,050 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.04 x $17,150.00 (the $0-$17,150 bracket) = $686.00; 0.045 x $6,450.00 (the $17,150-$23,600 bracket) = $290.25; 0.0525 x $4,300.00 (the $23,600-$27,900 bracket) = $225.75; 0.055 x $12,100.00 (the $27,900-$161,550 bracket) = $665.50; total $1,867.50 -> $1,868"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@15c9716acac8",
+    "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ny"
+  },
+  "work_common_tail": ". Tax line: 2025 Form IT-201, page 3: '39 NYS tax on line 38 amount'. IT-201-I (2025) p. 12, Line 39 – New York State tax: 'Is line 33 (your New York adjusted gross income) $107,650 or less? If Yes, find your New York State tax using the 2025 New York State Tax Table (visit www.tax.ny.gov and search: table); or if line 38 is $65,000 or more, use the New York State tax rate schedule below. Enter the tax due on line 39. If No, see Tax computation – New York adjusted gross income of more than $107,650 below.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply Form IT-201, line 33 (New York adjusted gross income) = federal AGI (line 19) + New York additions (lines 20-23) - New York subtractions (lines 25-32). The op then subtracts the shipped NY standard deduction (form line 34) and $1,000 per dependent (form line 36) to reproduce NY taxable income (lines 37/38 = line 33 - line 34 - line 36), the amount the rate schedule is applied to. Do NOT supply federal AGI unless you have no NY modifications; do NOT supply line 38 (taxable income) or the deduction/exemption would be subtracted twice. Adjudication note (two-pass, TY2025): the schedules, standard deduction table, and $1,000 dependent exemption were drafted from the printer-friendly 2025 IT-201-I PDF (pp. 11, 33-39; InDesign build dated 2025-11-20) and re-verified against the separately published 2025 IT-201-I HTML edition plus the 2025 Form IT-201 fill-in PDF — all passes agree on every bound, rate, and printed constant. New York again did NOT index for 2025: all nine brackets, all printed constants, and the 8,000/16,050/8,000/11,200 standard deduction are unchanged from 2024 and 2023 (the mid-bracket bounds 8,500/11,700/13,900/80,650/215,400/1,077,550/5,000,000/25,000,000 for single/MFS, 17,150/23,600/27,900/161,550/323,200/2,155,350 for MFJ, and 12,800/17,650/20,900/107,650/269,300/1,616,450 for head of household were re-checked digit by digit against the 2025 print, not carried forward). CRITICAL — benefit-recapture worksheet mandate: if New York adjusted gross income (IT-201 line 33) is more than $107,650, the 2025 IT-201-I instructions MANDATE the 'Tax computation — New York adjusted gross income of more than $107,650' worksheets (pp. 34-39), so plain bracket math is WRONG (it understates tax) above that threshold; the filed form must use the worksheets. The 2025 Recapture Base / Incremental Benefit constants were RE-DERIVED from the 2025 booklet (not carried from 2024) and are: married filing jointly / qualifying surviving spouse — worksheet 1 (5.5% of line 38, stop if line 33 is $157,650 or more), worksheet 2 $333/$807, worksheet 3 $1,140/$2,747, worksheet 4 $3,887/$60,350, worksheet 5 $64,237/$32,500, worksheet 6 flat 10.9% of line 1; single and married filing separately — worksheet 7 (6% of line 38), worksheet 8 $568/$1,831, worksheet 9 $2,399/$30,172, worksheet 10 $32,571/$32,500, worksheet 11 flat 10.9%; head of household — worksheet 12, worksheet 13 $787/$2,289, worksheet 14 $3,076/$45,261, worksheet 15 $48,337/$32,500, worksheet 16 flat 10.9%. Each recapture is phased in over $50,000 of NYAGI above the bracket threshold (line 7 = lesser of the excess or $50,000, divided by $50,000 to four decimals). At NYAGI over $25,000,000 the final worksheet in each status taxes ALL taxable income at a flat 10.9%. Table mandate below $65,000: if NYAGI (line 33) is $107,650 or less and taxable income (line 38) is less than $65,000, the 2025 instructions require the 2025 New York State Tax Table (visit www.tax.ny.gov and search: table) — bracket math may differ by a few dollars within a table band; the filed form must use the table. The rate schedule itself applies only when line 38 is $65,000 or more (2025 IT-201-I p. 32 method table). One schedule covers Single AND Married filing separately ('Single and married filing separately—filing status 1 and 3') — the identical schedule is duplicated for both statuses here, copied, not derived. The MFJ schedule is titled 'Married filing jointly and qualifying surviving spouse—filing status 2 and 5', so qualifying surviving spouse maps exactly to married_filing_jointly as the engine assumes, and the 2025 standard deduction table lists qualifying surviving spouse at the same $16,050 as a married filing joint return. The printed '$X plus Y% of the excess over $Z' constants in the 2025 schedule are rounded to whole dollars and do NOT all equal the exact cumulative sum of prior brackets: max divergence is $0.50 (single/MFS $600 printed vs $599.50 exact at $13,900) and roughly plus or minus $0.25 elsewhere (e.g., MFJ $976 vs $976.25 at $23,600 and $8,553 vs $8,552.75 at $161,550; single top constants $449,929/$2,509,929 vs exact $449,929.45/$2,509,929.45; HoH $107,651 vs $107,650.90 and $434,163/$2,494,163 vs exact $434,163.475/$2,494,163.475) — the identical divergence pattern to the 2024 and 2023 prints. Pure marginal accumulation (what this engine does) can therefore differ from schedule arithmetic by under $1. Standard-deduction gates NOT modeled: a Single filer who CAN be claimed as a dependent on another taxpayer's return (item C = Yes) gets $3,100, not the shipped $8,000 (2025 standard deduction table, first row); married-filing-separately spouses must both take the standard deduction unless both choose to itemize on their New York returns; itemizers enter the larger Form IT-196 line 49 amount on line 34 instead. Compute those cases on the form. New York has no personal (taxpayer/spouse) exemption — only the $1,000 per-dependent exemption on line 36. If line 36 is more than line 35, the 2025 form says to leave lines 37 and 38 blank (taxable income zero) — the engine's max(0, ...) floor matches. Line 35 itself is already floored at zero ('if line 34 is more than line 33, enter 0'). New York State household credit (IT-201 line 40 — table 1 up to $75 for single, tables 2/3 by household size, no credit above federal AGI of $28,000/$32,000), NY EITC (line 65, 30% of the federal EIC), the Empire State child credit (line 63 — DECOUPLED from the federal child tax credit for 2025: $1,000 per qualifying child under four, $330 per child age four to 16, less $16.50 per $1,000 of federal AGI over $110,000/$75,000/$55,000), and the child/dependent care credit (line 64) are TAX CREDITS subtracted from tax, not base reductions — none are shipped as exemptions and none are modeled by this op. Local taxes on the same return are NOT modeled: New York City resident tax (separate NYC tax table / NYC tax rate schedule on p. 40 with its own worksheets), the NYC school tax credit (line 69) and NYC child and dependent care credit, the Yonkers resident income tax surcharge (a percentage of net state tax) and Yonkers nonresident earnings tax, and the MCTMT for self-employed individuals. New York STATE tax on line 39 only is modeled here. Whole-dollar entry is MANDATORY on the 2025 return ('enter whole dollar amounts only... Do not enter any cent amounts'), and the printed rounding rule is drop under 50 cents / increase 50 cents or more to the next dollar — a .50 tie rounds UP, exactly matching this op's irs_round. 2025 filing-season schedule confirmed final: New York had no mid-year 2025 rate change; these are the schedules printed in the final 2025 IT-201-I (printer-friendly PDF and HTML editions agree) used for the 2026 filing season. Return due April 15, 2026."
+ },
+ "year": 2025
+}

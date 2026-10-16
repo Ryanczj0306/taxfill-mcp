@@ -1,0 +1,655 @@
+{
+ "_strings": {
+  "@@1921175c4e3a": "IT 1040 without payment: Ohio Department of Taxation, PO Box 2679, Columbus, OH 43270-2679",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1ebf7ccac627": "Retirement Income Credit — Taxpayer (and spouse, if filing jointly) who (a) has modified adjusted gross income less exemptions under $100,000; (b) received income from a pension, profit-sharing, or retirement plan (e.g., traditional IRA or 401(k)) on account of retirement; (c) the income is included in Ohio adjusted gross income; and (d) has not previously taken the Ohio lump sum retirement credit. Amounts deducted on the Ohio Schedule of Adjustments (e.g., Social Security, uniformed-services retirement) do not qualify.",
+  "@@2fcc0a99dd7f": "Joint Filing Credit — Married taxpayers filing a joint Ohio return where EACH spouse has at least $500 of 'qualifying income' (income included in Ohio AGI other than interest, dividends/distributions, capital gains, and rents/royalties; amounts deducted on the Ohio Schedule of Adjustments such as business income, state and local tax refunds, Social Security, and certain military compensation/retirement do not count). Include a separate statement listing the qualifying income for each spouse.",
+  "@@327bd905baa9": "Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.",
+  "@@330955011049": "Exemption Credit — Taxpayer whose modified adjusted gross income less exemptions is less than $30,000; a credit is allowed for each personal/dependent exemption claimed on the return. This functions as Ohio's low-income credit tied to the number of exemptions.",
+  "@@3f0f9f3e44a4": "Ohio Earned Income Credit (EIC) — Taxpayers who qualified for and claimed the federal Earned Income Tax Credit for tax year 2024 (federal Form 1040/1040-SR, line 27). Eligibility tracks the federal EIC.",
+  "@@416d79993bbd": "Senior Citizen Credit — Taxpayer who (a) has modified adjusted gross income less exemptions under $100,000; (b) was 65 or older at the end of the tax year; and (c) has not previously taken the Ohio lump sum distribution credit.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4fde1f3f089d": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation), p. 3 \"Where Should I Mail My Return and/or Payment?\" — \"Important: Always include a properly completed OUPC ... anytime you mail a check or money order\"",
+  "@@7e92a301c2f7": "Law change NOT modeled by the engine (status final_form_published): NEW credits for 2024 (Highlights for Tax Year 2024): the Commercial Vehicle Training credit and the Film/Theater Capital Improvements credits. Ohio credits are claimed through the Ohio Schedule of Credits and subtracted from tax (IT 1040 line 9), never from income, so neither changes the income base or the rate schedule; this pack's `credits` list does not carry them. Resolve via: 2024 Ohio IT 1040 / SD 100 Instruction Booklet Highlights for Tax Year 2024 and the Ohio Schedule of Credits instructions (the citation URL) for each credit's certificate requirements and amount; calc.state_tax applies no Ohio credits.",
+  "@@849b86078c18": "Treaty conformity — OH conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OH income (it flows through the federal starting point; do not add it back on the OH return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Ohio IT 1040 line 1 starts from federal adjusted gross income (\"Enter the amount from line 11 of your 2024 federal 1040, 1040-SR, or 1040-NR. Line 1 of your Ohio income tax return must match your federal adjusted gross income as defined in the Internal Revenue Code.\"). Ohio AGI = line 1 + additions (Schedule of Adjustments, line 2a) - deductions (line 2b). The 2024 Schedule of Adjustments additions list (lines 1-11: non-Ohio state/local government interest and dividends; pass-through entity add-back; state/local taxes deducted; non-qualified 529 college tuition expense distributions; Ohio public obligation losses; medical savings account nonmedical withdrawals; reimbursement of previously deducted expenses; Ohio Homebuyer Plus non-eligible withdrawals (new for 2024); IRC 168(k)/179 depreciation add-back; U.S. obligation interest/dividends exempt federally but not by the state; federal conformity additions) contains NO add-back of federally treaty-exempt income. Therefore income excluded from federal AGI under a U.S. tax treaty flows through and is not re-taxed by Ohio. Federal-AGI common case, no treaty addback -> conforms.",
+  "@@92d2cc58170e": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2024/it1040-booklet.pdf",
+  "@@a2dc6fe6b046": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) - Line 1 federal AGI, Schedule of Adjustments additions/deductions, Who Must File, Ohio Residency, mailing addresses, due date April 15 2025, payment/check payee, 2024 Ohio Income Tax Brackets (p. 18), personal/dependent exemption table (p. 17)",
+  "@@ab357a529e3e": "No separate nonresident/part-year return; nonresidents and part-year residents file the same Ohio IT 1040 and check the part-year resident or nonresident box. They compute the Nonresident Credit on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. (Optional residency status election: form IT NRS, Ohio Nonresident Statement.)",
+  "@@bf0b592ffb65": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 (Highlights for Tax Year 2024): the Ohio Homebuyer Plus deduction, with a matching new addition line — the 2024 Schedule of Adjustments additions list carries \"Ohio Homebuyer Plus non-eligible withdrawals (new for 2024)\" alongside the pre-existing add-back lines. It changes Ohio adjusted gross income (IT 1040 line 3 = line 1 federal AGI + line 2a additions - line 2b deductions), not the rate schedule, and does not touch treaty-exempt income (see treaty_note). Resolve via: 2024 Ohio IT 1040 / SD 100 Instruction Booklet, Schedule of Adjustments additions and deductions pp. 19-26 (the citation URL) for the deduction amount and the non-eligible-withdrawal add-back; this pack ships no Schedule of Adjustments figures and calc.state_tax applies none.",
+  "@@d63f950dac92": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) - Highlights for Tax Year 2024 (brackets reduced from three to two, one rate reduced; new Ohio Homebuyer Plus deduction; new Commercial Vehicle Training and Film/Theater Capital Improvements credits), Line 1 federal AGI, exemption table p. 17 ($2,400/$2,150/$1,900 by MAGI), 2024 Ohio Income Tax Brackets p. 18, Schedule of Adjustments additions/deductions pp. 19-26, Who Must File p. 12, Ohio Residency pp. 13-14, mailing addresses p. 3, due date April 15 2025, check payee Ohio Treasurer of State + OUPC",
+  "@@d9bf8f4a739d": "Child Care and Dependent Care Credit — Taxpayer whose modified adjusted gross income is less than $40,000 AND who claimed the federal 'credit for child and dependent care expenses' on federal Form 2441.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f0f5c806e709": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Tax Commissioner's cover letter 'The deadline to file both your Ohio and federal tax returns is April 15, 2025. Please note that an extension to file does not extend the deadline for payment'; Line 23 'This amount must be paid by April 15, 2025'"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@4fde1f3f089d",
+      "url": "@@92d2cc58170e"
+     },
+     {
+      "source": "@@f0f5c806e709",
+      "url": "@@92d2cc58170e"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@327bd905baa9",
+    "jurisdiction": "states/oh",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@1921175c4e3a",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@4fde1f3f089d",
+      "url": "@@92d2cc58170e"
+     },
+     {
+      "source": "@@f0f5c806e709",
+      "url": "@@92d2cc58170e"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@327bd905baa9",
+    "jurisdiction": "states/oh",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "IT 1040 with payment (include OUPC): Ohio Department of Taxation, PO Box 2057, Columbus, OH 43270-2057. (Individual income tax payment only, without the return: Ohio Department of Taxation, PO Box 182131, Columbus, OH 43218-2131.)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via OH Web Pay: https://tax.ohio.gov/pay (OH|TAX eServices portal at tax.ohio.gov/OHTAX) (no processor fee).",
+     "By check: make it payable to \"Ohio Treasurer of State (2024 booklet, Line 23: make check or money order payable to \"Ohio Treasurer of State\" and include an Ohio Universal Payment Coupon (OUPC); include the tax year and the last four digits of your SSN on the \"Memo\" line)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@4fde1f3f089d",
+      "url": "@@92d2cc58170e"
+     },
+     {
+      "source": "@@f0f5c806e709",
+      "url": "@@92d2cc58170e"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15."
+    ],
+    "form": "@@327bd905baa9",
+    "jurisdiction": "states/oh",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@1921175c4e3a",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@f0f5c806e709",
+      "url": "@@92d2cc58170e"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@327bd905baa9",
+    "headline": "OH 2024: refund $512",
+    "jurisdiction": "states/oh",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@f0f5c806e709",
+      "url": "@@92d2cc58170e"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@327bd905baa9",
+    "headline": "OH 2024: you owe $347",
+    "jurisdiction": "states/oh",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@f0f5c806e709",
+      "url": "@@92d2cc58170e"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "@@327bd905baa9",
+    "headline": "OH 2024: you owe $1,205",
+    "jurisdiction": "states/oh",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/oh",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3f0f9f3e44a4",
+      "@@1ebf7ccac627",
+      "@@416d79993bbd",
+      "@@d9bf8f4a739d",
+      "@@2fcc0a99dd7f",
+      "@@330955011049"
+     ],
+     "citations": [
+      {
+       "source": "@@d63f950dac92",
+       "url": "@@92d2cc58170e"
+      },
+      {
+       "source": "@@d63f950dac92",
+       "url": "@@92d2cc58170e"
+      },
+      {
+       "source": "@@a2dc6fe6b046",
+       "url": "@@92d2cc58170e"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@ab357a529e3e"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in OH in 2024 without living there — file a nonresident return on OH-source income.",
+     "state": "OH",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@849b86078c18",
+      "@@bf0b592ffb65",
+      "@@7e92a301c2f7",
+      "Remote-work trap: work performed from TX for an employer sitting in OH. If OH applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to OH and require a NONRESIDENT OH return that the physical footprint alone never shows — and the W-2's Box 15 often already names OH. This OH pack year carries no researched convenience rule: verify OH's nonresident wage-sourcing rule at its DOR before assuming no OH filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3f0f9f3e44a4",
+      "@@1ebf7ccac627",
+      "@@416d79993bbd",
+      "@@d9bf8f4a739d",
+      "@@2fcc0a99dd7f",
+      "@@330955011049"
+     ],
+     "citations": [
+      {
+       "source": "@@d63f950dac92",
+       "url": "@@92d2cc58170e"
+      },
+      {
+       "source": "@@d63f950dac92",
+       "url": "@@92d2cc58170e"
+      },
+      {
+       "source": "@@a2dc6fe6b046",
+       "url": "@@92d2cc58170e"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@ab357a529e3e"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in OH part of 2024 — file a part-year return on income while a resident (plus OH-source income while not).",
+     "state": "OH",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@849b86078c18",
+      "@@bf0b592ffb65",
+      "@@7e92a301c2f7"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@3f0f9f3e44a4",
+      "@@1ebf7ccac627",
+      "@@416d79993bbd",
+      "@@d9bf8f4a739d",
+      "@@2fcc0a99dd7f",
+      "@@330955011049"
+     ],
+     "citations": [
+      {
+       "source": "@@d63f950dac92",
+       "url": "@@92d2cc58170e"
+      },
+      {
+       "source": "@@d63f950dac92",
+       "url": "@@92d2cc58170e"
+      },
+      {
+       "source": "@@a2dc6fe6b046",
+       "url": "@@92d2cc58170e"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@327bd905baa9"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in OH all of 2024 — file a resident return on income from all sources.",
+     "state": "OH",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@bf0b592ffb65",
+      "@@7e92a301c2f7"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "oh",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "oh",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [head_of_household schedule]: 0 x $5,000.00 (the $0-$26,050 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 31050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "oh",
+     "taxable_base": "31050",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 138,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $31,050.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $31,050 [head_of_household schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $5,000.00 (the $26,050-$100,000 bracket) = $137.50; total $137.50 -> $138"
+   },
+   {
+    "base_after_exemptions": 110000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "oh",
+     "taxable_base": "110000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 2384,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $110,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $110,000 [head_of_household schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $73,950.00 (the $26,050-$100,000 bracket) = $2,033.62; 0.035 x $10,000.00 (the $100,000+ bracket) = $350.00; total $2,383.62 -> $2,384"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "oh",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "oh",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_jointly schedule]: 0 x $5,000.00 (the $0-$26,050 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 31050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "oh",
+     "taxable_base": "31050",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 138,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $31,050.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $31,050 [married_filing_jointly schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $5,000.00 (the $26,050-$100,000 bracket) = $137.50; total $137.50 -> $138"
+   },
+   {
+    "base_after_exemptions": 110000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "oh",
+     "taxable_base": "110000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 2384,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $110,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $110,000 [married_filing_jointly schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $73,950.00 (the $26,050-$100,000 bracket) = $2,033.62; 0.035 x $10,000.00 (the $100,000+ bracket) = $350.00; total $2,383.62 -> $2,384"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "oh",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "oh",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [married_filing_separately schedule]: 0 x $5,000.00 (the $0-$26,050 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 31050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "oh",
+     "taxable_base": "31050",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 138,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $31,050.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $31,050 [married_filing_separately schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $5,000.00 (the $26,050-$100,000 bracket) = $137.50; total $137.50 -> $138"
+   },
+   {
+    "base_after_exemptions": 110000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "oh",
+     "taxable_base": "110000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 2384,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $110,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $110,000 [married_filing_separately schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $73,950.00 (the $26,050-$100,000 bracket) = $2,033.62; 0.035 x $10,000.00 (the $100,000+ bracket) = $350.00; total $2,383.62 -> $2,384"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "oh",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "oh",
+     "taxable_base": "5000",
+     "year": 2024
+    },
+    "marginal_rate": "0",
+    "tax": 0,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $5,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $5,000 [single schedule]: 0 x $5,000.00 (the $0-$26,050 bracket) = $0.00; total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 31050,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "oh",
+     "taxable_base": "31050",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 138,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $31,050.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $31,050 [single schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $5,000.00 (the $26,050-$100,000 bracket) = $137.50; total $137.50 -> $138"
+   },
+   {
+    "base_after_exemptions": 110000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "oh",
+     "taxable_base": "110000",
+     "year": 2024
+    },
+    "marginal_rate": "0.035",
+    "tax": 2384,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $110,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $110,000 [single schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $73,950.00 (the $26,050-$100,000 bracket) = $2,033.62; 0.035 x $10,000.00 (the $100,000+ bracket) = $350.00; total $2,383.62 -> $2,384"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "oh",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: OH 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "oh",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: OH 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "oh",
+     "taxable_base": "40000",
+     "year": 2024
+    },
+    "marginal_rate": "0.0275",
+    "tax": 384,
+    "work_head": "OH state income tax (2024, graduated brackets): taxable_base $40,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0 x $26,050.00 (the $0-$26,050 bracket) = $0.00; 0.0275 x $13,950.00 (the $26,050-$100,000 bracket) = $383.62; total $383.62 -> $384"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_taxable_income",
+   "citation": {
+    "source": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) — p. 18 table '2024 Ohio Income Tax Brackets for Ohio IT 1040' (0.00% of Ohio taxable nonbusiness income up to $26,050; '$360.69 plus 2.75% of the amount in excess of $26,050' for $26,050-$100,000; '$2,394.32 plus 3.50% of the amount in excess of $100,000' over $100,000); p. 17 'Line 8a – Tax on Line 7a' instruction ('Calculate your tax on your Ohio income tax base less business income using the Income Tax Brackets found on page 18... the Department provides a tool to assist you with this calculation at tax.ohio.gov/taxcalculator', R.C. 5747.02(A)(3)) and personal/dependent exemption table ($2,400/$2,150/$1,900 by MAGI). Second pass: form line labels (lines 1-8c) and Schedule of Business Income lines 12-16 (3% business tax, $250,000/$125,000 business income deduction) verified from the 2024 IT 1040 form bundle at https://tax.ohio.gov/static/forms/ohio_individual/individual/2024/1040-bundle-original-fi.pdf — both passes agree.",
+    "url": "@@92d2cc58170e"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "oh"
+  },
+  "work_common_tail": ". Tax line: IT 1040 line 8a: 'Nonbusiness income tax liability on line 7a (see tax.ohio.gov/taxcalculator or see the instructions for the tax brackets)'. Booklet p. 18 table headings: 'Taxable Nonbusiness Income (Ohio IT 1040, line 7)' -> 'Nonbusiness Income Tax (enter on Ohio IT 1040, line 8a)'. Line 8c 'Income tax liability before credits (line 8a plus line 8b)' adds the separate 3% business income tax (line 8b), which this op does not model. This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2024 CHANGE — BRACKETS CONSOLIDATED AGAIN: 'Ohio has reduced the number of tax brackets used to calculate tax on nonbusiness income and reduced one of the two tax rates' (Highlights for Tax Year 2024, p. 5). The 2023 3.688% ($100,000-$115,300) and 3.75% (over $115,300) top tiers are GONE: 2024 is 0% to $26,050, 2.75% to $100,000, and 3.50% over $100,000 (p. 18). Do not use the 2023 schedule for 2024. Base guidance: Supply 2024 Ohio IT 1040 line 7 (= line 7a), 'Taxable nonbusiness income (line 5 minus line 6; if negative, enter zero)'. Compute it on the form: line 3 Ohio adjusted gross income (federal AGI line 1 + Schedule of Adjustments additions line 2a - deductions line 2b), minus line 4 exemption amount (MAGI-tiered, see notes) = line 5 Ohio income tax base, minus line 6 taxable business income (Ohio Schedule of Business Income line 15) = line 7. This pack ships NO standard deduction and NO exemptions, so the engine applies the brackets directly to the figure you supply — do not pass federal AGI or Ohio AGI. CRITICAL — printed-constant divergence at $26,050 (re-derived for the 2024 constants): Ohio's published 2024 schedule (booklet p. 18) is discontinuous. It reads 0.00% up to $26,050, then '$360.69 plus 2.75% of the amount in excess of $26,050' — but the cumulative sum of the prior bracket is $0.00, not $360.69. Pure marginal bracket math cannot reproduce this fixed $360.69 jump, so this op's result is exactly $360.69 BELOW the form's printed schedule for line 7 between $26,050 and $100,000. The top printed constant IS internally consistent with the middle row: $360.69 + 2.75% x $73,950 = $2,394.315 vs printed $2,394.32 (+$0.005), so above $100,000 the printed schedule exceeds this op's marginal math by $360.695. The filed form must use the printed brackets (R.C. 5747.02(A)(3)) — add $360.69 ($360.695 above $100,000) to this op's result when line 7 exceeds $26,050 to match the form. NO tax table for 2024 (change from 2023): the 2024 booklet prints ONLY the p. 18 Income Tax Brackets — the 2023 booklet's Income Tax Table (formerly pp. 47-52, mandatory presentation below $115,300) is gone. Line 8a instructs all filers to use the brackets or the Department's calculator at tax.ohio.gov/taxcalculator; booklet pp. 47-48 now carry sample income statements instead. Personal/dependent exemption NOT shipped because it is income-dependent (booklet p. 17, unchanged amounts from 2023): $2,400 per exemption if modified adjusted gross income (MAGI) is $40,000 or less; $2,150 if MAGI is $40,001-$80,000; $1,900 if MAGI is more than $80,000. The same tiered amount applies to the taxpayer, spouse, and each dependent (IT 1040 line 4; the booklet's example: MAGI $75,000, three exemptions = $6,450). MAGI = Ohio adjusted gross income (line 3) plus the business income deduction (Schedule of Adjustments line 13) (booklet p. 8, R.C. 5747.01(II)). A filer claimed as a dependent on someone else's return gets $0 exemption for themselves. Dependents claimed require the Ohio Schedule of Dependents. Compute line 4 on the form; supply line 7 to this op. Ohio has NO standard deduction and no itemized deduction; the only base reductions are the Schedule of Adjustments deductions (line 2b) and the line 4 exemption, both already reflected in the line 7 figure you supply. Business income is taxed SEPARATELY and is not modeled: taxable business income (IT 1040 line 6, after the business income deduction of $250,000 single/MFJ or $125,000 MFS) is taxed at a flat 3% on the 2024 Ohio Schedule of Business Income line 16 ('multiply line 15 by 3% (.03)') and reported on IT 1040 line 8b; total income tax liability before credits is line 8c = 8a + 8b. The line 7 figure supplied to this op already excludes business income. One rate schedule for ALL filing statuses: Ohio's 2024 brackets do not vary by filing status (the p. 18 schedule prints a single set of brackets); the identical schedule is duplicated per status here. Qualifying surviving spouse shares the form's 'Single, head of household or qualifying surviving spouse' checkbox and maps to married_filing_jointly in the engine with an identical result. Ohio school district income tax (form SD 100) is a separate ADDITIONAL tax on top of the IT 1040 for residents of taxing school districts — not modeled by this op. Ohio's personal/dependent-linked 'exemption credit' is a CREDIT, not an exemption: $20 for each exemption claimed, on the 2024 Ohio Schedule of Credits line 9, only if MAGI less exemptions is under $30,000 (R.C. 5747.022) — it is subtracted from tax (IT 1040 line 9), never from income, and is not modeled. Other unmodeled credits include the joint filing credit (5-20% of tax, max $650), retirement income credit (max $200), senior citizen credit ($50), and Ohio EIC (30% of federal EIC). Rounding: the booklet's Common Filing Tips instruct 'Round all figures to the nearest dollar.'"
+ },
+ "year": 2024
+}

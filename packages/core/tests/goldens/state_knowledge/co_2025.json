@@ -1,0 +1,692 @@
+{
+ "_strings": {
+  "@@04b6b3c68085": "Colorado DOR — 2025 Book 104, \"Due Date\" (\"Your Colorado income tax return and payment for any tax owed are due April 15... An automatic extension to file is granted until October 15, but there is no extension to pay. If you need to make a payment before filing, see form DR 0158 in this book.\")",
+  "@@085b946aec86": "DR 0104 (2025 Colorado Individual Income Tax Return, DR 0104 (10/03/25)) — full-year residents mark the \"Full-Year\" residency box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns (2025 booklet, \"Who Must File This Tax Return\" — full-year residents \"must file DR 0104 or DR 0104EZ\").",
+  "@@0e79b6c635c4": "Colorado DOR — 2025 Book 104, DR 0104CR instructions: Line 21 Colorado Promise Tuition and Fee Credit — 'Eligible students who attend Colorado public institutions of higher education with family incomes of $90,000 or less are eligible for complete reimbursement of any out-of-pocket tuition and fees they pay for postsecondary education.' Line 24 Disability Assistance Credit — 'Your federal adjusted gross income cannot exceed $20,000 if you are a single filer.' Line 25 Qualified Care Worker Credit — 'Complete form DR 1217, Qualified Care Worker Tax Credit, and enter the amount from line 7 on this line 25.'",
+  "@@17e3ee286f77": "Child and Dependent Care Expenses Credit — Taxpayers who pay child and dependent care expenses during the year and whose adjusted gross income is $60,000 or less (\"Taxpayers who pay child and dependent care expenses during the year and whose Adjusted Gross Income is $60,000 or less may be able to claim a child and dependent care expenses credit\" — 2025 booklet, DR 0104CR line 2). Computed on form DR 0347, which must be submitted along with the DR 0104CR.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1ebcb385fa15": "annual (per tax year; the newest shipped CO pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@2152a406f2bc": "Colorado Department of Revenue, Denver, CO 80261-0005 (without payment; these addresses and zip codes are exclusive to the Colorado Department of Revenue — a street address is not required)",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@45aae3d00af6": "The newest shipped CO pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@598450e72149": "Colorado Child Tax Credit (DR 0104CN) — Full-year and part-year Colorado residents with a qualifying child whose adjusted gross income does not exceed the applicable limits (nonresidents are NOT eligible). Requires the DR 0104 Dependents table \"Child Tax Credit\" box to be checked for the child and the DR 0104CN to be completed and attached.",
+  "@@59e630e1fb15": "CO state income tax (2025, flat rate): taxable_base $40,000.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; tax = 0.044 x $40,000 = $1,76",
+  "@@76b734e36e76": "Law change NOT modeled by the engine (status final_form_published): NEW INDIVIDUAL CREDITS on the 2025 DR 0104CR — the Colorado Promise Tuition and Fee Credit (full reimbursement of out-of-pocket tuition and fees for an eligible student at a Colorado public institution, family income $90,000 or less, certificate required); the Disability Assistance Credit (a full-year resident disabled for all of 2025, federal AGI at most $20,000 single or $32,000 joint); and the Qualified Care Worker Credit (form DR 1217). Resolve via: 2025 Book 104, Instructions for Select Credits from the DR 0104CR (lines 21, 24 and 25); form DR 1217.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a44aac9a183b": "2025 Book 104, Colorado Individual Income Tax Filing Guide (Book104_2025.pdf) — Line 13 instructions: \"The income tax rate is currently 4.4%. Full-year residents should refer to the tax table in this booklet.\"; \"2025 Colorado Income Tax Table with tax rate of 4.4%\"; the \"Worksheet for taxable incomes over $50,000\" — \"Multiply by 4.4% X .044\"; DR 0104 Line 1 = \"Federal Taxable Income from your federal income tax form: 1040, 1040 SR, or 1040 SP line 15\"; Line 12 = Colorado Taxable Income (line 10 subtotal minus line 11 DR 0104AD subtractions). Printed 2025 table rows verified at 4.4%: $5,100-$5,200 -> $227; $21,600-$21,700 -> $953; $45,100-$45,200 -> $1,987; $49,900-$50,000 -> $2,198 (each = 4.4% of the $100 band midpoint, rounded). Second pass: the standalone 2025 DR 0104 form PDF (revision \"DR 0104 (10/03/25)\") prints the same structure — line 1 federal taxable income, line 12 \"Colorado Taxable Income, subtract line 11 from line 10\", line 13 \"Colorado Tax from tax table or the DR 0104PN line 36\" — both passes agree.",
+  "@@a908dd8bf0eb": "DR 0104 with the DR 0104PN (Part-Year Resident/Nonresident Tax Calculation Schedule) attached — mark the \"Part-Year or Nonresident\" box on page 1 of the DR 0104 (also when filing jointly and one spouse is a full-year resident and the other is not). There is also an \"Abroad on due date\" box.",
+  "@@af7101894ed3": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not re-verified for 2025 (recorded in `unverified` rather than carried forward from 2024): the DR 0104CN per-child Colorado child tax credit / family affordability tax credit tables, the DR 0347 child-and-dependent-care percentages, and the DR 0104PTC (Property Tax/Rent/Heat Rebate) figures.",
+  "@@b0875e2ccf80": "An automatic extension to file is granted until October 15, but there is no extension to pay (use form DR 0158-I to pay before filing). Revenue Online accepts returns as timely filed until midnight on the due date; mailed returns and payments must be postmarked by April 15. If a due date falls on a weekend or legal holiday it moves to the next business day. Taxpayers abroad on the due date mark the \"Abroad on due date\" box.",
+  "@@b2921ed2f5b1": "Colorado DOR — 2025 Book 104, \"Mailing Address For Form DR 0104\" (With Payment 80261-0006 / Without Payment 80261-0005)",
+  "@@c2b912f21bb3": "Colorado DOR — 2025 Book 104, Colorado Individual Income Tax Filing Guide (Book104_2025.pdf; includes the DR 0104 form (DR 0104 (10/03/25)), instructions, the 2025 Colorado Income Tax Table at 4.4%, DR 0104AD, DR 0104CR, DR 0104CN reference, DR 0104PN, DR 0347, DR 0900, DR 0158-I)",
+  "@@df5c90e914f8": "Colorado Earned Income Tax Credit (COEITC) - SSN filers — Full-year or part-year Colorado residents who claim the federal Earned Income Tax Credit (EITC). Part-year residents apportion by the DR 0104PN line 34 percentage (capped at 100%). (ITIN filers, filers whose SSN is not valid for employment, and certain filers under 25 without qualifying children use form DR 0104TN and claim on DR 0104CR line 9 instead — and a federal-EITC claimant who had to leave out dependents only because of an ITIN/invalid SSN may claim a HIGHER COEITC on line 9.)",
+  "@@e987416ffd3a": "TABOR State Sales Tax Refund (claimed on the 2025 return) — Full-year Colorado residents born before 2007 (or full-year residents under eighteen who are required to file a return). The return must be postmarked or transmitted by the extension due date (October 15, 2026). In general you must be 18 or older as of January 1, 2025; if under 18 as of that date you must either have a Colorado tax liability (DR 0104 line 13 greater than 0) or be claiming a refund of Colorado wage withholding on a W-2. You must not have been convicted of a felony and incarcerated in a Colorado Department of Corrections or Federal Bureau of Prisons facility for 180 days or more during the year. A deceased person must have met all requirements as of the date of death. Lines 34-37 of the 2025 DR 0104 compute a Modified AGI solely to size the refund; they do not affect the income tax computation.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f0d1fb8990b9": "Treaty conformity — CO conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from CO income (it flows through the federal starting point; do not add it back on the CO return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Colorado's DR 0104 begins at \"Federal Taxable Income\" (2025 line 1, \"from your federal income tax form 1040, 1040 SR, or 1040 SP line 15\"). Federally treaty-exempt income is already excluded from federal taxable income, so it flows through to Colorado untaxed UNLESS Colorado has an explicit addback. The 2025 DR 0104's complete Additions to Federal Taxable Income are Lines 2-7 plus Line 9 (Line 8 is \"Reserved for future use\"): state income tax addback (Schedule A), Qualified Business Income Deduction addback, Standard/Itemized Federal Deduction addback (federal AGI over $300,000), business meals deducted under IRC 274(k), nonqualified CollegeInvest Tuition Savings Account distributions, nonqualified Colorado ABLE Account distributions, and Line 9 \"Other Additions\" — whose enumerated items in the 2025 booklet are: non-Colorado state/local bond interest (net of amortized premiums/expenses; Colorado bonds issued on or after May 1, 1980 are excluded from the addback), a federal charitable deduction for a conservation easement also claimed for a Colorado credit, expenses for unauthorized alien labor services, fiduciary adjustments and Colorado K-1 (DR 0106K) additions from a partnership or S corporation, expenses at/payments to a club that restricts membership on the basis of sex, sexual orientation, gender identity/expression, marital status, race, creed, religion, color, ancestry or national origin, and forfeited employer contributions to a home savings account previously subtracted. NONE of these is an addback of federally treaty-exempt or foreign-source income. Therefore treaty-exempt income is not re-taxed and Colorado conforms. (Confirmed against the official 2025 Book 104 and the standalone 2025 DR 0104 form PDF on tax.colorado.gov.)"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@b2921ed2f5b1",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     },
+     {
+      "source": "@@04b6b3c68085",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@b0875e2ccf80"
+    ],
+    "form": "@@085b946aec86",
+    "jurisdiction": "states/co",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@2152a406f2bc",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@b2921ed2f5b1",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     },
+     {
+      "source": "@@04b6b3c68085",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@b0875e2ccf80"
+    ],
+    "form": "@@085b946aec86",
+    "jurisdiction": "states/co",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Colorado Department of Revenue, Denver, CO 80261-0006 (with payment)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via CO Web Pay: https://www.colorado.gov/revenueonline (no processor fee).",
+     "By check: make it payable to \"Colorado Department of Revenue (\"Make your check or money order payable to 'Colorado Department of Revenue' and clearly write your Social Security number and '2025 DR 0104' on the memo line\"; keep a copy of the money order or note the check number with your tax records; if you file electronically but pay by mail, complete form DR 0900 and mail it with your payment)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@b2921ed2f5b1",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     },
+     {
+      "source": "@@04b6b3c68085",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15.",
+     "@@b0875e2ccf80"
+    ],
+    "form": "@@085b946aec86",
+    "jurisdiction": "states/co",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@2152a406f2bc",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@04b6b3c68085",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@085b946aec86",
+    "headline": "CO 2025: refund $512",
+    "jurisdiction": "states/co",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@04b6b3c68085",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@085b946aec86",
+    "headline": "CO 2025: you owe $347",
+    "jurisdiction": "states/co",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@04b6b3c68085",
+      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@085b946aec86",
+    "headline": "CO 2025: you owe $1,205",
+    "jurisdiction": "states/co",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@45aae3d00af6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Colorado DOR, 2025 Book 104 — \"Instructions for Select Credits from the DR 0104CR\", lines 3 through 6 (COEITC for SSN filers) and line 9 (COEITC for ITIN filers or certain filers under age 25)",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    },
+    {
+     "answers": "Colorado DOR — 2025 Book 104 / 2025 DR 0104, lines 34-38 and the \"Modified A G I Tiers for TABOR State Sales Tax Refund\" table",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "credits",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@45aae3d00af6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@b2921ed2f5b1",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "filing_logistics",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@45aae3d00af6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@c2b912f21bb3",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    },
+    {
+     "answers": "Colorado DOR — standalone 2025 DR 0104, Colorado Individual Income Tax Return (form PDF, revision \"DR 0104 (10/03/25)\"; second-pass verification of line 1 \"Federal Taxable Income from your federal income tax form: 1040, 1040 SR, or 1040 SP line 15\", additions lines 2-9, line 10 subtotal, line 11 DR 0104AD subtractions, line 12 \"Colorado Taxable Income, subtract line 11 from line 10\", line 13 \"Colorado Tax from tax table or the DR 0104PN line 36\", TABOR lines 34-38 and the Modified AGI tier table)",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf"
+    },
+    {
+     "answers": "Colorado DOR — DR 0104 Booklet landing page (names Book104_2025.pdf as the 2025 edition)",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/DR0104Booklet"
+    },
+    {
+     "answers": "Colorado DOR — Residency Status page (domicile + six-month rule)",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/residency-status"
+    },
+    {
+     "answers": "Colorado DOR — Individual Income Tax Guide (federal taxable income starting point; residency)",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/individual-income-tax-guide"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@45aae3d00af6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Colorado DOR — 2025 Book 104, Colorado Individual Income Tax Filing Guide (10/29/25), Line 13 Colorado Tax: 'The income tax rate is currently 4.4%. Full-year residents should refer to the tax table in this booklet.'",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "law_changes",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@45aae3d00af6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@a44aac9a183b",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@45aae3d00af6",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/co",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/co",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@df5c90e914f8",
+      "@@598450e72149",
+      "@@17e3ee286f77",
+      "@@e987416ffd3a"
+     ],
+     "citations": [
+      {
+       "source": "@@0e79b6c635c4",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      },
+      {
+       "source": "@@c2b912f21bb3",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@a908dd8bf0eb"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in CO in 2025 without living there — file a nonresident return on CO-source income.",
+     "state": "CO",
+     "warnings": [
+      "@@af7101894ed3",
+      "@@f0d1fb8990b9",
+      "@@76b734e36e76",
+      "Remote-work trap: work performed from TX for an employer sitting in CO. If CO applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to CO and require a NONRESIDENT CO return that the physical footprint alone never shows — and the W-2's Box 15 often already names CO. This CO pack year carries no researched convenience rule: verify CO's nonresident wage-sourcing rule at its DOR before assuming no CO filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@df5c90e914f8",
+      "@@598450e72149",
+      "@@17e3ee286f77",
+      "@@e987416ffd3a"
+     ],
+     "citations": [
+      {
+       "source": "@@0e79b6c635c4",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      },
+      {
+       "source": "@@c2b912f21bb3",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@a908dd8bf0eb"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CO part of 2025 — file a part-year return on income while a resident (plus CO-source income while not).",
+     "state": "CO",
+     "warnings": [
+      "@@af7101894ed3",
+      "@@f0d1fb8990b9",
+      "@@76b734e36e76"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@df5c90e914f8",
+      "@@598450e72149",
+      "@@17e3ee286f77",
+      "@@e987416ffd3a"
+     ],
+     "citations": [
+      {
+       "source": "@@0e79b6c635c4",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      },
+      {
+       "source": "@@c2b912f21bb3",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@085b946aec86"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CO all of 2025 — file a resident return on income from all sources.",
+     "state": "CO",
+     "warnings": [
+      "@@af7101894ed3",
+      "@@76b734e36e76"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "co",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "CO state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal TAXABLE income plus/minus the state's additions and subtractions (the federal standard/itemized deduction is already embedded) — with no exemptions or standard deduction to subtract; tax = 0.044 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "co",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "tax": 1760,
+    "work_head": "@@59e630e1fb15"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "single",
+     "state": "co",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: CO 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "single",
+     "state": "co",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: CO 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "co",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "tax": 1760,
+    "work_head": "@@59e630e1fb15"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_taxable_income",
+   "citation": {
+    "source": "@@a44aac9a183b",
+    "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+   },
+   "marginal_rate": "0.044",
+   "rate": "0.044",
+   "rate_structure": "flat",
+   "state": "co"
+  },
+  "work_common_tail": "0. Tax line: DR 0104 Line 13 (Colorado Tax): full-year residents take the amount from the 2025 booklet tax table (built at 4.4%) for Line 12 Colorado Taxable Income (= Line 10 subtotal minus Line 11 DR 0104AD subtractions); for taxable income over $50,000 the booklet worksheet multiplies Line 12 by 4.4% (.044); part-year residents and nonresidents transfer the apportioned tax from DR 0104PN line 36. This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Rate change: the 2025 rate is 4.4% (.044) — BACK UP from the temporarily reduced 4.25% of tax year 2024, and equal to the 2023 rate. The 2025 DR 0104 Book prints 4.4% three independent ways (the Line 13 instructions \"The income tax rate is currently 4.4%\", the \"2025 Colorado Income Tax Table with tax rate of 4.4%\" header, and the over-$50,000 worksheet's \"Multiply by 4.4% X .044\"), and the printed booklet is the sole authority for the year's rate — never substitute a TABOR-adjusted figure from another year. Colorado starts from federal TAXABLE income (DR 0104 Line 1, Form 1040 line 15) — the federal standard/itemized deduction is already embedded, so Colorado has no exemptions and no separate standard deduction. (Colorado does ADD BACK part of a large federal deduction: DR 0104 Line 4, for filers with federal AGI over $300,000.) 2025 line renumbering: additions are Lines 2-7, Line 8 is \"Reserved for future use\", Other Additions moved to Line 9, subtotal Line 10 (sum of lines 1-7 and line 9), DR 0104AD subtractions Line 11, Colorado Taxable Income Line 12, Colorado Tax Line 13 (2024: subtotal 9, subtractions 10, taxable income 11, tax 12; 2023: taxable income 10, tax 11). Never carry a line number between years. The DR 0104 form itself does not print a multiplication — Line 13 says to use the tax table (or the DR 0104PN apportionment). For 2025 the printed table stops at $50,000 and the worksheet covers taxable incomes over $50,000 (the same cutoff as the 2024 DR 0104 Book, printed page 38). The table is built at 4.4% but its $100-band midpoint rounding can differ from raw multiplication by a dollar or two; the printed table row controls on the filed form. Not modeled by calc.state_tax: Line 14 Alternative Minimum Tax, Line 15 recapture of prior-year credits, the Line 17 nonrefundable credits (DR 0104CR line 65) and Line 31 refundable credits (DR 0104CR line 26), and the TABOR State Sales Tax Refund on Lines 34-38 (Modified AGI is computed there solely to size the refund and does not affect the tax)."
+ },
+ "year": 2025
+}

@@ -1,0 +1,871 @@
+{
+ "_strings": {
+  "@@10e2e3a4fac1": "The newest shipped MA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@29dddbfcbdb7": "Treaty conformity — MA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from MA income (it flows through the federal starting point; do not add it back on the MA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Net result: treaty-exempt income is NOT re-taxed by MA, so conforms = true — but the mechanism is an EXPLICIT DEDUCTION, not passive federal-AGI conformity. Important nuance: MA's Form 1 does NOT start from federal AGI. It builds Massachusetts gross income from its own categories. Line 3 (Wages) is taken from W-2 state wages (Box 16), and Massachusetts gross income can include items not subject to U.S. income tax. So treaty-exempt income that an employer reports in state wages would otherwise land in MA income. MA neutralizes this with the dedicated Schedule Y, Line 4 deduction — for 2025 titled 'Amounts Excludible Under MGL Ch 41, § 111F or U.S. Tax Treaty Included in Form 1, Line 3' and SPLIT INTO TWO SUB-LINES: 'Massachusetts allows an exclusion from income of amounts received by a firefighter or police officer incapacitated in the line of duty, per MGL ch 41, § 111F, and an exclusion from income of amounts received by a qualifying student or taxpayer exempt under a U.S. tax treaty... If you were a qualifying student or a taxpayer with income exempt under a United States tax treaty, enter any excludible amount of income received that was exempt under such tax treaty in line 4b' (the § 111F amount goes on line 4a). Because Schedule Y reduces income, the treaty-exempt amount is deducted back out and is not taxed. PRACTICAL NOTE: unlike a pure federal-AGI conformity state where treaty income flows out automatically, in MA the taxpayer must affirmatively claim the Schedule Y, Line 4b deduction — if treaty wages appear in W-2 Box 16 / Form 1 line 3 and the deduction is not claimed, the income would be taxed. Source: 2025 Form 1 Instructions, Schedule Y Line 4 (income exempt under a U.S. tax treaty) and Line 3 (Wages, Salaries, Tips).",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@381d58837881": "Law change NOT modeled by the engine (status final_form_published): NEW for 2025, an express exemption from the 2024 joint-filing mandate: where one spouse has no Massachusetts filing requirement because their Massachusetts gross income does not exceed $8,000, the couple may choose married-filing-separate status by filling in the Form 1 \"if joint filing exemption for spouses with Massachusetts gross income under $8,000\" oval. A joint Form 1 otherwise remains unavailable unless both spouses were MA residents for the same portion of 2025.",
+  "@@3a0dce770d2c": "Law change NOT modeled by the engine (status final_form_published): NEW Climatetech Tax Incentive Program (including the Climatetech Incentive Jobs Credit) plus other new and revised credits for 2025 announced by TIR 24-16 and TIR 25-5 (Major 2025 Tax Changes). Related 2025 withholding change: employers must withhold the 4% surtax on wages once an employee's wages equal or exceed $1,000,000. Resolve via: TIR 24-16 and TIR 25-5 and the Major 2025 Tax Changes section of the 2025 Form 1 instructions at the citation URL — this pack did NOT transcribe the new/revised credit components (see unverified), so resolve eligibility and amounts there; the credits are claimed via Schedule CMS (Form 1 line 31).",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@54acd977cc1b": "Massachusetts Department of Revenue, PO Box 7000, Boston, MA 02204 (Form 1, refunds / no payments — also the correct address for 2D barcode forms)",
+  "@@62207b08c068": "Limited Income Credit (with No Tax Status) — Low-income MA filers whose Massachusetts AGI exceeds the No Tax Status threshold but falls within the Limited Income Credit range. 2025 No Tax Status: MA AGI $8,000 or less (single); $14,400 or less plus $1,000 per dependent (head of household); $16,400 or less plus $1,000 per dependent (married filing jointly). 2025 Limited Income Credit range: MA AGI between $8,000 and $14,000 (single); between $14,400 and $25,200 plus $1,750 per dependent (head of household); between $16,400 and $28,700 plus $1,750 per dependent (married filing jointly). Married filing separately qualifies for neither. The Limited Income Credit is an alternative tax calculation, computed via the Massachusetts AGI Worksheet / Line 29 worksheet in the Form 1 instructions. (Thresholds unchanged from 2024.)",
+  "@@69b855c8bf64": "Form 1-NR/PY — Massachusetts Nonresident or Part-Year Resident Income Tax Return (2025). Taxpayers who are both nonresident and part-year resident also complete Schedule R/NR (Resident/Nonresident Worksheet).",
+  "@@6b738ab8c936": "annual (per tax year; the newest shipped MA pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@8ea6b2035101": "2025 Form 1 Instructions (MA DOR) — mailing addresses (\"Massachusetts Department of Revenue, PO Box 7000, Boston, MA, 02204 for refunds or no payments, or Massachusetts Department of Revenue, PO Box 7003, Boston, MA, 02204 for payments\")",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9a1c880c0fe7": "Child and Family Tax Credit — Resident (or part-year resident for the period of residency) who may claim the credit for an individual who is (1) under the age of 13 and who qualifies for exemption as a dependent for federal purposes; (2) a dependent, or the taxpayer's spouse, who is physically or mentally incapable of taking care of himself or herself and principally lives with the taxpayer; or (3) a dependent who is age 65 or over or disabled. For tax years beginning on or after January 1, 2024 a noncustodial parent may claim the credit with respect to a child dependent age 13 or older who is physically or mentally incapable of caring for himself or herself. Cannot be claimed by a full-year nonresident.",
+  "@@a57dc38da6b5": "2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing withholding under 830 CMR 62B.2.4; Climatetech Tax Incentive Program; TIR 24-16 / TIR 25-5 credit changes; $325 parking and transit exclusions), residency definitions (183-day statutory-resident test), $8,000 filing threshold, MA gross income definition, Line 3 wages from W-2 state wages, Line 22 tax on 5.0% income, Schedule Y Line 4b U.S. tax treaty deduction, Filing Due Dates (April 15, 2026), mailing PO Box 7000 / 7003, check payable to the Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture of the official mass.gov URL (mass.gov 403s non-browser fetchers).",
+  "@@a9d9f7844953": "2025 Form 1 Instructions (MA DOR) — \"Filing Due Dates. Form 1 is due on or before April 15, 2026.\"",
+  "@@c69f3f16d390": "Senior Circuit Breaker Tax Credit (Real Estate Tax Credit for persons age 65+) — Taxpayer must be age 65 or older, own or rent residential property located in Massachusetts and occupy it as their principal residence, and meet the income and assessed-valuation limits. Married taxpayers generally must file jointly to claim.",
+  "@@d7512e3b546a": "Massachusetts Earned Income Tax Credit (EITC) — Massachusetts residents (full- or part-year) who qualify for and claim the federal Earned Income Credit — earned income under $68,675 for 2025 (the maximum may be lower depending on filing status and number of eligible children). MA adopts the federal EIC expansion rules; a married person who is a victim of domestic abuse, living apart from their spouse at the time of filing and unable to file jointly, may file married filing separately and still claim the MA EIC (keep records such as a protective/restraining order or police report). Part-year residents prorate the credit.",
+  "@@de383e775cbb": "Law change NOT modeled by the engine (status final_form_published): NEW real-estate-closing withholding regime for NON-RESIDENT sellers (830 CMR 62B.2.4), applying to closings on or after November 1, 2025 (Major 2025 Tax Changes). Massachusetts now takes withholding at the closing of a Massachusetts real-property sale by a non-resident, which the seller then reconciles on the Massachusetts return. Resolve via: 830 CMR 62B.2.4 and the Major 2025 Tax Changes section of the 2025 Form 1 instructions at the citation URL — this pack records the change but did NOT extract the regulation's rates or exemptions (see unverified), so resolve both there before relying on a figure.",
+  "@@e09840509c11": "MA DOR — 2025 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a 'Personal exemptions. Single/Married filing separately ($4,400), Head of household ($6,800), Married filing jointly ($8,800)'; line 2b number of dependents x $1,000; line 2c age 65 or over before 2026 x $700; line 2d blindness x $2,200; line 17 '5.0% INCOME AFTER DEDUCTIONS. Subtract line 16 from line 10. Not less than 0'; line 18 total exemption amount (from line 2g); line 19 '5.0% INCOME AFTER EXEMPTIONS. Subtract line 18 from line 17. Not less than 0'; line 20 INTEREST AND DIVIDEND INCOME (from Schedule B, line 38); line 21 'TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20'; line 22 'TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05'; line 28b '4% Surtax (from Schedule 4% Surtax, line 7)'. Second pass: 2025 Form 1 Instructions — Line 22 'If line 21 is less than $24,000, find the proper tax by using the tax tables found in the back of this booklet. If line 21 is greater than $24,000 multiply by 0.05 and enter the result in line 22'; 4% Surtax 'Starting with tax year 2023, personal income taxpayers must pay an additional 4% on taxable income over $1,000,000, increased annually for inflation. For the 2025 tax year, the threshold is $1,083,150.' — both passes agree. (mass.gov returns HTTP 403 to non-browser fetchers; both documents were retrieved from the Wayback Machine's 200-status captures of the SAME official mass.gov URLs, the same provenance path as the shipped MA form pack.)",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@8ea6b2035101",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     },
+     {
+      "source": "@@a9d9f7844953",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2025)",
+    "jurisdiction": "states/ma",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@54acd977cc1b",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@8ea6b2035101",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     },
+     {
+      "source": "@@a9d9f7844953",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2025)",
+    "jurisdiction": "states/ma",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Massachusetts Department of Revenue, PO Box 7003, Boston, MA 02204 (Form 1, with payments; amended returns with a payment also go here)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via MA Web Pay: https://mass.gov/masstaxconnect (no processor fee).",
+     "By check: make it payable to \"Commonwealth of Massachusetts (2025 Form 1 Instructions — send a \"check or money order payable to Commonwealth of Massachusetts\"; write your Social Security number on the front of the check or money order in the lower left). RE-VERIFIED for 2025 in the fetched capture, closing the 2024 pack's carried-forward gap.\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@8ea6b2035101",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     },
+     {
+      "source": "@@a9d9f7844953",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2025)",
+    "jurisdiction": "states/ma",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@54acd977cc1b",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@a9d9f7844953",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2025)",
+    "headline": "MA 2025: refund $512",
+    "jurisdiction": "states/ma",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@a9d9f7844953",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2025)",
+    "headline": "MA 2025: you owe $347",
+    "jurisdiction": "states/ma",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@a9d9f7844953",
+      "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "Form 1 — Massachusetts Resident Income Tax Return (2025)",
+    "headline": "MA 2025: you owe $1,205",
+    "jurisdiction": "states/ma",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10e2e3a4fac1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 Form 1 Instructions (MA DOR), Line 43 Earned Income Credit — credit equal to 40% of the federal amount; $68,675 earned-income ceiling; domestic-abuse married-filing-separately exception; TIR 17-10",
+     "cadence": "@@6b738ab8c936",
+     "topic": "credits",
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10e2e3a4fac1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@8ea6b2035101",
+     "cadence": "@@6b738ab8c936",
+     "topic": "filing_logistics",
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10e2e3a4fac1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@a57dc38da6b5",
+     "cadence": "@@6b738ab8c936",
+     "topic": "forms_and_instructions",
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    },
+    {
+     "answers": "2025 Form 1 Massachusetts Resident Income Tax Return (MA DOR; second-pass verification: header boxes a/b from U.S. Form 1040 lines 9 and 11a; line 1 filing statuses plus the new \"if joint filing exemption for spouses with Massachusetts gross income under $8,000\" oval; line 2a personal exemptions \"Single/Married filing separately ($4,400), Head of household ($6,800), Married filing jointly ($8,800)\"; line 2b dependents x $1,000; line 2c age 65 or over before 2026 x $700; line 2d blindness x $2,200; line 2e medical/dental; line 2f adoption; line 2g total exemptions; line 17 \"5.0% INCOME AFTER DEDUCTIONS\"; line 18 total exemption amount; line 19 \"5.0% INCOME AFTER EXEMPTIONS ... Not less than 0\"; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line 21 \"TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20\"; line 22 \"TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05\"; line 23a x .085 and 23b x .12; line 24 tax on long-term capital gains; line 27 No Tax Status oval; line 28a income tax and line 28b \"4% Surtax (from Schedule 4% Surtax, line 7)\")",
+     "cadence": "@@6b738ab8c936",
+     "topic": "forms_and_instructions",
+     "url": "https://www.mass.gov/doc/2025-form-1-massachusetts-resident-income-tax-return/download"
+    },
+    {
+     "answers": "2025 Massachusetts Personal Income Tax Forms and Instructions (MA DOR list page)",
+     "cadence": "@@6b738ab8c936",
+     "topic": "forms_and_instructions",
+     "url": "https://www.mass.gov/lists/2025-massachusetts-personal-income-tax-forms-and-instructions"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10e2e3a4fac1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@a57dc38da6b5",
+     "cadence": "@@6b738ab8c936",
+     "topic": "law_changes",
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10e2e3a4fac1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@e09840509c11",
+     "cadence": "@@6b738ab8c936",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@10e2e3a4fac1",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ma",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/ma",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@d7512e3b546a",
+      "@@c69f3f16d390",
+      "@@9a1c880c0fe7",
+      "@@62207b08c068"
+     ],
+     "citations": [
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@69b855c8bf64"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in MA in 2025 without living there — file a nonresident return on MA-source income.",
+     "state": "MA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@29dddbfcbdb7",
+      "@@de383e775cbb",
+      "@@381d58837881",
+      "@@3a0dce770d2c",
+      "Remote-work trap: work performed from TX for an employer sitting in MA. If MA applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to MA and require a NONRESIDENT MA return that the physical footprint alone never shows — and the W-2's Box 15 often already names MA. This MA pack year carries no researched convenience rule: verify MA's nonresident wage-sourcing rule at its DOR before assuming no MA filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@d7512e3b546a",
+      "@@c69f3f16d390",
+      "@@9a1c880c0fe7",
+      "@@62207b08c068"
+     ],
+     "citations": [
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@69b855c8bf64"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MA part of 2025 — file a part-year return on income while a resident (plus MA-source income while not).",
+     "state": "MA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@29dddbfcbdb7",
+      "@@de383e775cbb",
+      "@@381d58837881",
+      "@@3a0dce770d2c"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@d7512e3b546a",
+      "@@c69f3f16d390",
+      "@@9a1c880c0fe7",
+      "@@62207b08c068"
+     ],
+     "citations": [
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      },
+      {
+       "source": "@@a57dc38da6b5",
+       "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form 1 — Massachusetts Resident Income Tax Return (2025)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in MA all of 2025 — file a resident return on income from all sources.",
+     "state": "MA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@de383e775cbb",
+      "@@381d58837881",
+      "@@3a0dce770d2c"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ma",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $6,800 = -$6,800.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.05 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ma",
+     "taxable_base": "6800",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $6,800.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $6,800 = $0.00; tax = 0.05 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ma",
+     "taxable_base": "46800",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $46,800.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [head_of_household] = $6,800 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ma",
+     "taxable_base": "47800",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $47,800.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [head_of_household] = $6,800 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ma",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $8,800 = -$8,800.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.05 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ma",
+     "taxable_base": "8800",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $8,800.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $8,800 = $0.00; tax = 0.05 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ma",
+     "taxable_base": "48800",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $48,800.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly] = $8,800 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ma",
+     "taxable_base": "49800",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $49,800.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [married_filing_jointly] = $8,800 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ma",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $4,400 = -$4,400.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.05 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ma",
+     "taxable_base": "4400",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $4,400.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $4,400 = $0.00; tax = 0.05 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ma",
+     "taxable_base": "44400",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $44,400.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_separately] = $4,400 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ma",
+     "taxable_base": "45400",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $45,400.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [married_filing_separately] = $4,400 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ma",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $4,400 = -$4,400.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.05 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ma",
+     "taxable_base": "4400",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $4,400.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $4,400 = $0.00; tax = 0.05 x $0 = $"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ma",
+     "taxable_base": "44400",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $44,400.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [single] = $4,400 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ma",
+     "taxable_base": "45400",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $45,400.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus 1 dependent exemption(s) x $1,000 = $1,000.00, standard deduction [single] = $4,400 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ma",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: MA 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: age_65, blind, dependent). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ma",
+     "taxable_base": "48800",
+     "year": 2025
+    },
+    "tax": 2000,
+    "work_head": "MA state income tax (2025, flat rate): taxable_base $48,800.00 — which must be the state's OWN gross-income computation (never federal AGI) — for PA, the sum of the eight separately-computed PA income classes, where a loss in one class never offsets another — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $8,800 = $40,000.00; tax = 0.05 x $40,000 = $2,00"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_gross_income",
+   "citation": {
+    "source": "@@e09840509c11",
+    "url": "https://www.mass.gov/doc/2025-form-1-instructions/download"
+   },
+   "marginal_rate": "0.05",
+   "rate": "0.05",
+   "rate_structure": "flat",
+   "state": "ma"
+  },
+  "work_common_tail": "0. Tax line: Form 1 line 22: 'TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05' (line 21 = TOTAL TAXABLE 5.0% INCOME = line 19 income after exemptions + line 20 Schedule B interest and dividend income). Verified exemption kinds shipped but NOT applied by this op (compute them on the form): age_65 ($700 — Form 1 line 2c: $700 per age-65-or-over-before-2026 box (You/Spouse) — the visible face prints '× $ 700 = 2c'; its text layer reads '$1,700' because a separate '1,' text object is invisible, which an earlier extraction copied (corrected 2026-10-02 from a render of the blank). NOT applied by calc.state_tax — subtract it from the supplied base or compute line 2c on the form.); blind ($2,200 — Form 1 line 2d: $2,200 per blindness box (You/Spouse). NOT applied by calc.state_tax — subtract it from the supplied base or compute line 2d on the form.) This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Figures unchanged from 2024 (both passes re-verified for 2025): the 5.0% rate, the line 2a-2d exemption amounts ($4,400/$6,800/$8,800 personal; $1,000 dependent; $700 age 65+; $2,200 blindness) and the $24,000 tax-table cutoff are identical. What MOVED for 2025 is the 4% surtax threshold, indexed $1,053,750 -> $1,083,150, plus credit figures outside this block (Senior Circuit Breaker maximum $2,730 -> $2,820; the MA EITC's referenced federal earned-income ceiling $66,819 -> $68,675). Base guidance: supply 2025 Form 1 line 17 ('5.0% INCOME AFTER DEDUCTIONS' = line 10 TOTAL 5.0% INCOME minus line 16 total deductions) PLUS line 20 (interest and dividend income from Schedule B, line 38) — i.e., the Part B 5.0% taxable income BEFORE the line 18 exemptions. The op subtracts the line 2a personal exemption (shipped per filing status in standard_deduction) and $1,000 per dependent (line 2b), reproducing lines 18-21, then multiplies by 5% (line 22). Filers with line 2c-2f exemptions (age 65+ $700 each, blindness $2,200 each, medical/dental from U.S. Schedule A line 4, adoption) must subtract those amounts from the supplied base themselves. Modeling decision — standard_deduction carries the Form 1 line 2a PERSONAL EXEMPTION: Massachusetts has NO standard deduction; line 2a is a fixed per-filing-status base reduction ($4,400 single or married filing separately, $6,800 head of household, $8,800 married filing jointly) and ships in the per-status standard_deduction slot because the per-person 'personal' exemption key cannot represent the $6,800 head-of-household amount. Pass exemptions_count=0 — the taxpayer/spouse exemption is already inside the per-status amount. CRITICAL — 4% surtax NOT modeled: 'Starting with tax year 2023, personal income taxpayers must pay an additional 4% on taxable income over $1,000,000, increased annually for inflation. For the 2025 tax year, the threshold is $1,083,150' (2025 Form 1 instructions, Major 2025 Tax Changes). The surtax is computed on Schedule 4% Surtax and entered on Form 1 line 28b, and it applies to the SUM of all classes of taxable income (the 5.0% Part B income modeled here PLUS Schedule B 8.5%/12% income PLUS Schedule D long-term capital gains) over $1,083,150. It is NOT a marginal bracket of the 5.0% schedule — encoding it as one would misstate Massachusetts' class-separated system. If total taxable income across all classes exceeds $1,083,150, complete Schedule 4% Surtax on the form. (Related 2025 change: employers must withhold on wages once an employee's wages equal or exceed $1,000,000.) Class separation (PA-like): Massachusetts taxes income classes separately, and this op computes ONLY the Form 1 line 22 tax on 5.0% income. Not modeled: Schedule B 8.5% income (line 23a x .085 — short-term capital gains and certain other gains), 12% income (line 23b x .12 — long-term gains on collectibles and pre-1996 installment sales), and Schedule D long-term capital gain tax (line 24). Never merge those classes into the supplied base. Tax-table mandate: 'If line 21 is less than $24,000, find the proper tax by using the tax tables found in the back of this booklet. If line 21 is greater than $24,000 multiply by 0.05' (Line 22 instructions, unchanged for 2025). Below $24,000 the filed form uses the booklet table, which can differ from exact multiplication by a small amount within a table band; the fetched instructions capture did not include the table pages, so the band structure was not re-verified this session. Optional 5.85% rate (NOT modeled): Form 1 line 22 carries an oval to voluntarily pay tax at 5.85% on income that would otherwise be taxed at 5.0%; the election does not apply to the 8.5%/12% items. Excess exemptions: if line 18 exemptions exceed line 17, the form sets line 19 to 0 and the excess may be applied against interest and dividend income and income taxed at 8.5% or 12%, then against long-term capital gain income (the instructions' Line 36 / Schedule D Line 20 worksheet, available to single, head of household and married-filing-jointly filers). Because this op subtracts the exemptions from the combined line 17 + line 20 base, the offset against Part B interest/dividends is reproduced automatically; the offset against the 8.5%/12% and long-term-gain classes is NOT modeled (fill in the Form 1 line 24 oval if excess exemptions were used in calculating lines 20, 23 or 24). No Tax Status / Limited Income Credit (Form 1 lines 27-29, NOT modeled): Massachusetts AGI of $8,000 or less (single), $16,400 or less plus $1,000 per dependent (married filing jointly), or $14,400 or less plus $1,000 per dependent (head of household) qualifies for No Tax Status — fill in the line 27 oval and enter 0 in line 28 (married filing separately never qualifies). Limited Income Credit ranges for 2025: $8,000-$14,000 single; $14,400-$25,200 plus $1,750 per dependent head of household; $16,400-$28,700 plus $1,750 per dependent married filing jointly. Check the Massachusetts AGI worksheet before relying on the computed tax. Massachusetts gross income is built from MA's OWN categories, not federal AGI: Form 1 line 3 wages come from W-2 state wages (Box 16); income exempt under a U.S. tax treaty that landed in line 3 must be deducted on Schedule Y line 4b (2025 splits line 4 into 4a for the MGL ch 41 § 111F firefighter/police exclusion and 4b for the U.S. tax treaty exclusion). The header boxes a/b (federal total income from U.S. Form 1040 line 9 / federal AGI from line 11a) are informational only. A joint Form 1 is generally not allowed unless both spouses were MA residents for the same portion of 2025; NEW for 2025, where one spouse's Massachusetts gross income does not exceed $8,000 the couple may elect married filing separate status via the Form 1 'joint filing exemption for spouses with Massachusetts gross income under $8,000' oval. Not modeled — credits and later lines: Limited Income Credit (line 29), taxes due another jurisdiction (line 30, Schedule OJC), Schedule CMS credits (line 31), credit recapture (line 25, Schedule CRS), additional tax on installment sales (line 26), the refundable 40%-of-federal Massachusetts EITC (line 43), the $440-per-qualifying-individual Child and Family Tax Credit (line 46), the Senior Circuit Breaker credit up to $2,820 (line 44), use tax, and the Schedule HC health-care penalty."
+ },
+ "year": 2025
+}

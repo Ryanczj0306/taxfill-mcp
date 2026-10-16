@@ -1,0 +1,831 @@
+{
+ "_strings": {
+  "@@077fe72c6013": "https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download",
+  "@@1328afbb0047": "Form 500 with Schedule 3 (part-year residents and nonresidents file the same Form 500, omit Lines 9-14, and complete Form 500 Schedule 3 to calculate Georgia taxable income). The residency status box on Form 500 Line 4 (1=full-year resident, 2=part-year resident, 3=nonresident) designates status.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@37415a805b7f": "Qualified Caregiving Expense Credit (Credit Code 204) — Taxpayers who pay qualified caregiving expenses for a qualifying family member who is at least age 62 OR has been determined disabled by the Social Security Administration. Qualified services must be obtained from an organization or individual NOT related to the taxpayer or family member.",
+  "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@51a6bca78bf3": "Child and Dependent Care Expense Credit (Credit Code 202) — Georgia taxpayers who claimed and were allowed the federal child & dependent care expense credit under Internal Revenue Code Section 21 on their federal Form 1040.",
+  "@@70f8cb2237ab": "GA 2025 IT-511 Individual Income Tax Instruction Booklet - What's New ('Effective January 1, 2025, the income tax rate is 5.19%'; Form 500EZ discontinued for 2025); Standard Deductions chart ($24,000 MFJ; $12,000 Single/MFS/Head of household/Qualifying surviving spouse); Line 14 dependent exemption (Line 7c x $4,000); Line 16 tax (Line 15c x 5.19%, round to nearest dollar); Filing Requirements chart; 'file on or before April 15, 2026'; mailing addresses; Low Income Credit Worksheet; IND-CR 201/202/204",
+  "@@7bd48f184e66": "Georgia DOR, 2025 IT-511 Individual Income Tax Instruction Booklet — What's New: 'Effective January 1, 2025, the income tax rate is 5.19%. Form 500EZ has been discontinued'; Standard Deductions chart (Married filing jointly $24,000; Single, Married filing separately, Head of household, Qualifying surviving spouse $12,000 each); Line 14 dependent exemption 'multiply by $4,000'; Line 16 'Multiply the amount on Line 15c by 5.19%. Round to nearest dollar.' Second pass: the 2025 Form 500 prints Line 11 'Enter $12,000 if the filing status from Line 5 is A, C, or D. If the filing status is B, enter $24,000', Line 14 'Enter the number from Line 7c. Multiply by $4,000', and Line 16 'Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar)' (https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download) — both passes agree. HB 111 (2025 session) accelerated the rate to 5.19% (from 2024's 5.39%); the $12,000/$24,000 standard deductions and the $4,000 dependent exemption are unchanged from 2024.",
+  "@@7e568f1ab231": "Georgia DOR 2025 IT-511 booklet, 'Mailing Address' page (Form 500 without payment PO Box 740392 / with payment PO Box 740399; 500X PO Box 740318)",
+  "@@921fae3b30f3": "The newest shipped GA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@9713be127ea0": "https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download",
+  "@@9ab0b1ebc39d": "Form 500 without payment: PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740392, ATLANTA, GA 30374-0392",
+  "@@b4391634b953": "Form 500 (Georgia Individual Income Tax Return) for tax year 2025. NOTE — Form 500-EZ is DISCONTINUED for tax years beginning on or after January 1, 2025; all filers use Form 500.",
+  "@@b5eb681cda09": "Disabled Person Home Purchase or Retrofit Credit (Credit Code 201) — A permanently disabled person (the taxpayer or the taxpayer's spouse on a joint return) who has been issued a permanent parking permit by the Department of Revenue, and who purchases a new single-family home containing all four required accessibility features, or retrofits an existing single-family home with one or more of those features.",
+  "@@b8af893acd57": "Georgia DOR 2025 IT-511 booklet, 'When to File' — 'Calendar year taxpayers are required to file on or before April 15, 2026'",
+  "@@b8e8ec1cc483": "Low Income Tax Credit — Georgia residents whose Federal adjusted gross income (FAGI) is less than $20,000 and who are not claimed (or eligible to be claimed) as a dependent on another taxpayer's federal or Georgia return. Cannot be claimed by an inmate in a correctional facility. Part-year residents qualify only if they were Georgia residents at the end of the tax year.",
+  "@@cf788a0edf10": "Georgia Eligible Itemizer Tax Credit — Full-year residents and part-year residents living in Georgia at the end of the year who itemized deductions on their returns.",
+  "@@d94a5d9eb85a": "annual (per tax year; the newest shipped GA pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@e1b4560c91aa": "Treaty conformity — GA conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from GA income (it flows through the federal starting point; do not add it back on the GA return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Georgia conforms. The resident return (Form 500) starts from federal adjusted gross income (2025 Form 500, Line 8: \"Federal adjusted gross income (From Federal Form 1040)\" with the warning \"Do not use FEDERAL TAXABLE INCOME\"), and adjustments are made only on Form 500 Schedule 1. The Schedule 1 ADDITIONS do not include any add-back of federally treaty-exempt income (unlike California's Schedule CA add-back). To the contrary, the IT-511 booklet expressly lists as a SUBTRACTION item income specifically exempted by Federal law or treaty. Because treaty-exempt income is already excluded from federal AGI and GA neither adds it back nor otherwise re-taxes it (and explicitly recognizes the treaty exemption), it flows through untaxed.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@feb9a1864881": "GA Form 500 (2025) blank return - Line 8 'Federal adjusted gross income (From Federal Form 1040)', Line 9 Schedule 1 adjustments, Line 5 filing statuses (A Single / B MFJ / C MFS / D Head of household or Qualifying surviving spouse), Line 11 standard deduction ($12,000 status A/C/D, $24,000 status B), Line 14 dependent exemption (Line 7c x $4,000), Line 16 tax (Line 15c x 5.19%, round to nearest dollar)"
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "@@7e568f1ab231",
+      "url": "@@9713be127ea0"
+     },
+     {
+      "source": "@@b8af893acd57",
+      "url": "@@9713be127ea0"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@b4391634b953",
+    "jurisdiction": "states/ga",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@9ab0b1ebc39d",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "@@7e568f1ab231",
+      "url": "@@9713be127ea0"
+     },
+     {
+      "source": "@@b8af893acd57",
+      "url": "@@9713be127ea0"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@b4391634b953",
+    "jurisdiction": "states/ga",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Form 500 with payment: PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740399, ATLANTA, GA 30374-0399. (Form 500X amended: PO BOX 740318, ATLANTA, GA 30374-0318.)",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Pay online via GA Web Pay: https://gtc.dor.ga.gov/ (Georgia Tax Center, GTC) (no processor fee).",
+     "By check: make it payable to \"Georgia Department of Revenue (2025 IT-511 filing checklist — make your check or money order payable to the Georgia Department of Revenue; send with the 525-TV voucher when paying by check. The voucher prints its own address for a payment on an e-filed return — PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740323, ATLANTA GA 30374-0323 (2025 Form 500 page 28 / 2025 IT-511 booklet, Form 525-TV); a paper return and its voucher go to the with-payment address under mailing_addresses)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "@@7e568f1ab231",
+      "url": "@@9713be127ea0"
+     },
+     {
+      "source": "@@b8af893acd57",
+      "url": "@@9713be127ea0"
+     }
+    ],
+    "deadlines": [
+     "Due 2026-04-15."
+    ],
+    "form": "@@b4391634b953",
+    "jurisdiction": "states/ga",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "@@9ab0b1ebc39d",
+    "notes": [
+     "@@4d42ad525021"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2025
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@b8af893acd57",
+      "url": "@@9713be127ea0"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@b4391634b953",
+    "headline": "GA 2025: refund $512",
+    "jurisdiction": "states/ga",
+    "notes": [],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@b8af893acd57",
+      "url": "@@9713be127ea0"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@b4391634b953",
+    "headline": "GA 2025: you owe $347",
+    "jurisdiction": "states/ga",
+    "notes": [],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   },
+   {
+    "citations": [
+     {
+      "source": "@@b8af893acd57",
+      "url": "@@9713be127ea0"
+     }
+    ],
+    "deadline_status": "Due 2026-04-15.",
+    "form": "@@b4391634b953",
+    "headline": "GA 2025: you owe $1,205",
+    "jurisdiction": "states/ga",
+    "notes": [],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2025
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@921fae3b30f3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@077fe72c6013"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ga",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "Georgia DOR 2025 IT-511 Individual Income Tax Instruction Booklet, Low Income Credit Worksheet and Line 17 instructions",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "credits",
+     "url": "@@9713be127ea0"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "filing_logistics": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@921fae3b30f3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@077fe72c6013"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ga",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@7e568f1ab231",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "filing_logistics",
+     "url": "@@9713be127ea0"
+    }
+   ],
+   "topic": "filing_logistics",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@921fae3b30f3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@077fe72c6013"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ga",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@feb9a1864881",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "forms_and_instructions",
+     "url": "@@077fe72c6013"
+    },
+    {
+     "answers": "@@70f8cb2237ab",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "forms_and_instructions",
+     "url": "@@9713be127ea0"
+    },
+    {
+     "answers": "GA DOR - Gov. Kemp Signs Legislation (2025-04-17 press release) — HB 111 accelerates the Georgia income tax rate to 5.19% for tax year 2025 (delivering over $1 billion in tax cuts and relief)",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "forms_and_instructions",
+     "url": "https://dor.georgia.gov/press-releases/2025-04-17/gov-kemp-signs-legislation-delivering-more-1-billion-tax-cuts-and-relief"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@921fae3b30f3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@077fe72c6013"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ga",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@70f8cb2237ab",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "law_changes",
+     "url": "@@9713be127ea0"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@921fae3b30f3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@077fe72c6013"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ga",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@7bd48f184e66",
+     "cadence": "@@d94a5d9eb85a",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@9713be127ea0"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "filing_logistics",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@921fae3b30f3",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@077fe72c6013"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/ga",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/ga",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b8e8ec1cc483",
+      "@@cf788a0edf10",
+      "@@51a6bca78bf3",
+      "@@37415a805b7f",
+      "@@b5eb681cda09"
+     ],
+     "citations": [
+      {
+       "source": "@@feb9a1864881",
+       "url": "@@077fe72c6013"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@1328afbb0047"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in GA in 2025 without living there — file a nonresident return on GA-source income.",
+     "state": "GA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@e1b4560c91aa",
+      "Remote-work trap: work performed from TX for an employer sitting in GA. If GA applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to GA and require a NONRESIDENT GA return that the physical footprint alone never shows — and the W-2's Box 15 often already names GA. This GA pack year carries no researched convenience rule: verify GA's nonresident wage-sourcing rule at its DOR before assuming no GA filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b8e8ec1cc483",
+      "@@cf788a0edf10",
+      "@@51a6bca78bf3",
+      "@@37415a805b7f",
+      "@@b5eb681cda09"
+     ],
+     "citations": [
+      {
+       "source": "@@feb9a1864881",
+       "url": "@@077fe72c6013"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@1328afbb0047"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in GA part of 2025 — file a part-year return on income while a resident (plus GA-source income while not).",
+     "state": "GA",
+     "warnings": [
+      "@@4cf945d1e9e4",
+      "@@e1b4560c91aa"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@b8e8ec1cc483",
+      "@@cf788a0edf10",
+      "@@51a6bca78bf3",
+      "@@37415a805b7f",
+      "@@b5eb681cda09"
+     ],
+     "citations": [
+      {
+       "source": "@@feb9a1864881",
+       "url": "@@077fe72c6013"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "@@b4391634b953"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in GA all of 2025 — file a resident return on income from all sources.",
+     "state": "GA",
+     "warnings": [
+      "@@4cf945d1e9e4"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ga",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,000 = -$12,000.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.0519 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ga",
+     "taxable_base": "12000",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $12,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,000 = $0.00; tax = 0.0519 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ga",
+     "taxable_base": "52000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $52,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ga",
+     "taxable_base": "56000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $56,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $4,000 = $4,000.00, standard deduction [head_of_household] = $12,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ga",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $24,000 = -$24,000.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.0519 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ga",
+     "taxable_base": "24000",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $24,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $24,000 = $0.00; tax = 0.0519 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ga",
+     "taxable_base": "64000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $64,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $24,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ga",
+     "taxable_base": "68000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $68,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $4,000 = $4,000.00, standard deduction [married_filing_jointly] = $24,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ga",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,000 = -$12,000.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.0519 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ga",
+     "taxable_base": "12000",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $12,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,000 = $0.00; tax = 0.0519 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ga",
+     "taxable_base": "52000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $52,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $12,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ga",
+     "taxable_base": "56000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $56,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $4,000 = $4,000.00, standard deduction [married_filing_separately] = $12,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ga",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,000 = -$12,000.00 (clamped to $0 — exemptions/deduction exceed the base); tax = 0.0519 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ga",
+     "taxable_base": "12000",
+     "year": 2025
+    },
+    "tax": 0,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $12,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,000 = $0.00; tax = 0.0519 x $0 = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ga",
+     "taxable_base": "52000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $52,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $12,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 1,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ga",
+     "taxable_base": "56000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $56,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus 1 dependent exemption(s) x $4,000 = $4,000.00, standard deduction [single] = $12,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ga",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: GA 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: dependent). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ga",
+     "taxable_base": "64000",
+     "year": 2025
+    },
+    "tax": 2076,
+    "work_head": "GA state income tax (2025, flat rate): taxable_base $64,000.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $24,000 = $40,000.00; tax = 0.0519 x $40,000 = $2,076"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "@@7bd48f184e66",
+    "url": "@@9713be127ea0"
+   },
+   "marginal_rate": "0.0519",
+   "rate": "0.0519",
+   "rate_structure": "flat",
+   "state": "ga"
+  },
+  "work_common_tail": ". Tax line: Form 500, Line 16: 'Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar)'. Line 15c Georgia Taxable Income = Line 10 Georgia AGI minus Line 11 standard deduction (or Line 12c itemized), minus Line 14 dependent exemption (Line 7c x $4,000), minus Line 15b Georgia NOL utilized. This op computes the state's flat-rate tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 STRUCTURAL CHANGE — HB 111 ACCELERATED THE FLAT RATE: for tax years beginning on or after January 1, 2025 the Georgia flat rate DROPS to 5.19% (2024: 5.39%), per the 2025 IT-511 What's New ('Effective January 1, 2025, the income tax rate is 5.19%') and Form 500 Line 16. The $12,000/$24,000 standard deductions and the $4,000 dependent exemption are UNCHANGED from 2024; personal exemptions remain repealed (only the dependent exemption survives). Do NOT carry the 2024 5.39% rate into 2025, and do NOT use this pack for 2024. Base guidance: Supply Form 500, Line 10 'Georgia adjusted gross income' (Line 8 federal AGI from Form 1040, net of Line 9 adjustments from Form 500 Schedule 1) for a FULL-YEAR resident. The op subtracts the per-status Line 11 standard deduction and $4,000 per dependent (Line 14) to reach Line 15c Georgia taxable income (assuming no Line 15b NOL), then multiplies by 5.19%. Pass exemptions_count=0 — Georgia has NO personal exemption (repealed); pass dependents_count = Form 500 Line 7c (qualified dependents plus unborn dependents). Do not use this op if you itemize deductions, claim a Georgia NOL (Line 15b), or file as a part-year resident/nonresident (they omit Lines 9-14 and use Schedule 3, which prorates the deduction) — compute those on the form. QUALIFYING SURVIVING SPOUSE (CRITICAL): Georgia files QSS under filing status D 'Head of Household or Qualifying Surviving Spouse' with a $12,000 standard deduction (both the 2025 Form 500 Line 5 status list and the IT-511 Standard Deductions chart, which prints 'Qualifying surviving spouse $12,000') — pass head_of_household to this op, NOT married_filing_jointly. The engine's default QSS -> married_filing_jointly mapping would apply MFJ's $24,000 and UNDERSTATE tax. AGE-65/BLIND ADDITIONAL DEDUCTION: none for Georgia — the flat $12,000/$24,000 amounts are the entire standard deduction; the old (pre-2024) $1,300-per-checkbox additional standard deduction is gone. No age_65/blind keys ship. ITEMIZERS NOT MODELED: if you itemized on your federal return (or are MFS and your spouse itemizes), you MUST itemize on the Georgia return (Line 12c = federal Schedule A total less Georgia adjustments) and the standard deduction does not apply. Itemizing residents may claim the Georgia Eligible Itemizer Tax Credit of up to $300 per taxpayer on Form 500 Line 19 — a CREDIT against Line 16 tax, not a base reduction, and not modeled. NO tax table and NO rate schedule: Line 16 is a straight multiplication printed on the form ('Multiply Line 15c by 5.19%. Round to the nearest dollar'). Georgia NOL not modeled: Form 500 Line 15b (Georgia NOL utilized, limited to 80% of Line 15a income for losses from tax years 2018+) is subtracted before Line 15c taxable income. Part-year residents and nonresidents not modeled: they omit Form 500 Lines 9-14 and use Schedule 3, which prorates the standard deduction and dependent exemption by the Georgia-income ratio. This pack's subtractions apply only to full-year residents. Taxpayers required to file federal Form 1040NR generally may NOT take the Georgia standard deduction. NOTE: Form 500-EZ is DISCONTINUED for 2025 — all filers use Form 500. CREDITS (subtracted from tax, NOT modeled and NOT base reductions): Low Income Credit (Form 500 Line 17 — a per-exemption CREDIT of $5-$26 for federal AGI under $20,000); Other State(s) Tax Credit (Line 18); Georgia Eligible Itemizer Tax Credit (Line 19, up to $300 per itemizing taxpayer); IND-CR series 200 credits (Line 20); Schedule 2 series 100 credits (Line 21). Total credits used (Line 22) cannot exceed Line 16 tax. Rounding: the Form 500 Line 16 instruction itself mandates 'Round to the nearest dollar'; this pack rounds half-up to whole dollars (irs_round), matching the form's presentation."
+ },
+ "year": 2025
+}

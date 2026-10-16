@@ -1,0 +1,640 @@
+{
+ "_strings": {
+  "@@22dae2e7d779": "New Mexico Child Day Care Credit — A New Mexico resident who provided over half the cost of maintaining a household for one or more qualifying dependent children who received day care during 2025, was gainfully employed during the period claimed, and paid unreimbursed, uncompensated day care expenses. Requires the completed Child Day Care Credit Worksheet (PIT-Childcare) plus Form PIT-CG, New Mexico Caregiver's Statement, for each caregiver — an incomplete PIT-RC or a missing PIT-CG results in denial of the credit.",
+  "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@34062d638bf2": "https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/",
+  "@@347ec624bac8": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. For 2025 the PIT-RC instructions WERE retrievable, so the Child Income Tax Credit per-child table, the Low Income Comprehensive Tax Rebate table, the property tax rebate for persons 65 or older, and the child day care credit mechanics below are all quoted from the Department's own 2025 printing (this closes the three 2024 gaps). Not carried here (verify at the source if you need it): the additional Low Income Property Tax Rebate for Los Alamos, Santa Fe, Dona Ana, and Bernalillo county residents (PIT-RC Section 4, 2025 modified-gross-income gate $24,000 or less), and the PIT-CR business-related income tax credits.",
+  "@@409abfdf0218": "Low Income Comprehensive Tax Rebate (LICTR) — A New Mexico resident who files a PIT-1, was physically present in NM for at least six months during 2025, is not eligible to be claimed as a dependent of another taxpayer for 2025, and was not an inmate of a public institution for more than six months of 2025. May be claimed even with no taxable income.",
+  "@@40cbb8b52af0": "The newest shipped NM pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@542eabc4c559": "New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)",
+  "@@585fffe9fea7": "New Mexico Child Income Tax Credit — A taxpayer who was a New Mexico resident during the tax year and is not eligible to be claimed as a dependent of another taxpayer for 2025, for each qualifying child (Section 152(c) of the Internal Revenue Code, plus a minor child or stepchild who would qualify federally but for public assistance support). Available for taxable years beginning January 1, 2023 and prior to January 1, 2032.",
+  "@@5b87d4c7a69e": "Treaty conformity — NM conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from NM income (it flows through the federal starting point; do not add it back on the NM return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: NM's resident return (PIT-1) starts from federal adjusted gross income: \"LINE 9. Federal Adjusted Gross Income — Enter the federal adjusted gross income as reported on your federal Form 1040 or 1040SR, line 11\" (2025 PIT-1 instructions). Income exempt from federal tax under a US tax treaty is already excluded from federal AGI and therefore flows through to NM. NM's additions to federal AGI are enumerated exclusively on Schedule PIT-ADJ lines 1-5 (line 6 is their total, carried to PIT-1 line 11): (1) interest and dividend income from federal tax-exempt bonds, (2) federal net operating loss carryover, (3) contributions refunded when closing a New Mexico Section 529 account, (4) the charitable deduction claimed on the federal return for a land donation tied to the NM land conservation credit, and (5) withholding tax paid by a pass-through entity. None of these is an add-back of federally tax-treaty-exempt income (the word \"treaty\" does not appear anywhere in the 2025 PIT Packet). Because there is no treaty add-back, federally treaty-exempt income is NOT re-taxed by New Mexico -> conforms. (Same analysis and result as 2023 and 2024.)",
+  "@@5ced19348c64": "annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@75f806d053cc": "Property Tax Rebate for Persons 65 or Older — A New Mexico resident who was age 65 or older on the last day of 2025, was physically present in NM for at least six months in 2025, is not eligible to be claimed as a dependent of another taxpayer for 2025, was not an inmate of a public institution for more than six months in 2025, and has modified gross income of $16,000 or less. Both homeowners (property tax billed) and renters (rent paid on the principal place of residence) may qualify; no rebate is available for property that is not subject to property tax.",
+  "@@81864fa9d27f": "Refundable Medical Care Credit for Persons 65 or Older — A taxpayer (or spouse) age 65 or older who paid unreimbursed or uncompensated medical care expenses of $28,000 or more during 2025 for themselves, their spouse, or dependents, and who is not eligible to be claimed as a dependent of another taxpayer for 2025.",
+  "@@87d1f7d4e24c": "Form PIT-1 filed with Schedule PIT-B (Schedule of New Mexico Allocation and Apportionment of Income); nonresidents and part-year residents use PIT-B to allocate/apportion NM-source income, and PIT-1 line 18 then comes from PIT-B line 14 with indicator B in box 18a. Mark residency status in box 1e on PIT-1 page 1 (R = resident, N = non-resident, P = part-year, F = first-year). A nonresident whose only NM income is gross royalty income under $5,000 may instead enter that income on line 17 and mark Y in box 18a.",
+  "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@98a52845c8e5": "Working Families Tax Credit (New Mexico's state EITC) — A New Mexico resident during any part of 2025 who files a PIT-1 and is eligible for the federal Earned Income Credit for the same tax year.",
+  "@@c56a9c17064a": "New Mexico Legislature — 2024 House Bill 252 (HTRC/HB 252/a, final version), Section 5 amending Section 7-2-7 NMSA 1978 (INDIVIDUAL INCOME TAX RATES) for taxable years beginning on or after January 1, 2025",
+  "@@c8c39a2e10d5": "ValidationError: 1 validation error for Citation\nurl\n  Value error, url must point to an official US government host — a federal/.gov site (irs.gov, treasury.gov), a .mil site, or a state-government .us host (*.state.<xx>.us, e.g. revenue.state.mn.us), got host 'klvg4oyd4j.execute-api.us-west-2.amazonaws.com'. Bare .us domains are an open registry and blogs/commercial sites are never authority for tax data. [type=value_error, input_value='https://klvg4oyd4j.execu...9da0f/2025pit-1-ins.pdf', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+  "@@d1e630f1fbdc": "Special Needs Adopted Child Tax Credit — A taxpayer who files a New Mexico PIT-1, is not a dependent of another taxpayer, adopted a special needs child (certified as a 'difficult to place child' by the NM Children, Youth and Families Department or a licensed child placement agency), and claimed that child as a dependent on the federal return. Attach the certificate in the first year claimed for each qualifying child.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@fe79985fa838": "Statutory rate schedules of Section 7-2-7 NMSA 1978 as RESTRUCTURED by 2024 House Bill 252 (Laws 2024, Chapter 67, Section 5), 'for any taxable year beginning on or after January 1, 2025' — six brackets replacing the 1.7-5.9% five-bracket schedule that ran TY2021-TY2024: MFJ/HoH/surviving spouse 1.5% to $8,000 / $120 + 3.2% to $25,000 / $664 + 4.3% to $50,000 / $1,739 + 4.7% to $100,000 / $4,089 + 4.9% to $315,000 / $14,624 + 5.9%; Single (and estates/trusts) 1.5% to $5,500 / $82.50 + 3.2% to $16,500 / $434.50 + 4.3% to $33,500 / $1,165.50 + 4.7% to $66,500 / $2,716.50 + 4.9% to $210,000 / $9,748 + 5.9%; MFS 1.5% to $4,000 / $60.00 + 3.2% to $12,500 / $332 + 4.3% to $25,000 / $869.50 + 4.7% to $50,000 / $2,044.50 + 4.9% to $157,500 / $7,312 + 5.9%. Second pass: the Department's own 'Personal Income Tax Rates' publication (PIT rates_2005_2025.pdf, page 1 'PERSONAL INCOME TAX RATES FOR TAX YEARS STARTING 2025') prints the same schedules digit-for-digit, and the Department's 2025 PIT-TRT Tax Rate Table (2025 Personal Income Tax Packet, page T-1 ff.) implements them: the look-up table now runs through $100,000 and its continuation schedules read 'If line 17 of Form PIT-1 (Taxable Income) is over $100,000': Single $4,356 + 4.9% of excess over $100,000 to $210,000, then $9,746 + 5.9%; Married Filing Jointly and Head of Household $4,087 + 4.9% to $315,000, then $14,622 + 5.9%; Married Filing Separately $4,492 + 4.9% to $157,500, then $7,310 + 5.9% (footnote '* This column must also be used by surviving spouse'). Packet URL (Department AWS-backed public-files library, the NM pack's documented host exception): https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/34821a9573ca43e7b06dfad20f5183fd/0558a902-6362-47ca-8e3b-7cca3bc69b9d/2025%20PIT%20Packet_Final.pdf"
+ },
+ "file_and_pay": {
+  "error": "@@c8c39a2e10d5"
+ },
+ "filing_summary": {
+  "error": "@@c8c39a2e10d5"
+ },
+ "get_sources": {
+  "credits": {
+   "available_topics": [
+    "credits",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@40cbb8b52af0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "2025 PIT-1 New Mexico Personal Income Tax Return Instructions, LINES 25, 25a, and 25b (Working Families Tax Credit, 25% of the federal EIC), as printed in the Department's 2025 Personal Income Tax Packet (see `unverified` for the host note)",
+     "cadence": "@@5ced19348c64",
+     "topic": "credits",
+     "url": "https://www.tax.newmexico.gov/forms-publications/"
+    }
+   ],
+   "topic": "credits",
+   "year": 2025
+  },
+  "forms_and_instructions": {
+   "available_topics": [
+    "credits",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@40cbb8b52af0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@542eabc4c559",
+     "cadence": "@@5ced19348c64",
+     "topic": "forms_and_instructions",
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@c56a9c17064a",
+     "cadence": "@@5ced19348c64",
+     "topic": "forms_and_instructions",
+     "url": "https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf"
+    },
+    {
+     "answers": "New Mexico Taxpayer Access Point (TAP) — official online filing/payment portal",
+     "cadence": "@@5ced19348c64",
+     "topic": "forms_and_instructions",
+     "url": "https://tap.state.nm.us"
+    }
+   ],
+   "topic": "forms_and_instructions",
+   "year": 2025
+  },
+  "law_changes": {
+   "available_topics": [
+    "credits",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@40cbb8b52af0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@c56a9c17064a",
+     "cadence": "@@5ced19348c64",
+     "topic": "law_changes",
+     "url": "https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf"
+    }
+   ],
+   "topic": "law_changes",
+   "year": 2025
+  },
+  "tax_rates_and_brackets": {
+   "available_topics": [
+    "credits",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@40cbb8b52af0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": true,
+   "notes": [],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [
+    {
+     "answers": "@@fe79985fa838",
+     "cadence": "@@5ced19348c64",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf"
+    }
+   ],
+   "topic": "tax_rates_and_brackets",
+   "year": 2025
+  },
+  "zzqx unmatched probe": {
+   "available_topics": [
+    "credits",
+    "forms_and_instructions",
+    "law_changes",
+    "tax_rates_and_brackets"
+   ],
+   "change_channels": [
+    {
+     "answers": "@@40cbb8b52af0",
+     "cadence": "annual (each filing season)",
+     "topic": null,
+     "url": "@@34062d638bf2"
+    },
+    {
+     "answers": "@@4e5544041dbf",
+     "cadence": "standing page",
+     "topic": null,
+     "url": "@@94cf5df52d86"
+    }
+   ],
+   "jurisdiction": "states/nm",
+   "matched": false,
+   "notes": [
+    "Topic 'zzqx unmatched probe' is not in the registry. Pick one of available_topics, or use the change_channels + a .gov search and cite the result — never fill a line whose authority is not in the registry (the coverage rule)."
+   ],
+   "retrieval_hint": "@@2ec96343e2e3",
+   "sources": [],
+   "topic": "zzqx unmatched probe",
+   "year": 2025
+  }
+ },
+ "jurisdiction": "states/nm",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@98a52845c8e5",
+      "@@585fffe9fea7",
+      "@@409abfdf0218",
+      "@@22dae2e7d779",
+      "@@75f806d053cc",
+      "@@81864fa9d27f",
+      "@@d1e630f1fbdc"
+     ],
+     "citations": [
+      {
+       "source": "@@542eabc4c559",
+       "url": "@@34062d638bf2"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "@@87d1f7d4e24c"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in NM in 2025 without living there — file a nonresident return on NM-source income.",
+     "state": "NM",
+     "warnings": [
+      "@@347ec624bac8",
+      "@@5b87d4c7a69e",
+      "Remote-work trap: work performed from TX for an employer sitting in NM. If NM applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to NM and require a NONRESIDENT NM return that the physical footprint alone never shows — and the W-2's Box 15 often already names NM. This NM pack year carries no researched convenience rule: verify NM's nonresident wage-sourcing rule at its DOR before assuming no NM filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@98a52845c8e5",
+      "@@585fffe9fea7",
+      "@@409abfdf0218",
+      "@@22dae2e7d779",
+      "@@75f806d053cc",
+      "@@81864fa9d27f",
+      "@@d1e630f1fbdc"
+     ],
+     "citations": [
+      {
+       "source": "@@542eabc4c559",
+       "url": "@@34062d638bf2"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "@@87d1f7d4e24c"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in NM part of 2025 — file a part-year return on income while a resident (plus NM-source income while not).",
+     "state": "NM",
+     "warnings": [
+      "@@347ec624bac8",
+      "@@5b87d4c7a69e"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2025
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@98a52845c8e5",
+      "@@585fffe9fea7",
+      "@@409abfdf0218",
+      "@@22dae2e7d779",
+      "@@75f806d053cc",
+      "@@81864fa9d27f",
+      "@@d1e630f1fbdc"
+     ],
+     "citations": [
+      {
+       "source": "@@542eabc4c559",
+       "url": "@@34062d638bf2"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "Form PIT-1 (New Mexico Personal Income Tax Return)"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in NM all of 2025 — file a resident return on income from all sources.",
+     "state": "NM",
+     "warnings": [
+      "@@347ec624bac8"
+     ]
+    }
+   ],
+   "year": 2025
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nm",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.015",
+    "tax": 0,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nm",
+     "taxable_base": "4000",
+     "year": 2025
+    },
+    "marginal_rate": "0.015",
+    "tax": 60,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $4,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $4,000 [head_of_household schedule]: 0.015 x $4,000.00 (the $0-$8,000 bracket) = $60.00; total $60.00 -> $60"
+   },
+   {
+    "base_after_exemptions": 55000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nm",
+     "taxable_base": "55000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 1974,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $55,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $55,000 [head_of_household schedule]: 0.015 x $8,000.00 (the $0-$8,000 bracket) = $120.00; 0.032 x $17,000.00 (the $8,000-$25,000 bracket) = $544.00; 0.043 x $25,000.00 (the $25,000-$50,000 bracket) = $1,075.00; 0.047 x $5,000.00 (the $50,000-$100,000 bracket) = $235.00; total $1,974.00 -> $1,974"
+   },
+   {
+    "base_after_exemptions": 325000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "nm",
+     "taxable_base": "325000",
+     "year": 2025
+    },
+    "marginal_rate": "0.059",
+    "tax": 15214,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $325,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $325,000 [head_of_household schedule]: 0.015 x $8,000.00 (the $0-$8,000 bracket) = $120.00; 0.032 x $17,000.00 (the $8,000-$25,000 bracket) = $544.00; 0.043 x $25,000.00 (the $25,000-$50,000 bracket) = $1,075.00; 0.047 x $50,000.00 (the $50,000-$100,000 bracket) = $2,350.00; 0.049 x $215,000.00 (the $100,000-$315,000 bracket) = $10,535.00; 0.059 x $10,000.00 (the $315,000+ bracket) = $590.00; total $15,214.00 -> $15,214"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nm",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.015",
+    "tax": 0,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 4000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nm",
+     "taxable_base": "4000",
+     "year": 2025
+    },
+    "marginal_rate": "0.015",
+    "tax": 60,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $4,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $4,000 [married_filing_jointly schedule]: 0.015 x $4,000.00 (the $0-$8,000 bracket) = $60.00; total $60.00 -> $60"
+   },
+   {
+    "base_after_exemptions": 55000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nm",
+     "taxable_base": "55000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 1974,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $55,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $55,000 [married_filing_jointly schedule]: 0.015 x $8,000.00 (the $0-$8,000 bracket) = $120.00; 0.032 x $17,000.00 (the $8,000-$25,000 bracket) = $544.00; 0.043 x $25,000.00 (the $25,000-$50,000 bracket) = $1,075.00; 0.047 x $5,000.00 (the $50,000-$100,000 bracket) = $235.00; total $1,974.00 -> $1,974"
+   },
+   {
+    "base_after_exemptions": 325000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "nm",
+     "taxable_base": "325000",
+     "year": 2025
+    },
+    "marginal_rate": "0.059",
+    "tax": 15214,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $325,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $325,000 [married_filing_jointly schedule]: 0.015 x $8,000.00 (the $0-$8,000 bracket) = $120.00; 0.032 x $17,000.00 (the $8,000-$25,000 bracket) = $544.00; 0.043 x $25,000.00 (the $25,000-$50,000 bracket) = $1,075.00; 0.047 x $50,000.00 (the $50,000-$100,000 bracket) = $2,350.00; 0.049 x $215,000.00 (the $100,000-$315,000 bracket) = $10,535.00; 0.059 x $10,000.00 (the $315,000+ bracket) = $590.00; total $15,214.00 -> $15,214"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nm",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.015",
+    "tax": 0,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nm",
+     "taxable_base": "2000",
+     "year": 2025
+    },
+    "marginal_rate": "0.015",
+    "tax": 30,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $2,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $2,000 [married_filing_separately schedule]: 0.015 x $2,000.00 (the $0-$4,000 bracket) = $30.00; total $30.00 -> $30"
+   },
+   {
+    "base_after_exemptions": 30000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nm",
+     "taxable_base": "30000",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 1105,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $30,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $30,000 [married_filing_separately schedule]: 0.015 x $4,000.00 (the $0-$4,000 bracket) = $60.00; 0.032 x $8,500.00 (the $4,000-$12,500 bracket) = $272.00; 0.043 x $12,500.00 (the $12,500-$25,000 bracket) = $537.50; 0.047 x $5,000.00 (the $25,000-$50,000 bracket) = $235.00; total $1,104.50 -> $1,105"
+   },
+   {
+    "base_after_exemptions": 167500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "nm",
+     "taxable_base": "167500",
+     "year": 2025
+    },
+    "marginal_rate": "0.059",
+    "tax": 7902,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $167,500.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $167,500 [married_filing_separately schedule]: 0.015 x $4,000.00 (the $0-$4,000 bracket) = $60.00; 0.032 x $8,500.00 (the $4,000-$12,500 bracket) = $272.00; 0.043 x $12,500.00 (the $12,500-$25,000 bracket) = $537.50; 0.047 x $25,000.00 (the $25,000-$50,000 bracket) = $1,175.00; 0.049 x $107,500.00 (the $50,000-$157,500 bracket) = $5,267.50; 0.059 x $10,000.00 (the $157,500+ bracket) = $590.00; total $7,902.00 -> $7,902"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nm",
+     "taxable_base": "0",
+     "year": 2025
+    },
+    "marginal_rate": "0.015",
+    "tax": 0,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 2750,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nm",
+     "taxable_base": "2750",
+     "year": 2025
+    },
+    "marginal_rate": "0.015",
+    "tax": 41,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $2,750.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $2,750 [single schedule]: 0.015 x $2,750.00 (the $0-$5,500 bracket) = $41.25; total $41.25 -> $41"
+   },
+   {
+    "base_after_exemptions": 38500,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nm",
+     "taxable_base": "38500",
+     "year": 2025
+    },
+    "marginal_rate": "0.047",
+    "tax": 1401,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $38,500.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $38,500 [single schedule]: 0.015 x $5,500.00 (the $0-$5,500 bracket) = $82.50; 0.032 x $11,000.00 (the $5,500-$16,500 bracket) = $352.00; 0.043 x $17,000.00 (the $16,500-$33,500 bracket) = $731.00; 0.047 x $5,000.00 (the $33,500-$66,500 bracket) = $235.00; total $1,400.50 -> $1,401"
+   },
+   {
+    "base_after_exemptions": 220000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "nm",
+     "taxable_base": "220000",
+     "year": 2025
+    },
+    "marginal_rate": "0.059",
+    "tax": 10338,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $220,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $220,000 [single schedule]: 0.015 x $5,500.00 (the $0-$5,500 bracket) = $82.50; 0.032 x $11,000.00 (the $5,500-$16,500 bracket) = $352.00; 0.043 x $17,000.00 (the $16,500-$33,500 bracket) = $731.00; 0.047 x $33,000.00 (the $33,500-$66,500 bracket) = $1,551.00; 0.049 x $143,500.00 (the $66,500-$210,000 bracket) = $7,031.50; 0.059 x $10,000.00 (the $210,000+ bracket) = $590.00; total $10,338.00 -> $10,338"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "nm",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: NM 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "nm",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: NM 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "nm",
+     "taxable_base": "40000",
+     "year": 2025
+    },
+    "marginal_rate": "0.043",
+    "tax": 1309,
+    "work_head": "NM state income tax (2025, graduated brackets): taxable_base $40,000.00 — which must be the state form's OWN taxable-income line, with the state's deductions/exemptions already computed on the form (this state's deduction is income-dependent or otherwise not a fixed amount the op could subtract) — with no exemptions or standard deduction to subtract; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.015 x $8,000.00 (the $0-$8,000 bracket) = $120.00; 0.032 x $17,000.00 (the $8,000-$25,000 bracket) = $544.00; 0.043 x $15,000.00 (the $25,000-$50,000 bracket) = $645.00; total $1,309.00 -> $1,309"
+   }
+  ],
+  "common_result": {
+   "base_kind": "state_taxable_income",
+   "citation": {
+    "source": "@@fe79985fa838",
+    "url": "https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "nm"
+  },
+  "work_common_tail": ". Tax line: 2025 Form PIT-1, line 18: 'New Mexico Tax', with line 18a Rate Table Indicator ('R = Rate tables', 'B = Schedule PIT-B'). 2025 PIT-1 instructions, LINE 18: 'Unless you qualify for Schedule CC, calculate your New Mexico tax by using one of these methods and then complete line 18a: If you have income from sources inside and outside New Mexico, use your entry on PIT-B, line 14 or; Use the rate tables from the PIT-1 instructions, starting on page 1T.' Applied to line 17 New Mexico Taxable Income ('Add lines 9, 10, and 11, then subtract lines 12, 13, 14, and 15. If the result is negative, enter zero.'). This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: TY2025 = THE RESTRUCTURE YEAR: Section 7-2-7 NMSA 1978 now carries SIX brackets (1.5%, 3.2%, 4.3%, 4.7%, 4.9%, 5.9%) instead of the five (1.7%, 3.2%, 4.7%, 4.9%, 5.9%) that ran TY2021 through TY2024. 2024 House Bill 252 (Laws 2024, ch. 67, Sec. 5) cut the bottom rate 1.7% -> 1.5%, inserted a new 4.3% bracket, and widened the 3.2%/4.7%/4.9% bands (single: 3.2% now to $16,500 not $11,000, 4.7% to $66,500, 4.9% starts at $66,500 not $16,000; MFJ/HoH: 3.2% to $25,000, 4.3% to $50,000, 4.7% to $100,000). The top 5.9% thresholds are unchanged ($210,000 single / $315,000 MFJ-HoH / $157,500 MFS) but their constants moved ($9,748 / $14,624 / $7,312 for 2025 vs $10,010.50 / $15,027 / $7,513.50 for 2024). Do NOT reuse the 2024 block, and do not reuse this block for 2024. Base guidance: supply Form PIT-1, line 17 (New Mexico Taxable Income) = lines 9 (federal AGI) + 10 (SALT add-back for itemizers) + 11 (PIT-ADJ additions) MINUS lines 12, 13, 14 and 15, zero floor. STRUCTURAL 2025 CHANGE: line 16 (the medical care expense deduction for persons 65+, which was subtracted on the 2024 return) is now 'Reserved for Future Use. Do not use this line.' — that exemption is claimed on Schedule PIT-ADJ line 18 and arrives inside line 15 instead, so line 17 subtracts lines 12-15 only. Every deduction/exemption is computed ON THE FORM, so none ship as keys: line 12 is the filer's OWN federal standard or itemized deduction amount (federal Form 1040/1040SR line 12); line 13 is the $4,000 'Deduction for Certain Dependents' (head-of-household or MFJ filers only, and the worksheet multiplies $4,000 by total dependents MINUS ONE — never a flat per-dependent amount); line 14 is the New Mexico low- and middle-income tax exemption (maximum $2,500 per qualified exemption, phasing with AGI and filing status — 2025 gates: PIT-1 line 9 must be $36,667 or less single, $55,000 or less MFJ/surviving spouse/head of household, $27,500 or less MFS); line 15 is the PIT-ADJ deductions and exemptions total. Do NOT supply raw federal AGI. Adjudication note (two-pass): pass 1 = the statutory schedules in 2024 HB 252 as retrieved from nmlegis.gov (printed constants exact: $120/$664/$1,739/$4,089/$14,624 MFJ-HoH-surviving spouse; $82.50/$434.50/$1,165.50/$2,716.50/$9,748 single; $60.00/$332/$869.50/$2,044.50/$7,312 MFS — each constant reproduces exactly as the cumulative marginal tax at the bracket floor, e.g. single $2,716.50 + 143,500 x 4.9% = $9,748). Pass 2 = the Department's 'Personal Income Tax Rates' publication (identical text) plus the 2025 PIT-TRT look-up table's over-$100,000 continuation schedules, whose constants ($4,356/$4,087/$4,492 at $100,000 and $9,746/$14,622/$7,310 at the 5.9% thresholds) sit $2-$2.50 below the statutory cumulative figures ($4,358/$4,089/$4,494.50 and $9,748/$14,624/$7,312) exactly as expected from a table that chains from its last $100 midpoint row — the same offset the 2024 pack recorded when it previewed the 2025 table (9,746/14,622/7,310). CRITICAL — the filed line 18 value comes from the MANDATED look-up table, which sits a few dollars BELOW statutory marginal math: for line 17 of $100,000 or less the 2025 PIT-TRT table row (in $100 bands, computed at band midpoints) is the filed figure; over $100,000 the TRT continuation schedule CHAINS FROM THE LAST TABLE ROW ('Your Tax is $4,356 + 4.9% of taxable income in excess of $100,000' single; $4,087 MFJ/HoH; $4,492 MFS; then $9,746/$14,622/$7,310 + 5.9%) instead of the statutory cumulative ($4,358 / $4,089 / $4,494.50; $9,748 / $14,624 / $7,312), so the filed figure runs about $2-$3 below this engine's statutory bracket math at high incomes. The filed form must take the table/schedule value — never plain bracket arithmetic (the NM hand-fill pack's line 18 carries the same mandate). Statuses: the statute groups 'married individuals filing joint returns, heads of household and surviving spouses' on ONE schedule — head_of_household here is the SAME schedule as married_filing_jointly (copied per the schema, not derived), and the 2025 PIT-TRT prints identical MFJ and Head of Household columns with the footnote '* This column must also be used by surviving spouse', so qualifying surviving spouse maps to married_filing_jointly exactly as the engine assumes. The single schedule also applies to estates and trusts (Section 7-2-7(B) NMSA 1978 as amended for 2025: 'For single individuals and for estates and trusts'). Not modeled on the same return: line 19 additional tax on lump-sum distributions (New Mexico's 5x averaging method, Line 19 worksheet); PIT-B allocation/apportionment for income from sources inside and outside New Mexico (line 18 then comes from PIT-B line 14, indicator B); Schedule CC alternative tax (gross sales of $100,000 or less, no NM real estate); the nonresident gross-royalty-income election under $5,000 (indicator Y); line 20 credit for taxes paid to another state; PIT-CR business credits; and the refundable credits/rebates (Working Families Tax Credit 25% of the federal EIC, Child Income Tax Credit, PIT-RC rebates) — all tax credits or separate computations, never base reductions. New Mexico has no state-defined standard deduction or personal exemption of its own — the federal deduction flows through on PIT-1 line 12 (the federal Form 1040/1040SR line 12 amount), which is why the caller supplies the form's own taxable-income line and no standard_deduction or exemptions ship."
+ },
+ "year": 2025
+}

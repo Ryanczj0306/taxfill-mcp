@@ -1,0 +1,794 @@
+{
+ "_strings": {
+  "@@02a383eb71fe": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Net Operating Loss Suspension: 'For taxable years beginning on or after January 1, 2024, and before January 1, 2027, California has suspended the net operating loss (NOL) carryover deduction.' — 'However, taxpayers with net business income or modified adjusted gross income of less than $1,000,000 or with disaster loss carryovers are not affected by the NOL suspension rules.'",
+  "@@1448bc498528": "Young Child Tax Credit (YCTC) — Available if you qualified for the California EITC (or would have but for earned income of zero dollars or less) and have at least one qualifying child younger than six years old as of the last day of the taxable year. Computed on form FTB 3514.",
+  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1ff5e0c79b87": "Law change NOT modeled by the engine (status final_form_published): BUSINESS CREDITS CAPPED AT $5,000,000 for taxable years 2024-2026 (R&TC Sections 17039.4 and 17039.5): business credits, carryovers included, may not reduce net tax by more than $5,000,000; the Low-Income Housing Credit and the Pass-Through Entity Elective Tax Credit are outside the cap, and form FTB 3870 elects a future refundable credit for the disallowed amount. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Business Credit Limitation; form FTB 3870.",
+  "@@3359855c8c44": "2024 Personal Income Tax Booklet (Form 540), Important Dates — 'April 15, 2025: Last day to file and pay the 2024 amount you owe'; 'October 15, 2025: Last day to file or e-file your 2024 tax return' with interest from the original due date",
+  "@@3efc8612b386": "Law change NOT modeled by the engine (status final_form_published): FEDERAL WILDFIRE RELIEF PAYMENT EXCLUSION — California does NOT conform. The federal Disaster Tax Relief Act of 2023 excludes qualified wildfire relief payments (taxable years 2020-2025); a payment excluded federally is added back on Schedule CA (540) unless California provides its own exclusion. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Wildfire Relief Payment, and the Schedule CA (540) instructions (the specific wildfire payments California does exclude).",
+  "@@5688df63cdae": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Business Credit Limitation: 'The total of all business credits including the carryover of any credit for the taxable year may not reduce the \"net tax\" by more than $5,000,000.'",
+  "@@5c54c6c74f12": "If any income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties — that income is still taxable to CA.",
+  "@@7cb72b129be8": "California grants an automatic paper-filing extension to October 15, 2025 with no form required; tax owed must still be paid by April 15, 2025 (form FTB 3519) to avoid penalties/interest.",
+  "@@822061a238bb": "Law change NOT modeled by the engine (status final_form_published): NOL CARRYOVER SUSPENDED for taxable years 2024-2026 when net business income or modified AGI is $1,000,000 or more (R&TC Section 17276.24); the carryover period of a suspended loss is extended. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Net Operating Loss Suspension; form FTB 3805V.",
+  "@@84ce892c292a": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Special Rules for Certain Distributions from Qualified IRC Section 529 Tuition Plans: 'California law does not conform to this federal provision. Rollover distribution from an IRC Section 529 plan to a Roth IRA is includible in California taxable income and subject to an additional tax of'",
+  "@@8a27347f4de0": "FTB Publication 1031 (2024), Guidelines for Determining Resident Status — Tax Treaty section (p. 10)",
+  "@@98f88d52e9e0": "Law change NOT modeled by the engine (status final_form_published): CATCH-UP CONTRIBUTIONS — California does NOT conform to the federal CAA, 2023 indexing of the $1,000 IRA catch-up or to its increased catch-up amounts: a contribution above the California limit may be California income, and a later distribution of the excess may be taxable. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Catch-Up Contributions for Certain Individuals; FTB Pub. 1005.",
+  "@@9d1b915efa34": "Law change NOT modeled by the engine (status final_form_published): SDI WAGE LIMIT REMOVED — from 2024 every wage is subject to the State Disability Insurance contribution, so there is no excess SDI (or VPDI) credit: the Form 540 line that claimed it is now 'reserved for future use'. A filer with two employers can no longer recover over-withheld SDI on the return. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — State Disability Insurance.",
+  "@@a0603eda0bec": "Law change NOT modeled by the engine (status final_form_published): 529-TO-ROTH ROLLOVERS — California does NOT conform to the federal CAA, 2023 rule: a rollover from an IRC Section 529 plan to a Roth IRA is California taxable income and subject to an additional 2.5% tax (form FTB 3805P). Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Special Rules for Certain Distributions from Qualified IRC Section 529 Tuition Plans; Schedule CA (540) instructions; form FTB 3805P.",
+  "@@a481672c050a": "Treaty conformity — CA does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CA. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: California does not conform to federal income tax treaties; tax treaties that expressly limit their application to federal income taxes do not apply to California. Income exempt from federal tax under a U.S. treaty is generally still taxable by California unless the treaty specifically excludes it from California tax. FTB Pub. 1031 (2024) worked example: a resident of China doing research at a California university received $15,000 in wages excludable for federal purposes under the U.S.-China treaty — those wages are nonetheless taxable by California and must be included on Schedule CA (540NR), Part II, Section A, line 1a, column C. California also disallows the foreign earned income exclusion and the foreign tax credit (Pub 1031, \"Foreign Tax Credit or Foreign Earned Income Exclusion\").",
+  "@@abc9c0604685": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Catch-Up Contributions for Certain Individuals: 'California law does not conform to these federal provisions. Any amount contributed that exceeds the contribution amount allowed for California may need to be included in income for California purposes.'",
+  "@@b9db521b1826": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — State Disability Insurance: 'For taxable years beginning on or after January 1, 2024, California removes the taxable wage limit and maximum withholdings for each employee subject to State Disability Insurance (SDI) contributions.' — 'As a result, the excess SDI (or VPDI) withheld line has been removed from the personal income tax return by updating the line as \"reserved for future use.\"'",
+  "@@c4f3c955d2e2": "Credit amounts/limits are not independently verified: Dollar limits below are transcribed from the cited 2024 FTB booklets and re-confirmed against the FTB's HTML edition of the same booklet (two-pass). Confirm your eligibility at the cited URL before relying on a figure. (The live FTB pages display current-year, inflation-adjusted figures.)",
+  "@@c9f381e6ee60": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Wildfire Mitigation Payment: 'For taxable years beginning on or after January 1, 2024, and before January 1, 2029, California law allows a qualified taxpayer an exclusion from gross income for any amount received as a California qualified wildfire loss mitigation payment through the California Wildfire Mitigation Financial Assistance Program.'",
+  "@@d4bf29810f68": "If any of your income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties, so that income is still taxable to CA — do not carry the federal exclusion onto the state return.",
+  "@@d6d99e3aef4f": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Wildfire Relief Payment: 'Generally, California law does not conform. If any qualified amount was excluded from income for federal purposes and California law provides no similar exclusion, include that amount in income for California purposes.'",
+  "@@e9304ec7966b": "California Earned Income Tax Credit (CalEITC) — Requires California wage income and/or net earnings from self-employment of less than $31,951 (2024). You do not need a child to qualify. Computed on form FTB 3514.",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f52629e11b28": "Law change NOT modeled by the engine (status final_form_published): NEW CALIFORNIA EXCLUSION — wildfire loss mitigation payments received through the California Wildfire Mitigation Financial Assistance Program are excluded from gross income for taxable years 2024-2028 (R&TC Section 17138.8); form FTB 4197 reports the benefit. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Wildfire Mitigation Payment; Schedule CA (540) instructions.",
+  "@@f9f23430b689": "Nonrefundable Renter's Credit — Full-year California resident who paid rent for at least half of 2024 on a non-tax-exempt principal residence in California; California AGI within the limit; did not claim (and spouse did not claim, subject to lived-apart exceptions) the homeowner's property tax exemption; not living more than half the year in the home of a person who can claim them as a dependent."
+ },
+ "file_and_pay": {
+  "overall_notes": [
+   "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
+   "Mail each return in its OWN envelope, even if they go to the same address."
+  ],
+  "returns": [
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "Refund of $512",
+    "citations": [
+     {
+      "source": "2024 Personal Income Tax Booklet (Form 540), 'Mailing Your Tax Return', p. 23",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     {
+      "source": "@@3359855c8c44",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15.",
+     "@@7cb72b129be8"
+    ],
+    "form": "540",
+    "jurisdiction": "states/ca",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Franchise Tax Board, PO Box 942840, Sacramento CA 94240-0001",
+    "notes": [
+     "@@d4bf29810f68"
+    ],
+    "payment": [],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink.",
+     "Joint return — BOTH spouses must sign."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $347.",
+    "citations": [
+     {
+      "source": "2024 Personal Income Tax Booklet (Form 540), 'Mailing Your Tax Return', p. 23",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     {
+      "source": "@@3359855c8c44",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15.",
+     "@@7cb72b129be8"
+    ],
+    "form": "540",
+    "jurisdiction": "states/ca",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Franchise Tax Board, PO Box 942867, Sacramento CA 94267-0001",
+    "notes": [
+     "@@d4bf29810f68"
+    ],
+    "payment": [
+     "Pay online via CA Web Pay: https://www.ftb.ca.gov/pay (no processor fee).",
+     "By check: make it payable to \"Franchise Tax Board (check or money order payable to the 'Franchise Tax Board'; write your SSN or ITIN and '2024 Form 540' on it; use form FTB 3582 if you e-filed)\"; write the tax year, form, and your SSN on it."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   },
+   {
+    "assemble": [
+     "@@1b090f3f0709"
+    ],
+    "bottom_line": "You owe $1,205. Already paid.",
+    "citations": [
+     {
+      "source": "2024 Personal Income Tax Booklet (Form 540), 'Mailing Your Tax Return', p. 23",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     {
+      "source": "@@3359855c8c44",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     }
+    ],
+    "deadlines": [
+     "Due 2025-04-15.",
+     "@@7cb72b129be8"
+    ],
+    "form": "540",
+    "jurisdiction": "states/ca",
+    "mail": [
+     "Use a separate envelope from the federal return.",
+     "Certified Mail with Return Receipt gives you proof of timely filing."
+    ],
+    "mailing_address": "Franchise Tax Board, PO Box 942840, Sacramento CA 94240-0001",
+    "notes": [
+     "@@d4bf29810f68"
+    ],
+    "payment": [
+     "Balance already paid — keep the confirmation; do not enclose a check."
+    ],
+    "records": [
+     "Photograph the signed pages; keep a copy and the mailing receipt."
+    ],
+    "sign": [
+     "Print the form pages, sign and date the return in ink."
+    ],
+    "tax_year": 2024
+   }
+  ]
+ },
+ "filing_summary": {
+  "approval_prompt": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
+  "household_rollup": [],
+  "items": [
+   {
+    "citations": [
+     {
+      "source": "@@3359855c8c44",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "540",
+    "headline": "CA 2024: refund $512",
+    "jurisdiction": "states/ca",
+    "notes": [
+     "@@5c54c6c74f12"
+    ],
+    "owed": 0,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 512,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@3359855c8c44",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "540",
+    "headline": "CA 2024: you owe $347",
+    "jurisdiction": "states/ca",
+    "notes": [
+     "@@5c54c6c74f12"
+    ],
+    "owed": 347,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   },
+   {
+    "citations": [
+     {
+      "source": "@@3359855c8c44",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     }
+    ],
+    "deadline_status": "Due 2025-04-15.",
+    "form": "540",
+    "headline": "CA 2024: you owe $1,205",
+    "jurisdiction": "states/ca",
+    "notes": [
+     "@@5c54c6c74f12"
+    ],
+    "owed": 1205,
+    "plain_explanation": "State bottom line — review against your state return.",
+    "refund": 0,
+    "tax_year": 2024
+   }
+  ],
+  "label": "REVIEW DRAFT — approve the bottom line before printing"
+ },
+ "jurisdiction": "states/ca",
+ "state_scope": {
+  "nonresident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f9f23430b689",
+      "@@e9304ec7966b",
+      "@@1448bc498528"
+     ],
+     "citations": [
+      {
+       "source": "@@d6d99e3aef4f",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@02a383eb71fe",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@5688df63cdae",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@84ce892c292a",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@abc9c0604685",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@c9f381e6ee60",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@b9db521b1826",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@8a27347f4de0",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-1031-publication.pdf"
+      }
+     ],
+     "filing_role": "nonresident",
+     "forms": [
+      "540NR",
+      "Schedule CA"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Worked in CA in 2024 without living there — file a nonresident return on CA-source income.",
+     "state": "CA",
+     "warnings": [
+      "@@c4f3c955d2e2",
+      "@@a481672c050a",
+      "@@3efc8612b386",
+      "@@822061a238bb",
+      "@@1ff5e0c79b87",
+      "@@a0603eda0bec",
+      "@@98f88d52e9e0",
+      "@@f52629e11b28",
+      "@@9d1b915efa34",
+      "Remote-work trap: work performed from TX for an employer sitting in CA. If CA applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to CA and require a NONRESIDENT CA return that the physical footprint alone never shows — and the W-2's Box 15 often already names CA. This CA pack year carries no researched convenience rule: verify CA's nonresident wage-sourcing rule at its DOR before assuming no CA filing."
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "part_year": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f9f23430b689",
+      "@@e9304ec7966b",
+      "@@1448bc498528"
+     ],
+     "citations": [
+      {
+       "source": "@@d6d99e3aef4f",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@02a383eb71fe",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@5688df63cdae",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@84ce892c292a",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@abc9c0604685",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@c9f381e6ee60",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@b9db521b1826",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@8a27347f4de0",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-1031-publication.pdf"
+      }
+     ],
+     "filing_role": "part_year",
+     "forms": [
+      "540NR",
+      "Schedule CA"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CA part of 2024 — file a part-year return on income while a resident (plus CA-source income while not).",
+     "state": "CA",
+     "warnings": [
+      "@@c4f3c955d2e2",
+      "@@a481672c050a",
+      "@@3efc8612b386",
+      "@@822061a238bb",
+      "@@1ff5e0c79b87",
+      "@@a0603eda0bec",
+      "@@98f88d52e9e0",
+      "@@f52629e11b28",
+      "@@9d1b915efa34"
+     ]
+    },
+    {
+     "benefits_candidates": [],
+     "citations": [
+      {
+       "source": "TX Department of Revenue",
+       "url": "https://comptroller.texas.gov"
+      }
+     ],
+     "filing_role": "none",
+     "forms": [],
+     "income_tax": false,
+     "must_file": false,
+     "reason": "TX levies no personal income tax — no state return required.",
+     "state": "TX",
+     "warnings": []
+    }
+   ],
+   "year": 2024
+  },
+  "resident": {
+   "notes": [
+    "@@eb71823a243b"
+   ],
+   "states": [
+    {
+     "benefits_candidates": [
+      "@@f9f23430b689",
+      "@@e9304ec7966b",
+      "@@1448bc498528"
+     ],
+     "citations": [
+      {
+       "source": "@@d6d99e3aef4f",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@02a383eb71fe",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@5688df63cdae",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@84ce892c292a",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@abc9c0604685",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@c9f381e6ee60",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@b9db521b1826",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.html"
+      },
+      {
+       "source": "@@8a27347f4de0",
+       "url": "https://www.ftb.ca.gov/forms/2024/2024-1031-publication.pdf"
+      }
+     ],
+     "filing_role": "resident",
+     "forms": [
+      "540",
+      "Schedule CA"
+     ],
+     "income_tax": true,
+     "must_file": true,
+     "reason": "Lived in CA all of 2024 — file a resident return on income from all sources.",
+     "state": "CA",
+     "warnings": [
+      "@@c4f3c955d2e2",
+      "@@3efc8612b386",
+      "@@822061a238bb",
+      "@@1ff5e0c79b87",
+      "@@a0603eda0bec",
+      "@@98f88d52e9e0",
+      "@@f52629e11b28",
+      "@@9d1b915efa34"
+     ]
+    }
+   ],
+   "year": 2024
+  }
+ },
+ "state_tax": {
+  "calls": [
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = -$11,080.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "11080",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $11,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "16080",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 50,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $16,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.01 x $5,000.00 (the $0-$21,527 bracket) = $50.00; total $50.00 -> $50"
+   },
+   {
+    "base_after_exemptions": 86364,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "97444",
+     "year": 2024
+    },
+    "marginal_rate": "0.08",
+    "tax": 2732,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $97,444.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $86,364.00; graduated tax on $86,364 [head_of_household schedule]: 0.01 x $21,527.00 (the $0-$21,527 bracket) = $215.27; 0.02 x $29,473.00 (the $21,527-$51,000 bracket) = $589.46; 0.04 x $14,744.00 (the $51,000-$65,744 bracket) = $589.76; 0.06 x $15,620.00 (the $65,744-$81,364 bracket) = $937.20; 0.08 x $5,000.00 (the $81,364-$96,107 bracket) = $400.00; total $2,731.69 -> $2,732"
+   },
+   {
+    "base_after_exemptions": 990987,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "1002067",
+     "year": 2024
+    },
+    "marginal_rate": "0.123",
+    "tax": 95864,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $1,002,067.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $990,987.00; graduated tax on $990,987 [head_of_household schedule]: 0.01 x $21,527.00 (the $0-$21,527 bracket) = $215.27; 0.02 x $29,473.00 (the $21,527-$51,000 bracket) = $589.46; 0.04 x $14,744.00 (the $51,000-$65,744 bracket) = $589.76; 0.06 x $15,620.00 (the $65,744-$81,364 bracket) = $937.20; 0.08 x $14,743.00 (the $81,364-$96,107 bracket) = $1,179.44; 0.093 x $394,386.00 (the $96,107-$490,493 bracket) = $36,677.90; 0.103 x $98,100.00 (the $490,493-$588,593 bracket) = $10,104.30; 0.113 x $392,394.00 (the $588,593-$980,987 bracket) = $44,340.52; 0.123 x $10,000.00 (the $980,987+ bracket) = $1,230.00; total $95,863.85 -> $95,864"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = -$11,080.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "11080",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $11,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "16080",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 50,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $16,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.01 x $5,000.00 (the $0-$21,512 bracket) = $50.00; total $50.00 -> $50"
+   },
+   {
+    "base_after_exemptions": 116732,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "127812",
+     "year": 2024
+    },
+    "marginal_rate": "0.08",
+    "tax": 4259,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $127,812.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $116,732.00; graduated tax on $116,732 [married_filing_jointly schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $29,486.00 (the $21,512-$50,998 bracket) = $589.72; 0.04 x $29,492.00 (the $50,998-$80,490 bracket) = $1,179.68; 0.06 x $31,242.00 (the $80,490-$111,732 bracket) = $1,874.52; 0.08 x $5,000.00 (the $111,732-$141,212 bracket) = $400.00; total $4,259.04 -> $4,259"
+   },
+   {
+    "base_after_exemptions": 1452628,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "1463708",
+     "year": 2024
+    },
+    "marginal_rate": "0.123",
+    "tax": 141463,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $1,463,708.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $1,452,628.00; graduated tax on $1,452,628 [married_filing_jointly schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $29,486.00 (the $21,512-$50,998 bracket) = $589.72; 0.04 x $29,492.00 (the $50,998-$80,490 bracket) = $1,179.68; 0.06 x $31,242.00 (the $80,490-$111,732 bracket) = $1,874.52; 0.08 x $29,480.00 (the $111,732-$141,212 bracket) = $2,358.40; 0.093 x $580,106.00 (the $141,212-$721,318 bracket) = $53,949.86; 0.103 x $144,256.00 (the $721,318-$865,574 bracket) = $14,858.37; 0.113 x $577,054.00 (the $865,574-$1,442,628 bracket) = $65,207.10; 0.123 x $10,000.00 (the $1,442,628+ bracket) = $1,230.00; total $141,462.77 -> $141,463"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = -$5,540.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "5540",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $5,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "10540",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 50,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $10,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.01 x $5,000.00 (the $0-$10,756 bracket) = $50.00; total $50.00 -> $50"
+   },
+   {
+    "base_after_exemptions": 60866,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "66406",
+     "year": 2024
+    },
+    "marginal_rate": "0.08",
+    "tax": 2330,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $66,406.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $60,866.00; graduated tax on $60,866 [married_filing_separately schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $5,000.00 (the $55,866-$70,606 bracket) = $400.00; total $2,329.52 -> $2,330"
+   },
+   {
+    "base_after_exemptions": 731314,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "736854",
+     "year": 2024
+    },
+    "marginal_rate": "0.123",
+    "tax": 71346,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $736,854.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $731,314.00; graduated tax on $731,314 [married_filing_separately schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $14,740.00 (the $55,866-$70,606 bracket) = $1,179.20; 0.093 x $290,053.00 (the $70,606-$360,659 bracket) = $26,974.93; 0.103 x $72,128.00 (the $360,659-$432,787 bracket) = $7,429.18; 0.113 x $288,527.00 (the $432,787-$721,314 bracket) = $32,603.55; 0.123 x $10,000.00 (the $721,314+ bracket) = $1,230.00; total $71,346.38 -> $71,346"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "0",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = -$5,540.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 0,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "5540",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 0,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $5,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+   },
+   {
+    "base_after_exemptions": 5000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "10540",
+     "year": 2024
+    },
+    "marginal_rate": "0.01",
+    "tax": 50,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $10,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.01 x $5,000.00 (the $0-$10,756 bracket) = $50.00; total $50.00 -> $50"
+   },
+   {
+    "base_after_exemptions": 60866,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "66406",
+     "year": 2024
+    },
+    "marginal_rate": "0.08",
+    "tax": 2330,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $66,406.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $60,866.00; graduated tax on $60,866 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $5,000.00 (the $55,866-$70,606 bracket) = $400.00; total $2,329.52 -> $2,330"
+   },
+   {
+    "base_after_exemptions": 731314,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "736854",
+     "year": 2024
+    },
+    "marginal_rate": "0.123",
+    "tax": 71346,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $736,854.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $731,314.00; graduated tax on $731,314 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $14,740.00 (the $55,866-$70,606 bracket) = $1,179.20; 0.093 x $290,053.00 (the $70,606-$360,659 bracket) = $26,974.93; 0.103 x $72,128.00 (the $360,659-$432,787 bracket) = $7,429.18; 0.113 x $288,527.00 (the $432,787-$721,314 bracket) = $32,603.55; 0.123 x $10,000.00 (the $721,314+ bracket) = $1,230.00; total $71,346.38 -> $71,346"
+   },
+   {
+    "args": {
+     "exemptions_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: CA 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+   },
+   {
+    "args": {
+     "dependents_count": 1,
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: CA 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction, IL's unverified Schedule IL-E/EIC amount)."
+   },
+   {
+    "base_after_exemptions": 40000,
+    "inputs": {
+     "dependents_count": 0,
+     "exemptions_count": 0,
+     "filing_status": "qualifying_surviving_spouse",
+     "state": "ca",
+     "taxable_base": "51080",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 585,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $51,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $11,080 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $18,488.00 (the $21,512-$50,998 bracket) = $369.76; total $584.88 -> $585"
+   }
+  ],
+  "common_result": {
+   "base_kind": "federal_agi",
+   "citation": {
+    "source": "2024 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2024 California Tax Rate Schedules' (Schedules X/Y/Z), p. 75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Mental Health Services Tax worksheet, p. 16; Form 540 (2024) Side 1-2, lines 7-11 (X $149 / X $461 exemption credits), lines 17-19, 31-32, 61-62. Second pass: the standalone '2024 California Tax Rate Schedules' PDF and the standalone 2024 Form 540 PDF (ftb.ca.gov/forms/2024/) reproduce the same brackets, standard deduction, and credit amounts.",
+    "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+   },
+   "rate": null,
+   "rate_structure": "graduated",
+   "state": "ca"
+  },
+  "work_common_tail": ". Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply California adjusted gross income — 2024 Form 540, line 17 ('California adjusted gross income. Combine line 15 and line 16'), i.e. federal AGI (line 13) plus California additions minus California subtractions per Schedule CA (540). Do NOT supply unmodified federal AGI: California does not conform to federal income tax treaties (treaty-exempt income is added back on Schedule CA) and has other adjustments. The op subtracts the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and applies the rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32) and special credits. Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI = federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18 standard deduction). California exemptions are $149/$461 CREDITS (lines 7-10), so vectors pass zero counts by design. EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS — the op does not model them: California's personal exemption ($149 per exemption, 2024 Form 540 lines 7-9: personal, blind, senior) and dependent exemption ($461 per dependent, line 10) are exemption CREDITS totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce taxable income. This op reproduces line 31 (tax before exemption credits) only; subtract line 32 credits (and any special credits, lines 40-47) on the form. Exemption-credit AGI limitation (not modeled): if federal AGI (Form 540 line 13) exceeds $244,857 (single/MFS), $489,719 (MFJ/qualifying surviving spouse), or $367,291 (head of household), the line 32 exemption credits are reduced via the AGI Limitation Worksheet (booklet p. 14). Table mandate below $100,000 — 'Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69' (booklet pp. 13, 75): bracket math may differ by a few dollars within table bands; the filed form must use the Tax Table (booklet pp. 69-74). 1% Mental Health Services Tax is NOT modeled: if taxable income (line 19) exceeds $1,000,000, an additional 1% of the excess over $1,000,000 is due on Form 540 line 62 (booklet p. 16 worksheet). Alternative Minimum Tax (Form 540 line 61, Schedule P (540)) and other taxes/credit recapture (line 63, e.g. FTB 3805P early-distribution tax, IRC 409A NQDC 5% tax) are NOT modeled. FTB 3800 (tax for certain children with unearned income) and FTB 3803 (parents' election to report child's interest/dividends) change the line 31 computation and are NOT modeled. Standard-deduction gates NOT modeled: a person claimable as a dependent on another's return must use the California Standard Deduction Worksheet for Dependents (larger of earned income or the $1,300 minimum standard deduction, capped at the regular per-status amount) — not the chart amount; married/RDP filing separately, both spouses must either both itemize or both take the standard deduction; itemizers enter California itemized deductions from Schedule CA (540) Part II line 30 on line 18 instead of the standard deduction. Qualifying surviving spouse/RDP uses Schedule Y — identical to married/RDP filing jointly (engine's QSS-to-MFJ mapping matches the published schedule exactly). Married/RDP filing separately uses Schedule X, the same printed schedule as Single (copied from the schedule, not derived; note CA MFS is NOT half of MFJ at the bracket boundaries — it equals the Single schedule). Base caution: Form 540 line 17 (California AGI) differs from federal AGI via Schedule CA (540) adjustments — notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows the foreign earned income exclusion and foreign tax credit, and subtracts items like Social Security benefits. Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts. Printed '$X + Y% of amount over $Z' constants verified against cumulative bracket sums: all 27 constants match to the cent (largest print-rounding divergence $0.004, on Schedule X's $30,083.65 / $37,512.83 / $70,116.38 and Schedule Y's $60,167.30 / $140,232.77 constants) — bracket math and the printed schedule agree. Rounding: the booklet's worked example (p. 75) rounds the schedule result to whole dollars for line 31 ($4,920.48 entered as $4,920), consistent with this op's round-half-up-to-whole-dollars behavior. 2024 filing-season schedule confirmed final: California had no mid-year 2024 rate change; these are the inflation-indexed schedules printed in the final 2024 booklet used for the 2025 filing season (and republished unchanged in the standalone 2024 Tax Rate Schedules PDF)."
+ },
+ "year": 2024
+}
