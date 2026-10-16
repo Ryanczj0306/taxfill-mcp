@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**9,356 tests** — offline 8,087 + live-.gov 1269; derived
+Done and on `main` (**9,394 tests** — offline 8,120 + live-.gov 1274; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -213,7 +213,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 6 | JA1 Phase A agent half (trimmed) | M–L | — | — | **done 2026-10-15** |
 | 6a | JK27 Fix wave: the defects the JK0 verifiers and the JK6 / JK21 goldens found | M–L | — | — | 2026-10-16 |
 | 7 | JK5 Release-candidate dry run | M | JK1, JK27 (the rest done) | — | 2026-10-21 |
-| 8 | JK6 Five journey goldens | M | JA1.3 | — | 2026-11-02 |
+| 8 | JK6 Five journey goldens | M | JA1.3 | — | **done 2026-10-15** |
 | 9 | JA2 Phase A user half (+ JD2.3) | user | JK5 | the user | user's call (RC 2026-10-23) |
 | 10 | JK7 A6 flip + `.mcpb` on the release | S | JA2 upload | PyPI upload | upload + 1 day |
 | 11 | JK13 Fallback surface + guardrail ADR | S | — | user may weigh in | 2026-11-02 |
@@ -276,7 +276,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 - [ ] **JK5 — Release-candidate dry run** (M; deps JK0, JK0a, JK1-JK4, JA1, JK27; latest start 2026-10-21)
   - Cut from a pushed, CI-green commit after the JK0 wave stops committing.
   - **Acceptance:** both wheels build. `uvx twine check dist/*` passes. The clean-venv smoke shows 23 tools and the derived pack counts. `mcpb validate` passes. An agent runs ACCEPTANCE.md end to end on the TY2025 demo persona (Form 1040 + one high-volume state). The A6 diff (JK7's file list) and the release notes are pre-drafted on a branch. `grep -rn -i "not on PyPI yet\|not yet published\|coming with v0.1\|IN DEVELOPMENT" packages` (PUBLISHING.md:146's grep, widened) is empty on the RC. This is a developer dry run, not the non-developer test.
-- [ ] **JK6 — Five journey goldens** (M; deps JA1.3; latest start 2026-11-02) (KG10)
+- [x] **JK6 — Five journey goldens — DONE 2026-10-15** (M; deps JA1.3; latest start 2026-11-02) (KG10) — packages/mcp-server/tests/test_journeys.py runs five journeys of the TY2025 filing season through the MCP tools in-process, on demo personas: the W-2 employee of ACCEPTANCE.md (in Washington, so its state step is "nothing to file"; the "big state" case is carried by journeys 2 and 3), an F-1 student (Form 1040-NR, Schedule OI, Form 8843), a Virginia-to-California part-year mover, an Ohio school-district filer, and a TY2024 Form 1040-X with the Georgia Form 500X. Each step records pack, pointer or refusal (no fallback exists yet), and arithmetic figures are recomputed through calc. A module-level guard fails any non-pack step that claims filing-grade; the adversarial verify tightened it (a negation counts only right before the claim, keys are normalized, "ready for filing" and "is final" count, and a pack step may not carry the unmapped grade). Offline in CI: 30 tests plus 3 strict xfails; the fill, verify and render steps run in the weekly network job (4 plus 1 strict xfail). The strict xfails are the defects it found, now in JK27: file_and_pay has no amended-return model (federal 1040-X and Georgia 500X), Virginia's Form 760PY is cited only to the resident instructions, and verify_filing fails an attached Form 8843 whose address boxes are blank. ACCEPTANCE.md names the golden that holds it.
   - Scripted TY2025 runs through the MCP tools, demo personas only:
     1. a W-2 employee in a big state;
     2. an F-1 nonresident-alien student;

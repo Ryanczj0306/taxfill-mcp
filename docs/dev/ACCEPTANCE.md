@@ -17,6 +17,8 @@ release blocker, not a "known issue".
 
 ## Guided filing (target: ≤12 min) — use the sample W-2, never real PII
 
+*This walkthrough is journey 1 of `packages/mcp-server/tests/test_journeys.py`, which holds every figure quoted below.*
+
 The sample is a demo persona's 2025 Form W-2 (a hypothetical new-grad software engineer; every name, number and
 identifier on it is fictitious, and a SAMPLE watermark crosses it). Download
 [w2_2025_synthetic.png](../samples/w2_2025_synthetic.png) (or the
