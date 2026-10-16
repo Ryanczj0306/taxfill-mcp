@@ -2307,8 +2307,8 @@ class MailingAddressPair(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    no_payment: str | None = Field(default=None, description="None: not yet published (a planning pack only, JT2b).")
-    with_payment: str | None = Field(default=None, description="None: not yet published (a planning pack only, JT2b).")
+    no_payment: str | None = Field(default=None, description="None: the IRS has not printed it for this year (a planning pack only, JT2b).")
+    with_payment: str | None = Field(default=None, description="None: the IRS has not printed it for this year (a planning pack only, JT2b).")
 
 
 class MailingAddresses(BaseModel):
