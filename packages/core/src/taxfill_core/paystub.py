@@ -60,6 +60,8 @@ def _dec(value: Any, what: str) -> Decimal:
         d = Decimal(str(value).replace(",", "").replace("$", ""))
     except Exception as exc:  # noqa: BLE001 — every unparsable input gets the same prescriptive error
         raise ValueError(f"{what} must be an amount, got {value!r}") from exc
+    if not (d.is_finite() and d.adjusted() < 15):  # "NaN", "Infinity", "1e999999999" (Phase K JK5)
+        raise ValueError(f"{what} must be an amount, got {value!r}")
     if d < 0:
         raise ValueError(f"{what} must not be negative, got {value!r}")
     return d

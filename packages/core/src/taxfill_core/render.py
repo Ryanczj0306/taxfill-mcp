@@ -13,6 +13,7 @@ output bytes with Pillow, which is available in the dev environment only.
 
 from __future__ import annotations
 
+import logging
 import struct
 import zlib
 from collections.abc import Sequence
@@ -23,6 +24,22 @@ from pydantic import BaseModel, ConfigDict, Field
 
 # Dev plan section 10: render at ~170 dpi for the vision pass.
 DEFAULT_DPI = 170
+
+
+class _NoXfaBuildNotice(logging.Filter):
+    """Drop pypdfium2's "compiled without XFA support" notice (Phase K JK5).
+
+    TaxFill fills the AcroForm layer and strips /XFA from every filled return
+    (``filler._drop_xfa``), so the missing XFA engine changes nothing it renders.
+    The notice, with its pip command, still reached the MCP client's server log
+    on every render of a hybrid IRS form.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return "without XFA support" not in record.getMessage()
+
+
+logging.getLogger("pypdfium2._helpers.document").addFilter(_NoXfaBuildNotice())
 
 _PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 # PNG color type by channel count: 1 -> grayscale, 3 -> truecolor, 4 -> truecolor+alpha.

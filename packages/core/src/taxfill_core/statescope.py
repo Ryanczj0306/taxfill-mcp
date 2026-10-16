@@ -91,8 +91,11 @@ def _no_tax_citations(st: str, info: dict) -> list[Citation]:
     """
     cites: list[Citation] = []
     raw = info.get("citation")
-    if isinstance(raw, dict):
-        cites.append(Citation(**raw))
+    # one ``citation``, or a ``citations`` list when one source cannot carry the whole note (WA, Phase K JK5)
+    more = info.get("citations") or []
+    for entry in ([raw] if isinstance(raw, dict) else []) + ([more] if isinstance(more, dict) else list(more)):
+        if isinstance(entry, dict):
+            cites.append(Citation(**entry))
     dor = info.get("dor") or ""
     if dor.startswith("http"):
         try:
@@ -201,7 +204,9 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
                 reason = f"{st} does not tax wages — generally no return required."
                 warnings = [info["note"]] if info.get("note") else []
             out.append(StateFiling(
-                state=st, income_tax=(info["kind"] != "none"), filing_role="none",
+                # neither kind levies a BROAD personal income tax; WA's capital-gains and NH's old interest and
+                # dividends taxes ride in the warning (Phase K JK5: WA read income_tax true beside "does not tax wages")
+                state=st, income_tax=False, filing_role="none",
                 must_file=False, forms=[], reason=reason, warnings=warnings, citations=cites,
             ))
             continue

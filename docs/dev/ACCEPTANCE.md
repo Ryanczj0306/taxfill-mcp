@@ -30,28 +30,33 @@ direct deposit (a demo has no bank account). The expected figures below are what
 - [ ] Attach the sample W-2 image and say: *"Help me start my 2025 federal
       return."* The assistant runs intake and shows a **confirm table** of
       extracted figures: **wages $168,100** (box 1) and **federal tax withheld $30,487**
-      (box 2); the boxes the sample leaves blank (7–11, 16–20) stay blank (nothing invented).
+      (box 2); the boxes the sample leaves blank (7, 8, 10, 11 and 16–20) stay blank (nothing invented), and
+      box 9, shaded on the 2025 Form W-2, is never read.
 - [ ] Correct one figure in the confirm step (say box 2 is $30,000) → the assistant
       accepts the correction and does not silently overwrite it later. Then change it
       back to $30,487, so the figures below match.
 - [ ] The assistant scopes state filing (`state_scope`) and explains in plain language
       that Washington does not tax wages, so there is no state return.
-- [ ] `estimate_refund` / `calc` produces numbers — **a refund of about $1,076** — and
-      **each line shows a citation** (a `.gov` source); ask "where does line 16 come
-      from?" and get a source ($29,411, from the 2025 tax rate schedule), not a guess.
+- [ ] `estimate_refund` produces numbers — **a refund of about $1,076** — and cites its `.gov`
+      sources, and **each `calc` result carries its own citation** (line 16's tax, line 12's standard
+      deduction); ask "where does line 16 come from?" and get a source ($29,411, from the 2025 tax
+      rate schedule), not a guess.
 - [ ] `list_forms` → `fetch_blank` downloads the official 2025 Form 1040 blank from irs.gov;
       `fill_form` fills it; `render_form` shows page 1 of the filled 1040 (lines 1a, 9 and
       11a read 168100).
-- [ ] The draft carries the disclaimer (review draft, not tax advice, paper
-      filing only).
+- [ ] `fill_form`, `filing_summary` and `file_and_pay` each carry the disclaimer: a review draft,
+      not tax advice, for paper filing only (TaxFill does not e-file).
 
 ## Review & file (target: ≤3 min)
 
-- [ ] `filing_summary` says **Federal 2025: refund $1,076**; `file_and_pay` prints the
-      mailing address (**Ogden, UT 84201-0002**) and the refund options, cited.
+- [ ] `filing_summary`'s headline starts **Federal 2025: refund $1,076** and, because the persona
+      declined direct deposit, adds that paper refund checks are being phased out; `file_and_pay`
+      prints the mailing address (**Ogden, UT 84201-0002**) and the refund options, cited.
 - [ ] The filled PDF opens in a normal PDF viewer and the mapped fields are in
-      the right boxes (spot-check the name Jordan Q. Taxpayer, the SSN 999-88-0425 in
-      its boxes, wages 168100, AGI 168100).
+      the right boxes (spot-check the name — **Jordan Q** in "first name and middle initial",
+      **Taxpayer** in "last name" — the SSN 999880425 in its nine cells, wages 168100, AGI 168100).
+      The form's printed dashes in the SSN box can cross a digit: viewers space the nine digits
+      across the whole box, a cosmetic offset only.
 - [ ] Nothing was transmitted anywhere except the blank-form download from
       `.gov`; no account, no telemetry.
 

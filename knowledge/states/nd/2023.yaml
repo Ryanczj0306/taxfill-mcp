@@ -136,8 +136,12 @@ mailing_addresses:
   verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
     at the cited DOR source before relying on a specific figure/address.
 payment:
-  check_payee: North Dakota Office of State Tax Commissioner (Form ND-1 line 36 references paying "ND State Tax
-    Commissioner"; enclose Form ND-1PRV voucher with a paper check/money order)
+  # Phase K JK5: the 2023 booklet's payment paragraph names "ND State Tax Commissioner" (as Form ND-1 line 36 and the
+  # 2024 / 2025 packs do) and carries the memo rule; its assembly checklist writes the payee out in full.
+  check_payee: 'ND State Tax Commissioner (2023 booklet: "Make check or money order payable to “ND State Tax
+    Commissioner,” and write the last four digits of your social security number and “2023 Form ND-1” on your check
+    or money order."; its assembly checklist writes the payee out as “North Dakota Office of State Tax Commissioner”;
+    enclose Form ND-1PRV voucher with a paper check/money order)'
   web_pay_url: https://tap.tax.nd.gov/
 deadlines:
   filing_due_date: '2024-04-15'

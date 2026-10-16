@@ -1,14 +1,15 @@
 {
  "_strings": {
-  "@@3354e827ca3b": "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
   "@@59122121af3a": "Review each bottom line above. This is a draft you approve, sign, and file yourself — nothing is printed or sent until you say so.",
-  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
+  "@@7f8e90bdb507": "REVIEW DRAFT, not tax advice, for paper filing only — approve the bottom line before printing",
+  "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f2ac9f60ea73": "This is a review draft, not tax advice — you are the filer: review every number, then sign and mail it yourself. TaxFill prepares returns for paper filing only; it does not e-file."
  },
  "jurisdictions": {
   "AK": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -143,7 +144,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [
@@ -173,7 +174,7 @@
   "FL": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -308,7 +309,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [
@@ -338,7 +339,7 @@
   "NH": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -473,7 +474,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [
@@ -490,7 +491,7 @@
       ],
       "filing_role": "none",
       "forms": [],
-      "income_tax": true,
+      "income_tax": false,
       "must_file": false,
       "reason": "NH does not tax wages — generally no return required.",
       "state": "NH",
@@ -505,7 +506,7 @@
   "NV": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -640,7 +641,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [
@@ -670,7 +671,7 @@
   "SD": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -805,7 +806,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [
@@ -835,7 +836,7 @@
   "TN": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -970,7 +971,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [
@@ -1000,7 +1001,7 @@
   "TX": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -1135,7 +1136,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [
@@ -1165,7 +1166,7 @@
   "WA": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -1300,7 +1301,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [
@@ -1311,18 +1312,30 @@
       "benefits_candidates": [],
       "citations": [
        {
+        "source": "RCW 82.87.040(1): \"(a) Beginning January 1, 2022, an excise tax is imposed on the sale or exchange of long-term capital assets. Only individuals are subject to payment of the tax, which equals seven percent multiplied by an individual's Washington capital gains. (b) Beginning January 1, 2025, an additional excise tax is imposed on the sale or exchange of long-term capital assets, which equals 2.90 percent multiplied by the portion of an individual's Washington capital gains exceeding $1,000,000.\"",
+        "url": "https://app.leg.wa.gov/RCW/default.aspx?cite=82.87.040"
+       },
+       {
+        "source": "RCW 82.87.060(1): \"A standard deduction of $250,000 per individual, or in the case of spouses or domestic partners, their combined standard deduction is limited to $250,000\"; the amount is adjusted under RCW 82.87.150.",
+        "url": "https://app.leg.wa.gov/RCW/default.aspx?cite=82.87.060"
+       },
+       {
+        "source": "WA Department of Revenue, special notice 'New tiered rates for Washington’s capital gains tax' (issued June 30, 2025): \"Beginning with tax year 2025, Washington’s long-term capital gains tax has a tiered rate.\" \"Your first $1 million in taxable Washington capital gains is subject to tax at a rate of 7%. Any amount of Washington capital gains exceeding $1 million is subject to a 7% tax, plus an additional 2.9% tax.\"",
+        "url": "https://dor.wa.gov/forms-publications/publications-subject/special-notices/new-tiered-rates-washingtons-capital-gains-tax"
+       },
+       {
         "source": "WA Department of Revenue",
         "url": "https://dor.wa.gov"
        }
       ],
       "filing_role": "none",
       "forms": [],
-      "income_tax": true,
+      "income_tax": false,
       "must_file": false,
       "reason": "WA does not tax wages — generally no return required.",
       "state": "WA",
       "warnings": [
-       "No personal income tax on wages; a 7% capital-gains excise tax applies to high gains (2022+). Flag if the user had large long-term capital gains."
+       "No personal income tax on wages; a capital-gains excise tax applies to long-term capital gains above an annual standard deduction (tax years 2022+): 7%, and from tax year 2025 an additional 2.9% on taxable gains over $1 million. Flag if the user had large long-term capital gains."
       ]
      }
     ],
@@ -1332,7 +1345,7 @@
   "WY": {
    "file_and_pay": {
     "overall_notes": [
-     "@@3354e827ca3b",
+     "@@f2ac9f60ea73",
      "Mail each return in its OWN envelope, even if they go to the same address."
     ],
     "returns": [
@@ -1467,7 +1480,7 @@
       "tax_year": 2025
      }
     ],
-    "label": "REVIEW DRAFT — approve the bottom line before printing"
+    "label": "@@7f8e90bdb507"
    },
    "state_scope": {
     "notes": [

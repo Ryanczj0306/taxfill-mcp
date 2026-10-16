@@ -48,7 +48,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
-from pypdf.generic import ArrayObject, NameObject, NumberObject
+from pypdf.generic import ArrayObject, NameObject, NumberObject, StreamObject
 
 from taxfill_core.knowledge import assert_pack_filing_grade, provisional_marker
 from taxfill_core.redact import redact
@@ -558,6 +558,34 @@ def is_viewer_guard(annot: object, page_box: tuple[float, float, float, float]) 
     return pushbutton and is_button and bool(annot_flags & F_NOVIEW) and bool(annot_flags & F_PRINT)
 
 
+def _drop_xfa(writer: PdfWriter) -> bool:
+    """Remove the XFA stream from a filled hybrid form, as ``pdftk ... drop_xfa`` does (Phase K JK5).
+
+    Every IRS fillable blank is a hybrid: AcroForm fields plus an XFA (LiveCycle) stream that holds its own copy of the
+    field data. This filler writes the AcroForm values only, and Adobe Acrobat / Reader can draw a hybrid form from its
+    XFA data, which stays empty: the filled return then shows, and prints, blank there, while pdfium and macOS Preview
+    read the AcroForm values and look right (that gap is why pdftk has ``drop_xfa``). Without the XFA stream every
+    viewer reads the AcroForm values. The RC dry run found the 2025 Form 1040 output still carrying it.
+    """
+    acroform = writer._root_object.get("/AcroForm")
+    if acroform is None:
+        return False
+    acroform = acroform.get_object()
+    if "/XFA" not in acroform:
+        return False
+    xfa = acroform["/XFA"].get_object()
+    del acroform["/XFA"]
+    # pypdf still writes the unlinked packets (template, datasets, ...), so empty them: the bytes go too
+    for packet in xfa if isinstance(xfa, ArrayObject) else [xfa]:
+        packet = packet.get_object()
+        if isinstance(packet, StreamObject):
+            try:
+                packet.set_data(b"")
+            except Exception:  # noqa: BLE001 — a filter pypdf cannot re-encode: the packet is unlinked anyway
+                pass
+    return True
+
+
 def _annotation_flag_pass(writer: PdfWriter, written: Mapping[str, str]) -> list[str]:
     """P-027: every written widget becomes viewable and printable; every viewer guard is hidden.
 
@@ -833,6 +861,7 @@ def fill_form(
 
     # Viewers must regenerate appearance streams for the values to show.
     writer.set_need_appearances_writer(True)
+    _drop_xfa(writer)
 
     if rehearsal:
         from pypdf.annotations import FreeText  # noqa: PLC0415

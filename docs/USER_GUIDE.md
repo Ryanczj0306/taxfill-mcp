@@ -180,9 +180,10 @@ Free. Open source, MIT licensed, runs on your own machine.
 
 **What isn't supported yet?**
 taxfill is pre-release: it is not on PyPI yet, so the one-line `uvx` install, the one-click `.mcpb` bundle and the
-demo GIF are still to come. State form coverage for TY2024 and TY2025 is still filling in — check your state in
-[COVERAGE.md](COVERAGE.md). Separate nonresident / part-year returns are mapped only for California (Form 540NR) and
-New York (IT-203); where one return serves every filer (PA-40, for example), the residency boxes are mapped but most
-nonresident apportionment schedules are not yet. Most TY2026 forms are mapped from the IRS early-release drafts and
+demo GIF are still to come. A state return fills for all 42 income-tax jurisdictions in TY2023 and TY2025 and 41 in
+TY2024 — check your state in [COVERAGE.md](COVERAGE.md). For TY2024 and TY2025, separate nonresident / part-year
+returns are mapped only for California (Form 540NR) and New York (IT-203) (TY2023 adds Alabama, Arkansas, Arizona
+and Delaware); where one return serves every filer (PA-40, for example), the residency boxes are mapped but most
+nonresident apportionment schedules are not yet. State amended returns get a checklist pointer, not a filled form. Most TY2026 forms are mapped from the IRS early-release drafts and
 fill in rehearsal mode only until the IRS posts the finals (the 2026 Form 1040-ES vouchers are final). Maintainers
 track the remaining work in [dev/ROADMAP.md](dev/ROADMAP.md).

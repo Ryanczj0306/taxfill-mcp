@@ -4,7 +4,7 @@
 
 ![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 10,037 passing](https://img.shields.io/badge/tests-10%2C037%20passing-brightgreen)
+![Tests: 10,086 passing](https://img.shields.io/badge/tests-10%2C086%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 > [!WARNING]

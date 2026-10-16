@@ -178,9 +178,9 @@ mailing_addresses:
   verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
     at the cited DOR source before relying on a specific figure/address.
 payment:
+  # check_payee was re-verified for 2025 in the fetched capture, closing the 2024 pack's carried-forward gap.
   check_payee: Commonwealth of Massachusetts (2025 Form 1 Instructions — send a "check or money order payable to Commonwealth
     of Massachusetts"; write your Social Security number on the front of the check or money order in the lower left).
-    RE-VERIFIED for 2025 in the fetched capture, closing the 2024 pack's carried-forward gap.
   web_pay_url: https://mass.gov/masstaxconnect
 deadlines:
   filing_due_date: '2026-04-15'

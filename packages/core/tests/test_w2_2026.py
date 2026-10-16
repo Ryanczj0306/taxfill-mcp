@@ -125,3 +125,49 @@ def test_jt4a_the_w2_reading_checks_its_codes_and_box_14b():
     # The 2025 form's single box 14 reads as box 14a.
     fields = {f.key: f for f in _w2(2025, **{"14": "SDI 312.00"}).fields}
     assert fields["14a"].value == "SDI 312.00"
+
+
+def test_a_2025_w2s_code_findings_cite_the_2025_instructions():
+    # Phase K JK5: the release-candidate walkthrough's 2025 W-2 got "Instructions for Forms W-2 and W-3 (2026)".
+    cites = {f.rule_id: f.citation for f in _w2(2025, **{"12a": "D 4000.00", "12b": "TT 10", "14b": "10100"}).findings}
+    assert cites["V25"] == cites["V22"] == "Instructions for Forms W-2 and W-3 (2025), Box 12—Codes"
+    assert cites["V23"] == "Instructions for Forms W-2 and W-3 (2026), Box 12—Codes and Box 14b"  # box 14b is 2026's
+    assert {f.citation for f in _w2(2026, **{"12a": "D 4000.00"}).findings} == {
+        "Instructions for Forms W-2 and W-3 (2026), Box 12—Codes and Box 14b"}
+
+
+def test_box_8_allocated_tips_are_read_and_flagged_as_outside_box_1():
+    # Phase K JK5: the W-2 spec had no box 8, so allocated tips (income that is not in box 1) were never read.
+    doc = _w2(2025, **{"8": "1,234.50"})
+    assert {f.key: f.value for f in doc.fields}["8"] == "1234.50" and not doc.unexpected
+    v30 = [f for f in doc.findings if f.rule_id == "V30"]
+    assert len(v30) == 1 and v30[0].severity == "info" and v30[0].boxes == ["8"]
+    assert "$1,234.50 are not in box 1" in v30[0].message and "unless you can prove" in v30[0].message
+    assert "Box 8—Allocated tips" in v30[0].citation and "Line 1c" in v30[0].citation
+    assert "Form 4137" in v30[0].message and "leaves these tips and that tax out" in v30[0].message
+    assert not [f for f in _w2(2025, **{"8": "0.00"}).findings if f.rule_id == "V30"]
+    assert not [f for f in _w2(2025).findings if f.rule_id == "V30"]
+
+
+@pytest.mark.parametrize(("tax_year", "edition"), [(2024, 2024), (2022, 2022), (2026, 2025), (2020, 2025), (None, 2025)])
+def test_box_8_cites_the_w2s_own_year_where_line_1c_says_so(tax_year, edition):
+    # Line 1c's words hold from 2022 (the year line 1c began) to 2025, the newest edition read.
+    v30 = next(f for f in _w2(tax_year, **{"8": "500"}).findings if f.rule_id == "V30")
+    assert v30.citation == (f"Instructions for Forms W-2 and W-3 ({edition}), Box 8—Allocated tips; Instructions for "
+                            f"Form 1040 ({edition}), Line 1c")
+    assert f"The {edition} Form 1040 instructions (line 1c)" in v30.message
+
+
+@pytest.mark.parametrize("reading", ["NaN", "nan", "sNaN", "Infinity", "-inf", "1e999999999", "1000000000000000",
+                                     "1,234.5e3", "1e-999999999", "1.5E+3"])
+def test_a_non_finite_or_absurd_amount_is_a_misread_not_a_crash(reading):
+    # Phase K JK5: "NaN" in box 8 raised decimal.InvalidOperation out of extract_document (the whole W-2 reading was
+    # lost), "Infinity" read as $Infinity, and "1e999999999" hung the int coercion.
+    from taxfill_core.extract import _coerce
+
+    doc = _w2(2025, **{"8": reading, "3": reading})
+    fields = {f.key: f for f in doc.fields}
+    assert fields["8"].status == fields["3"].status == "invalid"
+    assert not [f for f in doc.findings if f.rule_id == "V30"]
+    assert _coerce(reading, "money") == (reading, False) and _coerce(reading, "int") == (reading, False)
+

@@ -628,3 +628,105 @@ def test_jt2b_only_a_planning_pack_may_leave_an_address_unstated():
         entry.update(line_source="final", url="https://www.irs.gov/pub/irs-prior/f1040--2026.pdf")
     with pytest.raises(ValidationError, match="leaves addresses unstated"):
         KnowledgePack.model_validate(data)
+
+
+# ── Phase K JK5: the "By check" sentence quotes the payee, not the whole note ─
+
+
+def test_the_check_sentence_quotes_only_the_payee():
+    # the release-candidate walkthrough read: make it payable to "Franchise Tax Board (check or money order payable to
+    # the "Franchise Tax Board" in U.S. dollars ...)"; write the tax year, form, and your SSN on it.
+    r = file_and_pay([FilingManifestItem(form="540", tax_year=2025, jurisdiction="states/ca", bottom_line=-100)]).returns[0]
+    check = [p for p in r.payment if p.startswith("By check")]
+    assert len(check) == 1
+    assert check[0].startswith('By check: make it payable to "Franchise Tax Board" (check or money order payable to')
+    assert check[0].endswith(".") and "your SSN on it." not in check[0]  # the state's own memo words, not ours
+
+
+def test_indiana_pays_the_payee_its_it40_prints():
+    # Phase K JK5: the payee read "DOR", from the booklet's in-person paragraph; IT-40 line 26 prints the payee.
+    for year in (2023, 2024, 2025):
+        r = file_and_pay([FilingManifestItem(form="IT-40", tax_year=year, jurisdiction="states/in",
+                                             bottom_line=-50)]).returns[0]
+        check = next(p for p in r.payment if p.startswith("By check"))
+        assert check.startswith('By check: make it payable to "Indiana Department of Revenue"'), check
+
+
+# the generic memo: several states want only the SSN's last four digits (OH, OR, PA, ND, MD 2025)
+_MEMO = "the tax year, the form and your SSN on the check (only its last four digits where the state's instructions " \
+        "ask for that)."
+
+
+@pytest.mark.parametrize(("payee", "note", "expected"), [
+    ("Wisconsin Department of Revenue", None,
+     'By check: make it payable to "Wisconsin Department of Revenue"; write ' + _MEMO),
+    ("Dept. of Finance and Administration (attach Form AR1000V)", None,
+     'By check: make it payable to "Dept. of Finance and Administration" (attach Form AR1000V). Write ' + _MEMO),
+    ("R.I. Division of Taxation (do not send cash.)", None,
+     'By check: make it payable to "R.I. Division of Taxation" (do not send cash.) Write ' + _MEMO),
+    ("SCDOR (South Carolina Department of Revenue). Pay electronically if you owe $15,000 or more", None,
+     'By check: make it payable to "SCDOR" (South Carolina Department of Revenue). Pay electronically if you owe '
+     "$15,000 or more. Write " + _MEMO),
+    ("SCDOR (x). The voucher says 'Make your check payable to SCDOR.'", None,  # a quote ends the sentence
+     "By check: make it payable to \"SCDOR\" (x). The voucher says 'Make your check payable to SCDOR.' Write " + _MEMO),
+    ("Check payments are made through the MN DOR Payment Voucher System (create a voucher)", None,
+     "By check: Check payments are made through the MN DOR Payment Voucher System (create a voucher). Write " + _MEMO),
+    ("Make checks payable to the Comptroller (write your SSN on it)", None,  # an instruction, not a payee
+     "By check: Make checks payable to the Comptroller (write your SSN on it)."),
+    ("Pay by check to the Treasurer (write your SSN on it)", None,  # an instruction, not a payee
+     "By check: Pay by check to the Treasurer (write your SSN on it)."),
+    ("Mail Processing Unit (write your SSN on it)", None,  # a name that starts with "Mail" is still a payee
+     'By check: make it payable to "Mail Processing Unit" (write your SSN on it).'),
+    ("Idaho State Tax Commission (write your Social Security number on the check)", None,
+     'By check: make it payable to "Idaho State Tax Commission" (write your Social Security number on the check).'),
+    ("WV Tax Division", "The booklet prints no separate payee line.",
+     'By check: make it payable to "WV Tax Division". The booklet prints no separate payee line. Write ' + _MEMO),
+    ("WV Tax Division", "Line 24 says 'write your social security number and \"2025 Form IT 140\" on it'.",
+     'By check: make it payable to "WV Tax Division". Line 24 says \'write your social security number and "2025 Form '
+     'IT 140" on it\'.'),
+])
+def test_check_sentence_shapes(payee, note, expected):
+    from taxfill_core.file_and_pay import _check_payment_line
+
+    assert _check_payment_line(payee, note) == expected
+
+
+def test_every_state_pack_check_sentence_quotes_a_bare_payee():
+    """Sweep every state knowledge pack: what lands in quotes is a payee, and no research note reaches the user."""
+    import re
+
+    import yaml
+
+    from taxfill_core.datadir import data_root
+    from taxfill_core.file_and_pay import _check_payment_line
+
+    seen = 0
+    for path in sorted((data_root() / "knowledge" / "states").glob("*/[0-9][0-9][0-9][0-9].yaml")):
+        pay = (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("payment") or {}
+        if not pay.get("check_payee"):
+            continue
+        seen += 1
+        where = f"{path.parent.name}/{path.name}"
+        line = _check_payment_line(pay["check_payee"], pay.get("check_payee_note"))
+        quoted = re.match(r'By check: make it payable to "([^"]*)"', line)
+        if quoted:
+            assert len(quoted[1]) <= 60 and "(" not in quoted[1], (where, quoted[1])
+        assert not re.search(r"see unverified|in this pass|re-verified|capture|mailing_addresses|check_payee|"
+                             r"web_pay_url", line, re.I), (where, line)
+        if re.search(r"last (?:four|4) digits", pay["check_payee"] + str(pay.get("check_payee_note") or ""), re.I):
+            assert "only its last four digits" not in line, (where, line)  # the state's own memo rule, not ours
+    assert seen >= 120  # 42 jurisdictions x 3 years, less the packs with no check payee
+
+
+@pytest.mark.parametrize(("state", "form", "year"), [
+    ("oh", "IT 1040", 2025), ("or", "OR-40", 2025), ("pa", "PA-40", 2024), ("pa", "PA-40", 2025),
+    ("nd", "ND-1", 2023), ("md", "502", 2025),
+])
+def test_a_last_four_digits_state_gets_its_own_memo_rule(state, form, year):
+    # Phase K JK5 re-verify: these packs' words named no memo rule, so the generic "your SSN" line was added, though
+    # each state's own instructions ask for only the last four digits.
+    r = file_and_pay([FilingManifestItem(form=form, tax_year=year, jurisdiction=f"states/{state}",
+                                         bottom_line=-50)]).returns[0]
+    check = next(p for p in r.payment if p.startswith("By check"))
+    assert "last four digits" in check and "only its last four digits where" not in check, check
+

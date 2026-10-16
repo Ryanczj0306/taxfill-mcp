@@ -1176,7 +1176,7 @@ def _form_1040x_return(item: FilingManifestItem, pack, notes: list[str], today: 
         if item.direct_deposit:
             notes.append(
                 "direct_deposit is set, but a paper Form 1040-X cannot request it — e-file the amended return through "
-                "tax software if you want the refund deposited."
+                "tax software (outside TaxFill, which prepares paper returns only) if you want the refund deposited."
                 if efile_ok else
                 f"direct_deposit is set, but a paper Form 1040-X cannot request it, and a {y} amendment can no longer "
                 f"be filed electronically, so the refund comes by check."
@@ -1215,7 +1215,8 @@ def _form_1040x_return(item: FilingManifestItem, pack, notes: list[str], today: 
     if efile_ok:
         notes.append(
             "E-file alternative: Forms 1040, 1040-SR and 1040-NR \"for the current or two prior tax periods\" can be "
-            "amended electronically with tax software; but \"If amending a prior year return originally filed on paper "
+            "amended electronically with tax software (outside TaxFill, which prepares paper returns only); but \"If "
+            "amending a prior year return originally filed on paper "
             "during the current processing year, then the amended return must also be filed on paper\" (IRS "
             "amended-return FAQ)."
         )
@@ -1369,6 +1370,49 @@ def _form_1040x_return(item: FilingManifestItem, pack, notes: list[str], today: 
     )
 
 
+# A pack's check_payee is the payee as printed, often followed by the state's own words, in parentheses, on
+# what to write on the check and what to enclose (Phase K JK5: the whole string used to land inside the quotes).
+_PAYEE_THEN_DETAILS = re.compile(r"(?P<payee>[^()]{2,60}?) (?P<details>\(.*)", re.S)
+
+
+# A sentence break, not an abbreviation such as "Dept. of", "N.C." or "R.I.".
+_SENTENCE_BREAK = re.compile(r"[;:] |[a-z]{2}\. [A-Z]")
+# An instruction, not a payee: "Make checks payable to the Comptroller", "Check payments are made through ...",
+# "Pay by check to ..." (but "Mail Processing Unit" or "Paymaster" would still be names).
+_NOT_A_PAYEE = re.compile(r"\bpayable\b|^(?:make|send|mail|pay)\s+(?:your\s+|the\s+|a\s+|all\s+)?(?:checks?|payments?|"
+                          r"it|money)\b|^pay\s+by\b|^check\s+payments\b", re.I)
+# The state's own words already say what to write on the check.
+_MEMO_GUIDANCE = re.compile(r"\bwrite\b|\bmemo\b|notation|social security|\bSSN|\bI?TIN\b|identification number|"
+                            r"account id|phone|on the check|on your check|on the payment", re.I)
+# Several states ask for only the last four digits of the SSN (OH, OR, PA, ND, MD 2025 among them), so the fallback
+# leaves room for that (Phase K JK5).
+_GENERIC_MEMO = ("write the tax year, the form and your SSN on the check (only its last four digits where the state's "
+                 "instructions ask for that)")
+
+
+def _check_payment_line(check_payee: str, note: str | None = None) -> str:
+    """The "By check" sentence for a state return: the payee alone in quotes, then the state's own details.
+
+    When the state's words say nothing about what to write on the check, the generic memo line follows them.
+    """
+    text = " ".join(str(check_payee).split())
+    memo = "" if _MEMO_GUIDANCE.search(f"{text} {note or ''}") else f" {_GENERIC_MEMO[0].upper()}{_GENERIC_MEMO[1:]}."
+    m = _PAYEE_THEN_DETAILS.fullmatch(text)
+    if m and not _SENTENCE_BREAK.search(m["payee"]) and not _NOT_A_PAYEE.search(m["payee"]):
+        return _end(f"By check: make it payable to \"{m['payee']}\" {m['details']}") + memo
+    if "(" not in text and len(text) <= 60 and not _SENTENCE_BREAK.search(text) and not _NOT_A_PAYEE.search(text):
+        if note:  # WV: the booklet prints no payee line; the note quotes what it does say
+            return _end(f"By check: make it payable to \"{text}\". {' '.join(str(note).split())}") + memo
+        return f"By check: make it payable to \"{text}\"; {_GENERIC_MEMO}."
+    # no payee to quote (MN prints none — the Payment Voucher System supplies it): the state's own words
+    return _end(f"By check: {text}") + memo
+
+
+def _end(sentence: str) -> str:
+    """End a sentence with a period, unless it ends one already (also inside a closing parenthesis or quote)."""
+    return sentence if sentence.endswith((".", ".)", ".'", '."', ".\u201d", ".\u2019", ".')")) else sentence + "."
+
+
 def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions:
     """Last-mile checklist for a state return, from the state knowledge pack.
 
@@ -1411,7 +1455,7 @@ def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions
         if pay.get("web_pay_url"):
             payment.append(f"Pay online via {state.upper()} Web Pay: {pay['web_pay_url']} (no processor fee).")
         if pay.get("check_payee"):
-            payment.append(f"By check: make it payable to \"{pay['check_payee']}\"; write the tax year, form, and your SSN on it.")
+            payment.append(_check_payment_line(pay["check_payee"], pay.get("check_payee_note")))
 
     ma = getattr(sk, "mailing_addresses", None) or {}
     if ma:
@@ -1577,6 +1621,15 @@ def _amended_state_return(item: FilingManifestItem, sk, state: str) -> ReturnIns
     )
 
 
+# The disclaimer every filer-facing output carries — file_and_pay here, filing_summary's label and the
+# fill_form tool (Phase K JK5): docs/dev/ACCEPTANCE.md checks all three parts — a review draft, not tax
+# advice, paper filing only.
+DRAFT_NOTICE = (
+    "This is a review draft, not tax advice — you are the filer: review every number, then sign and mail "
+    "it yourself. TaxFill prepares returns for paper filing only; it does not e-file."
+)
+
+
 def file_and_pay(
     manifest: list[FilingManifestItem],
     *,
@@ -1611,9 +1664,7 @@ def file_and_pay(
         else:
             returns.append(_state_return(item, knowledge_dir))
 
-    overall: list[str] = [
-        "This is a review draft — you are the filer: review every number, then sign and mail it yourself.",
-    ]
+    overall: list[str] = [DRAFT_NOTICE]
     if len(manifest) > 1:
         overall.append("Mail each return in its OWN envelope, even if they go to the same address.")
     return FilingInstructions(returns=returns, overall_notes=overall)

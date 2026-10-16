@@ -60,3 +60,11 @@ def test_jp3b_box_3_stops_at_the_wage_base_and_box_6_adds_the_0_9_percent():
 def test_jp3b_a_stub_from_another_year_refuses():
     with pytest.raises(ValueError, match="Calendar year basis"):
         paystub_to_w2({**SEMI_STUB, "pay_date": "2027-01-01"}, SEMI_JOB, 2026)
+
+
+@pytest.mark.parametrize("amount", ["NaN", "Infinity", "1e999999999", "1e30"])
+def test_a_non_finite_or_absurd_stub_amount_is_a_prescriptive_error(amount):
+    # Phase K JK5 re-verify: these raised a bare decimal.InvalidOperation / Overflow ("[<class ...>]") through calc.
+    with pytest.raises(ValueError, match="gross_ytd must be an amount"):
+        paystub_to_w2({**SEMI_STUB, "gross_ytd": amount}, SEMI_JOB, 2026)
+

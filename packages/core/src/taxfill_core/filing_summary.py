@@ -60,7 +60,7 @@ class FilingSummary(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    label: str = "REVIEW DRAFT — approve the bottom line before printing"
+    label: str = "REVIEW DRAFT, not tax advice, for paper filing only — approve the bottom line before printing"
     items: list[FilingSummaryItem] = Field(default_factory=list)
     household_rollup: list[str] = Field(
         default_factory=list,

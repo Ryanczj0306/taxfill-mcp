@@ -4,6 +4,7 @@ PNG outputs are verified with Pillow (dev-only dependency, pulled in via
 reportlab) — the renderer itself encodes PNGs with the standard library.
 """
 
+import logging
 from pathlib import Path
 
 import pytest
@@ -203,3 +204,29 @@ def test_corrupt_pdf_says_recreate(tmp_path: Path):
     bad.write_bytes(b"%PDF-1.7 truncated garbage")
     with pytest.raises(ValueError, match=r"could not be opened as a PDF.*re-run fill_form"):
         render_pdf(bad, tmp_path / "png")
+
+
+def test_rendering_a_hybrid_xfa_form_logs_no_pdfium_build_notice(two_page_pdf: Path, tmp_path: Path, caplog):
+    """Phase K JK5: every render of the XFA 2025 Form 1040 logged pdfium's "compiled without XFA support" notice."""
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.generic import DecodedStreamObject, NameObject
+
+    writer = PdfWriter(clone_from=str(two_page_pdf))
+    stream = DecodedStreamObject()
+    stream.set_data(b"<xdp:xdp xmlns:xdp='http://ns.adobe.com/xdp/'><xfa:datasets/></xdp:xdp>")
+    writer._root_object["/AcroForm"].get_object()[NameObject("/XFA")] = writer._add_object(stream)
+    hybrid = tmp_path / "hybrid.pdf"
+    with hybrid.open("wb") as fh:
+        writer.write(fh)
+    assert "/XFA" in PdfReader(str(hybrid)).trailer["/Root"]["/AcroForm"]
+
+    with caplog.at_level(logging.DEBUG):
+        results = render_pdf(hybrid, tmp_path / "png", pages=[1])
+    assert results and results[0].path.is_file()
+    assert not [r for r in caplog.records if "XFA" in r.getMessage()]
+
+    # the filter is that narrow: other pypdfium2 warnings still log
+    with caplog.at_level(logging.DEBUG):
+        logging.getLogger("pypdfium2._helpers.document").warning("some other pdfium notice")
+    assert [r.getMessage() for r in caplog.records if "pdfium notice" in r.getMessage()] == ["some other pdfium notice"]
+

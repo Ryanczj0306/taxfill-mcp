@@ -53,6 +53,11 @@ person checks, signs and files.
   Test (`residency`) and which states need a return (`state_scope`), a deterministic fill (`fill_form`), a
   mandatory verify gate (`verify_form`, `verify_filing`, and `render_form` page images for a visual check), and a
   plain-language bottom line with a pay / sign / assemble / mail checklist (`filing_summary`, `file_and_pay`).
+- **Amended returns.** Form 1040-X packs for TY2023 to TY2025 map the current revision (December 2025), the one an
+  amendment filed now uses. `file_and_pay` and `filing_summary` give an amended return its own checklist: the Form
+  1040-X Where To File address, payment, the corrected return behind it and the claim window from the current
+  instructions; Georgia's Form 500X rules; and, for any other state, a pointer to its revenue department instead of
+  the original return's address and due date.
 - **Print-only state forms**: `hand_fill_worksheet` lists every line to hand-write, and `fill_form` stamps the
   values onto the official blank.
 - **A resumable local workspace** (`workspace_save`, `workspace_load`): each position taken is recorded with its
@@ -60,6 +65,9 @@ person checks, signs and files.
   (`workspace_reconcile`); `taxfill purge <year>` overwrites and deletes a year's workspace.
 - **Blank forms are downloaded at runtime** from the tax agencies' own sites (or an exact, digest-checked Internet
   Archive copy when a state site blocks scripts) and checksum-verified; no blank PDF is stored in the packages.
+- **Filled PDFs carry no XFA layer.** A filled form keeps the official AcroForm fields with their appearances
+  and drops the XFA layer that hybrid IRS forms carry, so Adobe Acrobat and Reader draw the filled fields rather
+  than the form's empty XFA data.
 
 ### Not in this release
 
@@ -68,6 +76,8 @@ person checks, signs and files.
 - **A form with no pack is refused** (`list_forms` shows which forms have one, except the print-only state forms
   that `hand_fill_worksheet` serves). A later release adds an unmapped draft for such a form, which is never
   filing-grade.
+- **State amended returns are pointers.** No state amended form has a pack, and only Georgia's knowledge carries
+  its amended-return rules; for every other state the checklist names the revenue department's site.
 - **No TY2026 final forms.** The 2026 packs stay unfilable for filing until a later release re-pins them on the
   IRS's final 2026 forms.
 - **No proven one-click install yet.** `taxfill.mcpb` uses the MCPB format's experimental uv runtime (manifest

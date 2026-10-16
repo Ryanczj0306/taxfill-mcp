@@ -104,6 +104,7 @@ _SPECS: list[DocSpec] = [
             _b("5", "Box 5 — Medicare wages and tips", "money"),
             _b("6", "Box 6 — Medicare tax withheld", "money"),
             _b("7", "Box 7 — Social Security tips", "money"),
+            _b("8", "Box 8 — Allocated tips (not in box 1)", "money"),
             _b("10", "Box 10 — Dependent care benefits", "money"),
             _b("11", "Box 11 — Nonqualified plans", "money"),
             _b("12a", "Box 12a — Code/amount", "code"),
@@ -1442,6 +1443,13 @@ _MONEY_RE = re.compile(r"[,$\s]")
 _DIGITS_RE = re.compile(r"\D")
 
 
+# No document box holds a quadrillion dollars. "NaN", "Infinity" and "1e999999999" parse as Decimals, and passing them
+# as readings crashed the box 8 check (NaN cannot be compared) or hung on formatting and int() (Phase K JK5).
+def _plausible_amount(dec: Decimal) -> bool:
+    # adjusted(): the leading digit's exponent, overflow-free; no form prints an exponent ("1,234.5e3" read as 1.2345E+6)
+    return dec.is_finite() and dec.adjusted() < 15 and dec.as_tuple().exponent >= -6 and "E" not in str(dec)
+
+
 def _coerce(value: Any, type_: FieldType) -> tuple[Any, bool]:
     """Coerce a raw reading to its type. Returns (coerced, ok). Empty → (None, True)."""
     if value is None:
@@ -1456,12 +1464,17 @@ def _coerce(value: Any, type_: FieldType) -> tuple[Any, bool]:
                 # is a misread, not an empty box — flag invalid so it can't masquerade
                 # as a confirmed blank and slip past the required-gap check.
                 return value, False
-            return str(Decimal(cleaned)), True
+            dec = Decimal(cleaned)
+            if not _plausible_amount(dec):
+                return value, False
+            return str(dec), True
         if type_ == "int":
             cleaned = _MONEY_RE.sub("", str(value))
             if cleaned in ("", "-", "+"):
                 return value, False
             dec = Decimal(cleaned)
+            if not _plausible_amount(dec):
+                return value, False
             if dec != dec.to_integral_value():
                 return value, False  # a fractional reading of an int box is a misread, not a truncation
             return int(dec), True
@@ -1701,11 +1714,14 @@ def _validate_w2(fields: dict[str, ExtractedField], tax_year: int | None):
 
     found: list[Finding] = []
     cite = "Instructions for Forms W-2 and W-3 (2026), Box 12—Codes and Box 14b"
+    # A pre-2026 W-2's codes are read against its own year's instructions; box 14b starts with 2026's (Phase K JK5: a
+    # 2025 W-2's code findings cited the 2026 instructions).
+    codes_cite = f"Instructions for Forms W-2 and W-3 ({tax_year}), Box 12—Codes" if tax_year and tax_year < 2026 else cite
     allowed = w2_codes.codes_for(tax_year)
     seen: dict[str, str | None] = {}
 
-    def add(severity, rule_id, boxes, message):
-        found.append(Finding(severity=severity, rule_id=rule_id, boxes=boxes, message=message, citation=cite))
+    def add(severity, rule_id, boxes, message, citation=cite):
+        found.append(Finding(severity=severity, rule_id=rule_id, boxes=boxes, message=message, citation=citation))
 
     for key in ("12a", "12b", "12c", "12d"):
         f = fields.get(key)
@@ -1714,19 +1730,19 @@ def _validate_w2(fields: dict[str, ExtractedField], tax_year: int | None):
         parsed = w2_codes.parse_box12(f.value)
         if parsed is None:
             add("error", "V22", [key], f"box {key} reads {f.value!r} — a box 12 entry is a code and an amount "
-                "(\"D 5300.00\"): misread OR employer error, request a CORRECTED Form W-2 (W-2c).")
+                "(\"D 5300.00\"): misread OR employer error, request a CORRECTED Form W-2 (W-2c).", codes_cite)
             continue
         code, amount = parsed
         entry = w2_codes.code_entry(code)
         if entry is None or code not in allowed:
             when = f" (it starts with the {entry['since']} W-2)" if entry is not None else ""
             add("error", "V22", [key], f"box {key} code {code!r} is not a {tax_year or ''} box 12 code{when} — "
-                "misread OR employer error, request a CORRECTED Form W-2 (W-2c).")
+                "misread OR employer error, request a CORRECTED Form W-2 (W-2c).", codes_cite)
             continue
         seen[code] = amount
         route = entry["route"]
         if route != "info":
-            add("info", "V25", [key], f"box {key} code {code} — {entry['title']}: {_W2_ROUTE_NOTES[route]}")
+            add("info", "V25", [key], f"box {key} code {code} — {entry['title']}: {_W2_ROUTE_NOTES[route]}", codes_cite)
     box14b = fields.get("14b")
     has_14b = box14b is not None and box14b.value not in (None, "")
     if has_14b and tax_year is not None and tax_year < 2026:
@@ -1742,6 +1758,22 @@ def _validate_w2(fields: dict[str, ExtractedField], tax_year: int | None):
     if has_14b and "000" in str(box14b.value):
         add("warning", "V24", ["14b"], "box 14b includes \"000\": some tips were received in a nonqualifying "
             "occupation, so not all of code TP is qualified tips — only the tips from the listed occupation count.")
+    allocated = fields.get("8")
+    if allocated is not None and allocated.status == "ok" and allocated.value not in (None, ""):
+        amount = Decimal(str(allocated.value))
+        # The Form 1040 instructions print these words for line 1c from 2022 (the year line 1c began) to 2025, the
+        # newest edition read; another year's W-2 is told it is the 2025 edition that speaks (Phase K JK5: box 8 was
+        # not read at all).
+        year = tax_year if tax_year is not None and 2022 <= tax_year <= 2025 else 2025
+        if amount > 0:
+            add("info", "V30", ["8"], f"box 8 allocated tips of ${amount:,.2f} are not in box 1. The {year} Form 1040 "
+                "instructions (line 1c) count \"any allocated tips shown in box 8 on your Form(s) W-2 unless you can "
+                "prove that your unreported tips are less than the amount in box 8. Allocated tips aren't included as "
+                "income in box 1\" and add \"You may owe social security and Medicare or railroad retirement (RRTA) "
+                "tax on unreported tips\" (Schedule 2, line 5, with Form 4137). estimate_refund reads box 1, not box "
+                "8, so its estimate leaves these tips and that tax out.",
+                f"Instructions for Forms W-2 and W-3 ({year}), Box 8—Allocated tips; Instructions for Form 1040 "
+                f"({year}), Line 1c")
     return found, None
 
 

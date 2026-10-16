@@ -1180,6 +1180,16 @@ def _check_relation(
             blank_as_zero=blanks,
             detail=f"{lhs_dollars} == {rhs_dollars} (whole dollars, IRS rounding){blank_note}",
         )
+    left = relation.split("==", 1)[0].strip()
+    if left in line_names and left in blanks:
+        # Phase K JK5: a blank total line (CA 540 line 33 after a fill through line 31) used to get "recompute the
+        # input lines with calc" — no calc op makes a form's own subtraction; the relation already has the value.
+        remedy = (f"line '{left}' is blank, and the form's own arithmetic on the right side gives {rhs_dollars}: "
+                  f"fill it once every line on the right is final, then re-verify")
+    else:
+        remedy = (f"either a line on the right is wrong (recompute any calc-derived line, such as the tax, with calc "
+                  f"and refill it) or the left side is (it must equal the right side, {rhs_dollars}); fix it and "
+                  f"re-verify")
     return RelationCheck(
         relation=relation,
         status=FAIL,
@@ -1188,8 +1198,7 @@ def _check_relation(
         blank_as_zero=blanks,
         detail=(
             f"relation '{relation}' failed: left side = {lhs_dollars}, right side = "
-            f"{rhs_dollars} (difference {lhs_dollars - rhs_dollars:+d}){blank_note} — "
-            f"recompute the input lines with calc and refill them, then re-verify"
+            f"{rhs_dollars} (difference {lhs_dollars - rhs_dollars:+d}){blank_note} — {remedy}"
         ),
     )
 

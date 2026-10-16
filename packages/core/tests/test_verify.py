@@ -176,6 +176,18 @@ def test_relation_max_with_literal_zero_disambiguation():
     assert "difference" in bad.detail and "recompute" in bad.detail
 
 
+def test_a_blank_total_line_is_told_the_value_the_form_computes():
+    # Phase K JK5: a CA 540 filled through line 31 failed '33 == max(0, 31 - 32)' with "recompute the input lines with
+    # calc", though no calc op makes the form's own subtraction and the relation already had the value.
+    pack = make_pack([money_field("31"), money_field("32"), money_field("33")], relations=["33 == max(0, 31 - 32)"])
+    blank = relations(pack, {"31": 11541})[0]
+    assert blank.status == "FAIL" and blank.blank_as_zero == ["33", "32"]
+    assert "line '33' is blank, and the form's own arithmetic on the right side gives 11541" in blank.detail
+    wrong = relations(pack, {"31": 11541, "32": 153, "33": 11000})[0]
+    assert "it must equal the right side, 11388" in wrong.detail and "with calc" in wrong.detail
+    assert "is blank" not in wrong.detail
+
+
 def test_relation_min_function():
     pack = make_pack(
         [money_field("5"), money_field("1a"), money_field("1b")],

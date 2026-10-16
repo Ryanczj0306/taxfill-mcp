@@ -30,5 +30,16 @@ none:
 
 # No tax on WAGES, but a narrow tax on some income — scoping must flag, not skip.
 wages_only_exempt:
-  - { state: WA, dor: "https://dor.wa.gov", note: "No personal income tax on wages; a 7% capital-gains excise tax applies to high gains (2022+). Flag if the user had large long-term capital gains." }
+  # The 2022 tax, its standard deduction and the 2025 tier (ESSB 5813, Chapter 421, Laws of 2025) were read in RCW
+  # 82.87.040 / .060 and the DOR notice on 2026-10-16 (Phase K JK5: the note said a flat 7% for every year).
+  - state: WA
+    dor: "https://dor.wa.gov"
+    note: "No personal income tax on wages; a capital-gains excise tax applies to long-term capital gains above an annual standard deduction (tax years 2022+): 7%, and from tax year 2025 an additional 2.9% on taxable gains over $1 million. Flag if the user had large long-term capital gains."
+    citations:
+      - source: "RCW 82.87.040(1): \"(a) Beginning January 1, 2022, an excise tax is imposed on the sale or exchange of long-term capital assets. Only individuals are subject to payment of the tax, which equals seven percent multiplied by an individual's Washington capital gains. (b) Beginning January 1, 2025, an additional excise tax is imposed on the sale or exchange of long-term capital assets, which equals 2.90 percent multiplied by the portion of an individual's Washington capital gains exceeding $1,000,000.\""
+        url: "https://app.leg.wa.gov/RCW/default.aspx?cite=82.87.040"
+      - source: "RCW 82.87.060(1): \"A standard deduction of $250,000 per individual, or in the case of spouses or domestic partners, their combined standard deduction is limited to $250,000\"; the amount is adjusted under RCW 82.87.150."
+        url: "https://app.leg.wa.gov/RCW/default.aspx?cite=82.87.060"
+      - source: "WA Department of Revenue, special notice 'New tiered rates for Washington’s capital gains tax' (issued June 30, 2025): \"Beginning with tax year 2025, Washington’s long-term capital gains tax has a tiered rate.\" \"Your first $1 million in taxable Washington capital gains is subject to tax at a rate of 7%. Any amount of Washington capital gains exceeding $1 million is subject to a 7% tax, plus an additional 2.9% tax.\""
+        url: "https://dor.wa.gov/forms-publications/publications-subject/special-notices/new-tiered-rates-washingtons-capital-gains-tax"
   - { state: NH, dor: "https://www.revenue.nh.gov", note: "No tax on wages; an Interest & Dividends Tax applied through 2024 (repealed for 2025+). Flag if the user had significant interest/dividends in 2023/2024." }

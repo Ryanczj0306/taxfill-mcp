@@ -928,3 +928,64 @@ def test_jea_a_reserved_line_warns_when_a_value_lands_and_stays_quiet_when_blank
     assert any("'25d' is a printed 'Reserved for future use' row" in w for w in loud.warnings)
     quiet = fill_form(pack, {"name": "Test Taxpayer", "25d": 0}, blank_pdf, tmp_path / "quiet.pdf")
     assert not [w for w in quiet.warnings if "Reserved for future use" in w]
+
+
+# --- a hybrid XFA blank: the output carries no XFA stream (Phase K JK5) -------
+
+
+def _with_xfa(path: Path) -> Path:
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.generic import DecodedStreamObject, NameObject
+
+    writer = PdfWriter(clone_from=str(path))
+    stream = DecodedStreamObject()
+    stream.set_data(b"<xdp:xdp xmlns:xdp='http://ns.adobe.com/xdp/'><xfa:datasets/></xdp:xdp>")
+    acroform = writer._root_object["/AcroForm"].get_object()
+    acroform[NameObject("/XFA")] = writer._add_object(stream)
+    out = path.with_name("blank_xfa.pdf")
+    with out.open("wb") as fh:
+        writer.write(fh)
+    assert "/XFA" in PdfReader(str(out)).trailer["/Root"]["/AcroForm"]
+    return out
+
+
+def test_a_filled_hybrid_form_carries_no_xfa_stream(blank_pdf: Path, tmp_path: Path):
+    """Acrobat can draw a hybrid form from its XFA data, which the filler never writes: drop it (pdftk drop_xfa)."""
+    hybrid = _with_xfa(blank_pdf)
+    out = tmp_path / "filled.pdf"
+    fill_form(PACK, {"name": "Test Taxpayer", "1a": 100}, hybrid, out)
+    acroform = PdfReader(str(out)).trailer["/Root"]["/AcroForm"]
+    assert "/XFA" not in acroform
+    assert bool(acroform.get("/NeedAppearances"))
+    assert PdfReader(str(out)).get_fields()[LINE_TO_QUALIFIED["name"]].get("/V") == "Test Taxpayer"
+    # pypdf writes unlinked objects too, so the packet's bytes would stay in the file unless emptied
+    reader = PdfReader(str(out))
+    streams = [obj for num in range(1, reader.trailer["/Size"])
+               if (obj := _object_or_none(reader, num)) is not None and hasattr(obj, "get_data")]
+    assert streams and not [s for s in streams if b"xdp:xdp" in s.get_data()]
+
+
+def _object_or_none(reader, num):
+    from pypdf.generic import IndirectObject
+
+    try:
+        return IndirectObject(num, 0, reader).get_object()
+    except Exception:  # noqa: BLE001 — a free or missing object number
+        return None
+
+
+@pytest.mark.network
+def test_the_filled_2025_form_1040_carries_no_xfa_stream(tmp_path: Path):
+    from taxfill_core.discovery import load_form_pack
+    from taxfill_core.fetch import FetchError, fetch_pack_blank
+
+    pack = load_form_pack("f1040", 2025)
+    try:
+        blank = fetch_pack_blank(pack)
+    except FetchError as exc:
+        pytest.skip(f"cannot fetch the 2025 Form 1040 blank: {exc}")
+    assert "/XFA" in PdfReader(str(blank)).trailer["/Root"]["/AcroForm"]  # the IRS blank is a hybrid
+    out = tmp_path / "f1040.pdf"
+    fill_form(pack, {"name.first": "Alex", "name.last": "Example"}, blank, out)
+    assert "/XFA" not in PdfReader(str(out)).trailer["/Root"]["/AcroForm"]
+

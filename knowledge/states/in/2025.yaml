@@ -159,8 +159,10 @@ mailing_addresses:
       Box 7224 with payment; P.O. Box 40 for all other filings)
     url: https://forms.in.gov/Download.aspx?id=16915
 payment:
-  check_payee: DOR (money order, cashier's check or personal check made payable to DOR; all payments to DOR must
-    be made with U.S. funds)
+  # Phase K JK5: the payee was "DOR", from the booklet's in-person district-office paragraph; the IT-40 itself
+  # prints the payee on line 26.
+  check_payee: 'Indiana Department of Revenue (2025 Form IT-40, line 26: "Do not send cash. Make your check or money
+    order payable to: Indiana Department of Revenue.")'
   web_pay_url: https://intime.dor.in.gov
 deadlines:
   filing_due_date: '2026-04-15'

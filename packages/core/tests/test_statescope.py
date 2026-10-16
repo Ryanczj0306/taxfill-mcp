@@ -77,6 +77,22 @@ def test_wages_only_exempt_state_flags_the_caveat():
     assert any("capital-gains" in w.lower() or "capital gains" in w.lower() for w in wa.warnings)
 
 
+def test_washington_names_its_2025_tier_with_the_statute_and_the_dor_notice():
+    # Phase K JK5: the note said a flat 7% for every year and the entry read income_tax true beside "does not tax
+    # wages"; the 2.9% tier above $1 million starts with tax year 2025 (RCW 82.87.040(1)(b)).
+    r = state_scope(_profile(2025, lived=[_rp("WA", date(2025, 1, 1), date(2025, 12, 31))]), 2025)
+    wa = _by_state(r)["WA"]
+    assert wa.income_tax is False and wa.must_file is False
+    assert any("from tax year 2025 an additional 2.9% on taxable gains over $1 million" in w for w in wa.warnings)
+    urls = [c.url for c in wa.citations]
+    assert urls[:3] == [
+        "https://app.leg.wa.gov/RCW/default.aspx?cite=82.87.040",
+        "https://app.leg.wa.gov/RCW/default.aspx?cite=82.87.060",
+        "https://dor.wa.gov/forms-publications/publications-subject/special-notices/new-tiered-rates-washingtons-capital-gains-tax",
+    ]
+    assert "Beginning January 1, 2025" in wa.citations[0].source
+
+
 def test_full_year_residence_is_resident():
     r = state_scope(_profile(lived=[_rp("CA", date(2023, 1, 1), date(2023, 12, 31))]), 2023)
     ca = _by_state(r)["CA"]

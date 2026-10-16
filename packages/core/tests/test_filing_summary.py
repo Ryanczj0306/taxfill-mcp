@@ -7,7 +7,7 @@ from datetime import date
 
 import pytest
 
-from taxfill_core.file_and_pay import FilingManifestItem
+from taxfill_core.file_and_pay import DRAFT_NOTICE, FilingManifestItem, file_and_pay
 from taxfill_core.filing_summary import filing_summary
 
 TODAY = date(2026, 6, 17)
@@ -56,6 +56,18 @@ def test_approval_framing_is_review_draft():
     summary = filing_summary([FilingManifestItem(form="1040", tax_year=2023, bottom_line=100)], today=TODAY)
     assert "REVIEW DRAFT" in summary.label
     assert "sign" in summary.approval_prompt.lower() and "approve" in summary.approval_prompt.lower()
+
+
+def test_the_label_and_the_filing_notes_carry_the_whole_disclaimer():
+    # Phase K JK5: docs/dev/ACCEPTANCE.md checks all three parts — a review draft, not tax advice,
+    # paper filing only. The release-candidate walkthrough found only the first.
+    manifest = [FilingManifestItem(form="1040", tax_year=2025, bottom_line=100)]
+    for text in (filing_summary(manifest, today=TODAY).label, file_and_pay(manifest, today=TODAY).overall_notes[0],
+                 DRAFT_NOTICE):
+        lowered = text.lower()
+        assert "review draft" in lowered and "not tax advice" in lowered, text
+        assert "paper filing only" in lowered, text
+    assert "does not e-file" in DRAFT_NOTICE
 
 
 def test_supported_state_summary_uses_the_pack():

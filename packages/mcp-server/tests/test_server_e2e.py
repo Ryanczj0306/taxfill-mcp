@@ -11,9 +11,13 @@ import asyncio
 import json
 
 import pytest
+from mcp.client.session import ClientSession
+from mcp.shared.memory import create_client_server_memory_streams
 from mcp.shared.memory import create_connected_server_and_client_session as connect
 from mcp.types import ImageContent
 
+import taxfill_mcp
+from taxfill_core.file_and_pay import DRAFT_NOTICE
 from taxfill_mcp.server import mcp
 
 EXPECTED_TOOLS = {
@@ -49,6 +53,26 @@ async def _call(name, args):
 
 
 # ── tool surface ───────────────────────────────────────────────────────────────
+
+
+def test_initialize_reports_this_packages_version_not_the_sdks():
+    """serverInfo.version is taxfill-mcp's release (Phase K JK5: it read "1.30.0", the mcp SDK's)."""
+
+    async def handshake():
+        server = mcp._mcp_server
+        async with create_client_server_memory_streams() as (client_streams, server_streams):
+            async with asyncio.TaskGroup() as tg:
+                task = tg.create_task(server.run(*server_streams, server.create_initialization_options()))
+                try:
+                    async with ClientSession(*client_streams) as client:
+                        result = await client.initialize()
+                        await client.send_ping()  # the server has handled notifications/initialized: a clean stop
+                        return result
+                finally:
+                    task.cancel()
+
+    info = _run(handshake()).serverInfo
+    assert (info.name, info.version) == ("taxfill", taxfill_mcp.__version__)
 
 
 def test_all_expected_tools_are_listed_with_schemas():
@@ -439,6 +463,7 @@ def test_full_chain_fetch_fill_verify_render(tmp_path):
             filled = _data(await client.call_tool("fill_form", {"form": "f8843", "year": 2023, "values": values, "out_path": out}))
             # written reports the AcroForm field names actually set (>= the lines we asked for).
             assert len(filled["written"]) >= len(values)
+            assert filled["notice"] == DRAFT_NOTICE  # review draft, not tax advice, paper filing only
 
             report = _data(await client.call_tool("verify_form", {"form": "f8843", "year": 2023, "pdf_path": out, "expected": values}))
             # The values we set must read back cleanly (assertion diff has no failures).

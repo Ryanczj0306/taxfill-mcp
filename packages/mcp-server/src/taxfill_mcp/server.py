@@ -82,12 +82,14 @@ from taxfill_core.handfill import (
 from taxfill_core.schemas.handfill import HandFillPack
 from taxfill_core.knowledge import provisional_marker
 from taxfill_core.estimate import IncomeSnapshot
-from taxfill_core.file_and_pay import FilingManifestItem
+from taxfill_core.file_and_pay import DRAFT_NOTICE, FilingManifestItem
 from taxfill_core.residency import classify as _classify
 from taxfill_core.scenarios import compare_scenarios as _compare_scenarios
 from taxfill_core.schemas.profile import Profile
 from taxfill_core.verify import FilingItem, VerifyReport
 from taxfill_core.workspace import Position, Workspace, default_workspace_root
+
+from taxfill_mcp import __version__
 
 # Resolved through the shared resolver (env var -> existing ./taxfill-workspace
 # -> ~/taxfill-workspace) so the server, the CLI and `taxfill purge` always
@@ -115,6 +117,10 @@ mcp = FastMCP(
         "file_and_pay -> workspace_reconcile."
     ),
 )
+# FastMCP 1.x takes no version, and the low-level server it wraps then reports the
+# mcp SDK's own version as serverInfo.version, so clients saw "1.30.0" (Phase K
+# JK5). Report this package's release instead.
+mcp._mcp_server.version = __version__
 
 
 def _dump(model: Any) -> Any:
@@ -255,7 +261,8 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
     """Deterministically fill a form. `values` maps line ids (per get_form_map) to values.
 
     Downloads/uses the official blank, writes the filled PDF to out_path, and returns the
-    written lines + any warnings, plus `guards_hidden` (P-027): the page-covering viewer-guard
+    written lines + any warnings, the `notice` to relay to the user (a review draft, not tax
+    advice, for paper filing only), plus `guards_hidden` (P-027): the page-covering viewer-guard
     widgets the filler set Hidden so the return prints in any viewer (AL Form 40's "use Adobe
     Reader" panel and white print lids, MO-1040's print lids); every written widget is made
     viewable and printable. Rejects unknown lines and comb/length violations. No
@@ -291,9 +298,10 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
             "render_mode": "hand_fill_overlay",
             **_dump(result),
             "worksheet": _dump(_hand_fill_worksheet(pack, values)),
+            "notice": DRAFT_NOTICE,
         }
     return {"out_path": out_path, "written": result.written, "warnings": result.warnings,
-            "guards_hidden": result.guards_hidden}
+            "guards_hidden": result.guards_hidden, "notice": DRAFT_NOTICE}
 
 
 @mcp.tool()

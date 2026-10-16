@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**10,037 tests** — offline 8,455 + live-.gov 1582; derived
+Done and on `main` (**10,086 tests** — offline 8,503 + live-.gov 1583; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -281,6 +281,10 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
   - **Unmeasured text budgets.** 1,590 text lines in 123 packs carry a pack maxlen on a widget without /MaxLen; only the 11 CA address rows are render-measured (MEASURED_WITHOUT_MAXLEN in test_pack_maxlen.py). Probe-render the tier-1 packs' address, name and SSN boxes first.
   - **IA 1040 line 12 and the tax reduction worksheet.** The floored `12 == max(7 - 11, 0)` (2023-2025) still fails a correct return that uses the Income Tax Reduction Worksheet (41-146; the Step 5 box, `alt_tax_method`); the relation language has no condition. Add one, or skip the relation when the box is checked.
   - **Workspace paths in tool results.** fetch_blank returns the cached blank's absolute path (the agent needs it), and fill / overlay refusals echo a PDF path the agent passed in. Both are by design; a shared transcript still shows the home folder, so decide whether results should carry `~` paths.
+  - **Page-header mirrors (JK5).** Many forms repeat the filer's name and SSN at the top of later pages, and the packs map those boxes as separate lines under about ten key conventions (CA 540 `name.full` and `identifying_number.page6` on Sides 2-6; `identifying_number_page2`, `name_page2`, `name_p2`, `ssn_p2_*`, `name_on_page2`, `identifying_number.echo`, …). Nothing fills or checks them: the JK5 walkthrough's CA 540 printed blank headers on Sides 2-6 and verify passed. Add a pack-level `mirrors` declaration (mirror line → its source line, or a composed name) that fill_form fills when the caller leaves it out and verify_form checks.
+  - **State credits past the rate-schedule line (JK5).** calc's `state_tax` stops at the rate-schedule tax (CA 540 line 31). California's exemption credits ($153 / $475; lines 7-11 and 32) appear only in its `work` text, so an agent completing the return does that subtraction itself; verify's relations catch a wrong one, and since JK5 a blank total line is told the value the form's own arithmetic gives. Return the exemption credits as structured fields, CA first, then the other states whose exemptions are credits.
+  - **SSN comb offset on IRS hybrid forms (JK5).** The AcroForm comb spans the whole SSN rectangle (107 pt on the 2025 Form 1040, so 4.19 mm cells) while the printed dashes follow the XFA layout's ~3.83 mm cells, so the dashes cross the third and fifth digits in any viewer that draws the AcroForm comb (Acrobat too, now the XFA layer is dropped). Cosmetic, since every digit is in its box. A fix would write the comb appearance from the XFA geometry or reshape the widget rectangle; measure first.
+  - **W-2 code titles by year (JK5).** The box 12 code table carries the 2026 instructions' titles (codes F and S name Roth SEP and Roth SIMPLE contributions, which began in 2023), so a 2019-2022 W-2's V25 finding shows the newer title beside an older year's citation.
   - **Acceptance:** each item fixed with a test that fails before and passes after, or closed with a written reason per pack.
 - [ ] **JK5 — Release-candidate dry run** (M; deps JK0, JK0a, JK1-JK4, JA1, JK27; latest start 2026-10-21)
   - Cut from a pushed, CI-green commit after the JK0 wave stops committing.
