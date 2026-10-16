@@ -2,7 +2,7 @@
 
 **Your AI assistant prepares a paper U.S. tax return: taxfill fills the official PDFs, verifies every number, and tells you exactly how to sign and mail it.**
 
-![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange)
+![PyPI](https://img.shields.io/pypi/v/taxfill-mcp)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
 ![Tests: 10,086 passing](https://img.shields.io/badge/tests-10%2C086%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
@@ -28,37 +28,30 @@ The AI interviews and reasons with you; taxfill does the arithmetic, PDF field m
 
 ## Quickstart
 
-> **Pre-release:** runs from a source checkout. It is **not on PyPI yet**, so `uvx taxfill-mcp` and the one-click
-> `.mcpb` bundle are not available yet. Known gaps: [FAQ](docs/USER_GUIDE.md#faq).
-
-You need [`uv`](https://docs.astral.sh/uv/) (it installs Python for you) and `git`.
-
-```bash
-git clone https://github.com/Ryanczj0306/taxfill-mcp
-cd taxfill-mcp
-uv sync                 # creates the venv, installs both packages
-uv run taxfill tools    # smoke test: lists every tool (your agent starts the server itself)
-```
-
-Then connect your agent, using the **absolute path** to the checkout, and install the workflow skill so the agent
-follows taxfill's rules (you confirm every value before filling; the verify gate is mandatory):
+You need [`uv`](https://docs.astral.sh/uv/) (it installs Python for you). Connect your agent to the published server
+and install the workflow skill so the agent follows taxfill's rules (you confirm every value before filling; the
+verify gate is mandatory). Known gaps: [FAQ](docs/USER_GUIDE.md#faq).
 
 - **Claude Code** — add the server for every project, then install the skill:
   ```bash
-  claude mcp add --scope user taxfill -- uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill-mcp
-  mkdir -p ~/.claude/skills/taxfill && cp skills/claude/SKILL.md ~/.claude/skills/taxfill/
+  claude mcp add --scope user taxfill -- uvx taxfill-mcp
+  mkdir -p ~/.claude/skills/taxfill && curl -fsSL https://raw.githubusercontent.com/Ryanczj0306/taxfill-mcp/v0.1.0/skills/claude/SKILL.md -o ~/.claude/skills/taxfill/SKILL.md
   ```
 
-- **Claude Desktop / Cowork** — merge this into the `mcpServers` object of `claude_desktop_config.json` (Settings →
-  Developer → Edit Config) and restart the app; then, with code execution enabled, upload a ZIP of the `skills/claude`
-  folder as a skill ([how](https://support.claude.com/en/articles/12512180-use-skills-in-claude)):
+- **Claude Desktop / Cowork** — download `taxfill.mcpb` from the
+  [latest release](https://github.com/Ryanczj0306/taxfill-mcp/releases/latest) and open it. The bundle uses the MCPB
+  format's experimental uv runtime; if your build refuses it, merge this into the `mcpServers` object of
+  `claude_desktop_config.json` (Settings → Developer → Edit Config) and restart the app instead. Then, with code
+  execution enabled, upload a ZIP of the `skills/claude` folder as a skill
+  ([how](https://support.claude.com/en/articles/12512180-use-skills-in-claude)):
   ```json
-  { "mcpServers": { "taxfill": {
-      "command": "uv",
-      "args": ["run", "--project", "/ABSOLUTE/PATH/TO/taxfill-mcp", "taxfill-mcp"] } } }
+  { "mcpServers": { "taxfill": { "command": "uvx", "args": ["taxfill-mcp"] } } }
   ```
 
-- **Codex CLI / Copilot** — put the same `uv run … taxfill-mcp` command in their MCP config, and copy the matching
+- **From a source checkout** (developers): `git clone https://github.com/Ryanczj0306/taxfill-mcp`, `uv sync`, then
+  use `uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill-mcp` wherever this section says `uvx taxfill-mcp`.
+
+- **Codex CLI / Copilot** — put `uvx taxfill-mcp` in their MCP config, and copy the matching
   instructions where the agent reads them: [`skills/codex/AGENTS.md`](skills/codex/AGENTS.md) into the folder you run
   Codex from (or `~/.codex/AGENTS.md`), or [`skills/copilot/instructions.md`](skills/copilot/instructions.md) to
   `.github/copilot-instructions.md` in your workspace.

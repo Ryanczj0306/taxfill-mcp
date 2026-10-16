@@ -117,8 +117,7 @@ The packed file holds exactly `manifest.json`, `pyproject.toml` and
 - Reuse the disclaimer from the top-level README: not tax advice, not a
   preparer, review-draft only, paper filing — no e-file.
 
-## Until then
+## Without the bundle
 
-Until `taxfill-mcp` is on PyPI the bundle cannot launch anything. Use the
-from-source quickstart in the top-level [README](../../../README.md#quickstart)
-(`uv run taxfill-mcp` + `claude mcp add … uv run --project … taxfill-mcp`).
+If a Claude Desktop build refuses the bundle, connect `uvx taxfill-mcp` directly: see the
+[README quickstart](../../../README.md#quickstart).

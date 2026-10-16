@@ -1,6 +1,6 @@
 # Tool reference
 
-All 23 tools are available today (from source); the server registers exactly 23 (CI-asserted).
+All 23 tools are available today; the server registers exactly 23 (CI-asserted).
 
 A typical session calls them in this order: `intake_checklist` → read and confirm each document
 (`list_document_kinds`, `extract_document`) → `estimate_refund` → `residency` / `state_scope` → `list_forms` /
@@ -49,7 +49,7 @@ uv run taxfill call render_form '{"pdf_path": "filled.pdf", "pages": [1], "dpi":
 ```
 
 From a source checkout the CLI runs through `uv run` — inside the checkout, or from anywhere with
-`uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill …`. Once taxfill is installed from PyPI, `taxfill` is on
+`uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill …`. Installed from PyPI, `taxfill` is on
 your `PATH` and the `uv run` prefix goes away.
 
 `call` prints the tool's structured result as JSON on stdout; `render_form`'s page

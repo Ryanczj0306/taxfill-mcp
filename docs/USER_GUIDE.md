@@ -68,7 +68,7 @@ number, the mandatory verify gate), so do not skip it:
 
 Then ask your agent something like *"Help me prepare my 2025 federal return."* — it starts the interview.
 
-**Coming with v0.1 (once published to PyPI):**
+**From PyPI (v0.1):**
 
 - **Claude Desktop / Cowork** — one-click MCPB bundle (`taxfill.mcpb`): download, double-click, done. The primary path for non-technical users.
 - **Claude Code:** `claude mcp add --scope user taxfill -- uvx taxfill-mcp` (`uvx` bootstraps Python; no checkout needed).
@@ -150,7 +150,7 @@ An abbreviated, synthetic walkthrough (a hypothetical filer with demo numbers: a
 - **Errors are redacted.** Identifier-shaped content (SSN/ITIN patterns, long digit runs) is masked before any error echoes a value — in the engine's own errors AND the CLI, because tool errors land in your agent's transcript.
 - **Your data lives in one place you own:** `~/taxfill-workspace/<year>/` (override with `TAXFILL_WORKSPACE`; an existing `./taxfill-workspace` from an earlier release keeps working). The saved profile and source documents are under it. Filled PDFs go wherever the agent's `fill_form` `out_path` points — the skill files tell the agent to use the year's `drafts/` folder (`~/taxfill-workspace/<year>/drafts/`), so the purge below removes them too; if you asked for another folder, delete those files yourself.
 - Any documents you save locally hold sensitive data at rest — keep OS disk encryption on (FileVault / BitLocker).
-- The workspace can be wiped any time with a single `uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill purge <year>` (once installed from PyPI, just `taxfill purge <year>`), which overwrites the file bytes before deleting (best-effort on copy-on-write filesystems/SSDs — see [SECURITY.md](../.github/SECURITY.md) for the honest caveat); also delete any files you saved yourself when you're done.
+- The workspace can be wiped any time with a single `uv run --project /ABSOLUTE/PATH/TO/taxfill-mcp taxfill purge <year>` (installed from PyPI: `taxfill purge <year>`), which overwrites the file bytes before deleting (best-effort on copy-on-write filesystems/SSDs — see [SECURITY.md](../.github/SECURITY.md) for the honest caveat); also delete any files you saved yourself when you're done.
 - Found a way any of this fails? [SECURITY.md](../.github/SECURITY.md) has the private reporting channel.
 
 ## Troubleshooting
@@ -179,8 +179,7 @@ No, by design. Output is a paper return: you print it, sign it, and mail it (the
 Free. Open source, MIT licensed, runs on your own machine.
 
 **What isn't supported yet?**
-taxfill is pre-release: it is not on PyPI yet, so the one-line `uvx` install, the one-click `.mcpb` bundle and the
-demo GIF are still to come. A state return fills for all 42 income-tax jurisdictions in TY2023 and TY2025 and 41 in
+A state return fills for all 42 income-tax jurisdictions in TY2023 and TY2025 and 41 in
 TY2024 — check your state in [COVERAGE.md](COVERAGE.md). For TY2024 and TY2025, separate nonresident / part-year
 returns are mapped only for California (Form 540NR) and New York (IT-203) (TY2023 adds Alabama, Arkansas, Arizona
 and Delaware); where one return serves every filer (PA-40, for example), the residency boxes are mapped but most

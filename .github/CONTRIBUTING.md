@@ -4,8 +4,8 @@ Thanks for your interest in contributing! taxfill-mcp is an open-source (MIT) ex
 layer for AI tax prep: guided intake, deterministic form filling, mandatory verification,
 and file-and-pay instructions, consumable by any MCP client.
 
-**Project status:** pre-release. Everything runs today from a source checkout (see the
-[README quickstart](../README.md#quickstart)); nothing is published to PyPI yet. The design spec is
+**Project status:** v0.1 is on PyPI (`taxfill-mcp`, `taxfill-core`; see the
+[README quickstart](../README.md#quickstart)); development runs from a source checkout. The design spec is
 [docs/dev/DEV_PLAN.md](../docs/dev/DEV_PLAN.md), and the remaining work is planned in
 [docs/dev/ROADMAP.md](../docs/dev/ROADMAP.md).
 
@@ -138,7 +138,7 @@ This is enforced by the PR template and by that CI gate — not on the honor sys
 
 ## Development setup
 
-The packages are not on PyPI yet, but local development works today:
+Local development:
 
 ```bash
 git clone https://github.com/Ryanczj0306/taxfill-mcp

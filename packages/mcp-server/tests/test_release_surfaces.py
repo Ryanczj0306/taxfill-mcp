@@ -232,8 +232,6 @@ def test_the_bundle_manifest_runs_its_entry_point_with_uv():
 # ── (d) the repo-only surfaces, flipped after the upload ─────────────────────
 
 
-@pytest.mark.xfail(strict=True, reason="the repo-only surfaces flip after the PyPI upload (ROADMAP A6, after JA2); "
-                                       "the flip commit removes this marker")
 def test_no_repo_only_surface_still_reads_pre_release():
     hits = [f"{rel}:{n}: {line.strip()}" for rel in REPO_ONLY_SURFACES
             for n, line in enumerate((REPO / rel).read_text(encoding="utf-8").splitlines(), 1)
