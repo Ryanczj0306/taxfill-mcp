@@ -396,12 +396,15 @@
 # federal f1040 35b / 35d combs), the Form 5632 accountnumber-1..4 ("Enter
 # the 11-digit MOST 529 account number") and the MO-TC t.tc_bn1 ("The number
 # is the last six (6) digits of the number ... enter 123456"; its rows 2-10
-# are plain /Tx widgets without the flag). Comb widgets that stay plain
-# text, each with a row comment: the page-1 SSN_1 / SSN_2 (11 cells whose
-# cells 4 and 7 sit on the two printed dashes of the 3-2-4 boxes, so the
-# value is written WITH its dashes, "123-45-6789"; digits only would land
-# digits on the dashes), FEIN ("Preparer's FEIN, SSN, or PTIN" — a PTIN
-# starts with a letter), the two-letter state cells t.crp_state1* /
+# are plain /Tx widgets without the flag). The page-1 SSN_1 / SSN_2 are
+# 11-cell combs whose cells 4 and 7 sit on the two printed dashes of the
+# 3-2-4 boxes: `comb: true` with `format: ssn_dash_cells`, the one comb the
+# filler writes WITH its dashes ("999-88-7777", however the SSN is given),
+# and verify compares them by their digits (Phase K JK28, 2026-10-23; they
+# were plain text the caller had to type dashed, so 9 bare digits put the
+# 4th on the first dash). Comb widgets that stay plain text, each with a
+# row comment: FEIN ("Preparer's FEIN, SSN, or PTIN" — a PTIN starts with
+# a letter), the two-letter state cells t.crp_state1* /
 # t.crp_llstate1*, the trust-fund code cells line51m_tfcd / line51n_tfcd
 # (the face only says "See instructions for additional trust fund codes"),
 # and the MO-TC d.tc_charterno / d.tc_mitsno (no character set printed).
@@ -564,18 +567,26 @@ fields:
     field: "nonoblig-S"
     type: checkbox
     on_state: "/X"
-  - line: "SSN_1"  # 11-cell comb whose cells 4 and 7 sit on the printed dashes of the 3-2-4 boxes — write it WITH dashes (123-45-6789); not comb: true (digits only would misplace)
+  # Phase K JK28 (2026-10-23): SSN_1 / SSN_2 are 11-cell comb widgets (/Ff comb bit, /MaxLen 11) printed as
+  # three boxes (3, 2 and 4 digits) with a dash between them: cells 4 and 7 fall on the printed dashes.
+  # format: ssn_dash_cells writes 'ddd-dd-dddd' however the SSN is given, so each digit lands in its box (9 bare
+  # digits printed the 4th on the first dash), and verify compares the line by its digits.
+  - line: "SSN_1"  # 11-cell comb: 3-2-4 boxes, cells 4 and 7 on the printed dashes
     field: "SSN_1"
     type: text
     maxlen: 11
+    comb: true
+    format: ssn_dash_cells
   - line: "decease-1"
     field: "decease-1"
     type: checkbox
     on_state: "/X"
-  - line: "SSN_2"  # spouse — same 11-cell dashed comb as SSN_1; write it WITH dashes
+  - line: "SSN_2"  # spouse — the same 11-cell comb as SSN_1
     field: "SSN_2"
     type: text
     maxlen: 11
+    comb: true
+    format: ssn_dash_cells
   - line: "decease2"
     field: "decease2"
     type: checkbox

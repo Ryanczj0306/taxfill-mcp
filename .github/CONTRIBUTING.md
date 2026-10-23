@@ -56,7 +56,9 @@ fields:
     type: text
     maxlen: 9
     comb: true                   # comb cells take digits only
-    format: ssn_digits_only      # dashes overflow comb cells (pitfall P-001)
+    format: ssn_digits_only      # dashes overflow comb cells (pitfall P-001); an 11-cell comb whose printed face
+                                 # puts dashes in cells 4 and 7 is ssn_dash_cells instead (formpacks/CONVENTIONS.md,
+                                 # "Comb boxes and their printed separators")
   - line: "filing_status.single"
     field: "Page1[0].c1_1[0]"
     type: checkbox

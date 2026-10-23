@@ -11,9 +11,16 @@ Documented rendering rules (mirror of the filler's spec, on purpose):
 
 * **money** lines are filled in WHOLE DOLLARS: IRS rounding (50 cents or
   more rounds away from zero), rendered as a plain integer string with no
-  commas, currency symbols, or cents (``1234.50 -> "1235"``, ``-2.5 -> "-3"``);
+  commas, currency symbols, or cents (``1234.50 -> "1235"``, ``-2.5 -> "-3"``).
+  A ``format: money_comma_cells`` line (a comb whose printed face spends
+  cells on commas: the OR Form OR-40 dollar boxes) is written comma-grouped
+  (``1,234,567``); :func:`parse_money` drops the commas on the way back, so
+  the line verifies, and relations and the recompute see the number;
 * **comb** fields — and any field with ``format: ssn_digits_only`` — take
-  DIGITS ONLY; dashes overflow comb cells (pitfall P-001);
+  DIGITS ONLY; dashes overflow comb cells (pitfall P-001). The exception is
+  ``format: ssn_dash_cells``, an 11-cell comb whose printed face puts a dash
+  in cells 4 and 7: it is written 'ddd-dd-dddd'. Every such line is compared
+  by its digits, so a value written with or without its dashes verifies;
 * plain **text** is stripped and internal whitespace runs collapse to one
   space;
 * **checkboxes** carry the pack's ``on_state`` when checked and ``"/Off"``
@@ -165,13 +172,20 @@ from taxfill_core.datadir import home_display, user_path
 from taxfill_core.fetch import cached_blank_path
 from taxfill_core.knowledge import assert_pack_filing_grade
 from taxfill_core.schemas.formpack import (
+    SSN_DASH_CELLS,
+    SSN_DASH_CELLS_MAXLEN,
+    SSN_DASH_CELLS_RE,
+    SSN_DIGITS_ONLY,
+    SSN_FORMATS,
     FormPack,
     PackField,
+    mirror_digit_lines,
     mirror_ladder,
     mirror_order,
     mirror_sources,
     mirror_words,
     split_relation_guard,
+    ssn_dash_cells_text,
 )
 from taxfill_core.textfit import Fit, WidgetBox, widget_box
 from taxfill_core.textfit import fit as box_fit
@@ -380,7 +394,7 @@ def expected_rendering(pack_field: PackField, value: object) -> str:
             )
         return render_money(parsed)
     text = str(value)
-    if pack_field.comb or pack_field.format == "ssn_digits_only":
+    if pack_field.comb or pack_field.format in SSN_FORMATS:
         # P-026: the literal 'NRA' belongs in the MFS entry space, never in an SSN or
         # comb box, and the filler refuses it there. It still survives normalization on
         # EVERY such line so it can never digit-strip to "": an assertion of 'NRA' fails
@@ -401,7 +415,7 @@ def normalize_on_disk(pack_field: PackField, raw: str) -> str:
     if pack_field.type == "money":
         parsed = parse_money(raw)
         return render_money(parsed) if parsed is not None else normalize_text(raw)
-    if pack_field.comb or pack_field.format == "ssn_digits_only":
+    if pack_field.comb or pack_field.format in SSN_FORMATS:
         if raw.strip().upper() == "NRA":  # P-026: see expected_rendering
             return "NRA"
         return digits_only(raw)
@@ -2533,7 +2547,7 @@ _NUMBER_SHAPE_RE = re.compile(r"[0-9 -]+")
 
 def _mirror_key(pack_field: PackField, text: str) -> str:
     """How a mirror is compared: whitespace-collapsed and case-insensitive, digits only on a comb or SSN line."""
-    if pack_field.comb or pack_field.format == "ssn_digits_only":
+    if pack_field.comb or pack_field.format in SSN_FORMATS:
         digits = digits_only(text)
         if digits:
             return digits
@@ -2577,8 +2591,16 @@ def _abbreviates(header: str, words: Sequence[tuple[str, bool]]) -> bool:
 
 
 def _mirror_written(pack_field: PackField, value: str) -> str:
-    """The text the filler writes for a built mirror value: an ``ssn_digits_only`` line drops dashes and spaces."""
-    return value.replace("-", "").replace(" ", "") if pack_field.format == "ssn_digits_only" else value
+    """The text the filler writes for a built mirror value: an ``ssn_digits_only`` line drops dashes and spaces, and
+    an ``ssn_dash_cells`` line writes 9 digits as 'ddd-dd-dddd' (Phase K JK28, 2026-10-23)."""
+    if pack_field.format == SSN_DIGITS_ONLY:
+        return value.replace("-", "").replace(" ", "")
+    if pack_field.format == SSN_DASH_CELLS:
+        digits = value.replace("-", "").replace(" ", "")
+        if len(digits) == 9 and digits.isdigit():
+            return ssn_dash_cells_text(digits)
+        return digits
+    return value
 
 
 def _mirror_box_refusal(pack_field: PackField, value: str) -> str | None:
@@ -2589,14 +2611,20 @@ def _mirror_box_refusal(pack_field: PackField, value: str) -> str | None:
     digits only. fill_form leaves a mirror blank, with a warning, when its built value breaks one of them. Whether a
     plain box has ROOM for a value (its maxlen and its width) is :func:`_mirror_room`'s question.
     """
-    if (pack_field.comb or pack_field.format == "ssn_digits_only") and value.strip().upper() == "NRA":
+    if (pack_field.comb or pack_field.format in SSN_FORMATS) and value.strip().upper() == "NRA":
         return "'NRA' never goes in an identifying-number or comb box, P-026"
+    if pack_field.format == SSN_DASH_CELLS:
+        digits = value.replace("-", "").replace(" ", "")
+        if not pack_field.comb or pack_field.maxlen != SSN_DASH_CELLS_MAXLEN:
+            return f"format '{SSN_DASH_CELLS}' needs an {SSN_DASH_CELLS_MAXLEN}-cell comb line (fix the pack)"
+        if digits and (len(digits) != 9 or not digits.isdigit()):
+            return "the box takes a 9-digit SSN or ITIN in its 3-2-4 cells"
     if not pack_field.comb:
         return None
     text = _mirror_written(pack_field, value)
     if pack_field.maxlen is not None and len(text) > pack_field.maxlen:
         return f"it is {len(text)} characters and the box takes at most {pack_field.maxlen}"
-    if text and not text.isdigit():
+    if text and not text.isdigit() and not (pack_field.format == SSN_DASH_CELLS and SSN_DASH_CELLS_RE.fullmatch(text)):
         return "a comb box takes digits only"
     return None
 
@@ -2672,7 +2700,8 @@ def _mirror_check(
     actual = normalize_text(raw)
     name = f"page-header mirror '{mirror}'{where}"
     shortenable = pack.mirror_abbreviations.get(mirror, [])
-    ladder = mirror_ladder(template, on_disk, shortenable)
+    digit_lines = mirror_digit_lines(pack.fields)  # Phase K JK28 (2026-10-23): SSN-format slices read digits
+    ladder = mirror_ladder(template, on_disk, shortenable, digit_lines=digit_lines)
     if not ladder:
         held = (f"; the box holds {actual!r}, which no line of this form backs — confirm it at review" if actual
                 else "")
@@ -2713,7 +2742,8 @@ def _mirror_check(
             f" ({room.detail})" if room.fits else f" (its width was not measured: {room.detail})"
         )
         return PASS, f"{name} repeats {full!r}, as its template {template!r} builds it{measured}", actual
-    words = [(word.casefold(), short) for word, short in mirror_words(template, on_disk, shortenable)]
+    words = [(word.casefold(), short) for word, short in mirror_words(template, on_disk, shortenable,
+                                                                         digit_lines=digit_lines)]
     if shortenable and _abbreviates(actual, words):
         said = (
             f"{name} holds {actual!r}, an abbreviation of {full!r} (its template {template!r}) that the pack's "

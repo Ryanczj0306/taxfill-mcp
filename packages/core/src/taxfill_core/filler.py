@@ -33,6 +33,19 @@ pypdf specifics encoded here (dev plan section 10):
 - comb fields take digits only, and ``format: ssn_digits_only`` strips
   dashes/spaces *before* the MaxLen check — a dashed SSN written into a
   9-cell comb field silently clips its last digits (pitfall P-001);
+- the one exception is ``format: ssn_dash_cells``, an 11-cell comb whose
+  printed face spends cells 4 and 7 on the SSN's two dashes (the OR Form
+  OR-40 boxes): it writes 'ddd-dd-dddd', so the dash cells get the dash and
+  each digit its printed cell, and it is refused on any widget that is not
+  an 11-cell comb (Phase K JK28, 2026-10-23);
+- a money line with ``format: money_comma_cells`` is a right-aligned comb
+  whose printed face puts a comma in every 4th cell from the right (the OR
+  Form OR-40 dollar boxes): it writes the whole dollars comma-grouped
+  ('1,234,567', a negative '-12,345'), so each comma cell gets the comma and
+  each digit its printed cell; a minus never takes a comma cell, so a 3- or
+  6-digit negative leaves that comma cell blank ('- 123', '- 123,456');
+  it is refused on a widget that is not such a
+  comb and for an amount the cells cannot hold (Phase K JK28, 2026-10-23);
 - a comb divides its widget /Rect into /MaxLen equal cells, and where the
   separators printed in the box follow a narrower grid (the IRS Form 1040
   and 1040-X SSN boxes) the written widget is narrowed to that grid first,
@@ -63,7 +76,22 @@ from pypdf.generic import ArrayObject, DictionaryObject, FloatObject, NameObject
 from taxfill_core.datadir import home_display, user_path, write_output
 from taxfill_core.knowledge import assert_pack_filing_grade, provisional_marker
 from taxfill_core.redact import redact
-from taxfill_core.schemas.formpack import FormPack, PackField, mirror_ladder, mirror_order
+from taxfill_core.schemas.formpack import (
+    MONEY_COMMA_CELLS,
+    MONEY_COMMA_CELLS_RE,
+    PACK_FORMATS,
+    SSN_DASH_CELLS,
+    SSN_DASH_CELLS_MAXLEN,
+    SSN_DASH_CELLS_RE,
+    SSN_DIGITS_ONLY,
+    FormPack,
+    PackField,
+    mirror_digit_lines,
+    mirror_ladder,
+    mirror_order,
+    money_comma_cells_text,
+    ssn_dash_cells_text,
+)
 from taxfill_core.schemas.handfill import HandFillPack
 from taxfill_core.textfit import Fit, WidgetBox, widget_box
 from taxfill_core.textfit import fit as box_fit
@@ -71,10 +99,10 @@ from taxfill_core.textfit import fit as box_fit
 if TYPE_CHECKING:  # pragma: no cover - typing only; the runtime import is local (see fill_form)
     from taxfill_core.overlay import OverlayResult
 
-# The one input-normalization format the filler understands today.
-# Add new formats here AND in the docstring of PackField.format.
-_SSN_DIGITS_ONLY = "ssn_digits_only"
-_KNOWN_FORMATS = frozenset({_SSN_DIGITS_ONLY})
+# The input-normalization formats the filler understands (schemas.formpack.PACK_FORMATS: the SSN formats on text
+# lines, money_comma_cells on money lines). Add new formats there AND in the description of PackField.format.
+_SSN_DIGITS_ONLY = SSN_DIGITS_ONLY
+_KNOWN_FORMATS = PACK_FORMATS
 
 # P-026. An MFS filer whose nonresident-alien spouse has (and needs) no
 # SSN/ITIN writes the literal 'NRA' in the MFS ENTRY SPACE, never in the
@@ -138,6 +166,8 @@ def _nra_refusal(pack: FormPack | None, pf: PackField) -> str:
     takes = (
         "a real 9-digit SSN or ITIN (digits only) or stays blank"
         if pf.format == _SSN_DIGITS_ONLY
+        else "a real 9-digit SSN or ITIN (written into its 3-2-4 cells) or stays blank"
+        if pf.format == SSN_DASH_CELLS
         else "digits only (one digit per cell)"
     )
     head = (
@@ -240,7 +270,35 @@ def _render_text(pf: PackField, value: object, pack: FormPack | None = None) -> 
                 raise ValueError(_nra_refusal(pack, pf))
             # P-001: strip BEFORE the MaxLen check — dashes overflow comb cells.
             text = text.replace("-", "").replace(" ", "")
+        elif pf.format == SSN_DASH_CELLS:
+            text = _render_dash_cells(pf, text, pack)
     return text
+
+
+def _render_dash_cells(pf: PackField, text: str, pack: FormPack | None) -> str:
+    """``format: ssn_dash_cells``: 9 digits, given with or without dashes and spaces, as 'ddd-dd-dddd' (Phase K JK28).
+
+    The box is an 11-cell comb whose printed face puts a dash in cells 4 and 7 (the OR Form OR-40 SSN boxes); the
+    bare 9 digits would print from the first cell on, the 4th over the first dash and every later digit one or two
+    cells off its printed box. Only an 11-cell comb line takes the format (``fill_form`` also checks the widget)."""
+    if text.strip().upper() == _NRA_LITERAL:
+        raise ValueError(_nra_refusal(pack, pf))  # P-026: no SSN box takes 'NRA'
+    if not pf.comb or pf.maxlen != SSN_DASH_CELLS_MAXLEN:
+        raise ValueError(
+            f"line '{pf.line}': format '{SSN_DASH_CELLS}' is for an {SSN_DASH_CELLS_MAXLEN}-cell comb whose printed "
+            f"face puts a dash in cells 4 and 7, but this line is mapped with comb={pf.comb} and maxlen={pf.maxlen} "
+            f"— fix the pack: map the widget as it is (comb: true, maxlen: {SSN_DASH_CELLS_MAXLEN}) or use format "
+            f"'{SSN_DIGITS_ONLY}' for a 9-cell comb or a plain box"
+        )
+    digits = text.replace("-", "").replace(" ", "")
+    if not digits:
+        return ""
+    if len(digits) != 9 or not digits.isdigit():
+        raise ValueError(
+            f"line '{pf.line}': value '{redact(text)}' is not a 9-digit SSN or ITIN — this box prints 3-2-4 digit "
+            f"cells around two dash cells; pass the 9 digits (with or without dashes) or leave the line blank"
+        )
+    return ssn_dash_cells_text(digits)
 
 
 def _repair_empty_field_array(writer: PdfWriter) -> int:
@@ -357,6 +415,40 @@ def _render_money(pf: PackField, value: object) -> tuple[str, str | None]:
     return str(rounded), warning
 
 
+def _render_comma_cells(pf: PackField, whole: str) -> str:
+    """``format: money_comma_cells``: the whole-dollar rendering comma-grouped for its comb (Phase K JK28, 2026-10-23).
+
+    The box is a right-aligned comb whose printed face puts a comma in every 4th cell from the right (the OR Form
+    OR-40 dollar boxes: 3 digit cells, a comma cell, 3, a comma cell, 3); bare digits fill the cells from the right
+    with no regard for the comma cells, so 1234567 printed its 4 in a comma cell. A negative amount keeps its minus
+    sign, in the nearest digit cell left of its first digit: past a blank comma cell for a 3- or 6-digit amount
+    ('- 123', '- 123,456'), so it never overprints a printed comma. ``fill_form`` also checks the widget on the
+    blank."""
+    if not pf.comb or pf.maxlen is None:
+        raise ValueError(
+            f"line '{pf.line}': format '{MONEY_COMMA_CELLS}' is for a comb money line, but this line is mapped with "
+            f"comb={pf.comb} and maxlen={pf.maxlen} — fix the pack: map the widget as it is (comb: true, maxlen: "
+            f"<its /MaxLen>) or drop the format"
+        )
+    text = money_comma_cells_text(whole)
+    if len(text) > pf.maxlen:
+        digit_cells = pf.maxlen - pf.maxlen // 4
+        if text.startswith("-"):
+            # the minus takes a digit cell left of the first digit (one more, past a blank comma cell, for a 3-, 6- or
+            # 9-digit amount): name the most negative amount that fits
+            room = next(n for n in range(digit_cells, -1, -1) if len(money_comma_cells_text("-" + "9" * n)) <= pf.maxlen)
+            limit = (f"holds at most {money_comma_cells_text('-' + '9' * room)} when negative (the minus sign spends a "
+                     f"digit cell)" if room else "holds no negative amount")
+        else:
+            limit = f"holds at most {money_comma_cells_text('9' * digit_cells)}"
+        raise ValueError(
+            f"line '{pf.line}': {redact(text)} needs {len(text)} cells but this box has {pf.maxlen}, with a printed "
+            f"comma in every 4th, so it {limit} — check the amount; if it is right, the printed box cannot carry "
+            f"it: leave the line out of this fill and write it on the form by hand"
+        )
+    return text
+
+
 def _enforce_length(pf: PackField, rendered: str, pack: FormPack | None = None) -> None:
     """MaxLen and comb digits-only checks (P-001 clipping class)."""
     if pf.comb and rendered.strip().upper() == _NRA_LITERAL:
@@ -374,7 +466,9 @@ def _enforce_length(pf: PackField, rendered: str, pack: FormPack | None = None) 
             f"line '{pf.line}': value '{redact(rendered)}' is {len(rendered)} characters but the "
             f"field allows at most {pf.maxlen} — shorten it to {pf.maxlen} characters or fewer"
         )
-    if pf.comb and rendered and not rendered.isdigit():
+    dash_cells = pf.format == SSN_DASH_CELLS and SSN_DASH_CELLS_RE.fullmatch(rendered)
+    comma_cells = pf.format == MONEY_COMMA_CELLS and MONEY_COMMA_CELLS_RE.fullmatch(rendered)
+    if pf.comb and rendered and not rendered.isdigit() and not dash_cells and not comma_cells:
         raise ValueError(
             f"line '{pf.line}': comb fields take digits only (one digit per cell) — "
             f"value '{redact(rendered)}' contains non-digits; strip dashes, spaces and letters "
@@ -892,6 +986,82 @@ def _align_comb_cells(writer: PdfWriter, blank_pdf: Path, text_updates: Mapping[
     return changed
 
 
+def _refuse_dash_cells_off_comb(
+    writer: PdfWriter, pack: FormPack, text_updates: Mapping[str, str], blank_pdf: Path
+) -> None:
+    """Refuse a written ``ssn_dash_cells`` line whose widget on the blank is not an 11-cell comb (Phase K JK28).
+
+    'ddd-dd-dddd' lines its dashes up with printed dash cells only in an 11-cell comb; in any other widget the dashes
+    print as characters wherever they fall, so the pack is wrong for this blank and the fill stops."""
+    lines = {
+        (f"{pack.acroform_root}.{pf.field}" if pack.acroform_root else pf.field): pf.line
+        for pf in pack.fields
+        if pf.format == SSN_DASH_CELLS
+    }
+    targets = {name: line for name, line in lines.items() if text_updates.get(name)}
+    if not targets:
+        return
+    for page in writer.pages:
+        for ref in page.get("/Annots", []) or []:
+            annot = ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            name = _qualified_name(annot)
+            if name not in targets:
+                continue
+            max_len = _inherited_attr(annot, "/MaxLen")
+            comb = bool(int(_inherited_attr(annot, "/Ff") or 0) & _FF_COMB)
+            if comb and max_len is not None and int(max_len) == SSN_DASH_CELLS_MAXLEN:
+                continue
+            shape = f"a comb of {max_len} cells" if comb else "not a comb"
+            raise ValueError(
+                f"line '{targets[name]}': format '{SSN_DASH_CELLS}' writes 'ddd-dd-dddd' into an "
+                f"{SSN_DASH_CELLS_MAXLEN}-cell comb with printed dash cells, but field '{name}' on {blank_pdf.name} "
+                f"is {shape} — fix the pack for this blank (format '{SSN_DIGITS_ONLY}', and the widget's own "
+                f"comb and maxlen) or re-introspect the blank"
+            )
+
+
+def _refuse_comma_cells_off_comb(
+    writer: PdfWriter, pack: FormPack, text_updates: Mapping[str, str], blank_pdf: Path
+) -> None:
+    """Refuse a written ``money_comma_cells`` line whose widget on the blank is not a right-aligned comb of the pack's
+    maxlen cells (Phase K JK28, 2026-10-23).
+
+    A comma-grouped amount lines its commas up with the printed comma cells only when the viewer lays it out from the
+    right edge of exactly that many cells (/Ff comb bit, /MaxLen = the pack's maxlen, /Q 2); anywhere else the commas
+    print as characters wherever they fall, so the pack is wrong for this blank and the fill stops."""
+    lines = {
+        (f"{pack.acroform_root}.{pf.field}" if pack.acroform_root else pf.field): pf
+        for pf in pack.fields
+        if pf.format == MONEY_COMMA_CELLS
+    }
+    targets = {name: pf for name, pf in lines.items() if text_updates.get(name)}
+    if not targets:
+        return
+    for page in writer.pages:
+        for ref in page.get("/Annots", []) or []:
+            annot = ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            name = _qualified_name(annot)
+            pf = targets.get(name)
+            if pf is None:
+                continue
+            max_len = _inherited_attr(annot, "/MaxLen")
+            comb = bool(int(_inherited_attr(annot, "/Ff") or 0) & _FF_COMB)
+            quadding = int(_inherited_attr(annot, "/Q") or 0)
+            if comb and max_len is not None and int(max_len) == pf.maxlen and quadding == 2:
+                continue
+            shape = (f"a comb of {max_len} cells with /Q {quadding} (2 is right-aligned)" if comb else "not a comb")
+            raise ValueError(
+                f"line '{pf.line}': format '{MONEY_COMMA_CELLS}' writes a comma-grouped amount into a right-aligned "
+                f"comb of {pf.maxlen} cells with printed comma cells, but field '{name}' on {blank_pdf.name} is "
+                f"{shape} — fix the pack for this blank (drop the format, and map the widget's own comb and maxlen) "
+                f"or re-introspect the blank"
+            )
+
+
 def _annotation_flag_pass(writer: PdfWriter, written: Mapping[str, str]) -> list[str]:
     """P-027: every written widget becomes viewable and printable; every viewer guard is hidden.
 
@@ -1007,6 +1177,7 @@ def _fill_mirrors(
     if not pack.mirrors:
         return []
     by_line = {pf.line: pf for pf in pack.fields}
+    digit_lines = mirror_digit_lines(pack.fields)  # Phase K JK28 (2026-10-23): SSN-format slices read digits
     sources = dict(rendered)
     mirrored: list[str] = []
     for line in mirror_order(pack.mirrors):
@@ -1015,7 +1186,7 @@ def _fill_mirrors(
             continue  # a caller-supplied mirror always wins
         template = pack.mirrors[line]
         shortenable = pack.mirror_abbreviations.get(line, [])
-        ladder = mirror_ladder(template, sources, shortenable)
+        ladder = mirror_ladder(template, sources, shortenable, digit_lines=digit_lines)
         sources[line] = ""  # until it is written, a mirror reads as the blank it is (for a mirror of this mirror)
         if not ladder:
             continue  # every line the template reads is blank: nothing to mirror
@@ -1220,6 +1391,8 @@ def fill_form(
                 rendered, warning = _render_money(pf, value)
                 if warning:
                     warnings.append(warning)
+                if pf.format == MONEY_COMMA_CELLS:
+                    rendered = _render_comma_cells(pf, rendered)
             else:
                 rendered = _render_text(pf, value, pack)
             _enforce_length(pf, rendered, pack)
@@ -1303,6 +1476,8 @@ def fill_form(
             f"like {sample}; check the pack's acroform_root ('{pack.acroform_root}') "
             f"and field names, or re-introspect the blank PDF"
         )
+    _refuse_dash_cells_off_comb(writer, pack, text_updates, blank_pdf)
+    _refuse_comma_cells_off_comb(writer, pack, text_updates, blank_pdf)
 
     # P-028: the selected member of a checkbox group clears its separate-field siblings. A blank may
     # ship one of them pre-checked (GA 500's voucher "Paper Return"), and a sibling the caller did not

@@ -100,6 +100,70 @@ def _require_http_url(value: str, key: str) -> str:
     return value
 
 
+# PackField.format values that read an identifying number (Phase K JK28, 2026-10-23). Both take an SSN or ITIN with or
+# without dashes and spaces, and verify compares such a line by its digits however it was written.
+#   ssn_digits_only  the 9 digits alone: a 9-cell comb, or a plain box (P-001: dashes overflow a comb's cells).
+#   ssn_dash_cells   'ddd-dd-dddd': an 11-cell comb whose printed face spends cells 4 and 7 on the two dashes (the OR
+#                    Form OR-40 SSN boxes), so each dash cell gets the dash and each digit lands in its printed cell.
+SSN_DIGITS_ONLY = "ssn_digits_only"
+SSN_DASH_CELLS = "ssn_dash_cells"
+SSN_FORMATS = frozenset({SSN_DIGITS_ONLY, SSN_DASH_CELLS})
+SSN_DASH_CELLS_MAXLEN = 11
+SSN_DASH_CELLS_RE = re.compile(r"\d{3}-\d{2}-\d{4}")
+
+
+def ssn_dash_cells_text(digits: str) -> str:
+    """The 11 characters an ``ssn_dash_cells`` comb holds for 9 digits: 'ddd-dd-dddd' (Phase K JK28, 2026-10-23)."""
+    return f"{digits[:3]}-{digits[3:5]}-{digits[5:]}"
+
+
+# PackField.format for a MONEY line whose box is a comb that spends cells on printed thousands separators (Phase K
+# JK28, 2026-10-23).
+#   money_comma_cells  the whole-dollar amount comma-grouped ('1,234,567'), written into a right-aligned comb whose
+#                      printed face puts a comma in every 4th cell from the right, so each comma cell gets the comma
+#                      and each digit lands in its printed cell. A negative amount carries its minus sign in the
+#                      nearest DIGIT cell left of its first digit, never in a comma cell: '-5', '-12,345',
+#                      '-1,234,567' put it in the cell next to the first digit, but an amount of 3 or 6 (or 9) digits
+#                      has a comma cell there, which is left blank and the minus goes one cell further left
+#                      ('- 123', '- 123,456'), so the sign never overprints a printed comma (Phase K JK28 fix,
+#                      2026-10-23). verify reads the value back through parse_money, which drops the commas and the
+#                      space, so relations and the independent recompute see the number.
+# Census of every money line bound to a widget with the Comb bit (/Ff bit 25) on its pack's cached blank, 2026-10-23:
+# 576 lines in 12 packs; one representative widget per (pack, /MaxLen, width) rendered at 600 dpi with 1234567,
+# 12345 and 123 filled.
+#   OR Form OR-40 2023 / 2024 / 2025, lines 7-55b (48 / 46 / 48 lines): /MaxLen 11, /Q 2, 158 pt wide; printed as
+#       three boxes of 3 cells with a comma printed in the cell between two boxes (cells 4 and 8), then '.' and a
+#       printed '0 0'. Bare digits put a digit in a comma cell (1234567 printed '123[4]567'): money_comma_cells.
+#   LA Form IT-540 2023 / 2024 / 2025 (47 / 47 / 48 lines, /MaxLen 3-9), MA Form 1 2023 / 2025 (83 / 84 lines,
+#       /MaxLen 4-8) and VA Form 760 2023 / 2024 / 2025 (41 lines each, /MaxLen 3-9): the printed commas sit ON the
+#       rule between two digit cells and spend no cell, so the bare digits land one per printed cell. No format.
+#   IA 1040 2023 lines 32a / 32b (/MaxLen 9 and 17, /Q 0): the direct-deposit routing and account number boxes,
+#       digit cells only. No separator.
+# test_pack_invariants.py (network-marked, reading the cached blank) holds every money line on a comb widget to this
+# census: it uses the format or is listed with what its box prints; and the format is used only by a pack the census
+# found with comma cells (MONEY_COMBS_WITH_COMMA_CELLS there, offline), since on LA / MA / VA it would put commas in
+# digit cells.
+MONEY_COMMA_CELLS = "money_comma_cells"
+MONEY_FORMATS = frozenset({MONEY_COMMA_CELLS})
+PACK_FORMATS = SSN_FORMATS | MONEY_FORMATS
+# A digit group of 3 after a minus is written '- ddd': the cell between them is a printed comma cell, left blank.
+MONEY_COMMA_CELLS_RE = re.compile(r"(?:-?\d{1,2}|(?:- )?\d{3})(?:,\d{3})*")
+
+
+def money_comma_cells_text(whole: str) -> str:
+    """A whole-dollar amount as a ``money_comma_cells`` comb holds it: '1234567' -> '1,234,567', '-12345' ->
+    '-12,345' (Phase K JK28, 2026-10-23). ``whole`` is the filler's whole-dollar rendering: an optional '-', digits.
+
+    The minus sign takes the nearest digit cell left of the first digit: when the amount's leading group is a full
+    3 digits the cell next to it is a comma cell, so that cell is written blank and the minus goes one further left
+    ('-123' -> '- 123', '-123456' -> '- 123,456'), never on top of a printed comma."""
+    negative = whole.startswith("-")
+    grouped = f"{int(whole[1:] if negative else whole):,}"
+    if not negative or grouped == "0":
+        return grouped
+    return f"- {grouped}" if len(grouped.split(",")[0]) == 3 else f"-{grouped}"
+
+
 class PackField(BaseModel):
     """One line of the form mapped to one AcroForm field."""
 
@@ -112,7 +176,12 @@ class PackField(BaseModel):
     comb: bool = Field(default=False, description="True for comb fields (one character per cell).")
     format: str | None = Field(
         default=None,
-        description="Input normalization hint for the filler, e.g. 'ssn_digits_only' (dashes overflow comb cells).",
+        description=(
+            "Input normalization hint for the filler: 'ssn_digits_only' (dashes overflow comb cells), "
+            "'ssn_dash_cells' (an 11-cell comb whose printed face puts a dash in cells 4 and 7: written ddd-dd-dddd) "
+            "or, on a money line, 'money_comma_cells' (a right-aligned comb whose printed face puts a comma in every "
+            "4th cell from the right: written comma-grouped, 1,234,567)."
+        ),
     )
     on_state: str | None = Field(
         default=None,
@@ -172,6 +241,12 @@ class PackField(BaseModel):
                     f"field '{self.line}': comb fields require 'maxlen' "
                     f"(the number of comb cells) so the clipping scan can catch overflow"
                 )
+            if self.format == MONEY_COMMA_CELLS and (self.type != "money" or not self.comb):
+                raise ValueError(
+                    f"field '{self.line}': format '{MONEY_COMMA_CELLS}' is for a money line whose box is a comb with "
+                    f"printed comma cells, but this line is type {self.type} with comb={self.comb} — map it type: "
+                    f"money, comb: true and maxlen: <the widget's /MaxLen>, or drop the format"
+                )
         return self
 
 
@@ -224,7 +299,9 @@ OWN_FINAL_REVISION_FORMS = frozenset({("federal", "1040-ES")})
 #   {line}        the line's value as fill_form renders it (after the line's own formatting, e.g. ssn_digits_only)
 #   {line[a:b]}   a Python-style character slice of it: split SSN boxes ({ssn[0:3]}, {ssn[3:5]}, {ssn[5:9]}) and
 #                 truncations such as "first 10 characters of your last name" ({name.last[:10]}); a negative bound
-#                 counts from the end, and there is no step
+#                 counts from the end, and there is no step. A slice of a line in an SSN format (ssn_digits_only,
+#                 ssn_dash_cells) reads its 9 DIGITS, so {ssn[3:5]} is the middle two whether the line holds
+#                 999887777 or 999-88-7777 (Phase K JK28, 2026-10-23: the dashes shifted every slice past the first)
 #   [ ... ]       an optional segment, kept only when a placeholder inside it renders non-empty (the spouse's part of
 #                 a joint return's name line); segments do not nest
 #
@@ -383,26 +460,42 @@ def mirror_sources(template: str) -> tuple[str, ...]:
     return tuple(seen)
 
 
-def _slot_text(slot: MirrorSlot, values: Mapping[str, object]) -> str:
+def mirror_digit_lines(fields: Collection[PackField]) -> frozenset[str]:
+    """The lines a mirror slice reads by their digits: every line in an SSN format (Phase K JK28, 2026-10-23).
+
+    fill_form and verify pass it to the renderers below as ``digit_lines``."""
+    return frozenset(pf.line for pf in fields if pf.format in SSN_FORMATS)
+
+
+def _slot_text(slot: MirrorSlot, values: Mapping[str, object], digit_lines: Collection[str] = ()) -> str:
     value = values.get(slot.line)
     text = "" if value is None else _TEMPLATE_WS_RE.sub(" ", str(value)).strip()
+    if slot.line in digit_lines and (slot.start is not None or slot.stop is not None):
+        # An SSN-format line is sliced by its digits: 'ddd-dd-dddd' (ssn_dash_cells, or a value written with its
+        # dashes) and 'ddddddddd' give the same three boxes. A value that is not a number keeps its own characters.
+        digits = text.replace("-", "").replace(" ", "")
+        if digits.isdigit():
+            text = digits
     return text[slot.start:slot.stop]
 
 
-def render_mirror_pieces(template: str, values: Mapping[str, object]) -> list[tuple[str, str | None]]:
+def render_mirror_pieces(
+    template: str, values: Mapping[str, object], *, digit_lines: Collection[str] = ()
+) -> list[tuple[str, str | None]]:
     """The pieces :func:`render_mirror` joins, before its whitespace collapse, each with where it came from.
 
     ``(text, line)`` for a placeholder (the line it reads) and ``(text, None)`` for literal text, in template order,
     with every optional segment that prints expanded in place and every other one left out. Empty when every
     placeholder renders empty. :func:`mirror_words` reads the lines to apply a pack's ``mirror_abbreviations``.
+    A slice of a line in ``digit_lines`` (:func:`mirror_digit_lines`: the SSN-format lines) reads its digits.
     """
     pieces: list[tuple[str, str | None]] = []
     for part in parse_mirror_template(template):
         if isinstance(part, MirrorSlot):
-            pieces.append((_slot_text(part, values), part.line))
+            pieces.append((_slot_text(part, values, digit_lines), part.line))
         elif isinstance(part, MirrorSegment):
             inner = [
-                (piece, None) if isinstance(piece, str) else (_slot_text(piece, values), piece.line)
+                (piece, None) if isinstance(piece, str) else (_slot_text(piece, values, digit_lines), piece.line)
                 for piece in part.parts
             ]
             if any(text.strip() for text, line in inner if line is not None):
@@ -412,18 +505,20 @@ def render_mirror_pieces(template: str, values: Mapping[str, object]) -> list[tu
     return pieces if any(text.strip() for text, line in pieces if line is not None) else []
 
 
-def render_mirror(template: str, values: Mapping[str, object]) -> str:
+def render_mirror(template: str, values: Mapping[str, object], *, digit_lines: Collection[str] = ()) -> str:
     """Render a mirror template over ``values`` (line -> its value as fill_form renders it; a missing line is blank).
 
     The ONE renderer of the template language: fill_form calls it on the rendered values it is about to write and
     verify on the values it reads back from the PDF, so a template means the same thing on both sides. Returns ``""``
     when every placeholder renders empty, whatever literal text the template carries.
     """
-    pieces = render_mirror_pieces(template, values)
+    pieces = render_mirror_pieces(template, values, digit_lines=digit_lines)
     return _TEMPLATE_WS_RE.sub(" ", "".join(text for text, _ in pieces)).strip()
 
 
-def mirror_words(template: str, values: Mapping[str, object], shortenable: Collection[str]) -> list[tuple[str, bool]]:
+def mirror_words(
+    template: str, values: Mapping[str, object], shortenable: Collection[str], *, digit_lines: Collection[str] = ()
+) -> list[tuple[str, bool]]:
     """The words of :func:`render_mirror`'s value, in order, each flagged True when it may be abbreviated.
 
     A word may be abbreviated when every character of it comes from a placeholder in ``shortenable`` (the pack's
@@ -433,7 +528,7 @@ def mirror_words(template: str, values: Mapping[str, object], shortenable: Colle
     words: list[tuple[str, bool]] = []
     chars: list[str] = []
     may = True
-    for text, line in render_mirror_pieces(template, values):
+    for text, line in render_mirror_pieces(template, values, digit_lines=digit_lines):
         own = line is not None and line in shortenable
         for char in text:
             if char.isspace():
@@ -448,7 +543,10 @@ def mirror_words(template: str, values: Mapping[str, object], shortenable: Colle
     return words
 
 
-def mirror_ladder(template: str, values: Mapping[str, object], shortenable: Collection[str] = ()) -> list[str]:
+def mirror_ladder(
+    template: str, values: Mapping[str, object], shortenable: Collection[str] = (), *,
+    digit_lines: Collection[str] = (),
+) -> list[str]:
     """The values fill_form tries for a mirror, longest first: it writes the first one the mirror's box holds.
 
     The template's full value, then, when ``shortenable`` (the pack's ``mirror_abbreviations`` for the mirror) covers
@@ -457,11 +555,11 @@ def mirror_ladder(template: str, values: Mapping[str, object], shortenable: Coll
     others left out ("A WASHINGTON"). A rung equal to an earlier one is dropped. Empty when the template renders
     empty. verify computes the value a header must hold from the same ladder (Phase K JK28, 2026-10-16).
     """
-    full = render_mirror(template, values)
+    full = render_mirror(template, values, digit_lines=digit_lines)
     if not full:
         return []
     ladder = [full]
-    words = mirror_words(template, values, shortenable) if shortenable else []
+    words = mirror_words(template, values, shortenable, digit_lines=digit_lines) if shortenable else []
     may = [index for index, (_, short) in enumerate(words) if short]
     if not may:
         return ladder
@@ -860,7 +958,7 @@ class FormPack(BaseModel):
                     f"placeholders its header may abbreviate"
                 )
             pack_field, template = by_line[mirror], self.mirrors[mirror]
-            if pack_field.comb or pack_field.format == "ssn_digits_only":
+            if pack_field.comb or pack_field.format in SSN_FORMATS:
                 raise ValueError(
                     f"mirror_abbreviations: '{mirror}' is a comb or ssn_digits_only line, which verify compares digit "
                     f"for digit — an identifying number is never abbreviated; drop the entry"

@@ -37,8 +37,10 @@ from taxfill_core.discovery import get_form_map
 from taxfill_core.filler import fill_form
 from taxfill_core.overlay import text_width
 from taxfill_core.schemas.formpack import (
+    SSN_DASH_CELLS,
     FormPack,
     load_pack,
+    mirror_digit_lines,
     mirror_ladder,
     mirror_order,
     mirror_sources,
@@ -571,6 +573,60 @@ def test_jk28_verify_compares_a_number_by_its_digits_whatever_its_dashes():
     ]:
         (check,) = mirror_checks(pack, _dump(pack, {"tin": side1, "page2.tin": header}))
         assert check.status == status, (side1, header, check.detail)
+
+
+# --- Phase K JK28 (2026-10-23): a slice of an SSN-format line reads its digits ---------------------------------------
+
+DASH_CELL_FIELDS = [
+    {**field, "maxlen": 11, "format": SSN_DASH_CELLS} if field["line"] == "identifying_number" else field
+    for field in FIELDS
+]
+SSN_SPLIT = ("page2.ssn_area", "page2.ssn_group", "page2.ssn_serial")
+
+
+def test_jk28_a_slice_of_an_ssn_format_line_reads_its_digits():
+    template = "{ssn[0:3]}|{ssn[3:5]}|{ssn[5:]}|{ssn[-4:]}"
+    for written in ("999880101", "999-88-0101", "999 88 0101", " 999-880101 "):
+        assert render_mirror(template, {"ssn": written}, digit_lines={"ssn"}) == "999|88|0101|0101", written
+        assert mirror_ladder("{ssn[3:5]}", {"ssn": written}, digit_lines={"ssn"}) == ["88"], written
+    # the whole line is not a slice: it renders as written (the mirror's own format then renders it for its box)
+    assert render_mirror("{ssn}", {"ssn": "999-88-0101"}, digit_lines={"ssn"}) == "999-88-0101"
+    # a line in no SSN format keeps its characters, and a value that is not a number is sliced as text
+    assert render_mirror("{ssn[3:5]}", {"ssn": "999-88-0101"}) == "-8"
+    assert render_mirror("{ssn[:3]}", {"ssn": "NRA"}, digit_lines={"ssn"}) == "NRA"
+    pack = _pack(fields=DASH_CELL_FIELDS)
+    assert mirror_digit_lines(pack.fields) == {"identifying_number"}
+    assert mirror_digit_lines(_pack().fields) == {"identifying_number"}  # ssn_digits_only too
+
+
+@pytest.mark.parametrize("given", ["999880101", "999-88-0101"])
+def test_jk28_fill_form_splits_a_dash_cell_ssn_by_its_digits(tmp_path: Path, given: str):
+    """The source writes 'ddd-dd-dddd' (ssn_dash_cells): the split boxes still get 999 / 88 / 0101, not '-8' / '8-0101'
+    (each refused by its comb, so the boxes were left blank with a warning)."""
+    pack = _pack(fields=DASH_CELL_FIELDS)
+    out = tmp_path / "filled.pdf"
+    result = fill_form(pack, {**PERSON, "identifying_number": given}, _blank(pack, tmp_path / "blank.pdf"), out)
+    disk = _on_disk(pack, out)
+    assert disk["identifying_number"] == "999-88-0101"
+    assert tuple(disk[line] for line in SSN_SPLIT) == ("999", "88", "0101")
+    assert result.warnings == []
+    report = verify_form(pack, out)
+    assert {_mirror_check(report, line).status for line in SSN_SPLIT} == {"PASS"}, [
+        _mirror_check(report, line).detail for line in SSN_SPLIT]
+
+
+@pytest.mark.parametrize("fields", [FIELDS, DASH_CELL_FIELDS], ids=["ssn_digits_only", "ssn_dash_cells"])
+def test_jk28_verify_splits_an_ssn_source_by_its_digits_however_it_is_written(fields: list):
+    pack = _pack(fields=fields)
+    for source in ("999880101", "999-88-0101"):
+        dump = _dump(pack, {"identifying_number": source, "page2.ssn_area": "999", "page2.ssn_group": "88",
+                            "page2.ssn_serial": "0101"})
+        checks = {c.field: c for c in mirror_checks(pack, dump)}
+        statuses = {line: checks[f"page-header mirror {line}"].status for line in SSN_SPLIT}
+        assert statuses == dict.fromkeys(SSN_SPLIT, "PASS"), (source, [c.detail for c in checks.values()])
+        dump[_qualified(pack, "page2.ssn_group")] = "89"  # another number still fails
+        (wrong,) = [c for c in mirror_checks(pack, dump) if c.field == "page-header mirror page2.ssn_group"]
+        assert wrong.status == "FAIL", source
 
 
 NARROW = 80.0  # pt at Helv 12, 78 pt inside: 'Pat Q Example' advances 80.7 pt, 'P Q Example' 70.7, 'P Example' 58.0

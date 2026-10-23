@@ -55,7 +55,15 @@ from typing import NamedTuple
 import pytest
 
 from taxfill_core.filler import fill_form
-from taxfill_core.schemas.formpack import FormPack, PackField, load_pack
+from taxfill_core.schemas.formpack import (
+    MONEY_COMMA_CELLS,
+    SSN_DASH_CELLS,
+    SSN_DASH_CELLS_MAXLEN,
+    SSN_FORMATS,
+    FormPack,
+    PackField,
+    load_pack,
+)
 
 from test_formpacks_federal import KNOWN_FORM_KEYS, LINE_ID_RE
 
@@ -1751,3 +1759,281 @@ def test_every_option_set_row_still_describes_an_ungrouped_set():
     thin = [key for key, why in SEPARATE_OPTION_SETS_ADJUDICATED.items()
             if not why.startswith(("INDEPENDENT: ", "PARTIAL: ")) or len(why.split()) < 8]
     assert not thin, f"row(s) {thin} need INDEPENDENT/PARTIAL and the printed evidence, not a label"
+
+
+# ---------------------------------------------------------------------------
+# Phase K JK28 (2026-10-23): an 11-cell SSN comb spends two cells on its dashes
+# ---------------------------------------------------------------------------
+
+# A line reads as an identifying number when a segment of its key is one of these (or its format is an SSN format).
+_SSN_KEY_RE = re.compile(r"(?:^|[._-])(?:ssn|itin|tin|identifying_number)(?:$|[._-])", re.IGNORECASE)
+
+# (pack, line) -> why an SSN-like 11-cell comb line is NOT `format: ssn_dash_cells`. Each row self-clears
+# (test_eleven_cell_ssn_comb_rows_are_live_and_justified).
+ELEVEN_CELL_SSN_COMBS_WITHOUT_DASH_CELLS: dict[tuple[str, str], str] = {
+    ("states/vt/2023/in111/pack.yaml", "identifying_number"): (
+        "the blank's TPSSN widget has /MaxLen 11 but no Comb flag and prints one plain box with no cells or dashes "
+        "(rendered 2026-10-23), so the 9 digits print as one run; comb: true only makes the filler refuse dashes"
+    ),
+    ("states/vt/2023/in111/pack.yaml", "spouse.identifying_number"): (
+        "the blank's SpSSN widget has /MaxLen 11 but no Comb flag and prints one plain box with no cells or dashes "
+        "(rendered 2026-10-23), so the 9 digits print as one run; comb: true only makes the filler refuse dashes"
+    ),
+}
+
+
+def _eleven_cell_ssn_combs(pack: FormPack) -> list[PackField]:
+    return [pf for pf in pack.fields
+            if pf.type == "text" and pf.comb and pf.maxlen == SSN_DASH_CELLS_MAXLEN
+            and (_SSN_KEY_RE.search(pf.line) or pf.format in SSN_FORMATS)]
+
+
+@pytest.mark.parametrize("pack_path", ALL_PACK_PATHS, ids=_pack_id)
+def test_an_eleven_cell_ssn_comb_writes_its_dash_cells(pack_path: Path):
+    """An 11-cell comb holding a 9-digit SSN has two cells to spare, and the forms that print one (OR-40) put the
+    dashes in them: the digits only land in their printed boxes as 'ddd-dd-dddd'. So every SSN-like comb line with
+    maxlen 11 is `format: ssn_dash_cells`, or a row in ELEVEN_CELL_SSN_COMBS_WITHOUT_DASH_CELLS says why not; and the
+    format sits only on an 11-cell comb line (the filler refuses it anywhere else)."""
+    key = _pack_key(pack_path)
+    pack = _load(pack_path)
+    for pf in pack.fields:
+        if pf.format == SSN_DASH_CELLS:
+            assert pf.comb and pf.maxlen == SSN_DASH_CELLS_MAXLEN, (
+                f"{key}: line '{pf.line}' is format '{SSN_DASH_CELLS}' but comb={pf.comb} maxlen={pf.maxlen} — the "
+                f"format is for an {SSN_DASH_CELLS_MAXLEN}-cell comb with printed dash cells; map the widget as it is")
+    for pf in _eleven_cell_ssn_combs(pack):
+        if pf.format == SSN_DASH_CELLS:
+            continue
+        assert (key, pf.line) in ELEVEN_CELL_SSN_COMBS_WITHOUT_DASH_CELLS, (
+            f"{key}: line '{pf.line}' is an {SSN_DASH_CELLS_MAXLEN}-cell comb for an identifying number but format "
+            f"{pf.format!r}: 9 digits fill only the first nine cells, so where the box prints dashes in cells 4 and 7 "
+            f"(OR-40) every digit from the 4th on lands off its printed box. Render the blank: if it prints dash "
+            f"cells use format '{SSN_DASH_CELLS}'; if not, add ({key!r}, {pf.line!r}) to "
+            f"ELEVEN_CELL_SSN_COMBS_WITHOUT_DASH_CELLS saying what the box prints")
+
+
+def test_eleven_cell_ssn_comb_rows_are_live_and_justified():
+    live = {(_pack_key(path), pf.line) for path in ALL_PACK_PATHS for pf in _eleven_cell_ssn_combs(_load(path))
+            if pf.format != SSN_DASH_CELLS}
+    stale = sorted(set(ELEVEN_CELL_SSN_COMBS_WITHOUT_DASH_CELLS) - live)
+    assert not stale, f"ELEVEN_CELL_SSN_COMBS_WITHOUT_DASH_CELLS row(s) {stale} name no such line any more — delete them"
+    thin = [key for key, why in ELEVEN_CELL_SSN_COMBS_WITHOUT_DASH_CELLS.items() if len(why.split()) < 12]
+    assert not thin, f"row(s) {thin} need what the printed box shows, not a label"
+
+
+def test_the_ssn_key_shape_finds_the_house_spellings():
+    for line in ("identifying_number", "spouse_ssn", "dependent_1.ssn", "spouse.identifying_number", "care_provider_1.tin",
+                 "sch_f.claimant_ssn", "SSN-1"):
+        assert _SSN_KEY_RE.search(line), line
+    for line in ("accountnumber-1", "direct_deposit_account_number", "routing_number", "settings", "destination"):
+        assert not _SSN_KEY_RE.search(line), line
+
+
+# Phase K JK28 (2026-10-23): the gate above reads the PACK, so a line mapped as plain text (MO-1040's SSN_1 / SSN_2,
+# no `comb: true`) slipped past it while its widget on the blank was an 11-cell comb with printed dash cells. This one
+# reads the BLANK: a line bound to an 11-cell Comb widget (/Ff comb bit, /MaxLen 11) whose key or field name is
+# SSN-like must be `format: ssn_dash_cells`, whatever the pack's own comb flag says.
+
+# (pack, line) -> why such a line is NOT `format: ssn_dash_cells`, quoting what its box prints. Every hit read
+# 2026-10-23 (MO-1040 2023-2025 SSN_1 / SSN_2, OR-40 2023-2025 identifying_number, spouse_ssn, dependent_1-3.ssn)
+# prints its dashes in cells 4 and 7 and uses the format, so there are no rows. The other 11-cell combs the packs bind
+# are not identifying numbers (MO Form 5632 accountnumber-1..4 and finstaccountnumber, the MOST 529 account; MO-TC
+# d.tc_charterno; the OR-40 money boxes) and the key shape leaves them alone. Each row self-clears
+# (test_eleven_cell_ssn_comb_widget_rows_are_live_and_justified).
+ELEVEN_CELL_SSN_COMB_WIDGETS_WITHOUT_DASH_CELLS: dict[tuple[str, str], str] = {}
+
+
+@lru_cache(maxsize=None)
+def _eleven_cell_comb_widgets(blank: Path) -> frozenset[str]:
+    """The qualified names of the blank's widgets that are 11-cell combs (/Ff comb bit, /MaxLen 11, inherited)."""
+    from pypdf import PdfReader  # noqa: PLC0415
+
+    from taxfill_core.filler import _FF_COMB, _inherited_attr, _qualified_name  # noqa: PLC0415
+
+    names = set()
+    for page in PdfReader(str(blank)).pages:
+        for ref in page.get("/Annots", []) or []:
+            annot = ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            max_len = _inherited_attr(annot, "/MaxLen")
+            comb = int(_inherited_attr(annot, "/Ff") or 0) & _FF_COMB
+            if comb and max_len is not None and int(max_len) == SSN_DASH_CELLS_MAXLEN:
+                names.add(_qualified_name(annot))
+    return frozenset(names)
+
+
+def _eleven_cell_ssn_comb_widget_lines(pack: FormPack) -> list[PackField] | None:
+    """The pack's SSN-like lines bound to an 11-cell comb widget on its cached blank; None when the blank is out of
+    reach (offline with a cold cache)."""
+    from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank  # noqa: PLC0415
+
+    try:
+        combs = _eleven_cell_comb_widgets(Path(fetch_pack_blank(pack)))
+    except OfflineFetchError:
+        return None
+    prefix = f"{pack.acroform_root}." if pack.acroform_root else ""
+    return [pf for pf in pack.fields
+            if prefix + pf.field in combs
+            and (_SSN_KEY_RE.search(pf.line) or _SSN_KEY_RE.search(pf.field) or pf.format in SSN_FORMATS)]
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("pack_path", ALL_PACK_PATHS, ids=_pack_id)
+def test_an_eleven_cell_ssn_comb_widget_writes_its_dash_cells(pack_path: Path):
+    key = _pack_key(pack_path)
+    lines = _eleven_cell_ssn_comb_widget_lines(_load(pack_path))
+    if lines is None:
+        pytest.skip("cache empty and network unreachable: the blank is needed to read its widgets")
+    for pf in lines:
+        if pf.format == SSN_DASH_CELLS:
+            continue
+        assert (key, pf.line) in ELEVEN_CELL_SSN_COMB_WIDGETS_WITHOUT_DASH_CELLS, (
+            f"{key}: line '{pf.line}' is bound to field '{pf.field}', an {SSN_DASH_CELLS_MAXLEN}-cell Comb widget on "
+            f"the blank, for an identifying number, but the pack maps it comb={pf.comb} format={pf.format!r}: 9 "
+            f"digits fill only the first nine cells, so where the box prints dashes in cells 4 and 7 (MO-1040, OR-40) "
+            f"every digit from the 4th on lands off its printed box, and a dashed value verifies only as text. Render "
+            f"the box: if it prints dash cells map the line comb: true, maxlen: {SSN_DASH_CELLS_MAXLEN}, format: "
+            f"{SSN_DASH_CELLS}; if not, add ({key!r}, {pf.line!r}) to ELEVEN_CELL_SSN_COMB_WIDGETS_WITHOUT_DASH_CELLS "
+            f"saying what the box prints")
+
+
+@pytest.mark.network
+def test_eleven_cell_ssn_comb_widget_rows_are_live_and_justified():
+    for (key, line), why in ELEVEN_CELL_SSN_COMB_WIDGETS_WITHOUT_DASH_CELLS.items():
+        assert len(why.split()) >= 12, f"row ({key!r}, {line!r}) needs what the printed box shows, not a label"
+        lines = _eleven_cell_ssn_comb_widget_lines(_load(FORMPACKS / key))
+        if lines is None:
+            pytest.skip("cache empty and network unreachable: the blank is needed to read its widgets")
+        live = {pf.line for pf in lines if pf.format != SSN_DASH_CELLS}
+        assert line in live, (
+            f"ELEVEN_CELL_SSN_COMB_WIDGETS_WITHOUT_DASH_CELLS row ({key!r}, {line!r}) names no SSN-like line on an "
+            f"11-cell comb widget without the format any more — delete it")
+
+
+# Phase K JK28 (2026-10-23): a money comb whose printed face spends cells on its thousands separators. The OR Form
+# OR-40 dollar boxes (2023-2025) are 11-cell right-aligned combs printed 3 cells, a comma cell, 3, a comma cell, 3;
+# mapped as plain money lines, fill_form wrote bare digits and 1234567 printed '123[4]567' with a digit in a comma cell.
+# This gate reads the BLANK: every money line bound to a widget with the Comb flag must use `format: money_comma_cells`
+# or its pack must sit below, saying what its boxes print (the census of 2026-10-23, in schemas/formpack.py next to
+# the format: one widget per (pack, /MaxLen, width) rendered at 600 dpi with a 7-digit and a 5-digit amount).
+# pack key -> why that pack's money comb lines write bare digits. Each row self-clears
+# (test_money_comb_rows_are_live_and_justified).
+_COMMA_ON_THE_RULE = (
+    "the printed commas sit on the rule between two digit cells and spend no cell, so the bare whole dollars land one "
+    "digit per printed cell (rendered 2026-10-23 with 1234567, 12345 and 123)"
+)
+MONEY_COMBS_WITHOUT_COMMA_CELLS: dict[str, str] = {
+    "states/ia/2023/ia1040/pack.yaml": (
+        "lines 32a and 32b are the direct-deposit routing (9 cells) and account (17 cells) boxes: left-aligned digit "
+        "cells with no separator printed anywhere (rendered 2026-10-23)"
+    ),
+    "states/la/2023/it540/pack.yaml": f"Form IT-540 dollar boxes (3-9 cells): {_COMMA_ON_THE_RULE}",
+    "states/la/2024/it540/pack.yaml": f"Form IT-540 dollar boxes (3-9 cells): {_COMMA_ON_THE_RULE}",
+    "states/la/2025/it540/pack.yaml": f"Form IT-540 dollar boxes (3-9 cells): {_COMMA_ON_THE_RULE}",
+    "states/ma/2023/form1/pack.yaml": f"Form 1 dollar boxes (4-8 cells, cents printed 00): {_COMMA_ON_THE_RULE}",
+    "states/ma/2025/form1/pack.yaml": f"Form 1 dollar boxes (4-8 cells, cents printed 00): {_COMMA_ON_THE_RULE}",
+    "states/va/2023/va760/pack.yaml": f"Form 760 dollar boxes (3-9 cells): {_COMMA_ON_THE_RULE}",
+    "states/va/2024/va760/pack.yaml": f"Form 760 dollar boxes (3-9 cells): {_COMMA_ON_THE_RULE}",
+    "states/va/2025/va760/pack.yaml": f"Form 760 dollar boxes (3-9 cells): {_COMMA_ON_THE_RULE}",
+}
+
+
+# The other direction (Phase K JK28 fix, 2026-10-23): the format writes commas into cells 4 and 8 of its comb, which
+# is right only where the census rendered the printed comma cells there. On a comb whose commas sit on the cell rules
+# (LA, MA, VA) the fill-time check (a right-aligned comb of the pack's maxlen) passes, and the commas would land in
+# digit cells. pack key -> the census finding that puts its commas in cells. A pack that newly needs the format is
+# rendered first (7- and 5-digit fills at 600 dpi) and added here and to the census in schemas/formpack.py.
+_OR40_COMMA_CELLS = (
+    "Form OR-40 dollar boxes, lines 7-55b: 11-cell right-aligned combs printed 3 cells, a comma cell, 3, a comma cell, "
+    "3 (rendered 2026-10-23 with 1234567, 12345 and 123)"
+)
+MONEY_COMBS_WITH_COMMA_CELLS: dict[str, str] = {
+    "states/or/2023/or40/pack.yaml": _OR40_COMMA_CELLS,
+    "states/or/2024/or40/pack.yaml": _OR40_COMMA_CELLS,
+    "states/or/2025/or40/pack.yaml": _OR40_COMMA_CELLS,
+}
+
+
+@pytest.mark.parametrize("pack_path", ALL_PACK_PATHS, ids=_pack_id)
+def test_money_comma_cells_is_used_only_where_the_census_rendered_comma_cells(pack_path: Path):
+    key = _pack_key(pack_path)
+    used = [pf.line for pf in _load(pack_path).fields if pf.format == MONEY_COMMA_CELLS]
+    if not used or key in MONEY_COMBS_WITH_COMMA_CELLS:
+        return
+    raise AssertionError(
+        f"{key}: line(s) {used[:8]}{' ...' if len(used) > 8 else ''} use format: {MONEY_COMMA_CELLS}, which writes "
+        f"commas into the comb's 4th and 8th cells from the right, but the pack is not in MONEY_COMBS_WITH_COMMA_CELLS. "
+        f"Render a 7-digit and a 5-digit fill at 600 dpi: if the printed commas sit on the cell rules, drop the format "
+        f"(the bare digits land right); if a comma takes a cell, add {key!r} with what the box prints, and add it to "
+        f"the census in schemas/formpack.py")
+
+
+def test_money_comma_cell_rows_are_live_and_not_also_exempt():
+    for key, why in MONEY_COMBS_WITH_COMMA_CELLS.items():
+        assert len(why.split()) >= 12, f"row {key!r} needs what the printed boxes show, not a label"
+        assert key not in MONEY_COMBS_WITHOUT_COMMA_CELLS, f"{key!r} is listed both with and without comma cells"
+        assert any(pf.format == MONEY_COMMA_CELLS for pf in _load(FORMPACKS / key).fields), (
+            f"MONEY_COMBS_WITH_COMMA_CELLS row {key!r} has no {MONEY_COMMA_CELLS} line any more — delete it")
+
+
+@lru_cache(maxsize=None)
+def _comb_widgets(blank: Path) -> frozenset[str]:
+    """The qualified names of the blank's widgets with the Comb flag (/Ff bit 25, inherited)."""
+    from pypdf import PdfReader  # noqa: PLC0415
+
+    from taxfill_core.filler import _FF_COMB, _inherited_attr, _qualified_name  # noqa: PLC0415
+
+    names = set()
+    for page in PdfReader(str(blank)).pages:
+        for ref in page.get("/Annots", []) or []:
+            annot = ref.get_object()
+            if annot.get("/Subtype") == "/Widget" and int(_inherited_attr(annot, "/Ff") or 0) & _FF_COMB:
+                names.add(_qualified_name(annot))
+    return frozenset(names)
+
+
+def _money_comb_widget_lines(pack: FormPack) -> list[PackField] | None:
+    """The pack's money lines bound to a comb widget on its cached blank; None when the blank is out of reach."""
+    from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank  # noqa: PLC0415
+
+    if not any(pf.type == "money" for pf in pack.fields):
+        return []
+    try:
+        combs = _comb_widgets(Path(fetch_pack_blank(pack)))
+    except OfflineFetchError:
+        return None
+    prefix = f"{pack.acroform_root}." if pack.acroform_root else ""
+    return [pf for pf in pack.fields if pf.type == "money" and prefix + pf.field in combs]
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("pack_path", ALL_PACK_PATHS, ids=_pack_id)
+def test_a_money_comb_widget_writes_its_separator_cells_or_is_listed(pack_path: Path):
+    key = _pack_key(pack_path)
+    lines = _money_comb_widget_lines(_load(pack_path))
+    if lines is None:
+        pytest.skip("cache empty and network unreachable: the blank is needed to read its widgets")
+    bare = [pf.line for pf in lines if pf.format != MONEY_COMMA_CELLS]
+    if not bare or key in MONEY_COMBS_WITHOUT_COMMA_CELLS:
+        return
+    raise AssertionError(
+        f"{key}: money line(s) {bare[:8]}{' ...' if len(bare) > 8 else ''} are bound to Comb widgets on the blank but "
+        f"write bare whole dollars. Where the printed box spends cells on its commas (OR-40: 3 cells, a comma cell, 3, "
+        f"a comma cell, 3) the digits land off their cells, 1234567 printing '123[4]567'. Render a 7-digit and a "
+        f"5-digit fill at 600 dpi: if a comma takes a cell, map the line comb: true, maxlen: <the widget's /MaxLen>, "
+        f"format: {MONEY_COMMA_CELLS}; if the commas sit on the cell rules, add {key!r} to "
+        f"MONEY_COMBS_WITHOUT_COMMA_CELLS saying what the boxes print (and add the pack to the census in "
+        f"schemas/formpack.py)")
+
+
+@pytest.mark.network
+def test_money_comb_rows_are_live_and_justified():
+    for key, why in MONEY_COMBS_WITHOUT_COMMA_CELLS.items():
+        assert len(why.split()) >= 12, f"row {key!r} needs what the printed boxes show, not a label"
+        lines = _money_comb_widget_lines(_load(FORMPACKS / key))
+        if lines is None:
+            pytest.skip("cache empty and network unreachable: the blank is needed to read its widgets")
+        assert any(pf.format != MONEY_COMMA_CELLS for pf in lines), (
+            f"MONEY_COMBS_WITHOUT_COMMA_CELLS row {key!r} has no money line on a comb widget without the format any "
+            f"more — delete it")

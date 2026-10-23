@@ -74,7 +74,10 @@ instead (see CT/HI/NM/SC).
 ## Step 3 — map lines to fields (with your own eyes)
 
 Render each page (`render_form`) and map form lines to field names by LOOKING:
-comb fields get `format` hints (`ssn_digits_only` — P-001), checkbox groups get
+comb fields get `format` hints (`ssn_digits_only` — P-001; `ssn_dash_cells` for an
+11-cell SSN comb whose printed dashes take cells 4 and 7; `money_comma_cells` for a money
+comb whose printed commas take cells of their own, as on Oregon Form OR-40; see
+`formpacks/CONVENTIONS.md`, "Comb boxes and their printed separators"), checkbox groups get
 their export values, and every computed line gets a `relations` entry
 (`"38 == 13 + 21 + 30 + 37"`) so `verify_form` can recompute it.
 

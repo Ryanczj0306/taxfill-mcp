@@ -323,8 +323,8 @@ Quote the template: a YAML value that starts with `{` is a mapping.
 
 | syntax | meaning |
 |---|---|
-| `{line}` | the line's value as `fill_form` renders it, after the line's own formatting (`ssn_digits_only` strips dashes, a money line is whole dollars) |
-| `{line[a:b]}` | a Python-style character slice of it: `[0:3]`, `[3:5]` and `[5:]` split a 9-digit SSN across three boxes, `[:10]` is "first 10 characters of your last name"; a negative bound counts from the end; there is no step, and an index is refused |
+| `{line}` | the line's value as `fill_form` renders it, after the line's own formatting (`ssn_digits_only` strips dashes, `ssn_dash_cells` writes `ddd-dd-dddd`, a money line is whole dollars, comma-grouped on a `money_comma_cells` line) |
+| `{line[a:b]}` | a Python-style character slice of it: `[0:3]`, `[3:5]` and `[5:]` split a 9-digit SSN across three boxes, `[:10]` is "first 10 characters of your last name"; a negative bound counts from the end; there is no step, and an index is refused. A slice of a line in an SSN format (`ssn_digits_only`, `ssn_dash_cells`) counts its DIGITS, so `[3:5]` is the middle two digits whether the line holds `999887777` or `999-88-7777` |
 | `[ ... ]` | an optional segment, kept only when a placeholder inside it renders non-empty: `{name.first} {name.last}[ & {spouse.first} {spouse.last}]` prints the spouse's part only on a joint return. Segments do not nest |
 
 Each placeholder's value is whitespace-collapsed and stripped before it is
@@ -814,10 +814,53 @@ deterministically:
   text (the CA Schedule CA slashes); and a box no uniform comb fits, such as AZ Form 140NR 2023 worksheet line 8C,
   whose fifth box is narrower. Describe such a box in the pack banner (as the CA Schedule CA 2024 banner does) and
   check it on the render.
-- **A cell that sits on a printed dash takes the dash.** MO-1040's page-1 SSN is an 11-cell comb whose cells 4
-  and 7 sit on the printed dashes: that line is written WITH its dashes and is not `comb: true` (the filler's comb
-  mode is digits-only). The separators there are expected inside cells 4 and 7, and the filler leaves the widget
-  alone.
+- **A cell that sits on a printed dash takes the dash: `format: ssn_dash_cells`.** An 11-cell SSN comb printed as
+  3 boxes, a dash, 2 boxes, a dash and 4 boxes (every Oregon Form OR-40 SSN box, 2023-2025) spends cells 4 and 7
+  on the dashes, so 9 bare digits fill the first nine cells and every digit from the 4th on lands one or two cells
+  off its printed box. Map such a line `comb: true`, `maxlen: 11`, `format: ssn_dash_cells`: `fill_form` takes the
+  SSN or ITIN with or without dashes and spaces, writes it `ddd-dd-dddd` (each dash cell gets the dash), refuses
+  anything but 9 digits, and refuses the format on a pack line or a blank widget that is not an 11-cell comb.
+  `verify_form`, the cross-form identity checks and page-header mirrors compare the line by its digits, so a value
+  written either way verifies. Phase K JK28 (2026-10-23): `test_pack_invariants.py` requires every SSN-like comb
+  line with `maxlen: 11` to use the format or to sit in `ELEVEN_CELL_SSN_COMBS_WITHOUT_DASH_CELLS` with what its
+  box prints (VT IN-111 2023: a plain box whose widget has no Comb flag), and the network-marked
+  `test_an_eleven_cell_ssn_comb_widget_writes_its_dash_cells` reads the BLANK: a line bound to an 11-cell Comb widget
+  (`/Ff` comb bit, `/MaxLen 11`) whose key is SSN-like must use the format whatever the pack's own `comb` says, or sit
+  in `ELEVEN_CELL_SSN_COMB_WIDGETS_WITHOUT_DASH_CELLS` with what its box prints. MO-1040's page-1 `SSN_1` / `SSN_2`
+  (2023-2025: three printed boxes of 3, 2 and 4 digits with a dash printed between them, no cell rules) are such
+  combs and use the format too (Phase K JK28, 2026-10-23). The separators there are expected inside cells 4 and 7,
+  and the filler leaves the widget alone.
+- **A money cell that sits on a printed comma takes the comma: `format: money_comma_cells`.** A money line is written
+  in bare whole dollars (`1234567`), which suits a plain box and a comb whose printed commas sit ON the rule between
+  two digit cells (the LA IT-540, MA Form 1 and VA 760 dollar boxes). The Oregon Form OR-40 dollar boxes (2023-2025,
+  lines 7-55b) instead spend cells on the commas: an 11-cell right-aligned comb (`/Q 2`) printed as 3 cells, a comma
+  cell, 3, a comma cell, 3, then `.` and a printed `0 0`. Bare digits fill it from the right with no regard for the
+  comma cells: 1234567 printed `123[4]567` with the 4 in a comma cell, 12345 put its 2 in one, and only amounts under
+  1,000 landed right (1,234,567 could be read as 123,567). Map such a line `type: money`, `comb: true`, `maxlen: <the
+  widget's /MaxLen>`, `format: money_comma_cells`: `fill_form` rounds to whole dollars as always, then writes the
+  amount comma-grouped (`1,234,567`), so each comma cell gets the comma and each digit its printed cell. A negative
+  amount keeps its sign, and the minus always takes a DIGIT cell: the one left of the first digit (`-5`, `-12,345`,
+  `-1,234,567`), except that for an amount of 3 or 6 digits that cell is a printed comma cell, so it is left blank and
+  the minus goes one cell further left (`- 123`, `- 123,456`; Phase K JK28 fix, 2026-10-23: written `-123,456`, the
+  minus sat on the printed comma in cell 4, where a reader taking it for the separator loses the sign). The OR-40 face
+  prints no loss box or sign cell, and the OR-40 instructions (2023-2025) give no rule for a negative entry on the
+  form; the only one they print, on the amended-return worksheet, is "If less than 0, use a minus sign." (Form OR-40
+  Instructions, https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf, sha256
+  4ee45bad719499e2..., and the 2024 and 2023 editions, 697d45e372fa352d... and 200c94c973eacb56..., each downloaded
+  twice 2026-10-23 with matching digests; their line instructions say only "Don't enter cents."). The filler refuses
+  an amount the cells cannot hold (an 11-cell box holds at most 999,999,999, and -99,999,999 when negative: the minus
+  spends a digit cell, and the refusal names the limit for the amount's sign) with what to do, refuses the format on a
+  pack line that is not a comb money line (the schema) and on a blank widget that is not a right-aligned comb of the
+  pack's `maxlen` cells. `verify_form` reads the value back through `parse_money`, which drops the commas (and the
+  blank cell of `- 123`), so assertions, relations and the independent recompute see the number. Phase K JK28
+  (2026-10-23): the network-marked `test_a_money_comb_widget_writes_its_separator_cells_or_is_listed` in
+  `test_pack_invariants.py` reads the BLANK: every money line bound to a Comb widget uses the format, or its pack sits
+  in `MONEY_COMBS_WITHOUT_COMMA_CELLS` saying what its boxes print; and the offline
+  `test_money_comma_cells_is_used_only_where_the_census_rendered_comma_cells` holds the other direction: the format is
+  used only by a pack in `MONEY_COMBS_WITH_COMMA_CELLS` (the census's comma-cell packs, OR-40 2023-2025), because on a
+  comb whose commas sit on the rules the fill-time widget check passes and the commas would take digit cells. The
+  census behind it (every money comb in every pack, rendered at 600 dpi) is the comment block next to the format in
+  `schemas/formpack.py`.
 
 ## A blank inside a booklet (`source_pages`)
 

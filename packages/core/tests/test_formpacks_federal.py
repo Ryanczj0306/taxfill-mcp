@@ -1996,13 +1996,15 @@ def test_jt5e_the_foreign_tax_credit_op_points_at_the_2026_pack():
 
 def test_jt5f_the_1040x_rev_12_2026_tracks_the_2026_form_1040():
     old, new = _fed_pack(2025, "f1040x"), _fed_pack(2026, "f1040x")
-    assert (new.source_status, new.draft_created, new.signature.page, len(new.fields)) == ("draft", "8/19/26", 3, 191)
+    assert (new.source_status, new.draft_created, new.signature.page, len(new.fields)) == ("draft", "10/9/26", 3, 187)
     f = {pf.line: pf for pf in new.fields}
-    # New lines: 2a-2c, 11a-11c, 17a-17c and direct deposit 22a-22d; 11 and 17 are split, so the bare keys went.
-    assert {"2b", "2c", "11a", "11b", "11c", "17a", "17b", "17c", "22b", "22c.checking", "22d"} <= set(f)
-    assert {"2", "11", "17", "22", "15.form_8885"}.isdisjoint(f) and "15.form_8885" in {pf.line for pf in old.fields}
+    # New lines: 2a-2c, 11a-11c and 17a-17c; 11 and 17 are split, so the bare keys went. The Created 10/9/26
+    # re-post (Phase K drift re-map, 2026-10-23) dropped the 8/19/26 draft's direct deposit: line 22 is one line.
+    assert {"2b", "2c", "11a", "11b", "11c", "17a", "17b", "17c", "22"} <= set(f)
+    assert {"2", "11", "17", "22a", "22b", "22c.checking", "22d", "15.form_8885"}.isdisjoint(f)
+    assert "15.form_8885" in {pf.line for pf in old.fields} and f["22"].field == "Page2[0].f2_05[0]"
     # TRAP: Part I renumbered — 2025 "25" (children) / "27" (other dependents) are 2026 "24" / "25".
-    assert f["24"].field == "Page2[0].Table_Lines24-25[0].Line24[0].f2_12[0]" and "27" not in f
+    assert f["24"].field == "Page2[0].Table_Lines24-25[0].Line24[0].f2_10[0]" and "27" not in f
     assert {"20 == max(0, 11c - 19)", "17c == 17a - 17b", "3 == 1 - 2c"} <= set(new.relations)
     assert (f["citizen_or_work_authorized.spouse.no"].field, f["main_home_in_us"].field) == (
         "Page1[0].c1_12[1]", "Page1[0].c1_5[0]")

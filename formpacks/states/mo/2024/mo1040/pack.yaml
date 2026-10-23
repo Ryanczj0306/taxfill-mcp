@@ -253,8 +253,10 @@
 # computed total, the MO-A/MO-CR/MO-PTS/MO-CRP/MO-TC amount columns, the
 # 529/FTHB amounts, and the percentage cells the form computes) are `money`.
 # Genuine text widgets stay text: names / initials / suffixes, SSN boxes
-# (maxlen carried from the skeleton: 11 for the comb SSN_1/SSN_2, 9 for the
-# schedule SSN-1/SSN-2), addresses / city / state / ZIP / county, the 2- and
+# (maxlen carried from the skeleton: 11 for the comb SSN_1/SSN_2 — 3-2-4
+# printed boxes whose cells 4 and 7 sit on the dashes, so `comb: true` with
+# `format: ssn_dash_cells` writes "ddd-dd-dddd" (Phase K JK28, 2026-10-23) —
+# 9 for the schedule SSN-1/SSN-2), addresses / city / state / ZIP / county, the 2- and
 # 4-digit fiscal-year and birth-date comb cells, bank routing (9) / account
 # (17), preparer ids, the "Other (description)" and explanation text boxes,
 # the 2-digit trust-fund codes (line51m_tfcd / line51n_tfcd), the MO-WFTC
@@ -403,10 +405,16 @@ fields:
     field: "nonoblig-S"
     type: checkbox
     on_state: "/X"
+  # Phase K JK28 (2026-10-23): SSN_1 / SSN_2 are 11-cell comb widgets (/Ff comb bit, /MaxLen 11) printed as
+  # three boxes (3, 2 and 4 digits) with a dash between them: cells 4 and 7 fall on the printed dashes.
+  # format: ssn_dash_cells writes 'ddd-dd-dddd' however the SSN is given, so each digit lands in its box (9 bare
+  # digits printed the 4th on the first dash), and verify compares the line by its digits.
   - line: "SSN_1"
     field: "SSN_1"
     type: text
     maxlen: 11
+    comb: true
+    format: ssn_dash_cells
   - line: "decease-1"
     field: "decease-1"
     type: checkbox
@@ -415,6 +423,8 @@ fields:
     field: "SSN_2"
     type: text
     maxlen: 11
+    comb: true
+    format: ssn_dash_cells
   - line: "decease2"
     field: "decease2"
     type: checkbox

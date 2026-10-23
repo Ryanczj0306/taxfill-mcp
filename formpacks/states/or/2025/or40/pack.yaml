@@ -311,6 +311,20 @@
 #   change rather than a dangling-target fix, so it is left to a reviewed
 #   change.
 #
+# MONEY BOXES (Phase K JK28, 2026-10-23). Every dollar box, lines 7-55b (48
+# lines), is an 11-cell right-aligned comb widget (/Ff 29360128, /MaxLen 11,
+# /Q 2) printed as three boxes of 3 cells with a comma printed in the cell
+# between two boxes (cells 4 and 8), then '.' and a printed '0 0'. Mapped as
+# plain money, the filler wrote bare whole dollars that ignored the comma
+# cells (1234567 printed '123[4]567', the 4 in a comma cell). Each line is now
+# `maxlen: 11, comb: true, format: money_comma_cells`: written comma-grouped
+# ('1,234,567'; a negative '-12,345', the minus in the digit cell left of the
+# first digit, and for a 3- or 6-digit loss one cell further, past the comma
+# cell left blank: '- 123', '- 123,456', so the sign never sits on a printed
+# comma (Phase K JK28 fix, 2026-10-23); at most 999,999,999 or -99,999,999),
+# and verify reads the number back. Rendered at
+# 600 dpi (test_money_comma_cells.py); formpacks/CONVENTIONS.md, "Comb boxes".
+#
 # Signature. Sign Here block is on page 7.
 form: OR-40
 jurisdiction: states/or
@@ -337,7 +351,10 @@ fields:
   - { line: name.initial, field: or-40-p1-12, type: text, maxlen: 1 }  # "Initial"
   - { line: date_of_birth, field: or-40-p1-13, type: text, maxlen: 10 }  # "Date of birth (MM/DD/YYYY)"
   - { line: name, field: or-40-p1-14, type: text, maxlen: 32 }         # "Last name" (header repeats pages 2-8 via same field; 2025 /MaxLen 32, was 21)
-  - { line: identifying_number, field: or-40-p1-15, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Social Security number (SSN)"
+  # Phase K JK28 (2026-10-23): every OR-40 SSN box (this one, spouse_ssn, dependent_1-3.ssn) is an 11-cell comb
+  # printed 3 boxes - 2 boxes - 4 boxes, cells 4 and 7 holding the printed dashes. format: ssn_dash_cells writes
+  # 'ddd-dd-dddd' so each digit lands in its printed box (ssn_digits_only put the 4th digit on the first dash).
+  - { line: identifying_number, field: or-40-p1-15, type: text, maxlen: 11, comb: true, format: ssn_dash_cells }  # "Social Security number (SSN)"
   - { line: ssn_first_time.yes, field: or-40-p1-16, type: checkbox, on_state: /Yes }  # "First time using this SSN (see instructions)"
   - { line: applied_for_itin.yes, field: or-40-p1-17, type: checkbox, on_state: /Yes }  # "Applied for ITIN"
   - { line: deceased.yes, field: or-40-p1-18, type: checkbox, on_state: /Yes }        # "Deceased"
@@ -346,7 +363,7 @@ fields:
   - { line: spouse_name.initial, field: or-40-p1-20, type: text, maxlen: 1 } # "Initial"
   - { line: spouse_date_of_birth, field: or-40-p1-21, type: text, maxlen: 10 }  # "Spouse date of birth (MM/DD/YYYY)"
   - { line: spouse_name.last, field: or-40-p1-22, type: text, maxlen: 32 }   # "Spouse last name" (2025 /MaxLen 32, was 21)
-  - { line: spouse_ssn, field: or-40-p1-23, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Spouse SSN"
+  - { line: spouse_ssn, field: or-40-p1-23, type: text, maxlen: 11, comb: true, format: ssn_dash_cells }  # "Spouse SSN"
   - { line: spouse_ssn_first_time.yes, field: or-40-p1-24, type: checkbox, on_state: /Yes }  # "First time using this SSN"
   - { line: spouse_applied_for_itin.yes, field: or-40-p1-25, type: checkbox, on_state: /Yes }  # "Applied for ITIN"
   - { line: spouse_deceased.yes, field: or-40-p1-26, type: checkbox, on_state: /Yes }  # "Deceased"
@@ -379,7 +396,7 @@ fields:
   - { line: dependent_1.initial, field: or-40-p2-12, type: text, maxlen: 1 }      # "Initial"
   - { line: dependent_1.last_name, field: or-40-p2-13, type: text, maxlen: 21 }   # "Dependent 1: Last name"
   - { line: dependent_1.date_of_birth, field: or-40-p2-14, type: text, maxlen: 10 }  # "Dependent 1: Date of birth (MM/DD/YYYY)"
-  - { line: dependent_1.ssn, field: or-40-p2-15, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Dependent 1: SSN"
+  - { line: dependent_1.ssn, field: or-40-p2-15, type: text, maxlen: 11, comb: true, format: ssn_dash_cells }  # "Dependent 1: SSN"
   - { line: dependent_1.code, field: or-40-p2-16, type: text, maxlen: 2 }         # "Code *" (relationship code)
   - { line: dependent_1.qualifying_disability, field: or-40-p2-17, type: checkbox, on_state: /Yes }  # "Child with a qualifying disability"
   # ---- Dependent 2
@@ -387,7 +404,7 @@ fields:
   - { line: dependent_2.initial, field: or-40-p2-19, type: text, maxlen: 1 }      # "Initial"
   - { line: dependent_2.last_name, field: or-40-p2-20, type: text, maxlen: 21 }   # "Dependent 2: Last name"
   - { line: dependent_2.date_of_birth, field: or-40-p2-21, type: text, maxlen: 10 }  # "Dependent 2: Date of birth"
-  - { line: dependent_2.ssn, field: or-40-p2-22, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Dependent 2: SSN"
+  - { line: dependent_2.ssn, field: or-40-p2-22, type: text, maxlen: 11, comb: true, format: ssn_dash_cells }  # "Dependent 2: SSN"
   - { line: dependent_2.code, field: or-40-p2-23, type: text, maxlen: 2 }         # "Code *"
   - { line: dependent_2.qualifying_disability, field: or-40-p2-24, type: checkbox, on_state: /Yes }  # "Child with a qualifying disability"
   # ---- Dependent 3
@@ -395,7 +412,7 @@ fields:
   - { line: dependent_3.initial, field: or-40-p2-26, type: text, maxlen: 1 }      # "Initial"
   - { line: dependent_3.last_name, field: or-40-p2-27, type: text, maxlen: 21 }   # "Dependent 3: Last name"
   - { line: dependent_3.date_of_birth, field: or-40-p2-28, type: text, maxlen: 10 }  # "Dependent 3: Date of birth"
-  - { line: dependent_3.ssn, field: or-40-p2-29, type: text, maxlen: 11, comb: true, format: ssn_digits_only }  # "Dependent 3: SSN"
+  - { line: dependent_3.ssn, field: or-40-p2-29, type: text, maxlen: 11, comb: true, format: ssn_dash_cells }  # "Dependent 3: SSN"
   - { line: dependent_3.code, field: or-40-p2-30, type: text, maxlen: 2 }         # "Code *"
   - { line: dependent_3.qualifying_disability, field: or-40-p2-31, type: checkbox, on_state: /Yes }  # "Child with a qualifying disability"
   - { line: 6c, field: or-40-p2-32, type: text, maxlen: 2 }  # "6c. Total number of dependents" (count)
@@ -403,80 +420,81 @@ fields:
   - { line: 6e, field: or-40-p2-34, type: text, maxlen: 2 }  # "6e. Total exemptions. Add lines 6a through 6d" (count)
 
   # ============================================ page 3 — lines 7-19
-  - { line: "7", field: or-40-p3-1, type: money }   # "Federal adjusted gross income from federal Form 1040, 1040-SR, or 1040-NR, line 11a; or 1040-X, line 1C"
-  - { line: "8", field: or-40-p3-2, type: money }   # "Total additions from Schedule OR-ASC, line A5"
-  - { line: "9", field: or-40-p3-3, type: money }   # "Income after additions. Add lines 7 and 8"
-  - { line: "10", field: or-40-p3-4, type: money }  # "2025 federal tax liability"
-  - { line: "11", field: or-40-p3-5, type: money }  # "Social Security amount on federal Form 1040 or 1040-SR, line 6b"
-  - { line: "12", field: or-40-p3-6, type: money }  # "Oregon income tax refund included in federal income"
-  - { line: "13", field: or-40-p3-7, type: money }  # "Total subtractions from Schedule OR-ASC, line B7"
-  - { line: "14", field: or-40-p3-8, type: money }  # "Total subtractions. Add lines 10 through 13"
-  - { line: "15", field: or-40-p3-9, type: money }  # "Income after subtractions. Line 9 minus line 14"
-  - { line: "16", field: or-40-p3-10, type: money } # "Oregon itemized deductions ... Schedule OR-A, line 23"
-  - { line: "17", field: or-40-p3-11, type: money } # "Standard deduction" (printed table: single $2,835 / MFJ $5,670 / MFS "$2,835 or $0" / QSS $5,670 / HOH $4,560)
+  # Every dollar box below is an 11-cell comb with printed comma cells 4 and 8: format: money_comma_cells (see banner).
+  - { line: "7", field: or-40-p3-1, type: money, maxlen: 11, comb: true, format: money_comma_cells }   # "Federal adjusted gross income from federal Form 1040, 1040-SR, or 1040-NR, line 11a; or 1040-X, line 1C"
+  - { line: "8", field: or-40-p3-2, type: money, maxlen: 11, comb: true, format: money_comma_cells }   # "Total additions from Schedule OR-ASC, line A5"
+  - { line: "9", field: or-40-p3-3, type: money, maxlen: 11, comb: true, format: money_comma_cells }   # "Income after additions. Add lines 7 and 8"
+  - { line: "10", field: or-40-p3-4, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "2025 federal tax liability"
+  - { line: "11", field: or-40-p3-5, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Social Security amount on federal Form 1040 or 1040-SR, line 6b"
+  - { line: "12", field: or-40-p3-6, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Oregon income tax refund included in federal income"
+  - { line: "13", field: or-40-p3-7, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Total subtractions from Schedule OR-ASC, line B7"
+  - { line: "14", field: or-40-p3-8, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Total subtractions. Add lines 10 through 13"
+  - { line: "15", field: or-40-p3-9, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Income after subtractions. Line 9 minus line 14"
+  - { line: "16", field: or-40-p3-10, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Oregon itemized deductions ... Schedule OR-A, line 23"
+  - { line: "17", field: or-40-p3-11, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Standard deduction" (printed table: single $2,835 / MFJ $5,670 / MFS "$2,835 or $0" / QSS $5,670 / HOH $4,560)
   - { line: 17a.yes, field: or-40-p3-12, type: checkbox, on_state: /Yes }  # 17a "You were: 65 or older"
   - { line: 17b.yes, field: or-40-p3-13, type: checkbox, on_state: /Yes }  # 17b "You were: Blind"
   - { line: 17c.yes, field: or-40-p3-14, type: checkbox, on_state: /Yes }  # 17c "Your spouse was: 65 or older"
   - { line: 17d.yes, field: or-40-p3-15, type: checkbox, on_state: /Yes }  # 17d "Your spouse was: Blind"
-  - { line: "18", field: or-40-p3-16, type: money } # "Enter the larger of line 16 or 17"
-  - { line: "19", field: or-40-p3-17, type: money } # "Oregon taxable income. Line 15 minus line 18"
+  - { line: "18", field: or-40-p3-16, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Enter the larger of line 16 or 17"
+  - { line: "19", field: or-40-p3-17, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Oregon taxable income. Line 15 minus line 18"
 
   # ============================================ page 4 — lines 20-31
-  - { line: "20", field: or-40-p4-1, type: money }  # "Tax (see instructions)"
+  - { line: "20", field: or-40-p4-1, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Tax (see instructions)"
   - { line: 20a.yes, field: or-40-p4-2a, type: checkbox, on_state: /Yes }  # 20a "Schedule OR-FIA-40"
   - { line: 20b.yes, field: or-40-p4-2b, type: checkbox, on_state: /Yes }  # 20b "Worksheet FCG"
   - { line: 20c.yes, field: or-40-p4-2c, type: checkbox, on_state: /Yes }  # 20c "Schedule OR-PTE-FY"
-  - { line: "21", field: or-40-p4-4, type: money }  # "Interest on certain installment sales"
-  - { line: "22", field: or-40-p4-5, type: money }  # "Total tax recaptures from Schedule OR-ASC, line C5"
-  - { line: "23", field: or-40-p4-6, type: money }  # "Total additions to tax. Line 21 plus line 22"
-  - { line: "24", field: or-40-p4-7, type: money }  # "Total tax before credits. Add lines 20 and 23"
-  - { line: "25", field: or-40-p4-8, type: money }  # "Exemption credit. If the amount on line 7 is $100,000 or less, multiply your total exemptions on line 6e by $256"
-  - { line: "26", field: or-40-p4-9, type: money }  # "Political contribution credit. See limits in instructions"
-  - { line: "27", field: or-40-p4-10, type: money } # "Total standard credits from Schedule OR-ASC, line D16"
-  - { line: "28", field: or-40-p4-11, type: money } # "Total standard credits. Add lines 25 through 27"
-  - { line: "29", field: or-40-p4-12, type: money } # "Tax minus standard credits. Line 24 minus line 28"
-  - { line: "30", field: or-40-p4-13, type: money } # "Total carryforward credits used this year from Schedule OR-ASC, line E9"
-  - { line: "31", field: or-40-p4-14, type: money } # "Tax after standard and carryforward credits. Line 29 minus line 30"
+  - { line: "21", field: or-40-p4-4, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Interest on certain installment sales"
+  - { line: "22", field: or-40-p4-5, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Total tax recaptures from Schedule OR-ASC, line C5"
+  - { line: "23", field: or-40-p4-6, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Total additions to tax. Line 21 plus line 22"
+  - { line: "24", field: or-40-p4-7, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Total tax before credits. Add lines 20 and 23"
+  - { line: "25", field: or-40-p4-8, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Exemption credit. If the amount on line 7 is $100,000 or less, multiply your total exemptions on line 6e by $256"
+  - { line: "26", field: or-40-p4-9, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Political contribution credit. See limits in instructions"
+  - { line: "27", field: or-40-p4-10, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Total standard credits from Schedule OR-ASC, line D16"
+  - { line: "28", field: or-40-p4-11, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Total standard credits. Add lines 25 through 27"
+  - { line: "29", field: or-40-p4-12, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Tax minus standard credits. Line 24 minus line 28"
+  - { line: "30", field: or-40-p4-13, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Total carryforward credits used this year from Schedule OR-ASC, line E9"
+  - { line: "31", field: or-40-p4-14, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Tax after standard and carryforward credits. Line 29 minus line 30"
 
   # ============================================ page 5 — lines 32-44
   # 2025 RENUMBERING: the kicker moved to line 32 and lines 33-38 each shifted
   # down one printed number (see the PORT banner's table). The widget order
   # still follows the printed order, so or-40-p5-N still sits on line 31+N.
-  - { line: "32", field: or-40-p5-1, type: money }  # "Enter your kicker amount (see instructions). If you elect to donate your kicker to the State School Fund, enter 0 and see line 55" [2023: withholding]
-  - { line: "33", field: or-40-p5-2, type: money }  # "Oregon income tax withheld. Include a copy of your Forms W-2 and 1099"
-  - { line: "34", field: or-40-p5-3, type: money }  # "Prior-year refund applied as estimated payment"
-  - { line: "35", field: or-40-p5-4, type: money }  # "Estimated tax payments for 2025 ... that you made by April 15, 2026. Do not include the amount on line 34"
-  - { line: "36", field: or-40-p5-5, type: money }  # "Estimated tax payments from Schedule OR-K-1, line 20 (PTE owner payment from Form OR-19)"
-  - { line: "37", field: or-40-p5-6, type: money }  # "Earned income credit (see instructions)"
-  - { line: "38", field: or-40-p5-7, type: money }  # "Oregon Kids Credit (see instructions)"
-  - { line: "39", field: or-40-p5-8, type: money }  # "Total refundable credits from Schedule OR-ASC, line F7"
-  - { line: "40", field: or-40-p5-9, type: money }  # "Total payments and refundable credits. Add lines 32 through 39"
-  - { line: "41", field: or-40-p5-10, type: money } # "Overpayment of tax. Line 40 minus line 31"
-  - { line: "42", field: or-40-p5-11, type: money } # "Net tax. Line 31 minus line 40"
-  - { line: "43", field: or-40-p5-12, type: money } # "Penalty and interest for filing or paying late"
-  - { line: "44", field: or-40-p5-13, type: money } # "Interest on underpayment of estimated tax. Include Form OR-10"
+  - { line: "32", field: or-40-p5-1, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Enter your kicker amount (see instructions). If you elect to donate your kicker to the State School Fund, enter 0 and see line 55" [2023: withholding]
+  - { line: "33", field: or-40-p5-2, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Oregon income tax withheld. Include a copy of your Forms W-2 and 1099"
+  - { line: "34", field: or-40-p5-3, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Prior-year refund applied as estimated payment"
+  - { line: "35", field: or-40-p5-4, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Estimated tax payments for 2025 ... that you made by April 15, 2026. Do not include the amount on line 34"
+  - { line: "36", field: or-40-p5-5, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Estimated tax payments from Schedule OR-K-1, line 20 (PTE owner payment from Form OR-19)"
+  - { line: "37", field: or-40-p5-6, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Earned income credit (see instructions)"
+  - { line: "38", field: or-40-p5-7, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Oregon Kids Credit (see instructions)"
+  - { line: "39", field: or-40-p5-8, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Total refundable credits from Schedule OR-ASC, line F7"
+  - { line: "40", field: or-40-p5-9, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Total payments and refundable credits. Add lines 32 through 39"
+  - { line: "41", field: or-40-p5-10, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Overpayment of tax. Line 40 minus line 31"
+  - { line: "42", field: or-40-p5-11, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Net tax. Line 31 minus line 40"
+  - { line: "43", field: or-40-p5-12, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Penalty and interest for filing or paying late"
+  - { line: "44", field: or-40-p5-13, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Interest on underpayment of estimated tax. Include Form OR-10"
   - { line: 44a, field: or-40-p5-14, type: text, maxlen: 1 }  # "Exception number from Form OR-10, line 1"
   - { line: 44b.yes, field: or-40-p5-15, type: checkbox, on_state: /Yes }  # "Check box if you annualized"
 
   # ============================================ page 6 — lines 45-55, direct deposit
-  - { line: "45", field: or-40-p6-1a, type: money } # "Total penalty and interest due. Add lines 43 and 44"
-  - { line: "46", field: or-40-p6-1b, type: money } # "Net tax including penalty and interest. Line 42 plus line 45"
-  - { line: "47", field: or-40-p6-2, type: money }  # "Overpayment less penalty and interest. Line 41 minus line 45"
-  - { line: "48", field: or-40-p6-3, type: money }  # "Amount from line 47 you want to apply as a payment of your 2026* estimated tax (*to a later year if filing after 1/15/2027)"
-  - { line: "49", field: or-40-p6-4, type: money }  # "Charitable checkoff donations from Schedule OR-DONATE, line 30"
-  - { line: "50", field: or-40-p6-5, type: money }  # "Political party $3 checkoff"
+  - { line: "45", field: or-40-p6-1a, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Total penalty and interest due. Add lines 43 and 44"
+  - { line: "46", field: or-40-p6-1b, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Net tax including penalty and interest. Line 42 plus line 45"
+  - { line: "47", field: or-40-p6-2, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Overpayment less penalty and interest. Line 41 minus line 45"
+  - { line: "48", field: or-40-p6-3, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Amount from line 47 you want to apply as a payment of your 2026* estimated tax (*to a later year if filing after 1/15/2027)"
+  - { line: "49", field: or-40-p6-4, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Charitable checkoff donations from Schedule OR-DONATE, line 30"
+  - { line: "50", field: or-40-p6-5, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Political party $3 checkoff"
   - { line: 50a, field: or-40-p6-6, type: text, maxlen: 3 }  # "Party code: 50a. You"
   - { line: 50b, field: or-40-p6-7, type: text, maxlen: 3 }  # "50b. Spouse"
-  - { line: "51", field: or-40-p6-8, type: money }  # "Higher education savings plan deposits from Schedule OR-529, line 5"
-  - { line: "52", field: or-40-p6-9, type: money }  # "Total. Add lines 48 through 51"
-  - { line: "53", field: or-40-p6-10, type: money } # "Net refund. Line 47 minus line 52"
+  - { line: "51", field: or-40-p6-8, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Higher education savings plan deposits from Schedule OR-529, line 5"
+  - { line: "52", field: or-40-p6-9, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "Total. Add lines 48 through 51"
+  - { line: "53", field: or-40-p6-10, type: money, maxlen: 11, comb: true, format: money_comma_cells } # "Net refund. Line 47 minus line 52"
   - { line: 54.outside_us.yes, field: or-40-p6-11, type: checkbox, on_state: /Yes }  # 54 "Check the box if the final deposit destination is outside the United States"
   - { line: 54.account_type.checking, field: or-40-p6-12, type: checkbox, on_state: /Choice1, group: account_type }  # "Checking"
   - { line: 54.account_type.savings, field: or-40-p6-12, type: checkbox, on_state: /Choice2, group: account_type }   # "Savings"
   - { line: 54.routing_number, field: or-40-p6-14, type: text, maxlen: 9 }    # "Routing number"
   - { line: 54.account_number, field: or-40-p6-15, type: text, maxlen: 17 }   # "Account number"
   - { line: 55a.yes, field: or-40-p6-16, type: checkbox, on_state: /Yes }  # "55. If you elect to donate your kicker to the State School Fund, check this box ... 55a."
-  - { line: 55b, field: or-40-p6-17, type: money }  # "55b. Complete the kicker worksheet in the instructions and enter the amount here"
+  - { line: 55b, field: or-40-p6-17, type: money, maxlen: 11, comb: true, format: money_comma_cells }  # "55b. Complete the kicker worksheet in the instructions and enter the amount here"
 
   # ============================================ page 7 — Sign Here
   - { line: your_signature_date, field: or-40-p7-1, type: text, maxlen: 10 }   # "Your signature / Date (MM/DD/YYYY)"

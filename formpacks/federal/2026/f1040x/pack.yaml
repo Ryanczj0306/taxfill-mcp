@@ -2,14 +2,14 @@
 # JT5f, read 2026-09-28). The pack for amending a TAX YEAR 2026 return.
 #
 # Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040x--dft.pdf, footer "Form 1040-X (Rev.
-# 12-2026) Created 8/19/26"). PDF page 1 is the IRS cover sheet, so the form's pages 1 and 2 are PDF pages 2
-# and 3 (the signature block is on PDF page 3). When the final posts, re-pin source_url, pdf_sha256 and
-# source_status final, drop draft_created, signature page 2, and re-read the face. TY2026 is planning-only
-# (rehearsal mode only).
+# 12-2026) Created 10/9/26"; first mapped from the "Created 8/19/26" draft). PDF page 1 is the IRS cover
+# sheet, so the form's pages 1 and 2 are PDF pages 2 and 3 (the signature block is on PDF page 3). When the
+# final posts, re-pin source_url, pdf_sha256 and source_status final, drop draft_created, signature page 2,
+# and re-read the face. TY2026 is planning-only (rehearsal mode only).
 #
-# 194 widgets (Rev. 12-2025: 166), 191 mapped. The three unmapped widgets are line 9's A/B/C cells (f1_63-
-# f1_65), which print "Reserved for future use" on ReadOnly widgets and are named by no printed sum — the
-# every-year RESERVED_LINES_UNMAPPED verdict for this form's reserved lines.
+# 190 widgets (Created 8/19/26: 194; Rev. 12-2025: 166), 187 mapped. The three unmapped widgets are line
+# 9's A/B/C cells (f1_63-f1_65), which print "Reserved for future use" on ReadOnly widgets and are named by
+# no printed sum — the every-year RESERVED_LINES_UNMAPPED verdict for this form's reserved lines.
 #
 # Rev. 12-2025 -> Rev. 12-2026, read off the draft face and widget tree (a wholesale redesign that tracks
 # the 2026 Form 1040: every positional name moved, so every binding was re-derived from the containers):
@@ -28,11 +28,24 @@
 # - TRAP — line 17 splits: "17a Add lines 12 through 15, column C, and line 16", "17b Amount from Schedule
 #   3-A", "17c Subtract line 17b from line 17a. These are your total payments"; 19 subtracts 18 from 17c.
 # - Line 15's refundable-credit boxes drop Form 8885 (Schedule 8812, 2439, 4136, 8863, 8962, other).
-# - Line 22 gains DIRECT DEPOSIT: 22a amount refunded, 22b routing number, 22c checking/savings, 22d
-#   account number; 23 applies to "(enter year): estimated tax".
+# - Line 22 prints "22 Amount of line 21 you want refunded to you" with no direct-deposit boxes, as in
+#   Rev. 12-2025; 23 applies to "(enter year): estimated tax". (The Created 8/19/26 draft had split it into
+#   22a amount, 22b routing number, 22c checking/savings and 22d account number; see the re-post note below.)
 # - TRAP — Part I renumbers: "24 Your dependent children who lived with you more than half of the year"
 #   and "25 Other dependents" (Rev. 12-2025: 25 and 27, with 24/26/28/29 reserved). The dependents grid
 #   (rows (1)-(7)) keeps the 2025 keys.
+#
+# Re-post (Phase K drift re-map, 2026-10-23). The IRS re-created the draft at the same URL ("Created 10/9/26",
+# PDF CreationDate 2026-10-09; fetched twice 2026-10-23, both sha256 efbdbd1070b300ba..., replacing
+# 6b76023588d258be...). Page 1 (PDF page 2) is unchanged but for the footer date: same widgets, names, rects
+# and flags. Page 2 (PDF page 3) drops the direct-deposit row — RoutingNo f2_06, c2_1 (Checking /1, Savings /2)
+# and AccountNo f2_07 are gone, and "22a" now prints "22" (widget f2_05, same rect) — and everything below
+# moved up 24 pt and was RENUMBERED: 23 is f2_06 / f2_07, lines 24-25 are f2_08-f2_13, the dependents grid's
+# rows (1)-(4) are f2_14-f2_29 (row by row, Dependent 1-4 left to right), and the Part II box is f2_30
+# (f2_31/f2_32 no longer exist; the Sign Here and preparer widgets keep f2_33-f2_44 and their rects). The
+# trap: the OLD names still exist on the new draft in other cells — Row1 f2_16 is now Dependent 3's first
+# name, Line24 f2_10 is line 24 column C — so the 8/19/26 map filled them silently into the wrong boxes.
+# Every page-2 binding was re-derived from its rect against the printed row and column on a render.
 #
 # Relations: column C only, as in Rev. 12-2025, each re-read on the draft face. Cross-form: none — the
 # amended figures are compared with the attached corrected return by the filer, and 17b ("Amount from
@@ -41,9 +54,9 @@ form: 1040-X
 jurisdiction: federal
 tax_year: 2026
 source_url: https://www.irs.gov/pub/irs-dft/f1040x--dft.pdf
-pdf_sha256: "6b76023588d258bee82f7d549ab8cc8497fbbd263d2f963603df87831cfb28f2"
+pdf_sha256: "efbdbd1070b300ba9a243f9be9f128cc6ee987f8ce39a4aaa9096eef27ff890a"
 source_status: draft
-draft_created: "8/19/26"
+draft_created: "10/9/26"
 acroform_root: "topmostSubform[0]"
 fields:
   - { line: "amended_year", field: "Page1[0].f1_01[0]", type: text, maxlen: 4 }
@@ -170,36 +183,32 @@ fields:
   - { line: "19", field: "Page2[0].f2_02[0]", type: money }
   - { line: "20", field: "Page2[0].f2_03[0]", type: money }
   - { line: "21", field: "Page2[0].f2_04[0]", type: money }
-  - { line: "22a", field: "Page2[0].f2_05[0]", type: money }
-  - { line: "22b", field: "Page2[0].RoutingNo[0].f2_06[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
-  - { line: "22c.checking", field: "Page2[0].c2_1[0]", type: checkbox, on_state: "/1", group: "22c" }
-  - { line: "22c.savings", field: "Page2[0].c2_1[1]", type: checkbox, on_state: "/2", group: "22c" }
-  - { line: "22d", field: "Page2[0].AccountNo[0].f2_07[0]", type: text, maxlen: 17, comb: true, format: "ssn_digits_only" }
-  - { line: "23.estimated_tax_year", field: "Page2[0].f2_08[0]", type: text, maxlen: 4 }
-  - { line: "23", field: "Page2[0].f2_09[0]", type: money }
-  - { line: "24.original", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_10[0]", type: money }
-  - { line: "24.net_change", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_11[0]", type: money }
-  - { line: "24", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_12[0]", type: money }
-  - { line: "25.original", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_13[0]", type: money }
-  - { line: "25.net_change", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_14[0]", type: money }
-  - { line: "25", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_15[0]", type: money }
+  - { line: "22", field: "Page2[0].f2_05[0]", type: money }   # "22 Amount of line 21 you want refunded to you"
+  - { line: "23.estimated_tax_year", field: "Page2[0].f2_06[0]", type: text, maxlen: 4 }  # "applied to your (enter year):"
+  - { line: "23", field: "Page2[0].f2_07[0]", type: money }   # "estimated tax 23"
+  - { line: "24.original", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_08[0]", type: money }
+  - { line: "24.net_change", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_09[0]", type: money }
+  - { line: "24", field: "Page2[0].Table_Lines24-25[0].Line24[0].f2_10[0]", type: money }
+  - { line: "25.original", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_11[0]", type: money }
+  - { line: "25.net_change", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_12[0]", type: money }
+  - { line: "25", field: "Page2[0].Table_Lines24-25[0].Line25[0].f2_13[0]", type: money }
   - { line: "dependents.more_than_four", field: "Page2[0].Dependents_ReadOrder[0].c2_2[0]", type: checkbox, on_state: "/1" }
-  - { line: "dependent_1.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_16[0]", type: text }
-  - { line: "dependent_2.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_17[0]", type: text }
-  - { line: "dependent_3.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_18[0]", type: text }
-  - { line: "dependent_4.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_19[0]", type: text }
-  - { line: "dependent_1.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_20[0]", type: text }
-  - { line: "dependent_2.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_21[0]", type: text }
-  - { line: "dependent_3.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_22[0]", type: text }
-  - { line: "dependent_4.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_23[0]", type: text }
-  - { line: "dependent_1.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_24[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
-  - { line: "dependent_2.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_25[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
-  - { line: "dependent_3.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_26[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
-  - { line: "dependent_4.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_27[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
-  - { line: "dependent_1.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_28[0]", type: text, maxlen: 15 }
-  - { line: "dependent_2.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_29[0]", type: text, maxlen: 15 }
-  - { line: "dependent_3.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_30[0]", type: text, maxlen: 15 }
-  - { line: "dependent_4.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_31[0]", type: text, maxlen: 15 }
+  - { line: "dependent_1.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_14[0]", type: text }
+  - { line: "dependent_2.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_15[0]", type: text }
+  - { line: "dependent_3.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_16[0]", type: text }
+  - { line: "dependent_4.first_name", field: "Page2[0].Table_Dependents[0].Row1[0].f2_17[0]", type: text }
+  - { line: "dependent_1.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_18[0]", type: text }
+  - { line: "dependent_2.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_19[0]", type: text }
+  - { line: "dependent_3.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_20[0]", type: text }
+  - { line: "dependent_4.last_name", field: "Page2[0].Table_Dependents[0].Row2[0].f2_21[0]", type: text }
+  - { line: "dependent_1.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_22[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "dependent_2.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_23[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "dependent_3.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_24[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "dependent_4.ssn", field: "Page2[0].Table_Dependents[0].Row3[0].f2_25[0]", type: text, maxlen: 9, comb: true, format: "ssn_digits_only" }
+  - { line: "dependent_1.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_26[0]", type: text, maxlen: 15 }
+  - { line: "dependent_2.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_27[0]", type: text, maxlen: 15 }
+  - { line: "dependent_3.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_28[0]", type: text, maxlen: 15 }
+  - { line: "dependent_4.relationship", field: "Page2[0].Table_Dependents[0].Row4[0].f2_29[0]", type: text, maxlen: 15 }
   - { line: "dependent_1.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent1[0].c2_3[0]", type: checkbox, on_state: "/1" }
   - { line: "dependent_1.lived_with_you_in_us", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent1[0].c2_4[0]", type: checkbox, on_state: "/1" }
   - { line: "dependent_2.lived_with_you", field: "Page2[0].Table_Dependents[0].Row5[0].Dependent2[0].c2_5[0]", type: checkbox, on_state: "/1" }
@@ -225,7 +234,7 @@ fields:
   - { line: "dependent_4.child_tax_credit", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent4[0].c2_22[0]", type: checkbox, on_state: "/1", group: "dependent_4_credit" }
   - { line: "dependent_4.credit_for_other_dependents", field: "Page2[0].Table_Dependents[0].Row7[0].Dependent4[0].c2_22[1]", type: checkbox, on_state: "/2", group: "dependent_4_credit" }
   - { line: "mfs_hoh_lived_apart", field: "Page2[0].c2_23[0]", type: checkbox, on_state: "/1" }
-  - { line: "explanation", field: "Page2[0].f2_32[0]", type: text }
+  - { line: "explanation", field: "Page2[0].f2_30[0]", type: text }
   - { line: "occupation", field: "Page2[0].f2_33[0]", type: text }
   - { line: "identity_protection_pin", field: "Page2[0].f2_34[0]", type: text, maxlen: 6, comb: true }
   - { line: "spouse_occupation", field: "Page2[0].f2_35[0]", type: text }

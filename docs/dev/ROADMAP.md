@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**11,659 tests** — offline 9,640 + live-.gov 2019; derived
+Done and on `main` (**12,865 tests** — offline 10,262 + live-.gov 2603; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -43,7 +43,9 @@ re-issued the 2023 Form 1 in May 2026 as a rebuilt AcroForm — retired 2026-10-
 re-mapped the pack onto the re-issue. The 2026-10-12 run was red again on two new causes — the MN 2025 M1
 booklet moved, and mass.gov and its Wayback mirror refuse GitHub-hosted runners — which JK2 (2026-10-15)
 fixed or quarantined: the MN citations re-pointed, fetch retries and a CI blank cache added, and the ten MA
-network tests quarantined until 2027-01-11 (twenty since 2026-10-23: JK27's and JK28's signature sweeps add two MA cases each, and JK28's measured text budgets six).
+network tests quarantined until 2027-01-11 (twenty since 2026-10-23: JK27's and JK28's signature sweeps add two MA cases each, and JK28's measured text budgets six). The 2026-10-19 run was red on two upstream revisions of pinned blanks: Oregon re-issued the 2023 OR-40
+(an accessibility re-tag that replaced two radio fields with checkboxes) and the IRS re-created the 2026 Form 1040-X draft
+(10/9/26: line 22's direct deposit dropped, page 2 renumbered). JK29 (2026-10-23) re-mapped both packs.
 
 > **Status (2026-10-15):** JK2 landed (978fc2f): the MN booklet citations re-pointed, fetch and finals-watch retries,
 > a CI blank cache and the ten MA quarantine rows. The scheduled runs of 2026-10-19 and 10-26 are the proof; issue #3
@@ -215,6 +217,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 6a | JK27 Fix wave: the defects the JK0 verifiers and the JK6 / JK21 goldens found | M–L | — | — | **done 2026-10-16** |
 | 7 | JK5 Release-candidate dry run | M | all done (JK27 2026-10-16) | — | **done 2026-10-16** |
 | 7a | JK28 JK27's and JK5's open follow-ups: NR/PY form citations, signature lines, unmeasured budgets, IA line 12, workspace paths, page-header mirrors, state credits, the SSN comb | M | — | — | **done 2026-10-23** |
+| 7b | JK29 Freshness drift fix: OR-40 2023 re-issue, 2026 Form 1040-X draft re-post, comb boxes whose printed separators take cells | S–M | — | — | **done 2026-10-23** |
 | 8 | JK6 Five journey goldens | M | JA1.3 | — | **done 2026-10-15** |
 | 9 | JA2 Phase A user half (+ JD2.3) | user | JK5 | the user | user's call (RC 2026-10-23) |
 | 10 | JK7 A6 flip + `.mcpb` on the release | S | JA2 upload | PyPI upload | upload + 1 day |
@@ -286,6 +289,12 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
   - **SSN comb offset.** Fixed rather than closed: fill_form narrows a written comb widget to the grid its printed separators imply (P-033; the blank's vector strokes, comb widgets only) and reports `combs_aligned`. Over the 2,229 comb widgets of 265 cached blanks it moves exactly the 22 federal SSN boxes whose dots crossed a digit: 2023-2026 Form 1040 and 1040-X own and spouse, 2023/2024 dependents, and line 26. Pale tinted cell outlines (DE, IA, IL, LA, MA, OR, VA) are left as printed.
   - **W-2 code titles by year.** The 2019-2026 Instructions for Forms W-2 and W-3, each fetched twice, show F and S gaining the Roth SEP / Roth SIMPLE words in the 2025 edition, not in 2023 as this box assumed. M's closing period (2019-2024) and P's "or intelligence community" (2026) vary too. V25 shows the W-2's own year's title. Code II starts with the 2024 W-2 (the table had dated it 2019), so V22 now flags II on a 2019-2023 W-2.
   - **Left open, with reasons:** (1) 1,545 text lines in 106 packs outside tier-1 TY2025 still carry an unmeasured budget; each is measured when its pack is next touched. (2) The registry keeps the first description per (topic, url), which is JK20's. (3) CA's blind and senior counts for a qualifying surviving spouse are checked against the joint column; the separate-return maximum of 2 for AR, DE and OR fits only their combined separate return; AR's senior_special within senior and OR's disabled_child within dependent are stated in notes, not enforced. (4) MO's typed-signature rule lives in pack comments, not in a fill-time warning. (5) The gate cannot see a header field a pack leaves unmapped, as GA 2023's was; a blank scan for unmapped mirror-shaped fields would. (6) AL's "Name(s)" header mirrors print the primary filer only, as the DOR's own script does, while ME and OK add the spouse in an optional segment. (7) The four NR/PY group test modules share copied helpers.
+- [x] **JK29 — Freshness drift fix and comb separator cells — DONE 2026-10-23** (S–M; found by the 2026-10-19 freshness run and the re-map's verifiers) (KG2, KG3) — each fix has a test that fails before and passes after.
+  - **OR-40 2023 re-issue.** Oregon re-tagged the 2023 blank for accessibility (PDF ModDate 2026-10-14; the printed revision is still "150-101-040 (Rev. 03-21-24, ver. 01)") and replaced the filing-status and account-type radio fields with separate checkboxes, so a filing-status fill failed with "field not found". The seven lines are re-bound by rectangle against the printed captions and pdf_sha256 is re-pinned. OR-40 2024 and 2025 still match their pins.
+  - **2026 Form 1040-X draft re-post.** The IRS re-created the draft (Created 10/9/26): line 22 drops direct deposit (22a becomes 22; 22b-22d are gone) and the page-2 widgets below it moved and were renumbered. Ten lines of the old map would have filled other cells without a warning, because their old field names still exist and name different cells. The pack is re-mapped and re-pinned; test_reissued_blank_remaps.py fills both blanks and checks every value's cell.
+  - **SSN boxes whose printed dashes take cells.** `format: ssn_dash_cells` writes "ddd-dd-dddd" into an 11-cell comb whose cells 4 and 7 sit on printed dashes; verify still compares digits. OR-40 2023-2025 (15 lines) and MO-1040 2023-2025 (SSN_1/SSN_2) use it; before, the 4th digit landed on the first printed dash. A widget-level gate reads each blank, and a mirror that slices an SSN slices its digits.
+  - **Money boxes whose printed commas take cells.** `format: money_comma_cells` writes "1,234,567" into an OR-40 money comb (lines 7-55b, 2023-2025, 142 lines): bare digits put a digit in a comma cell, so 1,234,567 could read as 123,567. A minus never lands in a comma cell ("- 123,456"). A census of every money comb (576 lines in 12 packs) found the LA, MA and VA boxes print their commas on the cell rules, so they need no format; two gates hold both lists.
+  - **Left open:** verify does not yet fail a bare-digit value on disk in a comma-cell or dash-cell box written by another tool; identity checks match by line key, so MO-1040's SSN_1 is not compared with a Form 1040's identifying_number; the VA 760 line 17 widget is narrower than its printed cells; IA 1040 2023 lines 32a/32b (routing and account numbers) are mapped as money.
 - [x] **JK5 — Release-candidate dry run — DONE 2026-10-16** (M; deps JK0, JK0a, JK1-JK4, JA1, JK27; latest start 2026-10-21) — cut at 2a77d2d once its CI was green; the findings are fixed in 050e84d, and the A6 flip waits on branch `release/a6-flip`.
   - **The dry run.** Both wheels build (scripts/stage_data.py, then uv build); `uvx twine check dist/*` passes; scripts/release_smoke.py in a clean venv sees 23 tools and the derived pack counts; mcpb 2.1.2 `validate` and `pack` pass; PUBLISHING.md:146's grep, widened to packages/, finds only the gate test's own pattern list. An agent then ran ACCEPTANCE.md end to end over stdio against the installed RC: the TY2025 demo persona's Form 1040 in Washington, plus California Form 540, behind a logging proxy and lsof (traffic only to irs.gov and ftb.ca.gov). Every figure matched.
   - **What it found, fixed in 050e84d.** A three-lens review and a re-verify of the fixes found more, fixed in the same commit:
@@ -1166,7 +1175,7 @@ line items sum to the headline delta.
     - **Form 8938** (Rev. 12-2026, Created 9/2/26): the same 131 widgets in the same reading order (checked position by position); 18 names lose their zero padding; wording only.
     - The designator sweep over the four is clean. The filer-address fixture gains the rows (each equals its 2025 row); test_discovery 143. The Schedule E 2026 line-13 header cells from JT5d gain their RESERVED_LINES_UNMAPPED row. Tests: `test_jt5e_*`.
   - **JT5f** (M): f1040x (Rev. 12-2026), and sched_3a (new). **DONE 2026-09-28:**
-    - **Form 1040-X** (Rev. 12-2026, Created 8/19/26): a wholesale redesign that tracks the 2026 Form 1040 — 194 widgets, 191 mapped (line 9's three reserved cells stay unmapped, RESERVED_LINES_UNMAPPED).
+    - **Form 1040-X** (Rev. 12-2026, Created 8/19/26): a wholesale redesign that tracks the 2026 Form 1040 — 194 widgets, 191 mapped (line 9's three reserved cells stay unmapped, RESERVED_LINES_UNMAPPED). Re-posted Created 10/9/26 (line 22's direct deposit dropped, page 2 renumbered): 190 widgets, 187 mapped, re-mapped by JK29 (2026-10-23).
       - New on the face: the special-processing row, main-home-in-U.S., split Presidential Election boxes, and Other Information (the NRA-spouse election, digital assets, citizen/work-authorized).
       - New lines 2a–2c, 11a–11c (Form 1062), 17a–17c (Schedule 3-A) and direct deposit 22a–22d; the 8885 box is gone.
       - TRAP: Part I renumbers — 2025 25/27 are 2026 24/25.
