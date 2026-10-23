@@ -629,3 +629,12 @@ identity_fields:
   - tp_ssn
   - tp_first_name
   - tp_last_name
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2 prints "Last Name (First 10 Characters)" in its own
+# 10-character box (read on the 2025 blank rendered at 200 dpi); its "Your Social Security Number" is the page-1 field
+# again, so it needs no mirror. fill_form builds each mirror the caller leaves out from its page-1 source
+# (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)").
+# The 2023 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  tp_last_name_page2: "{tp_last_name[:10]}"  # "Last Name (First 10 Characters)"

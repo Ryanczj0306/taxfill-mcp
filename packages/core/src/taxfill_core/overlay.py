@@ -52,6 +52,7 @@ from taxfill_core.handfill import (
     hand_fill_worksheet,
     worksheet_money_values,
 )
+from taxfill_core.datadir import home_display, user_path, write_output
 from taxfill_core.knowledge import assert_filing_grade
 from taxfill_core.redact import redact
 from taxfill_core.schemas.handfill import (
@@ -567,8 +568,9 @@ def stamp_overlay(
         ProvisionalPackError: the year's knowledge pack is planning-only (same rule as fill_form).
     """
     assert_filing_grade(pack.jurisdiction, pack.tax_year, action="fill a form")
-    blank = Path(blank_pdf_path)
-    out = Path(out_path)
+    # "~/..." as an agent types it (Phase K JK28); refusals show the home folder as "~".
+    blank = user_path(blank_pdf_path)
+    out = user_path(out_path)
     values = dict(values or {})
 
     if pack.efile_only:
@@ -589,7 +591,7 @@ def stamp_overlay(
         )
     if not blank.is_file():
         raise FileNotFoundError(
-            f"blank PDF not found at {blank} — download it first from the pack's source_url "
+            f"blank PDF not found at {home_display(blank)} — download it first from the pack's source_url "
             f"({pack.source_url}) via fetch_blank and pass that path"
         )
 
@@ -601,7 +603,7 @@ def stamp_overlay(
         raise
     except Exception as exc:
         raise ValueError(
-            f"{blank} could not be parsed as a PDF ({exc}) — the download is corrupt or not a PDF; "
+            f"{home_display(blank)} could not be parsed as a PDF ({exc}) — the download is corrupt or not a PDF; "
             f"re-fetch the blank from the pack's source_url ({pack.source_url}) via fetch_blank and retry"
         ) from exc
     n_pages = len(writer.pages)
@@ -660,9 +662,7 @@ def stamp_overlay(
         base = writer.pages[page_no - 1]
         base.merge_page(_overlay_page(base, bytes(content)))
 
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("wb") as fh:
-        writer.write(fh)
+    write_output(out, writer.write)
     return OverlayResult(
         out_path=str(out), form=pack.form, jurisdiction=pack.jurisdiction, tax_year=pack.tax_year,
         page_count=n_pages, stamped_lines=stamped, hand_written_lines=hand_written,
@@ -675,12 +675,13 @@ def stamp_overlay(
 
 
 def _open_pdfium(pdf_path: Path, what: str) -> pdfium.PdfDocument:
+    pdf_path = user_path(pdf_path)
     if not pdf_path.is_file():
-        raise FileNotFoundError(f"no PDF at {pdf_path} — {what}")
+        raise FileNotFoundError(f"no PDF at {home_display(pdf_path)} — {what}")
     try:
         return pdfium.PdfDocument(str(pdf_path))
     except pdfium.PdfiumError as exc:
-        raise ValueError(f"{pdf_path} could not be opened as a PDF ({exc}) — {what}") from exc
+        raise ValueError(f"{home_display(pdf_path)} could not be opened as a PDF ({exc}) — {what}") from exc
 
 
 _WS = re.compile(r"\s+")
@@ -868,7 +869,7 @@ def verify_overlay(
     for AcroForm packs.
     """
     assert_filing_grade(pack.jurisdiction, pack.tax_year, action="verify a form")
-    path = Path(pdf_path)
+    path = user_path(pdf_path)
     values = dict(values or {})
     by_line = {ln.line: ln for ln in pack.lines}
     unknown = sorted(k for k in values if k not in by_line)
@@ -913,7 +914,7 @@ def verify_overlay(
 
 def page_geometry(pdf_path: str | Path, page: int) -> dict[str, float | int]:
     """MediaBox (user-space frame) and /Rotate of one page: the frame overlay coordinates use."""
-    path = Path(pdf_path)
+    path = user_path(pdf_path)
     doc = _open_pdfium(path, "pass the blank PDF fetched from the pack's source_url")
     try:
         n = len(doc)
@@ -951,7 +952,7 @@ def locate_labels(
     on the same printed row is stamped at ``y = y0``; its ``x1`` is where the label ends and
     the entry box begins somewhere to the right.
     """
-    path = Path(blank_pdf_path)
+    path = user_path(blank_pdf_path)
     doc = _open_pdfium(path, "pass the blank PDF fetched from the pack's source_url")
     out: dict[str, list[Box]] = {}
     try:

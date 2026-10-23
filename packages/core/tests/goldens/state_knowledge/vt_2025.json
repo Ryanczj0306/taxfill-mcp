@@ -11,6 +11,7 @@
   "@@49c0726f19c1": "Renter Credit (renter rebate / circuit-breaker) — Vermont renters who meet all three 2025 requirements per the 2025 IN-111 instructions: (1) domiciled in Vermont for the entire calendar year 2025, (2) not claimed in 2025 as a dependent of another taxpayer, and (3) rented in Vermont for at least six months in 2025. Eligibility also depends on income, family size, and county of residency.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@5683ecdae29b": "2025 Schedule IN-113 Instructions, Income Adjustment — 'WHO MUST FILE IN-113' (p. 1 of 2): 'You must file Schedule IN-113 if you are either: • a nonresident or part-year resident and earned or received Vermont income'; 'Part-Year Resident: Part-year residents may, in some cases, be able to adjust Vermont income by both the Vermont percentage of income on Schedule IN-113 and claim a credit for income tax paid to another tax jurisdiction on Schedule IN-117'",
   "@@5df2f3e32607": "VT Dept of Taxes — 2025 Form IN-111 Instructions, Due Date: 'The 2025 Vermont Income Tax Return must be filed by April 15, 2026.' An extension (Form IN-151, filable at myVTax) extends the filing deadline to Oct. 15, 2026 but does NOT extend the time to pay — late payment penalty and interest accrue after the April due date, and a $50 late-file penalty applies if the return is not filed by the extended Oct. 15, 2026 date.",
   "@@60bf67d4e06d": "Treaty conformity — VT conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from VT income (it flows through the federal starting point; do not add it back on the VT return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Vermont's resident return starts from federal adjusted gross income and does NOT add back federally treaty-exempt income; it explicitly SUBTRACTS it. Form IN-111 Line 1 is 'Federal Adjusted Gross Income REQUIRED entry. Enter the amount from your federal Form 1040 or, if applicable, from the recomputed federal Form 1040' (2025 IN-111 Instructions). The DOR 'Resident' page states: 'If you are a Vermont resident, your income starts with federal adjusted gross income minus the following: Income exempted from state taxation by the laws of the United States...'. Line 2 (Net Modifications to Federal AGI, from Schedule IN-112, Part I, Line 19) contains the standard state additions/subtractions — non-Vermont state/local obligation interest and federal bonus depreciation as additions; U.S.-obligation interest, the capital-gains exclusion, the retirement-income exemption, medical expenses, state/local taxes, railroad retirement, and military retirement/survivor benefits as subtractions — with no treaty-income add-back. Because treaty-exempt income is already excluded from federal AGI and is additionally listed as a Vermont subtraction (not an addition), it is not re-taxed -> conforms = true.",
   "@@6a1b3c74ec9b": "annual (per tax year; the newest shipped VT pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
@@ -23,7 +24,8 @@
   "@@c912235bc4e8": "Law change NOT modeled by the engine (status final_form_published): NEW refundable Vermont Veteran Tax Credit, \"signed into law on June 25, 2025, as part of Act 71\", effective beginning with the 2025 tax year: any Vermont resident or part-year resident with a discharge record or other record of separation from active duty verifying service in the uniformed services gets a \"$250 refundable tax credit if their adjusted gross income is less than or equal to $25,000\", reduced by $5 for each full $100 of AGI over $25,000 — \"No credit is available for veterans with an adjusted gross income equal to or greater than $30,000\". Resolve via: Compute on the 2025 Schedule IN-112, Part II, Lines 8-12 from Form IN-111 Line 1 AGI (Line 9 = AGI - $25,000; Line 10 = Line 9 / 100 rounded DOWN to a whole number; Line 11 = Line 10 x $5; Line 12 = $250 - Line 11), per the cited 2025 Schedule IN-112 Instructions.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f8411ddf2c64": "Vermont Child Tax Credit — Full-year and part-year Vermont resident families with a qualifying child age six or younger at the close of the tax year — the 2025 Schedule IN-112 says to list only children born 2019 through 2025. Available to all qualifying VT residents regardless of SSN/ITIN status of taxpayer, spouse, or dependents.",
-  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+  "@@f9708e0cde73": "2025 Schedule IN-113, Vermont Income Adjustment Calculations (p. 1): 'Nonresidents and Part-Year Residents Must Complete Parts I and II' — 'INCLUDE WITH FORM IN-111'"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -391,6 +393,18 @@
      "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf"
     },
     {
+     "answers": "@@5683ecdae29b",
+     "cadence": "@@6a1b3c74ec9b",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2025.pdf"
+    },
+    {
+     "answers": "@@f9708e0cde73",
+     "cadence": "@@6a1b3c74ec9b",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-113-2025.pdf"
+    },
+    {
      "answers": "VT Dept of Taxes — 2025 GB-1210, Income Tax Withholding Instructions, Tables, and Charts (effective January 1, 2025 - expires December 31, 2025): the Vermont Percentage Method Withholding Tables ANNUAL PAYROLLS rows, whose bounds net of the built-in offsets reproduce the 2025 income-tax bracket bounds and whose unrounded cumulative constants (1,654.90 / 6,294.70 / 16,174.70 single; 2,763.75 / 10,482.45 / 18,428.25 married) confirm the rate schedules' rounded printed VT Base Tax figures",
      "cadence": "@@6a1b3c74ec9b",
      "topic": "forms_and_instructions",
@@ -595,6 +609,18 @@
       {
        "source": "@@79c73d7c341a",
        "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf"
+      },
+      {
+       "source": "2025 Form IN-111 Instructions (Vermont Department of Taxes) — 'Requirement to File a Vermont Income Tax Return' (p. 3 of 20): 'A 2025 Vermont Income Tax Return must be filed by all full-year or part-year Vermont residents or nonresidents if you are required to file a 2025 federal income tax return, AND • You earned or received more than $100 in Vermont income, OR • You earned or received gross income of more than $1,000 as a nonresident.'; 'Line 15' (p. 7 of 20): 'Income Adjustment. Enter 100% or complete and submit Schedule IN-113 and enter percentage from Line 35.'",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf"
+      },
+      {
+       "source": "2025 Schedule IN-113 Instructions, Income Adjustment — 'WHO MUST FILE IN-113' (p. 1 of 2): 'You must file Schedule IN-113 if you are either: • a nonresident or part-year resident and earned or received Vermont income'; 'Nonresident: Complete both Parts I and II to determine the allocation of Vermont income.'",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2025.pdf"
+      },
+      {
+       "source": "@@f9708e0cde73",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-113-2025.pdf"
       }
      ],
      "filing_role": "nonresident",
@@ -653,6 +679,18 @@
       {
        "source": "@@79c73d7c341a",
        "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf"
+      },
+      {
+       "source": "2025 Form IN-111 Instructions (Vermont Department of Taxes) — 'Requirement to File a Vermont Income Tax Return' (p. 3 of 20): 'A 2025 Vermont Income Tax Return must be filed by all full-year or part-year Vermont residents or nonresidents if you are required to file a 2025 federal income tax return, AND • You earned or received more than $100 in Vermont income'; 'Line 15' (p. 7 of 20): 'Income Adjustment. Enter 100% or complete and submit Schedule IN-113 and enter percentage from Line 35.'",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf"
+      },
+      {
+       "source": "@@5683ecdae29b",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2025.pdf"
+      },
+      {
+       "source": "@@f9708e0cde73",
+       "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-113-2025.pdf"
       }
      ],
      "filing_role": "part_year",

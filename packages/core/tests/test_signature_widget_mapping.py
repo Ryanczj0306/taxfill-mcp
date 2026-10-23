@@ -17,7 +17,9 @@ pack and the AR1000NR 2023 pack already did this. The JK27 sweep found 10 bindin
 
 Out of scope here: an ink-signature line whose widget is an ordinary /Tx field (KS K-40, KY 740, MO-1040,
 IL-1040 2025). A typed value there does print, so whether it belongs on the line is a question for the printed
-face and instructions, not for the field type.
+face and instructions, not for the field type. test_signature_line_mapping.py answers it (Phase K JK28,
+2026-10-16): the KS, KY and IL keys are dropped, MO-1040's stay allow-listed because its face accepts an entered
+name, and every pack is swept for the rest.
 
 Layers, following test_readonly_widget_mapping.py:
 

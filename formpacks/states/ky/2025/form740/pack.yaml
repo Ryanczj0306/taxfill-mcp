@@ -72,8 +72,8 @@
 # round away the fraction. Line 24's federal-amount entry box
 # ("740Line24 from federal form 2441-K, line 11") is the federal Form 2441
 # line-11 figure the filer transcribes before the x20% result on line 24; it is
-# a dollar figure and mapped `money`. Identity / signature / preparer strings
-# stay `text`.
+# a dollar figure and mapped `money`. Identity strings, the Sign Here
+# driver's-license / date / phone boxes and the preparer strings stay `text`.
 #
 # SSN combs. 740SpouseSSN (column A) and 740PrimarySSN (column B) are /Btn-comb
 # text widgets (Ff comb bit set, MaxLen 9) -- one digit per cell, no dashes --

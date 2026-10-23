@@ -63,9 +63,73 @@ forms:
   resident: Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502
     (per Instruction 26).
   part_year_or_nonresident: 'Nonresidents: Form 505 — Maryland Nonresident Income Tax Return, with Form 505NR (Nonresident
-    Income Tax Calculation) attached; Form 515 is used by nonresidents subject to the special nonresident/local-jurisdiction
-    rules. Part-year residents do NOT use 505 — they file the resident Form 502 with part-year adjustments (Instruction
-    26).'
+    Income Tax Calculation) attached. A nonresident employed in Maryland who lived in a jurisdiction that imposes a local
+    income or earnings tax on Maryland residents files Form 515 (Nonresident Local Tax Return) for that wage income, and
+    also Form 505 if they have other income subject to Maryland tax. Part-year residents file the resident Form 502 with
+    part-year adjustments (Instruction 26); a part-year resident who also received Maryland-source income while a
+    nonresident files two returns, Form 502 and Form 505 (Form 505 Instructions 1 and 28).'
+  # (Phase K JK28, 2026-10-16): each role's own instructions and forms, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is the RESIDENT Form 502, so this entry named Forms 505,
+  # 505NR and 515 but pointed only at Form 502. CORRECTED from the 2025 documents: the entry said "Part-year residents
+  # do NOT use 505", but the 2025 Form 505 instructions send a "Taxpayer who moved into or out of Maryland during the
+  # tax year and received income from Maryland sources while you were a nonresident of Maryland" to "Form 505
+  # Nonresident Return and Form 502 Resident Return" (Instruction 1) — "you are required to file two returns with the
+  # State of Maryland" (Instruction 28); and Form 515, described before as for "nonresidents subject to the special
+  # nonresident/local-jurisdiction rules", is now described from its title and its Instruction 2. The URLs are the
+  # Comptroller's 2025 paths (content/dam/mdcomp/tax/instructions/2025/ and .../forms/2025/, the pattern this pack's
+  # other citations use; the Comptroller's forms list renders client-side); each PDF was downloaded twice on
+  # 2026-10-16 with identical sha256 (resident booklet 17bc9f77e055c057..., nonresident booklet 6374472b22453e0e...,
+  # 505 e042f70a30672aaf..., 505NR 7177b20646147e2a..., 515 e0fe52462271f6ac...). The first nonresident-booklet entry
+  # (part_year) ends, after ' | ', with this pack's all_citations description of the same URL, verbatim: the source
+  # registry keeps one description per (topic, url) and reads `forms` before `all_citations`, so the role quote alone
+  # had replaced it and get_sources stopped routing "capital gain", "worksheet" and "net capital gain additional tax"
+  # to the booklet. That description was re-checked against a fresh download (same sha256): 25 pages, created
+  # 2026-01-20; Tax Rate Schedules I and II (Instruction 19) and Lines 31a and 32d, the additional tax on net capital
+  # gain income, are on p. 10; the Form 505NR worksheet rows are the Tax Computation Worksheet Schedules on p. 21; and
+  # both schedules' rows equal the resident booklet's (re-downloaded, same sha256 17bc9f77e055c057...).
+  citations:
+    part_year:
+    - source: >-
+        2025 Maryland State & Local Tax Forms & Instructions (resident booklet, Form 502), Instruction 1 'WHO MUST
+        FILE?' — 'PART-YEAR RESIDENTS' (p. 1): 'If you began or ended residence in Maryland during the tax year, you
+        must file a Maryland resident income tax return. See Instruction 26.' — Instruction 26 'SPECIAL INSTRUCTIONS FOR
+        PART-YEAR RESIDENTS.' (p. 22): 'a. You must file Form 502.'
+      url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
+    - source: >-
+        2025 Maryland Nonresident Tax Forms & Instructions (Form 505), Instruction 1 'WHAT FORM TO FILE?' (p. 1):
+        'Taxpayer who moved into or out of Maryland during the tax year and received income from Maryland sources while
+        you were a nonresident of Maryland.' — 'Form 505 Nonresident Return and Form 502 Resident Return'; Instruction 28
+        'PART-YEAR RESIDENTS.' (p. 15): 'If you moved into or out of Maryland during 2025 AND received taxable Maryland
+        income both while you were a resident and while you were a nonresident AND you are required to file a federal
+        return, you are required to file two returns with the State of Maryland.' | 2025 Maryland Nonresident Tax Forms
+        and Instructions (Form 505 instructions, 25 pages, PDF build 2026-01-20) — the independent SECOND-PASS source;
+        prints the identical 2025 Tax Rate Schedules I and II (Instruction 19, including the new $500,001/$1,000,001
+        and $600,001/$1,200,001 6.25%/6.50% brackets) and the Form 505NR computation worksheet rows, plus the parallel
+        line 31a/32d net-capital-gain additional tax
+      url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/nonresident-booklet.pdf
+    nonresident:
+    - source: >-
+        2025 Maryland Nonresident Tax Forms & Instructions (Form 505), Instruction 1 'WHAT FORM TO FILE?' (p. 1):
+        'Taxpayer whose permanent home (domicile) is a state other than Maryland, you are a nonresident, unless you are
+        a statutory resident.' — 'Form 505 Nonresident Return'; 'Nonresident of Maryland but received salary, wages or
+        other compensation for personal services performed in any Maryland county or Baltimore City and you lived in a
+        jurisdiction that imposes a local or earnings tax on Maryland residents. NOTE: If you have other income subject
+        to Maryland tax, you must also file Form 505.' — 'Form 515 Nonresident Local Tax Return'
+      url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/nonresident-booklet.pdf
+    - source: >-
+        2025 Maryland Form 505, Nonresident Income Tax Return (COM/RAD-022 09/25) — the 4-page form itself
+      url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/505.pdf
+    - source: >-
+        2025 Maryland Form 505NR, Nonresident Income Tax Calculation (COM/RAD-318 09/25) — 'ATTACH TO YOUR TAX RETURN'
+      url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/505nr.pdf
+    - source: >-
+        2025 Maryland Form 515, for nonresidents employed in Maryland who reside in jurisdictions that impose a local
+        income or earnings tax on Maryland residents (COM/RAD-023 09/25), with its instructions — Instruction 2 'WHO MUST
+        FILE?' (instructions Page 1): 'In general, you are liable for local income tax and must file this return if you
+        are a nonresident of Maryland AND you received salary, wages or other compensation for personal services
+        performed in any county of Maryland or in Baltimore City AND you lived in a jurisdiction that imposes a local
+        income or earnings tax on Maryland residents AND you are required to file a federal return.'
+      url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/515.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice - confirm
   each amount and your eligibility at the cited source before claiming it. The 2025 thresholds below (CDCC chart
   endpoints, refundable-CDCC FAGI caps, poverty income guidelines, and the NEW income-based Maryland Child Tax Credit

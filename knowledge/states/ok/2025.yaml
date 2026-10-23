@@ -58,6 +58,46 @@ residency:
 forms:
   resident: Form 511 - Oklahoma Resident Individual Income Tax Return (2025)
   part_year_or_nonresident: Form 511-NR - Oklahoma Nonresident/Part-Year Resident Income Tax Return (2025)
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the resident Form 511 packet, so this entry named
+  # Form 511-NR without citing it. Each role cites the Form 511 packet's 'Who Must File?' sentence that sends it to Form
+  # 511-NR and the Form 511-NR packet (its instructions and the return; the OTC publishes no separate 511-NR PDF). The
+  # URLs are the "2025 Form 511 ... Packet & Instructions" and "2025 Form 511-NR ... Packet & Instructions" rows of the
+  # OTC forms table (oklahoma.gov/tax/forms.html). Each PDF was downloaded twice on 2026-10-16 with identical sha256:
+  # Form 511 packet c90cf30381cca6262ec94050acde8db1ee58885360f0af4ec21e045d1cc5a572, Form 511-NR packet
+  # b9681ba7c4172cf279f173f3ece218c95ae28a7c62bfbaae79938b88e475710d. RE-PIN BOTH WHEN THE 2026 PACKETS POST: they sit
+  # on OTC's `current/` path, as the top-level citation does, so they will then serve the 2026 packets. OTC files a past
+  # year's packet under a year-suffixed name: the 2024 ones are past-year/2024/511-Pkt-2024.pdf and
+  # past-year/2024/511-NR-Pkt-2024.pdf (both 200 on 2026-10-16, while past-year/2024/511-NR-Pkt.pdf is 404). So expect
+  # these at past-year/2025/511-Pkt-2025.pdf and past-year/2025/511-NR-Pkt-2025.pdf (both still 404 on 2026-10-16), and
+  # check each archived file's sha256 against the two above before re-pointing.
+  citations:
+    part_year:
+    - source: >-
+        2025 Form 511, Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission) —
+        'Who Must File?' (p. 4), Part-Year Resident: 'Every part-year resident, during the period of residency, has the
+        same filing requirements as a resident. During the period of nonresidency, an Oklahoma return is also required if
+        the Oklahoma part-year resident has gross income from Oklahoma sources of $1,000 or more. Use Form 511-NR.'
+      url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+    - source: >-
+        2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR
+        packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, 'F Residency
+        Status' (p. 9): 'Part-Year Resident - If a part-year resident, enter the dates of residency in Oklahoma. If filing
+        a joint return, both must be part-year residents.'
+      url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-NR-Pkt.pdf
+    nonresident:
+    - source: >-
+        2025 Form 511, Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission) —
+        'Who Must File?' (p. 4), Nonresident: 'Except as otherwise provided for in the Pass-Through Entity Tax Equity Act
+        of 2019 (68 OS Sec. 2355.1P-1 et seq.), every nonresident with gross income from Oklahoma sources of $1,000 or
+        more is required to file an Oklahoma income tax return. Use Form 511-NR.'
+      url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+    - source: >-
+        2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR
+        packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, 'F Residency
+        Status' (p. 9): 'Nonresident - If a nonresident the entire year, enter the state of residence. If filing a joint
+        return, both must be nonresidents the entire year.'
+      url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-NR-Pkt.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. For 2025 the Parental Choice Tax Credit
   for Homeschool Expenses maximum ($1,000 in qualified expenses per eligible student per tax year) IS printed in the

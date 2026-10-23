@@ -9,6 +9,7 @@
   "@@4c5d3096e3d7": "HI DOTAX — 2025 Form N-11 Instructions (files.hawaii.gov/tax/forms/2025/n11ins.pdf), '2025 Tax Rate Schedules' p. 48: Schedule I (Single/MFS, filing status oval 1 or 3) 12 brackets 1.40%..11.00% with boundaries 9,600/14,400/19,200/24,000/36,000/48,000/125,000/175,000/225,000/275,000/325,000 and printed base-tax constants 134/288/552/859/1,675/2,539/8,391/12,341/16,466/20,966/25,966; Schedule II (MFJ/QSS, oval 2 or 5) exactly DOUBLE those boundaries with constants 269/576/1,104/1,718/3,350/5,078/16,782/24,682/32,932/41,932/51,932; Schedule III (Unmarried Heads of Household, oval 4) exactly 1.5x with constants 202/432/828/1,289/2,513/3,809/12,587/18,512/24,699/31,449/38,949. 'Changes to Note': 'For the 2025 taxable year beginning after December 31, 2024, the individual income tax bracket amounts were amended for all the filing statuses by increasing the income limits in each bracket. (Act 45, SLH 2024)'. Standard deduction (instructions Line 23 table and the printed Form N-11 line 23) UNCHANGED at $4,400 Single/MFS, $8,800 MFJ/QSS, $6,424 HoH. Personal exemption $1,144 per exemption ('Residents are allowed $1,144 for each exemption they can claim. Multiply $1,144 by the total number of exemptions you claimed on line 6e'), $2,288 for an individual 65 or older. Second pass: the 2025 Form N-15 Instructions (files.hawaii.gov/tax/forms/2025/n15ins.pdf) print all 36 rows of the three '2025 Tax Rate Schedules' digit-identically, plus the same standard-deduction table and the same $1,144 multiplier.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@5f04c987803a": "Law change NOT modeled by the engine (status final_form_published): NEW ADD-BACK for 2025 (Act 58, SLH 2025), per \"Changes to Note\": all qualified members claiming the Pass-Through Entity tax credit must ADD their share of the taxes paid by the electing PTE to taxable income. This is an addition to the Hawaii base that did not exist for 2024. Resolve via: 2025 N-11 instructions \"Changes to Note\" and the Hawaii additions instructions for lines 8-10 at the citation URL; the amount comes from the member's share of taxes paid by the electing pass-through entity.",
+  "@@646ad6400bec": "Form N-15 (Rev. 2025), Hawaii Individual Income Tax Return, Nonresident and Part-Year Resident — the return itself (page 1: 'Part-Year Resident (Enter period of Hawaii residency above)')",
   "@@65d3fb187c56": "Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2025)",
   "@@7a75ba5fdf83": "The newest shipped HI pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@7e28940579a6": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOTAX source before relying on a specific figure/address.",
@@ -21,6 +22,7 @@
   "@@e6e26bc268b0": "Law change NOT modeled by the engine (status final_form_published): NEW SUBTRACTION for 2025 per \"Changes to Note\": an exclusion of up to $8,636 of military reserve or Hawaii National Guard duty pay, taken among the Hawaii subtractions (Form N-11 lines 13-19) on the way from federal AGI to Hawaii AGI. It did not exist in the 2024 pack's subtraction list. Resolve via: 2025 N-11 instructions \"Changes to Note\" and the line 13-19 Hawaii subtraction instructions at the citation URL (the $8,636 ceiling is the booklet's own figure; the qualifying duty pay comes from the filer's records).",
   "@@eae9318e4e91": "Credit for Low-Income Household Renters — Hawaii resident present in Hawaii more than nine months during 2025 who occupies and pays rent for real property in Hawaii used as a residence, whose rental unit was fully subject to real property tax (units wholly or partially exempt do not qualify), and who is not (and is not eligible to be) claimed as a dependent by another taxpayer. Net rent paid (after exclusions such as utilities, parking, ground rent and rental subsidies/public assistance) must EXCEED $1,000 — Schedule X Part I line 7: \"If this amount is $1,000, or less, STOP. You cannot claim this credit.\"",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@ed60b2bc12c7": "2025 Form N-15 Hawaii Nonresident and Part-Year Resident Income Tax Instructions, 'Residency Status' (pp. 4-5), under 'Part-Year Resident' (p. 5): 'A part-year resident must file an Individual Income Tax Return—Nonresident and Part-Year Resident (Form N-15), if required to do so.' — and 'Which Form to File' (p. 5): 'You MUST use Form N-15 if:' — 'You are taking up residence in Hawaii during the tax year. (Part-year resident).' — 'You are giving up residence in Hawaii during the tax year. (Part-year resident).' | Hawaii 2025 N-15 Nonresident/Part-Year Resident Instructions — INDEPENDENT SECOND-PASS source for the tax block: its \"2025 Tax Rate Schedules\" print all 36 rows of Schedules I, II and III digit-identically to the N-11's (same boundaries, same rates, same base-tax constants), and its standard-deduction table prints the same $4,400 / $8,800 / $4,400 / $6,424 amounts and the same $1,144 per-exemption multiplier",
   "@@f3530016e0ba": "annual (per tax year; the newest shipped HI pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@f5650b6feadf": "Hawaii 2025 N-11 Resident Income Tax Instructions — \"DUE DATE: APRIL 20, 2026\" on the cover and \"Form N-11, Individual Income Tax Return (Resident Form), is due on or before April 20, 2026.\" Extension: \"If you are unable to file by April 20, 2026, you are granted an automatic 6-month extension of time to file your return through October 20, 2026. You do not have to file a form to request an extension. The extension of time to file is not an extension of time for payment of tax\" — a balance due must be paid in full by April 20, 2026 with Form N-200V. Hawaii's deadline is April 20, NOT the federal April 15.",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
@@ -391,10 +393,16 @@
      "url": "https://files.hawaii.gov/tax/forms/2025/n11ins.pdf"
     },
     {
-     "answers": "Hawaii 2025 N-15 Nonresident/Part-Year Resident Instructions — INDEPENDENT SECOND-PASS source for the tax block: its \"2025 Tax Rate Schedules\" print all 36 rows of Schedules I, II and III digit-identically to the N-11's (same boundaries, same rates, same base-tax constants), and its standard-deduction table prints the same $4,400 / $8,800 / $4,400 / $6,424 amounts and the same $1,144 per-exemption multiplier",
+     "answers": "@@ed60b2bc12c7",
      "cadence": "@@f3530016e0ba",
      "topic": "forms_and_instructions",
      "url": "https://files.hawaii.gov/tax/forms/2025/n15ins.pdf"
+    },
+    {
+     "answers": "@@646ad6400bec",
+     "cadence": "@@f3530016e0ba",
+     "topic": "forms_and_instructions",
+     "url": "https://files.hawaii.gov/tax/forms/2025/n15_i.pdf"
     },
     {
      "answers": "Hawaii Department of Taxation, Schedule X (Form N-11/N-15) (Rev. 2025) — Part I Low-Income Household Renters credit and Part II Credit for Child and Dependent Care Expenses",
@@ -557,6 +565,14 @@
       {
        "source": "@@27fd08e4cd61",
        "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+      },
+      {
+       "source": "2025 Form N-15 Hawaii Nonresident and Part-Year Resident Income Tax Instructions, 'Residency Status' (pp. 4-5), under 'Nonresident' (p. 5): 'A nonresident must file an Individual Income Tax Return—Nonresident and Part-Year Resident (Form N-15), if required to do so.' — and 'Which Form to File' (p. 5): 'You MUST use Form N-15 if:' — 'You were a nonresident for the full year, or, if married filing jointly, both spouses were nonresidents for the full year.'",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n15ins.pdf"
+      },
+      {
+       "source": "Form N-15 (Rev. 2025), Hawaii Individual Income Tax Return, Nonresident and Part-Year Resident — the return itself (page 1: 'NONRESIDENT and PART-YEAR RESIDENT')",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n15_i.pdf"
       }
      ],
      "filing_role": "nonresident",
@@ -618,6 +634,14 @@
       {
        "source": "@@27fd08e4cd61",
        "url": "https://files.hawaii.gov/tax/forms/2025/n11_i.pdf"
+      },
+      {
+       "source": "@@ed60b2bc12c7",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n15ins.pdf"
+      },
+      {
+       "source": "@@646ad6400bec",
+       "url": "https://files.hawaii.gov/tax/forms/2025/n15_i.pdf"
       }
      ],
      "filing_role": "part_year",

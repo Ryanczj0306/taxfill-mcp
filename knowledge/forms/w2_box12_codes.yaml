@@ -1,8 +1,8 @@
 # Form W-2 box 12 codes and the 2026 box 14 split — the Instructions for Forms W-2 and W-3 (2026)
 # (Jan 29, 2026; irs.gov/pub/irs-prior/iw2w3--2026.pdf), read 2026-09-27 (Phase J JT4a). Titles are the index
 # entries "Codes for box 12, Form W-2", verbatim. `since` is the first tax year whose W-2 carries the code
-# (TA, TP and TT are new for 2026, P.L. 119-21; every other code predates the 2019 base year). `route` is where
-# the amount goes on the individual's return:
+# (TA, TP and TT are new for 2026, P.L. 119-21; II is new for 2024, below; every other code predates the 2019 base
+# year). `route` is where the amount goes on the individual's return:
 #   elective_deferral_402g — IRC 402(g)(3)'s "elective deferrals": (A) a 401(k) arrangement (D), (B) a salary
 #     reduction SEP (F), (C) a 403(b) salary reduction agreement (E), (D) a SIMPLE (S), and the designated Roth
 #     contributions IRC 402A(c)(1) makes "any elective deferral" (AA, BB) — one per-person limit;
@@ -12,6 +12,25 @@
 #   trump_account_employer — IRC 128 employer contributions (excluded); uncollected_tax — Schedule 2;
 #   golden_parachute_excise — Schedule 2; nontaxable_combat_pay — the EIC election; adoption_benefits — Form
 #   8839; info — shown for information (already in or excluded from box 1).
+# Titles by year (Phase K JK28, 2026-10-16): `title` is the 2026 index's wording, which holds for 2026 and later and
+# for an unknown year; `title_until` keeps an older edition's wording through the named year (the 1099-R code table's
+# convention). Read from the same index entry of every edition 2019-2025 (irs.gov/pub/irs-prior/iw2w3--YYYY.pdf; page
+# references dropped, wrapped lines joined with one space), each file downloaded twice on 2026-10-16 with identical
+# sha256 (the 2026 file re-read the same day):
+#   2019 bf3e518794b1c16556d7708fee72817c259f00cc720202e1aa731e4bd18df184 (index, page 33)
+#   2020 3c6c228b81fb81d7bb51a1dd06269530d2e9fabfa229a278c4af5a32ba828e62 (page 33)
+#   2021 ad3e8c929c21cc8a4a748db852b5f935c5d08262cd46c9e84fa3c8b5eb486f7b (page 34)
+#   2022 b03c8be71720a54882d778e790e00b782600532b085fe6ae8e5b082c55b18ef3 (page 34)
+#   2023 09ceee94de0701e9a100ed6e393ae69dfedebef96eff93e1aa32afa601ff6967 (page 33)
+#   2024 1eae396d17506e188e6061776730e7610e1a6847fa9683a97b860fa27bc92d79 (page 35)
+#   2025 bfecbc99720cc8fbedb50f6e698ac1f6fa758dbfa5df775715446b7cc30bae2b (page 34)
+#   2026 d16b9f506f039f5af24f01fad699b0b60d392ac7920fcff528c7d97740c792b6 (page 35)
+# 2020-2023 print 2019's entries word for word. F and S add the Roth SEP / Roth SIMPLE IRA from the 2025 edition (its
+# Code F and Code S headings too; the 2024 edition's What's New, page 2, already reads "Roth SIMPLE and Roth SEP IRAs.
+# Under SECURE 2.0 Act section 601, ..." but keeps the old titles); the 2019-2024 indexes close M's entry with a
+# period; P adds "or intelligence community" in 2026. Code II is in no index before 2024's, whose What's New (page 1)
+# reads "New box 12, code II, for Medicaid waiver payments excluded from gross income under Notice 2014-7. There is a
+# new code II for box 12 used to report Medicaid waiver payments not included in box 1 of Form W-2."
 citation:
   source: "Instructions for Forms W-2 and W-3 (2026), What's New, Box 12—Codes, Box 14b and the index 'Codes for box 12, Form W-2'"
   url: "https://www.irs.gov/pub/irs-prior/iw2w3--2026.pdf"
@@ -32,18 +51,22 @@ codes:
   C: { title: "Taxable cost of group-term life insurance over $50,000", since: 2019, route: info }
   D: { title: "Elective deferrals under section 401(k) cash or deferred arrangement (plan)", since: 2019, route: elective_deferral_402g }
   E: { title: "Elective deferrals under a section 403(b) salary reduction agreement", since: 2019, route: elective_deferral_402g }
-  F: { title: "Elective deferrals under a section 408(k)(6) salary reduction SEP (this includes elective deferrals made to a Roth SEP IRA)", since: 2019, route: elective_deferral_402g }
+  F: { title: "Elective deferrals under a section 408(k)(6) salary reduction SEP (this includes elective deferrals made to a Roth SEP IRA)", since: 2019, route: elective_deferral_402g,
+       title_until: { 2024: "Elective deferrals under a section 408(k)(6) salary reduction SEP" } }
   G: { title: "Elective deferrals and employer contributions (including nonelective deferrals) to any governmental or nongovernmental section 457(b) deferred compensation plan", since: 2019, route: deferral_457b }
   H: { title: "Elective deferrals under section 501(c) (18)(D) tax-exempt organization plan", since: 2019, route: info }
   J: { title: "Nontaxable sick pay", since: 2019, route: info }
   K: { title: "20% excise tax on excess golden parachute payments", since: 2019, route: golden_parachute_excise }
   L: { title: "Substantiated employee business expense reimbursements", since: 2019, route: info }
-  M: { title: "Uncollected social security or RRTA tax on taxable cost of group-term life insurance over $50,000 (for former employees)", since: 2019, route: uncollected_tax }
+  M: { title: "Uncollected social security or RRTA tax on taxable cost of group-term life insurance over $50,000 (for former employees)", since: 2019, route: uncollected_tax,
+       title_until: { 2024: "Uncollected social security or RRTA tax on taxable cost of group-term life insurance over $50,000 (for former employees)." } }
   N: { title: "Uncollected Medicare tax on taxable cost of group-term life insurance over $50,000 (for former employees)", since: 2019, route: uncollected_tax }
-  P: { title: "Excludable moving expense reimbursements paid directly to a member of the U.S. Armed Forces or intelligence community", since: 2019, route: info }
+  P: { title: "Excludable moving expense reimbursements paid directly to a member of the U.S. Armed Forces or intelligence community", since: 2019, route: info,
+       title_until: { 2025: "Excludable moving expense reimbursements paid directly to a member of the U.S. Armed Forces" } }
   Q: { title: "Nontaxable combat pay", since: 2019, route: nontaxable_combat_pay }
   R: { title: "Employer contributions to an Archer MSA", since: 2019, route: archer_msa_employer }
-  S: { title: "Employee salary reduction contributions under a section 408(p) SIMPLE plan (this includes salary reduction contributions made to a Roth SIMPLE IRA)", since: 2019, route: elective_deferral_402g }
+  S: { title: "Employee salary reduction contributions under a section 408(p) SIMPLE plan (this includes salary reduction contributions made to a Roth SIMPLE IRA)", since: 2019, route: elective_deferral_402g,
+       title_until: { 2024: "Employee salary reduction contributions under a section 408(p) SIMPLE plan" } }
   T: { title: "Adoption benefits", since: 2019, route: adoption_benefits }
   V: { title: "Income from the exercise of nonstatutory stock option(s)", since: 2019, route: info }
   W: { title: "Employer contributions to a health savings account (HSA)", since: 2019, route: hsa_employer }
@@ -56,7 +79,7 @@ codes:
   FF: { title: "Permitted benefits under a qualified small employer health reimbursement arrangement", since: 2019, route: info }
   GG: { title: "Income from qualified equity grants under section 83(i)", since: 2019, route: info }
   HH: { title: "Aggregate deferrals under section 83(i) elections as of the close of the calendar year", since: 2019, route: info }
-  II: { title: "Medicaid waiver payments", since: 2019, route: info }
+  II: { title: "Medicaid waiver payments", since: 2024, route: info }
   TA: { title: "Employer contributions under a section 128 Trump account contribution program paid to a Trump account of an employee or a dependent of an employee", since: 2026, route: trump_account_employer }
   TP: { title: "Total amount of cash tips reported to the employer", since: 2026, route: schedule_1a_tips }
   TT: { title: "Total amount of qualified overtime compensation", since: 2026, route: schedule_1a_overtime }

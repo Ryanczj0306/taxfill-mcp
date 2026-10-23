@@ -79,6 +79,53 @@ forms:
     Credit" (line 9 flows to Form 1040ME line 21); married taxpayers electing to file as single may use Schedule NRH
     (Form 1040ME) instead (line 11). Used by nonresidents, part-year residents, and safe harbor residents. (Full-year
     residents may not file Schedule NR.)
+  # (Phase K JK28, 2026-10-16): each role's own schedules and the instructions that send it there, which state_scope
+  # adds to a part-year or nonresident filer's citations — the top-level `citation` is the 1040ME booklet's resident
+  # figures, so this entry named Schedules NR and NRH without pointing at them. The three URLs are the "1040ME General
+  # Instructions (PDF)", "Schedule NR (PDF)" and "Schedule NRH (PDF)" links on Maine Revenue Services' 2025 individual
+  # income tax forms page (www.maine.gov/revenue/tax-return-forms/individual-income-tax-2025); each PDF was downloaded
+  # twice on 2026-10-16 with identical sha256 (general instructions 00f731e053a19cc4..., Schedule NR
+  # c575e3b4d032f4ce..., Schedule NRH 5d84d5c3177b07e3...). The entry above agrees with them (Schedule NR line 9 and
+  # Schedule NRH line 11 each 'Enter result here and on Form 1040ME, line 21') and is unchanged.
+  citations:
+    part_year:
+    - source: >-
+        2025 Maine Form 1040ME General Instructions, 'What is my Residency Status?' (p. 3): 'Part-year Resident: I was
+        domiciled in Maine for part of the year and was not a full-year resident as defined in 2) above.' — 'NOTE: Safe
+        harbor residents, part-year residents, and nonresidents, file Form 1040ME and Schedule NR or NRH.'
+      url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+    - source: >-
+        2025 Maine Schedule NR (Form 1040ME), Schedule for Calculating the Nonresident Credit, page 1: 'Who must file
+        Schedule NR? Part-year resident, nonresident and safe harbor resident individuals who are required to file a
+        Maine return, but have income not taxable by Maine and use the same filing status on the Maine return as used on
+        the federal return.' — page 2: 'A part-year resident is subject to Maine income tax on all income received while
+        a resident of Maine, plus any income derived from Maine sources during the period of nonresidence.'
+      url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nr_fillable.pdf
+    - source: >-
+        2025 Maine Schedule NRH (Form 1040ME), Schedule for Apportionment and for Calculating the Nonresident Credit for
+        Married Person Electing to File Single — line 11 'NONRESIDENT CREDIT: Multiply line 10 by line 7, column C.
+        Enter result here and on Form 1040ME, line 21'
+      url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nrh_fillable.pdf
+    nonresident:
+    - source: >-
+        2025 Maine Form 1040ME General Instructions, 'Who must file?' (p. 3): 'Generally, if you are a nonresident or a
+        safe harbor resident who has income from Maine sources resulting in a Maine income tax liability, you must file
+        a Maine income tax return.' — 'What is my Residency Status?' (p. 3): 'Nonresident: I was not a resident or
+        part-year resident in 2025, but I do have Maine-source income.' — 'NOTE: Safe harbor residents, part-year
+        residents, and nonresidents, file Form 1040ME and Schedule NR or NRH.'
+      url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+    - source: >-
+        2025 Maine Schedule NR (Form 1040ME), Schedule for Calculating the Nonresident Credit, page 1: 'Who must file
+        Schedule NR? Part-year resident, nonresident and safe harbor resident individuals who are required to file a
+        Maine return, but have income not taxable by Maine and use the same filing status on the Maine return as used on
+        the federal return.' — page 2: 'A nonresident or safe harbor resident is subject to Maine income tax on taxable
+        income derived from sources within Maine.'
+      url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nr_fillable.pdf
+    - source: >-
+        2025 Maine Schedule NRH (Form 1040ME), Schedule for Apportionment and for Calculating the Nonresident Credit for
+        Married Person Electing to File Single — line 11 'NONRESIDENT CREDIT: Multiply line 10 by line 7, column C.
+        Enter result here and on Form 1040ME, line 21'
+      url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nrh_fillable.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

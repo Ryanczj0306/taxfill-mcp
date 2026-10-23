@@ -5,24 +5,32 @@
   "@@0572dc8b7811": "The newest shipped DE pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@1b67b5a856b9": "Volunteer Firefighter Credit — Delaware residents who are active volunteer firefighters, members of a fire company auxiliary, or active members of an organized rescue squad in a Delaware volunteer company. Active status is verified annually with the volunteer fire companies; the Fire Company number must be entered on Line 29 (Spouse Column A and/or Self Column B). Only one $1,000 credit may be claimed by each spouse.",
+  "@@2866ddb0f400": "2025 Delaware Form PIT-RES (Revision 20260407), page 2: line 27a \"PERSONAL CREDITS Enter number of exemptions x $110\", line 27b \"CHECK BOXES Spouse 60 or over (Column A) Self 60 or over (Column B) Enter number of boxes checked on Line 27b x $110\", line 32 \"TOTAL NON-REFUNDABLE CREDITS - Add Line 27a through Line 31\", line 33 \"BALANCE - Subtract Line 32 from Line 26. If Line 32 is greater than Line 26, enter 0.\" Second pass: the 2025 PIT-RES Instructions, p. 8 \"Line 27a Personal Credits\", p. 9 \"Line 27b Additional Personal Credits\" and p. 10 \"Line 32 Total Non-Refundable Credits\", which print the same $110 and line text.",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@36d0013e5d5f": "annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@597e78f99a28": "DE Division of Revenue - 2025 Form PIT-RES Instructions, When to File: \"Individual income tax returns are due on or before April 30, 2026 for all taxpayers filing on a calendar year basis.\" Extension: submit Form PIT-EXT with payment of the estimated balance to the Division of Revenue no later than April 30, 2026 to extend the filing date from April 30, 2026 to October 15, 2026 (no extension of time for payment). Delaware's due date is April 30, NOT the federal April 15.",
   "@@5cc6396bf45c": "2025 Delaware Schedule W — Apportionment Worksheet (Form PIT-SCW, Revision 20250515), page 1 apportionment instructions + page 2 days-worked-outside-Delaware log.",
+  "@@61ff2c7db11b": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf",
   "@@672e703af563": "Earned Income Tax Credit (Delaware EITC) — Resident individuals who claimed (and qualified for) the federal Earned Income Credit. The taxpayer ELECTS one of two options: a REFUNDABLE credit equal to 4.5% of the federal EITC, OR a NONREFUNDABLE credit equal to 20% of the federal EITC. Computed on DE Schedule II (Form PIT-RSS); check the Refundable or Non-Refundable box on Line 34. Do NOT complete PIT-RSS Schedule II if you did not take the Earned Income Credit on your federal return. For spouses filing separate/combined-separate Delaware returns from a joint federal return, the credit may only be applied against the tax of the spouse with the HIGHER Line 23 taxable income.",
   "@@762a307c1e4b": "Refund due (2025 PIT-RES Line 47): State of Delaware, Division of Revenue, P.O. Box 8710, Wilmington, DE 19899-8710. Zero-due returns or returns without payment: State of Delaware, Division of Revenue, P.O. Box 8711, Wilmington, DE 19899-8711.",
+  "@@76373a6aff81": "Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33.",
+  "@@7f62f7022e2d": "Exemption credits applied: Form PIT-RES line 32 = $330; tax after them (line 33) = $1,504. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $330).",
   "@@81d1238df71f": "Credit for Income Taxes Paid to Another State — Delaware residents (or those electing to be taxed as residents) who paid income tax to another state on income earned in that state that is also included in Delaware taxable income. Must attach a signed copy of the income tax return filed with the other state(s). Does not include city wage taxes or county taxes paid directly to the county; the District of Columbia counts as a \"State\" for this credit. Use Form PIT-RSS DE Schedule I if claiming credit for more than one state (list states highest-to-lowest credit).",
+  "@@82b7d0272931": "2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: 'If you were a part-year resident in 2025, give the dates')",
   "@@843db8af5620": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources (the 2025 PIT-RES instructions, with every rate and dollar amount confirmed against the printed 2025 Form PIT-RES itself) and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
+  "@@8c830ecdd3ec": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-NON_2025-01_PaperInteractiveIPM.pdf",
   "@@90bcec6fab4c": "Additional Personal Credit (age 60 or over) — Resident taxpayer and/or spouse who were 60 years of age or over on December 31, 2025. Check the appropriate box(es) for Self (Column B) and/or Spouse (Column A) on Line 27b. This is Delaware's main senior-relief credit on the income-tax return (separate senior relief is also provided via the pension exclusion and the Section B exclusion for certain persons 60 or over, which are income exclusions rather than credits).",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@978e95dd513e": "DE Division of Revenue - 2025 Form PIT-RES Instructions, Step 5 mailing table: \"If Enclosing Payment w/ Balance Due (from Line 46): State of Delaware, Division of Revenue, P.O. Box 508, Wilmington, DE 19899-508\"; \"If Refund Due (from Line 47): ... P.O. Box 8710, Wilmington, DE 19899-8710\"; \"Zero Due returns or returns without payment: ... P.O. Box 8711, Wilmington, DE 19899-8711\" — the 2025 line numbers equal 2024's and are one higher than 2023's (the 2024 revision inserted Line 16)",
   "@@9f6bbd0a0d07": "Delaware Division of Revenue, 2025 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions (PIT-RES_Instructions_2025-01.pdf) — Line 24 Tax Liability From Tax Rate Table/Schedule: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table'; Rounding Off Dollars; Who Must File thresholds. Standard deduction and line numbers second-passed on the printed 2025 Form PIT-RES (Revision 20260407): Line 20 'Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column A and in Column B'; Line 21 additional standard deductions (x $2500, standard-deduction electors only); Line 22 'TOTAL DEDUCTIONS'; Line 23 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'; Line 24 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Rate schedule: Delaware 2025 State Income Tax Table & Schedule (https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf), last page: '2025 STATE INCOME TAX SCHEDULE - If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) over, for the portion over $60,000' with worked example taxable income $67,751 -> $2,943.50 + $511.56 = $3,455.06 (Round to $3,455). Sub-$60,000 marginal rates: 30 Del. C. sec. 1102(a)(14) (taxable years beginning after December 31, 2013), official Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html, re-fetched live this session — cross-checks exactly against the 2025 table's band values (e.g. $43,500-$43,550 -> $2,029; $16,750-$16,800 -> $586; $2,750-$2,800 -> $17) and the printed $2,943.50 constant. Three sources agree; no 2025 change.",
   "@@add01a4ba396": "Treaty conformity — DE conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from DE income (it flows through the federal starting point; do not add it back on the DE return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Delaware's resident return (PIT-RES) starts at Section A, Line 1 = \"FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040.\" Section A - Additions contains ONLY Line 2 (INTEREST ON STATE & LOCAL OBLIGATIONS OTHER THAN DELAWARE) and Line 3 (FIDUCIARY ADJUSTMENT, OIL DEPLETION) — verified verbatim on the 2025 form. There is no add-back of federally treaty-exempt income anywhere in the additions schedule, and the word \"treaty\" appears ZERO times in either the 2025 PIT-RES instructions or the 2025 PIT-RES form (re-counted this session). Because income excluded by treaty is already excluded from federal AGI and Delaware has no treaty add-back, that income flows through untaxed -> conforms. Note: the resident form's Section C \"Foreign Taxes Paid\" line is an itemized-deduction adjustment for those who took the federal Foreign Tax Credit, NOT a treaty-exempt-income add-back.",
   "@@b636c51098b7": "Form PIT-RES (Delaware Individual Resident Income Tax Return; formerly Form 200-01)",
+  "@@b6f5c4d16afe": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-NON_Instructions_2025-01.pdf",
   "@@bc706a328ff4": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-SCW_2025-01_PaperInteractiveIPM.pdf",
   "@@d009c3b9f7fc": "Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02). Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident treatment), whichever is more advantageous.",
+  "@@e090a772cde7": "2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), 'Who Must File' (p. 2): '2. Part-Year Residents – must file a Delaware tax return if:' — 'Part-Year Residents may elect to file either a resident or non- resident return. You may wish to prepare both a resident and non-resident return. File only the return which is more advantageous for you.'",
   "@@e7da96f5baec": "Personal Credits (exemption credit) — Resident individuals are allowed a credit for each personal exemption. If you were not required to file a federal return, \"enter $110 for each spouse reporting income plus $110 for each person who could have been listed as a dependent.\" NOT available if you are claimed as a dependent on another person's return. The number of personal credits is verified against the federal return with the IRS.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
@@ -379,10 +387,22 @@
      "url": "@@f9c149071f3b"
     },
     {
+     "answers": "@@e090a772cde7",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "forms_and_instructions",
+     "url": "@@b6f5c4d16afe"
+    },
+    {
+     "answers": "@@82b7d0272931",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "forms_and_instructions",
+     "url": "@@8c830ecdd3ec"
+    },
+    {
      "answers": "2025 Form PIT-RES (Revision 20260407, paper interactive) — second-pass verification of every line number and printed amount: Section A Line 1 \"FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040\", Line 2 interest on non-Delaware state/local obligations, Line 3 fiduciary adjustment/oil depletion, Line 12 Delaware AGI, Line 20 standard deduction election (\"Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column A and in Column B\"), Line 21 additional standard deductions (x $2500), Line 22 total deductions, Line 23 \"TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount\", Line 24 \"TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE\", Line 25 lump-sum tax, Line 26 total tax, Line 27a personal credits (x $110), Line 27b 60-or-over credits (x $110), Line 28 other states, Line 29 volunteer firefighter, Line 31 child care (50% of federal), Line 34 EITC refundable/non-refundable boxes, Line 39 capital gains tax payments (2023: Line 38), Lines 41-47 settle-up",
      "cadence": "@@36d0013e5d5f",
      "topic": "forms_and_instructions",
-     "url": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf"
+     "url": "@@61ff2c7db11b"
     },
     {
      "answers": "Delaware 2025 State Income Tax Table & Schedule (TY25_taxtable.pdf) — \"2025 STATE INCOME TAX SCHEDULE: If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60% (.066) over, for the portion over $60,000\" with worked example taxable income $67,751 -> Tax on $60,000 $2,943.50 + $511.56 = $3,455.06 (Round to $3,455); table for taxable incomes of less than $60,000 in $50 bands",
@@ -515,6 +535,12 @@
      "cadence": "@@36d0013e5d5f",
      "topic": "tax_rates_and_brackets",
      "url": "@@f9c149071f3b"
+    },
+    {
+     "answers": "@@2866ddb0f400",
+     "cadence": "@@36d0013e5d5f",
+     "topic": "tax_rates_and_brackets",
+     "url": "@@61ff2c7db11b"
     }
    ],
    "topic": "tax_rates_and_brackets",
@@ -576,6 +602,14 @@
        "url": "@@f9c149071f3b"
       },
       {
+       "source": "2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), 'Who Must File' (p. 2): '1. Non-Residents – File a tax return if you have any gross income during the tax year from sources in Delaware.'",
+       "url": "@@b6f5c4d16afe"
+      },
+      {
+       "source": "2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: 'DELAWARE INDIVIDUAL NON-RESIDENT INCOME TAX RETURN')",
+       "url": "@@8c830ecdd3ec"
+      },
+      {
        "source": "@@5cc6396bf45c",
        "url": "@@bc706a328ff4"
       }
@@ -631,6 +665,14 @@
       {
        "source": "@@0318a7ccf5ce",
        "url": "@@f9c149071f3b"
+      },
+      {
+       "source": "@@e090a772cde7",
+       "url": "@@b6f5c4d16afe"
+      },
+      {
+       "source": "@@82b7d0272931",
+       "url": "@@8c830ecdd3ec"
       }
      ],
      "filing_role": "part_year",
@@ -705,6 +747,27 @@
   "calls": [
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -715,10 +778,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -729,10 +813,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 1000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -743,10 +848,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $1,000.00; graduated tax on $1,000 [head_of_household schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $1,000.00; graduated tax on $1,000 [head_of_household schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 15000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -757,10 +883,31 @@
     },
     "marginal_rate": "0.048",
     "tax": 501,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $15,000.00; graduated tax on $15,000 [head_of_household schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $15,000.00; graduated tax on $15,000 [head_of_household schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 70000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -771,10 +918,31 @@
     },
     "marginal_rate": "0.066",
     "tax": 3604,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $70,000.00; graduated tax on $70,000 [head_of_household schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $70,000.00; graduated tax on $70,000 [head_of_household schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -785,10 +953,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = -$6,500.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = -$6,500.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -799,10 +988,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $6,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $6,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 1000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -813,10 +1023,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $7,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $1,000.00; graduated tax on $1,000 [married_filing_jointly schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $7,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $1,000.00; graduated tax on $1,000 [married_filing_jointly schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 15000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -827,10 +1058,31 @@
     },
     "marginal_rate": "0.048",
     "tax": 501,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $21,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $15,000.00; graduated tax on $15,000 [married_filing_jointly schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $21,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $15,000.00; graduated tax on $15,000 [married_filing_jointly schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 70000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -841,10 +1093,31 @@
     },
     "marginal_rate": "0.066",
     "tax": 3604,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $76,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $70,000.00; graduated tax on $70,000 [married_filing_jointly schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $76,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $70,000.00; graduated tax on $70,000 [married_filing_jointly schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -855,10 +1128,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -869,10 +1163,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 1000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -883,10 +1198,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $1,000.00; graduated tax on $1,000 [married_filing_separately schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $1,000.00; graduated tax on $1,000 [married_filing_separately schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 15000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -897,10 +1233,31 @@
     },
     "marginal_rate": "0.048",
     "tax": 501,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $15,000.00; graduated tax on $15,000 [married_filing_separately schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $15,000.00; graduated tax on $15,000 [married_filing_separately schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 70000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -911,10 +1268,31 @@
     },
     "marginal_rate": "0.066",
     "tax": 3604,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $70,000.00; graduated tax on $70,000 [married_filing_separately schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $70,000.00; graduated tax on $70,000 [married_filing_separately schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -925,10 +1303,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = -$3,250.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -939,10 +1338,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $3,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 1000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -953,10 +1373,31 @@
     },
     "marginal_rate": "0",
     "tax": 0,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $1,000.00; graduated tax on $1,000 [single schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $4,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $1,000.00; graduated tax on $1,000 [single schedule]: 0 x $1,000.00 (the $0-$2,000 bracket) = $0.00; total $0.00 -> $0. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 15000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -967,10 +1408,31 @@
     },
     "marginal_rate": "0.048",
     "tax": 501,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $15,000.00; graduated tax on $15,000 [single schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $18,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $15,000.00; graduated tax on $15,000 [single schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $5,000.00 (the $10,000-$20,000 bracket) = $240.00; total $501.00 -> $501. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "base_after_exemptions": 70000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -981,7 +1443,7 @@
     },
     "marginal_rate": "0.066",
     "tax": 3604,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $70,000.00; graduated tax on $70,000 [single schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $73,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $70,000.00; graduated tax on $70,000 [single schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $35,000.00 (the $25,000-$60,000 bracket) = $1,942.50; 0.066 x $10,000.00 (the $60,000+ bracket) = $660.00; total $3,603.50 -> $3,604. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
    },
    {
     "args": {
@@ -991,7 +1453,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: DE 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+    "error": "ValueError: DE 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it. DE's per-person exemptions are CREDITS against tax (Form PIT-RES lines 27a, 27b): pass their counts as exemption_credit_counts (kinds: personal, senior, dependent), and read the result's exemption_credits."
    },
    {
     "args": {
@@ -1001,10 +1463,31 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: DE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
+    "error": "ValueError: DE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction). DE's per-person exemptions are CREDITS against tax (Form PIT-RES lines 27a, 27b): pass their counts as exemption_credit_counts (kinds: personal, senior, dependent), and read the result's exemption_credits."
    },
    {
     "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@76373a6aff81",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1015,7 +1498,307 @@
     },
     "marginal_rate": "0.0555",
     "tax": 1834,
-    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $46,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $6,500 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $15,000.00 (the $25,000-$60,000 bracket) = $832.50; total $1,833.50 -> $1,834"
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $46,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $6,500 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $15,000.00 (the $25,000-$60,000 bracket) = $832.50; total $1,833.50 -> $1,834. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33. This pack ships DE's per-person exemption CREDITS against tax (Form PIT-RES: line 27a personal $110 each; line 27b senior $110 each; line 27a dependent $110 each; totaled on line 27a + 27b and subtracted on line 32)"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27a"
+      },
+      "personal": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27a"
+      },
+      "senior": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27b"
+      }
+     },
+     "exemption_amount": 330,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@7f62f7022e2d",
+     "tax_after_credits": 1504,
+     "tax_limit_reduction": 0,
+     "total": 330
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "de",
+     "taxable_base": "43250",
+     "year": 2025
+    },
+    "marginal_rate": "0.0555",
+    "tax": 1834,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $43,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $3,250 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $15,000.00 (the $25,000-$60,000 bracket) = $832.50; total $1,833.50 -> $1,834. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits (Form PIT-RES, past the tax line): line 27a personal 1 x $110 = $110; line 27b senior 1 x $110 = $110; line 27a dependent 1 x $110 = $110; line 27a + 27b (exemption amount) = $330. no AGI limitation in this pack, so line 32 = $330; Form PIT-RES limits line 32 to the tax on line 26: min($330, $1,834) = $330. Tax after exemption credits: line 33 = max(0, $1,834 - $330) = $1,504"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 110,
+       "count": 2,
+       "credit": 220,
+       "line": "27a"
+      },
+      "personal": {
+       "amount_each": 110,
+       "count": 2,
+       "credit": 220,
+       "line": "27a"
+      },
+      "senior": {
+       "amount_each": 110,
+       "count": 2,
+       "credit": 220,
+       "line": "27b"
+      }
+     },
+     "exemption_amount": 660,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form PIT-RES line 32 = $660; tax after them (line 33) = $1,174. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $660).",
+     "tax_after_credits": 1174,
+     "tax_limit_reduction": 0,
+     "total": 660
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 2,
+      "personal": 2,
+      "senior": 2
+     },
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "de",
+     "taxable_base": "46500",
+     "year": 2025
+    },
+    "marginal_rate": "0.0555",
+    "tax": 1834,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $46,500.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $6,500 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $15,000.00 (the $25,000-$60,000 bracket) = $832.50; total $1,833.50 -> $1,834. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits (Form PIT-RES, past the tax line): line 27a personal 2 x $110 = $220; line 27b senior 2 x $110 = $220; line 27a dependent 2 x $110 = $220; line 27a + 27b (exemption amount) = $660. no AGI limitation in this pack, so line 32 = $660; Form PIT-RES limits line 32 to the tax on line 26: min($660, $1,834) = $660. Tax after exemption credits: line 33 = max(0, $1,834 - $660) = $1,174"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27a"
+      },
+      "personal": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27a"
+      },
+      "senior": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27b"
+      }
+     },
+     "exemption_amount": 330,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@7f62f7022e2d",
+     "tax_after_credits": 1504,
+     "tax_limit_reduction": 0,
+     "total": 330
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "de",
+     "taxable_base": "43250",
+     "year": 2025
+    },
+    "marginal_rate": "0.0555",
+    "tax": 1834,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $43,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $3,250 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $15,000.00 (the $25,000-$60,000 bracket) = $832.50; total $1,833.50 -> $1,834. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits (Form PIT-RES, past the tax line): line 27a personal 1 x $110 = $110; line 27b senior 1 x $110 = $110; line 27a dependent 1 x $110 = $110; line 27a + 27b (exemption amount) = $330. no AGI limitation in this pack, so line 32 = $330; Form PIT-RES limits line 32 to the tax on line 26: min($330, $1,834) = $330. Tax after exemption credits: line 33 = max(0, $1,834 - $330) = $1,504"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27a"
+      },
+      "personal": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27a"
+      },
+      "senior": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27b"
+      }
+     },
+     "exemption_amount": 330,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@7f62f7022e2d",
+     "tax_after_credits": 1504,
+     "tax_limit_reduction": 0,
+     "total": 330
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "de",
+     "taxable_base": "43250",
+     "year": 2025
+    },
+    "marginal_rate": "0.0555",
+    "tax": 1834,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $43,250.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $40,000.00; graduated tax on $40,000 [single schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $3,000.00 (the $2,000-$5,000 bracket) = $66.00; 0.039 x $5,000.00 (the $5,000-$10,000 bracket) = $195.00; 0.048 x $10,000.00 (the $10,000-$20,000 bracket) = $480.00; 0.052 x $5,000.00 (the $20,000-$25,000 bracket) = $260.00; 0.0555 x $15,000.00 (the $25,000-$60,000 bracket) = $832.50; total $1,833.50 -> $1,834. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits (Form PIT-RES, past the tax line): line 27a personal 1 x $110 = $110; line 27b senior 1 x $110 = $110; line 27a dependent 1 x $110 = $110; line 27a + 27b (exemption amount) = $330. no AGI limitation in this pack, so line 32 = $330; Form PIT-RES limits line 32 to the tax on line 26: min($330, $1,834) = $330. Tax after exemption credits: line 33 = max(0, $1,834 - $330) = $1,504"
+   },
+   {
+    "base_after_exemptions": 2500,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@2866ddb0f400",
+      "url": "@@61ff2c7db11b"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27a"
+      },
+      "personal": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27a"
+      },
+      "senior": {
+       "amount_each": 110,
+       "count": 1,
+       "credit": 110,
+       "line": "27b"
+      }
+     },
+     "exemption_amount": 330,
+     "federal_agi": null,
+     "form": "Form PIT-RES",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "27a + 27b",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form PIT-RES line 32 = $11; tax after them (line 33) = $0. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $11).",
+     "tax_after_credits": 0,
+     "tax_limit_reduction": 319,
+     "total": 11
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "de",
+     "taxable_base": "5750",
+     "year": 2025
+    },
+    "marginal_rate": "0.022",
+    "tax": 11,
+    "work_head": "DE state income tax (2025, graduated brackets): taxable_base $5,750.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $3,250 = $2,500.00; graduated tax on $2,500 [single schedule]: 0 x $2,000.00 (the $0-$2,000 bracket) = $0.00; 0.022 x $500.00 (the $2,000-$5,000 bracket) = $11.00; total $11.00 -> $11. Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). Exemption credits (Form PIT-RES, past the tax line): line 27a personal 1 x $110 = $110; line 27b senior 1 x $110 = $110; line 27a dependent 1 x $110 = $110; line 27a + 27b (exemption amount) = $330. no AGI limitation in this pack, so line 32 = $330; Form PIT-RES limits line 32 to the tax on line 26: min($330, $11) = $11 ($319 more than the tax, not allowed). Tax after exemption credits: line 33 = max(0, $11 - $11) = $0"
    }
   ],
   "common_result": {
@@ -1028,7 +1811,7 @@
    "rate_structure": "graduated",
    "state": "de"
   },
-  "work_common_tail": ". Tax line: 2025 Form PIT-RES Line 24: 'TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)'. Line 23: 'TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'. Instructions, Line 24: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' NOTE — these are the SAME line numbers as 2024: the 2025 form renumbered nothing. Against the 2023 form every line from 17 on is one higher because the 2024 revision inserted Line 16 'ACTIVE LABOR ORGANIZATION DUES' (Line 39 'CAPITAL GAINS TAX PAYMENTS (Attach Form REW-EST)' is 2023's Line 38). This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 UNCHANGED TAX AND (for the tax lines) UNCHANGED FORM NUMBERING: the brackets, the $3,250/$6,500 standard deduction, the $2,500 additional standard deduction, and the $110 personal credits are all unchanged from 2024, and — unlike the 2023-to-2024 transition, which renumbered them — the 2025 PIT-RES keeps the deduction election on Line 20, additional standard deduction Line 21, total deductions Line 22, TAXABLE INCOME Line 23, TAX LIABILITY Line 24, lump-sum tax Line 25, total tax Line 26 and personal credits Lines 27a/27b. The settle-up tail is also 2024's: capital gains tax payments Line 39 (2023: 38), balance due 41, overpayment 42, contributions 43, applied-to-2026-estimated 44, penalties/interest 45, NET BALANCE DUE 46 (2023: 45) and NET REFUND 47 (2023: 46) — the +1 against 2023 came with the 2024 revision's inserted Line 16, and the 2025 mailing table cites these numbers. Base guidance: Supply 2025 Form PIT-RES Line 12, DELAWARE ADJUSTED GROSS INCOME = Line 1 federal AGI (from federal Form 1040) + Section A additions (Line 2 interest on non-Delaware state/local obligations; Line 3 fiduciary adjustment / oil depletion) - Section B subtractions (U.S.-obligation interest; pension/retirement exclusions; Delaware state tax refund, fiduciary adjustment, work opportunity credit, Delaware NOL carryforward; taxable Social Security / Railroad Retirement benefits, higher-education exclusion, certain lump-sum distributions; 529/ABLE contribution deduction) - the exclusion for certain persons 60 and over or disabled. If the filer has no Delaware additions or subtractions, Line 12 equals federal AGI. The op then subtracts the shipped per-status standard deduction to reproduce Line 23 taxable income (Line 23 = Line 12 - Line 22 total deductions). NO income-based exemptions are shipped (exemptions = {}): Delaware's per-person allowances are TAX CREDITS, not subtractions from income. 2025 Form PIT-RES Line 27a Personal Credits = $110 x the number of exemptions ('Enter number of exemptions ___ x $110'; e.g. MFJ with no dependents = $220), and Line 27b Additional Personal Credits = $110 per taxpayer/spouse age 60 or over on December 31, 2025 — both are subtracted from the Line 26 total tax, not from income. They are NOT applied by calc.state_tax; claim them on the form. exemptions_count and dependents_count must therefore be 0 for this pack. A filer claimed as a dependent on another person's return gets $0 personal credit. SINGLE rate schedule for ALL filing statuses: 30 Del. C. sec. 1102(a)(14) publishes one rate table with no filing-status variation, and the 2025 State Income Tax Table has no filing-status columns; the schedule is duplicated per status here. Only the standard deduction differs by status ($6,500 Filing Status 2 vs $3,250 Statuses 1, 3, 4, 5). TAX TABLE MANDATE below $60,000 — bracket math may differ by a dollar or two within table bands; the filed form must use the table: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability' (Line 24 instructions). The 2025 table uses $50-wide bands and every sampled band equals band-MIDPOINT bracket math rounded half-up: taxable $2,750-$2,800 prints $17 (midpoint $2,775 -> 2.2% x $775 = $17.05); $16,750-$16,800 prints $586 (midpoint -> $586.20); $43,500-$43,550 prints $2,029 (midpoint -> $2,029.14); $45,400-$45,450 prints $2,135; $49,500-$49,550 prints $2,362; $50,000-$50,050 prints $2,390. So at the BOTTOM of a band the op can read $1 lower than the table (e.g. exactly $43,500 computes $2,027.75 -> $2,028 vs the table's $2,029). At $60,000 or over the printed schedule ($2,943.50 + 6.60% of the portion over $60,000) IS exact marginal math. Printed-constant check (re-derived for 2025): the schedule's $2,943.50 at $60,000 exactly equals the cumulative sum of the prior brackets (0.022 x 3,000 = 66.00; + 0.039 x 5,000 = 195.00; + 0.048 x 10,000 = 480.00; + 0.052 x 5,000 = 260.00; + 0.0555 x 35,000 = 1,942.50; total 2,943.50) — no divergence. The DOR's own worked example then adds 6.6% x $7,751 = $511.56 for $3,455.06. Provenance of the sub-$60,000 rates: the 2025 DOR booklet and tax-table PDF print a rate schedule ONLY for taxable income of $60,000 or over (below that they mandate the table). The 2.2%/3.9%/4.8%/5.2%/5.55% marginal rates and their $2,000/$5,000/$10,000/$20,000/$25,000/$60,000 breakpoints are copied from 30 Del. C. sec. 1102(a)(14) (official Delaware Code site, 'For taxable years beginning after December 31, 2013' — re-fetched live and still the operative paragraph for 2025; the superseded paragraph (13) ended at 6.75%) and cross-check exactly against the 2025 DOR table's band values and the printed $2,943.50 constant. The first bracket is a zero-rate floor: sec. 1102(a)(14) imposes no tax on the first $2,000 of taxable income (the rate schedule starts at '2.2% of taxable income in excess of $2,000'), and the 2025 tax table shows $0 tax for taxable income under $2,000. Additional standard deduction NOT applied by the engine: Line 21 allows $2,500 per box checked for taxpayer/spouse age 65 or over and/or blind (maximum $5,000 per individual), ONLY for filers electing the Delaware standard deduction ('ADDITIONAL STANDARD DEDUCTIONS (Not Allowed with Itemized Deductions)' on the 2025 form). Enter it on the form; the shipped standard_deduction covers Line 20a only. Itemizers: the standard deduction is in lieu of itemizing. Filers may itemize on the Delaware return (Section C + Form PIT-RSA, checked on Line 20b) even if they took the federal standard deduction; the shipped standard_deduction applies only to standard-deduction electors. For Filing Status 3 or 4, if one spouse itemizes the other must itemize; if one takes the standard deduction the other must too. Delaware filing statuses are 1 Single/Divorced/Widow(er); 2 Married Filing Joint; 3 Married Filing Separate Forms; 4 Married Filing Combined Separate (two separate computations in Columns A and B of one form, $3,250 standard deduction per column); 5 Head of Household. The engine's married_filing_separately corresponds to Status 3 or per-column Status 4 (both $3,250). QUALIFYING SURVIVING SPOUSE caution: the engine maps QSS to married_filing_jointly ($6,500 standard deduction), but PIT-RES Filing Status 1 covers 'Single, Divorced, Widow(er)' and the 2025 booklet never mentions the federal QSS status. A widow(er) not remarried at year-end appears to file Delaware Status 1 ($3,250 standard deduction) — the brackets are identical either way, but the deduction differs by $3,250. Confirm the correct Delaware status at revenue.delaware.gov before relying on the QSS-to-MFJ mapping. Tax on lump-sum distributions is NOT modeled: 2025 Form PIT-RES Line 25 adds a separate tax on qualified lump-sum distributions computed on Form PIT-STC (30 Del. C. sec. 1102(b) separate tax, equal to the initial separate tax times the ordinary-income fraction); the engine computes Line 24 only (Line 26 TOTAL TAX = Line 24 + Line 25). Base subtractions taken BEFORE Line 12 are the caller's responsibility: the pension/retirement exclusion, the exclusion for certain persons 60 and over or disabled, the DE 529/ABLE contribution deduction, U.S.-obligation interest, and taxable Social Security / Railroad Retirement benefits — supply Line 12 Delaware AGI already reflecting them. Delaware EITC (elect refundable 4.5% or nonrefundable 20% of the federal EITC, Line 34), child care credit (50% of the federal Form 2441 credit, maximum $3,000, Line 31), other-state credit (Line 28), volunteer firefighter credit ($1,000 per spouse, Line 29), and the $110 personal credits (Lines 27a/27b) are all CREDITS against tax — none of them are exemptions and none are modeled by this op. All are unchanged for 2025. Rounding: 'Dollar amounts on your return must be rounded off to the nearest whole dollar. This means that amounts from 50 to 99 cents are increased to the next dollar' — matches the engine's half-up rounding, and the 2025 tax-schedule example rounds $3,455.06 to $3,455. No local income tax is collected on Form PIT-RES (the return has no local/county tax line). Part-year residents may elect to file either PIT-RES (full-year resident treatment) or PIT-NON, whichever is more advantageous; this pack models the resident form PIT-RES. Delaware's filing deadline is April 30, 2026 — NOT the federal April 15."
+  "work_common_tail": ". Exemption-credit rules (Form PIT-RES): Line 27a (personal): The taxpayer and spouse part of line 27a's \"number of exemptions\". Instructions p. 8: \"Example: If you filed your federal return as married filing jointly and have no dependents, enter $220.\" \"NOTE: You are not entitled to a Delaware Personal Credit if you are listed as a dependent on another individual's Federal return.\" Married filing separately counts 2 only on a combined separate return (Filing Status 4, one form, Columns A and B); a Status 3 return counts the filer alone. Delaware has no qualifying-surviving-spouse status (Status 1 is \"Single, Divorced, Widow(er)\"), so a surviving spouse counts 1. Line 27b (senior): Line 27b \"Additional Personal Credits\". Instructions p. 9: \"If you and/or your spouse were 60 years of age or over on December 31, 2025, check the appropriate box(es), multiply the number of boxes checked by $110, and enter the total on Line 27b.\" \"If you are filing a combined separate return (Filing Status 4), enter $110 in the column(s) that correspond to the checked box(es).\" The age is 60, not 65. Line 27a (dependent): The dependents part of line 27a's \"number of exemptions\". Instructions p. 8: \"Enter the total number of dependents listed on your federal return, multiply by $110 and enter the total on Line 27a.\" \"You are still eligible for this credit even though you do not recognize personal exemptions on your federal return.\" \"If you are married and filing separate returns (Filing Status 3), allocate dependents to each return and multiply by $110, entering the total for each return in Column B.\" \"If you were not required to file a federal return, enter $110 for each spouse reporting income plus $110 for each person who could have been listed as a dependent had you been required to file a federal return.\" Line 27a is ONE count on the form (\"Enter number of exemptions x $110\"): enter personal + dependent there; line 27b is the 60-or-over count. Lines 27a and 27b are not totaled on a line of their own: line 32 adds them to lines 28-31, and line 33 subtracts line 32 from line 26. Instructions p. 10: \"The total of all non-refundable credits (Lines 27a through 31) is limited to the amount of your Delaware tax liability on Line 26.\" No AGI limitation: the 2025 face and instructions print none for lines 27a and 27b. Line 32 and line 33 here count only lines 27a and 27b, from the op's tax (line 24; line 26 = line 24 + line 25 lump-sum tax). They equal the filed lines when lines 25 and 28-31 are zero; otherwise add those on the form. Below $60,000 of taxable income the filed line 24 comes from the tax table (see the pack notes). Line 32 is limited to the tax (limited_to_tax_line): the op caps lines 27a + 27b at its tax, which is line 26 when line 25 is zero. With credits on lines 28-31 or a line 25 tax, cap their sum at line 26 on the form. This op computes the state's rate-schedule tax line and, when exemption_credit_counts is passed, its exemption credits ONLY — county/city add-on taxes, other state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 UNCHANGED TAX AND (for the tax lines) UNCHANGED FORM NUMBERING: the brackets, the $3,250/$6,500 standard deduction, the $2,500 additional standard deduction, and the $110 personal credits are all unchanged from 2024, and — unlike the 2023-to-2024 transition, which renumbered them — the 2025 PIT-RES keeps the deduction election on Line 20, additional standard deduction Line 21, total deductions Line 22, TAXABLE INCOME Line 23, TAX LIABILITY Line 24, lump-sum tax Line 25, total tax Line 26 and personal credits Lines 27a/27b. The settle-up tail is also 2024's: capital gains tax payments Line 39 (2023: 38), balance due 41, overpayment 42, contributions 43, applied-to-2026-estimated 44, penalties/interest 45, NET BALANCE DUE 46 (2023: 45) and NET REFUND 47 (2023: 46) — the +1 against 2023 came with the 2024 revision's inserted Line 16, and the 2025 mailing table cites these numbers. Base guidance: Supply 2025 Form PIT-RES Line 12, DELAWARE ADJUSTED GROSS INCOME = Line 1 federal AGI (from federal Form 1040) + Section A additions (Line 2 interest on non-Delaware state/local obligations; Line 3 fiduciary adjustment / oil depletion) - Section B subtractions (U.S.-obligation interest; pension/retirement exclusions; Delaware state tax refund, fiduciary adjustment, work opportunity credit, Delaware NOL carryforward; taxable Social Security / Railroad Retirement benefits, higher-education exclusion, certain lump-sum distributions; 529/ABLE contribution deduction) - the exclusion for certain persons 60 and over or disabled. If the filer has no Delaware additions or subtractions, Line 12 equals federal AGI. The op then subtracts the shipped per-status standard deduction to reproduce Line 23 taxable income (Line 23 = Line 12 - Line 22 total deductions). NO income-based exemptions are shipped (exemptions = {}): Delaware's per-person allowances are TAX CREDITS, not subtractions from income. 2025 Form PIT-RES Line 27a Personal Credits = $110 x the number of exemptions ('Enter number of exemptions ___ x $110'; e.g. MFJ with no dependents = $220), and Line 27b Additional Personal Credits = $110 per taxpayer/spouse age 60 or over on December 31, 2025 — both are subtracted from the Line 26 total tax, not from income. calc.state_tax applies them past the tax line when exemption_credit_counts is passed (tax.exemption_credits, Phase K JK28); exemptions_count and dependents_count must be 0 for this pack. A filer claimed as a dependent on another person's return gets $0 personal credit. SINGLE rate schedule for ALL filing statuses: 30 Del. C. sec. 1102(a)(14) publishes one rate table with no filing-status variation, and the 2025 State Income Tax Table has no filing-status columns; the schedule is duplicated per status here. Only the standard deduction differs by status ($6,500 Filing Status 2 vs $3,250 Statuses 1, 3, 4, 5). TAX TABLE MANDATE below $60,000 — bracket math may differ by a dollar or two within table bands; the filed form must use the table: 'If Line 23 is less than $60,000, use the tax table to compute your tax liability' (Line 24 instructions). The 2025 table uses $50-wide bands and every sampled band equals band-MIDPOINT bracket math rounded half-up: taxable $2,750-$2,800 prints $17 (midpoint $2,775 -> 2.2% x $775 = $17.05); $16,750-$16,800 prints $586 (midpoint -> $586.20); $43,500-$43,550 prints $2,029 (midpoint -> $2,029.14); $45,400-$45,450 prints $2,135; $49,500-$49,550 prints $2,362; $50,000-$50,050 prints $2,390. So at the BOTTOM of a band the op can read $1 lower than the table (e.g. exactly $43,500 computes $2,027.75 -> $2,028 vs the table's $2,029). At $60,000 or over the printed schedule ($2,943.50 + 6.60% of the portion over $60,000) IS exact marginal math. Printed-constant check (re-derived for 2025): the schedule's $2,943.50 at $60,000 exactly equals the cumulative sum of the prior brackets (0.022 x 3,000 = 66.00; + 0.039 x 5,000 = 195.00; + 0.048 x 10,000 = 480.00; + 0.052 x 5,000 = 260.00; + 0.0555 x 35,000 = 1,942.50; total 2,943.50) — no divergence. The DOR's own worked example then adds 6.6% x $7,751 = $511.56 for $3,455.06. Provenance of the sub-$60,000 rates: the 2025 DOR booklet and tax-table PDF print a rate schedule ONLY for taxable income of $60,000 or over (below that they mandate the table). The 2.2%/3.9%/4.8%/5.2%/5.55% marginal rates and their $2,000/$5,000/$10,000/$20,000/$25,000/$60,000 breakpoints are copied from 30 Del. C. sec. 1102(a)(14) (official Delaware Code site, 'For taxable years beginning after December 31, 2013' — re-fetched live and still the operative paragraph for 2025; the superseded paragraph (13) ended at 6.75%) and cross-check exactly against the 2025 DOR table's band values and the printed $2,943.50 constant. The first bracket is a zero-rate floor: sec. 1102(a)(14) imposes no tax on the first $2,000 of taxable income (the rate schedule starts at '2.2% of taxable income in excess of $2,000'), and the 2025 tax table shows $0 tax for taxable income under $2,000. Additional standard deduction NOT applied by the engine: Line 21 allows $2,500 per box checked for taxpayer/spouse age 65 or over and/or blind (maximum $5,000 per individual), ONLY for filers electing the Delaware standard deduction ('ADDITIONAL STANDARD DEDUCTIONS (Not Allowed with Itemized Deductions)' on the 2025 form). Enter it on the form; the shipped standard_deduction covers Line 20a only. Itemizers: the standard deduction is in lieu of itemizing. Filers may itemize on the Delaware return (Section C + Form PIT-RSA, checked on Line 20b) even if they took the federal standard deduction; the shipped standard_deduction applies only to standard-deduction electors. For Filing Status 3 or 4, if one spouse itemizes the other must itemize; if one takes the standard deduction the other must too. Delaware filing statuses are 1 Single/Divorced/Widow(er); 2 Married Filing Joint; 3 Married Filing Separate Forms; 4 Married Filing Combined Separate (two separate computations in Columns A and B of one form, $3,250 standard deduction per column); 5 Head of Household. The engine's married_filing_separately corresponds to Status 3 or per-column Status 4 (both $3,250). QUALIFYING SURVIVING SPOUSE caution: the engine maps QSS to married_filing_jointly ($6,500 standard deduction), but PIT-RES Filing Status 1 covers 'Single, Divorced, Widow(er)' and the 2025 booklet never mentions the federal QSS status. A widow(er) not remarried at year-end appears to file Delaware Status 1 ($3,250 standard deduction) — the brackets are identical either way, but the deduction differs by $3,250. Confirm the correct Delaware status at revenue.delaware.gov before relying on the QSS-to-MFJ mapping. Tax on lump-sum distributions is NOT modeled: 2025 Form PIT-RES Line 25 adds a separate tax on qualified lump-sum distributions computed on Form PIT-STC (30 Del. C. sec. 1102(b) separate tax, equal to the initial separate tax times the ordinary-income fraction); the engine computes Line 24 only (Line 26 TOTAL TAX = Line 24 + Line 25). Base subtractions taken BEFORE Line 12 are the caller's responsibility: the pension/retirement exclusion, the exclusion for certain persons 60 and over or disabled, the DE 529/ABLE contribution deduction, U.S.-obligation interest, and taxable Social Security / Railroad Retirement benefits — supply Line 12 Delaware AGI already reflecting them. Delaware EITC (elect refundable 4.5% or nonrefundable 20% of the federal EITC, Line 34), child care credit (50% of the federal Form 2441 credit, maximum $3,000, Line 31), other-state credit (Line 28), volunteer firefighter credit ($1,000 per spouse, Line 29), and the $110 personal credits (Lines 27a/27b) are all CREDITS against tax — none of them are exemptions, and only the personal credits are modeled (tax.exemption_credits). All are unchanged for 2025. Rounding: 'Dollar amounts on your return must be rounded off to the nearest whole dollar. This means that amounts from 50 to 99 cents are increased to the next dollar' — matches the engine's half-up rounding, and the 2025 tax-schedule example rounds $3,455.06 to $3,455. No local income tax is collected on Form PIT-RES (the return has no local/county tax line). Part-year residents may elect to file either PIT-RES (full-year resident treatment) or PIT-NON, whichever is more advantageous; this pack models the resident form PIT-RES. Delaware's filing deadline is April 30, 2026 — NOT the federal April 15."
  },
  "year": 2025
 }

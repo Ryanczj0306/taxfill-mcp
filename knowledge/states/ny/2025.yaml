@@ -55,6 +55,39 @@ residency:
 forms:
   resident: Form IT-201, Resident Income Tax Return
   part_year_or_nonresident: Form IT-203, Nonresident and Part-Year Resident Income Tax Return
+  # (Phase K JK28, 2026-10-16): each role's own form and its instructions, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is the RESIDENT Form IT-201 instructions, so this entry
+  # named Form IT-203 but pointed only at IT-201-I. One form serves both roles. The two URLs are the "Printer-Friendly
+  # Version (PDF)" and "Form IT-203" links on the Tax Department's 2025 IT-203-I page
+  # (www.tax.ny.gov/forms/current-forms/it/it203i.htm); each PDF was downloaded twice on 2026-10-16 with identical
+  # sha256 (IT-203-I 1620acdbcc526052..., IT-203 a3ded3e726ef2565...). The entry's form name agrees with both.
+  citations:
+    part_year:
+    - source: >-
+        Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 (IT-203-I,
+        47 pages), 'How are you taxed as a nonresident or as a part-year resident?' (p. 3): 'If you were a resident of
+        New York State for only part of the tax year, you must pay New York State tax on all income you received
+        while you were a resident of the state and on income you received from New York State sources while you
+        were a nonresident. To determine how much tax you owe, use Form IT-203, Nonresident and Part-Year Resident
+        Income Tax Return.' — and 'New York State nonresidents and part-year residents: Who must file?' (p. 3): 'You
+        must file Form IT-203 if you meet any of the following conditions'
+      url: https://www.tax.ny.gov/pdf/2025/inc/it203i_2025.pdf
+    - source: >-
+        Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 — the 4-page return itself
+        (page 1: 'For the year January 1, 2025, through December 31, 2025')
+      url: https://www.tax.ny.gov/pdf/2025/inc/it203_2025_fill_in.pdf
+    nonresident:
+    - source: >-
+        Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 (IT-203-I,
+        47 pages), 'New York State nonresidents and part-year residents: Who must file?' (p. 3): 'You must file Form
+        IT-203 if you meet any of the following conditions: • You have income from a New York State source (see
+        Nonresidents: New York source income) and your New York adjusted gross income (Federal amount column) is
+        more than your New York State standard deduction.'
+      url: https://www.tax.ny.gov/pdf/2025/inc/it203i_2025.pdf
+    - source: >-
+        Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 — the 4-page return itself
+        (page 1: 'For the year January 1, 2025, through December 31, 2025')
+      url: https://www.tax.ny.gov/pdf/2025/inc/it203_2025_fill_in.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice - confirm
   each amount and your eligibility at the cited source before claiming it. Every 2025 amount below was read from
   the 2025 edition of the credit form or its instructions (IT-215, IT-213-I, IT-214, IT-216-I) or from the 2025

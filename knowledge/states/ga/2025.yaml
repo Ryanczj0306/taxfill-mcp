@@ -45,12 +45,6 @@ residency:
     Georgia activity is services as an employee whose wages do not exceed the lesser of 5% of total wages or $5,000.)
     The 2025 IT-511 booklet states the rule in legal-residence/domicile terms; no fixed 183-day statutory-resident
     day-count test is published.
-forms:
-  resident: Form 500 (Georgia Individual Income Tax Return) for tax year 2025. NOTE — Form 500-EZ is DISCONTINUED
-    for tax years beginning on or after January 1, 2025; all filers use Form 500.
-  part_year_or_nonresident: Form 500 with Schedule 3 (part-year residents and nonresidents file the same Form 500,
-    omit Lines 9-14, and complete Form 500 Schedule 3 to calculate Georgia taxable income). The residency status box
-    on Form 500 Line 4 (1=full-year resident, 2=part-year resident, 3=nonresident) designates status.
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:
@@ -339,3 +333,53 @@ effective_law_changes:
       dollar); Filing Requirements chart; 'file on or before April 15, 2026'; mailing addresses; Low
       Income Credit Worksheet; IND-CR 201/202/204
     url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+# `forms` sits at the END of this pack on purpose (Phase K JK28, 2026-10-16). The source registry
+# (knowledge/sources_states.yaml, built by scripts/assemble_state_sources.py) keeps the FIRST citation of each URL per
+# topic in file order, and get_sources routes a question by those descriptions. forms.citations below reuse the IT-511
+# URL that `all_citations` describes; placed before `all_citations` (where Virginia keeps `forms`), the role pinpoint
+# replaced that description in the registry. Keep `forms` after `all_citations`.
+forms:
+  resident: Form 500 (Georgia Individual Income Tax Return) for tax year 2025. NOTE — Form 500-EZ is DISCONTINUED
+    for tax years beginning on or after January 1, 2025; all filers use Form 500.
+  part_year_or_nonresident: Form 500 with Schedule 3 (part-year residents and nonresidents file the same Form 500,
+    omit Lines 9-14, and complete Form 500 Schedule 3 to calculate Georgia taxable income). The residency status box
+    on Form 500 Line 4 (1=full-year resident, 2=part-year resident, 3=nonresident) designates status.
+  # (Phase K JK28, 2026-10-16): the role's own instructions and form pages, which state_scope adds to a part-year or
+  # nonresident filer's citations. Georgia has ONE return (Form 500) for every role, plus Schedule 3 for part-year
+  # residents and nonresidents; the top-level `citation` is that Form 500, pinned to resident lines, so this entry named
+  # Schedule 3 without citing the instructions that send each role to it. The IT-511 URL is the "2025 IT-511 Individual
+  # Income Tax Booklet" link on DOR's IT-511 page (dor.georgia.gov/it-511-individual-income-tax-instruction-booklet);
+  # the Form 500 URL is the pack's primary citation, the "2025 500 Individual Income Tax Return - Blank form for
+  # printing" link on dor.georgia.gov/print-blank-tax-forms, whose PDF carries Schedule 3. Each PDF was downloaded twice
+  # on 2026-10-16 with identical sha256 (IT-511 ae43633e68ca4236..., Form 500 8933cb4fda483d21...). The entry above
+  # agrees with both (IT-511 p. 16: 'Part-year residents and nonresidents must skip Lines 9-14 and follow the Schedule 3
+  # instructions').
+  citations:
+    part_year:
+    - source: >-
+        2025 IT-511 Individual Income Tax Instructions Booklet (Georgia DOR), Filing Requirements (p. 13): 'Part-year
+        and Nonresidents 1. Part-year residents and nonresidents who work in Georgia or receive income from Georgia
+        sources are required to file Georgia Form 500 and complete Form 500 Schedule 3 to calculate Georgia taxable
+        income.' — and Form 500 Instructions, Line 4 (p. 15): '2. PART-YEAR RESIDENT- You lived in Georgia part of the
+        year. Or if one spouse is a resident and one is a part-year or nonresident. List the dates you lived in
+        Georgia, and you must complete Schedule 3 to calculate Georgia taxable income.'
+      url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+    - source: >-
+        2025 Georgia Form 500, Individual Income Tax Return — page 1, Line 4 Residency Status: 'Omit Lines 9 thru 14 and
+        use Form 500 Schedule 3 if you are a part-year or nonresident filer.'; Schedule 3 (Rev. 07/09/25, PDF page 11):
+        'COMPUTATION OF GEORGIA TAXABLE INCOME FOR ONLY PART-YEAR RESIDENTS AND NONRESIDENTS.'
+      url: https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download
+    nonresident:
+    - source: >-
+        2025 IT-511 Individual Income Tax Instructions Booklet (Georgia DOR), Filing Requirements (p. 13): 'Part-year
+        and Nonresidents 1. Part-year residents and nonresidents who work in Georgia or receive income from Georgia
+        sources are required to file Georgia Form 500 and complete Form 500 Schedule 3 to calculate Georgia taxable
+        income.' — and Form 500 Instructions, Line 4 (p. 15): '3. NONRESIDENT - You did not live in Georgia or, if
+        filing Married Filing Jointly and neither lived in Georgia. You must complete Schedule 3 to calculate Georgia
+        taxable income.'
+      url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+    - source: >-
+        2025 Georgia Form 500, Individual Income Tax Return — page 1, Line 4 Residency Status: 'Omit Lines 9 thru 14 and
+        use Form 500 Schedule 3 if you are a part-year or nonresident filer.'; Schedule 3 (Rev. 07/09/25, PDF page 11):
+        'COMPUTATION OF GEORGIA TAXABLE INCOME FOR ONLY PART-YEAR RESIDENTS AND NONRESIDENTS.'
+      url: https://dor.georgia.gov/document/document/2025-500-individual-income-tax-return-blank-form-printing/download

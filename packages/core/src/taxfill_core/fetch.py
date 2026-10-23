@@ -36,7 +36,7 @@ import uuid
 from collections.abc import Sequence
 from pathlib import Path
 
-from taxfill_core.datadir import home_display
+from taxfill_core.datadir import home_display, user_path
 
 __all__ = [
     "FetchError",
@@ -139,7 +139,7 @@ def default_cache_dir() -> Path:
     """
     env = os.environ.get(CACHE_DIR_ENV)
     if env:
-        return Path(env)
+        return user_path(env)  # an MCP client's JSON `env` block passes "~" through unexpanded (Phase K JK28)
     for parent in Path(__file__).resolve().parents:
         if (parent / "formpacks").is_dir() and (parent / "pyproject.toml").is_file():
             return parent / ".cache" / "blanks"
@@ -186,7 +186,7 @@ def cached_blank_path(url: str, sha256: str, *, cache_dir: str | Path | None = N
     reached into the private ``_cache_path``). A stale or foreign file under the cache name counts as absent.
     """
     try:
-        path = _cache_path(Path(cache_dir) if cache_dir is not None else default_cache_dir(), url)
+        path = _cache_path(user_path(cache_dir) if cache_dir is not None else default_cache_dir(), url)
         if path.is_file() and compute_sha256(path) == sha256.strip().lower():
             return path
     except OSError:
@@ -311,13 +311,20 @@ def seed_blank(pdf: str | Path, url: str, sha256: str, *, cache_dir: str | Path 
     A digest mismatch raises and caches nothing, exactly like a mismatched download.
     """
     expected = _validate_sha256(sha256)
-    data = Path(pdf).read_bytes()
+    pdf = user_path(pdf)
+    if not pdf.is_file():
+        # A message names the file as "~/..." (Phase K JK28): the CLI prints it into a shell agent's transcript.
+        raise FileNotFoundError(f"no file at {home_display(pdf)} — save the blank from the official URL in a browser, "
+                                f"then seed that file")
+    data = pdf.read_bytes()
     if b"%PDF" not in data[:1024]:
-        raise FetchError(f"{pdf} is not a PDF — save the form itself, not the page around it")
+        raise FetchError(f"{home_display(pdf)} is not a PDF — save the form itself, not the page around it")
     actual = hashlib.sha256(data).hexdigest()
     if actual != expected:
-        raise FetchError(f"{pdf} has sha256 {actual}, not the pack's {expected} — a different revision; nothing cached")
-    cache = Path(cache_dir) if cache_dir is not None else default_cache_dir()
+        raise FetchError(
+            f"{home_display(pdf)} has sha256 {actual}, not the pack's {expected} — a different revision; nothing cached"
+        )
+    cache = user_path(cache_dir) if cache_dir is not None else default_cache_dir()
     cache.mkdir(parents=True, exist_ok=True)
     final_path = _cache_path(cache, url)
     _atomic_write(final_path, data)
@@ -401,7 +408,7 @@ def fetch_blank(
             )
     expected_digest = _validate_sha256(sha256) if sha256 is not None else None
 
-    cache_dir = Path(cache_dir) if cache_dir is not None else default_cache_dir()
+    cache_dir = user_path(cache_dir) if cache_dir is not None else default_cache_dir()
     final_path = _cache_path(cache_dir, url)
 
     if final_path.is_file() and not force:

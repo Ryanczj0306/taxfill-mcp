@@ -55,6 +55,43 @@ residency:
 forms:
   resident: IT-540 (2025 Louisiana Resident Income Tax Return)
   part_year_or_nonresident: IT-540B (2025 Louisiana Nonresident and Part-Year Resident Income Tax Return)
+  # (Phase K JK28, 2026-10-16): the role's own form and its instructions, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is the RESIDENT IT-540 instructions, so this entry named
+  # IT-540B but pointed only at the IT-540 booklet. The two URLs are the "IT-540B Tax Form" and "IT-540B Instructions"
+  # links in the "2025 Louisiana Nonresident Income Tax Return IT-540B" row of LDR's individual forms page
+  # (revenue.louisiana.gov/tax-forms/individuals/); the instructions are the revised issue ("This form has been updated
+  # as of June 24, 2026."). Each PDF was downloaded twice on 2026-10-16 with identical sha256 (IT-540B instructions
+  # 759fa664cbf1eaae..., IT-540B 6308b16c06c49cf6...). The entry above agrees with them and is unchanged. The IT-540B
+  # PDF has 16 pages: the return ('Page 1 of 4' to 'Page 4 of 4'), then worksheets such as the '2025 Nonresident and
+  # Part-Year Resident (NPR) Worksheet' (page 5); the entry says so without the word "schedules", which pulled
+  # get_sources("rate schedules") off tax_rates_and_brackets.
+  citations:
+    part_year:
+    - source: >-
+        2025 Louisiana IT-540B Nonresident and Part-Year Resident Individual Income Tax instructions (revised; 'This form
+        has been updated as of June 24, 2026.'), 'WHO MUST FILE A RETURN (FORM IT-540B)' (p. 2): '1. If you are a
+        nonresident, or part-year resident with income from Louisiana sources who is required to file a federal
+        individual income tax return, you must file a Louisiana income tax return reporting income earned in 2025.' —
+        'NONRESIDENT RETURN OR PART-YEAR RETURN' (p. 2): 'If you are filing as a part-year resident, mark an "X" in the
+        Part-Year Return box.'
+      url: https://dam.ldr.la.gov/taxforms/IT540Bi-2025-Revised-7-26.pdf
+    - source: >-
+        2025 Form IT-540B WEB-BC, Louisiana Nonresident and Part-Year Resident — the 4-page return that opens the
+        16-page PDF (page 1 carries the 'Nonresident Return' and 'Part-Year Return' boxes)
+      url: https://dam.ldr.la.gov/taxforms/IT540B(2025)WEB-BC-F.pdf
+    nonresident:
+    - source: >-
+        2025 Louisiana IT-540B Nonresident and Part-Year Resident Individual Income Tax instructions (revised; 'This form
+        has been updated as of June 24, 2026.'), 'WHO MUST FILE A RETURN (FORM IT-540B)' (p. 2): '1. If you are a
+        nonresident, or part-year resident with income from Louisiana sources who is required to file a federal
+        individual income tax return, you must file a Louisiana income tax return reporting income earned in 2025.' —
+        'NONRESIDENT RETURN OR PART-YEAR RETURN' (p. 2): 'If you are filing as a nonresident, mark an "X" in the
+        Nonresident Return box.'
+      url: https://dam.ldr.la.gov/taxforms/IT540Bi-2025-Revised-7-26.pdf
+    - source: >-
+        2025 Form IT-540B WEB-BC, Louisiana Nonresident and Part-Year Resident — the 4-page return that opens the
+        16-page PDF (page 1 carries the 'Nonresident Return' and 'Part-Year Return' boxes)
+      url: https://dam.ldr.la.gov/taxforms/IT540B(2025)WEB-BC-F.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

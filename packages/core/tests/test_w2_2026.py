@@ -136,6 +136,115 @@ def test_a_2025_w2s_code_findings_cite_the_2025_instructions():
         "Instructions for Forms W-2 and W-3 (2026), Box 12—Codes and Box 14b"}
 
 
+# The index entries "Codes for box 12, Form W-2" of the Instructions for Forms W-2 and W-3, edition by edition, verbatim:
+# page references dropped, wrapped lines joined with one space (irs.gov/pub/irs-prior/iw2w3--YYYY.pdf, read 2026-10-16;
+# w2_box12_codes.yaml's header records each file's sha256 and page). The 2020-2023 editions print 2019's entries.
+_INDEX_2019 = {
+    "A": "Uncollected social security or RRTA tax on tips",
+    "B": "Uncollected Medicare tax on tips",
+    "C": "Taxable cost of group-term life insurance over $50,000",
+    "D": "Elective deferrals under section 401(k) cash or deferred arrangement (plan)",
+    "E": "Elective deferrals under a section 403(b) salary reduction agreement",
+    "F": "Elective deferrals under a section 408(k)(6) salary reduction SEP",
+    "G": "Elective deferrals and employer contributions (including nonelective deferrals) to any governmental or "
+         "nongovernmental section 457(b) deferred compensation plan",
+    "H": "Elective deferrals under section 501(c) (18)(D) tax-exempt organization plan",
+    "J": "Nontaxable sick pay",
+    "K": "20% excise tax on excess golden parachute payments",
+    "L": "Substantiated employee business expense reimbursements",
+    "M": "Uncollected social security or RRTA tax on taxable cost of group-term life insurance over $50,000 (for "
+         "former employees).",
+    "N": "Uncollected Medicare tax on taxable cost of group-term life insurance over $50,000 (for former employees)",
+    "P": "Excludable moving expense reimbursements paid directly to a member of the U.S. Armed Forces",
+    "Q": "Nontaxable combat pay",
+    "R": "Employer contributions to an Archer MSA",
+    "S": "Employee salary reduction contributions under a section 408(p) SIMPLE plan",
+    "T": "Adoption benefits",
+    "V": "Income from the exercise of nonstatutory stock option(s)",
+    "W": "Employer contributions to a health savings account (HSA)",
+    "Y": "Deferrals under a section 409A nonqualified deferred compensation plan",
+    "Z": "Income under section 409A on a nonqualified deferred compensation plan",
+    "AA": "Designated Roth contributions under a section 401(k) plan",
+    "BB": "Designated Roth contributions under a section 403(b) plan",
+    "DD": "Cost of employer-sponsored health coverage",
+    "EE": "Designated Roth contributions under a governmental section 457(b) plan",
+    "FF": "Permitted benefits under a qualified small employer health reimbursement arrangement",
+    "GG": "Income from qualified equity grants under section 83(i)",
+    "HH": "Aggregate deferrals under section 83(i) elections as of the close of the calendar year",
+}
+_INDEX_2024 = {**_INDEX_2019, "II": "Medicaid waiver payments"}
+_INDEX_2025 = {
+    **_INDEX_2024,
+    "F": "Elective deferrals under a section 408(k)(6) salary reduction SEP (this includes elective deferrals made to a "
+         "Roth SEP IRA)",
+    "M": "Uncollected social security or RRTA tax on taxable cost of group-term life insurance over $50,000 (for "
+         "former employees)",
+    "S": "Employee salary reduction contributions under a section 408(p) SIMPLE plan (this includes salary reduction "
+         "contributions made to a Roth SIMPLE IRA)",
+}
+_INDEX_2026 = {
+    **_INDEX_2025,
+    "P": "Excludable moving expense reimbursements paid directly to a member of the U.S. Armed Forces or intelligence "
+         "community",
+    "TA": "Employer contributions under a section 128 Trump account contribution program paid to a Trump account of "
+          "an employee or a dependent of an employee",
+    "TP": "Total amount of cash tips reported to the employer",
+    "TT": "Total amount of qualified overtime compensation",
+}
+_INDEX = {2019: _INDEX_2019, 2020: _INDEX_2019, 2021: _INDEX_2019, 2022: _INDEX_2019, 2023: _INDEX_2019,
+          2024: _INDEX_2024, 2025: _INDEX_2025, 2026: _INDEX_2026}
+
+
+@pytest.mark.parametrize("year", sorted(_INDEX))
+def test_each_code_carries_its_own_years_index_title(year):
+    # Phase K JK28: the table gave every year the 2026 titles, and dated code II from 2019.
+    assert {c: e["title"] for c, e in w2_codes.codes_for(year).items()} == _INDEX[year]
+    assert {c: w2_codes.code_entry(c, tax_year=year)["title"] for c in _INDEX[year]} == _INDEX[year]
+
+
+def test_later_and_unknown_years_keep_the_2026_titles():
+    for year in (2027, None):
+        assert {c: e["title"] for c, e in w2_codes.codes_for(year).items()} == _INDEX_2026
+    assert w2_codes.code_entry("f")["title"] == _INDEX_2026["F"]
+    assert w2_codes.code_entry("TT", tax_year=2025)["since"] == 2026  # a code its year does not carry yet
+
+
+def test_f_and_s_name_the_roth_iras_from_the_2025_edition():
+    # Phase K JK28: the editions keep the old F and S titles through 2024 (the 2024 edition's What's New, page 2, already
+    # describes Roth SEP and Roth SIMPLE IRAs under SECURE 2.0 Act section 601) and add the Roth IRA words in 2025, so a
+    # 2022 and a 2023 W-2 read alike and a 2024 and a 2025 one do not.
+    for code, roth in (("F", "Roth SEP IRA"), ("S", "Roth SIMPLE IRA")):
+        titles = {y: w2_codes.codes_for(y)[code]["title"] for y in (2022, 2023, 2024, 2025)}
+        assert titles[2022] == titles[2023] == titles[2024] != titles[2025]
+        assert roth not in titles[2024] and roth in titles[2025]
+        v25 = {y: next(f.message for f in _w2(y, **{"12a": f"{code} 3000.00"}).findings if f.rule_id == "V25")
+               for y in (2022, 2023, 2024, 2025)}
+        assert v25[2022] == v25[2023] == v25[2024] != v25[2025]
+        assert roth not in v25[2024] and roth in v25[2025]
+
+
+@pytest.mark.parametrize("year", sorted(_INDEX))
+def test_v25_shows_the_w2s_own_years_title(year):
+    # Phase K JK28: V25 showed the 2026 title beside the W-2's own year's citation. The 2019-2024 indexes close code M's
+    # entry with a period, which the message's colon replaces.
+    routed = [c for c, e in w2_codes.codes_for(year).items() if e["route"] != "info"]
+    for i in range(0, len(routed), 4):
+        boxes = dict(zip(("12a", "12b", "12c", "12d"), routed[i:i + 4]))
+        doc = _w2(year, **{box: f"{code} 100.00" for box, code in boxes.items()})
+        v25 = {f.boxes[0]: f.message for f in doc.findings if f.rule_id == "V25"}
+        for box, code in boxes.items():
+            assert v25[box].startswith(f"box {box} code {code} — {_INDEX[year][code].rstrip('.')}: "), v25[box]
+
+
+def test_code_ii_starts_with_the_2024_w2():
+    # Phase K JK28: the table dated code II from 2019. The 2024 edition's What's New (page 1): "There is a new code II
+    # for box 12 used to report Medicaid waiver payments not included in box 1 of Form W-2."
+    old = _w2(2023, **{"12a": "II 5000.00"}).findings
+    assert [(f.rule_id, f.severity) for f in old] == [("V22", "error")]
+    assert "(it starts with the 2024 W-2)" in old[0].message
+    assert not _w2(2024, **{"12a": "II 5000.00"}).findings
+
+
 def test_box_8_allocated_tips_are_read_and_flagged_as_outside_box_1():
     # Phase K JK5: the W-2 spec had no box 8, so allocated tips (income that is not in box 1) were never read.
     doc = _w2(2025, **{"8": "1,234.50"})

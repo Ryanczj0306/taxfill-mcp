@@ -120,7 +120,8 @@
 # written here in their qualified form.
 #
 # This is a single 2-page PDF and BOTH PAGES ARE THE FILED RETURN. Residents
-# and nonresidents share this form, and every widget is mapped.
+# and nonresidents share this form, and every widget is mapped except the
+# three ink-signature boxes (see Coverage).
 #   page 1 -- header (names, two SSNs, mailing address, school district, county,
 #             last-name-letters, daytime phone), name/address-changed and
 #             deceased flags, Amended Return (3 boxes), Filing Status (4 boxes),
@@ -133,13 +134,16 @@
 #             block (authorize-discussion checkbox, taxpayer and spouse
 #             signature and date, preparer signature / phone / PTIN).
 #
-# Coverage. ALL 130 widgets are mapped (110 text + 20 checkbox).
+# Coverage. 127 of the 130 widgets are mapped (107 text + 20 checkbox). The
+# three ink-signature boxes ("Signature of taxpayer", "Signature of spouse",
+# "Signature of preparer") are intentionally NOT mapped (Phase K JK28,
+# 2026-10-16): see Signature(s) below.
 #
 # Money vs text. Every numbered dollar line on page 2 and every currency box in
 # the exemptions block prints a ".00" suffix and is `money`. Line 9
 # (Nonresident percentage, "100.0000") stays `text` so the fraction is not
-# rounded away. The exemptions count boxes, header strings, dates and
-# signatures stay `text`.
+# rounded away. The exemptions count boxes, header strings and dates stay
+# `text`.
 #
 # Checkboxes. Every option is a SEPARATE single-state /Btn widget (on_state
 # /Yes). Filing status, residency status and amended return each carry one
@@ -628,23 +632,25 @@ fields:
     field: i authorize the director of taxation or the directors designee to discuss my return and enclosures with my preparer
     type: checkbox
     on_state: /Yes
-  - line: signature.taxpayer              # "Taxpayer Signature"
-    field: Signature of taxpayer
-    type: text
+  # signature.taxpayer / signature.spouse / preparer.signature: NOT mapped (Phase K JK28, 2026-10-16) --
+  # ink-signature lines. Page 2 prints "Taxpayer Signature", "Spouse Signature (If married filing joint)" and
+  # "Signature of preparer other than taxpayer" under "I declare under the penalties of perjury that to the best
+  # of my knowledge this is a true, correct, and complete return." Their widgets ("Signature of taxpayer",
+  # "Signature of spouse", "Signature of preparer") are ordinary /Tx boxes (the only text widgets with no /DA),
+  # and a sentinel typed into each printed on the signature rule. The 2025 booklet (ip25.pdf, sha256 8cbc2ea8d4f877a0,
+  # Page 10, SIGNATURE(S)): "Signature: Your income tax return must be signed. You will not receive your refund if your
+  # return is not signed. Both taxpayers must sign a joint return even if only one had income. If the return is prepared
+  # by someone other than you, the preparer should also sign in the space provided." Nothing in the booklet makes a
+  # typed name a signature, so the filer, the spouse and any preparer sign these lines by hand; `signature: {page: 2}`
+  # says where (test_signature_line_mapping.py).
   - line: signature.taxpayer_date         # "Date" — Courier 12 in 84.7 pt holds 11, so "MM/DD/YYYY"
     field: date signed
     type: text
     maxlen: 10
-  - line: signature.spouse                # "Spouse Signature (If married filing joint)"
-    field: Signature of spouse
-    type: text
   - line: signature.spouse_date           # "Date" — Courier 12 in 75.6 pt holds 10, so "MM/DD/YYYY"
     field: date signed 2
     type: text
     maxlen: 10
-  - line: preparer.signature              # "Signature of preparer other than taxpayer"
-    field: Signature of preparer
-    type: text
   - line: preparer.phone                  # "Phone number of preparer"
     field: preparers phone number
     type: text

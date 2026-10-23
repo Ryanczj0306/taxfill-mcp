@@ -67,6 +67,45 @@ forms:
   part_year_or_nonresident: Form 740-NP (Kentucky Individual Income Tax Return — Nonresident or Part-Year Resident).
     Reciprocal-state residents with only KY wages use Form 740-NP-R (mailed to Frankfort, KY 40620-0012 per the live
     DOR page).
+  # (Phase K JK28, 2026-10-16): each role's own form and its instructions, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is the RESIDENT Form 740, so this entry named Form 740-NP
+  # and Form 740-NP-R but pointed only at Form 740. The three URLs are the "740-NP Packet Instructions (2025)",
+  # "25_42A740-NP" and "740-NP-R (2025)" files in Kentucky DOR's Forms library (revenue.ky.gov/Forms); each PDF was
+  # downloaded twice on 2026-10-16 with identical sha256 (740-NP instructions b1ef413f0e37e2b4..., 740-NP
+  # dc1bad0d9b911eef..., 740-NP-R 91887367d2f2ff74...). The entry above agrees with the 2025 instructions (pp. 3 and 7)
+  # and the 740-NP-R (whose page 1 prints the Frankfort, KY 40620-0012 address) and is unchanged. The 740-NP-R's page-1
+  # sentence is quoted up to "nonresidents" (re-downloaded: same sha256): its purpose clause, "to claim a refund of
+  # Kentucky income taxes withheld during 2025", made get_sources("refund") drop the filing_logistics entry that holds
+  # the Form 740 refund address.
+  citations:
+    part_year:
+    - source: >-
+        2025 Kentucky Form 740-NP Packet Instructions (42A740-NP(P) (10-25)), Instructions for Form 740-NP, p. 7: 'WHO
+        MUST FILE FORM 740-NP—Form 740-NP must be used by full-year nonresidents who had income from Kentucky sources and
+        by part-year residents who had income while a Kentucky resident or from Kentucky sources while a nonresident.'
+        — 'Individuals who established or abandoned Kentucky residency are considered part-year residents.'
+      url: https://revenue.ky.gov/Forms/740-NP%20Packet%20Instructions%20(2025).pdf
+    - source: >-
+        2025 Form 740-NP (42A740-NP (10-25)), Kentucky Individual Income Tax Return, Nonresident or Part-Year Resident —
+        the 4-page form itself
+      url: https://revenue.ky.gov/Forms/25_42A740-NP.pdf
+    nonresident:
+    - source: >-
+        2025 Kentucky Form 740-NP Packet Instructions (42A740-NP(P) (10-25)), Instructions for Form 740-NP, p. 7: 'WHO
+        MUST FILE FORM 740-NP—Form 740-NP must be used by full-year nonresidents who had income from Kentucky sources and
+        by part-year residents who had income while a Kentucky resident or from Kentucky sources while a nonresident.'
+        — 'Reciprocal States' (p. 7): 'Taxpayers who qualify for this exemption and have no other Kentucky taxable
+        income should file Form 740-NP-R, Kentucky Income Tax Return, Nonresident–Reciprocal State, to obtain a refund.'
+      url: https://revenue.ky.gov/Forms/740-NP%20Packet%20Instructions%20(2025).pdf
+    - source: >-
+        2025 Form 740-NP (42A740-NP (10-25)), Kentucky Individual Income Tax Return, Nonresident or Part-Year Resident —
+        the 4-page form itself
+      url: https://revenue.ky.gov/Forms/25_42A740-NP.pdf
+    - source: >-
+        2025 Form 740-NP-R (42A740-NP-R (10-25)), Kentucky Income Tax Return, Nonresident—Reciprocal State, page 1:
+        'This form may be used by qualifying full-year nonresidents' — 'Nonresidents who answered “No” to any of the
+        statements above must file Form 740-NP to report Kentucky income.'
+      url: https://revenue.ky.gov/Forms/740-NP-R%20(2025).pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

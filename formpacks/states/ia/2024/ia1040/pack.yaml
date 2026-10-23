@@ -41,7 +41,8 @@
 # "Taxpayers Name" (header.name) is one field with a widget on each of pages
 # 2-6; "Social Security Number (SSN)" is one field with the page-1 box and a
 # "Taxpayer's SSN" header widget on each of pages 2-6. One write fills every
-# widget of each, so neither needs a mirror key. Blank geometry, measured on
+# widget of each; the SSN needs no mirror key, while header.name, a field of its
+# own, is a declared mirror of the page-1 name since Phase K JK28 (2026-10-23). Blank geometry, measured on
 # the sentinel render: on page 4 only, the DOR placed both header widgets
 # about 10 pt right of their printed boxes (SSN widget 439.3-560.0 pt over a
 # printed 9-cell comb at about 431-549 pt; name widget from 63.0 pt over a box
@@ -431,21 +432,42 @@ fields:
   - { line: "preparer.phone", field: "Preparers phone number", type: text, maxlen: 10 }  # Preparer's phone number
 relations:
   # The printed arithmetic of the 2024 face, plus the two rules the face leaves
-  # to the 2024 IA 1040 instructions (revenue.iowa.gov media/4152): line 12's
+  # to the 2024 IA 1040 instructions (revenue.iowa.gov media/4152, sha256
+  # 7257943544f063e3, fetched twice 2026-10-23): line 12's
   # zero floor and line 20's sum. Dotted line ids are allowed in relations
   # (the 2023 banner's "cannot appear" predates that).
   - "d == a + b + c"          # Step 3 d "Total. Add lines a, b and c"
   - "4 == 2 + 3"              # 4 "Add lines 2 and 3. Do not include lines 1a through 1e"
   - "7 == 5 + 6"              # 7 "Total tax. Add lines 5 and 6"
-  - "8 == d"                  # 8 "Total exemption credit amount from Step 3"
+  # The Step 5 box "Check if using alternate tax (line 5), tax reduction
+  # calculation (line 12), or low-income exemption. See instructions" (page 2,
+  # key alt_tax_method) guards two relations (Phase K JK28, 2026-10-16): verify
+  # reports each SKIPPED while the box is checked. Quotes are from the 2024 IA
+  # 1040 Expanded Instructions (media/4152) and the 2024 Iowa Income Tax
+  # Reduction Worksheet (41-146 (05/23/2024), revenue.iowa.gov media/4099).
+  # 8 "Total exemption credit amount from Step 3"; Step 3 d (p.8): "Add the dollar
+  # amounts and enter on Step 3, line d and on line 8." Guarded: line 25 (p.44),
+  # "If you qualify for the low income exemption and are filing an Iowa return
+  # only to claim a refund of the Iowa EITC, check the box between Steps 4 and 5.
+  # Skip lines 5 through 19, enter zero on lines 20 and 22, and enter the amount
+  # of your Iowa EITC on lines 25, 30, 31, and 32." That correct return leaves
+  # line 8 blank beside a filled Step 3 d. Its blank lines 9-19 and zeros on 20
+  # and 22 still satisfy every other relation over them (22 == 20 + 21 while
+  # line 21 holds no check-off; 31a == max(30 - 22, 0) with the EITC on both),
+  # so only 8 and 12 carry the guard.
+  - "8 == d unless alt_tax_method"
   - "11 == 8 + 9 + 10"        # 11 "Total Credits. Add lines 8, 9, and 10"
   # 12 prints "BALANCE. Subtract line 11 from line 7"; the instructions (line
-  # 12) read "Subtract line 11 from line 7. If less than zero, enter zero."
+  # 12, p.18) read "Subtract line 11 from line 7. If less than zero, enter zero."
   # Lines 14, 16 and 18 carry no floor in the instructions either, so they stay
-  # plain subtraction. One case this relation does not model: a single filer
-  # who uses the Income Tax Reduction Worksheet (41-146, the Step 5 box
-  # checked) enters the worksheet's amount on line 12.
-  - "12 == max(7 - 11, 0)"
+  # plain subtraction. Guarded: the same entry goes on, "Single taxpayers, who
+  # are not claimed as a dependent on another person's Iowa tax return, may owe
+  # less tax by using the Income Tax Reduction Worksheet (41-146)", and the
+  # worksheet's line 5 reads "Compare lines 3 and 4. Enter the smaller number
+  # here and on IA 1040, line 12. Check the box on IA 1040, step 5 if the amount
+  # on line 3 is used". One box marks all three methods, so line 12 also goes
+  # unchecked on an alternate-tax or low-income return, where the floor holds.
+  - "12 == max(7 - 11, 0) unless alt_tax_method"
   - "14 == 12 - 13"           # 14 "BALANCE. Subtract line 13 from line 12"
   - "16 == 14 - 15"           # 16 "BALANCE. Subtract line 15 from line 14"
   - "18 == 16 - 17"           # 18 "BALANCE. Subtract line 17 from line 16"
@@ -469,7 +491,10 @@ relations:
   # line 31a to the face's "subtract line 30 from line 22", so max(22 - 30, 0)
   # would fail a correct amended return; 32 (the refund may be less than
   # 31a - 31b when part goes to line 33); and 5 ("Iowa tax from tax rate
-  # schedule or alternate tax").
+  # schedule or alternate tax"). The alternate tax replaces line 5's own amount
+  # ("If you are using alternate tax calculation on IA 1040 in lieu of the tax
+  # rate calculation, check the box in IA 1040, Step 5", p.12), so "7 == 5 + 6"
+  # holds either way and is not guarded.
 cross_form:
   # Step 4 cites the federal lines by number; every target is a line key of the
   # 2024 federal pack (f1040: 9, 10, 11, 12, 13, 15). Schedule 1 line 5 also
@@ -488,6 +513,14 @@ identity_fields:
   - identifying_number
   - name.first
   - name.last
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2-6 print "Taxpayer's Name" over "Taxpayers Name", ONE field
+# with a widget on each of those pages (351.1-351.2 pt at ArialMT 10), apart from the page-1 Last Name / First Name /
+# Middle Initial boxes, and no DOR script fills it (read on the 2024 blank rendered at 200 dpi). The caption is
+# singular, beside "Taxpayer's SSN", so the header holds the primary filer's name. fill_form builds the mirror when
+# the caller leaves it out (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md,
+# "Page-header mirrors (`mirrors`)").
+mirrors:
+  header.name: "{name.first} {name.mi} {name.last}"  # "Taxpayer's Name"
 signature:
   page: 6
 mailing:

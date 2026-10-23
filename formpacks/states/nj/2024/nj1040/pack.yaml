@@ -3778,3 +3778,18 @@ identity_fields:
   - tp_ssn_d01
   - tp_name_last_first_initial
   - home_address
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2-4 print "Your Social Security Number" and "Name(s) as shown
+# on Form NJ-1040", each one box (read on the 2025 blank rendered at 200 dpi). Page 1 spells the SSN across nine cells
+# (tp_ssn_d01..d09, printed as 3-2-4 with dashes between) and the name as one "Last Name, First Name, Initial" box, so
+# the SSN mirror joins the nine cells as 999-88-0507 and the name mirror copies the page-1 box. fill_form builds each
+# mirror the caller leaves out from its page-1 source (FillResult.mirrored) and verify_form checks it on disk
+# (formpacks/CONVENTIONS.md, "Page-header mirrors (`mirrors`)").
+# The 2024 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  page2_names: "{tp_name_last_first_initial}"  # "Name(s) as shown on Form NJ-1040" (page 2)
+  page2_ssn: "{tp_ssn_d01}{tp_ssn_d02}{tp_ssn_d03}-{tp_ssn_d04}{tp_ssn_d05}-{tp_ssn_d06}{tp_ssn_d07}{tp_ssn_d08}{tp_ssn_d09}"  # "Your Social Security Number" (page 2)
+  page3_names: "{tp_name_last_first_initial}"  # "Name(s) as shown on Form NJ-1040" (page 3)
+  page3_ssn: "{tp_ssn_d01}{tp_ssn_d02}{tp_ssn_d03}-{tp_ssn_d04}{tp_ssn_d05}-{tp_ssn_d06}{tp_ssn_d07}{tp_ssn_d08}{tp_ssn_d09}"  # "Your Social Security Number" (page 3)
+  page4_names: "{tp_name_last_first_initial}"  # "Name(s) as shown on Form NJ-1040" (page 4)
+  page4_ssn: "{tp_ssn_d01}{tp_ssn_d02}{tp_ssn_d03}-{tp_ssn_d04}{tp_ssn_d05}-{tp_ssn_d06}{tp_ssn_d07}{tp_ssn_d08}{tp_ssn_d09}"  # "Your Social Security Number" (page 4)

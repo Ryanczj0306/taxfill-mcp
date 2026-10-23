@@ -57,6 +57,45 @@ residency:
 forms:
   resident: Form M1, Individual Income Tax
   part_year_or_nonresident: Schedule M1NR, Nonresidents/Part-Year Residents (filed together with Form M1)
+  # (Phase K JK28, 2026-10-16): the role's own schedule and the instructions that send it there, which state_scope adds
+  # to a part-year or nonresident filer's citations — the top-level `citation` is the M1 instructions' resident
+  # figures, so this entry named Schedule M1NR without pointing at it. The two URLs are "2025 M1, Individual Income Tax
+  # Instructions" and "2025 M1NR, Nonresidents/Part-Year Residents" from the Department of Revenue's form search
+  # (www.revenue.state.mn.us/form-search, individual income tax, 2025); each PDF was downloaded twice on 2026-10-16
+  # with identical sha256 (M1 instructions e3bacdd198233bba..., Schedule M1NR cfcb0621e03a91b4...). The entry above
+  # agrees with them and is unchanged; the nonresident citation also quotes the Michigan/North Dakota reciprocity
+  # exception the entry does not mention.
+  citations:
+    part_year:
+    - source: >-
+        2025 Minnesota Form M1 Individual Income Tax Instructions, 'Filing Requirements (cont.)' — 'Part-Year Residents
+        and Nonresidents' (p. 7): 'File a Minnesota income tax return if you moved into or out of Minnesota in 2025 and
+        your 2025 Minnesota source income is $14,950 or more.' — 'Complete Schedule M1NR, Nonresidents/Part-Year
+        Residents, to determine income received while a Minnesota resident and income received from Minnesota sources
+        while a nonresident.' — 'Line 13 —Part-Year Residents and Nonresidents (Schedule M1NR)' (p. 16): 'Include
+        Schedule M1NR when you file Form M1.'
+      url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
+    - source: >-
+        2025 Schedule M1NR, Nonresidents/Part-Year Residents, with its instructions — 'Should I file this schedule?'
+        (instructions, PDF page 3): 'File this schedule with your Form M1 if you meet the minimum filing requirement and
+        in 2025 you were either a: • Full-year nonresident of Minnesota • Part-year resident of Minnesota' — 'You must
+        include Schedule M1NR when you file your return.'
+      url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1nr-25.pdf
+    nonresident:
+    - source: >-
+        2025 Minnesota Form M1 Individual Income Tax Instructions, 'Filing Requirements for Part-Year Residents and
+        Nonresidents' (p. 7): '3. Add step 1 and step 2. If the total is $14,950 or more, you must file a Minnesota
+        income tax return and Schedule M1NR.' — 'Michigan and North Dakota Residents' (p. 8): 'Complete Schedule M1M,
+        Income Additions and Subtractions, to file for a refund of withholding if you are a Michigan or North Dakota
+        resident.'
+      url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
+    - source: >-
+        2025 Schedule M1NR, Nonresidents/Part-Year Residents, with its instructions — 'Should I file this schedule?'
+        (instructions, PDF page 3): 'File this schedule with your Form M1 if you meet the minimum filing requirement and
+        in 2025 you were either a: • Full-year nonresident of Minnesota • Part-year resident of Minnesota' — 'If you were
+        a resident of Michigan or North Dakota for all of 2025, do not complete this schedule if your only Minnesota
+        source income is exempt due to reciprocity (see Fact Sheet 4, Reciprocity, for more information).'
+      url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1nr-25.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

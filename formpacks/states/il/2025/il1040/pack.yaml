@@ -114,7 +114,8 @@
 #     insurance: Self Spouse Dependent(s)", MAPPED as
 #     42_household_needs_insurance::self / ::spouse / ::dependents) and "Paid
 #     preparers signaturePaid Preparer Use Only" (a /Tx box under the printed
-#     "Paid preparer's signature", MAPPED as preparer_signature).
+#     "Paid preparer's signature"; mapped as preparer_signature until Phase K
+#     JK28, 2026-10-16, and now left for the preparer's ink signature).
 #   * The base-unmapped "Help" tooltip banner (2024's only ReadOnly field) is
 #     gone. "Reset" and "Print" (pushbuttons, /Ff 65536) remain and stay
 #     unmapped. NOTHING on the 2025 blank carries the ReadOnly bit (/Ff bit
@@ -205,12 +206,15 @@
 # line key is the printed line number. Header, exemption sub-boxes,
 # refund/account, signature and preparer widgets carry descriptive keys.
 #
-# Coverage. The 2025 blank has 109 widgets under 102 qualified names. 107
-# lines are mapped here, one per fillable widget (every option kid of a
-# shared field is its own line: 100 names, 107 widgets). Two widgets are
-# intentionally OMITTED — form actions, not data fields: "Reset" and "Print"
-# (push-buttons, /Ff 65536, at the foot of page 2; their "_States_" are
-# appearance-stream dict keys, not values). No ReadOnly field exists on this
+# Coverage. The 2025 blank has 109 widgets under 102 qualified names. 106
+# lines are mapped here, one per fillable widget except the preparer's
+# signature box (every option kid of a shared field is its own line: 99
+# names, 106 widgets). Three widgets are intentionally OMITTED: the form
+# actions "Reset" and "Print", which are not data fields (push-buttons, /Ff
+# 65536, at the foot of page 2; their "_States_" are appearance-stream dict
+# keys, not values), and the ink-signature box "Paid preparers signaturePaid
+# Preparer Use Only" (Phase K JK28, 2026-10-16; see Paid preparer use only
+# below). No ReadOnly field exists on this
 # blank (the 2024 "Help" banner is gone). One parent container holds no AP
 # of its own: "Child Tax credit from Sch" with the kid "IL-EITC" — the fully
 # qualified name (what fill_form resolves and what `field:` carries) is the
@@ -351,7 +355,8 @@ fields:
     on_state: /head of household
     group: filing_status
 
-  # ---- C — Check if someone can claim you as a dependent (You / Spouse boxes; two separate /Btn fields, both may apply)
+  # ---- C — Check if someone can claim you as a dependent (You / Spouse boxes; two separate /Btn fields, both may
+  # apply)
   - line: C_claimed_as_dependent::you
     field: dependent_you
     type: checkbox
@@ -611,6 +616,9 @@ fields:
     on_state: /On
 
   # ---- Sign here
+  # "Your signature" and "Spouse’s signature" carry no widget on any IL-1040 blank: signed in ink. The 2025
+  # instructions (page 16, "Sign and date"): "You, and your spouse if filing jointly, must sign and date your
+  # return." `signature: {page: 2}` says where.
   - line: your_signature_date
     field: date_1
     type: text
@@ -628,9 +636,14 @@ fields:
   - line: preparer_name
     field: PrintType paid preparers namePaid Preparer Use Only
     type: text
-  - line: preparer_signature     # NEW widget in 2025 under the printed "Paid preparer's signature"
-    field: Paid preparers signaturePaid Preparer Use Only
-    type: text
+  # preparer_signature: NOT mapped (Phase K JK28, 2026-10-16) -- an ink-signature line. Page 2 prints "Paid
+  # preparer’s signature" beside its own "Print/Type paid preparer’s name" box (preparer_name). The widget under
+  # it, "Paid preparers signaturePaid Preparer Use Only" (new in 2025), is an ordinary /Tx box, and a sentinel
+  # typed into it printed on the signature line. The 2025 instructions (il-1040-instr.pdf, page 16, "Paid
+  # preparer"): "If you pay someone to prepare your return, the paid preparer must also sign and date your
+  # return, provide a phone number, and enter their Preparer Tax Identification Number (PTIN) issued by the
+  # IRS." The preparer signs by hand, as on the 2023 and 2024 blanks, which carry no widget on that line
+  # (test_signature_line_mapping.py).
   - line: preparer_signature_date
     field: Date mmddyyyyPaid Preparer Use Only
     type: text
@@ -691,3 +704,6 @@ identity_fields:
   - tp_ssn
   - tp_first_name_and_initial
   - tp_last_name
+# Page 2 "Sign Here" / "Paid Preparer Use Only": every signature on this form is made in ink (Phase K JK28,
+# 2026-10-16; see the Sign here and Paid preparer blocks above).
+signature: {page: 2}

@@ -55,6 +55,46 @@ forms:
   resident: Form IT-40, Indiana Full-Year Resident Individual Income Tax Return (2025, State Form 154)
   part_year_or_nonresident: Form IT-40PNR, Indiana Part-Year and Full-Year Nonresident Individual Income Tax Return
     (2025). (Reciprocal-state full-year nonresidents with only IN wage income file Form IT-40RNR instead.)
+  # (Phase K JK28, 2026-10-16): each role's own form and its instructions, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is the RESIDENT IT-40 booklet, so this entry named Form
+  # IT-40PNR and Form IT-40RNR but pointed only at the IT-40 booklet. The three URLs are the "IT-40PNR Booklet",
+  # "IT-40PNR Form" and "IT-40RNR Form" links on Indiana DOR's current individual income tax forms page
+  # (www.in.gov/dor/tax-forms/individual/current); each PDF was downloaded twice on 2026-10-16 with identical sha256
+  # (IT-40PNR booklet b8c5168eb7a64b32..., IT-40PNR form bdaaed95094b8ba4..., IT-40RNR form with its instructions
+  # 3e8111bb2cb5ec45...). The entry above agrees with the 2025 booklet (pp. 3 and 6) and is unchanged. The IT-40RNR
+  # entry describes the form itself (re-downloaded: same sha256) and the reciprocal-state rule is quoted from the
+  # booklet: the form's page-1 note ("a state other than those listed; had Indiana income other than wages, salaries,
+  # tips or commissions") pulled get_sources("other state credit") and ("tips") to the role documents.
+  citations:
+    part_year:
+    - source: >-
+        2025 Indiana IT-40PNR Part-Year and Full-Year Nonresident Individual Income Tax Booklet (Indiana DOR SP 258,
+        R28 / 12-25), 'Who Should File?' — 'Part-Year Residents and Full-Year Nonresidents' (p. 6): 'If you were a
+        part-year resident and received income while you lived in Indiana, you must file Indiana Form IT-40PNR,
+        Part-Year Resident or Nonresident Individual Income Tax Return.'
+      url: https://forms.in.gov/Download.aspx?id=16921
+    - source: >-
+        2025 Form IT-40PNR (State Form 472, R24 / 9-25), Indiana Part-Year or Full-Year Nonresident Individual Income
+        Tax Return — the form itself (page 1: 'Due April 15, 2026')
+      url: https://forms.in.gov/Download.aspx?id=16919
+    nonresident:
+    - source: >-
+        2025 Indiana IT-40PNR Part-Year and Full-Year Nonresident Individual Income Tax Booklet (Indiana DOR SP 258,
+        R28 / 12-25), 'Who Should File?' (p. 6): 'If you were a legal resident of another state(s) (exception: see
+        next paragraph) and had income from Indiana (except certain interest, dividends, or retirement income), you
+        must file Form IT-40PNR.' — and, under 'Full-Year Residents of Kentucky, Michigan, Ohio, Pennsylvania or
+        Wisconsin' (p. 6): 'If you were a full-year resident of Kentucky, Michigan, Ohio, Pennsylvania or Wisconsin,
+        and your only income from Indiana was from wages, salaries, tips or commissions, then you need to file Form
+        IT-40RNR, Indiana Reciprocal Nonresident Individual Income Tax Return.'
+      url: https://forms.in.gov/Download.aspx?id=16921
+    - source: >-
+        2025 Form IT-40PNR (State Form 472, R24 / 9-25), Indiana Part-Year or Full-Year Nonresident Individual Income
+        Tax Return — the form itself (page 1: 'Due April 15, 2026')
+      url: https://forms.in.gov/Download.aspx?id=16919
+    - source: >-
+        2025 Form IT-40RNR (State Form 44406, R24 / 9-25), Reciprocal Nonresident Indiana Individual Income Tax
+        Return — the form and its instructions (page 1: 'Due April 15, 2026')
+      url: https://forms.in.gov/Download.aspx?id=16925
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

@@ -53,11 +53,6 @@ residency:
     income while a nonresident. Residents report all income regardless of source. On the 2025 PA-40, fill in the
     residency oval for your status on Dec. 31, 2025 — (R) Resident, (N) Nonresident, (P) Part-Year Resident. (2025
     PA-40 instructions, Residency Status; PIT Guide - Brief Overview and Filing Requirements.)
-forms:
-  resident: PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident
-  part_year_or_nonresident: PA-40 (same form) - "Nonresidents and part-year residents use the same PA-40 form as
-    PA residents"; fill in residency oval (N) Nonresident or (P) Part-Year Resident. Use PA Schedule NRH/PA Schedule
-    SP as applicable; nonresident/part-year apportionment per the PA-40 instructions.
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:
@@ -316,3 +311,50 @@ law_changes_checked:
       2025 PA-40 Personal Income Tax Return Instructions (PA-40 IN 04-25), 2025 State Tax Change (p.1)
     url: >-
       https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf
+# `forms` sits at the END of this pack on purpose (Phase K JK28, 2026-10-16). The source registry
+# (knowledge/sources_states.yaml, built by scripts/assemble_state_sources.py) keeps the FIRST citation of each URL per
+# topic in file order, and get_sources routes a question by those descriptions. forms.citations below reuse the PA-40
+# URL that `all_citations` describes; placed before `all_citations` (where Virginia keeps `forms`), the role pinpoint
+# replaced that description in the registry. Keep `forms` after `all_citations`.
+forms:
+  resident: PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident
+  part_year_or_nonresident: PA-40 (same form) - "Nonresidents and part-year residents use the same PA-40 form as
+    PA residents"; fill in residency oval (N) Nonresident or (P) Part-Year Resident. Use PA Schedule NRH/PA Schedule
+    SP as applicable; nonresident/part-year apportionment per the PA-40 instructions.
+  # (Phase K JK28, 2026-10-16): the role's own pages and form, which state_scope adds to a part-year or nonresident
+  # filer's citations. Pennsylvania has ONE return for every role, so the role citation is the instructions' sentence
+  # saying so (the same PA-40 instructions the top-level `citation` names, pinned to the role's pages) plus the PA-40
+  # itself, whose page 1 carries the residency ovals. The instructions URL is the pack's primary citation; the PA-40 URL
+  # is in the same pa.gov 2025 PIT documents folder (the department's forms list renders by script, so no static page
+  # links it). Each PDF was downloaded twice on 2026-10-16 with identical sha256 (PA-40 IN e8996504a4302a65..., PA-40
+  # fcd7648601f3ce5a...). The entry above agrees with both (PA Schedule SP: 'Taxpayers who are nonresidents and
+  # part-year residents of Pennsylvania may claim Tax Forgiveness if meeting all the eligibility requirements', p. 37).
+  citations:
+    part_year:
+    - source: >-
+        2025 Pennsylvania Personal Income Tax Return Instructions (PA-40 IN), 'Residency Status' (p. 6): 'Nonresidents
+        and part-year residents use the same PA-40 form as PA residents.' — '(P) Part-Year Resident If you moved into
+        Pennsylvania during 2025, fill in this oval even though you were a PA resident at the end of 2025. If you moved
+        from Pennsylvania during 2025, fill in this oval even though you were not a PA resident at the end of 2025.' —
+        and 'INSTRUCTIONS FOR NONRESIDENTS AND PART-YEAR RESIDENTS' (p. 42): 'Part-Year Resident of Pennsylvania - You
+        must report all taxable income you earned, received, and realized from all sources for the time you were a PA
+        resident, and report the PA-taxable income you earned, received, and realized from sources within
+        Pennsylvania for the time you were not a PA resident.'
+      url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf
+    - source: >-
+        2025 PA-40, Pennsylvania Income Tax Return — the 2-page return itself (page 1: 'Residency Status. Fill in only
+        one oval.' — 'P Part-Year Resident from ___/___/2025 to ___/___/2025')
+      url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40.pdf
+    nonresident:
+    - source: >-
+        2025 Pennsylvania Personal Income Tax Return Instructions (PA-40 IN), 'Residency Status' (p. 6): 'Nonresidents
+        and part-year residents use the same PA-40 form as PA residents.' — '(N) Nonresident If you were a nonresident
+        of Pennsylvania for all of 2025, fill in this oval. PA law taxes nonresidents on the income earned, received,
+        or realized from Pennsylvania sources during 2025.' — and 'INSTRUCTIONS FOR NONRESIDENTS AND PART-YEAR
+        RESIDENTS' (p. 42): 'Nonresident of Pennsylvania - You must report all taxable income you earned, received, and
+        realized from PA sources.'
+      url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf
+    - source: >-
+        2025 PA-40, Pennsylvania Income Tax Return — the 2-page return itself (page 1: 'Residency Status. Fill in only
+        one oval.' — 'N Nonresident')
+      url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40.pdf

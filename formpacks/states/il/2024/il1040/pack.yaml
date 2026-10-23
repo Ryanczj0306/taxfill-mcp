@@ -516,6 +516,10 @@ fields:
     on_state: /IDOR may share your income information
 
   # ---- Sign here
+  # "Your signature", "Spouse’s signature" and "Paid preparer’s signature" carry no widget on this blank:
+  # signed in ink. The 2024 instructions (il-1040-instr.pdf, page 16, "Sign and date"): "You, and your spouse
+  # if filing jointly, must sign and date your return." ("Paid preparer": "If you pay someone to prepare your
+  # return, the paid preparer must also sign and date your return, ...") `signature: {page: 2}` says where.
   - line: your_signature_date
     field: YourSignatureDate
     type: text
@@ -596,3 +600,6 @@ identity_fields:
   - tp_ssn
   - tp_first_name_and_initial
   - tp_last_name
+# Page 2 "Sign Here" / "Paid Preparer Use Only": every signature on this form is made in ink (Phase K JK28,
+# 2026-10-16; see the Sign here block above).
+signature: {page: 2}

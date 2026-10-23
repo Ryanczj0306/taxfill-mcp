@@ -3,6 +3,7 @@
   "@@02a2e55f240c": "If any of your income was exempt from federal tax under a treaty: MS does not conform to federal tax treaties, so that income is still taxable to MS — do not carry the federal exclusion onto the state return.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@20b54a7a18be": "MS DOR — 2025 Form 80-100 instructions, WHEN AND WHERE SHOULD I FILE ('Calendar year returns must be filed no later than April 15th annually')",
+  "@@2e0dc53c5cb8": "2025 Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return (Form 80-205-25-8-1-000, Rev. 09/25) — the form itself (page 1 carries a 'Non-Resident' box and a 'Part-Year, Tax Year Beginning' box with its dates)",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@45955e6ee3e7": "annual (per tax year; the newest shipped MS pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
@@ -13,6 +14,7 @@
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9a69f7b3bc3e": "Credit for Income Tax Paid to Another State — A legal resident of Mississippi who earns income in another state and is required to pay income tax to that other state, on income also taxed by Mississippi. The taxpayer MUST file a return with the other state and attach a copy (plus Form 80-160); W-2 withholding amounts alone are not sufficient. Not applicable on the Non-Resident return.",
   "@@a871e5af1ef0": "If any income was exempt from federal tax under a treaty: MS does not conform to federal tax treaties — that income is still taxable to MS.",
+  "@@aa0e5b1b4caa": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80205258%201.pdf",
   "@@b075bc26cabb": "2025 Mississippi Resident, Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-25-1-1-000, Rev. 12/25), MS DOR - 'TAX RATES' (p.22): 'Income Tax: 0% on the first $10,000.00 of taxable income and 4.4% on taxable income in excess of $10,000.00'; 'SCHEDULE OF TAX COMPUTATION' (line 1 First $10,000 x 0%, line 2 Remaining balance x 4.4%, line 4 total to page 1 line 17); 'Filing Status and Exemptions' table: exemption $12,000 MFJ/combined and Married-Spouse Died 2025, $6,000 MFS (each), $8,000 Head of Family, $6,000 single; standard deduction $4,600 MFJ, $2,300 MFS, $3,400 Head of Family, $2,300 single; 'Additional Exemptions' chart $1,500 each dependent, $1,500 age 65 or over (taxpayer/spouse only), $1,500 blind. Second pass: 2025 Form 80-105 (Form 80-105-25-8-1-000, Rev. 09/25) prints the exemption amounts next to each filing-status checkbox ('Married - Combined or Joint Return ($12,000)' ... 'Single ($6,000)') and the line 10 'Line 9 x $1,500' - https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80105258%201.pdf - both passes agree. Only the rate changed from 2024 (4.7% -> 4.4%); exemptions and standard deductions are unchanged.",
   "@@b1bff7e2293d": "https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf",
   "@@c1c49c4e80e3": "The newest shipped MS pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
@@ -380,6 +382,12 @@
      "url": "@@b1bff7e2293d"
     },
     {
+     "answers": "@@2e0dc53c5cb8",
+     "cadence": "@@45955e6ee3e7",
+     "topic": "forms_and_instructions",
+     "url": "@@aa0e5b1b4caa"
+    },
+    {
      "answers": "MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; resident/nonresident/part-year forms; 1042-S taxable). The live FAQ now shows the 2025 rate (4.4%), corroborating the 2025 filing-season rate.",
      "cadence": "@@45955e6ee3e7",
      "topic": "forms_and_instructions",
@@ -525,6 +533,14 @@
       {
        "source": "@@fcb467eb1b85",
        "url": "@@b1bff7e2293d"
+      },
+      {
+       "source": "2025 Mississippi Resident, Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-25-1-1-000, Rev. 12/25), 'DO I HAVE TO FILE?' (p. 4): 'You should file a Mississippi Income Tax Return if any of the following statements apply to you:' — 'You are a non-resident or part-year resident with income taxed by Mississippi (other than gambling income).' — 'NON-RESIDENTS AND PART-YEAR RESIDENTS' (p. 14): 'The following instructions are specific for Form 80-205 only.'",
+       "url": "@@b1bff7e2293d"
+      },
+      {
+       "source": "@@2e0dc53c5cb8",
+       "url": "@@aa0e5b1b4caa"
       }
      ],
      "filing_role": "nonresident",
@@ -575,6 +591,14 @@
       {
        "source": "@@fcb467eb1b85",
        "url": "@@b1bff7e2293d"
+      },
+      {
+       "source": "2025 Mississippi Resident, Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-25-1-1-000, Rev. 12/25), 'AM I A RESIDENT OR A NON-RESIDENT?' — 'What is my status if I moved into or out of Mississippi in 2025?' (p. 4): 'You are considered a part-year resident and must file the Non-Resident/Part-Year Resident Return, Form 80-205. You will be taxed only on income earned while a resident of Mississippi and you will prorate your deductions and exemptions.'",
+       "url": "@@b1bff7e2293d"
+      },
+      {
+       "source": "@@2e0dc53c5cb8",
+       "url": "@@aa0e5b1b4caa"
       }
      ],
      "filing_role": "part_year",

@@ -569,7 +569,8 @@ fields:
     field: Page2[0].Table_Line28a-f[0].RowD[0].c2_13[0]
     type: checkbox
     on_state: /1
-  # ---- Line 28 cols (g) passive loss / (h) passive income / (i) nonpassive loss / (j) sec.179 / (k) nonpassive income, rows a–d ----
+  # ---- Line 28 cols (g) passive loss / (h) passive income / (i) nonpassive loss / (j) sec.179 / (k) nonpassive income,
+  # rows a–d ----
   - line: 28.a.g                     # (g) Passive loss allowed (attach Form 8582)
     field: Page2[0].Table_Line28g-k[0].RowA[0].f2_15[0]
     type: money
@@ -784,3 +785,8 @@ cross_form:
 identity_fields:
   - name
   - identifying_number
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2's header is NOT a mirror: it prints "Name(s) shown on return.
+# Do not enter name and social security number if shown on other side." (read on the 2023, 2024, 2025 and 2026 blanks
+# rendered at 200 dpi), and page 1, the other side of the sheet, always carries `name` and `identifying_number`. So
+# name_page2 / identifying_number_page2 stay mapped for a caller who needs them but are not built
+# (test_pack_invariants NOT_A_MIRROR).

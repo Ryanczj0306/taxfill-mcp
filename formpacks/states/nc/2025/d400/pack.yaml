@@ -112,8 +112,8 @@
 # (a state abbreviation; '2023 ' or '2024'; 'E'): fill_form and verify_form
 # accept any text (they write and read /V), but a poppler-based renderer
 # (pdftoppm) regenerates the appearance from the /Opt list and prints an
-# off-list value as an EMPTY box, while pdfium draws the text. Measured on this blank: the sentinel audit's T13 / T21 / T25 are
-# invisible under pdftoppm and visible under pdfium; NC / 2024 / E render in
+# off-list value as an EMPTY box, while pdfium draws the text. Measured on this blank: the sentinel audit's T13 / T21 /
+# T25 are invisible under pdftoppm and visible under pdfium; NC / 2024 / E render in
 # the right boxes under both. Audit these three lines on a pdfium render.
 #
 # MAXLEN. 55 widgets carry a /MaxLen (the table is byte-identical to 2024)
@@ -732,3 +732,10 @@ identity_fields:
   - tp_ssn
   - tp_first_name
   - tp_last_name
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2 prints "Last Name (First 10 Characters)" in its own
+# 10-character box (read on the 2025 blank rendered at 200 dpi); its "Your Social Security Number" is the page-1 field
+# again, so it needs no mirror. fill_form builds each mirror the caller leaves out from its page-1 source
+# (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)").
+mirrors:
+  tp_last_name_page2: "{tp_last_name[:10]}"  # "Last Name (First 10 Characters)"

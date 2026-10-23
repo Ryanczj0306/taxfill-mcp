@@ -132,13 +132,11 @@
 # _pack_maxlen_checks still covers them from the pack's own declared maxlen. That
 # restores P-001 coverage on exactly the SSN-shaped ReadOnly mirror P-007 (b)
 # calls structurally blind.
-# ONE THING THE MAP CANNOT EXPRESS: on a real filing all four mirror triples
-# must repeat the page-1 identity verbatim (the state's one data node). The
-# relation grammar is arithmetic over printed money lines, so there is no way
-# to assert page4_name_last == name.last here; a caller that fills the twelve
-# with anything other than the page-1 values produces an internally
-# inconsistent return and nothing in this pack will catch it. Flagged for the
-# gates agent as an invariant-test candidate.
+# On a real filing all four mirror triples must repeat the page-1 identity
+# verbatim (the state's one data node). Since Phase K JK28 (2026-10-23) the
+# `mirrors:` block at the end of this pack says so: fill_form builds the twelve
+# from page 1 when the caller leaves them out, and verify_form FAILs one that
+# says something else.
 #
 # VISION AUDIT: scripts/audit_pack.py against the pinned blank — 248 of the 252
 # mapped lines filled with distinct sentinels (the 4 unfilled are the
@@ -1329,5 +1327,26 @@ identity_fields:
   - mailing_address.city
   - mailing_address.state
   - mailing_address.zip
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2-5 print "Name(s) shown on Form RI-1040 or RI-1040NR" and
+# "Your social security number" over three fields each, PrimFirstName / PrimLastName / PrimTaxpayerSSN under their own
+# PageN[0], which the XFA layer binds globally to the page-1 fields (read on the 2025 blank rendered at 200 dpi).
+# taxfill writes the AcroForm layer only, so each copies its page-1 field. fill_form builds each mirror the caller
+# leaves out from its page-1 source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md,
+# "Page-header mirrors (`mirrors`)").
+# The 2024 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  page2_name_first: "{name.first}"  # "Name(s) shown on Form RI-1040 or RI-1040NR" (page 2), its first-name field
+  page2_name_last: "{name.last}"  # its last-name field
+  page2_identifying_number: "{identifying_number}"  # "Your social security number"
+  page3_name_first: "{name.first}"  # "Name(s) shown on Form RI-1040 or RI-1040NR" (page 3), its first-name field
+  page3_name_last: "{name.last}"  # its last-name field
+  page3_identifying_number: "{identifying_number}"  # "Your social security number"
+  page4_name_first: "{name.first}"  # "Name(s) shown on Form RI-1040 or RI-1040NR" (page 4), its first-name field
+  page4_name_last: "{name.last}"  # its last-name field
+  page4_identifying_number: "{identifying_number}"  # "Your social security number"
+  page5_name_first: "{name.first}"  # "Name(s) shown on Form RI-1040 or RI-1040NR" (page 5), its first-name field
+  page5_name_last: "{name.last}"  # its last-name field
+  page5_identifying_number: "{identifying_number}"  # "Your social security number"
 signature: {page: 2}
 mailing: null

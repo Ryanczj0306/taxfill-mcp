@@ -12,8 +12,8 @@
 # header for the field-map notes; the comments below are its own and describe
 # the 2025 revision's history. MECHANICAL TOPOLOGY DIFF, 2025 final -> 2026
 # draft: every widget keeps its name, rect, /MaxLen and /AP states. Printed-face
-# diff: the year in the title block and the page headers/footers only. No line was renumbered, so relations and cross_form carry
-# over unchanged.
+# diff: the year in the title block and the page headers/footers only. No line was renumbered, so relations and
+# cross_form carry over unchanged.
 
 form: "8949"
 jurisdiction: federal
@@ -774,6 +774,17 @@ relations:
 cross_form: []
 
 identity_fields: [name, identifying_number]
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2 prints "Name(s) shown on return. Name and SSN or taxpayer
+# identification no. not required if shown on other side" and "Social security number or taxpayer identification
+# number" (read on the 2025 blank rendered at 200 dpi). "Not required" permits the repeat, and a Part-II-only filing
+# needs it (see IDENTITY PAGE MIRRORS above). fill_form builds each mirror the caller leaves out from its page-1
+# source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)").
+# The 2026 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  page2_name: "{name}"  # "Name(s) shown on return. ..."
+  page2_identifying_number: "{identifying_number}"  # "Social security number or taxpayer identification number"
 
 # Attachment-only (Attachment Sequence No. 12A): no signature block of its own,
 # mailed inside the parent return's envelope (formpacks/CONVENTIONS.md).

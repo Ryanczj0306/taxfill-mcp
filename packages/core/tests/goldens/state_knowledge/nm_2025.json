@@ -20,6 +20,8 @@
   "@@87d1f7d4e24c": "Form PIT-1 filed with Schedule PIT-B (Schedule of New Mexico Allocation and Apportionment of Income); nonresidents and part-year residents use PIT-B to allocate/apportion NM-source income, and PIT-1 line 18 then comes from PIT-B line 14 with indicator B in box 18a. Mark residency status in box 1e on PIT-1 page 1 (R = resident, N = non-resident, P = part-year, F = first-year). A nonresident whose only NM income is gross royalty income under $5,000 may instead enter that income on line 17 and mark Y in box 18a.",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@98a52845c8e5": "Working Families Tax Credit (New Mexico's state EITC) — A New Mexico resident during any part of 2025 who files a PIT-1 and is eligible for the federal Earned Income Credit for the same tax year.",
+  "@@bb095b5d9524": "Instructions for 2025 PIT-B, Schedule of New Mexico Allocation and Apportionment of Income (p. B-1): 'If you have income from sources both inside and outside New Mexico, attach and submit Schedule PIT-B with your PIT-1 Return.'; 'Part-Year and First-Year Residents Line A and B' (p. B-3): 'Part-year and first-year residents enter the beginning and ending date for the tax year when the taxpayer was a resident of New Mexico.'",
+  "@@c22a1afa0f70": "2025 PIT-B, New Mexico Allocation and Apportionment of Income Schedule (p. 1): 'Taxpayers who allocate and apportion income from both inside and outside the State of New Mexico must complete this schedule. ... Include the Schedule PIT-B with your personal income tax return, Form PIT-1.' — 'For first-year and part-year resident taxpayers, enter the period of residency.'",
   "@@c56a9c17064a": "New Mexico Legislature — 2024 House Bill 252 (HTRC/HB 252/a, final version), Section 5 amending Section 7-2-7 NMSA 1978 (INDIVIDUAL INCOME TAX RATES) for taxable years beginning on or after January 1, 2025",
   "@@d020a97a3678": "2025 PIT-1 New Mexico Personal Income Tax Return Instructions — Filing Due Date (page PIT-1-1): \"Both paper and electronic PIT returns are due on or before April 15, 2026.\" (CHANGE from TY2024: there is no longer a later April 30 due date for returns that are both e-filed and e-paid — the instructions state \"April 15, 2026 is the deadline for filing both electronic\" and paper returns, and \"Electronically-filed returns are due April 15, 2026\" (page PIT-1-14). If April 15 falls on a weekend or observed holiday the return is due the next business day. New Mexico accepts the IRS automatic six-month extension: with a federal Form 4868 for tax year 2025, October 15, 2026 is the extended due date for calendar-year filers; an extension of time to file does not extend the time to pay, so pay with a PIT-EXT voucher to avoid the accrual of interest (page PIT-1-15).)",
   "@@d1e630f1fbdc": "Special Needs Adopted Child Tax Credit — A taxpayer who files a New Mexico PIT-1, is not a dependent of another taxpayer, adopted a special needs child (certified as a 'difficult to place child' by the NM Children, Youth and Families Department or a licensed child placement agency), and claimed that child as a dependent on the federal return. Attach the certificate in the first year claimed for each qualifying child.",
@@ -396,6 +398,18 @@
      "cadence": "@@5ced19348c64",
      "topic": "forms_and_instructions",
      "url": "https://tap.state.nm.us"
+    },
+    {
+     "answers": "@@bb095b5d9524",
+     "cadence": "@@5ced19348c64",
+     "topic": "forms_and_instructions",
+     "url": "https://realfile.tax.newmexico.gov/2025pit-b-ins.pdf"
+    },
+    {
+     "answers": "@@c22a1afa0f70",
+     "cadence": "@@5ced19348c64",
+     "topic": "forms_and_instructions",
+     "url": "https://realfile.tax.newmexico.gov/2025pit-b.pdf"
     }
    ],
    "topic": "forms_and_instructions",
@@ -529,6 +543,18 @@
       {
        "source": "@@542eabc4c559",
        "url": "@@34062d638bf2"
+      },
+      {
+       "source": "2025 PIT-1 Instructions (New Mexico Taxation and Revenue Department) — 'Non-Residents' (p. PIT-1-2): 'If you are a non-resident, including a foreign national or a person who resides in a state without income taxes, you must file in New Mexico when both the following are true: • You are required to file a federal return. • You have income from any New Mexico source whatsoever.'; 'Residency Status' (p. PIT-1-22): '• Non-Resident. If you were physically present in New Mexico for fewer than 185 days and you were not domiciled in New Mexico during any part of the year, mark N in the box.'; 'PIT-B To Allocate And Apportion Income' (p. PIT-1-10): 'To allocate and apportion income received from employment, business, or property sources located inside and outside New Mexico, file PIT-B, Schedule of New Mexico Allocation and Apportionment of Income, with your PIT-1.'",
+       "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+      },
+      {
+       "source": "Instructions for 2025 PIT-B, Schedule of New Mexico Allocation and Apportionment of Income (p. B-1): 'PIT-B is for taxpayers with income from sources both inside and outside New Mexico. ... If you have income from sources both inside and outside New Mexico, attach and submit Schedule PIT-B with your PIT-1 Return.'",
+       "url": "https://realfile.tax.newmexico.gov/2025pit-b-ins.pdf"
+      },
+      {
+       "source": "2025 PIT-B, New Mexico Allocation and Apportionment of Income Schedule (p. 1): 'Taxpayers who allocate and apportion income from both inside and outside the State of New Mexico must complete this schedule. ... Include the Schedule PIT-B with your personal income tax return, Form PIT-1.'",
+       "url": "https://realfile.tax.newmexico.gov/2025pit-b.pdf"
       }
      ],
      "filing_role": "nonresident",
@@ -583,6 +609,18 @@
       {
        "source": "@@542eabc4c559",
        "url": "@@34062d638bf2"
+      },
+      {
+       "source": "2025 PIT-1 Instructions (New Mexico Taxation and Revenue Department) — 'Who Must File A PIT-1 Return' (p. PIT-1-2): 'every person who meets both the following conditions must file a PIT-1: • Every person who is a New Mexico resident or has income from New Mexico sources. • Every person who is required to file a federal income tax return.'; 'Residency Status' (p. PIT-1-21): 'In boxes 1e and 2e, enter R, N, F, or P ... • First-Year Resident. If you moved into New Mexico during the tax year with the intent of establishing domicile in New Mexico, and you were still in New Mexico on December 31, 2025, mark F in the box. ... • Part-Year Resident. If you were physically present in New Mexico for fewer than 185 days during the tax year, and you were domiciled in New Mexico during part of the tax year but not on the last day of the tax year, mark P in the box.'; 'PIT-B To Allocate And Apportion Income' (p. PIT-1-10): 'To allocate and apportion income received from employment, business, or property sources located inside and outside New Mexico, file PIT-B, Schedule of New Mexico Allocation and Apportionment of Income, with your PIT-1.'",
+       "url": "https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf"
+      },
+      {
+       "source": "@@bb095b5d9524",
+       "url": "https://realfile.tax.newmexico.gov/2025pit-b-ins.pdf"
+      },
+      {
+       "source": "@@c22a1afa0f70",
+       "url": "https://realfile.tax.newmexico.gov/2025pit-b.pdf"
       }
      ],
      "filing_role": "part_year",

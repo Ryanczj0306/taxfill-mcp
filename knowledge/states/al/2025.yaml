@@ -79,6 +79,61 @@ forms:
     file the resident Form 40 (reporting only the resident-period income); a person who is part-year resident AND
     has nonresident-period Alabama-source income files BOTH Form 40 and Form 40NR (personal and dependent exemptions
     all claimed on the part-year Form 40, none on the 40NR).
+  # Role citations (Phase K JK28, 2026-10-16): each role's own form and the instructions that say who files it, which
+  # state_scope adds to a part-year or nonresident filer's citations (the top-level `citation` is the resident Form 40
+  # booklet, the only document this entry pointed at before). Part-year residents file the resident Form 40 itself (its
+  # booklet's 'Which Form To File', p. 5: Form 40A needs a full-year resident, Form 40 takes a full or part-year one),
+  # plus Form 40NR when they also had Alabama-source income while a nonresident, so the part-year list carries the
+  # Form 40NR return as well (the 40NR booklet prints the same rules on its p. 5).
+  # The two booklet URLs are this pack's own Form 40 and Form 40NR booklet citations; the two returns are the "Download
+  # Form" links on ADOR's two 2025 form pages
+  # (www.revenue.alabama.gov/forms/2025-alabama-individual-income-tax-return-residents-part-year-residents/ and
+  # .../2025-alabama-individual-income-tax-return-nonresidents-only/); each PDF was downloaded twice on 2026-10-16 with
+  # identical sha256 (25f40bk 7871a80bd580dff9..., 25f40 ffea0ca6b0f313ec..., 25f40nrbk 54601bb5dd776130..., 25f40nr
+  # fe054a9b509aa546...). The part_year_or_nonresident text above agrees with both 2025 booklets, its exemption rule
+  # included (Form 40 booklet, p. 5: 'No exemption can be claimed on the nonresident return.').
+  # The source registry (knowledge/sources_states.yaml, written by scripts/assemble_state_sources.py) keeps only the
+  # first citation of a URL under each topic, and it reads `forms` before `all_citations`. So the nonresident 25f40nrbk
+  # entry, the first one for that URL, repeats word for word after ' | ' the all_citations description of the same
+  # booklet. Without it the registry and get_sources would lose that second pass (the filing-threshold and Standard
+  # Deduction charts, the tax table, the Foreign Income Exclusion text): a 'treaty' question would match nothing, and a
+  # 'filing threshold' question would miss the forms_and_instructions entries.
+  citations:
+    part_year:
+    - source: >-
+        2025 Alabama Form 40 Booklet (Long Return, Residents and Part-Year Residents, Forms and Instructions), 'Which
+        Form To File' (p. 5): 'You MAY Use Form 40A If You Meet ALL The Following Conditions:' — 'You were a resident of
+        Alabama for the entire year,' — 'You MUST Use Form 40 If:' — 'You were a full or part-year resident of Alabama
+        and do not meet ALL of the requirements to file Form 40A, and' — 'You are itemizing deductions.' — and 'You MUST
+        Use Both Form 40 and Form 40NR If: You had sufficient income to require the filing of a part-year return and
+        also had income from Alabama sources while a nonresident during the same tax year.'
+      url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf
+    - source: >-
+        2025 Form 40, Alabama Individual Income Tax Return, Residents & Part-Year Residents — the return itself (page 1:
+        'RESIDENTS & PART-YEAR RESIDENTS')
+      url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40.pdf
+    - source: >-
+        2025 Form 40NR, Alabama Individual Income Tax Return, Nonresidents Only — the return itself (page 1:
+        'NONRESIDENTS ONLY')
+      url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nr.pdf
+    nonresident:
+    - source: >-
+        2025 Alabama Form 40NR Booklet (Nonresidents Only, Forms and Instructions), 'Which Form To File' (p. 5): 'You
+        MUST Use Form 40NR If:' — 'You are not a resident of Alabama and you received taxable income from Alabama
+        sources or for performing services within Alabama and your gross income from Alabama sources exceeds the
+        allowable prorated personal exemption, or filing Married Filing Joint under the "Military Spouses Residency
+        Relief Act."' | 2025 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart
+        (same $4,500/$8,200/$11,500/$5,750), the sliding Standard Deduction chart (same amounts and the same printed MFJ
+        typo), the identical tax-table figures (e.g. $4,100-$4,200 row = $168 single / $146 MFJ; $16,000-$16,100 =
+        $763/$723; $99,900-$100,000 = $4,958/$4,918), the identical Over $100,000.00 worksheet constants ($4,958.00 /
+        $4,918.00), and the Foreign Income Exclusion text ('All foreign income must be reported on your return, in order
+        to receive any foreign income exclusion' — IRC sec. 911 exclusion via federal Form 2555 only, reported as a
+        negative line 8 entry, no treaty mechanism)
+      url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nrbk.pdf
+    - source: >-
+        2025 Form 40NR, Alabama Individual Income Tax Return, Nonresidents Only — the return itself (page 1:
+        'NONRESIDENTS ONLY')
+      url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nr.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

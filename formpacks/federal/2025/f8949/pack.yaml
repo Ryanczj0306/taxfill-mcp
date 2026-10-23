@@ -601,11 +601,10 @@
 # Part-II-only filing correct — that filing has no other side, so its page-2
 # header is the only place the filer's name and SSN appear. Nothing propagates
 # the value either (no JS, no /AA, no /CO), so an unmapped mirror ships a blank
-# header on a filed return, which is the ri1040/it1040_oh defect exactly. The
-# one thing the schema cannot express is that the mirror's VALUE equals its
-# source's: a caller that fills `page2_name` differently from `name` files an
-# internally inconsistent return and no gate catches it (CONVENTIONS says so;
-# repeated here because this is where a reader of THIS pack looks).
+# header on a filed return, which is the ri1040/it1040_oh defect exactly.
+# Since Phase K JK28 (2026-10-23) the mirror's VALUE is declared too: the
+# `mirrors:` block at the end of this pack builds each page-2 line from its
+# page-1 source when the caller leaves it out, and verify_form checks both.
 #
 # ---------------------------------------------------------------------------
 # YEAR TOKENS IN LINE KEYS (formpacks/CONVENTIONS.md) — none, by rule 3
@@ -1478,6 +1477,15 @@ relations:
 cross_form: []
 
 identity_fields: [name, identifying_number]
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2 prints "Name(s) shown on return. Name and SSN or taxpayer
+# identification no. not required if shown on other side" and "Social security number or taxpayer identification
+# number" (read on the 2025 blank rendered at 200 dpi). "Not required" permits the repeat, and a Part-II-only filing
+# needs it (see IDENTITY PAGE MIRRORS above). fill_form builds each mirror the caller leaves out from its page-1
+# source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)").
+mirrors:
+  page2_name: "{name}"  # "Name(s) shown on return. ..."
+  page2_identifying_number: "{identifying_number}"  # "Social security number or taxpayer identification number"
 
 # Attachment-only (Attachment Sequence No. 12A): no signature block of its own,
 # mailed inside the parent return's envelope (formpacks/CONVENTIONS.md).

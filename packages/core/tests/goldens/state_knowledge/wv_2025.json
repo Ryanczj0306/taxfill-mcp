@@ -5,13 +5,14 @@
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@25af33a7def8": "annual (per tax year; the newest shipped WV pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
+  "@@2ed7f1eab21d": "2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income — '(To Be Completed By Nonresidents and Part-Year Residents Only)'; 'PART-YEAR RESIDENTS (Enter period of West Virginia residency MM/DD/YYYY)'",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@6b2e68bde304": "Form IT-140 with its single \"NONRESIDENT/PART YEAR RESIDENT\" box checked (one box for both roles), completed together with Schedule A (Form IT-140), \"Nonresidents/Part-Year Residents Schedule of Income\": nonresidents and part-year residents first complete Form IT-140 lines 1 through 7, then Schedule A, whose Part I tax goes on Form IT-140 line 8. A full-year resident of Kentucky, Maryland, Ohio, Pennsylvania or Virginia whose only West Virginia income was wages and salaries instead checks the separate \"NONRESIDENT SPECIAL\" box and completes Schedule A Part II. (Nonresident partners, S corporation shareholders and estate or trust beneficiaries may elect to be included on the pass-through entity's IT-140NRC composite return instead.)",
   "@@6d9896330e09": "Senior Citizen Tax Credit (SCTC) — Restricted to homeowners who participate in the county Homestead Exemption program (generally age 65+ or permanently/totally disabled), who owe and pay a Class II property tax liability on a homestead-exemption-eligible home (assessed value greater than $20,000 before the $20,000 homestead exemption), and whose federal AGI is less than 150% of the federal poverty guidelines. The WV Tax Division mails Form WV SCTC-A to program participants; the original SCTC-A must be filed (preparer-created substitutes are denied).",
   "@@7c9f8a2e3037": "WV Tax Division — 2025 IT-140 Personal Income Tax Forms and Instructions booklet: TY2025 rate schedules print the REDUCED set (Less than $10,000 -> 2.22% of the taxable income; $222.00 plus 2.96% of excess over $10,000; $666.00 plus 3.33% over $25,000; $1,165.50 plus 4.44% over $40,000; $2,053.50 plus 4.82% over $60,000; Rate Schedule II for married filing separately at exactly half boundaries with constants 111.00/333.00/582.75/1,026.75). 'You can deduct $2,000 for every exemption claimed'; '$500 if you claim zero exemptions'; cover: '2025 PERSONAL INCOME TAX IS DUE APRIL 15, 2026'.",
   "@@7faed9237982": "Form IT-140 (West Virginia Personal Income Tax Return) - check \"Resident\" status",
-  "@@8134a1fcad48": "Form IT-140 (check \"Filing as Nonresident\" or \"Filing as Part-Year Resident\"), completed together with Schedule A (Form IT-140), \"Nonresidents/Part-Year Residents Schedule of Income.\" (Nonresident composite filers use Form IT-140NRC.)",
   "@@8b5eb7cea933": "Law change NOT modeled by the engine (status final_form_published): SOCIAL SECURITY PHASE-OUT, SECOND STEP — for 2025, a filer above the income limits (federal AGI over $100,000 joint, $50,000 otherwise) may subtract 65% of the social security benefits included in federal AGI (35% in 2024); below the limits benefits stay fully exempt. A Schedule M decreasing modification. Resolve via: 2025 IT-140 booklet, Important Information for 2025, and the Schedule M social security benefits line.",
   "@@8f0aa52c469d": "2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025 (p.15): 'Widowed spouses may now claim Disabled Veteran’s Property Tax Credit if the deceased disabled veteran claimed claimed the credit in the prior year. Exceptions do apply see page Page 20.' Disabled Veterans Real Property Tax Credit (p.20): 'The widow(er) of a disabled veteran who previously claimed this credit may be eligible to claim this credit as long as: 1. The widow(er) has not remarried, 2. The qualifying property has not been reclassified, 3. The qualifying property has not been sold. If the amount of property tax timely paid exceeds tax amount, the excess will be refunded.' Form IT-140 line 21 (p.2): 'WV Property Tax Adjustment Tax Credits (claim each separately below. Enter sum on line 21)' with box B DISABLED VETERAN REAL PROPERTY TAX; instructions (p.25): 'LINE 21 WV PROPERTY TAX ADJUSTMENT TAX CREDIT. Enter the amount in the appropriate box for the credit being claimed.'",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
@@ -372,6 +373,12 @@
      "url": "@@164800a181a1"
     },
     {
+     "answers": "@@2ed7f1eab21d",
+     "cadence": "@@25af33a7def8",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.wv.gov/Documents/PIT/2025/it140.Schedule-A.2025.pdf"
+    },
+    {
      "answers": "WV Tax Division - 2025 Schedule M (Form IT-140), Modifications to Adjusted Gross Income (increasing modifications, lines 51-58)",
      "cadence": "@@25af33a7def8",
      "topic": "forms_and_instructions",
@@ -541,11 +548,19 @@
       {
        "source": "@@efd779ea731e",
        "url": "@@164800a181a1"
+      },
+      {
+       "source": "2025 West Virginia Personal Income Tax Forms & Instructions (IT-140 booklet, WV Tax Division) — 'Who Must File' (p. 17): '• You were not a resident of West Virginia at any time during 2025, but your federal adjusted gross income includes income from West Virginia sources (nonresident).'; 'Special Nonresidents' (p. 17): 'A resident of Kentucky, Maryland, Ohio, Pennsylvania, or Virginia for the entire taxable year; and • Your only source of West Virginia income was from wages and salaries. • Mark the nonresident special box on the front of the return and complete Part II of Schedule A.'; 'Nonresident/Part-Year Resident' (p. 18): 'NONRESIDENTS AND PART-YEAR RESIDENTS MUST FIRST COMPLETE LINES 1 THROUGH 7 OF FORM IT-140, THEN COMPLETE SCHEDULE A.'",
+       "url": "@@164800a181a1"
+      },
+      {
+       "source": "2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income — '(To Be Completed By Nonresidents and Part-Year Residents Only)'; Part I line 4: 'Tax (divide line 2 by line 3, round to 4 decimal places and multiply the result by line 1). Enter here and on line 8, Form IT-140'",
+       "url": "https://tax.wv.gov/Documents/PIT/2025/it140.Schedule-A.2025.pdf"
       }
      ],
      "filing_role": "nonresident",
      "forms": [
-      "@@8134a1fcad48"
+      "@@6b2e68bde304"
      ],
      "income_tax": true,
      "must_file": true,
@@ -601,11 +616,19 @@
       {
        "source": "@@efd779ea731e",
        "url": "@@164800a181a1"
+      },
+      {
+       "source": "2025 West Virginia Personal Income Tax Forms & Instructions (IT-140 booklet, WV Tax Division) — 'Who Must File' (p. 17): 'You must file a West Virginia income tax return if: ... • You were a resident of West Virginia for a part of the taxable year (Part-Year Resident).'; 'Nonresident/Part-Year Resident' (p. 18): 'NONRESIDENTS AND PART-YEAR RESIDENTS MUST FIRST COMPLETE LINES 1 THROUGH 7 OF FORM IT-140, THEN COMPLETE SCHEDULE A.'; Form IT-140 instructions (p. 24): 'NONRESIDENT OR PART-YEAR RESIDENT - Enter a check mark in this box if you are filing as a nonresident or part-year resident'",
+       "url": "@@164800a181a1"
+      },
+      {
+       "source": "@@2ed7f1eab21d",
+       "url": "https://tax.wv.gov/Documents/PIT/2025/it140.Schedule-A.2025.pdf"
       }
      ],
      "filing_role": "part_year",
      "forms": [
-      "@@8134a1fcad48"
+      "@@6b2e68bde304"
      ],
      "income_tax": true,
      "must_file": true,

@@ -25,6 +25,59 @@ residency:
 forms:
   resident: SC1040 (South Carolina Individual Income Tax Return)
   part_year_or_nonresident: 'Schedule NR (Nonresident Schedule), attached to a completed SC1040. Nonresidents and part-year residents electing to file as a nonresident complete Schedule NR; Column A = income from the federal return, Column B = income earned while an SC resident or from SC sources. The 2025 SC1040 instructions, Line 1: ''STOP! If you are a nonresident/part-year filer, you must complete the Schedule NR and go to line 5.'''
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the SC1040 instructions, so this entry named
+  # Schedule NR without citing it. Each role cites the SC1040 instructions' checkbox sentence, the SCDOR General
+  # Information FAQ for that filer, the Schedule NR instructions and Schedule NR itself — for a part-year resident the
+  # FAQ is the one that offers the choice of filing as a full-year resident (SC1040 with the SC1040TC credit) or as a
+  # nonresident (SC1040 with Schedule NR). The URLs are the 2025-column "SC1040 Instr", "Gen Instr", "Schedule NR Instr"
+  # and "Schedule NR" links on SCDOR's Individual Income Tax forms page (dor.sc.gov/iit/iit-file-pay-options/iit-forms);
+  # each PDF was downloaded twice on 2026-10-16 with identical sha256 (SC1040 instructions e75216d42f37f96c..., General
+  # Information a0e84f8562ed7938..., Schedule NR instructions 55b98e23ee05cd96..., Schedule NR 6301e35e37c4e0e1...).
+  citations:
+    part_year:
+    - source: >-
+        2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) — 'Checkboxes' (p. 2): '2. If you are a
+        nonresident for the entire year or a part-year resident electing to file as a nonresident, check the appropriate
+        box and attach your Schedule NR to the completed SC1040. Do not submit the Schedule NR separately.'
+      url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
+    - source: >-
+        Individual Income Tax: General Information and FAQs (SCDOR; the 2025 'Gen Instr', for the 2025 return due April
+        15, 2026) — 'What is my residency status if I moved into or out of South Carolina during the tax year?' (p. 2):
+        'You are a part-year resident and may consider yourself a full-year resident or nonresident. If you file as a
+        full-year resident, file the SC1040. ... If you file as a nonresident, file the SC1040 with the Schedule NR. ...
+        You may choose the filing method that is most beneficial to you.'
+      url: https://dor.sc.gov/sites/dor/files/forms/Geninfo_2025.pdf
+    - source: >-
+        2025 Schedule NR Instructions, Nonresident Schedule (SCDOR, July 2025) — 'Before You Begin' (p. 3): 'Use the
+        Schedule NR if you are a nonresident of South Carolina or you are filing as a part-year resident.' — 'Attach the
+        Schedule NR and a copy of your federal return to your SC1040.'
+      url: https://dor.sc.gov/sites/dor/files/forms/SchNRInst_2025.pdf
+    - source: >-
+        2025 Schedule NR, Nonresident Schedule (SCDOR 3081, Rev. 4/2/25), p. 1: 'Schedule NR is for Nonresidents or
+        Part-year residents. Attach to completed SC1040.'
+      url: https://dor.sc.gov/sites/dor/files/forms/SchNR_2025.pdf
+    nonresident:
+    - source: >-
+        2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) — 'Checkboxes' (p. 2): '2. If you are a
+        nonresident for the entire year or a part-year resident electing to file as a nonresident, check the appropriate
+        box and attach your Schedule NR to the completed SC1040. Do not submit the Schedule NR separately.'
+      url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
+    - source: >-
+        Individual Income Tax: General Information and FAQs (SCDOR; the 2025 'Gen Instr', for the 2025 return due April
+        15, 2026) — 'How should I file if I am a nonresident of South Carolina but work in this state?' (p. 2): 'File the
+        SC1040 with the Schedule NR. You will be taxed only on income earned in South Carolina and will prorate your
+        deductions.'
+      url: https://dor.sc.gov/sites/dor/files/forms/Geninfo_2025.pdf
+    - source: >-
+        2025 Schedule NR Instructions, Nonresident Schedule (SCDOR, July 2025) — 'Before You Begin' (p. 3): 'Use the
+        Schedule NR if you are a nonresident of South Carolina or you are filing as a part-year resident.' — 'Attach the
+        Schedule NR and a copy of your federal return to your SC1040.'
+      url: https://dor.sc.gov/sites/dor/files/forms/SchNRInst_2025.pdf
+    - source: >-
+        2025 Schedule NR, Nonresident Schedule (SCDOR 3081, Rev. 4/2/25), p. 1: 'Schedule NR is for Nonresidents or
+        Part-year residents. Attach to completed SC1040.'
+      url: https://dor.sc.gov/sites/dor/files/forms/SchNR_2025.pdf
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed for 2025 (verify the figure): South Carolina Earned Income Tax Credit (no 2025 revision of Form TC-60 was retrievable; the credit is confirmed only as code 060 on the 2025 SC1040TC).'
 credits:
 - name: South Carolina Earned Income Tax Credit (EITC)

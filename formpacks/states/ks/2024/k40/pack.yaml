@@ -55,7 +55,8 @@
 # the Head of Household currency box, the dependents count and currency boxes,
 # the disabled-veteran count and currency boxes, and the Total Kansas Exemption
 # Amount box; the "Total Kansas Exemptions" count box keeps its 2023 name) and
-# 20 in dependent rows 2-6. Nothing is deliberately left unmapped. The block
+# 20 in dependent rows 2-6. Apart from the three ink-signature boxes (Phase K
+# JK28, see Coverage), nothing is deliberately left unmapped. The block
 # has no born-this-year or stillborn rows (the 2025 return adds them).
 # The one name trap: the widgets named "... Disabled Veteran Personal Exemption
 # Allowance, in the first box enter the total number of disabled veterand being
@@ -142,7 +143,8 @@
 # are written in their qualified form.
 #
 # This is a single 2-page PDF and BOTH PAGES ARE THE FILED RETURN. Residents
-# and nonresidents share this form, and every widget is mapped.
+# and nonresidents share this form, and every widget is mapped except the
+# three ink-signature boxes (see Coverage).
 #   page 1 -- header (names, two SSNs, mailing address, school district, county,
 #             last-name-letters, daytime phone), name/address-changed and
 #             deceased flags, Amended Return (3 boxes), Filing Status (4 boxes),
@@ -156,7 +158,10 @@
 #             block (authorize-discussion checkbox, taxpayer + spouse signature
 #             & date, preparer signature/phone/PTIN).
 #
-# Coverage. ALL 139 widgets are mapped (112 text + 27 checkbox).
+# Coverage. 136 of the 139 widgets are mapped (109 text + 27 checkbox). The
+# three ink-signature boxes ("Signature of taxpayer", "Signature of spouse",
+# "Signature of preparer") are intentionally NOT mapped (Phase K JK28,
+# 2026-10-16): see Signature(s) below.
 #
 # Widget geometry on page 2. The line-33 (AMOUNT YOU OWE) and line-34
 # (Overpayment) boxes sit against the heavy rule that separates the Balance Due
@@ -179,8 +184,8 @@
 # limitation: per-cell placement would need the
 # filler to stamp seven single characters (three digits, an implied decimal,
 # four digits) over the cells, which this pack does not do. The exemptions
-# count boxes, the header strings, dates,
-# signatures and the Food Sales Tax Credit worksheet counts E, F and G stay
+# count boxes, the header strings, dates
+# and the Food Sales Tax Credit worksheet counts E, F and G stay
 # `text`. Lines D (federal AGI) and H (credit amount) of that worksheet are
 # currency boxes with a printed ".00" cents cell, so they are `money` (2023
 # typed them text, which would write a value with cents or commas verbatim
@@ -724,23 +729,25 @@ fields:
     field: i authorize the director of taxation or the directors designee to discuss my return and enclosures with my preparer
     type: checkbox
     on_state: /Yes
-  - line: signature.taxpayer             # "Signature of taxpayer"
-    field: Signature of taxpayer
-    type: text
+  # signature.taxpayer / signature.spouse / preparer.signature: NOT mapped (Phase K JK28, 2026-10-16) --
+  # ink-signature lines. Page 2 prints "Taxpayer Signature", "Spouse Signature (If married filing joint)" and
+  # "SIGNATURE OF PREPARER OTHER THAN TAXPAYER" under "I declare under the penalties of perjury that to the best
+  # of my knowledge this is a true, correct, and complete return." Their widgets ("Signature of taxpayer",
+  # "Signature of spouse", "Signature of preparer") are ordinary /Tx boxes (the only text widgets with no /DA),
+  # and a sentinel typed into each printed on the signature rule. The 2024 booklet (ip24.pdf, sha256 771aa0205ad6da8f,
+  # Page 11, SIGNATURE(S)): "Signature: Your income tax return must be signed. You will not receive your refund if your
+  # return is not signed. Both taxpayers must sign a joint return even if only one had income. If the return is prepared
+  # by someone other than you, the preparer should also sign in the space provided." Nothing in the booklet makes a
+  # typed name a signature, so the filer, the spouse and any preparer sign these lines by hand; `signature: {page: 2}`
+  # says where (test_signature_line_mapping.py).
   - line: signature.taxpayer_date        # "DATE" — Courier 12 in 71.6 pt holds 9, so "MM/DD/YY"
     field: date signed
     type: text
     maxlen: 8
-  - line: signature.spouse               # "Signature of spouse (If married filing joint)"
-    field: Signature of spouse
-    type: text
   - line: signature.spouse_date          # "DATE" — Courier 12 in 68.2 pt holds 9, so "MM/DD/YY"
     field: date signed 2
     type: text
     maxlen: 8
-  - line: preparer.signature             # "Signature of preparer other than taxpayer"
-    field: Signature of preparer
-    type: text
   - line: preparer.phone                 # "Phone number of preparer"
     field: preparers phone number
     type: text

@@ -72,6 +72,49 @@ forms:
     to compute the NC taxable percentage (D-400 Line 13, from Schedule PN Line 24); if needed, Form D-400 Schedule
     PN-1 (Other Additions and Other Deductions). All filers, including part-year residents and nonresidents, file
     the same Form D-400.
+  # (Phase K JK28, 2026-10-16): the role's own instructions and schedule, which state_scope adds to a part-year or
+  # nonresident filer's citations. North Carolina has ONE return (Form D-400) for every role, plus Schedule PN for
+  # part-year residents and nonresidents; the top-level `citation` is the D-401 instructions pinned to resident topics,
+  # so this entry named Schedule PN without citing it. The D-401 URL is the pack's primary citation, linked from the
+  # "2025 D-401 Individual Income Tax Instructions" page; the Schedule PN URL is the "2025 D-400 Schedule PN Web-Fill
+  # Version" link on the "2025 D-400 Schedule PN Part-Year Resident and Nonresident Schedule" page, both reached from
+  # NCDOR's Individual Income Tax Forms & Instructions page. Each PDF was downloaded twice on 2026-10-16 with identical
+  # sha256 (D-401 ceaade9246b24d4f..., Schedule PN 4863fc22c1d24ca6...). The entry above agrees with both (D-401 p. 21,
+  # Line 24: 'round to four decimal places on Form D-400, Line 13').
+  citations:
+    part_year:
+    - source: >-
+        2025 D-401 North Carolina Individual Income Tax Instructions, 'What Form Should I File?' (p. 6): 'All
+        individuals (including part-year residents and nonresidents) required to file a North Carolina individual
+        income tax return must file Form D-400' — 'Form D-400 Schedule PN, 2025 Part-Year Resident and Nonresident
+        Schedule. If you are a part-year resident or nonresident who received income from North Carolina sources
+        during tax year 2025, complete this form to determine what percent of your total income is from North
+        Carolina sources.' — and 'Instructions for Form D-400 Schedule PN' (p. 21): 'You are a “part-year resident” if
+        you moved to North Carolina and became a resident during the tax year, or you moved out of North Carolina and
+        became a resident of another state during the tax year.'
+      url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+    - source: >-
+        2025 D-400 Schedule PN, Part-Year Resident and Nonresident Schedule (Web-Fill 9-25) — the 2-page schedule
+        itself (its page 1, PDF page 2: 'A part-year resident or a nonresident who receives income from N.C. sources
+        must complete this form to determine the percentage of total income from all sources that is subject to N.C.
+        tax.')
+      url: https://www.ncdor.gov/2025-d-400-schedule-pn-web-fill-version/open
+    nonresident:
+    - source: >-
+        2025 D-401 North Carolina Individual Income Tax Instructions, 'What Form Should I File?' (p. 6): 'All
+        individuals (including part-year residents and nonresidents) required to file a North Carolina individual
+        income tax return must file Form D-400' — 'Form D-400 Schedule PN, 2025 Part-Year Resident and Nonresident
+        Schedule. If you are a part-year resident or nonresident who received income from North Carolina sources
+        during tax year 2025, complete this form to determine what percent of your total income is from North
+        Carolina sources.' — and 'Instructions for Form D-400 Schedule PN' (p. 21): 'You are a “nonresident” if you
+        were not a resident of North Carolina at any time during the tax year.'
+      url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+    - source: >-
+        2025 D-400 Schedule PN, Part-Year Resident and Nonresident Schedule (Web-Fill 9-25) — the 2-page schedule
+        itself (its page 1, PDF page 2: 'A part-year resident or a nonresident who receives income from N.C. sources
+        must complete this form to determine the percentage of total income from all sources that is subject to N.C.
+        tax.')
+      url: https://www.ncdor.gov/2025-d-400-schedule-pn-web-fill-version/open
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
   figure): Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L).'

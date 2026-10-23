@@ -155,8 +155,9 @@ def test_default_root_keeps_legacy_relative_data_findable(tmp_path, monkeypatch)
     monkeypatch.delenv("TAXFILL_WORKSPACE", raising=False)
     monkeypatch.chdir(tmp_path)
     (tmp_path / "taxfill-workspace").mkdir()
-    # An existing relative workspace (written by an earlier release) stays used.
-    assert default_workspace_root() == Path("taxfill-workspace")
+    # An existing relative workspace (written by an earlier release) stays used, named by its absolute path (Phase K
+    # JK28 final review, 2026-10-23: results name absolute paths).
+    assert default_workspace_root() == tmp_path / "taxfill-workspace"
 
 
 def test_default_root_is_absolute_and_user_owned_otherwise(tmp_path, monkeypatch):

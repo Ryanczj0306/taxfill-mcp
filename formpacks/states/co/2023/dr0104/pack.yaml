@@ -409,3 +409,13 @@ identity_fields:
   - ssn_or_itin
   - your_first_name
   - your_last_name
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2, 3 and 4 print "Name" beside "SSN or ITIN" in a header row
+# (read on the 2023 blank rendered at 200 dpi). "SSN or ITIN" is Text5, the page-1 SSN field itself, so one write
+# fills it; "Name" is Text31, ONE field of its own (430.1-430.4 pt at Helv 10) apart from the page-1 Text1 / Text2 /
+# Text3 name boxes, and nothing filled it, so a filled 2023 DR 0104 printed a blank Name header on pages 2-4. The
+# 2024 and 2025 blanks give the header the page-1 fields themselves, so they need no mirror. The harness first saw
+# this one through the `header_` key shape. fill_form builds the mirror when the caller leaves it out
+# (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)").
+mirrors:
+  header_name: "{your_first_name} {your_middle_initial} {your_last_name}"  # "Name"

@@ -34,6 +34,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from taxfill_core.datadir import user_path
 from taxfill_core.knowledge import Citation
 
 __all__ = ["Position", "WorkspaceMeta", "Workspace", "default_workspace_root"]
@@ -65,10 +66,11 @@ def default_workspace_root() -> Path:
     """
     env = os.environ.get(WORKSPACE_ROOT_ENV)
     if env:
-        return Path(env)
+        # An MCP client's JSON `env` block passes "~/taxes" through unexpanded (Phase K JK28).
+        return user_path(env)
     legacy = Path("taxfill-workspace")
     if legacy.is_dir():
-        return legacy
+        return legacy.absolute()  # results name absolute paths (Phase K JK28 final review, 2026-10-23)
     return Path.home() / "taxfill-workspace"
 
 
@@ -120,7 +122,8 @@ class Workspace:
         if not 1900 <= year <= 2100:
             raise ValueError(f"year out of range (1900–2100): {year}")
         self.year = year
-        self.root = Path(base) / str(year)
+        # A tool's or the CLI's `root` may be "~/..." (Phase K JK28): a JSON argument is never shell-expanded.
+        self.root = user_path(base) / str(year)
 
     # ── lifecycle ──────────────────────────────────────────────────────────
     @classmethod

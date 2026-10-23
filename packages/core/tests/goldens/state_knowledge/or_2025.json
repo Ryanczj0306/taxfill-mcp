@@ -1,32 +1,43 @@
 {
  "_strings": {
   "@@08da96ae03cc": "2025 Form OR-40 Instructions, New information: 'New federal deductions. You may be able to claim the same deductions for tip income, overtime wages, and passenger vehicle loan interest that you're claiming on your federal return.'",
+  "@@0b00143103d5": "Exemption credits applied: Form OR-40 line 25 = $1,024; tax after them (line 29) = $2,166. tax itself stays the line before the credits. Line 29 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 29 = max(0, that table amount - $1,024).",
   "@@1412ec1a4b4e": "REFUND, PO Box 14700, Salem OR 97309-0930 (2025 booklet, Tax return mailing addresses: 'Mail refund returns or no-tax-due returns to').",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1b7caa6cc72e": "2025 Form OR-40 (150-101-040, Rev. 09-18-25), page 1 \"Exemptions\": 6a \"Credits for yourself\" and 6b \"Credits for your spouse\" (boxes Regular, Severe disability, Someone else can claim you/your spouse as a dependent), 6c \"Total number of dependents\", 6d \"Total number of dependent children with a qualifying disability\", 6e \"Total exemptions. Add lines 6a through 6d\"; page 3 line 25 \"Exemption credit. If the amount on line 7 is $100,000 or less, multiply your total exemptions on line 6e by $256. Otherwise, see instructions\", line 28 \"Total standard credits. Add lines 25 through 27\", line 29 \"Tax minus standard credits. Line 24 minus line 28. If line 28 is more than line 24, enter 0\". Second pass and the AGI rule: the 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26), pp. 12-13 lines 6a-6e and pp. 17-18 line 25 and the \"Exemption credit worksheet\".",
   "@@29c0ed35e66a": "Law change NOT modeled by the engine (status final_form_published): KICKER CREDIT ON 2025 RETURNS — Oregon's surplus credit (the kicker) is claimed on the 2025 return, line 32 (none on 2024 returns). Resolve via: 2025 Form OR-40 Instructions, New information — Oregon surplus (kicker), and the line 32 instructions (the credit percentage and its base).",
   "@@2e6d83c2b9f5": "annual (per tax year; the newest shipped OR pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@377be8d200a4": "2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - 'Tax return mailing addresses' (REFUND PO Box 14700 Salem OR 97309-0930; tax-to-pay Oregon Department of Revenue PO Box 14555 Salem OR 97309-0940) and 'Avoid processing delays' (payment on top of the return, no cash, no voucher, no staples)",
   "@@3fe28f1d2ffd": "Oregon Surplus Credit ('kicker') — To be eligible for the 2025 kicker you must (1) file your 2024 Oregon return before you file your 2025 return, (2) have had an Oregon personal income tax liability for 2024, and (3) file a 2025 Oregon return even if you do not otherwise have a filing requirement. If the 2024 return is later amended or adjusted downward, the kicker may be reduced and billed back with interest or penalty.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@60f7351f7e3a": "Form OR-40-P (part-year resident) or Form OR-40-N (nonresident), 2025 — instructions 150-101-048-1. A joint return of spouses with different residency status uses Form OR-40-N for a part-year and a nonresident spouse or a nonresident and a full-year resident spouse, and Form OR-40-P for a part-year and a full-year resident spouse (Table 2). A nonresident (Form OR-40-N) prorates the standard or itemized deductions, the federal tax liability subtraction and certain other deductions and modifications by the Oregon percentage (line 42); a part-year resident (Form OR-40-P) instead multiplies the tax on taxable income by the Oregon percentage (line 45). Both prorate the exemption credit by the Oregon percentage.",
   "@@628054ce6bcd": "Exemption Credit — Filers whose federal AGI is $100,000 or less (single or married filing separately) or $200,000 or less (all other statuses) may claim a credit for the exemptions claimed on line 6 of the return — regular exemptions for the taxpayer, spouse and dependents, plus severe-disability exemptions and exemptions for children with a qualifying disability. Above those AGI thresholds the credit is 0. The severe-disability and disabled-child counts drop out once federal AGI exceeds $100,000 for any status.",
   "@@79d6967bf6cd": "2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) — 'April 15, 2026 is the due date for filing your return and paying your tax due'; 'Your 2025 Oregon tax is due April 15, 2026' even on extension (Oregon accepts the federal extension; the extended filing due date is October 15, 2026, but an extension of time to file is not an extension of time to pay — pay the tax you expect to owe by April 15, 2026 or interest and penalties accrue).",
+  "@@809bee29aee8": "Exemption credits applied: Form OR-40 line 25 = $512; tax after them (line 29) = $2,368. tax itself stays the line before the credits. Line 29 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 29 = max(0, that table amount - $512).",
   "@@85e5425a87e3": "Oregon Kids Credit — You must (1) use a filing status other than married filing separately, (2) have one or more dependents age five or younger at the end of 2025 listed on your Oregon return, and (3) have qualifying income under $31,550 (income after subtractions with excluded foreign earned income and total losses over $20,000 added back, and with deducted tip income, overtime wages and passenger vehicle interest added back). A child listed as your dependent only because the custodial parent released the exemption to you does not qualify; a custodial parent may claim the credit even if the exemption was released.",
-  "@@895539c1fb45": "Form OR-40-P (part-year resident) or Form OR-40-N (nonresident), 2025 — instructions 150-101-048-1; a part-year or nonresident filer prorates deductions, the federal tax liability subtraction and certain credits by the Oregon percentage.",
   "@@8e6017f82175": "Political Contribution Credit — Filers whose federal AGI is not more than $75,000 ($150,000 on a joint return) who made cash contributions during 2025 to a qualifying candidate, political party, or political action committee.",
   "@@8e74b2f2b984": "Treaty conformity — OR conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OR income (it flows through the federal starting point; do not add it back on the OR return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Oregon's resident return (Form OR-40) starts from federal adjusted gross income: 2025 Form OR-40 line 7 is the filer's federal AGI from Form 1040, 1040-SR, or 1040-NR, line 11 (or Form 1040-X, line 1C). Oregon taxable income is then built by applying additions (Schedule OR-ASC) and subtractions to that federal AGI. The 2025 OR-40 instruction booklet contains no general addition/add-back of federally treaty-exempt income (unlike California's Schedule CA, or CT/MD/MS). Because federally treaty-exempt income is already excluded from federal AGI on the 1040 and there is no Oregon addition code restoring it, the treaty exclusion flows through and is NOT re-taxed by Oregon -> conforms. Caveat: confirm against the full Schedule OR-ASC / OR-ASC-NP addition code list (Publication OR-CODES) and Publication OR-17 for any niche addition that could touch a specific treaty article.",
+  "@@8ed0023158c5": "2025 Form OR-40-N, Oregon Individual Income Tax Return for Nonresidents (150-101-048, Rev. 09-18-25) — the return itself; line 42: 'Deductions and modifications multiplied by the Oregon percentage'",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@965835992efa": "Law change NOT modeled by the engine (status final_form_published): FIRST-TIME HOME BUYER SAVINGS ACCOUNTS FOR A DESIGNATED BENEFICIARY — from January 1, 2025 an FTHBSA may be opened to save for a designated beneficiary; every new account also requires Form OR-HOME. Resolve via: 2025 Form OR-40 Instructions, New information — First-time home buyer savings account (FTHBSA) subtraction; Form OR-HOME Instructions.",
+  "@@96b1a4d5ab53": "2025 Form OR-40-P, Oregon Individual Income Tax Return for Part-year Residents (150-101-055, Rev. 09-18-25) — the return itself; line 45: 'Oregon income tax. Line 44 multiplied by the Oregon percentage'",
   "@@a0823487f0ad": "2025 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 01-29-26) — p.16 line 20 tax computation (tax tables if line 19 is less than $50,000; rate-chart formula if $50,000 or more; booklet Examples 1 and 2), p.32 '2025 Tax rate charts' (Chart S / Chart J, $50,000-and-over segments: Chart S 'your tax is $4,065 plus 8.75% of excess over $50,000' / '$10,627 plus 9.9% of excess over $125,000'; Chart J '$3,756 plus 8.75% of excess over $50,000' / '$21,256 plus 9.9% of excess over $250,000'), p.16 Table 5 'Standard deduction' ($2,835 single; $5,670 married filing jointly; $2,835 married filing separately if the spouse claims the standard deduction, $0 if the spouse itemizes; $4,560 head of household; $5,670 qualifying surviving spouse) plus the age-65/blind additions, p.14 Table 4 federal tax liability subtraction AGI phaseout ($8,500 / $4,250 for 2025), p.17 line 25 exemption credit worksheet ($256 per exemption CREDIT). Second pass: the FULL four-bracket 2025 Chart S / Chart J (4.75%, 6.75%, 8.75%, 9.9%; breakpoints $4,400 / $11,100 / $125,000 for S and $8,800 / $22,200 / $250,000 for J, with printed constants $209 / $661 / $10,627 and $418 / $1,323 / $21,256) as printed in the 2025 Form OR-40-N and OR-40-P Instructions (150-101-048-1, Rev. 12-30-25), p.21 '2025 Tax rate charts': https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf — the resident booklet's $50,000-and-over constants chain exactly onto that schedule (S: $661 + 8.75% x $38,900 = $4,064.75 -> printed $4,065; J: $1,323 + 8.75% x $27,800 = $3,755.50 -> printed $3,756), so both passes agree on every rate, breakpoint and constant.",
   "@@a2342a386efb": "2025 Form OR-40 Instructions, Oregon Individual Income Tax, Full-year Resident (150-101-040-1, Rev. 01-29-26) — line 7 federal AGI starting point, residency definitions and the 200-day rule, April 15 2026 due date, filing thresholds (Table 1), Table 5 standard deduction, line 20 tax computation and the 2025 tax rate charts (p.32), line 25 exemption credit worksheet ($256), New information (kicker on the 2025 return, federal tax subtraction $8,500/$4,250, FTHBSA subtraction), line 32 kicker (9.863%), line 37 earned income credit (Table 9), line 38 Oregon Kids Credit ($1,050), tax return mailing addresses (PO Box 14700 / PO Box 14555), check payee and Revenue Online payment",
   "@@a8f1f7953e60": "The newest shipped OR pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@ac028cee3f51": "Exemption credits applied: Form OR-40 line 25 = $0; tax after them (line 29) = $2,880. tax itself stays the line before the credits. Line 29 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 29 = max(0, that table amount - $0).",
+  "@@af2ae3690e73": "Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29.",
+  "@@b089268d12de": "Exemption credits applied: Form OR-40 line 25 = $1,024; tax after them (line 29) = $1,856. tax itself stays the line before the credits. Line 29 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 29 = max(0, that table amount - $1,024).",
+  "@@b6694ee43298": "Exemption credits applied: Form OR-40 line 25 = $0; tax after them (line 29) = $3,190. tax itself stays the line before the credits. Line 29 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 29 = max(0, that table amount - $0).",
   "@@bd07d84abda3": "2025 Form OR-40 Instructions, New information: 'Beginning January 1, 2025, FTHBSAs can be opened to save for a designated beneficiary.'",
   "@@c937dbee7fd9": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. The Oregon Kids Credit figures are taken from the January 29, 2026 reissue of the 2025 booklet (the reissue exists specifically to correct that credit's instructions and worksheet), so use the Rev. 01-29-26 booklet and not an earlier printing. Not carried here (see Publication OR-17): the political contribution credit's full rules, the credit for income taxes paid to another state, the retirement income credit, the working family household and dependent care credit, and every Schedule OR-ASC coded credit.",
   "@@cdf7470bd7bd": "2025 Form OR-40 Instructions, New information: 'Oregon surplus (kicker). Oregon's surplus, known as the \"kicker,\" will be claimed as a credit on your 2025 tax return. See the instructions for line 32.'",
   "@@de3e6295f4fe": "Law change NOT modeled by the engine (status final_form_published): FEDERAL TIP, OVERTIME AND CAR-LOAN INTEREST DEDUCTIONS CARRY OVER — a filer may claim on the Oregon return the same deductions for tip income, overtime wages and passenger vehicle loan interest claimed on the 2025 federal return (Publication OR-17, Other items). Resolve via: 2025 Form OR-40 Instructions, New information — New federal deductions; Publication OR-17, Other items.",
   "@@ea632709ac2f": "Oregon Earned Income Credit — Filers who claimed the federal earned income tax credit (EITC) on their federal return. Oregon RDPs may claim it if they would otherwise qualify using their 'as if' federal return. Filers who cannot claim some or all of the federal EITC because they, their spouse, or their children lack an SSN valid for work (ITIN filers) may instead qualify for Oregon's earned income credit for ITIN filers on Schedule OR-EIC-ITIN.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
-  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
+  "@@f8b5ad89ff4d": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf",
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
+  "@@fbdf60d69226": "Exemption credits applied: Form OR-40 line 25 = $2,048; tax after them (line 29) = $832. tax itself stays the line before the credits. Line 29 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 29 = max(0, that table amount - $2,048)."
  },
  "file_and_pay": {
   "overall_notes": [
@@ -370,10 +381,22 @@
      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
     },
     {
-     "answers": "2025 Form OR-40-N and Form OR-40-P Instructions, Oregon Individual Income Tax for Nonresidents and Part-year Residents (150-101-048-1, Rev. 12-30-25) — p.21 '2025 Tax rate charts', which print the FULL four-bracket Chart S and Chart J (including the $4,400 / $11,100 and $8,800 / $22,200 breakpoints that the resident booklet omits because its tax tables govern below $50,000), plus the worked chart examples and the Oregon-percentage proration of deductions and the federal tax liability subtraction",
+     "answers": "2025 Form OR-40-N and Form OR-40-P Instructions, Oregon Individual Income Tax for Nonresidents and Part-year Residents (150-101-048-1, Rev. 12-30-25) — 'What form do I use?' (p. 7; Form OR-40-P for a part-year resident, Form OR-40-N for a nonresident, with the joint-return cases in Table 2, p. 11); p.21 '2025 Tax rate charts', which print the FULL four-bracket Chart S and Chart J (including the $4,400 / $11,100 and $8,800 / $22,200 breakpoints that the resident booklet omits because its tax tables govern below $50,000), plus the worked chart examples and the Oregon-percentage proration of deductions and the federal tax liability subtraction ('Form OR-40-N filers only', p. 21)",
      "cadence": "@@2e6d83c2b9f5",
      "topic": "forms_and_instructions",
-     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf"
+     "url": "@@f8b5ad89ff4d"
+    },
+    {
+     "answers": "@@96b1a4d5ab53",
+     "cadence": "@@2e6d83c2b9f5",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-p_101-055_2025.pdf"
+    },
+    {
+     "answers": "@@8ed0023158c5",
+     "cadence": "@@2e6d83c2b9f5",
+     "topic": "forms_and_instructions",
+     "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_101-048_2025.pdf"
     }
    ],
    "topic": "forms_and_instructions",
@@ -517,11 +540,19 @@
       {
        "source": "@@a2342a386efb",
        "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+      },
+      {
+       "source": "2025 Form OR-40-N and Form OR-40-P Instructions, Nonresident/Part-year Resident (Oregon Department of Revenue, 150-101-048-1 (Rev. 12-30-25)) — 'What form do I use?' (p. 7): 'Use Form OR-40-N if any ONE of the following is true: • You're a nonresident. • You're a special-case Oregon resident. • You (or your spouse, if you're filing a joint return) are in the military, and you're treated as a nonresident for state income tax purposes. • You (or your spouse, if you're filing a joint return) qualified as an Oregon resident living abroad for the entire year.'; 'Do I need to file an Oregon return?' (p. 5): 'You need to file an Oregon income tax return if your Oregon-source income while you're a nonresident and any income received while you're a resident is more than your standard deduction.'",
+       "url": "@@f8b5ad89ff4d"
+      },
+      {
+       "source": "@@8ed0023158c5",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_101-048_2025.pdf"
       }
      ],
      "filing_role": "nonresident",
      "forms": [
-      "@@895539c1fb45"
+      "@@60f7351f7e3a"
      ],
      "income_tax": true,
      "must_file": true,
@@ -584,11 +615,19 @@
       {
        "source": "@@a2342a386efb",
        "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+      },
+      {
+       "source": "2025 Form OR-40-N and Form OR-40-P Instructions, Nonresident/Part-year Resident (Oregon Department of Revenue, 150-101-048-1 (Rev. 12-30-25)) — 'What form do I use?' (p. 7): 'Use Form OR-40-P if any ONE of the following is true: • You're a part-year resident and you're not filing a joint return. • Both you and your spouse are part-year residents, or one of you is a full-year Oregon resident and the other is a part-year resident, if you're filing a joint return. • You (or your spouse, if filing a joint return) qualified as an Oregon resident living abroad for part of the year.'; 'Do I need to file an Oregon return?' (p. 5): 'You need to file an Oregon income tax return if your Oregon-source income while you're a nonresident and any income received while you're a resident is more than your standard deduction.'",
+       "url": "@@f8b5ad89ff4d"
+      },
+      {
+       "source": "@@96b1a4d5ab53",
+       "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-p_101-055_2025.pdf"
       }
      ],
      "filing_role": "part_year",
      "forms": [
-      "@@895539c1fb45"
+      "@@60f7351f7e3a"
      ],
      "income_tax": true,
      "must_file": true,
@@ -675,6 +714,27 @@
   "calls": [
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -685,10 +745,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 0,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = -$4,560.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = -$4,560.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -699,10 +780,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 0,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $4,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $4,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 4400,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -713,10 +815,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 209,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $8,960.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $4,400.00; graduated tax on $4,400 [head_of_household schedule]: 0.0475 x $4,400.00 (the $0-$8,800 bracket) = $209.00; total $209.00 -> $209"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $8,960.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $4,400.00; graduated tax on $4,400 [head_of_household schedule]: 0.0475 x $4,400.00 (the $0-$8,800 bracket) = $209.00; total $209.00 -> $209. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 27200,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -727,10 +850,31 @@
     },
     "marginal_rate": "0.0875",
     "tax": 1760,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $31,760.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $27,200.00; graduated tax on $27,200 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $5,000.00 (the $22,200-$250,000 bracket) = $437.50; total $1,760.00 -> $1,760"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $31,760.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $27,200.00; graduated tax on $27,200 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $5,000.00 (the $22,200-$250,000 bracket) = $437.50; total $1,760.00 -> $1,760. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 260000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -741,10 +885,31 @@
     },
     "marginal_rate": "0.099",
     "tax": 22245,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $264,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $260,000.00; graduated tax on $260,000 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $227,800.00 (the $22,200-$250,000 bracket) = $19,932.50; 0.099 x $10,000.00 (the $250,000+ bracket) = $990.00; total $22,245.00 -> $22,245"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $264,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $260,000.00; graduated tax on $260,000 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $227,800.00 (the $22,200-$250,000 bracket) = $19,932.50; 0.099 x $10,000.00 (the $250,000+ bracket) = $990.00; total $22,245.00 -> $22,245. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -755,10 +920,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 0,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = -$5,670.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = -$5,670.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -769,10 +955,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 0,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $5,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $5,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 4400,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -783,10 +990,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 209,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $10,070.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $4,400.00; graduated tax on $4,400 [married_filing_jointly schedule]: 0.0475 x $4,400.00 (the $0-$8,800 bracket) = $209.00; total $209.00 -> $209"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $10,070.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $4,400.00; graduated tax on $4,400 [married_filing_jointly schedule]: 0.0475 x $4,400.00 (the $0-$8,800 bracket) = $209.00; total $209.00 -> $209. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 27200,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -797,10 +1025,31 @@
     },
     "marginal_rate": "0.0875",
     "tax": 1760,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $32,870.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $27,200.00; graduated tax on $27,200 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $5,000.00 (the $22,200-$250,000 bracket) = $437.50; total $1,760.00 -> $1,760"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $32,870.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $27,200.00; graduated tax on $27,200 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $5,000.00 (the $22,200-$250,000 bracket) = $437.50; total $1,760.00 -> $1,760. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 260000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -811,10 +1060,31 @@
     },
     "marginal_rate": "0.099",
     "tax": 22245,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $265,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $260,000.00; graduated tax on $260,000 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $227,800.00 (the $22,200-$250,000 bracket) = $19,932.50; 0.099 x $10,000.00 (the $250,000+ bracket) = $990.00; total $22,245.00 -> $22,245"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $265,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $260,000.00; graduated tax on $260,000 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $227,800.00 (the $22,200-$250,000 bracket) = $19,932.50; 0.099 x $10,000.00 (the $250,000+ bracket) = $990.00; total $22,245.00 -> $22,245. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -825,10 +1095,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 0,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = -$2,835.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = -$2,835.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -839,10 +1130,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 0,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $2,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $2,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 2200,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -853,10 +1165,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 105,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $5,035.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $2,200.00; graduated tax on $2,200 [married_filing_separately schedule]: 0.0475 x $2,200.00 (the $0-$4,400 bracket) = $104.50; total $104.50 -> $105"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $5,035.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $2,200.00; graduated tax on $2,200 [married_filing_separately schedule]: 0.0475 x $2,200.00 (the $0-$4,400 bracket) = $104.50; total $104.50 -> $105. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 16100,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -867,10 +1200,31 @@
     },
     "marginal_rate": "0.0875",
     "tax": 1099,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $18,935.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $16,100.00; graduated tax on $16,100 [married_filing_separately schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $5,000.00 (the $11,100-$125,000 bracket) = $437.50; total $1,098.75 -> $1,099"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $18,935.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $16,100.00; graduated tax on $16,100 [married_filing_separately schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $5,000.00 (the $11,100-$125,000 bracket) = $437.50; total $1,098.75 -> $1,099. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 135000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -881,10 +1235,31 @@
     },
     "marginal_rate": "0.099",
     "tax": 11618,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $137,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $135,000.00; graduated tax on $135,000 [married_filing_separately schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $113,900.00 (the $11,100-$125,000 bracket) = $9,966.25; 0.099 x $10,000.00 (the $125,000+ bracket) = $990.00; total $11,617.50 -> $11,618"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $137,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $135,000.00; graduated tax on $135,000 [married_filing_separately schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $113,900.00 (the $11,100-$125,000 bracket) = $9,966.25; 0.099 x $10,000.00 (the $125,000+ bracket) = $990.00; total $11,617.50 -> $11,618. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -895,10 +1270,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 0,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = -$2,835.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = -$2,835.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -909,10 +1305,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 0,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $2,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $2,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 2200,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -923,10 +1340,31 @@
     },
     "marginal_rate": "0.0475",
     "tax": 105,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $5,035.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $2,200.00; graduated tax on $2,200 [single schedule]: 0.0475 x $2,200.00 (the $0-$4,400 bracket) = $104.50; total $104.50 -> $105"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $5,035.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $2,200.00; graduated tax on $2,200 [single schedule]: 0.0475 x $2,200.00 (the $0-$4,400 bracket) = $104.50; total $104.50 -> $105. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 16100,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -937,10 +1375,31 @@
     },
     "marginal_rate": "0.0875",
     "tax": 1099,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $18,935.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $16,100.00; graduated tax on $16,100 [single schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $5,000.00 (the $11,100-$125,000 bracket) = $437.50; total $1,098.75 -> $1,099"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $18,935.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $16,100.00; graduated tax on $16,100 [single schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $5,000.00 (the $11,100-$125,000 bracket) = $437.50; total $1,098.75 -> $1,099. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "base_after_exemptions": 135000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -951,7 +1410,7 @@
     },
     "marginal_rate": "0.099",
     "tax": 11618,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $137,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $135,000.00; graduated tax on $135,000 [single schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $113,900.00 (the $11,100-$125,000 bracket) = $9,966.25; 0.099 x $10,000.00 (the $125,000+ bracket) = $990.00; total $11,617.50 -> $11,618"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $137,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $135,000.00; graduated tax on $135,000 [single schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $113,900.00 (the $11,100-$125,000 bracket) = $9,966.25; 0.099 x $10,000.00 (the $125,000+ bracket) = $990.00; total $11,617.50 -> $11,618. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
    },
    {
     "args": {
@@ -961,7 +1420,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: OR 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+    "error": "ValueError: OR 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it. OR's per-person exemptions are CREDITS against tax (Form OR-40 lines 6a-6b, 6c, 6d): pass their counts as exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) with federal_agi, and read the result's exemption_credits."
    },
    {
     "args": {
@@ -971,10 +1430,31 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: OR 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
+    "error": "ValueError: OR 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction). OR's per-person exemptions are CREDITS against tax (Form OR-40 lines 6a-6b, 6c, 6d): pass their counts as exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) with federal_agi, and read the result's exemption_credits."
    },
    {
     "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form OR-40",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@af2ae3690e73",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -985,7 +1465,1190 @@
     },
     "marginal_rate": "0.0875",
     "tax": 2880,
-    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $45,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $5,670 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880"
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $45,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $5,670 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is OR's tax line BEFORE them. Pass exemption_credit_counts (kinds: regular, severe_disability, dependent, disabled_child) and federal_agi to get Form OR-40 line 25 and line 29. This pack ships OR's per-person exemption CREDITS against tax (Form OR-40: line 6a-6b regular $256 each; line 6a-6b severe_disability $256 each; line 6c dependent $256 each; line 6d disabled_child $256 each; totaled on line 6e x $256 and subtracted on line 25, denied kind by kind when federal AGI (Form OR-40 line 7) is more than its ceiling (regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household))"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 44560,
+     "form": "Form OR-40",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@b089268d12de",
+     "tax_after_credits": 1856,
+     "total": 1024
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "44560",
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "44560",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $44,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $44,560 [head_of_household] — regular: not more than $200,000 -> allowed; dependent: not more than $200,000 -> allowed; severe_disability: not more than $100,000 -> allowed; disabled_child: not more than $100,000 -> allowed; line 25 = $1,024. Tax after exemption credits: line 29 = max(0, $2,880 - $1,024) = $1,856"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 100000,
+     "form": "Form OR-40",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@b089268d12de",
+     "tax_after_credits": 1856,
+     "total": 1024
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "100000",
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "44560",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $44,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $100,000 [head_of_household] — regular: not more than $200,000 -> allowed; dependent: not more than $200,000 -> allowed; severe_disability: not more than $100,000 -> allowed; disabled_child: not more than $100,000 -> allowed; line 25 = $1,024. Tax after exemption credits: line 29 = max(0, $2,880 - $1,024) = $1,856"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 100001,
+     "form": "Form OR-40",
+     "limitation_reduction": 512,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@809bee29aee8",
+     "tax_after_credits": 2368,
+     "total": 512
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "100001",
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "44560",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $44,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $100,001 [head_of_household] — regular: not more than $200,000 -> allowed; dependent: not more than $200,000 -> allowed; severe_disability: more than $100,000 -> $256 denied; disabled_child: more than $100,000 -> $256 denied; line 25 = $512 ($512 less than line 6e x $256). Tax after exemption credits: line 29 = max(0, $2,880 - $512) = $2,368"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 200000,
+     "form": "Form OR-40",
+     "limitation_reduction": 512,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@809bee29aee8",
+     "tax_after_credits": 2368,
+     "total": 512
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "200000",
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "44560",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $44,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $200,000 [head_of_household] — regular: not more than $200,000 -> allowed; dependent: not more than $200,000 -> allowed; severe_disability: more than $100,000 -> $256 denied; disabled_child: more than $100,000 -> $256 denied; line 25 = $512 ($512 less than line 6e x $256). Tax after exemption credits: line 29 = max(0, $2,880 - $512) = $2,368"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 200001,
+     "form": "Form OR-40",
+     "limitation_reduction": 1024,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@ac028cee3f51",
+     "tax_after_credits": 2880,
+     "total": 0
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "200001",
+     "filing_status": "head_of_household",
+     "state": "or",
+     "taxable_base": "44560",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $44,560.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $4,560 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $200,001 [head_of_household] — regular: more than $200,000 -> $256 denied; dependent: more than $200,000 -> $256 denied; severe_disability: more than $100,000 -> $256 denied; disabled_child: more than $100,000 -> $256 denied; line 25 = $0 ($1,024 less than line 6e x $256). Tax after exemption credits: line 29 = max(0, $2,880 - $0) = $2,880"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 2048,
+     "federal_agi": 45670,
+     "form": "Form OR-40",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@fbdf60d69226",
+     "tax_after_credits": 832,
+     "total": 2048
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 2,
+      "disabled_child": 2,
+      "regular": 2,
+      "severe_disability": 2
+     },
+     "exemptions_count": 0,
+     "federal_agi": "45670",
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "45670",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $45,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 2 x $256 = $512; line 6a-6b severe_disability 2 x $256 = $512; line 6c dependent 2 x $256 = $512; line 6d disabled_child 2 x $256 = $512; line 6e x $256 (exemption amount) = $2,048. AGI ceiling: federal AGI (Form OR-40 line 7) $45,670 [married_filing_jointly] — regular: not more than $200,000 -> allowed; dependent: not more than $200,000 -> allowed; severe_disability: not more than $100,000 -> allowed; disabled_child: not more than $100,000 -> allowed; line 25 = $2,048. Tax after exemption credits: line 29 = max(0, $2,880 - $2,048) = $832"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 2048,
+     "federal_agi": 100000,
+     "form": "Form OR-40",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@fbdf60d69226",
+     "tax_after_credits": 832,
+     "total": 2048
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 2,
+      "disabled_child": 2,
+      "regular": 2,
+      "severe_disability": 2
+     },
+     "exemptions_count": 0,
+     "federal_agi": "100000",
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "45670",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $45,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 2 x $256 = $512; line 6a-6b severe_disability 2 x $256 = $512; line 6c dependent 2 x $256 = $512; line 6d disabled_child 2 x $256 = $512; line 6e x $256 (exemption amount) = $2,048. AGI ceiling: federal AGI (Form OR-40 line 7) $100,000 [married_filing_jointly] — regular: not more than $200,000 -> allowed; dependent: not more than $200,000 -> allowed; severe_disability: not more than $100,000 -> allowed; disabled_child: not more than $100,000 -> allowed; line 25 = $2,048. Tax after exemption credits: line 29 = max(0, $2,880 - $2,048) = $832"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 2048,
+     "federal_agi": 100001,
+     "form": "Form OR-40",
+     "limitation_reduction": 1024,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@b089268d12de",
+     "tax_after_credits": 1856,
+     "total": 1024
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 2,
+      "disabled_child": 2,
+      "regular": 2,
+      "severe_disability": 2
+     },
+     "exemptions_count": 0,
+     "federal_agi": "100001",
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "45670",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $45,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 2 x $256 = $512; line 6a-6b severe_disability 2 x $256 = $512; line 6c dependent 2 x $256 = $512; line 6d disabled_child 2 x $256 = $512; line 6e x $256 (exemption amount) = $2,048. AGI ceiling: federal AGI (Form OR-40 line 7) $100,001 [married_filing_jointly] — regular: not more than $200,000 -> allowed; dependent: not more than $200,000 -> allowed; severe_disability: more than $100,000 -> $512 denied; disabled_child: more than $100,000 -> $512 denied; line 25 = $1,024 ($1,024 less than line 6e x $256). Tax after exemption credits: line 29 = max(0, $2,880 - $1,024) = $1,856"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 2048,
+     "federal_agi": 200000,
+     "form": "Form OR-40",
+     "limitation_reduction": 1024,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@b089268d12de",
+     "tax_after_credits": 1856,
+     "total": 1024
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 2,
+      "disabled_child": 2,
+      "regular": 2,
+      "severe_disability": 2
+     },
+     "exemptions_count": 0,
+     "federal_agi": "200000",
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "45670",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $45,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 2 x $256 = $512; line 6a-6b severe_disability 2 x $256 = $512; line 6c dependent 2 x $256 = $512; line 6d disabled_child 2 x $256 = $512; line 6e x $256 (exemption amount) = $2,048. AGI ceiling: federal AGI (Form OR-40 line 7) $200,000 [married_filing_jointly] — regular: not more than $200,000 -> allowed; dependent: not more than $200,000 -> allowed; severe_disability: more than $100,000 -> $512 denied; disabled_child: more than $100,000 -> $512 denied; line 25 = $1,024 ($1,024 less than line 6e x $256). Tax after exemption credits: line 29 = max(0, $2,880 - $1,024) = $1,856"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 200000,
+      "disabled_child": 100000,
+      "regular": 200000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 2,
+       "credit": 512,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 2048,
+     "federal_agi": 200001,
+     "form": "Form OR-40",
+     "limitation_reduction": 2048,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@ac028cee3f51",
+     "tax_after_credits": 2880,
+     "total": 0
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 2,
+      "disabled_child": 2,
+      "regular": 2,
+      "severe_disability": 2
+     },
+     "exemptions_count": 0,
+     "federal_agi": "200001",
+     "filing_status": "married_filing_jointly",
+     "state": "or",
+     "taxable_base": "45670",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 2880,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $45,670.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $5,670 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0475 x $8,800.00 (the $0-$8,800 bracket) = $418.00; 0.0675 x $13,400.00 (the $8,800-$22,200 bracket) = $904.50; 0.0875 x $17,800.00 (the $22,200-$250,000 bracket) = $1,557.50; total $2,880.00 -> $2,880. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 2 x $256 = $512; line 6a-6b severe_disability 2 x $256 = $512; line 6c dependent 2 x $256 = $512; line 6d disabled_child 2 x $256 = $512; line 6e x $256 (exemption amount) = $2,048. AGI ceiling: federal AGI (Form OR-40 line 7) $200,001 [married_filing_jointly] — regular: more than $200,000 -> $512 denied; dependent: more than $200,000 -> $512 denied; severe_disability: more than $100,000 -> $512 denied; disabled_child: more than $100,000 -> $512 denied; line 25 = $0 ($2,048 less than line 6e x $256). Tax after exemption credits: line 29 = max(0, $2,880 - $0) = $2,880"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 100000,
+      "disabled_child": 100000,
+      "regular": 100000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 42835,
+     "form": "Form OR-40",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@0b00143103d5",
+     "tax_after_credits": 2166,
+     "total": 1024
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "42835",
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "42835",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 3190,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $42,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $28,900.00 (the $11,100-$125,000 bracket) = $2,528.75; total $3,190.00 -> $3,190. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $42,835 [married_filing_separately] — regular: not more than $100,000 -> allowed; dependent: not more than $100,000 -> allowed; severe_disability: not more than $100,000 -> allowed; disabled_child: not more than $100,000 -> allowed; line 25 = $1,024. Tax after exemption credits: line 29 = max(0, $3,190 - $1,024) = $2,166"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 100000,
+      "disabled_child": 100000,
+      "regular": 100000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 100000,
+     "form": "Form OR-40",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@0b00143103d5",
+     "tax_after_credits": 2166,
+     "total": 1024
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "100000",
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "42835",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 3190,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $42,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $28,900.00 (the $11,100-$125,000 bracket) = $2,528.75; total $3,190.00 -> $3,190. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $100,000 [married_filing_separately] — regular: not more than $100,000 -> allowed; dependent: not more than $100,000 -> allowed; severe_disability: not more than $100,000 -> allowed; disabled_child: not more than $100,000 -> allowed; line 25 = $1,024. Tax after exemption credits: line 29 = max(0, $3,190 - $1,024) = $2,166"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 100000,
+      "disabled_child": 100000,
+      "regular": 100000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 100001,
+     "form": "Form OR-40",
+     "limitation_reduction": 1024,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@b6694ee43298",
+     "tax_after_credits": 3190,
+     "total": 0
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "100001",
+     "filing_status": "married_filing_separately",
+     "state": "or",
+     "taxable_base": "42835",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 3190,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $42,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $2,835 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $28,900.00 (the $11,100-$125,000 bracket) = $2,528.75; total $3,190.00 -> $3,190. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $100,001 [married_filing_separately] — regular: more than $100,000 -> $256 denied; dependent: more than $100,000 -> $256 denied; severe_disability: more than $100,000 -> $256 denied; disabled_child: more than $100,000 -> $256 denied; line 25 = $0 ($1,024 less than line 6e x $256). Tax after exemption credits: line 29 = max(0, $3,190 - $0) = $3,190"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 100000,
+      "disabled_child": 100000,
+      "regular": 100000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 42835,
+     "form": "Form OR-40",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@0b00143103d5",
+     "tax_after_credits": 2166,
+     "total": 1024
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "42835",
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "42835",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 3190,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $42,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $28,900.00 (the $11,100-$125,000 bracket) = $2,528.75; total $3,190.00 -> $3,190. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $42,835 [single] — regular: not more than $100,000 -> allowed; dependent: not more than $100,000 -> allowed; severe_disability: not more than $100,000 -> allowed; disabled_child: not more than $100,000 -> allowed; line 25 = $1,024. Tax after exemption credits: line 29 = max(0, $3,190 - $1,024) = $2,166"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 100000,
+      "disabled_child": 100000,
+      "regular": 100000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 100000,
+     "form": "Form OR-40",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@0b00143103d5",
+     "tax_after_credits": 2166,
+     "total": 1024
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "100000",
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "42835",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 3190,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $42,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $28,900.00 (the $11,100-$125,000 bracket) = $2,528.75; total $3,190.00 -> $3,190. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $100,000 [single] — regular: not more than $100,000 -> allowed; dependent: not more than $100,000 -> allowed; severe_disability: not more than $100,000 -> allowed; disabled_child: not more than $100,000 -> allowed; line 25 = $1,024. Tax after exemption credits: line 29 = max(0, $3,190 - $1,024) = $2,166"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_ceilings": {
+      "dependent": 100000,
+      "disabled_child": 100000,
+      "regular": 100000,
+      "severe_disability": 100000
+     },
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@1b7caa6cc72e",
+      "url": "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6c"
+      },
+      "disabled_child": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6d"
+      },
+      "regular": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      },
+      "severe_disability": {
+       "amount_each": 256,
+       "count": 1,
+       "credit": 256,
+       "line": "6a-6b"
+      }
+     },
+     "exemption_amount": 1024,
+     "federal_agi": 100001,
+     "form": "Form OR-40",
+     "limitation_reduction": 1024,
+     "lines": {
+      "exemption_amount": "6e x $256",
+      "tax_after_credits": "29",
+      "total": "25"
+     },
+     "note": "@@b6694ee43298",
+     "tax_after_credits": 3190,
+     "total": 0
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "100001",
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": "42835",
+     "year": 2025
+    },
+    "marginal_rate": "0.0875",
+    "tax": 3190,
+    "work_head": "OR state income tax (2025, graduated brackets): taxable_base $42,835.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $2,835 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.0475 x $4,400.00 (the $0-$4,400 bracket) = $209.00; 0.0675 x $6,700.00 (the $4,400-$11,100 bracket) = $452.25; 0.0875 x $28,900.00 (the $11,100-$125,000 bracket) = $2,528.75; total $3,190.00 -> $3,190. Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' Exemption credits (Form OR-40, past the tax line): line 6a-6b regular 1 x $256 = $256; line 6a-6b severe_disability 1 x $256 = $256; line 6c dependent 1 x $256 = $256; line 6d disabled_child 1 x $256 = $256; line 6e x $256 (exemption amount) = $1,024. AGI ceiling: federal AGI (Form OR-40 line 7) $100,001 [single] — regular: more than $100,000 -> $256 denied; dependent: more than $100,000 -> $256 denied; severe_disability: more than $100,000 -> $256 denied; disabled_child: more than $100,000 -> $256 denied; line 25 = $0 ($1,024 less than line 6e x $256). Tax after exemption credits: line 29 = max(0, $3,190 - $0) = $3,190"
+   },
+   {
+    "args": {
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "disabled_child": 1,
+      "regular": 1,
+      "severe_disability": 1
+     },
+     "filing_status": "single",
+     "state": "or",
+     "taxable_base": 40000,
+     "year": 2025
+    },
+    "error": "ValueError: OR 2025: exemption_credit_counts needs federal_agi — Form OR-40 denies regular, dependent, severe_disability, disabled_child credits when federal AGI (Form OR-40 line 7) is more than regular: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; dependent: $100,000 single, $200,000 married_filing_jointly, $100,000 married_filing_separately, $200,000 head_of_household; severe_disability: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household; disabled_child: $100,000 single, $100,000 married_filing_jointly, $100,000 married_filing_separately, $100,000 head_of_household. Pass federal_agi (the whole-dollar figure on that line) so the ceiling is applied, never skipped."
    }
   ],
   "common_result": {
@@ -998,7 +2661,7 @@
    "rate_structure": "graduated",
    "state": "or"
   },
-  "work_common_tail": ". Tax line: 2025 Form OR-40, line 20 'Tax (see instructions)'. Instructions p.16: 'Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.' and 'Tax rate charts. If your taxable income on line 19 is $50,000 or more, calculate your tax using the formula in the tax rate chart for your filing status. Use Chart S if your filing status is single or married filing separately. Use Chart J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: supply 2025 Form OR-40, line 15 'Income after subtractions' (line 9 income after additions minus line 14 total subtractions). Line 15 already reflects Oregon additions (Schedule OR-ASC) and all subtractions, including the line 10 federal tax liability subtraction (2025 limit $8,500; $4,250 married filing separately; phased down by federal AGI per Table 4 — $0 at AGI of $145,000 or more for single/MFS, and at $290,000 or more for MFJ/head of household/qualifying surviving spouse) and the new 2025 subtractions that mirror the federal tip-income, overtime-wage and passenger vehicle loan interest deductions plus the first-time home buyer savings account (FTHBSA) subtraction. The op subtracts only the Table 5 standard deduction to reach line 19 (Oregon taxable income) and applies the rate schedule to reproduce line 20. Filers who itemize for Oregon (line 16 Schedule OR-A amount larger than the standard deduction) or who claim the age-65-or-older/blind additional standard deduction must compute lines 16-19 on the form instead — the op models only the basic per-status standard deduction. Adjudication note (two-pass): base is federal_agi — Form OR-40 line 7 is federal adjusted gross income, and the caller supplies the pre-deduction Oregon figure (line 15) so the op can reproduce line 19 by subtracting the standard deduction. Vector exemption counts are zero BY DESIGN: Oregon's personal/dependent exemptions are the $256-per-exemption CREDIT on line 25 for 2025 (up from $249 in 2024), income-limited, never a base reduction — exemptions ship as {}. Every 2025 boundary was re-indexed upward from 2024 ($4,300 -> $4,400 and $10,750 -> $11,100 on Chart S; $8,600 -> $8,800 and $21,500 -> $22,200 on Chart J), while the $125,000 / $250,000 top-bracket thresholds and all four rates (4.75/6.75/8.75/9.9%) are unchanged; verified across the resident booklet's $50,000+ chart segments and the OR-40-N/OR-40-P full charts. Tax-table mandate below $50,000: the 2025 OR-40 instructions (line 20, p.16) REQUIRE the tax tables when Oregon taxable income (line 19) is less than $50,000. The table is built from the rounded chart constants at $100-band midpoints, so bracket math may differ by a dollar or two within a band — booklet Example 1: a single filer with taxable income $19,525 uses the $19,500-to-$19,600 row and enters $1,400 on line 20, where exact marginal math on this schedule is $1,398.44 -> $1,398. The filed form must use the table; the rate-chart formula applies only at $50,000 or more. Rounded printed constants: Chart S's published constants are the exact cumulative bracket sums rounded DOWN ($209 is exact; $661 vs $661.25 exact; $10,627 vs $10,627.50 exact; the $50,000+ segment prints $4,065, which is both the exact cumulative sum and the value chained from $661), so at and above $125,000 pure marginal bracket math (what this op computes) can be up to $1 HIGHER than the printed chart formula. Chart J's constants are rounded UP ($418 is exact; $1,323 vs $1,322.50 exact; $21,256 = $1,323 + 8.75% x $227,800 = $21,255.50 rounded, vs $21,255.00 exact; the $50,000+ segment prints $3,756 vs $3,755.00 exact), so Chart J formula results run about $1 HIGHER than marginal math — booklet Example 2: married filing jointly with taxable income $75,500 computes $3,756 + 8.75% x $25,500 = $5,987 on the chart, where exact marginal math gives $5,986.25 -> $5,986. One schedule covers married filing jointly, head of household, AND qualifying surviving spouse (Chart J / tax-table Column J) — head of household brackets are identical to MFJ, and qualifying surviving spouse maps to married_filing_jointly with no divergence. Single and married filing separately share Chart S / Column S. Oregon registered domestic partners (RDPs) use the married statuses with an 'as if' federal return. Oregon's personal/dependent exemption is a tax CREDIT, not a base reduction, and is NOT shipped as an exemption: Form OR-40 line 25 'Exemption credit' = $256 per exemption for 2025 (taxpayer, spouse, dependents, plus severe-disability and disabled-child exemptions), subtracted from tax after the rate applies; it is $0 when federal AGI exceeds $200,000 ($100,000 if single or married filing separately), and the severe-disability/disabled-child counts drop out above $100,000 for every status. The calc op does not model this credit. THE 2025 KICKER IS A CREDIT, NOT A RATE OR BASE CHANGE: Oregon's surplus credit returns on the 2025 return (it is claimed in odd tax years — 44.28% on 2023 returns, none on 2024 returns). For 2025 the kicker is 9.863% of the filer's 2024 total Oregon personal income tax liability, claimed on Form OR-40 line 32 in the same way as a payment (or donated to the State School Fund). Eligibility requires filing the 2024 return before the 2025 return, having had a 2024 Oregon liability, and filing a 2025 return even with no filing requirement. It never touches this rate schedule or the base — do not adjust brackets or the standard deduction for it. Standard-deduction gates NOT modeled: married filing separately gets $0 if the other spouse claims itemized deductions (the shipped $2,835 assumes the spouse claims the standard deduction); a non-U.S. citizen without permanent resident status gets $0 (but may itemize); a person claimable as a dependent on another return is limited to the larger of earned income plus $450 or the $1,350 minimum, capped at the basic amount for their status. Compute those cases on the form. Age 65-or-older/blind additional standard deduction NOT modeled: each applicable checkbox adds $1,200 (single or head of household) or $1,000 (all other filers) to the Table 5 amount — the booklet's example has a married-filing-jointly couple with one spouse who turned 65 by 1/1/2026 entering $6,670 ($5,670 + $1,000). Enter it on the form; this op applies only the basic per-status amount. Federal tax liability subtraction is already inside the caller-supplied base (OR-40 line 10 flows into line 15): the 2025 limit is $8,500 ($4,250 married filing separately), phased down by federal AGI per Table 4 (single: $8,500 under $125,000, then $6,800 / $5,100 / $3,400 / $1,700 in $5,000 steps to $0 at $145,000 or more; MFS: $4,250 under $125,000 stepping to $0 at $145,000 or more; MFJ/head of household/qualifying surviving spouse: $8,500 under $250,000, then $6,800 / $5,100 / $3,400 / $1,700 in $10,000 steps to $0 at $290,000 or more). Alternative tax computations on line 20 NOT modeled: Schedule OR-FIA-40 (farm income averaging, box 20a), Worksheet FCG in Publication OR-FCG (farm asset capital gain rate, box 20b), and Schedule OR-PTE-FY (Oregon qualified business income reduced tax rate, box 20c — an irrevocable election that must be made on the original return) replace the table/chart math when elected. Bracket source: the resident OR-40 booklet (p.32) prints Chart S/Chart J only for taxable income of $50,000 or more (the tax tables govern below that). The full four-bracket 2025 Chart S/Chart J, including the $4,400 / $11,100 and $8,800 / $22,200 breakpoints shipped here, is printed in the 2025 Form OR-40-N/OR-40-P instructions (150-101-048-1, Rev. 12-30-25) p.21, whose own worked examples corroborate the constants ('Tax on the first $22,200 $1,323 (from the chart)' for a joint filer with $76,200 of taxable income; 'Tax on the first $11,100 $661' for a single filer with $41,100)."
+  "work_common_tail": ". Exemption-credit rules (Form OR-40): Line 6a-6b (regular): The \"Regular\" boxes below lines 6a and 6b. Instructions p. 12: \"If you can't be claimed as a dependent on someone else's return, check the \"Regular\" exemption box below line 6a\"; \"If you're married and filing a joint return (or filing separately but your spouse has no income) and your spouse can't be claimed as a dependent on someone else's return, check the \"Regular\" exemption box below line 6b\". The \"Someone else can claim you as a dependent\" box earns no credit (worksheet line 1 counts \"Regular\" boxes only). Line 6a-6b (severe_disability): The \"Severe disability\" boxes below lines 6a and 6b. Instructions p. 13: \"Severe disability exemption. You or your spouse may qualify for the additional \"severe disability\" exemption, even if someone else can claim you or your spouse as a dependent\" (permanent loss of use of legs or feet or of both hands, permanent blindness, or a permanent condition limiting the ability to earn a living); a licensed physician's letter is kept with the records. Line 6c (dependent): Line 6c. Instructions p. 13: \"Dependents. List your dependents in order from youngest to oldest.\" \"Total number of dependents. On line 6c, enter your total number of dependents, including the total(s) from Schedule OR-ADD-DEP, line 6.\" Line 6d (disabled_child): Line 6d. Instructions p. 13: \"The additional \"Child with a disability\" exemption is for a dependent child, age 21 or younger, who was eligible for early intervention or special education services\" under the federal Individuals with Disabilities Education Act; \"Check the \"Child with a disability\" exemption box for each qualifying child listed on Form OR-40 and Schedule OR-ADD-DEP.\" Each such child is also counted under dependent, so this count is never more than the dependent count. The ceilings are cliffs, not phase-outs: AGI one dollar more than a ceiling denies that kind's whole credit, and AGI equal to it keeps it. A qualifying surviving spouse is one of \"all others\" ($200,000 for regular and dependent). Instructions p. 14, line 7: \"Enter your federal AGI from Form 1040, 1040-SR, or 1040-NR, line 11a\" — pass that figure as federal_agi. Line 29 here is counted from the op's tax (line 20): line 24 adds the line 21-23 additions to tax, and line 28 adds the line 26 political contribution credit and the line 27 Schedule OR-ASC standard credits to line 25. It equals the filed line 29 when lines 21-23, 26 and 27 are zero. Below $50,000 of taxable income the filed line 20 comes from the tax tables (see the pack notes). This op computes the state's rate-schedule tax line and, when exemption_credit_counts is passed, its exemption credits ONLY — county/city add-on taxes, other state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: supply 2025 Form OR-40, line 15 'Income after subtractions' (line 9 income after additions minus line 14 total subtractions). Line 15 already reflects Oregon additions (Schedule OR-ASC) and all subtractions, including the line 10 federal tax liability subtraction (2025 limit $8,500; $4,250 married filing separately; phased down by federal AGI per Table 4 — $0 at AGI of $145,000 or more for single/MFS, and at $290,000 or more for MFJ/head of household/qualifying surviving spouse) and the new 2025 subtractions that mirror the federal tip-income, overtime-wage and passenger vehicle loan interest deductions plus the first-time home buyer savings account (FTHBSA) subtraction. The op subtracts only the Table 5 standard deduction to reach line 19 (Oregon taxable income) and applies the rate schedule to reproduce line 20. Filers who itemize for Oregon (line 16 Schedule OR-A amount larger than the standard deduction) or who claim the age-65-or-older/blind additional standard deduction must compute lines 16-19 on the form instead — the op models only the basic per-status standard deduction. Adjudication note (two-pass): base is federal_agi — Form OR-40 line 7 is federal adjusted gross income, and the caller supplies the pre-deduction Oregon figure (line 15) so the op can reproduce line 19 by subtracting the standard deduction. Vector exemption counts are zero BY DESIGN: Oregon's personal/dependent exemptions are the $256-per-exemption CREDIT on line 25 for 2025 (up from $249 in 2024), income-limited, never a base reduction — exemptions ship as {}. Every 2025 boundary was re-indexed upward from 2024 ($4,300 -> $4,400 and $10,750 -> $11,100 on Chart S; $8,600 -> $8,800 and $21,500 -> $22,200 on Chart J), while the $125,000 / $250,000 top-bracket thresholds and all four rates (4.75/6.75/8.75/9.9%) are unchanged; verified across the resident booklet's $50,000+ chart segments and the OR-40-N/OR-40-P full charts. Tax-table mandate below $50,000: the 2025 OR-40 instructions (line 20, p.16) REQUIRE the tax tables when Oregon taxable income (line 19) is less than $50,000. The table is built from the rounded chart constants at $100-band midpoints, so bracket math may differ by a dollar or two within a band — booklet Example 1: a single filer with taxable income $19,525 uses the $19,500-to-$19,600 row and enters $1,400 on line 20, where exact marginal math on this schedule is $1,398.44 -> $1,398. The filed form must use the table; the rate-chart formula applies only at $50,000 or more. Rounded printed constants: Chart S's published constants are the exact cumulative bracket sums rounded DOWN ($209 is exact; $661 vs $661.25 exact; $10,627 vs $10,627.50 exact; the $50,000+ segment prints $4,065, which is both the exact cumulative sum and the value chained from $661), so at and above $125,000 pure marginal bracket math (what this op computes) can be up to $1 HIGHER than the printed chart formula. Chart J's constants are rounded UP ($418 is exact; $1,323 vs $1,322.50 exact; $21,256 = $1,323 + 8.75% x $227,800 = $21,255.50 rounded, vs $21,255.00 exact; the $50,000+ segment prints $3,756 vs $3,755.00 exact), so Chart J formula results run about $1 HIGHER than marginal math — booklet Example 2: married filing jointly with taxable income $75,500 computes $3,756 + 8.75% x $25,500 = $5,987 on the chart, where exact marginal math gives $5,986.25 -> $5,986. One schedule covers married filing jointly, head of household, AND qualifying surviving spouse (Chart J / tax-table Column J) — head of household brackets are identical to MFJ, and qualifying surviving spouse maps to married_filing_jointly with no divergence. Single and married filing separately share Chart S / Column S. Oregon registered domestic partners (RDPs) use the married statuses with an 'as if' federal return. Oregon's personal/dependent exemption is a tax CREDIT, not a base reduction, and is NOT shipped as an exemption: Form OR-40 line 25 'Exemption credit' = $256 per exemption for 2025 (taxpayer, spouse, dependents, plus severe-disability and disabled-child exemptions), subtracted from tax after the rate applies; it is $0 when federal AGI exceeds $200,000 ($100,000 if single or married filing separately), and the severe-disability/disabled-child counts drop out above $100,000 for every status. calc.state_tax applies it, ceilings included, past the tax line when exemption_credit_counts and federal_agi are passed (tax.exemption_credits, Phase K JK28). THE 2025 KICKER IS A CREDIT, NOT A RATE OR BASE CHANGE: Oregon's surplus credit returns on the 2025 return (it is claimed in odd tax years — 44.28% on 2023 returns, none on 2024 returns). For 2025 the kicker is 9.863% of the filer's 2024 total Oregon personal income tax liability, claimed on Form OR-40 line 32 in the same way as a payment (or donated to the State School Fund). Eligibility requires filing the 2024 return before the 2025 return, having had a 2024 Oregon liability, and filing a 2025 return even with no filing requirement. It never touches this rate schedule or the base — do not adjust brackets or the standard deduction for it. Standard-deduction gates NOT modeled: married filing separately gets $0 if the other spouse claims itemized deductions (the shipped $2,835 assumes the spouse claims the standard deduction); a non-U.S. citizen without permanent resident status gets $0 (but may itemize); a person claimable as a dependent on another return is limited to the larger of earned income plus $450 or the $1,350 minimum, capped at the basic amount for their status. Compute those cases on the form. Age 65-or-older/blind additional standard deduction NOT modeled: each applicable checkbox adds $1,200 (single or head of household) or $1,000 (all other filers) to the Table 5 amount — the booklet's example has a married-filing-jointly couple with one spouse who turned 65 by 1/1/2026 entering $6,670 ($5,670 + $1,000). Enter it on the form; this op applies only the basic per-status amount. Federal tax liability subtraction is already inside the caller-supplied base (OR-40 line 10 flows into line 15): the 2025 limit is $8,500 ($4,250 married filing separately), phased down by federal AGI per Table 4 (single: $8,500 under $125,000, then $6,800 / $5,100 / $3,400 / $1,700 in $5,000 steps to $0 at $145,000 or more; MFS: $4,250 under $125,000 stepping to $0 at $145,000 or more; MFJ/head of household/qualifying surviving spouse: $8,500 under $250,000, then $6,800 / $5,100 / $3,400 / $1,700 in $10,000 steps to $0 at $290,000 or more). Alternative tax computations on line 20 NOT modeled: Schedule OR-FIA-40 (farm income averaging, box 20a), Worksheet FCG in Publication OR-FCG (farm asset capital gain rate, box 20b), and Schedule OR-PTE-FY (Oregon qualified business income reduced tax rate, box 20c — an irrevocable election that must be made on the original return) replace the table/chart math when elected. Bracket source: the resident OR-40 booklet (p.32) prints Chart S/Chart J only for taxable income of $50,000 or more (the tax tables govern below that). The full four-bracket 2025 Chart S/Chart J, including the $4,400 / $11,100 and $8,800 / $22,200 breakpoints shipped here, is printed in the 2025 Form OR-40-N/OR-40-P instructions (150-101-048-1, Rev. 12-30-25) p.21, whose own worked examples corroborate the constants ('Tax on the first $22,200 $1,323 (from the chart)' for a joint filer with $76,200 of taxable income; 'Tax on the first $11,100 $661' for a single filer with $41,100)."
  },
  "year": 2025
 }

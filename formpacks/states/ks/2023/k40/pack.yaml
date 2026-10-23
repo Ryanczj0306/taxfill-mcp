@@ -27,14 +27,16 @@
 #             block (authorize-discussion checkbox, taxpayer + spouse signature
 #             & date, preparer signature/phone/PTIN).
 #
-# Coverage. The blank PDF exposes 134 fillable AcroForm widget entries; ALL 134
-# are mapped here (109 text + 25 checkbox). Nothing is intentionally omitted.
+# Coverage. The blank PDF exposes 134 fillable AcroForm widget entries; 131 are
+# mapped here (106 text + 25 checkbox). The three ink-signature boxes ("Signature
+# of taxpayer", "Signature of spouse", "Signature of preparer") are
+# intentionally NOT mapped (Phase K JK28, 2026-10-16): see Signature(s) below.
 #
 # Money vs text. Every numbered dollar line on page 2 prints a ".00" whole-
 # dollar cents suffix and is mapped `money`. Line 9 (Nonresident percentage,
 # field name "0000", prints "100.0000"-style 4-decimal fraction) stays `text`
 # so the fraction is not rounded away. The header text strings (names, address,
-# SSNs, district/county codes, phone) and signature strings stay `text`. The
+# SSNs, district/county codes, phone) and the signature dates stay `text`. The
 # Food Sales Tax Credit worksheet entries (D federal AGI, E/F/G counts, H
 # credit amount) and the small count boxes in the Exemptions block stay `text`
 # because they are entered as transcribed figures on this worksheet section.
@@ -539,23 +541,25 @@ fields:
     field: i authorize the director of taxation or the directors designee to discuss my return and enclosures with my preparer
     type: checkbox
     on_state: /Yes
-  - line: signature.taxpayer             # "Signature of taxpayer"
-    field: Signature of taxpayer
-    type: text
+  # signature.taxpayer / signature.spouse / preparer.signature: NOT mapped (Phase K JK28, 2026-10-16) --
+  # ink-signature lines. Page 2 prints "Taxpayer Signature", "Spouse Signature (If married filing joint)" and
+  # "SIGNATURE OF PREPARER OTHER THAN TAXPAYER" under "I declare under the penalties of perjury that to the best
+  # of my knowledge this is a true, correct, and complete return." Their widgets ("Signature of taxpayer",
+  # "Signature of spouse", "Signature of preparer") are ordinary /Tx boxes (the only text widgets with no /DA),
+  # and a sentinel typed into each printed on the signature rule. The 2023 booklet (ip23.pdf, sha256 456f9b8b6254b33a,
+  # Page 10, SIGNATURE(S)): "Signature: Your income tax return must be signed. You will not receive your refund if your
+  # return is not signed. Both taxpayers must sign a joint return even if only one had income. If the return is prepared
+  # by someone other than you, the preparer should also sign in the space provided." Nothing in the booklet makes a
+  # typed name a signature, so the filer, the spouse and any preparer sign these lines by hand; `signature: {page: 2}`
+  # says where (test_signature_line_mapping.py).
   - line: signature.taxpayer_date        # "DATE" — Courier 12 in 71.6 pt holds 9, so "MM/DD/YY" (JS3c)
     field: date signed
     type: text
     maxlen: 8
-  - line: signature.spouse               # "Signature of spouse (If married filing joint)"
-    field: Signature of spouse
-    type: text
   - line: signature.spouse_date          # "DATE" — Courier 12 in 68.1 pt holds 9, so "MM/DD/YY" (JS3c)
     field: date signed 2
     type: text
     maxlen: 8
-  - line: preparer.signature             # "Signature of preparer other than taxpayer"
-    field: Signature of preparer
-    type: text
   - line: preparer.phone                 # "Phone number of preparer"
     field: preparers phone number
     type: text

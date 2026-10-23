@@ -14,9 +14,11 @@
 # columns only on Schedule 3 (part-year/nonresident: A/B/C) and on the
 # Schedule 1 retirement worksheets (TAXPAYER / SPOUSE); everywhere else each
 # printed line is a single widget and the line key is the printed line number
-# ("L8" widget -> line "8", "S1L1" -> "s1.1", etc.). Repeated header SSN copy,
-# navigation/print/reset/calculator widgets, and the duplicate page-10 field
-# hierarchy are intentionally NOT mapped (see Coverage).
+# ("L8" widget -> line "8", "S1L1" -> "s1.1", etc.). Navigation/print/reset/
+# calculator widgets and the duplicate page-10 field hierarchy are
+# intentionally NOT mapped (see Coverage). The repeated header SSN copy
+# (SSN_COPY) was unmapped too until Phase K JK28 (2026-10-23); it is now the
+# declared mirror tp_ssn_page_header.
 #
 # Coverage. The blank PDF exposes 943 AcroForm field objects (pypdf
 # get_fields), 848 of them distinct widget names. Mapped here: every fillable
@@ -49,9 +51,6 @@
 #     (their states are appearance-dict keys only — they jump to a page/booklet).
 #   * "SCANLINE" (Ff 8388609, ReadOnly) — the machine-generated voucher scan
 #     line, computed by the form, never typed.
-#   * "SSN_COPY" — the ReadOnly SSN mirror the form's JavaScript propagates
-#     into every page header (and the Schedule-4 copy block); it is one
-#     auto-filled field, not taxpayer entry, and duplicates "TP_SSN".
 #   * The duplicate "P10.Page3.*" field hierarchy (a second naming of the
 #     page-10 Schedule-2 widgets, incl. "P10.Page3.P10.Page3.S2L5"): the same
 #     logical widgets are mapped once under their bare names (S2L1_CREDITCODE,
@@ -233,6 +232,19 @@ fields:
     field: L7C
     type: text
     maxlen: 2
+
+  # ==================================================== PAGES 2-5, 7-28 — header SSN mirror
+  # SSN_COPY prints under "YOUR SOCIAL SECURITY NUMBER" at the top of pages 2-5 and 7-28 (on page 25, Schedule 4,
+  # lower, under the same caption): ONE ReadOnly /MaxLen 11 field with 26 widget kids at /DA Courier Bold 10, 76.8-83.2
+  # pt wide (11 Courier characters take 66 pt), which the document JavaScript fills with
+  # SV("SSN_COPY",GVS("TP_SSN").toString()), never run by taxfill (read on the 2023 blank rendered at 200 dpi, Phase
+  # K JK28, 2026-10-23). Left unmapped until then, so a filled 2023 Form 500 printed 26 blank SSN headers; mapped as
+  # tp_ssn_page_header like GA 2024 and 2025, and declared in `mirrors:`. Like its source tp_ssn it is text, maxlen
+  # 11, no comb.
+  - line: tp_ssn_page_header        # "YOUR SOCIAL SECURITY NUMBER" header: ONE ReadOnly field, 26 kids
+    field: SSN_COPY
+    type: text
+    maxlen: 11
 
   # ==================================================== PAGE 2 — dependents (7d)
   - line: dependent_1.name          # line 7d dependent detail rows
@@ -1577,7 +1589,7 @@ fields:
     field: S3L14
     type: money
 
-  # ==================================================== PAGE 13 — IND-CR 201 (Disabled Person Home Purchase/Retrofit, credit 201)
+  # ========================================== PAGE 13 — IND-CR 201 (Disabled Person Home Purchase/Retrofit, credit 201)
   - line: indcr201.1                # Credit remaining from previous years
     field: CRP1L1
     type: text
@@ -1595,7 +1607,7 @@ fields:
     type: text
     maxlen: 3
 
-  # ==================================================== PAGE 14 — IND-CR 202 (Child and Dependent Care Expense, credit 202)
+  # ================================================ PAGE 14 — IND-CR 202 (Child and Dependent Care Expense, credit 202)
   - line: indcr202.1                # Amount of child & dependent care expense credit claimed on Federal 1040
     field: CRP2L1
     type: money
@@ -1606,7 +1618,7 @@ fields:
     field: CRP2L4
     type: money
 
-  # ==================================================== PAGE 15 — IND-CR 203 (Georgia National Guard/Air National Guard, credit 203)
+  # ======================================= PAGE 15 — IND-CR 203 (Georgia National Guard/Air National Guard, credit 203)
   - line: indcr203.1                # Credit remaining from previous years
     field: CRP3L1
     type: money
@@ -1761,7 +1773,7 @@ fields:
     field: CRP8L4
     type: money
 
-  # ==================================================== PAGE 20 — IND-CR 209 (Eligible Single-Family Residence, credit 209)
+  # ================================================ PAGE 20 — IND-CR 209 (Eligible Single-Family Residence, credit 209)
   - line: indcr209.1                # Total credit (from 2009 IND-CR, Part 9, Line 5)
     field: CRP9L1
     type: money
@@ -1781,7 +1793,7 @@ fields:
     field: CRP9L7
     type: money
 
-  # ==================================================== PAGE 21 — IND-CR 212 (Community Based Faculty Preceptor, credit 212)
+  # =============================================== PAGE 21 — IND-CR 212 (Community Based Faculty Preceptor, credit 212)
   - line: indcr212.physician_number       # Physician identifier
     field: PhysicianNumber
     type: text
@@ -1835,7 +1847,7 @@ fields:
     type: text
     maxlen: 4
 
-  # ==================================================== PAGE 22 — IND-CR 213 (Adoption of a Foster Child 2021+, credit 213)
+  # ================================================ PAGE 22 — IND-CR 213 (Adoption of a Foster Child 2021+, credit 213)
   - line: indcr213.1                # $6,000 per qualified foster child (first five taxable years)
     field: CRP13L1
     type: money
@@ -1849,7 +1861,7 @@ fields:
     field: CRP13L4
     type: money
 
-  # ==================================================== PAGE 23 — IND-CR 214 (Teacher Recruitment and Retention, credit 214)
+  # =============================================== PAGE 23 — IND-CR 214 (Teacher Recruitment and Retention, credit 214)
   - line: indcr214.1                # Credit remaining from previous year
     field: CRP14L1
     type: money
@@ -2220,3 +2232,18 @@ identity_fields:
   - tp_ssn
   - tp_first_name
   - tp_last_name
+# Page-header mirrors (Phase K JK28, 2026-10-23): fill_form builds each mirror the caller leaves out from its page-1
+# source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)"). Pages 2-5 and 7-28 print "YOUR SOCIAL SECURITY NUMBER" in the header, one field SSN_COPY with a
+# widget on each page, apart from the page-1 TP_SSN (read on the 2023 blank rendered at 200 dpi); this pack left it
+# unmapped until Phase K JK28 (2026-10-23), so those headers printed blank.
+mirrors:
+  tp_ssn_page_header: "{tp_ssn}"  # "YOUR SOCIAL SECURITY NUMBER" — the page-1 SSN as written there
+  # Schedule 4 (PDF page 25) repeats the page-1 name under "YOUR FIRST NAME", "MI", "Last Name" and "SUFFIX" in
+  # TP_FIRSTNAME_COPY / TP_MIDINIT_COPY / TP_LASTNAME_COPY / TP_SUFFIX_COPY, which the document JavaScript fills
+  # with SV("TP_FIRSTNAME_COPY",GVS("TP_FIRSTNAME")...) etc. (read on the 2023 blank rendered at 200 dpi, Phase K
+  # JK28, 2026-10-23). Undeclared, they printed blank: the sweep's verifier filled the 2025 pack and found them empty.
+  s4.tp_first_name: "{tp_first_name}"  # "YOUR FIRST NAME"
+  s4.tp_middle_initial: "{tp_middle_initial}"  # "MI"
+  s4.tp_last_name: "{tp_last_name}"  # "Last Name"
+  s4.tp_suffix: "{tp_suffix}"  # "SUFFIX"

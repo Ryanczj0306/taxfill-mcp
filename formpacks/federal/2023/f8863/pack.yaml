@@ -356,3 +356,15 @@ identity_fields:
   - ssn_area
   - ssn_group
   - ssn_serial
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2 repeats the page-1 header, "Name(s) shown on return" and
+# "Your social security number" (three cells), on fields of its own (read on the 2025 blank rendered at 200 dpi; 2023
+# prints the same captions). fill_form builds each mirror the caller leaves out from its page-1 source
+# (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)").
+# The 2023 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  name_p2: "{name}"  # "Name(s) shown on return"
+  ssn_p2_area: "{ssn_area}"  # "Your social security number", first cell (3 digits)
+  ssn_p2_group: "{ssn_group}"  # its middle cell (2 digits)
+  ssn_p2_serial: "{ssn_serial}"  # its last cell (4 digits)

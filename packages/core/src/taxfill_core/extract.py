@@ -1733,7 +1733,7 @@ def _validate_w2(fields: dict[str, ExtractedField], tax_year: int | None):
                 "(\"D 5300.00\"): misread OR employer error, request a CORRECTED Form W-2 (W-2c).", codes_cite)
             continue
         code, amount = parsed
-        entry = w2_codes.code_entry(code)
+        entry = w2_codes.code_entry(code, tax_year=tax_year)
         if entry is None or code not in allowed:
             when = f" (it starts with the {entry['since']} W-2)" if entry is not None else ""
             add("error", "V22", [key], f"box {key} code {code!r} is not a {tax_year or ''} box 12 code{when} — "
@@ -1742,7 +1742,11 @@ def _validate_w2(fields: dict[str, ExtractedField], tax_year: int | None):
         seen[code] = amount
         route = entry["route"]
         if route != "info":
-            add("info", "V25", [key], f"box {key} code {code} — {entry['title']}: {_W2_ROUTE_NOTES[route]}", codes_cite)
+            # The title the W-2's own year prints (Phase K JK28, 2026-10-16: every year read the 2026 titles, so a
+            # 2019-2024 W-2's code F or S showed the Roth SEP / Roth SIMPLE words the 2025 edition added, beside its own
+            # year's citation). The 2019-2024 indexes close code M's entry with a period, which the colon replaces.
+            title = entry["title"].rstrip(".")
+            add("info", "V25", [key], f"box {key} code {code} — {title}: {_W2_ROUTE_NOTES[route]}", codes_cite)
     box14b = fields.get("14b")
     has_14b = box14b is not None and box14b.value not in (None, "")
     if has_14b and tax_year is not None and tax_year < 2026:

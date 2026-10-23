@@ -82,6 +82,39 @@ forms:
   part_year_or_nonresident: 'Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02).
     Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident
     treatment), whichever is more advantageous.'
+  # Role citations (Phase K JK28, 2026-10-16): what state_scope adds to a part-year or nonresident filer's citations
+  # (the top-level `citation` is the PIT-RES instructions, the only document this entry pointed at before). A part-year
+  # resident may file either return: the role lists the PIT-NON instructions' election sentence and Form PIT-NON, and
+  # the resident option is the top-level PIT-RES instructions, which print the same election on their p. 2 (the PIT-RES
+  # form is not listed again: its URL is already cited under all_citations, and a forms entry would replace that entry's
+  # second-pass text in knowledge/sources_states.yaml). A nonresident files Form PIT-NON. The URLs are the PIT-NON
+  # instructions and form links on the Division of Revenue's Personal Income Tax Forms page
+  # (revenue.delaware.gov/personal-income-tax-forms/); each PDF was downloaded twice on 2026-10-16 with identical sha256
+  # (PIT-NON instructions 00d725d4629cc817..., PIT-NON 67ab63aa8f554972...; PIT-RES instructions b8b1dc59b9ce12b4...).
+  # The part_year_or_nonresident text above agrees with both 2025 instructions (they no longer print the former Form
+  # 200-01 and 200-02 numbers it recalls, and nothing in them contradicts it).
+  citations:
+    part_year:
+    - source: >-
+        2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), 'Who Must
+        File' (p. 2): '2. Part-Year Residents – must file a Delaware tax return if:' — 'Part-Year Residents may elect to
+        file either a resident or non- resident return. You may wish to prepare both a resident and non-resident
+        return. File only the return which is more advantageous for you.'
+      url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-NON_Instructions_2025-01.pdf
+    - source: >-
+        2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: 'If you were
+        a part-year resident in 2025, give the dates')
+      url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-NON_2025-01_PaperInteractiveIPM.pdf
+    nonresident:
+    - source: >-
+        2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), 'Who Must
+        File' (p. 2): '1. Non-Residents – File a tax return if you have any gross income during the tax year from
+        sources in Delaware.'
+      url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-NON_Instructions_2025-01.pdf
+    - source: >-
+        2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: 'DELAWARE
+        INDIVIDUAL NON-RESIDENT INCOME TAX RETURN')
+      url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-NON_2025-01_PaperInteractiveIPM.pdf
 credits_verification: 'State credits were researched from the cited DOR sources (the 2025 PIT-RES instructions, with
   every rate and dollar amount confirmed against the printed 2025 Form PIT-RES itself) and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.'
@@ -340,6 +373,68 @@ tax:
     married_filing_jointly: 6500
     married_filing_separately: 3250
     head_of_household: 3250
+  # Phase K JK28 (2026-10-23): the PIT-RES personal credits as cited data. Both sources fetched twice on
+  # 2026-10-23 with identical sha256: the 2025 Form PIT-RES (7b7ae51e2ede9141) and the 2025 PIT-RES Instructions
+  # (b8b1dc59b9ce12b4).
+  # limited_to_tax_line: the Instructions (b8b1dc59b9ce12b4, re-fetched twice 2026-10-23, identical sha256), p. 10,
+  # "Line 32 Total Non-Refundable Credits": "The total of all non-refundable credits (Lines 27a through 31) is limited
+  # to the amount of your Delaware tax liability on Line 26."
+  exemption_credits:
+    citation:
+      source: '2025 Delaware Form PIT-RES (Revision 20260407), page 2: line 27a "PERSONAL CREDITS Enter number of
+        exemptions x $110", line 27b "CHECK BOXES Spouse 60 or over (Column A) Self 60 or over (Column B) Enter number
+        of boxes checked on Line 27b x $110", line 32 "TOTAL NON-REFUNDABLE CREDITS - Add Line 27a through Line 31",
+        line 33 "BALANCE - Subtract Line 32 from Line 26. If Line 32 is greater than Line 26, enter 0." Second pass:
+        the 2025 PIT-RES Instructions, p. 8 "Line 27a Personal Credits", p. 9 "Line 27b Additional Personal Credits"
+        and p. 10 "Line 32 Total Non-Refundable Credits", which print the same $110 and line text.'
+      url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf
+    form: Form PIT-RES
+    credits:
+      personal:
+        amount: 110
+        line: 27a
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The taxpayer and spouse part of line 27a''s "number of exemptions". Instructions p. 8: "Example: If you
+          filed your federal return as married filing jointly and have no dependents, enter $220." "NOTE: You are not
+          entitled to a Delaware Personal Credit if you are listed as a dependent on another individual''s Federal
+          return." Married filing separately counts 2 only on a combined separate return (Filing Status 4, one form,
+          Columns A and B); a Status 3 return counts the filer alone. Delaware has no qualifying-surviving-spouse
+          status (Status 1 is "Single, Divorced, Widow(er)"), so a surviving spouse counts 1.'
+      senior:
+        amount: 110
+        line: 27b
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'Line 27b "Additional Personal Credits". Instructions p. 9: "If you and/or your spouse were 60 years of
+          age or over on December 31, 2025, check the appropriate box(es), multiply the number of boxes checked by $110,
+          and enter the total on Line 27b." "If you are filing a combined separate return (Filing Status 4), enter $110
+          in the column(s) that correspond to the checked box(es)." The age is 60, not 65.'
+      dependent:
+        amount: 110
+        line: 27a
+        note: 'The dependents part of line 27a''s "number of exemptions". Instructions p. 8: "Enter the total number of
+          dependents listed on your federal return, multiply by $110 and enter the total on Line 27a." "You are still
+          eligible for this credit even though you do not recognize personal exemptions on your federal return." "If
+          you are married and filing separate returns (Filing Status 3), allocate dependents to each return and
+          multiply by $110, entering the total for each return in Column B." "If you were not required to file a
+          federal return, enter $110 for each spouse reporting income plus $110 for each person who could have been
+          listed as a dependent had you been required to file a federal return."'
+    exemption_amount_line: 27a + 27b
+    credit_line: '32'
+    tax_after_line: '33'
+    limited_to_tax_line: '26'
+    notes:
+    - 'Line 27a is ONE count on the form ("Enter number of exemptions x $110"): enter personal + dependent there; line
+      27b is the 60-or-over count. Lines 27a and 27b are not totaled on a line of their own: line 32 adds them to
+      lines 28-31, and line 33 subtracts line 32 from line 26. Instructions p. 10: "The total of all non-refundable
+      credits (Lines 27a through 31) is limited to the amount of your Delaware tax liability on Line 26."'
+    - 'No AGI limitation: the 2025 face and instructions print none for lines 27a and 27b.'
+    - 'Line 32 and line 33 here count only lines 27a and 27b, from the op''s tax (line 24; line 26 = line 24 + line 25
+      lump-sum tax). They equal the filed lines when lines 25 and 28-31 are zero; otherwise add those on the form. Below
+      $60,000 of taxable income the filed line 24 comes from the tax table (see the pack notes).'
+    - 'Line 32 is limited to the tax (limited_to_tax_line): the op caps lines 27a + 27b at its tax, which is line 26
+      when line 25 is zero. With credits on lines 28-31 or a line 25 tax, cap their sum at line 26 on the form.'
   notes:
   - '2025 UNCHANGED TAX AND (for the tax lines) UNCHANGED FORM NUMBERING: the brackets, the $3,250/$6,500 standard
     deduction, the $2,500 additional standard deduction, and the $110 personal credits are all unchanged from 2024,
@@ -362,8 +457,8 @@ tax:
     not subtractions from income. 2025 Form PIT-RES Line 27a Personal Credits = $110 x the number of exemptions (''Enter
     number of exemptions ___ x $110''; e.g. MFJ with no dependents = $220), and Line 27b Additional Personal Credits
     = $110 per taxpayer/spouse age 60 or over on December 31, 2025 — both are subtracted from the Line 26 total tax,
-    not from income. They are NOT applied by calc.state_tax; claim them on the form. exemptions_count and dependents_count
-    must therefore be 0 for this pack. A filer claimed as a dependent on another person''s return gets $0 personal
+    not from income. calc.state_tax applies them past the tax line when exemption_credit_counts is passed
+    (tax.exemption_credits, Phase K JK28); exemptions_count and dependents_count must be 0 for this pack. A filer claimed as a dependent on another person''s return gets $0 personal
     credit.'
   - 'SINGLE rate schedule for ALL filing statuses: 30 Del. C. sec. 1102(a)(14) publishes one rate table with no filing-status
     variation, and the 2025 State Income Tax Table has no filing-status columns; the schedule is duplicated per status
@@ -416,7 +511,7 @@ tax:
   - Delaware EITC (elect refundable 4.5% or nonrefundable 20% of the federal EITC, Line 34), child care credit (50%
     of the federal Form 2441 credit, maximum $3,000, Line 31), other-state credit (Line 28), volunteer firefighter
     credit ($1,000 per spouse, Line 29), and the $110 personal credits (Lines 27a/27b) are all CREDITS against tax
-    — none of them are exemptions and none are modeled by this op. All are unchanged for 2025.
+    — none of them are exemptions, and only the personal credits are modeled (tax.exemption_credits). All are unchanged for 2025.
   - 'Rounding: ''Dollar amounts on your return must be rounded off to the nearest whole dollar. This means that amounts
     from 50 to 99 cents are increased to the next dollar'' — matches the engine''s half-up rounding, and the 2025
     tax-schedule example rounds $3,455.06 to $3,455.'

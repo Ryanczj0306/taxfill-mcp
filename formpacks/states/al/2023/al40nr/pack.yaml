@@ -59,9 +59,10 @@
 # 23, 25, 26, 28, 29, 31, 33; the page-2 part totals and the Part I / IV / V lines the schedules and the
 # worksheet carry in; the schedule totals and carried amounts) and the schedule-page name / SSN mirrors.
 # The blank's JavaScript fills them in Adobe Reader; taxfill runs no JavaScript, so they stay mapped for
-# the caller to write (P-007 class 4). Six of them hold a nonzero default: LINE10 and the five NOL-85A
-# Part III line 19 cells (SchNOL85ALN19, -1 ... -4) each hold "000.00", the formatted zero percentage
-# the form recomputes (adjudicated in NONZERO_READONLY_DEFAULTS).
+# the caller to write (P-007 class 4). Since Phase K JK28 (2026-10-23) the schedule-page name / SSN boxes
+# are declared in `mirrors:` (see that block), so fill_form builds each one the caller leaves out. Six of them hold a
+# nonzero default: LINE10 and the five NOL-85A Part III line 19 cells (SchNOL85ALN19, -1 ... -4) each hold "000.00", the
+# formatted zero percentage the form recomputes (adjudicated in NONZERO_READONLY_DEFAULTS).
 #
 # Viewer flags. 84 mapped widgets ship Hidden + Print (/F 6: every page-1 data widget except CKNRA, and
 # LINE19's page-13 widget) and 16 ship without Print (/F 0: the page-2 driver's-license block, NDL /
@@ -159,8 +160,9 @@ source_url: https://www.revenue.alabama.gov/wp-content/uploads/2024/03/23f40nr.p
 pdf_sha256: a41dd6a3fef84c0ab17fe3a110248498efa303b8de5318e680994d105c5dd7f3
 acroform_root: ''
 fields:
-  # --- page 1: Form 40NR page 1 — header, filing status / exemptions, income lines 5-12 in columns A (Alabama tax withheld),
-  # B (All Sources) and C (Alabama Income), deductions 13-17, tax 18-20, payments 21-28, owe / refund 29-33, signature.
+  # --- page 1: Form 40NR page 1 — header, filing status / exemptions, income lines 5-12 in columns A (Alabama tax
+  # withheld), B (All Sources) and C (Alabama Income), deductions 13-17, tax 18-20, payments 21-28, owe / refund 29-33,
+  # signature.
   - {line: "SSSN", field: "SSSN", type: text, maxlen: 9}
   - {line: "SPSSN", field: "SPSSN", type: text, maxlen: 9}
   - {line: "CHKDECEASED", field: "CHKDECEASED", type: checkbox, on_state: "/X"}
@@ -245,8 +247,8 @@ fields:
   - {line: "PREPPHONENO", field: "PREPPHONENO", type: text, maxlen: 7}
   - {line: "PREPZIP", field: "PREPZIP", type: text, maxlen: 9}
   - {line: "PREPADDRESS", field: "PREPADDRESS", type: text}
-  # --- page 2: Form 40NR page 2 — Part I other income, Part II adjustments, Part III other adjustments, Part IV federal income
-  # tax deduction, Part V dependents, Part VI general information, driver's-license block.
+  # --- page 2: Form 40NR page 2 — Part I other income, Part II adjustments, Part III other adjustments, Part IV federal
+  # income tax deduction, Part V dependents, Part VI general information, driver's-license block.
   - {line: "PG2PT1LINEB1", field: "PG2PT1LINEB1", type: money, maxlen: 9}
   - {line: "PG2PT1LINEC1", field: "PG2PT1LINEC1", type: money, maxlen: 9}
   - {line: "PG2PT1LINEC4", field: "PG2PT1LINEC4", type: money, maxlen: 9}
@@ -2005,5 +2007,64 @@ identity_fields:
   - SSSN
   - FIRSTNAME
   - LASTNAME
+# Page-header mirrors (Phase K JK28, 2026-10-23): fill_form builds each mirror the caller leaves out from its page-1
+# source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)"). Read on this blank rendered at 200 dpi: the schedules print "Name(s) as shown on Form 40NR" (A),
+# "Name(s) as shown on Form 40 or 40NR" (OC), "NAME(S) AS SHOWN ON TAX RETURN" (DS, AATC, AAC, W-2, CP, RS), "Name(s)
+# as shown on Form 40, or 40NR" (NOL-85), "Name(s) as shown on Form 40, 40NR, or 40X" (NOL-85A) and "Name(s) as shown
+# on your return" (4952A), beside the filer's SSN box ("Your social security number", "PRIMARY'S SOCIAL SECURITY
+# NUMBER", "Identifying number", ...) and, on DS, AATC, AAC, W-2 and RS, a spouse's SSN box. Every box is ReadOnly; the
+# document JavaScript fills it the way each template says: a name box with UPPER(FIRSTNAME) + " " +
+# UPPER(MIDDLEINITIAL) + " " + UPPER(LASTNAME) (PG2NAME, SCHOCNAME, SCHAATCNAME, SCHAACNAME and SCHW2NAME copy
+# "NAME"), an SSN box with ZPAD(SSSN, 9), and a spouse box with ZPAD(SPSSN, 9) only when SPSSN is not blank (the
+# template renders empty then). The name is the primary filer's alone, as the JavaScript writes it, so a return the
+# DOR's own form filled verifies; verify compares case-blind. The JavaScript fills the NOL-85 / NOL-85A, CP and 4952A
+# headers only when their schedule carries data (and blanks them otherwise); a template cannot say that, so
+# fill_form writes them on every fill — a header on a schedule not filed is harmless, a blank one on a filed schedule
+# is not. Schedule RS's name and SSN boxes have no JavaScript setter at all; the face still prints them.
+# Not declared, with the face's reason: page 4 (Schedules B, D and E, the back of Schedule A, whose page 3 says
+# "(Schedules B, D, and E are on back)") prints "Name(s) as shown on Form 40NR (Do not enter name and social security
+# number if shown on other side)" over PG2NAME / SSSNB2A (PG2NAME is a NOT_A_MIRROR row of the gate), and page 6
+# (Schedule HOF, the back of Schedule DS) prints "NAME(S) as shown on tax return (Do not enter name and social security
+# number if shown on other side)" over SCHHOFNAME / SCHHOFSSN / SCHHOFSPSSN; SCHDSSPSSN takes SPSSN or, when that is
+# blank, QUAL/SPOUSESSN, which no template can say (an optional segment would join the two), so it stays the
+# caller's; and Schedule KRCC-I's "Recipient's Name" / "Social Security Number" (SCHKRCCINAME, SCHKRCCISSN, -2) are
+# entries, not copies (no ReadOnly bit, no JavaScript setter).
+mirrors:
+  NAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule A (page 3) "Name(s) as shown on Form 40NR"
+  SSSNB: "{SSSN}"  # its "Your social security number"
+  SCHDSNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule DS (page 5) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHDSSSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NUMBER"
+  SCHOCNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule OC, pages 7-13 (one field)
+  SCHOCSSN: "{SSSN}"  # "Your social security number"
+  SCHAATCNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule AATC (page 14) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHAATCSSN: "{SSSN}"  # "PRIMARY SOCIAL SECURITY NO."
+  SCHAATCSPSSN: "{SPSSN}"  # "SPOUSE SOCIAL SECURITY NO."
+  SCHAACNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule AAC (page 15) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHAACSSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NO."
+  SCHAACSPSSN: "{SPSSN}"  # "SPOUSE'S SOCIAL SECURITY NO."
+  SchNOL85NAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Form NOL-85 (page 18) "Name(s) as shown on Form 40, or 40NR"
+  SchNOL85SSN: "{SSSN}"  # "Your Social Security Number"
+  # Form NOL-85A, five copies (pages 20, 22, 24, 26, 28): "Name(s) as shown on Form 40, 40NR, or 40X"
+  SchNOL85ANAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 1 (page 20)
+  SchNOL85ASSN: "{SSSN}"  # "Your Social Security Number"
+  SchNOL85ANAME-1: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 2 (page 22)
+  SchNOL85ASSN-1: "{SSSN}"  # "Your Social Security Number"
+  SchNOL85ANAME-2: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 3 (page 24)
+  SchNOL85ASSN-2: "{SSSN}"  # "Your Social Security Number"
+  SchNOL85ANAME-3: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 4 (page 26)
+  SchNOL85ASSN-3: "{SSSN}"  # "Your Social Security Number"
+  SchNOL85ANAME-4: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 5 (page 28)
+  SchNOL85ASSN-4: "{SSSN}"  # "Your Social Security Number"
+  SCHW2NAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule W-2 (page 30) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHW2SSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NO."
+  SCHW2SPSSN: "{SPSSN}"  # "SPOUSE'S SOCIAL SECURITY NO."
+  SCHCPNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule CP (page 31) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHCPSSN: "{SSSN}"  # "YOUR SOCIAL SECURITY NUMBER"
+  SCHRSNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule RS (page 32) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHRSSSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NO."
+  SCHRSSPSSN: "{SPSSN}"  # "SPOUSE'S SOCIAL SECURITY NO."
+  SCH4952ANAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Form 4952A (page 34) "Name(s) as shown on your return"
+  SSSNB7A: "{SSSN}"  # "Identifying number"
 signature: {page: 1}
 mailing: null

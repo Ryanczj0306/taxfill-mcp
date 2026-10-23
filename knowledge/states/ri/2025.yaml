@@ -103,21 +103,86 @@ effective_law_changes:
 residency:
   summary: 'Resident = an individual domiciled in the State of Rhode Island, OR an individual who maintains a permanent
     place of abode in Rhode Island and spends more than 183 days of the year in Rhode Island (statutory resident).
-    Domicile is the place an individual regards as their permanent home — the place to which they intend to return
-    after a period of absence — and a domicile once established continues until a new fixed and permanent home is
-    acquired. Nonresident = any person not within the definition of a resident, who must file if they have income
-    derived from or connected with Rhode Island sources and are required to file a federal return. Part-year resident
-    = an individual who was a RI resident for a period of less than 12 months; files if required to file a federal
-    return. Nonresidents and part-year residents both use Form RI-1040NR (nonresidents complete RI Schedule II;
-    part-year residents complete RI Schedule III). Note: the Rhode Island income tax is imposed on all the federal
-    taxable income of a resident who is a member of the armed forces regardless of where received, while military
-    pay received by a NONRESIDENT service person stationed in Rhode Island is not subject to RI income tax (other
-    RI-source income of that person still is); under the Military Spouses Residency Relief Act a servicemember''s
+    Domicile is the place an individual regards as their permanent home — the place to which they intend to return after
+    a period of absence — and a domicile once established continues until a new fixed and permanent home is acquired.
+    Nonresident = any person not within the definition of a resident, who must file if they have income derived from or
+    connected with Rhode Island sources and are required to file a federal return. Part-year resident = an individual
+    who was a RI resident for a period of less than 12 months; files if required to file a federal return. Nonresidents
+    and part-year residents both use Form RI-1040NR (a nonresident with income from outside Rhode Island completes RI
+    Schedule II and a part-year resident with income from outside Rhode Island completes RI Schedule III; a filer whose
+    income is all from Rhode Island sources completes neither). Note: the Rhode Island income tax is imposed on all the
+    federal taxable income of a resident who is a member of the armed forces regardless of where received, while
+    military pay received by a NONRESIDENT service person stationed in Rhode Island is not subject to RI income tax
+    (other RI-source income of that person still is); under the Military Spouses Residency Relief Act a servicemember''s
     spouse''s service income may be taxable only by their state of legal residence if certain conditions are met.'
 forms:
   resident: Form RI-1040 (Rhode Island Resident Individual Income Tax Return)
-  part_year_or_nonresident: Form RI-1040NR (Rhode Island Nonresident Individual Income Tax Return) — nonresidents
-    complete RI Schedule II; part-year residents complete RI Schedule III
+  part_year_or_nonresident: Form RI-1040NR (Rhode Island Nonresident Individual Income Tax Return), which part-year
+    residents file too — a nonresident with income from outside Rhode Island completes RI Schedule II and a part-year
+    resident with income from outside Rhode Island completes RI Schedule III, entering the result on line 11 (Rhode
+    Island allocated income tax); a nonresident or part-year resident whose income is all from Rhode Island sources
+    completes neither schedule and enters the line 10 amount on line 11.
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the resident RI-1040 instructions, so this
+  # entry named Form RI-1040NR and RI Schedules II and III without citing them. Each role cites the RI-1040NR
+  # instructions' 'WHO MUST FILE A RETURN' sentence and Line 11 for it, the RI-1040NR return's schedule note for it
+  # and its own schedule. The URLs are the "RI-1040NR Nonresident Return Instructions (2025)", "RI-1040NR Nonresident
+  # income Tax Return (2025)", "RI-1040NR Schedule II (2025)" and "RI-1040NR Schedule III (2025)" links on the
+  # Division's Personal Income Tax Forms page (tax.ri.gov/forms/individual-tax-forms/personal-income-tax-forms), read
+  # from its 2026-10-09 web.archive.org capture because the live page answers scripted requests with a browser check;
+  # each PDF was downloaded from tax.ri.gov twice on 2026-10-16 with identical sha256 (instructions
+  # 0de4dad2f410f27e..., RI-1040NR f02af7292b26d926..., Schedule II 7431ecdb5c5ebe13..., Schedule III
+  # 09beb754f7f2821b...). CORRECTED the same day from the return and its instructions: this entry said nonresidents
+  # complete RI Schedule II and part-year residents RI Schedule III, but for 2025 each schedule is for a filer 'with
+  # income from outside Rhode Island', and 'NONRESIDENTS and PART-YEAR RESIDENTS with all income from Rhode Island
+  # sources do not need to complete either schedule II or III' (RI-1040NR page 3; line 11's three boxes and the
+  # instructions' Line 11, p. I-5). `residency.summary` carried the same two-schedule rule and now says the same (the
+  # return and the instructions were downloaded twice more on 2026-10-16, same sha256).
+  citations:
+    part_year:
+    - source: >-
+        2025 Instructions for Filing RI-1040NR (for Rhode Island nonresidents or part-year residents filing Form
+        RI-1040NR; Revised 11/2025) — p. I-1: 'These instructions are for the use of non-resident and part-year resident
+        taxpayers only. Full Year resident taxpayers will file their individual income tax returns on Form RI-1040.';
+        'WHO MUST FILE A RETURN': 'Every part-year individual who was a resident for a period of less than 12 months is
+        required to file a Rhode Island return if he or she is required to file a federal return. Part-year residents
+        should complete page 15, Schedule III.'; 'Line 11 – Rhode Island Allocated Income Tax' (p. I-5): 'If ALL your
+        income is from Rhode Island, check the first box and enter the amount from line 10 on this line. ... If you are
+        a PART-YEAR RESIDENT with income from outside Rhode Island, complete page 15, RI Schedule III and enter the
+        result on this line.'
+      url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040NR%20Instructions%20122025.pdf
+    - source: >-
+        2025 Form RI-1040NR, Nonresident Individual Income Tax Return (with RI Schedules W and E) — page 3, 'RI SCHEDULE
+        II AND III - ALLOCATION AND MODIFICATION FOR NONRESIDENTS': 'Schedule III should be completed by PART-YEAR
+        RESIDENTS with income from outside Rhode Island. RI Schedule III is located on page 15. NONRESIDENTS and
+        PART-YEAR RESIDENTS with all income from Rhode Island sources do not need to complete either schedule II or
+        III.'
+      url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040NRWE_w.pdf
+    - source: >-
+        2025 RI Schedule III, Part-year Resident Tax Calculation (p. 1): 'THIS SCHEDULE IS ONLY TO BE COMPLETED BY
+        PART-YEAR RESIDENTS. FULL YEAR NONRESIDENTS COMPLETE RI SCHEDULE II. A part-year resident is a person who changed
+        his legal residence by moving into or out of Rhode Island at any time during the year 2025.'
+      url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025%20RI-1040NR%20Schedule%20III_w.pdf
+    nonresident:
+    - source: >-
+        2025 Instructions for Filing RI-1040NR (for Rhode Island nonresidents or part-year residents filing Form
+        RI-1040NR; Revised 11/2025) — p. I-1, 'WHO MUST FILE A RETURN': 'Every nonresident individual required by the
+        laws of the United States to file a federal income tax return who has income derived from or connected with
+        Rhode Island sources must file a Rhode Island individual income tax return. Nonresidents should complete page
+        13, Schedule II.'; 'Line 11 – Rhode Island Allocated Income Tax' (p. I-5): 'If ALL your income is from Rhode
+        Island, check the first box and enter the amount from line 10 on this line. If you are a NONRESIDENT with income
+        from outside Rhode Island, complete page 13, RI Schedule II and enter the result on this line.'
+      url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040NR%20Instructions%20122025.pdf
+    - source: >-
+        2025 Form RI-1040NR, Nonresident Individual Income Tax Return (with RI Schedules W and E) — page 3, 'RI SCHEDULE
+        II AND III - ALLOCATION AND MODIFICATION FOR NONRESIDENTS': 'Schedule II should be completed by NONRESIDENTS
+        with income from outside Rhode Island. RI Schedule II is located on page 13. ... NONRESIDENTS and PART-YEAR
+        RESIDENTS with all income from Rhode Island sources do not need to complete either schedule II or III.'
+      url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040NRWE_w.pdf
+    - source: >-
+        2025 RI Schedule II, Full Year Nonresident Tax Calculation (p. 1): 'THIS SCHEDULE IS ONLY TO BE COMPLETED BY FULL
+        YEAR NONRESIDENTS. PART-YEAR RESIDENTS COMPLETE RI SCHEDULE III.'
+      url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025%20RI-1040NR%20Schedule%20II_w.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

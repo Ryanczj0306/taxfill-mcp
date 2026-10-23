@@ -21,7 +21,7 @@ Documented rendering rules (mirror of the filler's spec, on purpose):
 
 Relation grammar (``pack.relations``)::
 
-    relation := expr '==' expr
+    relation := expr '==' expr [ 'unless' GUARD ]
     expr     := term (('+' | '-') term)*
     term     := unary (('*' | '/') unary)*
     unary    := '-' unary | atom
@@ -31,6 +31,18 @@ Relation grammar (``pack.relations``)::
     LINE     := [0-9]+[a-z]?          e.g. '9', '24', '1a'
               | word id               e.g. 'L1e' (letter-led identifier)
               | either, then ('.' segment)*   e.g. '10.a', 'ai.27.d' (dotted keys)
+    GUARD    := the line key of one CHECKBOX line of the same pack   e.g. 'alt_tax_method'
+
+The ``unless`` clause (Phase K JK28, 2026-10-16) is for a face that prints a box telling the reader a line is computed
+another way: IA 1040's "Check if using alternate tax (line 5), tax reduction calculation (line 12), or low-income
+exemption", whose Income Tax Reduction Worksheet (41-146) puts its own amount on line 12, so ``12 == max(7 - 11, 0)``
+fails that correct return. ``12 == max(7 - 11, 0) unless alt_tax_method`` is reported SKIPPED (visible, never failing
+``ok``) while the box is checked in the on-disk dump — the box's export value, e.g. IA's recycled ``/Spouse over 65``,
+not ``/Off`` — and is evaluated as usual while it is not. :func:`verify_form` and :func:`verify_filing` read the box
+from the PDF; a bare :func:`relations` call reads it from its ``fields`` dump, and without one every guard reads as
+unchecked, so the relation is enforced (a guard only ever suspends a check the PDF itself shows the filer opted out
+of). The pack schema validates the clause at load (``schemas.formpack.split_relation_guard``: one guard, after the
+equation, naming a checkbox line of the pack) and rejects it in ``cross_form`` rules.
 
 Disambiguation rule: a bare integer token (e.g. ``24``) is a LINE REFERENCE
 when the pack's field map or the supplied values contain that line key;
@@ -119,6 +131,22 @@ loud, not blind. ``test_verify_readonly_sweep.py`` holds every repo pack to
 zero clipping FAILs on a one-line fill, and to mapping no ReadOnly widget
 whose blank text already clips — so for a shipped pack even the no-blank
 fallback cannot FAIL on text the fill did not write.
+
+Page-header mirrors (Phase K JK28): a pack that declares ``mirrors`` (a line
+repeating other lines at the top of a later page, CA Form 540's "Your name:" /
+"Your SSN or ITIN:" on Sides 2-6) gets one identity check per mirror,
+:func:`mirror_checks`. The value a header must hold is computed from the
+values ON DISK with ``schemas.formpack.mirror_ladder`` (the template's full
+value, then the abbreviations the pack's ``mirror_abbreviations`` allow) and
+measured against the mirror's own widgets with ``taxfill_core.textfit``: the
+functions the filler builds mirrors with. Those are shared on purpose, unlike
+the normalizers above: the template language and the box arithmetic must mean
+one thing on both sides, and the check stays independent where it matters,
+because its inputs are read back from the PDF, never taken from the filler or
+the caller. A header its box cuts off FAILs, and so does an abbreviation of a
+value that fits; an abbreviation passes only when the full value does not fit
+and it does. A value written with digits, dashes and spaces only is compared
+by its digits (an SSN dashed on one side and not the other is the same number).
 """
 
 from __future__ import annotations
@@ -130,12 +158,23 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP, localcontext
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from taxfill_core.datadir import home_display, user_path
 # fetch's own URL -> cache-file lookup (never a download): verify FINDS a pinned blank, it never fetches one.
 from taxfill_core.fetch import cached_blank_path
 from taxfill_core.knowledge import assert_pack_filing_grade
-from taxfill_core.schemas.formpack import FormPack, PackField
+from taxfill_core.schemas.formpack import (
+    FormPack,
+    PackField,
+    mirror_ladder,
+    mirror_order,
+    mirror_sources,
+    mirror_words,
+    split_relation_guard,
+)
+from taxfill_core.textfit import Fit, WidgetBox, widget_box
+from taxfill_core.textfit import fit as box_fit
 
 __all__ = [
     "AssertionCheck",
@@ -157,6 +196,7 @@ __all__ = [
     "digits_only",
     "independent_recompute",
     "irs_round",
+    "mirror_checks",
     "normalize_text",
     "parse_money",
     "qualified_field_name",
@@ -661,17 +701,17 @@ def read_pdf_fields(pdf_path: str | Path) -> dict[str, str]:
     """Dump ``{fully_qualified_field_name: raw_value}`` from a filled PDF."""
     from pypdf import PdfReader  # local import keeps the pypdf layer isolated
 
-    path = Path(pdf_path)
+    path = user_path(pdf_path)  # "~/..." as an agent types it (Phase K JK28); messages show "~" again
     if not path.is_file():
         raise FileNotFoundError(
-            f"no PDF at {path} — pass the filled PDF written by fill_form "
+            f"no PDF at {home_display(path)} — pass the filled PDF written by fill_form "
             f"(check the workspace drafts/ directory) or a blank from fetch_blank"
         )
     reader = PdfReader(str(path))
     raw_fields = pdf_field_dicts(reader)
     if not raw_fields:
         raise ValueError(
-            f"{path} has no AcroForm fields — it is not a fillable form; "
+            f"{home_display(path)} has no AcroForm fields — it is not a fillable form; "
             f"re-download the blank with fetch_blank from the pack's official "
             f"source_url and refill it"
         )
@@ -734,10 +774,10 @@ def read_text_widgets(
     """
     from pypdf import PdfReader  # local import keeps the pypdf layer isolated
 
-    path = Path(pdf_path)
+    path = user_path(pdf_path)
     if not path.is_file():
         raise FileNotFoundError(
-            f"no PDF at {path} — pass the filled PDF written by fill_form "
+            f"no PDF at {home_display(path)} — pass the filled PDF written by fill_form "
             f"(check the workspace drafts/ directory)"
         )
     reader = PdfReader(str(path))
@@ -1073,6 +1113,12 @@ def _eval_relation_sides(
             raise _BadOperand(line, value)
         return number
 
+    lhs, rhs = _parse_relation(relation, line_names, resolve)
+    return lhs, rhs, list(dict.fromkeys(blanks))
+
+
+def _parse_relation(relation: str, line_names: frozenset[str], resolve) -> tuple[Decimal, Decimal]:
+    """Parse '<expr> == <expr>' (no guard clause), resolving each line through ``resolve``; returns (lhs, rhs)."""
     toks = _Tokens(relation)
     lhs = _parse_expr(toks, line_names, resolve)
     toks.expect_op("==")
@@ -1080,7 +1126,21 @@ def _eval_relation_sides(
     trailing_kind, trailing = toks.peek()
     if trailing_kind is not None:
         raise _grammar_error(relation, f"unexpected trailing token {trailing!r}")
-    return lhs, rhs, list(dict.fromkeys(blanks))
+    return lhs, rhs
+
+
+def _check_grammar_only(relation: str, line_names: frozenset[str]) -> None:
+    """Raise on a malformed equation without evaluating it (a SKIPPED relation's string must still be well formed).
+
+    Every line resolves to 1, so no blank denominator can stop the parse halfway; a literal arithmetic failure such
+    as ``1 / (1 - 1)`` is data, not grammar, and passes here as it would FAIL (not raise) when evaluated.
+    """
+    try:
+        _parse_relation(relation, line_names, lambda _line: Decimal(1))
+    except (ZeroDivisionError, InvalidOperation):
+        pass
+    except RecursionError:
+        raise _grammar_error(relation, "the expression nests too deeply to evaluate — flatten the parentheses") from None
 
 
 def evaluate_expression(
@@ -1128,9 +1188,38 @@ def _check_relation(
     relation: str,
     values: Mapping[str, float | int | Decimal],
     line_names: frozenset[str],
+    box_checked=None,
 ) -> RelationCheck:
+    """One relation, reported under its full pack string (guard clause included).
+
+    ``box_checked(line) -> bool`` reads an ``unless`` guard's box from the on-disk dump (:func:`relations`); None
+    means no dump was supplied, so a guard reads as unchecked and the relation is evaluated.
+    """
+    equation, guard = split_relation_guard(relation)
+    checked = box_checked(guard) if guard is not None and box_checked is not None else None
+    if checked:
+        _check_grammar_only(equation, line_names)
+        return RelationCheck(
+            relation=relation,
+            status=SKIPPED,
+            detail=(
+                f"relation '{relation}' not checked: box '{guard}' is checked on this PDF, and the pack suspends this "
+                f"relation while it is — the box marks a return the form's instructions complete another way (a "
+                f"worksheet, an alternate method, or lines they say to skip; the pack's comment on this relation "
+                f"quotes them), so this arithmetic does not apply. Check the relation's lines against those "
+                f"instructions instead"
+            ),
+        )
+    if guard is None:
+        guard_note = ""
+    elif checked is None:
+        guard_note = (f". The pack suspends this relation while box '{guard}' is checked; no field dump was "
+                      f"supplied to read that box, so the relation was checked")
+    else:
+        guard_note = (f". The pack suspends this relation only while box '{guard}' is checked, and it is not checked "
+                      f"on this PDF; check that box only if the form's instructions call for it on this return")
     try:
-        lhs, rhs, blanks = _eval_relation_sides(relation, values, line_names)
+        lhs, rhs, blanks = _eval_relation_sides(equation, values, line_names)
     except (ZeroDivisionError, InvalidOperation):
         # decimal raises DivisionByZero (a ZeroDivisionError) for x/0 and
         # InvalidOperation for 0/0 — both are the same data failure here.
@@ -1180,7 +1269,7 @@ def _check_relation(
             blank_as_zero=blanks,
             detail=f"{lhs_dollars} == {rhs_dollars} (whole dollars, IRS rounding){blank_note}",
         )
-    left = relation.split("==", 1)[0].strip()
+    left = equation.split("==", 1)[0].strip()
     if left in line_names and left in blanks:
         # Phase K JK5: a blank total line (CA 540 line 33 after a fill through line 31) used to get "recompute the
         # input lines with calc" — no calc op makes a form's own subtraction; the relation already has the value.
@@ -1198,12 +1287,17 @@ def _check_relation(
         blank_as_zero=blanks,
         detail=(
             f"relation '{relation}' failed: left side = {lhs_dollars}, right side = "
-            f"{rhs_dollars} (difference {lhs_dollars - rhs_dollars:+d}){blank_note} — {remedy}"
+            f"{rhs_dollars} (difference {lhs_dollars - rhs_dollars:+d}){blank_note} — {remedy}{guard_note}"
         ),
     )
 
 
-def relations(pack: FormPack, values: Mapping[str, float | int | Decimal]) -> list[RelationCheck]:
+def relations(
+    pack: FormPack,
+    values: Mapping[str, float | int | Decimal],
+    *,
+    fields: Mapping[str, str] | None = None,
+) -> list[RelationCheck]:
     """Evaluate every ``pack.relations`` entry against the supplied line values.
 
     Missing lines count as 0 (IRS blank-means-zero) and each substitution is
@@ -1213,12 +1307,30 @@ def relations(pack: FormPack, values: Mapping[str, float | int | Decimal]) -> li
     malformed relation strings raise :class:`ValueError` (a pack-authoring
     error, not a data failure) with a prescriptive message.
 
+    ``fields`` (an on-disk dump, as :func:`read_pdf_fields` returns it) decides
+    each ``unless <box>`` guard (Phase K JK28): a relation whose box is checked
+    there is SKIPPED. Without it every guard reads as unchecked and the
+    relation is evaluated. Each check's ``relation`` is the full pack string.
+
     Note: :func:`verify_form` / :func:`verify_filing` derive the values for
     on-disk money lines from the PDF dump itself — call them rather than
     feeding this function self-reported numbers.
     """
     line_names = frozenset(f.line for f in pack.fields) | frozenset(values)
-    return [_check_relation(relation, values, line_names) for relation in pack.relations]
+    by_line = {f.line: f for f in pack.fields}
+
+    def box_checked(line: str) -> bool:
+        pack_field = by_line.get(line)
+        if pack_field is None or pack_field.type != "checkbox":
+            # The schema refuses this at load; a pack edited after validation can still carry it.
+            raise ValueError(
+                f"an 'unless' guard names {line!r}, which is not a checkbox line of {pack.form} {pack.tax_year} — "
+                f"name the checkbox line whose check suspends the relation (fix the relation in pack.yaml)"
+            )
+        return _checkbox_member_selected(pack, pack_field, fields)
+
+    reader = box_checked if fields is not None else None
+    return [_check_relation(relation, values, line_names, reader) for relation in pack.relations]
 
 
 # ---------------------------------------------------------------------------
@@ -1895,6 +2007,12 @@ class FilingItem(BaseModel):
         default=None, description="On-disk field dump (read_pdf_fields output)."
     )
     pdf_path: Path | None = Field(default=None, description="Filled PDF to dump when 'fields' is not given.")
+
+    @field_validator("pdf_path")
+    @classmethod
+    def _expand_home(cls, value: Path | None) -> Path | None:
+        # verify_filing's items[].pdf_path may be "~/..." (Phase K JK28): a JSON argument is never shell-expanded.
+        return user_path(value) if value is not None else None
     values: dict[str, float] = Field(
         default_factory=dict,
         description=(
@@ -2406,6 +2524,275 @@ def _confirmed_address_checks(
     return checks
 
 
+# The field label of a page-header mirror check: P-002 must not read a mirror line whose key says "address" as the
+# filing's return address.
+_MIRROR_CHECK_LABEL = "page-header mirror "
+# A value written with digits, dashes and spaces only: a number in some dash style (an SSN, an ITIN).
+_NUMBER_SHAPE_RE = re.compile(r"[0-9 -]+")
+
+
+def _mirror_key(pack_field: PackField, text: str) -> str:
+    """How a mirror is compared: whitespace-collapsed and case-insensitive, digits only on a comb or SSN line."""
+    if pack_field.comb or pack_field.format == "ssn_digits_only":
+        digits = digits_only(text)
+        if digits:
+            return digits
+    return normalize_text(text).casefold()
+
+
+def _mirror_same(pack_field: PackField, actual: str, expected: str) -> bool:
+    """Whether an on-disk mirror repeats what its template builds (:func:`_mirror_key`).
+
+    Digits only, too, when BOTH values are written with digits, dashes and spaces alone: CA's "Your SSN or ITIN:"
+    header is a plain text box, and 999880101 on Side 1 with 999-88-0101 in the header (or the reverse) is the same
+    number (Phase K JK28, 2026-10-16). A value with any other character is compared as text.
+    """
+    if _mirror_key(pack_field, actual) == _mirror_key(pack_field, expected):
+        return True
+    digits = digits_only(actual)
+    return bool(
+        digits
+        and digits == digits_only(expected)
+        and _NUMBER_SHAPE_RE.fullmatch(actual)
+        and _NUMBER_SHAPE_RE.fullmatch(expected)
+    )
+
+
+def _abbreviates(header: str, words: Sequence[tuple[str, bool]]) -> bool:
+    """Whether ``header`` is ``words`` with some shortenable words cut to a leading part (an initial, with or without
+    a period) or left out and every other word whole, in order, case-insensitively."""
+    said = header.casefold().split()
+    fits = [[False] * (len(words) + 1) for _ in range(len(said) + 1)]  # fits[i][j]: said[i:] abbreviates words[j:]
+    fits[len(said)][len(words)] = True
+    for i in range(len(said), -1, -1):
+        for j in range(len(words) - 1, -1, -1):
+            word, may = words[j]
+            if may and fits[i][j + 1]:
+                fits[i][j] = True  # the word is left out
+            elif i < len(said):
+                lead = said[i][:-1] if may and said[i].endswith(".") else said[i]
+                kept = (bool(lead) and word.startswith(lead)) if may else said[i] == word
+                fits[i][j] = kept and fits[i + 1][j + 1]
+    return fits[0][0]
+
+
+def _mirror_written(pack_field: PackField, value: str) -> str:
+    """The text the filler writes for a built mirror value: an ``ssn_digits_only`` line drops dashes and spaces."""
+    return value.replace("-", "").replace(" ", "") if pack_field.format == "ssn_digits_only" else value
+
+
+def _mirror_box_refusal(pack_field: PackField, value: str) -> str | None:
+    """Why the filler would refuse ``value`` in this mirror's box for its FORM, or None when the box takes it.
+
+    The filler's documented rules, reimplemented like the normalizers above: the P-026 'NRA' refusal on a comb or
+    ``ssn_digits_only`` line, then a comb box's MaxLen (after ``ssn_digits_only`` strips dashes and spaces) and its
+    digits only. fill_form leaves a mirror blank, with a warning, when its built value breaks one of them. Whether a
+    plain box has ROOM for a value (its maxlen and its width) is :func:`_mirror_room`'s question.
+    """
+    if (pack_field.comb or pack_field.format == "ssn_digits_only") and value.strip().upper() == "NRA":
+        return "'NRA' never goes in an identifying-number or comb box, P-026"
+    if not pack_field.comb:
+        return None
+    text = _mirror_written(pack_field, value)
+    if pack_field.maxlen is not None and len(text) > pack_field.maxlen:
+        return f"it is {len(text)} characters and the box takes at most {pack_field.maxlen}"
+    if text and not text.isdigit():
+        return "a comb box takes digits only"
+    return None
+
+
+def _mirror_room(pack_field: PackField, text: str, boxes: Sequence[WidgetBox]) -> Fit:
+    """Whether ``text``, as written, fits the mirror's box: the measure fill_form uses (``taxfill_core.textfit``),
+    with the line's maxlen as its character budget. A comb box's width is not measured: its maxlen and digits are
+    refusals (:func:`_mirror_box_refusal`)."""
+    return box_fit(text, boxes, maxlen=pack_field.maxlen, comb=pack_field.comb)
+
+
+def _and(names: Sequence[str]) -> str:
+    """'a', 'a and b', 'a, b and c'."""
+    return names[0] if len(names) == 1 else f"{', '.join(names[:-1])} and {names[-1]}"
+
+
+def _abbreviation_rule(sources: Sequence[str], shortenable: Sequence[str]) -> str:
+    """The pack's abbreviation rule for one mirror, in words: what may shorten and what stays whole."""
+    whole = [line for line in sources if line not in shortenable]
+    return f"{_and(list(shortenable))} shortened to an initial or left out, {_and(whole)} whole"
+
+
+def _mirror_remedy(
+    mirror: str, full: str, expected: str | None, too_wide: str, refusal: str | None, rule: str, *, blank: bool,
+    explain: bool = True,
+) -> str:
+    """What a FAILing mirror check tells the agent to write.
+
+    ``expected`` is the value fill_form writes (the first rung of ``mirror_ladder`` its box holds; None when none
+    does), ``too_wide`` the full value's measurement, ``refusal`` why the box refuses the full value for its form, and
+    ``rule`` the pack's abbreviation rule in words. ``explain`` False drops the full value's measurement from an
+    abbreviation's reason, for a detail that has just given the header's own.
+    """
+    if refusal is not None:
+        # fill_form refuses the built value and leaves the mirror blank (its warning says so): pointing the agent back
+        # at it, or at passing exactly that value, would loop (Phase K JK28, 2026-10-16).
+        return (
+            f"the box refuses that value ({refusal}), so fill_form cannot build it and leaves it blank — pass "
+            f"'{mirror}' yourself with a value the box takes that still repeats it (on a comb or SSN box, the same "
+            f"digits); if none exists, the pack's maxlen, format or template does not fit this value: report it, then "
+            f"re-verify"
+        )
+    if expected is None:
+        return (
+            f"no value the pack allows fits its box, so refill with fill_form, leaving '{mirror}' out (it leaves a "
+            f"header its box cannot hold blank), and hand-write it in the box after printing"
+        )
+    why = "" if expected == full else (
+        (f"{full!r} does not fit its box ({too_wide}), so " if explain else "")
+        + f"write {expected!r}, the abbreviation the pack's mirror_abbreviations allow ({rule}) that fits: "
+    )
+    if blank:
+        return (
+            f"{why}refill with fill_form: it fills the mirrors you leave out (or pass '{mirror}': {expected!r}), then "
+            f"re-verify"
+        )
+    return (
+        f"{why}refill with fill_form, leaving '{mirror}' out (fill_form fills the mirrors you leave out) or passing "
+        f"exactly {expected!r}, then re-verify"
+    )
+
+
+def _mirror_check(
+    pack: FormPack, mirror: str, fields: Mapping[str, str], boxes: Sequence[WidgetBox], where: str
+) -> tuple[Status, str, str]:
+    """``(status, detail, on-disk value)`` of one mirror (:func:`mirror_checks`)."""
+    by_line = {pf.line: pf for pf in pack.fields}
+    template = pack.mirrors[mirror]
+    sources = mirror_sources(template)
+    on_disk = {line: _lookup_raw(pack, by_line[line], fields) or "" for line in sources}
+    pack_field = by_line[mirror]
+    raw = _lookup_raw(pack, pack_field, fields) or ""
+    actual = normalize_text(raw)
+    name = f"page-header mirror '{mirror}'{where}"
+    shortenable = pack.mirror_abbreviations.get(mirror, [])
+    ladder = mirror_ladder(template, on_disk, shortenable)
+    if not ladder:
+        held = (f"; the box holds {actual!r}, which no line of this form backs — confirm it at review" if actual
+                else "")
+        return SKIPPED, (
+            f"{name} not checked: every line its template {template!r} reads ({', '.join(sources)}) is blank on disk, "
+            f"so there is nothing to mirror{held}"
+        ), actual
+    full = ladder[0]
+    built = f"its template {template!r} builds {full!r} from this form's own lines"
+    rule = _abbreviation_rule(sources, shortenable) if shortenable else ""
+    refusal = _mirror_box_refusal(pack_field, full)
+    rooms = [_mirror_room(pack_field, _mirror_written(pack_field, rung), boxes) for rung in ladder]
+    expected = next((rung for rung, room in zip(ladder, rooms) if room.fits is not False), None)
+
+    def remedy(*, blank: bool, explain: bool = True) -> str:
+        return _mirror_remedy(mirror, full, expected, rooms[0].detail, refusal, rule, blank=blank, explain=explain)
+
+    if not actual:
+        if refusal is None and expected is None:
+            shortest = (
+                f", nor the shortest abbreviation the pack's mirror_abbreviations allow, {ladder[-1]!r} "
+                f"({rooms[-1].detail})" if len(ladder) > 1 else ""
+            )
+            return SKIPPED, (
+                f"{name} is blank: its box cannot hold {full!r} ({rooms[0].detail}){shortest}, so fill_form leaves it "
+                f"blank — hand-write it in the box after printing (this check cannot read handwriting)"
+            ), actual
+        must = full if refusal is not None or expected is None else expected
+        return FAIL, f"{name} is BLANK but must repeat {must!r} ({built}) — {remedy(blank=True)}", actual
+    room = _mirror_room(pack_field, raw.rstrip(), boxes)  # the header as drawn, its own width
+    if _mirror_same(pack_field, actual, full):
+        if room.fits is False:
+            return FAIL, (
+                f"{name} holds {actual!r}, which its box cuts off ({room.detail}) — "
+                f"{remedy(blank=False, explain=False)}"
+            ), actual
+        measured = "" if pack_field.comb else (
+            f" ({room.detail})" if room.fits else f" (its width was not measured: {room.detail})"
+        )
+        return PASS, f"{name} repeats {full!r}, as its template {template!r} builds it{measured}", actual
+    words = [(word.casefold(), short) for word, short in mirror_words(template, on_disk, shortenable)]
+    if shortenable and _abbreviates(actual, words):
+        said = (
+            f"{name} holds {actual!r}, an abbreviation of {full!r} (its template {template!r}) that the pack's "
+            f"mirror_abbreviations allow ({rule})"
+        )
+        if rooms[0].fits:
+            return FAIL, (
+                f"{said}, but {full!r} fits its box ({rooms[0].detail}), so the header must repeat it whole — refill "
+                f"with fill_form, leaving '{mirror}' out or passing exactly {full!r}, then re-verify"
+            ), actual
+        if rooms[0].fits is None:
+            return SKIPPED, (
+                f"{said}; whether {full!r} fits its box was not measured ({rooms[0].detail}), so this check "
+                f"cannot tell whether the abbreviation was needed — verify the filled PDF itself (its path, not a "
+                f"field dump)"
+            ), actual
+        if room.fits is False:
+            return FAIL, (
+                f"{said}, which its box still cuts off ({room.detail}) — {remedy(blank=False, explain=False)}"
+            ), actual
+        return PASS, (
+            f"{name} abbreviates {full!r} (its template {template!r}) as {actual!r}, which the pack's "
+            f"mirror_abbreviations allow ({rule}): {full!r} does not fit its box ({rooms[0].detail})"
+            + (f", and {actual!r} fits ({room.detail})" if room.fits else "")
+        ), actual
+    return FAIL, (
+        f"{name} holds {actual!r} but {built}, and the header must repeat them — {remedy(blank=False)}"
+    ), actual
+
+
+def mirror_checks(
+    pack: FormPack,
+    fields: Mapping[str, str],
+    *,
+    form_key: str | None = None,
+    widgets: Sequence[TextWidget | Mapping] | None = None,
+) -> list[IdentityCheck]:
+    """One identity check per page-header mirror the pack declares (``pack.mirrors``, Phase K JK28).
+
+    The value a header must hold is computed as fill_form computes it, from this form's own lines AS READ FROM DISK:
+    the first value of ``mirror_ladder`` (the template's full value, then the abbreviations the pack's
+    ``mirror_abbreviations`` allow) that its box holds, measured with ``taxfill_core.textfit`` against ``widgets``
+    (the widgets read off the PDF, each mirror against its own field's). Values compare whitespace-collapsed and
+    case-insensitively, by their digits on a comb or ``ssn_digits_only`` line or when both are written with digits,
+    dashes and spaces alone.
+
+    * PASS: the header repeats the full value and fits its box; or it abbreviates it as ``mirror_abbreviations``
+      allow, the full value does NOT fit and the abbreviation does.
+    * FAIL, which flips ``ok``: the header is cut off; it abbreviates a full value that fits; it is blank while a
+      value that fits exists; or it holds anything else. The detail names the value to write (or, when the box
+      refuses the value for its form, what to pass instead).
+    * SKIPPED: the template renders empty (nothing to mirror); the header is blank because no value the pack allows
+      fits its box (fill_form leaves it so, and the filer hand-writes it after printing); or it abbreviates a value
+      whose box could not be measured, e.g. a field dump with no ``widgets``, so whether it had to is unknown.
+
+    With no widget of the mirror's field to measure, a header that repeats the full value passes and says so.
+    ``form_key`` labels the checks of one :func:`verify_filing` item; :func:`verify_form` leaves it out.
+    """
+    if not pack.mirrors:
+        return []
+    by_line = {pf.line: pf for pf in pack.fields}
+    key = form_key or pack.form
+    prefix, where = (f"{form_key}: ", f" on {form_key}") if form_key else ("", "")
+    boxes: dict[str, list[WidgetBox]] = {}
+    for widget in _coerce_widgets(widgets or []):
+        boxes.setdefault(widget.name, []).append(
+            widget_box(widget.rect_width, widget.da, courier=widget.monospace, multiline=widget.multiline)
+        )
+    checks: list[IdentityCheck] = []
+    for mirror in mirror_order(pack.mirrors):
+        pack_field = by_line[mirror]
+        own = boxes.get(qualified_field_name(pack, pack_field)) or boxes.get(pack_field.field) or []
+        status, detail, actual = _mirror_check(pack, mirror, fields, own, where)
+        checks.append(IdentityCheck(
+            field=f"{prefix}{_MIRROR_CHECK_LABEL}{mirror}", status=status, values={key: actual}, detail=detail,
+        ))
+    return checks
+
+
 # ---------------------------------------------------------------------------
 # Report assembly
 # ---------------------------------------------------------------------------
@@ -2439,7 +2826,7 @@ def widget_flag_problems(pdf_path: str | Path, written_names: Iterable[str]) -> 
     wanted = set(written_names)
     problems: list[str] = []
     checked = 0
-    reader = PdfReader(str(pdf_path))
+    reader = PdfReader(str(user_path(pdf_path)))
     for index, page in enumerate(reader.pages, 1):
         page_box = visible_box(page)
         for ref in page.get("/Annots") or []:
@@ -2501,7 +2888,10 @@ def _pitfall_p001(clipping: Sequence[ClippingCheck]) -> PitfallCheck:
 
 
 def _pitfall_p002(identity: Sequence[IdentityCheck]) -> PitfallCheck:
-    address_checks = [check for check in identity if "address" in check.field.casefold()]
+    address_checks = [
+        check for check in identity
+        if "address" in check.field.casefold() and _MIRROR_CHECK_LABEL not in check.field  # JK28: not a mirror
+    ]
     if not address_checks:
         return PitfallCheck(
             id="P-002",
@@ -2592,7 +2982,11 @@ def verify_form(
     (the address the user receives mail at TODAY, from intake) adds the
     P-002 address comparison. Clipping and the checkbox audit always run;
     ``pitfall_checks`` always reports P-001 and P-003, plus P-002 when
-    ``confirmed_current_address`` is given. When the widgets are read from the
+    ``confirmed_current_address`` is given. Every page-header mirror the pack
+    declares (``pack.mirrors``) gets an identity check (:func:`mirror_checks`,
+    Phase K JK28), measured against ``widgets`` (read off the PDF when
+    ``fields`` is a path; a dump with no widgets cannot measure a header's
+    width). When the widgets are read from the
     PDF, the clipping scan covers the ReadOnly widgets the pack maps and reads
     the pack's pinned blank from the local cache (never the network) to skip
     any whose value is still the blank's own — see the module docstring.
@@ -2616,7 +3010,7 @@ def verify_form(
     widgets_from_disk = False
     flag_checks: list[PitfallCheck] = []
     if isinstance(fields, (str, Path)):
-        pdf_path = Path(fields)
+        pdf_path = user_path(fields)
         fields = read_pdf_fields(pdf_path)
         if widgets is None:
             # The pack's bound names let the reader scan the ReadOnly widgets
@@ -2646,7 +3040,7 @@ def verify_form(
     assertion_checks = (
         assertion_diff(pack, fields, expected) if expected is not None else []
     ) + value_checks
-    relation_checks = relations(pack, merged_values)
+    relation_checks = relations(pack, merged_values, fields=fields)
     recompute_checks = (
         independent_recompute(merged_values, independent) if independent is not None else []
     )
@@ -2664,7 +3058,7 @@ def verify_form(
         _confirmed_address_checks([(pack.form, pack, fields)], confirmed_current_address)
         if confirmed_current_address is not None
         else []
-    )
+    ) + mirror_checks(pack, fields, widgets=widget_models)  # Phase K JK28: page-header mirrors (none on most packs)
     regression = regression_diff(fields, baseline) if baseline is not None else None
 
     pitfall_checks = [_pitfall_p001(clipping_checks)]
@@ -2718,7 +3112,10 @@ def verify_filing(
     the user receives mail at TODAY, from intake) compares every on-disk
     address line against it — the P-002 incident shape where ONE wrong
     historical address lands consistently on every form. ``pitfall_checks``
-    reports P-001, P-002 (the address used across the filing), and P-003.
+    reports P-001, P-002 (the address used across the filing), and P-003. Each
+    item's page-header mirrors get identity checks, labelled with its
+    ``form_key`` and measured against the widgets read off its PDF
+    (:func:`mirror_checks`, Phase K JK28).
 
     ``rehearsal`` (core only, never the MCP tool) verifies a rehearsal filing of draft / planning-year packs, as
     :func:`verify_form` does (JT4c).
@@ -2781,11 +3178,15 @@ def verify_filing(
     clipping_checks: list[ClippingCheck] = []
     checkbox_checks: list[CheckboxCheck] = []
     cross_form_checks: list[CrossFormCheck] = []
+    widgets_by_key: dict[str, list[TextWidget]] = {}  # each item's widgets, for its page-header mirrors (JK28)
     for item in filing_items:
         item_fields = fields_by_key[item.form_key]
         relation_checks.extend(
-            check.model_copy(update={"relation": f"{item.form_key}: {check.relation}"})
-            for check in relations(item.pack, values_by_key[item.form_key])
+            # Phase K JK28 (2026-10-23): the detail carries the form_key too, so the MCP summary's failures and
+            # skipped lists (built from details) say which item a relation belongs to.
+            check.model_copy(update={"relation": f"{item.form_key}: {check.relation}",
+                                     "detail": f"{item.form_key}: {check.detail}"})
+            for check in relations(item.pack, values_by_key[item.form_key], fields=item_fields)
         )
         if independent is not None and item.form_key in independent:
             recompute_checks.extend(
@@ -2799,6 +3200,7 @@ def verify_filing(
             if item.fields is None and item.pdf_path
             else []
         )
+        widgets_by_key[item.form_key] = item_widgets
         clipping_checks.extend(
             check.model_copy(update={"name": f"{item.form_key}: {check.name}"})
             for check in _widget_clipping_checks(item.pack, item_widgets)
@@ -2820,6 +3222,10 @@ def verify_filing(
                 _filed_with_a_return(filing_items),
             )
         )
+    for item in filing_items:  # Phase K JK28: each form's page-header mirrors, against that form's own lines
+        identity_checks.extend(mirror_checks(
+            item.pack, fields_by_key[item.form_key], form_key=item.form_key, widgets=widgets_by_key[item.form_key],
+        ))
 
     return VerifyReport(
         ok=_all_pass(

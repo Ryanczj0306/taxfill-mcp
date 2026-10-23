@@ -71,6 +71,42 @@ forms:
     on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. Beginning with
     tax year 2025 the optional nonresident-presumption statement is a CHECKBOX on form IT 10 or IT 1040 — form IT
     NRS is discontinued.
+  # (Phase K JK28, 2026-10-16): the role's own pages and form, which state_scope adds to a part-year or nonresident
+  # filer's citations. Ohio has ONE return for every role, so the role citation is the booklet's own sentences for that
+  # role (the same IT 1040 booklet the top-level `citation` names, pinned to the role's pages) plus form IT NRC, the
+  # form only part-year residents and nonresidents use. The booklet URL is the pack's primary citation; the IT NRC URL
+  # is the "2025" link on the Department's "IT NRC Forms" page (tax.ohio.gov/individual/file-now/IT-NRC-Forms). Each PDF
+  # was downloaded twice on 2026-10-16 with identical sha256 (IT 1040 booklet 931b21e7484ba96e..., IT NRC
+  # 7e2f83559370510e...). The entry above agrees with both (booklet p. 5: 'Beginning with tax year 2025, Ohio will no
+  # longer be using form IT NRS').
+  citations:
+    part_year:
+    - source: >-
+        2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation), 'Who Must File an Ohio Income Tax
+        Return?' (p. 12): 'Every Ohio resident and every part-year resident is subject to the Ohio income tax.' —
+        'What Is My Ohio Residency Status?' (p. 13): 'Part-year resident: You are a part-year resident of Ohio if you
+        were a resident of Ohio for a portion of the tax year and a nonresident for the rest of the tax year.' — and
+        'IT NRC - Ohio Nonresident Credit Calculation' (p. 35): 'Include this form with your Ohio IT 1040 and retain a
+        copy for your records. Generally, only Ohio part-year residents and full-year nonresidents should use this
+        form.'
+      url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+    - source: >-
+        2025 IT NRC, Ohio Nonresident Credit Calculation — the 3-page form itself (page 1: 'This form is for individuals
+        who were either full-year nonresidents or part-year residents of Ohio during the tax year above.')
+      url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/itnrc-fi.pdf
+    nonresident:
+    - source: >-
+        2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation), 'Who Must File an Ohio Income Tax
+        Return?' (p. 12): 'Every nonresident having Ohio-sourced income must also file.' — 'What Is My Ohio Residency
+        Status?' (p. 13): 'Nonresident: You are a nonresident if you were a resident of another state for the entire
+        tax year.' — and 'IT NRC - Ohio Nonresident Credit Calculation' (p. 35): 'Include this form with your Ohio IT
+        1040 and retain a copy for your records. Generally, only Ohio part-year residents and full-year nonresidents
+        should use this form.'
+      url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+    - source: >-
+        2025 IT NRC, Ohio Nonresident Credit Calculation — the 3-page form itself (page 1: 'This form is for individuals
+        who were either full-year nonresidents or part-year residents of Ohio during the tax year above.')
+      url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/itnrc-fi.pdf
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice - confirm
   each amount and your eligibility at the cited source before claiming it. Two 2025 changes: the Joint Filing Credit
   now requires MAGI under $750,000 (its top tier reads $75,001-$749,999), and the Home School Expenses Credit changed

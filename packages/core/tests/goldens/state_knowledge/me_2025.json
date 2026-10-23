@@ -2,6 +2,9 @@
  "_strings": {
   "@@17aea0a92605": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1cb94a7d76dd": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nr_fillable.pdf",
+  "@@24144437a4ce": "2025 Maine Schedule NR (Form 1040ME), Schedule for Calculating the Nonresident Credit, page 1: 'Who must file Schedule NR? Part-year resident, nonresident and safe harbor resident individuals who are required to file a Maine return, but have income not taxable by Maine and use the same filing status on the Maine return as used on the federal return.' — page 2: 'A part-year resident is subject to Maine income tax on all income received while a resident of Maine, plus any income derived from Maine sources during the period of nonresidence.'",
+  "@@2b57c5ba2dd3": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nrh_fillable.pdf",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@2f4ad35fdd0d": "https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/earned-income-credit",
   "@@3e5d703c97d6": "Treaty conformity — ME conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from ME income (it flows through the federal starting point; do not add it back on the ME return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Maine's resident return (Form 1040ME) starts from federal adjusted gross income: 2025 Form 1040ME line 14 is \"FEDERAL ADJUSTED GROSS INCOME\" and line 16 is \"MAINE ADJUSTED GROSS INCOME. (Line 14 plus line 15a, minus line 15b.)\" Maine's only income additions are on Schedule 1A (per 36 M.R.S. § 5122(1)), and the 2025 Schedule 1A list contains NO add-back of federally treaty-exempt income — the additions are limited to specific items (non-Maine municipal/state bond interest, NOL recovery adjustment, MainePERS contributions, bonus depreciation / Maine capital investment credit add-backs, fiduciary adjustments, nonresident installment-sale gain election, pass-through financial-institution adjustments, wellness programs credit adjustment, enrolled tribal members). Because treaty-exempt income is already excluded from federal AGI and there is no Maine add-back, it flows through and is not re-taxed. Maine therefore conforms to federal treaty exclusions (unlike California, which adds treaty income back on Schedule CA). Basis: 2025 Form 1040ME instructions, Line 14/15a/15b and Schedule 1A (25_1040me_gen_instr_w_cover_pg.pdf).",
@@ -24,6 +27,7 @@
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a90bc62a00a5": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2025.pdf",
   "@@c79eae3e0d70": "Law change NOT modeled by the engine (status final_form_published): Dependent Exemption Tax Credit re-cut for 2025 (L.D. 210; P.L. 2025, c. 388, Pt. Q): \"For tax years beginning on or after January 1, 2025, the dependent exemption tax credit amount is doubled for each qualifying dependent of the taxpayer who has not attained six years of age before the end of the taxable year\" — $305 for each qualifying child or dependent at least six years of age and $610 for each under six (2024's flat $300 no longer applies). The phaseout was also re-cut to $20 for each $500 (previously $7.50 for each $1,000) by which Maine AGI exceeds $100,000 single / $125,000 head of household / $150,000 MFJ-surviving spouses / $75,000 MFS (2024: $200,000 / $400,000), with those thresholds inflation-adjusted for tax years after 2025. Resolve via: 2025 booklet IMPORTANT CHANGES for 2025 ('Dependent exemption tax credit'), the 2025 Tax Year Quick Facts and the Worksheet for Dependent Exemption Tax Credit at the citation URL — the credit is subtracted from TAX on Schedule A, so dependents_count never changes the base calc.state_tax uses.",
+  "@@ce129adb7477": "2025 Maine Schedule NRH (Form 1040ME), Schedule for Apportionment and for Calculating the Nonresident Credit for Married Person Electing to File Single — line 11 'NONRESIDENT CREDIT: Multiply line 10 by line 7, column C. Enter result here and on Form 1040ME, line 21'",
   "@@d2f5108cc6b2": "Law change NOT modeled by the engine (status final_form_published): The pension income deduction gained an FAGI PHASEOUT for 2025 ($125,000 single/MFS, $187,500 head of household, $250,000 MFJ/surviving spouses) and now EXCLUDES certain pre-age-55 distributions (IMPORTANT CHANGES for 2025). Two further 2025 repeals from the same list: the Maine capital investment credit is repealed prospectively, and the easy-enrollment health insurance checkoff is repealed. Resolve via: 2025 booklet IMPORTANT CHANGES for 2025 (pension income deduction phaseout $125,000/$187,500/$250,000 and pre-age-55 distribution exclusion) and the Schedule 1S instructions at the citation URL — the pension deduction is a line 15b subtraction, so take it on the form before supplying line 16 Maine AGI as taxable_base.",
   "@@e11953f10ed3": "Form 1040ME with Schedule NR (Form 1040ME), \"Schedule for Calculating the Nonresident Credit\" (line 9 flows to Form 1040ME line 21); married taxpayers electing to file as single may use Schedule NRH (Form 1040ME) instead (line 11). Used by nonresidents, part-year residents, and safe harbor residents. (Full-year residents may not file Schedule NR.)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
@@ -404,6 +408,18 @@
      "url": "@@17aea0a92605"
     },
     {
+     "answers": "@@24144437a4ce",
+     "cadence": "@@7b0fe2ae1ffd",
+     "topic": "forms_and_instructions",
+     "url": "@@1cb94a7d76dd"
+    },
+    {
+     "answers": "@@ce129adb7477",
+     "cadence": "@@7b0fe2ae1ffd",
+     "topic": "forms_and_instructions",
+     "url": "@@2b57c5ba2dd3"
+    },
+    {
      "answers": "State of Maine - Individual Income Tax, 2025 Rates (MRS, Income/Estate Tax Division, prepared February 3, 2026) — the standalone rate sheet used as the primary rate source: rate schedules #1 Single/MFS ($26,800/$63,450; $1,554 / $4,028 constants), #2 Head of Household ($40,200/$95,150; $2,332 / $6,041), #3 Married and Surviving Spouses Filing Jointly ($53,600/$126,900; $3,109 / $8,057); 'Personal Exemption: $5,150'; 'Standard Deduction: Single - $15,000, Married Filing Jointly - $30,000, Head of Household - $22,500, Married Filing Separately - $15,000'; additional amount for age or blindness $1,600 married / $2,000 unmarried; COLA multipliers 1.274 and 1.269 (brackets) and 1.25 (personal exemption) under 36 M.R.S. § 5403",
      "cadence": "@@7b0fe2ae1ffd",
      "topic": "forms_and_instructions",
@@ -587,6 +603,18 @@
       {
        "source": "@@76e9ae249dd0",
        "url": "@@17aea0a92605"
+      },
+      {
+       "source": "2025 Maine Form 1040ME General Instructions, 'Who must file?' (p. 3): 'Generally, if you are a nonresident or a safe harbor resident who has income from Maine sources resulting in a Maine income tax liability, you must file a Maine income tax return.' — 'What is my Residency Status?' (p. 3): 'Nonresident: I was not a resident or part-year resident in 2025, but I do have Maine-source income.' — 'NOTE: Safe harbor residents, part-year residents, and nonresidents, file Form 1040ME and Schedule NR or NRH.'",
+       "url": "@@17aea0a92605"
+      },
+      {
+       "source": "2025 Maine Schedule NR (Form 1040ME), Schedule for Calculating the Nonresident Credit, page 1: 'Who must file Schedule NR? Part-year resident, nonresident and safe harbor resident individuals who are required to file a Maine return, but have income not taxable by Maine and use the same filing status on the Maine return as used on the federal return.' — page 2: 'A nonresident or safe harbor resident is subject to Maine income tax on taxable income derived from sources within Maine.'",
+       "url": "@@1cb94a7d76dd"
+      },
+      {
+       "source": "@@ce129adb7477",
+       "url": "@@2b57c5ba2dd3"
       }
      ],
      "filing_role": "nonresident",
@@ -654,6 +682,18 @@
       {
        "source": "@@76e9ae249dd0",
        "url": "@@17aea0a92605"
+      },
+      {
+       "source": "2025 Maine Form 1040ME General Instructions, 'What is my Residency Status?' (p. 3): 'Part-year Resident: I was domiciled in Maine for part of the year and was not a full-year resident as defined in 2) above.' — 'NOTE: Safe harbor residents, part-year residents, and nonresidents, file Form 1040ME and Schedule NR or NRH.'",
+       "url": "@@17aea0a92605"
+      },
+      {
+       "source": "@@24144437a4ce",
+       "url": "@@1cb94a7d76dd"
+      },
+      {
+       "source": "@@ce129adb7477",
+       "url": "@@2b57c5ba2dd3"
       }
      ],
      "filing_role": "part_year",

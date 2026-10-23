@@ -74,6 +74,47 @@ forms:
   part_year_or_nonresident: Same Form K-40, with Schedule S (Supplemental Schedule) Part B "Income Allocation for
     Nonresidents and Part-Year Residents" required to compute the nonresident percentage (K-40 line 9 / Schedule
     S line B23). Kansas does not have a separate standalone nonresident form.
+  # (Phase K JK28, 2026-10-16): each role's own instructions and schedule, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` cites the booklet's resident figures, so this entry named
+  # Schedule S Part B without pointing at it or at the sentence that sends each role there. The two URLs are the 2025
+  # Individual Income Tax booklet (ip25.pdf) and the 2025 Schedule S (schs25.pdf) on ksrevenue.gov; each PDF was
+  # downloaded twice on 2026-10-16 with identical sha256 (ip25 8cbc2ea8d4f877a0..., schs25 743a39941df89417...). The
+  # entry above agrees with the 2025 booklet (pp. 3 and 6) and is unchanged. Each Schedule S entry ends, after ' | ',
+  # with this pack's all_citations description of schs25.pdf, verbatim: the source registry keeps one description per
+  # (topic, url) and reads `forms` before `all_citations`, so the first role entry is the one it keeps (Schedule S
+  # re-downloaded: same sha256; page 1 'PART A - Modifications to Federal Adjusted Gross Income', page 2 'PART B -
+  # Income Allocation for Nonresidents and Part-Year Residents').
+  citations:
+    part_year:
+    - source: >-
+        2025 Kansas Individual Income Tax booklet (ip25), 'Who Must File a Return' (p. 3): 'PART-YEAR RESIDENTS. You are
+        considered a part-year resident of Kansas if you were a Kansas resident for less than 12 months during the tax
+        year. As a part-year resident, you must include the dates that you were a resident in Kansas on Form K-40 and
+        complete Part B of Schedule S.' — K-40 Instructions, 'Residency Status' (p. 6): 'If you mark the Part-year
+        resident box, enter the dates that you lived in Kansas and complete Schedule S, Part B.'
+      url: https://www.ksrevenue.gov/pdf/ip25.pdf
+    - source: >-
+        2025 Kansas Supplemental Schedule (Schedule S, schs25.pdf), 'PART B - Income Allocation for Nonresidents and
+        Part-Year Residents' (page 2): 'B23. Nonresident allocation percentage (divide line B21 by line B22 and round to
+        the fourth decimal place, not to exceed 100.0000). Enter result here and on line 9 of Form K-40' | Kansas DOR —
+        2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part B income allocation for
+        nonresidents/part-year residents
+      url: https://www.ksrevenue.gov/pdf/schs25.pdf
+    nonresident:
+    - source: >-
+        2025 Kansas Individual Income Tax booklet (ip25), 'Who Must File a Return' (p. 3): 'NONRESIDENTS. If you are not
+        a resident of Kansas but received income from Kansas sources, you must file a Kansas return regardless of the
+        amount of income received from Kansas sources (see Kansas Source Income as provided in Schedule S Part B
+        Instructions).' — K-40 Instructions, 'Residency Status' (p. 6): 'Nonresidents must also complete Part B of
+        Schedule S.'
+      url: https://www.ksrevenue.gov/pdf/ip25.pdf
+    - source: >-
+        2025 Kansas Supplemental Schedule (Schedule S, schs25.pdf), 'PART B - Income Allocation for Nonresidents and
+        Part-Year Residents' (page 2): 'B23. Nonresident allocation percentage (divide line B21 by line B22 and round to
+        the fourth decimal place, not to exceed 100.0000). Enter result here and on line 9 of Form K-40' | Kansas DOR —
+        2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part B income allocation for
+        nonresidents/part-year residents
+      url: https://www.ksrevenue.gov/pdf/schs25.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

@@ -57,11 +57,6 @@ residency:
     taxed as full-year residents only if the booklet''s military conditions are all true; a nonresident
     servicemember''s spouse and Oregon residents living abroad have their own rules. Oregon registered domestic
     partners (RDPs) file using the married statuses with an ''as if'' federal return.'
-forms:
-  resident: Form OR-40 - Oregon Individual Income Tax Return for Full-year Residents (2025)
-  part_year_or_nonresident: Form OR-40-P (part-year resident) or Form OR-40-N (nonresident), 2025 — instructions
-    150-101-048-1; a part-year or nonresident filer prorates deductions, the federal tax liability subtraction and
-    certain credits by the Oregon percentage.
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. The Oregon Kids Credit figures are taken
   from the January 29, 2026 reissue of the 2025 booklet (the reissue exists specifically to correct that credit''s
@@ -193,11 +188,13 @@ all_citations:
     (9.863%); line 37 earned income credit (Table 9 percentages 9% or 12%); line 38 Oregon Kids Credit ($1,050 per qualifying
     dependent, up to five); tax return mailing addresses; check payee; April 15, 2026 due date
   url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
-- source: 2025 Form OR-40-N and Form OR-40-P Instructions, Oregon Individual Income Tax for Nonresidents and
-    Part-year Residents (150-101-048-1, Rev. 12-30-25) — p.21 '2025 Tax rate charts', which print the FULL four-bracket
-    Chart S and Chart J (including the $4,400 / $11,100 and $8,800 / $22,200 breakpoints that the resident booklet
-    omits because its tax tables govern below $50,000), plus the worked chart examples and the Oregon-percentage
-    proration of deductions and the federal tax liability subtraction
+- source: 2025 Form OR-40-N and Form OR-40-P Instructions, Oregon Individual Income Tax for Nonresidents and Part-year
+    Residents (150-101-048-1, Rev. 12-30-25) — 'What form do I use?' (p. 7; Form OR-40-P for a part-year resident, Form
+    OR-40-N for a nonresident, with the joint-return cases in Table 2, p. 11); p.21 '2025 Tax rate charts', which print
+    the FULL four-bracket Chart S and Chart J (including the $4,400 / $11,100 and $8,800 / $22,200 breakpoints that the
+    resident booklet omits because its tax tables govern below $50,000), plus the worked chart examples and the
+    Oregon-percentage proration of deductions and the federal tax liability subtraction ('Form OR-40-N filers only',
+    p. 21)
   url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf
 unverified:
 - 'Revenue Online payment URL: the 2025 booklet directs filers to www.oregon.gov/dor and to click on ''Revenue
@@ -265,6 +262,86 @@ tax:
     married_filing_jointly: 5670
     married_filing_separately: 2835
     head_of_household: 4560
+  # Phase K JK28 (2026-10-23): the OR-40 exemption credit as cited data, with its AGI ceilings. Both sources
+  # fetched twice on 2026-10-23 with identical sha256: the 2025 Form OR-40 (eaa5ca450083c771) and the 2025 Form
+  # OR-40 Instructions (4ee45bad719499e2).
+  exemption_credits:
+    citation:
+      source: '2025 Form OR-40 (150-101-040, Rev. 09-18-25), page 1 "Exemptions": 6a "Credits for yourself" and 6b
+        "Credits for your spouse" (boxes Regular, Severe disability, Someone else can claim you/your spouse as a
+        dependent), 6c "Total number of dependents", 6d "Total number of dependent children with a qualifying
+        disability", 6e "Total exemptions. Add lines 6a through 6d"; page 3 line 25 "Exemption credit. If the amount on
+        line 7 is $100,000 or less, multiply your total exemptions on line 6e by $256. Otherwise, see instructions", line
+        28 "Total standard credits. Add lines 25 through 27", line 29 "Tax minus standard credits. Line 24 minus line
+        28. If line 28 is more than line 24, enter 0". Second pass and the AGI rule: the 2025 Form OR-40 Instructions
+        (150-101-040-1, Rev. 01-29-26), pp. 12-13 lines 6a-6e and pp. 17-18 line 25 and the "Exemption credit
+        worksheet".'
+      url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+    form: Form OR-40
+    credits:
+      regular:
+        amount: 256
+        line: 6a-6b
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The "Regular" boxes below lines 6a and 6b. Instructions p. 12: "If you can''t be claimed as a dependent
+          on someone else''s return, check the "Regular" exemption box below line 6a"; "If you''re married and filing a
+          joint return (or filing separately but your spouse has no income) and your spouse can''t be claimed as a
+          dependent on someone else''s return, check the "Regular" exemption box below line 6b". The "Someone else can
+          claim you as a dependent" box earns no credit (worksheet line 1 counts "Regular" boxes only).'
+      severe_disability:
+        amount: 256
+        line: 6a-6b
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The "Severe disability" boxes below lines 6a and 6b. Instructions p. 13: "Severe disability exemption.
+          You or your spouse may qualify for the additional "severe disability" exemption, even if someone else can
+          claim you or your spouse as a dependent" (permanent loss of use of legs or feet or of both hands, permanent
+          blindness, or a permanent condition limiting the ability to earn a living); a licensed physician''s letter is
+          kept with the records.'
+      dependent:
+        amount: 256
+        line: 6c
+        note: 'Line 6c. Instructions p. 13: "Dependents. List your dependents in order from youngest to oldest."
+          "Total number of dependents. On line 6c, enter your total number of dependents, including the total(s) from
+          Schedule OR-ADD-DEP, line 6."'
+      disabled_child:
+        amount: 256
+        line: 6d
+        note: 'Line 6d. Instructions p. 13: "The additional "Child with a disability" exemption is for a dependent
+          child, age 21 or younger, who was eligible for early intervention or special education services" under the
+          federal Individuals with Disabilities Education Act; "Check the "Child with a disability" exemption box for
+          each qualifying child listed on Form OR-40 and Schedule OR-ADD-DEP." Each such child is also counted under
+          dependent, so this count is never more than the dependent count.'
+    exemption_amount_line: 6e x $256
+    credit_line: '25'
+    tax_after_line: '29'
+    agi_ceiling:
+      agi: federal AGI (Form OR-40 line 7)
+      ceilings:
+        regular: {single: 100000, married_filing_jointly: 200000, married_filing_separately: 100000, head_of_household: 200000}
+        dependent: {single: 100000, married_filing_jointly: 200000, married_filing_separately: 100000, head_of_household: 200000}
+        severe_disability: {single: 100000, married_filing_jointly: 100000, married_filing_separately: 100000, head_of_household: 100000}
+        disabled_child: {single: 100000, married_filing_jointly: 100000, married_filing_separately: 100000, head_of_household: 100000}
+      worksheet: 'Instructions p. 17, line 25: "Exemption credit. Depending on your AGI, you may be allowed to claim a
+        credit for the exemptions claimed on line 6 of your return." "If your federal AGI is more than $200,000
+        ($100,000 if your filing status is single or married filing separately)," p. 18 "enter 0; otherwise, use this
+        worksheet to figure your exemption credit." "Exemption credit worksheet": "1. If your federal AGI is more than
+        $100,000 and your filing status is single or married filing separately, or more than $200,000 for all others,
+        enter 0; otherwise, enter the number of "Regular" boxes checked on lines 6a and 6b plus the number of
+        dependents from line 6c." "2. If your federal AGI is more than $100,000, enter 0; otherwise, enter the number
+        of "Severe disability" boxes checked on lines 6a and 6b." "3. If your federal AGI is more than $100,000, enter
+        0; otherwise, enter the number of exemptions for children with a qualifying disability from line 6d." "4. Add
+        lines 1, 2, and 3." "5. Line 4 multiplied by $256. This is your exemption credit."'
+    notes:
+    - 'The ceilings are cliffs, not phase-outs: AGI one dollar more than a ceiling denies that kind''s whole credit, and
+      AGI equal to it keeps it. A qualifying surviving spouse is one of "all others" ($200,000 for regular and
+      dependent). Instructions p. 14, line 7: "Enter your federal AGI from Form 1040, 1040-SR, or 1040-NR, line 11a" —
+      pass that figure as federal_agi.'
+    - 'Line 29 here is counted from the op''s tax (line 20): line 24 adds the line 21-23 additions to tax, and line 28
+      adds the line 26 political contribution credit and the line 27 Schedule OR-ASC standard credits to line 25. It
+      equals the filed line 29 when lines 21-23, 26 and 27 are zero. Below $50,000 of taxable income the filed line 20
+      comes from the tax tables (see the pack notes).'
   notes:
   - 'Base guidance: supply 2025 Form OR-40, line 15 ''Income after subtractions'' (line 9 income after additions minus
     line 14 total subtractions). Line 15 already reflects Oregon additions (Schedule OR-ASC) and all subtractions,
@@ -306,7 +383,8 @@ tax:
     Form OR-40 line 25 ''Exemption credit'' = $256 per exemption for 2025 (taxpayer, spouse, dependents, plus severe-disability
     and disabled-child exemptions), subtracted from tax after the rate applies; it is $0 when federal AGI exceeds
     $200,000 ($100,000 if single or married filing separately), and the severe-disability/disabled-child counts drop
-    out above $100,000 for every status. The calc op does not model this credit.'
+    out above $100,000 for every status. calc.state_tax applies it, ceilings included, past the tax line when
+    exemption_credit_counts and federal_agi are passed (tax.exemption_credits, Phase K JK28).'
   - 'THE 2025 KICKER IS A CREDIT, NOT A RATE OR BASE CHANGE: Oregon''s surplus credit returns on the 2025 return (it
     is claimed in odd tax years — 44.28% on 2023 returns, none on 2024 returns). For 2025 the kicker is 9.863% of
     the filer''s 2024 total Oregon personal income tax liability, claimed on Form OR-40 line 32 in the same way as
@@ -399,3 +477,67 @@ law_changes_checked:
   citation:
     source: 2025 Form OR-40 Instructions, Federal tax law and New information (p.4)
     url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
+# `forms` sits at the END of this pack on purpose (Phase K JK28, 2026-10-16). The source registry
+# (knowledge/sources_states.yaml, built by scripts/assemble_state_sources.py) keeps the FIRST citation of each URL per
+# topic in file order, and get_sources routes a question by those descriptions. forms.citations below reuse the
+# Form OR-40-N and Form OR-40-P instructions URL that `all_citations` describes (the full 2025 tax rate charts and
+# their breakpoints, the worked chart examples, the OR-40-N proration). Placed before `all_citations` (where Virginia
+# keeps `forms`), the role quote replaced that description in the registry, and "proration", "breakpoints" and
+# "federal tax liability subtraction" no longer reached those instructions.
+# Keep `forms` after `all_citations` until the registry keeps every description of a URL (the merge ROADMAP JK20
+# carries).
+forms:
+  resident: Form OR-40 - Oregon Individual Income Tax Return for Full-year Residents (2025)
+  part_year_or_nonresident: 'Form OR-40-P (part-year resident) or Form OR-40-N (nonresident), 2025 — instructions
+    150-101-048-1. A joint return of spouses with different residency status uses Form OR-40-N for a part-year and a
+    nonresident spouse or a nonresident and a full-year resident spouse, and Form OR-40-P for a part-year and a full-year
+    resident spouse (Table 2). A nonresident (Form OR-40-N) prorates the standard or itemized deductions, the federal
+    tax liability subtraction and certain other deductions and modifications by the Oregon percentage (line 42); a
+    part-year resident (Form OR-40-P) instead multiplies the tax on taxable income by the Oregon percentage (line 45).
+    Both prorate the exemption credit by the Oregon percentage.'
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the full-year resident Form OR-40 instructions,
+  # so this entry named Forms OR-40-P and OR-40-N without citing them. Each role cites the joint Form OR-40-N and Form
+  # OR-40-P instructions ('What form do I use?') and its own return. The URLs are the "Form OR-40-N and Form OR-40-P ...
+  # Instructions", "Form OR-40-P ... for Part-year Residents" and "Form OR-40-N ... for Nonresidents" 2025 items of
+  # DOR's FormsPubs library (www.oregon.gov/dor/forms); each PDF was downloaded twice on 2026-10-16 with identical
+  # sha256 (instructions 53670a93d1c3f27a..., OR-40-P 729a8fe24594ad73..., OR-40-N 740ef3e604b9338f...). CORRECTED the
+  # same day from those instructions: this entry said a part-year or nonresident filer prorates deductions and the
+  # federal tax liability subtraction by the Oregon percentage, but for 2025 that is 'Form OR-40-N filers only' (p. 21);
+  # an OR-40-P filer instead multiplies the tax by the Oregon percentage — 'Tax multiplied by Oregon percentage (Form
+  # OR-40-P filers only)' (p. 22) — and the Table 2 joint-return rule (p. 11) was added. The `all_citations` description
+  # of these instructions now carries the same 'Form OR-40-N filers only' limit and names their 'What form do I use?'
+  # page (the registry serves that description, not the role quotes below, for this URL), and each role's 'What form do
+  # I use?' quote prints its whole list (p. 7), the military and resident-abroad lines included (the instructions were
+  # downloaded twice more for that on 2026-10-16, same sha256).
+  citations:
+    part_year:
+    - source: >-
+        2025 Form OR-40-N and Form OR-40-P Instructions, Nonresident/Part-year Resident (Oregon Department of Revenue,
+        150-101-048-1 (Rev. 12-30-25)) — 'What form do I use?' (p. 7): 'Use Form OR-40-P if any ONE of the following is
+        true: • You're a part-year resident and you're not filing a joint return. • Both you and your spouse are
+        part-year residents, or one of you is a full-year Oregon resident and the other is a part-year resident, if
+        you're filing a joint return. • You (or your spouse, if filing a joint return) qualified as an Oregon resident
+        living abroad for part of the year.'; 'Do I need to file an Oregon return?' (p. 5): 'You need to file an Oregon
+        income tax return if your Oregon-source income while you're a nonresident and any income received while you're a
+        resident is more than your standard deduction.'
+      url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf
+    - source: >-
+        2025 Form OR-40-P, Oregon Individual Income Tax Return for Part-year Residents (150-101-055, Rev. 09-18-25) — the
+        return itself; line 45: 'Oregon income tax. Line 44 multiplied by the Oregon percentage'
+      url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-p_101-055_2025.pdf
+    nonresident:
+    - source: >-
+        2025 Form OR-40-N and Form OR-40-P Instructions, Nonresident/Part-year Resident (Oregon Department of Revenue,
+        150-101-048-1 (Rev. 12-30-25)) — 'What form do I use?' (p. 7): 'Use Form OR-40-N if any ONE of the following is
+        true: • You're a nonresident. • You're a special-case Oregon resident. • You (or your spouse, if you're filing a
+        joint return) are in the military, and you're treated as a nonresident for state income tax purposes. • You (or
+        your spouse, if you're filing a joint return) qualified as an Oregon resident living abroad for the entire
+        year.'; 'Do I need to file an Oregon return?' (p. 5): 'You need to file an Oregon income tax return if your
+        Oregon-source income while you're a nonresident and any income received while you're a resident is more than
+        your standard deduction.'
+      url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf
+    - source: >-
+        2025 Form OR-40-N, Oregon Individual Income Tax Return for Nonresidents (150-101-048, Rev. 09-18-25) — the return
+        itself; line 42: 'Deductions and modifications multiplied by the Oregon percentage'
+      url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_101-048_2025.pdf

@@ -52,6 +52,41 @@ forms:
   resident: Form IL-1040, Illinois Individual Income Tax Return
   part_year_or_nonresident: Form IL-1040 with Schedule NR (Nonresident and Part-Year Resident Computation of Illinois
     Tax)
+  # (Phase K JK28, 2026-10-16): each role's own schedule and its instructions, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is the IL-1040 instructions, which name Schedule NR for
+  # both roles ('Who must file an Illinois tax return?', p. 3) but do not carry its rules. The two URLs are the
+  # "Schedule NR" row's PDF and instructions links on IDOR's "2025 Individual Income Tax Forms" page
+  # (tax.illinois.gov/forms/incometax/currentyear/individual.html — the same "currentyear" family as the primary
+  # citation, which IDOR moves to its prior-year archive when it publishes the next year); each PDF was downloaded twice
+  # on 2026-10-16 with identical sha256 (Schedule NR instructions 60ec6ed946bf8fea..., Schedule NR 752364aeb604fcdc...).
+  # The entry's form names agree with both.
+  citations:
+    part_year:
+    - source: >-
+        2025 Schedule NR Instructions (IL-1040 Schedule NR Instructions R-12/25, Illinois Department of Revenue), 'What
+        if I was an Illinois resident for part of the tax year?' (page 1 of 10): 'If you were a resident of Illinois
+        during part of the tax year, you are considered a part-year resident and must complete and file Form IL-1040
+        and Schedule NR if you ■ earned or received income from any source while you were an Illinois resident, ■
+        earned or received income from Illinois sources while you were not an Illinois resident, or ■ are entitled to
+        receive a refund of Illinois Income Tax.'
+      url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-nr-instr.pdf
+    - source: >-
+        2025 Schedule NR, Nonresident and Part-Year Resident Computation of Illinois Tax — the 2-page schedule itself
+        (page 1: 'Attach to your Form IL-1040.')
+      url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-nr.pdf
+    nonresident:
+    - source: >-
+        2025 Schedule NR Instructions (IL-1040 Schedule NR Instructions R-12/25, Illinois Department of Revenue), 'What
+        if I was a nonresident of Illinois for the entire tax year?' (page 1 of 10): 'If you were a nonresident of
+        Illinois during the entire tax year, you must complete and file Form IL-1040 and Schedule NR if you ● earned
+        enough taxable income from Illinois sources to have a tax liability (i.e., your Illinois base income from
+        Schedule NR is greater than your Illinois exemption allowance on Schedule NR), or ● are entitled to a refund of
+        Illinois Income Tax that was withheld from your pay in error.'
+      url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-nr-instr.pdf
+    - source: >-
+        2025 Schedule NR, Nonresident and Part-Year Resident Computation of Illinois Tax — the 2-page schedule itself
+        (page 1: 'Attach to your Form IL-1040.')
+      url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-nr.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

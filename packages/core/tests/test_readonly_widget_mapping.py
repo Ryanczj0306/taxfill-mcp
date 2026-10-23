@@ -530,12 +530,14 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
     ),
     StateComputed(
         "states/ga/2023/ga500/pack.yaml",
-        189,
-        "GA 500's JS-computed totals and mirrors (the ReadOnly SCANLINE voucher barcode and "
-        "SSN_COPY mirror are correctly NOT mapped). 193 -> 189 on 2026-09-28 (Phase J JEa): "
+        190,
+        "GA 500's JS-computed totals and mirrors (the ReadOnly SCANLINE voucher barcode is correctly NOT "
+        "mapped). 189 -> 190 on 2026-10-23 (Phase K JK28): SSN_COPY, the 'YOUR SOCIAL SECURITY NUMBER' "
+        "header on pages 2-5 and 7-28 that the JS copies from TP_SSN, was unmapped and so printed blank; it "
+        "is now the declared mirror tp_ssn_page_header, as in 2024 and 2025. 193 -> 189 on 2026-09-28 (Phase J JEa): "
         "the Schedule 1 worksheet constants TP/SP_S1L4 ('Maximum Earned Income', 4000) and "
         "TP/SP_S1L2_P3 ('Base Military Exclusion', 17500) hold their value in the blank with no "
-        "calculate script — class 1, unmapped. 189 fields but 187 widgets: the three "
+        "calculate script — class 1, unmapped. 190 fields but 188 widgets: the three "
         "s3.10_deduction.* option lines share the radio field CB_DEDUCTION_TYPE, which — "
         "like Ohio's two boxes — carries a bare /Ff = 1 on a selector the printed face "
         "requires the filer to answer",
@@ -573,7 +575,7 @@ STATE_COMPUTED_READONLY: tuple[StateComputed, ...] = (
         "RTNUMBER / ACCNUMBER, which checkDirectDeposit() unlocks only when GN('L46') > 0; the "
         "Schedule 4 name copies TP_FIRSTNAME / MIDINIT / LASTNAME / SUFFIX_COPY; and SSN_COPY "
         "(tp_ssn_page_header), the page-header SSN the JS copies from TP_SSN onto 26 pages, "
-        "which the 2023 pack leaves unmapped. SCANLINE and the class-1 constants TP/SP_S1L4 "
+        "which the 2023 pack left unmapped when this row was measured (it maps it since Phase K JK28). SCANLINE and the class-1 constants TP/SP_S1L4 "
         "(now 5000) and TP/SP_S1L2_P3 (17500) stay unmapped. 181 fields but 178 widgets: "
         "CB_DEDUCTION_TYPE's three option lines and CB_DD_TYPE's two share one field each",
     ),

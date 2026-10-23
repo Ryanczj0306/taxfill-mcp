@@ -649,3 +649,13 @@ identity_fields:
   - your_ssn
   - tp_first_name
   - tp_last_name
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2 prints "Name(s)" beside "Social Security Number (shown
+# first)" (read on the 2025 blank rendered at 200 dpi). The SSN is the page-1 your_ssn field again (one field, two
+# widgets), so it needs no mirror; the name box is its own field and takes the name that goes with the SSN shown
+# first, the taxpayer's. fill_form builds each mirror the caller leaves out from its page-1 source
+# (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)").
+mirrors:
+  name_on_page2: "{tp_first_name} {tp_mi} {tp_last_name} {tp_suffix}"  # "Name(s)"
+mirror_abbreviations:
+  name_on_page2: [tp_first_name, tp_mi]  # a name too wide for the box ("BARTHOLOMEW Q EXAMPLE-SAMPLE", 257.5 pt at Arial 14, wider than the 256.9 pt inside it): the first name and initial may shorten; tp_last_name and tp_suffix stay whole (a generational suffix has no initial)

@@ -72,6 +72,34 @@ residency:
 forms:
   resident: AR1000F - Full Year Resident Individual Income Tax Return
   part_year_or_nonresident: AR1000NR - Part Year or Non-Resident Individual Income Tax Return
+  # Role citations (Phase K JK28, 2026-10-16): the AR1000NR serves both roles, and these entries are what state_scope
+  # adds to a part-year or nonresident filer's citations — the sentence of the combined AR1000F/AR1000NR booklet that
+  # sends each role to Form AR1000NR (printed p. 10), and the AR1000NR return itself. The return's URL is the
+  # "AR1000NR Part Year or Non-Resident Individual Income Tax Return" link on DFA's 2025 Tax Forms page
+  # (www.dfa.arkansas.gov/office/taxes/income-tax-administration/individual-income-tax/forms/2025-tax-forms/); both PDFs
+  # were downloaded twice on 2026-10-16 with identical sha256 (instructions 9f24e23cfcfcc356..., AR1000NR
+  # 5f5485b9a7ac3691...). The part_year_or_nonresident text above agrees with the 2025 booklet.
+  citations:
+    part_year:
+    - source: >-
+        Arkansas 2025 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions), 'WHO MUST FILE A
+        TAX RETURN' (p. 10): 'PART YEAR RESIDENTS (Use Form AR1000NR)' — 'Part year residents who received any gross
+        income while an Arkansas resident must file a return (regardless of marital status, filing status, or amount).'
+      url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf
+    - source: >-
+        2025 AR1000NR, Arkansas Individual Income Tax Return, Nonresident and Part Year Resident — the return itself
+        (page 1 residency box: 'PART YEAR RESIDENT: Dates lived in AR:')
+      url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000NR_PartYear_or_Non-ResidentIndividualIncomeTaxReturn_1.pdf
+    nonresident:
+    - source: >-
+        Arkansas 2025 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions), 'WHO MUST FILE A
+        TAX RETURN' (p. 10): 'NONRESIDENTS (Use Form AR1000NR)' — 'Nonresidents who received any gross income from
+        Arkansas sources must file a return (regardless of marital status, filing status, or amount).'
+      url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf
+    - source: >-
+        2025 AR1000NR, Arkansas Individual Income Tax Return, Nonresident and Part Year Resident — the return itself
+        (page 1 residency box: 'NONRESIDENT:')
+      url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000NR_PartYear_or_Non-ResidentIndividualIncomeTaxReturn_1.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:
@@ -294,6 +322,93 @@ tax:
     married_filing_jointly: 4940
     married_filing_separately: 2470
     head_of_household: 2470
+  # Phase K JK28 (2026-10-23): the AR1000F personal tax credits as cited data. Both sources fetched twice on
+  # 2026-10-23 with identical sha256: the 2025 AR1000F (b8165006622e4960; page 1 read from the rendered page,
+  # whose text layer is font-encoded) and the 2025 AR1000F and AR1000NR Instructions (9f24e23cfcfcc356).
+  exemption_credits:
+    citation:
+      source: '2025 AR1000F Full Year Resident Individual Income Tax Return, page 1 "PERSONAL TAX CREDITS": line 7A
+        boxes (Yourself / Spouse, 65 or over, 65 Special, Blind, Deaf, Head of household/surviving spouse "(Filing
+        status 3 only)" "(Filing status 6 only)"), "Multiply number of boxes checked ... 7A X $29 ="; line 7B
+        "Multiply number of DEPENDENTS from above ... 7B X $29 ="; line 7C "TOTAL PERSONAL TAX CREDITS: (Add lines 7A
+        and 7B. Enter total here and on line 34)"; page 2 lines 33, 34 "Personal tax credit(s): (Enter total from
+        line 7C)", 37 and 38. Second pass: the 2025 AR1000F and AR1000NR Instructions, p. 12 "PERSONAL TAX CREDITS"
+        (lines 7A, 7B, 7C) and p. 15 (lines 34, 37, 38), which print the same $29 and line text.'
+      url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf
+    form: AR1000F
+    credits:
+      personal:
+        amount: 29
+        line: 7A
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The Yourself and Spouse boxes of line 7A. Instructions p. 12, Line 7A: "Each taxpayer and spouse is
+          entitled to one personal tax credit." The Spouse row is for a return that lists the spouse (Filing Status 2,
+          or 4 "Married filing separately on the same return"); a Status 5 return ("Married filing separately on
+          different returns") counts the filer alone, and a surviving spouse (Status 6) has no spouse on the return.'
+      senior:
+        amount: 29
+        line: 7A
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The "65 or over" boxes of line 7A. Instructions p. 12: "On January 1, 2026, were you age 65 or over?"
+          "Check the box or boxes that apply to you and/or your spouse. You CANNOT claim any of these credits for your
+          children or dependents."'
+      senior_special:
+        amount: 29
+        line: 7A
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The "65 Special" boxes of line 7A. Instructions p. 12: "Any taxpayer age 65 or over not claiming a
+          retirement income exemption on line 18 is eligible for an additional $29 (per taxpayer) tax credit. Check the
+          box(es) marked "65 Special"." Count it only for a person who is also counted under senior and claims no line
+          18 retirement income exemption.'
+      blind:
+        amount: 29
+        line: 7A
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The Blind boxes of line 7A. Instructions p. 12: "On December 31, 2025, were you blind?" "Blindness is
+          defined as being unable to tell light from darkness, having eyesight in the better eye not exceeding 20/200
+          with corrective lens, or having a field of vision limited to an angle of 20 degrees."'
+      deaf:
+        amount: 29
+        line: 7A
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 2, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The Deaf boxes of line 7A. Instructions p. 12: "On December 31, 2025, were you deaf?" "You can claim
+          the Deaf Credit only if the average loss in speech frequencies (500 to 2000 Hertz) in the better ear is 86
+          decibels, I.S.O., or worse."'
+      head_of_household_or_surviving_spouse:
+        amount: 29
+        line: 7A
+        max_count: {single: 0, married_filing_jointly: 0, married_filing_separately: 0, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The single "Head of household/surviving spouse" box of line 7A, printed "(Filing status 3 only)" and
+          "(Filing status 6 only)" (3 Head of household, 6 Surviving spouse with dependent child). Instructions p. 12:
+          "Is your filing status Head of Household or Surviving Spouse?"'
+      dependent:
+        amount: 29
+        line: 7B
+        note: 'Line 7B. Instructions p. 12: "List the name(s) of your dependent(s), Social Security Numbers, and
+          relationship to you in the space provided. DO NOT INCLUDE YOURSELF AND/OR YOUR SPOUSE." "Add the number of
+          dependents listed on line 7B. Write the total in the box provided. Multiply the number by $29 and write that
+          amount in the space provided."'
+    exemption_amount_line: 7C
+    credit_line: '34'
+    tax_after_line: '38'
+    notes:
+    - 'Instructions p. 12: line 7A "Add the number of boxes you checked on line 7A. Write the total in the box
+      provided. Multiply the number by $29 and write amount in space provided."; line 7C "Total the tax credits from
+      lines 7A and 7B. Enter the total on this line and on line 34." Every line 7A kind above is one box at $29, so
+      line 7A = $29 x (personal + senior + senior_special + blind + deaf + head_of_household_or_surviving_spouse).'
+    - 'No AGI limitation: the 2025 face and instructions print none for lines 7A-7C (the separate "Additional Tax
+      Credit for Qualified Individuals" is income-tested; it is not an exemption credit and is not modeled).'
+    - 'Line 38 here is counted from the op''s tax (line 29, one column): p. 15 "LINE 37. Add lines 34 through 36 and
+      enter the total." and "LINE 38. Subtract line 37 from line 33. This is your Net Tax. If line 37 is greater than
+      line 33, enter zero (0)." It equals the filed line 38 only when lines 31-32 (lump-sum and additional tax) and 35-36
+      (child care and other credits) are zero; otherwise add those on the form. The filed line 29 comes from the tax
+      table (see the pack notes). A Filing Status 4 return enters the credits once, on line 34 column A.'
   notes:
   - 'Base guidance: Supply AR1000F Line 25, ''Adjusted Gross Income (AGI)'' — Arkansas AGI, i.e. Line 23 Total Income
     (built line-by-line from source documents, Lines 8-22: W-2 wages, interest, dividends, etc.; Arkansas does NOT
@@ -345,7 +460,7 @@ tax:
   - 'EXEMPTIONS ARE CREDITS IN ARKANSAS — none are shipped: Arkansas has no personal or dependent exemption that reduces
     income. It gives $29-per-person PERSONAL TAX CREDITS instead (AR1000F Line 7A boxes: yourself, spouse, 65 or over
     as of January 1, 2026, ''65 Special'', blind, deaf, head-of-household/surviving-spouse; Line 7B: $29 per dependent;
-    totaled on Line 7C and subtracted from TAX on Line 34). These credits are not modeled by this op.'
+    totaled on Line 7C and subtracted from TAX on Line 34). calc.state_tax applies them past the tax line when exemption_credit_counts is passed (tax.exemption_credits, Phase K JK28).'
   - 'Other nonrefundable credits reduce the computed tax on the form but are NOT modeled: the ''Additional Tax Credit
     for Qualified Individuals'' (up to $60 per individual, 2025 net taxable income up to $27,600 — worksheet p.21:
     $60 at $0-$26,500 declining $5 per $100 band to $5 at $27,501-$27,600), the 20%-of-federal-computation Child and

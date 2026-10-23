@@ -72,6 +72,44 @@ forms:
   part_year_or_nonresident: Form 43 (Part-year Resident and Nonresident Income Tax Return); part-year/nonresident
     filers claiming additions, subtractions, or certain credits also file Form 39NR (Part-year Resident and Nonresident
     Supplemental Schedule)
+  # Role citations (Phase K JK28, 2026-10-16): Form 43 (with Form 39NR) serves both roles, and these entries are what
+  # state_scope adds to a part-year or nonresident filer's citations (the top-level `citation` is the combined
+  # 40/43/39R/39NR booklet's general pages). They pin the booklet's 'Who Must File' (printed page 2 of 52) and 'Which
+  # Form to Use' (page 5 of 52) sentences for each role, then the Form 43 and Form 39NR links on the Tax Commission's
+  # individual income tax forms page (tax.idaho.gov/taxes/income-tax/individual-income/forms/); each PDF was downloaded
+  # twice on 2026-10-16 with identical sha256 (booklet 952263e92f7c096b..., Form 43 4cabf8f822a9d61b..., Form 39NR
+  # 952be03ff0e21189...). The part_year_or_nonresident text above agrees with the 2025 booklet.
+  citations:
+    part_year:
+    - source: >-
+        2025 Idaho Individual Income Tax Forms and Instructions (Forms 40, 43, 39R, 39NR; EIN00046 03-02-2026), 'Which
+        Form to Use' (p. 5): 'Use Form 43 if you’re either of these:' — 'Part-year resident' — 'Use Form 39NR if you
+        file Form 43 and claim any additions, subtractions, or certain credits.' — and 'Who Must File' (p. 2): 'Every
+        part-year resident with a total of more than $2,500 gross income from either or both of these:'
+      url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
+    - source: >-
+        2025 Idaho Form 43, Part-year Resident and Nonresident Income Tax Return — the return itself (page 1: 'Part-year
+        Resident and Nonresident Income Tax Return')
+      url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00091/EFO00091_03-02-2026.pdf
+    - source: >-
+        2025 Idaho Form 39NR, Part-year Resident and Nonresident Supplemental Schedule (page 1: 'Part-year Resident and
+        Nonresident Supplemental Schedule')
+      url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00087/EFO00087_03-02-2026.pdf
+    nonresident:
+    - source: >-
+        2025 Idaho Individual Income Tax Forms and Instructions (Forms 40, 43, 39R, 39NR; EIN00046 03-02-2026), 'Which
+        Form to Use' (p. 5): 'Use Form 43 if you’re either of these:' — 'Nonresident' — 'Use Form 39NR if you file Form
+        43 and claim any additions, subtractions, or certain credits.' — and 'Who Must File' (p. 2): 'Every nonresident
+        with more than $2,500 gross income from Idaho sources'
+      url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
+    - source: >-
+        2025 Idaho Form 43, Part-year Resident and Nonresident Income Tax Return — the return itself (page 1: 'Part-year
+        Resident and Nonresident Income Tax Return')
+      url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00091/EFO00091_03-02-2026.pdf
+    - source: >-
+        2025 Idaho Form 39NR, Part-year Resident and Nonresident Supplemental Schedule (page 1: 'Part-year Resident and
+        Nonresident Supplemental Schedule')
+      url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00087/EFO00087_03-02-2026.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

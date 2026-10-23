@@ -34,6 +34,52 @@ residency:
 forms:
   resident: Form IN-111, Vermont Income Tax Return
   part_year_or_nonresident: 'Form IN-111 (same return) plus Schedule IN-113, Vermont Income Adjustment Calculations (nonresidents and part-year residents complete IN-113 to apportion/allocate Vermont income; the IN-113 Line 35 percentage goes on IN-111 Line 15 and multiplies Line 14 to produce Line 16 Adjusted Vermont Income Tax)'
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the IN-111 instructions' resident pages, so this
+  # entry named Schedule IN-113 without citing it. Vermont has no separate nonresident return — both roles file Form
+  # IN-111 with Schedule IN-113 — so each role cites the IN-111 instructions' filing requirement and Line 15, the IN-113
+  # instructions' 'WHO MUST FILE IN-113' and Schedule IN-113 itself. The URLs are the "IN-111 Instructions", "IN-113
+  # Instructions" and "IN-113" links on the Department's all-forms page (tax.vermont.gov/all-forms); each PDF was
+  # downloaded twice on 2026-10-16 with identical sha256 (IN-111 instructions e56ef973b1831973..., IN-113 instructions
+  # f1b616815e1bbbd1..., IN-113 bcc8c666b823c294...).
+  citations:
+    part_year:
+    - source: >-
+        2025 Form IN-111 Instructions (Vermont Department of Taxes) — 'Requirement to File a Vermont Income Tax Return'
+        (p. 3 of 20): 'A 2025 Vermont Income Tax Return must be filed by all full-year or part-year Vermont residents or
+        nonresidents if you are required to file a 2025 federal income tax return, AND • You earned or received more than
+        $100 in Vermont income'; 'Line 15' (p. 7 of 20): 'Income Adjustment. Enter 100% or complete and submit Schedule
+        IN-113 and enter percentage from Line 35.'
+      url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+    - source: >-
+        2025 Schedule IN-113 Instructions, Income Adjustment — 'WHO MUST FILE IN-113' (p. 1 of 2): 'You must file Schedule
+        IN-113 if you are either: • a nonresident or part-year resident and earned or received Vermont income'; 'Part-Year
+        Resident: Part-year residents may, in some cases, be able to adjust Vermont income by both the Vermont percentage
+        of income on Schedule IN-113 and claim a credit for income tax paid to another tax jurisdiction on Schedule
+        IN-117'
+      url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2025.pdf
+    - source: >-
+        2025 Schedule IN-113, Vermont Income Adjustment Calculations (p. 1): 'Nonresidents and Part-Year Residents Must
+        Complete Parts I and II' — 'INCLUDE WITH FORM IN-111'
+      url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-2025.pdf
+    nonresident:
+    - source: >-
+        2025 Form IN-111 Instructions (Vermont Department of Taxes) — 'Requirement to File a Vermont Income Tax Return'
+        (p. 3 of 20): 'A 2025 Vermont Income Tax Return must be filed by all full-year or part-year Vermont residents or
+        nonresidents if you are required to file a 2025 federal income tax return, AND • You earned or received more than
+        $100 in Vermont income, OR • You earned or received gross income of more than $1,000 as a nonresident.'; 'Line
+        15' (p. 7 of 20): 'Income Adjustment. Enter 100% or complete and submit Schedule IN-113 and enter percentage from
+        Line 35.'
+      url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+    - source: >-
+        2025 Schedule IN-113 Instructions, Income Adjustment — 'WHO MUST FILE IN-113' (p. 1 of 2): 'You must file Schedule
+        IN-113 if you are either: • a nonresident or part-year resident and earned or received Vermont income'; 'Nonresident:
+        Complete both Parts I and II to determine the allocation of Vermont income.'
+      url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2025.pdf
+    - source: >-
+        2025 Schedule IN-113, Vermont Income Adjustment Calculations (p. 1): 'Nonresidents and Part-Year Residents Must
+        Complete Parts I and II' — 'INCLUDE WITH FORM IN-111'
+      url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-2025.pdf
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed for 2025 (verify the figure): Renter Credit (renter rebate / circuit-breaker) — the per-county/per-household income limits and the credit calculator were not re-fetched.'
 credits:
 - name: Vermont Earned Income Tax Credit (EITC)

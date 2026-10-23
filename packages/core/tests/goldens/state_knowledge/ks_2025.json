@@ -2,6 +2,7 @@
  "_strings": {
   "@@0cb7a5894b32": "Kansas DOR — 2025 Individual Income Tax Booklet (ip25.pdf), Important Information: 'Due date for filing - April 15, 2026 is the due date for filing 2025 income tax returns.' (General Information also notes that if any due date falls on a Saturday, Sunday, or legal holiday, the next regular workday is substituted.)",
   "@@0cf72415eb0e": "Credit for Taxes Paid to Other States — Kansas residents whose Kansas adjusted gross income (KAGI, line 3 of K-40) includes income earned in another state and who were required to pay income tax to that other state on that income. (Part-year residents filing as nonresidents use a separate worksheet.) The credit is NOT the amount withheld by the other state. A copy of the other state's tax return must be enclosed. 'State' includes the District of Columbia, Puerto Rico, U.S. territories/possessions, and foreign countries (foreign taxes run through the Worksheet for Foreign Tax Credit first, and no credit is allowed if the foreign tax was claimed as a federal itemized deduction).",
+  "@@123b92c3b844": "2025 Kansas Supplemental Schedule (Schedule S, schs25.pdf), 'PART B - Income Allocation for Nonresidents and Part-Year Residents' (page 2): 'B23. Nonresident allocation percentage (divide line B21 by line B22 and round to the fourth decimal place, not to exceed 100.0000). Enter result here and on line 9 of Form K-40' | Kansas DOR — 2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part B income allocation for nonresidents/part-year residents",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@1f27f780fdca": "2025 Form K-40 (k-4025.pdf, 'Mail to' block — Kansas Income Tax, Kansas Dept. of Revenue, PO Box 750260, Topeka, KS 66699-0260) and 2025 Form K-40V payment voucher (k-40v25.pdf, PO BOX 750260)",
   "@@258a28a3501c": "Kansas DOR, 2025 Individual Income Tax booklet (ip25.pdf): 2025 Tax Computation Worksheet, page 34 (printing the two-bracket schedule: Married Filing Joint '$0 - $46,000' at '5.2% (.052)' subtracting $0, '$46,001 and over' at '5.58% (.0558)' subtracting $175; Single/Head of Household/Married Filing Separate '$0 - $23,000' at 5.2% subtracting $0, '$23,001 and over' at 5.58% subtracting $87); 2025 Kansas Tax Table pp.27-33 (first row '$26 - $50 -> $2', columns for Single/Head of Household/Married Filing Separate and for Married Filing Joint) with the '$100,001 and over - use the Tax Computation Worksheet' rule; Important Information + K-40 instructions — Line 4 Kansas Standard Deduction ($3,605 Single / $8,240 Married Filing Joint / $6,180 Head of Household / $4,120 Married Filing Separate) and the 'WORKSHEET - Standard Deduction for People 65 or Older and/or Blind'; Exemptions and Dependents instructions ($18,320 MFJ / $9,160 single-HoH-MFS filing-status allowance, $2,320 per dependent, $2,320 additional for Head of Household, $2,320 per qualified disabled veteran 'for tax year 2025 and all tax years thereafter', plus new $2,320 exemptions for a child born in the tax year and for a stillbirth); Line 5 exemption allowance; Line 7 taxable income; Line 8 tax-table/worksheet mandate; the QSS-to-Head-of-Household filing status instruction. SECOND PASS (independent document): the 2025 K-40ES estimated-tax voucher worksheet (https://www.ksrevenue.gov/pdf/k-40es25.pdf, Rev. 7-24) prints its own STANDARD DEDUCTION CHART (Single $3,605 / MFJ $8,240 / MFS $4,120 / HoH $6,180) and its own TAX COMPUTATION SCHEDULES in exact marginal form — MFJ '5.2% of line 5' to $46,000 then '$2,392 plus 5.58% of excess over $46,000'; Single/HoH/MFS '5.2% of line 5' to $23,000 then '$1,196 plus 5.58% of excess over $23,000' ($2,392 = 5.2% x 46,000 and $1,196 = 5.2% x 23,000 exactly) — and the 2025 Form K-40 (k-4025.pdf) prints the three 'X $2,320' additional-exemption boxes. All passes agree; no 2025 rate, deduction, or allowance change.",
@@ -381,6 +382,12 @@
      "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
     },
     {
+     "answers": "@@123b92c3b844",
+     "cadence": "@@e9005ca6495c",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ksrevenue.gov/pdf/schs25.pdf"
+    },
+    {
      "answers": "Kansas DOR — 2025 K-40ES Individual Estimated Income Tax Voucher (k-40es25.pdf, Rev. 7-24) — INDEPENDENT second-pass source for the rate schedule and standard deduction: its STANDARD DEDUCTION CHART prints Single $3,605 / Married Filing Joint $8,240 / Married Filing Separate $4,120 / Head of Household $6,180, and its TAX COMPUTATION SCHEDULES print the two brackets in exact marginal form — Schedule I MARRIED FILING JOINT '$0.00 to $46,000 ... 5.2% of line 5' and '$46,000 and over ... $2,392 plus 5.58% of excess over $46,000'; Schedule II SINGLE, HEAD OF HOUSEHOLD, OR MARRIED FILING SEPARATE '$0.00 to $23,000 ... 5.2% of line 5' and '$23,000 and over ... $1,196 plus 5.58% of excess over $23,000'. ($2,392 = 5.2% x $46,000 and $1,196 = 5.2% x $23,000 exactly, confirming the shipped marginal brackets.)",
      "cadence": "@@e9005ca6495c",
      "topic": "forms_and_instructions",
@@ -391,12 +398,6 @@
      "cadence": "@@e9005ca6495c",
      "topic": "forms_and_instructions",
      "url": "https://www.ksrevenue.gov/pdf/k-4025.pdf"
-    },
-    {
-     "answers": "Kansas DOR — 2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part B income allocation for nonresidents/part-year residents",
-     "cadence": "@@e9005ca6495c",
-     "topic": "forms_and_instructions",
-     "url": "https://www.ksrevenue.gov/pdf/schs25.pdf"
     },
     {
      "answers": "Kansas DOR — 2025 K-40V Individual Income Tax Payment Voucher (k-40v25.pdf): 'Make your check or money order payable to \"Kansas Income Tax\" for the full amount'; mailing address PO BOX 750260, TOPEKA KS 66699-0260",
@@ -547,6 +548,14 @@
       {
        "source": "@@e113c12da63f",
        "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "2025 Kansas Individual Income Tax booklet (ip25), 'Who Must File a Return' (p. 3): 'NONRESIDENTS. If you are not a resident of Kansas but received income from Kansas sources, you must file a Kansas return regardless of the amount of income received from Kansas sources (see Kansas Source Income as provided in Schedule S Part B Instructions).' — K-40 Instructions, 'Residency Status' (p. 6): 'Nonresidents must also complete Part B of Schedule S.'",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "@@123b92c3b844",
+       "url": "https://www.ksrevenue.gov/pdf/schs25.pdf"
       }
      ],
      "filing_role": "nonresident",
@@ -608,6 +617,14 @@
       {
        "source": "@@e113c12da63f",
        "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "2025 Kansas Individual Income Tax booklet (ip25), 'Who Must File a Return' (p. 3): 'PART-YEAR RESIDENTS. You are considered a part-year resident of Kansas if you were a Kansas resident for less than 12 months during the tax year. As a part-year resident, you must include the dates that you were a resident in Kansas on Form K-40 and complete Part B of Schedule S.' — K-40 Instructions, 'Residency Status' (p. 6): 'If you mark the Part-year resident box, enter the dates that you lived in Kansas and complete Schedule S, Part B.'",
+       "url": "https://www.ksrevenue.gov/pdf/ip25.pdf"
+      },
+      {
+       "source": "@@123b92c3b844",
+       "url": "https://www.ksrevenue.gov/pdf/schs25.pdf"
       }
      ],
      "filing_role": "part_year",

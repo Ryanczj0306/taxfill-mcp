@@ -82,6 +82,42 @@ forms:
     5 Qualifying surviving spouse.
   part_year_or_nonresident: TC-40 with Schedule TC-40B (Non or Part-year Resident Schedule). Attach TC-40 page 3,
     TC-40A, TC-40B, TC-40S and TC-40W as applicable.
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the TC-40 instructions' resident pages, so this
+  # entry named Schedule TC-40B without citing it. Utah has no separate nonresident return — both roles file TC-40 with
+  # TC-40B — so each role cites the TC-40 instructions ('Who Must File', 'Residency', the TC-40B instructions) and
+  # TC-40B. The tax.utah.gov/forms-pubs page links the 2025 "TC-40 Instructions" and "TC-40B" on the /tax/forms/current/
+  # path; these citations use the year-pinned /tax/forms/2025/ copies, byte-identical to /current/ on 2026-10-16, so
+  # they keep naming the 2025 documents once /current/ moves to 2026. Each PDF was downloaded twice from both paths on
+  # 2026-10-16 with identical sha256 (TC-40 instructions 9ea2823d81494434..., TC-40B 4ef9d107829843a3...).
+  citations:
+    part_year:
+    - source: >-
+        2025 Utah TC-40 Individual Income Tax Instructions — 'Who Must File' (p. 2): 'You must file a TC-40 return if you:
+        1. are a Utah resident or part-year resident who must file a federal return, 2. are a nonresident or part-year
+        resident with income from Utah sources who must file a federal return'; 'Residency' (p. 7): 'If you or your spouse
+        answer "N," complete and attach Schedule B, Non or Part-year Resident Schedule.'; 'TC-40B - Non or Part-year
+        Resident Schedule' (p. 28): 'Use TC-40B to calculate the Utah tax for a nonresident or a part-year resident.' —
+        '1. If you are a part-year resident, enter the date you established residency in Utah and the date the residency
+        ended.'
+      url: https://files.tax.utah.gov/tax/forms/2025/tc-40inst.pdf
+    - source: >-
+        2025 TC-40B, Non and Part-year Resident Schedule (form 40506) — Residency Status: 'Part-year resident from: / / to
+        / /'
+      url: https://files.tax.utah.gov/tax/forms/2025/tc-40b.pdf
+    nonresident:
+    - source: >-
+        2025 Utah TC-40 Individual Income Tax Instructions — 'Who Must File' (p. 2): 'You must file a TC-40 return if you:
+        ... 2. are a nonresident or part-year resident with income from Utah sources who must file a federal return';
+        'Residency' (p. 7): 'If you or your spouse answer "N," complete and attach Schedule B, Non or Part-year Resident
+        Schedule.'; 'TC-40B - Non or Part-year Resident Schedule' (p. 28): 'Use TC-40B to calculate the Utah tax for a
+        nonresident or a part-year resident.' — '2. If you (and your spouse) are a nonresident, enter the two-character
+        home state postal abbreviation.'
+      url: https://files.tax.utah.gov/tax/forms/2025/tc-40inst.pdf
+    - source: >-
+        2025 TC-40B, Non and Part-year Resident Schedule (form 40506) — Residency Status: 'Nonresident: Home state
+        abbreviation'
+      url: https://files.tax.utah.gov/tax/forms/2025/tc-40b.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

@@ -70,6 +70,7 @@ from taxfill_core import (
     verify_filing as _verify_filing,
     verify_form as _verify_form,
 )
+from taxfill_core.datadir import user_path
 from taxfill_core.discovery import get_form_map as _get_form_map, list_forms as _list_forms, load_form_pack
 from taxfill_core.extract import extract_document as _extract_document, list_document_kinds as _list_document_kinds
 from taxfill_core.fetch import fetch_pack_blank as _fetch_pack_blank
@@ -139,6 +140,11 @@ def _report_summary(report: VerifyReport, *, recompute_ran: bool = True) -> dict
         checks = getattr(report, name) or []
         fails = [c.detail for c in checks if getattr(c, "status", None) == "FAIL"]
         sections[name] = {"checked": len(checks), "failed": len(fails), "failures": fails}
+        # Phase K JK28: a SKIPPED check never flips ok (a relation whose `unless` box is checked, a cross_form rule
+        # whose form is not in the filing, a per-person identity field), so the summary lists what went unchecked.
+        skipped = [c.detail for c in checks if getattr(c, "status", None) == "SKIPPED"]
+        if skipped:
+            sections[name]["skipped"] = skipped
     if not recompute_ran:
         sections["recompute"]["note"] = (
             "not run — pass `independent` ({line: calc result}, e.g. line 16 tax from "
@@ -233,6 +239,11 @@ def get_form_map(form: str, year: int, jurisdiction: str = "federal") -> dict:
     """Return one pack's line->field map, relations, and cross-form refs.
 
     `form` is the form KEY (e.g. 'f1040', 'sched_c'). Use list_forms to discover keys.
+    A relation ending in ' unless <line>' names a checkbox line: verify skips it (SKIPPED) while that box is checked.
+    `mirrors` maps each page-header mirror line to the template fill_form builds it from when you
+    leave it out (e.g. CA Form 540's Sides 2-6 `name.full`); `mirror_abbreviations` lists, per
+    mirror, the placeholders a header may shorten to an initial or leave out when the full name is
+    too wide for its box (fill_form does that itself; every other placeholder stays whole).
     """
     return _dump(_get_form_map(form, year, jurisdiction))
 
@@ -260,12 +271,26 @@ def fetch_blank(form: str, year: int, jurisdiction: str = "federal") -> dict:
 def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, jurisdiction: str = "federal") -> dict:
     """Deterministically fill a form. `values` maps line ids (per get_form_map) to values.
 
-    Downloads/uses the official blank, writes the filled PDF to out_path, and returns the
-    written lines + any warnings, the `notice` to relay to the user (a review draft, not tax
+    Downloads/uses the official blank, writes the filled PDF to out_path ("~/..." works; the
+    result's `out_path` is the absolute path written), and returns the written lines + any
+    warnings, the `notice` to relay to the user (a review draft, not tax
     advice, for paper filing only), plus `guards_hidden` (P-027): the page-covering viewer-guard
     widgets the filler set Hidden so the return prints in any viewer (AL Form 40's "use Adobe
     Reader" panel and white print lids, MO-1040's print lids); every written widget is made
-    viewable and printable. Rejects unknown lines and comb/length violations. No
+    viewable and printable. `mirrored` lists the page-header mirror lines it filled itself: a pack
+    whose later pages repeat the filer's name and SSN (CA Form 540 / 540NR "Your name:" and "Your
+    SSN or ITIN:" on Sides 2-6) declares them, and a mirror you leave out is built from the lines
+    you gave (get_form_map's `mirrors` shows each template), measured against its box at the box's
+    font (the narrowest widget, less 1 pt on each side). A name too wide for it is abbreviated as
+    the pack's `mirror_abbreviations` allow ("A Q WASHINGTON" for "ALEXANDRA Q WASHINGTON", else
+    "A WASHINGTON") with an informational warning; one too wide even then is left BLANK, with a
+    warning to hand-write it in the box after printing. A value you pass for a mirror is written
+    as given (verify_form measures it), and a built value the box refuses for its form (comb
+    digits, 'NRA') is left blank with a warning saying so. `combs_aligned` (P-033) lists each
+    written comb widget whose cells crossed the separators printed in its box (the IRS 1040 /
+    1040-X SSN dots) and that fill_form narrowed to the printed grid, as '<field> (page N): x
+    <old> -> <new>'; nothing to do, it is reported so a reviewer knows the widget moved.
+    Rejects unknown lines and comb/length violations. No
     identifying-number or comb line takes the literal 'NRA' (P-026): an MFS filer whose
     nonresident-alien spouse has no SSN/ITIN (and needs none) writes 'NRA' in the MFS ENTRY
     SPACE (the Instructions for Form 1040: "enter 'NRA' in the entry space") —
@@ -292,7 +317,10 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
             f"({pack.source_url})"
         )
     blank = _fetch_pack_blank(pack)
-    result = _fill_form(pack, values, blank, Path(out_path))
+    # Phase K JK28: out_path may be "~/..." (a JSON argument is never shell-expanded). The result names the ABSOLUTE
+    # path written — the agent hands it to its own file tools, many of which take only absolute paths.
+    out = user_path(out_path).absolute()
+    result = _fill_form(pack, values, blank, out)
     if isinstance(pack, HandFillPack):
         return {
             "render_mode": "hand_fill_overlay",
@@ -300,8 +328,9 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
             "worksheet": _dump(_hand_fill_worksheet(pack, values)),
             "notice": DRAFT_NOTICE,
         }
-    return {"out_path": out_path, "written": result.written, "warnings": result.warnings,
-            "guards_hidden": result.guards_hidden, "notice": DRAFT_NOTICE}
+    return {"out_path": str(out), "written": result.written, "warnings": result.warnings,
+            "guards_hidden": result.guards_hidden, "mirrored": result.mirrored,
+            "combs_aligned": result.combs_aligned, "notice": DRAFT_NOTICE}
 
 
 @mcp.tool()
@@ -315,6 +344,14 @@ def verify_form(
 ) -> dict:
     """Verify a filled form against its pack: assertions, relation math + independent recompute,
     clipping scan, required-checkbox audit, and the pitfall registry. Returns ok + failures.
+
+    The identity section checks each page-header mirror the pack declares (e.g. CA Form 540's
+    Sides 2-6 name and SSN) against what fill_form would write from the form's own lines, measured
+    against the header's box: a failure, naming the value to write, when the header is blank,
+    different, cut off by its box, or abbreviated although the full name fits. A number compares
+    by its digits (dashes or not). An abbreviation get_form_map's `mirror_abbreviations` allow
+    passes only when the full name does not fit and it does; a header left blank because nothing
+    allowed fits is not a failure (fill_form's warning says to hand-write it after printing).
 
     `independent` maps line id -> the amount YOU recomputed via the calc tool over the versioned
     tables (never copied from the form or from your own fill values) — e.g. {"16": 36036, "12": 27700}
@@ -351,7 +388,9 @@ def verify_filing(items: list[dict], independent: dict[str, dict[str, float]] | 
     """Verify a whole filing across forms: cross-form identity + inter-form relations.
 
     Each item: {form, year, pdf_path, jurisdiction?, form_key?}. form_key (defaults to `form`)
-    is the key other forms' cross_form rules reference (e.g. 'sched_1', 'sched_oi').
+    is the key other forms' cross_form rules reference (e.g. 'sched_1', 'sched_oi'). Each form's
+    page-header mirrors (e.g. CA Form 540's Sides 2-6 name and SSN) are checked against that
+    form's own lines, in the identity section under its form_key.
 
     `independent` is keyed form_key -> {line id: amount YOU recomputed via the calc tool}, e.g.
     {"f1040": {"16": 36036}} — the per-form shape matches verify_form's `independent`. It is the
@@ -924,9 +963,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       excepted-asset rules, joint-ownership valuation, the FBAR's account exceptions, and PART-YEAR
       specified-individual status (Treas. Reg. 1.6038D-2(a)(9)) — segment an F-1-to-H-1B year's
       values yourself before passing them)
-    - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?}
+    - state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?,
+      exemption_credit_counts?, federal_agi?}
       (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
-      2023 and 2024, and 41 of 42 for 2025 (RI pending). The PACK decides the shape: flat-rate states
+      2023, 2024 and 2025 (42/42 each). The PACK decides the shape: flat-rate states
       multiply, graduated states apply the per-filing-status marginal schedule bracket by bracket and
       the work string shows each bracket's contribution. Do NOT assume which shape a state is and do
       NOT carry a roster forward — the split moves by year (GA converted to flat for 2024; IA and LA
@@ -937,9 +977,23 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       form's state-AGI line, named in each pack's tax_line/notes. The op subtracts only the pack's
       verified personal/dependent exemptions x your counts and the state's standard deduction where the
       state ships one — age-65/blind and other exemption kinds are disclosed, not applied, and the
-      credit-exemption states (ca, or, ne, ar) REFUSE counts because their per-person amounts are
-      credits, not exemptions. County/city add-on taxes (IN counties, MI cities, MD counties, OH school
-      districts) and state credits are NOT modeled. Out-of-schedule surcharges and recaptures are
+      credit-exemption states (ca, ar, de, ia, ne, or) REFUSE exemptions_count/dependents_count because
+      their per-person amounts are credits, not exemptions. EXEMPTION CREDITS: where the pack ships them
+      (ca 2023-2025: Form 540 lines 7-11 and 32-33; for 2025 also ar AR1000F 7A-7C/34, de PIT-RES
+      27a-27b, ia IA 1040 Step 3/line 8, ne 1040N line 4/18, or OR-40 6a-6e/25), pass
+      exemption_credit_counts keyed by the pack's kinds (ca {personal, blind, senior, dependent}, the
+      line 7-10 box numbers; the not-applied work string and the refusals list every pack's kinds) and,
+      for ca and or, federal_agi (ca: Form 540 line 13, which the line 32 AGI limitation reads; or:
+      OR-40 line 7, above whose per-status ceiling a kind is denied — agi_ceilings); the result's
+      `exemption_credits` then carries each line's credit, exemption_amount, limitation_reduction,
+      total (the credits taken; de's line 32 is limited to the tax, tax_limit_reduction) and
+      tax_after_credits, with `lines` naming the form lines. `tax` stays
+      the tax line either way; without counts exemption_credits.applied is false; a count above the
+      form's own maximum is refused. A state without the block refuses nonzero exemption_credit_counts.
+      Form 540NR prorates the credits on its own lines 38-40, so a 540NR return takes only
+      exemption_amount from here.
+      County/city add-on taxes (IN counties, MI cities, MD counties, OH school districts) and other
+      state credits are NOT modeled. Out-of-schedule surcharges and recaptures are
       disclosed in the work string, not computed — CA's 1% Mental Health Services Tax over $1M and NY's
       recapture worksheets above $107,650 NY AGI are cases where plain bracket math is WRONG. Unknown
       state or a state without the block errors, listing the supported states)

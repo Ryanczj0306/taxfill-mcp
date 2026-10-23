@@ -677,6 +677,20 @@ fields:
   - line: "line56"
     field: "line56"
     type: money
+  # t.signature / t.spousesignature: KEPT (Phase K JK28, 2026-10-16) -- on this form an entered name IS the
+  # signature. The page-5 declaration reads: "By signing or entering my name in the “Signature” field(s) below, I
+  # am providing the Department of Revenue with my signature as required under Section 143.561, RSMo." Section
+  # 143.561.1 RSMo: a return "shall be signed in accordance with regulations or instructions prescribed by the
+  # director of revenue". The 2023 instructions (MO-1040 Instructions_2023.pdf, page 12, SIGN RETURN): "You must
+  # sign Form MO-1040. Both spouses must sign a combined return. If you use a paid preparer, the preparer must
+  # also sign the return." A sentinel typed into each box printed in it. "Preparer’s Signature" has no widget and
+  # is signed by hand. Allow-listed in test_signature_line_mapping.py (TYPED_SIGNATURE_ALLOWED).
+  # AGENT RULE: do NOT fill t.signature or t.spousesignature unless the filer asks for it (t.spousesignature: the
+  # spouse asks). The face allows a typed name, but the default is the ink signature: an entered name signs the
+  # return under penalties of perjury, and the state filing steps (file_and_pay) tell the filer to "sign and date
+  # the return in ink". So leave both boxes blank unless that person asks you to enter their name as their
+  # signature. Nothing shows this rule at fill time (a pack field carries no note), so it lives in this comment
+  # and in the test's _MO_WHY.
   - line: "t.signature"
     field: "t.signature"
     type: text
@@ -2946,3 +2960,7 @@ identity_fields:
   - SSN_1
   - firstname-1
   - lastname-1
+# Page 5 "Signature" block (printed "MO-1040 Page 5"): the filer and spouse sign in ink or enter their names in the
+# "Signature" fields (t.signature / t.spousesignature above); a paid preparer signs by hand (Phase K JK28,
+# 2026-10-16).
+signature: {page: 5}

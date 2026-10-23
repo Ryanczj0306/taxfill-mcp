@@ -78,6 +78,20 @@ comb fields get `format` hints (`ssn_digits_only` — P-001), checkbox groups ge
 their export values, and every computed line gets a `relations` entry
 (`"38 == 13 + 21 + 30 + 37"`) so `verify_form` can recompute it.
 
+Then declare the page-header mirrors. When a later page repeats the filer's
+name or SSN in a box of its own (a separate AcroForm field, not a second widget
+of the page-1 one), map it under a mirror key (`page2_name`,
+`identifying_number_page2`) and declare it in the pack's `mirrors:` as a
+template over the page-1 lines, with a comment quoting the printed caption:
+`page2_name: "{name.first} {name.last}"  # "Name(s) shown on Form X"`. Use a
+slice for a box that asks for one (`"{tp_last_name[:10]}"` for "Last Name
+(First 10 Characters)") and an optional segment for the spouse
+(`[ & {spouse.first} {spouse.last}]`). `fill_form` then builds each header from
+page 1 and `verify_form` checks it; `test_pack_invariants.py` fails a
+mirror-shaped line left undeclared. See `formpacks/CONVENTIONS.md`, "Identity
+page mirrors" and "Page-header mirrors (`mirrors`)", for the syntax, the
+`mirror_abbreviations` rule and the boxes that are not mirrors.
+
 ## Step 4 — adversarial audit
 
 A second pass whose goal is to BREAK the map: fill every field with a

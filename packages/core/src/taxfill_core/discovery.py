@@ -118,9 +118,24 @@ class FormMap(BaseModel):
     source_url: str
     acroform_root: str
     lines: list[LineMap]
-    relations: list[str]
+    relations: list[str] = Field(
+        description="The pack's relations verbatim. One ending in ' unless <line>' names a checkbox line: verify "
+                    "reports it SKIPPED while that box is checked (Phase K JK28).",
+    )
     cross_form: list[str]
     identity_fields: list[str]
+    mirrors: dict[str, str] = Field(
+        default_factory=dict,
+        description="Phase K JK28 page-header mirrors: mirror line -> the template fill_form builds it from when the "
+                    "caller leaves it out, measured against its box (verify checks it on disk). Empty for most packs.",
+    )
+    mirror_abbreviations: dict[str, list[str]] = Field(
+        default_factory=dict,
+        description="Phase K JK28: mirror line -> the placeholders its header may shorten to an initial or leave out "
+                    "when the full name is too wide for the box (every other placeholder stays whole): fill_form "
+                    "abbreviates a built name its box cannot hold, and verify accepts an abbreviation only then. "
+                    "Empty for most packs.",
+    )
     source_status: Literal["final", "draft"] = Field(
         default="final",
         description="'draft' for a pack mapped from an IRS early-release draft (irs.gov/pub/irs-dft/, JT0a): it "
@@ -229,6 +244,8 @@ def get_form_map(
         relations=list(pack.relations),
         cross_form=list(pack.cross_form),
         identity_fields=list(pack.identity_fields),
+        mirrors=dict(pack.mirrors),
+        mirror_abbreviations={mirror: list(lines) for mirror, lines in pack.mirror_abbreviations.items()},
         source_status=pack.source_status,
         draft_created=pack.draft_created,
     )

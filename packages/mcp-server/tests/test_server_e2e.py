@@ -280,6 +280,45 @@ def test_calc_state_tax_is_dispatched():
     assert "state_tax" in unknown.content[0].text
 
 
+def test_calc_state_tax_returns_ca_exemption_credits_over_mcp():
+    # Phase K JK28 (2026-10-16): California's exemption credits travel as structured fields. MFJ, California AGI and
+    # federal AGI $200,000, two dependents (2025): line 31 $10,416; line 7 2 x $153 + line 10 2 x $475 = line 11
+    # $1,256 = line 32 (AGI not more than $504,411); line 33 $9,160 (worked in packages/core/tests/
+    # test_state_exemption_credits.py).
+    ca = _data(_run(_call("calc", {"op": "state_tax", "args": {
+        "state": "ca", "taxable_base": 200000, "filing_status": "married_filing_jointly", "year": 2025,
+        "exemption_credit_counts": {"personal": 2, "dependent": 2}, "federal_agi": 200000}})))
+    assert ca["tax"] == 10416
+    ec = ca["exemption_credits"]
+    assert ec["applied"] is True and ec["form"] == "Form 540"
+    assert ec["credits"]["personal"] == {"line": "7", "count": 2, "amount_each": 153, "credit": 306}
+    assert ec["credits"]["dependent"] == {"line": "10", "count": 2, "amount_each": 475, "credit": 950}
+    assert (ec["exemption_amount"], ec["limitation_reduction"], ec["total"], ec["tax_after_credits"]) == (1256, 0, 1256, 9160)
+    assert ec["lines"] == {"exemption_amount": "11", "total": "32", "tax_after_credits": "33"}
+    # Without counts the tax line is unchanged and the result says the credits were not applied.
+    plain = _data(_run(_call("calc", {"op": "state_tax", "args": {
+        "state": "ca", "taxable_base": 200000, "filing_status": "married_filing_jointly", "year": 2025}})))
+    assert plain["tax"] == 10416 and plain["exemption_credits"]["applied"] is False
+    assert "Exemption credits NOT applied" in plain["work"]
+    # A state whose pack ships no credits keeps its old output shape, and refuses a nonzero credit count.
+    il = _data(_run(_call("calc", {"op": "state_tax", "args": {
+        "state": "il", "taxable_base": 50000, "exemptions_count": 1, "year": 2025}})))
+    assert "exemption_credits" not in il
+    err = _run(_call("calc", {"op": "state_tax", "args": {
+        "state": "il", "taxable_base": 50000, "year": 2025, "exemption_credit_counts": {"personal": 1}}}))
+    assert err.isError is True and "ships no exemption_credits block" in err.content[0].text
+    # Phase K JK28 (2026-10-23): Oregon's AGI ceiling travels too. Single, line 15 and federal AGI $100,001, one
+    # Regular box: "If your federal AGI is more than $100,000 and your filing status is single ... enter 0" (2025
+    # OR-40 instructions p. 18), so line 25 is $0; agi_ceilings names the ceiling per kind.
+    ore = _data(_run(_call("calc", {"op": "state_tax", "args": {
+        "state": "or", "taxable_base": 100001, "year": 2025, "exemption_credit_counts": {"regular": 1},
+        "federal_agi": 100001}})))
+    oec = ore["exemption_credits"]
+    assert (oec["exemption_amount"], oec["total"], oec["limitation_reduction"]) == (256, 0, 256)
+    assert oec["agi_ceilings"]["regular"] == 100000 and oec["lines"]["total"] == "25"
+    assert "agi_ceilings" not in ec  # California's limitation is not a ceiling; its output keeps its shape
+
+
 def test_estimate_refund_is_labeled_and_computed():
     profile = {"household": {"marital_status": {"value": "unmarried", "provenance": {"kind": "user_stated"}},
                              "filing_status": {"value": "single", "provenance": {"kind": "user_stated"}}}}
@@ -376,6 +415,32 @@ def test_verify_tools_expose_independent_and_summary_flags_not_run():
     assert "not run" in rec["note"] and "independent" in rec["note"]
     ran = _report_summary(VerifyReport(ok=True), recompute_ran=True)
     assert "note" not in ran["sections"]["recompute"]
+
+
+def test_verify_summary_lists_skipped_checks():
+    """A SKIPPED check never flips ok, so the summary must say what went unchecked (Phase K JK28): a relation whose
+    `unless` box is checked, a cross_form rule whose form is not in the filing. A section with nothing skipped keeps
+    its old three keys."""
+    from taxfill_core.verify import CrossFormCheck, RelationCheck, VerifyReport
+    from taxfill_mcp.server import _report_summary
+
+    report = VerifyReport(
+        ok=True,
+        relations=[
+            RelationCheck(relation="12 == max(7 - 11, 0) unless alt_tax_method", status="SKIPPED",
+                          detail="relation '12 == max(7 - 11, 0) unless alt_tax_method' not checked: box ..."),
+            RelationCheck(relation="7 == 5 + 6", status="PASS", detail="456 == 456"),
+        ],
+        cross_form=[CrossFormCheck(form_key="ia1040", relation="1f == sched_1a.37", status="SKIPPED",
+                                   detail="cross_form rule '1f == sched_1a.37' not checked: ...")],
+    )
+    sections = _report_summary(report)["sections"]
+    assert sections["relations"] == {
+        "checked": 2, "failed": 0, "failures": [],
+        "skipped": ["relation '12 == max(7 - 11, 0) unless alt_tax_method' not checked: box ..."],
+    }
+    assert sections["cross_form"]["skipped"] == ["cross_form rule '1f == sched_1a.37' not checked: ..."]
+    assert sections["assertions"] == {"checked": 0, "failed": 0, "failures": []}
 
 
 def test_estimate_refund_unknown_income_field_error_is_prescriptive():
@@ -480,6 +545,92 @@ def test_full_chain_fetch_fill_verify_render(tmp_path):
 
 
 @pytest.mark.network
+def test_verify_form_over_mcp_skips_ia_line_12_while_the_step_5_box_is_checked(tmp_path):
+    """IA 1040 2025 over MCP (Phase K JK28): a single filer on the Income Tax Reduction Worksheet (41-146) checks the
+    Step 5 box and enters the worksheet's smaller amount on line 12. verify_form reports ok, and the summary lists the
+    guarded relation under `skipped`; the same return with the box unchecked fails it. Demo figures only."""
+    async def go():
+        async with connect(mcp) as client:
+            ia = {"form": "ia1040", "year": 2025, "jurisdiction": "states/ia"}
+            try:
+                _data(await client.call_tool("fetch_blank", ia))
+            except Exception as exc:  # offline + cold cache
+                pytest.skip(f"cannot fetch blank: {exc}")
+            fm = _data(await client.call_tool("get_form_map", ia))
+            guarded = "12 == max(7 - 11, 0) unless alt_tax_method"
+            assert guarded in fm["relations"]
+            values = {"filing_status.single": True, "a": 40, "d": 40, "2": 12000, "4": 12000, "5": 456, "7": 456,
+                      "8": 40, "11": 40, "12": 300, "14": 300, "16": 300, "18": 300, "20": 300, "22": 300}
+            for name, box, ok in (("checked.pdf", True, True), ("unchecked.pdf", False, False)):
+                out = str(tmp_path / name)
+                _data(await client.call_tool("fill_form", {**ia, "values": {**values, "alt_tax_method": box},
+                                                           "out_path": out}))
+                report = _data(await client.call_tool("verify_form", {**ia, "pdf_path": out}))
+                rel = report["sections"]["relations"]
+                assert report["ok"] is ok, rel
+                if box:
+                    assert rel["failed"] == 0
+                    assert any(guarded in s and "box 'alt_tax_method' is checked" in s for s in rel["skipped"])
+                else:
+                    assert "skipped" not in rel
+                    assert any(guarded in f for f in rel["failures"])
+
+    _run(go())
+
+
+@pytest.mark.network
+def test_verify_filing_over_mcp_names_the_item_of_each_skipped_and_failed_relation(tmp_path):
+    """Phase K JK28 final review (2026-10-23): two IA 1040 items carry the same guarded relation. The summary's
+    `skipped` and `failures` entries are built from each check's detail, so each must name its form_key — before the
+    fix the two items' skipped entries were identical strings and a failure named no item. Demo figures only."""
+    async def go():
+        async with connect(mcp) as client:
+            ia = {"form": "ia1040", "year": 2025, "jurisdiction": "states/ia"}
+            try:
+                _data(await client.call_tool("fetch_blank", ia))
+            except Exception as exc:  # offline + cold cache
+                pytest.skip(f"cannot fetch blank: {exc}")
+            values = {"filing_status.single": True, "a": 40, "d": 40, "2": 12000, "4": 12000, "5": 456, "7": 456,
+                      "8": 40, "11": 40, "12": 300, "14": 300, "16": 300, "18": 300, "20": 300, "22": 300,
+                      "alt_tax_method": True}
+            items = []
+            for key, extra in (("ia_a", {}), ("ia_b", {"7": 999})):  # ia_b's line 7 breaks "7 == 5 + 6"
+                out = str(tmp_path / f"{key}.pdf")
+                _data(await client.call_tool("fill_form", {**ia, "values": {**values, **extra}, "out_path": out}))
+                items.append({**ia, "pdf_path": out, "form_key": key})
+            report = _data(await client.call_tool("verify_filing", {"items": items}))
+            rel = report["sections"]["relations"]
+            guarded = "12 == max(7 - 11, 0) unless alt_tax_method"
+            for key in ("ia_a", "ia_b"):
+                assert any(s.startswith(f"{key}: ") and guarded in s for s in rel["skipped"]), rel["skipped"]
+            assert len(set(rel["skipped"])) == len(rel["skipped"]), rel["skipped"]
+            assert rel["failures"] and all(f.startswith("ia_b: ") for f in rel["failures"]), rel["failures"]
+
+    _run(go())
+
+
+@pytest.mark.network
+def test_fill_form_over_mcp_names_the_combs_it_aligned(tmp_path):
+    """Phase K JK28 (2026-10-23): the 2025 Form 1040 SSN box's dotted separators cross the widget's comb cells, so
+    fill_form narrows it (P-033) and its MCP result names the widget under `combs_aligned`, as FillResult does."""
+    async def go():
+        async with connect(mcp) as client:
+            where = {"form": "f1040", "year": 2025}
+            try:
+                _data(await client.call_tool("fetch_blank", where))
+            except Exception as exc:  # offline + cold cache
+                pytest.skip(f"cannot fetch blank: {exc}")
+            filled = _data(await client.call_tool("fill_form", {**where, "values": {"identifying_number": "999880503"},
+                                                                "out_path": str(tmp_path / "ssn.pdf")}))
+            assert any("f1_16[0] (page 1): x 469.00-576.00 -> 468.00-" in c for c in filled["combs_aligned"]), filled
+            plain = _data(await client.call_tool("fill_form", {**where, "values": {"name.first": "RILEY"},
+                                                               "out_path": str(tmp_path / "name.pdf")}))
+            assert plain["combs_aligned"] == []
+
+    _run(go())
+
+
+@pytest.mark.network
 def test_verify_form_independent_recompute_catches_wrong_tax_over_mcp(tmp_path):
     """The persona-review $6,036 repro, end-to-end over MCP: a 1040 whose line 16 carries a
     wrong tax-table number now FAILS verify_form when the calc result is passed as
@@ -526,3 +677,139 @@ def test_verify_form_independent_recompute_catches_wrong_tax_over_mcp(tmp_path):
             assert "not run" in silent["sections"]["recompute"]["note"]
 
     _run(go())
+
+
+# ── page-header mirrors (Phase K JK28) ─────────────────────────────────────────
+
+
+def _mirror_blank(path, header_width=200):
+    """A two-page blank: Side 1 first/last name, and a page-2 header box (Helv 12) that repeats the name."""
+    from reportlab.lib.pagesizes import letter
+    from reportlab.pdfgen import canvas
+
+    c = canvas.Canvas(str(path), pagesize=letter)
+    c.acroForm.textfield(name="p1_first", x=72, y=700, width=150, height=18)
+    c.acroForm.textfield(name="p1_last", x=240, y=700, width=150, height=18)
+    c.showPage()
+    c.acroForm.textfield(name="p2_name", x=72, y=700, width=header_width, height=18)
+    c.showPage()
+    c.save()
+    return path
+
+
+def test_jk28_fill_form_returns_mirrored_and_verify_form_counts_a_wrong_header(tmp_path, monkeypatch):
+    """fill_form's result names the header mirrors it built; verify_form's identity section fails a wrong one."""
+    import taxfill_mcp.server as server
+    from taxfill_core.schemas.formpack import FormPack
+
+    pack = FormPack.model_validate({
+        "form": "TEST-M", "jurisdiction": "states/ca", "tax_year": 2025,
+        "source_url": "https://www.ftb.ca.gov/forms/2025/test-m.pdf", "pdf_sha256": "...", "acroform_root": "",
+        "fields": [{"line": "name.first", "field": "p1_first", "type": "text"},
+                   {"line": "name.last", "field": "p1_last", "type": "text"},
+                   {"line": "name.full", "field": "p2_name", "type": "text"}],
+        "mirrors": {"name.full": "{name.first} {name.last}"},
+    })
+    blank = _mirror_blank(tmp_path / "blank.pdf")
+    monkeypatch.setattr(server, "_load_any_pack", lambda form, year, jurisdiction: pack)
+    monkeypatch.setattr(server, "_fetch_pack_blank", lambda p: blank)
+    where = {"form": "test_m", "year": 2025, "jurisdiction": "states/ca"}
+    person = {"name.first": "Riley", "name.last": "Example"}
+
+    out = str(tmp_path / "built.pdf")
+    filled = _data(_run(_call("fill_form", {**where, "values": person, "out_path": out})))
+    assert filled["mirrored"] == ["name.full"] and filled["warnings"] == []
+    assert filled["written"]["p2_name"] == "Riley Example"
+    good = _data(_run(_call("verify_form", {**where, "pdf_path": out})))
+    assert good["ok"] is True
+    assert good["sections"]["identity"] == {"checked": 1, "failed": 0, "failures": []}
+
+    wrong = str(tmp_path / "wrong.pdf")
+    filled = _data(_run(_call("fill_form", {**where, "values": {**person, "name.full": "Someone Else"},
+                                            "out_path": wrong})))
+    assert filled["mirrored"] == []  # a value the caller passes is written as given
+    bad = _data(_run(_call("verify_form", {**where, "pdf_path": wrong})))
+    assert bad["ok"] is False
+    identity = bad["sections"]["identity"]
+    assert (identity["checked"], identity["failed"]) == (1, 1)
+    assert "holds 'Someone Else' but its template" in identity["failures"][0]
+    assert "builds 'Riley Example'" in identity["failures"][0]
+
+
+def _abbreviating_pack():
+    from taxfill_core.schemas.formpack import FormPack
+
+    return FormPack.model_validate({
+        "form": "TEST-M", "jurisdiction": "states/ca", "tax_year": 2025,
+        "source_url": "https://www.ftb.ca.gov/forms/2025/test-m.pdf", "pdf_sha256": "...", "acroform_root": "",
+        "fields": [{"line": "name.first", "field": "p1_first", "type": "text"},
+                   {"line": "name.last", "field": "p1_last", "type": "text"},
+                   {"line": "name.full", "field": "p2_name", "type": "text"}],
+        "mirrors": {"name.full": "{name.first} {name.last}"},
+        "mirror_abbreviations": {"name.full": ["name.first"]},
+    })
+
+
+def test_jk28_get_form_map_shows_the_abbreviation_rule_and_verify_form_honours_it(tmp_path, monkeypatch):
+    """A name too wide for its header box may be abbreviated as the pack's mirror_abbreviations allow: get_form_map
+    shows the rule, and verify_form passes such a header only when the full name does not fit (Phase K JK28,
+    2026-10-16)."""
+    import taxfill_mcp.server as server
+
+    fm = _data(_run(_call("get_form_map", {"form": "form540", "year": 2025, "jurisdiction": "states/ca"})))
+    assert fm["mirror_abbreviations"] == {"name.full": ["name.first", "name.middle_initial"]}
+
+    pack = _abbreviating_pack()
+    monkeypatch.setattr(server, "_load_any_pack", lambda form, year, jurisdiction: pack)
+    where = {"form": "test_m", "year": 2025, "jurisdiction": "states/ca"}
+    person = {"name.first": "Riley", "name.last": "Example"}
+
+    # 'Riley Example' is 76.7 pt at Helv 12: a 70 pt box holds 68 pt, a 200 pt box all of it
+    for width, header, ok in ((70, "R. Example", True), (70, "Riley Exampl", False), (200, "R. Example", False)):
+        blank = _mirror_blank(tmp_path / f"blank{width}.pdf", width)
+        monkeypatch.setattr(server, "_fetch_pack_blank", lambda p, blank=blank: blank)
+        out = str(tmp_path / f"{width}_{ok}.pdf")
+        filled = _data(_run(_call("fill_form", {**where, "values": {**person, "name.full": header}, "out_path": out})))
+        assert filled["mirrored"] == [] and filled["warnings"] == []  # a value the caller passes is written as given
+        report = _data(_run(_call("verify_form", {**where, "pdf_path": out})))
+        assert report["ok"] is ok, report["sections"]["identity"]
+        assert report["sections"]["identity"]["failed"] == (0 if ok else 1)
+        if width == 200:
+            assert "but 'Riley Example' fits its box" in report["sections"]["identity"]["failures"][0]
+
+
+def test_jk28_fill_form_abbreviates_or_leaves_blank_a_header_its_box_cannot_hold(tmp_path, monkeypatch):
+    """fill_form measures a built header against its box: it writes the abbreviation the pack allows, with an
+    informational warning, or leaves the box blank with a warning to hand-write it; verify_form agrees either way."""
+    import taxfill_mcp.server as server
+
+    pack = _abbreviating_pack()
+    monkeypatch.setattr(server, "_load_any_pack", lambda form, year, jurisdiction: pack)
+    where = {"form": "test_m", "year": 2025, "jurisdiction": "states/ca"}
+    person = {"name.first": "Riley", "name.last": "Example"}
+
+    for width, written in ((70, "R Example"), (40, None)):  # 'R Example' is 58.7 pt; a 40 pt box holds 38
+        blank = _mirror_blank(tmp_path / f"blank{width}.pdf", width)
+        monkeypatch.setattr(server, "_fetch_pack_blank", lambda p, blank=blank: blank)
+        out = str(tmp_path / f"filled{width}.pdf")
+        filled = _data(_run(_call("fill_form", {**where, "values": person, "out_path": out})))
+        (warning,) = filled["warnings"]
+        if written:
+            assert filled["mirrored"] == ["name.full"] and filled["written"]["p2_name"] == written
+            assert warning.startswith("mirror line 'name.full': 'Riley Example' does not fit its box (76.7 pt at Helv "
+                                      "12, wider than the 68.0 pt inside its box")
+            assert "informational: verify_form accepts it" in warning
+        else:
+            assert filled["mirrored"] == [] and "p2_name" not in filled["written"]
+            assert warning.startswith("mirror line 'name.full' left blank: its box cannot hold 'Riley Example'")
+            assert "hand-write it in the box after printing" in warning
+        report = _data(_run(_call("verify_form", {**where, "pdf_path": out})))
+        assert report["ok"] is True, report["sections"]["identity"]
+        identity = report["sections"]["identity"]
+        if written:
+            assert identity == {"checked": 1, "failed": 0, "failures": []}
+        else:  # Phase K JK28 (2026-10-23): the blank header is SKIPPED, and the summary lists it under `skipped`
+            (skipped,) = identity.pop("skipped")
+            assert identity == {"checked": 1, "failed": 0, "failures": []}
+            assert skipped.startswith("page-header mirror 'name.full' is blank: its box cannot hold 'Riley Example'")
+            assert "hand-write" in skipped

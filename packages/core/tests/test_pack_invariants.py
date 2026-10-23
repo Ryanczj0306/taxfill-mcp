@@ -49,6 +49,7 @@ from __future__ import annotations
 import re
 from functools import lru_cache
 from pathlib import Path
+from types import SimpleNamespace
 from typing import NamedTuple
 
 import pytest
@@ -729,7 +730,7 @@ def test_yesno_pair_helper_accepts_every_house_option_spelling():
 
 
 # ---------------------------------------------------------------------------
-# Identity page mirrors (pitfall P-007 class 4) — a mirror needs its source
+# Identity page mirrors (pitfall P-007 class 4) — every mirror is declared
 # ---------------------------------------------------------------------------
 
 # The single most-repeated state defect in this repo is an identity banner that
@@ -740,160 +741,139 @@ def test_yesno_pair_helper_accepts_every_house_option_spelling():
 # header. ri/2023 + ri/2024 shipped exactly that — twelve unmapped mirrors each
 # — and oh/2023 + oh/2024 shipped it on eleven pages through one 12-kid field.
 #
-# Nothing anywhere asserted the relationship, in either direction. These checks
-# do, at the level a pack can actually express:
+# Since Phase K JK28 (2026-10-23) a pack DECLARES each mirror it maps, in its
+# `mirrors:` block, as a template over its own lines (formpacks/CONVENTIONS.md,
+# "Page-header mirrors (`mirrors`)"): fill_form builds a mirror the caller
+# leaves out and verify_form checks every declared mirror against its sources.
+# Before JK28 these checks could only pair a mirror with a same-named source
+# key, and "the VALUES agree" had no home in the schema: a caller that filled a
+# mirror with something else filed an internally inconsistent return. Now:
 #
-#   * a mirror line must have a SOURCE line in the same pack (otherwise a
-#     caller has no canonical key to copy from, and the mirrors drift);
-#   * the mirror must bind a DIFFERENT AcroForm field (this is the fact the
-#     Ohio pack originally got wrong — TP_SSN1 is a separate field from TP_SSN,
-#     so writing tp_ssn cannot populate it);
-#   * mirror and source must agree on `type`, `comb` and `format`, because
-#     those drive how the value is normalised — an SSN mirror written through a
-#     different path is exactly the P-001 shape, and verify's clipping scan
-#     skipped ReadOnly widgets until Phase J J0.3 (it now scans a MAPPED one
-#     only once a fill changes its value), so this gate is what catches it.
-#
-# What is NOT asserted, and cannot be: that the VALUES agree on a real filing.
-# `relations` is arithmetic over money lines and `identity_fields` drives a
-# CROSS-form check, so `page4_name_last == name.last` has no home in the pack
-# schema. A caller that fills a mirror with something else produces an
-# internally inconsistent return and no gate will catch it. Both RI pack
-# headers say so; it is recorded here because this is where a reader looks.
+#   * every MIRROR-SHAPED line (the shapes below) is declared in `mirrors`, or
+#     listed in NOT_A_MIRROR with the printed reason it is not a repeat — an
+#     undeclared mirror is never built, so its header ships blank again;
+#   * IDENTITY_MIRROR_COUNTS pins how many mirrors each pack declares, so that
+#     DROPPING a declaration fails (the direction the defect took);
+#   * a plain one-source mirror ("{line}") agrees with its source on `type`
+#     and `format`, and is a comb only when its source is, because those drive
+#     how the value is normalised or refused — an SSN mirror written through a
+#     different path is exactly the P-001 shape (a plain box may mirror a comb
+#     source: _comb_or_format_disagree).
+#     The schema already refuses a mirror whose AcroForm field another line
+#     binds (the Ohio lesson: TP_SSN1 is a separate field from TP_SSN, so
+#     writing tp_ssn cannot populate it; PA-40's your_ssn is ONE field whose
+#     widget repeats, so it needs no mirror), so that is not re-checked here.
 #
 # `maxlen` is deliberately NOT compared: a DOR often prints a narrower box on
 # the continuation page, and the packs are right to follow it (nc d400
-# tp_last_name 25 -> tp_last_name_page2 10; ri page4/page5 name_last 26 over an
-# unconstrained page-1 source). Each pack's maxlen tracks its own widget's
-# /MaxLen, which is what keeps ReadOnly mirrors inside _pack_maxlen_checks'
-# reach even though the geometry half of the clipping scan cannot see them.
+# tp_last_name 25 -> tp_last_name_page2 10, declared as "{tp_last_name[:10]}";
+# ri page4/page5 name_last 26 over an unconstrained page-1 source). fill_form
+# measures each built mirror against its own box (taxfill_core.textfit).
 
-# Mirror line shapes in house use, most specific first. `_page1` is excluded on
-# purpose: ny it201/it203's `name_as_shown_page1` names the page a widget sits
-# on, it is not a mirror of anything.
+# Mirror line shapes in house use. `_page1` is excluded on purpose: ny
+# it201/it203's `name_as_shown_page1` names the page a widget sits on, it is not
+# a mirror of anything. Phase K JK28 (2026-10-23) added the shapes the old
+# key-pairing could not see: f8863's `name_p2` / `ssn_p2_area`, CA's dotted
+# `identifying_number.page6`, OH/GA's `tp_ssn_page_header` (the old
+# EXTRA_IDENTITY_MIRRORS rows) and ME's `identifying_number.echo`. A mirror
+# whose key has no shape at all (CA's `name.full`, ME's `name`) is still pinned
+# by IDENTITY_MIRROR_COUNTS once declared. The `header.` / `header_` shape
+# (Phase K JK28, 2026-10-23) is the house name for ONE header field with a
+# widget on each later page: DE pit_res 2024-2025 `header.name` /
+# `header.taxpayer_id`, IA ia1040 2023-2025 `header.name` and CO dr0104 2023
+# `header_name` were mapped but undeclared, so their headers printed blank. It
+# names only identity words (name, taxpayer_id, ssn, identifying_number):
+# NJ-1040's `header_foreign_address` and the like are page-1 checkboxes. A
+# `header` key whose field IS the page-1 original (CO DR 0104PN's
+# `header_name`, "Taxpayer's Name" on page 1) is a NOT_A_MIRROR row.
 _MIRROR_SHAPES = (
-    re.compile(r"^page(?P<page>[2-9])_(?P<stem>.+)$"),
-    re.compile(r"^(?P<stem>.+)_page(?P<page>[2-9])$"),
-    re.compile(r"^(?P<stem>.+)_pg(?P<page>[2-9])$"),
+    re.compile(r"^page[2-9]_.+$"),
+    re.compile(r"^.+_page[2-9]$"),
+    re.compile(r"^.+_pg[2-9]$"),
+    re.compile(r"^.+_p[2-9](_.+)?$"),
+    re.compile(r"^.+\.page[2-9]$"),
+    re.compile(r"^.+_page_header$"),
+    re.compile(r"^.+\.echo$"),
+    re.compile(r"^header[._](name|taxpayer_id|ssn|identifying_number)$"),
 )
 
 
-class MirrorPair(NamedTuple):
-    """One identity mirror whose line key does not follow a house shape."""
-
-    pack: str
-    mirror: str
-    source: str
-    why: str
-
-
-# Mirrors the shape rules above cannot find, listed explicitly. Only ONE form
-# needs this today, and it is the one that shipped the defect.
-EXTRA_IDENTITY_MIRRORS: tuple[MirrorPair, ...] = (
-    MirrorPair(
-        "states/oh/2023/it1040_oh/pack.yaml",
-        "tp_ssn_page_header",
-        "tp_ssn",
-        "Ohio names the mirror after the header it fills rather than the page it sits on, "
-        "so no page-number shape matches it. TP_SSN1 is a SEPARATE AcroForm field from the "
-        "page-1 TP_SSN with 12 widget kids, 11 of them on document pages 2-12, every one of "
-        "which prints an SSN caption — so writing tp_ssn alone leaves 11 blank headers",
-    ),
-    MirrorPair(
-        "states/oh/2024/it1040_oh/pack.yaml",
-        "tp_ssn_page_header",
-        "tp_ssn",
-        "same field topology as the 2023 base, ported unchanged",
-    ),
-    MirrorPair(
-        "states/oh/2025/it1040_oh/pack.yaml",
-        "tp_ssn_page_header",
-        "tp_ssn",
-        "same field topology as 2024 on the 2025 blank (TP_SSN1: one field, 12 widget kids, "
-        "11 on pages 2-12 under an SSN caption), re-read on the Phase J JS5 port renders",
-    ),
+# AcroForm FIELD-name shapes of a mirror, matched case-insensitively against the binding, not the line key (Phase K
+# JK28, 2026-10-23). The line shapes above cannot see a mirror whose key reads like any other line: GA Form 500's
+# Schedule 4 header copies (`s4.tp_first_name` -> TP_FIRSTNAME_COPY, ...) shipped undeclared through the sweep, so
+# their "YOUR FIRST NAME / MI / LAST NAME / SUFFIX" boxes printed blank. A DOR names such a field after what it
+# does: `..._COPY` (GA's SSN_COPY and TP_*_COPY, filled by the document JavaScript), `... again` (ME's "1040ME Your
+# social security number again"), a name or SSN cell ending `pgN` (WI's ss3pg2 / lnamepg5, NC's
+# y_d400wf_lname2_PG2; AL Form 40's TOTADJINCPG2 is a page-2 total, not a header), or a field that starts with
+# the page and then names the cell (AL 2023 al40nr's PG2NAME, the page-4 Schedule B/D/E header; added with the AL
+# schedule-header declarations, Phase K JK28, 2026-10-23, and run over every pack: PG2NAME is its only match).
+_MIRROR_FIELD_SHAPES = (
+    re.compile(r"(^|[_ .])copy$", re.IGNORECASE),
+    re.compile(r"(^|[_ .])again$", re.IGNORECASE),
+    re.compile(r"(name|ssn?)[0-9]?_?pg[2-9]$", re.IGNORECASE),
+    re.compile(r"^pg[2-9]_?(name|ssn)", re.IGNORECASE),
 )
 
 
-class MirrorlessPack(NamedTuple):
-    """A pack whose mirror-shaped keys have no single source key, and why."""
+def _mirror_shaped(line: str, field: str | None = None, field_type: str = "text") -> bool:
+    """A mirror-shaped line: its KEY matches a line shape, or (a text line) its AcroForm FIELD a field shape."""
+    if any(shape.match(line) for shape in _MIRROR_SHAPES):
+        return True
+    return field is not None and field_type == "text" and any(shape.search(field) for shape in _MIRROR_FIELD_SHAPES)
+
+
+class NotAMirror(NamedTuple):
+    """Mirror-shaped lines of a pack that are deliberately NOT declared as mirrors, and why."""
 
     pack: str
     lines: tuple[str, ...]
     why: str
 
 
-# A mirror-shaped key with no resolvable source is usually a bug. These are
-# not: the page-1 identity is spelled with a DIFFERENT SHAPE from the mirror,
-# many-to-one, so no key-rewriting rule can pair them up and inventing one
-# would be a false assertion.
-MIRRORS_WITHOUT_A_SINGLE_SOURCE_KEY: tuple[MirrorlessPack, ...] = (
-    *(
-        MirrorlessPack(
-            f"states/nj/{year}/nj1040/pack.yaml",
-            ("page2_names", "page2_ssn", "page3_names", "page3_ssn", "page4_names", "page4_ssn"),
-            "NJ-1040 splits the page-1 SSN across NINE comb boxes (tp_ssn_d01..d09) and "
-            "prints the page-1 name as the single combined tp_name_last_first_initial, "
-            "while each continuation header is ONE box. The pairing is nine-to-one and "
-            "one-to-one-under-another-name, so it cannot be derived from the key",
-        )
-        # 2025 keeps the same six one-box continuation headers over the same nine-cell
-        # page-1 SSN and one combined name box (Phase J JS5, re-read on the port renders).
-        for year in (2023, 2024, 2025)
+# A mirror-shaped line left out of `mirrors` is usually the blank-header defect.
+# These are not: the printed face says the box is NOT a repeat to fill.
+NOT_A_MIRROR: tuple[NotAMirror, ...] = tuple(
+    NotAMirror(
+        f"federal/{year}/sched_e/pack.yaml",
+        ("identifying_number_page2", "name_page2"),
+        "Schedule E page 2 prints 'Name(s) shown on return. Do not enter name and social security number if "
+        "shown on other side.' (read on the 2023-2026 blanks at 200 dpi, Phase K JK28, 2026-10-23), and page 1 — "
+        "the other side of the sheet — always carries name and identifying_number, so fill_form must not build "
+        "the page-2 header and verify must not FAIL it blank; the lines stay mapped for a caller who needs them",
+    )
+    for year in (2023, 2024, 2025, 2026)
+) + (
+    NotAMirror(
+        "states/al/2023/al40nr/pack.yaml",
+        ("PG2NAME",),
+        "page 4, Schedules B, D and E, is the back of Schedule A ('(Schedules B, D, and E are on back)' on page 3) "
+        "and prints 'Name(s) as shown on Form 40NR (Do not enter name and social security number if shown on other "
+        "side)' (read on the 2023 blank at 200 dpi, Phase K JK28, 2026-10-23); page 3's NAME / SSSNB, declared "
+        "mirrors, always carry them, so PG2NAME and its SSN box SSSNB2A (no shape finds that one) are not built",
     ),
-    *(
-        MirrorlessPack(
-            f"states/pa/{year}/pa40/pack.yaml",
-            ("name_on_page2",),
-            "PA-40's page-2 header is one 'name on' box over a page-1 identity split into "
-            "tp_first_name / tp_mi / tp_last_name / tp_suffix, so again many-to-one. Note "
-            "PA needs no SSN mirror key at all: your_ssn is ONE AcroForm field whose widget "
-            "repeats at the top of page 2, so a single write fills both",
-        )
-        for year in (2023, 2024, 2025)
+    NotAMirror(
+        "states/co/2023/dr0104pn/pack.yaml",
+        ("header_name",),
+        "the field 'Taxpayer's Name' IS the page-1 name box of DR 0104PN ('Taxpayer's Name' on page 1, 'Name' on "
+        "pages 2-3, one field with a widget on each, read on the 2023 blank at 200 dpi, Phase K JK28, 2026-10-23): "
+        "the original, not a repeat of another line, so one write fills every page",
     ),
 )
 
 
-def _source_key_candidates(stem: str) -> tuple[str, ...]:
-    """Spellings a mirror's stem may use for its page-1 source key.
-
-    House packs spell the source both ways: sched_e mirrors `identifying_number`
-    as `identifying_number_page2` (undotted both ends), while ri1040 mirrors the
-    dotted `name.first` as `page2_name_first`. So a mirror stem resolves against
-    the bare stem AND its first-underscore-to-dot rewrite.
-    """
-    if "_" not in stem:
-        return (stem,)
-    return (stem, stem.replace("_", ".", 1))
-
-
-def _discovered_mirrors(pack: FormPack) -> tuple[list[tuple[str, str]], list[str]]:
-    """(mirror, source) pairs found by shape, plus mirror-shaped keys with no source."""
-    lines = {pf.line for pf in pack.fields}
-    pairs: list[tuple[str, str]] = []
-    orphans: list[str] = []
-    for line in sorted(lines):
-        for shape in _MIRROR_SHAPES:
-            match = shape.match(line)
-            if match is None:
-                continue
-            stem = match.group("stem")
-            source = next(
-                (c for c in _source_key_candidates(stem) if c in lines and c != line), None
-            )
-            if source is None:
-                orphans.append(line)
-            else:
-                pairs.append((line, source))
-            break
-    return pairs, orphans
-
-
-# Mirror pairs per pack, measured 2026-08-21 by the shape rules above. Pinned so
-# that DROPPING a mirror fails — which is the direction the defect actually took:
-# ri/2023 and ri/2024 each shipped 0 of their 12 for months.
+# Declared mirrors per pack, len(pack.mirrors). Pinned so that DROPPING one
+# fails — which is the direction the defect actually took: ri/2023 and ri/2024
+# each shipped 0 of their 12 for months. Until Phase K JK28 (2026-10-23) this
+# table counted mirror/source key PAIRS found by shape (measured 2026-08-21);
+# since then it counts declarations, which also covers the keys no shape finds.
 IDENTITY_MIRROR_COUNTS: dict[str, int] = {
+    # Form 8863 page 2 repeats "Name(s) shown on return" and the three-cell "Your
+    # social security number" on its own fields (name_p2, ssn_p2_area/_group/_serial);
+    # the key-pairing never saw the `_p2` shape (declared Phase K JK28, 2026-10-23).
+    "federal/2023/f8863/pack.yaml": 4,
+    "federal/2024/f8863/pack.yaml": 4,
+    "federal/2025/f8863/pack.yaml": 4,
+    "federal/2026/f8863/pack.yaml": 4,
     # Form 8949's page-2 header prints "Name(s) shown on return. Name and SSN or
     # taxpayer identification no. not required if shown on other side" over its
     # OWN AcroForm fields (Page2[0].f2_1[0]/f2_2[0]). The escape clause is "if
@@ -906,16 +886,63 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     # header text, the escape clause and the count are all unchanged.
     "federal/2025/f8949/pack.yaml": 2,
     "federal/2026/f8949/pack.yaml": 2,   # the 2026 draft keeps the 2025 widgets (Phase J JT3d)
-    "federal/2023/sched_e/pack.yaml": 2,
-    "federal/2024/sched_e/pack.yaml": 2,
-    "federal/2025/sched_e/pack.yaml": 2,
-    # The 2026 draft adds a third page (Part V) that repeats the header: page 2 AND page 3 mirrors (JT5d).
-    "federal/2026/sched_e/pack.yaml": 4,
-    "states/nc/2023/d400/pack.yaml": 1,
-    "states/nc/2024/d400/pack.yaml": 1,
-    # 2025 keeps the page-2 "Last Name (First 10 Characters)" box on its own widget (y_d400wf_lname2_PG2); the SSN
-    # echo is the same field as page 1 and so is not a mirror (Phase J JS5).
-    "states/nc/2025/d400/pack.yaml": 1,
+    # Schedule E 2023-2025 pinned 2 (name_page2 / identifying_number_page2) until Phase K JK28 (2026-10-23), when
+    # the page-2 caption "Do not enter name and social security number if shown on other side." moved them to
+    # NOT_A_MIRROR; with no mirror declared those packs are absent here.
+    # The 2026 draft adds a third page (Part V) that repeats the header: page 2 AND page 3 mirrors (JT5d), pinned
+    # 4; since JK28 only page 3's plain "Name(s) shown on return" pair is declared (page 2 is NOT_A_MIRROR).
+    "federal/2026/sched_e/pack.yaml": 2,
+    # CA Form 540 / 540NR Sides 2-6: "Your name:" (name.full, no page shape) and "Your SSN or ITIN:"
+    # (identifying_number.page6) — the JK28 pilot (2026-10-16), pinned here since the sweep (2026-10-23).
+    # AL Form 40NR's schedule headers (Phase K JK28, 2026-10-23): "Name(s) as shown on ..." and the filer's (and,
+    # on DS / AATC / AAC / W-2 / RS, the spouse's) SSN box on Schedules A, DS, OC (one field, pages 7-13), AATC,
+    # AAC, W-2, CP, RS, Form NOL-85, the five NOL-85A copies and Form 4952A, each ReadOnly and filled by the
+    # document JavaScript from FIRSTNAME / MIDDLEINITIAL / LASTNAME, SSSN and SPSSN: 15 name boxes, 15 filer SSN
+    # boxes and 4 spouse SSN boxes. The pack's `mirrors:` comment names the boxes it does not declare (page 4 and
+    # Schedule HOF print "Do not enter name and social security number if shown on other side").
+    "states/al/2023/al40nr/pack.yaml": 34,
+    # AL Form 40's schedule headers, the same JavaScript-filled boxes (Phase K JK28 final review, 2026-10-23): name and
+    # filer SSN on Schedules A, DS, ATP, HBC, CR, OC (one field), AATC, AAC, W-2, RS, CP, D, E, Form NOL-85, the five
+    # NOL-85A copies and Form 4952A (20 + 20), and the spouse SSN on DS, HBC, AATC, AAC, W-2 and RS (6): 46. The 2025
+    # blank adds a second Schedule RS page (SCHRSNAME-1 / SCHRSSSN-1 / SCHRSSPSSN-1): 49. Page 4 (NAME2A / SSSNB2A)
+    # and Schedule HOF print "Do not enter name and social security number if shown on other side" and are not built.
+    "states/al/2023/al40/pack.yaml": 46,
+    "states/al/2024/al40/pack.yaml": 46,
+    "states/al/2025/al40/pack.yaml": 49,
+    "states/ca/2023/form540/pack.yaml": 2,
+    "states/ca/2023/form540nr/pack.yaml": 2,
+    "states/ca/2024/form540/pack.yaml": 2,
+    "states/ca/2024/form540nr/pack.yaml": 2,
+    "states/ca/2025/form540/pack.yaml": 2,
+    "states/ca/2025/form540nr/pack.yaml": 2,
+    # CO DR 0104 2023 pages 2-4 "Name" header: Text31, one field of its own (the "SSN or ITIN" beside it is the
+    # page-1 Text5 itself); 2024 and 2025 put the page-1 name fields in the header, so they need none (Phase K JK28,
+    # 2026-10-23, found by the `header_` key shape).
+    "states/co/2023/dr0104/pack.yaml": 1,
+    # DE PIT-RES pages 2-4 "NAME" / "TAXPAYER ID" header row: tpName and tpID, one field each with three widgets,
+    # mapped as header.name / header.taxpayer_id since the 2024 port and declared since Phase K JK28 (2026-10-23).
+    "states/de/2024/pit_res/pack.yaml": 2,
+    "states/de/2025/pit_res/pack.yaml": 2,
+    # GA Form 500's "YOUR SOCIAL SECURITY NUMBER" header: SSN_COPY, one field with 26 widget kids (every page but 1
+    # and 6), filled in Acrobat only by the document JavaScript taxfill never runs (Phase K JK28, 2026-10-23); plus
+    # the Schedule 4 (page 25) name copies TP_FIRSTNAME_COPY / TP_MIDINIT_COPY / TP_LASTNAME_COPY / TP_SUFFIX_COPY
+    # under "YOUR FIRST NAME / MI / LAST NAME / SUFFIX", which the sweep missed and its verifier rendered blank (1 + 4).
+    # 2023 left SSN_COPY unmapped, declaring only the four name copies, until Phase K JK28 (2026-10-23) mapped it
+    # as in 2024 and 2025.
+    "states/ga/2023/ga500/pack.yaml": 5,
+    "states/ga/2024/ga500/pack.yaml": 5,
+    "states/ga/2025/ga500/pack.yaml": 5,
+    # IA 1040's "Taxpayer's Name" header on pages 2-5 (2023) / 2-6 (2024, 2025): "Taxpayers Name", one field with a
+    # widget on each, mapped as header.name and declared since Phase K JK28 (2026-10-23); the "Taxpayer's SSN"
+    # header beside it is the page-1 SSN field itself.
+    "states/ia/2023/ia1040/pack.yaml": 1,
+    "states/ia/2024/ia1040/pack.yaml": 1,
+    "states/ia/2025/ia1040/pack.yaml": 1,
+    # ME 1040ME form page 2 (PDF page 3): "Name(s) as shown on Form 1040ME" (`name`, no page shape) and "Your
+    # Social Security Number" (identifying_number.echo, its own field "... again") (Phase K JK28, 2026-10-23).
+    "states/me/2023/f1040me/pack.yaml": 2,
+    "states/me/2024/f1040me/pack.yaml": 2,
+    "states/me/2025/f1040me/pack.yaml": 2,
     # The 2025 port maps the page-2 and page-3 header "SSN" boxes (Page2SSN / Page3SSN: their own /Tx widgets, a
     # keystroke filter and no JavaScript that copies the page-1 SSN) as identifying_number_page2 / _page3; the 2023
     # pack had left them unmapped, so its continuation headers shipped blank (Phase J JS5).
@@ -925,14 +952,41 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     # commit 8959461).
     "states/ms/2024/f80105/pack.yaml": 2,
     "states/ms/2025/f80105/pack.yaml": 2,
+    "states/nc/2023/d400/pack.yaml": 1,
+    "states/nc/2024/d400/pack.yaml": 1,
+    # 2025 keeps the page-2 "Last Name (First 10 Characters)" box on its own widget (y_d400wf_lname2_PG2); the SSN
+    # echo is the same field as page 1 and so is not a mirror (Phase J JS5).
+    "states/nc/2025/d400/pack.yaml": 1,
+    # NJ-1040 pages 2-4: one "Your Social Security Number" box over the nine page-1 comb cells tp_ssn_d01..d09,
+    # and one "Name(s) as shown on Form NJ-1040" box over the combined tp_name_last_first_initial — many-to-one,
+    # so the old key-pairing listed them in MIRRORS_WITHOUT_A_SINGLE_SOURCE_KEY; declared since Phase K JK28
+    # (2026-10-23). 2025 keeps the same six boxes (Phase J JS5, re-read on the port renders).
+    "states/nj/2023/nj1040/pack.yaml": 6,
+    "states/nj/2024/nj1040/pack.yaml": 6,
+    "states/nj/2025/nj1040/pack.yaml": 6,
+    # Ohio names the mirror after the header it fills (tp_ssn_page_header), so no page-number shape matched it and
+    # it sat in EXTRA_IDENTITY_MIRRORS until Phase K JK28 (2026-10-23). TP_SSN1 is a SEPARATE AcroForm field from
+    # the page-1 TP_SSN with 12 widget kids, 11 of them on document pages 2-12, captioned "SSN:" or "Primary
+    # taxpayer's SSN" (2023: "SSN:" on page 2 only; 2024 and 2025: on the even pages), read off each blank's text.
+    "states/oh/2023/it1040_oh/pack.yaml": 1,
+    "states/oh/2024/it1040_oh/pack.yaml": 1,
+    "states/oh/2025/it1040_oh/pack.yaml": 1,
     # The 2024 port maps the continuation headers "Your Social Security Number:" — "511a SSN1" (ONE field, a widget on
     # each of PDF pages 43-49) and the 538-S page-2 "538-S Your Social Security Number" — as identifying_number_page2 and
     # f538s.identifying_number_page2; the 2023 pack had left both unmapped, so its headers shipped blank (Phase J JS5).
-    "states/ok/2024/form511/pack.yaml": 2,
+    # Since Phase K JK28 (2026-10-23) it also declares the "Name(s) Shown on Form 511:" / "Name(s) Shown on Form
+    # 538-S:" boxes beside them (name.full, f538s.name.full: no page shape), which the 2025 blank no longer prints.
+    "states/ok/2024/form511/pack.yaml": 4,
     # The 2025 port maps the continuation headers "Your Social Security Number:" — "511a SSN1" (ONE field, a widget on
     # each of PDF pages 43-49) and the 538-S page-2 "538-S Your Social Security Number" — as identifying_number_page2 and
     # f538s.identifying_number_page2; the 2023 pack had left both unmapped, so its headers shipped blank (Phase J JS5).
     "states/ok/2025/form511/pack.yaml": 2,
+    # PA-40's page-2 "Name(s)" box (name_on_page2) over the page-1 tp_first_name / tp_mi / tp_last_name /
+    # tp_suffix — many-to-one, formerly MIRRORS_WITHOUT_A_SINGLE_SOURCE_KEY; declared since Phase K JK28
+    # (2026-10-23). PA needs no SSN mirror: your_ssn is ONE AcroForm field whose widget repeats on page 2.
+    "states/pa/2023/pa40/pack.yaml": 1,
+    "states/pa/2024/pa40/pack.yaml": 1,
+    "states/pa/2025/pa40/pack.yaml": 1,
     "states/ri/2023/ri1040/pack.yaml": 12,
     "states/ri/2024/ri1040/pack.yaml": 12,
     # 2025 keeps every mirror widget at the same name and /Rect (Phase J JS5).
@@ -952,99 +1006,132 @@ IDENTITY_MIRROR_COUNTS: dict[str, int] = {
     "states/wi/2025/wi_form1/pack.yaml": 17,
 }
 
+_PLAIN_MIRROR = re.compile(r"^\{([^{}\[\]]+)\}$")  # "{line}": one whole placeholder, no slice, no literal text
+
+
+def _comb_or_format_disagree(mirror, source) -> bool:
+    """A plain mirror spells its source's value another way: a different `format`, or a comb mirror of a non-comb
+    source (its box refuses the dashes or letters the source accepts, P-001).
+
+    A NON-comb mirror of a comb source agrees (Phase K JK28, 2026-10-23): `comb` adds a digits-only refusal and
+    changes nothing the filler renders, so with the same `format` both boxes hold the same digits. DE pit_res's
+    pages 2-4 "TAXPAYER ID" header (tpID, a plain box) mirrors the page-1 9-cell comb taxPayerID that way.
+    """
+    if mirror.format != source.format:
+        return True
+    return bool(mirror.comb) and not source.comb
+
 
 @pytest.mark.parametrize("pack_path", ALL_PACK_PATHS, ids=_pack_id)
-def test_identity_page_mirrors_agree_with_the_line_they_mirror(pack_path: Path):
-    """A page-2..N identity mirror binds its own widget and matches its source."""
+def test_identity_page_mirrors_are_declared_and_agree_with_their_source(pack_path: Path):
+    """Every mirror-shaped line is a declared mirror (or a justified NOT_A_MIRROR), and the declared count is pinned."""
     pack = _load(pack_path)
     key = _pack_key(pack_path)
     by_line = {pf.line: pf for pf in pack.fields}
+    mirrors = dict(pack.mirrors or {})
 
-    pairs, orphans = _discovered_mirrors(pack)
-    extra = [
-        (row.mirror, row.source) for row in EXTRA_IDENTITY_MIRRORS if row.pack == key
-    ]
-    for mirror, source in extra:
-        assert mirror in by_line and source in by_line, (
-            f"{key}: EXTRA_IDENTITY_MIRRORS names '{mirror}' -> '{source}' but the pack no "
-            f"longer maps both. If the mirror was intentionally dropped, the continuation "
-            f"pages now ship a BLANK header — re-read the printed face before deleting the "
-            f"row (P-007 class 4)"
-        )
-
-    for mirror, source in [*pairs, *extra]:
-        mirror_field, source_field = by_line[mirror], by_line[source]
-        assert mirror_field.field != source_field.field, (
-            f"{key}: '{mirror}' and '{source}' bind the SAME AcroForm field "
-            f"'{mirror_field.field}', so the mirror line is redundant — one write already "
-            f"fills both widgets. Drop the mirror key, or re-derive the binding: the "
-            f"opposite mistake (assuming one field when the DOR authored two) is what left "
-            f"Ohio's page 2-12 SSN headers blank"
-        )
-        assert mirror_field.type == source_field.type, (
-            f"{key}: '{mirror}' is type {mirror_field.type!r} but its source '{source}' is "
-            f"{source_field.type!r} — a mirror carries the same value, so it takes the same "
-            f"type"
-        )
-        assert (mirror_field.comb, mirror_field.format) == (
-            source_field.comb,
-            source_field.format,
-        ), (
-            f"{key}: '{mirror}' has comb={mirror_field.comb!r} format="
-            f"{mirror_field.format!r} while '{source}' has comb={source_field.comb!r} "
-            f"format={source_field.format!r}. Those drive normalisation, so a mismatch "
-            f"means the same SSN reaches the two boxes spelled differently — verify's clipping "
-            f"scan checks a mapped ReadOnly mirror's width and /MaxLen, not whether its "
-            f"spelling matches its source's, so nothing downstream would catch it (P-001)"
-        )
-
-    exempt = {
-        line
-        for row in MIRRORS_WITHOUT_A_SINGLE_SOURCE_KEY
-        if row.pack == key
-        for line in row.lines
-    }
-    unexplained = sorted(set(orphans) - exempt)
-    assert not unexplained, (
-        f"{key}: mirror-shaped line(s) {unexplained} have no source line in this pack. "
-        f"Either the page-1 original is unmapped (then the caller has nothing to copy "
-        f"from), or the source is spelled in a shape _source_key_candidates does not know. "
-        f"If the pairing is genuinely many-to-one — NJ splits its page-1 SSN across nine "
-        f"comb boxes — add a MIRRORS_WITHOUT_A_SINGLE_SOURCE_KEY row saying so"
+    exempt = {line for row in NOT_A_MIRROR if row.pack == key for line in row.lines}
+    stale = sorted(line for line in exempt if line not in by_line or line in mirrors)
+    assert not stale, (
+        f"{key}: NOT_A_MIRROR names {stale}, which the pack no longer maps or now declares in `mirrors:` — "
+        f"delete those lines from the row (a declared mirror needs no exemption)"
+    )
+    undeclared = sorted(line for line, pf in by_line.items()
+                        if _mirror_shaped(line, pf.field, pf.type) and line not in mirrors and line not in exempt)
+    assert not undeclared, (
+        f"{key}: mirror-shaped line(s) {undeclared} are mapped but not declared in the pack's `mirrors:`, so "
+        f"fill_form never builds them and verify_form never checks them — the blank continuation header of P-007 "
+        f"class 4 (ri1040 shipped 12 of them blank). Render the page the line sits on, read its printed header, "
+        f"then declare each as a template over its page-1 line(s) (formpacks/CONVENTIONS.md, \"Page-header "
+        f"mirrors (`mirrors`)\"), or, when the face says the box is not a repeat to fill, add a NOT_A_MIRROR row "
+        f"quoting it"
     )
 
+    for mirror, template in mirrors.items():
+        plain = _PLAIN_MIRROR.match(template)
+        if plain is None:
+            continue  # a composed mirror (slices, several lines, literal text): the schema validates its template
+        source = plain.group(1)
+        mirror_field, source_field = by_line[mirror], by_line[source]
+        assert mirror_field.type == source_field.type, (
+            f"{key}: mirror '{mirror}' is type {mirror_field.type!r} but its source '{source}' is "
+            f"{source_field.type!r} — a mirror carries the same value, so it takes the same type"
+        )
+        assert not _comb_or_format_disagree(mirror_field, source_field), (
+            f"{key}: mirror '{mirror}' has comb={mirror_field.comb!r} format={mirror_field.format!r} while its "
+            f"source '{source}' has comb={source_field.comb!r} format={source_field.format!r}. Those drive "
+            f"normalisation, so a mismatch means the same SSN reaches the two boxes spelled differently (P-001): "
+            f"give the mirror its source's format (and comb only when the source is a comb too), or declare a "
+            f"template that says how the box differs"
+        )
+
     pinned = IDENTITY_MIRROR_COUNTS.get(key, 0)
-    assert len(pairs) == pinned, (
-        f"{key} has {len(pairs)} identity page mirror(s) ({sorted(m for m, _ in pairs)}); "
-        f"IDENTITY_MIRROR_COUNTS pins {pinned}.\nA count that DROPPED is the defect this "
-        f"pins: ri1040 shipped 0 of its 12 banner mirrors for months, filing a blank "
-        f"'Name(s) shown on Form RI-1040' header on pages 2-5. A count that GREW is "
-        f"usually right — confirm each new mirror against the printed continuation-page "
-        f"header, then update the number"
+    assert len(mirrors) == pinned, (
+        f"{key} declares {len(mirrors)} page-header mirror(s) ({sorted(mirrors)}); IDENTITY_MIRROR_COUNTS pins "
+        f"{pinned}.\nA count that DROPPED is the defect this pins: ri1040 shipped 0 of its 12 banner mirrors for "
+        f"months, filing a blank 'Name(s) shown on Form RI-1040' header on pages 2-5. A count that GREW is usually "
+        f"right — confirm each new mirror against the printed continuation-page header, then update the number"
     )
 
 
 def test_identity_mirror_tables_name_real_packs_and_carry_justifications():
     """Stale mirror-table rows must surface, and no row may be a rubber stamp."""
     discovered = {_pack_key(path) for path in ALL_PACK_PATHS}
-    named = (
-        {row.pack for row in EXTRA_IDENTITY_MIRRORS}
-        | {row.pack for row in MIRRORS_WITHOUT_A_SINGLE_SOURCE_KEY}
-        | set(IDENTITY_MIRROR_COUNTS)
-    )
+    named = {row.pack for row in NOT_A_MIRROR} | set(IDENTITY_MIRROR_COUNTS)
     missing = sorted(named - discovered)
     assert not missing, f"mirror table row(s) name packs that no longer exist: {missing}"
-    thin = [
-        f"{row.pack}:{row.mirror if isinstance(row, MirrorPair) else row.lines[0]}"
-        for row in (*EXTRA_IDENTITY_MIRRORS, *MIRRORS_WITHOUT_A_SINGLE_SOURCE_KEY)
-        if len(row.why.split()) < 4
-    ]
+    thin = [f"{row.pack}:{row.lines[0]}" for row in NOT_A_MIRROR if len(row.why.split()) < 4]
     assert not thin, f"row(s) {thin} carry no real justification"
+    by_pack = {_pack_key(path): {pf.line: pf for pf in _load(path).fields} for path in ALL_PACK_PATHS}
+    shapeless = [
+        f"{row.pack}:{line}" for row in NOT_A_MIRROR for line in row.lines
+        if not _mirror_shaped(line, *((by_pack[row.pack][line].field, by_pack[row.pack][line].type)
+                                      if line in by_pack.get(row.pack, {}) else (None, "text")))
+    ]
+    assert not shapeless, (
+        f"NOT_A_MIRROR row(s) {shapeless} name lines no mirror shape matches — the gate never asks about such a "
+        f"line, so the row exempts nothing; delete it"
+    )
     zero = sorted(pack for pack, count in IDENTITY_MIRROR_COUNTS.items() if count < 1)
     assert not zero, (
         f"IDENTITY_MIRROR_COUNTS row(s) {zero} pin ZERO mirrors — a pack with no mirrors "
         f"is simply absent from the table; a row pinned at 0 asserts nothing"
     )
+
+
+def test_the_mirror_shapes_find_every_house_spelling():
+    """The shapes the gate asks about, and the ones it must not (Phase K JK28, 2026-10-23)."""
+    for line in ("page2_name", "identifying_number_page3", "tp_last_name_page2", "name_pg2", "name_p2",
+                 "ssn_p2_area", "identifying_number.page6", "tp_ssn_page_header", "identifying_number.echo",
+                 "header.name", "header.taxpayer_id", "header_name"):
+        assert _mirror_shaped(line), line
+    for line in ("name_as_shown_page1", "page1_name", "name.full", "name", "identifying_number", "p2_total",
+                 "line_12_page", "page10_name", "header_foreign_address", "header_address_changed", "header.name.x"):
+        assert not _mirror_shaped(line), line
+    # A key with no shape is still found by its AcroForm field name (Phase K JK28, 2026-10-23: GA's s4 copies).
+    for line, field in (("s4.tp_first_name", "TP_FIRSTNAME_COPY"), ("tp_ssn_page_header", "SSN_COPY"),
+                        ("identifying_number.echo", "1040ME Your social security number again"),
+                        ("page2_your_ssn_first3", "ss3pg2"), ("tp_last_name_page2", "y_d400wf_lname2_PG2"),
+                        ("page5_name_last", "lnamepg5"), ("PG2NAME", "PG2NAME"), ("x", "pg3ssn")):
+        assert _mirror_shaped(line, field), (line, field)
+    for line, field in (("PG7LINE1", "PG7LINE1"), ("name", "Page1[0].Pg1Header[0].f1_1[0]"),
+                        ("signature_date", "Pg4 Date(A)"), ("copy_count", "COPYRIGHT"), ("x", "SSN_COPY_2"),
+                        ("TOTADJINCPG2", "TOTADJINCPG2"), ("PG2PT1LINEB1", "PG2PT1LINEB1"), ("x", "PG10NAME"),
+                        ("SSSNB2A", "SSSNB2A")):
+        assert not _mirror_shaped(line, field), (line, field)
+    assert not _mirror_shaped("s4.tp_first_name", "TP_FIRSTNAME_COPY", "checkbox")  # a mirror is a TEXT line
+
+
+def test_a_plain_mirror_may_drop_its_sources_comb_but_not_add_one_or_change_format():
+    """DE's plain "TAXPAYER ID" header over the page-1 comb agrees; a comb mirror of a plain source does not, nor a
+    different format (Phase K JK28, 2026-10-23)."""
+    def line(comb: bool, fmt: str | None):
+        return SimpleNamespace(comb=comb, format=fmt)
+
+    assert not _comb_or_format_disagree(line(False, "ssn_digits_only"), line(True, "ssn_digits_only"))
+    assert not _comb_or_format_disagree(line(True, None), line(True, None))
+    assert _comb_or_format_disagree(line(True, None), line(False, None))
+    assert _comb_or_format_disagree(line(False, None), line(True, "ssn_digits_only"))
 
 
 # ---------------------------------------------------------------------------

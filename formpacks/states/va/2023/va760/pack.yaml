@@ -463,10 +463,14 @@ fields:
   - line: your_signature_date
     field: Date
     type: text
+    # MM/DD/YY: the 8 characters render whole in this Helvetica 10 box, but 8 bare digits (MMDDYYYY) overrun it
+    # and 7 fit (600 dpi probe, Phase K JK28); fill_form has no date format to refuse that shape yet
     maxlen: 8
   - line: spouse_signature_date
     field: Date_2
     type: text
+    # MM/DD/YY: the 8 characters render whole in this Helvetica 10 box, but 8 bare digits (MMDDYYYY) overrun it
+    # and 7 fit (600 dpi probe, Phase K JK28); fill_form has no date format to refuse that shape yet
     maxlen: 8
   - line: your_phone_number
     field: Your Phone Number
@@ -517,3 +521,11 @@ identity_fields:
   - your_ssn
   - your_first_name
   - your_last_name
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2 prints "Social Security Number" in its own box (read on the
+# 2025 blank rendered at 200 dpi; 2023 prints the same caption). fill_form builds each mirror the caller leaves out
+# from its page-1 source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md,
+# "Page-header mirrors (`mirrors`)").
+# The 2023 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  page2_your_ssn: "{your_ssn}"  # "Social Security Number"

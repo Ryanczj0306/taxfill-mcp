@@ -48,10 +48,6 @@ residency:
     (but do pay on Michigan business income). The 2025 instruction book states the domicile-based rules but does
     not state a numeric statutory-resident day-count test, so no day-count "statutory resident" concept is asserted
     here.'
-forms:
-  resident: MI-1040 (Michigan Individual Income Tax Return)
-  part_year_or_nonresident: Schedule NR (Nonresident and Part-Year Resident Schedule), filed together with Form
-    MI-1040
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
   figure): Home Heating Credit (low-income heating-cost credit).'
@@ -280,3 +276,47 @@ law_changes_checked:
     source: 2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2)
     url: >-
       https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+# `forms` sits at the END of this pack on purpose (Phase K JK28, 2026-10-16). The source registry
+# (knowledge/sources_states.yaml, built by scripts/assemble_state_sources.py) keeps the FIRST citation of each URL per
+# topic in file order, and get_sources routes a question by those descriptions. forms.citations below reuse the
+# MI-1040 instruction book URL that `all_citations` describes; placed before `all_citations` (where Virginia keeps
+# `forms`), the role pinpoint replaced that description in the registry. Keep `forms` after `all_citations`.
+forms:
+  resident: MI-1040 (Michigan Individual Income Tax Return)
+  part_year_or_nonresident: Schedule NR (Nonresident and Part-Year Resident Schedule), filed together with Form
+    MI-1040
+  # (Phase K JK28, 2026-10-16): each role's own schedule and the instructions that send that filer to it, which
+  # state_scope adds to a part-year or nonresident filer's citations — the top-level `citation` is the MI-1040 form
+  # itself, so this entry named Schedule NR without citing it or the residency rules. The two URLs are the "MI-1040
+  # Individual Income Tax Instruction Book (no forms)" and "Schedule NR" links on Treasury's "2025 Individual Income Tax
+  # Forms" page (www.michigan.gov/taxes/iit-forms/2025-individual-income-tax-forms), without the page's ?rev= cache
+  # query; each PDF was downloaded twice on 2026-10-16 with identical sha256 (MI-1040 book 35b38086176f867d..., Schedule
+  # NR 639c849738c49cd2...). The entry's form names agree with both; Schedule NR's own page-2 instructions say
+  # 'Nonresidents and part-year residents must pay income tax to Michigan on all income earned in Michigan or
+  # attributable to Michigan.' That sentence stays here, not in the citation: the Schedule NR citation's text becomes
+  # the source registry's description of the schedule, and its 'pay' pulled get_sources("pay online") away from
+  # filing_logistics.
+  citations:
+    part_year:
+    - source: >-
+        2025 Michigan MI-1040 Individual Income Tax Instruction Book, 'Residency' (p. 6): 'Part-year resident. You are a
+        part-year resident if, during the year, you move your permanent home into or out of Michigan. You must pay
+        Michigan income tax on income you earned, received, or accrued while living in Michigan. Use Michigan
+        Nonresident and Part-Year Resident Schedule (Schedule NR) and the following guidelines to help figure your
+        tax'
+      url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+    - source: >-
+        2025 Michigan Schedule NR, Nonresident and Part-Year Resident Schedule (Rev. 03-25) — the 2-page schedule
+        itself (page 1: '2025 MICHIGAN Nonresident and Part-Year Resident Schedule' — 'Include with Form MI-1040.')
+      url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/Schedule-NR.pdf
+    nonresident:
+    - source: >-
+        2025 Michigan MI-1040 Individual Income Tax Instruction Book, 'Residency' (p. 7): 'Nonresident. Use Schedule
+        NR to figure your Michigan taxable income. You must pay Michigan income tax on the following types of
+        income' — and 'A resident of a reciprocal state who claims a refund of Michigan withholding tax must file a
+        Schedule NR along with an MI-1040.'
+      url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+    - source: >-
+        2025 Michigan Schedule NR, Nonresident and Part-Year Resident Schedule (Rev. 03-25) — the 2-page schedule
+        itself (page 1: '2025 MICHIGAN Nonresident and Part-Year Resident Schedule' — 'Include with Form MI-1040.')
+      url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/Schedule-NR.pdf

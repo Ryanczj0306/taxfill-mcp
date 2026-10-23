@@ -61,11 +61,6 @@ residency:
     part, but less than all, of the year, having changed domicile during the year by moving into or out of Nebraska.
     NONRESIDENT: a non-domiciliary not meeting the statutory-resident test, taxed only on income derived from or
     connected with Nebraska sources. (2025 booklet, Definitions.)'
-forms:
-  resident: Form 1040N — Nebraska Individual Income Tax Return
-  part_year_or_nonresident: Form 1040N with Nebraska Schedule III (Computation of Nebraska Tax for Nonresidents
-    and Partial-Year Residents); there is no separate nonresident form number — nonresidents and partial-year residents
-    file the same Form 1040N and must attach Schedule III.
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:
@@ -313,6 +308,53 @@ tax:
     married_filing_jointly: 17200
     married_filing_separately: 8600
     head_of_household: 12600
+  # Phase K JK28 (2026-10-23): the Form 1040N personal exemption credit as cited data. Both sources fetched twice
+  # on 2026-10-23 with identical sha256: the 2025 Form 1040N (db5850008b04901c) and the 2025 Nebraska Individual
+  # Income Tax Booklet (c3aff5d0f5b99141).
+  exemption_credits:
+    citation:
+      source: '2025 Nebraska Form 1040N, page 1 line 4 "Nebraska personal exemptions (Enter 1 in each line of 4a or 4b
+        that applies)": 4a "Yourself. If someone can claim you as a dependent, leave blank", 4b Spouse, 4c "Total
+        number of dependents listed", 4 "Total Nebraska personal exemptions - add lines 4a, 4b, and 4c"; line 17 "Total
+        Nebraska tax before Nebraska personal exemption credit (add lines 15 and 16)"; page 2 line 18 "NE personal
+        exemption credit for residents only ($171 times the number on line 4)", line 34 "Total nonrefundable credits
+        (add lines 18 through 33)", line 35 "Nebraska tax after nonrefundable credits Subtract line 34 from line 17 (if
+        line 34 is more than line 17, enter -0-)". Second pass: the 2025 Nebraska Individual Income Tax Booklet, p. 12
+        Lines 4a-4c, p. 13 Line 4, p. 14 Line 18 and p. 17 Line 35, which print the same $171 and line text.'
+      url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf
+    form: Form 1040N
+    credits:
+      personal:
+        amount: 171
+        line: 4a-4b
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 1, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'Lines 4a and 4b. Booklet p. 12: "Enter 1 in line 4a for yourself. You cannot enter a 1 in line 4a if
+          you are claimed by another taxpayer for child tax credit or dependent tax credit purposes." "If your status is
+          married, filing jointly enter 1 in line 4b for your spouse. You cannot enter a 1 in line 4b if your spouse is
+          claimed by another taxpayer for federal child tax credit or dependent tax credit purposes." Only a joint
+          return enters line 4b.'
+      dependent:
+        amount: 171
+        line: 4c
+        note: 'Line 4c. Booklet p. 12: "Enter the dependents'' names and social security numbers listed in columns 1
+          and 2 of the Federal Form 1040 or 1040-SR that qualify for the child tax credit or dependent tax credit."
+          Booklet p. 13, Line 4: "Add lines 4a, 4b, and 4c and enter the result on line 4."'
+    exemption_amount_line: '18'
+    credit_line: '18'
+    tax_after_line: '35'
+    notes:
+    - 'Booklet p. 14, Line 18: "Residents may claim a $171 credit for each Nebraska personal exemption reported on
+      line 4, Form 1040N. Multiply $171 by the number of Nebraska exemptions on line 4, Form 1040N. Nonresidents and
+      partial-year residents will claim this credit on line 7, Nebraska Schedule III." These amounts are the resident
+      Form 1040N line 18; Schedule III applies its own ratio afterwards. No AGI limitation: the 2025 face and booklet
+      print none for line 18.'
+    - 'Line 35 here is counted from the op''s tax (line 15): line 17 adds the line 16 other tax, and line 34 adds the
+      line 19-33 credits to line 18. It equals the filed line 35 when lines 16 and 19-33 are zero. Booklet p. 17, Line
+      35: "Do not complete the worksheet below if the result of line 12 minus line 13 is $5,000 or more. Otherwise, if
+      your federal tax liability is -0- or is less than your Nebraska tax, complete the Federal Tax Liability
+      Worksheet below." — "On line 35, enter the smaller of the amounts from line 2 or line 3 of this worksheet" (line
+      3 being total federal tax); that cap is not modeled.'
   notes:
   - '2025 CHANGE — TOP RATE CUT TO 5.20% AND BRACKETS RE-INDEXED: the 2025 Tax Calculation Schedule (8-460-2025) prints
     a 5.20% top rate, down from 5.84% in 2024 and 6.64% in 2023 — the LB 754 (2023) glide path continuing toward 3.99%
@@ -333,8 +375,8 @@ tax:
   - 'Nebraska personal exemptions are a TAX CREDIT, not an income exemption: Form 1040N line 18 gives RESIDENTS a
     nonrefundable credit of $171 times the number of Nebraska personal exemptions on line 4 (yourself, spouse, and
     dependents; the 2025 form prints ''$171 times the number on line 4''). It is subtracted from tax, not from income,
-    so no personal/dependent amounts are shipped in exemptions and calc.state_tax does not apply it — claim it on
-    line 18 of the form (nonresidents and partial-year residents claim it prorated on Nebraska Schedule III, line
+    so no personal/dependent amounts are shipped in exemptions; calc.state_tax applies it past the tax line when
+    exemption_credit_counts is passed (tax.exemption_credits, Phase K JK28) (nonresidents and partial-year residents claim it prorated on Nebraska Schedule III, line
     7).'
   - 'The shipped standard deduction is the 2025 chart amount with ZERO boxes checked on Form 1040N line 2a (under
     65, not blind) for a filer who cannot be claimed by another taxpayer for the federal child tax credit or dependent
@@ -379,8 +421,8 @@ tax:
     15 + line 16.'
   - 'Nonresidents and partial-year residents are NOT modeled: they compute line 15 via Nebraska Schedule III (line
     9), which apportions the tax by the Nebraska-income ratio from Schedule III line 4.'
-  - 'Credits are NOT modeled (they reduce tax after line 17): the $171-per-exemption personal exemption credit (line
-    18), credit for tax paid to another state (line 19, Schedule II), the nonrefundable child/dependent care credit
+  - 'Credits are NOT modeled (they reduce tax after line 17), apart from the line 18 personal exemption credit
+    (tax.exemption_credits): credit for tax paid to another state (line 19, Schedule II), the nonrefundable child/dependent care credit
     (line 23, 25% of the federal credit when AGI exceeds $29,000), the refundable child/dependent care credit (line
     42, Form 2441N, AGI $29,000 or less), the Beginning Farmer credit (line 43), the Nebraska EITC (line 44, 10% of
     the federal EITC), the community-college-only property tax credit (line 45, Form PTC), the $250 volunteer emergency
@@ -503,3 +545,62 @@ effective_law_changes:
   citation:
     source: Nebraska Department of Revenue, "2024 Nebraska Legislative Changes" — LB 1023 nonresident compensation sourcing, effective for taxable years beginning on or after 2025-01-01.
     url: https://revenue.nebraska.gov/about/2024-nebraska-legislative-changes
+# `forms` sits at the END of this pack on purpose (Phase K JK28, 2026-10-16). The source registry
+# (knowledge/sources_states.yaml, built by scripts/assemble_state_sources.py) keeps the FIRST citation of each URL per
+# topic in file order, and get_sources routes a question by those descriptions. forms.citations below reuse the
+# Schedules I-III URL that `all_citations` describes (Schedule I's adjustments: no treaty add-back, bullion losses,
+# the Relocation Incentive Act recapture, the food-donation addback). Placed before `all_citations` (where Virginia
+# keeps `forms`), the role quote replaced that description in the registry, and "treaty", "bullion", "relocation
+# incentive" and "food donation" no longer reached the schedules.
+# Keep `forms` after `all_citations` until the registry keeps every description of a URL (the merge ROADMAP JK20
+# carries).
+forms:
+  resident: Form 1040N — Nebraska Individual Income Tax Return
+  part_year_or_nonresident: Form 1040N with Nebraska Schedule III (Computation of Nebraska Tax for Nonresidents
+    and Partial-Year Residents); there is no separate nonresident form number — nonresidents and partial-year residents
+    file the same Form 1040N and must attach Schedule III, except that a married couple with one full-year resident
+    spouse and one nonresident or partial-year resident spouse who elect to file a married, filing jointly return must
+    file a resident return, on which Schedule III cannot be used.
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the booklet's resident pages, so this entry named
+  # Schedule III without citing it. Nebraska has no separate nonresident return — both roles file Form 1040N with
+  # Schedule III — so both roles carry the same two documents. The URLs are the "Booklet" (2025 Nebraska Individual
+  # Income Tax Return) and "Form 1040N Schedules I, II, and III" links on DOR's individual income tax forms page
+  # (revenue.nebraska.gov/about/forms/individual-income-tax-forms); each PDF was downloaded twice on 2026-10-16 with
+  # identical sha256 (booklet c3aff5d0f5b99141..., Schedules I-III a96fcd78d7413b2e...). CORRECTED the same day from
+  # that booklet: this entry said nonresidents and partial-year residents must attach Schedule III, without the
+  # exception the booklet prints beside that rule — 'If one spouse is a full-year resident and the other is a
+  # nonresident or partial-year resident, and they elect to file a married, filing jointly return, a resident return
+  # must be filed and Schedule III cannot be used.' (p. 12, Line 3).
+  citations:
+    part_year:
+    - source: >-
+        2025 Nebraska Individual Income Tax Booklet (8-307-2025) — Form 1040N 'Line 3 Type of Return' (p. 12): 'Box 2.
+        You were a partial-year resident ... Partial-year residents must also complete dates of residency. Nonresidents
+        and partial-year residents must complete and attach Form 1040N, Schedule III, even if all income is earned in
+        Nebraska. If one spouse is a full-year resident and the other is a nonresident or partial-year resident, and
+        they elect to file a married, filing jointly return, a resident return must be filed and Schedule III cannot be
+        used.'; 'Nebraska Schedule III Instructions' (p. 30): 'Taxpayers filing a nonresident or partial-year resident
+        return must complete Nebraska Schedule III to calculate the tax on their income derived from or connected with
+        Nebraska sources.'
+      url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+    - source: >-
+        2025 Form 1040N Schedules I, II, and III — page 3, 'Nebraska Schedule III — Computation of Nebraska Tax for
+        PARTIAL-YEAR RESIDENTS AND NONRESIDENTS ONLY': 'You must complete lines 1 through 14, Form 1040N. ... Use
+        Schedule III to calculate your Nebraska tax liability.'
+      url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N_Schs.pdf
+    nonresident:
+    - source: >-
+        2025 Nebraska Individual Income Tax Booklet (8-307-2025) — Form 1040N 'Line 3 Type of Return' (p. 12): 'Box 3.
+        You were a nonresident. ... Nonresidents and partial-year residents must complete and attach Form 1040N,
+        Schedule III, even if all income is earned in Nebraska. If one spouse is a full-year resident and the other is
+        a nonresident or partial-year resident, and they elect to file a married, filing jointly return, a resident
+        return must be filed and Schedule III cannot be used.'; 'Nebraska Schedule III Instructions' (p. 30):
+        'Taxpayers filing a nonresident or partial-year resident return must complete Nebraska Schedule III to calculate
+        the tax on their income derived from or connected with Nebraska sources.'
+      url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
+    - source: >-
+        2025 Form 1040N Schedules I, II, and III — page 3, 'Nebraska Schedule III — Computation of Nebraska Tax for
+        PARTIAL-YEAR RESIDENTS AND NONRESIDENTS ONLY': 'You must complete lines 1 through 14, Form 1040N. ... Use
+        Schedule III to calculate your Nebraska tax liability.'
+      url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N_Schs.pdf

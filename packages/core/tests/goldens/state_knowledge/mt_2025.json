@@ -8,6 +8,7 @@
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@3be0fefb08f3": "2025 Montana Form 2 Instructions, How to File / Paper Filing ('If you do not owe taxes or are expecting a refund, mail your tax return to ... PO Box 6577 ... If you are making a payment with your tax return, mail your tax return and check to ... PO Box 6308') and the assembly order (payment voucher, W-2s/1099s, Form 2 pages 1-2, Montana schedules, copy of the federal return)",
   "@@3e053dd2003f": "Montana Earned Income Tax Credit (EITC) — Full-year Montana residents who claimed the federal Earned Income Tax Credit on their federal return. Nonresidents do NOT qualify (leave the line blank). Part-year residents, enrolled tribal members living on their reservation, members of IRC section 501(d) agricultural organizations, and resident active-duty servicemembers use Worksheet A (renamed for 2025 from the Earned Income Tax Credit Reduction Worksheet) to reduce the credit by the Montana-earned-income ratio.",
+  "@@44744e815980": "https://revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/Form_2_2025_Schedule_II.pdf",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
@@ -19,6 +20,7 @@
   "@@b2ef4ff5f6a4": "Credit for Income Taxes Paid to Another State or Country — Full-year or part-year Montana residents who paid income tax to another state or country on income that is also taxed by Montana. Not available if the other state allowed a credit against its own tax for the Montana tax on the same income, or for taxes paid on Montana-source income. Pass-through entity owners may claim their share of qualifying entity-level income taxes (including composite and pass-through entity taxes).",
   "@@c17ec871359f": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, HB 845 and SB 53 raised the Montana 529-plan subtraction maximum to up to $4,500 ($9,000 joint). It is a Schedule I subtraction inside Form 2 line 5. Resolve via: The What's New section and the Schedule I subtraction instructions of the 2025 Montana Form 2 instructions (the citation URL); the engine subtracts nothing beyond what the supplied line 7 Montana taxable income already reflects.",
   "@@d0b7f306bb75": "annual (per tax year; the newest shipped MT pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
+  "@@d68c71df3d86": "2025 Montana Form 2 Schedule II – Tax on Montana Source Income (2025v3, 12/2025) — the schedule itself, with its 'Part-Year Resident Information' section",
   "@@d7e25c123754": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf",
   "@@e71e08fdced6": "There is no separate nonresident/part-year individual form for 2025. Nonresidents, part-year residents, and mixed-residency filers also file Montana Form 2 and complete Schedule II, \"Tax on Montana Source Income,\" to apportion the tax. (The Transition Schedule used in 2024 has been discontinued — it applied only to tax year 2024.)",
   "@@e9e3662fb4db": "Montana Form 2 — Individual Income Tax Return (most taxpayers complete only pages 1 and 2; Schedules I-V are separate pages included only when used).",
@@ -375,6 +377,12 @@
      "url": "@@d7e25c123754"
     },
     {
+     "answers": "@@d68c71df3d86",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "forms_and_instructions",
+     "url": "@@44744e815980"
+    },
+    {
      "answers": "2025 Montana Individual Income Tax Return Form 2 (the form itself) — second-pass verification: page 1 line 1 \"Federal adjusted gross income from Form 1040, line 11b\", line 2 \"Add Form 1040, lines 12e and 13b\", line 6 \"$5,660 subtraction for taxpayers 65 and older ($11,320 if married filing jointly and both are 65 and older)\", line 7 Montana taxable income; page 2 Montana Individual Income Tax worksheet with the printed filing-status amounts on line 5 ($21,100 single or married filing separately / $42,200 married filing jointly or qualifying surviving spouse / $31,700 head of household), the 3% (0.03) multiplier on line 8 and 4.1% (0.041) on line 10, the Montana Ordinary Income Tax Table reference on line 12, and the Montana resident tax on line 13; page 1 line 15 \"Multiply Federal EIC by 10% (0.10)\"; page 3 Schedule I Part II line 2 \"Total contributions for the year (up to $4,600 per taxpayer)\"; page 10 Schedule 2EC line 19 \"Your standard exclusion is entered here for you\" pre-printed 12,600, line 25 15% (0.15), line 28 \"Enter the lesser of line 27 or $1,150\"",
      "cadence": "@@d0b7f306bb75",
      "topic": "forms_and_instructions",
@@ -527,6 +535,14 @@
       {
        "source": "@@14ec0f539982",
        "url": "@@d7e25c123754"
+      },
+      {
+       "source": "2025 Montana Form 2 Instructions, 'Nonresident' (Page 6 of 42): 'You are a nonresident of Montana if you are neither a resident of Montana nor a part-year resident. Generally, Montana taxes a nonresident’s income from all Montana sources.' — 'Schedule II – Tax on Montana Source Income' (Page 23 of 42): 'If you are a nonresident, part-year resident, or a mixed residency filer you must use Schedule II to report your Montana source income and determine your Montana tax liability; and attach it to your return.' — 'North Dakota Reciprocity' (Page 6 of 42): 'If you are a resident of North Dakota, wages you received in 2025 for work performed in Montana are not taxable in Montana.'",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "2025 Montana Form 2 Schedule II – Tax on Montana Source Income (2025v3, 12/2025) — the schedule itself",
+       "url": "@@44744e815980"
       }
      ],
      "filing_role": "nonresident",
@@ -593,6 +609,14 @@
       {
        "source": "@@14ec0f539982",
        "url": "@@d7e25c123754"
+      },
+      {
+       "source": "2025 Montana Form 2 Instructions, 'Residency Status' — 'Part-Year Resident' (Page 5 of 42): 'Part-year residents must file an income tax return as a part-year resident and use the Schedule II to determine their Montana tax liability. Montana taxes the income that a part-year resident receives while living in Montana plus any income received from Montana sources when not living in Montana.' — 'Schedule II – Tax on Montana Source Income' (Page 23 of 42): 'If you are a nonresident, part-year resident, or a mixed residency filer you must use Schedule II to report your Montana source income and determine your Montana tax liability; and attach it to your return.'",
+       "url": "@@d7e25c123754"
+      },
+      {
+       "source": "@@d68c71df3d86",
+       "url": "@@44744e815980"
       }
      ],
      "filing_role": "part_year",

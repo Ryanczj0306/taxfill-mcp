@@ -55,6 +55,51 @@ forms:
   part_year_or_nonresident: IA 126 (Iowa Nonresident and Part-Year Resident Credit Schedule), form number 41-126,
     filed together with the IA 1040. (Iowa does not use a separate nonresident return; nonresidents/part-year residents
     file the IA 1040 and attach the IA 126.)
+  # Role citations (Phase K JK28, 2026-10-16): what state_scope adds to a part-year or nonresident filer's citations
+  # (the top-level `citation` is the IA 1040 itself, the only document this entry pointed at before). Both roles file
+  # the IA 1040 with Schedule IA 126; the Department's 2025 IA 1040 instructions are its "1040 Expanded Instructions"
+  # web pages (each marked 'Instruction Year: 2025'), and the IA 126 PDF is the 2025 "IA 126" link on its forms search
+  # (revenue.iowa.gov/forms?name=41-126&year=2025). Each was downloaded twice on 2026-10-16 with identical sha256 (Who
+  # Must File page 539f7bac6f795b75..., Line 13 page e53ff76733b67cb3..., IA 126 3334dd85e9879066...). The
+  # part_year_or_nonresident text above agrees with the 2025 instructions.
+  # The two instruction pages' URLs carry no year, and the Department publishes its IA 1040 instructions only as web
+  # pages: its forms search for the 2025 IA 1040 (revenue.iowa.gov/forms?name=41-001&year=2025, fetched twice on
+  # 2026-10-16, sha256 d0c6d9073f5ee788...) links 'IA 1040 Instructions' to the 1040-expanded-instructions pages and
+  # lists no instructions PDF. The verification anchors are therefore each page's 'Instruction Year: 2025' line and the
+  # year-specific sentence quoted ('... you were a resident or part-year resident of Iowa in 2025 ...'): a TY2026 run
+  # re-checks those, not the URL.
+  citations:
+    part_year:
+    - source: >-
+        Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, 'Intro 3: Who Must File?': 'You must file an
+        Iowa return if...' — '... you were a resident or part-year resident of Iowa in 2025 and meet any of the
+        following requirements.' — 'f. You were a nonresident or part-year resident and your Iowa-source net income IA
+        126, line 27 was $1,000 or more, unless below the income thresholds above.'
+      url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/who-must-file
+    - source: >-
+        Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, 'Line 13: Credit for Nonresident or Part-Year
+        Resident': 'A nonresident or part-year resident of Iowa must complete the IA 1040, lines 1 through 12 prior to
+        completing the IA 126. The nonresident or part-year resident then completes a Schedule IA 126.'
+      url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/credit-nonpart-year-resident
+    - source: >-
+        2025 IA 126, Iowa Nonresident and Part-Year Resident Credit Schedule (form 41-126) — the schedule itself (page 1:
+        'Your Residency Status (check one)')
+      url: https://revenue.iowa.gov/media/4385/download?inline
+    nonresident:
+    - source: >-
+        Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, 'Intro 3: Who Must File?': 'Nonresidents, see
+        items f and g.' — 'f. You were a nonresident or part-year resident and your Iowa-source net income IA 126, line
+        27 was $1,000 or more, unless below the income thresholds above.'
+      url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/who-must-file
+    - source: >-
+        Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, 'Line 13: Credit for Nonresident or Part-Year
+        Resident': 'A nonresident or part-year resident of Iowa must complete the IA 1040, lines 1 through 12 prior to
+        completing the IA 126. The nonresident or part-year resident then completes a Schedule IA 126.'
+      url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/credit-nonpart-year-resident
+    - source: >-
+        2025 IA 126, Iowa Nonresident and Part-Year Resident Credit Schedule (form 41-126) — the schedule itself (page 1:
+        'Your Residency Status (check one)')
+      url: https://revenue.iowa.gov/media/4385/download?inline
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:
@@ -219,6 +264,72 @@ tax:
     — computed on IA 1040 line 4 ''Iowa taxable income'' (line 4 = line 2 federal taxable income + line 3 net Iowa
     modifications; ''Do not include lines 1a through 1f'').'
   exemptions: {}
+  # Phase K JK28 (2026-10-23): the IA 1040 Step 3 exemption credits as cited data. Sources fetched twice on
+  # 2026-10-23 with identical sha256: the 2025 IA 1040 (623a3d5afbcec87d) and the 2025 IA 1040 Expanded
+  # Instructions pages "Exemption Credits" (page text 8a70c036dbcbf228), "Line 08: Total Exemption Credit"
+  # (6e5b5989d0da8e30) and "Line 12: Balance" (2797726349cb5147).
+  exemption_credits:
+    citation:
+      source: '2025 IA 1040 Iowa Individual Income Tax Return (41-001), page 1 Step 3 "Exemptions": a "Personal Credit:
+        Enter 1 (enter 2 if filing status 2 or 4) x $40 ="; b "Enter 1 for each taxpayer 65 or older and/or 1 for each
+        taxpayer who is blind x $20 =" (boxes You are 65 or older, You are blind, Spouse is 65 or older, Spouse is
+        blind); c "Dependents: Enter 1 for each dependent. x $40 ="; d "Total. Add lines a, b and c"; page 2 Step 5 line
+        8 "Total exemption credit amount from Step 3", line 11 "Total Credits. Add lines 8, 9, and 10.", line 12
+        "BALANCE. Subtract line 11 from line 7." Second pass: the 2025 IA 1040 Expanded Instructions ("Instruction
+        Year: 2025"), "Intro 6: Exemption Credits" (https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/exemption-credits),
+        "Line 08: Total Exemption Credit" and "Line 12: Balance" ("Subtract line 11 from line 7. If less than zero, enter
+        zero."), which print the same amounts.'
+      url: https://revenue.iowa.gov/media/4401/download
+    form: IA 1040
+    credits:
+      personal:
+        amount: 40
+        line: Step 3a
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 1, head_of_household: 2}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'Step 3 line a. Expanded Instructions, Exemption Credits: "If you are filing single (status 1), married
+          filing separately (status 3) or qualifying surviving spouse (status 5), enter 1 in the Personal Credit space.
+          If you are filing married filing jointly (status 2) or head of household (status 4), you are eligible for an
+          extra credit and should enter 2 in the Personal Credit space. Add the number of personal credits and multiply
+          by $40." "Note to dependents filing their own returns: You may claim a $40 personal exemption credit even if
+          you are claimed as a dependent on another person''s Iowa return." Head of household enters 2 in Iowa.'
+      senior:
+        amount: 20
+        line: Step 3b
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 1, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The 65-or-older boxes of Step 3 line b. Expanded Instructions: "If you were 65 or older on or before
+          January 1, 2026, you may take an additional personal credit. If your spouse was 65 or older on or before
+          January 1, 2026, and you are filing a joint return (status 2), you may take an additional personal credit for
+          your spouse." Line b is one count on the form: enter senior + blind there. A qualifying
+          surviving spouse (status 5) files no joint return, so it counts the filer alone.'
+      blind:
+        amount: 20
+        line: Step 3b
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 1, head_of_household: 1}
+        max_count_qualifying_surviving_spouse: 1
+        note: 'The blind boxes of Step 3 line b. Expanded Instructions: "If you were blind on December 31, 2025, you
+          may take an additional personal credit. If your spouse was blind on December 31, 2025, and you are filing a
+          joint return (status 2), you may take an additional personal credit for your spouse. Add the number of
+          credits for 65 or older and blind and multiply by $20."'
+      dependent:
+        amount: 40
+        line: Step 3c
+        note: 'Step 3 line c. Expanded Instructions: "Enter the number of dependent children and other dependents you
+          are claiming for federal income tax purposes. Add the number of dependent credits and multiply by $40."
+          "Married Separate Filers: You must report the same dependents you claimed on your federal income tax
+          return."'
+    exemption_amount_line: Step 3d
+    credit_line: '8'
+    tax_after_line: '12'
+    notes:
+    - 'Expanded Instructions, Exemption Credits: "d. Total Add the dollar amounts and enter on Step 3, line d and on
+      line 8." Line 08: "Enter the total exemption credit amount from IA 1040, Step 3, line d." No AGI limitation: the
+      2025 face and Expanded Instructions print none for Step 3.'
+    - 'Line 12 here is counted from the op''s tax (line 5): line 7 "Total tax. Add lines 5 and 6" adds the line 6
+      lump-sum tax, and line 11 adds the line 9 tuition/textbook and line 10 volunteer credits to line 8. It equals
+      the filed line 12 when lines 6, 9 and 10 are zero; otherwise add those on the form. The alternate tax, tax
+      reduction worksheet and low-income exemption change line 5 or 12 on the form (see the pack notes).'
   notes:
   - '2025 STRUCTURAL CHANGE (SF 2442, enacted May 2024): Iowa went FLAT. The three 2024 brackets (4.40%/4.82%/5.70%)
     are GONE — for tax years beginning on or after 1/1/2025 there is a SINGLE flat rate of 3.8% on Iowa taxable income
@@ -240,10 +351,10 @@ tax:
     line 4 on line 5 (check the Step 5 box). Status-3 (MFS) spouses prorate it. This provision is REPEALED for tax
     years beginning on or after 1/1/2026. Single taxpayers may instead qualify for the Iowa Income Tax Reduction Worksheet
     (41-146). Check these when income is just above the threshold.'
-  - 'Exemption CREDITS, not base exemptions (NOT modeled): IA 1040 Step 3 computes personal credits at $40 (enter
+  - 'Exemption CREDITS, not base exemptions: IA 1040 Step 3 computes personal credits at $40 (enter
     1 for statuses 1, 3, and 5; 2 for statuses 2 and 4), $20 per 65-or-older / blind condition, and $40 per dependent;
     the Step 3 total is a CREDIT against tax on line 8 — never a base reduction. exemptions ships empty; pass exemptions_count=0
-    and dependents_count=0.'
+    and dependents_count=0, and pass the Step 3 counts as exemption_credit_counts (tax.exemption_credits, Phase K JK28).'
   # The low-income box and the surtax line below were re-read on the 2025 face (JK27, 2026-10-16). Page 2
   # (41-001b) prints the box under the Step 5 heading, above line 5; page 3 (41-001c) prints "19. School district
   # surtax or EMS surtax. Multiply line 18 by the percentage from list" inside Step 5, and the "Line 19" page of
@@ -258,7 +369,7 @@ tax:
   - 'Cents vs whole dollars: the IA 1040 is captioned ''Enter Dollars and Cents'' and computes tax to the cent; whole-dollar
     rounding is OPTIONAL (drop under 50 cents; 50-99 cents up — a .50 tie rounds UP, matching this op). No tax-table
     mandate: all filers apply the 3.8% rate (or the alternate-tax / tax-reduction worksheets).'
-  - 'Not modeled — later lines: Iowa lump-sum tax (line 6), the Step 3 exemption credits (line 8), tuition and textbook
+  - 'Not modeled — later lines: Iowa lump-sum tax (line 6), tuition and textbook
     credit (line 9), volunteer firefighter/EMS/reserve peace officer credit (line 10), the IA 126 nonresident/part-year
     credit, out-of-state tax credit, SCHOOL DISTRICT SURTAX and EMS surtax (line 19, in Step 5: "School district surtax
     or EMS surtax. Multiply line 18 by the percentage from list"; Step 6 is "Refundable Credits and Payments", lines

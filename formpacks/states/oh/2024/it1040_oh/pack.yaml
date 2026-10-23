@@ -21,7 +21,9 @@
 #     and run in BOTH directions. /FT changed on nothing.
 #     /Ff — all EIGHT changes: PREPARER_PRINTED_NAME gained 8388608
 #     (DoNotScroll) while losing its /MaxLen (25 -> none), so the pack's
-#     `maxlen: 25` is now its own authoring bound and can no longer clip;
+#     `maxlen` is now its own authoring bound — 21, the capitals a 600 dpi
+#     probe render draws whole in its box (JK28; the 25 kept until then
+#     let 22-25 characters print cut);
 #     SP_SSN (12582912 -> 12582914), CHK_SP_RES (none -> 2) and
 #     SP_NON_RES_STATE (none -> 2) GAINED bit 2 (Required) — not ReadOnly;
 #     SP_SSN_SEP LOST bit 2 (2 -> no /Ff key at all), the mirror of that same
@@ -799,10 +801,14 @@ fields:
     field: SIGN_DATE
     type: text
     maxlen: 8
-  - line: preparer_printed_name     # Preparer's printed name
+  - line: preparer_printed_name     # Preparer's printed name — the widget has no /MaxLen; its box is
+                                    # 153.6 pt wide (/Rect x 113.25-266.85) at CourierNew,Bold 12 =
+                                    # 7.2 pt per glyph: a 600 dpi probe render (JK28) draws 21 capitals
+                                    # whole and cuts the 22nd 1 pt inside the right edge, so 21, as in
+                                    # 2025 (the same box); this pack said 25 until then
     field: PREPARER_PRINTED_NAME
     type: text
-    maxlen: 25
+    maxlen: 21
   - line: preparer_phone            # Preparer — Phone number
     field: PREPARER_PHONE_NUM
     type: text
@@ -2224,3 +2230,10 @@ identity_fields:
   - tp_ssn
   - tp_first_name
   - tp_last_name
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2-12 repeat the SSN in the header, one field TP_SSN1 with a
+# widget on each page, apart from the page-1 TP_SSN. Its caption, read off the 2024 blank's own text around each
+# widget: "SSN:" on pages 2, 4, 6, 8, 10 and 12, "Primary taxpayer's SSN" on pages 3, 5, 7, 9 and 11. fill_form builds
+# each mirror the caller leaves out from its page-1 source (FillResult.mirrored) and verify_form checks it on disk
+# (formpacks/CONVENTIONS.md, "Page-header mirrors (`mirrors`)").
+mirrors:
+  tp_ssn_page_header: "{tp_ssn}"  # "SSN:" / "Primary taxpayer's SSN"

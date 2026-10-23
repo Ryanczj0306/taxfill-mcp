@@ -11,6 +11,8 @@ it actually covers** — read this before trusting the word "binding":
 | `packages/core/tests/test_pack_invariants.py` | **every** pack, federal and state | `cross_form` target resolution, the checkbox `group` rules, identity page mirrors, year tokens in line keys |
 | `packages/core/tests/test_readonly_widget_mapping.py` | **every** pack, federal and state | which packs may bind an AcroForm ReadOnly widget |
 | `packages/core/tests/test_signature_widget_mapping.py` | **every** pack, federal and state | no line binds a digital-signature (`/FT /Sig`) widget |
+| `packages/core/tests/test_signature_line_mapping.py` | **every** `pack.yaml` and `handfill.yaml` | no line types a value onto an ink-signature line outside the allow-list |
+| `packages/core/tests/test_page_header_mirrors.py` | every pack that declares `mirrors` | each declared mirror is built from demo page-1 identity values on the real blank and verifies (network-marked); the CA Sides 2-6 declarations pinned (every pack's are validated by the schema at load) |
 
 Until 2026-08-21 the `cross_form` and checkbox-`group` rules below lived in the
 FEDERAL module and so had never run over a single state pack, while this
@@ -248,11 +250,18 @@ widget's count. Each such row is listed with the measured box in
 `TIGHTER_THAN_WIDGET` (`packages/core/tests/test_pack_maxlen.py`, network-
 marked, self-clearing). A text line whose widget carries a `/MaxLen` may omit
 `maxlen`, because verify's hard MaxLen check still guards it. A widget with NO
-`/MaxLen` gets the count a probe fill renders whole (digits, read on a high-dpi
-render: verify's 0.5-em scan does not catch a cut last glyph); pin it with the
-box it was measured on in `MEASURED_WITHOUT_MAXLEN` (same module), and give one
-box one budget in every year — the CA 540NR "Apt. no/ste. no." box, identical
-in 2023-2025, carried 14 / 12 / 13 until JK27 (2026-10-16) measured 12.
+`/MaxLen` gets the count a probe fill renders whole, read on a high-dpi render
+(verify's 0.5-em scan does not catch a cut last glyph). Probe a numeric box
+(SSN, FEIN, ZIP, apartment number) with digits and a name, initial or code box
+with a cycle of capitals A-Z (an all-caps entry is the widest realistic one);
+a Helvetica date box budgets its date shape ("MM/DD/YY" renders whole where 8
+bare digits do not), and an auto-size (`0 Tf`) box, which never cuts, holds
+the longest probe still drawn at 6 pt. Lower the pack `maxlen` when it allows
+more than renders, pin the box, its probe and its fit in
+`MEASURED_WITHOUT_MAXLEN` (same module), and give one box one budget in every
+year — the CA 540NR "Apt. no/ste. no." box, identical in 2023-2025, carried
+14 / 12 / 13 until JK27 (2026-10-16) measured 12, and the OH IT 1040
+preparer-name box 25 / 25 / 21 until JK28 measured 21.
 
 Two traps worth knowing before you audit a blank: `pdfinfo`'s
 "JavaScript: yes" is satisfied by `AFNumber_Format`-style FORMATTING scripts
@@ -269,24 +278,185 @@ page. The DOR propagates the value itself — embedded JavaScript, or an XFA
 its own line key or it ships blank on the filed return** (class 4 above; it
 happened to ri1040 on 12 widgets and to it1040_oh on 11 pages).
 
-- Name a mirror for the page it fills: `page<N>_<what>` (`page2_ssn`,
-  `page3_name_last`) or `<what>_page<N>` (`identifying_number_page2`). Both
-  house shapes are recognised by the harness; `_page1` is NOT a mirror.
-- A mirror must bind a DIFFERENT AcroForm field from its source, and must
-  agree with it on `type`, `comb` and `format`. Harness enforced. If the two
-  keys bind the SAME field, the mirror key is redundant — one write already
-  fills both widgets (PA-40's `your_ssn` is one field whose widget repeats).
+- Name a new mirror for the page it fills: `page<N>_<what>` (`page2_ssn`,
+  `page3_name_last`) or `<what>_page<N>` (`identifying_number_page2`);
+  `_page1` is NOT a mirror. Every mirror-shaped line (the full list of key and
+  AcroForm field shapes is under "What the harness enforces, and what it does
+  not" below) must be declared in `mirrors` (next section) or listed, with the
+  printed reason, in `test_pack_invariants.NOT_A_MIRROR`.
+- A plain one-source mirror (`"{line}"`) must agree with its source on `type`
+  and `format`, and may be a comb only when its source is one. Harness
+  enforced. If the mirror and its source keys bind the SAME field, the mirror
+  key is redundant — one write already fills both widgets (PA-40's `your_ssn`
+  is one field whose widget repeats).
 - `maxlen` tracks each widget's OWN `/MaxLen` and may legitimately differ
   between mirror and source (a DOR often prints a narrower continuation box).
   The filler enforces the pack `maxlen`. Since Phase J J0 (P-007(b)), verify's
   clipping scan also widget-scans a MAPPED ReadOnly mirror (its own `/MaxLen` and
   width) whenever its value differs from the pinned blank's; an unmapped ReadOnly
   widget (a DOR banner or caption) is still skipped — so never map one as a line.
-- **One thing the schema cannot express:** that the mirror's VALUE equals its
-  source's. `relations` is arithmetic over money lines and `identity_fields`
-  drives a cross-FORM check, so `page4_name_last == name.last` has no home. A
-  caller that fills a mirror differently files an internally inconsistent
-  return and no gate will catch it.
+- **The mirror's VALUE** — that it repeats its source — is what `mirrors:`
+  declares (next section, Phase K JK28). `relations` is arithmetic over money
+  lines and `identity_fields` drives a cross-FORM check, so before JK28
+  `page4_name_last == name.last` had no home: a caller that filled a mirror
+  differently filed an internally inconsistent return and no gate caught it.
+  Now `mirrors` says what each one repeats, fill_form builds it when the caller
+  leaves it out, verify_form FAILs a header that says something else, and the
+  harness refuses a mirror-shaped line that is not declared.
+
+### Page-header mirrors (`mirrors`)
+
+A pack declares how each mirror it maps is built from its own lines, as a
+template (Phase K JK28, 2026-10-16). The JK5 release-candidate walkthrough
+filled a CA Form 540 whose Sides 2-6 printed blank "Your name:" and "Your SSN
+or ITIN:" headers, and verify_form passed; the CA packs now say:
+
+```yaml
+mirrors:
+  name.full: "{name.first} {name.middle_initial} {name.last} {name.suffix}"  # "Your name:"
+  identifying_number.page6: "{identifying_number}"                          # "Your SSN or ITIN:"
+mirror_abbreviations:
+  name.full: [name.first, name.middle_initial]                              # a name too wide for the box
+```
+
+Quote the template: a YAML value that starts with `{` is a mapping.
+
+| syntax | meaning |
+|---|---|
+| `{line}` | the line's value as `fill_form` renders it, after the line's own formatting (`ssn_digits_only` strips dashes, a money line is whole dollars) |
+| `{line[a:b]}` | a Python-style character slice of it: `[0:3]`, `[3:5]` and `[5:]` split a 9-digit SSN across three boxes, `[:10]` is "first 10 characters of your last name"; a negative bound counts from the end; there is no step, and an index is refused |
+| `[ ... ]` | an optional segment, kept only when a placeholder inside it renders non-empty: `{name.first} {name.last}[ & {spouse.first} {spouse.last}]` prints the spouse's part only on a joint return. Segments do not nest |
+
+Each placeholder's value is whitespace-collapsed and stripped before it is
+sliced. The rendered template is whitespace-collapsed and stripped, and when
+every placeholder renders empty it renders empty, literal text included, so
+nothing is written. Braces and square brackets are syntax only.
+
+**What the schema refuses at load** (every pack): a key that is not a TEXT
+line of the pack; a mirror whose AcroForm field another line also binds (one
+write already fills every widget of a shared field — PA-40's `your_ssn`); a
+placeholder that names no line of the pack, a checkbox line, or the mirror
+itself; mirrors that read each other in a cycle (a mirror MAY read another
+mirror, and is then built after it); and a malformed template — an unclosed or
+stray brace or bracket, a nested or placeholder-less segment, an index, a step,
+a slice that is empty for every value (`[5:2]`, or any stop of 0: `[:0]`,
+`[-1:0]`), or no placeholder at all (a constant is a value the filler would
+invent).
+
+**A name too wide for its box (`mirror_abbreviations`).** A template says what a
+header repeats, not how to shorten it, and the CA booklets give no rule for a
+name too wide for the Sides 2-6 box (their page 11 speaks of abbreviating only
+country names: "Do not abbreviate the country name."). So a pack may name, per
+mirror, the placeholders whose words the header may shorten to a leading part —
+an initial, with or without a period — or leave out; every other placeholder and
+all literal text must still appear whole and in order. The CA packs list
+`name.first` and `name.middle_initial` for `name.full`: "A Q WASHINGTON" and "A.
+WASHINGTON" both abbreviate "ALEXANDRA Q WASHINGTON", while "ALEXANDRA Q
+WASHING" (the last name cut) and "SAM Q WASHINGTON" (another first name) do not.
+`name.suffix` stays whole: a generational suffix ("JR", "III") has no initial.
+The schema refuses a key that is not a mirror; a comb or `ssn_digits_only`
+mirror (an identifying number is compared digit for digit, never abbreviated);
+an empty list, a line its template does not read, or one named twice; and a list
+that covers every placeholder, since initials alone would then pass.
+
+**How a mirror is measured** (`taxfill_core.textfit`, the one measure the filler
+and verify share; Phase K JK28, 2026-10-16). A value fits its box when it is
+within the line's `maxlen` and its advance at the widget's /DA font and size is
+no more than the widget's width less 2 pt: pdfium draws from the 1 pt border
+inward and clips 1 pt inside the far edge, the model the measured rows of
+`packages/core/tests/test_pack_maxlen.py` pin. Helvetica and Arial advance by
+Adobe's Core-14 Helvetica AFM widths (`overlay.text_width`), Courier and Courier
+New by 0.6 em a glyph, and any other face is measured as Helvetica. A field with
+a widget on several pages must fit each one, in practice its narrowest; an
+auto-size /DA (`0 Tf`) always fits; a multiline or zero-width widget is not
+measured. A comb box is not measured by width either: its `maxlen`, digits-only
+and 'NRA' rules stay refusals. CA's "Your name:" box is 125.9-127.0 pt wide at
+Helv 10, so it holds 123.9 pt, about 18 capitals. "ALEXANDRA Q WASHINGTON" is
+142.8 pt, and P-001's 0.5-em estimate (110 pt) passed it.
+
+**What `fill_form` does.** After the caller's values are validated and rendered,
+every mirror the caller left out (absent or blank) is built from them, in
+dependency order, measured against the blank's own widgets, and written like any
+other line; `FillResult.mirrored` lists those lines (the MCP tool returns
+`mirrored`). It writes the first value of `schemas.formpack.mirror_ladder` that
+its box holds: the template's full value; then, for a mirror whose
+`mirror_abbreviations` cover a word of it, every such word cut to its first
+letter ("A Q WASHINGTON"); then only the first of them kept, as its initial ("A
+WASHINGTON"). An abbreviation comes with an informational warning that names
+both values and their widths. When nothing fits — a surname too wide for the box
+on its own, or a pack that allows no abbreviation — the mirror is left BLANK,
+and a warning gives the measured and available widths and says to hand-write it
+in the box after printing. A built value the box refuses for its form (comb
+digits only, the P-026 'NRA' refusal) is also left blank, with a warning saying
+why. A mirror the caller passes is written as given: never rebuilt, and not
+measured at fill time (verify measures it). Rehearsal fills take the same path;
+a hand-fill pack (`handfill.yaml`) has no `mirrors`, and its overlay stamps
+exactly the values it is given.
+
+**What verify checks.** `verify_form`, and `verify_filing` for each item, add
+one `identity` check per mirror, labelled `page-header mirror <line>` (prefixed
+`<form_key>: ` in a filing). The value the header must hold is computed as the
+filler computes it, with the same ladder and measure, from the PDF's ON-DISK
+source values and the widgets read off the PDF. Values compare
+whitespace-collapsed and case-insensitively: digits only on a comb or
+`ssn_digits_only` mirror, and whenever both are written with digits, dashes and
+spaces alone (CA's plain-text "Your SSN or ITIN:" box may hold 999-88-0101 while
+Side 1 holds 999880101). PASS when the header repeats the full value and its
+box holds it, or when it abbreviates the value as `mirror_abbreviations` allow
+while the full value does NOT fit and the abbreviation does. FAIL, which flips
+`ok`, when the header is cut off, abbreviates a value that fits ("EXAMPLE" for
+"RILEY EXAMPLE"), is blank while a value that fits exists, or holds anything
+else; each detail names the value to write (or, when the box refuses the value
+for its form, what to pass instead). SKIPPED when the template renders empty
+(nothing to mirror), when the header is blank because no allowed value fits (the
+detail says to hand-write it after printing), and when the header abbreviates a
+value whose box could not be measured (a field dump verified with no widgets).
+A mirror of a mirror is checked against its source as written on disk, so a
+blank source FAILs once, on the source. P-002 never reads a mirror check as the
+return address.
+
+**When to declare one.** For every line that repeats other lines of the same
+pack — a page-header name or SSN, or a fixed slice of one — once you have read
+the printed header and the instruction that governs it. Quote both in a comment,
+check that the mirror's widget `/MaxLen` holds the source AS RENDERED (a dashed
+SSN is 11 characters; the CA 2024 Form 540's Side 1 box takes 9, so a dashed SSN
+never reaches its mirror), record the box's width and /DA font, and build the
+name from the pack's own page-1 lines. Do not declare a box the form lets the
+filer word differently from its source: the check would FAIL a correct return.
+Nor a box the face says to leave blank: Schedule E page 2 prints "Do not enter
+name and social security number if shown on other side.", and page 1 always
+shows them, so its `name_page2` / `identifying_number_page2` are listed in
+`NOT_A_MIRROR` instead. A name too wide for its box is the one exception, and
+`mirror_abbreviations` declares which parts may shorten, keeping the last name
+whole; add it only when a long demo name (measured with `taxfill_core.textfit`
+on the real widget) overflows the box. The CA Form 540 and 540NR packs were the
+pilot (2026-10-16); the sweep (Phase K JK28, 2026-10-23) declared the rest of
+the mirrors the harness can find.
+
+**What the harness enforces, and what it does not.** `test_pack_invariants.py`
+("Identity page mirrors") fails a pack that maps a MIRROR-SHAPED line without
+declaring it in `mirrors:` or listing it in `NOT_A_MIRROR` with the printed
+reason. A line is mirror-shaped when its key has a page shape (`page2_name`,
+`name_page2`, `name_pg2`, `name_p2`, `identifying_number.page6`,
+`tp_ssn_page_header`, `identifying_number.echo`) or is a `header.` /
+`header_` identity key (`header.name`, `header.taxpayer_id`, `header_name`:
+one field with a widget on each later page), or, for a text line, when its
+AcroForm field is named like a copy (`..._COPY`, `... again`, a name or SSN cell
+ending `pgN`, or one starting `pgN` and then naming the cell: GA's
+`TP_FIRSTNAME_COPY`, AL's `PG2NAME`). It also pins each pack's declared count. A
+plain `"{line}"` mirror must share its source's `type` and `format`, and may be
+a comb only when its source is one (DE's plain "TAXPAYER ID" header mirrors the
+page-1 comb). It cannot see a mirror whose key AND field read like any other
+line (AL Form 40NR's `NAME`, `SCHOCSSN`, ...), and it cannot see a header field
+the pack leaves unmapped (GA 2023's `SSN_COPY` until Phase K JK28): those are
+found by reading every page's header on the blank, and once declared the count
+pins them. The follow-ups the sweep named were closed on 2026-10-23: GA 2023
+`ga500` maps `SSN_COPY` as `tp_ssn_page_header`; AL 2023 `al40nr` declares its
+34 schedule headers, while page 4's `PG2NAME` / `SSSNB2A` and Schedule HOF's
+boxes print "(Do not enter name and social security number if shown on other
+side)" and are not built; DE `pit_res` 2024-2025 declare `header.name` /
+`header.taxpayer_id`, IA `ia1040` 2023-2025 `header.name`, and the new key
+shape found CO `dr0104` 2023's `header_name`, now declared too.
 
 ### Lines filled only when the form is filed by itself (`standalone_only_lines`)
 
@@ -357,6 +527,40 @@ LINE reference whenever the pack maps that key. A relation must hold on every
 filing path, including a legitimately BLANK part (a schedule the filer does not
 use reads as zeros), or it is not declared.
 
+**The one exception: a path the face marks with a box** (Phase K JK28,
+2026-10-16). Some faces print a checkbox that tells the reader a line is
+computed another way. IA 1040's Step 5 box reads "Check if using alternate
+tax (line 5), tax reduction calculation (line 12), or low-income exemption",
+and the Income Tax Reduction Worksheet (41-146) puts its own amount on line 12:
+"Enter the smaller number here and on IA 1040, line 12. Check the box on IA
+1040, step 5 if the amount on line 3 is used". A relation that holds on every
+path except the one such a box marks ends in ` unless <line>`, where `<line>`
+is a CHECKBOX line key of the same pack:
+
+```yaml
+relations:
+  - "12 == max(7 - 11, 0) unless alt_tax_method"
+```
+
+- verify reports the relation SKIPPED while the box is checked in the filled
+  PDF (its export value, not `/Off`). SKIPPED is visible in the report and in
+  the MCP summary's `skipped` list, and it never fails `ok`. While the box is
+  unchecked the relation is checked as usual. A bare `relations()` call with
+  no field dump reads every box as unchecked.
+- The pack load refuses a malformed clause: a second `unless`, nothing (or
+  more than one word) after it, no equation before it, a capitalised keyword,
+  or a guard that names no line or a money / text line. `cross_form` rules
+  take no guard, and the load refuses one there too.
+- Guard only what the face or its instructions tie to the box, and quote both
+  beside the relation. One box often marks several methods: IA's suspends
+  line 12 for the alternate-tax and low-income returns too, where the floor
+  still holds. Say so in the comment. The IA 2023-2025 packs guard
+  `12 == max(7 - 11, 0)` (the worksheet) and `8 == d` (the low-income
+  filer who claims only the Iowa EITC is told to "Skip lines 5 through 19").
+  `7 == 5 + 6` stays unguarded, because the alternate tax replaces line 5's
+  amount and line 7 still adds lines 5 and 6.
+- `unless` is a reserved word in relations: no line key may spell it.
+
 ## Source URL and checksum
 
 - `source_url` is the official irs.gov URL, nothing else:
@@ -408,6 +612,34 @@ Also check what a widget near a signature line really sits in: OK Form 538-S
 inside the signature box (JK27, 2026-10-16;
 `packages/core/tests/test_signature_widget_mapping.py`,
 `test_ok538s_occupation_mapping.py`).
+
+**Never map an ink-signature line either, whatever its widget type.** Some DOR
+blanks put an ordinary /Tx widget on the rule the filer signs: KS K-40
+2023-2025 ("Signature of taxpayer", "Signature of spouse", "Signature of
+preparer"), KY 740 2023-2024 (the same three, capitalized), IL-1040 2025
+("Paid preparer’s signature"). A typed value prints there, so a mapped key
+puts a typed name on the line the state asks the filer to sign: "Your income
+tax return must be signed" (KS booklet), "Each return must be signed by the
+taxpayer" (KY 740 instructions), "the paid preparer must also sign and date
+your return" (IL-1040 instructions). Treat the line like a /Sig widget: leave
+it unmapped with a comment that quotes the face and the instructions, and give
+the pack `signature: {page: N}`. Keep a signature line mapped only where the
+state's own face or instructions make an entered name a signature, and record
+that quote on an allow-list row. The one case is MO-1040 2023-2025, whose
+page-5 declaration reads "By signing or entering my name in the “Signature”
+field(s) below, I am providing the Department of Revenue with my signature as
+required under Section 143.561, RSMo." Even there the default is the ink
+signature: the pack comment above the lines tells an agent not to fill them
+unless the filer asks (MO's "AGENT RULE", pinned in
+`test_signature_line_mapping.py`), because a pack field carries no note the
+agent would see. A Sign Here block with no widget on any signature line
+(IL-1040 2023 and 2024) still gets `signature: {page: N}`. The date, phone,
+driver's-license, PTIN and printed-name boxes of a signature block are ordinary
+data and stay mapped, and so do yes/no questions such as MO's "failtosignYES" /
+"failtosignNO" (Phase K JK28, 2026-10-16;
+`packages/core/tests/test_signature_line_mapping.py` pins the dropped keys,
+carries the allow-list, and sweeps every pack's line keys and widget labels for
+a signature line outside it).
 
 ## Hand-fill packs (`handfill.yaml`)
 
@@ -507,13 +739,15 @@ uv run python -m pytest packages/core/tests/test_formpacks_states.py  -m "not ne
 ```
 
 The repo-wide invariants (cross-form targets, checkbox groups, identity
-mirrors, year tokens) and the ReadOnly adjudication — these cover federal AND
-state packs, so run them whichever lane you touched:
+mirrors, year tokens), the ReadOnly adjudication and the two signature checks
+(no `/FT /Sig` widget bound, no ink-signature line typed onto) — these cover
+federal AND state packs, so run them whichever lane you touched:
 
 ```
 uv run python -m pytest packages/core/tests/test_pack_invariants.py
 uv run python -m pytest packages/core/tests/test_readonly_widget_mapping.py
 uv run python -m pytest packages/core/tests/test_signature_widget_mapping.py
+uv run python -m pytest packages/core/tests/test_signature_line_mapping.py
 ```
 
 Golden round-trip (downloads the blank, fills every mapped line with
@@ -561,6 +795,29 @@ run time; taxfill never runs it (P-007 class 4), so the filler does the viewer's
   `group` whose members are separate fields, `fill_form` writes `/Off` to every other member the caller
   did not name, so a blank that ships one option pre-checked (GA 500's voucher "Paper Return") cannot
   leave two ticks on a one-answer question. An unanswered group is left as the blank had it.
+
+## Comb boxes and their printed separators (P-033)
+
+A comb widget's cells are its `/Rect` split into `/MaxLen` equal parts, whatever the page prints under it. On the IRS
+Form 1040 and 1040-X SSN boxes (2023-2026) the dotted 3-2-4 separators follow a narrower grid than the widget, and
+before Phase K JK28 the dots crossed the third and fifth digits. `fill_form` now corrects that itself,
+deterministically:
+
+- **A crossing comb is narrowed to its printed grid.** When a visible separator printed inside a written comb falls
+  inside a character's cell, the filler reshapes the widget's `/Rect` (horizontally only) to the uniform grid the
+  separators imply, starting at the box's left rule, before any appearance is built; `FillResult.combs_aligned`
+  names each widget moved (`filler.comb_cell_grid` is the rule). Map the line as usual (`comb: true`, and
+  `format: ssn_digits_only` on an SSN); no pack key is involved.
+- **Everything else is left as printed.** A comb that already clears its separators; a bordered, filled or rotated
+  widget; separators in a pale tint (luminance 200 of 255 or paler: the tinted cells of the DE, IA, IL, LA, MA, OR
+  and VA blanks, even where the tint crosses a digit, as on the IA 1040 and the MA Form 1 ZIP box) or printed as
+  text (the CA Schedule CA slashes); and a box no uniform comb fits, such as AZ Form 140NR 2023 worksheet line 8C,
+  whose fifth box is narrower. Describe such a box in the pack banner (as the CA Schedule CA 2024 banner does) and
+  check it on the render.
+- **A cell that sits on a printed dash takes the dash.** MO-1040's page-1 SSN is an 11-cell comb whose cells 4
+  and 7 sit on the printed dashes: that line is written WITH its dashes and is not `comb: true` (the filler's comb
+  mode is digits-only). The separators there are expected inside cells 4 and 7, and the filler leaves the widget
+  alone.
 
 ## A blank inside a booklet (`source_pages`)
 

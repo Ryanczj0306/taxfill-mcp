@@ -80,6 +80,45 @@ forms:
   resident: Form 1 — Massachusetts Resident Income Tax Return (2025)
   part_year_or_nonresident: Form 1-NR/PY — Massachusetts Nonresident or Part-Year Resident Income Tax Return (2025).
     Taxpayers who are both nonresident and part-year resident also complete Schedule R/NR (Resident/Nonresident Worksheet).
+  # (Phase K JK28, 2026-10-16): each role's own form and its instructions, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is the RESIDENT Form 1 instructions, so this entry named
+  # Form 1-NR/PY but pointed only at Form 1's booklet. One form serves both roles. The two URLs are the "2025 Form
+  # 1-NR/PY Instructions" and "2025 Form 1-NR/PY: Massachusetts Nonresident/Part-Year Tax Return" links on DOR's "2025
+  # Personal Income Tax Forms and Instructions" list
+  # (www.mass.gov/lists/2025-massachusetts-personal-income-tax-forms-and-instructions). mass.gov refuses plain scripted
+  # fetches, but both PDFs were downloaded DIRECTLY from mass.gov (curl with a full browser header set) twice on
+  # 2026-10-16 with identical sha256 (Form 1-NR/PY instructions 0666e9ea9eea916f..., Form 1-NR/PY e5b9efc5c86d33d6...).
+  # The entry above agrees with both (Schedule R/NR: 'Complete Schedule R/NR, Resident/Nonresident Worksheet',
+  # instructions p. 3).
+  citations:
+    part_year:
+    - source: >-
+        Massachusetts Department of Revenue 2025 Form 1-NR/PY Instructions, 'Who Must File' (p. 3): 'You also must file
+        Form 1-NR/PY if you were a resident of Massachusetts for part of the year and you had more than $8,000 in
+        gross income during that time, whether received from sources inside or outside of Massachusetts.' — and '3.
+        You are a part-year resident if, during the taxable year, you moved to Massachusetts or established a permanent
+        place of abode here and became a resident, or you terminated your status as a Massachusetts resident to
+        establish a residence outside the state. Fill in the Part-year resident oval at the top of the form if this
+        category applies to you.'
+      url: https://www.mass.gov/doc/2025-form-1-nrpy-instructions/download
+    - source: >-
+        2025 Massachusetts Form 1-NR/PY, Nonresident/Part-Year Tax Return — the 5-page return itself (page 1: 'Form
+        1-NR/PY Massachusetts Nonresident/Part-Year Tax Return 2025'; ovals 'Nonresident', 'Part-year resident',
+        'Filing as both nonresident and part-year resident')
+      url: https://www.mass.gov/doc/2025-form-1-nrpy-massachusetts-nonresidentpart-year-tax-return/download
+    nonresident:
+    - source: >-
+        Massachusetts Department of Revenue 2025 Form 1-NR/PY Instructions, 'Who Must File' (p. 3): 'You must file
+        Massachusetts Form 1-NR/PY, Nonresident/Part-Year Resident Income Tax Return if you were not a resident of
+        Massachusetts for any part of the year and the lesser of either: 1. Your Massachusetts source income was more
+        than $8,000; or 2. Your Massachusetts source income was more than your personal exemption amount multiplied by
+        the ratio of your Massachusetts income to your total income.'
+      url: https://www.mass.gov/doc/2025-form-1-nrpy-instructions/download
+    - source: >-
+        2025 Massachusetts Form 1-NR/PY, Nonresident/Part-Year Tax Return — the 5-page return itself (page 1: 'Form
+        1-NR/PY Massachusetts Nonresident/Part-Year Tax Return 2025'; ovals 'Nonresident', 'Part-year resident',
+        'Filing as both nonresident and part-year resident')
+      url: https://www.mass.gov/doc/2025-form-1-nrpy-massachusetts-nonresidentpart-year-tax-return/download
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

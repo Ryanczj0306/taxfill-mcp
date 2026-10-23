@@ -43,9 +43,59 @@ residency:
     are not required to file.'
 forms:
   resident: Form IT-140 (West Virginia Personal Income Tax Return) - check "Resident" status
-  part_year_or_nonresident: Form IT-140 (check "Filing as Nonresident" or "Filing as Part-Year Resident"), completed
-    together with Schedule A (Form IT-140), "Nonresidents/Part-Year Residents Schedule of Income." (Nonresident
-    composite filers use Form IT-140NRC.)
+  part_year_or_nonresident: 'Form IT-140 with its single "NONRESIDENT/PART YEAR RESIDENT" box checked (one box for both
+    roles), completed together with Schedule A (Form IT-140), "Nonresidents/Part-Year Residents Schedule of Income":
+    nonresidents and part-year residents first complete Form IT-140 lines 1 through 7, then Schedule A, whose Part I
+    tax goes on Form IT-140 line 8. A full-year resident of Kentucky, Maryland, Ohio, Pennsylvania or Virginia whose
+    only West Virginia income was wages and salaries instead checks the separate "NONRESIDENT SPECIAL" box and completes
+    Schedule A Part II. (Nonresident partners, S corporation shareholders and estate or trust beneficiaries may elect
+    to be included on the pass-through entity''s IT-140NRC composite return instead.)'
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the IT-140 booklet's resident pages, so this
+  # entry named Schedule A without citing it. West Virginia has no separate nonresident return — both roles file Form
+  # IT-140 with Schedule A — so each role cites the booklet's 'Who Must File' and nonresident/part-year text for it and
+  # Schedule A. The URLs are the "IT-140 Personal Income Tax Forms and Instructions" and "Schedule A" links on the Tax
+  # Division's Individuals page (tax.wv.gov/Individuals); the Schedule A link's spelling (Schedule-A) serves the same
+  # bytes as the schedule-A spelling cited elsewhere in this pack. Each PDF was downloaded twice on 2026-10-16 with
+  # identical sha256 (booklet 6383bf9748fde18c..., Schedule A d091c45f0ba020f1...). CORRECTED the same day from that
+  # booklet: this entry said to check "Filing as Nonresident" or "Filing as Part-Year Resident", but the 2025 Form
+  # IT-140 has one "NONRESIDENT/PART YEAR RESIDENT" box ('Enter a check mark in this box if you are filing as a
+  # nonresident or part-year resident', p. 24) beside a separate "NONRESIDENT SPECIAL" box (p. 17 'Special
+  # Nonresidents'); the return's page 1 prints exactly those boxes ("AMENDED RETURN", "NONRESIDENT SPECIAL",
+  # "NONRESIDENT/PART YEAR RESIDENT", "FORM WV-8379 FILED AS AN INJURED SPOUSE"). The old wording survives in one place:
+  # Schedule A's Part II note (its second page, printed 8, in the booklet and in the separate PDF) still says 'You must
+  # check the box Filing as Nonresident or Filing as a Part-Year Resident' — a stale instruction, since the 2025 return
+  # has no such pair of boxes.
+  citations:
+    part_year:
+    - source: >-
+        2025 West Virginia Personal Income Tax Forms & Instructions (IT-140 booklet, WV Tax Division) — 'Who Must File' (p.
+        17): 'You must file a West Virginia income tax return if: ... • You were a resident of West Virginia for a part of
+        the taxable year (Part-Year Resident).'; 'Nonresident/Part-Year Resident' (p. 18): 'NONRESIDENTS AND PART-YEAR
+        RESIDENTS MUST FIRST COMPLETE LINES 1 THROUGH 7 OF FORM IT-140, THEN COMPLETE SCHEDULE A.'; Form IT-140
+        instructions (p. 24): 'NONRESIDENT OR PART-YEAR RESIDENT - Enter a check mark in this box if you are filing as a
+        nonresident or part-year resident'
+      url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+    - source: >-
+        2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income — '(To Be Completed By
+        Nonresidents and Part-Year Residents Only)'; 'PART-YEAR RESIDENTS (Enter period of West Virginia residency
+        MM/DD/YYYY)'
+      url: https://tax.wv.gov/Documents/PIT/2025/it140.Schedule-A.2025.pdf
+    nonresident:
+    - source: >-
+        2025 West Virginia Personal Income Tax Forms & Instructions (IT-140 booklet, WV Tax Division) — 'Who Must File' (p.
+        17): '• You were not a resident of West Virginia at any time during 2025, but your federal adjusted gross income
+        includes income from West Virginia sources (nonresident).'; 'Special Nonresidents' (p. 17): 'A resident of
+        Kentucky, Maryland, Ohio, Pennsylvania, or Virginia for the entire taxable year; and • Your only source of West
+        Virginia income was from wages and salaries. • Mark the nonresident special box on the front of the return and
+        complete Part II of Schedule A.'; 'Nonresident/Part-Year Resident' (p. 18): 'NONRESIDENTS AND PART-YEAR RESIDENTS
+        MUST FIRST COMPLETE LINES 1 THROUGH 7 OF FORM IT-140, THEN COMPLETE SCHEDULE A.'
+      url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+    - source: >-
+        2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income — '(To Be Completed By
+        Nonresidents and Part-Year Residents Only)'; Part I line 4: 'Tax (divide line 2 by line 3, round to 4 decimal
+        places and multiply the result by line 1). Enter here and on line 8, Form IT-140'
+      url: https://tax.wv.gov/Documents/PIT/2025/it140.Schedule-A.2025.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

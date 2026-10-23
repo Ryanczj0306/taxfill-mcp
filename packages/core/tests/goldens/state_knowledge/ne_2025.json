@@ -1,20 +1,24 @@
 {
  "_strings": {
   "@@044c373bd343": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Calculation_Schedule.pdf",
-  "@@1b01fb3d7bf9": "Form 1040N with Nebraska Schedule III (Computation of Nebraska Tax for Nonresidents and Partial-Year Residents); there is no separate nonresident form number — nonresidents and partial-year residents file the same Form 1040N and must attach Schedule III.",
+  "@@18d4304e1757": "2025 Nebraska Form 1040N, page 1 line 4 \"Nebraska personal exemptions (Enter 1 in each line of 4a or 4b that applies)\": 4a \"Yourself. If someone can claim you as a dependent, leave blank\", 4b Spouse, 4c \"Total number of dependents listed\", 4 \"Total Nebraska personal exemptions - add lines 4a, 4b, and 4c\"; line 17 \"Total Nebraska tax before Nebraska personal exemption credit (add lines 15 and 16)\"; page 2 line 18 \"NE personal exemption credit for residents only ($171 times the number on line 4)\", line 34 \"Total nonrefundable credits (add lines 18 through 33)\", line 35 \"Nebraska tax after nonrefundable credits Subtract line 34 from line 17 (if line 34 is more than line 17, enter -0-)\". Second pass: the 2025 Nebraska Individual Income Tax Booklet, p. 12 Lines 4a-4c, p. 13 Line 4, p. 14 Line 18 and p. 17 Line 35, which print the same $171 and line text.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@22fd499dcdd9": "annual (per tax year; the newest shipped NE pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@367d2a50b636": "Nebraska Child/Dependent Care Credit (refundable, AGI $29,000 or less) — Full-year and partial-year residents whose federal AGI (Form 1040N, line 5) is $29,000 or less and who have qualifying federal child & dependent care expenses. Must complete and attach Nebraska Form 2441N (the federal Form 2441 alone is NOT accepted — the credit will be disallowed). Taxpayers who file federal MFJ but Nebraska MFS cannot claim it; nonresidents cannot claim it.",
+  "@@3748d7e8cbca": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N_Schs.pdf",
+  "@@416a06f1ae44": "Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35.",
   "@@48746fecfbaa": "Nebraska Department of Revenue, \"2024 Nebraska Legislative Changes\" — LB 1023 nonresident compensation sourcing, effective for taxable years beginning on or after 2025-01-01.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4d42ad525021": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited DOR source before relying on a specific figure/address.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@590a55880908": "Nebraska Child/Dependent Care Nonrefundable Credit (AGI over $29,000) — Resident taxpayers with federal AGI greater than $29,000 who claim the federal child & dependent care credit. Must include a copy of federal Form 2441 (credit disallowed if not received). Taxpayers who file federal MFJ but Nebraska MFS cannot claim it; nonresidents may not claim it (partial-year residents use Schedule III line 6c).",
   "@@594128dadb89": "2025 Nebraska Form 1040N (Individual Income Tax Return) — 'Mail returns requesting a refund to: Nebraska Department of Revenue, PO Box 98912, Lincoln, NE 68509-8912. Mail returns not requesting a refund to: Nebraska Department of Revenue, PO Box 98934, Lincoln, NE 68509-8934.'",
+  "@@6f2801b06334": "Exemption credits applied: Form 1040N line 18 = $342; tax after them (line 35) = $1,260. tax itself stays the line before the credits. Line 35 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 35 = max(0, that table amount - $342).",
   "@@7005463924ae": "Refund returns: Nebraska Department of Revenue, PO Box 98912, Lincoln, NE 68509-8912. (Note — Nebraska splits addresses by refund vs. no-refund, not refund vs. payment. Returns NOT requesting a refund, including balance-due/with-payment returns, go to PO Box 98934 below.)",
   "@@710b34748673": "2025 Nebraska Tax Calculation Schedule for Individual Income Tax (8-460-2025), single page — all four filing-status rate tables ('This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.'): Single Taxpayers — 2.46% of Nebraska Taxable Income, line 14, Form 1040N, not over $4,030; $99.14 + 3.51% of the excess over $4,030 to $24,120; $804.30 + 5.01% of the excess over $24,120 to $38,870; $1,543.28 + 5.20% of the excess over $38,870. Married Taxpayers, Filing Jointly and Qualifying Surviving Spouses — 2.46% not over $8,040; $197.78 + 3.51% to $48,250; $1,609.15 + 5.01% to $77,730; $3,086.10 + 5.20% over $77,730. Married Taxpayers, Filing Separately — identical to Single ($4,030 / $24,120 / $38,870 with $99.14 / $804.30 / $1,543.28). Head of Household Taxpayers — 2.46% not over $7,510; $184.75 + 3.51% to $38,590; $1,275.66 + 5.01% to $57,630; $2,229.56 + 5.20% over $57,630. Standard deduction and line instructions: 2025 Nebraska Individual Income Tax Booklet, Form 1040N — Line 6 Nebraska Standard Deduction Chart (Single $8,600 / Married Filing Jointly $17,200 / Qualifying surviving spouse $17,200 / Married Filing Separately $8,600 / Head of Household $12,600 with zero boxes checked on line 2a), Line 15 Nebraska Income Tax, Line 18 personal exemption credit $171, and the 2025 Nebraska Tax Table with its over-$77,760 worksheet, at https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf. Second pass: the standalone 2025 Nebraska Tax Table (https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Tables.pdf) reproduces the identical math — its $13,060-$13,160 row prints $418/$376/$418/$381, exactly the four schedules at the $13,110 band midpoint (single 99.138 + 9,080 x .0351 = 417.846; MFJ 197.784 + 5,070 x .0351 = 375.741; HoH 184.746 + 5,600 x .0351 = 381.306), and its over-$77,760 worksheet constants ($3,566 single/MFS, $3,088 MFJ/QSS, $3,276 HoH, each + 5.20% of the excess) equal the schedule evaluated at $77,760 rounded to whole dollars (single 3,565.552; MFJ 3,087.663; HoH 3,276.318) — and the 2025 Form 1040N line 6 prints the same standard deduction amounts and line 18 prints '$171 times the number on line 4'. Both passes agree.",
   "@@83534fb6c105": "Nebraska Personal Exemption Credit (residents only) — Nebraska residents may claim a credit for each Nebraska personal exemption reported on line 4, Form 1040N (taxpayer, spouse, and dependents). Nonresidents and partial-year residents claim a prorated version on Schedule III line 7.",
+  "@@8ac8f3409353": "2025 Form 1040N Schedules I, II, and III — page 3, 'Nebraska Schedule III — Computation of Nebraska Tax for PARTIAL-YEAR RESIDENTS AND NONRESIDENTS ONLY': 'You must complete lines 1 through 14, Form 1040N. ... Use Schedule III to calculate your Nebraska tax liability.'",
   "@@8d336c9d2b74": "2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — 'Due Date. Your income tax return is due on the 15th day of the 4th month after the close of the tax year (April 15th for calendar-year filers). If the due date falls on a Saturday, Sunday, or legal holiday' the return is timely on the next business day; April 15, 2026 for calendar-year 2025 returns. An extension is available by filing Form 4868N on or before the due date, but unpaid tax accrues interest at 8% from the original due date.",
   "@@931725451ecc": "Credit for Community College Property Taxes (Form PTC) — Any individual (and other entities) who paid qualified Nebraska community college property taxes during the 2025 calendar year, directly or through a mortgage escrow. Property taxes that were delinquent for five years or more at the time of payment cannot be included. The completed Form PTC must be filed with the return; the DOR Property Tax Look-up Tool computes qualified amounts. CONTINUING RULE: for tax years beginning on or after January 1, 2024, Form PTC is used ONLY to claim a credit for community college property taxes — school district property tax relief is applied directly on the property tax statement under the School District Property Tax Relief Act (LB 34, 2024 special session), reducing property taxes before they are paid rather than refunding them afterward.",
   "@@9441b052845d": "Law change NOT modeled by the engine (status final_form_published): LB 1023 AMENDED Nebraska's convenience-of-the-employer sourcing rule for taxable years beginning on or after January 1, 2025 — the pre-2025 rule sourced convenience-based out-of-state wages TO Nebraska, while under the amendment \"Only the compensation paid for services performed within Nebraska constitutes Nebraska sourced income of the nonresident under this provision.\" The amendment also adds a conference/training safe harbor for TY2025+ (wages are not Nebraska-sourced when paid while present in Nebraska for a conference or training, the employee is present and earning wages in Nebraska for seven days or less during the taxable year, earned not more than $5,000 during the taxable year, and earned wages for work performed in more than one state during the taxable year). This is why the 2023/2024 NE packs carry no convenience_rule block and this one does. Resolve via: Nebraska Department of Revenue, \"2024 Nebraska Legislative Changes\" (the citation URL) for the LB 1023 amendment text and its effective date; nonresident/partial-year wage sourcing is then computed on Nebraska Schedule III, which calc.state_tax does not model.",
@@ -27,6 +31,7 @@
   "@@b77c888867a4": "Nebraska Earned Income Credit (state EITC) — Full-year and partial-year Nebraska residents who qualify for and claim the federal Earned Income Credit. Nonresidents may not claim it. If filing Nebraska married-filing-separately, eligibility depends on whether the federal EIC is allowed on a federal MFS return. Paper filers must attach pages 1 and 2 of the federal Form 1040 (or pages 1, 2, and 3 of Form 1040-SR).",
   "@@bc6ede40ad6e": "2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — What's New (the 2025 credit slate), federal AGI starting point (Line 5), Nebraska Standard Deduction Chart (Line 6), Line 15 Nebraska Income Tax, Line 18 personal exemption credit $171, residency definitions, Who Must File, due date, check payee",
   "@@d2c5841d751f": "The newest shipped NE pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
+  "@@e24aa2380263": "Form 1040N with Nebraska Schedule III (Computation of Nebraska Tax for Nonresidents and Partial-Year Residents); there is no separate nonresident form number — nonresidents and partial-year residents file the same Form 1040N and must attach Schedule III, except that a married couple with one full-year resident spouse and one nonresident or partial-year resident spouse who elect to file a married, filing jointly return must file a resident return, on which Schedule III cannot be used.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
   "@@f9c487f62fc6": "Law change NOT modeled by the engine (status final_form_published): A SLATE OF NEW OR NEWLY EFFECTIVE CREDITS arrives with tax year 2025 (booklet What's New, LB 650 / LB 208 / LB 937 / LB 1023 / LB 644): the $500 REFUNDABLE Intellectual and Developmental Disabilities Direct Support Professional credit created by LB 937 (2024) beginning with tax year 2025 (Form 1040N line 51, requiring DOR pre-approval on Forms 3157-A / 3157-E via eDASH), the Nebraska Pregnancy Help Act credit, the Shortline Rail Modernization credit, the Relocation Incentive Act refundable employer credit with its employee Nebraska wage exclusion, and the Food Bank / Food Pantry / Food Rescue Donation credit (2025 only). Nebraska Schedule I Part A also gains new add-back lines for 2025 — Relocation Incentive Act employee recapture, losses on the sale or exchange of gold or silver bullion, and the add-back of food-donation amounts deducted federally — and Form 1040N's credit lines are RENUMBERED (refundable child/dependent care 40 -> 42, Nebraska EITC 42 -> 44, community college property tax credit 43 -> 45). Resolve via: 2025 Nebraska Individual Income Tax Booklet, What's New plus the Lines 46-51 instructions, and the 2025 Nebraska Schedules I, II, III (Form 1040N) for the new Part A add-back lines (both at the cited booklet URL). This pack's `unverified` list records that the Pregnancy Help Act, Shortline Rail, Relocation Incentive Act and Food Bank credits were read only from What's New and the line summaries, and that the statutory fiscal-year cap on the LB 937 credit was not pulled — confirm amounts and application deadlines on their own forms before claiming."
@@ -415,7 +420,7 @@
      "answers": "2025 Nebraska Schedules I, II, III (Form 1040N) — Schedule I Part A Adjustments Increasing Federal AGI lines 1-12 (no treaty add-back; new lines for Relocation Incentive Act employee recapture, bullion losses, and the food-donation addback), Schedule III lines 6c/7/9-12",
      "cadence": "@@22fd499dcdd9",
      "topic": "forms_and_instructions",
-     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N_Schs.pdf"
+     "url": "@@3748d7e8cbca"
     },
     {
      "answers": "2025 Nebraska Form 2441N (Nebraska Child and Dependent Care Expenses) — refundable-credit computation and 2025 federal/state decimal tables",
@@ -554,6 +559,12 @@
      "cadence": "@@22fd499dcdd9",
      "topic": "tax_rates_and_brackets",
      "url": "@@044c373bd343"
+    },
+    {
+     "answers": "@@18d4304e1757",
+     "cadence": "@@22fd499dcdd9",
+     "topic": "tax_rates_and_brackets",
+     "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
     }
    ],
    "topic": "tax_rates_and_brackets",
@@ -623,13 +634,21 @@
        "url": "@@adbc1e53e725"
       },
       {
+       "source": "2025 Nebraska Individual Income Tax Booklet (8-307-2025) — Form 1040N 'Line 3 Type of Return' (p. 12): 'Box 3. You were a nonresident. ... Nonresidents and partial-year residents must complete and attach Form 1040N, Schedule III, even if all income is earned in Nebraska. If one spouse is a full-year resident and the other is a nonresident or partial-year resident, and they elect to file a married, filing jointly return, a resident return must be filed and Schedule III cannot be used.'; 'Nebraska Schedule III Instructions' (p. 30): 'Taxpayers filing a nonresident or partial-year resident return must complete Nebraska Schedule III to calculate the tax on their income derived from or connected with Nebraska sources.'",
+       "url": "@@adbc1e53e725"
+      },
+      {
+       "source": "@@8ac8f3409353",
+       "url": "@@3748d7e8cbca"
+      },
+      {
        "source": "@@48746fecfbaa",
        "url": "https://revenue.nebraska.gov/about/2024-nebraska-legislative-changes"
       }
      ],
      "filing_role": "nonresident",
      "forms": [
-      "@@1b01fb3d7bf9"
+      "@@e24aa2380263"
      ],
      "income_tax": true,
      "must_file": true,
@@ -688,11 +707,19 @@
       {
        "source": "@@bc6ede40ad6e",
        "url": "@@adbc1e53e725"
+      },
+      {
+       "source": "2025 Nebraska Individual Income Tax Booklet (8-307-2025) — Form 1040N 'Line 3 Type of Return' (p. 12): 'Box 2. You were a partial-year resident ... Partial-year residents must also complete dates of residency. Nonresidents and partial-year residents must complete and attach Form 1040N, Schedule III, even if all income is earned in Nebraska. If one spouse is a full-year resident and the other is a nonresident or partial-year resident, and they elect to file a married, filing jointly return, a resident return must be filed and Schedule III cannot be used.'; 'Nebraska Schedule III Instructions' (p. 30): 'Taxpayers filing a nonresident or partial-year resident return must complete Nebraska Schedule III to calculate the tax on their income derived from or connected with Nebraska sources.'",
+       "url": "@@adbc1e53e725"
+      },
+      {
+       "source": "@@8ac8f3409353",
+       "url": "@@3748d7e8cbca"
       }
      ],
      "filing_role": "part_year",
      "forms": [
-      "@@1b01fb3d7bf9"
+      "@@e24aa2380263"
      ],
      "income_tax": true,
      "must_file": true,
@@ -774,6 +801,27 @@
   "calls": [
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -784,10 +832,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 0,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = -$12,600.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = -$12,600.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -798,10 +867,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 0,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $12,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $12,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 3755,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -812,10 +902,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 92,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $16,355.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $3,755.00; graduated tax on $3,755 [head_of_household schedule]: 0.0246 x $3,755.00 (the $0-$7,510 bracket) = $92.37; total $92.37 -> $92"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $16,355.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $3,755.00; graduated tax on $3,755 [head_of_household schedule]: 0.0246 x $3,755.00 (the $0-$7,510 bracket) = $92.37; total $92.37 -> $92. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 43590,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -826,10 +937,31 @@
     },
     "marginal_rate": "0.0501",
     "tax": 1526,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $56,190.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $43,590.00; graduated tax on $43,590 [head_of_household schedule]: 0.0246 x $7,510.00 (the $0-$7,510 bracket) = $184.75; 0.0351 x $31,080.00 (the $7,510-$38,590 bracket) = $1,090.91; 0.0501 x $5,000.00 (the $38,590-$57,630 bracket) = $250.50; total $1,526.15 -> $1,526"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $56,190.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $43,590.00; graduated tax on $43,590 [head_of_household schedule]: 0.0246 x $7,510.00 (the $0-$7,510 bracket) = $184.75; 0.0351 x $31,080.00 (the $7,510-$38,590 bracket) = $1,090.91; 0.0501 x $5,000.00 (the $38,590-$57,630 bracket) = $250.50; total $1,526.15 -> $1,526. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 67630,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -840,10 +972,31 @@
     },
     "marginal_rate": "0.052",
     "tax": 2750,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $80,230.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $67,630.00; graduated tax on $67,630 [head_of_household schedule]: 0.0246 x $7,510.00 (the $0-$7,510 bracket) = $184.75; 0.0351 x $31,080.00 (the $7,510-$38,590 bracket) = $1,090.91; 0.0501 x $19,040.00 (the $38,590-$57,630 bracket) = $953.90; 0.052 x $10,000.00 (the $57,630+ bracket) = $520.00; total $2,749.56 -> $2,750"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $80,230.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $67,630.00; graduated tax on $67,630 [head_of_household schedule]: 0.0246 x $7,510.00 (the $0-$7,510 bracket) = $184.75; 0.0351 x $31,080.00 (the $7,510-$38,590 bracket) = $1,090.91; 0.0501 x $19,040.00 (the $38,590-$57,630 bracket) = $953.90; 0.052 x $10,000.00 (the $57,630+ bracket) = $520.00; total $2,749.56 -> $2,750. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -854,10 +1007,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 0,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = -$17,200.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = -$17,200.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -868,10 +1042,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 0,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $17,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $17,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 4020,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -882,10 +1077,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 99,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $21,220.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $4,020.00; graduated tax on $4,020 [married_filing_jointly schedule]: 0.0246 x $4,020.00 (the $0-$8,040 bracket) = $98.89; total $98.89 -> $99"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $21,220.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $4,020.00; graduated tax on $4,020 [married_filing_jointly schedule]: 0.0246 x $4,020.00 (the $0-$8,040 bracket) = $98.89; total $98.89 -> $99. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 53250,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -896,10 +1112,31 @@
     },
     "marginal_rate": "0.0501",
     "tax": 1860,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $70,450.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $53,250.00; graduated tax on $53,250 [married_filing_jointly schedule]: 0.0246 x $8,040.00 (the $0-$8,040 bracket) = $197.78; 0.0351 x $40,210.00 (the $8,040-$48,250 bracket) = $1,411.37; 0.0501 x $5,000.00 (the $48,250-$77,730 bracket) = $250.50; total $1,859.66 -> $1,860"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $70,450.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $53,250.00; graduated tax on $53,250 [married_filing_jointly schedule]: 0.0246 x $8,040.00 (the $0-$8,040 bracket) = $197.78; 0.0351 x $40,210.00 (the $8,040-$48,250 bracket) = $1,411.37; 0.0501 x $5,000.00 (the $48,250-$77,730 bracket) = $250.50; total $1,859.66 -> $1,860. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 87730,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -910,10 +1147,31 @@
     },
     "marginal_rate": "0.052",
     "tax": 3606,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $104,930.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $87,730.00; graduated tax on $87,730 [married_filing_jointly schedule]: 0.0246 x $8,040.00 (the $0-$8,040 bracket) = $197.78; 0.0351 x $40,210.00 (the $8,040-$48,250 bracket) = $1,411.37; 0.0501 x $29,480.00 (the $48,250-$77,730 bracket) = $1,476.95; 0.052 x $10,000.00 (the $77,730+ bracket) = $520.00; total $3,606.10 -> $3,606"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $104,930.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $87,730.00; graduated tax on $87,730 [married_filing_jointly schedule]: 0.0246 x $8,040.00 (the $0-$8,040 bracket) = $197.78; 0.0351 x $40,210.00 (the $8,040-$48,250 bracket) = $1,411.37; 0.0501 x $29,480.00 (the $48,250-$77,730 bracket) = $1,476.95; 0.052 x $10,000.00 (the $77,730+ bracket) = $520.00; total $3,606.10 -> $3,606. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -924,10 +1182,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 0,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = -$8,600.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = -$8,600.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -938,10 +1217,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 0,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $8,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $8,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 2015,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -952,10 +1252,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 50,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $10,615.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $2,015.00; graduated tax on $2,015 [married_filing_separately schedule]: 0.0246 x $2,015.00 (the $0-$4,030 bracket) = $49.57; total $49.57 -> $50"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $10,615.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $2,015.00; graduated tax on $2,015 [married_filing_separately schedule]: 0.0246 x $2,015.00 (the $0-$4,030 bracket) = $49.57; total $49.57 -> $50. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 29120,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -966,10 +1287,31 @@
     },
     "marginal_rate": "0.0501",
     "tax": 1055,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $37,720.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $29,120.00; graduated tax on $29,120 [married_filing_separately schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $5,000.00 (the $24,120-$38,870 bracket) = $250.50; total $1,054.80 -> $1,055"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $37,720.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $29,120.00; graduated tax on $29,120 [married_filing_separately schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $5,000.00 (the $24,120-$38,870 bracket) = $250.50; total $1,054.80 -> $1,055. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 48870,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -980,10 +1322,31 @@
     },
     "marginal_rate": "0.052",
     "tax": 2063,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $57,470.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $48,870.00; graduated tax on $48,870 [married_filing_separately schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $14,750.00 (the $24,120-$38,870 bracket) = $738.98; 0.052 x $10,000.00 (the $38,870+ bracket) = $520.00; total $2,063.27 -> $2,063"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $57,470.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $48,870.00; graduated tax on $48,870 [married_filing_separately schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $14,750.00 (the $24,120-$38,870 bracket) = $738.98; 0.052 x $10,000.00 (the $38,870+ bracket) = $520.00; total $2,063.27 -> $2,063. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -994,10 +1357,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 0,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = -$8,600.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = -$8,600.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1008,10 +1392,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 0,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $8,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $8,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 2015,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1022,10 +1427,31 @@
     },
     "marginal_rate": "0.0246",
     "tax": 50,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $10,615.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $2,015.00; graduated tax on $2,015 [single schedule]: 0.0246 x $2,015.00 (the $0-$4,030 bracket) = $49.57; total $49.57 -> $50"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $10,615.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $2,015.00; graduated tax on $2,015 [single schedule]: 0.0246 x $2,015.00 (the $0-$4,030 bracket) = $49.57; total $49.57 -> $50. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 29120,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1036,10 +1462,31 @@
     },
     "marginal_rate": "0.0501",
     "tax": 1055,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $37,720.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $29,120.00; graduated tax on $29,120 [single schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $5,000.00 (the $24,120-$38,870 bracket) = $250.50; total $1,054.80 -> $1,055"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $37,720.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $29,120.00; graduated tax on $29,120 [single schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $5,000.00 (the $24,120-$38,870 bracket) = $250.50; total $1,054.80 -> $1,055. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "base_after_exemptions": 48870,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1050,7 +1497,7 @@
     },
     "marginal_rate": "0.052",
     "tax": 2063,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $57,470.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $48,870.00; graduated tax on $48,870 [single schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $14,750.00 (the $24,120-$38,870 bracket) = $738.98; 0.052 x $10,000.00 (the $38,870+ bracket) = $520.00; total $2,063.27 -> $2,063"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $57,470.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $48,870.00; graduated tax on $48,870 [single schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $14,750.00 (the $24,120-$38,870 bracket) = $738.98; 0.052 x $10,000.00 (the $38,870+ bracket) = $520.00; total $2,063.27 -> $2,063. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
    },
    {
     "args": {
@@ -1060,7 +1507,7 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: NE 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+    "error": "ValueError: NE 2025: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it. NE's per-person exemptions are CREDITS against tax (Form 1040N lines 4a-4b, 4c): pass their counts as exemption_credit_counts (kinds: personal, dependent), and read the result's exemption_credits."
    },
    {
     "args": {
@@ -1070,10 +1517,31 @@
      "taxable_base": 40000,
      "year": 2025
     },
-    "error": "ValueError: NE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
+    "error": "ValueError: NE 2025: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction). NE's per-person exemptions are CREDITS against tax (Form 1040N lines 4a-4b, 4c): pass their counts as exemption_credit_counts (kinds: personal, dependent), and read the result's exemption_credits."
    },
    {
     "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@416a06f1ae44",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1084,7 +1552,215 @@
     },
     "marginal_rate": "0.0351",
     "tax": 1320,
-    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $57,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $17,200 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0246 x $8,040.00 (the $0-$8,040 bracket) = $197.78; 0.0351 x $31,960.00 (the $8,040-$48,250 bracket) = $1,121.80; total $1,319.58 -> $1,320"
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $57,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $17,200 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.0246 x $8,040.00 (the $0-$8,040 bracket) = $197.78; 0.0351 x $31,960.00 (the $8,040-$48,250 bracket) = $1,121.80; total $1,319.58 -> $1,320. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is NE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, dependent) to get Form 1040N line 18 and line 35. This pack ships NE's per-person exemption CREDITS against tax (Form 1040N: line 4a-4b personal $171 each; line 4c dependent $171 each; totaled on line 18 and subtracted on line 18)"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 171,
+       "count": 1,
+       "credit": 171,
+       "line": "4c"
+      },
+      "personal": {
+       "amount_each": 171,
+       "count": 1,
+       "credit": 171,
+       "line": "4a-4b"
+      }
+     },
+     "exemption_amount": 342,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "Exemption credits applied: Form 1040N line 18 = $342; tax after them (line 35) = $1,004. tax itself stays the line before the credits. Line 35 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 35 = max(0, that table amount - $342).",
+     "tax_after_credits": 1004,
+     "total": 342
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "personal": 1
+     },
+     "exemptions_count": 0,
+     "filing_status": "head_of_household",
+     "state": "ne",
+     "taxable_base": "52600",
+     "year": 2025
+    },
+    "marginal_rate": "0.0501",
+    "tax": 1346,
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $52,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $12,600 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.0246 x $7,510.00 (the $0-$7,510 bracket) = $184.75; 0.0351 x $31,080.00 (the $7,510-$38,590 bracket) = $1,090.91; 0.0501 x $1,410.00 (the $38,590-$57,630 bracket) = $70.64; total $1,346.30 -> $1,346. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits (Form 1040N, past the tax line): line 4a-4b personal 1 x $171 = $171; line 4c dependent 1 x $171 = $171; line 18 (exemption amount) = $342. no AGI limitation in this pack, so line 18 = $342. Tax after exemption credits: line 35 = max(0, $1,346 - $342) = $1,004"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 171,
+       "count": 2,
+       "credit": 342,
+       "line": "4c"
+      },
+      "personal": {
+       "amount_each": 171,
+       "count": 2,
+       "credit": 342,
+       "line": "4a-4b"
+      }
+     },
+     "exemption_amount": 684,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "Exemption credits applied: Form 1040N line 18 = $684; tax after them (line 35) = $636. tax itself stays the line before the credits. Line 35 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 35 = max(0, that table amount - $684).",
+     "tax_after_credits": 636,
+     "total": 684
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 2,
+      "personal": 2
+     },
+     "exemptions_count": 0,
+     "filing_status": "married_filing_jointly",
+     "state": "ne",
+     "taxable_base": "57200",
+     "year": 2025
+    },
+    "marginal_rate": "0.0351",
+    "tax": 1320,
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $57,200.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $17,200 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.0246 x $8,040.00 (the $0-$8,040 bracket) = $197.78; 0.0351 x $31,960.00 (the $8,040-$48,250 bracket) = $1,121.80; total $1,319.58 -> $1,320. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits (Form 1040N, past the tax line): line 4a-4b personal 2 x $171 = $342; line 4c dependent 2 x $171 = $342; line 18 (exemption amount) = $684. no AGI limitation in this pack, so line 18 = $684. Tax after exemption credits: line 35 = max(0, $1,320 - $684) = $636"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 171,
+       "count": 1,
+       "credit": 171,
+       "line": "4c"
+      },
+      "personal": {
+       "amount_each": 171,
+       "count": 1,
+       "credit": 171,
+       "line": "4a-4b"
+      }
+     },
+     "exemption_amount": 342,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@6f2801b06334",
+     "tax_after_credits": 1260,
+     "total": 342
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "personal": 1
+     },
+     "exemptions_count": 0,
+     "filing_status": "married_filing_separately",
+     "state": "ne",
+     "taxable_base": "48600",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 1602,
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $48,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $8,600 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $14,750.00 (the $24,120-$38,870 bracket) = $738.98; 0.052 x $1,130.00 (the $38,870+ bracket) = $58.76; total $1,602.03 -> $1,602. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits (Form 1040N, past the tax line): line 4a-4b personal 1 x $171 = $171; line 4c dependent 1 x $171 = $171; line 18 (exemption amount) = $342. no AGI limitation in this pack, so line 18 = $342. Tax after exemption credits: line 35 = max(0, $1,602 - $342) = $1,260"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": true,
+     "citation": {
+      "source": "@@18d4304e1757",
+      "url": "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf"
+     },
+     "credits": {
+      "dependent": {
+       "amount_each": 171,
+       "count": 1,
+       "credit": 171,
+       "line": "4c"
+      },
+      "personal": {
+       "amount_each": 171,
+       "count": 1,
+       "credit": 171,
+       "line": "4a-4b"
+      }
+     },
+     "exemption_amount": 342,
+     "federal_agi": null,
+     "form": "Form 1040N",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "18",
+      "tax_after_credits": "35",
+      "total": "18"
+     },
+     "note": "@@6f2801b06334",
+     "tax_after_credits": 1260,
+     "total": 342
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "dependent": 1,
+      "personal": 1
+     },
+     "exemptions_count": 0,
+     "filing_status": "single",
+     "state": "ne",
+     "taxable_base": "48600",
+     "year": 2025
+    },
+    "marginal_rate": "0.052",
+    "tax": 1602,
+    "work_head": "NE state income tax (2025, graduated brackets): taxable_base $48,600.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $8,600 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.0246 x $4,030.00 (the $0-$4,030 bracket) = $99.14; 0.0351 x $20,090.00 (the $4,030-$24,120 bracket) = $705.16; 0.0501 x $14,750.00 (the $24,120-$38,870 bracket) = $738.98; 0.052 x $1,130.00 (the $38,870+ bracket) = $58.76; total $1,602.03 -> $1,602. Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' Exemption credits (Form 1040N, past the tax line): line 4a-4b personal 1 x $171 = $171; line 4c dependent 1 x $171 = $171; line 18 (exemption amount) = $342. no AGI limitation in this pack, so line 18 = $342. Tax after exemption credits: line 35 = max(0, $1,602 - $342) = $1,260"
    }
   ],
   "common_result": {
@@ -1097,7 +1773,7 @@
    "rate_structure": "graduated",
    "state": "ne"
   },
-  "work_common_tail": ". Tax line: Form 1040N, line 15 'Nebraska income tax' — the 2025 Tax Calculation Schedule states: 'This calculation represents Nebraska income tax before any credits are applied. Enter on line 15, Form 1040N.' Booklet Line 15 instruction: 'Nebraska Income Tax. Nonresidents and partial-year residents, enter the amount from line 9, Nebraska Schedule III. Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 CHANGE — TOP RATE CUT TO 5.20% AND BRACKETS RE-INDEXED: the 2025 Tax Calculation Schedule (8-460-2025) prints a 5.20% top rate, down from 5.84% in 2024 and 6.64% in 2023 — the LB 754 (2023) glide path continuing toward 3.99% by tax year 2027. The three lower rates are unchanged at 2.46% / 3.51% / 5.01%, and all four schedules' breakpoints are re-indexed for 2025 (Single/MFS $4,030/$24,120/$38,870, 2024: $3,900/$23,370/$37,670; MFJ/QSS $8,040/$48,250/$77,730, 2024: $7,790/$46,760/$75,340; HoH $7,510/$38,590/$57,630, 2024: $7,270/$37,400/$55,850). Do NOT use 2024 tables or the 2026/2027 legislated rates. Base guidance: Supply Form 1040N line 5 — federal adjusted gross income, i.e. Federal Form 1040 or 1040-SR, line 11a. The pack ships Nebraska's standard deduction for the op to subtract, which reproduces line 14 (Nebraska Taxable Income = line 11 = line 5 minus the line 10 deduction, plus line 12 minus line 13 Schedule I adjustments) whenever there are no Nebraska Schedule I adjustments and the standard deduction is used. If Nebraska Schedule I adjustments apply, supply line 5 plus line 12 minus line 13 instead, so that subtracting the shipped standard deduction still reproduces line 14. Form 1040N line 14 says 'If less than -0-, enter -0-' — the engine's max(0, ...) floor matches. Adjudication note (two-pass): vector exemption counts are zero by design — Nebraska personal exemptions are a $171-per-person nonrefundable CREDIT on Form 1040N line 18 for 2025 (raised from $166 in 2024 and $157 in 2023), never an income exemption, so the pack ships no personal/dependent keys and the engine refuses nonzero counts. Nebraska personal exemptions are a TAX CREDIT, not an income exemption: Form 1040N line 18 gives RESIDENTS a nonrefundable credit of $171 times the number of Nebraska personal exemptions on line 4 (yourself, spouse, and dependents; the 2025 form prints '$171 times the number on line 4'). It is subtracted from tax, not from income, so no personal/dependent amounts are shipped in exemptions and calc.state_tax does not apply it — claim it on line 18 of the form (nonresidents and partial-year residents claim it prorated on Nebraska Schedule III, line 7). The shipped standard deduction is the 2025 chart amount with ZERO boxes checked on Form 1040N line 2a (under 65, not blind) for a filer who cannot be claimed by another taxpayer for the federal child tax credit or dependent tax credit. Nebraska Standard Deduction Chart with line-2a boxes checked: Single $10,600 (1 box) / $12,600 (2); Married Filing Jointly $18,850 / $20,500 / $22,150 / $23,800 (1-4 boxes); Qualifying surviving spouse $18,850 / $20,500 (1-2); Married Filing Separately $10,250 / $11,900 / $13,550 / $15,200 (1-4; the spouse's 65-and-over and blind boxes count only if the primary taxpayer can claim a personal exemption for the spouse); Head of Household $14,600 / $16,600 (1-2). These are NOT applied by calc.state_tax — use the chart amount on line 6. If you or your spouse CAN be claimed by another taxpayer for federal child tax credit or dependent tax credit purposes, your standard deduction is the SMALLER of the federal standard deduction allowed on line 12e of Federal Form 1040/1040-SR or the Nebraska chart amount — not modeled; compute on the form. Itemizers are not modeled: taxpayers who itemized on the federal return take the LARGER of the Nebraska standard deduction (line 6) or Nebraska itemized deductions (line 9 = federal Schedule A line 17 total minus line 8, the state and local income taxes reported on federal Schedule A line 5a — which must be entered even if the total state and local taxes were limited to $40,000, or $20,000 married filing separately, on federal Schedule A line 5e). If you used the federal standard deduction you MUST use the Nebraska standard deduction (booklet, Line 6). Nebraska Schedule I adjustments (Form 1040N line 12 adjustments increasing federal AGI from Schedule I line 13, line 13 adjustments decreasing federal AGI from Schedule I line 44) are NOT modeled — if they apply, fold them into the supplied base per the base guidance or compute line 14 on the form. New Schedule I Part A lines for 2025 include the Relocation Incentive Act employee recapture, losses on the sale or exchange of gold or silver bullion, and the addback of food-donation amounts deducted federally. Tax table option (paper filers only): 'Only taxpayers filing paper returns may use the Nebraska Tax Table'; electronic filers must use the Tax Calculation Schedule (booklet, Line 15), which is the exact bracket math this op implements. The table calculates tax at the midpoint of each $100 band and covers Nebraska taxable income up to $77,760 (2024: $75,360), so a paper filer's table amount may differ by a few dollars from this op's result within a band; above $77,760 the booklet worksheet is (taxable income - $77,760) x .0520 plus $3,566 Single/MFS, $3,088 MFJ/QSS, or $3,276 HoH — each of which is the shipped schedule evaluated at $77,760 and rounded to whole dollars. Qualifying surviving spouse: the schedule's second table is titled 'Married Taxpayers, Filing Jointly and Qualifying Surviving Spouses' — the engine's QSS-to-MFJ mapping is exact for the brackets, and the QSS standard deduction with zero boxes is the same $17,200. Married filing separately is printed with the SAME schedule as Single on the 2025 Tax Calculation Schedule (identical breakpoints $4,030/$24,120/$38,870 and identical constants $99.14/$804.30/$1,543.28) — copied from the MFS table, not derived by halving MFJ. The schedule's printed '$X + Y% of the excess over $Z' constants are the exact cumulative bracket sums rounded to the nearest cent; maximum divergence from the exact sum is $0.008 (Single/MFS $99.14 vs exact $99.138, $804.30 vs $804.297, $1,543.28 vs $1,543.272; MFJ $197.78 vs $197.784, $1,609.15 vs $1,609.155, $3,086.10 vs $3,086.103; HoH $184.75 vs $184.746, $1,275.66 vs $1,275.654, $2,229.56 vs $2,229.558) — after rounding to whole dollars the printed-schedule result and pure marginal bracket math agree. Nebraska other tax is NOT modeled: Form 1040N line 16 adds 29.6% of the federal tax on lump-sum distributions of qualified retirement plans and on early distributions of qualified retirement plans; line 17 total tax = line 15 + line 16. Nonresidents and partial-year residents are NOT modeled: they compute line 15 via Nebraska Schedule III (line 9), which apportions the tax by the Nebraska-income ratio from Schedule III line 4. Credits are NOT modeled (they reduce tax after line 17): the $171-per-exemption personal exemption credit (line 18), credit for tax paid to another state (line 19, Schedule II), the nonrefundable child/dependent care credit (line 23, 25% of the federal credit when AGI exceeds $29,000), the refundable child/dependent care credit (line 42, Form 2441N, AGI $29,000 or less), the Beginning Farmer credit (line 43), the Nebraska EITC (line 44, 10% of the federal EITC), the community-college-only property tax credit (line 45, Form PTC), the $250 volunteer emergency responder credit (line 46), and — new or newly effective for 2025 — the stillborn child credit (line 47), child care credit for a parent or legal guardian (line 48), school readiness credit (line 49), reverse osmosis system credit (line 50), and the $500 refundable Intellectual and Developmental Disabilities Direct Support Professional credit (line 51). Note the 2025 RENUMBERING versus 2024 (refundable child/dependent care moved 40 -> 42, Nebraska EITC 42 -> 44, community college property tax credit 43 -> 45). Standard deduction chart source: 2025 Nebraska Individual Income Tax Booklet, Form 1040N, Line 6 — https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf"
+  "work_common_tail": ". Exemption-credit rules (Form 1040N): Line 4a-4b (personal): Lines 4a and 4b. Booklet p. 12: \"Enter 1 in line 4a for yourself. You cannot enter a 1 in line 4a if you are claimed by another taxpayer for child tax credit or dependent tax credit purposes.\" \"If your status is married, filing jointly enter 1 in line 4b for your spouse. You cannot enter a 1 in line 4b if your spouse is claimed by another taxpayer for federal child tax credit or dependent tax credit purposes.\" Only a joint return enters line 4b. Line 4c (dependent): Line 4c. Booklet p. 12: \"Enter the dependents' names and social security numbers listed in columns 1 and 2 of the Federal Form 1040 or 1040-SR that qualify for the child tax credit or dependent tax credit.\" Booklet p. 13, Line 4: \"Add lines 4a, 4b, and 4c and enter the result on line 4.\" Booklet p. 14, Line 18: \"Residents may claim a $171 credit for each Nebraska personal exemption reported on line 4, Form 1040N. Multiply $171 by the number of Nebraska exemptions on line 4, Form 1040N. Nonresidents and partial-year residents will claim this credit on line 7, Nebraska Schedule III.\" These amounts are the resident Form 1040N line 18; Schedule III applies its own ratio afterwards. No AGI limitation: the 2025 face and booklet print none for line 18. Line 35 here is counted from the op's tax (line 15): line 17 adds the line 16 other tax, and line 34 adds the line 19-33 credits to line 18. It equals the filed line 35 when lines 16 and 19-33 are zero. Booklet p. 17, Line 35: \"Do not complete the worksheet below if the result of line 12 minus line 13 is $5,000 or more. Otherwise, if your federal tax liability is -0- or is less than your Nebraska tax, complete the Federal Tax Liability Worksheet below.\" — \"On line 35, enter the smaller of the amounts from line 2 or line 3 of this worksheet\" (line 3 being total federal tax); that cap is not modeled. This op computes the state's rate-schedule tax line and, when exemption_credit_counts is passed, its exemption credits ONLY — county/city add-on taxes, other state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: 2025 CHANGE — TOP RATE CUT TO 5.20% AND BRACKETS RE-INDEXED: the 2025 Tax Calculation Schedule (8-460-2025) prints a 5.20% top rate, down from 5.84% in 2024 and 6.64% in 2023 — the LB 754 (2023) glide path continuing toward 3.99% by tax year 2027. The three lower rates are unchanged at 2.46% / 3.51% / 5.01%, and all four schedules' breakpoints are re-indexed for 2025 (Single/MFS $4,030/$24,120/$38,870, 2024: $3,900/$23,370/$37,670; MFJ/QSS $8,040/$48,250/$77,730, 2024: $7,790/$46,760/$75,340; HoH $7,510/$38,590/$57,630, 2024: $7,270/$37,400/$55,850). Do NOT use 2024 tables or the 2026/2027 legislated rates. Base guidance: Supply Form 1040N line 5 — federal adjusted gross income, i.e. Federal Form 1040 or 1040-SR, line 11a. The pack ships Nebraska's standard deduction for the op to subtract, which reproduces line 14 (Nebraska Taxable Income = line 11 = line 5 minus the line 10 deduction, plus line 12 minus line 13 Schedule I adjustments) whenever there are no Nebraska Schedule I adjustments and the standard deduction is used. If Nebraska Schedule I adjustments apply, supply line 5 plus line 12 minus line 13 instead, so that subtracting the shipped standard deduction still reproduces line 14. Form 1040N line 14 says 'If less than -0-, enter -0-' — the engine's max(0, ...) floor matches. Adjudication note (two-pass): vector exemption counts are zero by design — Nebraska personal exemptions are a $171-per-person nonrefundable CREDIT on Form 1040N line 18 for 2025 (raised from $166 in 2024 and $157 in 2023), never an income exemption, so the pack ships no personal/dependent keys and the engine refuses nonzero counts. Nebraska personal exemptions are a TAX CREDIT, not an income exemption: Form 1040N line 18 gives RESIDENTS a nonrefundable credit of $171 times the number of Nebraska personal exemptions on line 4 (yourself, spouse, and dependents; the 2025 form prints '$171 times the number on line 4'). It is subtracted from tax, not from income, so no personal/dependent amounts are shipped in exemptions; calc.state_tax applies it past the tax line when exemption_credit_counts is passed (tax.exemption_credits, Phase K JK28) (nonresidents and partial-year residents claim it prorated on Nebraska Schedule III, line 7). The shipped standard deduction is the 2025 chart amount with ZERO boxes checked on Form 1040N line 2a (under 65, not blind) for a filer who cannot be claimed by another taxpayer for the federal child tax credit or dependent tax credit. Nebraska Standard Deduction Chart with line-2a boxes checked: Single $10,600 (1 box) / $12,600 (2); Married Filing Jointly $18,850 / $20,500 / $22,150 / $23,800 (1-4 boxes); Qualifying surviving spouse $18,850 / $20,500 (1-2); Married Filing Separately $10,250 / $11,900 / $13,550 / $15,200 (1-4; the spouse's 65-and-over and blind boxes count only if the primary taxpayer can claim a personal exemption for the spouse); Head of Household $14,600 / $16,600 (1-2). These are NOT applied by calc.state_tax — use the chart amount on line 6. If you or your spouse CAN be claimed by another taxpayer for federal child tax credit or dependent tax credit purposes, your standard deduction is the SMALLER of the federal standard deduction allowed on line 12e of Federal Form 1040/1040-SR or the Nebraska chart amount — not modeled; compute on the form. Itemizers are not modeled: taxpayers who itemized on the federal return take the LARGER of the Nebraska standard deduction (line 6) or Nebraska itemized deductions (line 9 = federal Schedule A line 17 total minus line 8, the state and local income taxes reported on federal Schedule A line 5a — which must be entered even if the total state and local taxes were limited to $40,000, or $20,000 married filing separately, on federal Schedule A line 5e). If you used the federal standard deduction you MUST use the Nebraska standard deduction (booklet, Line 6). Nebraska Schedule I adjustments (Form 1040N line 12 adjustments increasing federal AGI from Schedule I line 13, line 13 adjustments decreasing federal AGI from Schedule I line 44) are NOT modeled — if they apply, fold them into the supplied base per the base guidance or compute line 14 on the form. New Schedule I Part A lines for 2025 include the Relocation Incentive Act employee recapture, losses on the sale or exchange of gold or silver bullion, and the addback of food-donation amounts deducted federally. Tax table option (paper filers only): 'Only taxpayers filing paper returns may use the Nebraska Tax Table'; electronic filers must use the Tax Calculation Schedule (booklet, Line 15), which is the exact bracket math this op implements. The table calculates tax at the midpoint of each $100 band and covers Nebraska taxable income up to $77,760 (2024: $75,360), so a paper filer's table amount may differ by a few dollars from this op's result within a band; above $77,760 the booklet worksheet is (taxable income - $77,760) x .0520 plus $3,566 Single/MFS, $3,088 MFJ/QSS, or $3,276 HoH — each of which is the shipped schedule evaluated at $77,760 and rounded to whole dollars. Qualifying surviving spouse: the schedule's second table is titled 'Married Taxpayers, Filing Jointly and Qualifying Surviving Spouses' — the engine's QSS-to-MFJ mapping is exact for the brackets, and the QSS standard deduction with zero boxes is the same $17,200. Married filing separately is printed with the SAME schedule as Single on the 2025 Tax Calculation Schedule (identical breakpoints $4,030/$24,120/$38,870 and identical constants $99.14/$804.30/$1,543.28) — copied from the MFS table, not derived by halving MFJ. The schedule's printed '$X + Y% of the excess over $Z' constants are the exact cumulative bracket sums rounded to the nearest cent; maximum divergence from the exact sum is $0.008 (Single/MFS $99.14 vs exact $99.138, $804.30 vs $804.297, $1,543.28 vs $1,543.272; MFJ $197.78 vs $197.784, $1,609.15 vs $1,609.155, $3,086.10 vs $3,086.103; HoH $184.75 vs $184.746, $1,275.66 vs $1,275.654, $2,229.56 vs $2,229.558) — after rounding to whole dollars the printed-schedule result and pure marginal bracket math agree. Nebraska other tax is NOT modeled: Form 1040N line 16 adds 29.6% of the federal tax on lump-sum distributions of qualified retirement plans and on early distributions of qualified retirement plans; line 17 total tax = line 15 + line 16. Nonresidents and partial-year residents are NOT modeled: they compute line 15 via Nebraska Schedule III (line 9), which apportions the tax by the Nebraska-income ratio from Schedule III line 4. Credits are NOT modeled (they reduce tax after line 17), apart from the line 18 personal exemption credit (tax.exemption_credits): credit for tax paid to another state (line 19, Schedule II), the nonrefundable child/dependent care credit (line 23, 25% of the federal credit when AGI exceeds $29,000), the refundable child/dependent care credit (line 42, Form 2441N, AGI $29,000 or less), the Beginning Farmer credit (line 43), the Nebraska EITC (line 44, 10% of the federal EITC), the community-college-only property tax credit (line 45, Form PTC), the $250 volunteer emergency responder credit (line 46), and — new or newly effective for 2025 — the stillborn child credit (line 47), child care credit for a parent or legal guardian (line 48), school readiness credit (line 49), reverse osmosis system credit (line 50), and the $500 refundable Intellectual and Developmental Disabilities Direct Support Professional credit (line 51). Note the 2025 RENUMBERING versus 2024 (refundable child/dependent care moved 40 -> 42, Nebraska EITC 42 -> 44, community college property tax credit 43 -> 45). Standard deduction chart source: 2025 Nebraska Individual Income Tax Booklet, Form 1040N, Line 6 — https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf"
  },
  "year": 2025
 }

@@ -33,6 +33,9 @@ formpacks/CONVENTIONS.md). No OCR: the print-only blanks carry a text layer.
 The workspace lives under
 ``./taxfill-workspace`` by default (``--root`` to override). `purge` is
 destructive and PII-bearing, so it confirms interactively unless ``--yes`` is given.
+
+Every path argument takes ``~/...`` even when the shell leaves it alone (quoted, or ``--root=~/x``),
+and so does every path inside a ``call`` JSON argument (Phase K JK28).
 """
 from __future__ import annotations
 
@@ -49,6 +52,7 @@ from pathlib import Path
 # stderr — a shell agent may capture/log it. One shared implementation
 # (taxfill_core.redact) serves the CLI AND the engine's own value-echoing
 # errors, so the README's masking promise holds on the MCP path too.
+from taxfill_core.datadir import home_display, user_path
 from taxfill_core.redact import redact as _redact
 from taxfill_core.workspace import Workspace, default_workspace_root
 
@@ -64,7 +68,7 @@ def _cmd_status(args) -> int:
     ws = Workspace(args.root, args.year)
     st = ws.status()
     if not st["exists"]:
-        print(f"No workspace for {args.year} under {args.root!r}.")
+        print(f"No workspace for {args.year} under {home_display(args.root)!r}.")
         return 0
     print(f"Workspace {args.year} — {st['root']}")
     print(f"  profile: {'yes' if st['has_profile'] else 'no'}")
@@ -80,7 +84,7 @@ def _cmd_status(args) -> int:
 def _cmd_reconcile(args) -> int:
     ws = Workspace(args.root, args.year)
     if not ws.exists():
-        print(f"No workspace for {args.year} under {args.root!r}.", file=sys.stderr)
+        print(f"No workspace for {args.year} under {home_display(args.root)!r}.", file=sys.stderr)
         return 1
     now = _now()
     r = ws.write_reconciliation(now=now)
@@ -93,7 +97,7 @@ def _cmd_reconcile(args) -> int:
 def _cmd_purge(args) -> int:
     ws = Workspace(args.root, args.year)
     if not ws.exists():
-        print(f"No workspace for {args.year} under {args.root!r}.")
+        print(f"No workspace for {args.year} under {home_display(args.root)!r}.")
         return 0
     if not args.yes:
         print(f"This will PERMANENTLY wipe {ws.root} (profile, documents, drafts — all PII).")
@@ -112,11 +116,11 @@ def _cmd_introspect(args) -> int:
     from taxfill_core.packbuild import build_skeleton, sentinel_sweep
     from taxfill_core.schemas.formpack import FormPack
 
-    pdf = Path(args.pdf)
+    pdf = user_path(args.pdf)
     if not pdf.is_file():
-        print(f"No such PDF: {pdf}", file=sys.stderr)
+        print(f"No such PDF: {home_display(pdf)}", file=sys.stderr)
         return 1
-    out = Path(args.out) if args.out else pdf.with_suffix("")
+    out = user_path(args.out) if args.out else pdf.with_suffix("")
     out.mkdir(parents=True, exist_ok=True)
     skeleton = build_skeleton(pdf, form=args.form, jurisdiction=args.jurisdiction, tax_year=args.year, source_url=args.source_url)
     todo = skeleton.pop("_todo", [])
@@ -148,14 +152,47 @@ def _cmd_introspect(args) -> int:
     return 0
 
 
+def _pack_problems(exc: Exception) -> str:
+    """What is wrong with a --pack file, PII-safe (Phase K JK28 final review, 2026-10-23).
+
+    Field paths and messages for a schema error (input values never echoed, as the server's _validation_problems);
+    the line and column for a YAML syntax error; the shape for a file that is not a mapping. Never the raw message,
+    which may carry the expanded home path.
+    """
+    from pydantic import ValidationError  # noqa: PLC0415
+
+    if isinstance(exc, ValidationError):
+        problems = [
+            f"{'.'.join(str(part) for part in err['loc']) or '(top level)'}: {err['msg']}"
+            for err in exc.errors(include_url=False, include_input=False)
+        ]
+        return "; ".join(problems[:5]) + (f"; and {len(problems) - 5} more" if len(problems) > 5 else "")
+    mark = getattr(exc, "problem_mark", None)
+    if mark is not None:  # a yaml.MarkedYAMLError
+        return f"YAML syntax error at line {mark.line + 1}, column {mark.column + 1}: {getattr(exc, 'problem', '')}"
+    if "must be a YAML mapping" in str(exc):
+        return "the file is not a YAML mapping of key: value pairs"
+    return type(exc).__name__
+
+
 def _cmd_seed_blank(args) -> int:
     from taxfill_core.fetch import FetchError, seed_blank
 
     url, sha256 = args.url, args.sha256
     if args.pack:
+        import yaml  # noqa: PLC0415 - a pack.yaml that is not YAML raises yaml.YAMLError
         from taxfill_core.schemas.formpack import load_pack
 
-        pack = load_pack(args.pack)
+        # A refusal names the pack as "~/..." (Phase K JK28): the raw error would print the expanded home path.
+        try:
+            pack = load_pack(args.pack)
+        except OSError:
+            print(f"not seeded: no readable pack at {home_display(args.pack)}", file=sys.stderr)
+            return 1
+        except (ValueError, yaml.YAMLError) as exc:  # pydantic's ValidationError is a ValueError
+            print(f"not seeded: {home_display(args.pack)} is not a valid form pack ({_pack_problems(exc)}) — fix "
+                  f"that pack.yaml, or pass --url and --sha256 instead of --pack", file=sys.stderr)
+            return 1
         url, sha256 = url or pack.source_url, sha256 or pack.pdf_sha256
     if not url or not sha256:
         print("seed-blank needs --pack <pack.yaml>, or both --url and --sha256", file=sys.stderr)
@@ -163,7 +200,12 @@ def _cmd_seed_blank(args) -> int:
     try:
         path = seed_blank(args.pdf, url, sha256, cache_dir=args.cache_dir)
     except (FetchError, OSError, ValueError) as exc:
-        print(f"not seeded: {exc}", file=sys.stderr)
+        # seed_blank's own refusals already say "~/..."; an OS error (an unwritable cache) carries the absolute path
+        # in its filename, so that one is shown through home_display too.
+        filename = getattr(exc, "filename", None) if isinstance(exc, OSError) else None
+        filename = filename if isinstance(filename, (str, Path)) else None
+        reason = f"{exc.strerror or type(exc).__name__}: {home_display(filename)}" if filename else str(exc)
+        print(f"not seeded: {reason}", file=sys.stderr)
         return 1
     print(f"seeded {path} (sha256 {sha256.strip().lower()} verified) for {url}")
     return 0
@@ -172,9 +214,9 @@ def _cmd_seed_blank(args) -> int:
 def _cmd_locate(args) -> int:
     from taxfill_core.overlay import locate_labels, page_geometry
 
-    pdf = Path(args.pdf)
+    pdf = user_path(args.pdf)
     if not pdf.is_file():
-        print(f"No such PDF: {pdf}", file=sys.stderr)
+        print(f"No such PDF: {home_display(pdf)}", file=sys.stderr)
         return 1
     try:
         geom = page_geometry(pdf, args.page)
@@ -285,7 +327,7 @@ def _cmd_call(args) -> int:
     content, structured = res if isinstance(res, tuple) else (res, None)
 
     # 4. peel off image blocks (render_form) -> write to disk, return their paths
-    out_dir = Path(args.out_dir) if args.out_dir else None
+    out_dir = user_path(args.out_dir) if args.out_dir else None
     images: list[str] = []
     texts: list[str] = []
     for i, block in enumerate(content or []):

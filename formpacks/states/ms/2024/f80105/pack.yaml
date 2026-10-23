@@ -840,5 +840,14 @@ identity_fields:
   - mailing_address.city
   - mailing_address.state
   - mailing_address.zip
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2 and 3 print "SSN" in the header, each its own field
+# (Page2SSN / Page3SSN; read on the 2025 blank rendered at 200 dpi). fill_form builds each mirror the caller leaves
+# out from its page-1 source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md,
+# "Page-header mirrors (`mirrors`)").
+# The 2024 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  identifying_number_page2: "{identifying_number}"  # "SSN" (page 2)
+  identifying_number_page3: "{identifying_number}"  # "SSN" (page 3)
 signature: {page: 3}
 mailing: null

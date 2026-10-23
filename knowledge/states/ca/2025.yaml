@@ -87,6 +87,36 @@ forms:
   resident: '540'
   part_year_or_nonresident: '540NR'
   schedule: 'Schedule CA'
+  # (Phase K JK28, 2026-10-16): each role's own form and its instructions, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is FTB Pub. 1031 (residency), so this entry named Form
+  # 540NR without citing it. One form serves both roles: the 540NR booklet says so for each. The two URLs are the "Form
+  # 540 NR" link and the "Instruction Booket [sic] for Form 540NR" page's "Printable PDF of this document" link on FTB's
+  # forms index (www.ftb.ca.gov/forms/index.html); each PDF was downloaded twice on 2026-10-16 with identical sha256
+  # (540NR booklet 47104d74d7bb4783..., Form 540NR 00c5c7491e5a1dec...). The entry's '540NR' agrees with both, and the
+  # booklet's 'How Nonresidents and Part-Year Residents Are Taxed' (p. 10) says the same per role: 'Nonresidents of
+  # California who received California sourced income in 2025, or moved into or out of California in 2025, file Form
+  # 540NR.' That sentence stays here, not in the citation: the booklet citation's text becomes the source registry's
+  # description of the booklet, and its extra 'file' broke the tie that sends get_sources("do i have to file") to
+  # filing_logistics as well.
+  citations:
+    part_year:
+    - source: >-
+        2025 California 540NR Nonresident or Part-Year Resident Booklet (FTB), 'Which Form To Use' (p. 5): 'Use Form
+        540NR if either you or your spouse/RDP were a nonresident or part-year resident in taxable year 2025.'
+      url: https://www.ftb.ca.gov/forms/2025/2025-540nr-booklet.pdf
+    - source: >-
+        2025 Form 540NR, California Nonresident or Part-Year Resident Income Tax Return — the 6-page return itself
+        (Side 1 heading: 'California Nonresident or Part-Year Resident Income Tax Return', 'TAXABLE YEAR 2025')
+      url: https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf
+    nonresident:
+    - source: >-
+        2025 California 540NR Nonresident or Part-Year Resident Booklet (FTB), 'Which Form To Use' (p. 5): 'Use Form
+        540NR if either you or your spouse/RDP were a nonresident or part-year resident in taxable year 2025.'
+      url: https://www.ftb.ca.gov/forms/2025/2025-540nr-booklet.pdf
+    - source: >-
+        2025 Form 540NR, California Nonresident or Part-Year Resident Income Tax Return — the 6-page return itself
+        (Side 1 heading: 'California Nonresident or Part-Year Resident Income Tax Return', 'TAXABLE YEAR 2025')
+      url: https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf
 
 # Common California credits. Eligibility/structure are stable; the dollar limits
 # are the 2025 booklet figures, re-confirmed against the HTML booklet edition.
@@ -277,29 +307,149 @@ tax:
     married_filing_jointly: 11412
     married_filing_separately: 5706
     head_of_household: 11412
+  # Phase K JK28 (2026-10-16): California's exemption CREDITS — Form 540 lines 7-11 and 32-33 — as data. calc.state_tax
+  # applies them past line 31 when the caller passes exemption_credit_counts (and federal_agi for the line 32 AGI
+  # limitation); tax stays line 31. Every amount and quoted run below was re-found in the 2025 Form 540 booklet and the
+  # standalone 2025 Form 540 (and the 540NR note in the 2025 Form 540NR), each fetched twice with identical sha256.
+  # sha256 prefixes (each fetched twice 2026-10-23, identical): 2025-540-booklet.pdf b48ee24bd2f9b9e7, 2025-540.pdf
+  # 3be81dcc5d2be3d3, 2025-540nr.pdf 00c5c7491e5a1dec.
+  exemption_credits:
+    citation:
+      source: '2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — the Form
+        540 printed in it (Side 1 lines 6-9 "X $153"; Side 2 line 10 "X $475", lines 11 and 31-33), p. 12 "Line 6 –
+        Can be Claimed as Dependent" through "Line 11 – Exemption Amount", and p. 14 "Line 32 – Exemption Credits"
+        with the AGI Limitation Worksheet. Second pass: the standalone 2025 Form 540
+        (ftb.ca.gov/forms/2025/2025-540.pdf) prints the same amounts and line text; the 2025 Form 540NR
+        (ftb.ca.gov/forms/2025/2025-540nr.pdf) lines 38-40 for the proration note. Each fetched twice on 2026-10-16
+        with identical sha256.'
+      url: https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf
+    form: Form 540
+    credits:
+      personal:
+        amount: 153
+        line: '7'
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 1, head_of_household: 1}
+        note: 'Form 540 line 7 "Personal: If you checked box 1, 3, or 4 above, enter 1 in the box. If you checked box
+          2 or 5, enter 2 in the box. If you checked the box on line 6, see instructions." (the filing-status boxes: 1
+          Single, 2 Married/RDP filing jointly, 3 Married/RDP filing separately, 4 Head of household, 5 Qualifying
+          surviving spouse/RDP). Booklet p. 12, Line 6: "Check the box on line 6 if someone else can claim you or your
+          spouse/RDP as a dependent on their tax return, even if they chose not to." Line 7, when line 6 is checked:
+          "Single or married/RDP filing separately, enter -0-." "Head of household, enter -0-." "Married/RDP filing
+          jointly and both you and your spouse/RDP can be claimed as dependents, enter -0-." "Married/RDP filing
+          jointly and only one spouse/RDP can be claimed as a dependent, enter 1."'
+      blind:
+        amount: 153
+        line: '8'
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 1, head_of_household: 1}
+        note: 'Form 540 line 8 "Blind: If you (or your spouse/RDP) are visually impaired, enter 1; if both are
+          visually impaired, enter 2." Booklet p. 12, Line 8: "Visually impaired means not capable of seeing better
+          than 20/200 while wearing glasses or contact lenses, or if your field of vision is not more than 20
+          degrees." "The first year you claim this exemption credit, attach a doctor''s statement to the back of Form
+          540 indicating you or your spouse/RDP are visually impaired." "Do not claim this credit if someone else can
+          claim you as a dependent on their tax return." Only a joint return enters 2: the second count is the
+          spouse/RDP''s ("if both"). A single or head-of-household return has no spouse/RDP on it, and a separate
+          return counts the filer alone (booklet p. 5, "Married/RDP Filing Separately": "You cannot claim a personal
+          exemption credit for your spouse/RDP even if your spouse/RDP had no income, is not filing a tax return, and
+          is not claimed as a dependent on another person''s tax return."). On a qualifying surviving spouse/RDP
+          return the spouse/RDP died in an earlier year (p. 5: "Your spouse/RDP died in 2023 or 2024 and you did not
+          remarry or enter into another registered domestic partnership in 2025"), so "if both" cannot apply there
+          either.'
+      senior:
+        amount: 153
+        line: '9'
+        max_count: {single: 1, married_filing_jointly: 2, married_filing_separately: 1, head_of_household: 1}
+        note: 'Form 540 line 9 "Senior: If you (or your spouse/RDP) are 65 or older, enter 1; if both are 65 or older,
+          enter 2." Booklet p. 12, Line 9: "If you were 65 years of age or older by December 31, 2025*, you should
+          claim an additional exemption credit on line 9. If you are married/or an RDP, each spouse/RDP 65 years of
+          age or older should claim an additional credit." "*If your 65th birthday is on January 1, 2026, you are
+          considered to be age 65 on December 31, 2025." "Do not claim this credit if someone else can claim you as a
+          dependent on their tax return." Only a joint return enters 2: the second count is the spouse/RDP''s ("if
+          both"). A single or head-of-household return has no spouse/RDP on it, and a separate return counts the filer
+          alone (booklet p. 5, "Married/RDP Filing Separately": "You cannot claim a personal exemption credit for your
+          spouse/RDP even if your spouse/RDP had no income, is not filing a tax return, and is not claimed as a
+          dependent on another person''s tax return."). On a qualifying surviving spouse/RDP return the spouse/RDP
+          died in an earlier year (p. 5: "Your spouse/RDP died in 2023 or 2024 and you did not remarry or enter into
+          another registered domestic partnership in 2025"), so "if both" cannot apply there either.'
+      dependent:
+        amount: 475
+        line: '10'
+        note: 'Form 540 line 10 "Dependents: Do not include yourself or your spouse/RDP." Booklet p. 12, Line 10: "To
+          claim an exemption credit for each of your dependents, you must write each dependent''s first and last name,
+          SSN or ITIN, and relationship to you in the space provided." "The persons you list as dependents must be the
+          same persons you listed as dependents on your federal income tax return." "If you filed form FTB 3568,
+          Alternative Identifying Information for the Dependent Exemption Credit, to qualify to claim your dependents
+          for California purposes, the dependents you claim on your California income tax return may not match those
+          claimed on your federal income tax return." "Count the number of dependents listed and enter the total in
+          the box on line 10."'
+    exemption_amount_line: '11'
+    credit_line: '32'
+    tax_after_line: '33'
+    agi_limitation:
+      agi: federal AGI (Form 540 line 13)
+      threshold: {single: 252203, married_filing_jointly: 504411, married_filing_separately: 252203, head_of_household: 378310}
+      step: {single: 2500, married_filing_jointly: 2500, married_filing_separately: 1250, head_of_household: 2500}
+      reduction_per_step: 6
+      groups:
+      - [personal, blind, senior]
+      - [dependent]
+      worksheet: 'AGI Limitation Worksheet (booklet p. 14), "Use whole dollars only.": "a Enter the amount from Form
+        540, line 13"; "b Enter the amount for your filing status on line b:" (Single or married/RDP filing separately
+        $252,203; Married/RDP filing jointly or qualifying surviving spouse/RDP $504,411; Head of household $378,310);
+        "c Subtract line b from line a"; "d Divide line c by $2,500 ($1,250 if married/RDP filing separately). If the
+        result is not a whole number, round it to the next higher whole number"; "e Multiply line d by $6"; "f Add the
+        numbers from the boxes on Form 540, lines 7, 8, and 9 (not the dollar amounts)"; "g Multiply line e by line
+        f."; "h Add the total dollar amount from Form 540, lines 7, 8, and 9"; "i Subtract line g from line h. If zero
+        or less, enter -0-"; "j Enter the number from the box on Form 540, line 10 (not the dollar amount)"; "k
+        Multiply line e by line j"; "l Enter the dollar amount from Form 540, line 10"; "m Subtract line k from line
+        l. If zero or less, enter -0-"; "n Add line i and line m. Enter the result here and on Form 540, line 32".'
+    notes:
+    - 'Form 540 (2025) line 11 "Exemption amount: Add line 7 through line 10. Transfer this amount to line 32"; line
+      32 "Exemption credits. Enter the amount from line 11. If your federal AGI is more than $252,203, see
+      instructions."; line 33 "Subtract line 32 from line 31. If less than zero, enter -0-". Booklet p. 14, Line 32 –
+      Exemption Credits: "Exemption credits reduce your tax. If your federal AGI on line 13 is more than the amount
+      shown below for your filing status, your credits will be limited."'
+    - 'Line 33 starts from the filed line 31. Booklet p. 13, "Line 31 – Tax": "Tax Table – If your taxable income
+      on line 19 is $100,000 or less, use the tax table beginning on page 69." tax_after_credits subtracts line 32
+      from the rate-schedule tax (the op''s tax); when line 19 is $100,000 or less the filed line 33 is max(0, the
+      Tax Table''s line 31 - line 32), and the table can differ from the schedule by a few dollars.'
+    - 'RDPs: "For purposes of computing limitations based upon AGI, RDPs recalculate their AGI using a federal pro
+      forma Form 1040 or Form 1040-SR, or California RDP Adjustments Worksheet (located in FTB Pub. 737)." (booklet p.
+      14) — pass that recalculated AGI as federal_agi.'
+    - 'Form 540 lines only. Form 540NR prints the same lines 7-11 and amounts, then prorates the credits: "38 CA
+      Exemption Credit Percentage. Divide line 35 by line 19. If more than 1, enter 1.0000"; "39 CA Prorated Exemption
+      Credits. Multiply line 11 by line 38. If the amount on line 13 is more than $252,203, see instructions"; "40 CA
+      Regular Tax Before Credits. Subtract line 39 from line 37. If less than zero, enter -0-" (2025 Form 540NR). For
+      a 540NR return use exemption_amount (line 11) and compute lines 38-40 on that form; total and tax_after_credits
+      are Form 540''s lines 32 and 33.'
   notes:
   - 'Base guidance: Supply California adjusted gross income — 2025 Form 540, line 17 (''California adjusted gross
     income. Combine line 15 and line 16''), i.e. federal AGI (line 13) plus California additions minus California
     subtractions per Schedule CA (540). Do NOT supply unmodified federal AGI: California does not conform to federal
     income tax treaties (treaty-exempt income is added back on Schedule CA) and has many other adjustments. The op
-    subtracts the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and applies
-    the rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32) and special credits.'
-  - 'Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI
-    = federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18
-    standard deduction). California exemptions are $153/$475 CREDITS (lines 7-10), so vectors pass zero counts by
-    design. Bracket bounds were adjudicated three ways: the booklet pp. 74-75 schedules, the standalone 2025 Tax Rate
-    Schedules PDF, and the HTML booklet edition all print the same 24 bounds; independently, every 2025 bound reproduces
-    as round(2024 bound x 1.03) with Schedule Y = exactly 2x Schedule X, so the 3.0% indexing is confirmed rather
-    than assumed.'
-  - 'EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS — the op does not model them: California''s personal exemption ($153
-    per exemption, 2025 Form 540 lines 7-9: personal, blind, senior) and dependent exemption ($475 per dependent,
-    line 10) are exemption CREDITS totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce
-    taxable income. This op reproduces line 31 (tax before exemption credits) only; subtract the line 32 credits (and
-    any special credits, lines 40-47) on the form.'
-  - 'Exemption-credit AGI limitation (not modeled): if federal AGI (Form 540 line 13) exceeds $252,203 (single or
-    married/RDP filing separately), $504,411 (MFJ or qualifying surviving spouse/RDP), or $378,310 (head of household),
-    the line 32 exemption credits are reduced via the AGI Limitation Worksheet (booklet p. 14). These 2025 thresholds
-    replace the 2024 $244,857/$489,719/$367,291.'
+    subtracts the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and
+    applies the rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32; see
+    tax.exemption_credits) and special credits.'
+  - 'Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI =
+    federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18
+    standard deduction). California exemptions are $153/$475 CREDITS (lines 7-10), so vectors pass zero
+    exemptions_count/dependents_count by design (the credits have their own input, exemption_credit_counts, and block,
+    tax.exemption_credits). Bracket bounds were adjudicated three ways: the booklet pp. 74-75 schedules, the
+    standalone 2025 Tax Rate Schedules PDF, and the HTML booklet edition all print the same 24 bounds; independently,
+    every 2025 bound reproduces as round(2024 bound x 1.03) with Schedule Y = exactly 2x Schedule X, so the 3.0%
+    indexing is confirmed rather than assumed.'
+  - 'EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS: California''s personal exemption ($153 per exemption, 2025 Form 540
+    lines 7-9: personal, blind, senior) and dependent exemption ($475 per dependent, line 10) are exemption CREDITS
+    totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce taxable income, so
+    exemptions_count and dependents_count are refused. tax is line 31 (tax before exemption credits); pass
+    exemption_credit_counts (personal, blind, senior, dependent) with federal_agi and the result''s exemption_credits
+    carries lines 7-11, 32 and 33 (tax.exemption_credits, Phase K JK28). Special credits (lines 40-47) stay on the
+    form.'
+  - 'Exemption-credit AGI limitation (applied with the credits, from tax.exemption_credits.agi_limitation): if federal
+    AGI (Form 540 line 13) exceeds $252,203 (single or married/RDP filing separately), $504,411 (MFJ or qualifying
+    surviving spouse/RDP), or $378,310 (head of household), the line 32 exemption credits are reduced via the AGI
+    Limitation Worksheet (booklet p. 14). These 2025 thresholds replace the 2024 $244,857/$489,719/$367,291. The
+    worksheet takes $6 off each credit counted for each $2,500 ($1,250 married/RDP filing separately) of the excess, a
+    fraction of a step counting as a whole one.'
   - 'Table mandate below $100,000 — ''Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax
     table beginning on page 69'' and ''Use only if your taxable income on Form 540, line 19 is more than $100,000.
     If $100,000 or less, use the Tax Table'' (booklet pp. 13, 74): bracket math may differ by a few dollars from the

@@ -29,6 +29,9 @@ on stderr).
    `{"16": 36036}`; keyed per form_key for `verify_filing`), or the
    independent-recompute section does not run — loop until `ok: true` with
    recompute checks > 0, then `render_form` and review every page (P-001).
+   `ok` ignores SKIPPED checks: relay every section's `skipped` entry and every
+   `fill_form` warning (headers to hand-write, guarded relations) to the user.
+   `fill_form` builds the page-header mirrors you leave out (`mirrored`); paths may be `~/...`.
 4. `estimate_refund` is a labeled RANGE with assumptions, never fake precision — ESTIMATE for a closed
    year, PROJECTION for a planning year (TY2026 today: draft forms, rehearsal-only; see SKILL.md Recipe P;
    IRA basis / backdoor Roth / recharacterization: Recipe R).

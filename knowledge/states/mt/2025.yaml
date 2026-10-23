@@ -78,6 +78,41 @@ forms:
     residents, and mixed-residency filers also file Montana Form 2 and complete Schedule II, "Tax on Montana Source
     Income," to apportion the tax. (The Transition Schedule used in 2024 has been discontinued — it applied only
     to tax year 2024.)
+  # (Phase K JK28, 2026-10-16): the role's own schedule and the instructions that send each role to it, which
+  # state_scope adds to a part-year or nonresident filer's citations — the top-level `citation` is the Form 2
+  # instructions as a whole, so this entry named Schedule II without pointing at it or at the sentences that send each
+  # role there. The two URLs are the 2025 Form 2 Instructions (the pack's own URL; the Department of Revenue's Form 2
+  # page now links the same file at revenuefiles.mt.gov, byte-identical) and the "Schedule II – Tax on Montana Source
+  # Income" link on that page (revenue.mt.gov/publications/montana-individual-income-tax-return-form-2); each PDF was
+  # downloaded twice on 2026-10-16 with identical sha256 (instructions bed29192ae2fb020..., Schedule II
+  # 1cef5e4d89c36d43...). The entry above agrees with them and is unchanged.
+  citations:
+    part_year:
+    - source: >-
+        2025 Montana Form 2 Instructions, 'Residency Status' — 'Part-Year Resident' (Page 5 of 42): 'Part-year residents
+        must file an income tax return as a part-year resident and use the Schedule II to determine their Montana tax
+        liability. Montana taxes the income that a part-year resident receives while living in Montana plus any income
+        received from Montana sources when not living in Montana.' — 'Schedule II – Tax on Montana Source Income' (Page
+        23 of 42): 'If you are a nonresident, part-year resident, or a mixed residency filer you must use Schedule II to
+        report your Montana source income and determine your Montana tax liability; and attach it to your return.'
+      url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+    - source: >-
+        2025 Montana Form 2 Schedule II – Tax on Montana Source Income (2025v3, 12/2025) — the schedule itself, with its
+        'Part-Year Resident Information' section
+      url: https://revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/Form_2_2025_Schedule_II.pdf
+    nonresident:
+    - source: >-
+        2025 Montana Form 2 Instructions, 'Nonresident' (Page 6 of 42): 'You are a nonresident of Montana if you are
+        neither a resident of Montana nor a part-year resident. Generally, Montana taxes a nonresident’s income from all
+        Montana sources.' — 'Schedule II – Tax on Montana Source Income' (Page 23 of 42): 'If you are a nonresident,
+        part-year resident, or a mixed residency filer you must use Schedule II to report your Montana source income
+        and determine your Montana tax liability; and attach it to your return.' — 'North Dakota Reciprocity' (Page 6
+        of 42): 'If you are a resident of North Dakota, wages you received in 2025 for work performed in Montana are not
+        taxable in Montana.'
+      url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+    - source: >-
+        2025 Montana Form 2 Schedule II – Tax on Montana Source Income (2025v3, 12/2025) — the schedule itself
+      url: https://revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/Form_2_2025_Schedule_II.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

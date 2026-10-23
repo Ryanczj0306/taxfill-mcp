@@ -84,6 +84,47 @@ residency:
 forms:
   resident: 'Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)'
   part_year_or_nonresident: 'Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2025)'
+  # Role citations (Phase K JK28, 2026-10-16): Form N-15 serves both roles, and these entries are what state_scope adds
+  # to a part-year or nonresident filer's citations (the top-level `citation` is the resident Form N-11, the only
+  # document this entry pointed at before). The URLs are the year-pinned copies of the Form N-15 instructions and
+  # return that the Department of Taxation's income tax forms page (tax.hawaii.gov/forms/a1_b1_1income/) links under
+  # files.hawaii.gov/tax/forms/current/ ("Rev. 2025"); the 2025/ and current/ copies were each downloaded twice on
+  # 2026-10-16 and all four fetches of each file share one sha256 (instructions b946db310df825bc..., return
+  # 54f2b92963188bbb...). The part_year_or_nonresident text above agrees with the 2025 instructions.
+  # The source registry (knowledge/sources_states.yaml, written by scripts/assemble_state_sources.py) keeps only the
+  # first citation of a URL under each topic, and it reads `forms` before `all_citations`. So the part-year n15ins
+  # entry, the first one for that URL, repeats word for word after ' | ' the all_citations description of the same
+  # instructions. Without it the registry and get_sources would lose that tax-block second pass, and a 'standard
+  # deduction' question would stop reaching the N-15 and N-11 instructions under forms_and_instructions.
+  citations:
+    part_year:
+    - source: >-
+        2025 Form N-15 Hawaii Nonresident and Part-Year Resident Income Tax Instructions, 'Residency Status' (pp. 4-5),
+        under 'Part-Year Resident' (p. 5): 'A part-year resident must file an Individual Income Tax Return—Nonresident
+        and Part-Year Resident (Form N-15), if required to do so.' — and 'Which Form to File' (p. 5): 'You MUST use Form
+        N-15 if:' — 'You are taking up residence in Hawaii during the tax year. (Part-year resident).' — 'You are giving
+        up residence in Hawaii during the tax year. (Part-year resident).' | Hawaii 2025 N-15 Nonresident/Part-Year
+        Resident Instructions — INDEPENDENT SECOND-PASS source for the tax block: its "2025 Tax Rate Schedules" print
+        all 36 rows of Schedules I, II and III digit-identically to the N-11's (same boundaries, same rates, same
+        base-tax constants), and its standard-deduction table prints the same $4,400 / $8,800 / $4,400 / $6,424 amounts
+        and the same $1,144 per-exemption multiplier
+      url: https://files.hawaii.gov/tax/forms/2025/n15ins.pdf
+    - source: >-
+        Form N-15 (Rev. 2025), Hawaii Individual Income Tax Return, Nonresident and Part-Year Resident — the return itself
+        (page 1: 'Part-Year Resident (Enter period of Hawaii residency above)')
+      url: https://files.hawaii.gov/tax/forms/2025/n15_i.pdf
+    nonresident:
+    - source: >-
+        2025 Form N-15 Hawaii Nonresident and Part-Year Resident Income Tax Instructions, 'Residency Status' (pp. 4-5),
+        under 'Nonresident' (p. 5): 'A nonresident must file an Individual Income Tax Return—Nonresident and Part-Year
+        Resident (Form N-15), if required to do so.' — and 'Which Form to File' (p. 5): 'You MUST use Form N-15 if:' —
+        'You were a nonresident for the full year, or, if married filing jointly, both spouses were nonresidents for the
+        full year.'
+      url: https://files.hawaii.gov/tax/forms/2025/n15ins.pdf
+    - source: >-
+        Form N-15 (Rev. 2025), Hawaii Individual Income Tax Return, Nonresident and Part-Year Resident — the return itself
+        (page 1: 'NONRESIDENT and PART-YEAR RESIDENT')
+      url: https://files.hawaii.gov/tax/forms/2025/n15_i.pdf
 credits_verification: 'State credits were researched from the cited DOTAX sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. IMPROVEMENT over the 2024 pack: the 2025
   Schedule X (Form N-11/N-15) was fetched and read directly this session, so the Low-Income Household Renters credit

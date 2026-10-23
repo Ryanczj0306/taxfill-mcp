@@ -824,8 +824,10 @@ fields:
     maxlen: 8
   - line: preparer_printed_name     # Preparer's printed name — the widget has no /MaxLen; its box is
                                     # 153.6 pt wide (/Rect x 113.25-266.85) at CourierNew,Bold 12 =
-                                    # 7.2 pt per glyph, so 21 glyphs fit (the 2024 pack's 25 let
-                                    # 22-25 characters through to a verify P-001 width FAIL)
+                                    # 7.2 pt per glyph, so 21 glyphs fit: a 600 dpi probe render
+                                    # (JK28) draws 21 capitals whole and cuts the 22nd 1 pt inside the
+                                    # right edge (the 2023 / 2024 packs' 25 let 22-25 characters
+                                    # through to a verify P-001 width FAIL until JK28)
     field: PREPARER_PRINTED_NAME
     type: text
     maxlen: 21
@@ -2262,3 +2264,10 @@ identity_fields:
   - tp_ssn
   - tp_first_name
   - tp_last_name
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2-12 repeat the SSN in the header, one field TP_SSN1 with a
+# widget on each page, apart from the page-1 TP_SSN. Its caption, read off the 2025 blank's own text around each
+# widget: "SSN:" on pages 2, 4, 6, 8, 10 and 12, "Primary taxpayer's SSN" on pages 3, 5, 7, 9 and 11. fill_form builds
+# each mirror the caller leaves out from its page-1 source (FillResult.mirrored) and verify_form checks it on disk
+# (formpacks/CONVENTIONS.md, "Page-header mirrors (`mirrors`)").
+mirrors:
+  tp_ssn_page_header: "{tp_ssn}"  # "SSN:" / "Primary taxpayer's SSN"

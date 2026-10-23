@@ -1,5 +1,6 @@
 {
  "_strings": {
+  "@@065637cdbb8c": "2025 Form IT-40RNR (State Form 44406, R24 / 9-25), Reciprocal Nonresident Indiana Individual Income Tax Return — the form and its instructions (page 1: 'Due April 15, 2026')",
   "@@0719fc6f829f": "Indiana Earned Income Credit (EIC) — You must be eligible for and have actually claimed the federal Earned Income Credit on your federal tax return; if not, you are not eligible to claim Indiana's EIC. For the 2025 tax year Indiana follows all requirements and allowances for the federal EIC. Schedule IN-EIC must be completed and enclosed by all filers claiming the credit.",
   "@@09663c2dff1b": "annual (per tax year; the newest shipped IN pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
@@ -22,7 +23,9 @@
   "@@c39430a0f043": "Indiana DOR - 2026 Tax Chapter for the 2025 Filing Year (revised October 2025) — \"Individual Income tax rate is lowered to 3% for tax year 2025 and 2.95% for tax year 2026\" (independent live-host confirmation of the 3% rate)",
   "@@c5aeeb4aa74b": "Indiana529 Education Savings Plan Credit (credit code 837) — Any Indiana taxpayer who makes a contribution to an Indiana529 (formerly CollegeChoice 529) Education Savings Plan account during the tax year; the taxpayer need not be the account owner. You may make a contribution before the regular due date of your 2025 tax return (April 15, 2026) and claim the credit for that contribution on the 2025 return. Claimed on Schedule IN-529.",
   "@@c690d347a7d0": "Adoption Credit — You are eligible to claim the Indiana adoption credit if you claimed an adoption credit on your federal tax return (federal Form 8839). A credit may also be allowed based on a federal adoption credit carryforward from the preceding five tax years.",
+  "@@eb29100d3aee": "2025 Form IT-40PNR (State Form 472, R24 / 9-25), Indiana Part-Year or Full-Year Nonresident Individual Income Tax Return — the form itself (page 1: 'Due April 15, 2026')",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f3692a2964d2": "2025 Indiana IT-40PNR Part-Year and Full-Year Nonresident Individual Income Tax Booklet (Indiana DOR SP 258, R28 / 12-25), 'Who Should File?' — 'Part-Year Residents and Full-Year Nonresidents' (p. 6): 'If you were a part-year resident and received income while you lived in Indiana, you must file Indiana Form IT-40PNR, Part-Year Resident or Nonresident Individual Income Tax Return.'",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
@@ -373,6 +376,24 @@
      "url": "https://forms.in.gov/Download.aspx?id=16915"
     },
     {
+     "answers": "@@f3692a2964d2",
+     "cadence": "@@09663c2dff1b",
+     "topic": "forms_and_instructions",
+     "url": "https://forms.in.gov/Download.aspx?id=16921"
+    },
+    {
+     "answers": "@@eb29100d3aee",
+     "cadence": "@@09663c2dff1b",
+     "topic": "forms_and_instructions",
+     "url": "https://forms.in.gov/Download.aspx?id=16919"
+    },
+    {
+     "answers": "@@065637cdbb8c",
+     "cadence": "@@09663c2dff1b",
+     "topic": "forms_and_instructions",
+     "url": "https://forms.in.gov/Download.aspx?id=16925"
+    },
+    {
      "answers": "Indiana DOR - 2025 Form IT-40 (State Form 154) — Line 1 federal AGI (Form 1040/1040-SR line 11), Line 6 Indiana Exemptions from Schedule 3, Line 8 \"State adjusted gross income tax: multiply line 7 by 3% (.03)\", Line 9 county tax from Schedule CT-40 (second-pass verification of the 3% rate and structure)",
      "cadence": "@@09663c2dff1b",
      "topic": "forms_and_instructions",
@@ -532,6 +553,18 @@
       {
        "source": "@@b2b9bafa8578",
        "url": "https://forms.in.gov/Download.aspx?id=16915"
+      },
+      {
+       "source": "2025 Indiana IT-40PNR Part-Year and Full-Year Nonresident Individual Income Tax Booklet (Indiana DOR SP 258, R28 / 12-25), 'Who Should File?' (p. 6): 'If you were a legal resident of another state(s) (exception: see next paragraph) and had income from Indiana (except certain interest, dividends, or retirement income), you must file Form IT-40PNR.' — and, under 'Full-Year Residents of Kentucky, Michigan, Ohio, Pennsylvania or Wisconsin' (p. 6): 'If you were a full-year resident of Kentucky, Michigan, Ohio, Pennsylvania or Wisconsin, and your only income from Indiana was from wages, salaries, tips or commissions, then you need to file Form IT-40RNR, Indiana Reciprocal Nonresident Individual Income Tax Return.'",
+       "url": "https://forms.in.gov/Download.aspx?id=16921"
+      },
+      {
+       "source": "@@eb29100d3aee",
+       "url": "https://forms.in.gov/Download.aspx?id=16919"
+      },
+      {
+       "source": "@@065637cdbb8c",
+       "url": "https://forms.in.gov/Download.aspx?id=16925"
       }
      ],
      "filing_role": "nonresident",
@@ -584,6 +617,14 @@
       {
        "source": "@@b2b9bafa8578",
        "url": "https://forms.in.gov/Download.aspx?id=16915"
+      },
+      {
+       "source": "@@f3692a2964d2",
+       "url": "https://forms.in.gov/Download.aspx?id=16921"
+      },
+      {
+       "source": "@@eb29100d3aee",
+       "url": "https://forms.in.gov/Download.aspx?id=16919"
       }
      ],
      "filing_role": "part_year",

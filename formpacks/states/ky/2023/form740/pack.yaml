@@ -24,9 +24,12 @@
 #             block, and the Enclose federal-1040 checkbox.
 #
 # Coverage. The blank PDF exposes 118 fillable AcroForm widget entries
-# (introspect skeleton). ALL 118 are mapped here (93 text + 25 checkbox).
-# Nothing is intentionally omitted -- this PDF contains no JS pushbuttons,
-# readonly banners, or instructions-only fields.
+# (introspect skeleton). 115 are mapped here (90 text + 25 checkbox). The
+# three ink-signature boxes ("Signature of Taxpayer", "Signature of Spouse",
+# "Signature of Preparer") are intentionally NOT mapped (Phase K JK28,
+# 2026-10-16): see the page-3 Sign Here block below. Nothing else is omitted
+# -- this PDF contains no JS pushbuttons, readonly banners, or
+# instructions-only fields.
 #
 # Columns. Lines 5-18 are paired A/B widgets: column A ("...A" field) is the
 # spouse column used only when filing status 2 (married filing separately on a
@@ -41,8 +44,8 @@
 # round away the fraction. Line 24's federal-amount entry box
 # ("740Line24 from federal form 2441-K, line 11") is the federal Form 2441
 # line-11 figure the filer transcribes before the x20% result on line 24; it is
-# a dollar figure and mapped `money`. Identity / signature / preparer strings
-# stay `text`.
+# a dollar figure and mapped `money`. Identity strings, the Sign Here
+# driver's-license / date / phone boxes and the preparer strings stay `text`.
 #
 # SSN combs. 740SpouseSSN (column A) and 740PrimarySSN (column B) are /Btn-comb
 # text widgets (Ff comb bit set, MaxLen 9) -- one digit per cell, no dashes --
@@ -444,9 +447,16 @@ fields:
     type: money
 
   # ============================================ page 3 -- Sign Here / Paid Preparer
-  - line: signature.taxpayer            # Signature of Taxpayer
-    field: Signature of Taxpayer
-    type: text
+  # signature.taxpayer / signature.spouse / preparer.signature: NOT mapped (Phase K JK28, 2026-10-16) --
+  # ink-signature lines. Page 3 prints "Signature of Taxpayer" and "Signature of Spouse" (Sign Here) under "I,
+  # the undersigned, declare under penalties of perjury that I have examined this return, ..." and "Signature
+  # of Preparer" (Paid Preparer Use, above its own "Name of Preparer or Firm" box). Their widgets of the same
+  # names are ordinary /Tx boxes, and a sentinel typed into each printed on the signature line. The 2023
+  # instructions ("740 Packet Instructions 2023.pdf", sha256 cd3242f0e358d0ba, page 16, SIGN RETURN): "Be sure to sign
+  # on page 3 after completion of your return. Each return must be signed by the taxpayer. Joint and combined returns
+  # must be signed by both taxpayer and spouse. Returns that are not signed may be returned to you for signature."
+  # Nothing makes a typed name a signature, and the 2025 blank prints the same three captions with no widget at all. The
+  # filer, the spouse and any preparer sign by hand; `signature: {page: 3}` says where (test_signature_line_mapping.py).
   - line: signature.taxpayer_drivers_license
     field: 740DriversLic-TP
     type: text
@@ -456,17 +466,11 @@ fields:
   - line: signature.daytime_phone
     field: 740DaytimePhoneNum
     type: text
-  - line: signature.spouse             # Signature of Spouse
-    field: Signature of Spouse
-    type: text
   - line: signature.spouse_drivers_license
     field: 740DriversLic-SP
     type: text
   - line: signature.spouse_date
     field: 740TP2SigDate
-    type: text
-  - line: preparer.signature           # Signature of Preparer
-    field: Signature of Preparer
     type: text
   - line: preparer.date
     field: 740PreparerSigDate

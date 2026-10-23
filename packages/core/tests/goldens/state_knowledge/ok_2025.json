@@ -18,6 +18,8 @@
   "@@806b1a8793f6": "Child Care / Child Tax Credit — Filers whose Federal AGI is $100,000 or less and who are allowed either the federal credit for child care expenses or the federal child tax credit. Must provide a copy of the federal return and, if applicable, the federal child care credit schedule. If Oklahoma AGI (Form 511 line 7) is less than Federal AGI (line 1), compute on Schedule 511-F (prorated).",
   "@@90b2b07e1a31": "Oklahoma Tax Commission, PO Box 26800, Oklahoma City, OK 73126-0800 (this is the single mailing address for the 2025 Form 511 return itself, whether refund, no-payment, or with payment enclosed)",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@a47c3c8ab44b": "2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, 'F Residency Status' (p. 9): 'Part-Year Resident - If a part-year resident, enter the dates of residency in Oklahoma. If filing a joint return, both must be part-year residents.'",
+  "@@c3dfafc11ad0": "https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-NR-Pkt.pdf",
   "@@c58c9a6196a6": "Oklahoma Earned Income Credit (EIC) — Resident and part-year resident filers who qualify for the federal Earned Income Credit. The federal EIC is recalculated using the federal EITC eligibility/computation requirements in effect for the 2020 tax year. A copy of the federal return and OTC Form 511-EIC must be provided.",
   "@@d4abf582158e": "Treaty conformity — OK conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OK income (it flows through the federal starting point; do not add it back on the OK return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Oklahoma's resident return (Form 511) starts at line 1 from \"Federal adjusted gross income (from Federal 1040 or 1040-SR)\" and then applies Schedule 511-A (Oklahoma subtractions) and Schedule 511-B (Oklahoma additions) to arrive at Oklahoma AGI on line 7. The complete Schedule 511-B additions list for 2025 is closed and enumerated (lines 1-9, totalled on line 10 and carried to Form 511 line 6): (1) state and municipal bond interest, (2) out-of-state losses, (3) lump-sum distributions not included in federal AGI, (4) federal net operating loss, (5) recapture of depletion claimed on a lease bonus / add-back of excess federal depletion, (6) recapture of Oklahoma 529 and OklahomaDream 529 contributions, (7) Oklahoma loss distributed by an electing PTE, (8) Oklahoma bonus depreciation add-back, (9) miscellaneous other additions. There is NO add-back of federally treaty-exempt income anywhere in the 2025 resident packet (a full-text search of the packet for \"treaty\"/\"treaties\" returns zero hits). Because OK begins from federal AGI and does not add treaty income back (unlike CA Schedule CA), federally treaty-exempt income already excluded from federal AGI flows through and is NOT re-taxed by Oklahoma. Therefore conforms = true. (Same analysis and result as 2023 and 2024.)",
   "@@daabf38afa4f": "2025 Form 511 — Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission): Form 511 page 2, lines 10-14a (line 10 standard deduction 'Single or Married Filing Separate: $6,350 - Married Filing Joint or Qualifying Surviving Spouse: $12,700 - Head of Household: $9,350'; line 11 'Exemptions: Enter the total number of exemptions claimed on page 1 ... X $1,000'); Select Line Instructions and Top of Form Instructions (F EXEMPTIONS, incl. the Special 65-or-older federal-AGI limits and Legally Blind); 2025 Oklahoma Income Tax Table pp. 27-38, incl. the 'Tax Computation Worksheet' for taxable income of $100,000 or more ($4,562 plus 0.0475 of the excess over $100,000 for Single/Married Filing Separate; $4,373 plus 0.0475 for Married Filing Joint/Head of Household/Qualified Widow(er) — both constants IDENTICAL to 2024, confirming the schedule did not move). Second pass: the bracket-by-bracket schedule verified verbatim against 68 O.S. Section 2355(C) as amended by 2025 House Bill 2764 (ENROLLED text, oklegislature.gov), which retitles subsection C to 'tax years 2024 and 2025' and leaves the six brackets and the 4.75% top rate unchanged, while its NEW subsection D (three brackets, 4.5% top rate) applies only 'For tax year 2026 and for subsequent tax years'. Both passes agree, and printed table rows corroborate every boundary (e.g. the 12,300-12,350 row reads $397 Single / $229 MFJ, and the 16,300-16,350 row $587 / $398 — matching the MFJ 3.75% band that ends at $14,400).",
@@ -374,6 +376,12 @@
      "url": "@@e539bf5780d4"
     },
     {
+     "answers": "@@a47c3c8ab44b",
+     "cadence": "@@3ee0e3830aa8",
+     "topic": "forms_and_instructions",
+     "url": "@@c3dfafc11ad0"
+    },
+    {
      "answers": "Oklahoma Legislature — 2025 House Bill 2764, ENROLLED text (ENR. H.B. NO. 2764), Section 2 amending 68 O.S. 2021 Section 2355: subsection C is retitled from 'For all taxable years beginning on or after January 1, 2024' to 'tax years 2024 and 2025' with its six-bracket schedule and 4.75% top rate UNCHANGED (Single/MFS 0.25% first $1,000, 0.75% next $1,500, 1.75% next $1,250, 2.75% next $1,150, 3.75% next $2,300, 4.75% remainder; MFJ/surviving spouse/HOH 0.25% first $2,000, 0.75% next $3,000, 1.75% next $2,500, 2.75% next $2,300, 3.75% next $4,600, 4.75% remainder), and a NEW subsection D applies 'For tax year 2026 and for subsequent tax years' (Single/MFS 0% first $3,750, 2.5% next $1,150, 3.5% next $2,300, 4.5% remainder; MFJ/HOH 0% first $7,500, 2.5% next $2,300, 3.5% next $4,600, 4.5% remainder), with subsection E's revenue-trigger phase-down",
      "cadence": "@@3ee0e3830aa8",
      "topic": "forms_and_instructions",
@@ -517,6 +525,14 @@
       {
        "source": "@@dd584f58f289",
        "url": "@@e539bf5780d4"
+      },
+      {
+       "source": "2025 Form 511, Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission) — 'Who Must File?' (p. 4), Nonresident: 'Except as otherwise provided for in the Pass-Through Entity Tax Equity Act of 2019 (68 OS Sec. 2355.1P-1 et seq.), every nonresident with gross income from Oklahoma sources of $1,000 or more is required to file an Oklahoma income tax return. Use Form 511-NR.'",
+       "url": "@@e539bf5780d4"
+      },
+      {
+       "source": "2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, 'F Residency Status' (p. 9): 'Nonresident - If a nonresident the entire year, enter the state of residence. If filing a joint return, both must be nonresidents the entire year.'",
+       "url": "@@c3dfafc11ad0"
       }
      ],
      "filing_role": "nonresident",
@@ -579,6 +595,14 @@
       {
        "source": "@@dd584f58f289",
        "url": "@@e539bf5780d4"
+      },
+      {
+       "source": "2025 Form 511, Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission) — 'Who Must File?' (p. 4), Part-Year Resident: 'Every part-year resident, during the period of residency, has the same filing requirements as a resident. During the period of nonresidency, an Oklahoma return is also required if the Oklahoma part-year resident has gross income from Oklahoma sources of $1,000 or more. Use Form 511-NR.'",
+       "url": "@@e539bf5780d4"
+      },
+      {
+       "source": "@@a47c3c8ab44b",
+       "url": "@@c3dfafc11ad0"
       }
      ],
      "filing_role": "part_year",

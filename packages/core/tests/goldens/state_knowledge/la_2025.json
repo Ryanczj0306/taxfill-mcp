@@ -5,9 +5,11 @@
   "@@274fef353ccb": "Louisiana DOR - 2025 IT-540 instructions, WHERE TO FILE AND PAY TAX ('A return for which a payment is due must be mailed to P.O. Box 3550, Baton Rouge, LA 70821-3550 ... All other individual income tax returns must be mailed to P.O. Box 3440, Baton Rouge, LA 70821-3440')",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@3a96ab53fd70": "Louisiana Nonrefundable Child Care Credit (federal AGI greater than $25,000) — Louisiana residents with federal adjusted gross income greater than $25,000 who incurred qualifying child and dependent care expenses (IRC Section 21) in Louisiana and claimed a federal child care credit. Unused credit may be carried forward up to five years. Authorized by R.S. 47:297.4.",
+  "@@46df2069cbf1": "2025 Louisiana IT-540B Nonresident and Part-Year Resident Individual Income Tax instructions (revised; 'This form has been updated as of June 24, 2026.'), 'WHO MUST FILE A RETURN (FORM IT-540B)' (p. 2): '1. If you are a nonresident, or part-year resident with income from Louisiana sources who is required to file a federal individual income tax return, you must file a Louisiana income tax return reporting income earned in 2025.' — 'NONRESIDENT RETURN OR PART-YEAR RETURN' (p. 2): 'If you are filing as a part-year resident, mark an \"X\" in the Part-Year Return box.'",
   "@@4a4dd5c4f497": "annual (per tax year; the newest shipped LA pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@5baa007e6c18": "2025 Form IT-540B WEB-BC, Louisiana Nonresident and Part-Year Resident — the 4-page return that opens the 16-page PDF (page 1 carries the 'Nonresident Return' and 'Part-Year Return' boxes)",
   "@@9303524b31d3": "Louisiana DOR - 2025 IT-540 instructions WHEN TO FILE ('A 2025 calendar year return is due on or before May 15, 2026'); automatic six-month extension to November 15, 2026 (no extension form required; pay any tax due with voucher Form R-2868V by May 15, 2026)",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9967a606b131": "Law change NOT modeled by the engine (status final_form_published): Act 11 also raised the Annual Retirement Income Exemption for taxpayers 65 or older (Schedule E code 06E) from $6,000 to $12,000 per person for 2025. This is a Schedule E base subtraction reached on IT-540 Line 7, not part of the Line 11 computation. Resolve via: 2025 IT-540 Schedule E (code 06E, Annual Retirement Income Exemption) and its instructions in IT540i-WEB-2025 (the citation URL); the exempt amount comes from the filer's own retirement income and must already be netted out of the Line 7 figure supplied as taxable_base.",
@@ -365,6 +367,18 @@
      "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
     },
     {
+     "answers": "@@46df2069cbf1",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "forms_and_instructions",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540Bi-2025-Revised-7-26.pdf"
+    },
+    {
+     "answers": "@@5baa007e6c18",
+     "cadence": "@@4a4dd5c4f497",
+     "topic": "forms_and_instructions",
+     "url": "https://dam.ldr.la.gov/taxforms/IT540B(2025)WEB-BC-F.pdf"
+    },
+    {
      "answers": "@@b490c4420a1f",
      "cadence": "@@4a4dd5c4f497",
      "topic": "forms_and_instructions",
@@ -515,6 +529,14 @@
       {
        "source": "@@b0cb4800e01c",
        "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+      },
+      {
+       "source": "2025 Louisiana IT-540B Nonresident and Part-Year Resident Individual Income Tax instructions (revised; 'This form has been updated as of June 24, 2026.'), 'WHO MUST FILE A RETURN (FORM IT-540B)' (p. 2): '1. If you are a nonresident, or part-year resident with income from Louisiana sources who is required to file a federal individual income tax return, you must file a Louisiana income tax return reporting income earned in 2025.' — 'NONRESIDENT RETURN OR PART-YEAR RETURN' (p. 2): 'If you are filing as a nonresident, mark an \"X\" in the Nonresident Return box.'",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540Bi-2025-Revised-7-26.pdf"
+      },
+      {
+       "source": "@@5baa007e6c18",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540B(2025)WEB-BC-F.pdf"
       }
      ],
      "filing_role": "nonresident",
@@ -571,6 +593,14 @@
       {
        "source": "@@b0cb4800e01c",
        "url": "https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf"
+      },
+      {
+       "source": "@@46df2069cbf1",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540Bi-2025-Revised-7-26.pdf"
+      },
+      {
+       "source": "@@5baa007e6c18",
+       "url": "https://dam.ldr.la.gov/taxforms/IT540B(2025)WEB-BC-F.pdf"
       }
      ],
      "filing_role": "part_year",

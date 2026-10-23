@@ -69,6 +69,61 @@ forms:
   part_year_or_nonresident: DR 0104 with the DR 0104PN (Part-Year Resident/Nonresident Tax Calculation Schedule)
     attached — mark the "Part-Year or Nonresident" box on page 1 of the DR 0104 (also when filing jointly and one
     spouse is a full-year resident and the other is not). There is also an "Abroad on due date" box.
+  # Role citations (Phase K JK28, 2026-10-16): what state_scope adds to a part-year or nonresident filer's citations
+  # (the top-level `citation` is Book 104 as a whole). Both roles file the DR 0104 with the DR 0104PN, so each role pins
+  # Book 104's who-must-file sentence for it, the DR 0104PN and the DR 0104's residency box. (The DR 0104PN's own
+  # opening line, 'Use this form if you and/or your spouse were a resident of another state for all or part of 2025.',
+  # is not quoted: Book 104 already says who files it, and its 'another state' would route get_sources' 'credit for
+  # taxes paid to another state' to this schedule; its line 1 residency box is quoted instead.) The URLs are in the
+  # sites/tax/files/documents/ family that the rest of this pack and the DR 0104 form pack cite, so each document has
+  # one URL in the pack and one entry in the source registry. Each of the three paths now 301-redirects to the
+  # sites/default/files/documents/ copy linked from the DOR's DR0104Booklet, DR0104PN and DR0104 pages
+  # (tax.colorado.gov/DR0104Booklet, /DR0104PN, /DR0104), and serves the same bytes. tax.colorado.gov answers a browser
+  # User-Agent with a Cloudflare challenge but serves curl's own. Each PDF was downloaded twice that way under each of
+  # the two paths on 2026-10-16, and all fetches of a file share one sha256 (Book 104 (10/29/25) 69c80c89118eccd2...,
+  # DR 0104PN (09/24/25) caba6d564e48bac3..., DR 0104 (10/03/25) 6deb6c1818487975..., the digest the DR 0104 form pack
+  # pins). The part_year_or_nonresident text above agrees with the 2025 Book 104.
+  # The source registry (knowledge/sources_states.yaml, written by scripts/assemble_state_sources.py) keeps only the
+  # first citation of a URL under each topic, and it reads `forms` before `all_citations`. So the part-year DR 0104
+  # entry, the first one for that URL, repeats word for word after ' | ' the all_citations description of the same
+  # form (its line-by-line second pass), which the registry would otherwise lose.
+  citations:
+    part_year:
+    - source: >-
+        Colorado DOR 2025 Book 104, Colorado Individual Income Tax Filing Guide (10/29/25), 'Who Must File This Tax
+        Return' (p. 4): 'A part-year Colorado resident who received taxable income while residing here (you must file DR
+        0104 with DR 0104PN), or' — and 'Part-Year Colorado Residents and Nonresidents' (p. 5): 'You will calculate your
+        prorated tax by completing the DR 0104PN. You must submit the DR 0104PN along with the DR 0104.'
+      url: https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf
+    - source: >-
+        DR 0104PN (09/24/25), Form 104PN Part-Year Resident/Nonresident Tax Calculation Schedule 2025 — the schedule
+        itself (page 1, line 1: '1. Taxpayer is (mark one):' — 'Part-Year Resident from:')
+      url: https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2025.pdf
+    - source: >-
+        DR 0104 (10/03/25), 2025 Colorado Individual Income Tax Return — the return itself (page 1 residency box:
+        'Part-Year or Nonresident (or combination of full-year, part-year, or nonresident). You must submit form DR
+        0104PN') | Colorado DOR — standalone 2025 DR 0104, Colorado Individual Income Tax Return (form PDF, revision "DR
+        0104 (10/03/25)"; second-pass verification of line 1 "Federal Taxable Income from your federal income tax form:
+        1040, 1040 SR, or 1040 SP line 15", additions lines 2-9, line 10 subtotal, line 11 DR 0104AD subtractions, line
+        12 "Colorado Taxable Income, subtract line 11 from line 10", line 13 "Colorado Tax from tax table or the DR
+        0104PN line 36", TABOR lines 34-38 and the Modified AGI tier table)
+      url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf
+    nonresident:
+    - source: >-
+        Colorado DOR 2025 Book 104, Colorado Individual Income Tax Filing Guide (10/29/25), 'Who Must File This Tax
+        Return' (p. 4): 'Not a Colorado resident, but received income from Colorado sources (you must file DR 0104 with
+        DR 0104PN).' — and 'Part-Year Colorado Residents and Nonresidents' (p. 5): 'You will calculate your prorated tax
+        by completing the DR 0104PN. You must submit the DR 0104PN along with the DR 0104.'
+      url: https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf
+    - source: >-
+        DR 0104PN (09/24/25), Form 104PN Part-Year Resident/Nonresident Tax Calculation Schedule 2025 — the schedule
+        itself (page 1, line 1: '1. Taxpayer is (mark one):' — 'Full-Year Nonresident')
+      url: https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2025.pdf
+    - source: >-
+        DR 0104 (10/03/25), 2025 Colorado Individual Income Tax Return — the return itself (page 1 residency box:
+        'Part-Year or Nonresident (or combination of full-year, part-year, or nonresident). You must submit form DR
+        0104PN')
+      url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. Not re-verified for 2025 (recorded in
   `unverified` rather than carried forward from 2024): the DR 0104CN per-child Colorado child tax credit / family

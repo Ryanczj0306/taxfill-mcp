@@ -11,8 +11,10 @@
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@59bb56765b4b": "2025 Michigan Individual Income Tax Return MI-1040 (form PDF) and MI-1040-Book.pdf - printed mailing addresses ('Refund, credit, or zero returns... Lansing, MI 48956'; 'Pay amount on line 34... Lansing, MI 48929')",
   "@@6194f478ae4f": "Mailing address: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm at the cited Treasury source before relying on a specific figure/address.",
+  "@@65a1b1a0e0b4": "https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/Schedule-NR.pdf",
   "@@6d9116ac95b6": "Homestead Property Tax Credit (general claimants) — Available to Michigan resident homeowners and renters whose homestead is in Michigan and who were a Michigan resident for at least 6 months of 2025. You must own and occupy the homestead (property taxes levied in 2025), or have paid rent under a rental contract. Cannot claim if total household resources exceed $71,500, or if the homestead's taxable value exceeds $165,400 (excluding unoccupied farmland classified as agricultural). Renters: in most cases 23% of rent paid is considered property tax eligible for the credit. Separate, more generous computations apply to seniors, the blind/disabled, and veterans/surviving spouses (MI-1040CR-2 where applicable).",
   "@@6e46d30952db": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the figure): Home Heating Credit (low-income heating-cost credit).",
+  "@@7f982f5f8750": "2025 Michigan Schedule NR, Nonresident and Part-Year Resident Schedule (Rev. 03-25) — the 2-page schedule itself (page 1: '2025 MICHIGAN Nonresident and Part-Year Resident Schedule' — 'Include with Form MI-1040.')",
   "@@84f0244a1add": "2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2): 'NOTE: P.A. 24 of 2025 requires new adjustments to business income or loss due to separation from the Internal Revenue Code for certain items. See Schedule 1, line 8 for more information.'",
   "@@87572590facb": "annual (per tax year; the newest shipped MI pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@881d1a204cb7": "2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2) — Credit for Organ Donation Expenses: 'You may claim a one-time nonrefundable credit for unreimbursed live organ donation expenses incurred during the tax year or $10,000, whichever is less.'",
@@ -406,6 +408,12 @@
      "cadence": "@@87572590facb",
      "topic": "forms_and_instructions",
      "url": "https://www.michigan.gov/taxes/iit/iitpayments"
+    },
+    {
+     "answers": "@@7f982f5f8750",
+     "cadence": "@@87572590facb",
+     "topic": "forms_and_instructions",
+     "url": "@@65a1b1a0e0b4"
     }
    ],
    "topic": "forms_and_instructions",
@@ -547,6 +555,14 @@
       {
        "source": "@@f092430065f6",
        "url": "@@e8b7395b8a67"
+      },
+      {
+       "source": "2025 Michigan MI-1040 Individual Income Tax Instruction Book, 'Residency' (p. 7): 'Nonresident. Use Schedule NR to figure your Michigan taxable income. You must pay Michigan income tax on the following types of income' — and 'A resident of a reciprocal state who claims a refund of Michigan withholding tax must file a Schedule NR along with an MI-1040.'",
+       "url": "@@df8231a4af9f"
+      },
+      {
+       "source": "@@7f982f5f8750",
+       "url": "@@65a1b1a0e0b4"
       }
      ],
      "filing_role": "nonresident",
@@ -612,6 +628,14 @@
       {
        "source": "@@f092430065f6",
        "url": "@@e8b7395b8a67"
+      },
+      {
+       "source": "2025 Michigan MI-1040 Individual Income Tax Instruction Book, 'Residency' (p. 6): 'Part-year resident. You are a part-year resident if, during the year, you move your permanent home into or out of Michigan. You must pay Michigan income tax on income you earned, received, or accrued while living in Michigan. Use Michigan Nonresident and Part-Year Resident Schedule (Schedule NR) and the following guidelines to help figure your tax'",
+       "url": "@@df8231a4af9f"
+      },
+      {
+       "source": "@@7f982f5f8750",
+       "url": "@@65a1b1a0e0b4"
       }
      ],
      "filing_role": "part_year",

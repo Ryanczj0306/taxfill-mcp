@@ -2929,6 +2929,231 @@ class StateRateBracket(BaseModel):
         return self
 
 
+def _check_per_status(table: dict | None, where: str, *, minimum: int) -> None:
+    """A per-filing-status table must define all four statuses, each at least ``minimum`` whole dollars/items."""
+    if table is None:
+        return
+    missing = [s for s in FILING_STATUSES if s not in table]
+    if missing:
+        raise ValueError(
+            f"{where} must define all four filing statuses; missing: {', '.join(missing)} — copy each value from "
+            f"the cited form/instructions (qualifying surviving spouse resolves to the married_filing_jointly "
+            f"column in calc)"
+        )
+    bad = {s: v for s, v in table.items() if v < minimum}
+    if bad:
+        raise ValueError(f"{where} values must be at least {minimum}, got {bad}")
+
+
+class StateExemptionCredit(BaseModel):
+    """One exemption-CREDIT kind: a verified per-item credit against TAX + the form line it is entered on.
+
+    Phase K JK28 (2026-10-16). The counterpart of :class:`StateExemption` for a state whose per-person
+    "exemptions" are credits: the amount comes off the TAX the rate schedule produced and never reduces
+    the base. California's Form 540 prints the shape on its face: "For line 7, line 8, line 9, and line 10:
+    Multiply the number you enter in the box by the pre-printed dollar amount for that line."
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    amount: int = Field(gt=0, description="Per-item whole-dollar credit, exactly as pre-printed on the form.")
+    line: str = Field(description="The form line the count x amount is entered on, e.g. '7'.")
+    max_count: dict[FilingStatus, int] | None = Field(
+        default=None,
+        description="The largest count the form's own instruction allows, per filing status (CA line 7: 'If you "
+        "checked box 1, 3, or 4 above, enter 1 in the box. If you checked box 2 or 5, enter 2 in the box.'); "
+        "0 where the form offers the credit to no filer of that status (AR line 7A's head-of-household/surviving-"
+        "spouse box, 'Filing status 3 only' / 'Filing status 6 only'); null when the form prints no maximum "
+        "(dependents).",
+    )
+    max_count_qualifying_surviving_spouse: int | None = Field(
+        default=None,
+        ge=0,
+        description="Phase K JK28 (2026-10-23): the maximum for a qualifying surviving spouse where the form's own "
+        "rule differs from the married-filing-jointly column calc resolves that status to (IA Step 3 line a: 'Enter "
+        "1 (enter 2 if filing status 2 or 4)', status 5 being qualifying surviving spouse); null = the "
+        "married_filing_jointly maximum applies.",
+    )
+    note: str = Field(description="Who the credit covers, transcribed from the cited form and instructions.")
+
+    @field_validator("line", "note")
+    @classmethod
+    def _text_nonempty(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError(
+                "exemption credit line/note must not be empty — record the form line and who the credit covers, "
+                "transcribed from the cited state form and instructions"
+            )
+        return value
+
+    @model_validator(mode="after")
+    def _check_max_count(self) -> "StateExemptionCredit":
+        # Phase K JK28 (2026-10-23): 0 is a valid maximum (the form offers the credit to no filer of that status).
+        _check_per_status(self.max_count, "exemption credit max_count", minimum=0)
+        if self.max_count_qualifying_surviving_spouse is not None and self.max_count is None:
+            raise ValueError(
+                "exemption credit max_count_qualifying_surviving_spouse needs max_count — it overrides the "
+                "married_filing_jointly maximum for a qualifying surviving spouse, so ship the per-status maximum first"
+            )
+        return self
+
+
+class StateExemptionCreditLimitation(BaseModel):
+    """An AGI limitation on exemption credits, as CITED data (Phase K JK28, 2026-10-16).
+
+    The shape California's Form 540 line 32 instructions print ("If your federal AGI on line 13 is more
+    than the amount shown below for your filing status, your credits will be limited") and its AGI
+    Limitation Worksheet computes: the AGI over the filing status's ``threshold`` is divided by ``step``
+    ("If the result is not a whole number, round it to the next higher whole number"), every credit
+    counted in a group loses ``reduction_per_step`` times that number, and each group's dollar total is
+    floored at zero on its own ("If zero or less, enter -0-").
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    agi: str = Field(description="The AGI the test reads, as the instructions name it (CA: Form 540 line 13).")
+    threshold: dict[FilingStatus, int] = Field(
+        description="Per-status AGI above which the credits are limited (AGI equal to it is not limited)."
+    )
+    step: dict[FilingStatus, int] = Field(
+        description="Per-status AGI step; the excess over the threshold is divided by it and rounded UP."
+    )
+    reduction_per_step: int = Field(gt=0, description="Reduction of EACH credit counted, per step.")
+    groups: list[list[str]] = Field(
+        description="The credit kinds whose dollar totals the worksheet reduces and floors at zero together, "
+        "in worksheet order; every kind of the block appears in exactly one group."
+    )
+    worksheet: str = Field(description="The limitation worksheet, transcribed from the cited instructions.")
+
+    @model_validator(mode="after")
+    def _check_limitation(self) -> "StateExemptionCreditLimitation":
+        _check_per_status(self.threshold, "exemption_credits.agi_limitation.threshold", minimum=1)
+        _check_per_status(self.step, "exemption_credits.agi_limitation.step", minimum=1)
+        if not self.groups or any(not group for group in self.groups):
+            raise ValueError("exemption_credits.agi_limitation.groups must list at least one non-empty group")
+        if not self.agi.strip() or not self.worksheet.strip():
+            raise ValueError(
+                "exemption_credits.agi_limitation needs the AGI line it reads and the worksheet text, transcribed "
+                "from the cited instructions"
+            )
+        return self
+
+
+class StateExemptionCreditCeiling(BaseModel):
+    """An AGI CEILING on exemption credits, as CITED data (Phase K JK28, 2026-10-23).
+
+    The shape Oregon's 2025 Form OR-40 instructions print (p. 17, line 25 "Exemption credit worksheet"): above a
+    per-filing-status federal AGI the credit for a kind is not reduced but DENIED — "If your federal AGI is more
+    than $100,000 and your filing status is single or married filing separately, or more than $200,000 for all
+    others, enter 0". ``ceilings`` maps each limited credit kind to its per-status ceiling; AGI equal to the
+    ceiling keeps the credit, AGI more than it zeroes that kind. A kind not listed has no ceiling.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    agi: str = Field(description="The AGI the test reads, as the instructions name it (OR: Form OR-40 line 7).")
+    ceilings: dict[str, dict[FilingStatus, int]] = Field(
+        description="Credit kind -> per-status AGI above which that kind's credit is 0 (AGI equal to it is allowed)."
+    )
+    worksheet: str = Field(description="The worksheet or rule, transcribed from the cited instructions.")
+
+    @model_validator(mode="after")
+    def _check_ceiling(self) -> "StateExemptionCreditCeiling":
+        if not self.ceilings:
+            raise ValueError("exemption_credits.agi_ceiling.ceilings must list at least one credit kind")
+        for kind, table in self.ceilings.items():
+            _check_per_status(table, f"exemption_credits.agi_ceiling.ceilings.{kind}", minimum=1)
+        if not self.agi.strip() or not self.worksheet.strip():
+            raise ValueError(
+                "exemption_credits.agi_ceiling needs the AGI line it reads and the worksheet text, transcribed from "
+                "the cited instructions"
+            )
+        return self
+
+
+class StateExemptionCredits(BaseModel):
+    """The ``tax.exemption_credits`` block: a state's per-person exemption CREDITS against tax.
+
+    Phase K JK28 (2026-10-16), California first (Form 540 lines 7-11, 32 and 33). calc.state_tax applies
+    the block only when the caller passes ``exemption_credit_counts`` — then it reproduces the per-kind
+    lines (count x amount), the total before any limitation (CA line 11 "Exemption amount: Add line 7
+    through line 10"), the credits after the AGI limitation (CA line 32) and the tax after them (CA line
+    33 "Subtract line 32 from line 31. If less than zero, enter -0-"). The state's ``tax`` line stays the
+    rate-schedule tax. A state whose exemptions are credits but whose pack ships no block keeps refusing
+    counts: the block ships only once its amounts and limitation are verified.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    citation: Citation
+    form: str = Field(description="The form the lines below belong to, e.g. 'Form 540'.")
+    credits: dict[str, StateExemptionCredit] = Field(
+        description="Verified credit kinds by snake_case key (personal, blind, senior, dependent, ...), in form order."
+    )
+    exemption_amount_line: str = Field(description="The line totaling the credits before any limitation (CA: '11').")
+    credit_line: str = Field(description="The line holding the credits subtracted from tax (CA: '32').")
+    tax_after_line: str = Field(description="The line holding the tax after the credits (CA: '33').")
+    agi_limitation: StateExemptionCreditLimitation | None = Field(
+        default=None, description="The AGI limitation on the credits; null when the state has none."
+    )
+    agi_ceiling: StateExemptionCreditCeiling | None = Field(
+        default=None,
+        description="Phase K JK28 (2026-10-23): an AGI ceiling above which a credit kind is denied outright (OR "
+        "line 25); null when the state has none. A block ships at most one of agi_limitation and agi_ceiling.",
+    )
+    limited_to_tax_line: str | None = Field(
+        default=None,
+        description="Phase K JK28 (2026-10-23): the tax line the credit line may not exceed, when the form limits "
+        "it there (DE PIT-RES instructions p. 10, Line 32: 'The total of all non-refundable credits (Lines 27a "
+        "through 31) is limited to the amount of your Delaware tax liability on Line 26.'); null when the form "
+        "prints no such limit (CA line 32 is not limited; line 33 floors at zero instead).",
+    )
+    notes: list[str] = Field(
+        default_factory=list,
+        description="Cited rules the calc op quotes beside the credits (the form's own line text, who may claim).",
+    )
+
+    @model_validator(mode="after")
+    def _check_credits(self) -> "StateExemptionCredits":
+        if not self.credits:
+            raise ValueError("tax.exemption_credits.credits must list at least one verified credit kind")
+        bad_keys = [k for k in self.credits if not _STATE_EXEMPTION_KEY_RE.fullmatch(k)]
+        if bad_keys:
+            raise ValueError(
+                f"tax.exemption_credits.credits keys must be lowercase snake_case identifiers (personal, blind, "
+                f"senior, dependent, ...), got {bad_keys}"
+            )
+        if self.limited_to_tax_line is not None and not self.limited_to_tax_line.strip():
+            raise ValueError(
+                "tax.exemption_credits.limited_to_tax_line must not be empty — copy the tax line from the cited "
+                "instruction, or leave the field out when the form prints no limit"
+            )
+        for name in ("form", "exemption_amount_line", "credit_line", "tax_after_line"):
+            if not getattr(self, name).strip():
+                raise ValueError(f"tax.exemption_credits.{name} must not be empty — copy it from the cited form")
+        if self.agi_limitation is not None:
+            listed = [kind for group in self.agi_limitation.groups for kind in group]
+            if len(listed) != len(set(listed)) or set(listed) != set(self.credits):
+                raise ValueError(
+                    f"tax.exemption_credits.agi_limitation.groups must list every credit kind exactly once "
+                    f"(credits: {sorted(self.credits)}; groups: {self.agi_limitation.groups})"
+                )
+        if self.agi_ceiling is not None:
+            if self.agi_limitation is not None:
+                raise ValueError(
+                    "tax.exemption_credits ships at most one of agi_limitation (a stepped reduction, CA line 32) and "
+                    "agi_ceiling (a cliff, OR line 25) — no verified state prints both; model a new shape before "
+                    "shipping one"
+                )
+            unknown = sorted(set(self.agi_ceiling.ceilings) - set(self.credits))
+            if unknown:
+                raise ValueError(
+                    f"tax.exemption_credits.agi_ceiling.ceilings names credit kind(s) the block does not ship: "
+                    f"{unknown} (credits: {sorted(self.credits)})"
+                )
+        return self
+
+
 class StateTaxParams(BaseModel):
     """The ``tax`` block of a state pack: the state's income-tax computation data.
 
@@ -2942,6 +3167,9 @@ class StateTaxParams(BaseModel):
     the caller's counts) and the per-status ``standard_deduction``. Every
     other exemption key (age_65, blind, ...) is verified DATA the op discloses
     but does not apply — those lines are computed on the state form itself.
+    ``exemption_credits`` (Phase K JK28) holds a state's per-person CREDITS
+    against tax — California's Form 540 lines 7-11 and 32-33 — which the op
+    applies past the tax line when the caller passes their counts.
     ``notes`` carries the pack's disclosures (county/city add-on taxes not
     modeled, tax-table mandates, surcharges/recaptures outside the schedule,
     PA's eight-class no-deduction system, ...) and the calc op quotes them in
@@ -2979,6 +3207,12 @@ class StateTaxParams(BaseModel):
     notes: list[str] = Field(
         default_factory=list,
         description="Cited disclosures/quirks the calc op must surface (not-modeled add-ons, special rules).",
+    )
+    exemption_credits: StateExemptionCredits | None = Field(
+        default=None,
+        description="Per-person exemption CREDITS against tax (CA 2023-2025 Form 540 lines 7-11, 32-33; for 2025 "
+        "also AR, DE, IA, NE and OR), applied by calc.state_tax past the tax line when the caller passes "
+        "exemption_credit_counts; null = none modeled.",
     )
 
     _coerce_rate = field_validator("flat_rate", mode="before")(_as_exact_decimal)

@@ -8744,3 +8744,68 @@ identity_fields:
   - SSSN
   - FIRSTNAME
   - LASTNAME
+# Page-header mirrors (Phase K JK28, 2026-10-23): fill_form builds each mirror the caller leaves out from its page-1
+# source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header mirrors
+# (`mirrors`)"), as formpacks/states/al/2023/al40nr declares its own. Read on this blank rendered at 200 dpi: each
+# schedule prints a name box ("Name(s) as shown on Form 40", "NAME(S) AS SHOWN ON TAX RETURN", ...) beside the filer's
+# SSN box and, on DS, HBC, AATC, AAC, W-2 and RS, a spouse's SSN box. The document JavaScript fills each the way its
+# template says: a name box with UPPER(FIRSTNAME) + " " + UPPER(MIDDLEINITIAL) + " " + UPPER(LASTNAME), an SSN box
+# with ZPAD(SSSN, 9), and a spouse box with ZPAD(SPSSN, 9) only when SPSSN is not blank (the SPQUSSN branch is
+# commented out in the script; the template renders empty then). The name is the primary filer's alone, as the
+# JavaScript writes it; verify compares case-blind. The JavaScript fills the NOL-85 / NOL-85A and CP headers only
+# when their schedule carries data (and blanks them otherwise); a template cannot say that, so fill_form writes them
+# on every fill — a header on a schedule not filed is harmless, a blank one on a filed schedule is not.
+# Not declared, with the face's reason: page 4 (Schedules B and DC, the back of Schedule A, whose page 3 says
+# "(Schedules B and DC are on back page)") prints "Name(s) as shown on Form 40 (Do not enter name and social security
+# number if shown on other side)" over NAME2A / SSSNB2A, and page 6 (Schedule HOF, the back of Schedule DS) prints
+# "NAME(S) as shown on tax return (Do not enter name and social security number if shown on other side)" over
+# SCHHOFNAME / SCHHOFSSN / SCHHOFSPSSN; page 3's and page 5's declared mirrors always carry them.
+mirrors:
+  SCHANAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule A (page 3) "Name(s) as shown on Form 40"
+  SCHASSN: "{SSSN}"  # its "Your social security number"
+  SCHDSNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule DS (page 5) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHDSSSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NUMBER"
+  SCHDSSPSSN: "{SPSSN}"  # "SPOUSE'S SOCIAL SECURITY NUMBER"
+  SCHATPNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule ATP (page 7) "NAME(S) AS SHOWN ON THE TAX RETURN"
+  SCHATPSSN: "{SSSN}"  # "SOCIAL SECURITY NUMBER"
+  SCHHBCNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule HBC (page 8) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHHBCSSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NUMBER"
+  SCHHBCSPSSN: "{SPSSN}"  # "SPOUSE'S SOCIAL SECURITY NUMBER"
+  SCHCRNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule CR (page 9) "NAME(S) AS SHOWN ON THE TAX RETURN"
+  SCHCRSSN: "{SSSN}"  # "SOCIAL SECURITY NUMBER"
+  # Schedule OC, pages 10-16, one field each: "Name(s) as shown on Form 40 or 40NR"
+  SCHOCNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # the name box
+  SCHOCSSN: "{SSSN}"  # "Your social security number"
+  SCHAATCNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule AATC (page 17) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHAATCSSN: "{SSSN}"  # "PRIMARY SOCIAL SECURITY NO."
+  SCHAATCSPSSN: "{SPSSN}"  # "SPOUSE SOCIAL SECURITY NO."
+  SCHAACNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule AAC (page 18) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHAACSSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NO."
+  SCHAACSPSSN: "{SPSSN}"  # "SPOUSE'S SOCIAL SECURITY NO."
+  SchNOL85NAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Form NOL-85 (page 21) "Name(s) as shown on Form 40, or 40NR"
+  SchNOL85SSN: "{SSSN}"  # "Your Social Security Number"
+  # Form NOL-85A, five copies (pages 23, 25, 27, 29 and 31): "Name(s) as shown on Form 40, 40NR, or 40X"
+  SchNOL85ANAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 1 (page 23)
+  SchNOL85ASSN: "{SSSN}"  # "Your Social Security Number"
+  SchNOL85ANAME-1: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 2 (page 25)
+  SchNOL85ASSN-1: "{SSSN}"  # "Your Social Security Number"
+  SchNOL85ANAME-2: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 3 (page 27)
+  SchNOL85ASSN-2: "{SSSN}"  # "Your Social Security Number"
+  SchNOL85ANAME-3: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 4 (page 29)
+  SchNOL85ASSN-3: "{SSSN}"  # "Your Social Security Number"
+  SchNOL85ANAME-4: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # copy 5 (page 31)
+  SchNOL85ASSN-4: "{SSSN}"  # "Your Social Security Number"
+  SCHW2NAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule W-2 (page 33) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHW2SSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NO."
+  SCHW2SPSSN: "{SPSSN}"  # "SPOUSE'S SOCIAL SECURITY NO."
+  SCHRSNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule RS (page 34) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHRSSSN: "{SSSN}"  # "PRIMARY'S SOCIAL SECURITY NO."
+  SCHRSSPSSN: "{SPSSN}"  # "SPOUSE'S SOCIAL SECURITY NO."
+  SCHCPNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule CP (page 36) "NAME(S) AS SHOWN ON TAX RETURN"
+  SCHCPSSN: "{SSSN}"  # "YOUR SOCIAL SECURITY NUMBER"
+  SCHDNAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule D (page 37) "Name(s) as shown on Form 40"
+  SCHDSSN: "{SSSN}"  # "Your social security number"
+  SCHENAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Schedule E (page 38, back of D) "Name(s) shown on return"
+  SCHESSN: "{SSSN}"  # "Your social security number"
+  4952ANAME: "{FIRSTNAME} {MIDDLEINITIAL} {LASTNAME}"  # Form 4952A (page 39) "Name(s) as shown on your return"
+  4952ASSN: "{SSSN}"  # "Identifying number"

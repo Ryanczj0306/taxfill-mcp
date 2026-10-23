@@ -240,3 +240,14 @@ cross_form:
 identity_fields:
   - name
   - identifying_number
+# Page-header mirrors (Phase K JK28, 2026-10-23). Page 2's header is NOT a mirror: it prints "Name(s) shown on return.
+# Do not enter name and social security number if shown on other side." (read on the 2023, 2024, 2025 and 2026 blanks
+# rendered at 200 dpi), and page 1, the other side of the sheet, always carries `name` and `identifying_number`. So
+# name_page2 / identifying_number_page2 stay mapped for a caller who needs them but are not built
+# (test_pack_invariants NOT_A_MIRROR). The 2026 draft's page 3 (Part V) starts a new sheet and prints plain "Name(s)
+# shown on return" and "Your social security number" (read on the 2026 draft rendered at 200 dpi). fill_form builds
+# each mirror the caller leaves out from its page-1 source (FillResult.mirrored) and verify_form checks it on disk
+# (formpacks/CONVENTIONS.md, "Page-header mirrors (`mirrors`)").
+mirrors:
+  name_page3: "{name}"  # "Name(s) shown on return" (page 3)
+  identifying_number_page3: "{identifying_number}"  # "Your social security number" (page 3)

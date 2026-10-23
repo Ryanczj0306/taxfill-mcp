@@ -2,6 +2,7 @@
  "_strings": {
   "@@04b6b3c68085": "Colorado DOR — 2025 Book 104, \"Due Date\" (\"Your Colorado income tax return and payment for any tax owed are due April 15... An automatic extension to file is granted until October 15, but there is no extension to pay. If you need to make a payment before filing, see form DR 0158 in this book.\")",
   "@@085b946aec86": "DR 0104 (2025 Colorado Individual Income Tax Return, DR 0104 (10/03/25)) — full-year residents mark the \"Full-Year\" residency box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns (2025 booklet, \"Who Must File This Tax Return\" — full-year residents \"must file DR 0104 or DR 0104EZ\").",
+  "@@086031783931": "DR 0104PN (09/24/25), Form 104PN Part-Year Resident/Nonresident Tax Calculation Schedule 2025 — the schedule itself (page 1, line 1: '1. Taxpayer is (mark one):' — 'Part-Year Resident from:')",
   "@@0e79b6c635c4": "Colorado DOR — 2025 Book 104, DR 0104CR instructions: Line 21 Colorado Promise Tuition and Fee Credit — 'Eligible students who attend Colorado public institutions of higher education with family incomes of $90,000 or less are eligible for complete reimbursement of any out-of-pocket tuition and fees they pay for postsecondary education.' Line 24 Disability Assistance Credit — 'Your federal adjusted gross income cannot exceed $20,000 if you are a single filer.' Line 25 Qualified Care Worker Credit — 'Complete form DR 1217, Qualified Care Worker Tax Credit, and enter the amount from line 7 on this line 25.'",
   "@@17e3ee286f77": "Child and Dependent Care Expenses Credit — Taxpayers who pay child and dependent care expenses during the year and whose adjusted gross income is $60,000 or less (\"Taxpayers who pay child and dependent care expenses during the year and whose Adjusted Gross Income is $60,000 or less may be able to claim a child and dependent care expenses credit\" — 2025 booklet, DR 0104CR line 2). Computed on form DR 0347, which must be submitted along with the DR 0104CR.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
@@ -21,6 +22,7 @@
   "@@b0875e2ccf80": "An automatic extension to file is granted until October 15, but there is no extension to pay (use form DR 0158-I to pay before filing). Revenue Online accepts returns as timely filed until midnight on the due date; mailed returns and payments must be postmarked by April 15. If a due date falls on a weekend or legal holiday it moves to the next business day. Taxpayers abroad on the due date mark the \"Abroad on due date\" box.",
   "@@b2921ed2f5b1": "Colorado DOR — 2025 Book 104, \"Mailing Address For Form DR 0104\" (With Payment 80261-0006 / Without Payment 80261-0005)",
   "@@c2b912f21bb3": "Colorado DOR — 2025 Book 104, Colorado Individual Income Tax Filing Guide (Book104_2025.pdf; includes the DR 0104 form (DR 0104 (10/03/25)), instructions, the 2025 Colorado Income Tax Table at 4.4%, DR 0104AD, DR 0104CR, DR 0104CN reference, DR 0104PN, DR 0347, DR 0900, DR 0158-I)",
+  "@@c97b0799da9b": "DR 0104 (10/03/25), 2025 Colorado Individual Income Tax Return — the return itself (page 1 residency box: 'Part-Year or Nonresident (or combination of full-year, part-year, or nonresident). You must submit form DR 0104PN') | Colorado DOR — standalone 2025 DR 0104, Colorado Individual Income Tax Return (form PDF, revision \"DR 0104 (10/03/25)\"; second-pass verification of line 1 \"Federal Taxable Income from your federal income tax form: 1040, 1040 SR, or 1040 SP line 15\", additions lines 2-9, line 10 subtotal, line 11 DR 0104AD subtractions, line 12 \"Colorado Taxable Income, subtract line 11 from line 10\", line 13 \"Colorado Tax from tax table or the DR 0104PN line 36\", TABOR lines 34-38 and the Modified AGI tier table)",
   "@@df5c90e914f8": "Colorado Earned Income Tax Credit (COEITC) - SSN filers — Full-year or part-year Colorado residents who claim the federal Earned Income Tax Credit (EITC). Part-year residents apportion by the DR 0104PN line 34 percentage (capped at 100%). (ITIN filers, filers whose SSN is not valid for employment, and certain filers under 25 without qualifying children use form DR 0104TN and claim on DR 0104CR line 9 instead — and a federal-EITC claimant who had to leave out dependents only because of an ITIN/invalid SSN may claim a HIGHER COEITC on line 9.)",
   "@@e987416ffd3a": "TABOR State Sales Tax Refund (claimed on the 2025 return) — Full-year Colorado residents born before 2007 (or full-year residents under eighteen who are required to file a return). The return must be postmarked or transmitted by the extension due date (October 15, 2026). In general you must be 18 or older as of January 1, 2025; if under 18 as of that date you must either have a Colorado tax liability (DR 0104 line 13 greater than 0) or be claiming a refund of Colorado wage withholding on a W-2. You must not have been convicted of a felony and incarcerated in a Colorado Department of Corrections or Federal Bureau of Prisons facility for 180 days or more during the year. A deceased person must have met all requirements as of the date of death. Lines 34-37 of the 2025 DR 0104 compute a Modified AGI solely to size the refund; they do not affect the income tax computation.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
@@ -384,7 +386,13 @@
      "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
     },
     {
-     "answers": "Colorado DOR — standalone 2025 DR 0104, Colorado Individual Income Tax Return (form PDF, revision \"DR 0104 (10/03/25)\"; second-pass verification of line 1 \"Federal Taxable Income from your federal income tax form: 1040, 1040 SR, or 1040 SP line 15\", additions lines 2-9, line 10 subtotal, line 11 DR 0104AD subtractions, line 12 \"Colorado Taxable Income, subtract line 11 from line 10\", line 13 \"Colorado Tax from tax table or the DR 0104PN line 36\", TABOR lines 34-38 and the Modified AGI tier table)",
+     "answers": "@@086031783931",
+     "cadence": "@@1ebcb385fa15",
+     "topic": "forms_and_instructions",
+     "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2025.pdf"
+    },
+    {
+     "answers": "@@c97b0799da9b",
      "cadence": "@@1ebcb385fa15",
      "topic": "forms_and_instructions",
      "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf"
@@ -540,6 +548,18 @@
       {
        "source": "@@c2b912f21bb3",
        "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      },
+      {
+       "source": "Colorado DOR 2025 Book 104, Colorado Individual Income Tax Filing Guide (10/29/25), 'Who Must File This Tax Return' (p. 4): 'Not a Colorado resident, but received income from Colorado sources (you must file DR 0104 with DR 0104PN).' — and 'Part-Year Colorado Residents and Nonresidents' (p. 5): 'You will calculate your prorated tax by completing the DR 0104PN. You must submit the DR 0104PN along with the DR 0104.'",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      },
+      {
+       "source": "DR 0104PN (09/24/25), Form 104PN Part-Year Resident/Nonresident Tax Calculation Schedule 2025 — the schedule itself (page 1, line 1: '1. Taxpayer is (mark one):' — 'Full-Year Nonresident')",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2025.pdf"
+      },
+      {
+       "source": "DR 0104 (10/03/25), 2025 Colorado Individual Income Tax Return — the return itself (page 1 residency box: 'Part-Year or Nonresident (or combination of full-year, part-year, or nonresident). You must submit form DR 0104PN')",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf"
       }
      ],
      "filing_role": "nonresident",
@@ -596,6 +616,18 @@
       {
        "source": "@@c2b912f21bb3",
        "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      },
+      {
+       "source": "Colorado DOR 2025 Book 104, Colorado Individual Income Tax Filing Guide (10/29/25), 'Who Must File This Tax Return' (p. 4): 'A part-year Colorado resident who received taxable income while residing here (you must file DR 0104 with DR 0104PN), or' — and 'Part-Year Colorado Residents and Nonresidents' (p. 5): 'You will calculate your prorated tax by completing the DR 0104PN. You must submit the DR 0104PN along with the DR 0104.'",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf"
+      },
+      {
+       "source": "@@086031783931",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2025.pdf"
+      },
+      {
+       "source": "@@c97b0799da9b",
+       "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf"
       }
      ],
      "filing_role": "part_year",

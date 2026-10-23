@@ -146,6 +146,11 @@ Contents:
   where the state ships one. County/city add-on taxes and state credits are
   NOT modeled — the work string discloses exactly what was and was not
   applied, including out-of-schedule surcharges and recapture worksheets.
+  The one exception is a state's per-person exemption CREDITS where its pack
+  ships ``tax.exemption_credits`` (Phase K JK28: California, Form 540 lines
+  7-11 and 32-33; for 2025 also AR, DE, IA, NE and OR): applied past the tax
+  line when the caller passes their counts, and returned as structured fields
+  beside the unchanged tax line.
 
 These functions are pure: no logging, no side effects; the only I/O is
 reading the versioned knowledge pack. They never echo the value being
@@ -162,7 +167,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, SerializerFunctionWrapHandler, model_serializer
 
 from taxfill_core.knowledge import (
     FILING_STATUSES,
@@ -177,6 +182,7 @@ from taxfill_core.knowledge import (
     MagiRange,
     ObbbaSchedule1aParams,
     RateBracket,
+    StateExemptionCredits,
     StateRateBracket,
     SupplementalWithholdingParams,
     TaxTable,
@@ -10793,8 +10799,8 @@ def _graduated_state_tax(
     return total, marginal, lines
 
 
-def _states_with_tax_block(year: int, base_dir: str | Path | None) -> list[str]:
-    """The state codes whose ``knowledge/states/<st>/<year>.yaml`` ships a ``tax`` block."""
+def _states_with_tax_block(year: int, base_dir: str | Path | None, key: str | None = None) -> list[str]:
+    """The state codes whose ``knowledge/states/<st>/<year>.yaml`` ships a ``tax`` block (with ``tax.<key>`` if given)."""
     from taxfill_core.datadir import knowledge_dir as _default_knowledge_dir
 
     base = Path(base_dir) if base_dir is not None else _default_knowledge_dir()
@@ -10808,7 +10814,8 @@ def _states_with_tax_block(year: int, base_dir: str | Path | None) -> list[str]:
         except yaml.YAMLError:
             continue
         if isinstance(raw, dict) and isinstance(raw.get("tax"), dict):
-            shipped.append(path.parent.name)
+            if key is None or isinstance(raw["tax"].get(key), dict):
+                shipped.append(path.parent.name)
     return shipped
 
 
@@ -10838,6 +10845,367 @@ def _dependent_treatment_examples(year: int, base_dir: str | Path | None) -> lis
     return named
 
 
+class StateExemptionCreditLine(BaseModel):
+    """One exemption-credit line of the state form: the count times the pre-printed amount (e.g. CA Form 540 7-10)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    line: str = Field(description="The form line, e.g. '7'.")
+    count: int = Field(description="The number entered in the line's box.")
+    amount_each: int = Field(description="The pre-printed per-item credit, e.g. 153.")
+    credit: int = Field(description="count x amount_each — the line's dollar entry, BEFORE any AGI limitation.")
+
+
+class StateExemptionCreditsResult(BaseModel):
+    """The exemption CREDITS of :func:`state_tax`, past the state's tax line (Phase K JK28, 2026-10-16).
+
+    Present only for a state whose pack ships ``tax.exemption_credits``: CA 2023-2025 (Form 540 lines 7-11
+    and 32-33) and, for 2025, AR, DE, IA, NE and OR (each pack names its form, kinds and lines). ``applied`` is False when the caller passed no ``exemption_credit_counts``: every amount
+    below is then None, and the parent result's ``tax`` is the tax BEFORE the credits, as it always is.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    applied: bool = Field(
+        description="True when exemption_credit_counts was passed and the credits below were computed; False "
+        "means they were NOT applied — the parent result's tax is the line before them."
+    )
+    form: str = Field(description="The form the lines belong to, e.g. 'Form 540'.")
+    credits: dict[str, StateExemptionCreditLine] = Field(
+        description="Per credit kind, as the pack names them (CA: personal, blind, senior, dependent; OR: regular, "
+        "severe_disability, dependent, disabled_child; ...): line, count, per-item amount and the line's dollar "
+        "entry before any limitation; empty when not applied."
+    )
+    exemption_amount: int | None = Field(
+        description="The credits' total before any limitation (CA line 11 'Exemption amount: Add line 7 through "
+        "line 10'); None when not applied."
+    )
+    federal_agi: int | None = Field(
+        description="The whole-dollar AGI the limitation read (CA: Form 540 line 13); None when not applied or the "
+        "pack has no limitation."
+    )
+    agi_threshold: int | None = Field(
+        description="The filing status's limitation threshold; None when not applied or the pack has no limitation."
+    )
+    agi_ceilings: dict[str, int] | None = Field(
+        default=None,
+        description="Phase K JK28 (2026-10-23): per credit kind, the filing status's AGI ceiling above which that "
+        "kind is denied (OR line 25's worksheet); present only for a pack with an AGI ceiling and when applied.",
+    )
+    limitation_reduction: int | None = Field(
+        description="exemption_amount - total: what the AGI limitation took off (0 at or below the threshold); "
+        "None when not applied. Where the credit line is also limited to the tax (tax_limit_reduction), this is "
+        "the AGI part only."
+    )
+    tax_limit_reduction: int | None = Field(
+        default=None,
+        description="Phase K JK28 (2026-10-23): what the form's limit of the credit line to the tax took off (DE "
+        "line 32, limited to the line 26 tax); present only for a pack whose form prints that limit "
+        "(tax.exemption_credits.limited_to_tax_line) and when applied. exemption_amount - limitation_reduction - "
+        "tax_limit_reduction = total.",
+    )
+    total: int | None = Field(description="The credits subtracted from tax (CA line 32); None when not applied.")
+    tax_after_credits: int | None = Field(
+        description="max(0, tax - total) — the tax after the exemption credits (CA line 33), counted from tax, the "
+        "rate-schedule amount; None when not applied. When the filed tax line comes from the state's tax table "
+        "instead (CA: line 19 of $100,000 or less takes line 31 from the Tax Table), the filed line is max(0, that "
+        "table amount - total)."
+    )
+    lines: dict[str, str] = Field(
+        description="The form line of exemption_amount, total and tax_after_credits, e.g. "
+        "{'exemption_amount': '11', 'total': '32', 'tax_after_credits': '33'}."
+    )
+    note: str = Field(description="What was (or was not) applied and where the result lands.")
+    citation: Citation
+
+    @model_serializer(mode="wrap")
+    def _omit_absent_agi_ceilings(self, handler: SerializerFunctionWrapHandler):
+        # Phase K JK28 (2026-10-23): agi_ceilings appears only for a pack with an AGI ceiling (OR), and
+        # tax_limit_reduction only for a pack whose credit line is limited to the tax (DE), so a pack with neither
+        # (CA) keeps its output byte for byte. No return annotation, for the reason StateTaxResult's gives.
+        data = handler(self)
+        if isinstance(data, dict):
+            for name in ("agi_ceilings", "tax_limit_reduction"):
+                if getattr(self, name) is None:
+                    data.pop(name, None)
+        return data
+
+
+def _exemption_credit_counts_arg(value: Any) -> dict[str, int]:
+    """Validate ``exemption_credit_counts``: a mapping of credit kind -> non-negative int count."""
+    if not isinstance(value, Mapping):
+        raise TypeError(
+            f"exemption_credit_counts must be a mapping of credit kind to count, e.g. "
+            f"{{'personal': 1, 'dependent': 2}}, got {type(value).__name__}"
+        )
+    counts: dict[str, int] = {}
+    for kind, count in value.items():
+        if not isinstance(kind, str):
+            raise TypeError(f"exemption_credit_counts keys must be credit-kind strings, got {kind!r}")
+        counts[kind] = _count_arg(
+            count, f"exemption_credit_counts[{kind!r}]", "the number entered in that credit line's box"
+        )
+    return counts
+
+
+def _ln(line: str, cap: bool = False) -> str:
+    """A form line for a message: "line 32", but a line that already starts with a word stands alone ("Step 3a").
+
+    Phase K JK28 final review (2026-10-23): IA's lines are "Step 3a" .. "Step 3d", which read "line Step 3a".
+    """
+    if not line[:1].isdigit():
+        return line
+    return f"{'Line' if cap else 'line'} {line}"
+
+
+def _exemption_credit_hint(code: str, block: StateExemptionCredits | None) -> str:
+    """The pointer a base-exemption refusal appends for a state whose exemptions are shipped as credits."""
+    if block is None:
+        return ""
+    lines = list(dict.fromkeys(c.line for c in block.credits.values()))  # several kinds can share a line (AR 7A)
+    agi_text = " with federal_agi" if _reads_agi(block) else ""
+    lines_text = (f"lines {', '.join(lines)}" if all(line[:1].isdigit() for line in lines)
+                  else ", ".join(_ln(line) for line in lines))
+    return (
+        f" {code.upper()}'s per-person exemptions are CREDITS against tax ({block.form} {lines_text}): pass their counts as exemption_credit_counts "
+        f"(kinds: {', '.join(block.credits)}){agi_text}, and read the result's exemption_credits."
+    )
+
+
+def _reads_agi(block: StateExemptionCredits) -> bool:
+    """True when the block's credits depend on AGI (a limitation or a ceiling), so federal_agi is needed."""
+    return block.agi_limitation is not None or block.agi_ceiling is not None
+
+
+def _status_amounts_text(table: Mapping[str, int]) -> str:
+    return ", ".join(f"{_dollars(table[s])} {s}" for s in FILING_STATUSES)
+
+
+def _exemption_credit_rules_text(block: StateExemptionCredits) -> str:
+    """The block's who-may-claim rules, quoted beside the credits (the use site)."""
+    rules = " ".join(f"{_ln(c.line, cap=True)} ({kind}): {c.note}" for kind, c in block.credits.items())
+    notes = (" " + " ".join(block.notes)) if block.notes else ""
+    return f" Exemption-credit rules ({block.form}): {rules}{notes}"
+
+
+def _state_exemption_credits(
+    code: str,
+    year: int,
+    block: StateExemptionCredits,
+    counts: dict[str, int] | None,
+    federal_agi: Decimal | None,
+    status: FilingStatus,
+    alias_note: str | None,
+    tax: int,
+    qss: bool = False,
+) -> tuple[StateExemptionCreditsResult, str]:
+    """The exemption credits past the tax line, plus the work sentence (Phase K JK28, 2026-10-16).
+
+    California's Form 540, as its face prints it: lines 7-10 "Multiply the number you enter in the box by
+    the pre-printed dollar amount for that line"; line 11 "Exemption amount: Add line 7 through line 10";
+    line 32 "Exemption credits. Enter the amount from line 11. If your federal AGI is more than [the
+    threshold], see instructions" (the booklet's AGI Limitation Worksheet); line 33 "Subtract line 32 from
+    line 31. If less than zero, enter -0-".
+    """
+    lim = block.agi_limitation
+    lines_map = {
+        "exemption_amount": block.exemption_amount_line,
+        "total": block.credit_line,
+        "tax_after_credits": block.tax_after_line,
+    }
+    alias_text = f" ({alias_note})" if alias_note else ""
+    rules_text = _exemption_credit_rules_text(block)
+    if counts is None:
+        offered = "; ".join(
+            f"{_ln(c.line)} {kind} {_dollars(c.amount)} each" for kind, c in block.credits.items()
+        )
+        ceiling = block.agi_ceiling
+        limit_text = (
+            f", limited when {lim.agi} is more than {_status_amounts_text(lim.threshold)}" if lim is not None
+            else f", denied kind by kind when {ceiling.agi} is more than its ceiling ("
+            + "; ".join(f"{kind}: {_status_amounts_text(t)}" for kind, t in ceiling.ceilings.items()) + ")"
+            if ceiling is not None else ""
+        )
+        agi_text = (
+            " federal_agi was passed but no exemption_credit_counts, so nothing was applied and the AGI was not read."
+            if federal_agi is not None else ""
+        )
+        note = (
+            f"Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is {code.upper()}'s "
+            f"tax line BEFORE them.{agi_text} Pass exemption_credit_counts (kinds: {', '.join(block.credits)})"
+            + (" and federal_agi" if _reads_agi(block) else "")
+            + f" to get {block.form} {_ln(block.credit_line)} and {_ln(block.tax_after_line)}."
+        )
+        work = (
+            f" {note} This pack ships {code.upper()}'s per-person exemption CREDITS against tax ({block.form}: "
+            f"{offered}; totaled on {_ln(block.exemption_amount_line)} and subtracted on line "
+            f"{block.credit_line}{limit_text}).{rules_text}"
+        )
+        result = StateExemptionCreditsResult(
+            applied=False, form=block.form, credits={}, exemption_amount=None, federal_agi=None,
+            agi_threshold=None, limitation_reduction=None, total=None, tax_after_credits=None,
+            lines=lines_map, note=note, citation=block.citation,
+        )
+        return result, work
+
+    unknown = sorted(set(counts) - set(block.credits))
+    if unknown:
+        raise ValueError(
+            f"{code.upper()} {year}: exemption_credit_counts names unknown credit kind(s) {unknown} — this pack's "
+            f"{block.form} exemption credits are: "
+            + ", ".join(f"{kind} ({_ln(c.line)}, {_dollars(c.amount)} each)" for kind, c in block.credits.items())
+        )
+    credit_lines: dict[str, StateExemptionCreditLine] = {}
+    parts: list[str] = []
+    for kind, credit in block.credits.items():
+        n = counts.get(kind, 0)
+        if qss and credit.max_count_qualifying_surviving_spouse is not None:
+            # The form's own qualifying-surviving-spouse maximum, not the joint column the status resolves to.
+            most, who = credit.max_count_qualifying_surviving_spouse, "qualifying_surviving_spouse"
+        else:
+            most = None if credit.max_count is None else credit.max_count[status]
+            who = f"{status}{alias_text}"
+        if most is not None and n > most:
+            raise ValueError(
+                f"{code.upper()} {year}: exemption_credit_counts[{kind!r}] = {n} is more than the "
+                f"{most} that {block.form} {_ln(credit.line)} allows for {who}: "
+                f"{credit.note}"
+            )
+        credit_lines[kind] = StateExemptionCreditLine(
+            line=credit.line, count=n, amount_each=credit.amount, credit=n * credit.amount
+        )
+        parts.append(f"{_ln(credit.line)} {kind} {n} x {_dollars(credit.amount)} = {_dollars(n * credit.amount)}")
+    exemption_amount = sum(cl.credit for cl in credit_lines.values())
+
+    total = exemption_amount
+    agi_whole: int | None = None
+    threshold: int | None = None
+    ceilings_out: dict[str, int] | None = None
+    ceiling = block.agi_ceiling
+    if ceiling is not None:
+        ceilings_out = {kind: table[status] for kind, table in ceiling.ceilings.items()}
+        limited = [kind for kind in ceiling.ceilings if credit_lines[kind].count]
+        if not limited:
+            limit_text = (
+                f"no credit with an AGI ceiling is counted, so {_ln(block.credit_line)} = {_dollars(total)}"
+            )
+            if federal_agi is not None:
+                agi_whole = irs_round(federal_agi)
+        else:
+            if federal_agi is None:
+                raise ValueError(
+                    f"{code.upper()} {year}: exemption_credit_counts needs federal_agi — {block.form} denies "
+                    f"{', '.join(limited)} credits when {ceiling.agi} is more than "
+                    + "; ".join(f"{kind}: {_status_amounts_text(ceiling.ceilings[kind])}" for kind in limited)
+                    + ". Pass federal_agi (the whole-dollar figure on that line) so the ceiling is applied, never "
+                    "skipped."
+                )
+            agi_whole = irs_round(federal_agi)
+            tests: list[str] = []
+            for kind in limited:
+                cap = ceilings_out[kind]
+                if agi_whole > cap:
+                    total -= credit_lines[kind].credit
+                    tests.append(f"{kind}: more than {_dollars(cap)} -> {_dollars(credit_lines[kind].credit)} denied")
+                else:
+                    tests.append(f"{kind}: not more than {_dollars(cap)} -> allowed")
+            limit_text = (
+                f"AGI ceiling: {ceiling.agi} {_dollars(agi_whole)} [{status}{alias_text}] — " + "; ".join(tests)
+                + f"; {_ln(block.credit_line)} = {_dollars(total)}"
+                + (f" ({_dollars(exemption_amount - total)} less than {_ln(block.exemption_amount_line)})"
+                   if total != exemption_amount else "")
+            )
+    elif lim is None:
+        limit_text = f"no AGI limitation in this pack, so {_ln(block.credit_line)} = {_dollars(total)}"
+        if federal_agi is not None:
+            # federal_agi feeds only an AGI rule this pack does not have: say so rather than echo it unread.
+            limit_text += (
+                f" (federal_agi {_money(federal_agi)} was passed, but {code.upper()}'s exemption credits have no AGI "
+                f"rule, so it was not used)"
+            )
+    elif exemption_amount == 0:
+        limit_text = f"nothing for the AGI limitation to reduce, so {_ln(block.credit_line)} = $0"
+        if federal_agi is not None:
+            agi_whole, threshold = irs_round(federal_agi), lim.threshold[status]
+    else:
+        if federal_agi is None:
+            raise ValueError(
+                f"{code.upper()} {year}: exemption_credit_counts needs federal_agi — {block.form} limits the "
+                f"exemption credits when {lim.agi} is more than {_status_amounts_text(lim.threshold)}. Pass "
+                f"federal_agi (the whole-dollar figure on that line) so the limitation is applied, never skipped."
+            )
+        agi_whole, threshold = irs_round(federal_agi), lim.threshold[status]
+        if agi_whole <= threshold:
+            limit_text = (
+                f"AGI limitation: {lim.agi} {_dollars(agi_whole)} is not more than the {_dollars(threshold)} "
+                f"[{status}{alias_text}] threshold, so {_ln(block.credit_line)} = {_ln(block.exemption_amount_line)} "
+                f"= {_dollars(total)}"
+            )
+        else:
+            excess = agi_whole - threshold
+            step = lim.step[status]
+            steps = -(-excess // step)  # "If the result is not a whole number, round it to the next higher whole number"
+            quotient = Decimal(excess) / Decimal(step)
+            quotient_text = (
+                f"{steps}" if quotient == steps
+                else f"{quotient.quantize(Decimal('0.0001'), rounding=ROUND_FLOOR)}, rounded up to {steps}"
+            )
+            per_credit = steps * lim.reduction_per_step
+            total = 0
+            group_texts: list[str] = []
+            for group in lim.groups:
+                g_count = sum(credit_lines[k].count for k in group)
+                g_before = sum(credit_lines[k].credit for k in group)
+                g_raw = g_before - per_credit * g_count
+                total += max(0, g_raw)
+                group_texts.append(
+                    f"{' + '.join(group)}: {_dollars(g_before)} - {g_count} x {_dollars(per_credit)} = "
+                    f"{_dollars(g_raw)}" + (" -> $0" if g_raw < 0 else "")
+                )
+            limit_text = (
+                f"AGI limitation: {lim.agi} {_dollars(agi_whole)} is more than the {_dollars(threshold)} "
+                f"[{status}{alias_text}] threshold by {_dollars(excess)}; {_dollars(excess)} / {_dollars(step)} = "
+                f"{quotient_text} step(s) x {_dollars(lim.reduction_per_step)} = {_dollars(per_credit)} off each "
+                f"credit counted; " + "; ".join(group_texts)
+                + f"; {_ln(block.credit_line)} = {_dollars(total)} ({_dollars(exemption_amount - total)} less than "
+                f"{_ln(block.exemption_amount_line)})"
+            )
+    limitation_reduction = exemption_amount - total
+    tax_limit_reduction: int | None = None
+    if block.limited_to_tax_line is not None:
+        # Phase K JK28 (2026-10-23): DE PIT-RES instructions p. 10, Line 32: "The total of all non-refundable credits
+        # (Lines 27a through 31) is limited to the amount of your Delaware tax liability on Line 26."
+        capped = min(total, tax)
+        tax_limit_reduction = total - capped
+        limit_text += (
+            f"; {block.form} limits {_ln(block.credit_line)} to the tax on {_ln(block.limited_to_tax_line)}: "
+            f"min({_dollars(total)}, {_dollars(tax)}) = {_dollars(capped)}"
+            + (f" ({_dollars(tax_limit_reduction)} more than the tax, not allowed)" if tax_limit_reduction else "")
+        )
+        total = capped
+    tax_after = max(0, tax - total)
+    note = (
+        f"Exemption credits applied: {block.form} {_ln(block.credit_line)} = {_dollars(total)}; tax after them "
+        f"({_ln(block.tax_after_line)}) = {_dollars(tax_after)}. tax itself stays the line before the credits. "
+        f"{_ln(block.tax_after_line, cap=True)} here is counted from the rate-schedule tax: when the filed tax line comes from "
+        f"the state's tax table instead (the notes say when), {_ln(block.tax_after_line)} = max(0, that table amount "
+        f"- {_dollars(total)})."
+    )
+    work = (
+        f" Exemption credits ({block.form}, past the tax line): " + "; ".join(parts)
+        + f"; {_ln(block.exemption_amount_line)} (exemption amount) = {_dollars(exemption_amount)}. {limit_text}. "
+        f"Tax after exemption credits: {_ln(block.tax_after_line)} = max(0, {_dollars(tax)} - {_dollars(total)}) = "
+        f"{_dollars(tax_after)}.{rules_text}"
+    )
+    result = StateExemptionCreditsResult(
+        applied=True, form=block.form, credits=credit_lines, exemption_amount=exemption_amount,
+        federal_agi=agi_whole, agi_threshold=threshold, agi_ceilings=ceilings_out,
+        limitation_reduction=limitation_reduction, tax_limit_reduction=tax_limit_reduction,
+        total=total, tax_after_credits=tax_after, lines=lines_map, note=note, citation=block.citation,
+    )
+    return result, work
+
+
 class StateTaxResult(BaseModel):
     """Result of :func:`state_tax`: the state's tax line plus its audit trail."""
 
@@ -10865,6 +11233,24 @@ class StateTaxResult(BaseModel):
     inputs: dict[str, Any]
     work: str
     citation: Citation
+    exemption_credits: StateExemptionCreditsResult | None = Field(
+        default=None,
+        description="The state's per-person exemption CREDITS past the tax line (Phase K JK28; CA 2023-2025 Form "
+        "540 lines 7-11, 32-33; for 2025 also AR, DE, IA, NE and OR). Present only for a state whose pack ships them — applied=False when no "
+        "exemption_credit_counts were passed. tax is never reduced by them: read tax_after_credits.",
+    )
+
+    @model_serializer(mode="wrap")
+    def _omit_absent_exemption_credits(self, handler: SerializerFunctionWrapHandler):
+        # Phase K JK28 (2026-10-16): the key appears only for a state whose pack ships exemption credits, so every
+        # other state's output keeps its pre-JK28 shape byte for byte (the JK21 goldens hold it). No return
+        # annotation on purpose: pydantic builds the serialization JSON schema from it, and "-> dict[str, Any]"
+        # collapsed StateTaxResult's to a bare object; without one the schema keeps every typed field, with
+        # exemption_credits optional.
+        data = handler(self)
+        if self.exemption_credits is None and isinstance(data, dict):
+            data.pop("exemption_credits", None)
+        return data
 
 
 def state_tax(
@@ -10875,6 +11261,8 @@ def state_tax(
     dependents_count: int = 0,
     filing_status: str = "single",
     knowledge_dir: str | Path | None = None,
+    exemption_credit_counts: Mapping[str, int] | None = None,
+    federal_agi: int | float | Decimal | str | None = None,
 ) -> StateTaxResult:
     """The STATE income-tax line, from the state pack's cited ``tax`` block.
 
@@ -10950,8 +11338,29 @@ def state_tax(
     verified exemption kinds in a pack are DISCLOSED in the work but not
     applied — compute those lines on the state form itself.
 
+    EXEMPTION CREDITS (Phase K JK28, 2026-10-16). Where a state's per-person
+    exemptions are CREDITS against tax and its pack ships
+    ``tax.exemption_credits`` (California: Form 540 lines 7-10, 11, 32, 33;
+    for 2025 also AR1000F 7A-7C/34, DE PIT-RES 27a-27b, IA 1040 Step 3/line 8,
+    NE 1040N 4/18 and OR-40 6a-6e/25, whose kinds and lines the pack names),
+    ``exemption_credit_counts`` maps each credit kind to the number in its
+    box (CA: ``personal`` line 7, ``blind`` line 8, ``senior`` line 9,
+    ``dependent`` line 10) and ``federal_agi`` is the figure the AGI
+    limitation reads (CA: Form 540 line 13). The result's
+    ``exemption_credits`` then carries each line's credit, the total before
+    the limitation (line 11), the limitation's reduction, the credits taken
+    (line 32) and the tax after them (line 33). ``tax`` stays the tax line
+    (CA line 31) whatever is passed. Omit the counts and nothing changes
+    except that ``exemption_credits.applied`` is False and the work says the
+    credits were NOT applied. exemptions_count/dependents_count keep their
+    meaning — a per-item reduction of the BASE — so a credit state still
+    refuses them, pointing at exemption_credit_counts instead; and a state
+    whose pack ships no exemption_credits block refuses nonzero
+    exemption_credit_counts.
+
     County/city add-on taxes (Indiana counties, Michigan cities, PA/KY local
-    earned-income taxes) and state credits are NEVER modeled here.
+    earned-income taxes) and state credits are NEVER modeled here, apart
+    from the exemption credits above.
 
     Raises a prescriptive error for an unknown state or a state whose pack
     ships no ``tax`` block, listing the states that do.
@@ -10978,6 +11387,10 @@ def state_tax(
     n_dependents = _count_arg(dependents_count, "dependents_count", "dependents claimed")
     status, alias_note = _resolve_filing_status(str(filing_status))
 
+    credit_counts = None if exemption_credit_counts is None else _exemption_credit_counts_arg(exemption_credit_counts)
+    agi = None if federal_agi is None else _to_decimal(federal_agi, "federal_agi")
+    credit_block = params.exemption_credits
+
     personal = params.exemptions.get("personal")
     dependent = params.exemptions.get("dependent")
     if n_exemptions and personal is None:
@@ -10986,6 +11399,7 @@ def state_tax(
             f"exemption amount — this state has no personal exemption for state_tax to apply "
             f"(verified exemption kinds shipped: {', '.join(sorted(params.exemptions)) or '(none)'}). "
             f"Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+            + _exemption_credit_hint(code, credit_block)
         )
     if n_dependents and dependent is None:
         examples = _dependent_treatment_examples(year, knowledge_dir)
@@ -10996,7 +11410,19 @@ def state_tax(
             f"{', '.join(sorted(params.exemptions)) or '(none)'}). Pass dependents_count=0 and handle "
             f"dependents per the pack's tax.notes"
             + (f" (e.g. {', '.join(examples)})." if examples else ".")
+            + _exemption_credit_hint(code, credit_block)
         )
+    if credit_counts is not None and credit_block is None:
+        nonzero = {kind: n for kind, n in credit_counts.items() if n}
+        if nonzero:
+            shipped = _states_with_tax_block(year, knowledge_dir, key="exemption_credits")
+            raise ValueError(
+                f"{code.upper()} {year}: exemption_credit_counts was supplied ({nonzero}) but the pack ships no "
+                f"exemption_credits block — state_tax applies exemption CREDITS only from verified, cited amounts "
+                f"(packs that ship them for {year}: {', '.join(shipped) or '(none)'}). Pass no "
+                f"exemption_credit_counts and see the pack's tax.notes for how this state treats its exemptions; "
+                f"compute any credit on the state form from its own instructions — never a guessed amount."
+            )
 
     inputs: dict[str, Any] = {
         "state": code,
@@ -11006,6 +11432,11 @@ def state_tax(
         "dependents_count": n_dependents,
         "filing_status": str(filing_status),
     }
+    # Phase K JK28: the two new inputs are echoed only when passed, so a call without them keeps its old shape.
+    if credit_counts is not None:
+        inputs["exemption_credit_counts"] = dict(credit_counts)
+    if agi is not None:
+        inputs["federal_agi"] = str(agi)
 
     parts: list[str] = []
     subtracted = Decimal(0)
@@ -11061,12 +11492,33 @@ def state_tax(
     notes_text = (" Pack notes: " + " ".join(params.notes)) if params.notes else ""
     structure_label = "flat rate" if rate_structure == "flat" else "graduated brackets"
     scope_label = "flat-rate tax line" if rate_structure == "flat" else "rate-schedule tax line"
+    credits_result: StateExemptionCreditsResult | None = None
+    credits_text = ""
+    scope_text = (
+        f"computes the state's {scope_label} ONLY — county/city add-on taxes, state credits, and any "
+        f"amounts outside the rate schedule are NOT modeled."
+    )
+    if credit_block is None and agi is not None:
+        # federal_agi feeds only an exemption-credit limitation: say so rather than echo it unread (JK28 follow-up).
+        credits_text = (
+            f" federal_agi ({_money(agi)}) was passed, but {code.upper()}'s pack ships no exemption credits for it to "
+            f"limit, so it was not used."
+        )
+    if credit_block is not None:
+        credits_result, credits_text = _state_exemption_credits(
+            code, year, credit_block, credit_counts, agi, status, alias_note, tax,
+            qss=str(filing_status) == _QSS,
+        )
+        scope_text = (
+            f"computes the state's {scope_label} and, when exemption_credit_counts is passed, its exemption "
+            f"credits ONLY — county/city add-on taxes, other state credits, and any amounts outside the rate "
+            f"schedule are NOT modeled."
+        )
     work = (
         f"{code.upper()} state income tax ({year}, {structure_label}): taxable_base {_money(base)} — which must be "
         f"{_STATE_TAX_BASE_LABELS[params.base]} —{subtraction_text}; {computation_text}. "
-        f"Tax line: {params.tax_line}{unapplied_text} This op "
-        f"computes the state's {scope_label} ONLY — county/city add-on taxes, state credits, and any "
-        f"amounts outside the rate schedule are NOT modeled.{notes_text}"
+        f"Tax line: {params.tax_line}{unapplied_text}{credits_text} This op "
+        f"{scope_text}{notes_text}"
     )
     return StateTaxResult(
         tax=tax,
@@ -11079,6 +11531,7 @@ def state_tax(
         inputs=inputs,
         work=work,
         citation=params.citation,
+        exemption_credits=credits_result,
     )
 
 

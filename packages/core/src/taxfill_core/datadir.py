@@ -18,9 +18,14 @@ run against a patched data set). Every public loader still accepts an explicit
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from pathlib import Path
+from typing import BinaryIO
 
-__all__ = ["DATA_DIR_ENV", "data_root", "knowledge_dir", "formpacks_dir", "display_path", "home_display"]
+__all__ = [
+    "DATA_DIR_ENV", "data_root", "knowledge_dir", "formpacks_dir", "display_path", "home_display", "user_path",
+    "write_output",
+]
 
 DATA_DIR_ENV = "TAXFILL_DATA_DIR"
 
@@ -41,7 +46,7 @@ def data_root() -> Path:
     """
     env = os.environ.get(DATA_DIR_ENV)
     if env:
-        return Path(env)
+        return user_path(env)
     here = Path(__file__).resolve()
     for parent in here.parents:
         if _has_data(parent):
@@ -63,13 +68,52 @@ def formpacks_dir() -> Path:
     return data_root() / "formpacks"
 
 
+def user_path(path: str | os.PathLike[str]) -> Path:
+    """A path a user or an agent supplied, with a leading ``~`` expanded to the home folder (Phase K JK28).
+
+    Tool and CLI arguments arrive unexpanded: a JSON tool call, a quoted shell argument, ``--root=~/x`` and an MCP
+    client's ``env`` block all pass ``~`` through literally, so ``open("~/taxes/f1040.pdf")`` would look for a folder
+    named ``~`` in the server's working directory. Every taxfill entry point that opens or writes a supplied path
+    reads it through here. Results keep the absolute path (an agent passes it on to its own file tools); messages
+    that only mention one show it through :func:`home_display`. A relative path is made absolute here too (Phase K
+    JK28 final review, 2026-10-23): it would otherwise be read against the MCP server's working directory, which the
+    client chose, and come back in a result the agent's own file tools resolve against theirs.
+    """
+    return Path(path).expanduser().absolute()
+
+
 def home_display(path: str | os.PathLike[str]) -> str:
-    """A path for a message, with the user's home folder shown as ``~`` (Phase K JK27, privacy)."""
-    p = Path(path)
+    """A path for a message, with the user's home folder shown as ``~`` (Phase K JK27, privacy).
+
+    A path still spelled ``~/...`` is expanded first (Phase K JK28): resolved as typed, it would read as a folder
+    named ``~`` under the working directory, and from a working directory inside the home folder it would print as
+    ``~/<cwd>/~/...``.
+    """
+    p = Path(path).expanduser()
     try:
         return str(Path("~") / p.resolve().relative_to(Path.home().resolve()))
     except (ValueError, OSError, RuntimeError):
         return str(p)
+
+
+def write_output(path: Path, write: Callable[[BinaryIO], object]) -> None:
+    """Create ``path``'s folder and write the file through ``write``; an OS refusal names the path as ``~``.
+
+    Phase K JK28 final review (2026-10-23): an ``out_path`` that is a folder, or one in an unwritable folder, raised
+    Python's raw IsADirectoryError / PermissionError, whose message prints the absolute home path and says nothing
+    about what to do. The same exception type is re-raised with the path shown by :func:`home_display` and the next
+    step.
+    """
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("wb") as fh:
+            write(fh)
+    except OSError as exc:
+        message = (
+            f"cannot write {home_display(path)}: {exc.strerror or type(exc).__name__} — pass a file path, not a "
+            f"folder, in a folder you can write to, such as ~/taxfill-workspace/<year>/drafts/<form>.pdf"
+        )
+        raise (type(exc)(exc.errno, message) if exc.errno is not None else type(exc)(message)) from None
 
 
 def display_path(path: str | os.PathLike[str], base: str | os.PathLike[str] | None = None) -> str:

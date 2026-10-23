@@ -1049,3 +1049,28 @@ identity_fields:
   - your_ssn_first3
   - your_ssn_mid2
   - your_ssn_last4
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2-5 print "Name" and "SSN" in the header over fields of their
+# own (two name boxes, three SSN cells; read on the 2025 blank rendered at 200 dpi). Page 5's SSN cells are second
+# widgets of the page-4 fields, so they need no lines of their own. fill_form builds each mirror the caller leaves out
+# from its page-1 source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md,
+# "Page-header mirrors (`mirrors`)").
+# The 2024 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  page2_your_last_name: "{your_last_name}"  # "Name" (page 2), its last-name field
+  page2_your_first_name: "{your_first_name}"  # its first-name field
+  page2_your_ssn_first3: "{your_ssn_first3}"  # "SSN", first cell (3 digits)
+  page2_your_ssn_mid2: "{your_ssn_mid2}"  # its middle cell (2 digits)
+  page2_your_ssn_last4: "{your_ssn_last4}"  # its last cell (4 digits)
+  page3_your_last_name: "{your_last_name}"  # "Name" (page 3), its last-name field
+  page3_your_first_name: "{your_first_name}"  # its first-name field
+  page3_your_ssn_first3: "{your_ssn_first3}"  # "SSN", first cell (3 digits)
+  page3_your_ssn_mid2: "{your_ssn_mid2}"  # its middle cell (2 digits)
+  page3_your_ssn_last4: "{your_ssn_last4}"  # its last cell (4 digits)
+  page4_your_last_name: "{your_last_name}"  # "Name" (page 4), its last-name field
+  page4_your_first_name: "{your_first_name}"  # its first-name field
+  page4_your_ssn_first3: "{your_ssn_first3}"  # "SSN", first cell (3 digits)
+  page4_your_ssn_mid2: "{your_ssn_mid2}"  # its middle cell (2 digits)
+  page4_your_ssn_last4: "{your_ssn_last4}"  # its last cell (4 digits)
+  page5_your_last_name: "{your_last_name}"  # "Name" (page 5), its last-name field
+  page5_your_first_name: "{your_first_name}"  # its first-name field

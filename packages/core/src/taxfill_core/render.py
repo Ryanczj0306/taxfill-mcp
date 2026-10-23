@@ -22,6 +22,8 @@ from pathlib import Path
 import pypdfium2 as pdfium
 from pydantic import BaseModel, ConfigDict, Field
 
+from taxfill_core.datadir import home_display, user_path
+
 # Dev plan section 10: render at ~170 dpi for the vision pass.
 DEFAULT_DPI = 170
 
@@ -166,11 +168,11 @@ def render_pdf(
         ValueError: out-of-range/malformed page numbers, malformed crop,
             or non-positive dpi — every message says what to fix.
     """
-    pdf_path = Path(pdf_path)
-    out_dir = Path(out_dir)
+    pdf_path = user_path(pdf_path)  # "~/..." as an agent types it (Phase K JK28); messages show "~" again
+    out_dir = user_path(out_dir)
     if not pdf_path.is_file():
         raise FileNotFoundError(
-            f"PDF not found at {pdf_path} — render the file fill_form wrote, "
+            f"PDF not found at {home_display(pdf_path)} — render the file fill_form wrote, "
             f"or fix the path"
         )
     if dpi <= 0:
@@ -199,7 +201,7 @@ def render_pdf(
         # pdfium says "Failed to load document (PDFium: Data format error)."
         # with no next step; tell the agent what to do.
         raise ValueError(
-            f"{pdf_path} could not be opened as a PDF ({exc}) — the file is corrupt "
+            f"{home_display(pdf_path)} could not be opened as a PDF ({exc}) — the file is corrupt "
             f"or not a PDF; re-create it (e.g. re-run fill_form) and render again"
         ) from exc
     try:

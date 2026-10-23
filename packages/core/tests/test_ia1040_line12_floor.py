@@ -6,6 +6,10 @@ line 11 from line 7. If less than zero, enter zero." (2024 IA 1040 instructions,
 expanded instructions, "Line 12: Balance", Instruction Year 2025). A filer whose line-11 credits exceed the line-7 tax
 enters 0 on line 12. Before 2026-10-16 the 2023 and 2025 packs declared "12 == 7 - 11", so that correct return FAILED
 verify while the 2024 pack, built from the instructions, passed it (JK27).
+
+Since Phase K JK28 the relation carries " unless alt_tax_method": a single filer who uses the Income Tax Reduction
+Worksheet (41-146) enters its amount on line 12 and checks the Step 5 box. The floor itself is unchanged, and with no
+field dump the box reads as unchecked, so these checks still evaluate it (test_relation_guard.py covers the box).
 """
 from __future__ import annotations
 
@@ -19,7 +23,7 @@ from taxfill_core.verify import relations as check_relations
 REPO = Path(__file__).resolve().parents[3]
 YEARS = (2023, 2024, 2025)
 PACKS = [REPO / "formpacks" / "states" / "ia" / str(year) / "ia1040" / "pack.yaml" for year in YEARS]
-FLOORED = "12 == max(7 - 11, 0)"
+FLOORED = "12 == max(7 - 11, 0) unless alt_tax_method"
 
 
 @pytest.mark.parametrize("pack_path", PACKS, ids=lambda p: p.parts[-3])

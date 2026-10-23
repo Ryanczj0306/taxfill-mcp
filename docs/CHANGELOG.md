@@ -68,6 +68,25 @@ person checks, signs and files.
 - **Filled PDFs carry no XFA layer.** A filled form keeps the official AcroForm fields with their appearances
   and drops the XFA layer that hybrid IRS forms carry, so Adobe Acrobat and Reader draw the filled fields rather
   than the form's empty XFA data.
+- **Page headers are filled and checked.** Where a form repeats the filer's name and SSN at the top of later pages,
+  the pack declares how each header is built from the page-1 lines. `fill_form` fills the headers you leave out
+  (listed in `mirrored`), shortening a name that does not fit as the pack allows or leaving it to hand-write with a
+  warning, and `verify_form` checks every header against page 1. 56 packs declare them, among them California's
+  Form 540, whose Sides 2-6 headers had printed blank.
+- **State exemption credits are computed.** `calc` `state_tax` takes the credit counts and federal AGI and returns
+  each exemption credit as its own field, with the AGI rules applied: California for 2023-2025, and Arkansas,
+  Delaware, Iowa, Nebraska and Oregon for 2025.
+- **Part-year and nonresident filers get their own forms.** Every state's 2025 knowledge cites the part-year and
+  nonresident form and its instructions, so `state_scope` points those filers at the right documents.
+- **`~/` paths are accepted** in every tool argument, CLI path and `TAXFILL_*` setting. Results keep full paths;
+  refusals that only name a path show your home folder as `~`.
+- **Ink-signature lines stay blank.** A box that sits on a signature line is not fillable where the instructions
+  require a signature (Kansas, Kentucky, Illinois); Missouri's is, because its form accepts a typed name.
+- **Checks that depend on a checkbox.** Iowa's line 12 check is skipped when the Income Tax Reduction Worksheet box
+  is checked, and `verify_form` lists every skipped check instead of counting it as passed.
+- **Form W-2 code titles follow the W-2's own year**, and code II is accepted from 2024 W-2s on.
+- **SSN digits clear the printed dashes.** On the 2023-2026 Form 1040 and 1040-X, `fill_form` aligns the SSN boxes
+  with the separators printed in them (`combs_aligned`).
 
 ### Not in this release
 

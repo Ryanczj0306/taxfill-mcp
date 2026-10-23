@@ -23,6 +23,7 @@
   "@@92528fb58a49": "If any of your income was exempt from federal tax under a treaty: PA does not conform to federal tax treaties, so that income is still taxable to PA — do not carry the federal exclusion onto the state return.",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@98728ef85b01": "Law change NOT modeled by the engine (status final_form_published): NEW STUDENT LOAN INTEREST DEDUCTION — up to $2,500 of student loan interest may be deducted from Pennsylvania taxable income, on PA-40 Schedule O. Resolve via: 2025 PA-40 Instructions, 2025 State Tax Change, and the PA-40 Schedule O instructions.",
+  "@@9e86fd8035c7": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40.pdf",
   "@@a0cb0c972f9e": "61 Pa. Code § 109.8 (Compensation of nonresidents) — operative allowance sentence transcribed verbatim.",
   "@@a0f98c91e9d3": "PA-40 (Pennsylvania Personal Income Tax Return) - fill in residency oval (R) Resident",
   "@@a322b6f9eb62": "Property Tax/Rent Rebate Program (PTRR) — Pennsylvania residents who are age 65 or older; widows/widowers age 50 or older; or people with disabilities age 18 or older, who owned and occupied a home (and paid property tax) or rented during the claim year. NOTE: This is a standalone rebate filed on Form PA-1000, not a credit on the PA-40 income tax return. Since Act 7 of 2023 the income limits are indexed to the cost of living annually.",
@@ -410,7 +411,7 @@
      "answers": "2025 Form PA-40 (Pennsylvania Personal Income Tax Return, PA-40 2025 04-25) - the eight income-class lines 1a-8, Line 9 'Total PA Taxable Income. Add only the positive income amounts from Lines 1c, 2, 3, ...', Line 11 Adjusted PA Taxable Income, Line 12 'PA Tax Liability. Multiply Line 11 by 3.07 percent (0.0307)' (second-pass verification of the rate and the class structure)",
      "cadence": "@@facd9cdc4d20",
      "topic": "forms_and_instructions",
-     "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40.pdf"
+     "url": "@@9e86fd8035c7"
     },
     {
      "answers": "2025 PA-40 Schedule DC and Instructions - Child and Dependent Care Enhancement Tax Credit (100% of federal section-21 credit; $3,000/$6,000 caps; 35%-20%; refundable; maximum-credit table $1,050/$2,100 and $600/$1,200)",
@@ -637,6 +638,14 @@
        "url": "@@a6f08a7f1d2a"
       },
       {
+       "source": "2025 Pennsylvania Personal Income Tax Return Instructions (PA-40 IN), 'Residency Status' (p. 6): 'Nonresidents and part-year residents use the same PA-40 form as PA residents.' — '(N) Nonresident If you were a nonresident of Pennsylvania for all of 2025, fill in this oval. PA law taxes nonresidents on the income earned, received, or realized from Pennsylvania sources during 2025.' — and 'INSTRUCTIONS FOR NONRESIDENTS AND PART-YEAR RESIDENTS' (p. 42): 'Nonresident of Pennsylvania - You must report all taxable income you earned, received, and realized from PA sources.'",
+       "url": "@@a6f08a7f1d2a"
+      },
+      {
+       "source": "2025 PA-40, Pennsylvania Income Tax Return — the 2-page return itself (page 1: 'Residency Status. Fill in only one oval.' — 'N Nonresident')",
+       "url": "@@9e86fd8035c7"
+      },
+      {
        "source": "@@a0cb0c972f9e",
        "url": "@@cbfb534d472b"
       }
@@ -704,6 +713,14 @@
       {
        "source": "@@90ac97b7b31c",
        "url": "@@a6f08a7f1d2a"
+      },
+      {
+       "source": "2025 Pennsylvania Personal Income Tax Return Instructions (PA-40 IN), 'Residency Status' (p. 6): 'Nonresidents and part-year residents use the same PA-40 form as PA residents.' — '(P) Part-Year Resident If you moved into Pennsylvania during 2025, fill in this oval even though you were a PA resident at the end of 2025. If you moved from Pennsylvania during 2025, fill in this oval even though you were not a PA resident at the end of 2025.' — and 'INSTRUCTIONS FOR NONRESIDENTS AND PART-YEAR RESIDENTS' (p. 42): 'Part-Year Resident of Pennsylvania - You must report all taxable income you earned, received, and realized from all sources for the time you were a PA resident, and report the PA-taxable income you earned, received, and realized from sources within Pennsylvania for the time you were not a PA resident.'",
+       "url": "@@a6f08a7f1d2a"
+      },
+      {
+       "source": "2025 PA-40, Pennsylvania Income Tax Return — the 2-page return itself (page 1: 'Residency Status. Fill in only one oval.' — 'P Part-Year Resident from ___/___/2025 to ___/___/2025')",
+       "url": "@@9e86fd8035c7"
       }
      ],
      "filing_role": "part_year",

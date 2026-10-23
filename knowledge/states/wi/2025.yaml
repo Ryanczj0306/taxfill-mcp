@@ -33,6 +33,38 @@ residency:
 forms:
   resident: Form 1 (Wisconsin Income Tax) - full-year residents
   part_year_or_nonresident: Form 1NPR (Nonresident and Part-Year Resident Wisconsin Income Tax Return)
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the resident Form 1 instructions, so this entry
+  # named Form 1NPR without citing it. Each role cites the Form 1NPR instructions ('Which Form To File', 'Who Must
+  # File') and the Form 1NPR return. The URLs are the "Nonresident and Part-Year Resident Income Tax Return
+  # Instructions" and "Nonresident and Part-Year Resident Income Tax Return" items of DOR's 2025 individual income tax
+  # forms page (www.revenue.wi.gov/Pages/Form/2025Individual.aspx); each PDF was downloaded twice on 2026-10-16 with
+  # identical sha256 (Form 1NPR instructions ec79685479ed59e7..., Form 1NPR c9f212cd58e78373...).
+  citations:
+    part_year:
+    - source: >-
+        2025 Form 1NPR Instructions, Wisconsin Income Tax for Nonresidents and Part-Year Residents (I-152) — 'Which Form To
+        File' (p. 5): 'If you are a nonresident or part-year resident of Wisconsin in 2025, you must file Wisconsin Form
+        1NPR.'; 'Who Must File' (p. 4): 'If you are a nonresident or part-year resident of Wisconsin and your gross income
+        from Wisconsin sources (or the combined Wisconsin source gross income of you and your spouse) is $2,000 or more for
+        2025, you must file a Wisconsin return.'
+      url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR-Inst.pdf
+    - source: >-
+        2025 Form 1NPR, Nonresident & Part-Year Resident Wisconsin Income Tax (I-050i) — the return itself; page 1,
+        'Resident status Check the status that applies': 'Part-year resident of Wisconsin from' (the dates of residency)
+      url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR.pdf
+    nonresident:
+    - source: >-
+        2025 Form 1NPR Instructions, Wisconsin Income Tax for Nonresidents and Part-Year Residents (I-152) — 'Which Form To
+        File' (p. 5): 'If you are a nonresident or part-year resident of Wisconsin in 2025, you must file Wisconsin Form
+        1NPR.'; 'Who Must File' (p. 4): 'If you are a nonresident or part-year resident of Wisconsin and your gross income
+        from Wisconsin sources (or the combined Wisconsin source gross income of you and your spouse) is $2,000 or more for
+        2025, you must file a Wisconsin return.'
+      url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR-Inst.pdf
+    - source: >-
+        2025 Form 1NPR, Nonresident & Part-Year Resident Wisconsin Income Tax (I-050i) — the return itself; page 1,
+        'Resident status Check the status that applies': 'Nonresident of Wisconsin; state of residence'
+      url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR.pdf
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed for 2025 (verify the figure): the maximum homestead credit dollar amount (not re-derived from the 2025 Schedule H tables) and the Schedule WI-2441 qualifying-expense and maximum-credit caps (not read line by line).'
 credits:
 - name: Wisconsin Earned Income Credit (EITC)

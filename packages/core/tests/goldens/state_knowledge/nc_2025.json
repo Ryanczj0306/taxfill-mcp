@@ -17,6 +17,7 @@
   "@@9ead79645c9c": "2025 D-401 North Carolina Individual Income Tax Instructions — \"For tax year 2025, the individual income tax rate is 4.25%. To calculate your North Carolina tax liability, multiply your North Carolina taxable income by 4.25% (0.0425)\"; NC Standard Deduction Chart (D-400 Line 11): $12,750 Single / $25,500 MFJ-Qualifying Widow(er)-Surviving Spouse / $12,750 MFS ($0 if spouse claims itemized deductions) / $19,125 Head of Household; Child Deduction Table (D-400 Line 10); Schedule S starting point = federal AGI as of January 1, 2023. Second pass: the 2025 Form D-400 (\"D-400 Web-Fill 9-25\", Tax Year 2025) itself prints Line 15 \"Multiply Line 14 by 4.25% (0.0425). If zero or less, enter a zero.\" — both passes agree (the form does not print the standard-deduction chart; see pack unverified).",
   "@@a43a158328bc": "annual (per tax year; the newest shipped NC pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@a912faa84f0e": "Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L) — Narrow / not broadly applicable to ordinary residents. Available to taxpayers who incur qualified rehabilitation expenditures/expenses on a certified historic structure or historic mill facility under Article 3D, Article 3H (historic mill facility), or Article 3L (Historic Rehabilitation Tax Credits Investment Program; requires Form NC-Rehab, \"NC-Rehab, 2025 Historic Rehabilitation Tax Credits\", attached to the front of Form D-400). Distinguishes income-producing vs. non-income-producing structures.",
+  "@@adf08cdb1548": "2025 D-400 Schedule PN, Part-Year Resident and Nonresident Schedule (Web-Fill 9-25) — the 2-page schedule itself (its page 1, PDF page 2: 'A part-year resident or a nonresident who receives income from N.C. sources must complete this form to determine the percentage of total income from all sources that is subject to N.C. tax.')",
   "@@c23a7cc43693": "Law change NOT modeled by the engine (status final_form_published): NEW DISCLOSURE for 2025 — NC DECOUPLES from the 2025 federal reconciliation act (\"OBBBA\"): the 2025 booklet keeps the January 1, 2023 IRC conformity date (\"The starting point for North Carolina taxable income is federal adjusted gross income as of January 1, 2023\") and states expressly that the federal changes made by the reconciliation act do NOT apply for NC tax year 2025 — NC \"does not conform to the federal standard deduction amount, to the federal itemized deduction amount, or to the federal additional deductions reported on federal Schedule 1-A.\" Post-2023 federal changes do not apply unless NC specifically conforms; never substitute a federal 2025 standard deduction for the NC chart amount. NC also did not adopt IRC 168(k) or the new IRC 168(n) (Schedule S Part A Line 3 adds back 85% of bonus depreciation). Resolve via: 2025 D-401 Schedule S instructions and the Form D-400 Schedule S, Part A \"Additions to Federal Adjusted Gross Income\" line list (Lines 1-16) inside the cited booklet; the add-back amounts come from the filer's own federal return, and the NC deduction amounts come from the D-401 Line 11 NC Standard Deduction Chart — not from any federal 2025 figure.",
   "@@d1870484eb7e": "NC DEPARTMENT OF REVENUE, PO BOX R, RALEIGH, NC 27634-0001 (if due a refund and filing on paper — original returns only)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
@@ -371,6 +372,12 @@
      "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"
     },
     {
+     "answers": "@@adf08cdb1548",
+     "cadence": "@@a43a158328bc",
+     "topic": "forms_and_instructions",
+     "url": "https://www.ncdor.gov/2025-d-400-schedule-pn-web-fill-version/open"
+    },
+    {
      "answers": "2025 Form D-400 (web-filled version, \"D-400 Web-Fill 9-25\", Tax Year 2025) — Line 6 Federal Adjusted Gross Income, Line 7 additions (Form D-400 Schedule S, Part A, Line 16), Line 9 deductions (Schedule S Part B Line 41), Line 10a/10b child deduction, Line 11 N.C. Standard Deduction OR N.C. Itemized Deductions, Line 12a/12b, Line 13 part-year/nonresident taxable percentage (Schedule PN Line 24), Line 14 North Carolina Taxable Income, Line 15 \"Multiply Line 14 by 4.25% (0.0425). If zero or less, enter a zero.\" (second-pass verification of the rate), Line 16 Tax Credits (From Form D-400TC, Part 3, Line 20)",
      "cadence": "@@a43a158328bc",
      "topic": "forms_and_instructions",
@@ -513,6 +520,14 @@
       {
        "source": "@@007d9aee7ecb",
        "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"
+      },
+      {
+       "source": "2025 D-401 North Carolina Individual Income Tax Instructions, 'What Form Should I File?' (p. 6): 'All individuals (including part-year residents and nonresidents) required to file a North Carolina individual income tax return must file Form D-400' — 'Form D-400 Schedule PN, 2025 Part-Year Resident and Nonresident Schedule. If you are a part-year resident or nonresident who received income from North Carolina sources during tax year 2025, complete this form to determine what percent of your total income is from North Carolina sources.' — and 'Instructions for Form D-400 Schedule PN' (p. 21): 'You are a “nonresident” if you were not a resident of North Carolina at any time during the tax year.'",
+       "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"
+      },
+      {
+       "source": "@@adf08cdb1548",
+       "url": "https://www.ncdor.gov/2025-d-400-schedule-pn-web-fill-version/open"
       }
      ],
      "filing_role": "nonresident",
@@ -567,6 +582,14 @@
       {
        "source": "@@007d9aee7ecb",
        "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"
+      },
+      {
+       "source": "2025 D-401 North Carolina Individual Income Tax Instructions, 'What Form Should I File?' (p. 6): 'All individuals (including part-year residents and nonresidents) required to file a North Carolina individual income tax return must file Form D-400' — 'Form D-400 Schedule PN, 2025 Part-Year Resident and Nonresident Schedule. If you are a part-year resident or nonresident who received income from North Carolina sources during tax year 2025, complete this form to determine what percent of your total income is from North Carolina sources.' — and 'Instructions for Form D-400 Schedule PN' (p. 21): 'You are a “part-year resident” if you moved to North Carolina and became a resident during the tax year, or you moved out of North Carolina and became a resident of another state during the tax year.'",
+       "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"
+      },
+      {
+       "source": "@@adf08cdb1548",
+       "url": "https://www.ncdor.gov/2025-d-400-schedule-pn-web-fill-version/open"
       }
      ],
      "filing_role": "part_year",

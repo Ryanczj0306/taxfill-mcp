@@ -53,11 +53,6 @@ residency:
     source: 2025 NJ-1040 Resident Income Tax Return Instructions - Terms to Know (Domicile, Principal Residence)
       p. 4 and Part-Year Residents p. 5; GIT-6 pointer
     url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
-forms:
-  resident: NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their
-    NJ residency period.
-  part_year_or_nonresident: NJ-1040NR (New Jersey Nonresident Income Tax Return). Used by nonresidents with NJ-source
-    income and by part-year nonresidents (indicate residency period). There is no separate part-year resident return.
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice - confirm
   each amount and your eligibility at the cited source before claiming it. Every amount below was re-read from the
   2025 NJ-1040 instruction booklet; the one figure that CHANGED from 2024 is the NJEITC fixed amount for age-expansion
@@ -397,3 +392,58 @@ law_changes_checked:
     source: >-
       2025 NJ-1040 Resident Return Instructions, the Director's letter and the line instructions (compared with 2024's)
     url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
+# `forms` sits at the END of this pack on purpose (Phase K JK28, 2026-10-16). The source registry
+# (knowledge/sources_states.yaml, built by scripts/assemble_state_sources.py) keeps the FIRST citation of each URL per
+# topic in file order, and get_sources routes a question by those descriptions. forms.citations below reuse the
+# NJ-1040NR instructions and return URLs that `all_citations` describes; placed before `all_citations` (where Virginia
+# keeps `forms`), the role pinpoints replaced those descriptions in the registry. Keep `forms` after `all_citations`.
+forms:
+  resident: NJ-1040 (New Jersey Resident Income Tax Return). Part-year residents also use NJ-1040 and indicate their
+    NJ residency period.
+  # CORRECTED (Phase K JK28, 2026-10-16): this entry used to read "NJ-1040NR (New Jersey Nonresident Income Tax Return).
+  # Used by nonresidents with NJ-source income and by part-year nonresidents (indicate residency period). There is no
+  # separate part-year resident return." state_scope shows a part-year filer only this entry, which named NJ-1040NR
+  # alone; the 2025 instructions send a part-year resident to NJ-1040 for the resident part and to NJ-1040NR only for
+  # New Jersey-source income while a nonresident ("You may have to file both Form NJ-1040 to report income you received
+  # for the part of the year you were a resident and Form NJ-1040NR if you had income from New Jersey sources for the
+  # part of the year you were a nonresident", NJ-1040 instructions p. 3 and NJ-1040NR instructions p. 2) — what this
+  # pack's residency summary already said.
+  part_year_or_nonresident: 'Part-year resident: there is no part-year resident return — file Form NJ-1040 (New Jersey
+    Resident Income Tax Return) for the part of the year you were a resident, entering your residency period, and also
+    Form NJ-1040NR (New Jersey Nonresident Income Tax Return) if you had income from New Jersey sources for the part of
+    the year you were a nonresident. Nonresident: Form NJ-1040NR, if you had income from New Jersey sources.'
+  # (Phase K JK28, 2026-10-16): each role's own instructions and form, which state_scope adds to a part-year or
+  # nonresident filer's citations — the top-level `citation` is the NJ-1040 instructions pinned to resident topics. The
+  # URLs are the "Resident Income Tax Return Instructions", "Nonresident Income Tax Return Instructions" and
+  # "Nonresident Income Tax Return" links on the Division of Taxation's Income Tax Forms page
+  # (www.nj.gov/treasury/taxation/prntgit.shtml — the same "current" family as the primary citation, which the Division
+  # re-points at the next year's documents); each PDF was downloaded twice on 2026-10-16 with identical sha256 (NJ-1040
+  # instructions fe7977419b70d0c3..., NJ-1040NR instructions 53c2f31419964229..., NJ-1040NR 09f8c9fa377114fe...).
+  citations:
+    part_year:
+    - source: >-
+        2025 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation), 'Which Form to File' (p. 3):
+        'Part-Year Residents. There is no part-year resident return. You may have to file both Form NJ-1040 to report
+        income you received for the part of the year you were a resident and Form NJ-1040NR if you had income from New
+        Jersey sources for the part of the year you were a nonresident.' — and 'Part-Year Residents' (p. 5): 'If you
+        received income from a New Jersey source while you were a nonresident, you must also file a New Jersey
+        nonresident return.'
+      url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
+    - source: >-
+        2025 NJ-1040NR Nonresident Income Tax Return Instructions (NJ Division of Taxation), 'NJ Residency Status' (p.
+        4): 'You must file a nonresident return if you received income from a New Jersey source while you were a
+        nonresident and your income for the entire year (not just your period of nonresidency) was more than the
+        filing threshold for your filing status (see page 2). Only report income you earned while a nonresident of New
+        Jersey.'
+      url: https://www.nj.gov/treasury/taxation/pdf/current/1040nri.pdf
+    nonresident:
+    - source: >-
+        2025 NJ-1040NR Nonresident Income Tax Return Instructions (NJ Division of Taxation), 'Which Form to File' (p.
+        2): 'File Form NJ-1040NR if you had income from New Jersey sources.' — and 'Do You Have to File a New Jersey
+        Income Tax Return?' (p. 2): 'You are required to file a return if – your filing status is: ... and your gross
+        income from everywhere for the entire year was more than the filing threshold'
+      url: https://www.nj.gov/treasury/taxation/pdf/current/1040nri.pdf
+    - source: >-
+        2025 NJ-1040NR, New Jersey Nonresident Income Tax Return — the 4-page return itself (page 1: 'For Tax Year
+        January 1, 2025 – December 31, 2025')
+      url: https://www.nj.gov/treasury/taxation/pdf/current/1040nr.pdf

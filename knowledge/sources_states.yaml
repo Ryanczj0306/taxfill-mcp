@@ -35,6 +35,30 @@ states:
           To File (p.12); Tax Tables pp.25-30 and Over $100,000.00 worksheet (p.30)
         cadence: annual (per tax year; the newest shipped AL pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40.pdf
+        answers: '2025 Form 40, Alabama Individual Income Tax Return, Residents & Part-Year Residents — the return
+          itself (page 1: ''RESIDENTS & PART-YEAR RESIDENTS'')'
+        cadence: annual (per tax year; the newest shipped AL pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nr.pdf
+        answers: '2025 Form 40NR, Alabama Individual Income Tax Return, Nonresidents Only — the return itself (page
+          1: ''NONRESIDENTS ONLY'')'
+        cadence: annual (per tax year; the newest shipped AL pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nrbk.pdf
+        answers: '2025 Alabama Form 40NR Booklet (Nonresidents Only, Forms and Instructions), ''Which Form To File''
+          (p. 5): ''You MUST Use Form 40NR If:'' — ''You are not a resident of Alabama and you received taxable
+          income from Alabama sources or for performing services within Alabama and your gross income from Alabama
+          sources exceeds the allowable prorated personal exemption, or filing Married Filing Joint under the "Military
+          Spouses Residency Relief Act."'' | 2025 Form 40NR Booklet (Nonresidents) — independent second pass on
+          the filing-threshold chart (same $4,500/$8,200/$11,500/$5,750), the sliding Standard Deduction chart (same
+          amounts and the same printed MFJ typo), the identical tax-table figures (e.g. $4,100-$4,200 row = $168
+          single / $146 MFJ; $16,000-$16,100 = $763/$723; $99,900-$100,000 = $4,958/$4,918), the identical Over
+          $100,000.00 worksheet constants ($4,958.00 / $4,918.00), and the Foreign Income Exclusion text (''All
+          foreign income must be reported on your return, in order to receive any foreign income exclusion'' — IRC
+          sec. 911 exclusion via federal Form 2555 only, reported as a negative line 8 entry, no treaty mechanism)'
+        cadence: annual (per tax year; the newest shipped AL pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40blk.pdf
         answers: '2025 Alabama Form 40 (printed form) — second-pass verification: the filing-status boxes print
           the personal exemptions ''1 $1,500 Single; 2 $3,000 Married filing joint; 3 $1,500 Married filing separate;
@@ -42,16 +66,6 @@ states:
           tips, etc. (from Schedule W-2, line 18, column I plus J)''; line 16 ''Taxable income. Subtract line 15
           from line 10''; line 17 ''Income Tax due. Enter amount from tax table or check if from Form NOL-85A'';
           and the Where To File block'
-        cadence: annual (per tax year; the newest shipped AL pack covers 2025 — for any newer year re-resolve at
-          this URL family and cite)
-      - url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nrbk.pdf
-        answers: 2025 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart (same
-          $4,500/$8,200/$11,500/$5,750), the sliding Standard Deduction chart (same amounts and the same printed
-          MFJ typo), the identical tax-table figures (e.g. $4,100-$4,200 row = $168 single / $146 MFJ; $16,000-$16,100
-          = $763/$723; $99,900-$100,000 = $4,958/$4,918), the identical Over $100,000.00 worksheet constants ($4,958.00
-          / $4,918.00), and the Foreign Income Exclusion text ('All foreign income must be reported on your return,
-          in order to receive any foreign income exclusion' — IRC sec. 911 exclusion via federal Form 2555 only,
-          reported as a negative line 8 entry, no treaty mechanism)
         cadence: annual (per tax year; the newest shipped AL pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25schocinstr.pdf
@@ -167,6 +181,11 @@ states:
           and table (p.21), How to Fill Out Your Check (p.20), and mailing addresses.'
         cadence: annual (per tax year; the newest shipped AR pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000NR_PartYear_or_Non-ResidentIndividualIncomeTaxReturn_1.pdf
+        answers: '2025 AR1000NR, Arkansas Individual Income Tax Return, Nonresident and Part Year Resident — the
+          return itself (page 1 residency box: ''PART YEAR RESIDENT: Dates lived in AR:'')'
+        cadence: annual (per tax year; the newest shipped AR pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_TaxBrackets.pdf
         answers: 'Arkansas DFA, Revenue Division — ''2025 Indexed Tax Brackets'' (Individual Income Tax): the full
           bracket table (From / Less Than or Equal To / Percentage / Minus Adjustment), the complete $94,701-$97,800
@@ -219,6 +238,16 @@ states:
           (Rev 09/29/2025) with ''For $100,001 and over, your tax is $3,809 + 3.9% of the excess over $100,000''.'
         cadence: annual (per tax year; the newest shipped AR pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf
+        answers: '2025 AR1000F Full Year Resident Individual Income Tax Return, page 1 "PERSONAL TAX CREDITS": line
+          7A boxes (Yourself / Spouse, 65 or over, 65 Special, Blind, Deaf, Head of household/surviving spouse "(Filing
+          status 3 only)" "(Filing status 6 only)"), "Multiply number of boxes checked ... 7A X $29 ="; line 7B
+          "Multiply number of DEPENDENTS from above ... 7B X $29 ="; line 7C "TOTAL PERSONAL TAX CREDITS: (Add lines
+          7A and 7B. Enter total here and on line 34)"; page 2 lines 33, 34 "Personal tax credit(s): (Enter total
+          from line 7C)", 37 and 38. Second pass: the 2025 AR1000F and AR1000NR Instructions, p. 12 "PERSONAL TAX
+          CREDITS" (lines 7A, 7B, 7C) and p. 15 (lines 34, 37, 38), which print the same $29 and line text.'
+        cadence: annual (per tax year; the newest shipped AR pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
     change_channels:
     - url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf
       answers: The newest shipped AR pack's primary authority (TY2025). A revision newer than 2025 published by
@@ -249,6 +278,30 @@ states:
           gross income; additions lines 14-18; exemptions lines 38-41; standard deduction chart $15,750/$31,500/$15,750/$23,625;
           line 44 increased standard deduction 34%; line 46 tax = 2.5% (.025); mailing addresses; make check payable
           to Arizona Department of Revenue; AZTaxes.gov; April 15, 2026 due date)
+        cadence: annual (per tax year; the newest shipped AZ pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140PYi.pdf
+        answers: '2025 Arizona Form 140PY Part-Year Resident Personal Income Tax Return instructions, ''Determining
+          Residency Status'' (p. 2): ''If you are a part-year resident, you must file Arizona Form 140PY, Part-Year
+          Resident Personal Income Tax Return.'' — and (p. 1): ''If you also have Arizona source income and deductions
+          for the portion of the year you were an Arizona nonresident, file Arizona Form 140PY for the entire taxable
+          year.'''
+        cadence: annual (per tax year; the newest shipped AZ pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140PY_f.pdf
+        answers: '2025 Arizona Form 140PY, Part-Year Resident Personal Income Tax Return — the return itself (page
+          1: ''Part-Year Resident Personal Income Tax Return'')'
+        cadence: annual (per tax year; the newest shipped AZ pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140NRi.pdf
+        answers: '2025 Arizona Form 140NR Nonresident Personal Income Tax Return instructions, ''Determining Residency
+          Status'' (p. 2): ''If you are a nonresident (including nonresident aliens), you must file Arizona Form
+          140NR, Nonresident Personal Income Tax Return.'''
+        cadence: annual (per tax year; the newest shipped AZ pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140NR_f.pdf
+        answers: '2025 Arizona Form 140NR, Nonresident Personal Income Tax Return — the return itself (page 1: ''Nonresident
+          Personal Income Tax Return'')'
         cadence: annual (per tax year; the newest shipped AZ pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf
@@ -316,6 +369,18 @@ states:
       - url: https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf
         answers: FTB Publication 1031 (2025), Guidelines for Determining Resident Status — Tax Treaty section (p.
           10)
+        cadence: annual (per tax year; the newest shipped CA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.ftb.ca.gov/forms/2025/2025-540nr-booklet.pdf
+        answers: '2025 California 540NR Nonresident or Part-Year Resident Booklet (FTB), ''Which Form To Use'' (p.
+          5): ''Use Form 540NR if either you or your spouse/RDP were a nonresident or part-year resident in taxable
+          year 2025.'''
+        cadence: annual (per tax year; the newest shipped CA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf
+        answers: '2025 Form 540NR, California Nonresident or Part-Year Resident Income Tax Return — the 6-page return
+          itself (Side 1 heading: ''California Nonresident or Part-Year Resident Income Tax Return'', ''TAXABLE
+          YEAR 2025'')'
         cadence: annual (per tax year; the newest shipped CA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf
@@ -404,12 +469,19 @@ states:
           DR 0104CR, DR 0104CN reference, DR 0104PN, DR 0347, DR 0900, DR 0158-I)
         cadence: annual (per tax year; the newest shipped CO pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2025.pdf
+        answers: 'DR 0104PN (09/24/25), Form 104PN Part-Year Resident/Nonresident Tax Calculation Schedule 2025
+          — the schedule itself (page 1, line 1: ''1. Taxpayer is (mark one):'' — ''Part-Year Resident from:'')'
+        cadence: annual (per tax year; the newest shipped CO pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf
-        answers: 'Colorado DOR — standalone 2025 DR 0104, Colorado Individual Income Tax Return (form PDF, revision
-          "DR 0104 (10/03/25)"; second-pass verification of line 1 "Federal Taxable Income from your federal income
-          tax form: 1040, 1040 SR, or 1040 SP line 15", additions lines 2-9, line 10 subtotal, line 11 DR 0104AD
-          subtractions, line 12 "Colorado Taxable Income, subtract line 11 from line 10", line 13 "Colorado Tax
-          from tax table or the DR 0104PN line 36", TABOR lines 34-38 and the Modified AGI tier table)'
+        answers: 'DR 0104 (10/03/25), 2025 Colorado Individual Income Tax Return — the return itself (page 1 residency
+          box: ''Part-Year or Nonresident (or combination of full-year, part-year, or nonresident). You must submit
+          form DR 0104PN'') | Colorado DOR — standalone 2025 DR 0104, Colorado Individual Income Tax Return (form
+          PDF, revision "DR 0104 (10/03/25)"; second-pass verification of line 1 "Federal Taxable Income from your
+          federal income tax form: 1040, 1040 SR, or 1040 SP line 15", additions lines 2-9, line 10 subtotal, line
+          11 DR 0104AD subtractions, line 12 "Colorado Taxable Income, subtract line 11 from line 10", line 13 "Colorado
+          Tax from tax table or the DR 0104PN line 36", TABOR lines 34-38 and the Modified AGI tier table)'
         cadence: annual (per tax year; the newest shipped CO pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://tax.colorado.gov/DR0104Booklet
@@ -490,6 +562,29 @@ states:
           for Nonresident Aliens, What''s New for 2025)'
         cadence: annual (per tax year; the newest shipped CT pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information
+        answers: 'Connecticut DRS, ''Connecticut Nonresident and Part-Year Resident Income Tax Information'', ''Who
+          Must File Form CT-1040NR/PY'': ''You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year
+          Resident Income Tax Return, if you were a nonresident or part-year resident of Connecticut in 2025 and
+          any of the following is true for the 2025 taxable year:'' — ''You were a part-year resident who meets
+          the Gross Income Test or who had a federal alternative minimum tax liability'''
+        cadence: annual (per tax year; the newest shipped CT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf
+        answers: '2025 Form CT-1040NR/PY Connecticut Nonresident and Part-Year Resident Income Tax Return Instructions
+          (Rev. 12/25), p. 1: ''For additional information on the Connecticut Income Tax, visit portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information''
+          | 2025 Form CT-1040NR/PY Instructions (Rev. 12/25, 28 pages) — Schedule 1 "Other" additions ("1. Add back
+          any treaty income reported on federal Form 1040NR if a nonresident alien"); INDEPENDENT SECOND-PASS source
+          for Tables A-E: Table A (221 numeric tokens), Table C (136) and Table D (450) are digit-identical multisets,
+          all 28 Table E rows match row-by-row, and all 21 Table B rows print the same bounds, rates and constants'
+        cadence: annual (per tax year; the newest shipped CT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040nrpy_1225.pdf
+        answers: '2025 Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (Rev.
+          12/25) — the return itself (page 1, line 6: ''Income from Connecticut sources from Schedule CT-SI, Line
+          30'')'
+        cadence: annual (per tax year; the newest shipped CT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf
         answers: 2025 Form CT-1040 Instructions (Rev. 12/25, 28 pages) — Schedule 1 Line 37 "Other" additions ("1.
           Add back any treaty income reported on federal Form 1040NR if a nonresident alien"); Line 6 no-tax floors
@@ -499,14 +594,6 @@ states:
           Homes Rehabilitation Tax Credit (p. 4, the DECD voucher amount); Line 48d ABLE subtraction (p. 10, lesser
           of contributions or $5,000 / $10,000 joint); the Access Health CT authorization (p. 2); Line 1 federal
           Form 1040 Line 11a; Line 13 Schedule CT-IT Credit Part 1 Line 10
-        cadence: annual (per tax year; the newest shipped CT pack covers 2025 — for any newer year re-resolve at
-          this URL family and cite)
-      - url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf
-        answers: '2025 Form CT-1040NR/PY Instructions (Rev. 12/25, 28 pages) — Schedule 1 "Other" additions ("1.
-          Add back any treaty income reported on federal Form 1040NR if a nonresident alien"); INDEPENDENT SECOND-PASS
-          source for Tables A-E: Table A (221 numeric tokens), Table C (136) and Table D (450) are digit-identical
-          multisets, all 28 Table E rows match row-by-row, and all 21 Table B rows print the same bounds, rates
-          and constants'
         cadence: annual (per tax year; the newest shipped CT pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       law_changes:
@@ -568,6 +655,18 @@ states:
           due (April 15, 2026), mailing addresses (PO Box 96145 refund/no money due; PO Box 96169 with payment),
           check payable to DC Treasurer, Reminders Income Tax Rate Table + Calculation I/Tax Rate Schedule (p. 20),
           Schedule I Calculation A additions (no treaty add-back) and Calculation B subtractions, D-40 Lines 4/16/17/18/19/20'
+        cadence: annual (per tax year; the newest shipped DC pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40_Form_030526.pdf
+        answers: '2025 D-40, District of Columbia Individual Income Tax Return — the return itself (page 1, Line
+          2: ''Part-year resident in DC'')'
+        cadence: annual (per tax year; the newest shipped DC pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://otr.cfo.dc.gov/sites/default/files/dc/sites/otr/publication/attachments/2025_D40B_Form_012026.pdf
+        answers: '2025 D-40B, Nonresident Request for Refund (Revised 12/2025), ''Who must File a Form D-40B?''
+          (p. 2): ''Any non-resident of DC claiming a refund of DC income tax with-held or paid by estimated tax
+          payments must file a D-40B. A non-resident is anyone whose permanent home was outside DC during all of
+          2025 and who did not maintain a place of abode in DC for a total of 183 days or more during 2025.'''
         cadence: annual (per tax year; the newest shipped DC pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://otr.cfo.dc.gov/publication/2025-d-40-booklet
@@ -654,6 +753,18 @@ states:
           (P.O. Box 508 / 8710 / 8711), check payee ''DE Division of Revenue'', portal tax.delaware.gov'
         cadence: annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-NON_Instructions_2025-01.pdf
+        answers: '2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26),
+          ''Who Must File'' (p. 2): ''2. Part-Year Residents – must file a Delaware tax return if:'' — ''Part-Year
+          Residents may elect to file either a resident or non- resident return. You may wish to prepare both a
+          resident and non-resident return. File only the return which is more advantageous for you.'''
+        cadence: annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-NON_2025-01_PaperInteractiveIPM.pdf
+        answers: '2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page
+          1: ''If you were a part-year resident in 2025, give the dates'')'
+        cadence: annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf
         answers: '2025 Form PIT-RES (Revision 20260407, paper interactive) — second-pass verification of every line
           number and printed amount: Section A Line 1 "FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040", Line 2 interest
@@ -720,6 +831,16 @@ states:
           Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html, re-fetched live this session
           — cross-checks exactly against the 2025 table''s band values (e.g. $43,500-$43,550 -> $2,029; $16,750-$16,800
           -> $586; $2,750-$2,800 -> $17) and the printed $2,943.50 constant. Three sources agree; no 2025 change.'
+        cadence: annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf
+        answers: '2025 Delaware Form PIT-RES (Revision 20260407), page 2: line 27a "PERSONAL CREDITS Enter number
+          of exemptions x $110", line 27b "CHECK BOXES Spouse 60 or over (Column A) Self 60 or over (Column B) Enter
+          number of boxes checked on Line 27b x $110", line 32 "TOTAL NON-REFUNDABLE CREDITS - Add Line 27a through
+          Line 31", line 33 "BALANCE - Subtract Line 32 from Line 26. If Line 32 is greater than Line 26, enter
+          0." Second pass: the 2025 PIT-RES Instructions, p. 8 "Line 27a Personal Credits", p. 9 "Line 27b Additional
+          Personal Credits" and p. 10 "Line 32 Total Non-Refundable Credits", which print the same $110 and line
+          text.'
         cadence: annual (per tax year; the newest shipped DE pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
     change_channels:
@@ -859,10 +980,20 @@ states:
         cadence: annual (per tax year; the newest shipped HI pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://files.hawaii.gov/tax/forms/2025/n15ins.pdf
-        answers: 'Hawaii 2025 N-15 Nonresident/Part-Year Resident Instructions — INDEPENDENT SECOND-PASS source
-          for the tax block: its "2025 Tax Rate Schedules" print all 36 rows of Schedules I, II and III digit-identically
+        answers: '2025 Form N-15 Hawaii Nonresident and Part-Year Resident Income Tax Instructions, ''Residency
+          Status'' (pp. 4-5), under ''Part-Year Resident'' (p. 5): ''A part-year resident must file an Individual
+          Income Tax Return—Nonresident and Part-Year Resident (Form N-15), if required to do so.'' — and ''Which
+          Form to File'' (p. 5): ''You MUST use Form N-15 if:'' — ''You are taking up residence in Hawaii during
+          the tax year. (Part-year resident).'' — ''You are giving up residence in Hawaii during the tax year. (Part-year
+          resident).'' | Hawaii 2025 N-15 Nonresident/Part-Year Resident Instructions — INDEPENDENT SECOND-PASS
+          source for the tax block: its "2025 Tax Rate Schedules" print all 36 rows of Schedules I, II and III digit-identically
           to the N-11''s (same boundaries, same rates, same base-tax constants), and its standard-deduction table
           prints the same $4,400 / $8,800 / $4,400 / $6,424 amounts and the same $1,144 per-exemption multiplier'
+        cadence: annual (per tax year; the newest shipped HI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://files.hawaii.gov/tax/forms/2025/n15_i.pdf
+        answers: 'Form N-15 (Rev. 2025), Hawaii Individual Income Tax Return, Nonresident and Part-Year Resident
+          — the return itself (page 1: ''Part-Year Resident (Enter period of Hawaii residency above)'')'
         cadence: annual (per tax year; the newest shipped HI pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://files.hawaii.gov/tax/forms/2025/schx_i.pdf
@@ -945,6 +1076,25 @@ states:
           due date April 30 2026, PO Box 9187, payee Iowa Department of Revenue
         cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/who-must-file
+        answers: 'Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, ''Intro 3: Who Must File?'': ''You
+          must file an Iowa return if...'' — ''... you were a resident or part-year resident of Iowa in 2025 and
+          meet any of the following requirements.'' — ''f. You were a nonresident or part-year resident and your
+          Iowa-source net income IA 126, line 27 was $1,000 or more, unless below the income thresholds above.'''
+        cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/credit-nonpart-year-resident
+        answers: 'Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, ''Line 13: Credit for Nonresident
+          or Part-Year Resident'': ''A nonresident or part-year resident of Iowa must complete the IA 1040, lines
+          1 through 12 prior to completing the IA 126. The nonresident or part-year resident then completes a Schedule
+          IA 126.'''
+        cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenue.iowa.gov/media/4385/download?inline
+        answers: '2025 IA 126, Iowa Nonresident and Part-Year Resident Credit Schedule (form 41-126) — the schedule
+          itself (page 1: ''Your Residency Status (check one)'')'
+        cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-taxable-income
         answers: '2025 IA 1040 Expanded Instructions, "Line 04: Iowa Taxable Income" — "Check the box only if using
           low-income exemption, alternate tax, or tax reduction."'
@@ -1005,6 +1155,18 @@ states:
           rate is 3.8%. https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new'
         cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://revenue.iowa.gov/media/4401/download
+        answers: '2025 IA 1040 Iowa Individual Income Tax Return (41-001), page 1 Step 3 "Exemptions": a "Personal
+          Credit: Enter 1 (enter 2 if filing status 2 or 4) x $40 ="; b "Enter 1 for each taxpayer 65 or older and/or
+          1 for each taxpayer who is blind x $20 =" (boxes You are 65 or older, You are blind, Spouse is 65 or older,
+          Spouse is blind); c "Dependents: Enter 1 for each dependent. x $40 ="; d "Total. Add lines a, b and c";
+          page 2 Step 5 line 8 "Total exemption credit amount from Step 3", line 11 "Total Credits. Add lines 8,
+          9, and 10.", line 12 "BALANCE. Subtract line 11 from line 7." Second pass: the 2025 IA 1040 Expanded Instructions
+          ("Instruction Year: 2025"), "Intro 6: Exemption Credits" (https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/exemption-credits),
+          "Line 08: Total Exemption Credit" and "Line 12: Balance" ("Subtract line 11 from line 7. If less than
+          zero, enter zero."), which print the same amounts.'
+        cadence: annual (per tax year; the newest shipped IA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
     change_channels:
     - url: https://revenue.iowa.gov/media/4400/download?inline
       answers: The newest shipped IA pack's primary authority (TY2025). A revision newer than 2025 published by
@@ -1040,6 +1202,16 @@ states:
           amounts, 5.3%), Standard Deduction Worksheet ($15,750/$31,500/$23,625), Line 24 Idaho Child Tax Credit
           ($205), Line 31 $10 PBF tax, Line 42 Parental Choice Tax Credit, Line 43 Food Tax Credit worksheet, Line
           44 maintaining-a-home credit ($100 per person, up to $300)
+        cadence: annual (per tax year; the newest shipped ID pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00091/EFO00091_03-02-2026.pdf
+        answers: '2025 Idaho Form 43, Part-year Resident and Nonresident Income Tax Return — the return itself (page
+          1: ''Part-year Resident and Nonresident Income Tax Return'')'
+        cadence: annual (per tax year; the newest shipped ID pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00087/EFO00087_03-02-2026.pdf
+        answers: '2025 Idaho Form 39NR, Part-year Resident and Nonresident Supplemental Schedule (page 1: ''Part-year
+          Resident and Nonresident Supplemental Schedule'')'
         cadence: annual (per tax year; the newest shipped ID pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_03-02-2026.pdf
@@ -1142,6 +1314,20 @@ states:
           allowance ("The personal exemption amount for tax year 2025 is $2,850")
         cadence: annual (per tax year; the newest shipped IL pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-nr-instr.pdf
+        answers: '2025 Schedule NR Instructions (IL-1040 Schedule NR Instructions R-12/25, Illinois Department of
+          Revenue), ''What if I was an Illinois resident for part of the tax year?'' (page 1 of 10): ''If you were
+          a resident of Illinois during part of the tax year, you are considered a part-year resident and must complete
+          and file Form IL-1040 and Schedule NR if you ■ earned or received income from any source while you were
+          an Illinois resident, ■ earned or received income from Illinois sources while you were not an Illinois
+          resident, or ■ are entitled to receive a refund of Illinois Income Tax.'''
+        cadence: annual (per tax year; the newest shipped IL pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-nr.pdf
+        answers: '2025 Schedule NR, Nonresident and Part-Year Resident Computation of Illinois Tax — the 2-page
+          schedule itself (page 1: ''Attach to your Form IL-1040.'')'
+        cadence: annual (per tax year; the newest shipped IL pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040.pdf
         answers: '2025 Form IL-1040 (Individual Income Tax Return, IL-1040 R-12/25) — Step 4 Line 10 exemption lines,
           Step 5 Line 12 "Residents: Multiply Line 11 by 4.95% (.0495)" (second-pass verification of the rate and
@@ -1229,6 +1415,23 @@ states:
         answers: Indiana DOR - 2025 IT-40 Full-Year Resident Individual Income Tax Booklet - Line 1 federal AGI
           start; Schedule 1 Add-Backs (no treaty add-back); residency definitions; due date April 15, 2026; mailing
           addresses; check payee DOR; INTIME; filing requirement/exemption thresholds; rate 3% for tax year 2025
+        cadence: annual (per tax year; the newest shipped IN pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://forms.in.gov/Download.aspx?id=16921
+        answers: '2025 Indiana IT-40PNR Part-Year and Full-Year Nonresident Individual Income Tax Booklet (Indiana
+          DOR SP 258, R28 / 12-25), ''Who Should File?'' — ''Part-Year Residents and Full-Year Nonresidents'' (p.
+          6): ''If you were a part-year resident and received income while you lived in Indiana, you must file Indiana
+          Form IT-40PNR, Part-Year Resident or Nonresident Individual Income Tax Return.'''
+        cadence: annual (per tax year; the newest shipped IN pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://forms.in.gov/Download.aspx?id=16919
+        answers: '2025 Form IT-40PNR (State Form 472, R24 / 9-25), Indiana Part-Year or Full-Year Nonresident Individual
+          Income Tax Return — the form itself (page 1: ''Due April 15, 2026'')'
+        cadence: annual (per tax year; the newest shipped IN pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://forms.in.gov/Download.aspx?id=16925
+        answers: '2025 Form IT-40RNR (State Form 44406, R24 / 9-25), Reciprocal Nonresident Indiana Individual Income
+          Tax Return — the form and its instructions (page 1: ''Due April 15, 2026'')'
         cadence: annual (per tax year; the newest shipped IN pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://forms.in.gov/Download.aspx?id=16914
@@ -1319,6 +1522,14 @@ states:
           care 50%, taxes paid to other states)'
         cadence: annual (per tax year; the newest shipped KS pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.ksrevenue.gov/pdf/schs25.pdf
+        answers: '2025 Kansas Supplemental Schedule (Schedule S, schs25.pdf), ''PART B - Income Allocation for Nonresidents
+          and Part-Year Residents'' (page 2): ''B23. Nonresident allocation percentage (divide line B21 by line
+          B22 and round to the fourth decimal place, not to exceed 100.0000). Enter result here and on line 9 of
+          Form K-40'' | Kansas DOR — 2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part
+          B income allocation for nonresidents/part-year residents'
+        cadence: annual (per tax year; the newest shipped KS pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://www.ksrevenue.gov/pdf/k-40es25.pdf
         answers: 'Kansas DOR — 2025 K-40ES Individual Estimated Income Tax Voucher (k-40es25.pdf, Rev. 7-24) — INDEPENDENT
           second-pass source for the rate schedule and standard deduction: its STANDARD DEDUCTION CHART prints Single
@@ -1338,11 +1549,6 @@ states:
           same amount on page 2, line 5 of this form'', and the ''Mail to: Kansas Income Tax, Kansas Dept. of Revenue,
           PO Box 750260, Topeka, KS 66699-0260'' block. The 2024 food-sales-tax-credit lines A-H are ABSENT from
           the 2025 form.'
-        cadence: annual (per tax year; the newest shipped KS pack covers 2025 — for any newer year re-resolve at
-          this URL family and cite)
-      - url: https://www.ksrevenue.gov/pdf/schs25.pdf
-        answers: 'Kansas DOR — 2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part B income
-          allocation for nonresidents/part-year residents'
         cadence: annual (per tax year; the newest shipped KS pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.ksrevenue.gov/pdf/k-40v25.pdf
@@ -1436,6 +1642,25 @@ states:
           Tax—2025", Refund or No Payment Frankfort KY 40618-0006 / With Payment Frankfort KY 40619-0008)'
         cadence: annual (per tax year; the newest shipped KY pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://revenue.ky.gov/Forms/740-NP%20Packet%20Instructions%20(2025).pdf
+        answers: '2025 Kentucky Form 740-NP Packet Instructions (42A740-NP(P) (10-25)), Instructions for Form 740-NP,
+          p. 7: ''WHO MUST FILE FORM 740-NP—Form 740-NP must be used by full-year nonresidents who had income from
+          Kentucky sources and by part-year residents who had income while a Kentucky resident or from Kentucky
+          sources while a nonresident.'' — ''Individuals who established or abandoned Kentucky residency are considered
+          part-year residents.'''
+        cadence: annual (per tax year; the newest shipped KY pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenue.ky.gov/Forms/25_42A740-NP.pdf
+        answers: 2025 Form 740-NP (42A740-NP (10-25)), Kentucky Individual Income Tax Return, Nonresident or Part-Year
+          Resident — the 4-page form itself
+        cadence: annual (per tax year; the newest shipped KY pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenue.ky.gov/Forms/740-NP-R%20(2025).pdf
+        answers: '2025 Form 740-NP-R (42A740-NP-R (10-25)), Kentucky Income Tax Return, Nonresident—Reciprocal State,
+          page 1: ''This form may be used by qualifying full-year nonresidents'' — ''Nonresidents who answered “No”
+          to any of the statements above must file Form 740-NP to report Kentucky income.'''
+        cadence: annual (per tax year; the newest shipped KY pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx
         answers: Kentucky Department of Revenue — Individual Income Tax page (live DOR page; second-pass verification
           of the rate — "Kentucky's individual income tax law is based on the Internal Revenue Code in effect as
@@ -1516,6 +1741,20 @@ states:
           (Line 8), and repealed the additional $1,000 exemptions for dependents, 65-or-older, and blind (old Lines
           6A/6B/6D/6E/6F removed); Line 7 Federal AGI; Line 10 = Line 7 minus Line 8 minus Line 9D; ''A 2025 calendar
           year return is due on or before May 15, 2026'''
+        cadence: annual (per tax year; the newest shipped LA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://dam.ldr.la.gov/taxforms/IT540Bi-2025-Revised-7-26.pdf
+        answers: '2025 Louisiana IT-540B Nonresident and Part-Year Resident Individual Income Tax instructions (revised;
+          ''This form has been updated as of June 24, 2026.''), ''WHO MUST FILE A RETURN (FORM IT-540B)'' (p. 2):
+          ''1. If you are a nonresident, or part-year resident with income from Louisiana sources who is required
+          to file a federal individual income tax return, you must file a Louisiana income tax return reporting
+          income earned in 2025.'' — ''NONRESIDENT RETURN OR PART-YEAR RETURN'' (p. 2): ''If you are filing as a
+          part-year resident, mark an "X" in the Part-Year Return box.'''
+        cadence: annual (per tax year; the newest shipped LA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://dam.ldr.la.gov/taxforms/IT540B(2025)WEB-BC-F.pdf
+        answers: 2025 Form IT-540B WEB-BC, Louisiana Nonresident and Part-Year Resident — the 4-page return that
+          opens the 16-page PDF (page 1 carries the 'Nonresident Return' and 'Part-Year Return' boxes)
         cadence: annual (per tax year; the newest shipped LA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf
@@ -1607,6 +1846,22 @@ states:
           tax on 5.0% income, Schedule Y Line 4b U.S. tax treaty deduction, Filing Due Dates (April 15, 2026), mailing
           PO Box 7000 / 7003, check payable to the Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved
           via the Wayback Machine's 200-status capture of the official mass.gov URL (mass.gov 403s non-browser fetchers).
+        cadence: annual (per tax year; the newest shipped MA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.mass.gov/doc/2025-form-1-nrpy-instructions/download
+        answers: 'Massachusetts Department of Revenue 2025 Form 1-NR/PY Instructions, ''Who Must File'' (p. 3):
+          ''You also must file Form 1-NR/PY if you were a resident of Massachusetts for part of the year and you
+          had more than $8,000 in gross income during that time, whether received from sources inside or outside
+          of Massachusetts.'' — and ''3. You are a part-year resident if, during the taxable year, you moved to
+          Massachusetts or established a permanent place of abode here and became a resident, or you terminated
+          your status as a Massachusetts resident to establish a residence outside the state. Fill in the Part-year
+          resident oval at the top of the form if this category applies to you.'''
+        cadence: annual (per tax year; the newest shipped MA pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.mass.gov/doc/2025-form-1-nrpy-massachusetts-nonresidentpart-year-tax-return/download
+        answers: '2025 Massachusetts Form 1-NR/PY, Nonresident/Part-Year Tax Return — the 5-page return itself (page
+          1: ''Form 1-NR/PY Massachusetts Nonresident/Part-Year Tax Return 2025''; ovals ''Nonresident'', ''Part-year
+          resident'', ''Filing as both nonresident and part-year resident'')'
         cadence: annual (per tax year; the newest shipped MA pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.mass.gov/doc/2025-form-1-massachusetts-resident-income-tax-return/download
@@ -1704,11 +1959,36 @@ states:
         cadence: annual (per tax year; the newest shipped MD pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/nonresident-booklet.pdf
-        answers: 2025 Maryland Nonresident Tax Forms and Instructions (Form 505 instructions, 25 pages, PDF build
-          2026-01-20) — the independent SECOND-PASS source; prints the identical 2025 Tax Rate Schedules I and II
-          (Instruction 19, including the new $500,001/$1,000,001 and $600,001/$1,200,001 6.25%/6.50% brackets) and
-          the Form 505NR computation worksheet rows, plus the parallel line 31a/32d net-capital-gain additional
-          tax
+        answers: '2025 Maryland Nonresident Tax Forms & Instructions (Form 505), Instruction 1 ''WHAT FORM TO FILE?''
+          (p. 1): ''Taxpayer who moved into or out of Maryland during the tax year and received income from Maryland
+          sources while you were a nonresident of Maryland.'' — ''Form 505 Nonresident Return and Form 502 Resident
+          Return''; Instruction 28 ''PART-YEAR RESIDENTS.'' (p. 15): ''If you moved into or out of Maryland during
+          2025 AND received taxable Maryland income both while you were a resident and while you were a nonresident
+          AND you are required to file a federal return, you are required to file two returns with the State of
+          Maryland.'' | 2025 Maryland Nonresident Tax Forms and Instructions (Form 505 instructions, 25 pages, PDF
+          build 2026-01-20) — the independent SECOND-PASS source; prints the identical 2025 Tax Rate Schedules I
+          and II (Instruction 19, including the new $500,001/$1,000,001 and $600,001/$1,200,001 6.25%/6.50% brackets)
+          and the Form 505NR computation worksheet rows, plus the parallel line 31a/32d net-capital-gain additional
+          tax'
+        cadence: annual (per tax year; the newest shipped MD pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/505.pdf
+        answers: 2025 Maryland Form 505, Nonresident Income Tax Return (COM/RAD-022 09/25) — the 4-page form itself
+        cadence: annual (per tax year; the newest shipped MD pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/505nr.pdf
+        answers: 2025 Maryland Form 505NR, Nonresident Income Tax Calculation (COM/RAD-318 09/25) — 'ATTACH TO YOUR
+          TAX RETURN'
+        cadence: annual (per tax year; the newest shipped MD pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/515.pdf
+        answers: '2025 Maryland Form 515, for nonresidents employed in Maryland who reside in jurisdictions that
+          impose a local income or earnings tax on Maryland residents (COM/RAD-023 09/25), with its instructions
+          — Instruction 2 ''WHO MUST FILE?'' (instructions Page 1): ''In general, you are liable for local income
+          tax and must file this return if you are a nonresident of Maryland AND you received salary, wages or other
+          compensation for personal services performed in any county of Maryland or in Baltimore City AND you lived
+          in a jurisdiction that imposes a local income or earnings tax on Maryland residents AND you are required
+          to file a federal return.'''
         cadence: annual (per tax year; the newest shipped MD pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/502cr.pdf
@@ -1833,6 +2113,21 @@ states:
           + Maine Standard Deduction Chart and Worksheet for Standard/Itemized Deductions, Line 18 Exemption (''Multiply
           the amount shown on line 13 by $5,150'') + Worksheet for Phaseout of Personal Exemption Deduction Amount,
           2025 Tax Year Quick Facts, the 2025 MAINE INCOME TAX TABLE, and the 2025 TAX RATE SCHEDULES'
+        cadence: annual (per tax year; the newest shipped ME pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nr_fillable.pdf
+        answers: '2025 Maine Schedule NR (Form 1040ME), Schedule for Calculating the Nonresident Credit, page 1:
+          ''Who must file Schedule NR? Part-year resident, nonresident and safe harbor resident individuals who
+          are required to file a Maine return, but have income not taxable by Maine and use the same filing status
+          on the Maine return as used on the federal return.'' — page 2: ''A part-year resident is subject to Maine
+          income tax on all income received while a resident of Maine, plus any income derived from Maine sources
+          during the period of nonresidence.'''
+        cadence: annual (per tax year; the newest shipped ME pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nrh_fillable.pdf
+        answers: '2025 Maine Schedule NRH (Form 1040ME), Schedule for Apportionment and for Calculating the Nonresident
+          Credit for Married Person Electing to File Single — line 11 ''NONRESIDENT CREDIT: Multiply line 10 by
+          line 7, column C. Enter result here and on Form 1040ME, line 21'''
         cadence: annual (per tax year; the newest shipped ME pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2025.pdf
@@ -1979,6 +2274,12 @@ states:
         answers: Make a Payment - Michigan Individual Income Tax e-Payments (online payment portal)
         cadence: annual (per tax year; the newest shipped MI pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/Schedule-NR.pdf
+        answers: '2025 Michigan Schedule NR, Nonresident and Part-Year Resident Schedule (Rev. 03-25) — the 2-page
+          schedule itself (page 1: ''2025 MICHIGAN Nonresident and Part-Year Resident Schedule'' — ''Include with
+          Form MI-1040.'')'
+        cadence: annual (per tax year; the newest shipped MI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       law_changes:
       - url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
         answers: '2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2) — Expanded Deduction
@@ -2044,6 +2345,13 @@ states:
           advance payments, new M1M subtractions); residency rules (domicile + 183-day/abode); due date April 15,
           2026; filing-requirement chart; Tax Tables pp.32-38 and Tax Rate Schedules p.39 (mandate at $86,800);
           payment options; Mail Station 0010 mailing address
+        cadence: annual (per tax year; the newest shipped MN pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1nr-25.pdf
+        answers: '2025 Schedule M1NR, Nonresidents/Part-Year Residents, with its instructions — ''Should I file
+          this schedule?'' (instructions, PDF page 3): ''File this schedule with your Form M1 if you meet the minimum
+          filing requirement and in 2025 you were either a: • Full-year nonresident of Minnesota • Part-year resident
+          of Minnesota'' — ''You must include Schedule M1NR when you file your return.'''
         cadence: annual (per tax year; the newest shipped MN pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.revenue.state.mn.us/sites/default/files/2026-03/m1-25.pdf
@@ -2163,6 +2471,17 @@ states:
           of Revenue; 2025 Tax Chart p.21)
         cadence: annual (per tax year; the newest shipped MO pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://dor.mo.gov/forms/MO-NRI_2025.pdf
+        answers: '2025 Form MO-NRI, Missouri Income Percentage, ''Part A, Line 2: Part-Year Resident'' (page 3):
+          ''If you were a Missouri part-year resident with Missouri source income and income from another state,
+          you may use Form MO-NRI or Form MO-CR, whichever is to your benefit.'''
+        cadence: annual (per tax year; the newest shipped MO pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://dor.mo.gov/forms/MO-CR_2025.pdf
+        answers: '2025 Form MO-CR, Credit for Income Taxes Paid to Other States or Political Subdivisions (page
+          1): ''Complete this form if you or your spouse have income from another state or political subdivision.'''
+        cadence: annual (per tax year; the newest shipped MO pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://dor.mo.gov/forms/MO-1040A%20Instructions_2025.pdf
         answers: 2025 Form MO-1040A Single/Married (Income from One Spouse) Short Form Instructions — independent
           second pass on the 2025 Tax Chart (identical Tax Rate Chart and Tax Calculation Worksheet, including the
@@ -2245,6 +2564,12 @@ states:
           3.75%, 2028 3.5%, 2029 3.25%, 2030+ 3%); April 15th due date; mailing addresses'
         cadence: annual (per tax year; the newest shipped MS pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80205258%201.pdf
+        answers: 2025 Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return (Form
+          80-205-25-8-1-000, Rev. 09/25) — the form itself (page 1 carries a 'Non-Resident' box and a 'Part-Year,
+          Tax Year Beginning' box with its dates)
+        cadence: annual (per tax year; the newest shipped MS pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://www.dor.ms.gov/individual/individual-income-tax-frequently-asked-questions
         answers: MS DOR — Individual Income Tax Frequently Asked Questions (treaty non-conformity; resident/nonresident/part-year
           forms; 1042-S taxable). The live FAQ now shows the 2025 rate (4.4%), corroborating the 2025 filing-season
@@ -2319,6 +2644,11 @@ states:
           worker exclusion, Residency Status and the new Mixed Residency checkbox, North Dakota Reciprocity, Due
           Dates (April 15, 2026), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check
           payable to the Montana Department of Revenue; TransAction Portal https://tap.dor.mt.gov)
+        cadence: annual (per tax year; the newest shipped MT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/Form_2_2025_Schedule_II.pdf
+        answers: 2025 Montana Form 2 Schedule II – Tax on Montana Source Income (2025v3, 12/2025) — the schedule
+          itself, with its 'Part-Year Resident Information' section
         cadence: annual (per tax year; the newest shipped MT pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf
@@ -2405,6 +2735,13 @@ states:
           (p.6)
         cadence: annual (per tax year; the newest shipped NC pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.ncdor.gov/2025-d-400-schedule-pn-web-fill-version/open
+        answers: '2025 D-400 Schedule PN, Part-Year Resident and Nonresident Schedule (Web-Fill 9-25) — the 2-page
+          schedule itself (its page 1, PDF page 2: ''A part-year resident or a nonresident who receives income from
+          N.C. sources must complete this form to determine the percentage of total income from all sources that
+          is subject to N.C. tax.'')'
+        cadence: annual (per tax year; the newest shipped NC pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://www.ncdor.gov/2025-d-400-web-filled-version/open
         answers: 2025 Form D-400 (web-filled version, "D-400 Web-Fill 9-25", Tax Year 2025) — Line 6 Federal Adjusted
           Gross Income, Line 7 additions (Form D-400 Schedule S, Part A, Line 16), Line 9 deductions (Schedule S
@@ -2484,6 +2821,12 @@ states:
           2026, mailing PO Box 5621, payee 'ND State Tax Commissioner', Changes Affecting You and Your Income Tax
           (SB 2282 employer child care credit, OBBBA conformity, SB 2047 military pay withholding beginning 2026),
           2025 Tax Table (pp.20-27) and 2025 Tax Rate Schedules (p.28)
+        cadence: annual (per tax year; the newest shipped ND pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28724-schedule-nd-1nr-2025.pdf
+        answers: '2025 Schedule ND-1NR, Tax Calculation for Nonresidents and Part-Year Residents (SFN 28724 (12-2025),
+          ''Attach to Form ND-1''), ''Who must complete'' (p. 2): ''If you were a full-year nonresident or a part-year
+          resident of North Dakota during the tax year, you must complete this schedule to calculate your tax.'''
         cadence: annual (per tax year; the newest shipped ND pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28702-form-nd-1-2025.pdf
@@ -2679,6 +3022,18 @@ states:
           standard deduction amounts and line 18 prints ''$171 times the number on line 4''. Both passes agree.'
         cadence: annual (per tax year; the newest shipped NE pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N.pdf
+        answers: '2025 Nebraska Form 1040N, page 1 line 4 "Nebraska personal exemptions (Enter 1 in each line of
+          4a or 4b that applies)": 4a "Yourself. If someone can claim you as a dependent, leave blank", 4b Spouse,
+          4c "Total number of dependents listed", 4 "Total Nebraska personal exemptions - add lines 4a, 4b, and
+          4c"; line 17 "Total Nebraska tax before Nebraska personal exemption credit (add lines 15 and 16)"; page
+          2 line 18 "NE personal exemption credit for residents only ($171 times the number on line 4)", line 34
+          "Total nonrefundable credits (add lines 18 through 33)", line 35 "Nebraska tax after nonrefundable credits
+          Subtract line 34 from line 17 (if line 34 is more than line 17, enter -0-)". Second pass: the 2025 Nebraska
+          Individual Income Tax Booklet, p. 12 Lines 4a-4c, p. 13 Line 4, p. 14 Line 18 and p. 17 Line 35, which
+          print the same $171 and line text.'
+        cadence: annual (per tax year; the newest shipped NE pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
     change_channels:
     - url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
       answers: The newest shipped NE pack's primary authority (TY2025). A revision newer than 2025 published by
@@ -2822,6 +3177,21 @@ states:
         answers: New Mexico Taxpayer Access Point (TAP) — official online filing/payment portal
         cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://realfile.tax.newmexico.gov/2025pit-b-ins.pdf
+        answers: 'Instructions for 2025 PIT-B, Schedule of New Mexico Allocation and Apportionment of Income (p.
+          B-1): ''If you have income from sources both inside and outside New Mexico, attach and submit Schedule
+          PIT-B with your PIT-1 Return.''; ''Part-Year and First-Year Residents Line A and B'' (p. B-3): ''Part-year
+          and first-year residents enter the beginning and ending date for the tax year when the taxpayer was a
+          resident of New Mexico.'''
+        cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://realfile.tax.newmexico.gov/2025pit-b.pdf
+        answers: '2025 PIT-B, New Mexico Allocation and Apportionment of Income Schedule (p. 1): ''Taxpayers who
+          allocate and apportion income from both inside and outside the State of New Mexico must complete this
+          schedule. ... Include the Schedule PIT-B with your personal income tax return, Form PIT-1.'' — ''For first-year
+          and part-year resident taxpayers, enter the period of residency.'''
+        cadence: annual (per tax year; the newest shipped NM pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       law_changes:
       - url: https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf
         answers: New Mexico Legislature — 2024 House Bill 252 (HTRC/HB 252/a, final version), Section 5 amending
@@ -2905,6 +3275,21 @@ states:
           lines 20-23, Who must file ($4,000 / $3,100 dependent-single), line 34 standard deduction table, line
           36 dependent exemption ($1,000), line 39 tax computation, p. 33 rate schedules, pp. 34-39 tax computation
           worksheets, due date April 15 2026
+        cadence: annual (per tax year; the newest shipped NY pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.tax.ny.gov/pdf/2025/inc/it203i_2025.pdf
+        answers: 'Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025
+          (IT-203-I, 47 pages), ''How are you taxed as a nonresident or as a part-year resident?'' (p. 3): ''If
+          you were a resident of New York State for only part of the tax year, you must pay New York State tax on
+          all income you received while you were a resident of the state and on income you received from New York
+          State sources while you were a nonresident. To determine how much tax you owe, use Form IT-203, Nonresident
+          and Part-Year Resident Income Tax Return.'' — and ''New York State nonresidents and part-year residents:
+          Who must file?'' (p. 3): ''You must file Form IT-203 if you meet any of the following conditions'''
+        cadence: annual (per tax year; the newest shipped NY pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.tax.ny.gov/pdf/2025/inc/it203_2025_fill_in.pdf
+        answers: 'Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 — the 4-page
+          return itself (page 1: ''For the year January 1, 2025, through December 31, 2025'')'
         cadence: annual (per tax year; the newest shipped NY pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.tax.ny.gov/forms/html-instructions/2025/it/it201i-2025.htm
@@ -3020,6 +3405,12 @@ states:
           Tax Brackets (p. 18), personal and dependent exemption table (p. 17)
         cadence: annual (per tax year; the newest shipped OH pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/itnrc-fi.pdf
+        answers: '2025 IT NRC, Ohio Nonresident Credit Calculation — the 3-page form itself (page 1: ''This form
+          is for individuals who were either full-year nonresidents or part-year residents of Ohio during the tax
+          year above.'')'
+        cadence: annual (per tax year; the newest shipped OH pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://tax.ohio.gov/static/forms/ohio_individual/individual/2025/1040-bundle-original-fi.pdf
         answers: '2025 Ohio IT 1040 form bundle (the return itself plus the Ohio Schedule of Adjustments, Schedule
           of Business Income, Schedule of Credits and Schedule of Dependents) - SECOND PASS on structure: line 1
@@ -3100,6 +3491,13 @@ states:
           exemption on Schedule 511-C line 6; Electric Vehicle Charging Tax Credit added to Form 511-CR); due date
           April 15, 2026 (April 20 e-file/e-pay); WHO MUST FILE thresholds; mailing to PO Box 26800, OKC 73126-0800;
           check payable to Oklahoma Tax Commission; OkTAP at oktap.tax.ok.gov.'
+        cadence: annual (per tax year; the newest shipped OK pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-NR-Pkt.pdf
+        answers: '2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents
+          (Form 511-NR packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions,
+          ''F Residency Status'' (p. 9): ''Part-Year Resident - If a part-year resident, enter the dates of residency
+          in Oklahoma. If filing a joint return, both must be part-year residents.'''
         cadence: annual (per tax year; the newest shipped OK pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://www.oklegislature.gov/cf_pdf/2025-26%20ENR/hB/HB2764%20ENR.PDF
@@ -3185,10 +3583,22 @@ states:
           this URL family and cite)
       - url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_or-40-p-inst_101-048-1_2025.pdf
         answers: 2025 Form OR-40-N and Form OR-40-P Instructions, Oregon Individual Income Tax for Nonresidents
-          and Part-year Residents (150-101-048-1, Rev. 12-30-25) — p.21 '2025 Tax rate charts', which print the
-          FULL four-bracket Chart S and Chart J (including the $4,400 / $11,100 and $8,800 / $22,200 breakpoints
-          that the resident booklet omits because its tax tables govern below $50,000), plus the worked chart examples
-          and the Oregon-percentage proration of deductions and the federal tax liability subtraction
+          and Part-year Residents (150-101-048-1, Rev. 12-30-25) — 'What form do I use?' (p. 7; Form OR-40-P for
+          a part-year resident, Form OR-40-N for a nonresident, with the joint-return cases in Table 2, p. 11);
+          p.21 '2025 Tax rate charts', which print the FULL four-bracket Chart S and Chart J (including the $4,400
+          / $11,100 and $8,800 / $22,200 breakpoints that the resident booklet omits because its tax tables govern
+          below $50,000), plus the worked chart examples and the Oregon-percentage proration of deductions and the
+          federal tax liability subtraction ('Form OR-40-N filers only', p. 21)
+        cadence: annual (per tax year; the newest shipped OR pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-p_101-055_2025.pdf
+        answers: '2025 Form OR-40-P, Oregon Individual Income Tax Return for Part-year Residents (150-101-055, Rev.
+          09-18-25) — the return itself; line 45: ''Oregon income tax. Line 44 multiplied by the Oregon percentage'''
+        cadence: annual (per tax year; the newest shipped OR pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-n_101-048_2025.pdf
+        answers: '2025 Form OR-40-N, Oregon Individual Income Tax Return for Nonresidents (150-101-048, Rev. 09-18-25)
+          — the return itself; line 42: ''Deductions and modifications multiplied by the Oregon percentage'''
         cadence: annual (per tax year; the newest shipped OR pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       law_changes:
@@ -3377,6 +3787,38 @@ states:
           percentage is 16%", RI Schedule I Line 21 "Multiply the amount on line 20 by 25%"'
         cadence: annual (per tax year; the newest shipped RI pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040NR%20Instructions%20122025.pdf
+        answers: '2025 Instructions for Filing RI-1040NR (for Rhode Island nonresidents or part-year residents filing
+          Form RI-1040NR; Revised 11/2025) — p. I-1: ''These instructions are for the use of non-resident and part-year
+          resident taxpayers only. Full Year resident taxpayers will file their individual income tax returns on
+          Form RI-1040.''; ''WHO MUST FILE A RETURN'': ''Every part-year individual who was a resident for a period
+          of less than 12 months is required to file a Rhode Island return if he or she is required to file a federal
+          return. Part-year residents should complete page 15, Schedule III.''; ''Line 11 – Rhode Island Allocated
+          Income Tax'' (p. I-5): ''If ALL your income is from Rhode Island, check the first box and enter the amount
+          from line 10 on this line. ... If you are a PART-YEAR RESIDENT with income from outside Rhode Island,
+          complete page 15, RI Schedule III and enter the result on this line.'''
+        cadence: annual (per tax year; the newest shipped RI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040NRWE_w.pdf
+        answers: '2025 Form RI-1040NR, Nonresident Individual Income Tax Return (with RI Schedules W and E) — page
+          3, ''RI SCHEDULE II AND III - ALLOCATION AND MODIFICATION FOR NONRESIDENTS'': ''Schedule III should be
+          completed by PART-YEAR RESIDENTS with income from outside Rhode Island. RI Schedule III is located on
+          page 15. NONRESIDENTS and PART-YEAR RESIDENTS with all income from Rhode Island sources do not need to
+          complete either schedule II or III.'''
+        cadence: annual (per tax year; the newest shipped RI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025%20RI-1040NR%20Schedule%20III_w.pdf
+        answers: '2025 RI Schedule III, Part-year Resident Tax Calculation (p. 1): ''THIS SCHEDULE IS ONLY TO BE
+          COMPLETED BY PART-YEAR RESIDENTS. FULL YEAR NONRESIDENTS COMPLETE RI SCHEDULE II. A part-year resident
+          is a person who changed his legal residence by moving into or out of Rhode Island at any time during the
+          year 2025.'''
+        cadence: annual (per tax year; the newest shipped RI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025%20RI-1040NR%20Schedule%20II_w.pdf
+        answers: '2025 RI Schedule II, Full Year Nonresident Tax Calculation (p. 1): ''THIS SCHEDULE IS ONLY TO
+          BE COMPLETED BY FULL YEAR NONRESIDENTS. PART-YEAR RESIDENTS COMPLETE RI SCHEDULE III.'''
+        cadence: annual (per tax year; the newest shipped RI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-11/ADV_2025_22_Inflation_Adjustments.pdf
         answers: 'RI Division of Taxation ADVISORY ADV 2025-22 (November 3, 2025), "Inflation-adjusted amounts set
           for Tax Year 2026 — Division also posts changes for certain items involving 2025 Tax Year" — PASS 2 authority.
@@ -3479,6 +3921,26 @@ states:
           w dependent exemption $4,930
         cadence: annual (per tax year; the newest shipped SC pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://dor.sc.gov/sites/dor/files/forms/Geninfo_2025.pdf
+        answers: 'Individual Income Tax: General Information and FAQs (SCDOR; the 2025 ''Gen Instr'', for the 2025
+          return due April 15, 2026) — ''What is my residency status if I moved into or out of South Carolina during
+          the tax year?'' (p. 2): ''You are a part-year resident and may consider yourself a full-year resident
+          or nonresident. If you file as a full-year resident, file the SC1040. ... If you file as a nonresident,
+          file the SC1040 with the Schedule NR. ... You may choose the filing method that is most beneficial to
+          you.'''
+        cadence: annual (per tax year; the newest shipped SC pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://dor.sc.gov/sites/dor/files/forms/SchNRInst_2025.pdf
+        answers: '2025 Schedule NR Instructions, Nonresident Schedule (SCDOR, July 2025) — ''Before You Begin''
+          (p. 3): ''Use the Schedule NR if you are a nonresident of South Carolina or you are filing as a part-year
+          resident.'' — ''Attach the Schedule NR and a copy of your federal return to your SC1040.'''
+        cadence: annual (per tax year; the newest shipped SC pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://dor.sc.gov/sites/dor/files/forms/SchNR_2025.pdf
+        answers: '2025 Schedule NR, Nonresident Schedule (SCDOR 3081, Rev. 4/2/25), p. 1: ''Schedule NR is for Nonresidents
+          or Part-year residents. Attach to completed SC1040.'''
+        cadence: annual (per tax year; the newest shipped SC pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2025.pdf
         answers: 2025 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - line 1 'Enter federal taxable
           income from your federal form'; line w South Carolina Dependent Exemption; line 6 TAX (see SC1040TT);
@@ -3570,6 +4032,21 @@ states:
           17 phase-out bases, TC-40A Part 1 Additions (codes 51-69), Income from Other Countries, Rounding Off to
           Whole Dollars, When to File and Pay (April 15, 2026), paper-return mailing addresses (84134-0266 with
           payment / 84134-0260 all other returns), check payee, tap.utah.gov
+        cadence: annual (per tax year; the newest shipped UT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://files.tax.utah.gov/tax/forms/2025/tc-40inst.pdf
+        answers: '2025 Utah TC-40 Individual Income Tax Instructions — ''Who Must File'' (p. 2): ''You must file
+          a TC-40 return if you: 1. are a Utah resident or part-year resident who must file a federal return, 2.
+          are a nonresident or part-year resident with income from Utah sources who must file a federal return'';
+          ''Residency'' (p. 7): ''If you or your spouse answer "N," complete and attach Schedule B, Non or Part-year
+          Resident Schedule.''; ''TC-40B - Non or Part-year Resident Schedule'' (p. 28): ''Use TC-40B to calculate
+          the Utah tax for a nonresident or a part-year resident.'' — ''1. If you are a part-year resident, enter
+          the date you established residency in Utah and the date the residency ended.'''
+        cadence: annual (per tax year; the newest shipped UT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://files.tax.utah.gov/tax/forms/2025/tc-40b.pdf
+        answers: '2025 TC-40B, Non and Part-year Resident Schedule (form 40506) — Residency Status: ''Part-year
+          resident from: / / to / /'''
         cadence: annual (per tax year; the newest shipped UT pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://files.tax.utah.gov/tax/forms/current/tc-40.pdf
@@ -3757,6 +4234,19 @@ states:
           IN-116; myVTax'
         cadence: annual (per tax year; the newest shipped VT pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2025.pdf
+        answers: '2025 Schedule IN-113 Instructions, Income Adjustment — ''WHO MUST FILE IN-113'' (p. 1 of 2): ''You
+          must file Schedule IN-113 if you are either: • a nonresident or part-year resident and earned or received
+          Vermont income''; ''Part-Year Resident: Part-year residents may, in some cases, be able to adjust Vermont
+          income by both the Vermont percentage of income on Schedule IN-113 and claim a credit for income tax paid
+          to another tax jurisdiction on Schedule IN-117'''
+        cadence: annual (per tax year; the newest shipped VT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-2025.pdf
+        answers: '2025 Schedule IN-113, Vermont Income Adjustment Calculations (p. 1): ''Nonresidents and Part-Year
+          Residents Must Complete Parts I and II'' — ''INCLUDE WITH FORM IN-111'''
+        cadence: annual (per tax year; the newest shipped VT pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://tax.vermont.gov/sites/tax/files/documents/GB-1210-2025.pdf
         answers: 'VT Dept of Taxes — 2025 GB-1210, Income Tax Withholding Instructions, Tables, and Charts (effective
           January 1, 2025 - expires December 31, 2025): the Vermont Percentage Method Withholding Tables ANNUAL
@@ -3881,6 +4371,20 @@ states:
           Table p.35; 2025 Tax Table pp.38-43; 2025 Tax Computation Worksheet p.44
         cadence: annual (per tax year; the newest shipped WI pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
+      - url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR-Inst.pdf
+        answers: '2025 Form 1NPR Instructions, Wisconsin Income Tax for Nonresidents and Part-Year Residents (I-152)
+          — ''Which Form To File'' (p. 5): ''If you are a nonresident or part-year resident of Wisconsin in 2025,
+          you must file Wisconsin Form 1NPR.''; ''Who Must File'' (p. 4): ''If you are a nonresident or part-year
+          resident of Wisconsin and your gross income from Wisconsin sources (or the combined Wisconsin source gross
+          income of you and your spouse) is $2,000 or more for 2025, you must file a Wisconsin return.'''
+        cadence: annual (per tax year; the newest shipped WI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR.pdf
+        answers: '2025 Form 1NPR, Nonresident & Part-Year Resident Wisconsin Income Tax (I-050i) — the return itself;
+          page 1, ''Resident status Check the status that applies'': ''Part-year resident of Wisconsin from'' (the
+          dates of residency)'
+        cadence: annual (per tax year; the newest shipped WI pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
       - url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1f.pdf
         answers: '2025 Wisconsin Form 1 (fillable) - second-pass verification: Line 11 ''Subtract line 10c from
           line 9. If line 10c is larger than line 9, fill in 0. This is taxable income''; Line 12 ''Tax (see table
@@ -3976,6 +4480,12 @@ states:
           = FAGI (p.24), Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency
           Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form IT-140 p.2), Special Nonresident
           / 183-day PA-VA rule (Schedule A Part II instructions, p.32)'
+        cadence: annual (per tax year; the newest shipped WV pack covers 2025 — for any newer year re-resolve at
+          this URL family and cite)
+      - url: https://tax.wv.gov/Documents/PIT/2025/it140.Schedule-A.2025.pdf
+        answers: 2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income — '(To Be Completed
+          By Nonresidents and Part-Year Residents Only)'; 'PART-YEAR RESIDENTS (Enter period of West Virginia residency
+          MM/DD/YYYY)'
         cadence: annual (per tax year; the newest shipped WV pack covers 2025 — for any newer year re-resolve at
           this URL family and cite)
       - url: https://tax.wv.gov/Documents/PIT/2025/it140.schedule-M.2025.pdf

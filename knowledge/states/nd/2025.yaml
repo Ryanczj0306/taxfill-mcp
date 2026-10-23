@@ -74,6 +74,40 @@ forms:
   part_year_or_nonresident: Schedule ND-1NR (Tax Calculation for Nonresidents and Part-Year Residents), filed with
     Form ND-1. (Nonresidents and part-year residents file Form ND-1 plus Schedule ND-1NR; they cannot use Form ND-EZ.
     This also applies to a joint return where either spouse was a nonresident for part or all of the year.)
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is the booklet's resident pages, so this entry named
+  # Schedule ND-1NR without citing it. North Dakota has no separate nonresident return — both roles file Form ND-1 with
+  # Schedule ND-1NR — so both roles carry the same two documents. The URLs are the "Form ND-1 Booklet - Individual
+  # Income Tax Instructions and Tables" and "Schedule ND-1NR - Non-resident and Part-year Resident Schedule (2025)"
+  # links on the Office of State Tax Commissioner's forms page (www.tax.nd.gov/forms); each PDF was downloaded twice on
+  # 2026-10-16 with identical sha256 (booklet cea20eda0416339c..., Schedule ND-1NR 1c4d3d94dffba8ce...).
+  citations:
+    part_year:
+    - source: >-
+        2025 North Dakota Individual Income Tax Instructions, Forms ND-EZ and ND-1 — '2025 Form ND-1 Instructions',
+        'Nonresident of North Dakota for part or all of the 2025 tax year' (p. 11): 'If you were a nonresident of North
+        Dakota for part or all of the 2025 tax year, first complete Form ND-1 through line 19. Then complete Schedule
+        ND-1NR to calculate the amount of your tax.'; and 'Line 20 - Tax' (p. 14): 'If you were a full-year nonresident
+        or a part-year resident for the tax year, you must complete Schedule ND-1NR to calculate your tax.'
+      url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+    - source: >-
+        2025 Schedule ND-1NR, Tax Calculation for Nonresidents and Part-Year Residents (SFN 28724 (12-2025), 'Attach to
+        Form ND-1'), 'Who must complete' (p. 2): 'If you were a full-year nonresident or a part-year resident of North
+        Dakota during the tax year, you must complete this schedule to calculate your tax.'
+      url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28724-schedule-nd-1nr-2025.pdf
+    nonresident:
+    - source: >-
+        2025 North Dakota Individual Income Tax Instructions, Forms ND-EZ and ND-1 — '2025 Form ND-1 Instructions',
+        'Nonresident of North Dakota for part or all of the 2025 tax year' (p. 11): 'If you were a nonresident of North
+        Dakota for part or all of the 2025 tax year, first complete Form ND-1 through line 19. Then complete Schedule
+        ND-1NR to calculate the amount of your tax.'; and 'Line 20 - Tax' (p. 14): 'If you were a full-year nonresident
+        or a part-year resident for the tax year, you must complete Schedule ND-1NR to calculate your tax.'
+      url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+    - source: >-
+        2025 Schedule ND-1NR, Tax Calculation for Nonresidents and Part-Year Residents (SFN 28724 (12-2025), 'Attach to
+        Form ND-1'), 'Who must complete' (p. 2): 'If you were a full-year nonresident or a part-year resident of North
+        Dakota during the tax year, you must complete this schedule to calculate your tax.'
+      url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28724-schedule-nd-1nr-2025.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

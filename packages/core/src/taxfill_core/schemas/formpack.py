@@ -18,9 +18,12 @@ every failure tells the pack author exactly what to fix.
 
 from __future__ import annotations
 
+import difflib
+import functools
 import re
+from collections.abc import Collection, Mapping
 from pathlib import Path
-from typing import Literal
+from typing import Literal, NamedTuple
 from urllib.parse import urlparse
 
 import yaml
@@ -32,6 +35,60 @@ FieldType = Literal["text", "checkbox", "money"]
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _JURISDICTION_RE = re.compile(r"^(federal|states/[a-z]{2})$")
 _SHA256_PLACEHOLDER = "..."  # authoring placeholder; fetch_blank refuses to verify against it
+
+
+# A relation may end in " unless <line>" (Phase K JK28, 2026-10-16): the face's own checkbox that tells the reader a
+# line is computed another way. IA 1040 prints "Check if using alternate tax (line 5), tax reduction calculation (line
+# 12), or low-income exemption", and a single filer who uses the Income Tax Reduction Worksheet (41-146) enters its
+# amount on line 12 — "Enter the smaller number here and on IA 1040, line 12. Check the box on IA 1040, step 5 if the
+# amount on line 3 is used" — so "12 == max(7 - 11, 0)" fails that correct return. verify reports a guarded relation
+# SKIPPED while its box is checked on the PDF. The keyword is a whole word; no line key may spell it.
+RELATION_GUARD_KEYWORD = "unless"
+_GUARD_WORD_RE = re.compile(rf"\b{RELATION_GUARD_KEYWORD}\b", re.IGNORECASE)
+_GUARD_GRAMMAR = f"'<expr> == <expr> {RELATION_GUARD_KEYWORD} <checkbox line>'"
+
+
+def split_relation_guard(relation: str) -> tuple[str, str | None]:
+    """Split a relation into its equation and its ``unless`` guard: ``(equation, guard line or None)``.
+
+    ``"12 == max(7 - 11, 0) unless alt_tax_method"`` -> ``("12 == max(7 - 11, 0)", "alt_tax_method")``; a relation
+    with no clause comes back whole with ``None``. Only the CLAUSE is checked here — the equation's arithmetic is the
+    verify evaluator's to parse — and a malformed clause raises :class:`ValueError` saying how to write it: the
+    keyword must stand alone after the equation, at most once, followed by exactly one line key.
+    """
+    found = list(_GUARD_WORD_RE.finditer(relation))
+    if not found:
+        return relation, None
+    if len(found) > 1:
+        raise ValueError(
+            f"relation {relation!r}: '{RELATION_GUARD_KEYWORD}' appears {len(found)} times — a relation takes at most "
+            f"one guard, written {_GUARD_GRAMMAR}; to suspend it for either of two boxes, declare the arithmetic "
+            f"once per path or leave it undeclared"
+        )
+    match = found[0]
+    before, after = relation[: match.start()], relation[match.end():]
+    if match.group() != RELATION_GUARD_KEYWORD:
+        raise ValueError(
+            f"relation {relation!r}: write the guard keyword in lowercase, {_GUARD_GRAMMAR} (found {match.group()!r})"
+        )
+    if (before and not before[-1].isspace()) or (after and not after[0].isspace()):
+        raise ValueError(
+            f"relation {relation!r}: '{RELATION_GUARD_KEYWORD}' must stand alone between spaces, written "
+            f"{_GUARD_GRAMMAR}"
+        )
+    equation, guard = before.strip(), after.strip()
+    if "==" not in equation:
+        raise ValueError(
+            f"relation {relation!r}: '{RELATION_GUARD_KEYWORD}' must follow a whole equation, written "
+            f"{_GUARD_GRAMMAR} — nothing before it reads '<expr> == <expr>'"
+        )
+    if not guard or len(guard.split()) != 1:
+        raise ValueError(
+            f"relation {relation!r}: '{RELATION_GUARD_KEYWORD}' must be followed by exactly ONE line key — the "
+            f"checkbox line whose check suspends the relation, written {_GUARD_GRAMMAR}"
+            + (f"; found {guard!r}" if guard else "; found nothing")
+        )
+    return equation, guard
 
 
 def _require_http_url(value: str, key: str) -> str:
@@ -153,6 +210,305 @@ class Mailing(BaseModel):
 OWN_FINAL_REVISION_FORMS = frozenset({("federal", "1040-ES")})
 
 
+# ---------------------------------------------------------------------------
+# Page-header mirrors (Phase K JK28, 2026-10-16)
+# ---------------------------------------------------------------------------
+# A form that repeats the filer's name and SSN at the top of its later pages maps each repeat as a line of its own:
+# CA Form 540 prints "Your name:" and "Your SSN or ITIN:" across the top of Sides 2-6 (pack lines name.full and
+# identifying_number.page6). Nothing filled or checked them: the JK5 release-candidate walkthrough's Form 540 printed
+# blank headers on Sides 2-6 and verify_form passed. `FormPack.mirrors` maps such a line to a TEMPLATE over the pack's
+# other lines; fill_form fills a mirror the caller leaves out, and verify checks each one on disk. Both render the
+# template with render_mirror below: verify never imports the filler, so the one renderer lives here, beside the spec
+# it implements. The language:
+#
+#   {line}        the line's value as fill_form renders it (after the line's own formatting, e.g. ssn_digits_only)
+#   {line[a:b]}   a Python-style character slice of it: split SSN boxes ({ssn[0:3]}, {ssn[3:5]}, {ssn[5:9]}) and
+#                 truncations such as "first 10 characters of your last name" ({name.last[:10]}); a negative bound
+#                 counts from the end, and there is no step
+#   [ ... ]       an optional segment, kept only when a placeholder inside it renders non-empty (the spouse's part of
+#                 a joint return's name line); segments do not nest
+#
+# A placeholder's value is whitespace-collapsed and stripped before it is sliced. After rendering, whitespace runs
+# collapse to one space and the result is stripped. A template whose placeholders all render empty renders "" (its
+# literal text included), so a mirror never prints a caption with no value behind it. Braces and square brackets are
+# syntax only: a template carries no literal '{', '}', '[' or ']'.
+#
+# A name can be too wide for its header box (CA's "Your name:" holds about 18 capitals), and a template cannot say how
+# to shorten it. `FormPack.mirror_abbreviations` lets a pack name, per mirror, the placeholders whose words the header
+# may shorten to a leading part (an initial, with or without a period) or leave out; every other placeholder and all
+# literal text stay whole, in order. Both sides measure a mirror against its box with taxfill_core.textfit (Phase K
+# JK28, 2026-10-16): fill_form writes the first value of mirror_ladder below that its box holds (the full value, then
+# two fixed abbreviations), or leaves the box blank for the filer to hand-write when none fits, and verify expects
+# exactly that and accepts another allowed abbreviation only when the full value does not fit. render_mirror_pieces
+# says which line each piece of a rendering came from.
+
+_TEMPLATE_WS_RE = re.compile(r"\s+")
+_MIRROR_SLOT_RE = re.compile(r"(?P<line>[^\[\]{}]+)(?:\[(?P<slice>[^\[\]{}]*)\])?")
+_MIRROR_SLICE_RE = re.compile(r"\s*(?P<start>[+-]?\d+)?\s*:\s*(?P<stop>[+-]?\d+)?\s*")
+_MIRROR_INDEX_RE = re.compile(r"\s*[+-]?\d+\s*")
+
+
+class MirrorSlot(NamedTuple):
+    """One ``{line}`` or ``{line[a:b]}`` placeholder of a mirror template."""
+
+    line: str
+    start: int | None = None
+    stop: int | None = None
+
+
+class MirrorSegment(NamedTuple):
+    """One optional ``[ ... ]`` segment of a mirror template: printed only when a placeholder in it renders non-empty."""
+
+    parts: tuple[str | MirrorSlot, ...]
+
+
+def _parse_mirror_slot(template: str, body: str) -> MirrorSlot:
+    match = _MIRROR_SLOT_RE.fullmatch(body)
+    if match is None:
+        raise ValueError(
+            f"template {template!r}: placeholder {{{body}}} must be {{line}} or {{line[a:b]}} — a line key, then an "
+            f"optional Python-style slice"
+        )
+    line, raw = match.group("line"), match.group("slice")
+    if raw is None:
+        return MirrorSlot(line)
+    bounds = _MIRROR_SLICE_RE.fullmatch(raw)
+    if bounds is None:
+        if _MIRROR_INDEX_RE.fullmatch(raw):
+            index = int(raw)
+            one = f"[{index}:]" if index == -1 else f"[{index}:{index + 1}]"
+            hint = f"[{raw.strip()}] is an index, not a slice; the one character it means is {one}"
+        else:
+            hint = "write [a:b], [a:] or [:b] with whole numbers (a negative one counts from the end; there is no step)"
+        raise ValueError(f"template {template!r}: placeholder {{{body}}} has a malformed slice: {hint}")
+    start = int(bounds.group("start")) if bounds.group("start") is not None else None
+    stop = int(bounds.group("stop")) if bounds.group("stop") is not None else None
+    if stop == 0:
+        # [:0], [-1:0], [3:0] and [:-0] end before the first character, whatever the start (Phase K JK28, 2026-10-16:
+        # the same-sign rule below let [:0] and [-1:0] load, a mirror that could never print).
+        raise ValueError(
+            f"template {template!r}: placeholder {{{body}}} selects nothing — a stop bound of 0 ends the slice before "
+            f"its first character, so it is empty for every value; leave the stop out to read to the end ([a:]) or "
+            f"give the number of characters to keep ([:10])"
+        )
+    if start is not None and stop is not None and (start < 0) == (stop < 0) and start >= stop:
+        raise ValueError(
+            f"template {template!r}: placeholder {{{body}}} selects nothing — [{start}:{stop}] is empty for every "
+            f"value; the stop bound must come after the start"
+        )
+    return MirrorSlot(line, start, stop)
+
+
+@functools.lru_cache(maxsize=256)
+def parse_mirror_template(template: str) -> tuple[str | MirrorSlot | MirrorSegment, ...]:
+    """Parse a page-header mirror template (the language above) into literal text, slots and optional segments.
+
+    Raises :class:`ValueError`, saying what to fix, on an unclosed or stray brace or bracket, a nested segment, a
+    segment with no placeholder, a malformed or empty slice, or a template that names no line at all (a constant
+    would be a value the filler invents). Line keys are not checked here: :class:`FormPack` checks them against its
+    own lines.
+    """
+    parts: list[str | MirrorSlot | MirrorSegment] = []
+    segment: list[str | MirrorSlot] | None = None
+    literal: list[str] = []
+
+    def flush(into: list) -> None:
+        if literal:
+            into.append("".join(literal))
+            literal.clear()
+
+    index = 0
+    while index < len(template):
+        char = template[index]
+        if char == "{":
+            close = template.find("}", index + 1)
+            if close == -1:
+                raise ValueError(
+                    f"template {template!r}: the '{{' at position {index} is never closed — a placeholder is "
+                    f"{{line}} or {{line[a:b]}}"
+                )
+            into = parts if segment is None else segment
+            flush(into)
+            into.append(_parse_mirror_slot(template, template[index + 1:close]))
+            index = close + 1
+            continue
+        if char == "}":
+            raise ValueError(
+                f"template {template!r}: stray '}}' at position {index} — braces only wrap a placeholder, {{line}} "
+                f"or {{line[a:b]}}"
+            )
+        if char == "[":
+            if segment is not None:
+                raise ValueError(
+                    f"template {template!r}: the '[' at position {index} opens a segment inside another — optional "
+                    f"segments do not nest"
+                )
+            flush(parts)
+            segment = []
+        elif char == "]":
+            if segment is None:
+                raise ValueError(
+                    f"template {template!r}: stray ']' at position {index} — square brackets wrap an optional "
+                    f"segment, [ ... ], or the slice inside a placeholder, {{line[a:b]}}"
+                )
+            flush(segment)
+            if not any(isinstance(part, MirrorSlot) for part in segment):
+                raise ValueError(
+                    f"template {template!r}: the optional segment closed at position {index} holds no placeholder, "
+                    f"so it can never print — put a {{line}} inside it or drop the brackets"
+                )
+            parts.append(MirrorSegment(tuple(segment)))
+            segment = None
+        else:
+            literal.append(char)
+        index += 1
+    if segment is not None:
+        raise ValueError(f"template {template!r}: an optional segment opened with '[' is never closed with ']'")
+    flush(parts)
+    if not any(isinstance(part, (MirrorSlot, MirrorSegment)) for part in parts):
+        raise ValueError(
+            f"template {template!r} names no line — a mirror repeats other lines of the pack, so write at least one "
+            f"{{line}} placeholder (a constant would be a value the filler invents)"
+        )
+    return tuple(parts)
+
+
+def mirror_sources(template: str) -> tuple[str, ...]:
+    """The lines a mirror template reads, in order of first appearance."""
+    seen: list[str] = []
+    for part in parse_mirror_template(template):
+        for slot in part.parts if isinstance(part, MirrorSegment) else (part,):
+            if isinstance(slot, MirrorSlot) and slot.line not in seen:
+                seen.append(slot.line)
+    return tuple(seen)
+
+
+def _slot_text(slot: MirrorSlot, values: Mapping[str, object]) -> str:
+    value = values.get(slot.line)
+    text = "" if value is None else _TEMPLATE_WS_RE.sub(" ", str(value)).strip()
+    return text[slot.start:slot.stop]
+
+
+def render_mirror_pieces(template: str, values: Mapping[str, object]) -> list[tuple[str, str | None]]:
+    """The pieces :func:`render_mirror` joins, before its whitespace collapse, each with where it came from.
+
+    ``(text, line)`` for a placeholder (the line it reads) and ``(text, None)`` for literal text, in template order,
+    with every optional segment that prints expanded in place and every other one left out. Empty when every
+    placeholder renders empty. :func:`mirror_words` reads the lines to apply a pack's ``mirror_abbreviations``.
+    """
+    pieces: list[tuple[str, str | None]] = []
+    for part in parse_mirror_template(template):
+        if isinstance(part, MirrorSlot):
+            pieces.append((_slot_text(part, values), part.line))
+        elif isinstance(part, MirrorSegment):
+            inner = [
+                (piece, None) if isinstance(piece, str) else (_slot_text(piece, values), piece.line)
+                for piece in part.parts
+            ]
+            if any(text.strip() for text, line in inner if line is not None):
+                pieces.extend(inner)
+        else:
+            pieces.append((part, None))
+    return pieces if any(text.strip() for text, line in pieces if line is not None) else []
+
+
+def render_mirror(template: str, values: Mapping[str, object]) -> str:
+    """Render a mirror template over ``values`` (line -> its value as fill_form renders it; a missing line is blank).
+
+    The ONE renderer of the template language: fill_form calls it on the rendered values it is about to write and
+    verify on the values it reads back from the PDF, so a template means the same thing on both sides. Returns ``""``
+    when every placeholder renders empty, whatever literal text the template carries.
+    """
+    pieces = render_mirror_pieces(template, values)
+    return _TEMPLATE_WS_RE.sub(" ", "".join(text for text, _ in pieces)).strip()
+
+
+def mirror_words(template: str, values: Mapping[str, object], shortenable: Collection[str]) -> list[tuple[str, bool]]:
+    """The words of :func:`render_mirror`'s value, in order, each flagged True when it may be abbreviated.
+
+    A word may be abbreviated when every character of it comes from a placeholder in ``shortenable`` (the pack's
+    ``mirror_abbreviations`` for the mirror): literal text, and a word glued to a line that stays whole, never shorten.
+    fill_form builds its abbreviations from these words (:func:`mirror_ladder`) and verify checks a header against them.
+    """
+    words: list[tuple[str, bool]] = []
+    chars: list[str] = []
+    may = True
+    for text, line in render_mirror_pieces(template, values):
+        own = line is not None and line in shortenable
+        for char in text:
+            if char.isspace():
+                if chars:
+                    words.append(("".join(chars), may))
+                chars, may = [], True
+            else:
+                chars.append(char)
+                may = may and own
+    if chars:
+        words.append(("".join(chars), may))
+    return words
+
+
+def mirror_ladder(template: str, values: Mapping[str, object], shortenable: Collection[str] = ()) -> list[str]:
+    """The values fill_form tries for a mirror, longest first: it writes the first one the mirror's box holds.
+
+    The template's full value, then, when ``shortenable`` (the pack's ``mirror_abbreviations`` for the mirror) covers
+    a word of it (:func:`mirror_words`), two abbreviations: every such word cut to its first letter and every other
+    word whole ("A Q WASHINGTON" for "ALEXANDRA Q WASHINGTON"), then only the first such word's letter kept and the
+    others left out ("A WASHINGTON"). A rung equal to an earlier one is dropped. Empty when the template renders
+    empty. verify computes the value a header must hold from the same ladder (Phase K JK28, 2026-10-16).
+    """
+    full = render_mirror(template, values)
+    if not full:
+        return []
+    ladder = [full]
+    words = mirror_words(template, values, shortenable) if shortenable else []
+    may = [index for index, (_, short) in enumerate(words) if short]
+    if not may:
+        return ladder
+    initials = " ".join(word[:1] if short else word for word, short in words)
+    lead = may[0]
+    first = " ".join(word[:1] if i == lead else word for i, (word, short) in enumerate(words) if not short or i == lead)
+    for rung in (initials, first):
+        if rung not in ladder:
+            ladder.append(rung)
+    return ladder
+
+
+def mirror_order(mirrors: Mapping[str, str]) -> list[str]:
+    """The mirror lines in dependency order: a mirror that reads another mirror comes after it.
+
+    Raises :class:`ValueError` naming the loop when mirrors read each other in a cycle (:class:`FormPack` refuses
+    one at load, so a validated pack always has an order).
+    """
+    order: list[str] = []
+    state: dict[str, str] = {}
+
+    def visit(mirror: str, path: tuple[str, ...]) -> None:
+        if state.get(mirror) == "done":
+            return
+        if state.get(mirror) == "open":
+            loop = " -> ".join((*path[path.index(mirror):], mirror))
+            raise ValueError(
+                f"mirrors read each other in a cycle ({loop}), so none of them can be built first — build each "
+                f"mirror from the page-1 originals, not from another mirror of the loop"
+            )
+        state[mirror] = "open"
+        for source in mirror_sources(mirrors[mirror]):
+            if source in mirrors and source != mirror:  # a self-reference has its own refusal (FormPack)
+                visit(source, (*path, mirror))
+        state[mirror] = "done"
+        order.append(mirror)
+
+    for mirror in mirrors:
+        visit(mirror, ())
+    return order
+
+
+def _did_you_mean(name: str, lines: Collection[str]) -> str:
+    close = difflib.get_close_matches(name, list(lines), n=3)
+    return f" (did you mean {', '.join(repr(line) for line in close)}?)" if close else ""
+
+
 class FormPack(BaseModel):
     """A complete ``pack.yaml`` for one form, one jurisdiction, one tax year."""
 
@@ -200,7 +556,10 @@ class FormPack(BaseModel):
     fields: list[PackField] = Field(min_length=1)
     relations: list[str] = Field(
         default_factory=list,
-        description="Intra-form math relations enforced by the verifier, e.g. '1z == sum(1a..1h)'.",
+        description=(
+            "Intra-form math relations enforced by the verifier, e.g. '1z == sum(1a..1h)'. One may end in "
+            "' unless <checkbox line>' (JK28): verify reports it SKIPPED while that box is checked on the PDF."
+        ),
     )
     cross_form: list[str] = Field(
         default_factory=list,
@@ -232,6 +591,28 @@ class FormPack(BaseModel):
             "neither an identity mismatch nor a missing current address (P-002); a filled one is still checked "
             "against the confirmed current address and against any other form that maps the same line. "
             "Verified alone, the form is treated as filed by itself."
+        ),
+    )
+    mirrors: dict[str, str] = Field(
+        default_factory=dict,
+        description=(
+            "Phase K JK28 page-header mirrors: a line that repeats other lines of this pack at the top of a later "
+            "page -> the template that builds it, e.g. {'name.full': '{name.first} {name.middle_initial} "
+            "{name.last} {name.suffix}'}. fill_form fills a mirror the caller leaves out (FillResult.mirrored), "
+            "measured against its box, and verify checks every one on disk (the identity section). The template "
+            "language and when to declare one: formpacks/CONVENTIONS.md, 'Page-header mirrors'. Unrelated to "
+            "mirror_urls (Wayback copies of the blank)."
+        ),
+    )
+    mirror_abbreviations: dict[str, list[str]] = Field(
+        default_factory=dict,
+        description=(
+            "Phase K JK28: a mirror (a key of `mirrors`) -> the placeholders of its template whose words the header "
+            "may shorten to a leading part (an initial, with or without a period) or leave out, for a name too wide "
+            "for its box; every other placeholder and all literal text stay whole, in order. fill_form abbreviates a "
+            "built value its box cannot hold (mirror_ladder: those words cut to initials, then only the first "
+            "initial kept), and verify accepts an abbreviation only when the full value does not fit. E.g. "
+            "{'name.full': ['name.first', 'name.middle_initial']} keeps name.last and name.suffix whole."
         ),
     )
     signature: Signature | None = Field(
@@ -374,6 +755,37 @@ class FormPack(BaseModel):
         return self
 
     @model_validator(mode="after")
+    def _check_relation_guards(self) -> "FormPack":
+        # Phase K JK28: an " unless <line>" guard (split_relation_guard) suspends a relation while a CHECKBOX of this
+        # pack is checked on the PDF. A guard naming a money or text line, or no line at all, could never be read as
+        # checked, so the relation would be enforced on exactly the return the author meant to exempt — refuse it here.
+        types = {f.line: f.type for f in self.fields}
+        for relation in self.relations:
+            _, guard = split_relation_guard(relation)
+            if guard is None:
+                continue
+            if guard not in types:
+                raise ValueError(
+                    f"relation {relation!r}: the '{RELATION_GUARD_KEYWORD}' guard names {guard!r}, which is no line "
+                    f"key of this pack — name the CHECKBOX line (its 'line:' value) whose check suspends the relation"
+                )
+            if types[guard] != "checkbox":
+                raise ValueError(
+                    f"relation {relation!r}: the '{RELATION_GUARD_KEYWORD}' guard names {guard!r}, a {types[guard]} "
+                    f"line — a guard must be a CHECKBOX line (verify skips the relation while that box is checked)"
+                )
+        # cross_form rules take no guard: _cross_form_check would read "x unless box" as the line key "x unless box"
+        # of the other form, find nothing and compare against a silent 0.
+        for rule in self.cross_form:
+            if _GUARD_WORD_RE.search(rule):
+                raise ValueError(
+                    f"cross_form rule {rule!r}: an '{RELATION_GUARD_KEYWORD}' guard applies to `relations` only — a "
+                    f"cross_form rule is checked whenever both forms are in the filing. Drop the guard, or leave the "
+                    f"rule undeclared and say why in a comment"
+                )
+        return self
+
+    @model_validator(mode="after")
     def _check_cross_form_local_refs(self) -> "FormPack":
         # A cross_form operand containing a dot is parsed as '<form_key>.<line>'. A LOCAL
         # line id that itself contains a dot and is digit-led (e.g. '5.b') is misread as
@@ -391,6 +803,93 @@ class FormPack(BaseModel):
                     )
         return self
 
+    @model_validator(mode="after")
+    def _check_mirrors(self) -> "FormPack":
+        # Phase K JK28: a page-header mirror is a TEXT line of this pack that owns its AcroForm field, and its
+        # template reads other text or money lines of this pack in an order that exists.
+        if not self.mirrors and not self.mirror_abbreviations:
+            return self
+        by_line = {f.line: f for f in self.fields}
+        for mirror, template in self.mirrors.items():
+            pack_field = by_line.get(mirror)
+            if pack_field is None:
+                raise ValueError(
+                    f"mirrors: key '{mirror}' is not a line of this pack{_did_you_mean(mirror, by_line)} — a mirror "
+                    f"key is the line key (the 'line:' value) of the header box it fills"
+                )
+            if pack_field.type != "text":
+                raise ValueError(
+                    f"mirrors: '{mirror}' is a {pack_field.type} line — a page-header mirror repeats a name or an "
+                    f"identifying number, so only a text line can be one"
+                )
+            shared = [f.line for f in self.fields if f.field == pack_field.field and f.line != mirror]
+            if shared:
+                raise ValueError(
+                    f"mirrors: '{mirror}' binds AcroForm field '{pack_field.field}', which {shared} also bind(s) — one "
+                    f"write already fills every widget of a shared field, so the mirror is redundant (and building "
+                    f"it would overwrite that line); drop the mirrors entry"
+                )
+            try:
+                sources = mirror_sources(template)
+            except ValueError as exc:
+                raise ValueError(f"mirrors['{mirror}']: {exc}") from None
+            if mirror in sources:
+                raise ValueError(
+                    f"mirrors['{mirror}']: the template {template!r} reads '{mirror}' itself — a mirror is built from "
+                    f"OTHER lines (the page-1 originals), never from its own box"
+                )
+            for source in sources:
+                source_field = by_line.get(source)
+                if source_field is None:
+                    raise ValueError(
+                        f"mirrors['{mirror}']: placeholder {{{source}}} names no line of this pack"
+                        f"{_did_you_mean(source, by_line)} — a placeholder holds a line key (the 'line:' value), "
+                        f"e.g. {{name.last}}"
+                    )
+                if source_field.type == "checkbox":
+                    raise ValueError(
+                        f"mirrors['{mirror}']: placeholder {{{source}}} names a checkbox line, which renders as a PDF "
+                        f"state name, not text — build the mirror from text or money lines"
+                    )
+        mirror_order(self.mirrors)  # refuses a cycle, naming it
+        for mirror, lines in self.mirror_abbreviations.items():
+            if mirror not in self.mirrors:
+                raise ValueError(
+                    f"mirror_abbreviations: '{mirror}' is not a mirror of this pack"
+                    f"{_did_you_mean(mirror, self.mirrors)} — declare its template under mirrors first, then list the "
+                    f"placeholders its header may abbreviate"
+                )
+            pack_field, template = by_line[mirror], self.mirrors[mirror]
+            if pack_field.comb or pack_field.format == "ssn_digits_only":
+                raise ValueError(
+                    f"mirror_abbreviations: '{mirror}' is a comb or ssn_digits_only line, which verify compares digit "
+                    f"for digit — an identifying number is never abbreviated; drop the entry"
+                )
+            sources = mirror_sources(template)
+            if not lines:
+                raise ValueError(
+                    f"mirror_abbreviations['{mirror}'] lists no placeholder — name the lines of {template!r} its "
+                    f"header may abbreviate, or drop the entry"
+                )
+            for line in lines:
+                if line not in sources:
+                    raise ValueError(
+                        f"mirror_abbreviations['{mirror}']: '{line}' is not a placeholder of its template {template!r}"
+                        f"{_did_you_mean(line, sources)} — list only lines that template reads ({', '.join(sources)})"
+                    )
+            repeated = sorted({line for line in lines if lines.count(line) > 1})
+            if repeated:
+                raise ValueError(
+                    f"mirror_abbreviations['{mirror}'] lists {', '.join(repeated)} more than once — name each "
+                    f"placeholder once"
+                )
+            if not set(sources) - set(lines):
+                raise ValueError(
+                    f"mirror_abbreviations['{mirror}'] lets the header abbreviate every placeholder of {template!r}, "
+                    f"so initials alone would pass — leave at least one line whole (on a name header, the last name)"
+                )
+        return self
+
 
 # (resolved path, mtime_ns, size) -> the validated pack. A pack is parsed and validated ONCE per file version
 # (Phase J JD2: the suite and list_forms re-parsed every pack.yaml on every call — 3 s per list_forms); every
@@ -405,7 +904,7 @@ def load_pack(path: str | Path) -> FormPack:
     :class:`pydantic.ValidationError` when the mapping violates the schema.
     A file whose path, modification time and size are unchanged is served from a cache — as a deep copy.
     """
-    path = Path(path)
+    path = Path(path).expanduser()  # `taxfill seed-blank --pack ~/...` (Phase K JK28)
     stat = path.stat()
     key = (str(path.resolve()), stat.st_mtime_ns, stat.st_size)
     cached = _PACK_CACHE.get(key)

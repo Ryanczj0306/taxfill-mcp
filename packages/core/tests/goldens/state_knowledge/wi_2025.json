@@ -1,5 +1,6 @@
 {
  "_strings": {
+  "@@04609f730cdd": "2025 Form 1NPR, Nonresident & Part-Year Resident Wisconsin Income Tax (I-050i) — the return itself; page 1, 'Resident status Check the status that applies': 'Part-year resident of Wisconsin from' (the dates of residency)",
   "@@07a362a4d59e": "2025 Form 1 Instructions (I-111), Wisconsin Department of Revenue - Line 1 federal adjusted gross income; New in 2025; Which Form to File / domicile; Who Must File thresholds; Where to File mailing addresses; due date Wednesday April 15, 2026; Line 10 exemptions ($700 / $250); Line 12 Tax; 2025 Standard Deduction Table p.35; 2025 Tax Table pp.38-43; 2025 Tax Computation Worksheet p.44",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@26cccea6eed5": "2025 Form 1 Instructions (I-111) - 'Where to File' (PO Box 268 payment / PO Box 59 refund / PO Box 34 homestead credit; private delivery services to 2135 Rimrock Rd., Madison WI 53713)",
@@ -17,6 +18,7 @@
   "@@a3a9f3e72f50": "Wisconsin Homestead Credit (property-tax / rent circuit-breaker) — Per the 2025 Form 1 instructions Special Instructions: at least 18 years old on December 31, 2025; if under age 62 and not disabled, must have earned income; a legal resident of Wisconsin for all of 2025; not claimed as a dependent on anyone's 2025 federal return (unless 62 or older on December 31, 2025); not living in tax-exempt public housing for all of 2025 (exceptions apply); not living in a nursing home and receiving medical assistance (Title XIX) when filing; and not claiming (self or spouse) the veterans and surviving spouses property tax credit or farmland preservation credit. Claimed on Schedule H (or the simpler Schedule H-EZ).",
   "@@a50bff30da8e": "Wisconsin Earned Income Credit (EITC) — Full-year Wisconsin resident who qualifies for the federal earned income credit AND has at least one qualifying child (the federal definition of qualifying child applies). A married-filing-separate filer is ineligible unless they meet sec. 7703(b), IRC (in which case the Wisconsin filing status should be head of household, married). 'Federal earned income credit' means the credit computed using the IRC as adopted by Wisconsin — filers with Schedule I Part I adjustments recompute it on Schedule I Part III. A copy of federal Schedule EIC must be included (and federal Form 8867 if a paid preparer was used).",
   "@@a9410960b742": "2025 Wisconsin Income Tax Form 1 Instructions (I-111), New in 2025: 'Adoption Expenses Subtraction – The maximum subtraction for expenses paid for a qualifying adoption is now $15,000 per child.'",
+  "@@ae2d7fd5714a": "2025 Form 1NPR Instructions, Wisconsin Income Tax for Nonresidents and Part-Year Residents (I-152) — 'Which Form To File' (p. 5): 'If you are a nonresident or part-year resident of Wisconsin in 2025, you must file Wisconsin Form 1NPR.'; 'Who Must File' (p. 4): 'If you are a nonresident or part-year resident of Wisconsin and your gross income from Wisconsin sources (or the combined Wisconsin source gross income of you and your spouse) is $2,000 or more for 2025, you must file a Wisconsin return.'",
   "@@b5c1248e66c1": "Law change NOT modeled by the engine (status final_form_published): NEW RETIREMENT INCOME SUBTRACTION — an individual at least 67 at the end of 2025 may subtract up to $24,000 of retirement income (Schedule SB). Resolve via: 2025 Form 1 Instructions, New in 2025, and the Schedule SB instructions (retirement income subtraction).",
   "@@cc4a76384af5": "Additional Child and Dependent Care Tax Credit — You must have claimed the federal child and dependent care tax credit on your federal return, and you must have been a legal resident of Wisconsin for the entire year (on a joint return, qualifies if at least one spouse is a full-year Wisconsin resident).",
   "@@e3fc173b6f36": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it. Not independently confirmed for 2025 (verify the figure): the maximum homestead credit dollar amount (not re-derived from the 2025 Schedule H tables) and the Schedule WI-2441 qualifying-expense and maximum-credit caps (not read line by line).",
@@ -373,6 +375,18 @@
      "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
     },
     {
+     "answers": "@@ae2d7fd5714a",
+     "cadence": "@@8443b09faaee",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR-Inst.pdf"
+    },
+    {
+     "answers": "@@04609f730cdd",
+     "cadence": "@@8443b09faaee",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR.pdf"
+    },
+    {
      "answers": "2025 Wisconsin Form 1 (fillable) - second-pass verification: Line 11 'Subtract line 10c from line 9. If line 10c is larger than line 9, fill in 0. This is taxable income'; Line 12 'Tax (see table on page 38)'; Schedule 2 married couple credit ($16,000 cap, .03 rate, $480 max); credit line numbering (13/14/15/16/17/18/30/33)",
      "cadence": "@@8443b09faaee",
      "topic": "forms_and_instructions",
@@ -556,6 +570,14 @@
       {
        "source": "@@07a362a4d59e",
        "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      },
+      {
+       "source": "@@ae2d7fd5714a",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR-Inst.pdf"
+      },
+      {
+       "source": "2025 Form 1NPR, Nonresident & Part-Year Resident Wisconsin Income Tax (I-050i) — the return itself; page 1, 'Resident status Check the status that applies': 'Nonresident of Wisconsin; state of residence'",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR.pdf"
       }
      ],
      "filing_role": "nonresident",
@@ -618,6 +640,14 @@
       {
        "source": "@@07a362a4d59e",
        "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+      },
+      {
+       "source": "@@ae2d7fd5714a",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR-Inst.pdf"
+      },
+      {
+       "source": "@@04609f730cdd",
+       "url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1NPR.pdf"
       }
      ],
      "filing_role": "part_year",

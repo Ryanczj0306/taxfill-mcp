@@ -40,6 +40,14 @@ THE state_tax GRID (per jurisdiction-year), all inputs demo values:
   and 1 dependent. For each of the two kinds the pack does NOT ship, one call passing that
   count snapshots the refusal text (e.g. AZ's "Line 49 dependent CREDIT" pointer).
 * One ``qualifying_surviving_spouse`` call per pack at ``D[mfj] + 40,000`` (the alias path).
+* Exemption credits (Phase K JK28), only where the pack ships ``tax.exemption_credits``: per
+  status, ``exemption_credit_counts`` of 2 per credit kind (married statuses) or 1, capped at the
+  kind's ``max_count``, at ``D + 40,000`` with ``federal_agi`` below the limitation threshold and
+  again ``30,001`` above it (a fraction of a step rounds up); one ``single`` call ``100,000``
+  above the threshold (a group floors at $0); and one call without ``federal_agi`` (the refusal).
+  A pack with an AGI CEILING instead (OR) gets, per status, a call at each distinct ceiling and
+  one dollar above it (the cliff), plus the single refusal without ``federal_agi``; a pack with
+  neither gets the per-status call at the base alone (its credits read no AGI).
 
 Errors are part of the output: a call that raises is stored as ``{"args": ..., "error":
 "<Type>: <msg>"}``. A result is stored without the args, because it echoes them in ``inputs``.
@@ -164,6 +172,50 @@ def state_tax_grid(tax) -> list[dict[str, Any]]:
         "taxable_base": int(std.get("married_filing_jointly", 0)) + 40_000,
         "filing_status": "qualifying_surviving_spouse",
     })
+    grid += _exemption_credit_grid(tax, statuses, std)
+    return grid
+
+
+def _exemption_credit_grid(tax, statuses: list[str], std: dict) -> list[dict[str, Any]]:
+    """The exemption-credit calls for a pack that ships ``tax.exemption_credits`` (Phase K JK28); none otherwise."""
+    block = getattr(tax, "exemption_credits", None)
+    if block is None:
+        return []
+    lim = block.agi_limitation
+    ceiling = getattr(block, "agi_ceiling", None)
+    grid: list[dict[str, Any]] = []
+    for status in statuses:
+        counts = {
+            kind: min(2 if status in MARRIED else 1, credit.max_count[status] if credit.max_count else 2)
+            for kind, credit in block.credits.items()
+        }
+        base = int(std.get(status, 0)) + 40_000
+        agis = [base] + ([lim.threshold[status] + 30_001] if lim is not None else [])
+        if ceiling is not None:  # Phase K JK28 (2026-10-23): each ceiling, and one dollar over it
+            caps = sorted({table[status] for table in ceiling.ceilings.values()})
+            agis = [base] + [agi for cap in caps for agi in (cap, cap + 1)]
+        if lim is None and ceiling is None:  # credits that read no AGI: no federal_agi to pass
+            grid.append({"taxable_base": base, "filing_status": status, "exemption_credit_counts": counts})
+            continue
+        grid += [
+            {"taxable_base": base, "filing_status": status, "exemption_credit_counts": counts, "federal_agi": agi}
+            for agi in agis
+        ]
+    if lim is not None:
+        single = {kind: 1 for kind in block.credits}
+        grid.append({
+            "taxable_base": int(std.get("single", 0)) + 40_000, "filing_status": "single",
+            "exemption_credit_counts": single, "federal_agi": lim.threshold["single"] + 100_000,
+        })
+        grid.append({"taxable_base": 40_000, "filing_status": "single", "exemption_credit_counts": single})
+    elif ceiling is not None:
+        single = {kind: 1 for kind in block.credits}
+        grid.append({"taxable_base": 40_000, "filing_status": "single", "exemption_credit_counts": single})
+    if getattr(block, "limited_to_tax_line", None) is not None:  # Phase K JK28 (2026-10-23): a tax under the credits
+        grid.append({
+            "taxable_base": int(std.get("single", 0)) + 2_500, "filing_status": "single",
+            "exemption_credit_counts": {kind: 1 for kind in block.credits},
+        })
     return grid
 
 

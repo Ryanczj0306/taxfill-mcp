@@ -227,11 +227,11 @@
 # Header mirrors. tpName ("NAME") and tpID ("TAXPAYER ID") are each ONE AcroForm
 # field whose three widget kids sit at the top of pages 2, 3 and 4, so each is
 # mapped exactly once (header.name / header.taxpayer_id) and one write fills all
-# three pages. No DOR script copies the page-1 identity into them; a caller fills
-# header.name from name.first/last and header.taxpayer_id from identifying_number
-# (the schema cannot assert that equality; see CONVENTIONS "Identity page
-# mirrors"). The keys are deliberately not page-numbered: the field spans three
-# pages.
+# three pages. No DOR script copies the page-1 identity into them; since Phase K
+# JK28 (2026-10-23) both are declared in `mirrors:`, so fill_form builds them
+# from name.* / identifying_number and verify checks them (CONVENTIONS
+# "Page-header mirrors"). The keys are deliberately not page-numbered: the field
+# spans three pages.
 #
 # Relations (on-face arithmetic, unconditional, every operand mapped; declared for
 # Column B which every filing status uses; dotted column ids are accepted since
@@ -344,7 +344,7 @@ fields:
     field: partYearEnd
     type: text
 
-  # ============================================ Filing Status lines 1-5 (ONE /Btn "filingStatusRadio", physical position; states re-dumped from this blank)
+  # ======== Filing Status lines 1-5 (ONE /Btn "filingStatusRadio", physical position; states re-dumped from this blank)
   - line: filing_status.single           # 1 Single, Divorced, Widow(er) (row 1, x=349)
     field: filingStatusRadio
     type: checkbox
@@ -521,7 +521,7 @@ fields:
     field: ln19ColB
     type: money
 
-  # ============================================ page 2 -- header row (ONE field each, three widget kids on pages 2, 3 and 4)
+  # ======================================= page 2 -- header row (ONE field each, three widget kids on pages 2, 3 and 4)
   - line: header.name                    # "NAME" header box printed at the top of pages 2-4 (one field, three widgets)
     field: tpName
     type: text
@@ -975,5 +975,16 @@ identity_fields:
   - mailing_address.city
   - mailing_address.state
   - mailing_address.zip
+# Page-header mirrors (Phase K JK28, 2026-10-23). Pages 2, 3 and 4 print "NAME" and "TAXPAYER ID" in a header row
+# (read on the 2025 blank rendered at 200 dpi): tpName and tpID, each ONE field with a widget on each of those pages,
+# apart from the page-1 name boxes and the 9-cell taxPayerID comb, and no DOR script fills them. The caption is
+# singular, beside the filer's own TAXPAYER ID, so the header holds the primary filer's name. tpName is 374.4 pt wide
+# and tpID 79.2 pt at OpenSans-Bold 8, measured as Helvetica; the header box is not a comb, so the mirror differs from
+# its comb source only in that, and both render the nine digits (format ssn_digits_only). fill_form builds each mirror
+# the caller leaves out (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md, "Page-header
+# mirrors (`mirrors`)").
+mirrors:
+  header.name: "{name.first} {name.middle_initial} {name.last} {name.suffix}"  # "NAME"
+  header.taxpayer_id: "{identifying_number}"  # "TAXPAYER ID"
 signature: {page: 3}
 mailing: null

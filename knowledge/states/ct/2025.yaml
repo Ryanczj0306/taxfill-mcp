@@ -82,6 +82,67 @@ forms:
   resident: 'Form CT-1040, Connecticut Resident Income Tax Return'
   part_year_or_nonresident: 'Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (use
     Schedule CT-SI to report Connecticut-source income)'
+  # Role citations (Phase K JK28, 2026-10-16): Form CT-1040NR/PY serves both roles, and these entries are what
+  # state_scope adds to a part-year or nonresident filer's citations (the top-level `citation` is the resident Form
+  # CT-1040, the only document this entry pointed at before). The 2025 CT-1040NR/PY instructions carry no who-must-file
+  # section — page 1 sends the filer to DRS's nonresident and part-year information page, whose 'Who Must File Form
+  # CT-1040NR/PY' section is quoted here. The two PDFs are the CT-1040NR/PY links on DRS's current-year Individual
+  # Income Tax Forms page (portal.ct.gov/drs/drs-forms/current-year-forms/individual-income-tax-forms); each was
+  # downloaded twice on 2026-10-16 with identical sha256 (instructions 2c9648d6ba3c59f7..., return abddac561c4471ec...).
+  # The HTML page was fetched twice the same day: its bytes differ only in a server timestamp and the stylesheet and
+  # script version strings (2309ab0d0e69b5b5..., d023cdd15d5a76d1...), and its visible text is identical in both, the
+  # quoted section's text included (37d21b053ad5c0ec...). The
+  # part_year_or_nonresident text above agrees with the 2025 return (line 6 is 'Income from Connecticut sources from
+  # Schedule CT-SI, Line 30').
+  # The information page's URL carries no year, but its text is written for one taxable year ('... if you were a
+  # nonresident or part-year resident of Connecticut in 2025 and any of the following is true for the 2025 taxable
+  # year:'). That year-specific sentence is therefore the verification anchor: a TY2026 run re-checks it, not the URL.
+  # No 2025 DRS PDF carrying the who-must-file list was found (the 2025 CT-1040NR/PY instructions have none), so the
+  # page stays the citation.
+  # The source registry (knowledge/sources_states.yaml, written by scripts/assemble_state_sources.py) keeps only the
+  # first citation of a URL under each topic, and it reads `forms` before `all_citations`. So the part-year
+  # instructions entry, the first one for that URL, repeats word for word after ' | ' the all_citations description of
+  # the same instructions. Without it the registry and get_sources would lose that description (the treaty-income
+  # add-back and the Tables A-E second pass).
+  citations:
+    part_year:
+    - source: >-
+        Connecticut DRS, 'Connecticut Nonresident and Part-Year Resident Income Tax Information', 'Who Must File Form
+        CT-1040NR/PY': 'You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax
+        Return, if you were a nonresident or part-year resident of Connecticut in 2025 and any of the following is true
+        for the 2025 taxable year:' — 'You were a part-year resident who meets the Gross Income Test or who had a
+        federal alternative minimum tax liability'
+      url: https://portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information
+    - source: >-
+        2025 Form CT-1040NR/PY Connecticut Nonresident and Part-Year Resident Income Tax Return Instructions (Rev.
+        12/25), p. 1: 'For additional information on the Connecticut Income Tax, visit
+        portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information' | 2025 Form CT-1040NR/PY Instructions (Rev.
+        12/25, 28 pages) — Schedule 1 "Other" additions ("1. Add back any treaty income reported on federal Form 1040NR
+        if a nonresident alien"); INDEPENDENT SECOND-PASS source for Tables A-E: Table A (221 numeric tokens), Table C
+        (136) and Table D (450) are digit-identical multisets, all 28 Table E rows match row-by-row, and all 21 Table B
+        rows print the same bounds, rates and constants
+      url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf
+    - source: >-
+        2025 Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (Rev. 12/25) — the
+        return itself (page 1, line 6: 'Income from Connecticut sources from Schedule CT-SI, Line 30')
+      url: https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040nrpy_1225.pdf
+    nonresident:
+    - source: >-
+        Connecticut DRS, 'Connecticut Nonresident and Part-Year Resident Income Tax Information', 'Who Must File Form
+        CT-1040NR/PY': 'You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax
+        Return, if you were a nonresident or part-year resident of Connecticut in 2025 and any of the following is true
+        for the 2025 taxable year:' — 'You were a nonresident with Connecticut-sourced income who meets the Gross Income
+        Test or had a federal alternative minimum tax liability.'
+      url: https://portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information
+    - source: >-
+        2025 Form CT-1040NR/PY Connecticut Nonresident and Part-Year Resident Income Tax Return Instructions (Rev.
+        12/25), p. 1: 'For additional information on the Connecticut Income Tax, visit
+        portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information'
+      url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf
+    - source: >-
+        2025 Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (Rev. 12/25) — the
+        return itself (page 1, line 6: 'Income from Connecticut sources from Schedule CT-SI, Line 30')
+      url: https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040nrpy_1225.pdf
 credits_verification: 'State credits were researched from the cited DRS sources (the 2025 CT-1040 instructions Rev.
   12/25, re-checked against the 2025 CT-1040NR/PY instructions Rev. 12/25 and the DRS Tax-Information page) and are
   not tax advice — confirm each amount and your eligibility at the cited source before claiming it.'

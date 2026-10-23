@@ -606,6 +606,29 @@ identity_fields:
 - name.first
 - name.last
 - identifying_number
+# Page-header mirrors (Phase K JK28, 2026-10-16). Sides 2-6 print "Your name:" and "Your SSN or ITIN:" across the top,
+# each one AcroForm field with a widget on every side. The 2023 Form 540 booklet ("Filling in Your Tax Return", page 11)
+# says "Enter your social security number(s) or individual taxpayer identification number(s) at the top of Form 540,
+# Side 1 through Side 6." For the name ("Name(s) and Address", the same page) it says "Print your first name, middle
+# initial, last name, and street address in the spaces provided at the top of the form." fill_form builds each mirror
+# from the Side 1 lines when the caller leaves it out (FillResult.mirrored), and verify checks both on disk. Widgets on
+# the pinned blank: Side 1 SSN 1007 (no /MaxLen), the mirror 2002 (no /MaxLen; 69.0 pt at Helv 10): neither widget
+# carries a /MaxLen (both tooltips say "Enter 9 digits."); an 11-character dashed SSN measures 56.7 pt at Helv 10,
+# inside the 69 pt box. The name box is 2001 (no /MaxLen; 125.9-127.0 pt at Helv 10). fill_form measures every mirror it
+# builds against the narrowest widget less 2 pt (taxfill_core.textfit, with Helvetica's AFM widths), so this box holds
+# 123.9 pt: about 18 of the "CAPITAL LETTERS" the booklet asks for, where verify's P-001 estimate (0.5 em a character)
+# flags a name only past 25. A name too wide for it is abbreviated as mirror_abbreviations below allows, with an
+# informational warning: "A Q WASHINGTON" for "ALEXANDRA Q WASHINGTON" (142.8 pt), else "A WASHINGTON". A name too wide
+# even then is left blank, with a warning to hand-write it after printing. verify expects the same value, and FAILs a
+# header that is cut off or abbreviated although the full name fits. The booklet has no rule for a name too wide for
+# this box (page 11 speaks of abbreviating only country names: "Do not abbreviate the country name."), so the rule is
+# this pack's own: name.first and name.middle_initial may shorten to an initial or be left out; name.last stays whole,
+# and so does name.suffix, since a generational suffix ("JR", "III") has no initial.
+mirrors:
+  name.full: "{name.first} {name.middle_initial} {name.last} {name.suffix}"  # "Your name:" — from Side 1 "Your first name", "Initial", "Last name", "Suffix"
+  identifying_number.page6: "{identifying_number}"  # "Your SSN or ITIN:" — the Side 1 "Your SSN or ITIN" as written there (no format: dashes stay if given; verify compares the digits)
+mirror_abbreviations:
+  name.full: [name.first, name.middle_initial]  # e.g. "A Q WASHINGTON" for "ALEXANDRA Q WASHINGTON"; name.last and name.suffix stay whole
 signature:
   page: 6
 mailing: null

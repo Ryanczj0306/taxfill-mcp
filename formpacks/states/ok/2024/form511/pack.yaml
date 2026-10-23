@@ -95,9 +95,10 @@
 #     Names" (one widget on each of PDF pages 43-49) -> key name.full; page 51's
 #     "Name(s) Shown on Form 538-S:" box (field "538-S Name(s) Shown of Form
 #     538-s") -> f538s.name.full. Each takes the filer's full name(s) as one
-#     string the caller supplies (the page-1 names are split first / middle /
-#     last for each spouse), the same single-string key the CA 540 packs use
-#     for their "Your name:" header. Neither widget has a /MaxLen. Both carry
+#     string, which fill_form builds from the split page-1 names (first /
+#     middle / last for each spouse) when the caller leaves it out (`mirrors:`
+#     at the end of this pack, Phase K JK28), as the CA 540 packs do for
+#     their "Your name:" header. Neither widget has a /MaxLen. Both carry
 #     /DA "/Cour 10 Tf" (fixed size 10), but this blank's AcroForm /DR defines
 #     only /Helv and /ZaDb -- there is no /Cour resource. The filler (pypdf)
 #     therefore writes the appearance stream in Helvetica 10 ("/Helvetica 10.0
@@ -734,7 +735,8 @@ fields:
     field: "511 Spouse Phone"
     type: text
   - line: preparer.address_phone           # "Paid Preparer's Address and Phone Number" (the DOR places the box top about 5 pt over its printed caption, so the first line of a multiline value can touch the caption; same rect as 2023).
-                                           # A value that starts with a blank line ("\n<address>\n<phone>") renders both lines clear below the caption.
+                                           # A value that starts with a blank line ("\n<address>\n<phone>") renders both
+                                           # lines clear below the caption.
     field: "Preparer's Address/Phone"
     type: text
   - line: preparer.id_number               # "Paid Preparer's PTIN"
@@ -1407,8 +1409,8 @@ fields:
   # [39.31, 159.43, 299.83, 178.37], under the printed "Taxpayer's Signature and Date" caption and above the
   # "Occupation" caption, i.e. INSIDE the signature box (the sentinel render put the value there); the Occupation box
   # below has no widget. Filling it would print the occupation where the taxpayer signs, so the occupation is written
-  # by hand. The 2023 blank has the same rects (its pack mapped both occupations into the signature boxes until JK27, 2026-10-16, which unmapped them); the 2025
-  # blank moved the widgets under "Occupation".
+  # by hand. The 2023 blank has the same rects (its pack mapped both occupations into the signature boxes until JK27,
+  # 2026-10-16, which unmapped them); the 2025 blank moved the widgets under "Occupation".
   # f538s.spouse_occupation is DELIBERATELY UNMAPPED (see f538s.taxpayer_occupation above): "538-S Spouse
   # Occupation" is one widget at [306.68, 159.43, 571.79, 178.37], inside the "Spouse's Signature and Date" box.
 relations:
@@ -1454,5 +1456,21 @@ identity_fields:
   - mailing_address.city
   - mailing_address.state
   - mailing_address.zip
+# Page-header mirrors (Phase K JK28, 2026-10-23). Form 511 pages 2-8 and Form 538-S page 2 print "Your Social Security
+# Number:" on fields of their own (read on the 2025 blank rendered at 200 dpi). The 2024 blank also prints "Name(s)
+# Shown on Form 511:" and "Name(s) Shown on Form 538-S:" beside them (read on the 2024 blank rendered at 200 dpi); the
+# spouse's name prints only on a joint return, when page 1 has one. fill_form builds each mirror the caller leaves out
+# from its page-1 source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md,
+# "Page-header mirrors (`mirrors`)").
+# The 2024 blank's own text layer holds the same "Your Social Security Number:" caption as the 2025 blank's around
+# both SSN mirror widgets (compared per widget with pdfium, Phase K JK28, 2026-10-23); the name boxes are 2024-only.
+mirrors:
+  name.full: "{name.first} {name.middle_initial} {name.last}[ & {spouse.name.first} {spouse.name.middle_initial} {spouse.name.last}]"  # "Name(s) Shown on Form 511:"
+  f538s.name.full: "{f538s.name.first} {f538s.name.middle_initial} {f538s.name.last}[ & {f538s.spouse.name.first} {f538s.spouse.name.middle_initial} {f538s.spouse.name.last}]"  # "Name(s) Shown on Form 538-S:"
+  identifying_number_page2: "{identifying_number}"  # "Your Social Security Number:" (511 pages 2-8)
+  f538s.identifying_number_page2: "{f538s.identifying_number}"  # "Your Social Security Number:" (538-S page 2)
+mirror_abbreviations:
+  name.full: [name.first, name.middle_initial, spouse.name.first, spouse.name.middle_initial]  # a joint name past the box's 43-character budget ("BARTHOLOMEW Q EXAMPLE-SAMPLE & ALEXANDRA M WASHINGTON", 53): first names and initials may shorten; last names stay whole
+  f538s.name.full: [f538s.name.first, f538s.name.middle_initial, f538s.spouse.name.first, f538s.spouse.name.middle_initial]  # the same, past the 538-S box's 50
 signature: {page: 44}
 mailing: null

@@ -634,5 +634,17 @@ identity_fields:
   - mailing_address.city
   - mailing_address.state
   - mailing_address.zip
+# Page-header mirrors (Phase K JK28, 2026-10-23). Form page 2 (PDF page 3) prints "Name(s) as shown on Form 1040ME"
+# and "Your Social Security Number" on fields of their own (read on the 2025 blank rendered at 200 dpi). The name box
+# names both filers, so the spouse's name prints only when page 1 has one. fill_form builds each mirror the caller
+# leaves out from its page-1 source (FillResult.mirrored) and verify_form checks it on disk (formpacks/CONVENTIONS.md,
+# "Page-header mirrors (`mirrors`)").
+# The 2023 blank's own text layer holds the same caption text as the 2025 blank's around each mirror widget
+# (compared per widget with pdfium, Phase K JK28, 2026-10-23).
+mirrors:
+  name: "{name.first} {name.middle_initial} {name.last}[ & {spouse.name.first} {spouse.name.middle_initial} {spouse.name.last}]"  # "Name(s) as shown on Form 1040ME"
+  identifying_number.echo: "{identifying_number}"  # "Your Social Security Number"
+mirror_abbreviations:
+  name: [name.first, name.middle_initial, spouse.name.first, spouse.name.middle_initial]  # a joint name too wide for the 316 pt box ("BARTHOLOMEW Q EXAMPLE-SAMPLE & ALEXANDRA M WASHINGTON", 339.5 pt at Arial 10): first names and initials may shorten; last names stay whole
 signature: {page: 3}
 mailing: null

@@ -59,13 +59,6 @@ residency:
     servicemembers and their qualifying spouses (temporarily assigned to NM with residence established elsewhere =
     non-residents) and to enrolled members of NM federally recognized Indian nations, tribes, or pueblos. (2025
     PIT-1 instructions, Who Must File A PIT-1 Return / Definitions — framework unchanged from 2024.)'
-forms:
-  resident: Form PIT-1 (New Mexico Personal Income Tax Return)
-  part_year_or_nonresident: Form PIT-1 filed with Schedule PIT-B (Schedule of New Mexico Allocation and Apportionment
-    of Income); nonresidents and part-year residents use PIT-B to allocate/apportion NM-source income, and PIT-1
-    line 18 then comes from PIT-B line 14 with indicator B in box 18a. Mark residency status in box 1e on PIT-1 page
-    1 (R = resident, N = non-resident, P = part-year, F = first-year). A nonresident whose only NM income is gross
-    royalty income under $5,000 may instead enter that income on line 17 and mark Y in box 18a.
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. For 2025 the PIT-RC instructions WERE
   retrievable, so the Child Income Tax Credit per-child table, the Low Income Comprehensive Tax Rebate table, the
@@ -448,3 +441,76 @@ effective_law_changes:
     source: New Mexico Legislature — 2024 House Bill 252 (HTRC/HB 252/a, final version), Section 5 amending Section
       7-2-7 NMSA 1978 (INDIVIDUAL INCOME TAX RATES) for taxable years beginning on or after January 1, 2025
     url: https://www.nmlegis.gov/Sessions/24%20Regular/final/HB0252.pdf
+# `forms` sits at the END of this pack on purpose (Phase K JK28, 2026-10-16). The source registry
+# (knowledge/sources_states.yaml, built by scripts/assemble_state_sources.py) keeps the FIRST citation of each URL per
+# topic in file order, and get_sources routes a question by those descriptions. forms.citations below reuse the
+# PIT-1 instructions URL that `all_citations` describes (due dates, where to mail, check payee and PIT-PV, the TAP
+# portal, the Working Families Tax Credit, the lines 9-18 tax computation). Placed before `all_citations` (where
+# Virginia keeps `forms`), the role quote replaced that description in the registry, and "check payee", "PIT-PV",
+# "where to mail" and "line 16" no longer reached the instructions.
+# Keep `forms` after `all_citations` until the registry keeps every description of a URL (the merge ROADMAP JK20
+# carries).
+forms:
+  resident: Form PIT-1 (New Mexico Personal Income Tax Return)
+  part_year_or_nonresident: Form PIT-1 filed with Schedule PIT-B (Schedule of New Mexico Allocation and Apportionment
+    of Income); nonresidents and part-year residents use PIT-B to allocate/apportion NM-source income, and PIT-1
+    line 18 then comes from PIT-B line 14 with indicator B in box 18a. Mark residency status in box 1e on PIT-1 page
+    1 (R = resident, N = non-resident, P = part-year, F = first-year). A nonresident whose only NM income is gross
+    royalty income under $5,000 may instead enter that income on line 17 and mark Y in box 18a.
+  # Role citations (Phase K JK28, 2026-10-16), which state_scope adds to a part-year or nonresident filer's citations
+  # (the JK27 mechanism; see the VA pack): the top-level `citation` is TRD's overview web page, so this entry named
+  # Schedule PIT-B without citing it. New Mexico has no separate nonresident return — both roles file Form PIT-1 with
+  # Schedule PIT-B and mark the residency box — so each role cites the PIT-1 instructions' who-files and residency-box
+  # text for that role, the PIT-B instructions and Schedule PIT-B. The URLs are the "2025 PIT-1 Personal Income Tax
+  # Return Instructions", "2025 PIT-B Instructions" and "2025 PIT-B Allocation & Apportionment of Income Schedule"
+  # entries of the Income Taxes > Personal Income Tax (PIT) folder on TRD's Forms & Publications page
+  # (www.tax.newmexico.gov/forms-publications/); each PDF was downloaded twice on 2026-10-16 with identical sha256
+  # (PIT-1 instructions 7d578286a047513e..., PIT-B instructions 29acf53b8d319435..., PIT-B 550d4866c19fca93...).
+  citations:
+    part_year:
+    - source: >-
+        2025 PIT-1 Instructions (New Mexico Taxation and Revenue Department) — 'Who Must File A PIT-1 Return' (p.
+        PIT-1-2): 'every person who meets both the following conditions must file a PIT-1: • Every person who is a New
+        Mexico resident or has income from New Mexico sources. • Every person who is required to file a federal income
+        tax return.'; 'Residency Status' (p. PIT-1-21): 'In boxes 1e and 2e, enter R, N, F, or P ... • First-Year
+        Resident. If you moved into New Mexico during the tax year with the intent of establishing domicile in New
+        Mexico, and you were still in New Mexico on December 31, 2025, mark F in the box. ... • Part-Year Resident. If
+        you were physically present in New Mexico for fewer than 185 days during the tax year, and you were domiciled in
+        New Mexico during part of the tax year but not on the last day of the tax year, mark P in the box.'; 'PIT-B To
+        Allocate And Apportion Income' (p. PIT-1-10): 'To allocate and apportion income received from employment,
+        business, or property sources located inside and outside New Mexico, file PIT-B, Schedule of New Mexico
+        Allocation and Apportionment of Income, with your PIT-1.'
+      url: https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf
+    - source: >-
+        Instructions for 2025 PIT-B, Schedule of New Mexico Allocation and Apportionment of Income (p. B-1): 'If you have
+        income from sources both inside and outside New Mexico, attach and submit Schedule PIT-B with your PIT-1
+        Return.'; 'Part-Year and First-Year Residents Line A and B' (p. B-3): 'Part-year and first-year residents enter
+        the beginning and ending date for the tax year when the taxpayer was a resident of New Mexico.'
+      url: https://realfile.tax.newmexico.gov/2025pit-b-ins.pdf
+    - source: >-
+        2025 PIT-B, New Mexico Allocation and Apportionment of Income Schedule (p. 1): 'Taxpayers who allocate and
+        apportion income from both inside and outside the State of New Mexico must complete this schedule. ... Include
+        the Schedule PIT-B with your personal income tax return, Form PIT-1.' — 'For first-year and part-year resident
+        taxpayers, enter the period of residency.'
+      url: https://realfile.tax.newmexico.gov/2025pit-b.pdf
+    nonresident:
+    - source: >-
+        2025 PIT-1 Instructions (New Mexico Taxation and Revenue Department) — 'Non-Residents' (p. PIT-1-2): 'If you are
+        a non-resident, including a foreign national or a person who resides in a state without income taxes, you must
+        file in New Mexico when both the following are true: • You are required to file a federal return. • You have
+        income from any New Mexico source whatsoever.'; 'Residency Status' (p. PIT-1-22): '• Non-Resident. If you were
+        physically present in New Mexico for fewer than 185 days and you were not domiciled in New Mexico during any part
+        of the year, mark N in the box.'; 'PIT-B To Allocate And Apportion Income' (p. PIT-1-10): 'To allocate and
+        apportion income received from employment, business, or property sources located inside and outside New Mexico,
+        file PIT-B, Schedule of New Mexico Allocation and Apportionment of Income, with your PIT-1.'
+      url: https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf
+    - source: >-
+        Instructions for 2025 PIT-B, Schedule of New Mexico Allocation and Apportionment of Income (p. B-1): 'PIT-B is for
+        taxpayers with income from sources both inside and outside New Mexico. ... If you have income from sources both
+        inside and outside New Mexico, attach and submit Schedule PIT-B with your PIT-1 Return.'
+      url: https://realfile.tax.newmexico.gov/2025pit-b-ins.pdf
+    - source: >-
+        2025 PIT-B, New Mexico Allocation and Apportionment of Income Schedule (p. 1): 'Taxpayers who allocate and
+        apportion income from both inside and outside the State of New Mexico must complete this schedule. ... Include
+        the Schedule PIT-B with your personal income tax return, Form PIT-1.'
+      url: https://realfile.tax.newmexico.gov/2025pit-b.pdf

@@ -8,6 +8,7 @@
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@327bd905baa9": "Ohio IT 1040 (Individual Income Tax Return). Residency status (resident / part-year resident / nonresident) is indicated by checkbox on the IT 1040 itself; there is no separate resident-only return.",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
+  "@@56cee529d53e": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/itnrc-fi.pdf",
   "@@5772177f0743": "2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation, 64 pages, PDF build 2026-01-23) - Line 1 federal AGI, Schedule of Adjustments additions/deductions, Who Must File an Ohio Income Tax Return?, Ohio Residency (contact periods, the Ohio Nonresident Statement checkbox), mailing addresses p. 3, due date April 15 2026, payment / check payee ('Ohio Treasurer of State'), 2025 Ohio Income Tax Brackets (p. 18), personal and dependent exemption table (p. 17)",
   "@@5b49d160296e": "Retirement Income Credit — Taxpayer (and spouse, if filing jointly) who (a) has modified adjusted gross income less exemptions under $100,000; (b) received income from a pension, profit-sharing, or retirement plan (such as a traditional IRA or 401(k)) on account of retirement; (c) has that income included in Ohio adjusted gross income; and (d) has not previously taken the Ohio lump sum retirement credit. Amounts deducted on the Ohio Schedule of Adjustments (e.g. Social Security, uniformed-services retirement income) do not qualify.",
   "@@6f971e6c274f": "IT 1040 WITHOUT payment: Ohio Department of Taxation, PO Box 2679, Columbus OH 43270-2679. (SD 100 without payment: Ohio Department of Taxation, PO Box 182197, Columbus OH 43218-2197.)",
@@ -21,6 +22,7 @@
   "@@b20ed0f43934": "Ohio Department of Taxation - 2025 Ohio IT 1040 / SD 100 Instruction Booklet, Ohio Schedule of Credits, Line 12 Joint Filing Credit (percentage table, $650 maximum, the new MAGI-under-$750,000 requirement)",
   "@@c31c73aa8e77": "Joint Filing Credit — Married taxpayers filing a joint Ohio return where EACH spouse has at least $500 of 'qualifying income' (any amount included in Ohio AGI other than interest, dividends and distributions, capital gains, and rents and royalties; amounts deducted on the Ohio Schedule of Adjustments — business income, state and local tax refunds, Social Security and railroad retirement benefits, certain military compensation and retirement — are not in Ohio AGI and therefore are not qualifying income). NEW FOR 2025: the couple must also have MAGI less than $750,000.",
   "@@cb82f2b491d0": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice - confirm each amount and your eligibility at the cited source before claiming it. Two 2025 changes: the Joint Filing Credit now requires MAGI under $750,000 (its top tier reads $75,001-$749,999), and the Home School Expenses Credit changed from $250 per RETURN to $250 per qualifying STUDENT.",
+  "@@d82e10426289": "2025 IT NRC, Ohio Nonresident Credit Calculation — the 3-page form itself (page 1: 'This form is for individuals who were either full-year nonresidents or part-year residents of Ohio during the tax year above.')",
   "@@d9bf8f4a739d": "Child Care and Dependent Care Credit — Taxpayer whose modified adjusted gross income is less than $40,000 AND who claimed the federal 'credit for child and dependent care expenses' on federal Form 2441.",
   "@@da141e2a27f3": "2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation, 64 pages) - PASS 1 for every engine figure. Highlights for Tax Year 2025 (top rate reduced to 3.125%; new pregnancy resource center contribution deduction; Ohio educator expense deduction raised to $300 per taxpayer; home school expense credit now $250 per qualifying student; new transformational mixed-use development credit; IT NRS discontinued); mailing addresses p. 3; Who Must File; Ohio Residency and contact periods; personal and dependent exemption table p. 17 ($2,400 / $2,150 / $1,900 / $0 by MAGI); Line 8a - Tax on Line 7 (R.C. 5747.02(A)(3), tax.ohio.gov/taxcalculator); 2025 Ohio Income Tax Brackets p. 18 with the worked $68,050 example; Ohio Schedule of Credits (lines 2, 4, 6, 9, 12, 13) and its worksheets/tables pp. 43-45; Line 22 payment and the April 15 2026 due date",
   "@@db9fe0fc6831": "The newest shipped OH pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
@@ -371,6 +373,12 @@
      "url": "@@a92c40dd1919"
     },
     {
+     "answers": "@@d82e10426289",
+     "cadence": "@@97cef2632946",
+     "topic": "forms_and_instructions",
+     "url": "@@56cee529d53e"
+    },
+    {
      "answers": "2025 Ohio IT 1040 form bundle (the return itself plus the Ohio Schedule of Adjustments, Schedule of Business Income, Schedule of Credits and Schedule of Dependents) - SECOND PASS on structure: line 1 'Federal adjusted gross income (federal 1040 or 1040-SR, line 11a)', lines 2a/2b, line 3 Ohio adjusted gross income, line 4 exemption amount, line 5 Ohio income tax base, line 6 taxable business income, line 7 taxable nonbusiness income, line 8a nonbusiness income tax liability, line 8b business income tax liability, line 8c total before credits; Schedule of Business Income lines 12-16 ($250,000 / $125,000 business income deduction and 'multiply line 15 by 3% (.03)')",
      "cadence": "@@97cef2632946",
      "topic": "forms_and_instructions",
@@ -521,6 +529,14 @@
       {
        "source": "@@5772177f0743",
        "url": "@@a92c40dd1919"
+      },
+      {
+       "source": "2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation), 'Who Must File an Ohio Income Tax Return?' (p. 12): 'Every nonresident having Ohio-sourced income must also file.' — 'What Is My Ohio Residency Status?' (p. 13): 'Nonresident: You are a nonresident if you were a resident of another state for the entire tax year.' — and 'IT NRC - Ohio Nonresident Credit Calculation' (p. 35): 'Include this form with your Ohio IT 1040 and retain a copy for your records. Generally, only Ohio part-year residents and full-year nonresidents should use this form.'",
+       "url": "@@a92c40dd1919"
+      },
+      {
+       "source": "@@d82e10426289",
+       "url": "@@56cee529d53e"
       }
      ],
      "filing_role": "nonresident",
@@ -584,6 +600,14 @@
       {
        "source": "@@5772177f0743",
        "url": "@@a92c40dd1919"
+      },
+      {
+       "source": "2025 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation), 'Who Must File an Ohio Income Tax Return?' (p. 12): 'Every Ohio resident and every part-year resident is subject to the Ohio income tax.' — 'What Is My Ohio Residency Status?' (p. 13): 'Part-year resident: You are a part-year resident of Ohio if you were a resident of Ohio for a portion of the tax year and a nonresident for the rest of the tax year.' — and 'IT NRC - Ohio Nonresident Credit Calculation' (p. 35): 'Include this form with your Ohio IT 1040 and retain a copy for your records. Generally, only Ohio part-year residents and full-year nonresidents should use this form.'",
+       "url": "@@a92c40dd1919"
+      },
+      {
+       "source": "@@d82e10426289",
+       "url": "@@56cee529d53e"
       }
      ],
      "filing_role": "part_year",

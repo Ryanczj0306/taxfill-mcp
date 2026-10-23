@@ -67,6 +67,36 @@ forms:
     estimated payments, or you received and are subtracting the 2025 Arizona Families Tax Rebate)
   part_year_or_nonresident: 'Nonresident: Arizona Form 140NR - Nonresident Personal Income Tax Return. Part-year
     resident: Arizona Form 140PY - Part-Year Resident Personal Income Tax Return.'
+  # Role citations (Phase K JK28, 2026-10-16): each role's own form and its instructions, which state_scope adds to a
+  # part-year or nonresident filer's citations (the top-level `citation` is the resident Form 140 instructions, the only
+  # document this entry pointed at before). The URLs are the 2025 "Form" and "Instructions" links on ADOR's Form 140PY
+  # and Form 140NR pages (azdor.gov/forms/individual/part-year-resident-personal-income-tax-form-fillable and
+  # .../nonresident-personal-income-tax-form-calculating; ADOR publishes fillable forms only from tax year 2023); each
+  # PDF was downloaded twice on 2026-10-16 with identical sha256 (140PY instructions bee888b87444f859..., 140PY
+  # fa49274abf22ab89..., 140NR instructions 2efd8f9c591364e4..., 140NR 0b00f832cc3a4cf2...). The
+  # part_year_or_nonresident text above agrees with both 2025 instructions.
+  citations:
+    part_year:
+    - source: >-
+        2025 Arizona Form 140PY Part-Year Resident Personal Income Tax Return instructions, 'Determining Residency
+        Status' (p. 2): 'If you are a part-year resident, you must file Arizona Form 140PY, Part-Year Resident Personal
+        Income Tax Return.' — and (p. 1): 'If you also have Arizona source income and deductions for the portion of the
+        year you were an Arizona nonresident, file Arizona Form 140PY for the entire taxable year.'
+      url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140PYi.pdf
+    - source: >-
+        2025 Arizona Form 140PY, Part-Year Resident Personal Income Tax Return — the return itself (page 1: 'Part-Year
+        Resident Personal Income Tax Return')
+      url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140PY_f.pdf
+    nonresident:
+    - source: >-
+        2025 Arizona Form 140NR Nonresident Personal Income Tax Return instructions, 'Determining Residency Status' (p.
+        2): 'If you are a nonresident (including nonresident aliens), you must file Arizona Form 140NR, Nonresident
+        Personal Income Tax Return.'
+      url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140NRi.pdf
+    - source: >-
+        2025 Arizona Form 140NR, Nonresident Personal Income Tax Return — the return itself (page 1: 'Nonresident
+        Personal Income Tax Return')
+      url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140NR_f.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:

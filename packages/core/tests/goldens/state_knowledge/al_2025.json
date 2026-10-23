@@ -21,10 +21,13 @@
   "@@9bc83b51da56": "annual (per tax year; the newest shipped AL pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
   "@@9cce479f565d": "Form 40NR — Alabama Individual Income Tax Return (Nonresidents Only). Part-year residents file the resident Form 40 (reporting only the resident-period income); a person who is part-year resident AND has nonresident-period Alabama-source income files BOTH Form 40 and Form 40NR (personal and dependent exemptions all claimed on the part-year Form 40, none on the 40NR).",
   "@@a3e9412d87b9": "2025 Form 40 Booklet, When To File (p.5) — 'You should file as soon as you can after January 1, 2026, but no later than the due date of the federal return' (April 15, 2026); 'You will automatically be granted an extension until October 15, 2026' (no application required; payment with Form 40V, 'Automatic Extension Payment' box checked, is still due by the due date of the federal return).",
+  "@@afa5498564cf": "2025 Form 40NR, Alabama Individual Income Tax Return, Nonresidents Only — the return itself (page 1: 'NONRESIDENTS ONLY')",
   "@@b6fc2cc211ee": "Alabama Adoption Tax Credit — Taxpayers who reside in Alabama and complete an adoption. Two cases: (1) a private adoption in which the adopted child is a resident of Alabama, or a qualified foster child in the custody of the Alabama Department of Human Resources; (2) an out-of-state adoption or where the adopted child is not otherwise an Alabama resident. Schedule AAC must be completed.",
+  "@@c2b9527c3fee": "2025 Form 40, Alabama Individual Income Tax Return, Residents & Part-Year Residents — the return itself (page 1: 'RESIDENTS & PART-YEAR RESIDENTS')",
   "@@c58e7d1cb3cc": "Treaty conformity — AL does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by AL. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: Alabama does NOT start the return from federal adjusted gross income. Both the resident Form 40 and the nonresident Form 40NR build Alabama income from their own line items computed under Alabama law (2025 Form 40 line 5b wages/salaries/tips from Schedule W-2 line 18 column I plus column J, line 6 interest and dividends, line 7 other income; Form 40NR equivalents), not by importing a federal AGI figure. Because the federal-AGI-conformity flow-through does not exist here, a treaty exclusion that is already netted out of federal AGI does NOT automatically carry to the Alabama return. The 2025 Form 40NR booklet (25f40nrbk.pdf, Other Income / Foreign Income Exclusion) is explicit on the only foreign-income mechanism it recognizes: 'All foreign income must be reported on your return, in order to receive any foreign income exclusion,' and that exclusion is the IRC sec. 911 foreign EARNED income exclusion, claimed as a negative entry on line 8 Other Income with federal Form 2555 attached. There is NO Alabama line, schedule, or instruction that recognizes or excludes income exempt under a U.S. income-TAX TREATY. Given (a) the separate Alabama income build-up rather than a federal-AGI start, and (b) the affirmative 'report all foreign income' rule with only a sec. 911-style exclusion path, conformity to federal treaty exemptions is NOT established on any .gov page. Per conservative handling this is set false and flagged. See unverified/notes.",
   "@@c70678b89f8d": "The newest shipped AL pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@d71d2a05b94b": "Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional short form for full-year residents who do not itemize, claim no adjustments to income, have income only from salaries/wages plus up to $1,500 of interest and dividends, no Schedule C/D/E/F income, and no other-state credit; part-year residents use Form 40.)",
+  "@@e384d2311cfb": "2025 Alabama Form 40NR Booklet (Nonresidents Only, Forms and Instructions), 'Which Form To File' (p. 5): 'You MUST Use Form 40NR If:' — 'You are not a resident of Alabama and you received taxable income from Alabama sources or for performing services within Alabama and your gross income from Alabama sources exceeds the allowable prorated personal exemption, or filing Married Filing Joint under the \"Military Spouses Residency Relief Act.\"' | 2025 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart (same $4,500/$8,200/$11,500/$5,750), the sliding Standard Deduction chart (same amounts and the same printed MFJ typo), the identical tax-table figures (e.g. $4,100-$4,200 row = $168 single / $146 MFJ; $16,000-$16,100 = $763/$723; $99,900-$100,000 = $4,958/$4,918), the identical Over $100,000.00 worksheet constants ($4,958.00 / $4,918.00), and the Foreign Income Exclusion text ('All foreign income must be reported on your return, in order to receive any foreign income exclusion' — IRC sec. 911 exclusion via federal Form 2555 only, reported as a negative line 8 entry, no treaty mechanism)",
   "@@eab2ce4c8add": "If any of your income was exempt from federal tax under a treaty: AL does not conform to federal tax treaties, so that income is still taxable to AL — do not carry the federal exclusion onto the state return.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
@@ -388,16 +391,28 @@
      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
     },
     {
+     "answers": "@@c2b9527c3fee",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40.pdf"
+    },
+    {
+     "answers": "@@afa5498564cf",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nr.pdf"
+    },
+    {
+     "answers": "@@e384d2311cfb",
+     "cadence": "@@9bc83b51da56",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nrbk.pdf"
+    },
+    {
      "answers": "2025 Alabama Form 40 (printed form) — second-pass verification: the filing-status boxes print the personal exemptions '1 $1,500 Single; 2 $3,000 Married filing joint; 3 $1,500 Married filing separate; 4 $3,000 Head of Family (with qualifying person). Complete Schedule HOF'; line 5b 'Wages, salaries, tips, etc. (from Schedule W-2, line 18, column I plus J)'; line 16 'Taxable income. Subtract line 15 from line 10'; line 17 'Income Tax due. Enter amount from tax table or check if from Form NOL-85A'; and the Where To File block",
      "cadence": "@@9bc83b51da56",
      "topic": "forms_and_instructions",
      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40blk.pdf"
-    },
-    {
-     "answers": "2025 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart (same $4,500/$8,200/$11,500/$5,750), the sliding Standard Deduction chart (same amounts and the same printed MFJ typo), the identical tax-table figures (e.g. $4,100-$4,200 row = $168 single / $146 MFJ; $16,000-$16,100 = $763/$723; $99,900-$100,000 = $4,958/$4,918), the identical Over $100,000.00 worksheet constants ($4,958.00 / $4,918.00), and the Foreign Income Exclusion text ('All foreign income must be reported on your return, in order to receive any foreign income exclusion' — IRC sec. 911 exclusion via federal Form 2555 only, reported as a negative line 8 entry, no treaty mechanism)",
-     "cadence": "@@9bc83b51da56",
-     "topic": "forms_and_instructions",
-     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nrbk.pdf"
     },
     {
      "answers": "2025 Schedule OC Instructions — Part A other-state credit smaller-of computation (with the new NOTE denying the credit for wages from a no-income-tax state), Part D Rural Physician Credit ($5,000 / $10,000 MFJ), Part M Alabama Adoption Tax Credit ($2,000 / $1,000), Section F refundable credits (F2 adoption), and the 2025-new Act 2024-302/2024-303 credits (Workforce Housing, Childcare Facility, Employer, Employer Provider)",
@@ -563,6 +578,14 @@
       {
        "source": "@@20ce50806315",
        "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "@@e384d2311cfb",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nrbk.pdf"
+      },
+      {
+       "source": "@@afa5498564cf",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nr.pdf"
       }
      ],
      "filing_role": "nonresident",
@@ -628,6 +651,18 @@
       {
        "source": "@@20ce50806315",
        "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "2025 Alabama Form 40 Booklet (Long Return, Residents and Part-Year Residents, Forms and Instructions), 'Which Form To File' (p. 5): 'You MAY Use Form 40A If You Meet ALL The Following Conditions:' — 'You were a resident of Alabama for the entire year,' — 'You MUST Use Form 40 If:' — 'You were a full or part-year resident of Alabama and do not meet ALL of the requirements to file Form 40A, and' — 'You are itemizing deductions.' — and 'You MUST Use Both Form 40 and Form 40NR If: You had sufficient income to require the filing of a part-year return and also had income from Alabama sources while a nonresident during the same tax year.'",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf"
+      },
+      {
+       "source": "@@c2b9527c3fee",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40.pdf"
+      },
+      {
+       "source": "@@afa5498564cf",
+       "url": "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nr.pdf"
       }
      ],
      "filing_role": "part_year",

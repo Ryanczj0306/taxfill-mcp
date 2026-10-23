@@ -2111,3 +2111,106 @@ pitfalls:
       year pins the (key, widget) map and the two relations offline, and
       (network) reads the number printed left of each bound widget on the
       year's own blank.
+  - id: P-033
+    incident: >-
+      SSN digits crossed by their box's own printed separators. A comb widget
+      divides its /Rect into /MaxLen equal cells ("the field shall be
+      automatically divided into as many equally spaced positions, or combs,
+      as the value of MaxLen", ISO 32000-1:2008, 12.7.4.3, Table 228), and the
+      IRS Form 1040 and 1040-X SSN boxes print their dotted 3-2-4 separators
+      on a narrower grid than the widget: on the 2025 Form 1040 the 107 pt
+      widget makes 11.89 pt cells while the dots stand 21.7 pt apart (10.85 pt
+      cells), so the dots crossed the third and fifth digits in every viewer
+      that draws the comb, Acrobat included now the filler drops the XFA
+      layer (JK5). Writing the appearance from the XFA geometry would not
+      help: the template's comb field (numberOfCells 9) spans the same box as
+      the widget (field x plus leftInset to x plus w is 469-576 pt, the
+      widget /Rect); the field's para marginLeft="12pt", if applied, would
+      put the cells at 481-576 pt (10.56 pt cells), whose boundaries near the
+      dots are the 2|3 and 4|5 ones, so that grid does not match the dots
+      either; and the dots are separate draws (SSN_1 at x 176.636mm, SSN_2
+      at 184.291mm, edge stroke dotted). Found by the JK5 release-candidate
+      walkthrough; measured in Phase K JK28 (2026-10-16) over the 2,229 comb
+      widgets of the 265 distinct cached blanks (counted by digest: the Rev.
+      December 2024 Form 843 is cached under two URLs and counts once): 310
+      show dark vertical marks inside the rect on a 600 dpi render of the
+      printed page, and the vector content adds pale tinted cell outlines on
+      920 more. In 22, all federal, the printed cells are uniform and a
+      separator fell inside a digit: the own and spouse SSN of the 2023-2026
+      Form 1040 and of
+      the Form 1040-X (Rev. December 2025 and the 2026 draft), the 2023 and
+      2024 Form 1040 dependents' SSNs, and line 26's former-spouse SSN on the
+      2025 Form 1040 and the 2026 draft. The rest keep every separator clear
+      of the characters, print it in a pale tint or as text, or are boxes no
+      uniform comb can match (listed below).
+    countermeasure: >-
+      fill_form narrows every written comb whose cells cross a visible
+      printed separator to the grid the separators imply, before any
+      appearance is built (filler._align_comb_cells; filler.comb_cell_grid
+      over filler.vertical_strokes, the page's vector strokes read through
+      pdfium, text never read): the cells start at the box's left rule and
+      each separator lands on a cell boundary, so pypdf's appearance and
+      pdfium (measured) draw aligned cells, as must any viewer that divides
+      the /Rect as the spec says (Acrobat regenerating under NeedAppearances;
+      not yet observed there); FillResult.combs_aligned names each widget
+      moved. Nothing else moves: a
+      widget whose own cells clear its separators; a bordered, filled or
+      rotated widget; ink paler than luminance 200 of 255 (the tinted cell
+      outlines of the DE, IA, IL, LA, MA, OR and VA blanks; among them the IA
+      1040 2023-2025 put a tinted line inside a digit, its 2024/2025 page-4
+      header SSN widget standing about 8.8 pt right of its printed boxes, and
+      so does the MA Form 1 2023/2025 ZIP comb, a MaxLen 7 widget over five
+      tinted 15 pt boxes whose lines (luminance about 237) cross the second
+      and third digits of a ZIP, in 2023 the fifth too; both are left as
+      printed);
+      separators printed as text; and every box no uniform comb fits inside
+      its printed rules: the AZ Form 140NR 2023 worksheet line 8C (its fifth
+      box is 8.7 pt wide), MO-1040's page-1 SSN (the pack writes the dashes
+      into cells 4 and 7, which sit in the printed gaps by design) and the CA
+      Schedule CA (540NR) 2023/2024 dates, whose printed slashes are text
+      (the 2024 pack notes the first year digit touching the second slash
+      by about 1 pt). Run over every cached comb widget, the pass moves exactly
+      the 22 boxes above, and a 600 dpi render of each shows its digits
+      3 | 2 | 4 between the dots. Tests, P-033-tagged, in
+      packages/core/tests/test_comb_alignment.py: the grid of the measured
+      IRS boxes and of the boxes it must leave alone, a synthetic SSN box
+      with its controls (render, /Rect, verify; a plain /MaxLen 9 box with no
+      comb flag stays put), the pass never blocking a fill (a page pdfium
+      cannot open, a grid rule that raises), and (network) the real 2025
+      Form 1040, where only the three crossing boxes move, each inside its
+      printed box at its own height, and verify_form reads every value back.
+      formpacks/CONVENTIONS.md "Comb boxes and their printed separators
+      (P-033)" tells pack authors what is automatic.
+  - id: P-034
+    incident: >-
+      Page-header mirrors printed blank and verify passed them. Many forms
+      repeat the filer's name and SSN at the top of later pages or schedules
+      ("Your name:" / "Your SSN or ITIN:" on Sides 2-6 of the CA Form 540 and
+      540NR; "Name(s) as shown on Form 40" on the AL schedules), and the
+      blank's own JavaScript (or an XFA global bind) copies the page-1 values
+      there. taxfill runs neither, so a caller who supplied page-1 identity
+      alone filed blank headers, and verify_form had no check that read them:
+      the JK5 release-candidate walkthrough's Form 540 printed Sides 2-6 with
+      blank name and SSN boxes and verify_form returned ok. The Phase K JK28
+      sweep (2026-10-23) found the same shape mapped but unbuilt across
+      federal and state packs (GA Form 500's SSN_COPY and Schedule 4 name
+      copies, DE PIT-RES and IA 1040 header.* fields, CO DR 0104 2023, the AL
+      Form 40NR and Form 40 schedule headers).
+    countermeasure: >-
+      A pack declares each mirror in `mirrors:` as a template over its own
+      lines (formpacks/CONVENTIONS.md "Page-header mirrors (`mirrors`)");
+      fill_form builds every mirror the caller leaves out
+      (FillResult.mirrored), measures it against its own box and leaves a
+      header too wide BLANK with a hand-write warning rather than printing it
+      cut off; verify_form and verify_filing check each declared mirror on
+      disk ("page-header mirror <line>" identity checks: FAIL blank or
+      different, SKIPPED with nothing to mirror or nothing that fits). A box
+      whose face says "Do not enter name and social security number if shown
+      on other side" is not declared. The pack gate in
+      packages/core/tests/test_pack_invariants.py fails a pack that maps a
+      mirror-shaped line without declaring it (or listing it in NOT_A_MIRROR
+      with the printed reason) and pins each pack's declared count
+      (IDENTITY_MIRROR_COUNTS). Tests, P-034-tagged, in
+      packages/core/tests/test_page_header_mirrors.py, including
+      (network) a fill of every declaring pack's real blank with page-1
+      identity alone, each mirror built and verified.

@@ -2,7 +2,9 @@
  "_strings": {
   "@@02a383eb71fe": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Net Operating Loss Suspension: 'For taxable years beginning on or after January 1, 2024, and before January 1, 2027, California has suspended the net operating loss (NOL) carryover deduction.' — 'However, taxpayers with net business income or modified adjusted gross income of less than $1,000,000 or with disaster loss carryovers are not affected by the NOL suspension rules.'",
   "@@0de64e99d022": "The shipped CA 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
+  "@@1257e1c4be7d": "Exemption credits applied: Form 540 line 32 = $908; tax after them (line 33) = $74. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $908).",
   "@@1448bc498528": "Young Child Tax Credit (YCTC) — Available if you qualified for the California EITC (or would have but for earned income of zero dollars or less) and have at least one qualifying child younger than six years old as of the last day of the taxable year. Computed on form FTB 3514.",
+  "@@194858f6ffba": "2024 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — the Form 540 printed in it (Side 1 lines 6-9 \"X $149\"; Side 2 line 10 \"X $461\", lines 11 and 31-33), p. 12 \"Line 6 – Can be Claimed as Dependent\" through \"Line 11 – Exemption Amount\", and p. 14 \"Line 32 – Exemption Credits\" with the AGI Limitation Worksheet. Second pass: the standalone 2024 Form 540 (ftb.ca.gov/forms/2024/2024-540.pdf) prints the same amounts and line text; the 2024 Form 540NR (ftb.ca.gov/forms/2024/2024-540nr.pdf) lines 38-40 for the proration note. Each fetched twice on 2026-10-16 with identical sha256.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@1ff5e0c79b87": "Law change NOT modeled by the engine (status final_form_published): BUSINESS CREDITS CAPPED AT $5,000,000 for taxable years 2024-2026 (R&TC Sections 17039.4 and 17039.5): business credits, carryovers included, may not reduce net tax by more than $5,000,000; the Low-Income Housing Credit and the Pass-Through Entity Elective Tax Credit are outside the cap, and form FTB 3870 elects a future refundable credit for the disallowed amount. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Business Credit Limitation; form FTB 3870.",
   "@@3359855c8c44": "2024 Personal Income Tax Booklet (Form 540), Important Dates — 'April 15, 2025: Last day to file and pay the 2024 amount you owe'; 'October 15, 2025: Last day to file or e-file your 2024 tax return' with interest from the original due date",
@@ -17,6 +19,7 @@
   "@@84ce892c292a": "2024 Personal Income Tax Booklet (Form 540), 2024 Tax Law Changes/What's New — Special Rules for Certain Distributions from Qualified IRC Section 529 Tuition Plans: 'California law does not conform to this federal provision. Rollover distribution from an IRC Section 529 plan to a Roth IRA is includible in California taxable income and subject to an additional tax of'",
   "@@8a27347f4de0": "FTB Publication 1031 (2024), Guidelines for Determining Resident Status — Tax Treaty section (p. 10)",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@956d61148f1d": "Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33.",
   "@@98f88d52e9e0": "Law change NOT modeled by the engine (status final_form_published): CATCH-UP CONTRIBUTIONS — California does NOT conform to the federal CAA, 2023 indexing of the $1,000 IRA catch-up or to its increased catch-up amounts: a contribution above the California limit may be California income, and a later distribution of the excess may be taxable. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Catch-Up Contributions for Certain Individuals; FTB Pub. 1005.",
   "@@9d1b915efa34": "Law change NOT modeled by the engine (status final_form_published): SDI WAGE LIMIT REMOVED — from 2024 every wage is subject to the State Disability Insurance contribution, so there is no excess SDI (or VPDI) credit: the Form 540 line that claimed it is now 'reserved for future use'. A filer with two employers can no longer recover over-withheld SDI on the return. Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — State Disability Insurance.",
   "@@a0603eda0bec": "Law change NOT modeled by the engine (status final_form_published): 529-TO-ROTH ROLLOVERS — California does NOT conform to the federal CAA, 2023 rule: a rollover from an IRC Section 529 plan to a Roth IRA is California taxable income and subject to an additional 2.5% tax (form FTB 3805P). Resolve via: 2024 Form 540 booklet, 2024 Tax Law Changes/What's New — Special Rules for Certain Distributions from Qualified IRC Section 529 Tuition Plans; Schedule CA (540) instructions; form FTB 3805P.",
@@ -779,6 +782,27 @@
   "calls": [
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -789,10 +813,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 0,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = -$11,080.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = -$11,080.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -803,10 +848,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 0,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $11,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $11,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $0.00; graduated tax on $0 [head_of_household schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 5000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -817,10 +883,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 50,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $16,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.01 x $5,000.00 (the $0-$21,527 bracket) = $50.00; total $50.00 -> $50"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $16,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $5,000.00; graduated tax on $5,000 [head_of_household schedule]: 0.01 x $5,000.00 (the $0-$21,527 bracket) = $50.00; total $50.00 -> $50. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 86364,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -831,10 +918,31 @@
     },
     "marginal_rate": "0.08",
     "tax": 2732,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $97,444.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $86,364.00; graduated tax on $86,364 [head_of_household schedule]: 0.01 x $21,527.00 (the $0-$21,527 bracket) = $215.27; 0.02 x $29,473.00 (the $21,527-$51,000 bracket) = $589.46; 0.04 x $14,744.00 (the $51,000-$65,744 bracket) = $589.76; 0.06 x $15,620.00 (the $65,744-$81,364 bracket) = $937.20; 0.08 x $5,000.00 (the $81,364-$96,107 bracket) = $400.00; total $2,731.69 -> $2,732"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $97,444.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $86,364.00; graduated tax on $86,364 [head_of_household schedule]: 0.01 x $21,527.00 (the $0-$21,527 bracket) = $215.27; 0.02 x $29,473.00 (the $21,527-$51,000 bracket) = $589.46; 0.04 x $14,744.00 (the $51,000-$65,744 bracket) = $589.76; 0.06 x $15,620.00 (the $65,744-$81,364 bracket) = $937.20; 0.08 x $5,000.00 (the $81,364-$96,107 bracket) = $400.00; total $2,731.69 -> $2,732. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 990987,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -845,10 +953,31 @@
     },
     "marginal_rate": "0.123",
     "tax": 95864,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $1,002,067.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $990,987.00; graduated tax on $990,987 [head_of_household schedule]: 0.01 x $21,527.00 (the $0-$21,527 bracket) = $215.27; 0.02 x $29,473.00 (the $21,527-$51,000 bracket) = $589.46; 0.04 x $14,744.00 (the $51,000-$65,744 bracket) = $589.76; 0.06 x $15,620.00 (the $65,744-$81,364 bracket) = $937.20; 0.08 x $14,743.00 (the $81,364-$96,107 bracket) = $1,179.44; 0.093 x $394,386.00 (the $96,107-$490,493 bracket) = $36,677.90; 0.103 x $98,100.00 (the $490,493-$588,593 bracket) = $10,104.30; 0.113 x $392,394.00 (the $588,593-$980,987 bracket) = $44,340.52; 0.123 x $10,000.00 (the $980,987+ bracket) = $1,230.00; total $95,863.85 -> $95,864"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $1,002,067.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $990,987.00; graduated tax on $990,987 [head_of_household schedule]: 0.01 x $21,527.00 (the $0-$21,527 bracket) = $215.27; 0.02 x $29,473.00 (the $21,527-$51,000 bracket) = $589.46; 0.04 x $14,744.00 (the $51,000-$65,744 bracket) = $589.76; 0.06 x $15,620.00 (the $65,744-$81,364 bracket) = $937.20; 0.08 x $14,743.00 (the $81,364-$96,107 bracket) = $1,179.44; 0.093 x $394,386.00 (the $96,107-$490,493 bracket) = $36,677.90; 0.103 x $98,100.00 (the $490,493-$588,593 bracket) = $10,104.30; 0.113 x $392,394.00 (the $588,593-$980,987 bracket) = $44,340.52; 0.123 x $10,000.00 (the $980,987+ bracket) = $1,230.00; total $95,863.85 -> $95,864. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -859,10 +988,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 0,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = -$11,080.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = -$11,080.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -873,10 +1023,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 0,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $11,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $11,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $0.00; graduated tax on $0 [married_filing_jointly schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 5000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -887,10 +1058,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 50,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $16,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.01 x $5,000.00 (the $0-$21,512 bracket) = $50.00; total $50.00 -> $50"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $16,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $5,000.00; graduated tax on $5,000 [married_filing_jointly schedule]: 0.01 x $5,000.00 (the $0-$21,512 bracket) = $50.00; total $50.00 -> $50. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 116732,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -901,10 +1093,31 @@
     },
     "marginal_rate": "0.08",
     "tax": 4259,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $127,812.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $116,732.00; graduated tax on $116,732 [married_filing_jointly schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $29,486.00 (the $21,512-$50,998 bracket) = $589.72; 0.04 x $29,492.00 (the $50,998-$80,490 bracket) = $1,179.68; 0.06 x $31,242.00 (the $80,490-$111,732 bracket) = $1,874.52; 0.08 x $5,000.00 (the $111,732-$141,212 bracket) = $400.00; total $4,259.04 -> $4,259"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $127,812.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $116,732.00; graduated tax on $116,732 [married_filing_jointly schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $29,486.00 (the $21,512-$50,998 bracket) = $589.72; 0.04 x $29,492.00 (the $50,998-$80,490 bracket) = $1,179.68; 0.06 x $31,242.00 (the $80,490-$111,732 bracket) = $1,874.52; 0.08 x $5,000.00 (the $111,732-$141,212 bracket) = $400.00; total $4,259.04 -> $4,259. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 1452628,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -915,10 +1128,31 @@
     },
     "marginal_rate": "0.123",
     "tax": 141463,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $1,463,708.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $1,452,628.00; graduated tax on $1,452,628 [married_filing_jointly schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $29,486.00 (the $21,512-$50,998 bracket) = $589.72; 0.04 x $29,492.00 (the $50,998-$80,490 bracket) = $1,179.68; 0.06 x $31,242.00 (the $80,490-$111,732 bracket) = $1,874.52; 0.08 x $29,480.00 (the $111,732-$141,212 bracket) = $2,358.40; 0.093 x $580,106.00 (the $141,212-$721,318 bracket) = $53,949.86; 0.103 x $144,256.00 (the $721,318-$865,574 bracket) = $14,858.37; 0.113 x $577,054.00 (the $865,574-$1,442,628 bracket) = $65,207.10; 0.123 x $10,000.00 (the $1,442,628+ bracket) = $1,230.00; total $141,462.77 -> $141,463"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $1,463,708.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $1,452,628.00; graduated tax on $1,452,628 [married_filing_jointly schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $29,486.00 (the $21,512-$50,998 bracket) = $589.72; 0.04 x $29,492.00 (the $50,998-$80,490 bracket) = $1,179.68; 0.06 x $31,242.00 (the $80,490-$111,732 bracket) = $1,874.52; 0.08 x $29,480.00 (the $111,732-$141,212 bracket) = $2,358.40; 0.093 x $580,106.00 (the $141,212-$721,318 bracket) = $53,949.86; 0.103 x $144,256.00 (the $721,318-$865,574 bracket) = $14,858.37; 0.113 x $577,054.00 (the $865,574-$1,442,628 bracket) = $65,207.10; 0.123 x $10,000.00 (the $1,442,628+ bracket) = $1,230.00; total $141,462.77 -> $141,463. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -929,10 +1163,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 0,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = -$5,540.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = -$5,540.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -943,10 +1198,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 0,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $5,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $5,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $0.00; graduated tax on $0 [married_filing_separately schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 5000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -957,10 +1233,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 50,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $10,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.01 x $5,000.00 (the $0-$10,756 bracket) = $50.00; total $50.00 -> $50"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $10,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $5,000.00; graduated tax on $5,000 [married_filing_separately schedule]: 0.01 x $5,000.00 (the $0-$10,756 bracket) = $50.00; total $50.00 -> $50. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 60866,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -971,10 +1268,31 @@
     },
     "marginal_rate": "0.08",
     "tax": 2330,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $66,406.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $60,866.00; graduated tax on $60,866 [married_filing_separately schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $5,000.00 (the $55,866-$70,606 bracket) = $400.00; total $2,329.52 -> $2,330"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $66,406.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $60,866.00; graduated tax on $60,866 [married_filing_separately schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $5,000.00 (the $55,866-$70,606 bracket) = $400.00; total $2,329.52 -> $2,330. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 731314,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -985,10 +1303,31 @@
     },
     "marginal_rate": "0.123",
     "tax": 71346,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $736,854.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $731,314.00; graduated tax on $731,314 [married_filing_separately schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $14,740.00 (the $55,866-$70,606 bracket) = $1,179.20; 0.093 x $290,053.00 (the $70,606-$360,659 bracket) = $26,974.93; 0.103 x $72,128.00 (the $360,659-$432,787 bracket) = $7,429.18; 0.113 x $288,527.00 (the $432,787-$721,314 bracket) = $32,603.55; 0.123 x $10,000.00 (the $721,314+ bracket) = $1,230.00; total $71,346.38 -> $71,346"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $736,854.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $731,314.00; graduated tax on $731,314 [married_filing_separately schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $14,740.00 (the $55,866-$70,606 bracket) = $1,179.20; 0.093 x $290,053.00 (the $70,606-$360,659 bracket) = $26,974.93; 0.103 x $72,128.00 (the $360,659-$432,787 bracket) = $7,429.18; 0.113 x $288,527.00 (the $432,787-$721,314 bracket) = $32,603.55; 0.123 x $10,000.00 (the $721,314+ bracket) = $1,230.00; total $71,346.38 -> $71,346. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -999,10 +1338,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 0,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = -$5,540.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $0.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = -$5,540.00 (clamped to $0 — exemptions/deduction exceed the base); graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 0,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1013,10 +1373,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 0,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $5,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $5,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $0.00; graduated tax on $0 [single schedule]: $0.00 (base does not exceed the first bracket); total $0.00 -> $0. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 5000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1027,10 +1408,31 @@
     },
     "marginal_rate": "0.01",
     "tax": 50,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $10,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.01 x $5,000.00 (the $0-$10,756 bracket) = $50.00; total $50.00 -> $50"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $10,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $5,000.00; graduated tax on $5,000 [single schedule]: 0.01 x $5,000.00 (the $0-$10,756 bracket) = $50.00; total $50.00 -> $50. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 60866,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1041,10 +1443,31 @@
     },
     "marginal_rate": "0.08",
     "tax": 2330,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $66,406.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $60,866.00; graduated tax on $60,866 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $5,000.00 (the $55,866-$70,606 bracket) = $400.00; total $2,329.52 -> $2,330"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $66,406.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $60,866.00; graduated tax on $60,866 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $5,000.00 (the $55,866-$70,606 bracket) = $400.00; total $2,329.52 -> $2,330. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "base_after_exemptions": 731314,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1055,7 +1478,7 @@
     },
     "marginal_rate": "0.123",
     "tax": 71346,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $736,854.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $731,314.00; graduated tax on $731,314 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $14,740.00 (the $55,866-$70,606 bracket) = $1,179.20; 0.093 x $290,053.00 (the $70,606-$360,659 bracket) = $26,974.93; 0.103 x $72,128.00 (the $360,659-$432,787 bracket) = $7,429.18; 0.113 x $288,527.00 (the $432,787-$721,314 bracket) = $32,603.55; 0.123 x $10,000.00 (the $721,314+ bracket) = $1,230.00; total $71,346.38 -> $71,346"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $736,854.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $731,314.00; graduated tax on $731,314 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,746.00 (the $25,499-$40,245 bracket) = $589.84; 0.06 x $15,621.00 (the $40,245-$55,866 bracket) = $937.26; 0.08 x $14,740.00 (the $55,866-$70,606 bracket) = $1,179.20; 0.093 x $290,053.00 (the $70,606-$360,659 bracket) = $26,974.93; 0.103 x $72,128.00 (the $360,659-$432,787 bracket) = $7,429.18; 0.113 x $288,527.00 (the $432,787-$721,314 bracket) = $32,603.55; 0.123 x $10,000.00 (the $721,314+ bracket) = $1,230.00; total $71,346.38 -> $71,346. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
    },
    {
     "args": {
@@ -1065,7 +1488,7 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: CA 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it."
+    "error": "ValueError: CA 2024: exemptions_count was supplied but the pack ships no 'personal' exemption amount — this state has no personal exemption for state_tax to apply (verified exemption kinds shipped: (none)). Pass exemptions_count=0 and see the pack's tax.notes for how the state handles it. CA's per-person exemptions are CREDITS against tax (Form 540 lines 7, 8, 9, 10): pass their counts as exemption_credit_counts (kinds: personal, blind, senior, dependent) with federal_agi, and read the result's exemption_credits."
    },
    {
     "args": {
@@ -1075,10 +1498,31 @@
      "taxable_base": 40000,
      "year": 2024
     },
-    "error": "ValueError: CA 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction)."
+    "error": "ValueError: CA 2024: dependents_count was supplied but the pack ships no 'dependent' exemption amount — this state does not model dependents as a verified per-dependent base exemption (verified exemption kinds shipped: (none)). Pass dependents_count=0 and handle dependents per the pack's tax.notes (e.g. AZ's Line 49 dependent CREDIT, NC's AGI-tiered child deduction). CA's per-person exemptions are CREDITS against tax (Form 540 lines 7, 8, 9, 10): pass their counts as exemption_credit_counts (kinds: personal, blind, senior, dependent) with federal_agi, and read the result's exemption_credits."
    },
    {
     "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": null,
+     "applied": false,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {},
+     "exemption_amount": null,
+     "federal_agi": null,
+     "form": "Form 540",
+     "limitation_reduction": null,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@956d61148f1d",
+     "tax_after_credits": null,
+     "total": null
+    },
     "inputs": {
      "dependents_count": 0,
      "exemptions_count": 0,
@@ -1089,7 +1533,625 @@
     },
     "marginal_rate": "0.02",
     "tax": 585,
-    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $51,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $11,080 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $18,488.00 (the $21,512-$50,998 bracket) = $369.76; total $584.88 -> $585"
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $51,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column)] = $11,080 = $40,000.00; graduated tax on $40,000 [married_filing_jointly (qualifying surviving spouse uses the married-filing-jointly column) schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $18,488.00 (the $21,512-$50,998 bracket) = $369.76; total $584.88 -> $585. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33. This pack ships CA's per-person exemption CREDITS against tax (Form 540: line 7 personal $149 each; line 8 blind $149 each; line 9 senior $149 each; line 10 dependent $461 each; totaled on line 11 and subtracted on line 32, limited when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household)"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 367291,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 1,
+       "credit": 461,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 908,
+     "federal_agi": 51080,
+     "form": "Form 540",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form 540 line 32 = $908; tax after them (line 33) = $0. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $908).",
+     "tax_after_credits": 0,
+     "total": 908
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 1,
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "51080",
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "51080",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 585,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $51,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.01 x $21,527.00 (the $0-$21,527 bracket) = $215.27; 0.02 x $18,473.00 (the $21,527-$51,000 bracket) = $369.46; total $584.73 -> $585. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 1 x $149 = $149; line 8 blind 1 x $149 = $149; line 9 senior 1 x $149 = $149; line 10 dependent 1 x $461 = $461; line 11 (exemption amount) = $908. AGI limitation: federal AGI (Form 540 line 13) $51,080 is not more than the $367,291 [head_of_household] threshold, so line 32 = line 11 = $908. Tax after exemption credits: line 33 = max(0, $585 - $908) = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 367291,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 1,
+       "credit": 461,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 908,
+     "federal_agi": 397292,
+     "form": "Form 540",
+     "limitation_reduction": 312,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form 540 line 32 = $596; tax after them (line 33) = $0. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $596).",
+     "tax_after_credits": 0,
+     "total": 596
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 1,
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "397292",
+     "filing_status": "head_of_household",
+     "state": "ca",
+     "taxable_base": "51080",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 585,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $51,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [head_of_household] = $11,080 = $40,000.00; graduated tax on $40,000 [head_of_household schedule]: 0.01 x $21,527.00 (the $0-$21,527 bracket) = $215.27; 0.02 x $18,473.00 (the $21,527-$51,000 bracket) = $369.46; total $584.73 -> $585. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 1 x $149 = $149; line 8 blind 1 x $149 = $149; line 9 senior 1 x $149 = $149; line 10 dependent 1 x $461 = $461; line 11 (exemption amount) = $908. AGI limitation: federal AGI (Form 540 line 13) $397,292 is more than the $367,291 [head_of_household] threshold by $30,001; $30,001 / $2,500 = 12.0004, rounded up to 13 step(s) x $6 = $78 off each credit counted; personal + blind + senior: $447 - 3 x $78 = $213; dependent: $461 - 1 x $78 = $383; line 32 = $596 ($312 less than line 11). Tax after exemption credits: line 33 = max(0, $585 - $596) = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 489719,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 2,
+       "credit": 298,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 2,
+       "credit": 922,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 2,
+       "credit": 298,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 2,
+       "credit": 298,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 1816,
+     "federal_agi": 51080,
+     "form": "Form 540",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form 540 line 32 = $1,816; tax after them (line 33) = $0. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $1,816).",
+     "tax_after_credits": 0,
+     "total": 1816
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 2,
+      "dependent": 2,
+      "personal": 2,
+      "senior": 2
+     },
+     "exemptions_count": 0,
+     "federal_agi": "51080",
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "51080",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 585,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $51,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $18,488.00 (the $21,512-$50,998 bracket) = $369.76; total $584.88 -> $585. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 2 x $149 = $298; line 8 blind 2 x $149 = $298; line 9 senior 2 x $149 = $298; line 10 dependent 2 x $461 = $922; line 11 (exemption amount) = $1,816. AGI limitation: federal AGI (Form 540 line 13) $51,080 is not more than the $489,719 [married_filing_jointly] threshold, so line 32 = line 11 = $1,816. Tax after exemption credits: line 33 = max(0, $585 - $1,816) = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 489719,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 2,
+       "credit": 298,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 2,
+       "credit": 922,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 2,
+       "credit": 298,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 2,
+       "credit": 298,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 1816,
+     "federal_agi": 519720,
+     "form": "Form 540",
+     "limitation_reduction": 624,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form 540 line 32 = $1,192; tax after them (line 33) = $0. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $1,192).",
+     "tax_after_credits": 0,
+     "total": 1192
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 2,
+      "dependent": 2,
+      "personal": 2,
+      "senior": 2
+     },
+     "exemptions_count": 0,
+     "federal_agi": "519720",
+     "filing_status": "married_filing_jointly",
+     "state": "ca",
+     "taxable_base": "51080",
+     "year": 2024
+    },
+    "marginal_rate": "0.02",
+    "tax": 585,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $51,080.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_jointly] = $11,080 = $40,000.00; graduated tax on $40,000 [married_filing_jointly schedule]: 0.01 x $21,512.00 (the $0-$21,512 bracket) = $215.12; 0.02 x $18,488.00 (the $21,512-$50,998 bracket) = $369.76; total $584.88 -> $585. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 2 x $149 = $298; line 8 blind 2 x $149 = $298; line 9 senior 2 x $149 = $298; line 10 dependent 2 x $461 = $922; line 11 (exemption amount) = $1,816. AGI limitation: federal AGI (Form 540 line 13) $519,720 is more than the $489,719 [married_filing_jointly] threshold by $30,001; $30,001 / $2,500 = 12.0004, rounded up to 13 step(s) x $6 = $78 off each credit counted; personal + blind + senior: $894 - 6 x $78 = $426; dependent: $922 - 2 x $78 = $766; line 32 = $1,192 ($624 less than line 11). Tax after exemption credits: line 33 = max(0, $585 - $1,192) = $0"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 244857,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 1,
+       "credit": 461,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 908,
+     "federal_agi": 45540,
+     "form": "Form 540",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@1257e1c4be7d",
+     "tax_after_credits": 74,
+     "total": 908
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 1,
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "45540",
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "45540",
+     "year": 2024
+    },
+    "marginal_rate": "0.04",
+    "tax": 982,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $45,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,501.00 (the $25,499-$40,245 bracket) = $580.04; total $982.46 -> $982. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 1 x $149 = $149; line 8 blind 1 x $149 = $149; line 9 senior 1 x $149 = $149; line 10 dependent 1 x $461 = $461; line 11 (exemption amount) = $908. AGI limitation: federal AGI (Form 540 line 13) $45,540 is not more than the $244,857 [married_filing_separately] threshold, so line 32 = line 11 = $908. Tax after exemption credits: line 33 = max(0, $982 - $908) = $74"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 244857,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 1,
+       "credit": 461,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 908,
+     "federal_agi": 274858,
+     "form": "Form 540",
+     "limitation_reduction": 597,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form 540 line 32 = $311; tax after them (line 33) = $671. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $311).",
+     "tax_after_credits": 671,
+     "total": 311
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 1,
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "274858",
+     "filing_status": "married_filing_separately",
+     "state": "ca",
+     "taxable_base": "45540",
+     "year": 2024
+    },
+    "marginal_rate": "0.04",
+    "tax": 982,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $45,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [married_filing_separately] = $5,540 = $40,000.00; graduated tax on $40,000 [married_filing_separately schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,501.00 (the $25,499-$40,245 bracket) = $580.04; total $982.46 -> $982. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 1 x $149 = $149; line 8 blind 1 x $149 = $149; line 9 senior 1 x $149 = $149; line 10 dependent 1 x $461 = $461; line 11 (exemption amount) = $908. AGI limitation: federal AGI (Form 540 line 13) $274,858 is more than the $244,857 [married_filing_separately] threshold by $30,001; $30,001 / $1,250 = 24.0008, rounded up to 25 step(s) x $6 = $150 off each credit counted; personal + blind + senior: $447 - 3 x $150 = -$3 -> $0; dependent: $461 - 1 x $150 = $311; line 32 = $311 ($597 less than line 11). Tax after exemption credits: line 33 = max(0, $982 - $311) = $671"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 244857,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 1,
+       "credit": 461,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 908,
+     "federal_agi": 45540,
+     "form": "Form 540",
+     "limitation_reduction": 0,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "@@1257e1c4be7d",
+     "tax_after_credits": 74,
+     "total": 908
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 1,
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "45540",
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "45540",
+     "year": 2024
+    },
+    "marginal_rate": "0.04",
+    "tax": 982,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $45,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,501.00 (the $25,499-$40,245 bracket) = $580.04; total $982.46 -> $982. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 1 x $149 = $149; line 8 blind 1 x $149 = $149; line 9 senior 1 x $149 = $149; line 10 dependent 1 x $461 = $461; line 11 (exemption amount) = $908. AGI limitation: federal AGI (Form 540 line 13) $45,540 is not more than the $244,857 [single] threshold, so line 32 = line 11 = $908. Tax after exemption credits: line 33 = max(0, $982 - $908) = $74"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 244857,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 1,
+       "credit": 461,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 908,
+     "federal_agi": 274858,
+     "form": "Form 540",
+     "limitation_reduction": 312,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form 540 line 32 = $596; tax after them (line 33) = $386. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $596).",
+     "tax_after_credits": 386,
+     "total": 596
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 1,
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "274858",
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "45540",
+     "year": 2024
+    },
+    "marginal_rate": "0.04",
+    "tax": 982,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $45,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,501.00 (the $25,499-$40,245 bracket) = $580.04; total $982.46 -> $982. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 1 x $149 = $149; line 8 blind 1 x $149 = $149; line 9 senior 1 x $149 = $149; line 10 dependent 1 x $461 = $461; line 11 (exemption amount) = $908. AGI limitation: federal AGI (Form 540 line 13) $274,858 is more than the $244,857 [single] threshold by $30,001; $30,001 / $2,500 = 12.0004, rounded up to 13 step(s) x $6 = $78 off each credit counted; personal + blind + senior: $447 - 3 x $78 = $213; dependent: $461 - 1 x $78 = $383; line 32 = $596 ($312 less than line 11). Tax after exemption credits: line 33 = max(0, $982 - $596) = $386"
+   },
+   {
+    "base_after_exemptions": 40000,
+    "exemption_credits": {
+     "agi_threshold": 244857,
+     "applied": true,
+     "citation": {
+      "source": "@@194858f6ffba",
+      "url": "https://www.ftb.ca.gov/forms/2024/2024-540-booklet.pdf"
+     },
+     "credits": {
+      "blind": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "8"
+      },
+      "dependent": {
+       "amount_each": 461,
+       "count": 1,
+       "credit": 461,
+       "line": "10"
+      },
+      "personal": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "7"
+      },
+      "senior": {
+       "amount_each": 149,
+       "count": 1,
+       "credit": 149,
+       "line": "9"
+      }
+     },
+     "exemption_amount": 908,
+     "federal_agi": 344857,
+     "form": "Form 540",
+     "limitation_reduction": 687,
+     "lines": {
+      "exemption_amount": "11",
+      "tax_after_credits": "33",
+      "total": "32"
+     },
+     "note": "Exemption credits applied: Form 540 line 32 = $221; tax after them (line 33) = $761. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $221).",
+     "tax_after_credits": 761,
+     "total": 221
+    },
+    "inputs": {
+     "dependents_count": 0,
+     "exemption_credit_counts": {
+      "blind": 1,
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "exemptions_count": 0,
+     "federal_agi": "344857",
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": "45540",
+     "year": 2024
+    },
+    "marginal_rate": "0.04",
+    "tax": 982,
+    "work_head": "CA state income tax (2024, graduated brackets): taxable_base $45,540.00 — which must be the state's own income base derived from federal AGI plus/minus the state's additions and subtractions (NOT raw federal AGI when modifications apply) — minus standard deduction [single] = $5,540 = $40,000.00; graduated tax on $40,000 [single schedule]: 0.01 x $10,756.00 (the $0-$10,756 bracket) = $107.56; 0.02 x $14,743.00 (the $10,756-$25,499 bracket) = $294.86; 0.04 x $14,501.00 (the $25,499-$40,245 bracket) = $580.04; total $982.46 -> $982. Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. Exemption credits (Form 540, past the tax line): line 7 personal 1 x $149 = $149; line 8 blind 1 x $149 = $149; line 9 senior 1 x $149 = $149; line 10 dependent 1 x $461 = $461; line 11 (exemption amount) = $908. AGI limitation: federal AGI (Form 540 line 13) $344,857 is more than the $244,857 [single] threshold by $100,000; $100,000 / $2,500 = 40 step(s) x $6 = $240 off each credit counted; personal + blind + senior: $447 - 3 x $240 = -$273 -> $0; dependent: $461 - 1 x $240 = $221; line 32 = $221 ($687 less than line 11). Tax after exemption credits: line 33 = max(0, $982 - $221) = $761"
+   },
+   {
+    "args": {
+     "exemption_credit_counts": {
+      "blind": 1,
+      "dependent": 1,
+      "personal": 1,
+      "senior": 1
+     },
+     "filing_status": "single",
+     "state": "ca",
+     "taxable_base": 40000,
+     "year": 2024
+    },
+    "error": "ValueError: CA 2024: exemption_credit_counts needs federal_agi — Form 540 limits the exemption credits when federal AGI (Form 540 line 13) is more than $244,857 single, $489,719 married_filing_jointly, $244,857 married_filing_separately, $367,291 head_of_household. Pass federal_agi (the whole-dollar figure on that line) so the limitation is applied, never skipped."
    }
   ],
   "common_result": {
@@ -1102,7 +2164,7 @@
    "rate_structure": "graduated",
    "state": "ca"
   },
-  "work_common_tail": ". Tax line: Form 540, line 31 'Tax'. Booklet p. 13: 'Line 31 – Tax. To figure your tax, use one or more of the following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule for your filing status on page 75.' Rate schedule header (p. 75): 'If the amount on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –'. Line 19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or California standard deduction); 'Subtract line 18 from line 17. This is your taxable income. If less than zero, enter -0-'. This op computes the state's rate-schedule tax line ONLY — county/city add-on taxes, state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply California adjusted gross income — 2024 Form 540, line 17 ('California adjusted gross income. Combine line 15 and line 16'), i.e. federal AGI (line 13) plus California additions minus California subtractions per Schedule CA (540). Do NOT supply unmodified federal AGI: California does not conform to federal income tax treaties (treaty-exempt income is added back on Schedule CA) and has other adjustments. The op subtracts the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and applies the rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32) and special credits. Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI = federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18 standard deduction). California exemptions are $149/$461 CREDITS (lines 7-10), so vectors pass zero counts by design. EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS — the op does not model them: California's personal exemption ($149 per exemption, 2024 Form 540 lines 7-9: personal, blind, senior) and dependent exemption ($461 per dependent, line 10) are exemption CREDITS totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce taxable income. This op reproduces line 31 (tax before exemption credits) only; subtract line 32 credits (and any special credits, lines 40-47) on the form. Exemption-credit AGI limitation (not modeled): if federal AGI (Form 540 line 13) exceeds $244,857 (single/MFS), $489,719 (MFJ/qualifying surviving spouse), or $367,291 (head of household), the line 32 exemption credits are reduced via the AGI Limitation Worksheet (booklet p. 14). Table mandate below $100,000 — 'Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69' (booklet pp. 13, 75): bracket math may differ by a few dollars within table bands; the filed form must use the Tax Table (booklet pp. 69-74). 1% Mental Health Services Tax is NOT modeled: if taxable income (line 19) exceeds $1,000,000, an additional 1% of the excess over $1,000,000 is due on Form 540 line 62 (booklet p. 16 worksheet). Alternative Minimum Tax (Form 540 line 61, Schedule P (540)) and other taxes/credit recapture (line 63, e.g. FTB 3805P early-distribution tax, IRC 409A NQDC 5% tax) are NOT modeled. FTB 3800 (tax for certain children with unearned income) and FTB 3803 (parents' election to report child's interest/dividends) change the line 31 computation and are NOT modeled. Standard-deduction gates NOT modeled: a person claimable as a dependent on another's return must use the California Standard Deduction Worksheet for Dependents (larger of earned income or the $1,300 minimum standard deduction, capped at the regular per-status amount) — not the chart amount; married/RDP filing separately, both spouses must either both itemize or both take the standard deduction; itemizers enter California itemized deductions from Schedule CA (540) Part II line 30 on line 18 instead of the standard deduction. Qualifying surviving spouse/RDP uses Schedule Y — identical to married/RDP filing jointly (engine's QSS-to-MFJ mapping matches the published schedule exactly). Married/RDP filing separately uses Schedule X, the same printed schedule as Single (copied from the schedule, not derived; note CA MFS is NOT half of MFJ at the bracket boundaries — it equals the Single schedule). Base caution: Form 540 line 17 (California AGI) differs from federal AGI via Schedule CA (540) adjustments — notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows the foreign earned income exclusion and foreign tax credit, and subtracts items like Social Security benefits. Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts. Printed '$X + Y% of amount over $Z' constants verified against cumulative bracket sums: all 27 constants match to the cent (largest print-rounding divergence $0.004, on Schedule X's $30,083.65 / $37,512.83 / $70,116.38 and Schedule Y's $60,167.30 / $140,232.77 constants) — bracket math and the printed schedule agree. Rounding: the booklet's worked example (p. 75) rounds the schedule result to whole dollars for line 31 ($4,920.48 entered as $4,920), consistent with this op's round-half-up-to-whole-dollars behavior. 2024 filing-season schedule confirmed final: California had no mid-year 2024 rate change; these are the inflation-indexed schedules printed in the final 2024 booklet used for the 2025 filing season (and republished unchanged in the standalone 2024 Tax Rate Schedules PDF)."
+  "work_common_tail": ". Exemption-credit rules (Form 540): Line 7 (personal): Form 540 line 7 \"Personal: If you checked box 1, 3, or 4 above, enter 1 in the box. If you checked box 2 or 5, enter 2 in the box. If you checked the box on line 6, see instructions.\" (the filing-status boxes: 1 Single, 2 Married/RDP filing jointly, 3 Married/RDP filing separately, 4 Head of household, 5 Qualifying surviving spouse/RDP). Booklet p. 12, Line 6: \"Check the box on line 6 if someone else can claim you or your spouse/RDP as a dependent on their tax return, even if they chose not to.\" Line 7, when line 6 is checked: \"Single or married/RDP filing separately, enter -0-.\" \"Head of household, enter -0-.\" \"Married/RDP filing jointly and both you and your spouse/RDP can be claimed as dependents, enter -0-.\" \"Married/RDP filing jointly and only one spouse/RDP can be claimed as a dependent, enter 1.\" Line 8 (blind): Form 540 line 8 \"Blind: If you (or your spouse/RDP) are visually impaired, enter 1; if both are visually impaired, enter 2.\" Booklet p. 12, Line 8: \"Visually impaired means not capable of seeing better than 20/200 while wearing glasses or contact lenses, or if your field of vision is not more than 20 degrees.\" \"The first year you claim this exemption credit, attach a doctor's statement to the back of Form 540 indicating you or your spouse/RDP are visually impaired.\" \"Do not claim this credit if someone else can claim you as a dependent on their tax return.\" Only a joint return enters 2: the second count is the spouse/RDP's (\"if both\"). A single or head-of-household return has no spouse/RDP on it, and a separate return counts the filer alone (booklet p. 5, \"Married/RDP Filing Separately\": \"You cannot claim a personal exemption credit for your spouse/RDP even if your spouse/RDP had no income, is not filing a tax return, and is not claimed as a dependent on another person's tax return.\"). On a qualifying surviving spouse/RDP return the spouse/RDP died in an earlier year (p. 5: \"Your spouse/RDP died in 2022 or 2023 and you did not remarry or enter into another registered domestic partnership in 2024\"), so \"if both\" cannot apply there either. Line 9 (senior): Form 540 line 9 \"Senior: If you (or your spouse/RDP) are 65 or older, enter 1; if both are 65 or older, enter 2.\" Booklet p. 12, Line 9: \"If you were 65 years of age or older by December 31, 2024*, you should claim an additional exemption credit on line 9. If you are married/or an RDP, each spouse/RDP 65 years of age or older should claim an additional credit.\" \"*If your 65th birthday is on January 1, 2025, you are considered to be age 65 on December 31, 2024.\" \"Do not claim this credit if someone else can claim you as a dependent on their tax return.\" Only a joint return enters 2: the second count is the spouse/RDP's (\"if both\"). A single or head-of-household return has no spouse/RDP on it, and a separate return counts the filer alone (booklet p. 5, \"Married/RDP Filing Separately\": \"You cannot claim a personal exemption credit for your spouse/RDP even if your spouse/RDP had no income, is not filing a tax return, and is not claimed as a dependent on another person's tax return.\"). On a qualifying surviving spouse/RDP return the spouse/RDP died in an earlier year (p. 5: \"Your spouse/RDP died in 2022 or 2023 and you did not remarry or enter into another registered domestic partnership in 2024\"), so \"if both\" cannot apply there either. Line 10 (dependent): Form 540 line 10 \"Dependents: Do not include yourself or your spouse/RDP.\" Booklet p. 12, Line 10: \"To claim an exemption credit for each of your dependents, you must write each dependent's first and last name, SSN or ITIN, and relationship to you in the space provided.\" \"The persons you list as dependents must be the same persons you listed as dependents on your federal income tax return.\" \"If you filed form FTB 3568, Alternative Identifying Information for the Dependent Exemption Credit, to qualify to claim your dependents for California purposes, the dependents you claim on your California income tax return may not match those claimed on your federal income tax return.\" \"Count the number of dependents listed and enter the total in the box on line 10.\" Form 540 (2024) line 11 \"Exemption amount: Add line 7 through line 10. Transfer this amount to line 32\"; line 32 \"Exemption credits. Enter the amount from line 11. If your federal AGI is more than $244,857, see instructions.\"; line 33 \"Subtract line 32 from line 31. If less than zero, enter -0-\". Booklet p. 14, Line 32 – Exemption Credits: \"Exemption credits reduce your tax. If your federal AGI on line 13 is more than the amount shown below for your filing status, your credits will be limited.\" Line 33 starts from the filed line 31. Booklet p. 13, \"Line 31 – Tax\": \"Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69.\" tax_after_credits subtracts line 32 from the rate-schedule tax (the op's tax); when line 19 is $100,000 or less the filed line 33 is max(0, the Tax Table's line 31 - line 32), and the table can differ from the schedule by a few dollars. RDPs: \"For purposes of computing limitations based upon AGI, RDPs recalculate their AGI using a federal pro forma Form 1040 or Form 1040-SR, or California RDP Adjustments Worksheet (located in FTB Pub. 737).\" (booklet p. 14) — pass that recalculated AGI as federal_agi. Form 540 lines only. Form 540NR prints the same lines 7-11 and amounts, then prorates the credits: \"38 CA Exemption Credit Percentage. Divide line 35 by line 19. If more than 1, enter 1.0000\"; \"39 CA Prorated Exemption Credits. Multiply line 11 by line 38. If the amount on line 13 is more than $244,857, see instructions\"; \"40 CA Regular Tax Before Credits. Subtract line 39 from line 37. If less than zero, enter -0-\" (2024 Form 540NR). For a 540NR return use exemption_amount (line 11) and compute lines 38-40 on that form; total and tax_after_credits are Form 540's lines 32 and 33. This op computes the state's rate-schedule tax line and, when exemption_credit_counts is passed, its exemption credits ONLY — county/city add-on taxes, other state credits, and any amounts outside the rate schedule are NOT modeled. Pack notes: Base guidance: Supply California adjusted gross income — 2024 Form 540, line 17 ('California adjusted gross income. Combine line 15 and line 16'), i.e. federal AGI (line 13) plus California additions minus California subtractions per Schedule CA (540). Do NOT supply unmodified federal AGI: California does not conform to federal income tax treaties (treaty-exempt income is added back on Schedule CA) and has other adjustments. The op subtracts the shipped per-status standard deduction to reproduce line 19 (taxable income, floored at 0) and applies the rate schedule to reproduce line 31 — the tax BEFORE exemption credits (line 32; see tax.exemption_credits) and special credits. Adjudication note (two-pass): base is federal_agi — Form 540 line 13 is federal AGI and line 17 California AGI = federal AGI +/- Schedule CA (540) adjustments; supply line 17 as taxable_base (the op subtracts the line 18 standard deduction). California exemptions are $149/$461 CREDITS (lines 7-10), so vectors pass zero exemptions_count/dependents_count by design (the credits have their own input, exemption_credit_counts, and block, tax.exemption_credits). EXEMPTIONS ARE TAX CREDITS, NOT DEDUCTIONS: California's personal exemption ($149 per exemption, 2024 Form 540 lines 7-9: personal, blind, senior) and dependent exemption ($461 per dependent, line 10) are exemption CREDITS totaled on line 11 and subtracted from TAX on Form 540 line 32 — they never reduce taxable income, so exemptions_count and dependents_count are refused. tax is line 31 (tax before exemption credits); pass exemption_credit_counts (personal, blind, senior, dependent) with federal_agi and the result's exemption_credits carries lines 7-11, 32 and 33 (tax.exemption_credits, Phase K JK28). Special credits (lines 40-47) stay on the form. Exemption-credit AGI limitation (applied with the credits, from tax.exemption_credits.agi_limitation): if federal AGI (Form 540 line 13) exceeds $244,857 (single/MFS), $489,719 (MFJ/qualifying surviving spouse), or $367,291 (head of household), the line 32 exemption credits are reduced via the AGI Limitation Worksheet (booklet p. 14). The worksheet takes $6 off each credit counted for each $2,500 ($1,250 married/RDP filing separately) of the excess, a fraction of a step counting as a whole one. Table mandate below $100,000 — 'Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning on page 69' (booklet pp. 13, 75): bracket math may differ by a few dollars within table bands; the filed form must use the Tax Table (booklet pp. 69-74). 1% Mental Health Services Tax is NOT modeled: if taxable income (line 19) exceeds $1,000,000, an additional 1% of the excess over $1,000,000 is due on Form 540 line 62 (booklet p. 16 worksheet). Alternative Minimum Tax (Form 540 line 61, Schedule P (540)) and other taxes/credit recapture (line 63, e.g. FTB 3805P early-distribution tax, IRC 409A NQDC 5% tax) are NOT modeled. FTB 3800 (tax for certain children with unearned income) and FTB 3803 (parents' election to report child's interest/dividends) change the line 31 computation and are NOT modeled. Standard-deduction gates NOT modeled: a person claimable as a dependent on another's return must use the California Standard Deduction Worksheet for Dependents (larger of earned income or the $1,300 minimum standard deduction, capped at the regular per-status amount) — not the chart amount; married/RDP filing separately, both spouses must either both itemize or both take the standard deduction; itemizers enter California itemized deductions from Schedule CA (540) Part II line 30 on line 18 instead of the standard deduction. Qualifying surviving spouse/RDP uses Schedule Y — identical to married/RDP filing jointly (engine's QSS-to-MFJ mapping matches the published schedule exactly). Married/RDP filing separately uses Schedule X, the same printed schedule as Single (copied from the schedule, not derived; note CA MFS is NOT half of MFJ at the bracket boundaries — it equals the Single schedule). Base caution: Form 540 line 17 (California AGI) differs from federal AGI via Schedule CA (540) adjustments — notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows the foreign earned income exclusion and foreign tax credit, and subtracts items like Social Security benefits. Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts. Printed '$X + Y% of amount over $Z' constants verified against cumulative bracket sums: all 27 constants match to the cent (largest print-rounding divergence $0.004, on Schedule X's $30,083.65 / $37,512.83 / $70,116.38 and Schedule Y's $60,167.30 / $140,232.77 constants) — bracket math and the printed schedule agree. Rounding: the booklet's worked example (p. 75) rounds the schedule result to whole dollars for line 31 ($4,920.48 entered as $4,920), consistent with this op's round-half-up-to-whole-dollars behavior. 2024 filing-season schedule confirmed final: California had no mid-year 2024 rate change; these are the inflation-indexed schedules printed in the final 2024 booklet used for the 2025 filing season (and republished unchanged in the standalone 2024 Tax Rate Schedules PDF)."
  },
  "year": 2024
 }
