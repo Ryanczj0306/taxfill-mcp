@@ -62,10 +62,23 @@ are the ones you claim. The digest goes in the pack as `pdf_sha256`; the URL as
 ## Step 2 — introspect to a skeleton
 
 ```bash
-taxfill introspect blank.pdf > pack-skeleton.yaml
+taxfill introspect blank.pdf --form 1040 --jurisdiction federal --year 2025 \
+  --source-url https://www.irs.gov/pub/irs-pdf/f1040.pdf --out skeleton/ --render
 ```
 
-This emits every AcroForm field with its type and page. For a year-over-year
+This writes `pack.skeleton.yaml` (every fillable AcroForm field with its type and
+page, line keys still the raw field paths; pushbuttons hold no value, so they are
+left out and listed in one `MAPPING_TODO.md` entry, "pushbutton, not fillable"),
+`MAPPING_TODO.md`, and `fields.json`: one
+row per widget with its `kind` (text, checkbox, radio, pushbutton, choice or
+signature), its tooltip (`/TU`), the `/Ff` bits as named flags (`read_only`,
+`required`, `multiline`, `comb`, `password`, `do_not_scroll`, `radio`,
+`pushbutton`, `no_toggle_to_off`), a choice field's `options` (`/Opt`), the
+`/DA` font and size, the `/Q` alignment, and `calculated` (the widget carries an
+`/AA` calculate or format script) plus `javascript`. A calculated or ReadOnly
+widget is usually a total or a mirror the form's own script fills: check it on
+the render before you map it (P-007). `--render` also renders the sentinel
+sweep for step 3. For a year-over-year
 port, diff the skeleton against the prior year's pack: identical field topology
 means you port the map and re-audit; changed topology means you re-map from
 scratch. A print-only form (no AcroForm) becomes a `handfill.yaml` manifest

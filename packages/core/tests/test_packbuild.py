@@ -114,3 +114,12 @@ def test_introspect_cli_writes_skeleton(tmp_path):
     skel = yaml.safe_load((out / "pack.skeleton.yaml").read_text())
     FormPack.model_validate(skel)  # the written skeleton re-validates
     assert (out / "MAPPING_TODO.md").exists()
+    # Phase K JK14 (2026-10-24): fields.json carries every widget with its kind, flags and /AA actions.
+    import json
+    widgets = json.loads((out / "fields.json").read_text())
+    assert len(widgets) == 4
+    by_name = {w["name"]: w for w in widgets}
+    ssn = by_name[f"{ROOT}.Page1[0].f1_7[0]"]
+    assert (ssn["kind"], ssn["comb"], ssn["maxlen"], ssn["calculated"]) == ("text", True, 9, False)
+    assert by_name[f"{ROOT}.Page1[0].c1_1[0]"]["kind"] == "checkbox"
+    assert "Widgets by kind: checkbox 1, text 3; 0 ReadOnly, 0 calculated" in (out / "MAPPING_TODO.md").read_text()

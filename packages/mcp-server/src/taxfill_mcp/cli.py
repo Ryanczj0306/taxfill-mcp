@@ -45,6 +45,7 @@ import base64
 import json
 import sys
 import tempfile
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
@@ -113,7 +114,7 @@ def _cmd_purge(args) -> int:
 def _cmd_introspect(args) -> int:
     import yaml
 
-    from taxfill_core.packbuild import build_skeleton, sentinel_sweep
+    from taxfill_core.packbuild import build_skeleton, extract_fields, sentinel_sweep
     from taxfill_core.schemas.formpack import FormPack
 
     pdf = user_path(args.pdf)
@@ -131,9 +132,18 @@ def _cmd_introspect(args) -> int:
         "# add relations/cross_form/identity_fields, then adversarially audit before shipping.\n"
         + yaml.dump(skeleton, sort_keys=False, allow_unicode=True, width=100)
     )
+    # Every widget with its kind, flags, tooltip, /Opt, /DA, /Q and /AA actions (Phase K JK14, 2026-10-24): the
+    # columns an author checks before mapping — a calculated or ReadOnly widget is usually the form's own total.
+    widgets = extract_fields(pdf)
+    (out / "fields.json").write_text(json.dumps(widgets, indent=1, ensure_ascii=False) + "\n")
+    kinds = Counter(w["kind"] for w in widgets)
+    n_calculated = sum(w["calculated"] for w in widgets)
+    n_read_only = sum(w["read_only"] for w in widgets)
     (out / "MAPPING_TODO.md").write_text(
         f"# Mapping TODO — {args.form}\n\n"
-        f"{len(skeleton['fields'])} fields, acroform_root = {skeleton['acroform_root']!r}.\n\n"
+        f"{len(skeleton['fields'])} fields, acroform_root = {skeleton['acroform_root']!r}.\n"
+        f"Widgets by kind: {', '.join(f'{k} {n}' for k, n in sorted(kinds.items()))}; "
+        f"{n_read_only} ReadOnly, {n_calculated} calculated (an /AA calculate or format script) — see fields.json.\n\n"
         "1. Rename each `line` from its raw field path to the printed line number/label "
         "(read them off the sentinel sweep render).\n"
         "2. Add `relations`, `cross_form`, `identity_fields`.\n"
@@ -148,7 +158,9 @@ def _cmd_introspect(args) -> int:
     print(f"Skeleton pack for {args.form}: {len(skeleton['fields'])} fields, root={skeleton['acroform_root']!r}")
     if todo:
         print(f"  {len(todo)} field(s) need attention — see MAPPING_TODO.md")
-    print(f"  wrote {out}/pack.skeleton.yaml + MAPPING_TODO.md")
+    print(f"  widgets: {', '.join(f'{k} {n}' for k, n in sorted(kinds.items()))}; {n_read_only} ReadOnly, "
+          f"{n_calculated} calculated")
+    print(f"  wrote {out}/pack.skeleton.yaml + MAPPING_TODO.md + fields.json")
     return 0
 
 

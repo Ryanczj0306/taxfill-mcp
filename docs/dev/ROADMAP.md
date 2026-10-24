@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**13,039 tests** — offline 10,436 + live-.gov 2603; derived
+Done and on `main` (**13,103 tests** — offline 10,473 + live-.gov 2630; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -224,7 +224,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 9 | JA2 Phase A user half (+ JD2.3) | user | JK5 | the user | user's call (RC 2026-10-23) |
 | 10 | JK7 A6 flip + `.mcpb` on the release | S | JA2 upload | PyPI upload | upload + 1 day |
 | 11 | JK13 Fallback surface + guardrail ADR | S | — | user accepts or amends | **done 2026-10-16** (ADR-0002 Proposed) |
-| 12 | JK14 Introspect + pack-less fetch | M | JK13 | — | 2026-11-09 |
+| 12 | JK14 Introspect + pack-less fetch | M | JK13 | — | **done 2026-10-24** |
 | 13 | JK15 Anchor + blind benchmark | L | JK14 | — | 2026-11-16 |
 | 14 | JK21 Golden-diff harness over every tool | M | — | — | **done 2026-10-15** |
 | 15 | JK20 Hoist citations into `sources` | M | JK0, JS2c (done), JK21 | — | **done 2026-10-24** |
@@ -379,13 +379,11 @@ Every building block exists as a core or CLI authoring tool (fetch with sha256=N
   - Riding the existing tools changes their input schema and response shape; KG8 allows it only as additive, opt-in, unmapped-only parameters and fields with the pack path byte-identical (JK21).
   - Write down the refusal rules: XFA-only or scanned pages; page-1 year or title not matching the request; a non-official host; ReadOnly or pushbutton targets.
   - **Acceptance:** ADR-0002 is committed under docs/dev/adr/ (ADR-0001 records this re-plan), and KG5-KG7 and KG11 are written into it.
-- [ ] **JK14 — Introspect + pack-less fetch** (M; deps JK13; latest start 2026-11-09)
-  - `extract_fields` reads /TU, the /Ff bits (ReadOnly, multiline, comb, pushbutton), /Ch + /Opt, the /DA size and /Q. Today every non-/Btn field is typed "text" (packbuild.py:88).
-  - It also reads each widget's /AA actions: a /C (calculate) or /F (format) action marks the field as calculated, ReadOnly or not (KG7).
-  - Fetch: official host only; sha256 recorded, not pinned; the page-1 printed year and title are read and checked; XFA-only and scanned blanks are detected and refused.
-  - Today's fetch rules stand and are stated, not bypassed: a PINNED_ONLY host is refused without a pinned sha256 (fetch.py:88-95, :335-340; today NM's document API), and a Wayback mirror is used only digest-verified (fetch.py:224-225), so a host that answers 403 (mass.gov) cannot be served unpinned. For those the fallback returns a refusal with a pointer, or accepts a **user-supplied local blank** whose page-1 year/title check stands in for the pin.
-  - Cache: with sha256=None today's fetch returns any cached file for the URL without re-downloading (fetch.py:352-354), and several state URLs are rotating "current" slots (IL-1040, OK 511; docs/dev/ROADMAP.md:2378, :2388). A pack-less fetch therefore force-refreshes (or records a digest per (url, fetched_at)), and the page-1 year/title check runs on a cached copy as well as on a fresh download.
-  - **Acceptance:** unit tests per field type, checked against the 2025 pack blanks, including /AA detection on a 2025 pack blank with calculated totals. A wrong-year blank is refused, including a wrong-year blank already in the cache. A PINNED_ONLY host and a 403 host without a digest are refused with a pointer.
+- [x] **JK14 — Introspect + pack-less fetch — DONE 2026-10-24** (M; deps JK13) — core only: no MCP tool, parameter or response changed (still 23 tools); ADR-0002 is still Proposed, so this box's wording bound it.
+  - **Introspect.** packbuild.extract_fields reports each widget's kind (text, checkbox, radio, pushbutton, choice with its /Opt values, signature), the named /Ff flags (read-only, required, multiline, password, comb, do-not-scroll, radio, pushbutton, no-toggle-to-off), /TU, the /DA font and size, /Q, and `calculated` when the field or widget carries an /AA /C or /F action (KG7), plus `javascript`. `type` keeps its meaning; build_skeleton skips pushbuttons and lists them in one TODO entry (they used to get a "/BBox" on-state). `taxfill introspect` also writes fields.json; CONTRIBUTING-PACKS step 2 now matches the CLI.
+  - **Pack-less fetch.** fetch.fetch_unmapped_blank: https and an official host on every redirect hop; always downloads, never touching the pack cache, into a namespace keyed by sha256 with a (url, sha256, fetched_at) record; a pinned-only host (NM's document API) and a 401/403 host are refused with a pointer to save the PDF in a browser and pass it as `local_blank` (no Wayback mirror without a digest); a local blank needs a PDF header in its first 1024 bytes (ADR-0002 rule 5) and an official source_url and is stored under the year's workspace, so `taxfill purge` removes it; XFA-only, needs-rendering, locked and scanned (no text on the form's first page) blanks are refused. The form's first page must print the requested year at title size; a revision date is refused for every tax year; `expected_title` is matched as whole tokens. load_unmapped_blank re-runs every check on a stored copy, so a wrong-year blank is refused cached or fresh. Every refusal carries a `.reason` code and the next step.
+  - **Measured** over the 250 cached non-draft pack blanks: 219 pass, 22 are refused as revision-dated (Forms 1040-X, 843, 8316, 8833, 8938, W-7) and 9 as having no printed year (DC D-40 2023-2025, whose title block has no year in its text layer, and NY IT-201 / IT-203 2023-2025, whose title year is vector art). A sweep of 290 blanks at their own year and the years either side found no false accept.
+  - **Left open:** ADR-0002 rule 1 (a shipped pack wins), rule 5's typed-value check on a local blank and rule 9's any-page text check are not built: they belong with JK16, the first tranche that accepts a request; the stored record has no jurisdiction yet (a JK16 surface decision); a pack-path golden over get_form_map is due before JK16 merges its first unmapped branch.
 - [ ] **JK15 — Anchor + blind benchmark** (L; deps JK14; latest start 2026-11-16) (KG6)
   - Dump every text run with its box. Pair each widget with its nearest printed label (left or above, same row) plus the line-number token. Cross-check with /TU. Emit a per-field anchor confidence: high, med, low or none.
   - Run blind on **≥30 shipped packs**, federal and state, and compare each with the pack's line map. The ME 1040ME 2023 3-cycle (063f293's pack) and the AL 40 2023 one-high shift are mandatory cases and must be flagged; every disagreement with a pack is adjudicated by a vision check before the pack counts as ground truth.
