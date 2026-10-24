@@ -182,20 +182,23 @@ def test_no_role_citation_drops_an_older_description_from_the_source_registry(st
     # source for Tax Rate Schedules I and II, the Form 505NR worksheet rows and the line 31a/32d additional tax on net
     # capital gain income), and get_sources stopped routing "capital gain", "worksheet" and "net capital gain additional
     # tax" to the booklet. The first role entry of a shared URL now ends with the older description, verbatim.
+    # Phase K JK22 (2026-10-24): a (topic, url)'s FIRST description is the first one in the pack's `sources` table,
+    # which the registry is built from and which keeps the descriptions of the blocks JK22 dropped (Maryland's
+    # resident booklet still leads with its residency description), so it is read there and not off the walk.
     raw = _raw_pack(st)
-    role_ids = {id(c) for cites in ((raw.get("forms") or {}).get("citations") or {}).values() for c in cites}
-    first: dict[tuple[str, str], dict] = {}
+    role_cites = [c for cites in ((raw.get("forms") or {}).get("citations") or {}).values() for c in cites]
+    role_ids = {id(c) for c in role_cites}
+    role_texts = {c["source"].strip() for c in role_cites}
+    first = {(row["topic"], row["url"]): row["descriptions"][0] for row in raw["sources"]}
     carried: list[tuple[str, str, str]] = []
-    for block, cite in walk_citations(raw):
+    for block, cite in walk_citations({k: v for k, v in raw.items() if k != "sources"}):
         url = cite["url"].strip()
         if not is_gov(url):
             continue
         key = (BLOCK_TO_TOPIC.get(block or "", FALLBACK_TOPIC), url)
-        if key not in first:
-            first[key] = cite
-        elif id(first[key]) in role_ids and id(cite) not in role_ids:
-            text = cite["source"].strip()
-            assert text in first[key]["source"], f"{st}: the role citation of {url} drops {text[:90]!r}"
+        text = cite["source"].strip()
+        if first[key] in role_texts and id(cite) not in role_ids and text != first[key]:
+            assert text in first[key], f"{st}: the role citation of {url} drops {text[:90]!r}"
             carried.append((*key, text))
     if st in ("ks", "md"):  # the two packs whose role citations reuse a URL all_citations describes
         assert {url for _, url, _ in carried} == {"ks": {KS_SCHEDULE_S}, "md": {MD_NR_BOOKLET}}[st]

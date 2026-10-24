@@ -1,19 +1,4 @@
-# PA state knowledge — tax year 2025. Fetched + cited from the PA DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 PA-40
-# instruction booklet (PA-40 IN 04-25, PDF title "2025 Pennsylvania Personal Income Tax
-# Return Instructions", CreationDate 2026-02-10), then independently re-derived from a
-# second official document (the 2025 PA-40 form itself (PA-40 2025 04-25), the 2025
-# PA-40 Schedule DC, the 2025 PA-40 V, or the 2025 PA-1000 booklet) — resolutions
-# recorded inline where the passes differed.
-# UNCHANGED for 2025 vs the 2024 pack: 3.07% flat rate, eight-class system, no standard
-# deduction / personal exemptions, $33 filing threshold, Tax Forgiveness Eligibility
-# Income Tables (unmarried base $6,500, married base $13,000, +$9,500 per dependent
-# child). CHANGED: due date April 15, 2026; PTRR claim-year-2025 income cap $46,520 ->
-# $48,110 (indexed) with a re-indexed standard-rebate table.
+# Provenance: see git history (git show 7a90a06:knowledge/states/pa/2025.yaml); sources: the `sources` table
 jurisdiction: states/pa
 tax_year: 2025
 income_tax: true
@@ -39,20 +24,6 @@ citation:
     residents use the same PA-40 form as PA residents', no standard/personal-exemption deductions, mailing addresses,
     PA-40 V reference
   url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf
-starts_from: state-computed (flat 3.07% on eight separately-computed classes of income; not federal AGI, not federal
-  taxable income)
-residency:
-  summary: PA defines a RESIDENT as an individual domiciled in Pennsylvania OR a statutory resident. Domicile is
-    the place where an individual, by present and voluntary intention, establishes his true, fixed and permanent
-    home. A STATUTORY RESIDENT is a person domiciled outside PA who maintains a permanent place of abode in PA (a
-    house, apartment, dwelling place, or other residence that can be maintained as a household for an indefinite
-    period) AND spends more than 183 days (midnight to midnight) of the taxable year in PA. A NONRESIDENT is domiciled
-    elsewhere and does not meet statutory-resident tests; PA taxes nonresidents only on income earned, received
-    or realized from Pennsylvania sources. A PART-YEAR RESIDENT is a resident for part of the year and a nonresident
-    for the other part (moved into or out of PA during 2025); taxed on all income while a PA resident plus PA-source
-    income while a nonresident. Residents report all income regardless of source. On the 2025 PA-40, fill in the
-    residency oval for your status on Dec. 31, 2025 — (R) Resident, (N) Nonresident, (P) Part-Year Resident. (2025
-    PA-40 instructions, Residency Status; PIT Guide - Brief Overview and Filing Requirements.)
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:
@@ -64,15 +35,6 @@ credits:
     limits. Determined by filing status, number of dependent children, and total eligibility income (which includes
     some nontaxable income). Married claimants must use their JOINT eligibility income and Table 2 even when filing
     separately — a married taxpayer cannot claim Tax Forgiveness independently of their spouse.
-  amount: 'A percentage (100% down to 10%, in 10-point steps) of PA tax liability, set by the 2025 Eligibility Income
-    Tables (2025 PA-40 booklet, Schedule SP instructions). Table 1 (unmarried): 100% forgiveness up to $6,500 eligibility
-    income with no dependent children, sliding to 10% at $8,750; each dependent child raises the thresholds by $9,500.
-    Table 2 (married, even if filing separately): 100% up to $13,000 joint eligibility income, sliding to 10% at
-    $15,250; +$9,500 per dependent child (e.g., 1 child: 100% up to $22,500; 2 children: 100% up to $32,000). Formula:
-    Schedule SP Section IV credit = PA tax liability x forgiveness decimal.'
-  income_limit_2025: 'Varies by filing status and dependents per the Eligibility Income Tables: single with no dependent
-    children qualifies for some forgiveness up to $8,750 of eligibility income; married with no dependent children
-    up to $15,250; thresholds rise $9,500 per dependent child.'
   claimed_on: PA-40 Schedule SP (Section IV), carried to PA-40 Line 21 (with Lines 19a filing status, 19b dependents,
     and 20 total eligibility income from the schedule). PA Schedule SP must be completed and included.
   citation:
@@ -88,15 +50,6 @@ credits:
     who lived with you more than half the year, or another individual incapable of self-care meeting the dependency
     tests. In general, married persons must file a joint return to claim it. A completed copy of federal Form 2441
     and 1040 Schedule 3 must be included with the PA-40 or the credit will be removed.
-  amount: '100% of the federal section-21 credit amount ("The credit is 100 percent of that amount" — 2025 PA Schedule
-    DC instructions). Expense amounts used to calculate the credit are capped at $3,000 (one qualifying person)
-    / $6,000 (two or more); the credit rate starts at 35 percent of those expenses and decreases to 20 percent at
-    higher income levels. Resulting 2025 PA maximums (printed in the Schedule DC instructions): household income
-    $43,000 and under — $1,050 (one dependent) / $2,100 (two or more); over $43,000 — $600 / $1,200. Refundable:
-    qualified taxpayers receive a refund of the credit in the event the credit exceeds their tax liability.'
-  income_limit_2025: No hard income cutoff to claim; the federal credit percentage (and thus the PA credit) phases
-    down from 35% to 20% as income rises (the 35% rate applies at household income of $43,000 and under per the
-    Schedule DC instructions' maximum-credit table).
   claimed_on: PA-40 Schedule DC (Section III), carried to PA-40 Line 23 (Total Other Credits, together with any
     Schedule OC credits)
   citation:
@@ -110,26 +63,12 @@ credits:
     disabilities age 18 or older, who owned and occupied a home (and paid property tax) or rented during the claim
     year. NOTE: This is a standalone rebate filed on Form PA-1000, not a credit on the PA-40 income tax return.
     Since Act 7 of 2023 the income limits are indexed to the cost of living annually.'
-  amount: 'Standard rebate by household income for claim year 2025 (PA-1000 booklet 04-25): $1,000 for income $0-$8,550;
-    $770 for $8,551-$16,040; $460 for $16,041-$19,240; $380 for $19,241-$48,110. Maximum standard rebate $1,000.
-    Rebate may not exceed actual property taxes or rent paid. Supplemental rebates are available to certain homeowners.'
-  income_limit_2025: $48,110 household income for both homeowners and renters for claim year 2025 (up from $46,520;
-    only half of Social Security income is counted toward eligibility income). Application deadline extended to December
-    31, 2026.
   claimed_on: Form PA-1000, Property Tax or Rent Rebate Claim (standalone application, not the PA-40; also filable
     online via myPATH)
   citation:
     source: 2025 PA-1000 Property Tax or Rent Rebate Claim booklet (PA-1000 04-25) - claim-year-2025 income cap
       $48,110 and standard-rebate table ($1,000 / $770 / $460 / $380; maximum $1,000)
     url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/ptrr/documents/2025_pa-1000_inst.pdf
-filing_requirement:
-  note: Per the 2025 PA-40 instructions, a PA resident, nonresident or part-year resident must file a 2025 PA-40
-    if they received total PA gross taxable income in excess of $33 during 2025 (even if no tax is due with the
-    PA return) and/or incurred a loss from any transaction as an individual, sole proprietor, partner in a partnership,
-    or PA S corporation shareholder. A dependent child with taxable income in excess of $33 must file a PA tax return;
-    PA law does not exempt a minor from the filing requirements. The PIT Guide phrases it as filing "when he or
-    she realizes income generating $1 or more in tax, even if no tax is due." PA filing requirements differ from
-    federal; a person not required to file federally may still have to file in PA.
 mailing_addresses:
   refund_or_no_payment: 'Refund/credit requested (amount on Line 29): PA DEPT OF REVENUE, REFUND OR CREDIT REQUESTED,
     3 REVENUE PLACE, HARRISBURG PA 17129-0003. Neither owe nor overpaid (zeros on Lines 28 and 29): PA DEPT OF REVENUE,
@@ -364,9 +303,9 @@ forms:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

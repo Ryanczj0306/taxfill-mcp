@@ -1,43 +1,4 @@
-# California (FTB) state knowledge — tax year 2025 (state-year knowledge program).
-#
-# Loaded by taxfill_core.knowledge.load_state_knowledge as a StateKnowledge.
-# Every figure is cited to ftb.ca.gov and was authored per the shipped, two-pass
-# verified 2024 pack (same structure, same tax: modeling decisions, same CRITICAL
-# notes) with every number RE-DERIVED from the 2025 documents — nothing carried
-# forward.
-#
-# Verification status (honest provenance — this project never ships unverified
-# numbers as authoritative):
-#   - treaty non-conformity + residency rules + forms: CONFIRMED verbatim against
-#     FTB Pub 1031 (2025) p. 10 "Tax Treaty" (the China-treaty $15,000 worked
-#     example survives verbatim into the 2025 edition), fetched from ftb.ca.gov.
-#   - brackets / standard deduction / exemption credits: THREE independent 2025
-#     sources agree — the 2025 Form 540 booklet PDF (pp. 74-75 rate schedules,
-#     p. 13 line 18/19/31, p. 14 line 32), the standalone "2025 California Tax
-#     Rate Schedules" PDF, and the separately published HTML edition of the same
-#     booklet (all 24 bracket bounds re-grepped out of the HTML).
-#   - credits + logistics (mailing addresses, filing thresholds, deadlines):
-#     transcribed from the 2025 Form 540 booklet PDF and re-confirmed against the
-#     HTML booklet edition and the standalone 2025 Form 540 PDF.
-#
-# 2025 CHANGES vs the 2024 pack (all found in the 2025 booklet, none inferred):
-#   - Every bracket bound moved: California applied a 3.0% inflation factor to the
-#     2024 Schedule X/Z bounds (Schedule Y = exactly 2x Schedule X). Verified by
-#     re-deriving each 2025 bound as round(2024_bound x 1.03) — all 18 primitive
-#     bounds reproduce to the dollar, and all 27 printed "$X + Y%" constants
-#     reconcile against cumulative bracket sums.
-#   - Standard deduction $5,540/$11,080 -> $5,706/$11,412; dependent minimum
-#     standard deduction $1,300 -> $1,350.
-#   - Exemption credits $149/$461 -> $153/$475; the line 32 AGI limitation
-#     thresholds $244,857/$489,719/$367,291 -> $252,203/$504,411/$378,310.
-#   - The 1% surcharge over $1,000,000 taxable income was RENAMED: the Mental
-#     Health Services Act became the Behavioral Health Services Act for taxable
-#     years beginning on or after 2025-01-01, so Form 540 line 62 is now the
-#     "Behavioral Health Services Tax". Same 1% rate, same $1,000,000 threshold,
-#     same line — still NOT modeled (see tax.notes).
-#   - CalEITC earned-income ceiling $31,951 -> $32,901; renter's credit CA AGI
-#     limits $52,421/$104,842 -> $53,994/$107,988 (credit still $60/$120).
-
+# Provenance: see git history (git show 7a90a06:knowledge/states/ca/2025.yaml); sources: the `sources` table
 jurisdiction: states/ca
 tax_year: 2025
 income_tax: true
@@ -59,28 +20,6 @@ treaty_note: 'California does not conform to federal income tax treaties. FTB Pu
 citation:
   source: 'FTB Publication 1031 (2025), Guidelines for Determining Resident Status — Tax Treaty section (p. 10)'
   url: 'https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf'
-
-residency:
-  resident: 'A California resident is taxed on ALL income (worldwide), regardless of source.'
-  nonresident: 'A nonresident is taxed only on income from California sources. Nonresidents of California are not
-    taxed on pensions received after December 31, 1995.'
-  part_year: 'A part-year resident is taxed on all income received while a California resident, plus California-source
-    income received while a nonresident. Form 540NR computes taxable income as if you were a California resident
-    for the entire year, then prorates.'
-  domicile: 'Domicile is the place where you voluntarily establish yourself and family, not merely for a special
-    or limited purpose, but with the present intention of making it your true, fixed, permanent home and principal
-    establishment — the place to which you intend to return whenever absent. You can have only one domicile at a
-    time; once acquired you retain it until you acquire another. A change of domicile requires abandonment of the
-    prior domicile, physically moving to and residing in the new locality, and intent to remain there permanently
-    or indefinitely as demonstrated by your actions. Maintenance of a marital abode in California is a significant
-    factor in establishing California domicile.'
-  closest_connection: 'Residency follows your closest connections; in using the factors (home, family, time, licenses,
-    registrations, bank accounts, voter registration) it is the STRENGTH of your ties, not the number, that decides
-    — no one factor is determinative and all must be considered.'
-  citation:
-    source: 'FTB Publication 1031 (2025), Guidelines for Determining Resident Status — residency/temporary or transitory
-      purposes/income taxable by California/meaning of domicile sections (pp. 5-11)'
-    url: 'https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf'
 
 # Which California return each role files (confirmed, 2025 Form 540 booklet).
 forms:
@@ -131,11 +70,6 @@ credits:
     principal residence in California; California AGI within the limit; did not claim (and spouse/RDP did not claim,
     subject to lived-apart exceptions) the homeowner''s property tax exemption; not living for more than half the
     year in the home of a person who can claim them as a dependent.'
-  amount: '$60 (single); $120 (head of household, qualifying surviving spouse/RDP, or married/RDP filing jointly).
-    Married/RDP filing separately: if both qualify and lived in the same rental, one may claim the full $120 or each
-    may claim $60; if they lived apart all year, $60 each.'
-  income_limit_2025: 'California adjusted gross income (Form 540 line 17) $53,994 or less (single or married/RDP filing
-    separately); $107,988 or less (married/RDP filing jointly, head of household, or qualifying surviving spouse/RDP)'
   claimed_on: 'Form 540 line 46 (per the booklet Nonrefundable Renter''s Credit Qualification Record, pp. 25-26)'
   citation:
     source: '2025 Personal Income Tax Booklet (Form 540), Nonrefundable Renter''s Credit Qualification Record, pp.
@@ -158,24 +92,6 @@ credits:
   claimed_on: 'FTB 3514, then Form 540 line 76'
   citation:
     source: '2025 Personal Income Tax Booklet (Form 540), "$$$ for You" — Young Child Tax Credit; form FTB 3514'
-    url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
-
-filing_requirement:
-  note: 'California has its own gross-income and AGI threshold charts ("Do I Have to File?") that vary by filing
-    status, age (under 65 vs 65 or older on 12/31/25) and number of dependents. 2025 chart values: single or head
-    of household, under 65 — file if California gross income exceeds $22,941 (0 dependents), $38,774 (1), $50,649
-    (2 or more), or if California AGI exceeds $18,353 / $34,186 / $46,061; single or HoH 65 or older — $30,591 /
-    $42,466 / $51,966 gross and $26,003 / $37,878 / $47,378 AGI; married/RDP filing jointly or separately with both
-    under 65 — $45,887 / $61,720 / $73,595 gross and $36,711 / $52,544 / $64,419 AGI (one spouse/RDP 65 or older
-    $53,537 / $65,412 / $74,912 gross, $44,361 / $56,236 / $65,736 AGI; both 65 or older $61,187 / $73,062 / $82,562
-    gross, $52,011 / $63,886 / $73,386 AGI); qualifying surviving spouse/RDP under 65 — $38,774 (1 dependent) /
-    $50,649 (2 or more) gross and $34,186 / $46,061 AGI. A dependent of another person (any filing status, any age)
-    files if income exceeds their standard deduction computed on the California Standard Deduction Worksheet for
-    Dependents (larger of earned income or the $1,350 minimum, capped at the per-status chart amount). Read the full
-    charts in the booklet.'
-  citation:
-    source: '2025 Personal Income Tax Booklet (Form 540), "Do I Have to File?" Steps 1-4 and the gross income / adjusted
-      gross income chart, p. 4'
     url: 'https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf'
 
 mailing_addresses:
@@ -535,9 +451,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

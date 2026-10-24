@@ -1,36 +1,4 @@
-# KS state knowledge — tax year 2025. Fetched + cited from the KS DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Individual Income
-# Tax Booklet (ip25.pdf), then independently re-derived from second official documents —
-# the 2025 K-40ES Individual Estimated Income Tax Voucher worksheet (k-40es25.pdf, Rev. 7-24),
-# which prints its own STANDARD DEDUCTION CHART and its own TAX COMPUTATION SCHEDULES in
-# exact marginal form, plus the 2025 Form K-40 (k-4025.pdf) and the 2025 Form K-40V
-# (k-40v25.pdf) — resolutions recorded inline where the passes differed.
-# HEADLINE FOR 2025: NO RATE, STANDARD-DEDUCTION, OR ALLOWANCE CHANGE. The 2024 SB 1
-# restructure carries forward untouched — two brackets, 5.2% up to $23,000 ($46,000 married
-# filing joint) and 5.58% above; standard deductions $3,605 single / $8,240 MFJ / $6,180 HoH
-# / $4,120 MFS; exemption allowance $18,320 (MFJ) or $9,160 (all other statuses) plus $2,320
-# per dependent and $2,320 additional for Head of Household. Filing thresholds are also
-# unchanged ($12,765 single under 65 ... $26,560 MFJ both under 65).
-# WHAT DID CHANGE FOR 2025:
-#   * THE FOOD SALES TAX CREDIT IS GONE. The 2025 booklet contains NO food-sales-tax-credit
-#     section and the 2025 Form K-40 front no longer carries the lines A-H credit block
-#     (2024: $125 per qualified exemption, federal AGI $30,615 or less). Kansas's state sales
-#     tax on food reached 0% on January 1, 2025, and the offsetting income-tax credit is not
-#     in the 2025 return.
-#   * K-40 LINE RENUMBERING follows that removal: line 17 is now the EITC, line 18 is the
-#     Total tax balance (2024: line 18 was the food sales credit, line 19 the balance), and
-#     the refundable EITC portion is line 22 (2024: line 23).
-#   * The DISABLED VETERAN exemption rose from $2,250 to $2,320 ('such individual shall be
-#     allowed an additional Kansas exemption of $2,320 for tax year 2025 and all tax years
-#     thereafter'), so it now equals the per-dependent amount.
-#   * TWO NEW ADDITIONAL EXEMPTIONS, each $2,320: one for each dependent child BORN in the
-#     tax year, and one for the parent(s) of a child who is STILLBORN during the tax year.
-#   * Homestead limits re-indexed: K-40H household income $43,389 (2024: $42,600); K-40PT
-#     $25,380 (2024: $24,500); K-40SVR $58,041 (2024: $56,450). Max refund still $700.
+# Provenance: see git history (git show 7a90a06:knowledge/states/ks/2025.yaml); sources: the `sources` table
 jurisdiction: states/ks
 tax_year: 2025
 income_tax: true
@@ -56,18 +24,6 @@ citation:
     mandate; 2025 Kansas Tax Table and 2025 Tax Computation Worksheet (5.2%/5.58%); Schedule S Part A additions;
     credits (EITC 17%, child and dependent care 50%, taxes paid to other states)'
   url: https://www.ksrevenue.gov/pdf/ip25.pdf
-starts_from: federal AGI (K-40 Line 1 = "Federal adjusted gross income (as reported on your federal income tax return)")
-residency:
-  summary: Kansas taxes by domicile/residence. Per the 2025 booklet, "A Kansas resident for income tax purposes is
-    anyone who lives in Kansas, regardless of where they are employed. An individual who is away from Kansas for
-    a period of time and has intentions of returning to Kansas is a resident" — a domicile/intent-to-return concept;
-    a full-year resident is taxed on all income. A PART-YEAR RESIDENT is a Kansas resident for less than 12 months
-    during the tax year, must enter the Kansas residency dates on the K-40, and completes Schedule S Part B to allocate
-    income. A NONRESIDENT is someone not a resident of Kansas who received income from Kansas sources; they must
-    file regardless of the amount of Kansas-source income and complete Schedule S Part B. Military pay is taxable
-    only to the service member's state of legal residency; nonresident service members stationed in Kansas are taxed
-    only on Kansas-source income. Your Kansas filing status must match your federal filing status, and a joint federal
-    return requires a joint Kansas return even if one spouse is a nonresident.
 forms:
   resident: Form K-40 (Kansas Individual Income Tax) — residency status is indicated by checkbox; full-year residents
     complete K-40 (with Schedule S Part A only if they have modifications)
@@ -123,12 +79,6 @@ credits:
   eligibility: Kansas residents only (not part-year residents or nonresidents) who qualify for and claim the federal
     Earned Income Tax Credit. A valid SSN is required for the entire year for the taxpayer, spouse (if MFJ), and
     each dependent claimed.
-  amount: 'Equal to 17% of the taxpayer''s federal EITC. Computed on the EITC Worksheet in the 2025 K-40 instructions:
-    ''Kansas EITC (multiply line 1 by 17%)''. The portion that offsets Kansas tax liability goes on line 17 (nonrefundable
-    use), and the remainder (worksheet line 4) is refundable and entered on line 22 — line 22 for 2025, not 2024''s
-    line 23.'
-  income_limit_2025: No separate Kansas income limit; eligibility and income phase-out follow the federal EITC rules
-    (you must qualify for the federal EITC).
   claimed_on: Form K-40, line 17 (credit against tax) and line 22 (refundable portion); computed on the Earned Income
     Tax Credit (EITC) Worksheet in the 2025 K-40 instructions.
   citation:
@@ -140,11 +90,6 @@ credits:
   eligibility: Kansas residents only - nonresidents and part-year residents are NOT eligible. Available to taxpayers
     who claimed the federal child and dependent care credit on federal Form 2441. A valid SSN for the entire year
     is required for the taxpayer, spouse (if MFJ), and each dependent claimed.
-  amount: 50% of the amount of the federal credit allowed on federal Form 2441 (2025 booklet, Line 14 — 'Multiply
-    amount of credit allowed on (federal Form 2441) by 50% and enter the result on line 14'), unchanged from 2024
-    (it was 25% in 2023).
-  income_limit_2025: No separate Kansas income limit stated; tied to the federal Form 2441 credit (which has its
-    own federal limits).
   claimed_on: Form K-40, line 14.
   citation:
     source: Kansas Department of Revenue, 2025 Individual Income Tax Booklet (Form K-40 instructions, ip25.pdf),
@@ -158,11 +103,6 @@ credits:
     copy of the other state's tax return must be enclosed. 'State' includes the District of Columbia, Puerto Rico,
     U.S. territories/possessions, and foreign countries (foreign taxes run through the Worksheet for Foreign Tax
     Credit first, and no credit is allowed if the foreign tax was claimed as a federal itemized deduction).
-  amount: 'Determined by the ''Worksheet for Residents'': the credit equals the LESSER of (a) the income tax actually
-    paid to the other state on the income also taxed by Kansas (worksheet line 7 = other state''s adjusted source
-    income percentage applied to its tax), or (b) the maximum credit allowable computed from the Kansas tax and the
-    percentage limitation (worksheet line 9). Enter the lesser on worksheet line 10 and on K-40 line 13.'
-  income_limit_2025: No income limit; the credit is limited by the worksheet formula rather than by an income ceiling.
   claimed_on: Form K-40, line 13; computed on the Worksheet for Residents (or the Worksheet for Part-Year Residents
     filing as Nonresidents) in the K-40 instructions.
   citation:
@@ -178,11 +118,6 @@ credits:
     or less — refund is 75% of property taxes paid) and Form K-40SVR (seniors at least 65, disabled veterans, and
     spouses of veterans 65 or older, household income not more than $58,041). A claimant who receives the K-40PT
     refund cannot also claim a Homestead refund.'
-  amount: A property tax rebate of up to $700 for homeowners; the refund is a percentage of general property tax
-    paid based on total household income.
-  income_limit_2025: 2025 household income of $43,389 or less for the K-40H Homestead refund (re-indexed from 2024's
-    $42,600). 'Household income' is generally the total of all taxable and nontaxable income received by all household
-    members.
   claimed_on: Form K-40H (Kansas Homestead Claim) — a separate form, not the K-40 (K-40PT and K-40SVR for the related
     programs).
   citation:
@@ -190,15 +125,6 @@ credits:
       Relief Refunds' (up to $700; 2025 household income $43,389 or less; K-40PT $25,380 at 75% of property taxes;
       K-40SVR $58,041)
     url: https://www.ksrevenue.gov/pdf/ip25.pdf
-filing_requirement:
-  note: 'A full-year Kansas resident must file a 2025 K-40 if (1) they are required to file a federal return, OR
-    (2) their Kansas adjusted gross income is more than the total of their Kansas standard deduction and exemption
-    allowance. Minimum gross-income filing thresholds (2025 booklet table — UNCHANGED from 2024): Single under 65
-    = $12,765 (65 or older or blind = $13,615; 65 or older and blind = $14,465); Married Filing Joint both under
-    65 = $26,560 (one spouse 65 or older or blind = $27,260; both = $27,960, rising further with additional 65/blind
-    conditions); Head of Household under 65 = $17,660; Married Filing Separate under 65 = $13,280. Nonresidents must
-    file if they received ANY income from Kansas sources, regardless of amount. File to receive a refund of any Kansas
-    withholding regardless of the amount of total income. (Source: ip25.pdf, ''Who Must File a Return.'')'
 mailing_addresses:
   refund_or_no_payment: 'KANSAS INCOME TAX, KANSAS DEPT. OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260 (printed
     on the face of the 2025 Form K-40 as the ''Mail to'' block)'
@@ -493,9 +419,9 @@ law_changes_checked:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

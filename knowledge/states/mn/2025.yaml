@@ -1,24 +1,4 @@
-# MN state knowledge — tax year 2025. Fetched + cited from the MN DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Form M1 instruction
-# booklet (m1-inst-25.pdf, 40 pages), then independently re-derived from second and third
-# official documents — the MN DOR press release 'Minnesota income tax brackets, standard
-# deduction and dependent exemption amounts for 2025' (Dec 16, 2024), the Tax Year 2025
-# Minnesota Revenue Tax Professional Desk Reference Chart, the DOR 'Income Tax Rates and
-# Brackets' web page, the 2025 Form M1 itself, and the 2025 Schedule M1CWFC / M1ED PDFs.
-# HEADLINE 2025 CHANGES: brackets indexed +2.886% from 2024 (rounded to the nearest $10);
-# standard deduction $14,950 Single / $29,900 MFJ-QSS / $14,950 MFS / $22,500 HoH; dependent
-# exemption $5,200 (up from $5,050); the TAX-TABLE MANDATE THRESHOLD MOVED from 2024's
-# $90,000 to $86,800 (the printed table now ends at '86,800 & over'); a taxpayer who elected
-# advance payments of the 2025 Child Tax Credit on the 2024 return MUST file a 2025 return to
-# reconcile them (new Schedule M1CWFC line 27 -> Form M1 line 14b); the advance-payment
-# election now covers the 2026 credit; new Schedule M1M subtractions for coerced debt,
-# consumer-enforcement public compensation, foreign-service retirement pay, and SEIU stipend
-# payments. The 2024-new Net Investment Income Tax (Schedule NIIT, >$1,000,000 of net
-# investment income) is UNCHANGED for 2025 and now reports on Form M1 line 14a.
+# Provenance: see git history (git show 7a90a06:knowledge/states/mn/2025.yaml); sources: the `sources` table
 jurisdiction: states/mn
 tax_year: 2025
 income_tax: true
@@ -40,20 +20,6 @@ citation:
     chart; Tax Tables pp.32-38 and Tax Rate Schedules p.39 (mandate at $86,800); payment options; Mail Station 0010
     mailing address
   url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
-starts_from: federal AGI (Form M1 Line 1 = federal adjusted gross income, from line 11a of federal Form 1040/1040-SR — the 2025 M1 face still prints "from line 11 of federal Form 1040 and 1040-SR", but AGI is line 11a on the 2025 Form 1040 —
-  or 1040-NR)
-residency:
-  summary: 'Minnesota taxes by residency. You are a full-year resident if Minnesota was your permanent home in 2025
-    (the domicile test), or if Minnesota was your home for an indefinite period of time and you maintained an abode
-    in Minnesota. A statutory-resident rule also applies: if your permanent residence is in another state but you
-    were physically in Minnesota for 183 days or more during the tax year AND you or your spouse owned, rented, lived
-    in, or leased an abode (house, townhouse, condominium, apartment, mobile home, or cabin, with cooking and bathing
-    facilities, that could be lived in year-round) in Minnesota, you are considered a Minnesota resident for the length
-    of time you maintained that abode. Part-year residents are those who moved into or out of Minnesota during 2025
-    (file if 2025 Minnesota-source income is $14,950 or more); nonresidents have Minnesota-source income but are
-    domiciled elsewhere and do not meet the 183-day/abode test. Part-year residents and nonresidents compute Minnesota
-    tax on the share of income assignable to Minnesota using Schedule M1NR (2025 M1NR lines 28 and 29 -> M1 lines
-    13a/13b). (See Income Tax Fact Sheets 1 Residency, 2 Part-Year Residents, 3 Nonresidents.)'
 forms:
   resident: Form M1, Individual Income Tax
   part_year_or_nonresident: Schedule M1NR, Nonresidents/Part-Year Residents (filed together with Form M1)
@@ -105,13 +71,6 @@ credits:
     or have qualifying children (qualifying children and qualifying older children determined on Schedule M1DQC).
     Combined with the Child Tax Credit on Schedule M1CWFC. ITINs may be used if you, your spouse, or your qualifying
     children have no SSN. Part-year residents qualify based on their percentage of income assignable to Minnesota.
-  amount: 'Four percent of your first $9,480 of earned income (2025 Schedule M1CWFC line 3 caps earned income at
-    $9,480), plus an additional amount for up to three qualifying older children. 2025 maximum Working Family Credit:
-    $379 with zero qualifying older children, $1,379 with one, $2,649 with two, $3,089 with three or more. You may
-    claim the credit for qualifying older children (and the Child Tax Credit) even with no earned income.'
-  income_limit_2025: Credit is reduced when adjusted gross income exceeds $31,950 ($37,910 if Married Filing Jointly).
-    The reduction is 12% of AGI above the limit (9% if you have a qualifying older child but no qualifying child
-    for the Child Tax Credit).
   claimed_on: Schedule M1CWFC (with Schedule M1DQC), flows to Schedule M1REF, then Form M1 line 22
   citation:
     source: 2025 Schedule M1CWFC, Minnesota Child and Working Family Credits (form + instructions — 'The Working
@@ -126,12 +85,6 @@ credits:
     Credit to receive 2026 advance payments; paper filers who elect mail to Mail Station 0015 instead of 0010). NEW
     for 2025 — taxpayers who elected advance payments of their 2025 credit on the 2024 return MUST file a 2025 return
     to reconcile them, even if not otherwise required to file.
-  amount: $1,750 for each qualifying child under age 18, with no cap on the number of qualifying children (2025
-    Schedule M1CWFC line 8, 'Multiply line 7 by $1,750').
-  income_limit_2025: Credit is reduced when adjusted gross income exceeds $31,950 ($37,910 if Married Filing Jointly);
-    the reduction is 12% of AGI above the limit. (Tax Year 2025 Desk Reference phase-out table, e.g. one qualifying
-    child fully phased out at $55,649 MFJ / $49,689 not-MFJ when receiving the full $379 Working Family Credit; reduce
-    the phase-out by $3,160 if not eligible for the Working Family Credit.)
   claimed_on: Schedule M1CWFC (with Schedule M1DQC), flows to Schedule M1REF (qualifying children counted on M1REF
     lines 2a/2b), then Form M1 line 22
   citation:
@@ -146,10 +99,6 @@ credits:
     person and expenses are the same as for the federal child and dependent care credit. Also available to licensed
     family daycare operators caring for their own dependent child under age six, and for a child born in 2025 if
     you did not participate in a pre-tax dependent care assistance program. Refundable, unlike the federal credit.
-  amount: A percentage of qualifying care expenses (federal Form 2441 mechanics). Computed on Schedule M1CD.
-  income_limit_2025: Federal adjusted gross income must be less than $76,150 with one qualifying person or less
-    than $88,150 with two or more qualifying persons (2025 M1 instructions, Schedule M1REF section; $88,150 confirmed
-    on the Tax Year 2025 Desk Reference Chart).
   claimed_on: Schedule M1CD, flows to Schedule M1REF (number of qualifying persons on M1REF line 1a), then Form
     M1 line 22
   citation:
@@ -163,9 +112,6 @@ credits:
     Since rent paid in tax year 2024 renters claim this credit on Schedule M1RENT WITH the Form M1 income tax return
     — renters do NOT complete Form M1PR (which remains only for homeowners'' Homestead Credit Refund). A copy of
     any CRP used to claim the credit must be provided with the return.'
-  amount: Based on household income and rent constituting property taxes, using the Renter's Credit Tables printed
-    in the 2025 M1 instruction booklet (pp.27-31). The maximum credit is $2,720 for 2025.
-  income_limit_2025: Household income must be less than $77,570 to qualify.
   claimed_on: Schedule M1RENT, Renter's Credit, flows to Schedule M1REF, then Form M1 line 22
   citation:
     source: 2025 Minnesota Individual Income Tax Return (M1) Instructions — Line 22 section ('You may qualify for
@@ -178,31 +124,12 @@ credits:
     K-12 (a qualifying child is the same as for the federal Earned Income Credit). Qualifying expenses include tutoring
     by a qualified instructor, instructional materials, music lessons, and certain educational services (private
     school tuition does NOT qualify for the credit — it is a Schedule M1M subtraction only). Refundable.
-  amount: 75% of qualifying K-12 education expenses (2025 Schedule M1ED line 11, 'Multiply line 10 by 75% (.75)'),
-    capped at $1,500 per qualifying child (line 12 multiplies the number of K-12 qualifying children by $1,500);
-    a phase-out worksheet applies if AGI is more than $75,820.
-  income_limit_2025: 'AGI limit varies by number of K-12 qualifying children: $81,820 (1 or 2 children), $84,820
-    (3), $87,820 (4), $90,820 (5), $93,820 plus $3,000 for each additional child (6 or more). Above the limit you
-    do not qualify (but may use the K-12 Education Subtraction instead).'
   claimed_on: Schedule M1ED, flows to Schedule M1REF, then Form M1 line 22
   citation:
     source: 2025 Schedule M1ED, K-12 Education Credit (75% / $1,500-per-child / $75,820 worksheet trigger / $81,820
       one-or-two-child AGI limit) and 2025 Form M1 instructions K-12 Education Credit AGI-limit table ($81,820 ...
       $93,820+$3,000), MN Department of Revenue
     url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1ed-25.pdf
-filing_requirement:
-  note: 'Full-year residents must file a 2025 Form M1 if required to file a federal return, or if income exceeds
-    the filing-requirement chart amount for their filing status/age (Single born on/after Jan 2, 1961: $14,950;
-    born before: $16,950; Married Filing Jointly both born on/after Jan 2, 1961: $29,900; one spouse older: $31,450;
-    both older: $33,000; Head of Household: $22,500 / $24,500; Qualifying Surviving Spouse: $29,900 / $31,450;
-    Married Filing Separately any age: $5). Part-year residents and nonresidents: add (1) all income while a MN
-    resident plus (2) MN-source income while a nonresident; if the total is $14,950 or more they must file Form
-    M1 with Schedule M1NR. A filer who ELECTED advance payments of the 2025 Child Tax Credit on the 2024 return
-    must file a 2025 return even if not otherwise required to (and even if MN-source income is below $14,950). A
-    nonresident alien with income assignable to Minnesota who was required to file a federal return must also file.
-    If not required to file, you can still file to claim refundable credits (K-12 Education, Child and Working Family,
-    Child and Dependent Care, Parents of Stillborn Children) or a withholding refund. Source: 2025 Form M1 instructions,
-    Filing Requirements (pp.6-8).'
 mailing_addresses:
   refund_or_no_payment: Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010
   with_payment: 'There is NO separate payment-only mailing address. The Form M1 return is mailed to Minnesota Department
@@ -474,9 +401,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

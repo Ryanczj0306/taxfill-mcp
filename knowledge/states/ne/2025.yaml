@@ -1,29 +1,4 @@
-# NE state knowledge — tax year 2025. Fetched + cited from the NE DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the standalone 2025 Nebraska
-# Tax Calculation Schedule (8-460-2025) and the 2025 Individual Income Tax Booklet (Form
-# 1040N instructions), then independently re-derived from second official documents — the
-# 2025 Form 1040N itself (line 5 federal AGI, line 6 printed standard deductions, line 18
-# '$171 times the number on line 4') and the standalone 2025 Nebraska Tax Table, whose
-# band-midpoint rows and over-$77,760 worksheet constants reproduce the same bracket math —
-# resolutions recorded inline where the passes differed.
-# HEADLINE 2025 CHANGES: (1) the TOP RATE IS CUT AGAIN, to 5.20% (2024: 5.84%; 2023: 6.64%)
-# — the LB 754 (2023) glide path continues toward 3.99% by 2027 — and all four schedules'
-# breakpoints are re-indexed (Single/MFS $4,030/$24,120/$38,870; MFJ/QSS $8,040/$48,250/
-# $77,730; HoH $7,510/$38,590/$57,630); the three lower rates stay 2.46%/3.51%/5.01%;
-# (2) the personal exemption CREDIT rises to $171 (2024: $166); (3) the standard deduction
-# rises to $8,600 single/MFS, $17,200 MFJ/QSS, $12,600 HoH; (4) Form PTC remains
-# COMMUNITY-COLLEGE-ONLY (school district property tax relief stays on the property tax
-# statement under LB 34); (5) many NEW credits arrive with tax year 2025 — the $500
-# refundable Intellectual and Developmental Disabilities Direct Support Professional credit
-# (Form 1040N line 51), the Nebraska Pregnancy Help Act credit, the Shortline Rail
-# Modernization credit, the Relocation Incentive Act refundable employer credit with its
-# employee Nebraska wage exclusion, and the Food Bank/Food Pantry/Food Rescue Donation
-# credit (2025 only); (6) Form 1040N's credit lines are RENUMBERED (refundable child/dependent
-# care 42, Nebraska EITC 44, community college property tax credit 45).
+# Provenance: see git history (git show 7a90a06:knowledge/states/ne/2025.yaml); sources: the `sources` table
 jurisdiction: states/ne
 tax_year: 2025
 income_tax: true
@@ -45,22 +20,6 @@ citation:
     federal AGI starting point (Line 5), Nebraska Standard Deduction Chart (Line 6), Line 15 Nebraska Income Tax,
     Line 18 personal exemption credit $171, residency definitions, Who Must File, due date, check payee
   url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
-starts_from: federal AGI (Form 1040N line 5 = federal AGI from Federal Form 1040/1040-SR, line 11a)
-residency:
-  summary: 'Nebraska bases residency on domicile plus a statutory-resident (183-day) rule. RESIDENT: an individual
-    whose domicile is in Nebraska, OR an individual who is physically present in Nebraska and maintains a permanent
-    place of abode in the state for an aggregate of more than six months; specifically, if an individual maintains
-    a permanent place of abode in Nebraska and is present in Nebraska for at least 183 days during the tax year,
-    that individual is a Nebraska resident even if domiciled in another state (any part of a day in Nebraska counts
-    as a day in the state). DOMICILE is the place an individual has his or her permanent home, where the individual
-    intends to return even if absent at times; an individual establishes Nebraska domicile on the date of arrival
-    for other than temporary or transitory purposes, and once established it remains until abandoned (by leaving
-    the state, abandoning Nebraska domicile, and establishing domicile in another state while present there for other
-    than temporary or transitory purposes). PERMANENT PLACE OF ABODE is a dwelling place permanently maintained by
-    the taxpayer, whether or not owned by the taxpayer. PARTIAL-YEAR RESIDENT: an individual who is a resident for
-    part, but less than all, of the year, having changed domicile during the year by moving into or out of Nebraska.
-    NONRESIDENT: a non-domiciliary not meeting the statutory-resident test, taxed only on income derived from or
-    connected with Nebraska sources. (2025 booklet, Definitions.)'
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
 credits:
@@ -70,12 +29,6 @@ credits:
     Credit. Nonresidents may not claim it. If filing Nebraska married-filing-separately, eligibility depends on
     whether the federal EIC is allowed on a federal MFS return. Paper filers must attach pages 1 and 2 of the federal
     Form 1040 (or pages 1, 2, and 3 of Form 1040-SR).
-  amount: 10% of the federal earned income credit (a state credit equal to 10% of the federal credit, using the
-    federal credit from line 27a of Form 1040/1040-SR). Partial-year residents enter the amount calculated on line
-    12, Nebraska Schedule III.
-  income_limit_2025: 'Same income limits as the federal EITC. For 2025 the earned-income thresholds cited in the
-    booklet''s NOL worksheet are: $19,104 ($26,214 MFJ) for no qualifying children; $50,434 ($57,554 MFJ) for one
-    child; $57,310 ($64,430 MFJ) for two children; $61,555 ($68,675 MFJ) for three or more children.'
   claimed_on: Form 1040N, line 44 (residents — RENUMBERED from 2024's line 42); Nebraska Schedule III, lines 11-12
     (partial-year residents)
   citation:
@@ -90,13 +43,6 @@ credits:
     who have qualifying federal child & dependent care expenses. Must complete and attach Nebraska Form 2441N (the
     federal Form 2441 alone is NOT accepted — the credit will be disallowed). Taxpayers who file federal MFJ but
     Nebraska MFS cannot claim it; nonresidents cannot claim it.
-  amount: 'Refundable amount = (smallest of qualifying expenses/earned income, capped at $3,000 for one qualifying
-    person or $6,000 for two or more) x federal decimal (2025 Form 2441N line 8 table: .35 at AGI of $15,000 or
-    less, stepping down .34, .33, .32, .31, .30, .29, and .28 for AGI over $27,000 up to $29,000) x Nebraska state
-    decimal (2025 Form 2441N line 9 table: 1.00 for AGI of $22,000 or less, stepping down .90, .80, .70, .60, .50,
-    .40, and .30 for AGI over $28,000 up to $29,000).'
-  income_limit_2025: Federal AGI of $29,000 or less (Form 1040N line 5). Above $29,000 the credit is instead the
-    nonrefundable version on line 23 (25% of the federal credit).
   claimed_on: Form 2441N, carried to Form 1040N, line 42 (residents — RENUMBERED from 2024's line 40); partial-year
     residents use Form 2441N / Schedule III
   citation:
@@ -110,10 +56,6 @@ credits:
     care credit. Must include a copy of federal Form 2441 (credit disallowed if not received). Taxpayers who file
     federal MFJ but Nebraska MFS cannot claim it; nonresidents may not claim it (partial-year residents use Schedule
     III line 6c).
-  amount: 25% (.25) of the amount on line 2 of Schedule 3, Federal Form 1040 (i.e., 25% of the federal child & dependent
-    care credit).
-  income_limit_2025: Federal AGI greater than $29,000 (taxpayers at or below $29,000 use the refundable version
-    on line 42 instead).
   claimed_on: Form 1040N, line 23 (residents); Nebraska Schedule III, line 6c (partial-year residents)
   citation:
     source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions), Line 23 instructions ('Resident
@@ -130,9 +72,6 @@ credits:
     district property tax relief is applied directly on the property tax statement under the School District Property
     Tax Relief Act (LB 34, 2024 special session), reducing property taxes before they are paid rather than refunding
     them afterward.'
-  amount: The credit equals the qualified community college property taxes paid in 2025 as computed in Form PTC
-    Part B (Part A line 1 = the line 2a total — no percentage multiplier on the 2025 form).
-  income_limit_2025: None (not income-limited).
   claimed_on: Form PTC, line 1, carried to Form 1040N line 45 (RENUMBERED from 2024's line 43)
   citation:
     source: 2025 Nebraska Property Tax Credit, Form PTC and its instructions (in the 2025 Form 1040N booklet) — Part
@@ -144,9 +83,6 @@ credits:
   eligibility: Nebraska residents may claim a credit for each Nebraska personal exemption reported on line 4, Form
     1040N (taxpayer, spouse, and dependents). Nonresidents and partial-year residents claim a prorated version on
     Schedule III line 7.
-  amount: $171 per Nebraska personal exemption for 2025 (multiply $171 by the number of exemptions on line 4, Form
-    1040N) — up from $166 in 2024 and $157 in 2023.
-  income_limit_2025: None (not income-limited).
   claimed_on: Form 1040N, line 18 (residents); Nebraska Schedule III, line 7 (nonresidents/partial-year residents)
   citation:
     source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions), Line 18 instructions ('Residents
@@ -164,20 +100,12 @@ credits:
     from the approved Form 3157-A. Total credits under the act are capped by the statutory limit for each State fiscal
     year (employers may separately claim three nonrefundable credits of $500 / $1,000 / $1,000 per qualifying employee
     or served individual).'
-  amount: $500 refundable credit per qualifying direct support professional.
-  income_limit_2025: None stated.
   claimed_on: Form 1040N, line 51 (approved Form 3157-A certificate number and amount)
   citation:
     source: 2025 Nebraska Individual Income Tax Booklet (Form 1040N instructions) — What's New, 'Individuals with
       Intellectual and Developmental Disabilities Support Act (LB 937, 2024)' ($500 refundable credit; six months
       and 500 hours) and Line 51 instructions (Forms 3157-A / 3157-E via eDASH)
     url: https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf
-filing_requirement:
-  note: 'Per the 2025 Form 1040N booklet ("Who Must File?"): A Nebraska RESIDENT must file if they (a) are required
-    to file a federal individual income tax return reporting a federal tax liability before credits, OR (b) have
-    $5,000 or more of net Nebraska adjustments to federal AGI, including non-Nebraska state and local bond interest
-    exempt from federal tax (see the Nebraska Schedule I instructions). A PARTIAL-YEAR RESIDENT or NONRESIDENT must
-    file if they have income derived from or connected with Nebraska sources.'
 mailing_addresses:
   refund_or_no_payment: 'Refund returns: Nebraska Department of Revenue, PO Box 98912, Lincoln, NE 68509-8912. (Note
     — Nebraska splits addresses by refund vs. no-refund, not refund vs. payment. Returns NOT requesting a refund,
@@ -610,9 +538,9 @@ forms:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

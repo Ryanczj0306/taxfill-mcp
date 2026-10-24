@@ -1,24 +1,4 @@
-# WI state knowledge — tax year 2025. Fetched + cited from the WI DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Form 1-ES
-# instructions' '2025 Tax Rate Schedules for Full-Year Residents' and the 2025 Standard
-# Deduction schedules, then independently re-derived from the 2025 Form 1 instructions
-# (I-111) — its p.44 '2025 Tax Computation Worksheet - Line 12' subtraction constants
-# ($586.44 / $8,183.76 Section A; $781.92 / $10,911.83 Section B; $390.96 / $5,455.92
-# Section C) each equal the cumulative marginal sum implied by the 1-ES schedules — plus
-# the 2025 Form 1 itself and the 2025 Schedule AD instructions.
-# TY2025 HEADLINE CHANGE: 2025 Wisconsin Act 15 (the 2025-27 budget) sharply EXPANDED the
-# 4.4% bracket — the 2025 Form 1-ES instructions carry an 'Instruction Updates' banner
-# reading '2025 Wisconsin Act 15 increased the income threshold for the top of the second
-# and bottom of the third tax brackets for each filing status. The 2025 Tax Rate Schedules
-# on page 3 have been updated to reflect that change.' Single/HoH: 4.4% now runs to
-# $50,480 (2024: $28,640); MFJ to $67,300 (2024: $38,190); MFS to $33,650 (2024:
-# $19,090). The four rates 3.5/4.4/5.3/7.65% are unchanged. Other 2025 changes are
-# subtractions, not rates (new retirement-income subtraction up to $24,000 at age 67+;
-# college savings $5,130; tuition and fees $7,649; adoption $15,000).
+# Provenance: see git history (git show 7a90a06:knowledge/states/wi/2025.yaml); sources: the `sources` table
 jurisdiction: states/wi
 tax_year: 2025
 income_tax: true
@@ -27,9 +7,6 @@ treaty_note: 'Wisconsin Form 1 starts from federal adjusted gross income (2025 F
 citation:
   source: '2025 Form 1 Instructions (I-111), Wisconsin Department of Revenue - Line 1 federal adjusted gross income; New in 2025; Which Form to File / domicile; Who Must File thresholds; Where to File mailing addresses; due date Wednesday April 15, 2026; Line 10 exemptions ($700 / $250); Line 12 Tax; 2025 Standard Deduction Table p.35; 2025 Tax Table pp.38-43; 2025 Tax Computation Worksheet p.44'
   url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf
-starts_from: federal AGI (federal adjusted gross income from line 11 of federal Form 1040/1040-SR)
-residency:
-  summary: 'Full-year residents file Form 1; nonresidents and part-year residents file Form 1NPR. You must file Form 1NPR if you were domiciled in another state or country at any time during the year, or are filing a joint return and your spouse was domiciled elsewhere at any time during the year. Domicile is your true, fixed, and permanent home to which, whenever absent, you intend to return; you can be physically present/residing in one locality but maintain domicile in another. An established domicile does not change unless all three occur: (1) you intend to abandon your old domicile and act consistently, (2) you intend to acquire a new domicile and act consistently, and (3) you are physically present in the new domicile. Tax treatment: full-year residents are taxed on income from all sources; nonresidents only on Wisconsin-source income; part-year residents on all income while a Wisconsin resident and only on Wisconsin-source income while a nonresident. Service members may elect Wisconsin residence under 50 U.S.C. 4001 (see Publication 128). (Framework unchanged for 2025.)'
 forms:
   resident: Form 1 (Wisconsin Income Tax) - full-year residents
   part_year_or_nonresident: Form 1NPR (Nonresident and Part-Year Resident Wisconsin Income Tax Return)
@@ -70,8 +47,6 @@ credits:
 - name: Wisconsin Earned Income Credit (EITC)
   type: refundable
   eligibility: 'Full-year Wisconsin resident who qualifies for the federal earned income credit AND has at least one qualifying child (the federal definition of qualifying child applies). A married-filing-separate filer is ineligible unless they meet sec. 7703(b), IRC (in which case the Wisconsin filing status should be head of household, married). ''Federal earned income credit'' means the credit computed using the IRC as adopted by Wisconsin — filers with Schedule I Part I adjustments recompute it on Schedule I Part III. A copy of federal Schedule EIC must be included (and federal Form 8867 if a paid preparer was used).'
-  amount: 'A percentage of the federal earned income credit (from federal Form 1040/1040-SR line 27, or Schedule I Part III line 1a Column II if recomputed), based on the number of qualifying children: 1 child = 4%; 2 children = 11%; 3 or more children = 34% (2025 Form 1 instructions, Line 30 Step 3 — unchanged from 2024).'
-  income_limit_2025: 'No separate Wisconsin income limit stated; eligibility follows the federal EITC income/eligibility limits (after any Schedule I adjustments).'
   claimed_on: Form 1, line 30 (Earned income credit - Number of qualifying children)
   citation:
     source: '2025 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 30 Earned Income Credit (Step 3 percentage table 4% / 11% / 34%)'
@@ -79,8 +54,6 @@ credits:
 - name: Wisconsin Homestead Credit (property-tax / rent circuit-breaker)
   type: refundable
   eligibility: 'Per the 2025 Form 1 instructions Special Instructions: at least 18 years old on December 31, 2025; if under age 62 and not disabled, must have earned income; a legal resident of Wisconsin for all of 2025; not claimed as a dependent on anyone''s 2025 federal return (unless 62 or older on December 31, 2025); not living in tax-exempt public housing for all of 2025 (exceptions apply); not living in a nursing home and receiving medical assistance (Title XIX) when filing; and not claiming (self or spouse) the veterans and surviving spouses property tax credit or farmland preservation credit. Claimed on Schedule H (or the simpler Schedule H-EZ).'
-  amount: 'Credit is computed from the Schedule H tables based on household income and property taxes (and/or rent constituting property taxes) up to the allowable amounts.'
-  income_limit_2025: 'Total household income (including wages, interest, social security, and income from certain other sources) must be below $24,680 in 2025 (unchanged from 2024).'
   claimed_on: Schedule H or Schedule H-EZ; carried to Form 1, line 33
   citation:
     source: '2025 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Special Instructions ''Homestead Credit'' (the $24,680 household-income limit) and Line 33'
@@ -88,8 +61,6 @@ credits:
 - name: Renter's and Homeowner's School Property Tax Credit
   type: nonrefundable
   eligibility: 'Wisconsin filers who paid rent during 2025 for living quarters used as their principal home, OR who paid property taxes during 2025 on their home. Available whether or not the homestead credit is claimed. Cannot be claimed if you or your spouse claim the veterans and surviving spouses property tax credit. Rent for property-tax-exempt housing (e.g. university dorms, nonprofit senior housing, certain public housing) does not qualify.'
-  amount: 'Credit figured from the Renter''s School Property Tax Credit Table (renter''s portion of rent, with different columns for heat included vs not included) and the Homeowner''s School Property Tax Credit Table (based on property taxes paid). The total combined credit claimed on lines 16a and 16b may not be more than $300 ($150 if married filing a separate return or married filing as head of household).'
-  income_limit_2025: No income limit.
   claimed_on: 'Form 1, line 16 (16a renter''s portion from the table on p.19, 16b homeowner''s portion from the table on p.20)'
   citation:
     source: '2025 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 16 School Property Tax Credit and the ''Special Cases'' $300 / $150 combined caps'
@@ -97,8 +68,6 @@ credits:
 - name: Additional Child and Dependent Care Tax Credit
   type: nonrefundable
   eligibility: 'You must have claimed the federal child and dependent care tax credit on your federal return, and you must have been a legal resident of Wisconsin for the entire year (on a joint return, qualifies if at least one spouse is a full-year Wisconsin resident).'
-  amount: 'Computed on Schedule WI-2441 (the amount from its line 14 is carried to Form 1 line 14) — not a flat percentage of the federal Form 2441 credit. If there is an amount on line 13 of Schedule WI-2441, a copy of the completed Worksheet A from the Schedule WI-2441 instructions must also be submitted. The 2025 dollar caps were not re-read line by line — see unverified.'
-  income_limit_2025: 'No separate Wisconsin income limit stated; follows the federal child and dependent care credit framework, which phases with income at the federal level.'
   claimed_on: Form 1, line 14, computed on Schedule WI-2441
   citation:
     source: '2025 I-111 Form 1 Instructions (Wisconsin Department of Revenue), Line 14 Additional Child and Dependent Care Tax Credit / Schedule WI-2441'
@@ -107,14 +76,10 @@ credits:
 - name: Married Couple Credit
   type: nonrefundable
   eligibility: 'Married filing a joint return where both spouses have qualified earned income (taxable wages, salaries, tips, W-2-reported scholarships/fellowships, other employee compensation, and net self-employment earnings; deferred compensation, interest, dividends, pensions, unemployment compensation and other unearned income excluded). Not available if federal Form 2555/2555-EZ (foreign earned income exclusion) or Form 4563 is filed. Computed on Schedule 2 of Form 1.'
-  amount: '3% of the lower-earning spouse''s qualified earned income, with that income capped at $16,000 — maximum credit $480 (2025 Form 1, Schedule 2: line 6 ''Fill in the smaller amount here. If more than $16,000, fill in $16,000''; line 7 ''Rate of credit is .03 (3%)''; line 8 ''Do not fill in more than $480''). Unchanged from 2024.'
-  income_limit_2025: 'No income limit; the earned-income base for the computation is capped at $16,000 per Schedule 2 line 6.'
   claimed_on: Form 1, line 18 (computed on Schedule 2, page 4 of Form 1)
   citation:
     source: '2025 Wisconsin Form 1 (Schedule 2 - Married Couple Credit When Both Spouses Are Employed, lines 6-8) and 2025 I-111 Form 1 Instructions, Line 18'
     url: https://www.revenue.wi.gov/TaxForms2025/2025-Form1f.pdf
-filing_requirement:
-  note: 'A full-year resident must file Form 1 for 2025 if gross income (or the total gross income of a married couple) met the threshold for the filing status/age: Single $14,260 (under 65) / $14,510 (65 or older); Married filing joint $26,510 (both under 65) / $26,760 (one 65 or older) / $27,010 (both 65 or older); Married filing separate $12,630 (under 65) / $12,880 (65 or older, applied to each spouse individually); Head of household $18,220 (under 65) / $18,470 (65 or older). Gross income means all income (before deducting expenses) reportable to Wisconsin and does not include items exempt from Wisconsin tax (e.g. social security benefits or U.S. government interest). A birthday of January 1, 2026 counts as being a year older as of December 31, 2025. A filer who could be claimed as a dependent on someone else''s return must file if gross income was more than $1,350 AND included at least $451 of unearned income, OR gross income exceeded $13,560 single / $17,520 head of household / $25,110 married filing jointly / $11,930 married filing separately. A return is also required if you owe a penalty on an IRA, retirement plan, Coverdell ESA, ABLE, HSA, or Archer MSA. Nonresidents and part-year residents must file Form 1NPR if Wisconsin gross income (or combined with spouse) was $2,000 or more.'
 mailing_addresses:
   refund_or_no_payment: 'Wisconsin Department of Revenue, PO Box 59, Madison WI 53785-0001 (if refund or no payment enclosed). Note: if claiming homestead credit, mail to PO Box 34, Madison WI 53786-0001.'
   with_payment: 'Wisconsin Department of Revenue, PO Box 268, Madison WI 53790-0001 (if payment enclosed). For an e-filed return paid by check with Form PV, mail Form PV and payment to the address shown on Form PV.'
@@ -343,9 +308,9 @@ law_changes_checked:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

@@ -1,27 +1,4 @@
-# MT state knowledge — tax year 2025. Fetched + cited from the MT DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Montana Form 2
-# Individual Income Tax Instructions (42 pages), then independently re-derived from the
-# 2025 Form 2 itself, which prints the $21,100/$42,200/$31,700 breakpoints on page 2 line 5,
-# the 3% (0.03) / 4.1% (0.041) capital-gains multipliers, the $5,660/$11,320 age-65
-# subtraction on page 1 line 6, and the 10% EITC multiplier on page 1 line 15 —
-# resolutions recorded inline where the passes differed.
-# HEADLINE 2025 CHANGES: the SB 399 structure from 2024 is UNCHANGED in shape — Montana
-# still starts from FEDERAL TAXABLE INCOME and still taxes ORDINARY income in two brackets
-# at 4.7% and 5.9%, with net long-term capital gains taxed separately at 3.0%/4.1%. What
-# moved for 2025: the bracket breakpoints were re-indexed to $21,100 single/MFS, $42,200
-# MFJ/QSS, $31,700 HoH (2024: $20,500/$41,000/$30,750), the printed 'Less' constants became
-# $253/$506/$380 (and, unlike 2024's, they are now ROUNDED DOWN from the exact 1.2% x
-# breakpoint — see the tax notes), and the age-65 subtraction was inflation-adjusted to
-# $5,660 ($11,320 MFJ both 65+) from $5,500/$11,000. Legislative changes effective for 2025:
-# HB 845 + SB 53 (529 subtraction max up to $4,500 / $9,000 joint), SB 93 (military
-# retirement subtraction made permanent), SB 544 (Montana NOL transition adjustment).
-# CRITICAL: HB 337's top-rate cut to 5.65% and the EITC increase to 20% begin in TAX YEAR
-# 2026 (5.4% in 2027) — they must NOT be applied to 2025. The 2025 top rate is 5.9% and the
-# 2025 EITC is 10% of the federal EITC.
+# Provenance: see git history (git show 7a90a06:knowledge/states/mt/2025.yaml); sources: the `sources` table
 jurisdiction: states/mt
 tax_year: 2025
 income_tax: true
@@ -45,32 +22,6 @@ citation:
     15, 2026), mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check payable to the Montana
     Department of Revenue; TransAction Portal https://tap.dor.mt.gov)
   url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
-starts_from: 'federal TAXABLE income: 2025 Form 2, line 1 = federal AGI (Form 1040, line 11b); line 2 = Form 1040
-  lines 12e and 13b (the federal standard deduction or federal itemized deductions, plus the additional Schedule
-  1-A deductions for qualified tips and the other One Big Beautiful Bill items); line 3 = federal taxable income
-  for Montana. Montana taxable income (line 7) = line 3 + line 4 Montana additions (Schedule I) - line 5 Montana
-  subtractions (Schedule I) - line 6 the $5,660 subtraction for taxpayers 65 and older ($11,320 MFJ if both are
-  65 and older), floored at zero. NOTE: for tax year 2023 and earlier Montana started from federal AGI with its own
-  standard deduction and $2,960 exemptions — do not use this pack for those years.'
-residency:
-  summary: 'Montana recognizes resident, part-year resident, and nonresident status, plus a NEW-for-2025 "Mixed Residency"
-    checkbox. RESIDENT: "You are a Montana resident if you are domiciled or maintain a permanent place of abode in
-    Montana," and Montana taxes all of a resident''s income even if earned out-of-state. Domicile/permanent-abode
-    factors include a MT driver''s license or ID, voting/registering to vote in MT, MT resident hunting/fishing licenses,
-    claiming MT residency for college admission/financial aid, receiving MT-resident-only DPHHS program services,
-    a concealed-weapon permit, claiming MT residency for tax purposes in prior years, motor-vehicle registration,
-    where real estate/a mobile home/an RV with sleeping facilities is owned, rented, or occupied (non-exhaustive).
-    PART-YEAR RESIDENT: a MT resident at the start of the year who established residency in another state during
-    the year, OR a nonresident who established MT residency during the year; MT taxes income received while living
-    in MT plus MT-source income received while not living in MT (Schedule II). NONRESIDENT: neither; MT taxes only
-    Montana-source income. MIXED RESIDENCY (new 2025 checkbox): a resident filing jointly with a nonresident or part-year
-    resident spouse marks Mixed Residency instead of Resident and uses Schedule II. A separate Nonresident Military
-    Spouse checkbox was added for filers whose exempt wages were withheld on and who are filing only for a refund.
-    The thirty-day nonresident worker exclusion (nonresidents earning only wages for services performed in Montana
-    for 30 days or less who worked in more than one state) continues, with the same exclusions (professional athletes,
-    entertainers, per-event performers, construction workers, salaries over $500,000, MEDIA-credit production employees),
-    and does not apply to self-employed taxpayers or filers with other Montana-source income. Montana keeps its North
-    Dakota wage reciprocity agreement and SCRA/MSRRA servicemember-spouse rules.'
 forms:
   resident: Montana Form 2 — Individual Income Tax Return (most taxpayers complete only pages 1 and 2; Schedules
     I-V are separate pages included only when used).
@@ -123,13 +74,6 @@ credits:
     reservation, members of IRC section 501(d) agricultural organizations, and resident active-duty servicemembers
     use Worksheet A (renamed for 2025 from the Earned Income Tax Credit Reduction Worksheet) to reduce the credit
     by the Montana-earned-income ratio.
-  amount: '10% of the federal EITC for 2025 — 2025 Form 2, page 1, line 15: "Earned Income Credit. Federal EIC ___
-    Multiply Federal EIC by 10% (0.10)", and the instructions'' Line 15 text, "a Montana earned income tax credit
-    (EITC) of 10 percent of the federal EITC." Refundable — any excess over the Montana tax liability is refunded.
-    NOTE: HB 337 raises the credit to 20% of the federal EITC BEGINNING IN TAX YEAR 2026 — that rate must not be
-    used for 2025.'
-  income_limit_2025: No separate Montana income limit; governed by federal EITC eligibility (the federal AGI/earned-income
-    limits that determine federal EITC qualification).
   claimed_on: Form 2, page 1, line 15 (Worksheet A for part-year residents / tribal members / 501(d) members / resident
     active-duty servicemembers)
   citation:
@@ -154,20 +98,6 @@ credits:
     where the total income of all its members is less than $45,000. Available even to those with no other filing
     requirement (Schedule 2EC may be filed directly on the TransAction Portal under Individuals). One credit per
     household.'
-  amount: 'Refundable credit of up to $1,150, computed on Schedule 2EC (2025 Form 2, page 10): gross household income
-    (line 18, the sum of lines 1-17) minus the STANDARD EXCLUSION of $12,600 pre-printed on line 19 ("Your standard
-    exclusion is entered here for you"; instructions p.40: "You must first deduct $12,600 from your gross household
-    income"), not less than zero (line 20), times the Household Income Reduction Table multiplier (line 21: 0 when
-    line 20 is $0-$1,999, then 0.006 / 0.016 / 0.024 / 0.028 / 0.032 / 0.035 / 0.039 / 0.042 / 0.045 / 0.048 for
-    each $1,000 band from $2,000 through $11,999, and 0.05 at $12,000 and greater) = net household income (line 22).
-    Property tax billed on the Montana residence and up to one acre (line 23) plus 15% (0.15) of rent paid (lines
-    24-25), minus line 22, not less than zero (line 27), capped at $1,150 (line 28: "Enter the lesser of line 27 or
-    $1,150"), times the Credit Multiplier Table percentage keyed to gross household income on line 18 (line 29: 100%
-    below $35,000; 40% $35,000-$37,500; 30% $37,501-$40,000; 20% $40,001-$42,500; 10% $42,501-$44,999; 0% at $45,000
-    and greater) = the credit on line 30, carried to Form 2, page 1, line 16. For 2025 the long-term care facility
-    rent worksheet was renamed from Worksheet D to Worksheet C (What''s New); the p.41 Line 24 text still calls it
-    "Worksheet D".'
-  income_limit_2025: Total household income of all household members must be less than $45,000.
   claimed_on: Schedule 2EC (Elderly Homeowner/Renter Credit), carried to Form 2, page 1, line 16
   citation:
     source: 2025 Montana Form 2 Instructions, Line 16 - Elderly Homeowner/Renter Credit ('a refundable tax credit
@@ -184,9 +114,6 @@ credits:
   eligibility: Montana residents who complete an adoption. Form ADPT and paperwork documenting the adoption (for
     foster-care adoptions, the signed adoption confirmation letter from Montana DPHHS) must be included with the
     return.
-  amount: $7,500 for the adoption of a child in the Montana foster care system and $5,000 for any other child under
-    the age of 18 or person who is physically or mentally incapable of providing self-care.
-  income_limit_2025: None stated.
   claimed_on: Schedule III (Tax Credits), Part I refundable credits, line 15, carried to Form 2, page 1, line 17;
     Form ADPT required
   citation:
@@ -199,29 +126,12 @@ credits:
     that is also taxed by Montana. Not available if the other state allowed a credit against its own tax for the
     Montana tax on the same income, or for taxes paid on Montana-source income. Pass-through entity owners may claim
     their share of qualifying entity-level income taxes (including composite and pass-through entity taxes).
-  income_limit_2025: No income limit; the credit is limited by the Schedule III Part II computation.
   claimed_on: Schedule III (Tax Credits), Part II — the credit is calculated SEPARATELY for ordinary income and for
     net long-term capital gains (because Montana has two rate tables), each limited by an income-ratio formula.
   citation:
     source: 2025 Montana Form 2 Instructions, Schedule III Part II - Credit for Income Taxes Paid to Another State
       or Country (separate ordinary-income and net-long-term-capital-gains computations)
     url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
-filing_requirement:
-  note: 'Per the 2025 Form 2 instructions, General Instructions - Filing Requirements: "In general, if during the
-    tax year you were a resident or part-year resident of Montana, or if you were a nonresident who received Montana
-    source income; and you had a requirement to file a federal tax return, then you must file a Montana income tax
-    return. If you did not have a federal filing requirement, but have a Montana addition or subtraction, you also
-    must file a Montana income tax return." There are no fixed dollar thresholds. You must also file to claim the
-    Montana EITC or the Elderly Homeowner/Renter Credit (Schedule 2EC may alternatively be filed on the TransAction
-    Portal), and taxpayers who incurred or reported capital or passive losses must file to track the sourcing of
-    those losses (unreported losses may be disallowed in future years). THIRTY-DAY NONRESIDENT WORKER EXCLUSION:
-    nonresidents who earned only wages for services performed in Montana for 30 days or less and worked in more than
-    one state during the tax year do not have to file or pay Montana tax on that income; the exclusion does not apply
-    to professional athletes, entertainers, per-event performers, construction workers, employees with annual salaries
-    over $500,000, MEDIA-credit qualified production employees, self-employed taxpayers, or filers with other Montana-source
-    income. Enrolled tribal members living on their own reservation generally have a filing requirement but may subtract
-    reservation-sourced income on Schedule I. North Dakota residents'' Montana wages are exempt under reciprocity
-    (file only to recover withholding, marking the Nonresident and North Dakota Reciprocity boxes).'
 mailing_addresses:
   refund_or_no_payment: Montana Department of Revenue, PO Box 6577, Helena, MT 59604-6577
   with_payment: Montana Department of Revenue, PO Box 6308, Helena, MT 59604-6308
@@ -499,9 +409,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

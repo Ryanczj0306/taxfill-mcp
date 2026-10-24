@@ -1,26 +1,4 @@
-# ND state knowledge — tax year 2025. Fetched + cited from the ND Office of State Tax
-# Commissioner (.gov), authored per the 2024 template (state-year knowledge program).
-# Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Individual Income
-# Tax Booklet (Forms ND-EZ/ND-1 instructions, 28702 12-2025), then independently re-derived
-# from a second official document — the 2025 Form ND-1 itself (SFN 28702, 12-2025: lines
-# 1a/1b, 18/19/20, PO Box 5621) — plus the booklet's own 2025 Tax Table rows recomputed
-# against the rate schedules — resolutions recorded inline where the passes differed.
-# HEADLINE 2025: the three-bracket 0%/1.95%/2.5% structure CONTINUES with RE-INDEXED
-# boundaries — single 0% now to $48,475 (2024: $47,150) and 2.5% above $244,825 (2024:
-# $238,200); MFJ/QSS $80,975/$298,075; MFS $40,475/$149,025; HoH $64,950/$271,450. Marriage
-# penalty credit maximum rose to $312 (2024: $303), eligibility thresholds $81,036 joint ND
-# taxable income / $47,550 lower spouse's qualified income, worksheet line-5 constant
-# $15,750. Still NO state standard deduction and NO personal/dependent exemptions (federal
-# taxable income base). NEW for 2025: the SB 2282 Employer Child Care Contribution income
-# tax credit (Schedule ECC, 50% of the first $1,000 of contributions per employee). Because
-# North Dakota PERPETUALLY CONFORMS to federal taxable income, every OBBBA change to federal
-# taxable income (bigger standard deduction with the extra $6,000 senior amount, $40,000 SALT
-# cap, tip and overtime exclusions) flows straight into the ND base. SB 2047's military-pay
-# WITHHOLDING exemption begins in tax year 2026, not 2025.
+# Provenance: see git history (git show 7a90a06:knowledge/states/nd/2025.yaml); sources: the `sources` table
 jurisdiction: states/nd
 tax_year: 2025
 income_tax: true
@@ -45,28 +23,6 @@ citation:
     OBBBA conformity, SB 2047 military pay withholding beginning 2026), 2025 Tax Table (pp.20-27) and 2025 Tax Rate
     Schedules (p.28)
   url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
-starts_from: federal taxable income (Form 1040/1040-SR line 15 -> ND-1 line 1b; line 1a also captures federal AGI,
-  printed on the 2025 form as Form 1040/1040-SR line 11a). Per the Nonresident Aliens guideline, a nonresident alien
-  builds a Pro Forma 1040NR disregarding treaty provisions and enters its line 15 on ND-1 line 1b.
-residency:
-  summary: 'Full-year resident: a legal resident of ND (domicile = the permanent home to which you always intend
-    to return whenever absent; if you have more than one physical place of abode, only one may be your legal residence,
-    based on intent and actions) for the entire tax year, OR someone meeting the statutory 7-month rule. Statutory
-    7-month rule: even if you were not a ND resident for any part of the year, you must file as a full-year resident
-    if you maintain a permanent place of abode in ND (a house, apartment, or other dwelling containing cooking and
-    bathroom facilities that is suitable for year-round living and is maintained on a permanent or indefinite basis)
-    and spend in the aggregate more than 210 days of the tax year in ND; the rule does not apply if you were (1)
-    a part-year resident of ND, (2) a full-year nonresident serving in the U.S. armed forces, or (3) a full-year
-    resident of Montana or Minnesota covered by reciprocity. Part-year resident: a ND resident for only part of 2025
-    — files if required to file federally and derived gross income from any source while a ND resident or from a
-    ND source while a nonresident. Full-year nonresident: not a ND resident for any part of the year and does not
-    meet the 7-month rule — files if required to file federally and derived gross income from ND sources. Residents
-    are taxed on all income, even if earned outside ND (including employment overseas); nonresidents/part-year residents
-    apportion via Schedule ND-1NR. Reciprocity exempts MN full-year residents (personal/professional-service compensation,
-    with monthly returns home) and MT full-year residents (wages) from ND filing on that income. Civilian spouses
-    of service members stationed in ND, and full-year-nonresident service members whose only ND income is military
-    compensation, are not required to file. A resident may claim a credit for tax paid to another state (Schedule
-    ND-1CR).'
 forms:
   resident: Form ND-1 (Individual Income Tax Return, SFN 28702). A simplified Form ND-EZ (SFN 28745) is available
     for qualifying full-year residents who answer "No" to all the "Which form to use" questions (e.g., no additions/most
@@ -119,12 +75,6 @@ credits:
     income is more than $47,550 (2025 indexed amounts — up from $78,836/$46,275 in 2024). Designed to offset the
     higher tax that two-earner couples pay versus filing as singles. Meeting all the conditions does not guarantee
     a credit — the worksheet formula may produce none.
-  amount: Calculated via the Marriage Penalty Credit Worksheet (2025 booklet p.14, which nets the joint-schedule
-    tax against each spouse's tax computed at single rates using a $15,750 constant on worksheet line 5); equals
-    the smaller of the computed marriage penalty (worksheet line 12) or the maximum credit of $312.00 for 2025 (up
-    from $303 in 2024). Nonresident/part-year filers prorate it by the Schedule ND-1NR line 20 ratio.
-  income_limit_2025: Joint ND taxable income must be more than $81,036 and the lower-earning spouse's qualified income
-    must be more than $47,550 to qualify (these are eligibility thresholds, not upper income caps).
   claimed_on: Form ND-1, line 22 (Marriage Penalty Credit Worksheet in the 2025 ND-1 booklet, p.14)
   citation:
     source: ND Office of State Tax Commissioner — 2025 Individual Income Tax Booklet, 'Line 22 - Marriage penalty
@@ -135,8 +85,6 @@ credits:
   type: nonrefundable
   eligibility: Full-year residents or part-year residents of North Dakota who paid income tax to another state (or
     a local jurisdiction in that state) on income also taxed by North Dakota.
-  income_limit_2025: None stated; the credit is limited by the Schedule ND-1CR computation (generally the lesser
-    of the other state's tax or the ND tax attributable to that income).
   claimed_on: Form ND-1, line 21, computed on Schedule ND-1CR (include the schedule)
   citation:
     source: ND Office of State Tax Commissioner — 2025 Individual Income Tax Booklet, 'Line 21 - Credit for income
@@ -149,8 +97,6 @@ credits:
     qualified child care. Qualified payments include those made to child care facilities licensed in North Dakota
     and payments to licensed facilities located within 10 miles of North Dakota. Created by 2025 Senate Bill 2282,
     effective beginning with tax year 2025.'
-  amount: 50% of the first $1,000 of child care contributions per employee.
-  income_limit_2025: None stated.
   claimed_on: Schedule ECC, carried through Schedule ND-1TC to Form ND-1
   citation:
     source: ND Office of State Tax Commissioner — 2025 Individual Income Tax Booklet, 'New for 2025 — Employer Child
@@ -165,9 +111,6 @@ credits:
     of residence or a mobile home lot (heat, water, lights, telephone, and furniture costs do not count as rent;
     properties exempt from property tax, such as nursing homes, do not qualify). There is no asset limitation for
     renters. You are eligible only if 20% of your annual rent exceeds 4% of your annual income.
-  amount: 'Refund equals (20% of annual rent) minus (4% of annual income), up to a maximum refund of $600 annually.
-    (Official example: $9,600 annual rent and $35,000 income gives $1,920 - $1,400 = $520 refund.)'
-  income_limit_2025: $70,000 (total income including spouse and dependents)
   claimed_on: Application for Renter's Refund filed directly with the ND Office of State Tax Commissioner (not on
     Form ND-1); the application is available the Tuesday after Martin Luther King Jr. Day in January through May
     31 each year and must be postmarked by May 31.
@@ -181,29 +124,12 @@ credits:
     (no age requirement for disability; proof required), who lives at and has an ownership interest in the property
     (co-ownership prorates the credit), and whose income (including spouse and dependents) does not exceed $70,000
     for the calendar year preceding the assessment date. There is no asset limitation for homeowners.
-  amount: 'Reduction in the property''s taxable value based on income: income $0-$40,000 = 100% reduction up to
-    a maximum $9,000 of taxable value (max true & full value $200,000); income $40,001-$70,000 = 50% reduction up
-    to a maximum $4,500 of taxable value (max true & full value $100,000). The dollar property-tax savings depends
-    on the local mill rate.'
-  income_limit_2025: $70,000 (total income including spouse and dependents)
   claimed_on: Application filed with the local assessor or county director of tax equalization, due April 1 of the
     assessment year (a property-tax program, not claimed on Form ND-1; once approved the credit is applied automatically).
   citation:
     source: ND Office of State Tax Commissioner — Homestead Property Tax Credit web page (qualifications, $70,000
       income limit, 100%/50% taxable-value reduction table, April 1 application)
     url: https://www.tax.nd.gov/homestead-property-tax-credit
-filing_requirement:
-  note: 'You must file a 2025 ND individual income tax return if you are required to file a 2025 federal return
-    AND you are: (a) a full-year ND resident (taxed on all income, even if you worked outside ND including employment
-    overseas, or have income from sources outside ND); (b) a part-year resident who derived gross income from any
-    source while a ND resident or from a ND source while a nonresident; or (c) a full-year nonresident (including
-    a nonresident alien) with gross income from ND sources. A full-year nonresident who maintains a permanent place
-    of abode in ND and spends more than 210 days of the year in ND must file as a FULL-YEAR RESIDENT (statutory
-    7-month rule). MN full-year residents (personal/professional-service compensation with monthly returns home)
-    and MT full-year residents (wages) are exempt under reciprocity. A full-year-nonresident service member files
-    only if they have ND-source income other than military compensation; a civilian spouse of a service member stationed
-    in ND whose only ND income is wages for ND work, who resided in ND only to live with the spouse, and where both
-    were full-year nonresidents, need not file. (2025 ND-1 Booklet, "Who must file a return," pp.5-6.)'
 mailing_addresses:
   refund_or_no_payment: Office of State Tax Commissioner, PO Box 5621, Bismarck, ND 58506-5621
   with_payment: Office of State Tax Commissioner, PO Box 5621, Bismarck, ND 58506-5621 (enclose check/money order
@@ -461,9 +387,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

@@ -13,7 +13,8 @@ Two callers share this one builder:
 
 Phase K JK20 (2026-10-24): a TY2025-and-later pack carries a top-level ``sources`` table (one entry per distinct
 (topic, url), every distinct inline description kept; generated once by scripts/hoist_state_sources.py), and the
-builder reads it when present, so a citation outlives the block that carried it once JK22 drops never-read blocks.
+builder reads it when present, so a citation outlives the block that carried it: JK22 (2026-10-24) dropped the TY2025
+residency and filing_requirement blocks, and their citations are in the table alone.
 A pack without the table (TY2023 / TY2024, frozen) is walked as before. Either way a URL cited under one topic with
 several descriptions is ONE registry entry whose ``answers`` joins them (before JK20 the first won and the rest were
 dropped: 89 / 222 / 328 descriptions in the 2023 / 2024 / 2025 packs).

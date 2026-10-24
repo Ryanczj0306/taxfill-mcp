@@ -1,26 +1,4 @@
-# CO state knowledge — tax year 2025. Fetched + cited from the CO DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Book 104
-# (Book104_2025.pdf — the year-pinned filing guide, which includes the DR 0104 form, the
-# 2025 tax table, DR 0104AD, DR 0104CR and DR 0104PN), then independently re-checked
-# against the standalone 2025 DR 0104 form PDF (DR 0104 (10/03/25)) — resolutions inline.
-# CHANGED for 2025 vs the 2024 pack:
-#   * RATE BACK UP to 4.4% (.044) from the temporarily reduced 4.25% of 2024. The 2025
-#     booklet is the sole authority and prints 4.4% three independent ways (Line 13
-#     instructions, the "2025 Colorado Income Tax Table with tax rate of 4.4%" header,
-#     and the over-$50,000 worksheet's "Multiply by 4.4% X .044").
-#   * LINE RENUMBERING AGAIN: additions Lines 2-7, Line 8 is now "Reserved for future
-#     use", Other Additions moved to Line 9, subtotal Line 10, subtractions Line 11,
-#     Colorado Taxable Income Line 12, Colorado Tax Line 13 (2024: subtotal 9,
-#     subtractions 10, taxable income 11, tax 12).
-#   (Unchanged, not a delta: as in 2024 the printed tax table stops at $50,000 and the
-#   "Worksheet for taxable incomes over $50,000" multiplies by the rate — 2024 DR 0104
-#   Book printed page 38, where the table ends at $49,900-$50,000 -> $2,123 at 4.25%.)
-#   * TABOR state sales tax refund amounts collapsed to $19/$25/$29/$35/$37/$59 single
-#     (double for joint) on re-tiered Modified AGI bands.
+# Provenance: see git history (git show 7a90a06:knowledge/states/co/2025.yaml); sources: the `sources` table
 jurisdiction: states/co
 tax_year: 2025
 income_tax: true
@@ -46,22 +24,6 @@ citation:
     DR 0104 form (DR 0104 (10/03/25)), instructions, the 2025 Colorado Income Tax Table at 4.4%, DR 0104AD, DR 0104CR,
     DR 0104CN reference, DR 0104PN, DR 0347, DR 0900, DR 0158-I)
   url: https://tax.colorado.gov/sites/tax/files/documents/Book104_2025.pdf
-starts_from: 'federal taxable income (2025 DR 0104 line 1 — "Federal Taxable Income from your federal income tax
-  form: 1040, 1040 SR, or 1040 SP line 15"); Colorado income tax is based on federal taxable income, which has already
-  taken the federal standard or itemized deduction into account'
-residency:
-  summary: An individual is a Colorado full-year resident if domiciled in Colorado (domicile being the permanent
-    home to which one intends to return when away), OR if they maintain a permanent place of abode in Colorado and
-    spend, in aggregate, more than six months of the tax year in Colorado (the statutory "six-month rule"). A part-year
-    resident is domiciled in Colorado for only part of the year (e.g., moved into or out of Colorado during 2025)
-    and is taxed on income received while a resident plus Colorado-source income; a nonresident did not reside in
-    Colorado during the year and is taxed only on Colorado-source income. Part-year residents and nonresidents compute
-    an apportioned tax on the DR 0104PN and carry it to DR 0104 line 13 (from DR 0104PN line 36); they must mark
-    the "Part-Year or Nonresident" residency box on page 1 of the 2025 DR 0104 (which also covers any combination
-    of full-year/part-year/nonresident spouses). Under federal law a military servicemember's state of legal residence
-    does not change solely because of assignment in another state. (The domicile + six-month statutory definitions
-    come from the CO DOR Residency Status / Individual Income Tax Guide pages; the 2025 booklet itself states the
-    proration rule and the residency-box mechanics — see unverified.)
 forms:
   resident: DR 0104 (2025 Colorado Individual Income Tax Return, DR 0104 (10/03/25)) — full-year residents mark the
     "Full-Year" residency box. A simplified DR 0104EZ also exists for qualifying simple full-year-resident returns
@@ -137,9 +99,6 @@ credits:
     SSN is not valid for employment, and certain filers under 25 without qualifying children use form DR 0104TN
     and claim on DR 0104CR line 9 instead — and a federal-EITC claimant who had to leave out dependents only because
     of an ITIN/invalid SSN may claim a HIGHER COEITC on line 9.)
-  amount: '50% of the federal EITC claimed for tax year 2025 — 2025 booklet, DR 0104CR line 5: "Multiply line 4
-    [federal EITC from Form 1040/1040-SR/1040-SP line 27a] by 50% (0.50) to calculate your Colorado E I T C."'
-  income_limit_2025: No separate Colorado income limit; eligibility tracks the federal EITC income limits for 2025.
   claimed_on: DR 0104CR (Individual Credit Schedule), Part I, lines 3-6 (refundable); ITIN/under-25 filers via DR
     0104TN on DR 0104CR line 9. The DR 0104CR refundable total (line 26) carries to DR 0104 line 31.
   citation:
@@ -151,12 +110,6 @@ credits:
   eligibility: Full-year and part-year Colorado residents with a qualifying child whose adjusted gross income does
     not exceed the applicable limits (nonresidents are NOT eligible). Requires the DR 0104 Dependents table "Child
     Tax Credit" box to be checked for the child and the DR 0104CN to be completed and attached.
-  amount: Computed on form DR 0104CN — transfer DR 0104CN line 11 (full-year residents) or line 13 (part-year residents)
-    to DR 0104CR Part I line 1. The 2025 per-child amounts and AGI bands (the regular child tax credit table and
-    the family affordability tax credit tables) were NOT re-verified this pass and are deliberately not carried forward
-    from 2024 — resolve them from the 2025 DR 0104CN before claiming (see unverified).
-  income_limit_2025: An AGI ceiling applies per the DR 0104CN (the 2024 ceilings were $75,000/$85,000 joint for the
-    regular credit and $85,000/$95,000 joint for the family affordability credit); the 2025 figures were not re-verified.
   claimed_on: DR 0104CN line 11 (full-year) or line 13 (part-year) -> DR 0104CR Part I, line 1 (refundable) -> DR
     0104 line 31.
   citation:
@@ -170,11 +123,6 @@ credits:
     is $60,000 or less ("Taxpayers who pay child and dependent care expenses during the year and whose Adjusted
     Gross Income is $60,000 or less may be able to claim a child and dependent care expenses credit" — 2025 booklet,
     DR 0104CR line 2). Computed on form DR 0347, which must be submitted along with the DR 0104CR.
-  amount: A percentage of the federal child and dependent care credit per form DR 0347 (the 2025 DR 0347 percentages
-    were not independently re-verified by this pack — the 2023 rates were 50% of the federal credit, and 25% of expenses
-    capped $500/$1,000 for the low-income variant; confirm on the 2025 DR 0347, which is bound into the 2025 Book
-    104).
-  income_limit_2025: Adjusted gross income of $60,000 or less (2025 booklet). (Unchanged from 2024.)
   claimed_on: Computed on DR 0347 (2025 Child and Dependent Care Expenses Tax Credit); entered on DR 0104CR Part
     I, line 2 (refundable).
   citation:
@@ -192,26 +140,12 @@ credits:
     or Federal Bureau of Prisons facility for 180 days or more during the year. A deceased person must have met
     all requirements as of the date of death. Lines 34-37 of the 2025 DR 0104 compute a Modified AGI solely to size
     the refund; they do not affect the income tax computation.
-  amount: 'Tiered by 2025 Modified AGI (DR 0104 line 37): single filers $19 (MAGI $52,000 or less) / $25 ($52,001-$105,000)
-    / $29 ($105,001-$168,000) / $35 ($168,001-$233,000) / $37 ($233,001-$299,000) / $59 ($299,001 or more); joint
-    filers exactly double ($38/$50/$58/$70/$74/$118). MUCH smaller than the 2024 amounts ($177-$565 single). Applied
-    first against income tax liability, remainder refunded.'
-  income_limit_2025: No ceiling — the refund amount varies by Modified AGI tier (see amount).
   claimed_on: DR 0104 lines 34-38 (Modified AGI lines 34-37; refund on line 38 from the "Modified A G I Tiers for
     TABOR State Sales Tax Refund" table; line 39 = line 33 subtotal + line 38).
   citation:
     source: Colorado DOR — 2025 Book 104 / 2025 DR 0104, lines 34-38 and the "Modified A G I Tiers for TABOR State
       Sales Tax Refund" table
     url: https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf
-filing_requirement:
-  note: 'You must file a 2025 DR 0104 if you are required to file a federal income tax return with the IRS for the
-    tax year, or have a Colorado income tax liability for the tax year, AND you are: (a) a full-year Colorado resident
-    (file DR 0104 or DR 0104EZ), (b) a part-year Colorado resident who received taxable income while residing here
-    (file DR 0104 + DR 0104PN), or (c) not a Colorado resident but received income from Colorado sources (file DR
-    0104 + DR 0104PN). Colorado residents must file whenever a federal return is required even with no Colorado tax
-    liability — otherwise the Department may file a return on your behalf that does not consider your situation;
-    filing is also the only way to determine whether you are entitled to a refund. (2025 Book 104, "Who Must File
-    This Tax Return.")'
 mailing_addresses:
   refund_or_no_payment: Colorado Department of Revenue, Denver, CO 80261-0005 (without payment; these addresses
     and zip codes are exclusive to the Colorado Department of Revenue — a street address is not required)
@@ -385,9 +319,9 @@ law_changes_checked:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

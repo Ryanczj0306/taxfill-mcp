@@ -1,19 +1,4 @@
-# AZ state knowledge — tax year 2025. Fetched + cited from the AZ DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Form 140
-# instructions (FORMS_INDIVIDUAL_2025_140i), then independently re-checked against the
-# 2025 Form 140 itself (ADOR 10413 (25), "AZ Form 140 (2025)"), which prints the line
-# 38-41 exemption multiplications, the line 46 "Tax: Multiply line 45 by 2.5% (.025)"
-# tax line, and the page-3 charitable standard-deduction-increase worksheet at 34% (.34).
-# CHANGED for 2025 vs the 2024 pack: the standard deduction / filing thresholds rose to
-# the 2025 federal amounts as raised by the federal reconciliation act ("OBBBA") —
-# $15,750 single & MFS / $31,500 MFJ / $23,625 HoH (from $14,600/$29,200/$21,900), and
-# the Line 44 charitable standard-deduction increase went 33% -> 34% (.34). UNCHANGED:
-# the 2.5% flat rate, the lines 38-41 exemptions ($2,100/$1,500/$2,300/$10,000), and
-# every credit amount/limit (dependent, family income, excise, property tax).
+# Provenance: see git history (git show 7a90a06:knowledge/states/az/2025.yaml); sources: the `sources` table
 jurisdiction: states/az
 tax_year: 2025
 income_tax: true
@@ -44,21 +29,6 @@ citation:
     line 44 increased standard deduction 34%; line 46 tax = 2.5% (.025); mailing addresses; make check payable to
     Arizona Department of Revenue; AZTaxes.gov; April 15, 2026 due date)
   url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
-starts_from: federal AGI (2025 Form 140 line 12 "Federal adjusted gross income (from your federal return)" — "Arizona
-  uses federal adjusted gross income as a starting point to determine Arizona taxable income. Your federal adjusted
-  gross income is your Arizona gross income." The instructions add "Be sure to use your federal adjusted gross income
-  and not your federal taxable income.")
-residency:
-  summary: An individual is an Arizona resident if their domicile is in Arizona — "Domicile is the place where you
-    have your permanent home. It is where you intend to return if you are living or working temporarily in another
-    state or country. If you leave Arizona for a temporary period, you are still an Arizona resident while gone"
-    (2025 Form 140 instructions, Residents). An Arizona resident is subject to Arizona tax on all income no matter
-    where earned, including out-of-state income. Full-year residents file Form 140 (or 140A/140EZ if eligible; both
-    you and your spouse must be full-year residents to file Form 140). A part-year resident (Arizona resident for
-    only part of 2025) files Form 140PY. A nonresident with Arizona-source income files Form 140NR. (Arizona also
-    has a statutory presence/9-month-presumption concept under A.R.S. 43-104 and a departmental "Procedure For Determining
-    Residency Status", but the domicile rule is the core test cited in the DOR instructions; the 9-month statutory
-    presumption was not separately confirmed on a .gov page in this session — see unverified.)
 forms:
   resident: Arizona Form 140 - Resident Personal Income Tax Return (ADOR 10413 (25); full-year residents; short forms
     Form 140A and Form 140EZ are also available for eligible residents — Form 140 is REQUIRED if Arizona taxable
@@ -105,13 +75,6 @@ credits:
   eligibility: Available to taxpayers who claim qualifying dependents (an individual that qualifies as a dependent
     for federal purposes) on the Arizona return. Credit amount is higher for dependents under age 17. Cannot claim
     the same individual as a qualifying parent/grandparent exemption (line 41) or Other Exemption (line 40).
-  amount: $100 for each qualifying dependent under age 17 at the end of the taxable year; $25 for each qualifying
-    dependent age 17 or older at the end of the taxable year. Reduced (phased down via the 2025 Adjusted Dependent
-    Tax Credit worksheets — Tables III/IV — and the Table V factors) for federal AGI above the limits; unavailable
-    once federal AGI exceeds the limit by more than $19,000.
-  income_limit_2025: Begins to phase out when federal AGI (Form 140, page 1, line 12) exceeds $200,000 (single,
-    head of household, or married filing separate) or $400,000 (married filing joint); no credit when the excess
-    over the limit is greater than $19,000. (Unchanged from 2024.)
   claimed_on: Arizona Form 140, page 2, line 49. Worksheet/Tables I-V in the 2025 Form 140 instructions.
   citation:
     source: Arizona Department of Revenue, 2025 Form 140 Resident Personal Income Tax Return Instructions (Line
@@ -122,14 +85,6 @@ credits:
   eligibility: Arizona residents whose income (Worksheet I — Form 140 line 42 Arizona AGI plus the line 38-41 exemptions
     added back, plus any Form 140-SBI small business income from line 13) does not exceed the maximum allowed for
     their filing status and number of dependents. The credit only reduces tax and cannot be refunded.
-  amount: $40 for each person (taxpayer, spouse, and qualifying dependents/qualifying parent-grandparent individuals
-    who qualify as dependents for federal purposes), capped at a maximum of $240 for married-filing-joint or head-of-household
-    returns (filing status 4 or 5) and $120 for single or married-filing-separate returns (filing status 6 or 7).
-    Computed on Worksheet II (Step 4) in the 2025 Form 140 instructions.
-  income_limit_2025: 'Maximum income depends on filing status and number of dependents. Married filing joint (Table
-    I): $20,000 for 0-1 dependents, $23,600 for 2, $27,300 for 3, $31,000 for 4 or more. Head of household (Table
-    II): $20,000 (0-1), $20,135 (2), $23,800 (3), $25,200 (4), $26,575 (5 or more). Single or married filing separate
-    (Table III): $10,000 for 0 or more dependents. (Unchanged from 2024 and 2023.)'
   claimed_on: Arizona Form 140, page 2, line 50. Worksheets I and II / Tables I-III in the Form 140 instructions.
   citation:
     source: Arizona Department of Revenue, 2025 Form 140 Instructions (Line 50 - Family Income Tax Credit, Tables
@@ -141,11 +96,6 @@ credits:
     not be claimed as a dependent by another taxpayer, and not have been sentenced for at least 60 days of 2025
     to a county/state/federal prison. Married joint filers may also claim for a spouse who has either a valid SSN
     or an ITIN; if the spouse has a valid SSN but the taxpayer does not, neither may claim it.
-  amount: '$25 for each person (taxpayer, spouse, and qualifying dependents who are Arizona residents), up to a
-    maximum credit of $100 per household (Credit for Increased Excise Taxes Worksheet: dependents plus 2 if filing
-    status 4, or plus 1 for statuses 5/6/7, times $25, not to exceed $100).'
-  income_limit_2025: Federal AGI (Form 140, page 1, line 12) of $25,000 or less for married filing joint or head
-    of household; $12,500 or less for single or married filing separate. (Unchanged from 2024.)
   claimed_on: Arizona Form 140, page 2, line 56. If also claiming the property tax credit, computed on Form 140PTC
     (line 17) and carried to Form 140 line 56.
   citation:
@@ -159,29 +109,12 @@ credits:
     age 65 or older in 2025, or (b) under 65 but receiving SSI Title 16 income from the Social Security Administration
     (NOT normal Social Security disability). Total household income must be under the limits below. The claim (or
     an extension request) must be filed by April 15, 2026.
-  amount: A set credit amount based on total household income, per the credit tables on Form 140PTC (the per-bracket
-    2025 table amounts / maximum were not re-verified this pass — see unverified; the 2023 maximum was $502).
-  income_limit_2025: Total household income under $3,751 if you lived alone, or under $5,501 if others lived with
-    you (2025 Form 140 instructions, Line 57). (Unchanged from 2024.)
   claimed_on: Arizona Form 140PTC, page 1, line 15 (carried to Form 140 page 2 line 57; if claiming both this and
     the excise credit, Form 140PTC line 17 feeds Form 140 line 56).
   citation:
     source: Arizona Department of Revenue, 2025 Form 140 Instructions (Line 57 - Property Tax Credit) and Form 140PTC
     url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
   unverified: true
-filing_requirement:
-  note: 'Per the 2025 Form 140 instructions ("Do You Have to File?" / Arizona Filing Requirements), an Arizona return
-    is required for 2025 when gross income is more than: $15,750 (single or married filing separately), $23,625 (head
-    of household), or $31,500 (married filing jointly) — the thresholds track the 2025 federal standard deduction
-    amounts as raised by the federal reconciliation act ("OBBBA"). Figure gross income the same as for federal purposes,
-    then exclude income Arizona does not tax (e.g., interest from U.S. Government obligations; Title II Social Security
-    retirement benefits; Railroad Retirement Act tier 1/tier 2, disability, unemployment and sickness benefits; pay
-    for active service in the Reserves, National Guard or U.S. Armed Forces; and uniformed-services retired/retainer
-    pay, annuities and pensions). Even if not required to file, you must still file to get a refund of Arizona tax
-    withheld. You may file Form 140 only if you (and spouse, if MFJ) are full-year Arizona residents; you MUST use
-    Form 140 (rather than 140A/140EZ) if Arizona taxable income is $50,000 or more, you make adjustments to income,
-    you itemize, you claim credits other than the family income tax / increased excise / property tax credits, you
-    claim estimated payments, or you are subtracting the 2025 Arizona Families Tax Rebate (subtraction item "U").'
 mailing_addresses:
   refund_or_no_payment: Arizona Department of Revenue, PO Box 52138, Phoenix, AZ 85072-2138 (if expecting a refund,
     owe no tax, or owe tax but are not including a payment)
@@ -364,9 +297,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

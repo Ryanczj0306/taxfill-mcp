@@ -1,20 +1,4 @@
-# NC state knowledge — tax year 2025. Fetched + cited from the NC DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 D-401
-# instruction booklet, then independently re-checked against a second official document
-# (the 2025 Form D-400 web-fill itself, "D-400 Web-Fill 9-25", tax year 2025) —
-# resolutions recorded inline where a second document does not print the figure.
-# CHANGED for 2025 vs the 2024 pack: the individual income tax rate dropped 4.5% -> 4.25%
-# (2025 D-401 "What is the Tax Rate?"; 2025 D-400 Line 15 "Multiply Line 14 by 4.25%
-# (0.0425)"). UNCHANGED: the NC Standard Deduction Chart ($12,750/$25,500/$12,750/$19,125),
-# the Child Deduction Table, the Filing Requirements Chart, and the January 1, 2023 IRC
-# conformity date. NEW disclosure for 2025: the 2025 booklet states expressly that federal
-# changes made by the reconciliation act ("OBBBA") do NOT apply for NC tax year 2025 —
-# NC does not conform to the federal standard deduction, the federal itemized deduction
-# amount, or the new federal Schedule 1-A additional deductions.
+# Provenance: see git history (git show 7a90a06:knowledge/states/nc/2025.yaml); sources: the `sources` table
 jurisdiction: states/nc
 tax_year: 2025
 income_tax: true
@@ -47,24 +31,6 @@ citation:
     (mailing addresses, payee, "2025 D-400" memo), Schedule S starting point (federal AGI as of January 1, 2023),
     Line 7 Additions / Schedule S Part A list, Filing Requirements Chart (p.6)
   url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
-starts_from: federal adjusted gross income (Form D-400, Line 6 "Federal Adjusted Gross Income"; the 2025 D-401 Schedule
-  S instructions — "The starting point for North Carolina taxable income is federal adjusted gross income as of
-  January 1, 2023"); NC's starting basis remains the Internal Revenue Code as of January 1, 2023, so post-2023
-  federal changes (including the 2025 federal reconciliation act, "OBBBA") do not apply unless NC specifically conforms
-residency:
-  summary: Residency is based on domicile. A North Carolina RESIDENT is an individual domiciled in NC at any time
-    during 2025, or who resided in NC during 2025 for other than a temporary or transitory purpose; in the absence
-    of convincing proof to the contrary, an individual present within NC for more than 183 days during the taxable
-    year is presumed to be a resident, though absence from the state for more than 183 days raises no presumption
-    of non-residence. A resident who moves from the state during 2025 remains an NC resident until the individual
-    has BOTH established a definite domicile elsewhere AND abandoned any NC domicile (mere intent is not enough;
-    voluntary and positive action must be taken). A PART-YEAR RESIDENT is one who moved into and became a resident
-    of NC during 2025, or who moved out of NC and became a resident of another state during 2025. A NONRESIDENT
-    is one who was not a resident at any time during 2025 but received NC-source income (real/tangible property
-    in NC, a business/trade/profession/occupation carried on in NC, or NC gambling activities). A nonresident alien
-    (one who has not passed the green card test or the substantial presence test) may be treated as resident, part-year,
-    or nonresident for NC purposes; nonresident aliens are required to file NC returns at the same time they are
-    required to file their federal returns.
 forms:
   resident: Form D-400 (North Carolina Individual Income Tax Return, "D-400 Web-Fill 9-25") — used by all individuals
     including residents
@@ -128,15 +94,6 @@ credits:
     this credit. A copy of the return filed with the other state/country and proof of payment must be attached
     (the 2025 D-401 "What You Should Send Us" list requires Form D-400TC — and, if applicable, Form NC-478 and
     Form NC-Rehab — whenever a tax credit is claimed on Form D-400, Line 16).
-  amount: Credit = the LESSER of (a) the proportion of N.C. income tax attributable to the double-taxed income
-    or (b) the net income tax actually paid to the other state/country on that income (2025 D-401, Form D-400TC
-    Part 1 instructions — Line 1 total income while an NC resident, Line 2 the portion taxed by the other state
-    or country, Line 3 the Line 2 / Line 1 decimal, Line 4 "Total North Carolina Income Tax. Enter the amount
-    from Form D-400, Line 15", Line 6 "Amount of Net Tax Paid to the Other State or Country on the Income Shown
-    on Line 2"). No fixed dollar amount. For multiple states/countries, a separate Out-of-State Tax Credit
-    Worksheet is used per jurisdiction.
-  income_limit_2025: 'No income limit. The credit is limited mechanically: total credits taken (D-400TC Part 3)
-    cannot exceed the N.C. income tax on D-400 Line 15.'
   claimed_on: Form D-400TC, Part 1 (result flows through Part 3); then reported on Form D-400, Line 16 ("Tax Credits
     (From Form D-400TC, Part 3, Line 20)" per the 2025 Form D-400 itself).
   citation:
@@ -150,9 +107,6 @@ credits:
     3D, Article 3H (historic mill facility), or Article 3L (Historic Rehabilitation Tax Credits Investment Program;
     requires Form NC-Rehab, "NC-Rehab, 2025 Historic Rehabilitation Tax Credits", attached to the front of Form
     D-400). Distinguishes income-producing vs. non-income-producing structures.
-  income_limit_2025: No income limit, but total credits on D-400TC cannot exceed the N.C. income tax on D-400 Line
-    15. Specific credit percentages/caps vary by Article (3D/3H/3L) and are set in the respective General Statutes
-    / Form NC-Rehab, which were not extracted as exact figures here.
   claimed_on: Form D-400TC, Part 2 (Article 3L requires Form NC-Rehab; the 2025 D-401 "What You Should Send Us"
     list names Form NC-478, "2025 Summary of Tax Credits Limited to 50% of Tax", and Form NC-Rehab attachments);
     flows to D-400 Line 16.
@@ -161,15 +115,6 @@ credits:
       Form Should I File?" form list)
     url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
   unverified: true
-filing_requirement:
-  note: 'A 2025 NC return is required if federal gross income for 2025 exceeds the filing threshold for your status
-    (2025 Filing Requirements Chart, D-401 p.6): Single $12,750; Married - Filing Jointly $25,500; Married - Filing
-    Separately $12,750 (if spouse does not claim itemized deductions) or $0 (if spouse claims itemized deductions);
-    Head of Household $19,125; Qualifying Widow(er)/Surviving Spouse $25,500; Nonresident Alien $0 (regardless of
-    filing status). NC minimum gross income filing requirements differ from the IRC because NC law "does not allow
-    the same standard deduction amount as the Internal Revenue Code." Even below the threshold you must file to
-    get a refund of NC tax withheld. A part-year resident or nonresident with NC-source income must file if total
-    gross income from all sources exceeds the threshold for the filing status.'
 mailing_addresses:
   refund_or_no_payment: NC DEPARTMENT OF REVENUE, PO BOX R, RALEIGH, NC 27634-0001 (if due a refund and filing
     on paper — original returns only)
@@ -338,9 +283,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

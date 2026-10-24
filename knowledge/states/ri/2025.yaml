@@ -1,42 +1,4 @@
-# RI state knowledge — tax year 2025. Fetched + cited from the RI DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-#
-# TWO-PASS VERIFICATION: every key figure below was drafted from the FINAL "2025 INSTRUCTIONS
-# FOR FILING RI-1040" (Revised 11/2025, posted 12/2025) — Line 4 standard-deduction list,
-# Line 6 exemption amount, Line 8 tax, RI Schedule EIC/I, Where and When to File — then
-# independently re-derived from a SECOND final official document: RI Division of Taxation
-# ADVISORY **ADV 2025-22** (November 3, 2025), whose "Uniform tax rate schedule for Tax Year
-# 2025" table and by-tax-year standard-deduction / exemption / phase-out tables are printed
-# specifically so the 2025 and 2026 figures can be told apart. Both passes agree on every
-# figure with zero discrepancies.
-#
-# SOURCING NOTE (why the rate-and-worksheets page is NOT the primary citation): the
-# "2025 Tax Rate and Worksheets" PDF the DOR serves under a `_d` filename is stamped
-# "DRAFT 10/01/2025" on its face. Its figures happen to match the two final sources
-# above exactly, so it is cited only as corroboration — never as the authority. Prefer the
-# instructions booklet and the ADV advisory, both of which are final.
-#
-# HEADLINE 2025 ITEMS. Every indexed amount moved: brackets $79,900/$181,650 (from
-# $77,450/$176,050), standard deduction $10,900/$21,800/$10,900/$16,350, exemption $5,100
-# (from $4,950), phase-out threshold $254,250 (from $246,450) with a $7,250 increment (from
-# $7,050). The 3.75/4.75/5.99% RATES are unchanged, as is the 16% RI EITC and the 25% child
-# and dependent care percentage. Two structural items are new:
-#   * NEW RI SCHEDULE HR1 — Individual: Rhode Island DECOUPLES from four federal deductions
-#     enacted by P.L. 119-21 (H.R.1, 119th Cong. — the OBBBA) and adds them back: the
-#     business interest expense deduction (IRC 163(j)), the section 174A amortization
-#     adjustment for research and experimental expenditures, depreciation of business assets
-#     (IRC 179(b)), and the qualified sound recording production deduction (IRC 181). This is
-#     the first RI add-back schedule aimed at the OBBBA and it is NOT modeled by this pack —
-#     see notes.
-#   * The MFS standard deduction now EQUALS the single amount ($10,900 each). For 2024 it was
-#     deliberately $25 HIGHER than single ($10,575 vs $10,550); that quirk is gone.
-# Also: the RI-1040H property-tax-relief maximum credit rises to $700 (from $675) with the
-# household-income ceiling at $40,730 (from $39,275), and starting with TY2025 the
-# pension/401(k)/403(b)/annuity modification allows up to $50,000 of federally taxable
-# retirement income to be subtracted.
+# Provenance: see git history (git show 7a90a06:knowledge/states/ri/2025.yaml); sources: the `sources` table
 jurisdiction: states/ri
 tax_year: 2025
 income_tax: true
@@ -67,8 +29,6 @@ citation:
     Worksheet", RI Schedule EIC Line 40 "The Rhode Island percentage is 16%", RI Schedule I Line 21 "Multiply the
     amount on line 20 by 25%"'
   url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
-starts_from: federal AGI (Federal Form 1040/1040-SR, line 11a) — RI-1040 Line 1; RI taxable income then computed
-  via RI Schedule M modifications and the new RI Schedule HR1 add-backs, the RI standard deduction, and RI exemptions
 # DEV_PLAN §7.2 effective_law_changes — the typed delta registry (schema shipped in
 # knowledge.py long before any pack used it; this is the FIRST data instance repo-wide,
 # D2c). The same facts were already in this pack's header prose; the typed block is what
@@ -100,21 +60,6 @@ effective_law_changes:
       (IRC 163(j) business interest, 174A research and experimental amortization, 179(b)
       depreciation, 181 qualified sound recording production).
     url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
-residency:
-  summary: 'Resident = an individual domiciled in the State of Rhode Island, OR an individual who maintains a permanent
-    place of abode in Rhode Island and spends more than 183 days of the year in Rhode Island (statutory resident).
-    Domicile is the place an individual regards as their permanent home — the place to which they intend to return after
-    a period of absence — and a domicile once established continues until a new fixed and permanent home is acquired.
-    Nonresident = any person not within the definition of a resident, who must file if they have income derived from or
-    connected with Rhode Island sources and are required to file a federal return. Part-year resident = an individual
-    who was a RI resident for a period of less than 12 months; files if required to file a federal return. Nonresidents
-    and part-year residents both use Form RI-1040NR (a nonresident with income from outside Rhode Island completes RI
-    Schedule II and a part-year resident with income from outside Rhode Island completes RI Schedule III; a filer whose
-    income is all from Rhode Island sources completes neither). Note: the Rhode Island income tax is imposed on all the
-    federal taxable income of a resident who is a member of the armed forces regardless of where received, while
-    military pay received by a NONRESIDENT service person stationed in Rhode Island is not subject to RI income tax
-    (other RI-source income of that person still is); under the Military Spouses Residency Relief Act a servicemember''s
-    spouse''s service income may be taxable only by their state of legal residence if certain conditions are met.'
 forms:
   resident: Form RI-1040 (Rhode Island Resident Individual Income Tax Return)
   part_year_or_nonresident: Form RI-1040NR (Rhode Island Nonresident Individual Income Tax Return), which part-year
@@ -191,11 +136,6 @@ credits:
   eligibility: Resident (and part-year/eligible nonresident) taxpayers who qualify for and claim the FEDERAL Earned
     Income Tax Credit. RI does not impose its own separate eligibility test - if you receive the federal EITC, you
     receive the RI EITC. You must claim the federal EITC (federal Form 1040/1040-SR, line 27a) to claim the RI credit.
-  amount: '16% of the federal earned income credit for 2025 (UNCHANGED from 16% for 2024). Computed on RI Schedule
-    EIC: Line 39 = federal EITC from Federal Form 1040/1040-SR line 27a; Line 40 = 16% (the Rhode Island percentage);
-    Line 41 = Line 39 x Line 40.'
-  income_limit_2025: No separate Rhode Island income limit; eligibility and income limits track the federal EITC
-    (the federal EITC AGI/investment-income limits for the 2025 tax year apply).
   claimed_on: RI Schedule EIC, line 41; carried to Form RI-1040, page 2, line 14d (the 2025 face's Schedule EIC line 41
     prints "Enter here and on RI-1040, page 2, line 14d"; the Instructions quoted below still say "page 1"). RI Schedule
     EIC is on page 3 of the RI-1040 Resident booklet and must be completed and attached.
@@ -212,12 +152,6 @@ credits:
     were 65 years of age or older AND/OR disabled as of December 31, 2025; and (E) 2025 total household income was
     $40,730 or less. Both homeowners (attach the 2025 property tax bill) and renters (attach the 2025 lease or rent
     receipts; rent paid is multiplied by 20% as deemed property tax) may claim it.'
-  amount: 'Maximum credit is $700.00 for 2025 (up from $675 for 2024; the maximum has been inflation-adjusted for
-    tax years beginning on or after January 1, 2024 per R.I. Gen. Laws section 44-33-9). The tentative credit is
-    property tax paid (or 20% of rent) minus (household income x the table percentage), then the lesser of that
-    amount or $700. The 2025 income-based percentage table runs: less than $6,991 = 3%; $6,991-$10,480 = 4%;
-    $10,481-$13,970 = 5%; $13,971-$17,460 = 6% (1 person) or 5% (2 or more); $17,461-$40,730 = 6%.'
-  income_limit_2025: Total household income of $40,730 or less for 2025 (up from $39,275 for 2024).
   claimed_on: Form RI-1040H; carried to Form RI-1040, page 2, line 14c ("Property tax relief credit from RI-1040H, line 13"). RI-1040H must be filed by April 15, 2026;
     an extension to file RI-1040 does NOT extend the time to file RI-1040H.
   citation:
@@ -231,12 +165,6 @@ credits:
   eligibility: Taxpayers who claimed the federal Credit for Child and Dependent Care Expenses (federal Form 1040/1040-SR,
     Schedule 3, line 2). Rhode Island allows a credit equal to a percentage of that federal care credit, limited
     to the amount of Rhode Island income tax (so any excess is not refunded - it is nonrefundable).
-  amount: '25% of the federal Credit for Child and Dependent Care Expenses, capped at the Rhode Island income tax.
-    Computed on RI Schedule I: Line 19 = RI income tax from RI-1040 line 8; Line 20 = federal care credit (federal
-    Schedule 3, line 2); Line 21 = Line 20 x 25%; Line 22 (Maximum Credit) = the amount from line 19 or 21, whichever
-    is less.'
-  income_limit_2025: No separate Rhode Island income limit stated; the federal child and dependent care credit rules
-    (federal AGI-based percentage and expense caps) govern the base amount.
   claimed_on: RI Schedule I, line 22; carried to Form RI-1040, page 1, line 9a (Rhode Island Percentage of Allowable
     Federal Credit), in the credits-against-tax section - nonrefundable.
   citation:
@@ -251,10 +179,6 @@ credits:
     Rhode Island. Authorized under R.I. Gen. Laws section 44-30-18. If credit is claimed for taxes paid to more
     than one other state, a separate calculation for each state must be made on Form RI-1040MU (page 11 of the
     RI-1040 Resident booklet); a signed copy of each other-state return must be attached.
-  amount: 'The smallest of the Rhode Island income tax less allowable federal credit, the tentative credit (RI tax
-    x the proportion of income from the other state), or the income tax actually due and paid to the other state.
-    Computed on RI Schedule II, line 29.'
-  income_limit_2025: None.
   claimed_on: RI Schedule II, line 29; carried to Form RI-1040, page 1, line 9b (credits-against-tax section -
     nonrefundable).
   citation:
@@ -262,14 +186,6 @@ credits:
       II - Credit for Taxes Paid to Other States (R.I. Gen. Laws section 44-30-18); Form RI-1040MU for more than
       one state'
     url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
-filing_requirement:
-  note: 'Every resident individual of Rhode Island who is required to file a federal income tax return must file
-    a RI individual income tax return (RI-1040). A resident not required to file a federal return may still be
-    required to file a Rhode Island income tax return if their income for the taxable year is in excess of the sum
-    of their Rhode Island personal exemptions and applicable standard deduction. Every nonresident individual
-    required to file a federal return who has income derived from or connected with Rhode Island sources must file
-    (RI-1040NR). A part-year resident (RI resident for less than 12 months) must file if they are required to file
-    a federal return. (Source: 2025 RI-1040 instructions, "Who Must File a Return," p. I-1.)'
 mailing_addresses:
   refund_or_no_payment: Rhode Island Division of Taxation, One Capitol Hill, Providence, RI 02908-5806
   with_payment: Rhode Island Division of Taxation, One Capitol Hill, Providence, RI 02908-5807 (mail return, payment,
@@ -468,9 +384,9 @@ tax:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

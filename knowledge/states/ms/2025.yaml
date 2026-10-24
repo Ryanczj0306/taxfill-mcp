@@ -1,19 +1,4 @@
-# MS state knowledge — tax year 2025. Fetched + cited from the MS DOR (.gov),
-# authored per the 2023/2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Resident,
-# Non-Resident and Part-Year Resident Income Tax Instructions (Form 80-100-25-1-1-000,
-# Rev. 12/25), then independently re-derived from the 2025 Form 80-105 itself
-# (Form 80-105-25-8-1-000, Rev. 09/25 — which prints the filing-status exemption amounts
-# next to each checkbox and the line 10 'Line 9 x $1,500' multiplier) — both passes agree.
-# HEADLINE 2025 CHANGE (HB 531 phase-in): the rate on taxable income in excess of $10,000
-# DROPS to 4.4% (2024: 4.7%). The 0% band on the first $10,000 is unchanged. Exemptions
-# ($6,000/$12,000/$8,000 + $1,500 dependent) and standard deductions ($2,300/$4,600/$3,400)
-# are UNCHANGED from 2024. The 2025 'Build Up Mississippi Act' (HB 1, eff. 7/1/2025) leaves
-# 2025 at 4.4% and 2026 at 4.0% and adds further cuts (2027 3.75%, 2028 3.5%, 2029 3.25%,
-# 2030+ 3%, with contingent reductions below 3% from 2031) — do NOT use those for 2025.
+# Provenance: see git history (git show 7a90a06:knowledge/states/ms/2025.yaml); sources: the `sources` table
 jurisdiction: states/ms
 tax_year: 2025
 income_tax: true
@@ -35,21 +20,6 @@ citation:
     Status and Exemptions table; LEGISLATIVE CHANGES (HB 1 Build Up Mississippi Act — 2027 3.75%, 2028 3.5%, 2029 3.25%,
     2030+ 3%); April 15th due date; mailing addresses'
   url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
-starts_from: Mississippi gross income computed from scratch on the return (NOT federal AGI). The 2025 resident Form
-  80-105 starts from individual income line items, totals them at line 49 "Total income," then subtracts MS adjustments
-  (lines 50-65) to reach line 66 "Mississippi adjusted gross income." There is no "federal adjusted gross income"
-  starting line on the resident return.
-residency:
-  summary: 'Per the 2025 instructions (Form 80-100, "Am I a Resident or a Non-Resident?"): a legal resident is an
-    individual who maintains a home, apartment, or other place of abode in Mississippi, OR who exercises the rights
-    of citizenship in Mississippi by meeting the requirements as a voter, OR who enjoys the benefits of homestead
-    exemption. Residency is based on domicile/legal residence: an individual remains a legal resident of Mississippi
-    (even if temporarily absent) until citizenship rights are relinquished and a new legal residence is established
-    (changes in driver''s license, vehicle tags, voter registration, and property taxes evidence intent to change
-    legal residence). A part-year resident moved into or out of Mississippi during the year; part-year residents file
-    Form 80-205 and are taxed only on income earned while a Mississippi resident, prorating deductions and exemptions.
-    Nonresidents file Form 80-205 and are taxed only on Mississippi-source income, reporting total income from all
-    sources solely to prorate deductions and exemptions.'
 forms:
   resident: Form 80-105, Mississippi Resident Individual Income Tax Return (2025; Form 80-105-25-8-1-000, Rev. 09/25)
   part_year_or_nonresident: Form 80-205, Mississippi Non-Resident / Part-Year Resident Individual Income Tax Return
@@ -96,9 +66,6 @@ credits:
   eligibility: Mississippi individuals who claim the federal income tax credit for certain dependent care expenses
     on their federal return. The taxpayer must actually claim the federal credit and must have federal adjusted gross
     income (AGI) of not more than $50,000.
-  amount: 25% of the amount of the federal dependent care credit claimed on the taxpayer's federal income tax return;
-    the credit is limited to the taxpayer's total Mississippi income tax liability.
-  income_limit_2025: Federal AGI must be not more than $50,000.
   claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 44; total carried to Form 80-105 line 19 (resident).
   citation:
     source: Mississippi Department of Revenue, 2025 Individual Income Tax Instructions (Form 80-100-25-1-1-000),
@@ -108,10 +75,6 @@ credits:
   type: nonrefundable
   eligibility: A Mississippi taxpayer who legally adopts a dependent child, for qualified adoption expenses paid
     or incurred during the tax year for each child. Claimed for the tax year in which the adoption becomes final.
-  amount: Up to $10,000 per child for a dependent child residing in Mississippi before adoption; up to $5,000 per
-    child for a dependent child residing outside Mississippi before adoption. Any unused credit may be carried forward
-    5 years.
-  income_limit_2025: None stated.
   claimed_on: Form 80-401 (Tax Credit Summary Schedule), credit code 25; total carried to Form 80-105 line 19 (resident).
   citation:
     source: Mississippi Department of Revenue, 2025 Individual Income Tax Instructions (Form 80-100-25-1-1-000),
@@ -123,25 +86,12 @@ credits:
     to that other state, on income also taxed by Mississippi. The taxpayer MUST file a return with the other state
     and attach a copy (plus Form 80-160); W-2 withholding amounts alone are not sufficient. Not applicable on the
     Non-Resident return.
-  amount: 'Credit for the total income tax due to the other state, subject to three statutory limitations under Miss.
-    Code Ann. Sec. 27-7-77: (1) cannot exceed the Mississippi income tax due on line 17; (2) cannot exceed income
-    tax actually paid to the other state; (3) cannot exceed an amount computed by applying the highest applicable
-    Mississippi rates to the net taxable income reported to the other state.'
-  income_limit_2025: None (limited instead by the formula above).
   claimed_on: Form 80-105 line 18 (resident return); supported by Form 80-160 with a copy of the other state's return
     attached.
   citation:
     source: 'Mississippi Department of Revenue, 2025 Individual Income Tax Instructions (Form 80-100-25-1-1-000),
       ''Line 18: Credit for Income Tax Paid to Another State'' section'
     url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
-filing_requirement:
-  note: 'Per the 2025 instructions (Form 80-100, "DO I HAVE TO FILE?"), file a Mississippi return if any apply: you
-    had Mississippi income tax withheld (other than gambling); you are a non-resident or part-year resident with income
-    taxed by Mississippi (other than gambling); single resident with gross income over $8,300 plus $1,500 per dependent;
-    married resident (combined) with gross income over $16,600 plus $1,500 per dependent; a minor resident with gross
-    income over the personal exemption plus standard deduction for the filing status; residents working outside Mississippi/abroad
-    must report total gross income regardless of source. If not required to file but Mississippi tax was withheld,
-    file to obtain a refund.'
 mailing_addresses:
   refund_or_no_payment: 'Returns requesting a REFUND: Department of Revenue, P.O. Box 23058, Jackson, MS 39225-3058.
     (Per the 2025 Form 80-105 footer "Mail REFUND returns to" and the 2025 instructions, WHEN AND WHERE SHOULD I FILE.)'
@@ -336,9 +286,9 @@ law_changes_checked:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

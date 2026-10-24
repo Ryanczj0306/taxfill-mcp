@@ -1,20 +1,4 @@
-# NJ state knowledge — tax year 2025. Fetched + cited from the NJ DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure was drafted from the 2025 NJ-1040 resident
-# instruction booklet (70 pages, PDF build 2025-10-21), then independently re-derived from
-# the 2025 NJ-1040NR nonresident instruction booklet (45 pages), which prints the SAME 2025
-# Tax Rate Schedules (Tables A and B) keyed to its own line 39 — both passes agree on every
-# bound, rate, and printed STEP 3 subtraction constant.
-# 2025 vs 2024: New Jersey's statutory brackets are UNCHANGED (same schedules in force since
-# the 2020 millionaire's-tax addition), the exemption amounts, filing thresholds, property-tax
-# deduction/credit caps, Worksheet J tiers, and Child Tax Credit bands are all unchanged, and
-# the famous Table B "-$1,154.50" misprint PERSISTS in the 2025 print (both booklets). The one
-# figure that changed is the NJEITC fixed amount for age-expansion filers: $260 for 2025
-# (2024: $253). NOTE the citation URL caveat in `unverified` — NJ serves the 2025 booklet from
-# its year-agnostic /pdf/current/ path.
+# Provenance: see git history (git show 7a90a06:knowledge/states/nj/2025.yaml); sources: the `sources` table
 jurisdiction: states/nj
 tax_year: 2025
 income_tax: true
@@ -36,23 +20,6 @@ citation:
     New Jersey - TGI'), Where to Mail Your Return p. 47 (PO Box 555 refunds; PO Box 111 payments), Tax Table p.
     54, Tax Rate Schedules p. 63
   url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
-starts_from: state-computed (NJ gross income built from its own income categories; wages taken from W-2 box 16 "State
-  wages," NOT federal AGI or federal box 1 wages)
-residency:
-  summary: 'Residency is determined by domicile and a statutory-resident test. Domicile is "the place you consider
-    your permanent home - the place where you intend to return after a period of absence" (2025 booklet, Terms to
-    Know, p. 4); you have only one domicile and it does not change until you move to a new location intending to
-    establish a permanent home there and abandon your New Jersey domicile. (1) If NJ is your domicile, you are a
-    RESIDENT unless you (a) did not maintain a permanent home in NJ, (b) maintained a permanent home outside NJ,
-    AND (c) did not spend more than 30 days in NJ. (2) If NJ is NOT your domicile, you are a resident only if you
-    maintain a permanent home in NJ and spend more than 183 days here (statutory resident). A NONRESIDENT has no
-    NJ domicile and does not meet the 183-day statutory test. PART-YEAR: there is no part-year resident return -
-    if you change domicile mid-year you file NJ-1040 (as a part-year resident) reporting income received during
-    the resident period, and if you also had NJ-source income while a nonresident you must also file NJ-1040NR.'
-  citation:
-    source: 2025 NJ-1040 Resident Income Tax Return Instructions - Terms to Know (Domicile, Principal Residence)
-      p. 4 and Part-Year Residents p. 5; GIT-6 pointer
-    url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice - confirm
   each amount and your eligibility at the cited source before claiming it. Every amount below was re-read from the
   2025 NJ-1040 instruction booklet; the one figure that CHANGED from 2024 is the NJEITC fixed amount for age-expansion
@@ -67,13 +34,6 @@ credits:
     Married filing separately qualifies only with a qualifying child who lived with the filer more than half of
     2025 and living apart from the spouse for the last six months of 2025. Part-year residents prorate by months
     of NJ residency.
-  amount: '40% of the taxpayer''s federal Earned Income Credit (EIC). 2025 instructions, Line 58: "The NJEITC is
-    40% of the federal EIC. If you claimed and were allowed a federal earned income credit (EIC), enter 40% of your
-    federal EIC amount." Age-expansion filers (18+, no qualifying child, no federal EIC solely because of the age
-    requirement) enter $260 on line 58 for 2025 (2024: $253) and prorate that $260 if a part-year resident.'
-  income_limit_2025: Tied to the federal EIC income limits for tax year 2025 (varies by filing status and number
-    of qualifying children). The state does not set a separate dollar income limit; eligibility follows federal
-    EIC qualification.
   claimed_on: Form NJ-1040, Line 58
   citation:
     source: 2025 NJ-1040 Resident Income Tax Return Instructions, Line 58 - New Jersey Earned Income Tax Credit
@@ -87,14 +47,6 @@ credits:
     the deduction OR the credit (whichever gives the greater benefit; Worksheet H decides). Homeowners or tenants
     age 65 or older or disabled who are below the filing threshold can claim the credit on Form NJ-1040-HW without
     filing NJ-1040 (by April 15, 2026).
-  amount: 'Property Tax Credit: $50 ($25 if you and your spouse/CU partner file separate returns but maintained
-    the same main home) - refundable, taken on Line 56; do not claim it if you claimed the Line 41 deduction. Alternatively,
-    Property Tax Deduction: property taxes paid (or 18% of rent) up to a maximum of $15,000 ($7,500 if you and your
-    spouse file separate returns but maintained the same main home) - taken on Line 41. Only one benefit may be
-    claimed.'
-  income_limit_2025: No upper income limit to claim the deduction/credit. Those not otherwise required to file (gross
-    income at or below the $10,000 single-or-MFS / $20,000 other-statuses filing threshold) can still claim the
-    Property Tax Credit if age 65 or older or disabled, using Form NJ-1040-HW.
   claimed_on: Form NJ-1040, Line 41 (Property Tax Deduction) or Line 56 (Property Tax Credit); or Form NJ-1040-HW
     for eligible seniors/blind/disabled not required to file NJ-1040
   citation:
@@ -107,11 +59,6 @@ credits:
     so they could work or look for work, and who were allowed the federal child and dependent care credit (civil-union
     and non-joint-federal filers compute a mock federal credit per the Worksheet J instructions). Married filing
     separately is only eligible if the federal exceptions are met.
-  amount: 'A percentage of the taxpayer''s federal child and dependent care credit, tiered by NJ taxable income
-    (2025 Worksheet J): 50% if NJ taxable income (line 42) is $30,000 or less; 40% if over $30,000 but not over
-    $60,000; 30% if over $60,000 but not over $90,000; 20% if over $90,000 but not over $120,000; 10% if over $120,000
-    but not over $150,000; not eligible if over $150,000. Part-year residents prorate by months of NJ residency.'
-  income_limit_2025: New Jersey taxable income of $150,000 or less (over $150,000 = not eligible).
   claimed_on: Form NJ-1040, Line 64 (computed on Worksheet J; enclose federal Form 2441)
   citation:
     source: 2025 NJ-1040 Resident Income Tax Return Instructions, Line 64 / Worksheet J (50%/40%/30%/20%/10% tiers)
@@ -122,25 +69,11 @@ credits:
   eligibility: Resident taxpayers with NJ taxable income (line 42) of $80,000 or less, claiming a credit for each
     dependent who is age 5 or younger on the last day of the tax year. The dependent must be claimed on the NJ-1040
     dependent lines. Married filing separately is not eligible. Part-year residents prorate by months of NJ residency.
-  amount: 'Per qualifying dependent age 5 or younger, by NJ taxable income (line 42): $1,000 if $30,000 or less;
-    $800 if over $30,000 but not over $40,000; $600 if over $40,000 but not over $50,000; $400 if over $50,000 but
-    not over $60,000; $200 if over $60,000 but not over $80,000. Multiply the per-child amount by the number of
-    qualifying dependents. Unchanged from 2024.'
-  income_limit_2025: New Jersey taxable income of $80,000 or less.
   claimed_on: Form NJ-1040, Line 65
   citation:
     source: 2025 NJ-1040 Resident Income Tax Return Instructions, Line 65 - New Jersey Child Tax Credit ($1,000/$800/$600/$400/$200
       by taxable-income band) (NJ Division of Taxation)
     url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
-filing_requirement:
-  note: 'For 2025, you must file an NJ return if your gross income from everywhere for the entire year was more
-    than the filing threshold: $10,000 for Single or Married/CU partner filing separate return; $20,000 for Married/CU
-    couple filing joint, Head of household, or Qualifying widow(er)/surviving CU partner. Also file if you had New
-    Jersey Income Tax withheld and are due a refund, if you paid New Jersey estimated taxes for 2025 and are due
-    a refund, or if you are eligible for a New Jersey Earned Income Tax Credit or other credit and are due a refund.
-    If you are NOT required to file and you are a homeowner or tenant age 65 or older or disabled, you may still
-    be eligible for the Property Tax Credit on Form NJ-1040-HW. (2025 NJ-1040 instructions, "Do You Have to File
-    a New Jersey Income Tax Return?", p. 3.)'
 mailing_addresses:
   refund_or_no_payment: State of New Jersey, Division of Taxation, Revenue Processing Center - Refunds, PO Box 555,
     Trenton NJ 08647-0555
@@ -453,9 +386,9 @@ forms:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

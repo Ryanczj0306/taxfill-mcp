@@ -23,7 +23,8 @@ Four entries were also wrong for 2025 and are corrected from the documents now c
 * Rhode Island said nonresidents complete RI Schedule II and part-year residents RI Schedule III. The 2025 RI-1040NR
   gives each schedule to a filer "with income from outside Rhode Island" and says "NONRESIDENTS and PART-YEAR
   RESIDENTS with all income from Rhode Island sources do not need to complete either schedule II or III" (page 3).
-  The pack's ``residency.summary`` carried the same rule and is corrected with it.
+  The pack's ``residency.summary`` carried the same rule and was corrected with it (Phase K JK22 later dropped
+  that block: no tool read it).
 * Nebraska said nonresidents and partial-year residents must attach Schedule III, leaving out the exception the 2025
   booklet prints beside that rule: a couple with one full-year resident spouse who elect a married, filing jointly
   return file a resident return, "and Schedule III cannot be used" (p. 12, Line 3).
@@ -215,12 +216,9 @@ def test_rhode_island_2025_entry_limits_the_schedules_to_income_from_outside_rho
     assert "Schedule II should be completed by NONRESIDENTS" in " ".join(form_quotes["nonresident"].split())
     for role in ROLES:
         assert "do not need to complete either schedule II or III" in " ".join(form_quotes[role].split())
-    # the residency summary said the same thing as the old forms entry; it now says what the forms entry says
-    summary = " ".join(load_state_knowledge("ri", YEAR, KNOWLEDGE).residency["summary"].split())
-    assert "nonresidents complete RI Schedule II; part-year residents complete RI Schedule III" not in summary
-    assert ("(a nonresident with income from outside Rhode Island completes RI Schedule II and a part-year resident with "
-            "income from outside Rhode Island completes RI Schedule III; a filer whose income is all from Rhode Island "
-            "sources completes neither)") in summary
+    # The residency summary said the same thing as the old forms entry and was corrected with it; Phase K JK22
+    # (2026-10-24) then dropped the TY2025 residency blocks (no tool read them), so no second copy of the rule is left.
+    assert getattr(load_state_knowledge("ri", YEAR, KNOWLEDGE), "residency", None) is None
 
 
 def test_nebraska_2025_entry_states_the_joint_return_exception():

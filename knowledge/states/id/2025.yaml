@@ -1,33 +1,4 @@
-# ID state knowledge — tax year 2025. Fetched + cited from the ID State Tax Commission
-# (.gov), authored per the 2024 template (state-year knowledge program). Loaded as a
-# StateKnowledge. conforms_to_federal_treaties: whether federally treaty-exempt income
-# flows through (most states start from federal AGI) or is added back (CA/CT/MD/MS-style).
-# Figures the fetch could not independently confirm are in `unverified` — confirm at the
-# cited source. Two-pass verification: every key figure below was drafted from the 2025
-# Form 40/43/39R/39NR instruction booklet (EIN00046, 03-02-2026), then independently
-# re-derived from second official documents — the printed 2025 Form 40 (EFO00089,
-# 03-02-2026), the live tax.idaho.gov individual-income online guide (which states the 2025
-# rate on its own), and the live tax.idaho.gov Noncitizens guidance — resolutions recorded
-# inline where the passes differed.
-# HEADLINE 2025 CHANGES (What's New for 2025):
-#   * RATE CUT to 5.3%, effective January 1, 2025 (from 2024's 5.695%) — 2025 House Bill 40,
-#     signed by Gov. Little, which cut the individual and business rate from 5.695% to 5.3%.
-#     The booklet states 'Effective January 1, 2025, the individual income tax rate is 5.3%'
-#     and the live online guide independently states 'The income tax rate for 2025 is 5.3%
-#     on Idaho taxable income.'
-#   * The Line 20 worksheet's zero-floor subtraction amounts were RE-INDEXED to $4,811
-#     (single/MFS) and $9,622 (MFJ/HOH/QSS), from 2024's $4,673/$9,346.
-#   * IRC CONFORMITY MOVED TO JANUARY 1, 2026 (2024's booklet said January 1, 2024), which
-#     is why the standard deduction tracks the OBBBA-amended federal 2025 amounts:
-#     $15,750 single/MFS, $31,500 MFJ/QSS, $23,625 HOH (2024: $14,600/$29,200/$21,900).
-#     Age-65/blind add-on is now $1,600 ($2,000 if single or head of household).
-#   * The GROCERY CREDIT WAS RENAMED the FOOD TAX CREDIT and INCREASED to $155 per person
-#     ($12.92 per qualified month), with a NEW option to claim actual Idaho sales tax paid on
-#     qualifying food (up to $250 each) by including scanned receipts. The 2024 age-65+ $20
-#     add-on ($140 total) is GONE — 2025 is a flat $155 for every qualifying person.
-#   * NEW Line 42 PARENTAL CHOICE TAX CREDIT (pre-approved through Idaho TAP).
-#   * Form 40 line renumbering: the Idaho Child Tax Credit is line 24 (2024: line 25) and the
-#     $10 Permanent Building Fund tax is line 31 (2024: line 32).
+# Provenance: see git history (git show 7a90a06:knowledge/states/id/2025.yaml); sources: the `sources` table
 jurisdiction: states/id
 tax_year: 2025
 income_tax: true
@@ -52,20 +23,6 @@ citation:
     Choice Tax Credit, Line 43 Food Tax Credit worksheet, Line 44 maintaining-a-home credit ($100 per person, up
     to $300)
   url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
-starts_from: federal AGI (Form 40, line 7 = federal Form 1040/1040-SR, line 11)
-residency:
-  summary: Idaho residency is domicile-based with a statutory-resident overlay. You are a RESIDENT if you think of
-    Idaho as your permanent home, Idaho is the center of your financial, social, and family life, and Idaho is the
-    place you intend to return to when away; you are ALSO a (statutory) resident if you maintain a home in Idaho
-    the entire year AND spend more than 270 days in Idaho during the tax year. You are a PART-YEAR resident if you
-    moved into or out of Idaho during the year (you remain a resident if you only temporarily moved outside Idaho
-    and moved back after a temporary absence). You are a NONRESIDENT if your permanent home is outside Idaho all
-    year; a safe harbor also treats an Idaho resident as a nonresident if they lived outside Idaho at least 445 days
-    in a 15-month period, then spent less than 60 days in Idaho during the year, had no personal residence in Idaho
-    for themselves or family during any part of 2025, didn't claim Idaho as their federal tax home, and weren't on
-    the staff of a U.S. senator or representative. Military and Military Spouses Residency Relief Act rules can override
-    these (a spouse or dependent of a nonresident military person stationed in Idaho can still be an Idaho resident
-    or part-year resident; the domicile of a dependent child follows the nonmilitary spouse).
 forms:
   resident: Form 40 (Individual Income Tax Return); residents claiming additions, subtractions, or certain credits
     also file Form 39R (Resident Supplemental Schedule)
@@ -121,14 +78,6 @@ credits:
     or lived illegally in the US. Members of the Armed Forces domiciled in Idaho can take it; a person living in
     Idaho who is a nonresident under the Servicemembers Civil Relief Act cannot. Refundable even if you are not required
     to file an income tax return (file Form 40, or Form 24 if not filing — Form 24 due by April 15, 2026).
-  amount: '$155 each for you, your spouse, and each qualifying dependent for a full year (prorated at $12.92 per
-    qualified month) — INCREASED from 2024''s $120/$140. ALTERNATIVE new for 2025: you may instead claim the actual
-    Idaho sales tax paid during the year on qualifying food, up to $250 each, by including scanned copies of receipts
-    for qualifying Idaho food purchases with the return (candy, soda, restaurant sales, heated food, and retailer-combined
-    ingredients do not qualify). The 2024 extra $20 for a taxpayer/spouse age 65 or older no longer exists — 2025
-    is a flat $155 per qualifying person. The credit may instead be donated in full to the Cooperative Welfare Fund
-    (check the line 43 box, enter zero; irrevocable).'
-  income_limit_2025: None
   claimed_on: Form 40, line 43 (Food Tax Credit Worksheet, 2025 instructions pp.11-12). Nonfilers age 65+ may use
     Form 24.
   citation:
@@ -142,11 +91,6 @@ credits:
     as of December 31, 2025. For divorced parents or parents who don't live together, only one parent can claim a
     qualifying child — typically the custodial parent (a noncustodial parent may claim it with a court order or the
     custodial parent's signed written declaration attached). No qualifying child means no credit.
-  amount: '$205 per qualifying child (unchanged from 2024). Per the Line 24 worksheet: multiply the number of qualifying
-    children by $205, then limit to the remaining tax after subtracting the Form 40 lines 21-23 credits (worksheet
-    line 7: if less than zero, enter zero; line 8: enter the lesser of lines 2 or 7).'
-  income_limit_2025: None stated; the credit is limited to your remaining Idaho tax liability after the credit for
-    tax paid to other states and the Form 39R/Form 44 credits (nonrefundable).
   claimed_on: Form 40, line 24 (Idaho Child Tax Credit Worksheet, 2025 instructions pp.9-10) — line 25 in 2024.
     Nonresidents don't qualify.
   citation:
@@ -160,8 +104,6 @@ credits:
     (not including yourself or your spouse), or (b) has a developmental disability (may include yourself or your
     spouse) AND you did NOT claim the $1,000-per-person deduction for that family member on Form 39R, Part B, line
     15. You can claim this credit even if your gross income is below the filing requirement.
-  amount: $100 per person, up to a maximum of $300 (unchanged from 2024).
-  income_limit_2025: None (claimable even if gross income is below the filing threshold).
   claimed_on: Form 40, line 44 (requires Form 39R).
   citation:
     source: Idaho State Tax Commission, 2025 Form 40 instructions (EIN00046, 03-02-2026), Line 44 Maintaining a
@@ -173,10 +115,6 @@ credits:
   eligibility: You must have APPLIED FOR and been APPROVED for the credit through Idaho's Taxpayer Access Point
     (tax.idaho.gov/TAP) before claiming it; the credit is claimed for qualified education expenses incurred during
     2025.
-  amount: The amount of qualified expenses you incurred during 2025, which cannot exceed the amount you were approved
-    for on your application. The booklet states no dollar cap of its own — the cap is the approved application amount.
-  income_limit_2025: Not stated in the Form 40 instructions (eligibility and any income test are administered through
-    the TAP application process).
   claimed_on: Form 40, line 42 (in the Payments and Other Credits section, which totals on line 50 — so it functions
     as a refundable credit).
   citation:
@@ -185,17 +123,6 @@ credits:
       expenses you incurred during 2025 on line 42. The amount can't exceed the amount you were approved for on the
       application'), and the printed 2025 Form 40 line 42
     url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
-filing_requirement:
-  note: '2025 thresholds (EIN00046 General Information, ''Who Must File'' / Idaho Resident Filing Requirements chart):
-    every Idaho resident who must file a federal return must file; every part-year resident with a total of more
-    than $2,500 gross income (all sources while a resident + Idaho sources while a nonresident) must file; every
-    nonresident with more than $2,500 gross income from Idaho sources must file. Resident gross-income thresholds
-    for 2025 (federal-linked, and all raised with the OBBBA-amended federal standard deduction): Single under 65
-    = $15,750 (65 or older = $17,750); Head of household under 65 = $23,625 (65 or older = $25,625); Married filing
-    jointly under 65 both = $31,500 (one spouse 65 or older = $33,100, both = $34,700); Qualifying surviving spouse
-    with dependent child under 65 = $31,500 (65 or older = $33,100); Married filing separately (any age) = $5. Treaty-exempt
-    amounts are excluded from the gross-income filing test. A resident filing a federal return only to pay self-employment
-    tax, whom the IRS does not otherwise require to file, need not file.'
 mailing_addresses:
   refund_or_no_payment: 'Return only / no payment: Idaho State Tax Commission, PO Box 56, Boise ID 83756-0056. (Delivery
     service requiring a physical address: Idaho State Tax Commission, 11321 W Chinden Blvd, Boise ID 83714.)'
@@ -479,9 +406,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

@@ -1,40 +1,4 @@
-# ME state knowledge — tax year 2025. Fetched + cited from the ME DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the standalone MRS sheet
-# 'State of Maine - Individual Income Tax, 2025 Rates' (ind_tax_rate_sched_2025.pdf, prepared
-# February 3, 2026), then independently re-derived from the 2025 MAINE Individual Income Tax
-# booklet / Form 1040ME general instructions (25_1040me_gen_instr_w_cover_pg.pdf), the
-# standalone 2025 MAINE INCOME TAX TABLE (25_tax_tables.pdf, which reprints the same rate
-# schedules on its last page), and the printed 2025 Form 1040ME (25_1040ME_fillable.pdf,
-# which prints 'EXEMPTION. (Multiply line 13 x $5,150.)'). Resolutions recorded inline.
-# NOTE ON THE 2024 SUPERSEDED-FILE TRAP: for 2024, maine.gov hosted a wrong
-# 24_1040me_tax_tables.pdf alongside a corrected _2 revision. For 2025 there is no '_2'
-# duplicate — 25_1040me_tax_tables.pdf and 25_1040me_tax_tables_2.pdf both return 404, and
-# the live 2025 forms index points to 25_tax_tables.pdf, whose rate schedules match the MRS
-# rate sheet and the booklet exactly. All three were compared before shipping.
-# HEADLINE 2025 CHANGES:
-#   * Brackets re-indexed, rates unchanged at 5.8% / 6.75% / 7.15% (COLA 1.274 on the lowest
-#     dollar amounts and 1.269 on the highest, 36 M.R.S. 5403): single/MFS $26,800/$63,450
-#     (2024: $26,050/$61,600); HoH $40,200/$95,150 (2024: $39,050/$92,450); MFJ/surviving
-#     spouses $53,600/$126,900 (2024: $52,100/$123,250).
-#   * Personal exemption ROSE $5,000 -> $5,150 (COLA 1.25 on the 36 M.R.S. 5126-A amount).
-#   * STANDARD DEDUCTION IS PRE-OBBBA: $15,000 single/MFS, $30,000 MFJ/QSS, $22,500 HoH.
-#     Maine conforms to the Code as of DECEMBER 31, 2024, so the federal One Big Beautiful
-#     Bill Act (P.L. 119-21, enacted July 4, 2025) standard-deduction increase to
-#     $15,750/$31,500/$23,625 does NOT apply in Maine for 2025. Do NOT use federal 2025
-#     OBBBA figures here. Age/blindness additional amounts: $1,600 married / $2,000 unmarried.
-#   * Dependent exemption tax credit: $305 per qualifying child/dependent age six or older,
-#     DOUBLED to $610 for each qualifying dependent under age six, and the phaseout was
-#     re-cut to $20 per $500 of Maine AGI over $100,000 single / $125,000 HoH / $150,000
-#     MFJ-QSS / $75,000 MFS (2024: $7.50 per $1,000 over $200,000/$400,000).
-#   * Pension income deduction gained an FAGI phaseout ($125,000 / $187,500 / $250,000) and
-#     excludes certain pre-age-55 distributions.
-#   * Maine itemized deduction cap $36,300 (2024: $35,250); STFC maximum $280 (2024: $270);
-#     deduction phaseout thresholds $100,000 / $150,000 / $200,050; exemption phaseout
-#     thresholds $333,450 / $366,750 / $400,100 / $200,050.
+# Provenance: see git history (git show 7a90a06:knowledge/states/me/2025.yaml); sources: the `sources` table
 jurisdiction: states/me
 tax_year: 2025
 income_tax: true
@@ -60,19 +24,6 @@ citation:
     for Phaseout of Personal Exemption Deduction Amount, 2025 Tax Year Quick Facts, the 2025 MAINE INCOME TAX TABLE,
     and the 2025 TAX RATE SCHEDULES'
   url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
-starts_from: federal AGI (Form 1040ME Line 14 = "FEDERAL ADJUSTED GROSS INCOME" from the federal return)
-residency:
-  summary: Maine taxes individuals based on domicile and a statutory-resident test. Per the 2025 booklet, a full-year
-    resident is one for whom (1) Maine was their domicile for the entire year of 2025, or (2) they maintained a permanent
-    place of abode in Maine for the entire year and spent a total of more than 183 days in Maine. Domicile is the
-    place an individual establishes as their permanent home, including the place to which they intend to return after
-    any period of absence; once established it continues until a new, fixed and permanent home is acquired. A part-year
-    resident was domiciled in Maine for part of the year and was not a full-year resident. A nonresident was not a
-    resident or part-year resident in 2025 but has Maine-source income. A "safe harbor resident" is treated as a nonresident
-    — General Safe Harbor (Maine domicile in 2025 but no permanent place of abode in Maine, a permanent place of abode
-    maintained outside Maine, and no more than 30 days spent in Maine) or Foreign Safe Harbor (at least 450 days in
-    a foreign country during any 548-day period occurring partially or fully in the tax year, plus other criteria).
-    Safe harbor residents, part-year residents, and nonresidents file Form 1040ME with Schedule NR or NRH.
 forms:
   resident: Form 1040ME (Maine Individual Income Tax Return) — resident return
   part_year_or_nonresident: Form 1040ME with Schedule NR (Form 1040ME), "Schedule for Calculating the Nonresident
@@ -135,11 +86,6 @@ credits:
     filers using an IRS-issued ITIN who would otherwise qualify, and filers at least age 18 with no qualifying children
     who would otherwise qualify for the federal EIC). For nonresidents the credit is nonrefundable and may not reduce
     the Maine income tax to less than zero.
-  amount: 25% of the federal EIC (50% of the federal EIC for taxpayers with no qualifying children), for tax years
-    beginning on or after January 1, 2022 — which includes 2025. Confirmed refundable for residents and part-year
-    residents by the 2025 Tax Year Quick Facts.
-  income_limit_2025: No separate Maine income limit; eligibility tracks the federal EIC income limits (the taxpayer
-    must otherwise qualify for the federal earned income tax credit).
   claimed_on: Form 1040ME, Schedule A (refundable section) for residents/part-year residents and the nonrefundable
     section for nonresidents; computed on the Earned Income Tax Credit Worksheet available at maine.gov/revenue/tax-return-forms.
   citation:
@@ -155,16 +101,6 @@ credits:
     year and lived in it as their principal residence, and who paid property tax on that home greater than 4% of
     total income OR rent greater than 26.67% of total income. Cannot be claimed if the filing status is married filing
     separately.
-  amount: 'Refundable credit up to $1,000 ($2,000 if you are 65 years of age or older); up to $2,000 ($4,000 if 65
-    or older) if you or your spouse is a U.S. Armed Forces veteran rated 100% permanently and totally disabled by
-    the VA. Credit = benefit base (property tax, or rent x 15%, capped at the maximum benefit base: $2,550 single
-    at any dependent count; $3,300 head of household with 0 or 1 dependent / $4,050 with more than 1; $3,300 MFJ/QSS
-    with 0 dependents / $4,050 with 1 or more; or $4,100 for any filer 65 or older) minus 4% of total income, capped
-    at the applicable maximum.'
-  income_limit_2025: '2025 total income must be less than: Single $63,750 (any dependent count); Head of Household
-    $82,500 (0 or 1 dependent) / $101,250 (more than 1); Married Filing Jointly or Qualifying Surviving Spouse $82,500
-    (0 dependents) / $101,250 (1 or more); OR, if you are 65 years of age or older, do not use the table — the limit
-    is $102,500 (the Quick Facts maximum) and the schedule''s 65-or-older path uses $100,000 in its own line.'
   claimed_on: Form 1040ME, line 25d; computed on Schedule PTFC/STFC, line 16.
   citation:
     source: 2025 Schedule PTFC/STFC (Form 1040ME) — 'Who is eligible?' (up to $1,000 / $2,000 if 65 or older; veteran
@@ -178,11 +114,6 @@ credits:
   eligibility: Individuals who were Maine residents during any part of the 2025 tax year, are not married filing
     separately, and cannot be claimed as a dependent on another person's return. The credit amount depends on the
     number of qualifying children and dependents claimed on Form 1040ME, line 13a.
-  amount: Refundable credit up to $280 for 2025 (raised from 2024's $270), depending on the number of qualifying
-    children and dependents (the exact amount comes from the Schedule PTFC/STFC line 17 table based on filing status,
-    total income, and dependents).
-  income_limit_2025: '2025 total income not more than: $32,950 if single; $51,700 if head of household; $63,950 if
-    married filing jointly or qualifying surviving spouse.'
   claimed_on: Form 1040ME, line 25e; computed on Schedule PTFC/STFC, line 17 (or line 17a if filing Schedule NR/NRH).
   citation:
     source: 2025 Schedule PTFC/STFC (Form 1040ME) — 'You may qualify for the refundable Sales Tax Fairness Credit
@@ -196,11 +127,6 @@ credits:
     who claimed the federal credit for child and dependent care expenses. The credit doubles if the expenses are related
     to a quality child care provider. Maine also allows a separate adult dependent care credit, refundable up to $500
     for residents and part-year residents.
-  amount: 25% of the federal child and dependent care credit (doubled — 50% — for expenses paid to a quality child
-    care provider). The credit is refundable up to $500 for Maine residents and part-year residents; any amount above
-    $500 is claimed as a nonrefundable credit.
-  income_limit_2025: No stated Maine income limit; the credit is a percentage of the federal child and dependent care
-    credit.
   claimed_on: Form 1040ME, Schedule A — refundable line (up to $500) and the nonrefundable line for the remainder;
     computed on the Worksheet for Child Care Credit.
   citation:
@@ -216,14 +142,6 @@ credits:
     whom they are eligible to claim the federal child tax credit or the credit for other dependents under IRC Section
     24. The credit is REFUNDABLE for Maine residents and part-year residents (36 M.R.S. § 5219-SS) and remains nonrefundable
     for nonresidents.
-  amount: '2025 amounts (indexed and newly age-tiered): $305 for each qualifying child or dependent who is at least
-    six years of age, and $610 — DOUBLE — for each qualifying child or dependent who has not attained six years of
-    age before the end of the taxable year (L.D. 210; P.L. 2025, c. 388, Pt. Q). 2024''s flat $300 no longer applies.'
-  income_limit_2025: 'Phaseout re-cut for 2025: the credit is reduced by $20 for each $500 (previously $7.50 for each
-    $1,000), or fraction thereof, by which Maine adjusted gross income exceeds $100,000 for single individuals; $125,000
-    for heads of household; $150,000 for married filing jointly or surviving spouses; or $75,000 for married filing
-    separately. (2024 thresholds were $200,000 / $400,000.) Thresholds are inflation-adjusted for tax years after
-    2025.'
   claimed_on: Form 1040ME, Schedule A — the refundable line for residents/part-year residents (line 13a count x the
     per-dependent amount) or the nonrefundable line for nonresidents; computed on the Worksheet for Dependent Exemption
     Tax Credit.
@@ -235,16 +153,6 @@ credits:
       Facts ('up to $305 for each qualifying child or dependent that is at least six years of age, or $610 for each
       qualifying child or dependent that is under six years of age')
     url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
-filing_requirement:
-  note: 'Per the 2025 Form 1040ME instructions ("Who must file?"): a Maine income tax return must be filed by April
-    15, 2026, if you are a resident of Maine who is required to file a federal income tax return, OR if you are not
-    required to file a federal return but have income subject to Maine income tax resulting in a Maine income tax
-    liability. Even if required to file federally, a resident does not have to file a Maine return if they have no
-    income addition modifications (Form 1040ME, Schedule 1A, line 11) AND their income subject to Maine income tax
-    is less than the sum of their Maine standard deduction amount plus their personal exemption amount. A return must
-    still be filed to claim any refund due. Generally, a nonresident or safe harbor resident with income from Maine
-    sources resulting in a Maine income tax liability must file (see the Schedule NR instructions for minimum taxability
-    thresholds; 36 M.R.S. § 5142(8-B) and MRS Rule 806).'
 mailing_addresses:
   refund_or_no_payment: Maine Revenue Services, P.O. Box 1066, Augusta, ME 04332-1066 (Form 1040ME if you are expecting
     a refund / no balance due)
@@ -587,9 +495,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

@@ -1,24 +1,4 @@
-# OR state knowledge — tax year 2025. Fetched + cited from the OR DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Form OR-40
-# instruction booklet (150-101-040-1, Rev. 01-29-26 — the booklet was reissued on
-# January 29, 2026 to correct the Oregon Kids Credit instructions and worksheet), then
-# independently re-derived from the 2025 Form OR-40-N/OR-40-P instructions
-# (150-101-048-1, Rev. 12-30-25), which print the FULL four-bracket 2025 tax rate charts
-# that the resident booklet abbreviates to its $50,000-and-over segments.
-# HEADLINE 2025 ITEMS (New information): the KICKER IS BACK — Oregon's surplus credit is
-# claimed on the 2025 return (line 32) at 9.863% of the filer's 2024 total Oregon personal
-# income tax liability (a CREDIT, never a base or rate change); federal tax liability
-# subtraction limit rose to $8,500 ($4,250 MFS); every bracket boundary was re-indexed
-# (Chart S 4,400/11,100/125,000; Chart J 8,800/22,200/250,000); standard deduction rose to
-# $2,835/$5,670/$4,560; the exemption CREDIT rose to $256; the Oregon Kids Credit is $1,050
-# per qualifying dependent (full credit to $26,550 of qualifying income, phasing out at
-# $31,550); and new subtractions mirror the federal tip-income, overtime-wage and passenger
-# vehicle loan interest deductions, plus a first-time home buyer savings account (FTHBSA)
-# subtraction with Form OR-HOME. The 4.75/6.75/8.75/9.9% RATES are unchanged.
+# Provenance: see git history (git show 7a90a06:knowledge/states/or/2025.yaml); sources: the `sources` table
 jurisdiction: states/or
 tax_year: 2025
 income_tax: true
@@ -40,23 +20,6 @@ citation:
     (Table 9), line 38 Oregon Kids Credit ($1,050), tax return mailing addresses (PO Box 14700 / PO Box 14555),
     check payee and Revenue Online payment
   url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
-starts_from: federal AGI (Form OR-40 line 7 = federal adjusted gross income from federal Form 1040/1040-SR/1040-NR
-  line 11, or Form 1040-X line 1C)
-residency:
-  summary: 'Full-year resident: your domicile is in Oregon — you think of Oregon as your permanent home, the center
-    of your financial, social, and family life is in Oregon, and you intend to return to Oregon when you are away.
-    You remain a full-year resident through a temporary absence (or a temporary move back) during 2025. You may ALSO
-    be taxed as a full-year resident even if your domicile is outside Oregon if you maintained a permanent home in
-    Oregon and spent more than 200 days in the state during 2025, unless you can show you were in Oregon only for a
-    temporary purpose. NONRESIDENT: your domicile is outside Oregon AND, if you maintain a permanent home in Oregon,
-    you did not spend more than 200 days in the state during 2025 (or were here only for a temporary purpose); a
-    recreational vehicle is not a permanent home outside Oregon. SPECIAL-CASE OREGON RESIDENT: you may be taxed as a
-    nonresident even though domiciled in Oregon if you meet all the booklet''s conditions (including maintaining no
-    permanent home in Oregon, having a permanent home elsewhere the entire year, and spending 30 days or less in
-    Oregon). PART-YEAR RESIDENT: you moved into or out of Oregon during 2025 (Form OR-40-P). Military personnel are
-    taxed as full-year residents only if the booklet''s military conditions are all true; a nonresident
-    servicemember''s spouse and Oregon residents living abroad have their own rules. Oregon registered domestic
-    partners (RDPs) file using the married statuses with an ''as if'' federal return.'
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. The Oregon Kids Credit figures are taken
   from the January 29, 2026 reissue of the 2025 booklet (the reissue exists specifically to correct that credit''s
@@ -71,11 +34,6 @@ credits:
     2025 return, (2) have had an Oregon personal income tax liability for 2024, and (3) file a 2025 Oregon return
     even if you do not otherwise have a filing requirement. If the 2024 return is later amended or adjusted downward,
     the kicker may be reduced and billed back with interest or penalty.'
-  amount: '9.863% of your 2024 total Oregon personal income tax liability, as adjusted or amended (total liability =
-    Oregon income tax before all payments and credits other than the credit for income taxes paid to another state on
-    mutually-taxed income). Claimed on the return in the same way as a payment; you may elect instead to donate the
-    entire kicker to the State School Fund. Look up your figure with "What''s my Kicker?" on Revenue Online.'
-  income_limit_2025: No income limit — the credit is a percentage of your own prior-year liability.
   claimed_on: Form OR-40, line 32 ('Oregon surplus credit (kicker)').
   citation:
     source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - New information ('Oregon surplus (kicker).
@@ -91,10 +49,6 @@ credits:
     deducted tip income, overtime wages and passenger vehicle interest added back). A child listed as your dependent
     only because the custodial parent released the exemption to you does not qualify; a custodial parent may claim the
     credit even if the exemption was released.'
-  amount: 'For 2025 the maximum credit is $1,050 per qualifying dependent for up to five dependents (maximum $5,250).
-    Full credit if qualifying income is $26,550 or less; more than $26,550 but less than $31,550 phases the credit
-    down on the Oregon Kids Credit worksheet.'
-  income_limit_2025: Qualifying income under $31,550 (full credit at $26,550 or less).
   claimed_on: Form OR-40, line 38 (Oregon Kids Credit worksheet in the instructions).
   citation:
     source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - line 38 Oregon Kids Credit and its worksheet
@@ -106,10 +60,6 @@ credits:
     may claim it if they would otherwise qualify using their 'as if' federal return. Filers who cannot claim some or
     all of the federal EITC because they, their spouse, or their children lack an SSN valid for work (ITIN filers)
     may instead qualify for Oregon's earned income credit for ITIN filers on Schedule OR-EIC-ITIN.
-  amount: 'A percentage of the federal EITC claimed on the federal return, keyed to the age of your youngest dependent
-    at the end of the tax year (2025 Table 9): 12 percent (0.12) if the youngest dependent is younger than 3; 9 percent
-    (0.09) if the youngest dependent is at least 3 years old, or if you have no dependents.'
-  income_limit_2025: No separate Oregon income limit; eligibility follows the federal EITC limits.
   claimed_on: Form OR-40, line 37 (earned income credit worksheet; Schedule OR-EIC-ITIN for ITIN filers).
   citation:
     source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - line 37 Earned income credit, Table 9 EITC
@@ -122,10 +72,6 @@ credits:
     for the taxpayer, spouse and dependents, plus severe-disability exemptions and exemptions for children with a
     qualifying disability. Above those AGI thresholds the credit is 0. The severe-disability and disabled-child
     counts drop out once federal AGI exceeds $100,000 for any status.
-  amount: $256 per allowed exemption for 2025 (exemption credit worksheet, line 4 count multiplied by $256; the 2024
-    amount was $249). This is a CREDIT against tax, never a reduction of taxable income.
-  income_limit_2025: Federal AGI of $100,000 (single/married filing separately) or $200,000 (all others); above that
-    the credit is 0.
   claimed_on: Form OR-40, line 25 ('Exemption credit'), computed on the booklet's exemption credit worksheet.
   citation:
     source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - line 25 Exemption credit and the exemption
@@ -135,21 +81,10 @@ credits:
   type: nonrefundable
   eligibility: Filers whose federal AGI is not more than $75,000 ($150,000 on a joint return) who made cash
     contributions during 2025 to a qualifying candidate, political party, or political action committee.
-  amount: A standard credit of up to $50 ($100 on a joint return) for cash political contributions made during 2025.
-  income_limit_2025: Federal AGI not more than $75,000 ($150,000 if filing a joint return).
   claimed_on: Form OR-40, line 26 ('Political contribution credit').
   citation:
     source: 2025 Form OR-40 Instructions (150-101-040-1, Rev. 01-29-26) - line 26 Political contribution credit
     url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf
-filing_requirement:
-  note: 'Full-year residents file if gross income is more than the Table 1 threshold for their status and number of
-    boxes checked (2025 Table 1): single $7,935 / $9,135 / $10,335 for 0 / 1 / 2 boxes; married filing jointly
-    $15,865 / $16,865 / $17,865 / $18,865 / $19,865 for 0-4 boxes; married filing separately $7,935 / $8,935 / $9,935;
-    head of household $9,950 / $11,150 / $12,350; qualifying surviving spouse $11,060 / $12,060 / $13,060. A person
-    who can be claimed as a dependent files at the larger of $1,350 or earned income plus $450, up to the standard
-    deduction for their status (including any age-65-or-older or blind addition). In addition, file a return if you
-    had $1 or more of Oregon income tax withheld and want a refund, or if you may qualify for a refundable credit
-    (the kicker specifically requires filing a 2025 return even with no filing obligation).'
 mailing_addresses:
   refund_or_no_payment: 'REFUND, PO Box 14700, Salem OR 97309-0930 (2025 booklet, Tax return mailing addresses: ''Mail
     refund returns or no-tax-due returns to'').'
@@ -547,9 +482,9 @@ forms:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

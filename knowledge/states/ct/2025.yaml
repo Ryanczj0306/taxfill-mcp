@@ -1,41 +1,4 @@
-# CT state knowledge — tax year 2025. Fetched + cited from the CT DRS (.gov),
-# authored per the shipped 2024 template (state-year knowledge program). Loaded as
-# a StateKnowledge. conforms_to_federal_treaties: whether federally treaty-exempt
-# income flows through (most states start from federal AGI) or is added back
-# (CA/CT/MD/MS-style). Figures the fetch could not independently confirm are in
-# `unverified` — confirm at the cited source.
-#
-# Two-pass verification: every key figure was drafted from the 2025 Form CT-1040
-# instructions (Rev. 12/25, 28 pages) and independently re-verified against the
-# 2025 Form CT-1040NR/PY instructions (Rev. 12/25, 28 pages) and the 2025 Form
-# CT-1040 itself (Rev. 12/25). Tables A, B, C, D and E were compared
-# ROW-BY-ROW/token-by-token between the two 2025 booklets: Table A (221 numeric
-# tokens), Table C (136), Table D (450) and Table E (28 rows) are digit-identical,
-# and all 21 Table B rows across the three schedules print the same bounds, rates
-# and constants. Zero discrepancies.
-#
-# THE 2025 RATE QUESTION, ANSWERED: the TY2024 bottom-rate cut (3% -> 2% and
-# 5% -> 4.5%) HELD — Connecticut did NOT change rates again for 2025. Table B for
-# 2025 is digit-identical to TY2024: 2.00% / 4.5% / 5.5% / 6.0% / 6.5% / 6.9% /
-# 6.99% on the same bounds with the same printed constants ($200/$2,000/$4,750/
-# $10,750/$14,000/$31,250 single-MFS; $400/$4,000/$9,500/$21,500/$28,000/$62,500
-# MFJ-QSS; $320/$3,200/$7,600/$17,200/$22,400/$50,000 HoH) and the same four DRS
-# worked examples ($335 / $32,998 / $513 / $69,490 / $500 / $51,748). Table A
-# personal exemptions, Table C 2% Phase-Out Add-Back (max $250/$500/$250/$400),
-# Table D Tax Recapture (still beginning at CT AGI over $105,000/$210,000/
-# $168,000, max $3,400/$6,800/$5,320) and Table E personal-credit decimals are
-# also unchanged from 2024.
-#
-# 2025 CHANGE FOUND: the CT EITC was EXPANDED. It remains 40% of the federal EIC,
-# but a taxpayer eligible for the CT EITC who has at least one qualifying child
-# for federal purposes now receives an ADDITIONAL $250 (2025 CT-1040 instructions,
-# Line 20a; DRS "What's New for 2025"). The EITC investment-income ceiling rose
-# from $11,600 (2024) to $11,950 (2025).
-#
-# Improvement over the 2024 pack: the Gross Income Test dollar chart and the
-# statutory-residence rules are now confirmed 2025-specific from the DRS
-# Tax-Information page, which prints them with explicit "2025 taxable year"
-# wording — the 2024 pack could only infer the chart from the Line 6 no-tax floors.
+# Provenance: see git history (git show 7a90a06:knowledge/states/ct/2025.yaml); sources: the `sources` table
 jurisdiction: states/ct
 tax_year: 2025
 income_tax: true
@@ -57,27 +20,6 @@ citation:
     from Schedule 1; ''Due date: April 15, 2026''; mailing addresses PO Box 2977 (with payment) / PO Box 2976 (refund
     or no payment); check payable to Commissioner of Revenue Services with ''2025 Form CT-1040'' written on it'
   url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf'
-starts_from: 'federal AGI (Form CT-1040, Line 1 = "Federal adjusted gross income from your 2025 federal income tax
-  return"; then Line 2 additions from Schedule 1 and Line 4 subtractions from Schedule 1 produce Connecticut adjusted
-  gross income on Line 5: "Line 5: Connecticut Adjusted Gross Income — Subtract Line 4 from Line 3 and enter the
-  result.")'
-residency:
-  summary: 'Connecticut taxes by domicile and statutory residence. Per the DRS Tax-Information page, stated with explicit
-    2025 wording: you are a RESIDENT for the 2025 taxable year if Connecticut was your domicile (permanent legal residence)
-    for the entire 2025 taxable year, OR if you were not domiciled in Connecticut but maintained a permanent place
-    of abode in Connecticut during the entire 2025 taxable year AND spent a total of more than 183 days in Connecticut
-    during the 2025 taxable year. Nonresident aliens who meet either condition are considered Connecticut residents
-    even if federal Form 1040NR is filed for federal purposes. Domicile is "the place you intend to have as your permanent
-    home... the place you intend to return to whenever you are away. You can have only one domicile although you may
-    have more than one place to live"; it does not change until you move to a new location and definitely intend to
-    make your permanent home there. A PART-YEAR RESIDENT changed legal residence by moving into or out of Connecticut
-    during the year. A NONRESIDENT is neither a resident nor a part-year resident and is taxed only on Connecticut-source
-    income (Schedule CT-SI), prorating the tax.'
-  citation:
-    source: 'CT DRS Resident Income Tax — Tax Information (2025 edition: Who Must File a Connecticut Resident Return,
-      Gross Income Test, residency/domicile and the 183-day statutory-resident rule, Special Information for Nonresident
-      Aliens, What''s New for 2025)'
-    url: 'https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information'
 forms:
   resident: 'Form CT-1040, Connecticut Resident Income Tax Return'
   part_year_or_nonresident: 'Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (use
@@ -154,13 +96,6 @@ credits:
     children, if applicable) must have valid Social Security Numbers by the return due date, must have earned income
     from employment or self-employment, and must meet all federal EITC rules. Either qualify with a qualifying child,
     or as a worker without a qualifying child aged 25-64.'
-  amount: '40% (.40) of the federal earned income credit claimed and allowed on the 2025 federal return, PLUS a new
-    2025 supplement: "Any taxpayer eligible for CT EITC that has at least one qualifying child for federal income
-    tax purposes for the same taxable year, is eligible to receive an additional two hundred fifty dollars ($250)."
-    If the CT EITC exceeds the Connecticut income tax liability the excess is an overpayment and is refunded.'
-  income_limit_2025: 'Mirrors federal EITC income limits; additionally, investment income must be $11,950 or less
-    for 2025 ("You cannot claim the CT EITC if your investment income is more than $11,950") — up from $11,600 for
-    2024.'
   claimed_on: 'Schedule CT-EITC, carried to Form CT-1040, Line 20a (or Form CT-1040X, Line 20a)'
   citation:
     source: 'CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 20a Connecticut Earned Income Tax Credit (40%
@@ -174,13 +109,6 @@ credits:
     on their primary residence and/or a privately owned or leased motor vehicle. Single/MFS/HoH limited to one motor
     vehicle; MFJ/qualifying surviving spouse limited to two. Cannot be claimed if Form CT-1040 Line 10 is zero, cannot
     be carried forward, and is not refundable — "This credit can be used to offset only your 2025 income tax."'
-  amount: 'Maximum credit is $300 per return regardless of filing status; limited to the lesser of qualifying property
-    tax paid or $300, then phased down by Connecticut AGI per the Property Tax Credit Table (2025 instructions, Page
-    27). Full $300 (no reduction) allowed at or below the filing-status threshold below; above it, the credit is multiplied
-    by a decimal that decreases as AGI rises.'
-  income_limit_2025: 'Full credit allowed at Connecticut AGI of: Single $49,500 or less; MFJ/qualifying surviving spouse
-    $70,500 or less; Married filing separately $35,250 or less; Head of household $54,500 or less (unchanged from
-    2023 and 2024). Above these the credit phases out per the Property Tax Credit Table.'
   claimed_on: 'Form CT-1040, Schedule 3 (Lines 60-68), carried to Form CT-1040, Line 11'
   citation:
     source: 'CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 11 / Schedule 3 Property Tax Credit ($300
@@ -191,12 +119,6 @@ credits:
   eligibility: 'Connecticut resident individuals whose Connecticut AGI falls within the Table E phase-out ranges for
     their filing status. Taxpayers below the no-tax threshold owe no income tax and need no credit; the personal credit
     reduces the income tax for low-to-moderate income filers just above that threshold.'
-  amount: 'A decimal percentage reduction of the calculated Connecticut income tax, up to .75 (75%), declining in
-    28 steps to .00 as Connecticut AGI rises. Example (Single): .75 for CT AGI over $15,000 up to $18,800; stepping
-    down to .00 once CT AGI exceeds $64,500. The 2025 Table E is digit-identical to 2023 and 2024 (all 28 rows compared).'
-  income_limit_2025: 'Credit fully phases out (decimal = .00) above: Single $64,500; MFJ/qualifying surviving spouse
-    $100,500; Married filing separately $52,500; Head of household $78,500. Filers at or below the no-tax floor (MFS
-    $12,000 / Single $15,000 / HoH $19,000 / MFJ-QSS $24,000) owe no tax at all.'
   claimed_on: 'Tax Calculation Schedule, Line 8 (decimal from Table E), multiplied on Line 9 and subtracted from the
     Line 7 tax to give the income tax reported on Form CT-1040, Line 6'
   citation:
@@ -209,11 +131,6 @@ credits:
     to income tax in another qualifying jurisdiction (another U.S. state, a local jurisdiction within another state,
     or the District of Columbia) where the taxpayer filed a return and paid income tax. Prevents double taxation of
     the same income. A copy of the other jurisdiction''s return must be attached.'
-  amount: 'Limited to the lesser of (a) the income tax actually paid to the qualifying jurisdiction on income also
-    taxed by Connecticut, or (b) the proportion of Connecticut income tax attributable to that income (Connecticut
-    income tax multiplied by the ratio of income taxed in the other jurisdiction to Connecticut AGI). Computed on
-    Schedule 2.'
-  income_limit_2025: 'No specific income limit; the credit amount is capped by the formula above.'
   claimed_on: 'Form CT-1040, Schedule 2, carried to Form CT-1040, Line 7'
   citation:
     source: 'CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 7 / Schedule 2 Credit for Income Taxes Paid
@@ -226,28 +143,11 @@ credits:
     contributions to qualified rehabilitation expenditures on historic homes." The booklet prints no statute, no cap and
     no computation — the credit is whatever the DECD voucher shows. The form face captions the line "20d. Historic Home
     Rehabilitation Credit"; the Instructions call it the "Historic Homes Rehabilitation Tax Credit".'
-  amount: 'The voucher amount: "Enter the amount received from your Historic Homes Rehabilitation Tax Credit Voucher and
-    submit a copy of the voucher you received from the Department of Economic and Community Development with your
-    Connecticut income tax return." Refundable by placement — Line 21 "Total Payments and Refundable Credits" reads
-    "Add Lines 18, 19, 20, 20a, 20b, 20c, and 20d" (the Line 20d text itself never uses the word refundable).'
-  income_limit_2025: 'None printed.'
   claimed_on: 'Form CT-1040, Line 20d (new on the 2025 face), summed into Line 21 — a copy of the DECD voucher is attached'
   citation:
     source: 'CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), p. 4 Line 20d Historic Homes Rehabilitation Tax Credit
       and Line 21 Total Payments and Refundable Credits; the 2025 Form CT-1040 face, Lines 20d and 21'
     url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf'
-filing_requirement:
-  note: 'Connecticut uses a "Gross Income Test." Per the DRS Tax-Information page, stated for 2025: "You must file
-    a Connecticut income tax return if your gross income for the 2025 taxable year exceeds: $12,000 and you are married
-    filing separately; $15,000 and you are filing single; $19,000 and you are filing head of household; or $24,000
-    and you are married filing jointly or qualifying surviving spouse." (Unchanged from 2023 and 2024, and the same
-    dollar levels as the Line 6 no-tax floors printed in the 2025 instructions.) You must also file if you had Connecticut
-    income tax withheld, made estimated payments, meet the Gross Income Test, had a federal alternative minimum tax
-    liability, or are claiming a Connecticut refund. Nonresidents/part-year residents file CT-1040NR/PY if they meet
-    the Gross Income Test or had federal AMT liability (and, for nonresidents, had Connecticut-source income).'
-  citation:
-    source: 'CT DRS Resident Income Tax — Tax Information, "Gross Income Test" section (2025 taxable-year dollar thresholds)'
-    url: 'https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information'
 mailing_addresses:
   refund_or_no_payment: 'Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976 (for refunds and all
     other tax forms without payment)'
@@ -475,9 +375,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

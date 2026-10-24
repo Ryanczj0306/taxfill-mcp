@@ -1,42 +1,4 @@
-# HI state knowledge — tax year 2025. Fetched + cited from the HI DOTAX (.gov),
-# authored per the shipped 2024 template (state-year knowledge program). Loaded as
-# a StateKnowledge. conforms_to_federal_treaties: whether federally treaty-exempt
-# income flows through (most states start from federal AGI) or is added back
-# (CA/CT/MD/MS-style). Figures the fetch could not independently confirm are in
-# `unverified` — confirm at the cited source.
-#
-# THE HEADLINE: TY2025 IS THE YEAR THE SCHEDULES MOVED. The 2024 pack proved the
-# 12-bracket schedules were digit-identical to 2023 and noted that HB 2404's
-# bracket WIDENING begins TY2025 — and it does. The 2025 N-11 instructions'
-# "Changes to Note" states it verbatim: "For the 2025 taxable year beginning after
-# December 31, 2024, the individual income tax bracket amounts were amended for
-# all the filing statuses by increasing the income limits in each bracket. (Act 45,
-# SLH 2024)". All three schedules were RE-DERIVED FROM SCRATCH off the 2025
-# instructions (no figure carried forward) and independently re-verified against
-# the 2025 N-15 instructions, which print all 36 rows digit-identically.
-#
-# What changed and what did NOT:
-#   - The TWELVE RATES are unchanged (1.40 / 3.20 / 5.50 / 6.40 / 6.80 / 7.20 /
-#     7.60 / 7.90 / 8.25 / 9.00 / 10.00 / 11.00 percent). Only the bracket
-#     BOUNDARIES widened.
-#   - Schedule I (Single/MFS) boundaries: 2024 was
-#     2,400/4,800/9,600/14,400/19,200/24,000/36,000/48,000/150,000/175,000/200,000;
-#     2025 is 9,600/14,400/19,200/24,000/36,000/48,000/125,000/175,000/225,000/
-#     275,000/325,000. The 1.40% bracket alone widened from $2,400 to $9,600, and
-#     the 11% top threshold moved from $200,000 to $325,000.
-#   - Schedule II (MFJ/QSS) is still EXACTLY 2x Schedule I and Schedule III (HoH)
-#     EXACTLY 1.5x, verified boundary by boundary on the 2025 prints.
-#   - STANDARD DEDUCTION IS UNCHANGED FOR 2025: $4,400 Single/MFS, $8,800
-#     MFJ/QSS, $6,424 HoH. This CORRECTS a common expectation that Act 45/46 SLH
-#     2024 raised it again for 2025 — the 2025 N-11 instructions' Line 23 table and
-#     the 2025 Form N-11 line 23 print itself both show the same 2024 amounts (the
-#     act's next standard-deduction step is a later tax year; 2025's step was the
-#     bracket widening). Confirmed a third way by the 2025 N-15 instructions.
-#   - PERSONAL EXEMPTION UNCHANGED at $1,144 per exemption ($2,288 for an
-#     individual 65 or older, who counts as two exemptions).
-#   - FILING THRESHOLDS DID move (they are SD + exemption): under 65 — Single/MFS
-#     $5,544, HoH $7,568, QSS $9,944, MFJ $11,088. (The 2024 pack shipped the older
-#     $3,344/$4,356/$5,544/$6,688 chart, which was the pre-Act-45 set.)
+# Provenance: see git history (git show 7a90a06:knowledge/states/hi/2025.yaml); sources: the `sources` table
 jurisdiction: states/hi
 tax_year: 2025
 income_tax: true
@@ -60,27 +22,6 @@ citation:
     ("If you checked filing status box: 1 or 3 enter $4,400; 2 or 5 enter $8,800; 4 enter $6,424"), line 25 exemptions
     ("Multiply $1,144 by the total number of exemptions claimed on line 6e"), line 26 Taxable Income, line 27 Tax'
   url: 'https://files.hawaii.gov/tax/forms/2025/n11_i.pdf'
-starts_from: 'federal AGI (Form N-11, line 7: "Federal adjusted gross income (AGI)")'
-residency:
-  summary: 'Per the 2025 N-11 instructions "Residency Status": a RESIDENT is (1) every individual domiciled in Hawaii,
-    and (2) every other individual whether domiciled in Hawaii or not, who resides in Hawaii for other than a temporary
-    or transitory purpose; a resident is taxed on income from all sources and files Form N-11. An individual domiciled
-    outside Hawaii is PRESUMED to be a resident if he or she spends more than 200 days in Hawaii during the taxable
-    year — a presumption that "may be overcome by evidence satisfactory to the Department that the individual maintained
-    a permanent place of abode outside the State and was in the State for a temporary or transitory purpose." No person
-    is deemed to have gained or lost a residence simply because of presence or absence in compliance with military
-    or naval orders, while engaged in aviation or navigation, or while a student at any institution of learning (see
-    Tax Information Release No. 97-1, "Determination of Residence Status"). "Domicile" is the place of an individual''s
-    true, fixed, permanent home to which they intend to return; changing domicile requires abandoning the old domicile,
-    intent to establish a new one, and actual physical presence in the new domicile. A NONRESIDENT is an individual
-    in Hawaii for a temporary or transient purpose whose permanent domicile is not Hawaii (taxed only on Hawaii-source
-    income). A PART-YEAR RESIDENT was a Hawaii resident for part of 2025 and a nonresident for the other part; taxed
-    on all income during the residency period and on Hawaii-source income only during the nonresidency period. Nonresidents
-    and part-year residents file Form N-15.'
-  citation:
-    source: 'Hawaii 2025 N-11 Resident Income Tax Instructions — "Residency Status" (Resident / Nonresident / Part-Year
-      Resident definitions, the more-than-200-days presumption, TIR No. 97-1 reference)'
-    url: 'https://files.hawaii.gov/tax/forms/2025/n11ins.pdf'
 forms:
   resident: 'Form N-11, Individual Income Tax Return (Resident) (Rev. 2025)'
   part_year_or_nonresident: 'Form N-15, Individual Income Tax Return — Nonresident and Part-Year Resident (Rev. 2025)'
@@ -138,14 +79,6 @@ credits:
     as a dependent by another taxpayer for federal or Hawaii purposes, and who is not incarcerated for the entire year.
     Credit is computed per qualified exemption (taxpayer, spouse, dependents, plus certain minor children receiving
     public support through the Department of Human Services).'
-  amount: 'Per qualified exemption, based on federal AGI (Form N-11 line 7): Under $15,000 = $220; $15,000 and over
-    but under $20,000 = $200; $20,000 and over but under $25,000 = $170; $25,000 and over but under $30,000 = $140;
-    $30,000 and over but under $40,000 = $110; $40,000 and over = $0 for Single filers. For Married Filing Jointly/Separately,
-    Head of Household, or Qualifying Surviving Spouse the schedule continues: $40,000 and over but under $50,000 =
-    $90; $50,000 and over but under $60,000 = $70; $60,000 and over = $0. Multiply the per-exemption amount by the
-    number of qualified exemptions. Unchanged from 2024.'
-  income_limit_2025: 'Federal AGI must be less than $60,000 (less than $40,000 if filing status is Single). Married
-    filing separately must combine both spouses'' federal AGI; if the total is $60,000 or more, no credit.'
   claimed_on: 'Form N-311 (Rev. 2025); result entered on Form N-11, line 28 (or Form N-15, line 45)'
   citation:
     source: 'Hawaii Department of Taxation, Form N-311 (Rev. 2025), Refundable Food/Excise Tax Credit — line 1 AGI
@@ -158,13 +91,6 @@ credits:
     credit under IRC section 32 for the tax year, (b) uses the same filing status on the Hawaii return as on the federal
     return, and (c) claims the same dependents on the Hawaii return as on the federal return. Part-year residents and
     nonresidents prorate by the ratio of Hawaii AGI to federal AGI.'
-  amount: 'Equal to 40% of the federal earned income tax credit allowed and properly claimed on the federal return
-    (Form N-356 line 3: "Multiply line 2 by 40%"); the credit is refundable. Unchanged from 2024. Note: Act 25, SLH
-    2025 eliminated the unlimited carryforward of the nonrefundable EITC from tax year 2022, effective for taxable
-    years beginning after December 31, 2025 — so a 2022 carryover may still be applied on the 2025 return (Form N-356
-    lines 8-12) but not thereafter.'
-  income_limit_2025: 'No separate Hawaii income limit; eligibility follows the federal EITC income/eligibility limits
-    under IRC section 32.'
   claimed_on: 'Form N-356 (Rev. 2025); amount carried to Schedule CR'
   citation:
     source: 'Hawaii Department of Taxation, Form N-356 (Rev. 2025), Earned Income Tax Credit — line 3 "Multiply line
@@ -179,12 +105,6 @@ credits:
     taxpayer. Net rent paid (after exclusions such as utilities, parking, ground rent and rental subsidies/public assistance)
     must EXCEED $1,000 — Schedule X Part I line 7: "If this amount is $1,000, or less, STOP. You cannot claim this
     credit."'
-  amount: '$50 multiplied by the number of qualified exemptions (taxpayer, spouse, and qualifying dependents present
-    in Hawaii more than nine months). One additional exemption is added if the taxpayer is a qualified exemption age
-    65 or over, and one more for a qualifying spouse age 65 or over, so each senior adds another $50. Unchanged from
-    2024.'
-  income_limit_2025: 'Adjusted gross income (Form N-11, line 20; or Form N-15, line 35, Column A) must be less than
-    $30,000.'
   claimed_on: 'Schedule X (Form N-11/N-15) (Rev. 2025), Part I line 12; result entered on Form N-11, line 29 (or Form
     N-15, line 46)'
   citation:
@@ -199,12 +119,6 @@ credits:
     to the State of Hawaii A+ Program. Generally married persons must file jointly; married-filing-separately taxpayers
     may claim only if they meet the separate-filer requirements in the instructions. Provider information must be reported
     on Schedule X, Part II.'
-  amount: 'Applicable percentage (decimal) multiplied by qualified care expenses, capped at $10,000 for one qualifying
-    person or $20,000 for two or more (Schedule X Part II line 17). Decimal by AGI: Under $25,001 = .25; $25,001-30,000
-    = .24; $30,001-35,000 = .23; $35,001-40,000 = .22; $40,001-45,000 = .21; $45,001-50,000 = .20; $50,001 and over
-    = .15. Maximum credit therefore $2,500 for one qualifying person and $5,000 for two or more. Unchanged from 2024.'
-  income_limit_2025: 'No eligibility cutoff, but the credit percentage decreases with AGI (from 25% down to a floor
-    of 15% once AGI exceeds $50,000); the credit is limited to the lesser of qualified expenses or earned income.'
   claimed_on: 'Schedule X (Form N-11/N-15) (Rev. 2025), Part II; result entered on Form N-11, line 30 (or Form N-15,
     line 47)'
   citation:
@@ -212,26 +126,6 @@ credits:
       ($20,000 if two or more qualifying persons)", line 22 expense cap, and the applicable-percentage table (.25 under
       $25,001 down to .15 for $50,001 and over)'
     url: 'https://files.hawaii.gov/tax/forms/2025/schx_i.pdf'
-filing_requirement:
-  note: 'A full-year resident must file Form N-11 if gross income subject to taxation under Hawaii Income Tax Law exceeds
-    the filing threshold. The 2025 N-11 instructions'' chart (which MOVED for 2025 because the thresholds are the standard
-    deduction plus the personal exemption) reads — For Individuals UNDER Age 65: Married filing separately $5,544;
-    Single $5,544; Head of household $7,568; Qualifying surviving spouse $9,944; Married filing jointly $11,088. For
-    Individuals Age 65 or older: Married filing separately $6,688; Single $6,688; Head of household $8,712; Qualifying
-    surviving spouse $11,088; Married filing jointly, one is 65 or older $12,232; Married filing jointly, both are
-    65 or older $13,376. "These threshold amounts will be higher for persons who are blind, deaf, or totally disabled,
-    and who have completed and filed a certification with the Department of Taxation of their disability on Form N-172
-    before filing their income tax return." For individuals who can be claimed as dependents on another taxpayer''s
-    return, the threshold is the dependent''s standard deduction; for nonresident aliens it is $1,144 (under 65) or
-    $2,288 (65 or older); for nonresident individuals the stated thresholds are multiplied by the ratio of Hawaii AGI
-    to total AGI. Additionally, every individual doing business in Hawaii must file whether or not any taxable income
-    results, and a return must be filed regardless of income level if certain recapture or special forms apply (N-2,
-    N-103, N-152, N-312, N-325, N-338, N-344, N-348, N-405, N-586, N-814).'
-  citation:
-    source: 'Hawaii 2025 N-11 Resident Income Tax Instructions — "Who Must File" (both gross-income threshold charts,
-      the Form N-172 disability note, dependent/nonresident-alien/nonresident threshold rules, and the doing-business
-      and recapture-form filing triggers)'
-    url: 'https://files.hawaii.gov/tax/forms/2025/n11ins.pdf'
 mailing_addresses:
   refund_or_no_payment: 'Hawaii Department of Taxation, P.O. Box 3559, Honolulu, Hawaii 96811-3559 (use when NOT enclosing
     a check or money order with your tax return)'
@@ -577,9 +471,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

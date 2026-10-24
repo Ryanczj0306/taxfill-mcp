@@ -1,17 +1,4 @@
-# IL state knowledge — tax year 2025. Fetched + cited from the IL DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 IL-1040
-# instruction booklet (PDF title "2025 IL-1040 Instructions", CreationDate 2025-12-04),
-# then independently re-derived from a second official document (the 2025 Form IL-1040
-# itself (IL-1040 R-12/25), the 2025 Schedule IL-E/EITC form, or the 2025 Schedule ICR
-# instructions (R-12/25)) — resolutions recorded inline where the passes differed.
-# CHANGED for 2025 vs the 2024 pack: personal/dependent exemption $2,775 -> $2,850
-# (COLA-indexed); Illinois Child Tax Credit raised 20% -> 40% of the Illinois EITC;
-# 2025 EITC Table 1 income limits and the $11,950 investment-income cap updated. The
-# 4.95% flat rate is UNCHANGED.
+# Provenance: see git history (git show 7a90a06:knowledge/states/il/2025.yaml); sources: the `sources` table
 jurisdiction: states/il
 tax_year: 2025
 income_tax: true
@@ -35,19 +22,6 @@ citation:
     (April 15, 2026), income tax rate ("The Illinois income tax rate is 4.95 percent (.0495)"), exemption allowance
     ("The personal exemption amount for tax year 2025 is $2,850")
   url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf
-starts_from: 'federal AGI (2025 IL-1040 face, Step 2 Line 1: "Federal adjusted gross income from your federal Form 1040 or
-  1040-SR, Line 11a"; the 2025 Instructions: "Adjusted gross income — Enter the adjusted gross income from your federal
-  return")'
-residency:
-  summary: You are an Illinois resident if you were domiciled in Illinois for the entire tax year; your domicile
-    is the place where you reside and intend to return after temporary absences (e.g., U.S. Armed Forces duty, residence
-    in a foreign country, out-of-state student or seasonal residence). A part-year resident is someone who was an
-    Illinois resident for only part of the year (e.g., moved into or out of Illinois) and files IL-1040 plus Schedule
-    NR. A nonresident is a person not domiciled in Illinois who has Illinois-source income; nonresidents and part-year
-    residents compute Illinois-taxable income on Schedule NR. Illinois does not publish a numeric day-count statutory-resident
-    test in the IL-1040 general information; residency turns on domicile. If a joint federal return is filed and
-    one spouse is an Illinois resident while the other is a nonresident or part-year resident, separate Illinois
-    returns may be filed; a joint Illinois return causes both to be taxed as residents.
 forms:
   resident: Form IL-1040, Illinois Individual Income Tax Return
   part_year_or_nonresident: Form IL-1040 with Schedule NR (Nonresident and Part-Year Resident Computation of Illinois
@@ -98,12 +72,6 @@ credits:
     are age 18-24 or 65+ with no qualifying child, may also claim it. Must have earned income under the federal limits
     in Table 1, investment income below $11,950, not have filed federal Form 2555, and meet the other federal EITC
     rules.'
-  amount: '20% of the federal Earned Income Tax Credit. 2025 Schedule IL-E/EITC Step 4, Line 7: "Multiply the amount
-    on Line 6 [federal EITC or Illinois Expanded EITC Worksheet amount] by 20% (0.2)." Nonresidents/part-year residents
-    prorate by the Illinois income percentage from Schedule NR (Line 8).'
-  income_limit_2025: 'Federal EITC earned-income limits apply (2025, Schedule IL-E/EITC Table 1): no qualifying children
-    $19,104 ($26,214 MFJ); one child $50,434 ($57,554 MFJ); two children $57,310 ($64,430 MFJ); three children $61,555
-    ($68,675 MFJ). Investment income must be below $11,950.'
   claimed_on: Schedule IL-E/EITC, Step 4, Line 9; carried to Form IL-1040, Line 29 (Step 8 Payments and Refundable
     Credit). The schedule notes the total Illinois EITC and Child Tax Credit may exceed the amount of tax (i.e.,
     refundable).
@@ -115,13 +83,6 @@ credits:
   type: refundable
   eligibility: Available to taxpayers who qualify for the Illinois EITC and have at least one child that is their
     dependent and under the age of 12 years old as of the last day of 2025.
-  amount: '40% of the taxpayer''s Illinois EITC — INCREASED for 2025 from 20% (2024 What''s New / 2025 What''s New:
-    "Illinois Child Tax Credit amount was increased to 40 percent of the Illinois Earned Income Tax Credit"). 2025
-    Schedule IL-E/EITC Step 5, Line 12: "Multiply the amount on Line 11 [the Illinois EITC from Line 9] by 40% (0.4).
-    This is your Illinois Child Tax Credit." The schedule notes the total Illinois EITC and Child Tax Credit may exceed
-    the amount of tax (refundable).'
-  income_limit_2025: Bounded by Illinois EITC eligibility (see the Illinois EITC entry's federal limits) — no separate
-    income limit.
   claimed_on: Schedule IL-E/EITC, Step 5, Line 12; carried to Form IL-1040, Line 30 (Step 8 Payments and Refundable
     Credit).
   citation:
@@ -135,12 +96,6 @@ credits:
     home or rental property) for the time they owned and lived at the property during 2024, where that residence
     was in Illinois. Not available for mobile home privilege tax, penalties/fees, property outside Illinois, or
     the portion of property tax deductible as a business expense. Nonresidents may not take this credit.
-  amount: 5% of qualifying Illinois property tax paid on the principal residence (Schedule ICR Section A; the 2025
-    ICR instructions cap married-filing-separate spouses' combined claims at "5 percent of the qualifying property
-    tax"). The combined Property Tax + K-12 Education Expense + Volunteer Emergency Worker credits (Schedule ICR
-    Line 13) cannot exceed tax due (nonrefundable).
-  income_limit_2025: Not allowed if the taxpayer's adjusted gross income for the taxable year exceeds $500,000 for
-    returns with a federal filing status of married filing jointly, or $250,000 for all other returns.
   claimed_on: Schedule ICR, Section A (Lines 4-5); total nonrefundable credit on Schedule ICR Line 13 carried to
     Form IL-1040, Line 16.
   citation:
@@ -152,11 +107,6 @@ credits:
     where the taxpayer and student were Illinois residents when the expenses were paid, and the student attended
     kindergarten through 12th grade at a public or nonpublic school in Illinois during 2025. Must complete Section
     B of Schedule ICR including the K-12 Education Expense Credit Worksheet and keep school receipts.
-  amount: 25% of qualified K-12 education expenses paid in excess of the first $250, up to a maximum credit of $750
-    regardless of the number of qualifying students (2025 ICR instructions; for separately-filing parents/guardians,
-    combined credit "may not exceed $750").
-  income_limit_2025: Not allowed if the taxpayer's adjusted gross income for the taxable year exceeds $500,000 for
-    returns with a federal filing status of married filing jointly, or $250,000 for all other returns.
   claimed_on: Schedule ICR, Section B (Lines 7-8) plus K-12 Education Expense Credit Worksheet; total nonrefundable
     credit on Schedule ICR Line 13 carried to Form IL-1040, Line 16.
   citation:
@@ -171,25 +121,11 @@ credits:
     as a volunteer emergency worker at least 9 months during the taxable year, not receive more than $5,000 in compensation
     for those services, apply with IDOR, and be one of the first 10,000 qualified applicants. Note: the income limit
     that applies to the property tax / K-12 credits does NOT apply to this credit.'
-  amount: $500 per awarded individual; $1,000 if married filing jointly and both spouses were awarded the credit
-    (Schedule ICR Line 10c). Statewide aggregate of all such credits awarded by the Department in a calendar year
-    may not exceed $5,000,000, awarded first-come first-served.
-  income_limit_2025: No adjusted-gross-income limit applies to this credit (the $500,000 MFJ / $250,000 other limit
-    applies only to the property tax and K-12 credits).
   claimed_on: Schedule ICR, Section C (Lines 10-11); total nonrefundable credit on Schedule ICR Line 13 carried
     to Form IL-1040, Line 16.
   citation:
     source: Illinois Department of Revenue — 2025 Schedule ICR (form) and 2025 Schedule ICR Instructions (R-12/25)
     url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-icr-instr.pdf
-filing_requirement:
-  note: An Illinois resident must file Form IL-1040 if (a) you were required to file a federal income tax return,
-    OR (b) you were not required to file federally but your Illinois base income from Line 9 is greater than your
-    Illinois exemption allowance. The personal exemption amount for tax year 2025 is $2,850. An Illinois resident
-    claimed as a dependent on another person's return must file if Illinois base income from Line 9 is greater than
-    $2,850 (or to get a refund of Illinois tax withheld). A nonresident must file IL-1040 and Schedule NR if Illinois
-    base income from Schedule NR Step 5 exceeds the Schedule NR exemption allowance, or to claim a refund of Illinois
-    tax withheld in error. Even if not otherwise required, file to obtain a refund of Illinois tax withheld, estimated
-    payments, or pass-through withholding.
 mailing_addresses:
   refund_or_no_payment: ILLINOIS DEPARTMENT OF REVENUE, PO BOX 19041, SPRINGFIELD IL 62794-9041 (if no payment is
     enclosed)
@@ -357,9 +293,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

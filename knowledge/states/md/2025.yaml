@@ -1,26 +1,4 @@
-# MD state knowledge — tax year 2025. Fetched + cited from the MD Comptroller (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure was drafted from the 2025 Resident Booklet
-# (marylandcomptroller.gov, 60 pages), then independently re-derived from the 2025
-# Nonresident Booklet (25 pages, build 2026-01-20), which reprints the same 2025 Tax Rate
-# Schedules I and II, plus the 2025 Form 502 itself and the 2025 Form 502CR — resolutions
-# recorded in the tax.notes adjudication note (including a row-label typo in the resident
-# booklet's Worksheet 17A that pass 2 caught).
-# 2025 IS A RESTRUCTURE YEAR (Budget Reconciliation and Financing Act, House Bill 352):
-#   * TWO NEW TOP BRACKETS — 6.25% and 6.50% (Schedule I over $500,000 / $1,000,000;
-#     Schedule II over $600,000 / $1,200,000). The 5.75% bracket is no longer the top rate
-#     and is now BOUNDED. Do NOT carry 2024's eight-bracket schedules forward.
-#   * The standard deduction is now a FLAT $3,350 (single/dependent/MFS) or $6,700
-#     (joint/HoH/QSS) — the 15%-of-income-with-min/max-clamp worksheet (16A) is GONE.
-#   * NEW additional 2% tax on certain net capital gain income for filers with federal AGI
-#     over $350,000 (new Form 502CG -> Form 502 line 20a; line 21b = line 20a x .02).
-#   * Itemized deductions are now reduced for filers with federal AGI over $200,000
-#     ($100,000 MFS); the Maryland Child Tax Credit gained an income-based phase-out.
-#   * Local: Dorchester County rose to .0330 (a new statewide maximum above the old .0320
-#     ceiling), Cecil fell to .0274, and Anne Arundel's middle graduated rate rose to 2.94%.
+# Provenance: see git history (git show 7a90a06:knowledge/states/md/2025.yaml); sources: the `sources` table
 jurisdiction: states/md
 tax_year: 2025
 income_tax: true
@@ -41,24 +19,6 @@ citation:
     Form 502CG'; line 21 'Maryland tax (from Tax Table or Computation Worksheet Schedules I or II)'; line 21a recaptured
     credit; NEW line 21b 'Additional tax on net capital gain income. Multiply Line 20a by .02'; line 28 local tax
   url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/502.pdf
-starts_from: 'federal AGI (Form 502 line 1: "Adjusted gross income from your federal return"; 2025 Instruction 11:
-  "Copy the figure for federal adjusted gross income from Line 11a of your federal Form 1040/1040SR onto Line 1
-  of Form 502" — the 2025 booklet points at line 11a, where the 2024 booklet said line 11)'
-residency:
-  summary: 'You are a resident of Maryland if (a) your permanent home is or was in Maryland (domicile), OR (b) your
-    permanent home is outside Maryland but you maintained a place of abode (a place to live) in Maryland for more
-    than six months of the tax year AND you were physically present in the state for 183 days or more (statutory
-    resident) — in which case you must file a full-year resident return. Part-year residents (those who began or
-    ended legal residence in Maryland during 2025) file the resident Form 502 with adjustments per Instruction 26
-    (for a part-year resident the ''tax year'' means only the portion of the year of Maryland residence). Nonresidents
-    who had Maryland-source income (and were not Maryland residents) file the nonresident return (Form 505, with
-    Form 505NR, or Form 515 for nonresidents employed in a Maryland local jurisdiction that imposes a local tax).
-    Military personnel domiciled in Maryland but stationed elsewhere generally retain Maryland residency (see Instruction
-    29). Source: 2025 Resident Booklet, "Who Is a Resident?" and Instructions 9 and 26.'
-  citation:
-    source: 2025 Maryland State & Local Tax Forms & Instructions (Resident Booklet) - Who Is a Resident?, Instruction
-      9 (Part-year residents) and Instruction 26 (Special instructions for part-year residents)
-    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
 forms:
   resident: Form 502 — Maryland Resident Income Tax Return (COM/RAD-009). Part-year residents also file Form 502
     (per Instruction 26).
@@ -141,15 +101,6 @@ credits:
     taxpayers who miss the federal minimum-age requirement (calculate the federal EIC disregarding the age minimum)
     and ITIN filers otherwise eligible (calculate disregarding the SSN requirement). Filers who filed a joint federal
     return but a separate Maryland return may claim a combined total of up to one-half the federal credit.
-  amount: 'Married couples (joint or separate) and taxpayers with at least one qualifying child: 50% of the federal
-    earned income credit (2025 Worksheet 18A line 2: ''Federal earned income credit x 50% (.50)''), entered on Form
-    502 line 22 and limited to Maryland tax (Worksheet 18A line 1 = the sum of Form 502 lines 21 through 21b). Individuals
-    filing single, head of household, or qualifying surviving spouse WITHOUT a qualifying child instead use Worksheet
-    18A.1 and may claim up to 100% of the federal EIC (amounts flow to Line 22 and Line 44).'
-  income_limit_2025: 'No separate Maryland income cap; eligibility tracks the federal EITC income limits for tax
-    year 2025. The 2025 Form 502 asks on line 1e: "Place a "Y" in this box if the amount of your investment income
-    is more than $11,950" — the 2025 federal EIC investment-income limit (the 2023 face printed $11,000, that
-    year''s limit).'
   claimed_on: Form 502, line 22 (computed on State Earned Income Credit Worksheet 18A / 18A.1 in Resident Booklet
     Instruction 18).
   citation:
@@ -162,10 +113,6 @@ credits:
     couple filing jointly or separately (with or without a qualifying child), or any taxpayer with at least one
     qualifying child; individuals without a qualifying child use Worksheet 18A.1. Part-year residents see Instruction
     26(o).
-  amount: 'The amount by which 45% of your federal earned income credit exceeds your Maryland tax (2025 Worksheet
-    21A: line 1 = federal earned income credit x 45% (.45); line 2 = your Maryland tax, the sum of Form 502 lines
-    21 through 21b; line 3 = line 1 minus line 2, floored at zero).'
-  income_limit_2025: No separate Maryland income cap; tracks federal EITC income limits for tax year 2025.
   claimed_on: Form 502, line 44 (Refundable Earned Income Credit Worksheet 21A in Resident Booklet Instruction 21).
   citation:
     source: Comptroller of Maryland - 2025 Resident Booklet, Instruction 21 (Line 44) and Worksheet 21A
@@ -176,10 +123,6 @@ credits:
     income guidelines for the number of persons in the family/household claimed on the federal return, and generally
     whose Maryland tax exceeds 50% of their federal earned income credit. NOT available if you checked filing status
     6 (dependent taxpayer).
-  amount: '5% of your earned income (Worksheet 18B: earned income x .05). This is not a refundable credit.'
-  income_limit_2025: 'Must be below the 2025 poverty income guidelines listed in the booklet: $15,650 (1 person),
-    $21,150 (2), $26,650 (3), $32,150 (4), $37,650 (5), $43,150 (6), $48,650 (7), $54,150 (8); add $5,500 for each
-    additional person. (2024: $15,060/$20,440/.../$52,720, +$5,380.)'
   claimed_on: Form 502, line 23 (State Poverty Level Credit Worksheet 18B in Resident Booklet Instruction 18).
   citation:
     source: Comptroller of Maryland - 2025 Resident Booklet, Instruction 18 (Line 23) and the 2025 POVERTY INCOME
@@ -191,12 +134,6 @@ credits:
     Form 2441) for tax year 2025. (A separate refundable top-up exists for lower-income filers — Worksheet 21B;
     for 2025 it is unavailable if FAGI exceeds $60,900 (individual return) or $91,400 (joint return), up from $59,400/$89,100
     in 2024; claimed on Form 502CR Part CC.)
-  amount: A percentage of the federal credit, starting at 32% (decimal 0.3200) and phasing down in $2,000 FAGI bands
-    as income rises (per the 2025 CREDIT FOR CHILD AND DEPENDENT CARE EXPENSES CHART in the Form 502CR instructions);
-    the credit equals the federal Form 2441 credit x the chart decimal (Form 502CR Part B line 2 x line 3).
-  income_limit_2025: Phases to 0.0000 for FAGI of $112,101 and up (individual) or $174,301 and up (married) — the
-    2025 chart endpoints, up from 2024's $109,301/$169,901. The chart's own footnote states 'The FAGI figures indicated
-    have been adjusted for taxable year 2025.'
   claimed_on: Form 502CR, Part B (line 4), carried to Part AA line 2; total credits flow to Form 502 line 24.
   citation:
     source: Comptroller of Maryland - 2025 Form 502CR (Part B, CREDIT FOR CHILD AND DEPENDENT CARE EXPENSES CHART,
@@ -206,12 +143,6 @@ credits:
   type: nonrefundable
   eligibility: Resident individuals who are at least age 65. Subject to the federal AGI limits below. Part-year
     residents are not required to prorate the credit amount.
-  amount: $1,000 if federal adjusted gross income does not exceed $100,000. For married filing jointly, qualifying
-    surviving spouse, and head of household whose federal adjusted gross income does not exceed $150,000, the credit
-    is $1,750 (reduced to $1,000 if only one spouse filing jointly is at least age 65). Nonrefundable — the excess
-    is not refunded. Unchanged from 2024.
-  income_limit_2025: FAGI must not exceed $100,000 (single/other) or $150,000 (married filing jointly, qualifying
-    surviving spouse, head of household).
   claimed_on: Form 502CR, Part M (line 1), carried to Part AA line 13; total flows to Form 502 line 24.
   citation:
     source: Comptroller of Maryland - 2025 Form 502CR, PART M - SENIOR TAX CREDIT instructions ($1,000 / $1,750)
@@ -221,13 +152,6 @@ credits:
   eligibility: Residents only, with one or more qualified children — a dependent under age 6 on the last day of
     the tax year, or a dependent over age 5 and under age 17 who has a disability (the booklet lists the qualifying
     disability determinations). No limit on the number of qualifying children.
-  amount: 'NEW PHASE-OUT FOR 2025 (Budget Reconciliation and Financing Act, HB 352): $500 per qualifying child if
-    federal AGI is below the $15,000 threshold, REDUCED by $50 for each $1,000 (or fraction thereof) by which federal
-    AGI exceeds $15,000, never below $0. Worksheet 21C therefore stops eligibility at FAGI of $24,001 or more (FAGI
-    $15,000 or less -> full $500 per child; FAGI $15,001-$24,000 -> phased amount). For 2024 the credit was a flat
-    $500 per child with a hard $15,000 FAGI cliff and no phase-out band.'
-  income_limit_2025: 'Federal adjusted gross income of $24,000 or less (Worksheet 21C line 1: if FAGI is $24,001
-    or greater, STOP - not eligible). Full $500 per child only at FAGI of $15,000 or less.'
   claimed_on: Form 502CR, Part CC (Refundable Maryland Child Tax Credit, Worksheet 21C); flows to Form 502 line
     45.
   citation:
@@ -235,17 +159,6 @@ credits:
       CREDIT) and REFUNDABLE CHILD TAX CREDIT WORKSHEET (21C); NEW FOR 2025 page i (BRFA - House Bill 352 'establishes
       a new income-based, phase-out formula for the Maryland Child Tax Credit')
     url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
-filing_requirement:
-  note: 'You generally must file a Maryland return if you are/were a Maryland resident and are required to file
-    a federal return, or if your Maryland gross income (total federal income plus Maryland additions, minus certain
-    subtractions) equals or exceeds the minimum filing level for your status. 2025 minimum filing levels for taxpayers
-    UNDER 65 (Table 1): Single (including dependent taxpayers) $15,750; Joint Return $31,500; Married persons filing
-    separately $15,750; Head of Household $23,625; Qualifying surviving spouse $31,500. Higher thresholds apply
-    if 65 or over (Table 2): Single 65+ $17,750; Joint one spouse 65+ $33,100; Joint both spouses 65+ $34,700; MFS
-    65+ $15,750; Head of Household 65+ $25,625; Qualifying surviving spouse 65+ $33,100. You must also file if you
-    have Maryland income tax liability from recaptured credits, and you should file to claim a refund of Maryland
-    tax withheld. (All 2025 figures are HIGHER than 2024''s $14,600/$29,200/$14,600/$21,900/$29,200 and $16,550/$30,750/$32,300/$14,600/$23,850/$30,750.)
-    Source: 2025 Resident Booklet, Instruction 1 "Who Must File?" and MINIMUM FILING LEVELS TABLES 1 and 2.'
 mailing_addresses:
   refund_or_no_payment: Comptroller of Maryland, Revenue Administration Division, 110 Carroll Street, Annapolis,
     MD 21411-0001 (also the private delivery service address)
@@ -587,9 +500,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

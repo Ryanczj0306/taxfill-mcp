@@ -486,7 +486,7 @@ def test_graduated_state_verified_spot_data():
 
 
 def test_oh_2025_discontinuity_is_surfaced_by_state_tax():
-    # knowledge/states/oh/2025.yaml:292-304 (the "CRITICAL — printed-constant divergence" note):
+    # knowledge/states/oh/2025.yaml, tax.notes (the "CRITICAL — printed-constant divergence" note):
     # the middle row prints "$342.00 plus 2.750%" over a $0.00 cumulative floor, and the top row's
     # $2,394.32 was left unchanged, so the printed schedule runs $342.00 ahead of bracket math between
     # $26,050 and $100,000 and $360.695 ahead above $100,000.
@@ -511,7 +511,7 @@ def test_oh_2025_discontinuity_is_surfaced_by_state_tax():
 
 
 def test_az_2025_line_49_dependent_credit_is_disclosed_not_applied():
-    # knowledge/states/az/2025.yaml:267-270: no personal exemption; the dependent exemption became the
+    # knowledge/states/az/2025.yaml, tax.notes: no personal exemption; the dependent exemption became the
     # Line 49 Dependent Tax CREDIT, which calc.state_tax does not model.
     from taxfill_core.calc import state_tax
 
@@ -530,10 +530,11 @@ def test_az_2025_line_49_dependent_credit_is_disclosed_not_applied():
 
 
 def test_il_2025_schedule_il_e_eitc_caveats_reach_the_output():
-    # knowledge/states/il/2025.yaml:242-245 + :255-257: for 2025 the per-dependent $2,850 IS verified on
-    # Schedule IL-E/EITC Step 2 Line 1, so it ships and is applied (the TY2023 pin above checks the
-    # opposite, NOT-shipped caveat). :58-78 (the Illinois EITC, Schedule IL-E/EITC Step 4) and :271-293
-    # (the unmodeled Child Tax Credit increase to 40% of the Illinois EITC, Step 5) reach state_scope.
+    # knowledge/states/il/2025.yaml, tax.exemptions.dependent and tax.notes: for 2025 the per-dependent $2,850 IS
+    # verified on Schedule IL-E/EITC Step 2 Line 1, so it ships and is applied (the TY2023 pin above checks the
+    # opposite, NOT-shipped caveat). The credits entries (the Illinois EITC, Schedule IL-E/EITC Step 4) and
+    # effective_law_changes (the unmodeled Child Tax Credit increase to 40% of the Illinois EITC, Step 5) reach
+    # state_scope. (Named by block, not line: Phase K JK22 (2026-10-24) dropped the pack headers.)
     from taxfill_core.calc import state_tax
 
     kb = REPO_ROOT / "knowledge"

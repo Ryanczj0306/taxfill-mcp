@@ -1,21 +1,4 @@
-# IA state knowledge — tax year 2025. Fetched + cited from the IA DOR (.gov),
-# authored per the 2023/2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 IA 1040 blank
-# form (revenue.iowa.gov media/4400 — Step 4 line 4 'Iowa taxable income', Step 5 line 5
-# 'Iowa tax. Multiply line 4 by 3.8%', Step 3 $40/$20/$40 exemption CREDITS, the April 30
-# 2026 due date, PO Box 9187, 'Make checks payable to Iowa Department of Revenue'), then
-# independently re-checked against the 2025 IA 1040 Expanded Instructions (Line 05 'Iowa
-# Tax' page: 'Iowa now has a flat tax rate of 3.8%'; What's New) and the 2025 IA 1040
-# Alternate Tax Worksheet (41-145, Rev. 10/17/2025) — both passes agree on the flat rate.
-# 2025 STRUCTURAL CHANGE (SF 2442, enacted May 2024): Iowa went FLAT. The three 2024
-# brackets (4.40%/4.82%/5.70%) are GONE — for tax years beginning on or after 1/1/2025
-# Iowa has a SINGLE flat rate of 3.8% (IA 1040 line 5 = line 4 x 3.8%). The alternate tax
-# survives for 2025 at 4.3% (down from 5.7%) over $13,500/$32,000, and is repealed for
-# 2026. base is still federal taxable income; the Step 3 exemption CREDITS ($40/$20/$40)
-# and the low-income exemption are unchanged. Do NOT carry 2024 bracket figures forward.
+# Provenance: see git history (git show 7a90a06:knowledge/states/ia/2025.yaml); sources: the `sources` table
 jurisdiction: states/ia
 tax_year: 2025
 income_tax: true
@@ -36,20 +19,6 @@ citation:
     Step 3 exemption credits ($40 personal, $20 per 65+/blind, $40 per dependent), due date April 30 2026, PO Box 9187,
     payee Iowa Department of Revenue'
   url: https://revenue.iowa.gov/media/4400/download?inline
-starts_from: 'federal taxable income (federal Form 1040, line 15; IA 1040 line 2). The 2025 form carries informational
-  lines 1a-1f (federal total income, adjustments, AGI, standard/itemized deduction, QBI deduction, and the new federal
-  senior deduction) but Iowa taxable income (line 4) is still line 2 federal taxable income plus line 3 Schedule 1
-  modifications — "Do not include lines 1a through 1f."'
-residency:
-  summary: Per Iowa Admin. Code 701—300.17(422), an individual is a "resident" if they either (1) maintain a permanent
-    place of abode in Iowa, or (2) are domiciled in Iowa, and a resident is taxed on all income regardless of source
-    (except income specifically exempted by federal or Iowa law). "Domicile" is where one intends to permanently or
-    indefinitely reside and to return when absent; every person has exactly one domicile, retained until abandoned
-    by removing to another state and forming a bona fide intent to remain there. There is a rebuttable presumption
-    of a "permanent place of abode" if the person maintains an abode in Iowa and spends more than 183 days of the
-    tax year in Iowa. A part-year resident is an Iowa resident for only part of the year; a nonresident is domiciled
-    outside Iowa with Iowa-source income. Nonresidents and part-year residents use the IA 126 to compute the credit
-    limiting Iowa tax to the Iowa-source portion of income.
 forms:
   resident: IA 1040 (Iowa Individual Income Tax Return), form number 41-001
   part_year_or_nonresident: IA 126 (Iowa Nonresident and Part-Year Resident Credit Schedule), form number 41-126,
@@ -108,9 +77,6 @@ credits:
   eligibility: Available only to taxpayers who qualify for the federal Earned Income Tax Credit (EITC); Iowa piggybacks
     on federal EITC eligibility. A taxpayer who qualifies for the Iowa low-income exemption may file solely to claim
     a refund of this credit.
-  amount: 15% (.15) of the taxpayer's federal EITC (nonresidents/part-year residents multiply by the IA 126 Iowa
-    income percentage)
-  income_limit_2025: No separate Iowa income limit; bounded by the federal EITC income limits for 2025
   claimed_on: IA 1040, line 25 (2025 line numbering)
   citation:
     source: Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Iowa Earned Income Tax Credit'
@@ -120,10 +86,6 @@ credits:
   eligibility: Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying child/dependent
     care expenses and qualify for the federal child and dependent care credit. Only one of the Child & Dependent
     Care Credit OR the Early Childhood Development Credit may be claimed per year.
-  amount: 'A percentage of the federal Form 2441 amount, set by Iowa taxable income (IA 1040 line 4): less than $10,000
-    = 75%; $10,000-$19,999 = 65%; $20,000-$24,999 = 55%; $25,000-$34,999 = 50%; $35,000-$39,999 = 40%; $40,000-$89,999
-    = 30%; $90,000 and over = not eligible (per 2024 instructions; confirm the 2025 table at the cited source)'
-  income_limit_2025: Iowa taxable income must be less than $90,000 (combined for married filing jointly)
   claimed_on: IA 1040, line 24 (check the 'Child and Dependent Care Credit' box)
   citation:
     source: Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Child and Dependent Care Credit or Early
@@ -134,9 +96,6 @@ credits:
   eligibility: Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying early
     childhood development expenses for a dependent aged three through five. Claimed in lieu of (not in addition to)
     the Child and Dependent Care Credit.
-  amount: 25% of the first $1,000 of qualifying expenses paid in 2025 for each dependent ages three through five
-    (maximum $250 per qualifying dependent)
-  income_limit_2025: Iowa taxable income must be less than $90,000
   claimed_on: IA 1040, line 24 (check the 'Early Childhood Development Credit' box)
   citation:
     source: Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Early Childhood Development Credit'
@@ -146,9 +105,6 @@ credits:
   eligibility: A parent/taxpayer who claims a dependent attending grades K-12 at an accredited Iowa school (or receiving
     qualifying private instruction under Iowa Code 422.12) and who paid tuition and textbook expenses for that dependent.
     Purchases made from Students First Educational Savings Account (ESA) funds are NOT eligible.
-  amount: 25% of the first $2,000 of qualifying tuition and textbook expenses paid for each dependent (maximum $500
-    credit per dependent)
-  income_limit_2025: No income limit
   claimed_on: IA 1040, line 9
   citation:
     source: Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Tuition and Textbook Credit (K-12 Only)'
@@ -159,11 +115,6 @@ credits:
     senior relief. A taxpayer is exempt from Iowa income tax if Iowa taxable income (IA 1040 line 4, with required
     add-backs) is at or below the threshold for their filing status. NEW for 2025 — the federal 'Enhanced Deduction
     for Seniors' is treated as a personal exemption that must be ADDED BACK when calculating the low-income exemption.
-  amount: Not a dollar credit — it eliminates Iowa income-tax liability when income is at or below the threshold.
-  income_limit_2025: 'Single: Iowa taxable income $9,000 or less ($24,000 or less if age 65+ on 12/31/25); or under
-    $5,000 if claimed as a dependent. Married filing jointly / head of household / qualifying surviving spouse: $13,500
-    or less ($32,000 or less if taxpayer or spouse is 65+ on 12/31/25). Married filing separately: each spouse $9,000
-    or less AND combined $13,500 or less. (Carried from 2024 — confirm the exact 2025 thresholds at the cited source.)'
   # Box location re-read on the 2025 face (JK27, 2026-10-16): page 2 (41-001b 10/14/2025) prints the box on its
   # own row under the Step 5 heading, above line 5, as the 2024 face does. The 2025 Expanded Instructions still
   # say "check the box between Steps 4 and 5" (the "Line 25: Iowa Earned Income Tax Credit" page, Instruction
@@ -178,15 +129,6 @@ credits:
       senior deduction add-back); box wording from the "Line 04" and "Line 25" pages (Instruction Year 2025); box
       location from the 2025 IA 1040 page 2 (41-001b 10/14/2025), https://revenue.iowa.gov/media/4400/download?inline
     url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
-filing_requirement:
-  note: A resident or part-year resident must file if Iowa taxable income (IA 1040 line 4, with specified add-backs
-    incl. the line 1d standard/itemized deduction, line 1e QBI deduction, the new federal senior deduction, lump-sum
-    distributions, and the Schedule 1 Iowa NOL carryforward) is more than $9,000 for single/married-filing-separately
-    ($24,000 if 65 or older on 12/31/25), or more than $13,500 for married filing jointly, head of household, or qualifying
-    surviving spouse ($32,000 if you or spouse is 65 or older). A dependent must file if Iowa taxable income is $5,000
-    or more. A nonresident or part-year resident must file if Iowa-source net income (IA 126, line 25) was $1,000 or
-    more. Anyone with Iowa tax withheld who wants a refund must also file. (2025 IA 1040 Expanded Instructions, "Who
-    Must File" — thresholds carried from 2024; confirm at the cited source.)
 mailing_addresses:
   refund_or_no_payment: Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187
   with_payment: Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187 (include an IA 1040V Payment
@@ -452,9 +394,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

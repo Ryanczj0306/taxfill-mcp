@@ -1,28 +1,4 @@
-# MA state knowledge — tax year 2025. Fetched + cited from the MA DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Form 1
-# instructions, then independently re-checked against the 2025 Form 1 blank itself
-# (which prints the $4,400/$6,800/$8,800 line 2a exemptions, the $1,000/$700/$2,200
-# line 2b-2d multipliers, the line 22 '$24,000 / multiply by .05' tax line, and the
-# line 28b 4% surtax line). mass.gov sits behind Akamai and 403s non-browser fetchers,
-# so BOTH documents were recovered from the Wayback Machine's 200-status captures of the
-# SAME official mass.gov URLs (instructions capture 20260425134124; Form 1 capture
-# 20260420000228) — the identical provenance path the shipped MA form pack used.
-# HEADLINE 2025 CHANGES (Major 2025 Tax Changes): (1) the 4% surtax threshold indexed
-# $1,053,750 -> $1,083,150; (2) Senior Circuit Breaker maximum rose $2,730 -> $2,820
-# (income limits $75,000/$94,000/$112,000; valuation cap $1,298,000); (3) the federal
-# earned-income ceiling referenced for the MA EITC rose $66,819 -> $68,675 (the MA credit
-# stays 40% of the federal); (4) a NEW real-estate-closing withholding regime for
-# non-resident sellers (830 CMR 62B.2.4) applies to closings on or after November 1, 2025;
-# (5) a new Climatetech Tax Incentive Program plus other new/revised credits (TIR 24-16,
-# TIR 25-5); (6) employer-provided parking and combined transit-pass/commuter-highway-
-# vehicle monthly exclusions are $325 each. UNCHANGED for 2025: the 5.0% Part B rate, the
-# 8.5%/12% Schedule B classes, the line 2a-2d exemption amounts, the $24,000 tax-table
-# cutoff, the $8,000 filing threshold, the No Tax Status / Limited Income Credit
-# thresholds, and the $440 Child and Family Tax Credit.
+# Provenance: see git history (git show 7a90a06:knowledge/states/ma/2025.yaml); sources: the `sources` table
 jurisdiction: states/ma
 tax_year: 2025
 income_tax: true
@@ -53,29 +29,6 @@ citation:
     Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture
     of the official mass.gov URL (mass.gov 403s non-browser fetchers).
   url: https://www.mass.gov/doc/2025-form-1-instructions/download
-starts_from: 'federal wages (W-2 state wages, Box 16) — NOT federal AGI. MA Form 1 builds Massachusetts gross income
-  from its own income categories (5.0% income incl. wages from W-2; interest/dividends on Schedule B; capital gains
-  on Schedule D); it does not begin from a single federal AGI line. The header boxes a/b (total federal income from
-  U.S. Form 1040, line 9; total federal AGI from U.S. Form 1040, line 11a) are informational.'
-residency:
-  summary: 'MA recognizes four statuses (MGL ch 62). FULL-YEAR RESIDENT: "You are a full-year resident if your residence
-    (domicile) is in Massachusetts or if you maintain a permanent place of abode in Massachusetts and during the year
-    spend more than 183 days, in the aggregate, in the state" — file Form 1. "The words residence and domicile are
-    used to denote the place where you have your permanent home and to which, whenever you are absent, you have the
-    intention of returning." NONRESIDENT: not a MA resident but received Massachusetts-source income (e.g., from a
-    MA job) — file Form 1-NR/PY. PART-YEAR RESIDENT: you moved into MA or terminated MA residency during the year;
-    income/deductions/exemptions are apportioned — file Form 1-NR/PY. NONRESIDENT AND PART-YEAR RESIDENT: meet both
-    criteria; file Form 1-NR/PY and complete Schedule R/NR (Resident/Nonresident Worksheet). MILITARY: nonresident
-    military personnel stationed in MA may be subject to MA tax and should file Form 1-NR/PY if they earn income from
-    outside military sources; the Military Spouses Residency Relief Act (P.L. 111-97) prevents a servicemember''s spouse
-    from gaining/losing MA domicile solely by accompanying the servicemember, and the Veterans Auto and Education Improvement
-    Act (P.L. 117-333, as of January 5, 2023) lets a servicemember and spouse elect as residence/domicile for each
-    taxable year of the marriage either spouse''s residence/domicile or the servicemember''s permanent duty station.
-    JOINT RETURNS: a joint Form 1 is generally not allowed unless both spouses were Massachusetts residents for the
-    same portion of 2025; NEW for 2025 there is an express exemption where one spouse has no MA filing requirement
-    because their Massachusetts gross income does not exceed $8,000 — that couple may choose married-filing-separate
-    status by filling in the "if joint filing exemption for spouses with Massachusetts gross income under $8,000" oval
-    on Form 1.'
 forms:
   resident: Form 1 — Massachusetts Resident Income Tax Return (2025)
   part_year_or_nonresident: Form 1-NR/PY — Massachusetts Nonresident or Part-Year Resident Income Tax Return (2025).
@@ -130,11 +83,6 @@ credits:
     apart from their spouse at the time of filing and unable to file jointly, may file married filing separately and
     still claim the MA EIC (keep records such as a protective/restraining order or police report). Part-year residents
     prorate the credit.
-  amount: A credit equal to 40% of the federal earned income credit claimed on the taxpayer's federal return. Refundable
-    to the extent the credit exceeds total income tax payable. Worksheet A filers use Worksheet A line 6 and Worksheet
-    B filers use Worksheet B line 11 for the "Amount from U.S. return" entry (see TIR 17-10).
-  income_limit_2025: No separate MA income limit; tied to the federal EITC income/AGI limits for 2025 (federal earned-income
-    ceiling referenced as $68,675, up from $66,819 for 2024).
   claimed_on: 2025 Form 1 (Resident), line 43 (enter qualifying children in 43a, the federal EIC amount in 43b, multiply
     by 40%); Form 1-NR/PY for nonresidents/part-year residents.
   citation:
@@ -146,14 +94,6 @@ credits:
   eligibility: Taxpayer must be age 65 or older, own or rent residential property located in Massachusetts and occupy
     it as their principal residence, and meet the income and assessed-valuation limits. Married taxpayers generally
     must file jointly to claim.
-  amount: 'For homeowners: the amount by which 2025 real estate tax payments exceed 10% of total income. For renters:
-    the amount by which 25% of rent paid for the principal residence exceeds 10% of total income. Either way the credit
-    cannot exceed the 2025 maximum of $2,820 (up from $2,730 for 2024). Homeowners enter Schedule CB line 17; renters
-    line 21. Refundable — any excess over total income tax payable is refunded without interest.'
-  income_limit_2025: '2025 total income may not exceed $75,000 (single filer who is not a head of household), $94,000
-    (head of household), or $112,000 (joint filer). Homeowners: the assessed value of the principal residence for
-    tax year 2025 must not exceed $1,298,000. Total income and maximum credit thresholds are adjusted annually for
-    inflation.'
   claimed_on: 2025 Form 1, line 44 (complete and enclose Schedule CB, Circuit Breaker Credit); Form 1-NR/PY for part-year
     residents.
   citation:
@@ -168,9 +108,6 @@ credits:
     lives with the taxpayer; or (3) a dependent who is age 65 or over or disabled. For tax years beginning on or after
     January 1, 2024 a noncustodial parent may claim the credit with respect to a child dependent age 13 or older who
     is physically or mentally incapable of caring for himself or herself. Cannot be claimed by a full-year nonresident.'
-  amount: $440 for each qualifying individual, with no cap on the number of qualifying individuals — "Enter the number
-    of qualified dependents in line 46a and multiply that amount by $440." (Unchanged from 2024.)
-  income_limit_2025: No income limit specified.
   claimed_on: 2025 Form 1, line 46 (count in 46a x $440); Schedule DI for dependent information; Form 1-NR/PY for
     nonresidents/part-year residents.
   citation:
@@ -192,18 +129,6 @@ credits:
     source: 2025 Form 1 Instructions (MA DOR) — Massachusetts AGI worksheet, No Tax Status and Limited Income Credit
       thresholds and the Line 27/29 instructions
     url: https://www.mass.gov/doc/2025-form-1-instructions/download
-filing_requirement:
-  note: 'RESIDENT: "If you were a resident of Massachusetts and your gross income was more than $8,000 — whether received
-    from sources inside or outside of Massachusetts — you are required to file a Massachusetts income tax return. If
-    your gross income was $8,000 or less, you do not need to file a return." NONRESIDENT: "If you did not live in
-    Massachusetts but received Massachusetts source income in excess of your personal exemption amount multiplied by
-    the ratio of your Massachusetts income to your total income, you must file as a nonresident on the Nonresident/Part-Year
-    Resident Income Tax Return, Form 1-NR/PY." PART-YEAR RESIDENT: if during the taxable year you moved to Massachusetts
-    or terminated MA residency, and gross income was more than $8,000 (from sources inside or outside MA), file as
-    a part-year resident on Form 1-NR/PY. A joint Form 1 is generally not allowed unless both spouses were MA residents
-    for the same portion of 2025; where one spouse''s Massachusetts gross income does not exceed $8,000 the couple
-    may elect married filing separate status via the Form 1 "joint filing exemption" oval. Source: 2025 Form 1 Instructions
-    (Filing Your Massachusetts Return; Major 2025 Tax Changes).'
 mailing_addresses:
   refund_or_no_payment: Massachusetts Department of Revenue, PO Box 7000, Boston, MA 02204 (Form 1, refunds / no payments
     — also the correct address for 2D barcode forms)
@@ -453,9 +378,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

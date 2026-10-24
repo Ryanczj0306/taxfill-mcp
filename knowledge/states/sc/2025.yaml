@@ -1,16 +1,4 @@
-# SC state knowledge — tax year 2025. Fetched + cited from the SC DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure was drafted from the 2025 SC1040 instructions
-# (SCDOR, August 2025) and the 2025 SC1040 form, then independently re-verified against
-# the 2025 SC1040TT (tax tables + the printed '$100,000 or more' rate schedule) and the
-# 2025 SC4972's printed '2025 Tax Computation Schedule' — resolutions recorded inline
-# where the passes differed. TY2025 headline change: the top rate fell 6.2% -> 6.0%
-# (the Act 228 of 2022 annual step-down toward 6%), the bracket bounds indexed to
-# $3,560/$17,830, the subtraction constants became $107/$642, and the dependent
-# exemption rose to $4,930. IRC conformity advanced to December 31, 2024.
+# Provenance: see git history (git show 7a90a06:knowledge/states/sc/2025.yaml); sources: the `sources` table
 jurisdiction: states/sc
 tax_year: 2025
 income_tax: true
@@ -19,9 +7,6 @@ treaty_note: 'SC1040 line 1 starts from FEDERAL TAXABLE INCOME (''Enter your tax
 citation:
   source: '2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue, August 2025) - Line 1 federal taxable income; Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back; IRC conformity through 12/31/2024; due date April 15, 2026; refund claim deadline April 15, 2029; Line w dependent exemption $4,930'
   url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
-starts_from: federal taxable income
-residency:
-  summary: 'Resident: domiciled in / maintains SC as permanent home - SC return treats you as a resident even if living outside SC if all are true: (1) intention to maintain SC as your permanent home, (2) SC is the center of your financial, social, and family life, (3) when away you intend to return to SC. Nonresident: permanent home is outside SC for the entire year and none of the resident tests apply. Part-year resident (moved into or out of SC during the year): may elect to file either as a full-year resident (SC1040, report all income, claim credit for taxes paid to another state via SC1040TC) OR as a nonresident (SC1040 with Schedule NR, taxed only on income earned while an SC resident plus SC-source income, prorate deductions); may choose whichever method is more beneficial. Residency is domicile-based (true, fixed, permanent home with intent to return); see SCDOR ''Determining a Taxpayer''''s Domicile for Income Tax Purposes'' at dor.sc.gov/policy. Special military rules apply. (Framework unchanged from 2024; the 2025 SC1040 instructions still route nonresidents and part-year residents electing nonresident treatment through the Schedule NR - ''If you are a nonresident for the entire year or a part-year resident electing to file as a nonresident, check the appropriate box and attach your Schedule NR to the completed SC1040''.)'
 forms:
   resident: SC1040 (South Carolina Individual Income Tax Return)
   part_year_or_nonresident: 'Schedule NR (Nonresident Schedule), attached to a completed SC1040. Nonresidents and part-year residents electing to file as a nonresident complete Schedule NR; Column A = income from the federal return, Column B = income earned while an SC resident or from SC sources. The 2025 SC1040 instructions, Line 1: ''STOP! If you are a nonresident/part-year filer, you must complete the Schedule NR and go to line 5.'''
@@ -83,8 +68,6 @@ credits:
 - name: South Carolina Earned Income Tax Credit (EITC)
   type: nonrefundable
   eligibility: 'Full-year South Carolina residents who were eligible for and claimed the federal Earned Income Tax Credit on their federal return for the same tax year. The 2025 SC1040TC describes credit code 060 as ''For full-year resident individuals who claimed the Earned Income Tax Credit on their federal return. (TC-60)'', and the TC-60 itself instructs the taxpayer to STOP (no credit) if they were not a full-year SC resident or were not eligible for the federal EITC.'
-  amount: '125% of the federal Earned Income Tax Credit allowed on the taxpayer''s federal return (fully phased in beginning tax year 2023 under S.C. Code Section 12-6-3632; the same 125% statutory rate applies for 2025 — the 2025 revision of Form TC-60 was not retrievable, so the percentage is carried from the statute, not re-read off a 2025 form).'
-  income_limit_2025: 'No separate SC income limit stated; eligibility tracks the federal EITC, so the federal EITC income limits effectively apply (taxpayer must qualify for the federal EITC).'
   claimed_on: 'Computed on SC Schedule TC-60; entered on the SC1040TC (2025 TAX CREDITS, Rev. 3/21/25) as credit code 060, whose total flows to SC1040 line 13 (Other nonrefundable credits).'
   citation:
     source: 'SC DOR Form SC1040TC, 2025 TAX CREDITS (Rev. 3/21/25) - credit code 060 ''SC EARNED INCOME TAX CREDIT: For full-year resident individuals who claimed the Earned Income Tax Credit on their federal return. (TC-60)''; and the 2025 SC1040 instructions Line 13 (Other nonrefundable credits, ''Refer to the instructions for the SC1040TC'')'
@@ -93,8 +76,6 @@ credits:
 - name: Two Wage Earner Credit
   type: nonrefundable
   eligibility: 'Married couples filing jointly when both spouses have earned income taxed to South Carolina. Not allowed for filing statuses Single, Married Filing Separately, or Head of Household. If either spouse''s qualified earned income is zero or less, the credit cannot be taken.'
-  amount: 'For 2025: .007 (0.7%) multiplied by the lesser of $50,000 or the SC qualified earned income of the spouse with the LOWER SC qualified earned income; maximum credit $350. (2025 instructions'' own example: spouse wages $17,000 - $1,000 IRA deduction = $16,000 qualified earned income; $16,000 x .007 = $112.) SC qualified earned income = SC earned income minus certain federal adjustments (deductible part of self-employment tax, self-employed SEP/SIMPLE/qualified plans, self-employed health insurance deduction, IRA deduction, repayment of sub-pay).'
-  income_limit_2025: 'The credit base is capped at $50,000 of the lower-earning spouse''s SC qualified earned income (Worksheet for Two Wage Earner Credit, line 6: ''Enter the lesser of 5(a) or 5(b). Cannot be greater than $50,000''); there is no upper income cutoff that disqualifies the taxpayer, but the cap limits the maximum credit to $350.'
   claimed_on: 'SC1040 line 12 (computed via the Worksheet for Two Wage Earner Credit in the SC1040 instructions).'
   citation:
     source: 'SC DOR 2025 SC1040 Individual Income Tax Instructions, Line 12: Two Wage Earner Credit (''For 2025, the credit is computed at .007 of the lesser of $50,000 or the South Carolina qualified earned income of the spouse with the lower South Carolina qualified earned income for the taxable year'')'
@@ -102,8 +83,6 @@ credits:
 - name: Child and Dependent Care Credit
   type: nonrefundable
   eligibility: 'Full-year SC residents who incurred federal child and dependent care expenses (reported on federal Form 2441). Part-year residents/nonresidents are not eligible if they are residents of a state that does not offer a credit for child and dependent care expense to nonresidents of that state; an eligible part-year resident/nonresident computes the credit on the prorated federal expense using the Schedule NR proration percentage. Cannot be claimed if filing status is Married Filing Separately.'
-  amount: '7% of the federal child and dependent care expense (from federal Form 2441). Maximum credit is $210 for one child or $420 for two or more children. (2025 instructions'' own examples: $2,000 federal expense x .07 = $140; part-year: $2,000 x 30% proration = $600 x .07 = $42.)'
-  income_limit_2025: 'No SC income limit stated; the credit is a flat 7% of the qualifying federal expense, subject to the $210 / $420 caps.'
   claimed_on: SC1040 line 11.
   citation:
     source: 'SC DOR 2025 SC1040 Individual Income Tax Instructions, Line 11: Child and Dependent Care Credit'
@@ -111,14 +90,10 @@ credits:
 - name: Tuition Tax Credit
   type: refundable
   eligibility: 'A SC resident student (or a parent/legal guardian/other person who can claim the student as a dependent and who paid the tuition) attending a qualifying SC 2-year or 4-year college/university, meeting the I-319 requirements (SC high school diploma or qualifying equivalent, enrollment within 12 months, in-state tuition rate, credit-hour minimums, no disqualifying scholarships/convictions/defaults; claimable at most four consecutive years).'
-  amount: '50% of qualified tuition paid (after subtracting scholarships/grants used for tuition), not to exceed $1,500 per tax year for 2-year and 4-year institutions alike. For 4-year independent (private) institutions, qualifying tuition is capped at an indexed tuition limit — $12,268 for 2025, prorated by credit hours if the student did not attend a full year (2025 Form I-319: ''A tuition limit ($12,268 for 2025) applies to students at independent 4-year colleges and universities''; worked example $12,268 x 18 / 30 = $7,361).'
-  income_limit_2025: 'No income limit stated; the credit is limited by the 50%-of-tuition calculation and the $1,500 annual cap.'
   claimed_on: 'Computed on Form I-319 (one per student); the total is entered on SC1040 line 21 (''Tuition tax credit (attach I-319)''), in the SC1040 Tax Payments and Refundable Credits section.'
   citation:
     source: 'SC DOR 2025 Form I-319, Tuition Tax Credit (50% of tuition, not to exceed $1,500; independent 4-year tuition limit $12,268 for 2025), and the 2025 SC1040 instructions Line 21 (Tuition Tax Credit via Form I-319)'
     url: https://dor.sc.gov/sites/dor/files/forms/I319_2025.pdf
-filing_requirement:
-  note: 'You must file an SC Individual Income Tax return if you answer YES to any: Resident under 65 - you were required to file a federal return that included income taxable by SC (SC residents are taxed on their entire income regardless of where earned, unless specifically exempted), or you had SC Income Tax withheld. Resident 65+ - MFJ (both 65+): gross income greater than the federal gross-income filing requirement amount plus $30,000; any other status: greater than the federal amount plus $15,000; or SC tax was withheld. Nonresidents - you had SC Income Tax withheld, or you had SC gross income (e.g., rental property, businesses, or other SC investments). Find the federal gross-income filing requirement in the federal 1040 instructions at irs.gov. (Framework carried from the SCDOR General Information; the 2025 dates are confirmed from the 2025 SC1040 instructions ''Before You Begin'': ''For tax year 2025, unless you have a valid extension, the due date is April 15, 2026, and the deadline to claim a refund is April 15, 2029.'')'
 mailing_addresses:
   refund_or_no_payment: 'SC1040 Processing Center, PO Box 101100, Columbia, SC 29211-0100 (2025 SC1040, ''REFUNDS OR ZERO TAX DUE'')'
   with_payment: 'Taxable Processing Center, PO Box 101105, Columbia, SC 29211-0105 (2025 SC1040, ''BALANCE DUE'')'
@@ -289,9 +264,9 @@ law_changes_checked:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

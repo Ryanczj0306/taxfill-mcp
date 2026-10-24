@@ -1,27 +1,4 @@
-# VA state knowledge — tax year 2025. Fetched + cited from the VA DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure was drafted from the 2025 Form 760 instruction
-# booklet (43 pages), then independently re-derived from the 2025 Form 763 nonresident
-# instructions (44 pages), which print the identical Tax Rate Schedule and the same
-# $8,750/$17,500 standard deduction — resolutions recorded in the tax.notes.
-# RESOLVED — THE 2024 PACK'S SUNSET FLAG: the 2024 pack warned that the $8,500/$17,000
-# standard deduction was scheduled to sunset after Taxable Year 2025 (reverting to
-# $3,000/$6,000) and that the live DOR page already showed TY2025 = $8,750/$17,500. The
-# 2025 booklet's own What's New resolves it: "Legislation enacted during the 2025 General
-# Assembly session increased the standard deduction for Taxable Years 2025 and 2026 from
-# $8,500 to $8,750 for single filers and from $17,000 to $17,500 for married filers filing
-# jointly. The increase in the standard deduction is scheduled to sunset after Taxable Year
-# 2026 and revert to the standard deduction amounts that applied prior to Taxable Year 2019:
-# $3,000 for single filers and $6,000 for married couples filing jointly." So TY2025 =
-# $8,750 / $17,500 (NOT $3,000/$6,000, and NOT the 2024 $8,500/$17,000), and the sunset
-# moved out one year to after TY2026.
-# Other 2025 changes: the refundable Virginia EITC rose from 15% to 20% (TY2025-2026); the
-# rate schedule (2% / 3% / 5% / 5.75%) and the $930 / $800 exemptions are UNCHANGED; the
-# detailed tax table is no longer printed in the booklet (online only); and Virginia's IRC
-# conformity is now a FIXED date of December 31, 2025.
+# Provenance: see git history (git show 7a90a06:knowledge/states/va/2025.yaml); sources: the `sources` table
 jurisdiction: states/va
 tax_year: 2025
 income_tax: true
@@ -43,23 +20,6 @@ citation:
     Line 11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options,
     mailing addresses, May 1 2026 due date
   url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
-starts_from: federal AGI (federal adjusted gross income; Form 760 Line 1 "Adjusted Gross Income from federal return
-  - Not federal taxable income")
-residency:
-  summary: 'Resident: a person who is a legal (domiciliary) resident of Virginia, OR an "actual" resident — one
-    who maintained an abode in Virginia or was physically present in Virginia for more than 183 total days during
-    the taxable year, even if a domiciliary resident of another state or country. File Form 760 if you were an actual
-    or domiciliary resident for the entire year, or for a portion of the year but all of your income for the entire
-    year was from Virginia sources. Part-year resident (Form 760PY): moved into Virginia during the year and became
-    an actual or domiciliary resident, or moved out and became a domiciliary resident of another state (without
-    moving back within six months). Nonresident (Form 763): not a resident or part-year resident but had income
-    from Virginia sources. Students follow the same rules as anyone else; special rules apply to members of Congress,
-    and servicemembers/military spouses may elect the member''s residence, the spouse''s residence, or the permanent
-    duty station under the SCRA as amended.'
-  citation:
-    source: 2025 Form 760 Resident Individual Income Tax Instructions - 'Residency Status and Choosing the Right
-      Form to File' (p. 5)
-    url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
 forms:
   resident: Form 760 (Resident Individual Income Tax Return)
   part_year_or_nonresident: 'Nonresident: Form 763 (Nonresident Individual Income Tax Return). Part-year resident:
@@ -103,11 +63,6 @@ credits:
     the basic military pay subtraction, or the federal & state employee subtraction, or if you are claimed as a
     dependent on another taxpayer's return. Mutually exclusive with both Virginia EITC options — claim only the
     one of the three that gives the greatest benefit.
-  amount: $300 per personal and dependent exemption reported on Form 760, excluding the age 65-or-older and blind
-    exemptions (Schedule ADJ Line 12 count x $300 on Line 13); nonrefundable, limited to Virginia income tax liability.
-  income_limit_2025: 'Family VAGI at or below the 2025 Poverty Guideline Table in the instructions: $15,650 (1 eligible
-    exemption), $21,150 (2), $26,650 (3), $32,150 (4), $37,650 (5), $43,150 (6), $48,650 (7), $54,150 (8); add $5,500
-    for each additional person, spouse, and dependent exemption. (2024: $15,060 through $52,720, +$5,380.)'
   claimed_on: Virginia Schedule ADJ, Lines 9-13, carried to Schedule ADJ Line 17 and Form 760 Line 23
   citation:
     source: 2025 Form 760 Resident Individual Income Tax Instructions - 'Tax Credit for Low-Income Individuals or
@@ -121,9 +76,6 @@ credits:
     to claim whichever of the three gives the greatest tax benefit. A married-filing-separately taxpayer must first
     determine their proportion of the earned income used to qualify for the federal credit and apply that proportion
     to the Virginia credit.
-  amount: 20% of the Earned Income Tax Credit claimed on the federal return; nonrefundable (limited to Virginia
-    tax liability).
-  income_limit_2025: No separate Virginia dollar cap; eligibility follows the federal EITC for tax year 2025.
   claimed_on: Virginia Schedule ADJ, Lines 14-17, carried to Form 760 Line 23
   citation:
     source: 2025 Form 760 Resident Individual Income Tax Instructions - Schedule ADJ Line 14 instructions ('the
@@ -134,11 +86,6 @@ credits:
   eligibility: Full-year Virginia residents who claimed a federal Earned Income Tax Credit. Nonresidents and part-year
     residents are INELIGIBLE for the refundable credit. Mutually exclusive with the Credit for Low-Income Individuals
     and the nonrefundable 20% option.
-  amount: 'INCREASED FOR 2025: 20% of the federal Earned Income Tax Credit, refundable — up from 15% for taxable
-    years before 2025. The increase applies to Taxable Years 2025 and 2026 (''For taxable years Taxable Years 2025
-    and 2026, new legislation increased the refundable portion of the Virginia Earned Income Tax Credit from 15%
-    to 20%'').'
-  income_limit_2025: No separate Virginia dollar cap; eligibility follows the federal EITC for tax year 2025.
   claimed_on: Form 760 refundable-credit line (via the Schedule ADJ earned income credit computation)
   citation:
     source: 2025 Form 760 Resident Individual Income Tax Instructions - What's New, 'Refundable Virginia Earned
@@ -148,22 +95,11 @@ credits:
   type: nonrefundable
   eligibility: Virginia residents who paid income tax to another state on income also taxed by Virginia (computed
     on Virginia Schedule OSC). Special rules apply for the reverse-credit states.
-  amount: The lesser of the tax actually paid to the other state on the qualifying income or the Virginia tax attributable
-    to that income (Schedule OSC computation); nonrefundable.
-  income_limit_2025: No income limit; the credit is limited by the Schedule OSC computation.
   claimed_on: Virginia Schedule OSC, carried to Form 760 Line 24
   citation:
     source: 2025 Form 760 Resident Individual Income Tax Instructions - 'Credit for Taxes Paid to Another State'
       and the Schedule OSC Line Instructions (pp. 31-33)
     url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
-filing_requirement:
-  note: 'Every Virginia resident whose Virginia Adjusted Gross Income (VAGI) is at or above the minimum threshold
-    must file Form 760. For tax year 2025 the thresholds are UNCHANGED from 2024: Single and your VAGI is $11,950
-    or more; Married filing jointly and combined VAGI is $23,900 or more; Married filing separately and your VAGI
-    is $11,950 or more. If VAGI is below the threshold, Virginia tax is $0.00 and the rate schedule/tax table must
-    NOT be used (''If your Virginia Adjusted Gross Income is less than the filing threshold, do not use the rate
-    schedule or tax table. Enter $0 as your tax instead.''); a return is filed only to obtain a refund of withholding
-    or estimated tax paid.'
 mailing_addresses:
   refund_or_no_payment: 'REFUND RETURNS: Virginia Department of Taxation, P.O. Box 1498, Richmond, VA 23218-1498.
     Alternatively, returns may be filed with the Commissioner of the Revenue / Director of Finance / Director of
@@ -466,9 +402,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

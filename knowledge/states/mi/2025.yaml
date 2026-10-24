@@ -1,19 +1,4 @@
-# MI state knowledge — tax year 2025. Fetched + cited from the MI Dept of Treasury (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 MI-1040
-# instruction book (MI-1040-Book.pdf, PDF title "2025 MICHIGAN Individual Income Tax
-# MI-1040 Instructions", CreationDate 2025-12-23), then independently re-derived from a
-# second official document (the 2025 MI-1040 form itself (CreationDate 2025-06-24) or the
-# 2025 Schedule 1 form) — resolutions recorded inline where the passes differed.
-# CHANGED for 2025 vs the 2024 pack: personal/stillbirth exemption $5,600 -> $5,800;
-# special (deaf/blind/disabled) exemption $3,300 -> $3,400; Homestead Property Tax
-# Credit updated (household-resources cap $69,700 -> $71,500, taxable-value cap
-# $160,700 -> $165,400, phase-out start $60,700 -> $62,500, maximum credit $1,800 ->
-# $1,900). The 4.25% rate, the $500 disabled-veteran exemption, and the $1,500
-# claimed-as-dependent (line 9e) amount are UNCHANGED.
+# Provenance: see git history (git show 7a90a06:knowledge/states/mi/2025.yaml); sources: the `sources` table
 jurisdiction: states/mi
 tax_year: 2025
 income_tax: true
@@ -32,22 +17,6 @@ citation:
     the printed exemption amounts (9a x $5,800, 9b x $3,400, 9c x $500, 9d x $5,800, 9e $1,500), and the printed
     mailing addresses (Lansing, MI 48956 refund; Lansing, MI 48929 with payment)
   url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040.pdf
-starts_from: 'federal AGI (MI-1040 line 10: "Adjusted Gross Income from your U.S. Form 1040")'
-residency:
-  summary: 'Michigan uses a domicile-based residency definition. Resident: Michigan is your permanent home (the
-    place you intend to return to whenever you go away); a temporary absence (e.g., spending the winter in a southern
-    state) does not make you a part-year resident. Part-year resident: you move your permanent home into or out
-    of Michigan during the year, and you pay Michigan tax on income earned, received, or accrued while living in
-    Michigan (use Schedule NR to allocate). Nonresident: you pay Michigan tax only on Michigan-source income (salary/wages
-    for work performed in Michigan unless from a reciprocal state, net rents/royalties from Michigan property, capital
-    gains on Michigan real/tangible property, income from a Michigan S corporation/partnership/business, lottery
-    winnings, prizes from Michigan casinos or licensed horse tracks) and file Schedule NR with an MI-1040. Out-of-state
-    students who live in Michigan while attending school are not considered Michigan residents or part-year residents
-    and should file as nonresidents. Reciprocal states (Illinois, Indiana, Kentucky, Minnesota, Ohio, Wisconsin):
-    residents of reciprocal states working in Michigan do not pay Michigan tax on salaries or wages earned in Michigan
-    (but do pay on Michigan business income). The 2025 instruction book states the domicile-based rules but does
-    not state a numeric statutory-resident day-count test, so no day-count "statutory resident" concept is asserted
-    here.'
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. Not independently confirmed (verify the
   figure): Home Heating Credit (low-income heating-cost credit).'
@@ -58,10 +27,6 @@ credits:
     EITC, you do not qualify for the Michigan EITC. Aimed at low-to-moderate-income working individuals and families;
     the amount depends on the federal credit (which turns on income, filing status, and number of qualifying children).
     The 30% rate (raised from 6% by the Lowering MI Costs plan / Public Act 4 of 2023) continues for 2025.
-  amount: 30% of the taxpayer's federal EITC (MI-1040 line 28a = federal EITC; line 28b = line 28a x 30% (0.30)
-    — the 2025 instructions state "a Michigan EITC equal to 30 percent of the taxpayer's federal credit")
-  income_limit_2025: No separate Michigan income cap; the limit is whatever the federal EITC allows for the year
-    (based on federal AGI/earned income, filing status, and number of qualifying children).
   claimed_on: MI-1040, line 28 (line 28a = federal EITC amount; line 28b = line 28a x 30%)
   citation:
     source: 2025 MICHIGAN Individual Income Tax MI-1040 Instructions (MI-1040-Book.pdf), Line 28 instructions ("a
@@ -75,13 +40,6 @@ credits:
     or if the homestead''s taxable value exceeds $165,400 (excluding unoccupied farmland classified as agricultural).
     Renters: in most cases 23% of rent paid is considered property tax eligible for the credit. Separate, more generous
     computations apply to seniors, the blind/disabled, and veterans/surviving spouses (MI-1040CR-2 where applicable).'
-  amount: Credit is based on property taxes (or 23% of rent for renters) that exceed 3.2% of total household resources
-    (MI-1040CR Table 2), multiplied by the applicable percentage (60% for most general claimants; seniors use the
-    Table A percentage). Maximum credit is $1,900 (increased from $1,800 for 2024). The computed credit is reduced
-    by 10% for every $1,000 (or part of $1,000) that total household resources exceed $62,500 (full phase-out above
-    $71,500).
-  income_limit_2025: Total household resources of $71,500 or less; credit phases out for total household resources
-    above $62,500 and reaches $0 above $71,500. Homestead taxable value must not exceed $165,400.
   claimed_on: MI-1040, line 25, by attaching Form MI-1040CR (or MI-1040CR-2 for certain veterans/blind claimants)
   citation:
     source: 2025 MICHIGAN Individual Income Tax MI-1040 Instructions (MI-1040-Book.pdf) — "New for 2025" Homestead
@@ -103,13 +61,6 @@ credits:
       Home Heating Credit
     url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
   unverified: true
-filing_requirement:
-  note: File a 2025 MI-1040 if you owe tax, are due a refund, or your AGI exceeds your exemption allowance (the
-    personal/stillbirth exemption allowance for 2025 is $5,800 per exemption; the 2025 income tax rate is 4.25%).
-    Treasury also advises filing a Michigan return if you file a federal return, even if you do not owe Michigan
-    tax. If your income subject to tax (line 14) is less than your personal exemption allowance (line 15) and Michigan
-    tax was withheld from your earnings, you must file to claim a refund. Dependents claimed on another's return
-    need not file if AGI is $1,500 or less (single/MFS) or $3,000 or less (joint), unless claiming a refund of withholding.
 mailing_addresses:
   refund_or_no_payment: 'Refund, credit, or zero returns: Michigan Department of Treasury, Lansing, MI 48956'
   with_payment: 'Returns with payment (pay amount on MI-1040 line 34): Michigan Department of Treasury, Lansing,
@@ -326,9 +277,9 @@ forms:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

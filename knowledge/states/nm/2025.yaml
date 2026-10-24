@@ -1,27 +1,4 @@
-# NM state knowledge — tax year 2025. Fetched + cited from the NM Taxation and Revenue
-# Department, authored per the 2024 template (state-year knowledge program). Loaded as a
-# StateKnowledge. conforms_to_federal_treaties: whether federally treaty-exempt income flows
-# through (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: pass 1 = the statutory Section 7-2-7 NMSA 1978 rate schedules as
-# restructured by 2024 House Bill 252 (Laws 2024, ch. 67, Sec. 5, 'applicable to taxable years
-# beginning on or after January 1, 2025'), retrieved from nmlegis.gov, cross-read against the
-# Department's own 'Personal Income Tax Rates' publication (PIT rates_2005_2025.pdf, whose first
-# page prints the 2025 schedules digit-for-digit); pass 2 = the Department's 2025 PIT-TRT Tax
-# Rate Table and the 2025 PIT-1 / PIT-ADJ / PIT-RC instructions as printed in the 2025 Personal
-# Income Tax Packet, both retrieved from the Department's document library (since JK27 cited at
-# their byte-identical realfile.tax.newmexico.gov copies, below).
-# JK27 (2026-10-16): every citation url in this pack is now a government host. The 2025 PIT-1
-# instructions and the 2025 Personal Income Tax Packet are cited at realfile.tax.newmexico.gov,
-# the Department's own file host, whose copies are byte-identical to the library copies cited
-# before (sha256 below); the rates publication is cited to the tax.newmexico.gov page that lists
-# it. The library (AWS) links stay in the source text and in tax.citation.source.
-# TY2025 headline: the RESTRUCTURE landed. The five-bracket 1.7-5.9% schedule that ran TY2021
-# through TY2024 is replaced by a SIX-bracket 1.5/3.2/4.3/4.7/4.9/5.9% schedule with a new 4.3%
-# middle bracket and widened 4.7%/4.9% bands. Do NOT reuse the 2024 block. Two other 2025
-# changes: the filing due date is April 15, 2026 for BOTH paper and electronic returns (TY2024's
-# April 30 e-file/e-pay bonus date is gone), and PIT-1 line 16 (the medical care expense
-# deduction) is now 'Reserved for Future Use' — taxable income is lines 9+10+11 minus 12-15.
+# Provenance: see git history (git show 7a90a06:knowledge/states/nm/2025.yaml); sources: the `sources` table
 jurisdiction: states/nm
 tax_year: 2025
 income_tax: true
@@ -40,25 +17,6 @@ treaty_note: 'NM''s resident return (PIT-1) starts from federal adjusted gross i
 citation:
   source: New Mexico Taxation and Revenue Department — Personal Income Tax Forms / Individuals (official site)
   url: https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/
-starts_from: federal AGI (PIT-1 line 9 = federal Form 1040/1040SR line 11)
-residency:
-  summary: 'Residency for income tax turns on (1) where you were domiciled during the tax year and (2) whether you
-    were physically present in NM for 185 days or more. RESIDENT: your domicile was in NM for the entire year, OR
-    you were physically present in NM for a total of 185 days or more during the tax year regardless of domicile
-    (count each day you were here for 24 hours; the 185 days need not be consecutive; residents include people
-    temporarily residing in NM who plan to return to an out-of-state residence — students, vacationers, people
-    temporarily assigned to work in NM). DOMICILE: the place you intend as your permanent home and return to
-    whenever away; you can have only one; a NM domicile is not changed until you show you abandoned it and
-    established a new one outside NM, and a change of domicile must be clear and convincing. FIRST-YEAR RESIDENT:
-    you moved to NM during 2025 intending to make it your permanent place of residence AND you are still in NM on
-    December 31, 2025 (no 185-day requirement); a former NM resident who returned after being a nonresident for at
-    least one full tax year may also file as a first-year resident. PART-YEAR RESIDENT: you were a NM resident for
-    part of the year, were NOT physically present 185 days or more, and on December 31 were no longer domiciled in
-    NM having moved to another state intending to maintain domicile there. NON-RESIDENT: not domiciled in NM for
-    any part of the year and not physically present at least 185 days. Special rules apply to military
-    servicemembers and their qualifying spouses (temporarily assigned to NM with residence established elsewhere =
-    non-residents) and to enrolled members of NM federally recognized Indian nations, tribes, or pueblos. (2025
-    PIT-1 instructions, Who Must File A PIT-1 Return / Definitions — framework unchanged from 2024.)'
 credits_verification: 'State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it. For 2025 the PIT-RC instructions WERE
   retrievable, so the Child Income Tax Credit per-child table, the Low Income Comprehensive Tax Rebate table, the
@@ -72,11 +30,6 @@ credits:
   type: refundable
   eligibility: A New Mexico resident during any part of 2025 who files a PIT-1 and is eligible for the federal Earned
     Income Credit for the same tax year.
-  amount: '25% of the federal Earned Income Credit (EIC/EITC) for which you are eligible for the same tax year (2025
-    PIT-1 instructions, LINES 25, 25a, and 25b: "The credit is 25% of the Earned Income Credit (EIC), also referred
-    to as the Earned Income Tax Credit (EITC), for which you are eligible the same tax year").'
-  income_limit_2025: No separate state income cap; bounded by federal EITC eligibility (the federal EITC phases out
-    by income and number of qualifying children).
   claimed_on: Form PIT-1, lines 25, 25a, and 25b (complete all or the credit is denied)
   citation:
     source: 2025 PIT-1 New Mexico Personal Income Tax Return Instructions, LINES 25, 25a, and 25b (Working Families
@@ -89,14 +42,6 @@ credits:
     dependent of another taxpayer for 2025, for each qualifying child (Section 152(c) of the Internal Revenue Code,
     plus a minor child or stepchild who would qualify federally but for public assistance support). Available for
     taxable years beginning January 1, 2023 and prior to January 1, 2032.'
-  amount: 'Per qualifying child, from Table 4, 2025 Child Income Tax Credit Income Table, keyed to adjusted gross
-    income on PIT-1 line 9: $0-$25,000 = $637; $25,001-$50,000 = $424; $50,001-$75,000 = $212; $75,001-$100,000 =
-    $106; $100,001-$200,000 = $79; $200,001-$350,000 = $53; over $350,000 = $26. Multiply by the number of
-    qualifying children (Line 25 worksheet). AGI below zero uses the first row; AGI over $350,000 uses the last row.
-    Married individuals filing separately may each claim only one-half of the credit that would have been claimed on
-    a joint return. (These are the inflation-adjusted 2025 amounts — the statutory 2023 tiers were $600/$400/$200/
-    $100/$75/$50/$25.)'
-  income_limit_2025: No hard cutoff; the per-child amount declines with AGI to $26 for AGI over $350,000.
   claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, line 25 (Line 25 worksheet + Table 4), filed
     with PIT-1
   citation:
@@ -109,14 +54,6 @@ credits:
   eligibility: A New Mexico resident who files a PIT-1, was physically present in NM for at least six months during
     2025, is not eligible to be claimed as a dependent of another taxpayer for 2025, and was not an inmate of a
     public institution for more than six months of 2025. May be claimed even with no taxable income.
-  amount: 'A fixed rebate read off Table 1, 2025 Low-Income Comprehensive Tax Rebate Table by modified gross income
-    (PIT-RC line 13) and number of exemptions (PIT-RC line 13a). The 2025 table runs from $224 (modified gross
-    income $0-$1,000, one exemption) to a maximum of $839 (the $2,501-$8,000 rows, six or more exemptions), and
-    tapers to $17-$86 in the top $34,001-$36,000 row. The rebate amounts are inflation-indexed from TY2022, so they
-    differ from the printed 2022 table.'
-  income_limit_2025: 'Modified gross income of $36,000 or less (statutory ceiling, not inflation-indexed; printed on
-    the 2025 PIT-RC Modified Gross Income Limitations table: "$36,000 or less — Low Income Comprehensive Tax Rebate
-    (Section 2)").'
   claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section 2 (filed with PIT-1)
   citation:
     source: 2025 PIT-RC Instructions — Section 2 and Table 1, 2025 Low-Income Comprehensive Tax Rebate Table (page
@@ -130,12 +67,6 @@ credits:
     claimed, and paid unreimbursed, uncompensated day care expenses. Requires the completed Child Day Care Credit
     Worksheet (PIT-Childcare) plus Form PIT-CG, New Mexico Caregiver's Statement, for each caregiver — an incomplete
     PIT-RC or a missing PIT-CG results in denial of the credit.
-  amount: '40% of qualifying day care expense, where the expense counted is capped at $8 per child per day (enter $8
-    even if you paid more); the per-child credit cannot exceed $480, and the total entered in PIT-RC Section 5
-    cannot exceed $1,200 (2025 Child Day Care Credit Worksheet, columns D/F/G instructions).'
-  income_limit_2025: 'Modified gross income of $30,160 or less (printed on the 2025 Schedule PIT-RC and in the 2025
-    PIT-RC instructions'' Modified Gross Income Limitations table: "$30,160 or less — New Mexico Child Day Care
-    Credit (Section 5)").'
   claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section 5 (with the Child Day Care Credit
     Worksheet and PIT-CG; filed with PIT-1)
   citation:
@@ -151,12 +82,6 @@ credits:
     not an inmate of a public institution for more than six months in 2025, and has modified gross income of $16,000
     or less. Both homeowners (property tax billed) and renters (rent paid on the principal place of residence) may
     qualify; no rebate is available for property that is not subject to property tax.
-  amount: 'A percentage of property tax liability (or the rent-equivalent, 6% of rent paid) on the principal place of
-    residence, computed on PIT-RC lines 15-18 against Table 2, 2025 Maximum Property Tax Liability Table. The rebate
-    cannot exceed $250, or $125 for a married taxpayer filing a separate return (2025 PIT-RC instructions, Section
-    3).'
-  income_limit_2025: 'Modified gross income of $16,000 or less (2025 PIT-RC Modified Gross Income Limitations table:
-    "$16,000 or less — Property Tax Rebate, if you are 65 or older (Section 3)").'
   claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section 3 (filed with PIT-1)
   citation:
     source: 2025 PIT-RC Instructions — Section 3, Property Tax Rebate for Persons 65 or Older ($250 cap, $125 for
@@ -168,11 +93,6 @@ credits:
   eligibility: A taxpayer (or spouse) age 65 or older who paid unreimbursed or uncompensated medical care expenses of
     $28,000 or more during 2025 for themselves, their spouse, or dependents, and who is not eligible to be claimed
     as a dependent of another taxpayer for 2025.
-  amount: '$2,800 if you qualify. Married couples filing separate returns may each claim one-half of the credit
-    ($1,400) that would have been allowed on a joint return. A qualifying taxpayer is also eligible for the separate
-    medical care expense exemption reported on Schedule PIT-ADJ, line 18 (a base reduction, not a credit).'
-  income_limit_2025: No income limit; the gate is the $28,000 of unreimbursed/uncompensated medical care expense and
-    age 65 or older.
   claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, Section 6 line 23 (filed with PIT-1)
   citation:
     source: 2025 PIT-RC Instructions — refundable medical care credit for persons age 65 years or older ('If you
@@ -185,20 +105,11 @@ credits:
     needs child (certified as a 'difficult to place child' by the NM Children, Youth and Families Department or a
     licensed child placement agency), and claimed that child as a dependent on the federal return. Attach the
     certificate in the first year claimed for each qualifying child.
-  amount: '$1,500 for each special needs adopted child; $750 for each child if married filing separately (married
-    individuals filing separate returns may each claim one-half).'
-  income_limit_2025: No income limit stated for this credit.
   claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, line 24 (filed with PIT-1)
   citation:
     source: 2025 PIT-RC Instructions — LINE 24, Special Needs Adopted Child Tax Credit ($1,500 per child; $750 if
       married filing separately), page RC-10, as printed in the Department's 2025 Personal Income Tax Packet
     url: https://www.tax.newmexico.gov/forms-publications/
-filing_requirement:
-  note: 'Per the 2025 PIT-1 instructions ("Who Must File A PIT-1 Return"): New Mexico''s law says every person who
-    meets BOTH of the following must file a PIT-1: (1) is a New Mexico resident or has income from New Mexico
-    sources, AND (2) is required to file a federal income tax return. A taxpayer who is not required to file a
-    federal return may still want or need to file a NM return — for example to claim a refund of withholding or to
-    claim the PIT-RC rebates and credits.'
 mailing_addresses:
   refund_or_no_payment: NM Taxation and Revenue Dept., P.O. Box 25122, Santa Fe, NM 87504-5122 ('Mail refund returns
     and returns without a payment attached to' — 2025 PIT-1 instructions, Where To Mail Paper Returns and Payments)
@@ -520,9 +431,9 @@ forms:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

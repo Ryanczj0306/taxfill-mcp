@@ -1,33 +1,4 @@
-# AL state knowledge — tax year 2025. Fetched + cited from the AL DOR (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: every key figure below was drafted from the 2025 Form 40 booklet
-# (Long Return, Residents and Part-Year Residents, 25f40bk.pdf), then independently
-# re-derived from second official documents — the printed 2025 Form 40 (25f40blk.pdf), the
-# 2025 Form 40NR booklet (25f40nrbk.pdf), the 2025 Schedule OC instructions
-# (25schocinstr.pdf), and the live ADOR rate FAQ — resolutions recorded inline where the
-# passes differed.
-# HEADLINE FOR 2025: NO structural rate/deduction/exemption change. The What's New For 2025
-# page carries only credits and income EXCLUSIONS (Identity Quiz notice; new-vehicle loan
-# interest deduction under Sec. 40-18-15 for 2025-2028; expanded military-pay exemption,
-# Act 2024-0170; Sound Money Tax Neutrality Act, Act 2024-0447, excluding net capital gains
-# on precious metal bullion beginning January 1, 2025; Alabama Workforce Housing Tax Credit,
-# Act 2024-302; Childcare Facility / Employer / Employer Provider credits, Act 2024-303).
-# The 2%/4%/5% dual schedules, the sliding standard deduction chart (identical amounts AND
-# the identical printed MFJ typo), the $1,500/$3,000 personal exemptions, the income-tiered
-# dependent exemption ($1,000/$500/$300), and the over-$100,000 worksheet constants
-# ($4,958/$4,918) were each RE-DERIVED from the 2025 prints, not assumed.
-# TWO 2025-ONLY WAGE/FORM CHANGES OUTSIDE THE BOOKLET'S WHAT'S NEW PAGE:
-#   * OVERTIME EXEMPTION SUNSET — the Act 2023-421 (as amended by Act 2024-437) exclusion of
-#     overtime pay for full-time hourly employees ENDED June 30, 2025 (ADOR NOTICE of
-#     May 29, 2025). TY2025 is therefore a HALF-YEAR exclusion: overtime earned in the period
-#     the exemption was in effect is denoted in Box 14 of the W-2 as 'EX OT WAGES' and is NOT
-#     included in Box 16 state wages; overtime paid after June 30, 2025 is fully taxable.
-#     (The successor Overtime Premium Deduction is a 2026-2028 provision — NOT a TY2025 item.)
-#   * The printed 2025 Form 40 filing-status box 4 (Head of Family) now reads 'Complete
-#     Schedule HOF' — the exemption amount is unchanged at $3,000.
+# Provenance: see git history (git show 7a90a06:knowledge/states/al/2025.yaml); sources: the `sources` table
 jurisdiction: states/al
 tax_year: 2025
 income_tax: true
@@ -53,23 +24,6 @@ citation:
     p.8); Line 17 Figuring Your Tax tax-table mandate (p.10); Amount You Owe / Form 40V (p.11); Where To File (p.12);
     Tax Tables pp.25-30 and Over $100,000.00 worksheet (p.30)'
   url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf
-starts_from: 'Alabama gross income computed under Alabama law (separate line items: 2025 Form 40 line 5b wages/salaries/tips
-  from Schedule W-2 line 18 column I plus column J, line 6 interest and dividend income, line 7 other income; Form
-  40NR equivalents) — it does NOT start from federal adjusted gross income or federal taxable income.'
-residency:
-  summary: Residency is domicile-based. A resident is anyone domiciled in (a resident of) Alabama — domicile being
-    where one lives, has a permanent home, and intends to return when absent — and residents are taxed on their
-    entire income whether earned within or without Alabama. A part-year resident establishes or abandons Alabama
-    domicile during the year and reports income earned only during the period of Alabama residency (itemized deductions
-    prorated and the federal tax liability deduction prorated by the ratio of Alabama AGI to federal AGI, but the
-    FULL standard deduction and personal/dependent exemptions are allowed). A nonresident has no Alabama domicile/permanent
-    home but is taxed on income from Alabama sources or services performed in Alabama; the 2025 Form 40 booklet
-    repeats that a foreign citizen who comes to Alabama to work, buys a home, secures an Alabama driver's license,
-    and intends to ultimately return to the country of origin is considered to have established Alabama domicile
-    and is liable for Alabama income tax on income earned from all sources. Military personnel whose legal residence
-    is Alabama remain residents regardless of duty station (burden of proof of a change in home of record is on
-    the taxpayer); nonresident military merely stationed in Alabama file only if they have non-military Alabama-source
-    income (Form 40NR).
 forms:
   resident: Form 40 — Alabama Individual Income Tax Return (Residents & Part-Year Residents). (Form 40A is an optional
     short form for full-year residents who do not itemize, claim no adjustments to income, have income only from
@@ -146,11 +100,6 @@ credits:
     2025 Schedule OC instructions add an explicit NOTE: residents who worked and received income/wages from a state
     that has NO income tax are not eligible. Taxes paid to a FOREIGN country use Schedule OC Section B, Part I —
     not Schedule CR.)'
-  amount: Credit equals the tax paid to the other state, limited per the 2025 Schedule OC instructions Part A to
-    the SMALLER of (a) the current Alabama tax liability multiplied by the other states' percentage of Alabama AGI
-    (line A1 Schedule CR line 26 divided by line A2 Form 40 line 10, applied on line A4), or (b) the actual other-state
-    tax from Schedule CR line 27 (line A5).
-  income_limit_2025: None (no income cap; the credit is capped by the smaller-of limitation above).
   claimed_on: Form 40, page 1, line 18 (net tax due computed with Schedule OC — check the Schedule OC box), via
     Schedule CR and Schedule OC, Part A (lines A1-A6, carried to Section C, Part A, Column 3).
   citation:
@@ -164,10 +113,6 @@ credits:
     the adopted child is a resident of Alabama, or a qualified foster child in the custody of the Alabama Department
     of Human Resources; (2) an out-of-state adoption or where the adopted child is not otherwise an Alabama resident.
     Schedule AAC must be completed.'
-  amount: $2,000 per child for a private adoption where the adopted child is an Alabama resident or a qualified
-    foster child in DHR custody; $1,000 per child for an out-of-state adoption / when the adopted child is not an
-    Alabama resident.
-  income_limit_2025: None stated.
   claimed_on: Computed on Schedule AAC, Part III, line 3, carried to Schedule OC, Part M (line M1) and Section C,
     Part M; the refundable amount flows through Schedule OC, Section F (line F2) to Form 40, page 1, line 25 (Refundable
     Credit).
@@ -184,9 +129,6 @@ credits:
     Medicare rural reimbursement from the federal government). No credit is allowed to physicians meeting the requirements
     on or before May 5, 1993, nor to a physician having previously practiced within a rural community unless he/she
     returns to such practice after having practiced in a large or urban community for at least three years.
-  amount: $5,000.00 per year for a qualifying physician ($10,000 if married filing jointly and both spouses qualify,
-    per the 2025 Schedule OC instructions line D2). May be claimed for not more than five consecutive tax years.
-  income_limit_2025: None.
   claimed_on: Schedule OC, Part D (lines D1-D3), carried to Schedule OC Section C, Part D, Column 3; reduces net
     tax on Form 40, page 1, line 18.
   citation:
@@ -194,14 +136,6 @@ credits:
       amount of this credit is $5,000.00 per year and may be claimed for not more than five consecutive tax years';
       D2 '$10,000' if MFJ and both spouses qualify).
     url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25schocinstr.pdf
-filing_requirement:
-  note: 'Domicile-based. Full-year residents (2025) must file if gross income is at least: Single $4,500; Head of
-    family $8,200; Married, joint return $11,500; Married, separate return $5,750 — unchanged from 2024 (2025 Form
-    40 booklet p.5 ''You Must File A Return If'' chart; the same chart with the same amounts is printed in the 2025
-    Form 40NR booklet). Part-year residents use the same thresholds measured against gross income earned while
-    an Alabama resident. Nonresidents must file Form 40NR if Alabama-source gross income exceeds the allowable prorated
-    personal exemption (or if filing Married Filing Joint under the Military Spouses Residency Relief Act). Even
-    if below the threshold, file to claim a refund of any Alabama tax withheld.'
 mailing_addresses:
   refund_or_no_payment: 'Receiving a refund (Form 40, line 35): Alabama Department of Revenue, P.O. Box 154, Montgomery,
     AL 36135-0001. Neither a refund nor a payment: Alabama Department of Revenue, P.O. Box 327469, Montgomery, AL
@@ -482,9 +416,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

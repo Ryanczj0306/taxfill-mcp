@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**13,103 tests** — offline 10,473 + live-.gov 2630; derived
+Done and on `main` (**13,189 tests** — offline 10,559 + live-.gov 2630; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -228,7 +228,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 13 | JK15 Anchor + blind benchmark | L | JK14 | — | 2026-11-16 |
 | 14 | JK21 Golden-diff harness over every tool | M | — | — | **done 2026-10-15** |
 | 15 | JK20 Hoist citations into `sources` | M | JK0, JS2c (done), JK21 | — | **done 2026-10-24** |
-| 16 | JK22 Drop never-read TY2025 blocks (zero-output) | M | JK20, JK21 | — | 2026-11-16 (must land by 11-30) |
+| 16 | JK22 Drop never-read TY2025 blocks (zero-output) | M | JK20, JK21 | — | **done 2026-10-24** |
 | 17 | JK16 Pack-less fill | L | JK14, JK15 | — | 2026-11-23 |
 | 18 | JK8 Watch coverage | M | JK2, JK9 (state rows) | — | 2026-11-23 |
 | 19 | JK9 Tier-1 state triage table | S–M | JK0 | IRS SOI state data | 2026-11-16 |
@@ -420,9 +420,10 @@ What the code reads: calc applies roughly 4% of state bytes and ~11% of federal 
   - **Routing.** A plain merge moved 360 of 2,646 routes (21 queries over every state-year), 74 of them to the wrong topic: the catch-all booklet topic out-counted the specific one, or a stray word of a joined description ("Who must file", "income earned while a resident") turned a clean miss into a false match. So get_sources' scorer reads a joined description only when ONE description names the whole query as a literal run of words, and scores the primary description otherwise (federal answers carry no separator, so federal routing is byte-identical). 105 routes still move, each to a topic whose own text names the query (most were clean misses: CA "due date" now reaches filing_logistics). packages/core/tests/goldens/state_source_routes.json pins every matched route, and 12 canonical routes are pinned with their reasons.
   - **Goldens.** get_sources moved in 119 of the 127 JK21 files; every other section is byte-identical, and no (state, year, topic, url) left the registry. knowledge/sources_states.yaml is regenerated.
   - **Left open:** the tables add about 470 KB to the TY2025 packs (every description copied verbatim), which JK22 and JK24's id references should take back; NY 2025 "where to file" now ties to the IT-201-I booklet entry (the same PDF) rather than filing_logistics; the literal rule does not match inflections ("Filing Due Dates", "PART-YEAR RESIDENTS") or abbreviations (Michigan's "EITC"); the JK28 NR/PY test modules' inner comments still describe the first-description-wins registry.
-- [ ] **JK22 — Drop never-read blocks from the TY2025 state packs** (M; deps JK20, JK21; latest start 2026-11-16, **must land by 2026-11-30**, else it resumes 2027-04-16)
-  - Drop: residency, filing_requirement, starts_from, credit amounts/limits, and the TY2025 YAML header comments (~107 KB: 106,611 bytes of `^#` lines in knowledge/states/*/2025.yaml; 214 KB is the TY2023-2025 total; their provenance moves to git history). Only what the JK21 diff proves unread. Credit eligibility prose is read by state_scope (statescope.py:201-203), so it waits for JK26.
-  - **Acceptance:** the JK21 diff is byte-identical, apart from get_sources, which must not shrink. The suite is green.
+- [x] **JK22 — Drop never-read blocks from the TY2025 state packs — DONE 2026-10-24** (M; deps JK20, JK21) — zero output change: every JK21 golden is byte-identical, get_sources included, and no registry entry was lost (2,824 before and after).
+  - **Dropped** from all 42 TY2025 state packs (2,112,863 -> 1,827,941 bytes): `residency` (62.6 KB), `filing_requirement` (44.5 KB), `starts_from` (9.5 KB), every credit's `amount` and `income_limit_2025` (362 fields, 90.8 KB), and the header comment diaries (83.6 KB gross; 79.4 KB net of the one-line `# Provenance: see git history (git show 7a90a06:...)` header that replaces each). Each kind was first dropped alone in a scratch copy with no golden change, and a negative control (renaming the read `deadlines` block) showed the harness reads the scratch data. The 13 citations that lived only in dropped blocks stay in each pack's `sources` table (JK20), so get_sources lost nothing; test_state_sources_table.py exempts exactly those rows from "backed by an inline citation".
+  - **Kept, because read:** credit names, eligibility and citations (state_scope) and `credits_verification` (state_scope's warning). test_state_pack_never_read_blocks.py keeps the dropped blocks and fields out of the TY2025 packs.
+  - **Left open (JK26):** about 75 KB of column-0 body comments remain (39 KB of them JK20's sources-table note), so the box's "~107 KB" counted more than the header diaries; 17 `effective_law_changes[].affects` entries in 16 packs still name dropped blocks (no tool emits them); some body comments point at the removed header; state_scope's "Credit amounts/limits are not independently verified" warning and the `credits_verification` text still speak of amounts the packs no longer carry (rewording it moves the state_scope goldens); the writer scripts (assemble_state_knowledge.py, assemble_state_credits.py) still emit the dropped shapes, so a TY2026 cohort needs JK25's v2 scaffold or a writer change.
 - [ ] **JK23 — Quote-verbatim checker** (M; latest start 2026-11-30)
   - Check quoted spans against cached source text keyed by url + sha256 (the check_drift.py pattern). Run it in **report mode** over the quotes in tax.notes and form_lines. Mismatches go to a JK27-style fix tranche (JS2c's procedure, in HISTORY.md since 2026-10-15).
   - **Acceptance:** CI runs it in report mode, and a seeded paraphrase is reported.

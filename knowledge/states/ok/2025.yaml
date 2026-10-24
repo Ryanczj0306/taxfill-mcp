@@ -1,23 +1,4 @@
-# OK state knowledge — tax year 2025. Fetched + cited from the OK Tax Commission (.gov),
-# authored per the 2024 template (state-year knowledge program). Loaded as a StateKnowledge.
-# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
-# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
-# fetch could not independently confirm are in `unverified` — confirm at the cited source.
-# Two-pass verification: pass 1 = the statutory schedule in 68 O.S. § 2355(C) as amended by
-# 2025 House Bill 2764 (ENROLLED text on oklegislature.gov), which retitles subsection C to
-# apply to "tax years 2024 and 2025" and leaves its six brackets and 4.75% top rate untouched;
-# pass 2 = the 2025 Form 511 resident packet (forms + instructions + 2025 Income Tax Table +
-# the $100,000-or-more tax computation worksheets), whose printed table rows and worksheet
-# constants reproduce those brackets exactly. Both passes agree.
-# HEADLINE 2025 CHANGE: NONE to the rate schedule. HB 2764 (signed May 28, 2025) is the
-# Oklahoma rate cut everyone cites, but it takes effect for TAX YEAR 2026, not 2025: it adds a
-# new § 2355(D) — three brackets, 0% / 2.5% / 3.5% / 4.5% top rate — "For tax year 2026 and for
-# subsequent tax years", with a revenue-trigger phase-down in subsection E. For TY2025 the
-# schedule, the standard deductions ($6,350 / $12,700 / $9,350), the $1,000 exemptions and the
-# worksheet constants ($4,562 Single-MFS / $4,373 MFJ-HOH-QSS) are all IDENTICAL to 2024.
-# The 2025 packet's own What's New lists only two items, neither touching the rate schedule: a
-# Schedule 511-C line 6 exemption for employers providing paid poll-worker leave, and the
-# Electric Vehicle Charging Tax Credit added to Form 511-CR.
+# Provenance: see git history (git show 7a90a06:knowledge/states/ok/2025.yaml); sources: the `sources` table
 jurisdiction: states/ok
 tax_year: 2025
 income_tax: true
@@ -42,19 +23,6 @@ citation:
     (April 20 e-file/e-pay); WHO MUST FILE thresholds; mailing to PO Box 26800, OKC 73126-0800; check payable to
     Oklahoma Tax Commission; OkTAP at oktap.tax.ok.gov.'
   url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
-starts_from: 'federal AGI (Form 511 line 1: "Federal adjusted gross income (from Federal 1040 or 1040-SR)")'
-residency:
-  summary: Domicile-based. Resident = a person domiciled in Oklahoma for the entire tax year ('Domicile' is the place
-    established as a person's true, fixed, and permanent home; it is the place you intend to return to whenever you
-    are away, and once established it remains until a new one is adopted). Part-year resident = an individual whose
-    domicile was in Oklahoma for a period of less than 12 months during the tax year. Nonresident = an individual
-    whose domicile was not in Oklahoma for any portion of the tax year. Military residency follows the SCRA (as
-    amended by the Veterans Auto and Education Improvement Act of 2022); an Oklahoma resident who enters military
-    service remains an Oklahoma resident until establishing permanent residence in another state and changing
-    military records (Form DD2058). Resident income = all income reported on the federal return except income from
-    real/tangible personal property located in another state, business activity in another state, or gains/losses on
-    the sale of real property in another state; wages for personal services are taxed regardless of where earned,
-    with a credit for taxes paid to another state on Form 511-TX (Form 511 line 16).
 forms:
   resident: Form 511 - Oklahoma Resident Individual Income Tax Return (2025)
   part_year_or_nonresident: Form 511-NR - Oklahoma Nonresident/Part-Year Resident Income Tax Return (2025)
@@ -111,10 +79,6 @@ credits:
   eligibility: Resident and part-year resident filers who qualify for the federal Earned Income Credit. The federal
     EIC is recalculated using the federal EITC eligibility/computation requirements in effect for the 2020 tax year.
     A copy of the federal return and OTC Form 511-EIC must be provided.
-  amount: 5% of the federal earned income credit (computed under the 2020 federal rules), computed on Schedule 511-G
-    with Form 511-EIC. Part-year residents prorate the Oklahoma earned income credit.
-  income_limit_2025: No separate Oklahoma income limit; eligibility follows the federal EITC income limits/phase-outs
-    as in effect for tax year 2020.
   claimed_on: Form 511, line 28 ('Oklahoma earned income credit (provide Form 511-EIC)', computed on Schedule 511-G;
     included in payments and credits and refundable for 2025).
   citation:
@@ -127,11 +91,6 @@ credits:
     care expenses or the federal child tax credit. Must provide a copy of the federal return and, if applicable, the
     federal child care credit schedule. If Oklahoma AGI (Form 511 line 7) is less than Federal AGI (line 1), compute
     on Schedule 511-F (prorated).
-  amount: 'The greater of: (a) 20% of the credit for child care expenses allowed by the IRC, OR (b) 5% of the child
-    tax credit allowed by the IRC (including both the nonrefundable child tax credit and the refundable additional
-    child tax credit). Prorated on Schedule 511-F when Oklahoma AGI is less than Federal AGI.'
-  income_limit_2025: Federal AGI of $100,000 or less. 'If your Federal AGI is greater than $100,000, no credit is
-    allowed.'
   claimed_on: Form 511, line 15 (computed on Schedule 511-F when Oklahoma AGI is less than Federal AGI); subtracted
     from tax before line 18, making it nonrefundable.
   citation:
@@ -147,10 +106,6 @@ credits:
     month of 2025; a person convicted of a felony who was a Department of Corrections inmate for any part of the
     year. Claimed on Form 538-S (included in the 2025 packet). The credit follows the return''s filing deadline,
     including the April 20 electronic-filing due date.'
-  amount: $40 per qualified exemption (2025 Form 538-S line 15, 'Total qualified exemptions claimed in Box D on
-    page 1 x $40').
-  income_limit_2025: $20,000 total gross household income (general), or $50,000 if you have a dependent, are 65 or
-    older by December 31, 2025, or are disabled.
   claimed_on: Form 538-S, line 15; carried to Form 511, line 25 ('Sales Tax Relief Credit (provide Form 538-S)';
     refundable).
   citation:
@@ -163,9 +118,6 @@ credits:
     was a resident of and domiciled in Oklahoma during the entire preceding calendar year, and whose gross household
     income for that year does not exceed $12,000. The claim is for property taxes paid on the household occupied
     during the preceding calendar year, and must be made on Form 538-H.
-  amount: Based on the property taxes paid on the occupied household during the preceding calendar year; 'The credit
-    may not exceed $200.'
-  income_limit_2025: Gross household income must not exceed $12,000.
   claimed_on: Form 538-H; carried to Form 511, line 24 ('Low Income Property Tax Credit (provide Form 538-H)';
     refundable).
   citation:
@@ -177,25 +129,11 @@ credits:
     Legible copies of all receipts for claimed expenses must be submitted to the OTC, and a separate Form 591-D must
     be submitted for each eligible homeschool student. Form 591-D must be filed WITH Form 511 or 511-NR — a
     stand-alone Form 591-D will not be processed. A qualified expense may not be claimed more than once.
-  amount: 'Computed on Form 591-D. The maximum credit is $1,000 in qualified expenses per eligible student in each
-    tax year (2025 packet, line 29 instructions).'
-  income_limit_2025: None stated in the packet's line 29 instructions; see Form 591-D.
   claimed_on: Form 511, line 29 ('Parental Choice Tax Credit for Homeschool Expenses (provide Form 591-D)').
   citation:
     source: Oklahoma Tax Commission, 2025 Form 511 packet - Line 29 instructions (Parental Choice Tax Credit for
       Homeschool Expenses; $1,000 maximum in qualified expenses per eligible student per tax year; Form 591-D)
     url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
-filing_requirement:
-  note: 'Resident: every resident individual whose gross income from both within and outside Oklahoma exceeds the
-    standard deduction plus personal exemption is required to file (Form 511); see Charts A and B on page 5 of the
-    2025 packet. A resident not required to file a federal return must attach a completed federal return to the
-    Oklahoma return to show how AGI and deductions were determined, if gross income is more than AGI. Part-year
-    resident: the same filing requirements as a resident during the period of residency; during the period of
-    nonresidency a return is also required if Oklahoma-source gross income is $1,000 or more (Form 511-NR).
-    Nonresident: except as otherwise provided under the Pass-Through Entity Tax Equity Act of 2019 (68 O.S. Sec.
-    2355.1P-1 et seq.), every nonresident with gross income from Oklahoma sources of $1,000 or more must file (Form
-    511-NR). Even without a filing requirement, file to claim withholding, estimated payments, the Natural Disaster
-    Tax Credit, or other refundable credits.'
 mailing_addresses:
   refund_or_no_payment: Oklahoma Tax Commission, PO Box 26800, Oklahoma City, OK 73126-0800 (this is the single
     mailing address for the 2025 Form 511 return itself, whether refund, no-payment, or with payment enclosed)
@@ -463,9 +401,9 @@ effective_law_changes:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

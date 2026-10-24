@@ -1,13 +1,4 @@
-# WV 2025 pack — derived from the verified 2024 pack; every rate/constant/
-# exemption/address re-verified against the 2025 IT-140 booklet
-# (tax.wv.gov/Documents/PIT/2025/, fetched 2026-08-04). TY2025 IS the year the
-# trigger-based reduction landed: rates 2.22/2.96/3.33/4.44/4.82% (2024:
-# 2.36/3.15/3.54/4.72/5.12). Schedule I constants 222.00/666.00/1,165.50/
-# 2,053.50 and Schedule II (MFS, half boundaries) 111.00/333.00/582.75/
-# 1,026.75 were each re-derived and are EXACT cumulative sums. $2,000 per
-# exemption and the $500 zero-exemption rule re-printed; Box 1071 refund /
-# 25336-3694 payment addresses unchanged; "2025 PERSONAL INCOME TAX IS DUE
-# APRIL 15, 2026" on the cover.
+# Provenance: see git history (git show 7a90a06:knowledge/states/wv/2025.yaml); sources: the `sources` table
 jurisdiction: states/wv
 tax_year: 2025
 income_tax: true
@@ -28,19 +19,6 @@ citation:
     Who Must File & Residency Status (p.17), due date April 15, 2026 (cover, p.24), mailing addresses (Form
     IT-140 p.2), Special Nonresident / 183-day PA-VA rule (Schedule A Part II instructions, p.32)'
   url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
-starts_from: federal AGI (Form IT-140 line 1 = Federal Adjusted Gross Income)
-residency:
-  summary: 'RESIDENT: an individual who (a) spends more than 30 days in WV with the intent of WV becoming his/her
-    permanent residence, OR (b) maintains a physical presence in WV for more than 183 days of the taxable year,
-    even if also considered a resident of another state (statutory/183-day resident). PART-YEAR RESIDENT: an individual
-    who changes residence either from WV to another state, or from another state to WV, during the taxable year.
-    FULL-YEAR NONRESIDENT: a WV resident who spends fewer than 30 days of the year in WV and maintains a permanent
-    place of residence outside WV; OR a resident of another state who does not maintain a physical presence in WV
-    and does not spend more than 183 days in WV. SPECIAL NONRESIDENT (reciprocity): a full-year resident of KY,
-    MD, OH, PA, or VA whose only WV-source income was wages/salaries (mark "Nonresident Special" box, complete Part
-    II of Schedule A). NOTE: a non-military domiciliary resident of PA or VA who spends more than 183 days in WV
-    is treated as a WV resident and must file as a resident. Nonresidents with no WV-source income or withholding
-    are not required to file.'
 forms:
   resident: Form IT-140 (West Virginia Personal Income Tax Return) - check "Resident" status
   part_year_or_nonresident: 'Form IT-140 with its single "NONRESIDENT/PART YEAR RESIDENT" box checked (one box for both
@@ -105,15 +83,6 @@ credits:
     exemptions cannot claim it, and persons who pay the federal Alternative Minimum Tax are ineligible. Eligibility
     and credit percentage depend on family size (number of exemptions, boxes a+b+c) and Modified Federal AGI. Computed
     on Schedule FTC-1 and attached to the return; if filing married-filing-separately use Table 2.
-  amount: 'A percentage of WV income tax due (line 8 of IT-140), from 100% down to a phase-out, based on family
-    size and Modified Federal AGI. For a 1-person household the credit is 100% of tax when Modified Federal AGI is
-    $15,650 or less, then
-    90% from $15,650 to $15,950, 80% to $16,250, 70% to $16,550, 60% to $16,850, 50% to $17,150, 40% to $17,450,
-    down to 0% above $18,350 (100% thresholds rise with family size: $21,150 for family size 2, $26,650 for
-    size 3, $32,150 for size 4). 2025 Family Tax Credit Table 1 (booklet p.12).'
-  income_limit_2025: No fixed cutoff; the credit percentage phases from 100% to 0% as Modified Federal AGI rises
-    within each family-size bracket (e.g., 1-person household 100% at <=$15,650, 0% above $18,350; 4-person
-    household 100% at <=$32,150).
   claimed_on: Schedule FTC-1, then carried to line 2 of the IT-140 RECAP (Tax Credit Recap) schedule
   citation:
     source: WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet), Schedule FTC-1 (p.11)
@@ -126,12 +95,6 @@ credits:
     federal poverty guideline for the household size. Homestead Exemption program participation is NOT required.
     No credit if any owner of the homestead is not a low-income person. Filers who pay federal AMT are flagged/excluded.
     Schedule HEPTC-1 and the Class 2 property tax receipt must be filed.
-  amount: 'Refundable credit equal to the amount by which property tax paid (less SCTC) exceeds 4% of gross household
-    income, capped at a maximum of $1,000. Formula on Schedule HEPTC-1: line 3 (WV property tax paid less SCTC)
-    minus line 7 (4% x total gross income); enter that result or $1,000, whichever is lower.'
-  income_limit_2025: 'Federal AGI (or income less Social Security if not required to file federal) must be: $46,950
-    or less (1 person), $63,450 (2), $79,950 (3), $96,450 (4); add $16,500 for each additional person in the home
-    (2025 Schedule HEPTC-1, Part I).'
   claimed_on: Schedule HEPTC-1, line 9 ('enter on line 19 of IT-140'), carried to Form IT-140 line 19
   citation:
     source: WV Tax Division - 2025 IT-140 booklet, Schedule HEPTC-1 (Homestead Excess Property Tax Credit)
@@ -143,26 +106,12 @@ credits:
     home (assessed value greater than $20,000 before the $20,000 homestead exemption), and whose federal AGI is
     less than 150% of the federal poverty guidelines. The WV Tax Division mails Form WV SCTC-A to program participants;
     the original SCTC-A must be filed (preparer-created substitutes are denied).
-  amount: Refundable credit based on the ad valorem (Class II) property taxes paid on the first $20,000 (or portion
-    thereof) of taxable assessed value above the $20,000 Homestead Exemption. The dollar amount is taxpayer-specific
-    (varies with property tax paid); it is computed on Form SCTC-A and is not a single fixed figure.
-  income_limit_2025: 'Federal AGI must be less than 150% of federal poverty guidelines: maximum is $23,475 for a
-    1-person household, $31,725 (2), $39,975 (3), $48,225 (4); add $8,250 for each additional person (2025
-    Form SCTC-A, 150% of poverty guidelines).'
   claimed_on: Schedule/Form SCTC-A (line 2, Part III), carried to Form IT-140 line 18 ('List Allowable Credit
     amount from Line 2, Part III of Form SCTC-A on Form IT-140, line 18')
   citation:
     source: WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet), Senior Citizens Tax
       Credit Information (page 34) and the Form SCTC-A instructions (Form IT-140 line 18)
     url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
-filing_requirement:
-  note: 'Must file a WV return if: you were a WV resident for the entire year; a part-year resident; or a nonresident
-    whose FAGI includes WV-source income. You must file even if not required to file federally if your WV adjusted
-    gross income exceeds your allowable personal-exemption deduction ($2,000 per exemption, or $500 if claiming
-    zero exemptions), or if claiming the SCTC/HEPTC credit, or if due a refund. Taxpayers 65+ are not required to
-    file if total income is less than the exemption allowance plus the senior-citizen modification ($2,000 per exemption
-    plus up to $8,000 of income per taxpayer 65+), but must file to claim a refund. (Source: 2025 IT-140 instructions,
-    "Who Must File," p.17.)'
 mailing_addresses:
   refund_or_no_payment: WV Tax Division, P.O. Box 1071, Charleston, WV 25324-1071
   with_payment: WV Tax Division, P.O. Box 3694, Charleston, WV 25336-3694
@@ -433,9 +382,9 @@ law_changes_checked:
 # `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
 # scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
 # knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
-# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# carried it (Phase K JK22, 2026-10-24, dropped the never-read blocks). Inline citations of read blocks stay inline.
 # A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
-# lacks, and on a row no inline citation backs).
+# lacks, and on a row no inline citation backs, unless JK22 dropped the block that carried it).
 sources:
 - id: forms-1
   topic: forms_and_instructions

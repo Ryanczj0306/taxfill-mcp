@@ -3367,7 +3367,10 @@ class StateKnowledge(BaseModel):
     the graduated-bracket second tranche); everywhere else
     scoping, rules, credits, and logistics are the pack's job. Extra cited
     blocks (residency, credits, mailing_addresses, payment, deadlines,
-    filing_requirement, forms) are allowed and grow per state.
+    filing_requirement, forms) are allowed and grow per state. None is required:
+    Phase K JK22 (2026-10-24) dropped the never-read ones (residency,
+    filing_requirement, starts_from, credit amount/income limit fields) from the
+    TY2025 packs, whose ``sources`` table keeps their citations; TY2023/2024 keep them.
 
     The one firm, typed contract is ``conforms_to_federal_treaties`` — California
     does NOT, so a treaty-exempt-federally amount is still taxable to CA, which
