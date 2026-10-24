@@ -5,6 +5,7 @@ from __future__ import annotations
 import datetime as dt
 import importlib.util
 import os
+import re
 import subprocess
 import sys
 import textwrap
@@ -67,9 +68,17 @@ MA_FORM1_NETWORK_TESTS = frozenset(
 )
 
 
+# JK30 (2026-10-24): uscode.house.gov "is currently operating in a temporary format", and the view.xhtml section pages
+# the source registries cite answer HTTP 404. The rows cover all of them or none: the whole service is down.
+def _registry_uscode_view_urls() -> set[str]:
+    """Every uscode.house.gov view.xhtml URL the two source registries cite (what check_drift probes)."""
+    text = "".join((REPO / "knowledge" / name).read_text(encoding="utf-8") for name in ("sources.yaml", "sources_states.yaml"))
+    return set(re.findall(r"https://uscode\.house\.gov/view\.xhtml\?[^\s\"']+", text))
+
+
 def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
     entries = fq.load()
-    assert {e.fixed_by for e in entries} == {"JK2"}     # JS1a/JS1b/JS5 retired theirs; JK2's rows self-clear
+    assert {e.fixed_by for e in entries} == {"JK2", "JK30"}  # JS1a/JS1b/JS5 retired theirs; JK2's rows self-clear
     knowledge = "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "knowledge").rglob("*.yaml"))
     knowledge += "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "formpacks").rglob("pack.yaml"))
     for e in entries:
@@ -84,9 +93,15 @@ def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
     # two MA packs are served only by the CI blank cache, so exactly their twenty node ids are quarantined (JK2,
     # JK27, JK28).
     assert {e.target for e in entries if e.kind == "network_test"} == MA_FORM1_NETWORK_TESTS
-    assert not any(e.kind == "drift" for e in entries)   # the MN M1 booklet move was FIXED (new URL), not quarantined
-    assert {e.added for e in entries} == {dt.date(2026, 10, 15), dt.date(2026, 10, 16)}
-    assert all("mass.gov" in e.why and "mirror" in e.why and "cache" in e.why for e in entries)
+    # The MN M1 booklet move was FIXED (new URL), not quarantined. The only drift rows are JK30's (2026-10-24): the
+    # uscode.house.gov view.xhtml section pages the source registries cite, while that site runs in a temporary format.
+    drift = [e for e in entries if e.kind == "drift"]
+    assert not drift or {e.target for e in drift} == _registry_uscode_view_urls()
+    assert all(e.fixed_by == "JK30" and e.expires == dt.date(2026, 12, 15) for e in drift)
+    assert all("temporary format" in e.why and "govinfo.gov" in e.why for e in drift)
+    assert {e.added for e in entries} == {dt.date(2026, 10, 15), dt.date(2026, 10, 16), dt.date(2026, 10, 24)}
+    assert all("mass.gov" in e.why and "mirror" in e.why and "cache" in e.why
+               for e in entries if e.kind == "network_test")
 
 
 @pytest.mark.parametrize(("row", "message"), [

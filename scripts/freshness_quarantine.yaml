@@ -21,6 +21,9 @@
 # sweep in test_signature_line_mapping.py, for the same reason: twenty rows.
 # DELETE these twenty rows once that cache has served the MA tests green on two consecutive weekly runs;
 # packages/core/tests/test_freshness_quarantine.py pins the twenty node ids, so the deletion updates it too.
+# JK30 (2026-10-24) added eighteen drift rows, one per view.xhtml URL in the source registries: uscode.house.gov runs in a temporary format and its view.xhtml
+# section pages, cited by the source registries, answer HTTP 404 (500 the day before). They expire 2026-12-15:
+# delete them when the pages resolve again, or re-point the citations to govinfo.gov (JK30).
 # Any other red opens a `freshness red` issue.
 #
 # Rules (scripts/freshness_quarantine.py; tests in packages/core/tests/test_freshness_quarantine.py):
@@ -151,3 +154,111 @@ entries:
   expires: 2027-01-11
   fixed_by: JK2
   why: mass.gov refuses non-browser fetchers (HTTP 403) and the pack's digest-verified Wayback mirror rate-limits (HTTP 429) or refuses GitHub-hosted runners; the mirror works from a developer machine, where the blank is cached digest-verified and the test passes. Delete the row once the CI blank cache (freshness.yml network-tests) has served the MA tests green on two consecutive weekly runs.
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1341&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section163&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section170&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section402&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section408A&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section530A&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6050AA&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6654&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section68&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section72&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section871&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section901&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title31-section5321&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title8-section1611&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section408&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section4973&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
+- kind: drift
+  url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title8-section1641&num=0&edition=prelim"
+  added: 2026-10-24
+  expires: 2026-12-15
+  fixed_by: JK30
+  why: 'uscode.house.gov runs in a temporary format: its home page reads "The uscode.house.gov website is currently operating in a temporary format. While the United States Code remains available from its authoritative source, some website features and functionality are temporarily unavailable." (read 2026-10-24). Its view.xhtml section pages answered HTTP 500 on 2026-10-23 (run 40016970383) and 404 since; the Code text stays published as static release-point pages. Delete the row once the page resolves again; if it has not by the expiry, re-point the citation to govinfo.gov (JK30).'
