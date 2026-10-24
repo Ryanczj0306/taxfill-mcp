@@ -22,6 +22,22 @@ packs or note where it lives.
 Phase K JK20 (2026-10-24): a TY2025-and-later pack also carries a top-level ``sources``
 table that the source registry is built from. Run ``python scripts/hoist_state_sources.py
 --year <year>`` after this script (test_state_sources_table.py fails on a pack without one).
+
+Phase K JK25 (2026-10-24): TY2026 AND LATER packs are written as schema v2
+(taxfill_core.knowledge_v2.StateKnowledgeV2) by scripts/state_knowledge_v2_writer.py, which
+this script hands every state's fact set to:
+
+    python scripts/assemble_state_knowledge.py --year 2026 --input facts.json \
+        [--tax-dir DIR] [--credits credits.json] [--knowledge-dir knowledge]
+
+The v2 input shape (quotes with their citations, credit pointers, logistics, gaps) is in the
+writer's docstring; ``--tax-dir`` takes the tax-block workflow's verified JSON (the
+assemble_state_tax_blocks.py input, its ``notes`` written as ``caveats``) and ``--credits`` the
+credits research (the assemble_state_credits.py input, items as credit pointers). The pack is
+written whole, `sources` table included, so neither those two scripts nor
+hoist_state_sources.py runs after it. A v1 field (residency_summary, filing_requirement_note,
+starts_from, treaty_basis, a credit amount, ...) is refused with what to drop or reword.
+TY2025 and earlier keep the v1 behaviour above, byte for byte.
 """
 from __future__ import annotations
 
@@ -37,6 +53,8 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
 from taxfill_core.knowledge import StateKnowledge  # noqa: E402
 
+sys.path.insert(0, str(REPO / "scripts"))
+import state_knowledge_v2_writer as v2_writer  # noqa: E402
 
 
 def _is_gov_host(url: str) -> bool:
@@ -89,12 +107,36 @@ def build(st: str, d: dict, year: int) -> dict:
     return pack
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
+def _main_v2(kb: dict, args: argparse.Namespace) -> int:
+    """TY2026+: every state's fact set through the v2 writer (Phase K JK25)."""
+    wrote, refused = v2_writer.assemble(kb, args.year, args.knowledge_dir, tax_dir=args.tax_dir,
+                                        credits_file=args.credits)
+    print(f"wrote {len(wrote)} schema v2 state knowledge packs for TY{args.year}: {sorted(wrote)}")
+    if refused:
+        print(f"REFUSED ({len(refused)}), nothing written for these states:")
+        for _, why in refused:
+            print(f"  {why}")
+    if wrote:
+        print("each pack carries its own `sources` table: do not run hoist_state_sources.py, "
+              "assemble_state_tax_blocks.py or assemble_state_credits.py after this")
+    return 1 if refused else 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--year", type=int, required=True, help="tax year the fetch covers, e.g. 2026")
     ap.add_argument("--input", type=Path, required=True, help="path to the cited all-states fetch JSON")
-    args = ap.parse_args()
+    ap.add_argument("--knowledge-dir", type=Path, default=REPO / "knowledge",
+                    help="the knowledge tree to write into (default: the repo's)")
+    ap.add_argument("--tax-dir", type=Path, help="TY2026+: the tax-block workflow's verified <st>.json files")
+    ap.add_argument("--credits", type=Path, help="TY2026+: the credits research JSON ({result: [...]})")
+    args = ap.parse_args(argv)
     kb = json.loads(args.input.read_text(encoding="utf-8"))
+    if args.year >= v2_writer.V2_FIRST_WRITTEN_YEAR:
+        return _main_v2(kb, args)
+    if args.tax_dir is not None or args.credits is not None:
+        ap.error(f"--tax-dir and --credits are for TY{v2_writer.V2_FIRST_WRITTEN_YEAR}+ (schema v2); a TY{args.year} "
+                 f"pack takes its tax block and credits from assemble_state_tax_blocks.py / assemble_state_credits.py")
 
     wrote, failed = [], []
     for st, d in kb.items():
@@ -104,7 +146,7 @@ def main() -> int:
         except Exception as exc:
             failed.append((st, str(exc)[:120]))
             continue
-        out = REPO / "knowledge" / "states" / st.lower() / f"{args.year}.yaml"
+        out = args.knowledge_dir / "states" / st.lower() / f"{args.year}.yaml"
         out.parent.mkdir(parents=True, exist_ok=True)
         header = (
             f"# {st} state knowledge — tax year {args.year}. Fetched + cited from the {st} DOR (.gov) and\n"

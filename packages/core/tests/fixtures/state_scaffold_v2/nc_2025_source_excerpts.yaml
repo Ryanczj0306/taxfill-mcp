@@ -1,0 +1,68 @@
+# Source excerpts for the Phase K JK25 demo (test_state_scaffold_v2.py builds an offline scripts/check_quotes.py
+# cache from them): passages of the 2025 NC D-401 instructions and Form D-400, copied verbatim from the pdfium text
+# layer of each document as downloaded twice on 2026-10-24 (sha256 below, both downloads identical). Only the
+# passages the demo quotes are kept; the cache entry claims the full document's sha256, as a fetched copy would.
+https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open:
+  sha256: ceaade9246b24d4f7e504919fafd74787ebec17db6d6bbcf1c954f71cfdc185b
+  excerpt: |
+    What is the Tax Rate? For tax year 2025, the individual income tax rate is 4.25%. To calculate your North Carolina
+    tax liability, multiply your North Carolina taxable income by 4.25% (0.0425).
+    amount of interest due and include the interest on Form D-400, Line 26e. If a refund is
+    If you are due a refund and you choose not to e-file your return, mail your North Carolina
+    individual income tax return to the following address:
+    NC DEPARTMENT OF REVENUE
+    PO BOX R
+    RALEIGH, NC 27634-0001
+    If you are not due a refund and you choose not to e-file your return, mail your North Carolina
+    individual income tax return, any payment due, and Form D-400V to the following address:
+    NC DEPARTMENT OF REVENUE
+    PO BOX 25000
+    RALEIGH, NC 27640-0640
+    How Can I Pay? If you owe additional tax, you can pay online by bank draft (free), or credit or debit card
+    using Mastercard or Visa ($2 convenience fee for every $100 paid). This online service is
+    secure and convenient. For details, visit the Department’s website.
+    You can also pay by check or money order. Do not send cash. The Department will not
+    accept a check, money order, or cashier’s check unless it is drawn on a US (domestic) bank
+    and the funds are payable in US dollars. Make your check or money order payable to the
+    NC Department of Revenue for the full amount due. Write “2025 D-400” and your name,
+    address, and the last 4 digits of your Social Security number on your payment. If you are
+    Line 6 – Federal Adjusted Gross Income
+    The starting point for determining North Carolina taxable income is
+    federal adjusted gross income. Therefore, before you begin your
+    Page 13
+    North Carolina tax return, you must determine federal adjusted gross income. If you filed a 2025 federal tax return, enter the federal adjusted
+    gross income from your completed federal return. If you did not file a federal income tax return, you must complete a schedule showing the
+    Line 10 – Child Deduction
+    deduction amount for taxpayers who are age 65 or older or blind.
+    NC Standard Deduction. Use the chart below to determine the
+    amount of your NC standard deduction based on your filing status:
+    Important: If you claim the NC standard deduction DO NOT
+    complete Form D-400 Schedule A.
+    NC Itemized Deductions. To compute North Carolina itemized
+    deductions, complete Form D-400 Schedule A, Lines 1 through 10.
+    (For more information, see “NC Itemized Deductions” on page 20.)
+    If your filing status is: Your standard deduction is:
+    Single $ 12,750
+    Married filing jointly/Qualifying widow(er)/
+     Surviving spouse $ 25,500
+    Married filing separately
+    If spouse does not claim itemized deductions $ 12,750
+    If spouse claims itemized deductions 0
+    Head of household $ 19,125
+    NC Standard Deduction Chart
+    If you are not eligible for the federal standard deduction,
+    your NC standard deduction is ZERO. (For information on
+    who is eligible for the federal standard deduction, see federal
+    publication 501, Dependents, Standard Deduction, and Filing
+    When income is taxed by North Carolina for a period during which you were a legal resident of North Carolina and the same income is
+    also taxed by another state or country because it was earned in or derived from sources within that state or country, a tax credit may be
+    claimed, but not on the basis of a withholding statement alone. Important: No credit is allowed for income taxes paid to a city, county, or
+    other political subdivision of a state or country or to the federal government. Nonresidents are not entitled to this tax credit.
+    North Carolina residents must complete Form D-400 and calculate North Carolina income tax. Then, complete Part 1 of Form D-400TC to
+https://www.ncdor.gov/2025-d-400-web-filled-version/open:
+  sha256: 2bf6e0b44e628a05cc401d22f7cf6f8c7b39db529d345f4bcf7d93ccfe170d63
+  excerpt: |
+    6. Federal Adjusted Gross Income 6.
+    14.
+    15. North Carolina Income Tax 15.
+    Multiply Line 14 by 4.25% (0.0425). If zero or less, enter a zero.

@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**13,331 tests** — offline 10,701 + live-.gov 2630; derived
+Done and on `main` (**13,379 tests** — offline 10,749 + live-.gov 2630; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -238,7 +238,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 22 | JK17 Pack-less verify + grade label | M | JK16 | — | 2026-11-30 |
 | 23 | JK23 Quote-verbatim checker (report mode) | M | — | — | **done 2026-10-24** |
 | 24 | JK24 Schema v2 models + dual loader | M | JK20, JK21 | — | **done 2026-10-24** |
-| 25 | JK25 2026 scaffold emits v2 (optional) | S | JK24, JK23 | — | lands by 2026-12-01 or skipped |
+| 25 | JK25 2026 scaffold emits v2 (optional) | S | JK24, JK23 | — | **done 2026-10-24** |
 | 26 | JK18 Fallback skill text + evals | S–M | JK17, JK6 | — | 2026-12-07 |
 | 27 | JK11 User decisions for JT6 | user | — | the user | 2026-12-15 |
 | 28 | JT5g Schedule NEC / OI 2026 | M | JK8 | IRS drafts | drafts + 3 business days |
@@ -438,8 +438,9 @@ What the code reads: calc applies roughly 4% of state bytes and ~11% of federal 
   - **Parity.** scripts/convert_state_pack_v2.py converts a TY2025 v1 pack; the PA, CA, GA and NY 2025 packs are converted into packages/core/tests/fixtures/state_knowledge_v2/, and each, swapped into a copy of the tree, reproduces every JK21 golden byte for byte. In a scratch run all 42 TY2025 packs converted (27% smaller) and all 127 goldens matched. Every raw-YAML repo gate runs over the four fixtures and a TY2026 shape pack.
   - Built, verified (a fail: free text bound nothing for a 2026 author), fixed, re-verified (a fail: the own-sources gate would have turned red on the first v2 pack), fixed again and re-checked.
   - **Left open:** for JK25, the scaffold must emit caveats as `{quote, ref}` or `{not_modeled, ref}` and a law-change record; for JK26, a SourceRef points at a description by position (append-only is documented, not enforced), the `sources` descriptions and several plain strings (tax_line, exemption notes, logistics notes) are still uncapped prose, and a bare number of three digits or fewer, or one spelled out, still passes the not-modeled filter.
-- [ ] **JK25 — The 2026 state scaffold emits v2** (S; deps JK24, JK23; lands **by 2026-12-01 or is skipped for TY2026**)
-  - **Acceptance:** a v2 scaffold validates and passes JK23. If it is late, JS7a ships v1 and migrates with JK26.
+- [x] **JK25 — The 2026 state scaffold emits v2 — DONE 2026-10-24** (S; deps JK24, JK23) — from TY2026 on, scripts/assemble_state_knowledge.py hands each state to scripts/state_knowledge_v2_writer.py, which writes a StateKnowledgeV2 pack in one pass (the tax-block and credits results come in through `--tax-dir` and `--credits`; assemble_state_tax_blocks.py and assemble_state_credits.py refuse TY2026+ and say so). The writer builds the `sources` table from the input's citations, fills each v2 slot, validates, loads the pack through the v1 projection, recomputes the tax vectors through calc.state_tax and restores the file if anything fails. Input it cannot carry honestly is refused with the field named and what to drop or reword: the blocks JK22 dropped, prose treaty notes and eligibility, free text, tax.notes, a caveat that is neither a quote nor a not-modeled statement, a credit amount anywhere (including a figure in a credit's caveat or name), a non-.gov citation, malformed tax brackets or rates, and a state named twice; one refusal lists every bad key. TY2025 and earlier keep their v1 output byte for byte.
+  - **Acceptance:** the committed demo input (packages/core/tests/fixtures/state_scaffold_v2/nc_2026_demo_input.json, demo data built from the 2025 NC D-401 and D-400, each fetched twice) becomes a v2 pack that validates, works through state_tax, state_scope, file_and_pay and filing_summary, passes every raw-YAML gate, and passes check_quotes.py offline with 0 mismatches (a reworded quote turns into one). No knowledge/states/*/2026.yaml is added: TY2026 cohorts come with JS7a.
+  - **Left open:** a credit's `line` text and the law-change description are not figure-checked; bracket bounds are not type-checked; duplicate `--tax-dir` files still stop the whole run; the writer does not run the networked quote check itself (CONTRIBUTING tells the author to).
 - [ ] **JK26 — Migrate TY2025 to v2** (XL; deps JK21-JK24 and the end of KG8; **starts no earlier than 2027-04-16**; done before TY2027 state work, ~2027-10)
   - Triage the 486 TY2025 tax.notes into base_line, typed caveats or dropped diaries, with a two-verifier wave and a per-state diff the user can review. tax.notes is "Cited disclosures/quirks the calc op must surface" (knowledge.py:2978-2981) and state_tax prints every one (calc.py:11037), so the user's "keep every figure a calc op reads" includes the disclosures the op must surface: every note naming a not-modeled add-on, surcharge, recapture or form-computed amount survives as a typed caveat that state_tax still prints. The OH $342.00 discontinuity, AZ Line 49 and the IL IL-E/EIC caveats must survive, guarded by the TY2025 pins JK21 adds (the existing pins, test_state_knowledge.py:411-414, :298, :319-324, are TY2023).
   - Rewrite the consumers: calc.py:11021-11040, statescope.py:196-254, file_and_pay.py:938-966, filing_summary.py:270-280. Rewrite the narrative-pinning tests (test_state_knowledge.py:96-131, :219, :298, :324, :397, :414, :431; test_statescope.py:108-220; the test_state_law_change_sweep.py:36 count). JK23 becomes enforcing.

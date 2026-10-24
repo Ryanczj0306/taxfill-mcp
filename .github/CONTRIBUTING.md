@@ -150,6 +150,24 @@ Jurisdiction knowledge ships as data in `knowledge/`. Rules from
   for TY2023 and TY2024, which stay frozen in v1. `scripts/convert_state_pack_v2.py`
   converts a TY2025 v1 pack, and `test_state_knowledge_v2.py` holds four such
   conversions to the JK21 goldens byte for byte.
+- **TY2026+ packs are written as v2 by `scripts/assemble_state_knowledge.py`**
+  (Phase K JK25), which hands each state's cited fact set to
+  `scripts/state_knowledge_v2_writer.py`:
+  `uv run python scripts/assemble_state_knowledge.py --year 2026 --input facts.json
+  [--tax-dir DIR] [--credits FILE]`. The input shape is in the writer's docstring: inline
+  citations `{source, url, pinpoint}` (the writer builds the `sources` table from them,
+  numbered per topic as JK20 does), quotes `{quote, citation}`, tax caveats as quotes or
+  `{not_modeled, citation}`, credits as pointers. `--tax-dir` takes the tax-block
+  workflow's verified JSON (its `notes` written as `caveats`) and `--credits` the credits
+  research. The pack is written whole and gated (StateKnowledgeV2, the loader's v1
+  projection, exact rates, the tax JSON's test vectors through `calc.state_tax`), so
+  `assemble_state_tax_blocks.py`, `assemble_state_credits.py` and
+  `hoist_state_sources.py` do not run after it (the first two refuse TY2026+). A v1
+  field is refused with what to drop or reword: `residency_summary`,
+  `filing_requirement_note` and `starts_from` (JK22 dropped those blocks; quote the
+  starting line as `base_line`), `treaty_basis` and `tax.notes` (prose), a credit
+  `amount` or `income_limit_<year>`. Then run `scripts/check_quotes.py --pack` on each
+  new pack. TY2025 and earlier keep the v1 scripts, byte for byte.
 - **Never hardcode numbers that lack final IRS guidance.** When a law is enacted but
   the IRS has not published final caps/phase-outs/form lines, the pack stores the
   *lookup path* (which source answers it), not a guessed number. Agents resolve it

@@ -15,7 +15,9 @@ citations are left out, as the registry always dropped them. The inline citation
 
 The table is generated ONCE per pack; afterwards it is maintained by hand: a new citation goes inline AND into
 ``sources`` (test_state_sources_table.py fails otherwise). A pack that already has a table is skipped, and only
-TY2025-and-later packs are hoisted (TY2023 / TY2024 stay frozen as schema v1).
+TY2025-and-later packs are hoisted (TY2023 / TY2024 stay frozen as schema v1). A TY2026+ pack is written as schema
+v2 with its table already in it (Phase K JK25: scripts/state_knowledge_v2_writer.py, through
+assemble_state_knowledge.py), so this script skips it; it is for the TY2025 v1 packs.
 
 Usage:
     python scripts/hoist_state_sources.py              # every knowledge/states/<st>/2025.yaml without a table

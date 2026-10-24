@@ -14,6 +14,12 @@ YEAR defaults to 2023 (the cohort this script was written for). It drives both
 the target pack file and the `income_limit_<YEAR>` key, which MUST agree with
 the pack's tax_year — four packs shipped with a stale `income_limit_2023` key
 because that suffix used to be a hardcoded literal (fixed 2026-08-07).
+
+Phase K JK25 (2026-10-24): a TY2026+ pack is schema v2 and carries credits as pointers (name,
+line, type, a quoted eligibility, a citation; no amount or income limit). This script refuses
+YEAR >= 2026: pass the research file to ``python scripts/assemble_state_knowledge.py --year
+2026 --input FACTS --credits FILE`` (scripts/state_knowledge_v2_writer.py), whose items take
+the pointer shape and refuse an amount with what to drop.
 """
 from __future__ import annotations
 
@@ -27,6 +33,7 @@ import yaml
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
 from taxfill_core.knowledge import StateKnowledge, load_state_knowledge  # noqa: E402
+from taxfill_core.knowledge_v2 import POINTER_ONLY_FIRST_TAX_YEAR  # noqa: E402
 
 YEAR = int(sys.argv[2]) if len(sys.argv) > 2 else 2023
 
@@ -82,6 +89,13 @@ def _build_credits(entry: dict) -> tuple[list[dict], str]:
 
 
 def main() -> int:
+    if YEAR >= POINTER_ONLY_FIRST_TAX_YEAR:
+        print(
+            f"refused: TY{YEAR} state packs are schema v2 and carry credits as pointers without amounts — pass this "
+            f"file to `python scripts/assemble_state_knowledge.py --year {YEAR} --input FACTS --credits FILE` "
+            f"(each item: name, line, type, eligibility {{quote, citation}}, citation)"
+        )
+        return 2
     raw = json.load(open(sys.argv[1] if len(sys.argv) > 1 else "/tmp/credits_raw.json"))
     data = raw["result"] if isinstance(raw, dict) and "result" in raw else raw
     wrote, failed, total_credits = [], [], 0

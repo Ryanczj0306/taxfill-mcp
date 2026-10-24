@@ -21,6 +21,13 @@ brackets ({status: [{over, but_not_over, rate}]} | null), standard_deduction
 ({status: int} | null), exemptions ({key: {amount, note}}), notes [..],
 test_vectors [{taxable_base, filing_status, exemptions_count, dependents_count,
 expected_base_after, expected_tax, work}].
+
+Phase K JK25 (2026-10-24): TY2025 and earlier only. A TY2026+ pack is schema v2 and is
+written whole, so this script refuses a TY2026+ --year: pass the same directory to
+``python scripts/assemble_state_knowledge.py --year 2026 --input FACTS --tax-dir DIR``
+(scripts/state_knowledge_v2_writer.py), with each JSON's ``notes`` written as ``caveats``
+({quote, citation} or {not_modeled, citation}). The writer runs the same gates
+(:func:`_check_rates_exact`, :func:`check_vectors`).
 """
 from __future__ import annotations
 
@@ -37,6 +44,11 @@ sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
 
 from taxfill_core.calc import state_tax  # noqa: E402
 from taxfill_core.knowledge import StateTaxParams, load_state_knowledge  # noqa: E402
+from taxfill_core.knowledge_v2 import POINTER_ONLY_FIRST_TAX_YEAR  # noqa: E402
+
+# Phase K JK25 (2026-10-24): from this tax year a state pack is schema v2, written in one pass by
+# scripts/state_knowledge_v2_writer.py (via assemble_state_knowledge.py --tax-dir), which reuses the gates below.
+V2_FIRST_WRITTEN_YEAR = POINTER_ONLY_FIRST_TAX_YEAR
 
 STATUS_ORDER = ("single", "married_filing_jointly", "married_filing_separately", "head_of_household")
 
@@ -102,6 +114,26 @@ def _check_rates_exact(pack: dict, params: StateTaxParams) -> None:
             assert got.over == b["over"] and got.but_not_over == b["but_not_over"], f"{status}[{i}] bound drift"
 
 
+def check_vectors(code: str, year: int, vectors: list[dict], knowledge_dir: Path) -> None:
+    """Gate 2: every verified test vector recomputes through the real calc op (shared with the TY2026+ v2 writer)."""
+    for i, v in enumerate(vectors):
+        r = state_tax(
+            code,
+            v["taxable_base"],
+            year=year,
+            exemptions_count=v["exemptions_count"],
+            dependents_count=v["dependents_count"],
+            filing_status=v["filing_status"],
+            knowledge_dir=knowledge_dir,
+        )
+        assert r.base_after_exemptions == v["expected_base_after"], (
+            f"{code} vector {i}: base_after {r.base_after_exemptions} != expected {v['expected_base_after']}"
+        )
+        assert r.tax == v["expected_tax"], (
+            f"{code} vector {i}: tax {r.tax} != expected {v['expected_tax']} — {v['work']}"
+        )
+
+
 def assemble(pack: dict, year: int, knowledge_dir: Path, dry_run: bool) -> None:
     code = pack["state"]
     path = knowledge_dir / "states" / code / f"{year}.yaml"
@@ -120,23 +152,7 @@ def assemble(pack: dict, year: int, knowledge_dir: Path, dry_run: bool) -> None:
         loaded = load_state_knowledge(code, year, base_dir=knowledge_dir)
         assert loaded.tax is not None
         _check_rates_exact(pack, loaded.tax)
-        # Gate 2: every verified test vector recomputes through the real calc op.
-        for i, v in enumerate(pack["test_vectors"]):
-            r = state_tax(
-                code,
-                v["taxable_base"],
-                year=year,
-                exemptions_count=v["exemptions_count"],
-                dependents_count=v["dependents_count"],
-                filing_status=v["filing_status"],
-                knowledge_dir=knowledge_dir,
-            )
-            assert r.base_after_exemptions == v["expected_base_after"], (
-                f"{code} vector {i}: base_after {r.base_after_exemptions} != expected {v['expected_base_after']}"
-            )
-            assert r.tax == v["expected_tax"], (
-                f"{code} vector {i}: tax {r.tax} != expected {v['expected_tax']} — {v['work']}"
-            )
+        check_vectors(code, year, pack["test_vectors"], knowledge_dir)
     except BaseException:
         path.write_text(existing, encoding="utf-8")  # restore on any gate failure
         raise
@@ -155,6 +171,12 @@ def main() -> None:
     ap.add_argument("--knowledge-dir", type=Path, default=REPO / "knowledge")
     ap.add_argument("--dry-run", action="store_true", help="run every gate but restore the file afterwards")
     args = ap.parse_args()
+    if args.year >= V2_FIRST_WRITTEN_YEAR:
+        raise SystemExit(
+            f"refused: TY{args.year} state packs are schema v2 and are written whole, not appended to — pass this "
+            f"directory to `python scripts/assemble_state_knowledge.py --year {args.year} --input FACTS --tax-dir "
+            f"{args.json_dir}` (each JSON's `notes` become `caveats`: {{quote, citation}} or {{not_modeled, citation}})"
+        )
 
     only = set(args.states.split(",")) if args.states else None
     files = sorted(f for f in args.json_dir.glob("*.json") if not f.name.startswith("pending-"))

@@ -1,0 +1,46 @@
+# NC state knowledge — tax year 2025. Fetched + cited from the NC DOR (.gov) and
+# assembled by scripts/assemble_state_knowledge.py. Loaded as a StateKnowledge.
+# conforms_to_federal_treaties: whether federally treaty-exempt income flows through
+# (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
+# fetch could not independently confirm are in `unverified` — confirm at the cited source.
+jurisdiction: states/nc
+tax_year: 2025
+income_tax: true
+conforms_to_federal_treaties: true
+treaty_note: 'The 2025 D-401 (Line 6): "The starting point for determining North Carolina taxable income is federal
+  adjusted gross income."'
+citation:
+  source: 2025 D-401 North Carolina Individual Income Tax Instructions
+  url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+starts_from: federal adjusted gross income (Form D-400 Line 6)
+residency:
+  summary: ''
+forms:
+  resident: Form D-400
+  part_year_or_nonresident: Form D-400 with Form D-400 Schedule PN
+filing_requirement:
+  note: ''
+mailing_addresses:
+  refund_or_no_payment: NC Department of Revenue, PO Box R, Raleigh, NC 27634-0001
+  with_payment: NC Department of Revenue, PO Box 25000, Raleigh, NC 27640-0640
+  citation:
+    source: 2025 D-401 North Carolina Individual Income Tax Instructions
+    url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+  verification: Some state facts could not be independently re-confirmed — see the pack's `unverified` list; confirm
+    at the cited DOR source before relying on a specific figure/address.
+payment:
+  check_payee: NC Department of Revenue
+  web_pay_url: ''
+deadlines:
+  filing_due_date: '2026-04-15'
+  citation:
+    source: 2025 D-401 North Carolina Individual Income Tax Instructions
+    url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+all_citations:
+- source: 2025 D-401 North Carolina Individual Income Tax Instructions
+  url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+- source: 2025 Form D-400 Individual Income Tax Return
+  url: https://www.ncdor.gov/2025-d-400-web-filled-version/open
+unverified:
+- 'Demo input (Phase K JK25): a short TY2025 fact set copied from the 2025 D-401, for the v1 byte-identity test
+  only.'

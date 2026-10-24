@@ -1,0 +1,90 @@
+{
+  "NC": {
+    "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"},
+    "citations": [
+      {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"},
+      {"source": "2025 Form D-400 Individual Income Tax Return", "url": "https://www.ncdor.gov/2025-d-400-web-filled-version/open"}
+    ],
+    "conforms_to_federal_treaties": true,
+    "treaty_note": {
+      "quote": "The starting point for determining North Carolina taxable income is federal adjusted gross income.",
+      "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "Line 6 instructions"}
+    },
+    "base_line": {
+      "form": "Form D-400",
+      "line": "6",
+      "quote": "6. Federal Adjusted Gross Income",
+      "citation": {"source": "2025 Form D-400 Individual Income Tax Return", "url": "https://www.ncdor.gov/2025-d-400-web-filled-version/open", "pinpoint": "Line 6"}
+    },
+    "tax": {
+      "state": "nc",
+      "classification": "flat",
+      "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "What is the Tax Rate?"},
+      "base": "federal_agi",
+      "tax_line": "Form D-400 Line 15 (North Carolina Income Tax)",
+      "flat_rate": "0.0425",
+      "brackets": null,
+      "standard_deduction": {"single": 12750, "married_filing_jointly": 25500, "married_filing_separately": 12750, "head_of_household": 19125},
+      "exemptions": {},
+      "caveats": [
+        {"quote": "Multiply Line 14 by 4.25% (0.0425). If zero or less, enter a zero.",
+         "citation": {"source": "2025 Form D-400 Individual Income Tax Return", "url": "https://www.ncdor.gov/2025-d-400-web-filled-version/open", "pinpoint": "Line 15"}},
+        {"quote": "If you are not eligible for the federal standard deduction, your NC standard deduction is ZERO.",
+         "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "NC Standard Deduction Chart"}},
+        {"not_modeled": "the N.C. child deduction (Form D-400 Line 10)",
+         "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "Line 10"}},
+        {"not_modeled": "N.C. itemized deductions (Form D-400 Schedule A)",
+         "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "NC Itemized Deductions"}}
+      ],
+      "test_vectors": [
+        {"taxable_base": 50000, "filing_status": "single", "exemptions_count": 0, "dependents_count": 0,
+         "expected_base_after": 37250, "expected_tax": 1583,
+         "work": "50,000 - 12,750 standard deduction = 37,250; x 0.0425 = 1,583.125 -> 1,583"}
+      ]
+    },
+    "credits": {
+      "caveat": "State credits are listed as pointers to the cited DOR source; confirm your eligibility and the amount there before claiming one.",
+      "items": [
+        {"name": "Credit for Income Tax Paid to Another State or Country",
+         "line": "Form D-400TC, Part 1 (carried to Form D-400 Line 16)",
+         "type": "nonrefundable",
+         "eligibility": {"quote": "Nonresidents are not entitled to this tax credit.",
+                         "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "Form D-400TC, Part 1"}},
+         "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"}}
+      ]
+    },
+    "law_changes": {
+      "checked": {
+        "checked": "2026-10-24",
+        "finding": "Demo record: the TY2026 D-401 is not published, so no What's New section was read; this fixture's facts come from the 2025 D-401.",
+        "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"}
+      }
+    },
+    "forms": {
+      "resident": "Form D-400",
+      "part_year_or_nonresident": "Form D-400 with Form D-400 Schedule PN",
+      "citations": {
+        "resident": [{"source": "2025 Form D-400 Individual Income Tax Return", "url": "https://www.ncdor.gov/2025-d-400-web-filled-version/open"}],
+        "part_year": [{"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "Form D-400 Schedule PN"}],
+        "nonresident": [{"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "Form D-400 Schedule PN"}]
+      }
+    },
+    "logistics": {
+      "mailing": {
+        "refund_or_no_payment": "NC Department of Revenue, PO Box R, Raleigh, NC 27634-0001",
+        "with_payment": "NC Department of Revenue, PO Box 25000, Raleigh, NC 27640-0640",
+        "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "Where Do I File?"}
+      },
+      "payment": {
+        "check_payee": "NC Department of Revenue",
+        "citation": {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open", "pinpoint": "How Can I Pay?"}
+      }
+    },
+    "gaps": [
+      {"about": "logistics", "detail": "No filing due date: the TY2026 D-401 that states it is not published yet."}
+    ],
+    "unverified": [
+      "DEMO INPUT (Phase K JK25), not a TY2026 fact set: every quote and figure is copied from the 2025 D-401 and Form D-400, so scripts/check_quotes.py can hold it to a real source."
+    ]
+  }
+}

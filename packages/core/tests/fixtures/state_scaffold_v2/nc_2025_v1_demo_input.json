@@ -1,0 +1,20 @@
+{
+  "NC": {
+    "conforms_to_federal_treaties": true,
+    "treaty_basis": "The 2025 D-401 (Line 6): \"The starting point for determining North Carolina taxable income is federal adjusted gross income.\"",
+    "citations": [
+      {"source": "2025 D-401 North Carolina Individual Income Tax Instructions", "url": "https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open"},
+      {"source": "2025 Form D-400 Individual Income Tax Return", "url": "https://www.ncdor.gov/2025-d-400-web-filled-version/open"}
+    ],
+    "starts_from": "federal adjusted gross income (Form D-400 Line 6)",
+    "resident_form": "Form D-400",
+    "nonresident_or_part_year_form": "Form D-400 with Form D-400 Schedule PN",
+    "mailing": {
+      "refund_or_no_payment": "NC Department of Revenue, PO Box R, Raleigh, NC 27634-0001",
+      "with_payment": "NC Department of Revenue, PO Box 25000, Raleigh, NC 27640-0640"
+    },
+    "payment": {"check_payee": "NC Department of Revenue"},
+    "filing_due_date": "2026-04-15",
+    "unverified": ["Demo input (Phase K JK25): a short TY2025 fact set copied from the 2025 D-401, for the v1 byte-identity test only."]
+  }
+}
