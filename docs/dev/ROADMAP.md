@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**13,189 tests** — offline 10,559 + live-.gov 2630; derived
+Done and on `main` (**13,263 tests** — offline 10,633 + live-.gov 2630; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -236,7 +236,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 21 | JEe Text width vs widget padding | M | JK0 | the user: RI DOB choice | 2026-11-30 |
 | 22 | JK17 Pack-less verify + grade label | M | JK16 | — | 2026-11-30 |
 | 23 | JK23 Quote-verbatim checker (report mode) | M | — | — | 2026-11-30 |
-| 24 | JK24 Schema v2 models + dual loader | M | JK20, JK21 | — | 2026-11-24 (else 2027-04-16) |
+| 24 | JK24 Schema v2 models + dual loader | M | JK20, JK21 | — | **done 2026-10-24** |
 | 25 | JK25 2026 scaffold emits v2 (optional) | S | JK24, JK23 | — | lands by 2026-12-01 or skipped |
 | 26 | JK18 Fallback skill text + evals | S–M | JK17, JK6 | — | 2026-12-07 |
 | 27 | JK11 User decisions for JT6 | user | — | the user | 2026-12-15 |
@@ -427,9 +427,12 @@ What the code reads: calc applies roughly 4% of state bytes and ~11% of federal 
 - [ ] **JK23 — Quote-verbatim checker** (M; latest start 2026-11-30)
   - Check quoted spans against cached source text keyed by url + sha256 (the check_drift.py pattern). Run it in **report mode** over the quotes in tax.notes and form_lines. Mismatches go to a JK27-style fix tranche (JS2c's procedure, in HISTORY.md since 2026-10-15).
   - **Acceptance:** CI runs it in report mode, and a seeded paraphrase is reported.
-- [ ] **JK24 — Schema v2 models + dual-version loader** (M; deps JK20, JK21; latest start 2026-11-24; if not merged by 2026-11-30 it slips to 2027-04-16, KG8)
-  - Quote/SourceRef models, generalising FormLineEntry (packages/core/src/taxfill_core/knowledge.py:2094). StateKnowledge v2 (typed sources, base_line, caveats, treaty, pointer-only credits, law_changes with quotes, logistics, gaps; a ~400-char quote cap). TY2023/2024 are frozen as v1; the single-version loader at knowledge.py:3143-3190 (`load_state_knowledge`) becomes dual-version. No dual loader exists today.
-  - **Acceptance:** both shapes load, and the JK21 diff is byte-identical. No consumer changes.
+- [x] **JK24 — Schema v2 models + dual-version loader — DONE 2026-10-24** (M; deps JK20, JK21) — no data and no consumer changed; every JK21 golden is byte-identical.
+  - **Models** (packages/core/src/taxfill_core/knowledge_v2.py, design in its docstring): SourceRef (a `sources` row id, which of its descriptions, an optional pinpoint), Quote (verbatim, at most 400 characters, with a SourceRef; the cap and edge check are shared with FormLineEntry.printed, now also capped), and StateKnowledgeV2 (`schema_version: 2`, extra keys forbidden): treaty, base_line, tax with typed `caveats`, credits as pointers (no amounts), law_changes with quotes (the JS2 rule enforced), convenience_rule, forms with per-role refs, logistics (mailing, deadlines, payment, amended return), gaps, and the JK20 `sources` table. A TY2026+ pack may say only what its sources say: every caveat, treaty note and eligibility is a Quote, or a caveat `{not_modeled, ref}` (200 characters, no figures in digits or words). Free `{text}` exists only for converted TY2025 packs (capped, and declared in `gaps`).
+  - **Loader.** load_state_knowledge reads `schema_version` (absent or 1 is v1, 2 is v2, anything else is refused, as is v2 for a year before 2025) and returns a v2 pack as its v1 projection, so today's consumers read a TY2026 v2 pack unchanged; load_state_knowledge_v2 returns the v2 model. state_sources.state_block projects a raw v2 mapping too.
+  - **Parity.** scripts/convert_state_pack_v2.py converts a TY2025 v1 pack; the PA, CA, GA and NY 2025 packs are converted into packages/core/tests/fixtures/state_knowledge_v2/, and each, swapped into a copy of the tree, reproduces every JK21 golden byte for byte. In a scratch run all 42 TY2025 packs converted (27% smaller) and all 127 goldens matched. Every raw-YAML repo gate runs over the four fixtures and a TY2026 shape pack.
+  - Built, verified (a fail: free text bound nothing for a 2026 author), fixed, re-verified (a fail: the own-sources gate would have turned red on the first v2 pack), fixed again and re-checked.
+  - **Left open:** for JK25, the scaffold must emit caveats as `{quote, ref}` or `{not_modeled, ref}` and a law-change record; for JK26, a SourceRef points at a description by position (append-only is documented, not enforced), the `sources` descriptions and several plain strings (tax_line, exemption notes, logistics notes) are still uncapped prose, and a bare number of three digits or fewer, or one spelled out, still passes the not-modeled filter.
 - [ ] **JK25 — The 2026 state scaffold emits v2** (S; deps JK24, JK23; lands **by 2026-12-01 or is skipped for TY2026**)
   - **Acceptance:** a v2 scaffold validates and passes JK23. If it is late, JS7a ships v1 and migrates with JK26.
 - [ ] **JK26 — Migrate TY2025 to v2** (XL; deps JK21-JK24 and the end of KG8; **starts no earlier than 2027-04-16**; done before TY2027 state work, ~2027-10)

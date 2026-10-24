@@ -12,7 +12,8 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from taxfill_core.knowledge import LawChangesChecked, load_state_knowledge
+from taxfill_core.knowledge import LawChangesChecked, StateKnowledge, load_state_knowledge
+from taxfill_core.knowledge_v2 import SCHEMA_VERSION, v1_mapping
 
 REPO = Path(__file__).resolve().parents[3]
 STATES = REPO / "knowledge" / "states"
@@ -32,14 +33,18 @@ def test_the_sweep_covers_every_2024_and_2025_pack():
     assert len([p for p in PACKS if p.stem in ("2024", "2025")]) == 84
 
 
-@pytest.mark.parametrize("path", PACKS, ids=lambda p: f"{p.parent.name}-{p.stem}")
-def test_every_ty2024_plus_state_pack_records_its_law_changes(path: Path):
-    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
-    where = f"{path.parent.name}/{path.stem}"
+def check_law_changes_recorded(raw: dict, st: str, year: int) -> None:
+    """The per-pack body of test_every_ty2024_plus_state_pack_records_its_law_changes over a raw pack mapping."""
+    where = f"{st}/{year}"
+    v2 = raw.get("schema_version") == SCHEMA_VERSION
+    # Phase K JK24 (2026-10-24): a schema v2 pack records them as law_changes {changes, checked} (StateKnowledgeV2
+    # holds it to this rule at load); read the v1 projection the consumers read. A v1 mapping passes unchanged.
+    raw = v1_mapping(raw)
     assert "effective_law_changes" in raw, (
         f"{where}: record the year's law changes — read the booklet's What's New section and list each delta, or "
         f"write `effective_law_changes: []` with a `law_changes_checked` record naming the section read")
-    pack = load_state_knowledge(path.parent.name, int(path.stem), base_dir=REPO / "knowledge")
+    # What load_state_knowledge returns, minus the path checks (a v2 mapping was validated by the projection above).
+    pack = StateKnowledge.model_validate(raw if v2 else {k: v for k, v in raw.items() if k != "schema_version"})
     checked = pack.law_changes_checked
     if not pack.effective_law_changes:
         assert checked is not None, f"{where}: an empty list must say which section was read (law_changes_checked)"
@@ -48,6 +53,14 @@ def test_every_ty2024_plus_state_pack_records_its_law_changes(path: Path):
         others = _urls({k: v for k, v in raw.items() if k != "law_changes_checked"})
         assert checked.citation.url in others, (
             f"{where}: law_changes_checked cites {checked.citation.url}, which the pack cites nowhere else")
+
+
+@pytest.mark.parametrize("path", PACKS, ids=lambda p: f"{p.parent.name}-{p.stem}")
+def test_every_ty2024_plus_state_pack_records_its_law_changes(path: Path):
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    check_law_changes_recorded(raw, path.parent.name, int(path.stem))
+    # The shipped pack also loads through the real loader (path checks included).
+    load_state_knowledge(path.parent.name, int(path.stem), base_dir=REPO / "knowledge")
 
 
 def test_law_changes_checked_is_a_typed_record():

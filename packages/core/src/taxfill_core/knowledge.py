@@ -30,7 +30,7 @@ from typing import Literal
 from urllib.parse import urlparse
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator, model_validator
 
 from taxfill_core.datadir import DATA_DIR_ENV, display_path, knowledge_dir
 
@@ -2090,6 +2090,40 @@ _FORM_LINE_VALUE_RE = re.compile(r"^[0-9A-Za-z]{1,6}$")
 _LINE_SOURCE_RE = re.compile(r"^(final|draft Created \d{1,2}/\d{1,2}/\d{2})$")
 _ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
+# Phase K JK24 (2026-10-24): the quote discipline FormLineEntry.printed started (the face's own text, short, showing
+# the designator) is shared with the state schema v2 Quote (taxfill_core.knowledge_v2), so one rule governs every
+# verbatim span a pack stores. ADR-0001: "New text is a verbatim quote with a source ref, or a pointer".
+QUOTE_MAX_CHARS = 400
+
+
+def check_quote_text(value: str, *, what: str = "quote") -> str:
+    """A verbatim span as a pack may store it: non-empty, no edge whitespace, at most QUOTE_MAX_CHARS characters.
+
+    A longer span is a copy of the document, not a quote: quote the operative sentence and point at the rest
+    (a source ref with a page or section pinpoint).
+    """
+    if not value or not value.strip():
+        raise ValueError(f"{what} must not be empty: copy the source's own words, or drop the {what} and keep the pointer")
+    if value != value.strip():
+        raise ValueError(f"{what} must not start or end with whitespace: copy the span exactly, trimmed, got {value[:40]!r}")
+    if len(value) > QUOTE_MAX_CHARS:
+        raise ValueError(
+            f"{what} is {len(value)} characters; a quote holds at most {QUOTE_MAX_CHARS}: quote the operative "
+            f"sentence and point at the rest with the source ref's pinpoint (page, section or line)"
+        )
+    return value
+
+
+def check_printed_designator(line: str, printed: str | None, *, what: str = "printed") -> None:
+    """``line`` is a bare printed designator ('8', '25c', 'V') and ``printed`` quotes the face showing it."""
+    if not _FORM_LINE_VALUE_RE.fullmatch(line):
+        raise ValueError(
+            f"line must be the bare printed designator ('8z', '25c', 'V'), got {line!r} — the "
+            f"words 'line' / 'Part' belong to the rendering text, not the value"
+        )
+    if not printed or not re.search(rf"(?<![0-9A-Za-z]){re.escape(line)}(?![0-9A-Za-z])", printed):
+        raise ValueError(f"{what} must quote the face's text at line {line!r} and show that designator — got {printed!r}")
+
 
 class FormLineEntry(BaseModel):
     """One printed line (or Part) designator, read off one year's form face.
@@ -2128,6 +2162,11 @@ class FormLineEntry(BaseModel):
     def _url_is_gov(cls, value: str) -> str:
         return validate_gov_url(value)
 
+    @field_validator("printed")
+    @classmethod
+    def _printed_is_a_quote(cls, value: str | None) -> str | None:
+        return None if value is None else check_quote_text(value, what="printed")
+
     @field_validator("line_source")
     @classmethod
     def _check_line_source(cls, value: str) -> str:
@@ -2153,18 +2192,7 @@ class FormLineEntry(BaseModel):
                 "form or line does not exist this year) — never both, never neither"
             )
         if self.line is not None:
-            if not _FORM_LINE_VALUE_RE.fullmatch(self.line):
-                raise ValueError(
-                    f"line must be the bare printed designator ('8z', '25c', 'V'), got {self.line!r} — the "
-                    f"words 'line' / 'Part' belong to the rendering text, not the value"
-                )
-            if not self.printed or not re.search(
-                rf"(?<![0-9A-Za-z]){re.escape(self.line)}(?![0-9A-Za-z])", self.printed
-            ):
-                raise ValueError(
-                    f"printed must quote the face's text at line {self.line!r} and show that designator — "
-                    f"got {self.printed!r}"
-                )
+            check_printed_designator(self.line, self.printed)
         draft_url = "/pub/irs-dft/" in self.url
         if self.is_draft != draft_url:
             raise ValueError(
@@ -3417,48 +3445,55 @@ class StateKnowledge(BaseModel):
         "inline citations; the source registry is built from it when present. Empty on TY2023 / TY2024 packs.",
     )
 
+    # Phase K JK24 (2026-10-24): a schema v2 pack loads as this v1 projection (what today's consumers read); the
+    # validated v2 model it was built from rides here, None for a v1 pack. See :attr:`schema_v2`.
+    _v2: object | None = PrivateAttr(default=None)
+
+    @property
+    def schema_v2(self):
+        """The :class:`taxfill_core.knowledge_v2.StateKnowledgeV2` this pack was projected from, or None (a v1 pack)."""
+        return self._v2
+
     @model_validator(mode="after")
     def _sources_rows_are_unique(self) -> StateKnowledge:
-        seen_ids: set[str] = set()
-        seen_pairs: set[tuple[str, str]] = set()
-        for row in self.sources:
-            if row.id in seen_ids:
-                raise ValueError(f"sources: id {row.id!r} is used twice; give each row its own id")
-            if (row.topic, row.url) in seen_pairs:
-                raise ValueError(
-                    f"sources: ({row.topic}, {row.url}) has two rows; merge their descriptions into one row"
-                )
-            seen_ids.add(row.id)
-            seen_pairs.add((row.topic, row.url))
+        check_sources_rows(self.sources)
         return self
 
     @field_validator("jurisdiction")
     @classmethod
     def _check_state_jurisdiction(cls, value: str) -> str:
-        if not value.startswith("states/") or not _JURISDICTION_RE.fullmatch(value):
-            raise ValueError(
-                f"state knowledge jurisdiction must be 'states/<two-letter lowercase code>' (e.g. 'states/ca'), got {value!r}"
-            )
-        return value
+        return check_state_jurisdiction(value)
 
 
-def load_state_knowledge(
-    state: str,
-    year: int,
-    base_dir: str | Path | None = None,
-) -> StateKnowledge:
-    """Load ``<base_dir>/states/<state>/<year>.yaml`` as a :class:`StateKnowledge`.
+def check_sources_rows(rows: list[StateSourceEntry]) -> None:
+    """A ``sources`` table names each row once: no id twice, no (topic, url) twice (v1 and v2 packs)."""
+    seen_ids: set[str] = set()
+    seen_pairs: set[tuple[str, str]] = set()
+    for row in rows:
+        if row.id in seen_ids:
+            raise ValueError(f"sources: id {row.id!r} is used twice; give each row its own id")
+        if (row.topic, row.url) in seen_pairs:
+            raise ValueError(f"sources: ({row.topic}, {row.url}) has two rows; merge their descriptions into one row")
+        seen_ids.add(row.id)
+        seen_pairs.add((row.topic, row.url))
 
-    Args:
-        state: two-letter lowercase code, e.g. ``'ca'``.
-        year: tax year.
-        base_dir: defaults to the repo's ``knowledge/`` directory.
 
-    Raises:
-        ValueError: bad state code or a pack whose declared jurisdiction/year
-            disagrees with its path.
-        FileNotFoundError: no pack for that state/year (lists the freshness path).
-    """
+def check_state_jurisdiction(value: str) -> str:
+    if not value.startswith("states/") or not _JURISDICTION_RE.fullmatch(value):
+        raise ValueError(
+            f"state knowledge jurisdiction must be 'states/<two-letter lowercase code>' (e.g. 'states/ca'), got {value!r}"
+        )
+    return value
+
+
+# Phase K JK24 (2026-10-24): the state knowledge schema versions. A pack without ``schema_version`` (or with 1) is v1;
+# 2 is the pointer-first v2 shape (taxfill_core.knowledge_v2). TY2023 and TY2024 are frozen in v1 and never migrate.
+STATE_SCHEMA_VERSIONS = (1, 2)
+STATE_V2_FIRST_TAX_YEAR = 2025
+
+
+def _read_state_pack(state: str, year: int, base_dir: str | Path | None) -> tuple[dict, int, str]:
+    """The pack's raw mapping, its schema version and its display path (shared by both loaders)."""
     state = state.lower()
     if not re.fullmatch(r"[a-z]{2}", state):
         raise ValueError(f"state must be a two-letter lowercase code (e.g. 'ca'), got {state!r}")
@@ -3470,16 +3505,90 @@ def load_state_knowledge(
             f"State packs ship per dev plan section 6 (CA first); resolve any figure from the state DOR "
             f"(.gov) and cite it — never invent a state rule or amount."
         )
+    shown = display_path(path, base)
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
-        raise ValueError(f"{display_path(path, base)}: a state knowledge pack must be a YAML mapping, got {type(raw).__name__}")
-    pack = StateKnowledge.model_validate(raw)
+        raise ValueError(f"{shown}: a state knowledge pack must be a YAML mapping, got {type(raw).__name__}")
+    version = raw.get("schema_version", 1)
+    # bool is an int subclass: `schema_version: true` must not read as version 1
+    if type(version) is not int or version not in STATE_SCHEMA_VERSIONS:
+        raise ValueError(
+            f"{shown}: schema_version {version!r} is not a state knowledge schema this engine reads — write "
+            f"`schema_version: 2` for the pointer-first shape (taxfill_core.knowledge_v2, TY{STATE_V2_FIRST_TAX_YEAR}+), "
+            f"or leave the key out for v1"
+        )
+    if version == 2 and year < STATE_V2_FIRST_TAX_YEAR:
+        raise ValueError(
+            f"{shown}: TY{year} state packs are frozen in schema v1 (Phase K: TY2023 and TY2024 never migrate), so "
+            f"schema_version 2 is refused here — remove `schema_version` and write the v1 shape, or put v2 content "
+            f"in a TY{STATE_V2_FIRST_TAX_YEAR}+ pack"
+        )
+    return raw, version, shown
+
+
+def _check_pack_path(pack, state: str, year: int, shown: str) -> None:
     if pack.jurisdiction != f"states/{state}" or pack.tax_year != year:
         raise ValueError(
-            f"{display_path(path, base)}: file declares jurisdiction '{pack.jurisdiction}', tax_year {pack.tax_year} but was loaded "
+            f"{shown}: file declares jurisdiction '{pack.jurisdiction}', tax_year {pack.tax_year} but was loaded "
             f"as state '{state}', year {year} — fix the file or move it to knowledge/states/{state}/{year}.yaml"
         )
+
+
+def load_state_knowledge(
+    state: str,
+    year: int,
+    base_dir: str | Path | None = None,
+) -> StateKnowledge:
+    """Load ``<base_dir>/states/<state>/<year>.yaml`` as a :class:`StateKnowledge`.
+
+    Dual-version (Phase K JK24): a v1 pack (no ``schema_version``, or 1) validates as :class:`StateKnowledge`
+    directly; a v2 pack (``schema_version: 2``) validates as
+    :class:`taxfill_core.knowledge_v2.StateKnowledgeV2` and is returned as its v1 projection, the
+    StateKnowledge every consumer reads today, with the v2 model on ``.schema_v2``. Use
+    :func:`load_state_knowledge_v2` to read the v2 model itself.
+
+    Args:
+        state: two-letter lowercase code, e.g. ``'ca'``.
+        year: tax year.
+        base_dir: defaults to the repo's ``knowledge/`` directory.
+
+    Raises:
+        ValueError: bad state code, a pack whose declared jurisdiction/year disagrees with its path, an
+            unknown ``schema_version``, or ``schema_version: 2`` on a frozen TY2023/TY2024 pack.
+        FileNotFoundError: no pack for that state/year (lists the freshness path).
+    """
+    state = state.lower()
+    raw, version, shown = _read_state_pack(state, year, base_dir)
+    if version == 2:
+        from taxfill_core.knowledge_v2 import StateKnowledgeV2  # knowledge_v2 imports this module
+
+        v2 = StateKnowledgeV2.model_validate(raw)
+        _check_pack_path(v2, state, year, shown)
+        return v2.to_v1()
+    raw.pop("schema_version", None)
+    pack = StateKnowledge.model_validate(raw)
+    _check_pack_path(pack, state, year, shown)
     return pack
+
+
+def load_state_knowledge_v2(state: str, year: int, base_dir: str | Path | None = None):
+    """Load a ``schema_version: 2`` state pack as :class:`taxfill_core.knowledge_v2.StateKnowledgeV2` (Phase K JK24).
+
+    For consumers written against v2. A v1 pack is refused with the way forward: today's consumers read every pack
+    through :func:`load_state_knowledge`, and JK26 migrates TY2025 to v2.
+    """
+    state = state.lower()
+    raw, version, shown = _read_state_pack(state, year, base_dir)
+    if version != 2:
+        raise ValueError(
+            f"{shown}: a schema v1 state pack — read it with load_state_knowledge (TY2025 migrates to v2 in "
+            f"Phase K JK26; TY2023 and TY2024 stay v1)"
+        )
+    from taxfill_core.knowledge_v2 import StateKnowledgeV2
+
+    v2 = StateKnowledgeV2.model_validate(raw)
+    _check_pack_path(v2, state, year, shown)
+    return v2
 
 
 # ── Treaty knowledge (Phase G item G1) ────────────────────────────────────────

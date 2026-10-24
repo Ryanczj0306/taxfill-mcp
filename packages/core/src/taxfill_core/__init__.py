@@ -127,6 +127,7 @@ from taxfill_core.knowledge import (
     TreatyKnowledge,
     load_knowledge,
     load_state_knowledge,
+    load_state_knowledge_v2,
     load_treaty,
 )
 from taxfill_core.render import RenderedPage, render_pdf
@@ -293,6 +294,7 @@ __all__ = [
     "load_knowledge",
     "load_pack",
     "load_state_knowledge",
+    "load_state_knowledge_v2",
     "load_treaty",
     "presence_days",
     "presence_days_by_year",

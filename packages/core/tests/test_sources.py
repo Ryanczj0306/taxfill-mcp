@@ -870,16 +870,46 @@ def _state_pack_years():
     )
 
 
+def own_gov_urls_of(raw):
+    """(the v1 view of a raw state pack mapping, the .gov URLs it cites as its own)."""
+    from taxfill_core.knowledge_v2 import SCHEMA_VERSION, v1_mapping
+    from taxfill_core.state_sources import is_gov, walk_citations
+
+    table = set()
+    if raw.get("schema_version") == SCHEMA_VERSION:
+        # Phase K JK24 (2026-10-24) fix round 2: a v2 pack's `sources` table is its own citation list by
+        # construction. v2 drops all_citations and the unverified items on purpose, so rows that backed only those
+        # have no SourceRef pointing at them, and the projection's walk below never prints them.
+        table = {row["url"].strip() for row in raw.get("sources") or [] if is_gov(row["url"].strip())}
+    # Phase K JK24 (2026-10-24): a schema v2 pack cites by `sources` row reference; walk its v1 projection, whose
+    # citations are those references printed (a v1 mapping passes through unchanged).
+    raw = v1_mapping(raw)
+    return raw, table | {c["url"].strip() for _, c in walk_citations(raw) if is_gov(c["url"].strip())}
+
+
 def _own_gov_urls(st, year):
     import yaml
 
-    from taxfill_core.state_sources import is_gov, walk_citations
+    return own_gov_urls_of(
+        yaml.safe_load((_repo_root() / "knowledge" / "states" / st / f"{year}.yaml").read_text(encoding="utf-8"))
+    )
 
-    raw = yaml.safe_load((_repo_root() / "knowledge" / "states" / st / f"{year}.yaml").read_text(encoding="utf-8"))
-    return raw, {c["url"].strip() for _, c in walk_citations(raw) if is_gov(c["url"].strip())}
+
+def check_own_packs_sources(raw, st, year, block, note):
+    """The per-pack body of test_every_state_year_gets_its_own_packs_sources: ``block`` (and ``note``) are what
+    get_sources hands ``st``/``year``; every URL in it must be the pack's own, and the primary authority leads the
+    change channels. Raises AssertionError naming the drift."""
+    raw, own = own_gov_urls_of(raw)
+    urls = {e["url"] for entries in (block.get("by_topic") or {}).values() for e in entries}
+    primary = (raw.get("citation") or {}).get("url", "").strip()
+    channel = block["change_channels"][0]["url"]
+    assert urls and urls <= own and note is None and (primary not in own or channel == primary), (
+        st, year, sorted(urls - own)[:2], note, channel)
 
 
 def test_every_state_year_gets_its_own_packs_sources():
+    import yaml
+
     from taxfill_core.sources import _jurisdiction_block, _load_registry
 
     base = _repo_root() / "knowledge"
@@ -887,12 +917,11 @@ def test_every_state_year_gets_its_own_packs_sources():
     wrong = []
     for st, year in _state_pack_years():
         block, note = _jurisdiction_block(registry, f"states/{st}", year, base)
-        raw, own = _own_gov_urls(st, year)
-        urls = {e["url"] for entries in (block.get("by_topic") or {}).values() for e in entries}
-        primary = (raw.get("citation") or {}).get("url", "").strip()
-        channel = block["change_channels"][0]["url"]
-        if not urls or not urls <= own or note is not None or (primary in own and channel != primary):
-            wrong.append((st, year, sorted(urls - own)[:2], note, channel))
+        raw = yaml.safe_load((base / "states" / st / f"{year}.yaml").read_text(encoding="utf-8"))
+        try:
+            check_own_packs_sources(raw, st, year, block, note)
+        except AssertionError as exc:
+            wrong.append(exc.args[0] if exc.args else (st, year))
     assert not wrong, wrong[:5]
 
 

@@ -26,6 +26,7 @@ import yaml
 from pydantic import ValidationError
 
 from taxfill_core.knowledge import StateKnowledge, load_state_knowledge
+from taxfill_core.knowledge_v2 import SCHEMA_VERSION, StateKnowledgeV2, v1_mapping
 from taxfill_core.state_sources import (
     ANSWERS_SEPARATOR,
     BLOCK_TO_TOPIC,
@@ -120,9 +121,13 @@ def test_ty2023_and_ty2024_packs_stay_frozen_without_a_table():
     assert not have, have
 
 
-@pytest.mark.parametrize("st,year", TABLE_PACKS, ids=[f"{st}-{year}" for st, year in TABLE_PACKS])
-def test_the_sources_table_and_the_inline_citations_agree(st: str, year: int):
-    raw = _raw(st, year)
+def check_table_agrees(raw: dict, st: str, year: int) -> None:
+    """The per-pack body of test_the_sources_table_and_the_inline_citations_agree over a raw pack mapping."""
+    if raw.get("schema_version") == SCHEMA_VERSION:
+        # Phase K JK24 (2026-10-24): a schema v2 pack has no inline citations to agree with: it cites by reference,
+        # and StateKnowledgeV2 refuses a reference that names no row or a description the row does not have.
+        StateKnowledgeV2.model_validate(raw)
+        return
     table = raw["sources"]
     rows = {(row["topic"], row["url"]): row for row in table}
     # Every inline .gov citation is in the table: same topic and url, its text among the descriptions.
@@ -155,8 +160,18 @@ def test_the_sources_table_and_the_inline_citations_agree(st: str, year: int):
 
 
 @pytest.mark.parametrize("st,year", TABLE_PACKS, ids=[f"{st}-{year}" for st, year in TABLE_PACKS])
-def test_the_block_built_from_the_table_equals_the_walked_block(st: str, year: int):
-    raw = _raw(st, year)
+def test_the_sources_table_and_the_inline_citations_agree(st: str, year: int):
+    check_table_agrees(_raw(st, year), st, year)
+
+
+def check_table_parity(raw: dict, st: str, year: int) -> None:
+    """The per-pack body of test_the_block_built_from_the_table_equals_the_walked_block over a raw pack mapping."""
+    if raw.get("schema_version") == SCHEMA_VERSION:
+        # Phase K JK24 (2026-10-24): nothing to walk in a schema v2 pack (references, not inline citations); its
+        # registry block is built from the table, the same as its v1 projection's.
+        for newest in (True, False):
+            assert state_block(st, year, raw, newest=newest) == state_block(st, year, v1_mapping(raw), newest=newest)
+        return
     walked = {k: v for k, v in raw.items() if k != "sources"}
     hoisted = hoist_sources(walked)
     if any(s == st and year == JK22_DROPPED_YEAR for s, _ in JK22_DROPPED):
@@ -175,6 +190,11 @@ def test_the_block_built_from_the_table_equals_the_walked_block(st: str, year: i
         assert yaml.safe_dump(from_table, sort_keys=False) == yaml.safe_dump(from_walk, sort_keys=False)
     # And the table's rows are exactly what the walk hoists (order, topics, urls, descriptions).
     assert [{k: v for k, v in row.items() if k != "id"} for row in raw["sources"]] == hoisted
+
+
+@pytest.mark.parametrize("st,year", TABLE_PACKS, ids=[f"{st}-{year}" for st, year in TABLE_PACKS])
+def test_the_block_built_from_the_table_equals_the_walked_block(st: str, year: int):
+    check_table_parity(_raw(st, year), st, year)
 
 
 @pytest.mark.parametrize("st,year", TABLE_PACKS, ids=[f"{st}-{year}" for st, year in TABLE_PACKS])

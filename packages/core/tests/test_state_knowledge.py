@@ -128,24 +128,16 @@ def _iter_citation_shaped(node, path: str = "$", parent_key: str | None = None):
             yield from _iter_citation_shaped(item, f"{path}[{i}]", parent_key)
 
 
-@pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
-def test_every_citation_shaped_mapping_validates_as_a_citation(code: str, year: int):
-    # Not just credits[].citation: EVERY citation-shaped block (deadlines, all_citations,
-    # residency, mailing, ...). StateKnowledge uses extra='allow', so these untyped blocks are
-    # never validated at load, yet file_and_pay and filing_summary build Citation(**block) from
-    # mailing_addresses and deadlines at call time. JK27 (2026-10-16): this test used to check
-    # the url HOST only, and allow-listed New Mexico's AWS document-API host — a host the
-    # Citation model rejects. So nm/2025.yaml's mailing_addresses and deadlines citations passed
-    # here while filing_summary and file_and_pay raised a ValidationError on every NM 2025 return.
-    # Now each mapping must validate as the Citation model itself (government host, http(s),
-    # exactly source + url), with no allow-list. Service URLs (payment.web_pay_url, ...) are not
-    # citations and are not walked.
-    import yaml
+def check_citation_shaped_mappings(raw: dict, code: str, year: int) -> None:
+    """The per-pack body of test_every_citation_shaped_mapping_validates_as_a_citation over a raw pack mapping."""
     from pydantic import ValidationError
 
     from taxfill_core.knowledge import Citation
+    from taxfill_core.knowledge_v2 import v1_mapping
 
-    raw = yaml.safe_load((REPO_ROOT / "knowledge" / "states" / code / f"{year}.yaml").read_text(encoding="utf-8"))
+    # Phase K JK24 (2026-10-24): a schema v2 pack cites by `sources` row reference, so walk the v1 projection the
+    # consumers read (each reference printed as the Citation it stands for); a v1 mapping passes through unchanged.
+    raw = v1_mapping(raw)
     found, rejected = 0, []
     for path, mapping in _iter_citation_shaped(raw):
         found += 1
@@ -158,6 +150,25 @@ def test_every_citation_shaped_mapping_validates_as_a_citation(code: str, year: 
         f"{code} {year}: citation-shaped mappings the Citation model rejects (cite an official government "
         f"page or PDF instead):\n" + "\n".join(rejected)
     )
+
+
+@pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)
+def test_every_citation_shaped_mapping_validates_as_a_citation(code: str, year: int):
+    # Not just credits[].citation: EVERY citation-shaped block (deadlines, all_citations,
+    # residency, mailing, ...). StateKnowledge uses extra='allow', so these untyped blocks are
+    # never validated at load, yet file_and_pay and filing_summary build Citation(**block) from
+    # mailing_addresses and deadlines at call time. JK27 (2026-10-16): this test used to check
+    # the url HOST only, and allow-listed New Mexico's AWS document-API host — a host the
+    # Citation model rejects. So nm/2025.yaml's mailing_addresses and deadlines citations passed
+    # here while filing_summary and file_and_pay raised a ValidationError on every NM 2025 return.
+    # Now each mapping must validate as the Citation model itself (government host, http(s),
+    # exactly source + url), with no allow-list. Service URLs (payment.web_pay_url, ...) are not
+    # citations and are not walked. The body is check_citation_shaped_mappings (Phase K JK24: the v2 fixtures run
+    # it too, test_state_knowledge_v2.py).
+    import yaml
+
+    raw = yaml.safe_load((REPO_ROOT / "knowledge" / "states" / code / f"{year}.yaml").read_text(encoding="utf-8"))
+    check_citation_shaped_mappings(raw, code, year)
 
 
 @pytest.mark.parametrize("code,year", STATE_YEARS, ids=STATE_YEAR_IDS)

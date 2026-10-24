@@ -117,6 +117,9 @@ knowledge side (rates, credits, addresses, deadlines) needs its own two-pass
 verification: two independent official documents, or one document read twice by
 independent readers (DEV_PLAN §7). Record what would not verify in
 `unverified`.
+A TY2026+ state knowledge pack written in schema v2 records it in `gaps` instead
+(`about: unverified`). v2 is for TY2026+ packs; TY2023-2025 stay v1 until JK26. The
+shape is summarised in [CONTRIBUTING](../../.github/CONTRIBUTING.md#knowledge-packs-and-sources).
 
 ## Step 5 — golden test
 

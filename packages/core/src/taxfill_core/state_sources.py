@@ -154,6 +154,10 @@ def state_block(st: str, year: int, pack: dict, *, newest: bool) -> dict | None:
     ``newest`` picks the wording: the generated registry says the pack is the newest shipped one and that any NEWER
     year is re-resolved at the same URL family; a block for an older year says whose citations these are instead.
     """
+    if pack.get("schema_version") == 2:  # Phase K JK24 (2026-10-24): a v2 pack cites by reference; read its projection
+        from taxfill_core.knowledge_v2 import v1_mapping  # knowledge_v2 imports knowledge, which imports this module
+
+        pack = v1_mapping(pack)
     code = st.upper()
     if newest:
         cadence = (

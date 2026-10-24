@@ -123,6 +123,33 @@ Jurisdiction knowledge ships as data in `knowledge/`. Rules from
   disagree. TY2023 / TY2024 packs have no table. Then regenerate
   `knowledge/sources_states.yaml` and check `test_state_source_routes.py`: a longer
   description can move where `get_sources` routes a query.
+- **State knowledge schema v2 is for TY2026+ packs; TY2023-2025 stay v1 until JK26.**
+  A pack that starts with `schema_version: 2` is the pointer-first shape
+  (`taxfill_core/knowledge_v2.py`, whose docstring is the design). It cites by
+  reference, never inline: a `SourceRef` is `{id, description, pinpoint}`, a `sources`
+  row id, which of that row's descriptions it uses, and an optional page or section.
+  New text is a `Quote` (`{quote, ref}`, verbatim, at most 400 characters) or a pointer.
+  The treaty note and a credit's eligibility are quotes. A tax caveat is a quote or, for
+  something the calc does not compute, `{not_modeled, ref}` (printed "Not modeled: ...",
+  at most 200 characters, no figure: no dollar amount or percentage in signs or words
+  ("$300", "USD 300", "300 dollars", "80%", "80 percent"), no separated number, decimal
+  or bare number of four or more digits; a designator such as "Line 15b", "Form 8949" or
+  "IT-201" is fine). The pack's own prose, `{text}`,
+  is refused from TY2026: only a TY2025 conversion carries it, capped at 2,400
+  characters and owned up to in a `gaps` entry with `about: migration`. Credits are
+  `refundable` or `nonrefundable`, and `law_changes` needs `changes` or `checked`.
+  A `SourceRef`'s description is an index, so append to a row's descriptions and
+  never insert or reorder them. The blocks are
+  typed and closed: `treaty`, `base_line` (the quoted line the computation starts from),
+  `tax` (the v1 figures, with `caveats` in place of `notes`), `credits` (pointers, no
+  amounts), `law_changes`, `convenience_rule`, `forms`, `logistics` (mailing, deadlines,
+  payment, amended return), `gaps` (what the pack knowingly does not cover) and
+  `sources`. `load_state_knowledge` reads both versions. It hands today's tools a v2
+  pack as its v1 projection, which is why a v2 pack must give the same tool output as
+  the v1 data it replaces. `load_state_knowledge_v2` returns the v2 model. v2 is refused
+  for TY2023 and TY2024, which stay frozen in v1. `scripts/convert_state_pack_v2.py`
+  converts a TY2025 v1 pack, and `test_state_knowledge_v2.py` holds four such
+  conversions to the JK21 goldens byte for byte.
 - **Never hardcode numbers that lack final IRS guidance.** When a law is enacted but
   the IRS has not published final caps/phase-outs/form lines, the pack stores the
   *lookup path* (which source answers it), not a guessed number. Agents resolve it
