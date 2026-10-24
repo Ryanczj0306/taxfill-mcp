@@ -46,6 +46,12 @@ Usage:
     python scripts/scaffold_state_year.py --base newest --target-year 2025 --triage \\
         --rows scripts/state_discovery_rows.json
     python scripts/scaffold_state_year.py --base newest --target-year 2025 --triage --offline
+    python scripts/scaffold_state_year.py --base newest --target-year 2026 --probe --tier1 \\
+        --out scripts/worklists/tier1_ty2026_<date>.json
+
+Phase K JK9 (2026-10-24) added ``--tier1 [PATH]``: only the tier-1 states of ``scripts/tier1_states.yaml`` (the
+income-tax jurisdictions ranked by IRS SOI return count, cut to 12). JS7a's TY2026 sprint and JK8's state-blank watch
+work from that list; dated work-lists go in ``scripts/worklists/``.
 """
 from __future__ import annotations
 
@@ -64,6 +70,7 @@ import yaml
 REPO = Path(__file__).resolve().parents[1]
 STATES = REPO / "formpacks" / "states"
 DEFAULT_ROWS = REPO / "scripts" / "state_discovery_rows.json"
+DEFAULT_TIER1 = REPO / "scripts" / "tier1_states.yaml"
 
 # A revision DATE in a basename: MMDDYY / MMDDYYYY / MM-DD-YYYY (DC 01222024, 011525; ID 08-23-2023). Month and day
 # are range-checked so a form number next to a year (SC1040_2023) is not mistaken for one.
@@ -237,13 +244,29 @@ def load_rows(path: Path | None) -> dict[tuple[str, str, int], dict]:
     return {(r["state"], r["form_dir"], int(r["year"])): r for r in rows}
 
 
+def load_tier1(path: Path = DEFAULT_TIER1) -> list[str]:
+    """The tier-1 state codes (lower case, in rank order) from the JK9 triage table; refuses a table whose tier-1 rows
+    are not the top ``cut.size`` of its ranking, since the filter would then silently drop or add a state."""
+    table = yaml.safe_load(path.read_text(encoding="utf-8"))
+    tier1 = [r["state"] for r in table["tier1"]]
+    ranked = [r["state"] for r in table["ranking"]][: table["cut"]["size"]]
+    if tier1 != ranked:
+        raise SystemExit(f"{path}: tier1 rows {tier1} are not the top {table['cut']['size']} of the ranking {ranked}; "
+                         f"fix the table (packages/core/tests/test_tier1_states.py says where) before filtering on it")
+    return [s.lower() for s in tier1]
+
+
 def scaffold(target_year: int, base: str, *, rows_path: Path | None = None, probe: bool = False, triage: bool = False,
-             offline: bool = False, cache_dir: Path | None = None, states_dir: Path = STATES) -> list[dict]:
+             offline: bool = False, cache_dir: Path | None = None, states_dir: Path = STATES,
+             states: set[str] | None = None) -> list[dict]:
+    """``states`` (lower-case codes) limits the work-list to those states; None means every state."""
     cache_dir = cache_dir or (REPO / ".cache" / "triage-blanks")
     rows = load_rows(rows_path)
     out = []
     for base_year, pack_path in base_packs(target_year, base, states_dir):
         state, form = pack_path.parts[-4], pack_path.parts[-2]
+        if states is not None and state not in states:
+            continue
         raw = yaml.safe_load(pack_path.read_text(encoding="utf-8")) or {}
         url = raw.get("source_url") or ""
         row = {"state": state, "form": form, "kind": pack_path.name, "base_year": base_year, "base_url": url}
@@ -297,13 +320,16 @@ def main() -> int:
     ap.add_argument("--offline", action="store_true", help="never touch the network: triage only cached blanks")
     ap.add_argument("--cache-dir", type=Path, default=None, help="where --triage looks for and stores blanks")
     ap.add_argument("--out", type=Path, default=None, help="work-list JSON path (default: stdout summary only)")
+    ap.add_argument("--tier1", type=Path, nargs="?", const=DEFAULT_TIER1, default=None,
+                    help=f"only the tier-1 states of the JK9 triage table (default {DEFAULT_TIER1.relative_to(REPO)})")
     args = ap.parse_args()
     base = args.base or (str(args.base_year) if args.base_year else None)
     if base is None:
         ap.error("pass --base <year|newest> (or --base-year <year>)")
 
+    states = set(load_tier1(args.tier1)) if args.tier1 else None
     rows = scaffold(args.target_year, base, rows_path=args.rows, probe=args.probe, triage=args.triage,
-                    offline=args.offline, cache_dir=args.cache_dir)
+                    offline=args.offline, cache_dir=args.cache_dir, states=states)
     n_shipped = sum(1 for r in rows if r["status"].startswith("shipped"))
     n_candidates = sum(1 for r in rows if r["candidate_url"])
     n_blocked = len(rows) - n_candidates - n_shipped
@@ -328,8 +354,11 @@ def main() -> int:
         print("  PORTABLE/NEAR-PORT = the cheap path (swap URL+digest, then STILL vision-audit every "
               "page: identical field NAMES do not prove the state kept its line NUMBERING).")
     if args.out:
-        args.out.write_text(json.dumps({"base": base, "target_year": args.target_year, "packs": rows}, indent=2),
-                            encoding="utf-8")
+        listing = {"base": base, "target_year": args.target_year, "packs": rows}
+        if states is not None:
+            listing["tier1"] = load_tier1(args.tier1)
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(listing, indent=2) + "\n", encoding="utf-8")
         print(f"work-list written to {args.out}")
     return 0
 

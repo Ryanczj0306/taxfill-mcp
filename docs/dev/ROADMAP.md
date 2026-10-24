@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**13,379 tests** — offline 10,749 + live-.gov 2630; derived
+Done and on `main` (**13,436 tests** — offline 10,806 + live-.gov 2630; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -232,7 +232,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 16 | JK22 Drop never-read TY2025 blocks (zero-output) | M | JK20, JK21 | — | **done 2026-10-24** |
 | 17 | JK16 Pack-less fill | L | JK14, JK15 | — | 2026-11-23 |
 | 18 | JK8 Watch coverage | M | JK2, JK9 (state rows) | — | 2026-11-23 |
-| 19 | JK9 Tier-1 state triage table | S–M | JK0 | IRS SOI state data | 2026-11-16 |
+| 19 | JK9 Tier-1 state triage table | S–M | JK0 | IRS SOI state data | **done 2026-10-24** |
 | 20 | JK10 Label-adjacency guard (base pack + every port) | M | — | — | 2026-11-30 |
 | 21 | JEe Text width vs widget padding | M | JK0 | the user: RI DOB choice | 2026-11-30 |
 | 22 | JK17 Pack-less verify + grade label | M | JK16 | — | 2026-11-30 |
@@ -343,16 +343,11 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
   - Watch by name: the irs-dft f1040nrn/f1040nro drafts (JT5g's trigger, still dated 2025-05-13 on 2026-10-09); the 2027 inflation Rev. Proc.; the five non-draft 2026 packs (f1040es, f8316, f843, f8833, fw7).
   - Add a state-blank watch for the JK9 tier-1 list (JS7a's trigger).
   - **Acceptance:** a dry run lists every new target. A planted 200 opens the issue. The cron covers October to 03-15. A manual check is booked for 2027-03-15.
-- [ ] **JK9 — Tier-1 state triage table (replaces JS7's "re-triage every state")** (S–M; deps JK0; latest start 2026-11-16, so JK8's state rows are live by 11-23; external: IRS SOI state data)
-  - Rank income-tax states by individual-return count from a cited IRS SOI table (the user's criterion: high volume). Pick about 12. The plans proposed CA, NY, IL, PA, OH, MI, GA, NC, NJ, VA, MA; the table decides.
-  - **Recommendation for the user to accept or reject** (not part of the 2026-10-09 decision): weight the ranking toward where nonresident-alien students cluster. Without the user's yes, the ranking is volume only.
-  - Per state, record:
-    - the resident form;
-    - the NR/PY form;
-    - the amend route (a checkbox on the same form, or a separate X form such as IT-201-X or IL-1040-X);
-    - whether the 2025 pack maps the amended checkbox (MO's `amendedTXT` is unmapped, JEa).
-  - Pre-scaffold each state from its newest base (`--base newest`).
-  - **Acceptance:** the table is committed with its volume citation, and the scaffolds are staged.
+- [x] **JK9 — Tier-1 state triage table — DONE 2026-10-24** (S–M; deps JK0) — scripts/tier1_states.yaml ranks the 42 income-tax jurisdictions by number of individual returns from IRS SOI Historic Table 2, tax year 2023 (https://www.irs.gov/pub/irs-soi/23in55cmcsv.csv, column N1 at AGI_STUB 0, fetched twice; the newest year on the index page on 2026-10-24). Tier 1 is the top 12, volume only, 62.1% of the returns from income-tax jurisdictions: **CA, NY, PA, IL, OH, NC, GA, MI, NJ, VA, MA, AZ** (the plans' eleven plus AZ; IN, MD and CO follow closely, so 12 is the roadmap's "about 12", not a natural break).
+  - Per tier-1 state the table records the resident and NR/PY forms, the NR/PY packs a port can start from, the amend route quoted from each state's 2025 instructions (same form with an indicator: CA, PA, OH, NC, MI, VA, MA; a separate X form: NY IT-201-X / IT-203-X, IL-1040-X, GA 500X, NJ-1040X, AZ 140X), and which line of each 2025 pack maps the amended indicator. test_tier1_states.py holds every claim to the packs' line keys, so a re-map cannot leave the table stale.
+  - `scaffold_state_year.py --tier1` filters to the table (it refuses a table whose tier-1 rows are not the top of the ranking); the TY2026 work-list is staged at scripts/worklists/tier1_ty2026_2026-10-24.json (18 forms: 15 answer 404 until the 2026 blanks post, MA 403, IL and NJ carry no year token).
+  - **Pending, the user's call (KG9):** the recommendation to weight the ranking toward where nonresident-alien students cluster is recorded as `recommendation.status: pending` and not applied; accepting it needs .gov student counts (e.g. ICE SEVIS by the Numbers), fetched and cited.
+  - **For JS7a / JK8:** AZ's NR/PY lineage is the 2023 140NR / 140PY packs only (no 2024/2025 port), while JS7a's box names only CA 540NR and NY IT-203; OH's CHK_AMD carries the ReadOnly flag on the 2025 blank (mapped on purpose) and needs re-checking on the 2026 blank; JK8's watch must tell MA's 403 from "not posted" and read IL's and NJ's rotating URLs by content.
 - [ ] **JK10 — Label-adjacency guard on the base pack and every port** (M; latest start 2026-11-30)
   - The real failures are in the **base** pack, not in a widget that moved between years: the ME 1040ME 2023 widget names are rotated against their printed captions and the 2024 and 2025 blanks carry the same names on the same rows (measured by the ME 1040ME 2024 port's verifier, 2026-10-04); AL Form 40 2023's keys were one number high and the relations matched (docs/dev/ROADMAP.md:2391, P-031). A name or /Rect diff between years reports these as unchanged and carries the mis-bind forward; today's triage diffs names only (scripts/scaffold_state_year.py:170-177).
   - Primary check: for every mapped widget, read the printed line number beside it and require it to equal the pack's line key. Generalise the existing per-form tests (packages/core/tests/test_al40_line_designators.py, P-031; the ME test from JK0a, P-032) into one gate. Run it on the base pack and on every port.

@@ -48,6 +48,24 @@ its line numbering — a form that renumbered lines while keeping positional fie
 names (`f1_12[0]`) will fill the wrong lines and only the render catches it.
 Open an issue naming the row(s) you are taking.
 
+**Which states get a new-year pack.** From TY2026 only the tier-1 states in
+[`scripts/tier1_states.yaml`](../../scripts/tier1_states.yaml) get one (JS7a);
+every other state goes through the no-pack fallback until someone needs it.
+That table ranks the income-tax states by IRS SOI return count and records each
+tier-1 state's resident and NR/PY forms, how it amends (a box on the same
+return, or a separate X form) and the line its last pack maps the amended box
+to. `--tier1` limits the work-list to those states:
+
+```bash
+python scripts/scaffold_state_year.py --base newest --target-year 2026 --probe --tier1 \
+    --out scripts/worklists/tier1_ty2026_<date>.json
+```
+
+The 2026-10-24 run is committed as `scripts/worklists/tier1_ty2026_2026-10-24.json`,
+taken before the 2026 blanks posted, so most rows are 404s; re-run it with
+`--triage` when they post. A port to a state that amends on the same return
+maps the amended box, and its row in the table is updated when the pack ships.
+
 ## Step 1 — fetch the blank, pin the digest
 
 ```bash

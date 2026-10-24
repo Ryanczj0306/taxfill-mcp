@@ -1,0 +1,330 @@
+# Tier-1 state triage table (Phase K JK9, 2026-10-24).
+#
+# The income-tax jurisdictions (41 states + DC) ranked by the number of individual income tax returns in the newest
+# IRS SOI state table, cut to the 12 largest. JS7a builds the TY2026 state packs for the tier-1 states only (every
+# other state goes through the no-pack fallback, JS7b), and JK8's state-blank watch reads this list. It replaces JS7's
+# "re-triage every state".
+#
+# Why here and not under knowledge/: this is maintainer planning data read by maintainer scripts
+# (`scaffold_state_year.py --tier1`, JK8's watch), not tax knowledge served at run time; knowledge/ is staged into the
+# wheel and gated as runtime data. It sits beside state_discovery_rows.json, the other year-tranche input.
+# packages/core/tests/test_tier1_states.py keeps it honest: it loads, the ranking is sorted and complete, the cut is
+# the stated rule, the forms agree with each state's 2025 knowledge, and every amended-indicator claim matches the
+# 2025 pack's line keys.
+#
+# Refresh: when SOI posts a newer Historic Table 2 year, download its state CSV twice, re-rank, update `volume`,
+# `ranking` and the cut, and re-check each tier-1 row. JS7a updates a row's TY2026 status as its pack ships.
+schema: 1
+as_of: "2026-10-24"
+target_year: 2026
+
+volume:
+  title: "SOI Tax Stats - Historic Table 2: Individual income and tax data, by state and size of adjusted gross income, Tax year 2023 (.csv file)"
+  index_url: https://www.irs.gov/statistics/soi-tax-stats-historic-table-2
+  url: https://www.irs.gov/pub/irs-soi/23in55cmcsv.csv
+  sha256: d1f7c8901fcefb2c46f5dd14f22715b7c8513794ce7b9ea6a6a947f1c548668f   # two fetches 2026-10-24, identical
+  table_year: 2023            # the newest year on the index page on 2026-10-24
+  column: N1                  # "Number of returns"
+  row_filter: "AGI_STUB = 0 (no AGI stub: every AGI class)"
+  documentation:
+    url: https://www.irs.gov/pub/irs-soi/23incmdocguide.doc
+    sha256: 942790690b0027b465019ec5d3f5d8f23124882ab85535f06129f74c12021206   # two fetches 2026-10-24, identical
+    variables:                # the guide's file-characteristics table, verbatim
+      STATE: "The state associated with the return"
+      AGI_STUB: "Size of adjusted gross income; 0 = No AGI Stub"
+      N1: "Number of returns [3]"
+    quotes:
+      - "[3] \"Number,\" here, and elsewhere represents number of returns, unless otherwise specified. The number of returns have been rounded to the nearest 10."
+      - "The Statistics of Income (SOI) Division’s state data is tabulated using individual income tax returns (Forms 1040) filed with the Internal Revenue Service (IRS) during the 12-month period, January 1, 2024 to December 31, 2024."
+  caveat: >-
+    A federal return is counted under "the state associated with the return" (the guide's words; its section C warns
+    that the address on a return may differ from the taxpayer's actual residence), so the count approximates
+    resident volume. It does not count nonresident state filers, and federal Form 1040-NR filers are not in a
+    Form 1040 tabulation at all.
+
+# Rows of the SOI file that are not ranked: the nine states with no broad personal income tax
+# (knowledge/states/no_income_tax.yaml) and the US total, other areas (OA) and Puerto Rico.
+excluded_no_income_tax: [AK, FL, NH, NV, SD, TN, TX, WA, WY]
+excluded_other_rows: [US, OA, PR]
+
+cut:
+  size: 12
+  rule: "rank <= 12: the twelve income-tax jurisdictions with the most returns (N1), no other weighting"
+  why: >-
+    The roadmap asked for about 12. The twelve largest cover 62.1% of the returns filed from income-tax jurisdictions
+    (76,838,680 of 123,721,710), and they are the eleven states the plans proposed plus AZ (rank 12, 3,391,030). Below
+    the cut the counts run close together (IN 3,241,920, MD 3,100,200, CO 3,086,830), so any cut between 11 and 16
+    is a judgement call; twelve is the size asked for.
+  income_tax_returns_total: 123721710
+  tier1_returns_total: 76838680
+
+# Every income-tax jurisdiction, by N1 (AGI_STUB 0), descending.
+ranking:
+  - {rank: 1, state: CA, returns: 18482300}
+  - {rank: 2, state: NY, returns: 9789330}
+  - {rank: 3, state: PA, returns: 6301140}
+  - {rank: 4, state: IL, returns: 6100250}
+  - {rank: 5, state: OH, returns: 5678870}
+  - {rank: 6, state: NC, returns: 4923710}
+  - {rank: 7, state: GA, returns: 4881840}
+  - {rank: 8, state: MI, returns: 4872330}
+  - {rank: 9, state: NJ, returns: 4654080}
+  - {rank: 10, state: VA, returns: 4168070}
+  - {rank: 11, state: MA, returns: 3595730}
+  - {rank: 12, state: AZ, returns: 3391030}
+  - {rank: 13, state: IN, returns: 3241920}
+  - {rank: 14, state: MD, returns: 3100200}
+  - {rank: 15, state: CO, returns: 3086830}
+  - {rank: 16, state: WI, returns: 2944630}
+  - {rank: 17, state: MN, returns: 2902640}
+  - {rank: 18, state: MO, returns: 2870290}
+  - {rank: 19, state: SC, returns: 2487890}
+  - {rank: 20, state: AL, returns: 2140840}
+  - {rank: 21, state: OR, returns: 2067600}
+  - {rank: 22, state: KY, returns: 1980840}
+  - {rank: 23, state: LA, returns: 1932540}
+  - {rank: 24, state: CT, returns: 1822410}
+  - {rank: 25, state: OK, returns: 1702930}
+  - {rank: 26, state: UT, returns: 1542530}
+  - {rank: 27, state: IA, returns: 1482000}
+  - {rank: 28, state: KS, returns: 1366100}
+  - {rank: 29, state: AR, returns: 1292190}
+  - {rank: 30, state: MS, returns: 1229590}
+  - {rank: 31, state: NM, returns: 980620}
+  - {rank: 32, state: NE, returns: 951450}
+  - {rank: 33, state: ID, returns: 884660}
+  - {rank: 34, state: WV, returns: 777490}
+  - {rank: 35, state: ME, returns: 712110}
+  - {rank: 36, state: HI, returns: 695470}
+  - {rank: 37, state: RI, returns: 570860}
+  - {rank: 38, state: MT, returns: 553910}
+  - {rank: 39, state: DE, returns: 507390}
+  - {rank: 40, state: ND, returns: 371320}
+  - {rank: 41, state: DC, returns: 348640}
+  - {rank: 42, state: VT, returns: 335140}
+
+# One row per tier-1 state, in rank order.
+#   resident_form / nrpy_forms: form ids, each found verbatim in knowledge/states/<st>/2025.yaml forms.resident /
+#     forms.part_year_or_nonresident (the test checks).
+#   nrpy_lineage: the newest shipped pack of each NR/PY-only form (any year): the lineage JS7a ports a tier-1 NR/PY
+#     pack from; [] = no NR/PY pack exists (the NR/PY filer uses the resident pack's form, or no pack was ever built).
+#   amend: how the 2025 resident return is amended, from the state's 2025 instructions (quote, url, printed page).
+#     route same_form_indicator = file a new copy of the same return with its amended box or oval filled (plus the
+#     named explanation schedule); separate_x_form = a different return (IT-201-X, IL-1040-X, ...).
+#   packs: each 2025 return pack of the state and the amended indicator it maps: {line, field} (the line key and the
+#     blank's widget), or null where the blank has no amended indicator. `not_the_indicator` names a mapped line that
+#     mentions "amend" but is not the return's indicator. The test reads the pack and fails on any drift.
+#   schedules: any other pack of the state (a schedule filed with the return). Every form the state ships a pack for
+#     is named in packs, nrpy_lineage or schedules, so a new pack shows up here (the test checks).
+tier1:
+  - state: CA
+    resident_form: "540"
+    nrpy_forms: ["540NR"]
+    nrpy_lineage: [ca/2025/form540nr, ca/2025/sched_ca_540nr]
+    amend:
+      route: same_form_indicator
+      form: "Form 540 with its AMENDED box checked, plus Schedule X"
+      quote: "If you need to amend your California resident income tax return, complete an amended Form 540 and check the box at the top of Form 540 indicating AMENDED return. Attach Schedule X, California Explanation of Amended Return Changes, to the amended Form 540."
+      url: https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf
+      page: "Personal Income Tax Booklet 2025, page 11"
+      sha256: b48ee24bd2f9b9e74fe9a5bbc548d15bae0bd1ce53306bef1ff33fc76f8078c1
+    nrpy_amend:
+      route: same_form_indicator
+      form: "Form 540NR with its AMENDED box checked, plus Schedule X"
+      quote: "If you need to amend your Form 540NR, complete an amended Form 540NR and check the box at the top of Form 540NR indicating AMENDED return. Attach Schedule X, California Explanation of Amended Return Changes, to the amended Form 540NR."
+      url: https://www.ftb.ca.gov/forms/2025/2025-540nr-booklet.pdf
+      page: "540NR Tax Booklet 2025, page 11"
+      sha256: 47104d74d7bb4783a8c507243fa4c91ffb31104c51c75bd24ad4d77b853e0e60
+    packs:
+      - {pack: ca/2025/form540, amended_indicator: {line: amended_return, field: "540_form_1001 CB"}}
+      - {pack: ca/2025/form540nr, amended_indicator: {line: amended, field: "540NR_form_1001 CB"}}
+    schedules: [ca/2025/sched_ca_540]   # a resident schedule pack: no amended indicator of its own
+
+  - state: NY
+    resident_form: "IT-201"
+    nrpy_forms: ["IT-203"]
+    nrpy_lineage: [ny/2025/it203]
+    amend:
+      route: separate_x_form
+      form: "Form IT-201-X"
+      quote: "Use Form IT-201-X if your original return was Form IT-201."
+      url: https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf
+      page: "IT-201-I (2025), page 32 of 41"
+      sha256: 29489d6eed7529bc1388e57a5bf0814e6e6d94d02288c5c83a377d21e3773f72
+    nrpy_amend:
+      route: separate_x_form
+      form: "Form IT-203-X"
+      quote: "Use Form IT-203-X if your original return was Form IT-203."
+      url: https://www.tax.ny.gov/pdf/2025/inc/it203i_2025.pdf
+      page: "IT-203-I (2025), page 39 of 47"
+      sha256: 1620acdbcc5260521ff259494d5bce314f0d0a9783c3ad797b676f02485a6384
+    packs:
+      - {pack: ny/2025/it201, amended_indicator: null}
+      - {pack: ny/2025/it203, amended_indicator: null}
+
+  - state: PA
+    resident_form: "PA-40"
+    nrpy_forms: ["PA-40"]          # one return for every residency status (residency oval R / N / P)
+    nrpy_lineage: []
+    amend:
+      route: same_form_indicator
+      form: "PA-40 with its Amended Return oval filled, plus Schedule PA-40 X"
+      quote: "If you realize you made a mistake on your 2025 PA tax return, you must correct your return by filing a separate 2025 PA-40 return, marking the Amended Return oval on the return and completing and submitting Schedule PA-40 X for the tax year being amended with your amended return."
+      url: https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf
+      page: "2025 PA-40 instructions, page 41"
+      sha256: e8996504a4302a65055e697ba6301a3e41a411a4802645a5fc5f653f7538c172
+    packs:
+      - {pack: pa/2025/pa40, amended_indicator: {line: amended_return, field: "Amended Return"}}
+
+  - state: IL
+    resident_form: "IL-1040"
+    nrpy_forms: ["IL-1040", "Schedule NR"]
+    nrpy_lineage: []
+    amend:
+      route: separate_x_form
+      form: "Form IL-1040-X"
+      quote: "Do not file another Form IL-1040 to make changes to a previously filed Form IL-1040. You must file Form IL-1040-X, Amended Individual Income Tax Return, if"
+      url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf
+      page: "2025 IL-1040 instructions, page 5"
+      sha256: e888e819a62d34fba51dae317960c9bb5e12889d21d153ac78ab6bd67646d35a
+    packs:
+      - {pack: il/2025/il1040, amended_indicator: null}
+
+  - state: OH
+    resident_form: "IT 1040"
+    nrpy_forms: ["IT 1040", "IT NRC"]
+    nrpy_lineage: []
+    amend:
+      route: same_form_indicator
+      form: "IT 1040 with its amended box checked, plus the IT RE"
+      quote: "To amend the Ohio IT 1040 or SD 100, you should file a new return, reflecting all proposed changes, and indicate that it is amended by checking the box at the top of page 1. You must include the IT RE with your amended IT 1040"
+      url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf
+      page: "2025 Ohio IT 1040 / SD 100 instructions, page 8"
+      sha256: 931b21e7484ba96e561cf2346d8a7d2a8005bd990724b5903c9a90acede5f50e
+    packs:
+      # CHK_AMD carries ReadOnly on the 2025 blank; the pack maps it anyway (its header, class 4).
+      - {pack: oh/2025/it1040_oh, amended_indicator: {line: amended_return, field: CHK_AMD}}
+
+  - state: NC
+    resident_form: "D-400"
+    nrpy_forms: ["D-400", "Schedule PN"]
+    nrpy_lineage: []
+    amend:
+      route: same_form_indicator
+      form: "D-400 with its Amended Return circle filled, plus D-400 Schedule AM"
+      quote: "Form D-400 Schedule AM, North Carolina Amended Schedule. Complete this form if you need to amend your North Carolina individual income tax return. Enter the calendar year or other tax period (beginning and end dates) to be amended at the top of Form D-400 Schedule AM. You must also fill in the circle on the top right hand corner of Form D-400."
+      url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+      page: "2025 D-401, page 7"
+      sha256: ceaade9246b24d4f7e504919fafd74787ebec17db6d6bbcf1c954f71cfdc185b
+    packs:
+      - {pack: nc/2025/d400, amended_indicator: {line: amended_return, field: y_d400wf_amendedreturn}}
+
+  - state: GA
+    resident_form: "Form 500"
+    nrpy_forms: ["Form 500", "Schedule 3"]
+    nrpy_lineage: []
+    amend:
+      route: separate_x_form
+      form: "Form 500X (knowledge/states/ga/2025.yaml amended_return)"
+      quote: "Amended Returns. File Form 500X to correct information reported on Form 500. Do not use Form 500 to correct a previously filed return or use Form 500X as an original return."
+      url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+      page: "2025 IT-511 Instructions Booklet, page 10"
+      sha256: ae43633e68ca423609607b0f93b1ebcd6056bce06ffb91829c448292e48a693f
+    packs:
+      - pack: ga/2025/ga500
+        amended_indicator: null
+        not_the_indicator:
+          voucher.amended_return: "the 525-TV payment voucher's Amended Return box, printed on the same blank; it marks a payment sent with a 500X, not the return"
+
+  - state: MI
+    resident_form: "MI-1040"
+    nrpy_forms: ["MI-1040", "Schedule NR"]
+    nrpy_lineage: []
+    amend:
+      route: same_form_indicator
+      form: "MI-1040 with its Amended Return box checked, plus Schedule AMD"
+      quote: "If you need to make a correction to your return, file a new complete MI-1040. Check the Amended Return box at the top of page 1 of the form, and file the Schedule AMD and all applicable schedules and supporting documentation to amend your return."
+      url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+      page: "2025 MI-1040 instruction book, page 8"
+      sha256: 35b38086176f867d1365e20f4f31a40b9b85ef68befb3e44d6021eb4502f66cd
+    packs:
+      - pack: mi/2025/mi1040
+        amended_indicator: {line: amended_return, field: "Amended Return Checkbox"}
+        not_the_indicator:
+          33a_amended_refund: "line 33a, the refund-received box of the amended-return adjustment on line 33c"
+          33b_amended_tax: "line 33b, the tax-paid box of the amended-return adjustment on line 33c"
+
+  - state: NJ
+    resident_form: "NJ-1040"
+    nrpy_forms: ["NJ-1040", "NJ-1040NR"]
+    nrpy_lineage: []
+    amend:
+      route: separate_x_form
+      form: "Form NJ-1040X"
+      quote: "If you filed your original return and need to make changes or correct mistakes, you must file an amended return (NJ-1040X). Do not refile Form NJ-1040."
+      url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
+      page: "2025 NJ-1040 instructions, printed page 49 (PDF page 51)"
+      sha256: fe7977419b70d0c3dcc392c328adc5f58f3b99937e0d2f79aecf6ac368872c31
+    packs:
+      - {pack: nj/2025/nj1040, amended_indicator: null}
+
+  - state: VA
+    resident_form: "Form 760"
+    nrpy_forms: ["Form 763", "Form 760PY"]
+    nrpy_lineage: []
+    amend:
+      route: same_form_indicator
+      form: "Form 760 with its amended return oval filled and a reason code"
+      quote: "If you are filing an amended return, fill in the amended return oval. In addition, enter the appropriate amended return reason code (see below) in the space provided."
+      url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+      page: "2025 Form 760 instructions, printed page 5 (PDF page 11)"
+      sha256: d557ee51d6e1e572d3db05624d2882db0093b6f85ef1075140754a845653ec18
+    packs:
+      - {pack: va/2025/va760, amended_indicator: {line: "amended_return::on", field: "Amended Return"}}
+
+  - state: MA
+    resident_form: "Form 1"
+    nrpy_forms: ["Form 1-NR/PY"]
+    nrpy_lineage: []
+    amend:
+      route: same_form_indicator
+      form: "Form 1 with its Amended return oval filled"
+      quote: "complete a new return with the corrected information and fill in the Amended return oval."
+      url: https://www.mass.gov/doc/2025-form-1-instructions/download
+      # mass.gov answers 403 to scripted fetches; the bytes were read from the Wayback capture of that URL.
+      mirror_url: https://web.archive.org/web/20260925234039id_/https://www.mass.gov/doc/2025-form-1-instructions/download
+      page: "2025 Form 1 Instructions, page 7"
+      sha256: f99acc9db3a4c83da890b7e2a26fd310f1a0ec6fa9e2744e4f975e32f64dd2cd
+    packs:
+      - pack: ma/2025/form1
+        amended_indicator: {line: amended_return, field: "Amended return"}
+        not_the_indicator:
+          federal_amendment: "the Federal amendment oval, filled together with the Amended return oval"
+          amended_return_bba: "the Amended return due to IRS BBA Partnership Audit oval"
+
+  - state: AZ
+    resident_form: "Form 140"
+    nrpy_forms: ["Form 140NR", "Form 140PY"]
+    nrpy_lineage: [az/2023/az140nr, az/2023/az140py]     # 2023 only: no 2024/2025 port, so JS7a ports from 2023
+    amend:
+      route: separate_x_form
+      form: "Form 140X"
+      quote: "If you need to make changes to your return after you have filed, do not file a new return using Form 140. You must file Arizona Form 140X, Individual Amended Income Tax Return."
+      url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
+      page: "2025 Arizona Form 140 instructions, page 3"
+      sha256: fc5de97b82a807ea89296e4512985ff0a5b01bc9253682a3022c59d810fdfa04
+    packs:
+      - {pack: az/2025/az140, amended_indicator: null}
+
+# PENDING — not applied. The ranking above is volume only (the user's criterion, 2026-10-09).
+recommendation:
+  status: pending            # the user accepts or rejects; until then nothing below changes the cut
+  proposal: >-
+    Weight the ranking toward the states where nonresident-alien students cluster: taxfill's distinctive users file a
+    federal 1040-NR, and the SOI count above (Form 1040 returns by filer address) cannot see them. If accepted, the
+    second signal would be a cited .gov count of F-1/J-1 students by state (ICE's SEVIS by the Numbers, state table),
+    downloaded twice like the volume table; a state above the cut on that signal but below it on volume would join
+    tier 1 (the cut grows, no volume state is dropped).
+  not_done: >-
+    No student-count figures are recorded here: none was fetched and verified for JK9, and the brief keeps the
+    ranking volume-only without the user's yes.

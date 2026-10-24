@@ -1,0 +1,200 @@
+{
+  "base": "newest",
+  "target_year": 2026,
+  "packs": [
+    {
+      "state": "az",
+      "form": "az140",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf",
+      "candidate_url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2026_140_f.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "az",
+      "form": "az140nr",
+      "kind": "pack.yaml",
+      "base_year": 2023,
+      "base_url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140NR_f.pdf",
+      "candidate_url": "https://azdor.gov/sites/default/files/2026-12/FORMS_INDIVIDUAL_2026_140NR_f.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "az",
+      "form": "az140py",
+      "kind": "pack.yaml",
+      "base_year": 2023,
+      "base_url": "https://azdor.gov/sites/default/files/2023-12/FORMS_INDIVIDUAL_2023_140PY_f.pdf",
+      "candidate_url": "https://azdor.gov/sites/default/files/2026-12/FORMS_INDIVIDUAL_2026_140PY_f.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "ca",
+      "form": "form540",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.ftb.ca.gov/forms/2025/2025-540.pdf",
+      "candidate_url": "https://www.ftb.ca.gov/forms/2026/2026-540.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "ca",
+      "form": "form540nr",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf",
+      "candidate_url": "https://www.ftb.ca.gov/forms/2026/2026-540nr.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "ca",
+      "form": "sched_ca_540",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf",
+      "candidate_url": "https://www.ftb.ca.gov/forms/2026/2026-540-ca.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "ca",
+      "form": "sched_ca_540nr",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.ftb.ca.gov/forms/2025/2025-540nr-ca.pdf",
+      "candidate_url": "https://www.ftb.ca.gov/forms/2026/2026-540nr-ca.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "ga",
+      "form": "ga500",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://apps.dor.ga.gov/FillableForms/webpdf/examples/2025GA500.pdf",
+      "candidate_url": "https://apps.dor.ga.gov/FillableForms/webpdf/examples/2026GA500.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "il",
+      "form": "il1040",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040.pdf",
+      "candidate_url": "",
+      "source": "derived",
+      "status": "no-year-token"
+    },
+    {
+      "state": "ma",
+      "form": "form1",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.mass.gov/doc/2025-form-1-massachusetts-resident-income-tax-return/download",
+      "candidate_url": "https://www.mass.gov/doc/2026-form-1-massachusetts-resident-income-tax-return/download",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 403: Forbidden)"
+    },
+    {
+      "state": "mi",
+      "form": "mi1040",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040.pdf?rev=c1d9fa606c614f799b4aa38843fa87f4&hash=CFBA1487FAEED3EF2D548B7E52D889BA",
+      "candidate_url": "https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2026/MI-1040.pdf?rev=c1d9fa606c614f799b4aa38843fa87f4&hash=CFBA1487FAEED3EF2D548B7E52D889BA",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "nc",
+      "form": "d400",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.ncdor.gov/2025-d-400-web-filled-version/open",
+      "candidate_url": "https://www.ncdor.gov/2026-d-400-web-filled-version/open",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "nj",
+      "form": "nj1040",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.nj.gov/treasury/taxation/pdf/current/1040.pdf",
+      "candidate_url": "",
+      "source": "derived",
+      "status": "no-year-token"
+    },
+    {
+      "state": "ny",
+      "form": "it201",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.tax.ny.gov/pdf/2025/inc/it201_2025_fill_in.pdf",
+      "candidate_url": "https://www.tax.ny.gov/pdf/2026/inc/it201_2026_fill_in.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "ny",
+      "form": "it203",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.tax.ny.gov/pdf/2025/inc/it203_2025_fill_in.pdf",
+      "candidate_url": "https://www.tax.ny.gov/pdf/2026/inc/it203_2026_fill_in.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "oh",
+      "form": "it1040_oh",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/1040-bundle-original-fi.pdf",
+      "candidate_url": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2026/1040-bundle-original-fi.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "pa",
+      "form": "pa40",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40.pdf",
+      "candidate_url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2026/2026_pa-40.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    },
+    {
+      "state": "va",
+      "form": "va760",
+      "kind": "pack.yaml",
+      "base_year": 2025,
+      "base_url": "https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/760-2025.pdf",
+      "candidate_url": "https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2026/760-2026.pdf",
+      "source": "derived",
+      "status": "unreachable (HTTPError: HTTP Error 404: Not Found)"
+    }
+  ],
+  "tier1": [
+    "ca",
+    "ny",
+    "pa",
+    "il",
+    "oh",
+    "nc",
+    "ga",
+    "mi",
+    "nj",
+    "va",
+    "ma",
+    "az"
+  ]
+}
