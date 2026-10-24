@@ -159,6 +159,22 @@ Jurisdiction knowledge ships as data in `knowledge/`. Rules from
   status that moves through `enacted` → `irs_guidance_pending` →
   `final_form_published`. Update the status (and only then any hardcoded numbers)
   as official guidance lands.
+- **A quote is checked against its source** (Phase K JK23). `scripts/check_quotes.py`
+  collects every quoted span ('...', "...", curly quotes) in the state packs' prose
+  (`tax.notes`, credit eligibility, the other prose fields), every federal `form_lines`
+  `printed` caption and every v2 `Quote`, reads each candidate source once (cached by
+  url + sha256) and reports each span VERBATIM, MISMATCH (with the closest source passage
+  and a class: wording, citation, punctuation, case) or UNCHECKED (with the reason: a host
+  that refuses scripts, a quarantined URL, a garbled text layer). The weekly freshness
+  workflow runs it in **report mode** (it never fails the job; the summary is in the run
+  and the JSON report is an artifact). When you write a quote, run it on your pack:
+  `uv run python scripts/check_quotes.py --pack knowledge/states/<st>/<year>.yaml`. **A MISMATCH is not fixed in place.** It goes to a
+  JK27-style fix tranche that follows JS2c's procedure (docs/dev/HISTORY.md, "JS2c"):
+  re-read the span at the pack's own cited source; restore the source's exact words (or
+  drop the quote marks where the text is the pack's own summary); fix the citation for a
+  `citation`-class span; record what the source prints in the commit; regenerate
+  `knowledge/sources_states.yaml` and the JK21 goldens if output moved. JK26 turns on
+  `--strict` (any MISMATCH fails) once the TY2025 packs are migrated.
 - Blogs and forum posts are never authority — at most a lead to a .gov citation.
 
 ## The pitfall rule (every bug fix)

@@ -8,6 +8,7 @@ Run them from the repo root with `uv run python scripts/<name>.py`. None is need
 | `sync_doc_counts.py` | Same for every other quoted number (tools, calc ops, document kinds, packs), and generates the tables in `docs/COVERAGE.md` and the next release's coverage lines in `docs/CHANGELOG.md` |
 | `sync_bundle_manifest.py` | Keeps the `.mcpb` bundle manifest's calc entry equal to the running server (a test checks the tool names) |
 | `check_drift.py` | Freshness check: re-fetches the official sources, blanks and addresses (the weekly freshness workflow) |
+| `check_quotes.py` | Quote-verbatim checker (Phase K JK23): every quoted span in the knowledge packs (state prose, federal `form_lines` captions, v2 `Quote`s) against its cited source text, fetched once and cached by url + sha256 (`.cache/quotes`; a URL in the blank cache is read from there). Reports VERBATIM / MISMATCH (closest passage, class) / UNCHECKED (reason); report mode exits 0 (the weekly freshness workflow), `--strict` exits 1 on a MISMATCH (JK26), `--json` writes the full report, `--offline` reads only the caches. Mismatches go to a JS2c-style fix tranche (`.github/CONTRIBUTING.md`) |
 | `freshness_quarantine.py` + `.yaml` | Known freshness reds behind an expiring allowlist, so only a NEW red fails |
 | `check_finals.py` | Watches for the IRS final revision of each form a draft pack mirrors |
 | `scaffold_state_year.py` | Starts a state form-pack year: derives and probes candidate blank-PDF URLs, triages each form against its base year |

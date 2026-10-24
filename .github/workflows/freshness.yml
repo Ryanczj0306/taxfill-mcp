@@ -92,6 +92,45 @@ jobs:
           path: .cache/blanks
           key: blanks-v1-${{ hashFiles('formpacks/**/pack.yaml') }}-${{ github.run_id }}
 
+  quotes:
+    # Phase K JK23: hold every quoted span in the knowledge packs to its source (scripts/check_quotes.py). REPORT mode:
+    # the script exits 0, and the step is continue-on-error too, so a quote mismatch or a .gov outage never reds the
+    # job or opens a freshness-red issue. The summary goes to the run page; the JSON report is an artifact. Mismatches go
+    # to a JS2c-style fix tranche (.github/CONTRIBUTING.md, "A quote is checked against its source"); JK26 adds --strict.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
+        with:
+          version: "0.13.0"
+          python-version: "3.11"
+      - name: Sync workspace
+        run: uv sync
+      - name: Restore the blank-PDF cache
+        # Read-only: a blank the network-tests job cached (a mass.gov PDF that refuses the runner) is read from there.
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: .cache/blanks
+          key: blanks-v1-${{ hashFiles('formpacks/**/pack.yaml') }}-${{ github.run_id }}
+          restore-keys: |
+            blanks-v1-${{ hashFiles('formpacks/**/pack.yaml') }}-
+            blanks-v1-
+      - name: Check quotes (report mode)
+        continue-on-error: true
+        run: |
+          uv run python scripts/check_quotes.py --json quote-report.json | tee quote-summary.txt
+          { echo '```'; cat quote-summary.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload the quote report
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: quote-report
+          path: |
+            quote-report.json
+            quote-summary.txt
+          if-no-files-found: ignore
+
   report:
     # JT0c: any red (a NEW failure, or an expired quarantine row) opens a `freshness red` issue, or
     # comments on the open one, so a red is a tracked item and not only a failure email.
