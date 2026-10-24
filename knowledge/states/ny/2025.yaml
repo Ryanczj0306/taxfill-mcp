@@ -498,3 +498,179 @@ effective_law_changes:
       the federal child tax credit, $1,000 per qualifying child under four / $330 per qualifying child age four to
       16, $16.50-per-$1,000 phase-down, $110,000/$75,000/$55,000 thresholds, line 6 round-down rule
     url: https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf
+  descriptions:
+  - Instructions for Form IT-201, Full-Year Resident Income Tax Return (2025), printer-friendly PDF (IT-201-I, 41
+    pages) - starting point (line 1 = federal 1040 line 1z; line 19 federal AGI), additions lines 20-23, Who must
+    file ($4,000 / $3,100 dependent-single), line 34 standard deduction table, line 36 dependent exemption ($1,000),
+    line 39 tax computation, p. 33 rate schedules, pp. 34-39 tax computation worksheets, due date April 15 2026
+  - Instructions for Form IT-201, Full-Year Resident Income Tax Return (2025), printer-friendly PDF (IT-201-I, 41
+    pages) - PASS 1 for every engine figure. p. 11 New York State standard deduction table and Line 36 dependent
+    exemption ($1,000); p. 12 Line 39 tax computation gate and household credit tables 1-3; pp. 19-20 lines 63-68
+    credits; p. 32 "How to calculate your 2025 New York State tax" method table; p. 33 the three New York State
+    tax rate schedules; pp. 34-39 tax computation worksheets 1-16; p. 41 When to file / Where to file; plus Who
+    must file ($4,000/$3,100) and the check-payee wording
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pdf/2025/inc/it203i_2025.pdf
+  descriptions:
+  - 'Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 (IT-203-I,
+    47 pages), ''How are you taxed as a nonresident or as a part-year resident?'' (p. 3): ''If you were a resident
+    of New York State for only part of the tax year, you must pay New York State tax on all income you received
+    while you were a resident of the state and on income you received from New York State sources while you were
+    a nonresident. To determine how much tax you owe, use Form IT-203, Nonresident and Part-Year Resident Income
+    Tax Return.'' — and ''New York State nonresidents and part-year residents: Who must file?'' (p. 3): ''You must
+    file Form IT-203 if you meet any of the following conditions'''
+  - 'Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 (IT-203-I,
+    47 pages), ''New York State nonresidents and part-year residents: Who must file?'' (p. 3): ''You must file Form
+    IT-203 if you meet any of the following conditions: • You have income from a New York State source (see Nonresidents:
+    New York source income) and your New York adjusted gross income (Federal amount column) is more than your New
+    York State standard deduction.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pdf/2025/inc/it203_2025_fill_in.pdf
+  descriptions:
+  - 'Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 — the 4-page return itself
+    (page 1: ''For the year January 1, 2025, through December 31, 2025'')'
+- id: credits-1
+  topic: credits
+  url: https://www.tax.ny.gov/pdf/2025/inc/it215_2025_fill_in.pdf
+  descriptions:
+  - 2025 Form IT-215, Claim for Earned Income Credit (line 11 "NYS EIC rate 30% (.30)", line 18); 2025 IT-201-I
+    Line 65 (including the "write EIC in the box" IRS-computed-credit path and the 21-days / April 15, 2026 bill
+    wording)
+- id: credits-2
+  topic: credits
+  url: https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm
+  descriptions:
+  - NY Dept. of Taxation and Finance - 2025 Instructions for Form IT-213 (IT-213-I), "New for 2025" and "Credit
+    Calculation" ($1,000 per qualifying child under four / $330 per qualifying child age four to 16; $16.50-per-$1,000
+    phase-down; $110,000/$75,000/$55,000 thresholds; line 6 round-down rule), updated December 10, 2025; 2025 IT-201-I
+    Line 63
+- id: credits-3
+  topic: credits
+  url: https://www.tax.ny.gov/pdf/2025/inc/it214_2025_fill_in.pdf
+  descriptions:
+  - 2025 Form IT-214 (line 3 $85,000 property-value gate, line 8 $18,000 household-gross-income limit, lines 11/13
+    rent computation and $450 limit, credit limit chart $375/$150 and $75/$50) and the 2025 IT-214-I instructions;
+    2025 IT-201-I Line 67
+- id: credits-4
+  topic: credits
+  url: https://www.tax.ny.gov/pdf/2025/inc/it216i_2025.pdf
+  descriptions:
+  - NY Dept. of Taxation and Finance - 2025 Form IT-216-I, Instructions for Form IT-216 (New York State child and
+    dependent care credit limitation table and the New York City child and dependent care credit limitation table,
+    p. 7 of 7)
+- id: credits-5
+  topic: credits
+  url: https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf
+  descriptions:
+  - Instructions for Form IT-201 (2025), Line 40 - New York State household credit tables 1, 2, and 3 (p. 12 of
+    the printer-friendly IT-201-I)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf
+  descriptions:
+  - Instructions for Form IT-201 (2025), "Where to file" (p. 41) - both PO Box addresses printed in the instructions
+    themselves; Publication 55 for designated private delivery services
+  - Instructions for Form IT-201 (2025), "When to file/Important dates" (p. 41) - April 15, 2026 filing/payment
+    date; IT-370 six-month extension to October 15, 2026; June 15, 2026 special federal-qualifier date; the four
+    2026 estimated-tax dates and the $300 threshold
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/forms/html-instructions/2025/it/it201i-2025.htm
+  descriptions:
+  - Instructions for Form IT-201 (2025), HTML edition - the independent SECOND-PASS source for the three rate schedules,
+    the standard deduction table, the $1,000 dependent exemption, and the line 39 / method-table wording; agrees
+    with the printer-friendly PDF on every bound, rate, and printed constant
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pdf/2025/inc/it201_2025_fill_in.pdf
+  descriptions:
+  - 2025 Form IT-201, Resident Income Tax Return (fill-in PDF) - page 2 lines 33-37 (New York adjusted gross income,
+    standard/itemized deduction, dependent exemption amount "multiply the number of dependents listed in item H
+    by 1,000", taxable income) and page 3 lines 38-39 "NYS tax on line 38 amount" (third-pass structure check)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pit/file/pit_definitions.htm
+  descriptions:
+  - Income tax definitions (resident, nonresident, part-year resident, domicile, statutory resident 184-day rule,
+    permanent place of abode, substantially all of the taxable year)
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/forms/html-instructions/2025/it/it225i-2025.htm
+  descriptions:
+  - Instructions for Form IT-225, New York State Modifications (2025) - addition modification chart (60 A-1xx plus
+    59 A-2xx codes), no treaty-exempt-income addback (the word 'treaty' appears zero times)
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm
+  descriptions:
+  - 2025 Instructions for Form IT-213, Claim for Empire State Child Credit - "New for 2025" DECOUPLING from the
+    federal child tax credit, $1,000 per qualifying child under four / $330 per qualifying child age four to 16,
+    $16.50-per-$1,000 phase-down, $110,000/$75,000/$55,000 thresholds, line 6 round-down rule
+- id: forms-9
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pdf/2025/inc/it215_2025_fill_in.pdf
+  descriptions:
+  - 2025 Form IT-215, Claim for Earned Income Credit (fill-in PDF) - line 11 'NYS EIC rate 30% (.30)', line 18 carried
+    to IT-201 line 65
+- id: forms-10
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pdf/2025/inc/it214_2025_fill_in.pdf
+  descriptions:
+  - 2025 Form IT-214, Claim for Real Property Tax Credit for Homeowners and Renters (fill-in PDF) - $85,000 property-value
+    gate, $18,000 household-gross-income limit, $450 average-monthly-rent limit, $375/$150 and $75/$50 credit limit
+    chart
+- id: forms-11
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pdf/2025/inc/it214i_2025.pdf
+  descriptions:
+  - 2025 Form IT-214-I, Instructions for Form IT-214 (Claim for Real Property Tax Credit for Homeowners and Renters)
+- id: forms-12
+  topic: forms_and_instructions
+  url: https://www.tax.ny.gov/pdf/2025/inc/it216i_2025.pdf
+  descriptions:
+  - 2025 Form IT-216-I, Instructions for Form IT-216 (Claim for Child and Dependent Care Credit) - New York State
+    child and dependent care credit limitation table (1.100 at NYAGI of $25,000 or less, 1.000 across $40,000-$50,000,
+    0.600 over $65,000 to $150,000, 0.200 over $150,000) and the New York City limitation table (0.750 down to 0.000
+    over $30,000)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf
+  descriptions:
+  - 'Instructions for Form IT-201, Full-Year Resident Income Tax Return, New York State, tax year 2025 (IT-201-I,
+    printer-friendly PDF, 41 pages) — p. 33 ''New York State tax rate schedule'' (Married filing jointly and qualifying
+    surviving spouse—filing status 2 and 5; Single and married filing separately—filing status 1 and 3; Head of
+    household—filing status 4), p. 11 ''New York State standard deduction table'' (Line 34) and ''Line 36: Dependent
+    exemption amount'' ($1,000 each), p. 12 ''Line 39 – New York State tax'', p. 32 ''How to calculate your 2025
+    New York State tax'' method table, and pp. 34-39 ''Tax computation—New York adjusted gross income of more than
+    $107,650'' (tax computation worksheets 1-16). Second pass: the 2025 IT-201-I HTML edition (https://www.tax.ny.gov/forms/html-instructions/2025/it/it201i-2025.htm)
+    reproduces the same three schedules, worksheets, standard deduction table, and $1,000 dependent exemption digit
+    for digit; the 2025 Form IT-201 fill-in PDF pages 2-3 confirm the line 33-39 structure.'
+- id: remote-1
+  topic: remote_work_sourcing
+  url: https://www.tax.ny.gov/pdf/memos/income/m06_5i.pdf
+  descriptions:
+  - TSB-M-06(5)I (NYS Dept. of Taxation and Finance, 2006-05-15), "New York Tax Treatment of Nonresidents and Part-Year
+    Residents — Application of the Convenience of the Employer Test to Telecommuters and Others", quoting 20 NYCRR
+    132.18(a) and setting the primary / secondary / other bona-fide-employer-office factor test.
+- id: law-1
+  topic: law_changes
+  url: https://www.tax.ny.gov/forms/html-instructions/2025/it/it213i-2025.htm
+  descriptions:
+  - 2025 Instructions for Form IT-213, Claim for Empire State Child Credit - "New for 2025" DECOUPLING from the
+    federal child tax credit, $1,000 per qualifying child under four / $330 per qualifying child age four to 16,
+    $16.50-per-$1,000 phase-down, $110,000/$75,000/$55,000 thresholds, line 6 round-down rule

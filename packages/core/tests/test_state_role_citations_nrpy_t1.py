@@ -17,6 +17,9 @@ were a nonresident." (NJ-1040 instructions p. 3; NJ-1040NR instructions p. 2).
 The same citations also feed the source registry (knowledge/sources_states.yaml, one description per URL and topic), so
 the last three tests hold that they only ADD registry entries, leave the queries they used to move where they were, and
 route a part-year or nonresident question to the role documents.
+
+Since Phase K JK20 (2026-10-24) the registry keeps every description of a (topic, url), the first one leading and
+the rest joined after it (test_state_sources_table.py); the paragraph above describes the registry as JK28 found it.
 """
 from __future__ import annotations
 
@@ -177,8 +180,12 @@ _NEIGHBOURS = {
     ("ga", "personal exemption"): {"forms_and_instructions", "tax_rates_and_brackets"},
     ("pa", "federal adjusted gross income"): {"forms_and_instructions"},
     ("pa", "amended return"): {"filing_logistics", "forms_and_instructions"},
-    ("nj", "filing status"): {"filing_logistics"},
-    ("nj", "filing threshold"): {"filing_logistics"},
+    # Phase K JK20 (2026-10-24): the registry now keeps every description of a URL, and the NJ-1040NR instructions'
+    # second and third ones quote "the filing threshold for your filing status" and "your filing status is: ...".
+    # filing_logistics reached these two questions on its topic name alone (its entries are the mailing address and
+    # the due date), so the documents that name them win.
+    ("nj", "filing status"): {"forms_and_instructions"},
+    ("nj", "filing threshold"): {"forms_and_instructions"},
 }
 
 

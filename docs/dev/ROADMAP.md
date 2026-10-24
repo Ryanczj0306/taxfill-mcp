@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**12,865 tests** — offline 10,262 + live-.gov 2603; derived
+Done and on `main` (**13,039 tests** — offline 10,436 + live-.gov 2603; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -227,7 +227,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 12 | JK14 Introspect + pack-less fetch | M | JK13 | — | 2026-11-09 |
 | 13 | JK15 Anchor + blind benchmark | L | JK14 | — | 2026-11-16 |
 | 14 | JK21 Golden-diff harness over every tool | M | — | — | **done 2026-10-15** |
-| 15 | JK20 Hoist citations into `sources` | M | JK0, JS2c (done), JK21 | — | 2026-11-09 |
+| 15 | JK20 Hoist citations into `sources` | M | JK0, JS2c (done), JK21 | — | **done 2026-10-24** |
 | 16 | JK22 Drop never-read TY2025 blocks (zero-output) | M | JK20, JK21 | — | 2026-11-16 (must land by 11-30) |
 | 17 | JK16 Pack-less fill | L | JK14, JK15 | — | 2026-11-23 |
 | 18 | JK8 Watch coverage | M | JK2, JK9 (state rows) | — | 2026-11-23 |
@@ -416,10 +416,12 @@ What the code reads: calc applies roughly 4% of state bytes and ~11% of federal 
   - Snapshot the output of every MCP tool that reads state knowledge (state_tax via calc.py, state_scope via statescope.py, file_and_pay, filing_summary, and get_sources through sources_states.yaml, sources.py:107-112) over every jurisdiction and year. The residency tool is not included: it calls `_classify` only (server.py:1041-1078) and residency.py reads no state knowledge.
   - Add the missing TY2025 pins now: the OH $342.00 / $2,394.32 discontinuity (knowledge/states/oh/2025.yaml:293-303; no test pins "342.00" today), AZ Line 49 and the IL IL-E/EIC caveats for 2025. The existing pins test TY2023 only (packages/core/tests/test_state_knowledge.py:411-414 asserts OH 2023's "360.69"; :298 is AZ 2023; :319-324 is IL 2023).
   - **Acceptance:** the harness runs in CI. It is the gate for JK20, JK22, JK24 and JK26.
-- [ ] **JK20 — Hoist citations into a `sources` table** (M; deps JK0, JS2c (done 2026-10-15), JK21; latest start 2026-11-09, after JK21's 11-05)
-  - The block builder (`taxfill_core.state_sources.state_block`, shared by scripts/assemble_state_sources.py and, since JK27, get_sources' per-year state blocks) reads `sources` ids, so a citation outlives the block that carried it. Regenerate sources_states.yaml.
-  - From JK27: when one URL is cited twice under one topic the builder keeps the first description and drops the rest (88 / 221 / 236 in the 2023 / 2024 / 2025 packs), so the registry loses verified `answers` text; JK27's own edits added instances (VA's Form 763 instructions lost their second-pass description to the 2026-10-16 `forms.citations` entry; the NM re-pointed citations, GA's amended_return citations and HI 2024's relabelled N-11 citations displaced older descriptions). Merge the descriptions here. It changes the routing text in many states, so add the neighbour-theft tests the knowledge-gap pattern calls for.
-  - **Acceptance:** the test_sources.py:330 byte-equality holds. get_sources' state coverage does not shrink. The JK21 diff is otherwise byte-identical.
+- [x] **JK20 — Hoist citations into a `sources` table — DONE 2026-10-24** (M; deps JK0, JS2c, JK21) — zero-output apart from get_sources, as K-K requires before 2026-12-01.
+  - **The table.** Every TY2025 state pack (42) carries a top-level `sources:` list, generated once by scripts/hoist_state_sources.py from the pack's own .gov citations: one row per (registry topic, url), `{id, topic, url, descriptions}`, every distinct inline description kept verbatim (519 rows). The inline citations stay, so no consumer changes; the 2023 and 2024 packs stay frozen and untouched. knowledge.StateSourceEntry refuses a duplicate id or (topic, url), an unknown topic, a non-.gov url and an empty description at load.
+  - **The builder.** state_sources.state_block reads the table when a pack has one and walks the inline citations otherwise. Both paths now MERGE the descriptions of one (topic, url), joined by " || " with the first description first; the registry used to keep the first and drop the rest (89 / 222 / 328 in the 2023 / 2024 / 2025 packs). Tests hold the table to the inline citations (every inline .gov citation is in it, every row is backed by one; JK22 relaxes the second half when it drops blocks) and the table's block to the walked block, byte for byte.
+  - **Routing.** A plain merge moved 360 of 2,646 routes (21 queries over every state-year), 74 of them to the wrong topic: the catch-all booklet topic out-counted the specific one, or a stray word of a joined description ("Who must file", "income earned while a resident") turned a clean miss into a false match. So get_sources' scorer reads a joined description only when ONE description names the whole query as a literal run of words, and scores the primary description otherwise (federal answers carry no separator, so federal routing is byte-identical). 105 routes still move, each to a topic whose own text names the query (most were clean misses: CA "due date" now reaches filing_logistics). packages/core/tests/goldens/state_source_routes.json pins every matched route, and 12 canonical routes are pinned with their reasons.
+  - **Goldens.** get_sources moved in 119 of the 127 JK21 files; every other section is byte-identical, and no (state, year, topic, url) left the registry. knowledge/sources_states.yaml is regenerated.
+  - **Left open:** the tables add about 470 KB to the TY2025 packs (every description copied verbatim), which JK22 and JK24's id references should take back; NY 2025 "where to file" now ties to the IT-201-I booklet entry (the same PDF) rather than filing_logistics; the literal rule does not match inflections ("Filing Due Dates", "PART-YEAR RESIDENTS") or abbreviations (Michigan's "EITC"); the JK28 NR/PY test modules' inner comments still describe the first-description-wins registry.
 - [ ] **JK22 — Drop never-read blocks from the TY2025 state packs** (M; deps JK20, JK21; latest start 2026-11-16, **must land by 2026-11-30**, else it resumes 2027-04-16)
   - Drop: residency, filing_requirement, starts_from, credit amounts/limits, and the TY2025 YAML header comments (~107 KB: 106,611 bytes of `^#` lines in knowledge/states/*/2025.yaml; 214 KB is the TY2023-2025 total; their provenance moves to git history). Only what the JK21 diff proves unread. Credit eligibility prose is read by state_scope (statescope.py:201-203), so it waits for JK26.
   - **Acceptance:** the JK21 diff is byte-identical, apart from get_sources, which must not shrink. The suite is green.

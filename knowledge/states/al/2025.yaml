@@ -476,3 +476,160 @@ effective_law_changes:
       p.8); Line 17 Figuring Your Tax tax-table mandate (p.10); Amount You Owe / Form 40V (p.11); Where To File (p.12);
       Tax Tables pp.25-30 and Over $100,000.00 worksheet (p.30)
     url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf
+  descriptions:
+  - 2025 Form 40 Booklet (Alabama Department of Revenue, Long Return — Residents and Part-Year Residents, Forms
+    and Instructions) — What's New For 2025 (p.2, credit/exclusion changes only); You Must File A Return If chart
+    (p.5); When To File / automatic extension to October 15, 2026 (p.5); Filing Status and Personal Exemption Lines
+    1-4 (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.10, Line 14 instructions begin p.8);
+    Line 17 Figuring Your Tax tax-table mandate (p.10); Amount You Owe / Form 40V (p.11); Where To File (p.12);
+    Tax Tables pp.25-30 and Over $100,000.00 worksheet (p.30)
+  - '2025 Alabama Form 40 Booklet (Long Return, Residents and Part-Year Residents, Forms and Instructions), ''Which
+    Form To File'' (p. 5): ''You MAY Use Form 40A If You Meet ALL The Following Conditions:'' — ''You were a resident
+    of Alabama for the entire year,'' — ''You MUST Use Form 40 If:'' — ''You were a full or part-year resident of
+    Alabama and do not meet ALL of the requirements to file Form 40A, and'' — ''You are itemizing deductions.''
+    — and ''You MUST Use Both Form 40 and Form 40NR If: You had sufficient income to require the filing of a part-year
+    return and also had income from Alabama sources while a nonresident during the same tax year.'''
+  - 2025 Form 40 Booklet (Alabama Department of Revenue) — What's New For 2025 (credit/exclusion changes only; no
+    rate, deduction, or exemption changes); You Must File A Return If chart p.5 ($4,500/$8,200/$11,500/$5,750);
+    When To File p.5 (federal due date, automatic extension to October 15, 2026); Filing Status/Personal Exemption
+    p.6 (box 1 $1,500, box 2 $3,000, box 3 $1,500, box 4 Head of Family); Standard Deduction chart p.9; dependent
+    exemption chart p.10 ($1,000/$500/$300 by AL AGI line 10); Line 17 tax-table mandate p.10; Amount You Owe /
+    Form 40V p.11; Where To File p.12; Tax Tables pp.25-30 with worked example ($23,360 MFJ -> $1,088) and last
+    row $99,900-$100,000 = $4,958/$4,918; Over $100,000.00 worksheet p.30 ($4,958.00 / $4,918.00 + 5%)
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40.pdf
+  descriptions:
+  - '2025 Form 40, Alabama Individual Income Tax Return, Residents & Part-Year Residents — the return itself (page
+    1: ''RESIDENTS & PART-YEAR RESIDENTS'')'
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nr.pdf
+  descriptions:
+  - '2025 Form 40NR, Alabama Individual Income Tax Return, Nonresidents Only — the return itself (page 1: ''NONRESIDENTS
+    ONLY'')'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40nrbk.pdf
+  descriptions:
+  - '2025 Alabama Form 40NR Booklet (Nonresidents Only, Forms and Instructions), ''Which Form To File'' (p. 5):
+    ''You MUST Use Form 40NR If:'' — ''You are not a resident of Alabama and you received taxable income from Alabama
+    sources or for performing services within Alabama and your gross income from Alabama sources exceeds the allowable
+    prorated personal exemption, or filing Married Filing Joint under the "Military Spouses Residency Relief Act."''
+    | 2025 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart (same $4,500/$8,200/$11,500/$5,750),
+    the sliding Standard Deduction chart (same amounts and the same printed MFJ typo), the identical tax-table figures
+    (e.g. $4,100-$4,200 row = $168 single / $146 MFJ; $16,000-$16,100 = $763/$723; $99,900-$100,000 = $4,958/$4,918),
+    the identical Over $100,000.00 worksheet constants ($4,958.00 / $4,918.00), and the Foreign Income Exclusion
+    text (''All foreign income must be reported on your return, in order to receive any foreign income exclusion''
+    — IRC sec. 911 exclusion via federal Form 2555 only, reported as a negative line 8 entry, no treaty mechanism)'
+  - 2025 Form 40NR Booklet (Nonresidents) — independent second pass on the filing-threshold chart (same $4,500/$8,200/$11,500/$5,750),
+    the sliding Standard Deduction chart (same amounts and the same printed MFJ typo), the identical tax-table figures
+    (e.g. $4,100-$4,200 row = $168 single / $146 MFJ; $16,000-$16,100 = $763/$723; $99,900-$100,000 = $4,958/$4,918),
+    the identical Over $100,000.00 worksheet constants ($4,958.00 / $4,918.00), and the Foreign Income Exclusion
+    text ('All foreign income must be reported on your return, in order to receive any foreign income exclusion'
+    — IRC sec. 911 exclusion via federal Form 2555 only, reported as a negative line 8 entry, no treaty mechanism)
+- id: credits-1
+  topic: credits
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25schocinstr.pdf
+  descriptions:
+  - Alabama Department of Revenue, 2025 Schedule OC Instructions, 'Part A - Credit for Taxes Paid to Other States
+    (Form 40 Only)' lines A1-A6, and 2025 Form 40 Booklet, 'Credit for Taxes Paid to Another State' (Line 17/18
+    credits discussion, p.10).
+  - Alabama Department of Revenue, 2025 Schedule OC Instructions, Part M - Alabama Adoption Tax Credit ($2,000 per
+    Alabama-resident/foster child, $1,000 for an out-of-state adoption) and Section F line F2 (refundable portion).
+  - Alabama Department of Revenue, 2025 Schedule OC Instructions, Part D - Rural Physician Credit ('The amount of
+    this credit is $5,000.00 per year and may be claimed for not more than five consecutive tax years'; D2 '$10,000'
+    if MFJ and both spouses qualify).
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf
+  descriptions:
+  - 2025 Form 40 Booklet, 'Where To File' (p.12) and the same block printed on the face of the 2025 Form 40 — refund
+    P.O. Box 154 (36135-0001); payment P.O. Box 2401 (36140-0001) with Form 40V; neither P.O. Box 327469 (36132-7469);
+    prior-year/amended/correspondence P.O. Box 327464 (36132-7464).
+  - 2025 Form 40 Booklet, When To File (p.5) — 'You should file as soon as you can after January 1, 2026, but no
+    later than the due date of the federal return' (April 15, 2026); 'You will automatically be granted an extension
+    until October 15, 2026' (no application required; payment with Form 40V, 'Automatic Extension Payment' box checked,
+    is still due by the due date of the federal return).
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40blk.pdf
+  descriptions:
+  - '2025 Alabama Form 40 (printed form) — second-pass verification: the filing-status boxes print the personal
+    exemptions ''1 $1,500 Single; 2 $3,000 Married filing joint; 3 $1,500 Married filing separate; 4 $3,000 Head
+    of Family (with qualifying person). Complete Schedule HOF''; line 5b ''Wages, salaries, tips, etc. (from Schedule
+    W-2, line 18, column I plus J)''; line 16 ''Taxable income. Subtract line 15 from line 10''; line 17 ''Income
+    Tax due. Enter amount from tax table or check if from Form NOL-85A''; and the Where To File block'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25schocinstr.pdf
+  descriptions:
+  - 2025 Schedule OC Instructions — Part A other-state credit smaller-of computation (with the new NOTE denying
+    the credit for wages from a no-income-tax state), Part D Rural Physician Credit ($5,000 / $10,000 MFJ), Part
+    M Alabama Adoption Tax Credit ($2,000 / $1,000), Section F refundable credits (F2 adoption), and the 2025-new
+    Act 2024-302/2024-303 credits (Workforce Housing, Childcare Facility, Employer, Employer Provider)
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/
+  descriptions:
+  - ADOR FAQ 'What is Alabama's Individual Income Tax Rate?' — '2% First $500 of taxable income, 4% Next $2,500
+    of taxable income, 5% All taxable income over $3,000' (single persons, heads of families, married filing separate);
+    '2% First $1,000 of taxable income, 4% Next $5,000 of taxable income, 5% All taxable income over $6,000' (married
+    filing joint) — live re-fetch, matches the 2025 booklet tax table and worksheet numerically
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2025/06/250529_NOTICE_IT_OvertimeExemptionSunset.pdf
+  descriptions:
+  - 'ADOR NOTICE, May 29, 2025 — ''Overtime Exemption Ends June 30, 2025'': ''The Alabama state income tax exemption
+    applicable to overtime wages ends on June 30, 2025. After this date, any amounts paid/received as overtime compensation
+    are subject to income tax.'' Employers denote the exempt wages earned during the 2025 period in which the exemption
+    was in effect in Box 14 of the W-2 using ''EX OT WAGES''; ''Do not include exempt overtime wages in Box 16 of
+    the W-2.'''
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf
+  descriptions:
+  - '2025 Alabama Form 40 Booklet (Individual Income Tax — Long Return, Residents and Part-Year Residents) — Tax
+    Tables pp. 25-30 (based on Form 40 line 16 taxable income; one column for Single/Married-filing-separately/Head-of-Family,
+    one for Married-filing-jointly; worked example p. 25: MFJ $23,360 -> $1,088) and the "Over $100,000.00" worksheet,
+    p. 30 (tax = $4,958.00 [Single/MFS/Head of family] or $4,918.00 [MFJ] plus .05 x taxable income over $100,000
+    — both constants RE-DERIVED for 2025, unchanged from 2024); Standard Deduction chart p. 9; dependent-exemption
+    chart p. 10; personal exemptions printed on the 2025 Form 40 filing-status boxes 1-4 ($1,500/$3,000/$1,500/$3,000).
+    Rate schedule text (2% first $500/$1,000, 4% next $2,500/$5,000, 5% over $3,000/$6,000) corroborated by the
+    live ADOR FAQ "What is Alabama''s Individual Income Tax Rate?" (revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/).
+    Second pass: the printed 2025 Form 40 (line 16 "Taxable income. Subtract line 15 from line 10", line 17 "Income
+    Tax due. Enter amount from tax table or check if from Form NOL-85A", the "$1,500 / $3,000" filing-status boxes)
+    and the 2025 Form 40NR booklet''s identical tax-table rows and identical over-$100,000 worksheet — all passes
+    agree; no 2025 rate or bracket change.'
+- id: law-1
+  topic: law_changes
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2025/06/250529_NOTICE_IT_OvertimeExemptionSunset.pdf
+  descriptions:
+  - 'ADOR NOTICE, May 29, 2025 — ''Overtime Exemption Ends June 30, 2025'': ''The Alabama state income tax exemption
+    applicable to overtime wages ends on June 30, 2025. After this date, any amounts paid/received as overtime compensation
+    are subject to income tax.'' Employers denote the exempt wages earned during the 2025 period in which the exemption
+    was in effect in Box 14 of the W-2 using ''EX OT WAGES''; ''Do not include exempt overtime wages in Box 16 of
+    the W-2.'''
+- id: law-2
+  topic: law_changes
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25f40bk.pdf
+  descriptions:
+  - 2025 Form 40 Booklet (Alabama Department of Revenue, Long Return — Residents and Part-Year Residents, Forms
+    and Instructions) — What's New For 2025 (p.2, credit/exclusion changes only); You Must File A Return If chart
+    (p.5); When To File / automatic extension to October 15, 2026 (p.5); Filing Status and Personal Exemption Lines
+    1-4 (p.6); Standard Deduction chart (p.9); dependent exemption chart (p.10, Line 14 instructions begin p.8);
+    Line 17 Figuring Your Tax tax-table mandate (p.10); Amount You Owe / Form 40V (p.11); Where To File (p.12);
+    Tax Tables pp.25-30 and Over $100,000.00 worksheet (p.30)

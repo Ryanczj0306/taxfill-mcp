@@ -119,7 +119,9 @@ def test_va_get_sources_routes_a_part_year_question_to_the_760py_instructions():
     assert f"{VA_HOST}sites/default/files/vatax-pdf/2025-760py-instructions.pdf" in [s.url for s in hit.sources]
     for query, topics in {
         "tax rates": {"tax_rates_and_brackets"},
-        "credit for low-income individuals": {"credits"},
+        # Phase K JK20 (2026-10-24): + forms_and_instructions, whose joined descriptions of the Form 760 instructions
+        # name the "Credit for Low-Income Individuals" as the credits entry does.
+        "credit for low-income individuals": {"credits", "forms_and_instructions"},
         "earned income credit": {"credits"},
         "law changes": {"law_changes"},
         "mailing address": {"filing_logistics", "forms_and_instructions", "law_changes"},

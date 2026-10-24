@@ -447,3 +447,118 @@ forms:
         2025 NJ-1040NR, New Jersey Nonresident Income Tax Return — the 4-page return itself (page 1: 'For Tax Year
         January 1, 2025 – December 31, 2025')
       url: https://www.nj.gov/treasury/taxation/pdf/current/1040nr.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
+  descriptions:
+  - 2025 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation, 70-page booklet, PDF build dated
+    2025-10-21) - Do You Have to File p. 3 ($10,000 / $20,000 thresholds), When to File / Extension of Time to File
+    p. 4 (April 15, 2026; six-month extension with 80% paid), Things to Know p. 4 (State wages box 16, not federal
+    box 1), Exemptions pp. 6-7, Line 42/43 tax pp. 31, How to Pay pp. 46-47 (check payable to 'State of New Jersey
+    - TGI'), Where to Mail Your Return p. 47 (PO Box 555 refunds; PO Box 111 payments), Tax Table p. 54, Tax Rate
+    Schedules p. 63
+  - 2025 NJ-1040 Resident Income Tax Return Instructions - Terms to Know (Domicile, Principal Residence) p. 4 and
+    Part-Year Residents p. 5; GIT-6 pointer
+  - 2025 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation, 70 pages) - PASS 1 for every
+    engine figure. Do You Have to File p. 3; When to File / Extension p. 4; Things to Know p. 4 (State wages box
+    16, not federal box 1); Terms to Know (Domicile) p. 4; Part-Year Residents p. 5; Exemptions pp. 6-7 (Line 6
+    $1,000 regular, Line 7 $1,000 senior 65+, Line 8 $1,000 blind/disabled, Line 9 $6,000 veteran, Lines 10/11 $1,500
+    dependents, Line 12 additional $1,000 college dependent); Line 29 New Jersey Gross Income; Line 30 Exemption
+    Amount; Lines 31-37c deductions; Line 38 Total Exemptions and Deductions; Line 39 Taxable Income; Line 41 Property
+    Tax Deduction; Line 42 New Jersey Taxable Income; Line 43 Tax on Amount on Line 42 (tax-table mandate under
+    $100,000); Lines 56/58/64/65 credits; How to Pay pp. 46-47; Where to Mail Your Return p. 47; Tax Table p. 54;
+    Tax Rate Schedules p. 63
+  - '2025 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation), ''Which Form to File'' (p.
+    3): ''Part-Year Residents. There is no part-year resident return. You may have to file both Form NJ-1040 to
+    report income you received for the part of the year you were a resident and Form NJ-1040NR if you had income
+    from New Jersey sources for the part of the year you were a nonresident.'' — and ''Part-Year Residents'' (p.
+    5): ''If you received income from a New Jersey source while you were a nonresident, you must also file a New
+    Jersey nonresident return.'''
+- id: credits-1
+  topic: credits
+  url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
+  descriptions:
+  - 2025 NJ-1040 Resident Income Tax Return Instructions, Line 58 - New Jersey Earned Income Tax Credit (40% of
+    the federal EIC; $260 age-expansion amount) (NJ Division of Taxation)
+  - 2025 NJ-1040 Resident Income Tax Return Instructions - Property Tax Deduction/Credit (Line 41 up to $15,000/$7,500,
+    Line 56 $50/$25, Worksheets G/H, pp. 25-30) and the NJ-1040-HW instructions p. 49
+  - 2025 NJ-1040 Resident Income Tax Return Instructions, Line 64 / Worksheet J (50%/40%/30%/20%/10% tiers) (NJ
+    Division of Taxation)
+  - 2025 NJ-1040 Resident Income Tax Return Instructions, Line 65 - New Jersey Child Tax Credit ($1,000/$800/$600/$400/$200
+    by taxable-income band) (NJ Division of Taxation)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
+  descriptions:
+  - 2025 NJ-1040 Resident Income Tax Return Instructions, 'Where to Mail Your Return' p. 47 (Payment Due Label PO
+    Box 111; Refund Label PO Box 555; do not staple or paper clip the return)
+  - 2025 NJ-1040 Resident Income Tax Return Instructions - 'When to File' and 'Extension of Time to File' p. 4 (April
+    15, 2026 due date; six-month extension conditioned on 80% paid and NJ-630 / federal extension)
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.nj.gov/treasury/taxation/pdf/current/1040nri.pdf
+  descriptions:
+  - 2025 NJ-1040NR Nonresident Income Tax Return Instructions (NJ Division of Taxation, 45 pages) - the independent
+    SECOND-PASS source; prints the identical 2025 New Jersey Tax Rate Schedules (Tables A and B, p. 44, keyed to
+    NJ-1040NR line 39), including the Table B -$1,154.50 constant
+  - '2025 NJ-1040NR Nonresident Income Tax Return Instructions (NJ Division of Taxation), ''NJ Residency Status''
+    (p. 4): ''You must file a nonresident return if you received income from a New Jersey source while you were
+    a nonresident and your income for the entire year (not just your period of nonresidency) was more than the filing
+    threshold for your filing status (see page 2). Only report income you earned while a nonresident of New Jersey.'''
+  - '2025 NJ-1040NR Nonresident Income Tax Return Instructions (NJ Division of Taxation), ''Which Form to File''
+    (p. 2): ''File Form NJ-1040NR if you had income from New Jersey sources.'' — and ''Do You Have to File a New
+    Jersey Income Tax Return?'' (p. 2): ''You are required to file a return if – your filing status is: ... and
+    your gross income from everywhere for the entire year was more than the filing threshold'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.nj.gov/treasury/taxation/pdf/current/1040.pdf
+  descriptions:
+  - 2025 Form NJ-1040 New Jersey Resident Income Tax Return (4-page form, PDF build dated 2025-10-27) - line structure
+    check for lines 29-43 and the digital-assets oval
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.nj.gov/treasury/taxation/pdf/current/1040nr.pdf
+  descriptions:
+  - 2025 Form NJ-1040NR (nonresident return form)
+  - '2025 NJ-1040NR, New Jersey Nonresident Income Tax Return — the 4-page return itself (page 1: ''For Tax Year
+    January 1, 2025 – December 31, 2025'')'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.nj.gov/treasury/taxation/pdf/pubs/tgi-ee/git6.pdf
+  descriptions:
+  - NJ Division of Taxation Publication GIT-6, Part-Year Residents and Nonresidents - Domicile, Resident (30-day
+    / 183-day statutory) definitions, Income Filing Thresholds, NJ-1040 vs NJ-1040NR (the publication the 2025 booklet
+    points to for residency detail)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.nj.gov/treasury/taxation/prntgit.shtml
+  descriptions:
+  - NJ Division of Taxation - Income Tax Forms (Form NJ-1040-V payment voucher / blank vouchers)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
+  descriptions:
+  - '2025 Form NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation, 70-page booklet, PDF build
+    dated 2025-10-21) — New Jersey Tax Rate Schedules, booklet p. 63 (Table A: Single / Married-CU partner filing
+    separate return; Table B: Married-CU couple filing joint return / Head of household / Qualifying widow(er)-surviving
+    CU partner); Line 43 ''Tax on Amount on Line 42'' and Line 42 New Jersey Taxable Income; Exemptions pp. 6-7
+    (Lines 6-12); Line 29 New Jersey Gross Income and the filing thresholds; Line 30 Exemption Amount and Lines
+    31-37c deductions; Line 38 Total Exemptions and Deductions; Line 39 Taxable Income; Line 41 Property Tax Deduction.
+    Second pass: the 2025 NJ-1040NR nonresident instructions print the identical 2025 Tax Rate Schedules (Tables
+    A and B, p. 44, keyed to NJ-1040NR line 39, https://www.nj.gov/treasury/taxation/pdf/current/1040nri.pdf) —
+    both passes agree on every bound, rate, and printed subtraction constant, including Table B''s -$1,154.50.'
+- id: law-1
+  topic: law_changes
+  url: https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf
+  descriptions:
+  - 2025 NJ-1040 Resident Return Instructions, the Director's letter and the line instructions (compared with 2024's)

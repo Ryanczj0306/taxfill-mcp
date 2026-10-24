@@ -9,7 +9,6 @@
   "@@57577a225136": "The newest shipped CA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
   "@@5c54c6c74f12": "If any income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties — that income is still taxable to CA.",
   "@@6376293e0da7": "2025 Form 540NR, California Nonresident or Part-Year Resident Income Tax Return — the 6-page return itself (Side 1 heading: 'California Nonresident or Part-Year Resident Income Tax Return', 'TAXABLE YEAR 2025')",
-  "@@660cf3a53690": "2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2025 California Tax Rate Schedules' (Schedules X/Y/Z), pp. 74-75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Behavioral Health Services Tax worksheet; Form 540 (2025) Side 1-2, lines 7-11 (X $153 / X $475 exemption credits), lines 13-19, 31-32, 61-63. Second pass: the standalone '2025 California Tax Rate Schedules' PDF and the separately published HTML edition of the booklet reproduce all 24 bracket bounds, the $5,706/$11,412 standard deduction, and the $252,203/$504,411/$378,310 AGI limits; the standalone 2025 Form 540 PDF reproduces the $153/$475 credits and the printed standard deduction.",
   "@@747e52046e32": "FTB Publication 1031 (2025), Guidelines for Determining Resident Status — Tax Treaty section (p. 10)",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@956d61148f1d": "Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33.",
@@ -307,7 +306,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "2025 Personal Income Tax Booklet (Form 540), Nonrefundable Renter's Credit Qualification Record, pp. 25-26; line 46 instructions",
+     "answers": "2025 Personal Income Tax Booklet (Form 540), Nonrefundable Renter's Credit Qualification Record, pp. 25-26; line 46 instructions || 2025 Personal Income Tax Booklet (Form 540), \"$$$ for You\" — California Earned Income Tax Credit (less than $32,901 of California wage income and/or self-employment net earnings); Form 540 line 75 instructions || 2025 Personal Income Tax Booklet (Form 540), \"$$$ for You\" — Young Child Tax Credit; form FTB 3514",
      "cadence": "@@c4a5951c662f",
      "topic": "credits",
      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
@@ -344,7 +343,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "2025 Personal Income Tax Booklet (Form 540), \"Do I Have to File?\" Steps 1-4 and the gross income / adjusted gross income chart, p. 4",
+     "answers": "2025 Personal Income Tax Booklet (Form 540), \"Do I Have to File?\" Steps 1-4 and the gross income / adjusted gross income chart, p. 4 || 2025 Personal Income Tax Booklet (Form 540), \"Mailing Your Tax Return\" (amount due -> PO Box 942867; refund or no amount due -> PO Box 942840) || 2025 Personal Income Tax Booklet (Form 540), \"Payment Options\" — Web Pay / credit card (ACI Payments, jurisdiction code 1555) / check or money order || 2025 Personal Income Tax Booklet (Form 540), Important Dates, p. 3 — \"April 15, 2026: Last day to file and pay the 2025 amount you owe to avoid penalties and interest\"; \"October 15, 2026: Last day to file or e-file your 2025 tax return to avoid a late filing penalty and interest computed from the original due date of April 15, 2026\"",
      "cadence": "@@c4a5951c662f",
      "topic": "filing_logistics",
      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
@@ -381,7 +380,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@747e52046e32",
+     "answers": "FTB Publication 1031 (2025), Guidelines for Determining Resident Status — Tax Treaty section (p. 10) || FTB Publication 1031 (2025), Guidelines for Determining Resident Status — residency/temporary or transitory purposes/income taxable by California/meaning of domicile sections (pp. 5-11) || FTB Publication 1031 (2025), Guidelines for Determining Resident Status — residency, domicile, tax treaty non-conformity (p. 10), foreign tax credit / foreign earned income exclusion disallowance",
      "cadence": "@@c4a5951c662f",
      "topic": "forms_and_instructions",
      "url": "https://www.ftb.ca.gov/forms/2025/2025-1031-publication.pdf"
@@ -497,7 +496,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@660cf3a53690",
+     "answers": "2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2025 California Tax Rate Schedules' (Schedules X/Y/Z), pp. 74-75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Behavioral Health Services Tax worksheet; Form 540 (2025) Side 1-2, lines 7-11 (X $153 / X $475 exemption credits), lines 13-19, 31-32, 61-63. Second pass: the standalone '2025 California Tax Rate Schedules' PDF and the separately published HTML edition of the booklet reproduce all 24 bracket bounds, the $5,706/$11,412 standard deduction, and the $252,203/$504,411/$378,310 AGI limits; the standalone 2025 Form 540 PDF reproduces the $153/$475 credits and the printed standard deduction. || 2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — the Form 540 printed in it (Side 1 lines 6-9 \"X $153\"; Side 2 line 10 \"X $475\", lines 11 and 31-33), p. 12 \"Line 6 – Can be Claimed as Dependent\" through \"Line 11 – Exemption Amount\", and p. 14 \"Line 32 – Exemption Credits\" with the AGI Limitation Worksheet. Second pass: the standalone 2025 Form 540 (ftb.ca.gov/forms/2025/2025-540.pdf) prints the same amounts and line text; the 2025 Form 540NR (ftb.ca.gov/forms/2025/2025-540nr.pdf) lines 38-40 for the proration note. Each fetched twice on 2026-10-16 with identical sha256.",
      "cadence": "@@c4a5951c662f",
      "topic": "tax_rates_and_brackets",
      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
@@ -2086,7 +2085,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "@@660cf3a53690",
+    "source": "2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2025 California Tax Rate Schedules' (Schedules X/Y/Z), pp. 74-75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Behavioral Health Services Tax worksheet; Form 540 (2025) Side 1-2, lines 7-11 (X $153 / X $475 exemption credits), lines 13-19, 31-32, 61-63. Second pass: the standalone '2025 California Tax Rate Schedules' PDF and the separately published HTML edition of the booklet reproduce all 24 bracket bounds, the $5,706/$11,412 standard deduction, and the $252,203/$504,411/$378,310 AGI limits; the standalone 2025 Form 540 PDF reproduces the $153/$475 credits and the printed standard deduction.",
     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
    },
    "rate": null,

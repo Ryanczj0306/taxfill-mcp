@@ -581,3 +581,221 @@ effective_law_changes:
       for Phaseout of Personal Exemption Deduction Amount, 2025 Tax Year Quick Facts, the 2025 MAINE INCOME TAX TABLE,
       and the 2025 TAX RATE SCHEDULES'
     url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+  descriptions:
+  - '2025 MAINE Individual Income Tax Booklet (Form 1040ME general instructions with cover page) — IMPORTANT UPDATE
+    (Maine conforms to the Code as of December 31, 2024; OBBBA conformity deferred to the Second Regular Session
+    of the 132nd Legislature, with the Governor directing limited administrative adopt-ins under P.L. 2025, c. 336),
+    IMPORTANT CHANGES for 2025, Who must file, residency and safe harbors, ''Form 1040ME due date: Wednesday, April
+    15, 2026'', whole-dollar rounding, payee ''Treasurer, State of Maine'' and the Maine Tax Portal at revenue.maine.gov,
+    Line 13/13a personal-exemption count chart, Line 17 Deduction + Maine Standard Deduction Chart and Worksheet
+    for Standard/Itemized Deductions, Line 18 Exemption (''Multiply the amount shown on line 13 by $5,150'') + Worksheet
+    for Phaseout of Personal Exemption Deduction Amount, 2025 Tax Year Quick Facts, the 2025 MAINE INCOME TAX TABLE,
+    and the 2025 TAX RATE SCHEDULES'
+  - '2025 Maine Form 1040ME General Instructions, ''What is my Residency Status?'' (p. 3): ''Part-year Resident:
+    I was domiciled in Maine for part of the year and was not a full-year resident as defined in 2) above.'' — ''NOTE:
+    Safe harbor residents, part-year residents, and nonresidents, file Form 1040ME and Schedule NR or NRH.'''
+  - '2025 Maine Form 1040ME General Instructions, ''Who must file?'' (p. 3): ''Generally, if you are a nonresident
+    or a safe harbor resident who has income from Maine sources resulting in a Maine income tax liability, you must
+    file a Maine income tax return.'' — ''What is my Residency Status?'' (p. 3): ''Nonresident: I was not a resident
+    or part-year resident in 2025, but I do have Maine-source income.'' — ''NOTE: Safe harbor residents, part-year
+    residents, and nonresidents, file Form 1040ME and Schedule NR or NRH.'''
+  - 2025 MAINE Individual Income Tax Booklet (Form 1040ME general instructions with cover page, 25_1040me_gen_instr_w_cover_pg.pdf)
+    — IMPORTANT UPDATE (conformity to the Code as of December 31, 2024; OBBBA (P.L. 119-21) conformity deferred
+    to the Second Regular Session of the 132nd Legislature; Governor's directive under P.L. 2025, c. 336 adopting
+    federal treatment only for qualified disaster losses, qualified farmland sales, IRC 179 expensing, business
+    interest deduction, and research and experimental expenditures), IMPORTANT CHANGES for 2025 (pension income
+    deduction phaseout $125,000/$187,500/$250,000 and pre-age-55 distribution exclusion; dependent exemption tax
+    credit doubled for under-six dependents with the new $20-per-$500 phaseout over $100,000/$125,000/$150,000/$75,000;
+    Maine capital investment credit repealed; Dirigo Business Incentives Program; historic rehabilitation credit
+    changes; easy-enrollment health checkoff repealed), Who must file, residency and safe harbors (183 days; General
+    Safe Harbor 30 days; Foreign Safe Harbor 450 days in a 548-day period), due date Wednesday April 15 2026, whole-dollar
+    rounding rule, payee 'Treasurer, State of Maine', Line 13 personal-exemption count chart and Line 13a dependents,
+    Line 17 Deduction + Maine Standard Deduction Chart + Worksheet for Standard/Itemized Deductions ($100,000/$150,000/$200,050
+    thresholds; $75,000/$112,500/$150,000 ranges), Line 18 Exemption ('Multiply the amount shown on line 13 by $5,150')
+    + Worksheet for Phaseout of Personal Exemption Deduction Amount ($333,450/$366,750/$400,100/$200,050; $125,000/$62,500
+    ranges), 2025 Tax Year Quick Facts ($5,150 personal exemption; standard deduction $15,000/$22,500/$30,000; itemized
+    cap $36,300; PTFC/STFC limits; dependent exemption credit $305/$610), the 2025 MAINE INCOME TAX TABLE, and the
+    2025 TAX RATE SCHEDULES
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nr_fillable.pdf
+  descriptions:
+  - '2025 Maine Schedule NR (Form 1040ME), Schedule for Calculating the Nonresident Credit, page 1: ''Who must file
+    Schedule NR? Part-year resident, nonresident and safe harbor resident individuals who are required to file a
+    Maine return, but have income not taxable by Maine and use the same filing status on the Maine return as used
+    on the federal return.'' — page 2: ''A part-year resident is subject to Maine income tax on all income received
+    while a resident of Maine, plus any income derived from Maine sources during the period of nonresidence.'''
+  - '2025 Maine Schedule NR (Form 1040ME), Schedule for Calculating the Nonresident Credit, page 1: ''Who must file
+    Schedule NR? Part-year resident, nonresident and safe harbor resident individuals who are required to file a
+    Maine return, but have income not taxable by Maine and use the same filing status on the Maine return as used
+    on the federal return.'' — page 2: ''A nonresident or safe harbor resident is subject to Maine income tax on
+    taxable income derived from sources within Maine.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_nrh_fillable.pdf
+  descriptions:
+  - '2025 Maine Schedule NRH (Form 1040ME), Schedule for Apportionment and for Calculating the Nonresident Credit
+    for Married Person Electing to File Single — line 11 ''NONRESIDENT CREDIT: Multiply line 10 by line 7, column
+    C. Enter result here and on Form 1040ME, line 21'''
+- id: credits-1
+  topic: credits
+  url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/earned-income-credit
+  descriptions:
+  - Maine Revenue Services - Maine Earned Income Credit (EIC) page, re-fetched live ('For tax years beginning on
+    or after January 1, 2022, the Maine EIC is equal to 25% (50% for taxpayers with no qualifying children) of the
+    federal earned income tax credit'; 'The Maine EIC is refundable for Maine residents and part-year residents.
+    The credit for nonresidents may not reduce the Maine income tax to less than zero.'), and the 2025 booklet Schedule
+    A instructions plus 2025 Tax Year Quick Facts
+- id: credits-2
+  topic: credits
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_ptfc_fillable.pdf
+  descriptions:
+  - 2025 Schedule PTFC/STFC (Form 1040ME) — 'Who is eligible?' (up to $1,000 / $2,000 if 65 or older; veteran $2,000
+    / $4,000; 4%-of-income and 26.67%-of-rent tests; income-limit table $63,750 / $82,500 / $101,250), line 8 maximum
+    benefit base table ($2,550 / $3,300 / $4,050, or $4,100 if 65 or older) and line 12 ($2,000 if 65 or older,
+    otherwise $1,000); 2025 Tax Year Quick Facts (PTFC maximum income limitation $63,750 / $101,250 / $102,500)
+  - 2025 Schedule PTFC/STFC (Form 1040ME) — 'You may qualify for the refundable Sales Tax Fairness Credit up to
+    $280 ... if your total income during 2025 was not more than $32,950 if filing single; $51,700 if filing head
+    of household; or, $63,950 if married filing jointly or qualifying surviving spouse'; and the 2025 Tax Year Quick
+    Facts
+- id: credits-3
+  topic: credits
+  url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/child-care-credit
+  descriptions:
+  - Maine Revenue Services — Credit for Child Care Expenses page, re-fetched live ('This credit is equal to 25%
+    of the federal credit for child and dependent care expenses'; 'The credit doubles if the expenses are related
+    to a quality child care provider'; 'This credit is also refundable up to $500'; 36 M.R.S. § 5218, with a Tax
+    Year 2025 worksheet posted) and the 2025 Tax Year Quick Facts ('Child and dependent care credit is refundable
+    for Maine residents and part-year residents, up to $500'; adult dependent care credit likewise up to $500)
+- id: credits-4
+  topic: credits
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+  descriptions:
+  - 2025 MAINE Individual Income Tax Booklet — IMPORTANT CHANGES for 2025, 'Dependent exemption tax credit' ('For
+    tax years beginning on or after January 1, 2025, the dependent exemption tax credit amount is doubled for each
+    qualifying dependent of the taxpayer who has not attained six years of age before the end of the taxable year'
+    and the $20-per-$500 phaseout over $100,000 / $125,000 / $150,000 / $75,000), and 2025 Tax Year Quick Facts
+    ('up to $305 for each qualifying child or dependent that is at least six years of age, or $610 for each qualifying
+    child or dependent that is under six years of age')
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.maine.gov/revenue/about/contact/mailing-addresses
+  descriptions:
+  - Maine Revenue Services — Mailing Addresses for Forms and Applications, re-fetched live (Individual Income Tax
+    Form 1040ME with a check for payment = P.O. Box 1067, Augusta, ME 04332-1067; expecting a refund = P.O. Box
+    1066, Augusta, ME 04332-1066)
+- id: logistics-2
+  topic: filing_logistics
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+  descriptions:
+  - '2025 MAINE Individual Income Tax Booklet (Form 1040ME general instructions) — cover page ''Form 1040ME due
+    date: Wednesday, April 15, 2026'' and Who must file (''A Maine income tax return must be filed by April 15,
+    2026'')'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2025.pdf
+  descriptions:
+  - 'State of Maine - Individual Income Tax, 2025 Rates (MRS, Income/Estate Tax Division, prepared February 3, 2026)
+    — the standalone rate sheet used as the primary rate source: rate schedules #1 Single/MFS ($26,800/$63,450;
+    $1,554 / $4,028 constants), #2 Head of Household ($40,200/$95,150; $2,332 / $6,041), #3 Married and Surviving
+    Spouses Filing Jointly ($53,600/$126,900; $3,109 / $8,057); ''Personal Exemption: $5,150''; ''Standard Deduction:
+    Single - $15,000, Married Filing Jointly - $30,000, Head of Household - $22,500, Married Filing Separately -
+    $15,000''; additional amount for age or blindness $1,600 married / $2,000 unmarried; COLA multipliers 1.274
+    and 1.269 (brackets) and 1.25 (personal exemption) under 36 M.R.S. § 5403'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_tax_tables.pdf
+  descriptions:
+  - 2025 MAINE INCOME TAX TABLE (standalone, 25_tax_tables.pdf, linked from the live 2025 individual income tax
+    forms index) — covers Form 1040ME line 19 taxable income from $0 through $100,000 in $100 bands with three columns
+    (Single or Married-Filing Separately / Married Filing Jointly* / Head of Household, footnoted '*This column
+    must also be used by a surviving spouse with dependent child') and reprints the same 2025 TAX RATE SCHEDULES
+    on its final page — third independent confirmation of the shipped schedules
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040ME_fillable.pdf
+  descriptions:
+  - 2025 Form 1040ME (Maine Individual Income Tax Return, 25_1040ME_fillable.pdf) — line 14 FEDERAL ADJUSTED GROSS
+    INCOME, lines 15a/15b modifications, line 16 MAINE ADJUSTED GROSS INCOME (Line 14 plus line 15a, minus line
+    15b), line 17 DEDUCTION, line 18 'EXEMPTION. (Multiply line 13 x $5,150.)', line 19 TAXABLE INCOME (Line 16
+    minus lines 17 and 18), line 20 INCOME TAX, line 20a tax credit recapture, line 21 NONRESIDENT CREDIT
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_sch_ptfc_fillable.pdf
+  descriptions:
+  - 2025 Schedule PTFC/STFC (Form 1040ME) — Property Tax Fairness Credit / Sales Tax Fairness Credit (2025 maximum
+    benefit base table $2,550/$3,300/$4,050 and $4,100 if 65 or older; line 12 $1,000/$2,000; PTFC income-limit
+    table $63,750/$82,500/$101,250; STFC up to $280 with $32,950/$51,700/$63,950 limits)
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/about/contact/mailing-addresses
+  descriptions:
+  - Maine Revenue Services — Mailing Addresses for Forms and Applications (1040ME with payment = P.O. Box 1067;
+    refund = P.O. Box 1066)
+- id: forms-9
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/earned-income-credit
+  descriptions:
+  - Maine Revenue Services — Maine Earned Income Credit (EIC) page (25% / 50% for taxpayers with no qualifying children,
+    tax years beginning on or after January 1, 2022; refundable for residents and part-year residents)
+- id: forms-10
+  topic: forms_and_instructions
+  url: https://www.maine.gov/revenue/taxes/tax-relief-credits-programs/income-tax-credits/child-care-credit
+  descriptions:
+  - Maine Revenue Services — Credit for Child Care Expenses page (25% of the federal credit, doubled for quality
+    child care providers, refundable up to $500, 36 M.R.S. § 5218)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2025.pdf
+  descriptions:
+  - 'State of Maine - Individual Income Tax, 2025 Rates (Maine Revenue Services, Income/Estate Tax Division, prepared
+    February 3, 2026) — the standalone MRS rate sheet: Tax Rate Schedule #1 ''For Single Individuals and Married
+    Persons Filing Separate Returns'' (less than $26,800 = 5.8% of Maine taxable income; $26,800 but less than $63,450
+    = $1,554 plus 6.75% of excess; $63,450 or more = $4,028 plus 7.15% of excess); Schedule #2 ''For Unmarried or
+    Legally Separated Individuals who Qualify as Heads of Household'' ($40,200 / $95,150, $2,332 / $6,041 constants);
+    Schedule #3 ''For Married Individuals and Surviving Spouses Filing Joint Returns'' ($53,600 / $126,900, $3,109
+    / $8,057 constants); ''Personal Exemption: $5,150''; ''Standard Deduction: Single - $15,000, Married Filing
+    Jointly - $30,000, Head of Household - $22,500, Married Filing Separately - $15,000''; additional age/blindness
+    amounts $1,600 married / $2,000 unmarried; COLA 1.274 / 1.269 on the bracket dollar amounts and 1.25 on the
+    personal exemption (36 M.R.S. 5403). SECOND PASS (two independent documents): the 2025 MAINE Individual Income
+    Tax booklet (25_1040me_gen_instr_w_cover_pg.pdf) prints the identical 2025 TAX RATE SCHEDULES, the same 2025
+    Tax Year Quick Facts ($5,150 personal exemption; standard deduction base $15,000 single/MFS, $22,500 HoH, $30,000
+    MFJ/QSS), the Line 18 instruction ''Multiply the amount shown on line 13 by $5,150'', and its IMPORTANT UPDATE
+    stating Maine conforms to the Code as of December 31, 2024 (so the federal OBBBA standard-deduction increase
+    does NOT apply); the standalone 2025 MAINE INCOME TAX TABLE (25_tax_tables.pdf) reprints the same three schedules
+    on its last page and its printed rows reproduce this op''s marginal math at band midpoints (e.g. the $51,000-$51,100
+    row prints 3,191 / 2,961 / 3,064 and midpoint 51,050 computes to 3,191.275 / 2,960.90 / 3,063.975); and the
+    printed 2025 Form 1040ME (25_1040ME_fillable.pdf) prints ''EXEMPTION. (Multiply line 13 x $5,150.)''. All passes
+    agree.'
+- id: law-1
+  topic: law_changes
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf
+  descriptions:
+  - 2025 MAINE Individual Income Tax Booklet — IMPORTANT CHANGES for 2025, 'Dependent exemption tax credit' ('For
+    tax years beginning on or after January 1, 2025, the dependent exemption tax credit amount is doubled for each
+    qualifying dependent of the taxpayer who has not attained six years of age before the end of the taxable year'
+    and the $20-per-$500 phaseout over $100,000 / $125,000 / $150,000 / $75,000), and 2025 Tax Year Quick Facts
+    ('up to $305 for each qualifying child or dependent that is at least six years of age, or $610 for each qualifying
+    child or dependent that is under six years of age')
+  - '2025 MAINE Individual Income Tax Booklet (Form 1040ME general instructions with cover page) — IMPORTANT UPDATE
+    (Maine conforms to the Code as of December 31, 2024; OBBBA conformity deferred to the Second Regular Session
+    of the 132nd Legislature, with the Governor directing limited administrative adopt-ins under P.L. 2025, c. 336),
+    IMPORTANT CHANGES for 2025, Who must file, residency and safe harbors, ''Form 1040ME due date: Wednesday, April
+    15, 2026'', whole-dollar rounding, payee ''Treasurer, State of Maine'' and the Maine Tax Portal at revenue.maine.gov,
+    Line 13/13a personal-exemption count chart, Line 17 Deduction + Maine Standard Deduction Chart and Worksheet
+    for Standard/Itemized Deductions, Line 18 Exemption (''Multiply the amount shown on line 13 by $5,150'') + Worksheet
+    for Phaseout of Personal Exemption Deduction Amount, 2025 Tax Year Quick Facts, the 2025 MAINE INCOME TAX TABLE,
+    and the 2025 TAX RATE SCHEDULES'

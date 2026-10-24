@@ -29,7 +29,6 @@
   "@@b3e8c7ba676c": "Georgia DOR 2024 Form 500X, Amended Individual Income Tax Return (blank for printing): \"Mail To: GEORGIA DEPARTMENT OF REVENUE PROCESSING CENTER, PO BOX 740318 ATLANTA, GA 30374-0318\"; lines 36-38; the attachment and line 8 instructions",
   "@@b75a49ecb3ea": "Georgia Resident Itemizer Tax Credit (NEW for 2024) — Full-year residents and part-year residents living in Georgia at the end of the year who itemized deductions on their returns.",
   "@@b79da178a6b7": "annual (per tax year; the shipped GA 2024 pack's own citation — for another year re-resolve at this URL family and cite)",
-  "@@bcae8fd124ae": "GA 2024 IT-511 Individual Income Tax Instruction Booklet - What's New (5.39% rate effective January 1, 2024; personal exemptions repealed except the $4,000 dependent exemption; standard deductions $24,000 MFJ / $12,000 Single-HoH-MFS; new Georgia Resident Itemizer Tax Credit up to $300; retirement income exclusion earned-income change); Line 11 standard deduction chart (incl. Qualifying surviving spouse $12,000); Line 14 dependent exemption (Line 7c x $4,000); Line 16 tax (Line 15c x 5.39%, round to nearest dollar); Filing Requirements chart; Schedule 1 additions (no treaty add-back) and subtraction 'specifically exempted by Federal law or treaty'; 'file on or before April 15, 2025'; check payable to the Georgia Department of Revenue; mailing addresses; Low Income Credit Worksheet p.35; IND-CR 201/202/204",
   "@@c559335fa054": "Georgia DOR, 2024 IT-511 Individual Income Tax Instruction Booklet — What's New: 'Effective January 1, 2024, the income tax rate is 5.39%. Additionally, personal exemptions have been repealed except for the $4,000 dependent exemption. Finally, Georgia standard deductions have increased to $24,000 for Married filing jointly returns and $12,000 for Single, Head of household, and Married filing separately returns'; Line 11 standard deduction chart (Married filing jointly $24,000; Single, Married filing separately, Head of household, Qualifying surviving spouse $12,000 each); Line 14 'Multiply the number of dependents on Line 7c by $4,000'; Line 16 'Multiply the amount on Line 15c by 5.39%. Round to nearest dollar.' Second pass: the 2024 Form 500 itself prints Line 11 'Enter $12,000 if the filing status from Line 5 is A, C, or D. If the filing status is B, enter $24,000', Line 14 'Enter the number from Line 7c. Multiply by $4,000', and Line 16 'Tax (Multiply Line 15c by 5.39%. Round to the nearest dollar)' (https://dor.georgia.gov/document/document/2024-500-individual-income-tax-return-blank-form-printing/download) — both passes agree.",
   "@@d0106885bb14": "Law change NOT modeled by the engine (status final_form_published): NEW CREDIT for 2024 — the Georgia Resident Itemizer Tax Credit: full-year residents (and part-year residents living in Georgia at the end of the year) who itemized deductions may claim up to $300 per taxpayer on Form 500 Line 19. The credit cannot exceed the Line 16 tax liability and cannot be carried forward. It did not exist for 2023. Resolve via: 2024 IT-511 booklet, What's New and the Form 500 Line 19 instructions at the citation URL (this pack's `credits` block carries the transcribed $300 cap and eligibility).",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation."
@@ -326,7 +325,7 @@
    "retrieval_hint": "@@4d1a27910f8a",
    "sources": [
     {
-     "answers": "Georgia DOR 2024 IT-511 Individual Income Tax Instruction Booklet, Low Income Credit Worksheet (p.35) and Line 17 instructions",
+     "answers": "Georgia DOR 2024 IT-511 Individual Income Tax Instruction Booklet, Low Income Credit Worksheet (p.35) and Line 17 instructions || Georgia DOR 2024 IT-511 booklet, What's New ('Georgia Resident Itemizer Tax Credit') and Line 19 instructions || Georgia DOR 2024 IT-511 booklet, IND-CR 202 Child and Dependent Care Expense Credit (Tax Credit 202), O.C.G.A. Section 48-7-29.10 || Georgia DOR 2024 IT-511 booklet, IND-CR 204 Qualified Caregiving Expense Credit (Tax Credit 204), O.C.G.A. Section 48-7-29.2 || Georgia DOR 2024 IT-511 booklet, IND-CR 201 Disabled Person Home Purchase or Retrofit Credit (Tax Credit 201), O.C.G.A. Section 48-7-29.1",
      "cadence": "@@b79da178a6b7",
      "topic": "credits",
      "url": "@@ae4b034fdf8c"
@@ -363,7 +362,7 @@
    "retrieval_hint": "@@4d1a27910f8a",
    "sources": [
     {
-     "answers": "@@17b9c51250b4",
+     "answers": "Georgia DOR 2024 IT-511 booklet, 'Mailing Address' page (Form 500 without payment PO Box 740392 / with payment PO Box 740399; 525-TV PO Box 740323; 500X PO Box 740318) — the same addresses are printed on the 2024 Form 500 signature page || Georgia DOR 2024 IT-511 booklet, General Information 'When to File' — 'Calendar year taxpayers are required to file on or before April 15, 2025' || Georgia DOR 2024 IT-511 booklet: Mailing Address, \"Form 500X Amended: ... PO BOX 740318\" (p. 7); Amended Returns (p. 10); claim for refund within three years (p. 3); Federal Audits, within 180 days (p. 12)",
      "cadence": "@@b79da178a6b7",
      "topic": "filing_logistics",
      "url": "@@ae4b034fdf8c"
@@ -418,13 +417,13 @@
    "retrieval_hint": "@@4d1a27910f8a",
    "sources": [
     {
-     "answers": "@@5fda39ac6da8",
+     "answers": "GA Form 500 (2024) blank return - Line 8 'Federal adjusted gross income (From Federal Form 1040)', Line 9 Schedule 1 adjustments, Line 4 residency status (1 full-year/2 part-year/3 nonresident), Line 11 standard deduction ($12,000 status A/C/D, $24,000 status B), Line 14 dependent exemption (Line 7c x $4,000), Line 16 tax (Line 15c x 5.39%), 'Omit Lines 9 thru 14 and use Form 500 Schedule 3 if you are a part-year or nonresident filer' || GA Form 500 (2024) blank return — second-pass verification: Line 8 federal AGI; Line 5 filing statuses A Single / B Married filing jointly / C Married filing separately / D Head of household or Qualifying surviving spouse; Line 11 'Enter $12,000 if the filing status from Line 5 is A, C, or D. If the filing status is B, enter $24,000'; Line 14 'Enter the number from Line 7c. Multiply by $4,000'; Line 16 'Tax (Multiply Line 15c by 5.39%. Round to the nearest dollar)'; Lines 17-22 credits",
      "cadence": "@@b79da178a6b7",
      "topic": "forms_and_instructions",
      "url": "@@3b93752316bf"
     },
     {
-     "answers": "@@bcae8fd124ae",
+     "answers": "GA 2024 IT-511 Individual Income Tax Instruction Booklet - What's New (5.39% rate effective January 1, 2024; personal exemptions repealed except the $4,000 dependent exemption; standard deductions $24,000 MFJ / $12,000 Single-HoH-MFS; new Georgia Resident Itemizer Tax Credit up to $300; retirement income exclusion earned-income change); Line 11 standard deduction chart (incl. Qualifying surviving spouse $12,000); Line 14 dependent exemption (Line 7c x $4,000); Line 16 tax (Line 15c x 5.39%, round to nearest dollar); Filing Requirements chart; Schedule 1 additions (no treaty add-back) and subtraction 'specifically exempted by Federal law or treaty'; 'file on or before April 15, 2025'; check payable to the Georgia Department of Revenue; mailing addresses; Low Income Credit Worksheet p.35; IND-CR 201/202/204",
      "cadence": "@@b79da178a6b7",
      "topic": "forms_and_instructions",
      "url": "@@ae4b034fdf8c"
@@ -467,7 +466,7 @@
    "retrieval_hint": "@@4d1a27910f8a",
    "sources": [
     {
-     "answers": "@@bcae8fd124ae",
+     "answers": "GA 2024 IT-511 Individual Income Tax Instruction Booklet - What's New (5.39% rate effective January 1, 2024; personal exemptions repealed except the $4,000 dependent exemption; standard deductions $24,000 MFJ / $12,000 Single-HoH-MFS; new Georgia Resident Itemizer Tax Credit up to $300; retirement income exclusion earned-income change); Line 11 standard deduction chart (incl. Qualifying surviving spouse $12,000); Line 14 dependent exemption (Line 7c x $4,000); Line 16 tax (Line 15c x 5.39%, round to nearest dollar); Filing Requirements chart; Schedule 1 additions (no treaty add-back) and subtraction 'specifically exempted by Federal law or treaty'; 'file on or before April 15, 2025'; check payable to the Georgia Department of Revenue; mailing addresses; Low Income Credit Worksheet p.35; IND-CR 201/202/204 || Georgia DOR 2024 IT-511 booklet, What's New ('Georgia Resident Itemizer Tax Credit') and Line 19 instructions",
      "cadence": "@@b79da178a6b7",
      "topic": "law_changes",
      "url": "@@ae4b034fdf8c"

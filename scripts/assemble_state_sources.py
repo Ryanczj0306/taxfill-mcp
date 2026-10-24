@@ -11,7 +11,9 @@ This script derives the registry EXCLUSIVELY from the state knowledge packs'
 own citations (newest year per state; taxfill_core.state_sources builds each block,
 and get_sources builds an older year's block from that year's pack the same way): every citation URL in a pack was
 web-verified when the pack was authored, so nothing here is invented — the
-generator only regroups verified (source, url) pairs by topic. Non-government
+generator only regroups verified (source, url) pairs by topic (from a pack's
+`sources` table when it has one, Phase K JK20; a URL's several descriptions are
+joined into one entry). Non-government
 hosts (a DOR occasionally serves a PDF from a CDN) are dropped by the same
 rule the typed Citation enforces.
 

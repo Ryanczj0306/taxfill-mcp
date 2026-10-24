@@ -469,3 +469,134 @@ effective_law_changes:
       CT-EITC line instructions ($11,950 investment-income limit); confirmed against the DRS "What's New for 2025"
       EITC expansion note
     url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf'
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf
+  descriptions:
+  - '2025 Form CT-1040 Connecticut Resident Income Tax Return (Rev. 12/25) — Line 1 = federal AGI; Line 2 additions
+    from Schedule 1; ''Due date: April 15, 2026''; mailing addresses PO Box 2977 (with payment) / PO Box 2976 (refund
+    or no payment); check payable to Commissioner of Revenue Services with ''2025 Form CT-1040'' written on it'
+  - '2025 Form CT-1040 Connecticut Resident Income Tax Return (Rev. 12/25) — Line 1 federal AGI, Line 5 Connecticut
+    AGI, Line 6 income tax, Schedules 1-4, "Due date: April 15, 2026", mailing addresses PO Box 2976/2977, check
+    payable to Commissioner of Revenue Services'
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information
+  descriptions:
+  - 'CT DRS Resident Income Tax — Tax Information (2025 edition: Who Must File a Connecticut Resident Return, Gross
+    Income Test, residency/domicile and the 183-day statutory-resident rule, Special Information for Nonresident
+    Aliens, What''s New for 2025)'
+  - 'CT DRS Resident Income Tax — Tax Information (2025 edition: Who Must File, Gross Income Test 2025 dollar thresholds,
+    residency/domicile and the more-than-183-days statutory-resident rule stated for the 2025 taxable year, Special
+    Information for Nonresident Aliens, What''s New for 2025 including the EITC expansion)'
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information
+  descriptions:
+  - 'Connecticut DRS, ''Connecticut Nonresident and Part-Year Resident Income Tax Information'', ''Who Must File
+    Form CT-1040NR/PY'': ''You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income
+    Tax Return, if you were a nonresident or part-year resident of Connecticut in 2025 and any of the following
+    is true for the 2025 taxable year:'' — ''You were a part-year resident who meets the Gross Income Test or who
+    had a federal alternative minimum tax liability'''
+  - 'Connecticut DRS, ''Connecticut Nonresident and Part-Year Resident Income Tax Information'', ''Who Must File
+    Form CT-1040NR/PY'': ''You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income
+    Tax Return, if you were a nonresident or part-year resident of Connecticut in 2025 and any of the following
+    is true for the 2025 taxable year:'' — ''You were a nonresident with Connecticut-sourced income who meets the
+    Gross Income Test or had a federal alternative minimum tax liability.'''
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf
+  descriptions:
+  - '2025 Form CT-1040NR/PY Connecticut Nonresident and Part-Year Resident Income Tax Return Instructions (Rev.
+    12/25), p. 1: ''For additional information on the Connecticut Income Tax, visit portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information''
+    | 2025 Form CT-1040NR/PY Instructions (Rev. 12/25, 28 pages) — Schedule 1 "Other" additions ("1. Add back any
+    treaty income reported on federal Form 1040NR if a nonresident alien"); INDEPENDENT SECOND-PASS source for Tables
+    A-E: Table A (221 numeric tokens), Table C (136) and Table D (450) are digit-identical multisets, all 28 Table
+    E rows match row-by-row, and all 21 Table B rows print the same bounds, rates and constants'
+  - '2025 Form CT-1040NR/PY Connecticut Nonresident and Part-Year Resident Income Tax Return Instructions (Rev.
+    12/25), p. 1: ''For additional information on the Connecticut Income Tax, visit portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information'''
+  - '2025 Form CT-1040NR/PY Instructions (Rev. 12/25, 28 pages) — Schedule 1 "Other" additions ("1. Add back any
+    treaty income reported on federal Form 1040NR if a nonresident alien"); INDEPENDENT SECOND-PASS source for Tables
+    A-E: Table A (221 numeric tokens), Table C (136) and Table D (450) are digit-identical multisets, all 28 Table
+    E rows match row-by-row, and all 21 Table B rows print the same bounds, rates and constants'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040nrpy_1225.pdf
+  descriptions:
+  - '2025 Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (Rev. 12/25) — the
+    return itself (page 1, line 6: ''Income from Connecticut sources from Schedule CT-SI, Line 30'')'
+- id: credits-1
+  topic: credits
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf
+  descriptions:
+  - CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 20a Connecticut Earned Income Tax Credit (40% of
+    the federal EIC plus the additional $250 for a taxpayer with at least one federal qualifying child) and Schedule
+    CT-EITC line instructions ($11,950 investment-income limit); confirmed against the DRS "What's New for 2025"
+    EITC expansion note
+  - CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 11 / Schedule 3 Property Tax Credit ($300 maximum
+    per return, Connecticut AGI thresholds) and the Property Tax Credit Table on Page 27
+  - CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Table E Personal Tax Credits (Page 23); Tax Calculation
+    Schedule Lines 8-10 (Page 19); Line 6 Income Tax no-tax floors
+  - CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 7 / Schedule 2 Credit for Income Taxes Paid to Qualifying
+    Jurisdictions
+  - CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), p. 4 Line 20d Historic Homes Rehabilitation Tax Credit
+    and Line 21 Total Payments and Refundable Credits; the 2025 Form CT-1040 face, Lines 20d and 21
+- id: logistics-1
+  topic: filing_logistics
+  url: https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information
+  descriptions:
+  - CT DRS Resident Income Tax — Tax Information, "Gross Income Test" section (2025 taxable-year dollar thresholds)
+- id: logistics-2
+  topic: filing_logistics
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf
+  descriptions:
+  - '2025 Form CT-1040 (Rev. 12/25), page 4 mailing box: "For all tax forms with payment: Department of Revenue
+    Services, PO Box 2977, Hartford CT 06104-2977"; "For refunds and all other tax forms without payment: Department
+    of Revenue Services, PO Box 2976, Hartford CT 06104-2976"'
+  - 2025 Form CT-1040 (Rev. 12/25), page 4 payment box; 2025 CT-1040 instructions — file and pay electronically
+    using myconneCT
+  - '2025 Form CT-1040 (Rev. 12/25), page 1: "Due date: April 15, 2026 - Attach a copy of all applicable schedules
+    and forms to this return. Do not use staples."'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf
+  descriptions:
+  - 2025 Form CT-1040 Instructions (Rev. 12/25, 28 pages) — Schedule 1 Line 37 "Other" additions ("1. Add back any
+    treaty income reported on federal Form 1040NR if a nonresident alien"); Line 6 no-tax floors and optional DRS
+    tax tables at CT AGI $102,000 or less; Tax Calculation Schedule (p. 19) and Tables A-E (pp. 19-23); Line 20a
+    CT EITC 40% plus the new $250 qualifying-child supplement and the $11,950 investment-income limit; Line 11 /
+    Schedule 3 Property Tax Credit and Property Tax Credit Table (p. 27); Line 20d Historic Homes Rehabilitation
+    Tax Credit (p. 4, the DECD voucher amount); Line 48d ABLE subtraction (p. 10, lesser of contributions or $5,000
+    / $10,000 joint); the Access Health CT authorization (p. 2); Line 1 federal Form 1040 Line 11a; Line 13 Schedule
+    CT-IT Credit Part 1 Line 10
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf
+  descriptions:
+  - '2025 Form CT-1040 Connecticut Resident Income Tax Return Instructions (Rev. 12/25) — Tax Calculation Schedule
+    (p. 19: Line 1 CT AGI, Line 2 Table A exemption, Line 3 CT taxable income, Line 4 Table B initial tax, Line
+    5 Table C add-back, Line 6 Table D recapture, Line 8 Table E credit decimal, Line 10 to Form CT-1040 Line 6);
+    Table A Personal Exemptions (p. 19); Table B Initial Tax Calculation (p. 20, all three schedules with the DRS
+    worked examples $335/$32,998/$513/$69,490/$500/$51,748); Table C 2% Phase-Out Add-Back (p. 21); Table D Tax
+    Recapture (p. 22); Table E Personal Tax Credits (p. 23); Line 6 Income Tax (no-tax floors, optional DRS tax
+    tables at CT AGI $102,000 or less). Second pass: the 2025 Form CT-1040NR/PY instructions (Rev. 12/25, https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf)
+    print identical Tables A-E — Table A (221 numeric tokens), Table C (136) and Table D (450) are digit-identical
+    multisets, all 28 Table E rows match row-by-row, and all 21 Table B rows print the same bounds, rates and constants.'
+- id: law-1
+  topic: law_changes
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf
+  descriptions:
+  - CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 20a Connecticut Earned Income Tax Credit (40% of
+    the federal EIC plus the additional $250 for a taxpayer with at least one federal qualifying child) and Schedule
+    CT-EITC line instructions ($11,950 investment-income limit); confirmed against the DRS "What's New for 2025"
+    EITC expansion note

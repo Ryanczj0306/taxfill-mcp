@@ -18,6 +18,9 @@ The source registry (knowledge/sources_states.yaml) is generated from the same p
 of a URL under each topic, reading ``forms`` before ``all_citations``. A role citation that reuses a URL the pack
 already describes therefore becomes that URL's registry description, so the first role entry of such a URL (Maryland's
 nonresident booklet, Kansas's Schedule S) ends, after ' | ', with the older description verbatim.
+
+Since Phase K JK20 (2026-10-24) the registry keeps every description of a (topic, url), the first one leading and
+the rest joined after it (test_state_sources_table.py); the paragraph above describes the registry as JK28 found it.
 """
 from __future__ import annotations
 
@@ -256,7 +259,9 @@ NEIGHBOUR_ROUTES = {
            "refund mailing address": {"filing_logistics", "forms_and_instructions"}},
     "la": {"tax rates": {"tax_rates_and_brackets"}, "law changes": {"law_changes"},
            "mailing address": {"law_changes"}, "due date": {"forms_and_instructions"},
-           "payment": {"filing_logistics", "law_changes"}, "standard deduction": {"law_changes"},
+           # JK20: + forms_and_instructions, whose joined descriptions name "payment" too.
+           "payment": {"filing_logistics", "forms_and_instructions", "law_changes"},
+           "standard deduction": {"law_changes"},
            "rate schedules": {"tax_rates_and_brackets"}},
     "md": {"tax rates": {"tax_rates_and_brackets"}, "law changes": {"law_changes"},
            "mailing address": {"filing_logistics"}, "payment": {"filing_logistics"},
@@ -270,7 +275,8 @@ NEIGHBOUR_ROUTES = {
            "rate schedules": {"tax_rates_and_brackets"}},
     "me": {"tax rates": {"tax_rates_and_brackets"}, "earned income credit": {"credits"}, "law changes": {"law_changes"},
            "mailing address": {"filing_logistics", "forms_and_instructions"},
-           "due date": {"filing_logistics", "forms_and_instructions"},
+           # JK20: + law_changes, whose joined booklet descriptions name the "due date" as well.
+           "due date": {"filing_logistics", "forms_and_instructions", "law_changes"},
            "payment": {"filing_logistics", "forms_and_instructions"},
            "standard deduction": {"forms_and_instructions", "tax_rates_and_brackets"},
            "refund": {"filing_logistics", "forms_and_instructions"}},
@@ -279,7 +285,9 @@ NEIGHBOUR_ROUTES = {
            "payment": {"forms_and_instructions"}, "standard deduction": {"forms_and_instructions"}},
     "mo": {"tax rates": {"tax_rates_and_brackets"}, "law changes": {"law_changes"},
            "mailing address": {"forms_and_instructions", "law_changes"},
-           "due date": {"forms_and_instructions", "law_changes"}, "payment": {"forms_and_instructions"},
+           # JK20: + filing_logistics, whose joined descriptions name the "due date" (it reached it on one word before).
+           "due date": {"filing_logistics", "forms_and_instructions", "law_changes"},
+           "payment": {"forms_and_instructions"},
            "standard deduction": {"law_changes"}},
     "ms": {"tax rates": {"tax_rates_and_brackets"}, "law changes": {"law_changes"},
            "mailing address": {"filing_logistics", "forms_and_instructions"}, "due date": {"forms_and_instructions"},

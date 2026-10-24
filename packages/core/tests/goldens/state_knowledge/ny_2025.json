@@ -1,7 +1,6 @@
 {
  "_strings": {
   "@@090c6082177e": "Child and Dependent Care Credit (New York State) — You are entitled to this credit if you qualified to claim the federal child and dependent care credit for 2025 (whether or not you actually claimed it). Full-year residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.",
-  "@@10f864b701e1": "Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 (IT-203-I, 47 pages), 'How are you taxed as a nonresident or as a part-year resident?' (p. 3): 'If you were a resident of New York State for only part of the tax year, you must pay New York State tax on all income you received while you were a resident of the state and on income you received from New York State sources while you were a nonresident. To determine how much tax you owe, use Form IT-203, Nonresident and Part-Year Resident Income Tax Return.' — and 'New York State nonresidents and part-year residents: Who must file?' (p. 3): 'You must file Form IT-203 if you meet any of the following conditions'",
   "@@15c9716acac8": "Instructions for Form IT-201, Full-Year Resident Income Tax Return, New York State, tax year 2025 (IT-201-I, printer-friendly PDF, 41 pages) — p. 33 'New York State tax rate schedule' (Married filing jointly and qualifying surviving spouse—filing status 2 and 5; Single and married filing separately—filing status 1 and 3; Head of household—filing status 4), p. 11 'New York State standard deduction table' (Line 34) and 'Line 36: Dependent exemption amount' ($1,000 each), p. 12 'Line 39 – New York State tax', p. 32 'How to calculate your 2025 New York State tax' method table, and pp. 34-39 'Tax computation—New York adjusted gross income of more than $107,650' (tax computation worksheets 1-16). Second pass: the 2025 IT-201-I HTML edition (https://www.tax.ny.gov/forms/html-instructions/2025/it/it201i-2025.htm) reproduces the same three schedules, worksheets, standard deduction table, and $1,000 dependent exemption digit for digit; the 2025 Form IT-201 fill-in PDF pages 2-3 confirm the line 33-39 structure.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
@@ -355,7 +354,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@f5fc3cab0dcf",
+     "answers": "Instructions for Form IT-201 (2025), \"Where to file\" (p. 41) - both PO Box addresses printed in the instructions themselves; Publication 55 for designated private delivery services || Instructions for Form IT-201 (2025), \"When to file/Important dates\" (p. 41) - April 15, 2026 filing/payment date; IT-370 six-month extension to October 15, 2026; June 15, 2026 special federal-qualifier date; the four 2026 estimated-tax dates and the $300 threshold",
      "cadence": "@@e5f26f4421cd",
      "topic": "filing_logistics",
      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
@@ -393,13 +392,13 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@7a28d7063c58",
+     "answers": "Instructions for Form IT-201, Full-Year Resident Income Tax Return (2025), printer-friendly PDF (IT-201-I, 41 pages) - starting point (line 1 = federal 1040 line 1z; line 19 federal AGI), additions lines 20-23, Who must file ($4,000 / $3,100 dependent-single), line 34 standard deduction table, line 36 dependent exemption ($1,000), line 39 tax computation, p. 33 rate schedules, pp. 34-39 tax computation worksheets, due date April 15 2026 || Instructions for Form IT-201, Full-Year Resident Income Tax Return (2025), printer-friendly PDF (IT-201-I, 41 pages) - PASS 1 for every engine figure. p. 11 New York State standard deduction table and Line 36 dependent exemption ($1,000); p. 12 Line 39 tax computation gate and household credit tables 1-3; pp. 19-20 lines 63-68 credits; p. 32 \"How to calculate your 2025 New York State tax\" method table; p. 33 the three New York State tax rate schedules; pp. 34-39 tax computation worksheets 1-16; p. 41 When to file / Where to file; plus Who must file ($4,000/$3,100) and the check-payee wording",
      "cadence": "@@e5f26f4421cd",
      "topic": "forms_and_instructions",
      "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
     },
     {
-     "answers": "@@10f864b701e1",
+     "answers": "Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 (IT-203-I, 47 pages), 'How are you taxed as a nonresident or as a part-year resident?' (p. 3): 'If you were a resident of New York State for only part of the tax year, you must pay New York State tax on all income you received while you were a resident of the state and on income you received from New York State sources while you were a nonresident. To determine how much tax you owe, use Form IT-203, Nonresident and Part-Year Resident Income Tax Return.' — and 'New York State nonresidents and part-year residents: Who must file?' (p. 3): 'You must file Form IT-203 if you meet any of the following conditions' || Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 (IT-203-I, 47 pages), 'New York State nonresidents and part-year residents: Who must file?' (p. 3): 'You must file Form IT-203 if you meet any of the following conditions: • You have income from a New York State source (see Nonresidents: New York source income) and your New York adjusted gross income (Federal amount column) is more than your New York State standard deduction.'",
      "cadence": "@@e5f26f4421cd",
      "topic": "forms_and_instructions",
      "url": "https://www.tax.ny.gov/pdf/2025/inc/it203i_2025.pdf"
@@ -710,7 +709,7 @@
        "url": "https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf"
       },
       {
-       "source": "@@10f864b701e1",
+       "source": "Instructions for Form IT-203, Nonresident and Part-Year Resident Income Tax Return, Tax Year 2025 (IT-203-I, 47 pages), 'How are you taxed as a nonresident or as a part-year resident?' (p. 3): 'If you were a resident of New York State for only part of the tax year, you must pay New York State tax on all income you received while you were a resident of the state and on income you received from New York State sources while you were a nonresident. To determine how much tax you owe, use Form IT-203, Nonresident and Part-Year Resident Income Tax Return.' — and 'New York State nonresidents and part-year residents: Who must file?' (p. 3): 'You must file Form IT-203 if you meet any of the following conditions'",
        "url": "https://www.tax.ny.gov/pdf/2025/inc/it203i_2025.pdf"
       },
       {

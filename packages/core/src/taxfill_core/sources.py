@@ -24,7 +24,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from taxfill_core.datadir import DATA_DIR_ENV, display_path, knowledge_dir
 from taxfill_core.knowledge import validate_gov_url
-from taxfill_core.state_sources import state_block
+from taxfill_core.state_sources import ANSWERS_SEPARATOR, state_block
 
 __all__ = ["Source", "SourcesResult", "get_sources"]
 
@@ -192,6 +192,27 @@ def _longest_contiguous_phrase(query_seq: list[str], answers_seq: list[str]) -> 
     return best
 
 
+def _words(text: str) -> list[str]:
+    """Every word of ``text``, lowercased, stopwords KEPT (the "names the whole query" test reads the literal phrase)."""
+    return [w for w in re.split(r"[^a-z0-9]+", text.lower()) if w]
+
+
+def _names_whole_query(query: str, answers: str) -> bool:
+    """True when ONE description carries the query's words as one literal run ("where to file", "tax table").
+
+    ``answers`` holds descriptions separated by ANSWERS_SEPARATOR; each is tested on its own, so a match can never
+    straddle the end of one description and the start of the next ("... due" | "Date ...") (JK20 review, 2026-10-24).
+    """
+    want = _words(query)
+    if not want:
+        return False
+    for piece in answers.split(ANSWERS_SEPARATOR):
+        have = _words(piece)
+        if any(have[i : i + len(want)] == want for i in range(len(have) - len(want) + 1)):
+            return True
+    return False
+
+
 def _score_topic(key: str, entries: list, query: str, query_tokens: set[str]) -> int:
     """Relevance of one by_topic key to the query.
 
@@ -209,7 +230,18 @@ def _score_topic(key: str, entries: list, query: str, query_tokens: set[str]) ->
     # it must be a clean miss, never a substring/answers match on a family word.
     if not distinctive:
         return 0
-    answers_seq = _tokens(" ".join(str(e.get("answers", "")) for e in (entries or [])))
+    # Phase K JK20 (2026-10-24): a state URL cited with several descriptions is one entry whose answers joins them
+    # with ' || ' (taxfill_core.state_sources.merge_descriptions). The text before the first ' || ' is the entry's
+    # PRIMARY description, exactly what the registry carried before JK20. The joined descriptions count only when the
+    # topic's text names the WHOLE query as one literal run of words ("where to file", "tax table", "child tax
+    # credit"); otherwise the topic is scored on its primary descriptions alone, as before. Without this, one stray
+    # word of a joined description ("Who must FILE", "income EARNED while a resident") pulled a two-word query to the
+    # catch-all booklet topic or turned a clean miss into a false match (the JK20 route probe,
+    # test_state_source_routes.py). An answers text without ' || ' (every federal entry) scores exactly as before.
+    joined = " ".join(str(e.get("answers", "")) for e in (entries or []))
+    primary_seq = _tokens(" ".join(str(e.get("answers", "")).split(ANSWERS_SEPARATOR, 1)[0] for e in (entries or [])))
+    descriptions = ANSWERS_SEPARATOR.join(str(e.get("answers", "")) for e in (entries or []))
+    answers_seq = _tokens(joined) if _names_whole_query(query, descriptions) else primary_seq
     answers_tokens = set(answers_seq)
     # Coverage gate: the topic's key + answers must cover at least HALF of the
     # query's distinctive tokens, or it is a clean miss. Without this, a
@@ -232,7 +264,11 @@ def _score_topic(key: str, entries: list, query: str, query_tokens: set[str]) ->
     # word most is the better fit, e.g. "child" for CTC vs EITC).
     hits = distinctive & answers_tokens
     score += 10 * len(hits)
-    score += sum(answers_seq.count(t) - 1 for t in hits)
+    # The occurrence tiebreak reads the PRIMARY descriptions only (JK20, above): a joined description that names the
+    # query adds its hits and phrase, never volume, or the catch-all booklet topic, cited from many blocks, out-counts
+    # the specific topic on repetition alone ("due date", "where to file" and "mailing address" left
+    # filing_logistics that way in the JK20 route probe).
+    score += sum(max(primary_seq.count(t) - 1, 0) for t in hits)
     # Phrase boost: a topic whose answers literally contain a multi-word run of
     # the query (e.g. "earned income credit") is the better fit than one that
     # only shares the words scattered ("earned income rule") — this is what

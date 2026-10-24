@@ -508,3 +508,158 @@ law_changes_checked:
     source: >-
       2025 AR1000F and AR1000NR Instructions (Arkansas DFA), Special Information for Tax Year 2025 (p.6)
     url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf
+  descriptions:
+  - 'Arkansas 2025 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions booklet) - Arkansas
+    Dept. of Finance and Administration. Contains: Special Information for Tax Year 2025 (rates remain 3.9% per
+    Act 1 of the Second Extraordinary Session of 2024; withholding split to lines 39A/39B; Additional Tax Credit
+    net income up to $27,600), Definitions (domicile / full year / nonresident / part year resident / military),
+    who-must-file thresholds, ''When to File'' April 15, 2026 due date, tax-treaty foreign-student taxation language,
+    line-by-line income section (Lines 8-25), Standard Deduction chart ($2,470/$4,940), Personal Tax Credits ($29),
+    2025 Low Income Tax Tables (pp.24-25, Rev 12/12/2025 and Rev 09/29/2025) and 2025 Regular Income Tax Table (pp.26-30,
+    Rev 09/29/2025), Additional Tax Credit worksheet and table (p.21), How to Fill Out Your Check (p.20), and mailing
+    addresses.'
+  - 'Arkansas 2025 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions), ''WHO MUST
+    FILE A TAX RETURN'' (p. 10): ''PART YEAR RESIDENTS (Use Form AR1000NR)'' — ''Part year residents who received
+    any gross income while an Arkansas resident must file a return (regardless of marital status, filing status,
+    or amount).'''
+  - 'Arkansas 2025 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions), ''WHO MUST
+    FILE A TAX RETURN'' (p. 10): ''NONRESIDENTS (Use Form AR1000NR)'' — ''Nonresidents who received any gross income
+    from Arkansas sources must file a return (regardless of marital status, filing status, or amount).'''
+  - Arkansas 2025 Individual Income Tax Forms and Instructions (AR1000F and AR1000NR Instructions booklet) - Arkansas
+    Dept. of Finance and Administration. Special Information for Tax Year 2025 ('Individual Income Tax Rate Reduction
+    (Act 1 of the Second Extraordinary Session of 2024) — Marginal Income Tax rates for 2025 are 3.9%, as amended
+    in 2024'; withholding split to lines 39A/39B; Additional Tax Credit net income up to $27,600; AR1000-DD; Act
+    1019 remote work), Definitions (domicile, full year/nonresident/part year resident, military, dependents $5,200
+    gross-income limit), who-must-file thresholds ($14,644 single ... $28,723 MFJ 2+), April 15 2026 due date, treaty
+    foreign-student language, Lines 8-25 income build-up, Standard Deduction chart $2,470/$4,940, Lines 26-29 tax
+    computation and table selection, 2025 Low Income Tax Tables pp.24-25 (Rev 12/12/2025 / Rev 09/29/2025) and 2025
+    Regular Income Tax Table pp.26-30 (Rev 09/29/2025) with the printed top rule 'For $100,001 and over, your tax
+    is $3,809 + 3.9% of the excess over $100,000', Additional Tax Credit worksheet + table p.21, How to Fill Out
+    Your Check p.20, mailing addresses
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000NR_PartYear_or_Non-ResidentIndividualIncomeTaxReturn_1.pdf
+  descriptions:
+  - '2025 AR1000NR, Arkansas Individual Income Tax Return, Nonresident and Part Year Resident — the return itself
+    (page 1 residency box: ''PART YEAR RESIDENT: Dates lived in AR:'')'
+  - '2025 AR1000NR, Arkansas Individual Income Tax Return, Nonresident and Part Year Resident — the return itself
+    (page 1 residency box: ''NONRESIDENT:'')'
+- id: credits-1
+  topic: credits
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf
+  descriptions:
+  - 'Arkansas DFA - 2025 AR1000F Full Year Resident Individual Income Tax Return (form, P1, lines 7A/7B ''X $29
+    ='' and line 7C ''TOTAL PERSONAL TAX CREDITS: (Add lines 7A and 7B. Enter total here and on line 34)'') and
+    2025 AR1000F/AR1000NR Instructions (Line 7A/7B personal tax credits, Line 34)'
+- id: credits-2
+  topic: credits
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR2441_Child_andDependentCareExpenses.pdf
+  descriptions:
+  - Arkansas DFA - 2025 AR2441 Child and Dependent Care Expenses (form, R 4/28/2025, lines 3, 8-10) and 2025 AR1000F/AR1000NR
+    Instructions (Line 35, Line 43)
+- id: credits-3
+  topic: credits
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf
+  descriptions:
+  - Arkansas DFA - 2025 Individual Income Tax Forms and Instructions booklet, 'Additional Tax Credit For Qualified
+    Individuals Worksheet' and table (p.21 — '$0 - $26,500 / $60' declining $5 per $100 band) and Special Information
+    for Tax Year 2025 (net income up to $27,600)
+- id: credits-4
+  topic: credits
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000TC_Instructions.pdf
+  descriptions:
+  - Arkansas DFA - Instructions for AR1000TC (2025), Line 7 (R 6/9/2025); 2025 booklet Special Information for Tax
+    Year 2025 (Act 191 of the General Session of 2023 — no re-certification, AR1000RC5 renamed AR1000-DD)
+  - Arkansas DFA - Instructions for AR1000TC (2025), Line 1 — 'A credit of up to $50.00 per taxpayer ($100.00 for
+    a joint return) is allowed against your Arkansas individual income tax'
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf
+  descriptions:
+  - Arkansas 2025 Individual Income Tax Forms and Instructions booklet, 'Choose the appropriate address below to
+    mail your return' (TAX DUE RETURN P.O. Box 2144; REFUND RETURN P.O. Box 1000; NO TAX DUE/REFUND RETURN P.O.
+    Box 2144) - Arkansas Dept. of Finance and Administration
+  - Arkansas 2025 Individual Income Tax Forms and Instructions booklet, WHEN TO FILE ('You can file your calendar
+    year original tax return any time after December 31, 2025, but NO LATER THAN April 15, 2026, (unless an extension
+    has been granted)'); a federal extension (Form 4868) extends the Arkansas deadline to FILE until November 15th
+    (an AR1055-IT grants at most 210 days, also to November 15th), but 'Any tax due must be paid by April 15, 2026
+    to avoid failure to pay penalty and interest'; back cover checklist repeats 'YOU MUST FILE BY APRIL 15, 2026'
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_TaxBrackets.pdf
+  descriptions:
+  - 'Arkansas DFA, Revenue Division — ''2025 Indexed Tax Brackets'' (Individual Income Tax): the full bracket table
+    (From / Less Than or Equal To / Percentage / Minus Adjustment), the complete $94,701-$97,800 adjustment phase-down,
+    the midpoint-of-band formula examples, and the ''results must match the table exactly'' rule — the primary source
+    for the shipped rate schedule'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf
+  descriptions:
+  - 'Arkansas DFA - 2025 AR1000F Full Year Resident Individual Income Tax Return (form) — second-pass verification
+    of the ''X $29'' personal tax credit multipliers (lines 7A/7B), line 7C ''Enter total here and on line 34'',
+    line 29 ''TAX: (Enter tax from tax table)'', line 30 combined tax'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR2441_Child_andDependentCareExpenses.pdf
+  descriptions:
+  - Arkansas DFA - 2025 AR2441 Child and Dependent Care Expenses (R 4/28/2025) — line 3 $3,000/$6,000 expense caps,
+    line 8 decimal table (.35 at $0-$15,000 sliding to .20 for $43,000-No limit), line 10 'Multiply line 9 by .20'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000TC_Instructions.pdf
+  descriptions:
+  - Arkansas DFA - Instructions for AR1000TC (2025, R 6/9/2025) — Line 1 political contributions credit ($50/$100),
+    Line 6 Additional Tax Credit, Line 7 Developmental Disabilities credit ($500 per dependent), Line 8 tax credit
+    codes
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.atap.arkansas.gov
+  descriptions:
+  - Arkansas Taxpayer Access Point (ATAP) - official DFA online payment/account portal (referenced in the 2025 instructions
+    booklet for making payments and estimated payments).
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_TaxBrackets.pdf
+  descriptions:
+  - 'Arkansas DFA, Revenue Division — ''2025 Indexed Tax Brackets'' (Individual Income Tax): full bracket table
+    (From / Less Than or Equal To / Percentage / Minus Adjustment: 0% to $5,599; 2% $5,600-$11,199 minus $111.98;
+    3% $11,200-$15,999 minus $223.97; 3.4% $16,000-$26,399 minus $287.97; 3.9% $26,400-$94,700 minus $419.96; then
+    the adjustment phase-down $94,701-$97,800 stepping $419.96 -> $399.30 -> $10 per $100 band -> $99.30; 3.9% minus
+    $89.30 at $97,801 and over), midpoint-of-band formula examples ($75,950 x .039 = $2,962.05 - $419.96 = $2,542.09
+    -> $2,542; $14,850 x .030 = $445.50 - $223.97 = $221.53 -> $222), and the ''results must match the table exactly''
+    rule. Cross-verified against the 2025 AR1000F and AR1000NR Instructions booklet (https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf):
+    ''Special Information for Tax Year 2025'' (''Individual Income Tax Rate Reduction (Act 1 of the Second Extraordinary
+    Session of 2024) — Marginal Income Tax rates for 2025 are 3.9%, as amended in 2024''), Line 7A/7B Personal Tax
+    Credits ($29), Standard Deduction chart ($2,470/$4,940) and Lines 26-29, the 2025 Low Income Tax Tables pp.24-25
+    (Rev 12/12/2025 and Rev 09/29/2025) and the 2025 Regular Income Tax Table pp.26-30 (Rev 09/29/2025) with ''For
+    $100,001 and over, your tax is $3,809 + 3.9% of the excess over $100,000''.'
+- id: rates-2
+  topic: tax_rates_and_brackets
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf
+  descriptions:
+  - '2025 AR1000F Full Year Resident Individual Income Tax Return, page 1 "PERSONAL TAX CREDITS": line 7A boxes
+    (Yourself / Spouse, 65 or over, 65 Special, Blind, Deaf, Head of household/surviving spouse "(Filing status
+    3 only)" "(Filing status 6 only)"), "Multiply number of boxes checked ... 7A X $29 ="; line 7B "Multiply number
+    of DEPENDENTS from above ... 7B X $29 ="; line 7C "TOTAL PERSONAL TAX CREDITS: (Add lines 7A and 7B. Enter total
+    here and on line 34)"; page 2 lines 33, 34 "Personal tax credit(s): (Enter total from line 7C)", 37 and 38.
+    Second pass: the 2025 AR1000F and AR1000NR Instructions, p. 12 "PERSONAL TAX CREDITS" (lines 7A, 7B, 7C) and
+    p. 15 (lines 34, 37, 38), which print the same $29 and line text.'
+- id: law-1
+  topic: law_changes
+  url: https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf
+  descriptions:
+  - 2025 AR1000F and AR1000NR Instructions (Arkansas DFA), Special Information for Tax Year 2025 (p.6)

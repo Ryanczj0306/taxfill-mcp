@@ -332,3 +332,110 @@ effective_law_changes:
       and Child Deduction Table, Line 11 NC Standard Deduction Chart, Line 15 tax computation, Filing Requirements
       Chart (p.6), Form D-400TC Part 1 out-of-state credit instructions
     url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+  descriptions:
+  - 2025 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must File,
+    residency/183-day presumption), When Must I File ("the 2025 return is due on or before April 15th, 2026"), What
+    is the Tax Rate? ("For tax year 2025, the individual income tax rate is 4.25%. To calculate your North Carolina
+    tax liability, multiply your North Carolina taxable income by 4.25% (0.0425)"), Where Do I File / How Can I
+    Pay (mailing addresses, payee, "2025 D-400" memo), Schedule S starting point (federal AGI as of January 1, 2023),
+    Line 7 Additions / Schedule S Part A list, Filing Requirements Chart (p.6)
+  - '2025 D-401 North Carolina Individual Income Tax Instructions, ''What Form Should I File?'' (p. 6): ''All individuals
+    (including part-year residents and nonresidents) required to file a North Carolina individual income tax return
+    must file Form D-400'' — ''Form D-400 Schedule PN, 2025 Part-Year Resident and Nonresident Schedule. If you
+    are a part-year resident or nonresident who received income from North Carolina sources during tax year 2025,
+    complete this form to determine what percent of your total income is from North Carolina sources.'' — and ''Instructions
+    for Form D-400 Schedule PN'' (p. 21): ''You are a “part-year resident” if you moved to North Carolina and became
+    a resident during the tax year, or you moved out of North Carolina and became a resident of another state during
+    the tax year.'''
+  - '2025 D-401 North Carolina Individual Income Tax Instructions, ''What Form Should I File?'' (p. 6): ''All individuals
+    (including part-year residents and nonresidents) required to file a North Carolina individual income tax return
+    must file Form D-400'' — ''Form D-400 Schedule PN, 2025 Part-Year Resident and Nonresident Schedule. If you
+    are a part-year resident or nonresident who received income from North Carolina sources during tax year 2025,
+    complete this form to determine what percent of your total income is from North Carolina sources.'' — and ''Instructions
+    for Form D-400 Schedule PN'' (p. 21): ''You are a “nonresident” if you were not a resident of North Carolina
+    at any time during the tax year.'''
+  - 2025 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must File,
+    residency/183-day presumption), When Must I File (April 15, 2026), What is the Tax Rate? (4.25% / 0.0425), Where
+    Do I File / How Can I Pay (mailing addresses, payee, "2025 D-400" memo, $2-per-$100 card fee), Schedule S federal-AGI
+    starting point and the January 1, 2023 IRC conformity date (with the express statement that OBBBA changes do
+    not apply for 2025), Line 7 Additions / Schedule S Part A Lines 1-16, Line 10 Child Deduction Worksheet and
+    Child Deduction Table, Line 11 NC Standard Deduction Chart, Line 15 tax computation, Filing Requirements Chart
+    (p.6), Form D-400TC Part 1 out-of-state credit instructions
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.ncdor.gov/2025-d-400-schedule-pn-web-fill-version/open
+  descriptions:
+  - '2025 D-400 Schedule PN, Part-Year Resident and Nonresident Schedule (Web-Fill 9-25) — the 2-page schedule itself
+    (its page 1, PDF page 2: ''A part-year resident or a nonresident who receives income from N.C. sources must
+    complete this form to determine the percentage of total income from all sources that is subject to N.C. tax.'')'
+- id: credits-1
+  topic: credits
+  url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+  descriptions:
+  - NCDOR 2025 D-401 Individual Income Tax Instructions (Instructions for Form D-400TC, Part 1) and 2025 Form D-400
+    Line 16
+  - NCDOR 2025 D-401 Instructions (Form D-400TC credits; What You Should Send Us — NC-478/NC-Rehab; "What Form Should
+    I File?" form list)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+  descriptions:
+  - 2025 D-401 North Carolina Individual Income Tax Instructions — "Where Do I File?" and the back-cover Mailing
+    Address box (refund PO Box R, Raleigh NC 27634-0001; not due a refund PO Box 25000, Raleigh NC 27640-0640; amended
+    returns PO Box 25000, Raleigh NC 27640-0640)
+  - 2025 D-401 North Carolina Individual Income Tax Instructions — "When Must I File?" ("If you file your return
+    on a calendar year basis, the 2025 return is due on or before April 15th, 2026"); automatic four-month extension
+    if out of the country on the due date; federal automatic extension honored when the "Federal Extension" circle
+    on D-400 page 1 is filled in (else Form D-410)
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.ncdor.gov/2025-d-400-web-filled-version/open
+  descriptions:
+  - 2025 Form D-400 (web-filled version, "D-400 Web-Fill 9-25", Tax Year 2025) — Line 6 Federal Adjusted Gross Income,
+    Line 7 additions (Form D-400 Schedule S, Part A, Line 16), Line 9 deductions (Schedule S Part B Line 41), Line
+    10a/10b child deduction, Line 11 N.C. Standard Deduction OR N.C. Itemized Deductions, Line 12a/12b, Line 13
+    part-year/nonresident taxable percentage (Schedule PN Line 24), Line 14 North Carolina Taxable Income, Line
+    15 "Multiply Line 14 by 4.25% (0.0425). If zero or less, enter a zero." (second-pass verification of the rate),
+    Line 16 Tax Credits (From Form D-400TC, Part 3, Line 20)
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.ncdor.gov/file-pay/file-pay-individuals
+  descriptions:
+  - NCDOR — File & Pay for Individuals (online payment by bank draft free; Mastercard/Visa $2 convenience fee per
+    $100 paid, per the 2025 D-401 "How Can I Pay?")
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+  descriptions:
+  - '2025 D-401 North Carolina Individual Income Tax Instructions — "For tax year 2025, the individual income tax
+    rate is 4.25%. To calculate your North Carolina tax liability, multiply your North Carolina taxable income by
+    4.25% (0.0425)"; NC Standard Deduction Chart (D-400 Line 11): $12,750 Single / $25,500 MFJ-Qualifying Widow(er)-Surviving
+    Spouse / $12,750 MFS ($0 if spouse claims itemized deductions) / $19,125 Head of Household; Child Deduction
+    Table (D-400 Line 10); Schedule S starting point = federal AGI as of January 1, 2023. Second pass: the 2025
+    Form D-400 ("D-400 Web-Fill 9-25", Tax Year 2025) itself prints Line 15 "Multiply Line 14 by 4.25% (0.0425).
+    If zero or less, enter a zero." — both passes agree (the form does not print the standard-deduction chart; see
+    pack unverified).'
+- id: law-1
+  topic: law_changes
+  url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+  descriptions:
+  - 2025 D-401 North Carolina Individual Income Tax Instructions (Form D-401) — General Information (Who Must File,
+    residency/183-day presumption), When Must I File (April 15, 2026), What is the Tax Rate? (4.25% / 0.0425), Where
+    Do I File / How Can I Pay (mailing addresses, payee, "2025 D-400" memo, $2-per-$100 card fee), Schedule S federal-AGI
+    starting point and the January 1, 2023 IRC conformity date (with the express statement that OBBBA changes do
+    not apply for 2025), Line 7 Additions / Schedule S Part A Lines 1-16, Line 10 Child Deduction Worksheet and
+    Child Deduction Table, Line 11 NC Standard Deduction Chart, Line 15 tax computation, Filing Requirements Chart
+    (p.6), Form D-400TC Part 1 out-of-state credit instructions

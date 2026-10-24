@@ -355,3 +355,128 @@ effective_law_changes:
       with an annual CPI-U inflation adjustment; the additional exemptions for dependents, blind, and 65-or-older were
       repealed; annual retirement income exemption for 65+ raised from $6,000 to $12,000
     url: https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+  descriptions:
+  - 'Louisiana DOR - 2025 IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025): WHAT''S NEW FOR LOUISIANA
+    2025 - Act 11 of the 2024 Third Extraordinary Legislative Session changed the income tax rate to a flat 3% (Line
+    11), increased the standard deduction to $12,500 single/MFS and $25,000 MFJ/QSS/HOH (Line 8), and repealed the
+    additional $1,000 exemptions for dependents, 65-or-older, and blind (old Lines 6A/6B/6D/6E/6F removed); Line
+    7 Federal AGI; Line 10 = Line 7 minus Line 8 minus Line 9D; ''A 2025 calendar year return is due on or before
+    May 15, 2026'''
+  - 'Louisiana DOR - 2025 IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025): WHAT''S NEW FOR LOUISIANA
+    2025 (Act 11, 2024 Third Extraordinary Session — flat 3% rate at Line 11; standard deduction increased to $12,500
+    single/MFS and $25,000 MFJ/QSS/HOH at Line 8; additional $1,000 exemptions for dependents, 65-or-older, and
+    blind REPEALED and old Lines 6A/6B/6D/6E/6F removed; annual retirement income exemption for 65+ raised from
+    $6,000 to $12,000); Line 7 Federal AGI; Line 8 standard deduction; Line 9A-9D excess federal itemized deductions;
+    Line 10 = Line 7 minus Lines 8 and 9D (floor 0); Line 11 = Line 10 x .03 (round to nearest dollar); Lines 14-16
+    refundable child care / school readiness / LA EIC (5%); WHO MUST FILE; WHEN TO FILE (May 15, 2026); mailing
+    P.O. Box 3550 (with payment) / P.O. Box 3440 (all other); payee Louisiana Department of Revenue'
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://dam.ldr.la.gov/taxforms/IT540Bi-2025-Revised-7-26.pdf
+  descriptions:
+  - '2025 Louisiana IT-540B Nonresident and Part-Year Resident Individual Income Tax instructions (revised; ''This
+    form has been updated as of June 24, 2026.''), ''WHO MUST FILE A RETURN (FORM IT-540B)'' (p. 2): ''1. If you
+    are a nonresident, or part-year resident with income from Louisiana sources who is required to file a federal
+    individual income tax return, you must file a Louisiana income tax return reporting income earned in 2025.''
+    — ''NONRESIDENT RETURN OR PART-YEAR RETURN'' (p. 2): ''If you are filing as a part-year resident, mark an "X"
+    in the Part-Year Return box.'''
+  - '2025 Louisiana IT-540B Nonresident and Part-Year Resident Individual Income Tax instructions (revised; ''This
+    form has been updated as of June 24, 2026.''), ''WHO MUST FILE A RETURN (FORM IT-540B)'' (p. 2): ''1. If you
+    are a nonresident, or part-year resident with income from Louisiana sources who is required to file a federal
+    individual income tax return, you must file a Louisiana income tax return reporting income earned in 2025.''
+    — ''NONRESIDENT RETURN OR PART-YEAR RETURN'' (p. 2): ''If you are filing as a nonresident, mark an "X" in the
+    Nonresident Return box.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://dam.ldr.la.gov/taxforms/IT540B(2025)WEB-BC-F.pdf
+  descriptions:
+  - 2025 Form IT-540B WEB-BC, Louisiana Nonresident and Part-Year Resident — the 4-page return that opens the 16-page
+    PDF (page 1 carries the 'Nonresident Return' and 'Part-Year Return' boxes)
+- id: credits-1
+  topic: credits
+  url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+  descriptions:
+  - Louisiana Department of Revenue – 2025 IT-540 instructions, Line 16 (LA EIC, 5 percent of the Federal EIC, R.S.
+    47:297.8)
+  - Louisiana Department of Revenue – 2025 IT-540 instructions, Line 14 (Louisiana Refundable Child Care Credit;
+    federal AGI $25,000 or less)
+  - Louisiana Department of Revenue – 2025 IT-540 instructions, Line 15 (Louisiana Refundable School Readiness Credit)
+  - Louisiana Department of Revenue – 2025 IT-540 instructions (Louisiana Nonrefundable Child Care Credit Worksheet;
+    Schedule J)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+  descriptions:
+  - Louisiana DOR - 2025 IT-540 instructions, WHERE TO FILE AND PAY TAX ('A return for which a payment is due must
+    be mailed to P.O. Box 3550, Baton Rouge, LA 70821-3550 ... All other individual income tax returns must be mailed
+    to P.O. Box 3440, Baton Rouge, LA 70821-3440')
+  - Louisiana DOR - 2025 IT-540 instructions WHEN TO FILE ('A 2025 calendar year return is due on or before May
+    15, 2026'); automatic six-month extension to November 15, 2026 (no extension form required; pay any tax due
+    with voucher Form R-2868V by May 15, 2026)
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf
+  descriptions:
+  - 'Louisiana DOR - Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform): Act 11 of
+    the 2024 Third Extraordinary Session repeals the graduated rates/brackets (formerly 1.85%/3.5%/4.25%) in favor
+    of a FLAT 3% tax effective for tax years beginning on or after 1/1/2025; nearly triples the standard deduction
+    ($4,500 -> $12,500 single/MFS; $9,000 -> $25,000 surviving spouse / head of household — MFJ likewise $25,000)
+    with an annual CPI-U inflation adjustment; the additional exemptions for dependents, blind, and 65-or-older
+    were repealed; annual retirement income exemption for 65+ raised from $6,000 to $12,000'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://revenue.louisiana.gov/individuals/general-resources/individual-income-tax/
+  descriptions:
+  - 'Louisiana DOR - Individual Income Tax (general resources): residency/domicile, IT-540 vs IT-540B, returns and
+    payments due May 15th of the following year, filing requirement tied to federal filing obligation'
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+  descriptions:
+  - '2025 Louisiana IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025), LA DOR - WHAT''S NEW FOR LOUISIANA
+    2025: ''Your Louisiana Income Tax - Line 11 - Act 11 of the 2024 Third Extraordinary Legislative Session changed
+    the income tax rate to a flat tax rate of 3%''; ''Louisiana Standard Deduction - Line 8 ... The amount of the
+    deduction is $12,500 for individuals filing single and married filing separate; $25,000 for individuals filing
+    married filing joint, qualifying surviving spouse and head of household''; Line 8 instruction ''If your filing
+    status is 1 or 3, enter $12,500; 2, 4, or 5, enter $25,000''; Line 10 ''Subtract Lines 8 and 9D from Line 7.
+    If less than zero, enter zero 0''; Line 11 ''Multiply Line 10 by .03. Round to the nearest dollar''. Second
+    pass: Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform) prints the pre/post rate
+    tables (graduated 1.85%/3.5%/4.25% -> flat 3%) and the standard-deduction increase table ($4,500 -> $12,500
+    single/MFS; $9,000 -> $25,000 surviving spouse/head of household), and states the additional exemptions for
+    dependents, blind, and 65-or-older were repealed - https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf
+    - both passes agree.'
+- id: law-1
+  topic: law_changes
+  url: https://dam.ldr.la.gov/taxforms/IT540i-WEB-2025.pdf
+  descriptions:
+  - 'Louisiana DOR - 2025 IT-540 Resident Income Tax Return Instructions (IT540i-WEB-2025): WHAT''S NEW FOR LOUISIANA
+    2025 (Act 11, 2024 Third Extraordinary Session — flat 3% rate at Line 11; standard deduction increased to $12,500
+    single/MFS and $25,000 MFJ/QSS/HOH at Line 8; additional $1,000 exemptions for dependents, 65-or-older, and
+    blind REPEALED and old Lines 6A/6B/6D/6E/6F removed; annual retirement income exemption for 65+ raised from
+    $6,000 to $12,000); Line 7 Federal AGI; Line 8 standard deduction; Line 9A-9D excess federal itemized deductions;
+    Line 10 = Line 7 minus Lines 8 and 9D (floor 0); Line 11 = Line 10 x .03 (round to nearest dollar); Lines 14-16
+    refundable child care / school readiness / LA EIC (5%); WHO MUST FILE; WHEN TO FILE (May 15, 2026); mailing
+    P.O. Box 3550 (with payment) / P.O. Box 3440 (all other); payee Louisiana Department of Revenue'
+- id: law-2
+  topic: law_changes
+  url: https://dam.ldr.la.gov/lawspolicies/RIB-25-012-Louisiana-Individual-Income-Tax-Reform-1.pdf
+  descriptions:
+  - 'Louisiana DOR - Revenue Information Bulletin No. 25-012 (Louisiana Individual Income Tax Reform): Act 11 of
+    the 2024 Third Extraordinary Session repeals the graduated rates/brackets (formerly 1.85%/3.5%/4.25%) in favor
+    of a FLAT 3% tax effective for tax years beginning on or after 1/1/2025; nearly triples the standard deduction
+    ($4,500 -> $12,500 single/MFS; $9,000 -> $25,000 surviving spouse / head of household — MFJ likewise $25,000)
+    with an annual CPI-U inflation adjustment; the additional exemptions for dependents, blind, and 65-or-older
+    were repealed; annual retirement income exemption for 65+ raised from $6,000 to $12,000'

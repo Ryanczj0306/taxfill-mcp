@@ -457,3 +457,122 @@ effective_law_changes:
       of Household/Qualified Widow(er)); Who Must File; Resident Defined; Due Date; mailing address; check payee;
       Schedules 511-A/511-B/511-C/511-D/511-E/511-F/511-G; Form 538-S
     url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+  descriptions:
+  - '2025 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission).
+    Source for: Form 511 line 1 = Federal AGI starting point; Schedule 511-B additions list (no treaty add-back);
+    resident/part-year/nonresident domicile definitions; What''s New (poll-worker paid-leave exemption on Schedule
+    511-C line 6; Electric Vehicle Charging Tax Credit added to Form 511-CR); due date April 15, 2026 (April 20
+    e-file/e-pay); WHO MUST FILE thresholds; mailing to PO Box 26800, OKC 73126-0800; check payable to Oklahoma
+    Tax Commission; OkTAP at oktap.tax.ok.gov.'
+  - '2025 Form 511, Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission)
+    — ''Who Must File?'' (p. 4), Part-Year Resident: ''Every part-year resident, during the period of residency,
+    has the same filing requirements as a resident. During the period of nonresidency, an Oklahoma return is also
+    required if the Oklahoma part-year resident has gross income from Oklahoma sources of $1,000 or more. Use Form
+    511-NR.'''
+  - '2025 Form 511, Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission)
+    — ''Who Must File?'' (p. 4), Nonresident: ''Except as otherwise provided for in the Pass-Through Entity Tax
+    Equity Act of 2019 (68 OS Sec. 2355.1P-1 et seq.), every nonresident with gross income from Oklahoma sources
+    of $1,000 or more is required to file an Oklahoma income tax return. Use Form 511-NR.'''
+  - '2025 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission):
+    What''s New (poll-worker paid-leave exemption, Schedule 511-C line 6; Electric Vehicle Charging Tax Credit added
+    to Form 511-CR); Form 511 lines 1-14a; line 10 standard deduction instructions ($6,350 Single/MFS, $12,700 MFJ/Qualifying
+    Surviving Spouse, $9,350 Head of Household); line 11 exemptions X $1,000; Top of Form Instructions F EXEMPTIONS
+    (Special 65-or-older federal-AGI limits $15,000/$25,000/$12,500/$19,000; Legally Blind; Dependents); 2025 Oklahoma
+    Income Tax Table pp. 27-38 including the ''Tax Computation Worksheet ... $100,000 or more'' constants ($4,562
+    plus 0.0475 Single/Married Filing Separate; $4,373 plus 0.0475 Married Filing Joint/Head of Household/Qualified
+    Widow(er)); Who Must File; Resident Defined; Due Date; mailing address; check payee; Schedules 511-A/511-B/511-C/511-D/511-E/511-F/511-G;
+    Form 538-S'
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-NR-Pkt.pdf
+  descriptions:
+  - '2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR
+    packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, ''F Residency
+    Status'' (p. 9): ''Part-Year Resident - If a part-year resident, enter the dates of residency in Oklahoma. If
+    filing a joint return, both must be part-year residents.'''
+  - '2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR
+    packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, ''F Residency
+    Status'' (p. 9): ''Nonresident - If a nonresident the entire year, enter the state of residence. If filing a
+    joint return, both must be nonresidents the entire year.'''
+- id: credits-1
+  topic: credits
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+  descriptions:
+  - Oklahoma Tax Commission, 2025 Oklahoma Resident Individual Income Tax Forms and Instructions (Form 511 packet)
+    - Line 28 instructions and Schedule 511-G
+  - Oklahoma Tax Commission, 2025 Form 511 packet - Line 15 instructions (Child Care/Child Tax Credit) and Schedule
+    511-F
+  - Oklahoma Tax Commission, 2025 Form 511 packet - Line 25 instructions and the 2025 Form 538-S 'Claim for Credit/Refund
+    of Sales Tax' included in the packet (line 15, exemptions x $40)
+  - Oklahoma Tax Commission, 2025 Form 511 packet - Line 24 instructions ('Credit for Property Tax Relief')
+  - Oklahoma Tax Commission, 2025 Form 511 packet - Line 29 instructions (Parental Choice Tax Credit for Homeschool
+    Expenses; $1,000 maximum in qualified expenses per eligible student per tax year; Form 591-D)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+  descriptions:
+  - 2025 Form 511 packet, 'When You Are Finished' / Form 511 mailing line (PO Box 26800, OKC 73126-0800; 'If you
+    owe taxes, provide a check or money order payable to Oklahoma Tax Commission. Do not send cash.')
+  - '2025 Form 511 packet - ''Generally, your return must be postmarked by April 15, 2026'' and the DUE DATE section:
+    ''Generally, your Oklahoma income tax return is due April 15th, the same day as your federal return. However:
+    If you file your return electronically (through a preparer or the internet), your due date is extended to April
+    20th. Any payment of taxes due on April 20th must be remitted electronically in order to be considered timely
+    paid.'' If the due date falls on a weekend or legal holiday when OTC offices are closed, the return is due the
+    next business day. A valid federal extension automatically extends the Oklahoma due date if no Oklahoma liability
+    is owed (attach a copy); otherwise request an Oklahoma extension on Form 504-I.'
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.oklegislature.gov/cf_pdf/2025-26%20ENR/hB/HB2764%20ENR.PDF
+  descriptions:
+  - 'Oklahoma Legislature — 2025 House Bill 2764, ENROLLED text (ENR. H.B. NO. 2764), Section 2 amending 68 O.S.
+    2021 Section 2355: subsection C is retitled from ''For all taxable years beginning on or after January 1, 2024''
+    to ''tax years 2024 and 2025'' with its six-bracket schedule and 4.75% top rate UNCHANGED (Single/MFS 0.25%
+    first $1,000, 0.75% next $1,500, 1.75% next $1,250, 2.75% next $1,150, 3.75% next $2,300, 4.75% remainder; MFJ/surviving
+    spouse/HOH 0.25% first $2,000, 0.75% next $3,000, 1.75% next $2,500, 2.75% next $2,300, 3.75% next $4,600, 4.75%
+    remainder), and a NEW subsection D applies ''For tax year 2026 and for subsequent tax years'' (Single/MFS 0%
+    first $3,750, 2.5% next $1,150, 3.5% next $2,300, 4.5% remainder; MFJ/HOH 0% first $7,500, 2.5% next $2,300,
+    3.5% next $4,600, 4.5% remainder), with subsection E''s revenue-trigger phase-down'
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+  descriptions:
+  - '2025 Form 511 — Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission):
+    Form 511 page 2, lines 10-14a (line 10 standard deduction ''Single or Married Filing Separate: $6,350 - Married
+    Filing Joint or Qualifying Surviving Spouse: $12,700 - Head of Household: $9,350''; line 11 ''Exemptions: Enter
+    the total number of exemptions claimed on page 1 ... X $1,000''); Select Line Instructions and Top of Form Instructions
+    (F EXEMPTIONS, incl. the Special 65-or-older federal-AGI limits and Legally Blind); 2025 Oklahoma Income Tax
+    Table pp. 27-38, incl. the ''Tax Computation Worksheet'' for taxable income of $100,000 or more ($4,562 plus
+    0.0475 of the excess over $100,000 for Single/Married Filing Separate; $4,373 plus 0.0475 for Married Filing
+    Joint/Head of Household/Qualified Widow(er) — both constants IDENTICAL to 2024, confirming the schedule did
+    not move). Second pass: the bracket-by-bracket schedule verified verbatim against 68 O.S. Section 2355(C) as
+    amended by 2025 House Bill 2764 (ENROLLED text, oklegislature.gov), which retitles subsection C to ''tax years
+    2024 and 2025'' and leaves the six brackets and the 4.75% top rate unchanged, while its NEW subsection D (three
+    brackets, 4.5% top rate) applies only ''For tax year 2026 and for subsequent tax years''. Both passes agree,
+    and printed table rows corroborate every boundary (e.g. the 12,300-12,350 row reads $397 Single / $229 MFJ,
+    and the 16,300-16,350 row $587 / $398 — matching the MFJ 3.75% band that ends at $14,400).'
+- id: law-1
+  topic: law_changes
+  url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf
+  descriptions:
+  - '2025 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission):
+    What''s New (poll-worker paid-leave exemption, Schedule 511-C line 6; Electric Vehicle Charging Tax Credit added
+    to Form 511-CR); Form 511 lines 1-14a; line 10 standard deduction instructions ($6,350 Single/MFS, $12,700 MFJ/Qualifying
+    Surviving Spouse, $9,350 Head of Household); line 11 exemptions X $1,000; Top of Form Instructions F EXEMPTIONS
+    (Special 65-or-older federal-AGI limits $15,000/$25,000/$12,500/$19,000; Legally Blind; Dependents); 2025 Oklahoma
+    Income Tax Table pp. 27-38 including the ''Tax Computation Worksheet ... $100,000 or more'' constants ($4,562
+    plus 0.0475 Single/Married Filing Separate; $4,373 plus 0.0475 Married Filing Joint/Head of Household/Qualified
+    Widow(er)); Who Must File; Resident Defined; Due Date; mailing address; check payee; Schedules 511-A/511-B/511-C/511-D/511-E/511-F/511-G;
+    Form 538-S'

@@ -24,8 +24,7 @@
   "@@d2ebbec48149": "Tuition Tax Credit — A SC resident student (or a parent/legal guardian/other person who can claim the student as a dependent and who paid the tuition) attending a qualifying SC 2-year or 4-year college/university, meeting the I-319 requirements (SC high school diploma or qualifying equivalent, enrollment within 12 months, in-state tuition rate, credit-hour minimums, no disqualifying scholarships/convictions/defaults; claimable at most four consecutive years).",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f0285f3f5ebe": "2025 South Carolina Individual Income Tax Tables SC1040TT (Revised 6/17/25) — the mandatory tax tables for taxable income under $100,000 and the '2025 Tax Rate Schedule for taxable income of $100,000 or more' ('1. Multiply the amount on line 5 by 6%; 2. Subtract $642; 3. Enter the difference on line 6', with the worked example $101,000 -> $5,418); 2025 SC1040 Instructions Line 6 ('If your income subject to tax on line 5 is less than $100,000, use the SC1040TT... If your income subject to tax on line 5 is $100,000 or more, use the tax rate schedule provided in the SC1040TT') and Line w (dependent exemption $4,930). Second pass (bracket bounds and constants): 2025 SC4972, Rev. 6/17/25, printed '2025 Tax Computation Schedule for Line 19 and Line 22' — $0 to $3,560: 0% times the amount; $3,560 to $17,830: 3% times the amount minus $107; $17,830 or more: 6% times the amount minus $642 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2025.pdf). TY2025 changes vs 2024: top rate 6.2% -> 6% (the Act 228 of 2022 step-down toward 6%), bounds indexed $3,460/$17,330 -> $3,560/$17,830, constants $104/$659 -> $107/$642, dependent exemption $4,790 -> $4,930.",
-  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
-  "@@fcaf68ce7d67": "Individual Income Tax: General Information and FAQs (SCDOR; the 2025 'Gen Instr', for the 2025 return due April 15, 2026) — 'What is my residency status if I moved into or out of South Carolina during the tax year?' (p. 2): 'You are a part-year resident and may consider yourself a full-year resident or nonresident. If you file as a full-year resident, file the SC1040. ... If you file as a nonresident, file the SC1040 with the Schedule NR. ... You may choose the filing method that is most beneficial to you.'"
+  "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
   "overall_notes": [
@@ -295,7 +294,7 @@
      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040TC_2025.pdf"
     },
     {
-     "answers": "SC DOR 2025 SC1040 Individual Income Tax Instructions, Line 12: Two Wage Earner Credit ('For 2025, the credit is computed at .007 of the lesser of $50,000 or the South Carolina qualified earned income of the spouse with the lower South Carolina qualified earned income for the taxable year')",
+     "answers": "SC DOR 2025 SC1040 Individual Income Tax Instructions, Line 12: Two Wage Earner Credit ('For 2025, the credit is computed at .007 of the lesser of $50,000 or the South Carolina qualified earned income of the spouse with the lower South Carolina qualified earned income for the taxable year') || SC DOR 2025 SC1040 Individual Income Tax Instructions, Line 11: Child and Dependent Care Credit",
      "cadence": "@@6a88d3242c9e",
      "topic": "credits",
      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf"
@@ -381,13 +380,13 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@11ba6af2dc6b",
+     "answers": "2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue, August 2025) - Line 1 federal taxable income; Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back; IRC conformity through 12/31/2024; due date April 15, 2026; refund claim deadline April 15, 2029; Line w dependent exemption $4,930 || 2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) — 'Checkboxes' (p. 2): '2. If you are a nonresident for the entire year or a part-year resident electing to file as a nonresident, check the appropriate box and attach your Schedule NR to the completed SC1040. Do not submit the Schedule NR separately.' || 2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue, August 2025) - Line 1 federal taxable income; Additions lines a-e incl. line e foreign add-back; IRC conformity through 12/31/2024; due date April 15, 2026; Line w dependent exemption $4,930; Line 11/12 credit computations; Line 6 tax-table/rate-schedule mandate",
      "cadence": "@@6a88d3242c9e",
      "topic": "forms_and_instructions",
      "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf"
     },
     {
-     "answers": "@@fcaf68ce7d67",
+     "answers": "Individual Income Tax: General Information and FAQs (SCDOR; the 2025 'Gen Instr', for the 2025 return due April 15, 2026) — 'What is my residency status if I moved into or out of South Carolina during the tax year?' (p. 2): 'You are a part-year resident and may consider yourself a full-year resident or nonresident. If you file as a full-year resident, file the SC1040. ... If you file as a nonresident, file the SC1040 with the Schedule NR. ... You may choose the filing method that is most beneficial to you.' || Individual Income Tax: General Information and FAQs (SCDOR; the 2025 'Gen Instr', for the 2025 return due April 15, 2026) — 'How should I file if I am a nonresident of South Carolina but work in this state?' (p. 2): 'File the SC1040 with the Schedule NR. You will be taxed only on income earned in South Carolina and will prorate your deductions.'",
      "cadence": "@@6a88d3242c9e",
      "topic": "forms_and_instructions",
      "url": "https://dor.sc.gov/sites/dor/files/forms/Geninfo_2025.pdf"
@@ -651,7 +650,7 @@
        "url": "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf"
       },
       {
-       "source": "@@fcaf68ce7d67",
+       "source": "Individual Income Tax: General Information and FAQs (SCDOR; the 2025 'Gen Instr', for the 2025 return due April 15, 2026) — 'What is my residency status if I moved into or out of South Carolina during the tax year?' (p. 2): 'You are a part-year resident and may consider yourself a full-year resident or nonresident. If you file as a full-year resident, file the SC1040. ... If you file as a nonresident, file the SC1040 with the Schedule NR. ... You may choose the filing method that is most beneficial to you.'",
        "url": "https://dor.sc.gov/sites/dor/files/forms/Geninfo_2025.pdf"
       },
       {

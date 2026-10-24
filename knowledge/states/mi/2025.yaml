@@ -320,3 +320,117 @@ forms:
         2025 Michigan Schedule NR, Nonresident and Part-Year Resident Schedule (Rev. 03-25) — the 2-page schedule
         itself (page 1: '2025 MICHIGAN Nonresident and Part-Year Resident Schedule' — 'Include with Form MI-1040.')
       url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/Schedule-NR.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040.pdf
+  descriptions:
+  - 2025 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 'Adjusted Gross Income from your U.S.
+    Form 1040', line 11 'Additions from Schedule 1, line 9', line 17 'Tax. Multiply line 16 by 4.25% (0.0425)',
+    the printed exemption amounts (9a x $5,800, 9b x $3,400, 9c x $500, 9d x $5,800, 9e $1,500), and the printed
+    mailing addresses (Lansing, MI 48956 refund; Lansing, MI 48929 with payment)
+  - 2025 Michigan Individual Income Tax Return MI-1040 (form PDF) - line 10 federal AGI start, line 11 additions
+    from Schedule 1 line 9, lines 9a-9f printed exemption amounts ($5,800 / $3,400 / $500 / $5,800 stillbirth /
+    $1,500 claimed-as-dependent), line 17 'Tax. Multiply line 16 by 4.25% (0.0425)', printed Lansing mailing addresses
+    (second-pass verification of every figure)
+- id: credits-1
+  topic: credits
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+  descriptions:
+  - 2025 MICHIGAN Individual Income Tax MI-1040 Instructions (MI-1040-Book.pdf), Line 28 instructions ("a Michigan
+    EITC equal to 30 percent of the taxpayer's federal credit")
+  - 2025 MICHIGAN Individual Income Tax MI-1040 Instructions (MI-1040-Book.pdf) — "New for 2025" Homestead Property
+    Tax Credit Updates (maximum taxable value $165,400; total-household-resources limit $71,500; phase-out begins
+    over $62,500; maximum credit $1,900) and the Homestead Property Tax Credit section (3.2% Table 2, 23% of rent,
+    60% general-claimant percentage, 10%-per-$1,000 reduction)
+  - 2025 MICHIGAN Individual Income Tax MI-1040 Instructions (MI-1040-Book.pdf), references to MI-1040CR-7 Home
+    Heating Credit
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040.pdf
+  descriptions:
+  - 2025 Michigan Individual Income Tax Return MI-1040 (form PDF) and MI-1040-Book.pdf - printed mailing addresses
+    ('Refund, credit, or zero returns... Lansing, MI 48956'; 'Pay amount on line 34... Lansing, MI 48929')
+- id: logistics-2
+  topic: filing_logistics
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+  descriptions:
+  - 2025 MICHIGAN Individual Income Tax MI-1040 Instructions - "Your return must be postmarked no later than April
+    15, 2026, to avoid penalty and interest"; extension (Form 4) extends time to file, not to pay (payment due April
+    15, 2026)
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+  descriptions:
+  - 2025 MICHIGAN Individual Income Tax MI-1040 Instructions (MI-1040-Book.pdf) - 'For tax year 2025, the Michigan
+    income tax rate is 4.25%'; 'the personal and stillbirth exemption allowances are $5,800'; special exemption
+    $3,400; qualified disabled veteran $500; line 9e $1,500; residency definitions and reciprocal states; who-must-file;
+    April 15, 2026 due date; check payable to 'State of Michigan'; worked example ($53,000 - $5,800 = $47,200 x
+    0.0425 = $2,006); New for 2025 Homestead Property Tax Credit updates ($165,400 / $71,500 / $62,500 / $1,900)
+  - '2025 Michigan MI-1040 Individual Income Tax Instruction Book, ''Residency'' (p. 6): ''Part-year resident. You
+    are a part-year resident if, during the year, you move your permanent home into or out of Michigan. You must
+    pay Michigan income tax on income you earned, received, or accrued while living in Michigan. Use Michigan Nonresident
+    and Part-Year Resident Schedule (Schedule NR) and the following guidelines to help figure your tax'''
+  - '2025 Michigan MI-1040 Individual Income Tax Instruction Book, ''Residency'' (p. 7): ''Nonresident. Use Schedule
+    NR to figure your Michigan taxable income. You must pay Michigan income tax on the following types of income''
+    — and ''A resident of a reciprocal state who claims a refund of Michigan withholding tax must file a Schedule
+    NR along with an MI-1040.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/Schedule-1.pdf
+  descriptions:
+  - 2025 MICHIGAN Schedule 1 Additions and Subtractions - additions lines 1-8 totaled on line 9 (no treaty add-back;
+    zero 'treaty' occurrences; verified on the standalone form itself)
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.michigan.gov/taxes/iit-forms/2025-individual-income-tax-forms
+  descriptions:
+  - 2025 Individual Income Tax Forms and Instructions (michigan.gov forms index, lists MI-1040, MI-1040-Book, Schedule
+    1, MI-1040CR and Schedule NR for TY2025)
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.michigan.gov/taxes/iit/iitpayments
+  descriptions:
+  - Make a Payment - Michigan Individual Income Tax e-Payments (online payment portal)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+  descriptions:
+  - '2025 MICHIGAN Individual Income Tax MI-1040 Instructions (MI-1040-Book.pdf) — "For tax year 2025, the Michigan
+    income tax rate is 4.25%"; "the personal and stillbirth exemption allowances are $5,800. The special exemption
+    allowance for deaf, blind, hemiplegic, paraplegic, quadriplegic, or totally and permanently disabled is $3,400.
+    The exemption allowance for qualified disabled veterans is $500"; Line 17 "Tax. Multiply the amount on line
+    16 by 4.25% (0.0425)". Second pass: the 2025 MI-1040 form itself prints line 9a "x $5,800", 9b "x $3,400", 9c
+    "x $500", 9d "x $5,800", 9e $1,500, and line 17 "Tax. Multiply line 16 by 4.25% (0.0425)" — both passes agree,
+    and the instructions'' worked example ($53,000 - $5,800 = $47,200 x 0.0425 = $2,006) confirms half-up whole-dollar
+    rounding.'
+- id: law-1
+  topic: law_changes
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/MI-1040-Book.pdf
+  descriptions:
+  - '2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2) — Expanded Deduction for Retirement
+    and Pension Benefits: ''The Lowering MI Costs Plan provides more options for taxpayers when selecting the best
+    taxing situation for their retirement benefits. Individuals born prior to January 1, 1967 may now qualify for
+    a retirement and pension benefits deduction.'''
+  - '2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2) — Credit for Organ Donation Expenses:
+    ''You may claim a one-time nonrefundable credit for unreimbursed live organ donation expenses incurred during
+    the tax year or $10,000, whichever is less.'''
+  - '2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2): ''NOTE: P.A. 24 of 2025 requires
+    new adjustments to business income or loss due to separation from the Internal Revenue Code for certain items.
+    See Schedule 1, line 8 for more information.'''
+  - 2025 MICHIGAN Individual Income Tax MI-1040 Instructions, New for 2025 (p.2)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.michigan.gov/taxes/-/media/Project/Websites/taxes/Forms/IIT/TY2025/Schedule-NR.pdf
+  descriptions:
+  - '2025 Michigan Schedule NR, Nonresident and Part-Year Resident Schedule (Rev. 03-25) — the 2-page schedule itself
+    (page 1: ''2025 MICHIGAN Nonresident and Part-Year Resident Schedule'' — ''Include with Form MI-1040.'')'

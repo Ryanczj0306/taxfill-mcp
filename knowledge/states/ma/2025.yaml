@@ -447,3 +447,128 @@ effective_law_changes:
       Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture
       of the official mass.gov URL (mass.gov 403s non-browser fetchers).
     url: https://www.mass.gov/doc/2025-form-1-instructions/download
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.mass.gov/doc/2025-form-1-instructions/download
+  descriptions:
+  - 2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker
+    maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing
+    withholding under 830 CMR 62B.2.4; Climatetech Tax Incentive Program; TIR 24-16 / TIR 25-5 credit changes; $325
+    parking and transit exclusions), residency definitions (183-day statutory-resident test), $8,000 filing threshold,
+    MA gross income definition, Line 3 wages from W-2 state wages, Line 22 tax on 5.0% income, Schedule Y Line 4b
+    U.S. tax treaty deduction, Filing Due Dates (April 15, 2026), mailing PO Box 7000 / 7003, check payable to the
+    Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture
+    of the official mass.gov URL (mass.gov 403s non-browser fetchers).
+  - 2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker
+    maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing
+    withholding under 830 CMR 62B.2.4 for closings on or after November 1, 2025; Climatetech Tax Incentive Program;
+    TIR 24-16 and TIR 25-5 credit changes; $325 employer-provided parking and $325 combined transit-pass/commuter-highway-vehicle
+    exclusions; health-insurance penalty), residency and the 183-day statutory-resident test, military/spouse residency
+    elections, joint-return rules and the new under-$8,000-spouse joint-filing exemption oval, $8,000 filing threshold,
+    No Tax Status / Limited Income Credit thresholds, Line 22 tax (tax table below $24,000, else x 0.05; optional
+    5.85% election), Line 23a/23b 8.5%/12% Schedule B tax, Line 28b 4% Surtax, Line 43 EITC 40% with the $68,675
+    ceiling, Line 44 Circuit Breaker $2,820, Line 46 Child and Family Tax Credit $440, Schedule Y Line 4a/4b (§
+    111F and U.S. tax treaty deductions), excess-exemptions worksheets, due date April 15 2026, PO Box 7000/7003,
+    check payable to Commonwealth of Massachusetts
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.mass.gov/doc/2025-form-1-nrpy-instructions/download
+  descriptions:
+  - 'Massachusetts Department of Revenue 2025 Form 1-NR/PY Instructions, ''Who Must File'' (p. 3): ''You also must
+    file Form 1-NR/PY if you were a resident of Massachusetts for part of the year and you had more than $8,000
+    in gross income during that time, whether received from sources inside or outside of Massachusetts.'' — and
+    ''3. You are a part-year resident if, during the taxable year, you moved to Massachusetts or established a permanent
+    place of abode here and became a resident, or you terminated your status as a Massachusetts resident to establish
+    a residence outside the state. Fill in the Part-year resident oval at the top of the form if this category applies
+    to you.'''
+  - 'Massachusetts Department of Revenue 2025 Form 1-NR/PY Instructions, ''Who Must File'' (p. 3): ''You must file
+    Massachusetts Form 1-NR/PY, Nonresident/Part-Year Resident Income Tax Return if you were not a resident of Massachusetts
+    for any part of the year and the lesser of either: 1. Your Massachusetts source income was more than $8,000;
+    or 2. Your Massachusetts source income was more than your personal exemption amount multiplied by the ratio
+    of your Massachusetts income to your total income.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.mass.gov/doc/2025-form-1-nrpy-massachusetts-nonresidentpart-year-tax-return/download
+  descriptions:
+  - '2025 Massachusetts Form 1-NR/PY, Nonresident/Part-Year Tax Return — the 5-page return itself (page 1: ''Form
+    1-NR/PY Massachusetts Nonresident/Part-Year Tax Return 2025''; ovals ''Nonresident'', ''Part-year resident'',
+    ''Filing as both nonresident and part-year resident'')'
+- id: credits-1
+  topic: credits
+  url: https://www.mass.gov/doc/2025-form-1-instructions/download
+  descriptions:
+  - 2025 Form 1 Instructions (MA DOR), Line 43 Earned Income Credit — credit equal to 40% of the federal amount;
+    $68,675 earned-income ceiling; domestic-abuse married-filing-separately exception; TIR 17-10
+  - 2025 Form 1 Instructions (MA DOR) — Circuit Breaker Tax Credit (maximum $2,820; income limits $75,000/$94,000/$112,000;
+    valuation cap $1,298,000) and Line 44 instructions
+  - 2025 Form 1 Instructions (MA DOR), Line 46 Child and Family Tax Credit ($440 per qualifying individual; noncustodial-parent
+    rule for tax years beginning on or after January 1, 2024)
+  - 2025 Form 1 Instructions (MA DOR) — Massachusetts AGI worksheet, No Tax Status and Limited Income Credit thresholds
+    and the Line 27/29 instructions
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.mass.gov/doc/2025-form-1-instructions/download
+  descriptions:
+  - 2025 Form 1 Instructions (MA DOR) — mailing addresses ("Massachusetts Department of Revenue, PO Box 7000, Boston,
+    MA, 02204 for refunds or no payments, or Massachusetts Department of Revenue, PO Box 7003, Boston, MA, 02204
+    for payments")
+  - 2025 Form 1 Instructions (MA DOR) — "Filing Due Dates. Form 1 is due on or before April 15, 2026."
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.mass.gov/doc/2025-form-1-massachusetts-resident-income-tax-return/download
+  descriptions:
+  - '2025 Form 1 Massachusetts Resident Income Tax Return (MA DOR; second-pass verification: header boxes a/b from
+    U.S. Form 1040 lines 9 and 11a; line 1 filing statuses plus the new "if joint filing exemption for spouses with
+    Massachusetts gross income under $8,000" oval; line 2a personal exemptions "Single/Married filing separately
+    ($4,400), Head of household ($6,800), Married filing jointly ($8,800)"; line 2b dependents x $1,000; line 2c
+    age 65 or over before 2026 x $700; line 2d blindness x $2,200; line 2e medical/dental; line 2f adoption; line
+    2g total exemptions; line 17 "5.0% INCOME AFTER DEDUCTIONS"; line 18 total exemption amount; line 19 "5.0% INCOME
+    AFTER EXEMPTIONS ... Not less than 0"; line 20 INTEREST AND DIVIDEND INCOME (Schedule B, line 38); line 21 "TOTAL
+    TAXABLE 5.0% INCOME. Add lines 19 and 20"; line 22 "TAX ON 5.0% INCOME (from tax table). If line 21 is more
+    than $24,000, multiply by .05"; line 23a x .085 and 23b x .12; line 24 tax on long-term capital gains; line
+    27 No Tax Status oval; line 28a income tax and line 28b "4% Surtax (from Schedule 4% Surtax, line 7)")'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.mass.gov/lists/2025-massachusetts-personal-income-tax-forms-and-instructions
+  descriptions:
+  - 2025 Massachusetts Personal Income Tax Forms and Instructions (MA DOR list page)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.mass.gov/doc/2025-form-1-instructions/download
+  descriptions:
+  - 'MA DOR — 2025 Form 1 Massachusetts Resident Income Tax Return (form face): line 2a ''Personal exemptions. Single/Married
+    filing separately ($4,400), Head of household ($6,800), Married filing jointly ($8,800)''; line 2b number of
+    dependents x $1,000; line 2c age 65 or over before 2026 x $700; line 2d blindness x $2,200; line 17 ''5.0% INCOME
+    AFTER DEDUCTIONS. Subtract line 16 from line 10. Not less than 0''; line 18 total exemption amount (from line
+    2g); line 19 ''5.0% INCOME AFTER EXEMPTIONS. Subtract line 18 from line 17. Not less than 0''; line 20 INTEREST
+    AND DIVIDEND INCOME (from Schedule B, line 38); line 21 ''TOTAL TAXABLE 5.0% INCOME. Add lines 19 and 20'';
+    line 22 ''TAX ON 5.0% INCOME (from tax table). If line 21 is more than $24,000, multiply by .05''; line 28b
+    ''4% Surtax (from Schedule 4% Surtax, line 7)''. Second pass: 2025 Form 1 Instructions — Line 22 ''If line 21
+    is less than $24,000, find the proper tax by using the tax tables found in the back of this booklet. If line
+    21 is greater than $24,000 multiply by 0.05 and enter the result in line 22''; 4% Surtax ''Starting with tax
+    year 2023, personal income taxpayers must pay an additional 4% on taxable income over $1,000,000, increased
+    annually for inflation. For the 2025 tax year, the threshold is $1,083,150.'' — both passes agree. (mass.gov
+    returns HTTP 403 to non-browser fetchers; both documents were retrieved from the Wayback Machine''s 200-status
+    captures of the SAME official mass.gov URLs, the same provenance path as the shipped MA form pack.)'
+- id: law-1
+  topic: law_changes
+  url: https://www.mass.gov/doc/2025-form-1-instructions/download
+  descriptions:
+  - 2025 Form 1 Instructions (MA DOR) — Major 2025 Tax Changes (4% surtax threshold $1,083,150; Circuit Breaker
+    maximum $2,820 with income limits $75,000/$94,000/$112,000 and valuation cap $1,298,000; new non-resident real-estate-closing
+    withholding under 830 CMR 62B.2.4; Climatetech Tax Incentive Program; TIR 24-16 / TIR 25-5 credit changes; $325
+    parking and transit exclusions), residency definitions (183-day statutory-resident test), $8,000 filing threshold,
+    MA gross income definition, Line 3 wages from W-2 state wages, Line 22 tax on 5.0% income, Schedule Y Line 4b
+    U.S. tax treaty deduction, Filing Due Dates (April 15, 2026), mailing PO Box 7000 / 7003, check payable to the
+    Commonwealth of Massachusetts, mass.gov/masstaxconnect. Retrieved via the Wayback Machine's 200-status capture
+    of the official mass.gov URL (mass.gov 403s non-browser fetchers).

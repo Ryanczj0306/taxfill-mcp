@@ -23,6 +23,7 @@
   "@@bcb5767ba56f": "The shipped CO 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
   "@@c26ed4a74451": "Colorado DOR — 2024 DR 0104 Book, \"Due Date\" (\"Your Colorado income tax return and payment for any tax owed are due April 15... An automatic extension to file is granted until October 15, but there is no extension to pay\") and \"Persons Traveling or Residing Abroad\"",
   "@@d4afc33be495": "Law change NOT modeled by the engine (status final_form_published): NEW ADDBACK for 2024: a business meals deduction addback under IRC 274(k) appears as NEW Line 5 of the DR 0104's Additions to Federal Taxable Income — a decoupling from the federal business-meals deduction. It arrives with a line renumbering: additions now run Lines 2-8, subtotal Line 9, subtractions Line 10, Colorado Taxable Income Line 11, Colorado Tax Line 12 (in 2023 taxable income was Line 10 and tax was Line 11). Resolve via: 2024 DR 0104 Book, Additions to Federal Taxable Income, Line 5 instructions (the citation URL); the added-back amount is the filer's own federal IRC 274(k) business-meals deduction. calc.state_tax multiplies the Line 11 base the caller supplies and computes no additions.",
+  "@@e83de915645d": "Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book; includes DR 0104 form, instructions, 2024 tax table at 4.25%, DR 0104AD, DR 0104CR, DR 0104PN, DR 0900, DR 0158-I) || Colorado DOR — 2024 Book 104, Colorado Individual Income Tax Filing Guide (DR 0104 Book) — Who Must File, Due Date, mailing addresses, line 1 Federal Taxable Income, Additions lines 2-8 (incl. NEW line 5 business meals addback), line 11 Colorado Taxable Income, line 12 Colorado Tax (\"The income tax rate is currently 4.25%\"), 2024 Colorado Income Tax Table (\"with tax rate of 4.25%\"), over-$50,000 worksheet (\"Multiply by 4.25% X .0425\"), DR 0104CR credit instructions (COEITC 50%, child care $60,000 limit), TABOR Modified AGI tiers, payment options (payee, DR 0900, Revenue Online)",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f1ed30994e1e": "Law change NOT modeled by the engine (status final_form_published): NEW REFUNDABLE CREDIT for 2024: the family affordability tax credit, computed on form DR 0104CN alongside the pre-existing regular Colorado child tax credit. It runs per qualifying child UNDER AGE 17 (born 2008 or later) and is unavailable once federal AGI exceeds $85,000 ($95,000 joint), with per-child amounts stepping down by AGI band — the under-6 table from $3,200 (AGI up to $15,000 single / $25,000 joint) down to $120, and the ages 6-16 table from $2,400 down to $90. Full-year and part-year residents only (nonresidents are NOT eligible); part-year residents apportion via DR 0104PN line 34. Resolve via: 2024 Form DR 0104CN, \"Age 5 and Under\" and \"Age 6 to 16\" Family Affordability Tax Credit Tables (the citation URL); calc.state_tax computes the DR 0104 Line 12 tax only and applies no Colorado credits.",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
@@ -293,7 +294,7 @@
    "retrieval_hint": "@@4d1a27910f8a",
    "sources": [
     {
-     "answers": "Colorado DOR, 2024 DR 0104 Book — DR 0104CR Individual Credit Schedule instructions, lines 3 through 6 (COEITC for SSN filers) and line 9 (COEITC for ITIN filers or certain filers under age 25)",
+     "answers": "Colorado DOR, 2024 DR 0104 Book — DR 0104CR Individual Credit Schedule instructions, lines 3 through 6 (COEITC for SSN filers) and line 9 (COEITC for ITIN filers or certain filers under age 25) || Colorado DOR, 2024 DR 0104 Book — DR 0104CR line 2 (Child Care Expenses Credit, DR 0347, $60,000 AGI limit)",
      "cadence": "@@420e41d608e0",
      "topic": "credits",
      "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
@@ -342,7 +343,7 @@
    "retrieval_hint": "@@4d1a27910f8a",
    "sources": [
     {
-     "answers": "@@76e28ba46e67",
+     "answers": "Colorado DOR — 2024 DR 0104 Book, \"Mailing Address For Form DR 0104\" (With Payment 80261-0006 / Without Payment 80261-0005) || Colorado DOR — 2024 DR 0104 Book, \"Due Date\" (\"Your Colorado income tax return and payment for any tax owed are due April 15... An automatic extension to file is granted until October 15, but there is no extension to pay\") and \"Persons Traveling or Residing Abroad\"",
      "cadence": "@@420e41d608e0",
      "topic": "filing_logistics",
      "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
@@ -379,7 +380,7 @@
    "retrieval_hint": "@@4d1a27910f8a",
    "sources": [
     {
-     "answers": "@@48bbd699d398",
+     "answers": "@@e83de915645d",
      "cadence": "@@420e41d608e0",
      "topic": "forms_and_instructions",
      "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"
@@ -446,7 +447,7 @@
    "retrieval_hint": "@@4d1a27910f8a",
    "sources": [
     {
-     "answers": "@@48bbd699d398",
+     "answers": "@@e83de915645d",
      "cadence": "@@420e41d608e0",
      "topic": "law_changes",
      "url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_book_2024.pdf"

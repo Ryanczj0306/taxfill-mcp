@@ -18,6 +18,9 @@ CT-1040NR/PY instructions, HI's N-15 instructions), and each document is cited u
 Every URL and quote below was read from the state revenue department's own 2025 documents, each downloaded twice on
 2026-10-16. The digests are in each pack's comment above its ``citations`` block; for DRS's HTML page, whose bytes
 differ between fetches, the comment records that the visible text is the same in both.
+
+Since Phase K JK20 (2026-10-24) the registry keeps every description of a (topic, url), the first one leading and
+the rest joined after it (test_state_sources_table.py); the paragraph above describes the registry as JK28 found it.
 """
 from __future__ import annotations
 

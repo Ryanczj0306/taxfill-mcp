@@ -487,3 +487,151 @@ law_changes_checked:
   citation:
     source: 2025 Kansas Individual Income Tax booklet (ip25), Important Information
     url: https://www.ksrevenue.gov/pdf/ip25.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.ksrevenue.gov/pdf/ip25.pdf
+  descriptions:
+  - 'Kansas DOR — 2025 Individual Income Tax Booklet (ip25.pdf): Important Information (April 15, 2026 due date;
+    2025 standard deductions $3,605/$8,240/$6,180/$4,120; exemption allowance $18,320 MFJ / $9,160 other statuses;
+    $2,320 per dependent; new $2,320 exemptions for a child born in the tax year and for a stillbirth; $2,320 disabled
+    veteran); Who Must File and 2025 filing thresholds; Homestead/property-tax relief limits; Exemptions and Dependents
+    instructions (including the Head of Household additional $2,320 and the QSS-to-Head-of-Household filing status
+    rule); Line 4 standard deduction and the 65-or-older/blind worksheet; Line 5 exemption allowance; Line 8 tax-table/worksheet
+    mandate; 2025 Kansas Tax Table and 2025 Tax Computation Worksheet (5.2%/5.58%); Schedule S Part A additions;
+    credits (EITC 17%, child and dependent care 50%, taxes paid to other states)'
+  - '2025 Kansas Individual Income Tax booklet (ip25), ''Who Must File a Return'' (p. 3): ''PART-YEAR RESIDENTS.
+    You are considered a part-year resident of Kansas if you were a Kansas resident for less than 12 months during
+    the tax year. As a part-year resident, you must include the dates that you were a resident in Kansas on Form
+    K-40 and complete Part B of Schedule S.'' — K-40 Instructions, ''Residency Status'' (p. 6): ''If you mark the
+    Part-year resident box, enter the dates that you lived in Kansas and complete Schedule S, Part B.'''
+  - '2025 Kansas Individual Income Tax booklet (ip25), ''Who Must File a Return'' (p. 3): ''NONRESIDENTS. If you
+    are not a resident of Kansas but received income from Kansas sources, you must file a Kansas return regardless
+    of the amount of income received from Kansas sources (see Kansas Source Income as provided in Schedule S Part
+    B Instructions).'' — K-40 Instructions, ''Residency Status'' (p. 6): ''Nonresidents must also complete Part
+    B of Schedule S.'''
+  - 'Kansas DOR — 2025 Individual Income Tax Booklet (ip25.pdf): Important Information (April 15, 2026 due date;
+    standard deductions $3,605/$8,240/$6,180/$4,120; exemption allowance $18,320 MFJ / $9,160 single-HoH-MFS; $2,320
+    per dependent; NEW $2,320 exemptions for a child born in the tax year and for a stillbirth; $2,320 disabled
+    veteran); Who Must File and 2025 filing thresholds; Homestead limits ($43,389 / $25,380 / $58,041, max $700);
+    Exemptions and Dependents instructions (HoH additional $2,320; ''If your federal filing status is Qualifying
+    Widow(er) with Dependent Child, check the Head of Household box''); Line 4 standard deduction plus the WORKSHEET
+    for Standard Deduction for People 65 or Older and/or Blind ($4,455/$5,305 Single; $8,940/$9,640/$10,340/$11,040
+    MFJ; $4,820/$5,520/$6,220/$6,920 MFS; $7,030/$7,880 HOH); Line 5 exemption allowance; Line 7 taxable income;
+    Line 8 tax-table/worksheet mandate; 2025 Kansas Tax Table (first row $26-$50 -> $2, columns for Single/HoH/MFS
+    and MFJ) and 2025 Tax Computation Worksheet (MFJ $0-$46,000 at 5.2% minus $0, $46,001 and over at 5.58% minus
+    $175; Single/HoH/MFS $0-$23,000 at 5.2% minus $0, $23,001 and over at 5.58% minus $87); Schedule S Part A additions;
+    credits (EITC 17% at lines 17/22, child and dependent care 50% at line 14, taxes paid to other states at line
+    13)'
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.ksrevenue.gov/pdf/schs25.pdf
+  descriptions:
+  - '2025 Kansas Supplemental Schedule (Schedule S, schs25.pdf), ''PART B - Income Allocation for Nonresidents and
+    Part-Year Residents'' (page 2): ''B23. Nonresident allocation percentage (divide line B21 by line B22 and round
+    to the fourth decimal place, not to exceed 100.0000). Enter result here and on line 9 of Form K-40'' | Kansas
+    DOR — 2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part B income allocation for nonresidents/part-year
+    residents'
+  - 'Kansas DOR — 2025 Schedule S (schs25.pdf): Part A modifications to federal AGI and Part B income allocation
+    for nonresidents/part-year residents'
+- id: credits-1
+  topic: credits
+  url: https://www.ksrevenue.gov/pdf/ip25.pdf
+  descriptions:
+  - Kansas Department of Revenue, 2025 Individual Income Tax Booklet (Form K-40 instructions, ip25.pdf), Line 17
+    / Line 22 instructions and EITC Worksheet (multiply federal EITC by 17%)
+  - Kansas Department of Revenue, 2025 Individual Income Tax Booklet (Form K-40 instructions, ip25.pdf), Line 14
+    (Credit for child and dependent care expenses — 50% of the federal Form 2441 credit)
+  - Kansas Department of Revenue, 2025 Individual Income Tax Booklet (Form K-40 instructions, ip25.pdf), Line 13
+    (Credit for taxes paid to other states), Worksheet for Residents lines 1-10, and Worksheet for Foreign Tax Credit
+  - Kansas Department of Revenue, 2025 Individual Income Tax Booklet (ip25.pdf), 'Homestead & Property Tax Relief
+    Refunds' (up to $700; 2025 household income $43,389 or less; K-40PT $25,380 at 75% of property taxes; K-40SVR
+    $58,041)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.ksrevenue.gov/pdf/k-4025.pdf
+  descriptions:
+  - 2025 Form K-40 (k-4025.pdf, 'Mail to' block — Kansas Income Tax, Kansas Dept. of Revenue, PO Box 750260, Topeka,
+    KS 66699-0260) and 2025 Form K-40V payment voucher (k-40v25.pdf, PO BOX 750260)
+- id: logistics-2
+  topic: filing_logistics
+  url: https://www.ksrevenue.gov/pdf/ip25.pdf
+  descriptions:
+  - 'Kansas DOR — 2025 Individual Income Tax Booklet (ip25.pdf), Important Information: ''Due date for filing -
+    April 15, 2026 is the due date for filing 2025 income tax returns.'' (General Information also notes that if
+    any due date falls on a Saturday, Sunday, or legal holiday, the next regular workday is substituted.)'
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.ksrevenue.gov/pdf/k-40es25.pdf
+  descriptions:
+  - 'Kansas DOR — 2025 K-40ES Individual Estimated Income Tax Voucher (k-40es25.pdf, Rev. 7-24) — INDEPENDENT second-pass
+    source for the rate schedule and standard deduction: its STANDARD DEDUCTION CHART prints Single $3,605 / Married
+    Filing Joint $8,240 / Married Filing Separate $4,120 / Head of Household $6,180, and its TAX COMPUTATION SCHEDULES
+    print the two brackets in exact marginal form — Schedule I MARRIED FILING JOINT ''$0.00 to $46,000 ... 5.2%
+    of line 5'' and ''$46,000 and over ... $2,392 plus 5.58% of excess over $46,000''; Schedule II SINGLE, HEAD
+    OF HOUSEHOLD, OR MARRIED FILING SEPARATE ''$0.00 to $23,000 ... 5.2% of line 5'' and ''$23,000 and over ...
+    $1,196 plus 5.58% of excess over $23,000''. ($2,392 = 5.2% x $46,000 and $1,196 = 5.2% x $23,000 exactly, confirming
+    the shipped marginal brackets.)'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.ksrevenue.gov/pdf/k-4025.pdf
+  descriptions:
+  - 'Kansas DOR — 2025 Form K-40 (k-4025.pdf) — second-pass verification of the form face: the Additional Exemptions
+    block prints three ''X $2,320 ='' boxes (children born in the tax year; stillbirth; Disabled Veteran Personal
+    Exemption allowance, ''enter the total number of disabled veterans being claimed including yourself''), the
+    Total Kansas Exemptions / Total Kansas Exemption Amount boxes with ''Also enter this same amount on page 2,
+    line 5 of this form'', and the ''Mail to: Kansas Income Tax, Kansas Dept. of Revenue, PO Box 750260, Topeka,
+    KS 66699-0260'' block. The 2024 food-sales-tax-credit lines A-H are ABSENT from the 2025 form.'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.ksrevenue.gov/pdf/k-40v25.pdf
+  descriptions:
+  - 'Kansas DOR — 2025 K-40V Individual Income Tax Payment Voucher (k-40v25.pdf): ''Make your check or money order
+    payable to "Kansas Income Tax" for the full amount''; mailing address PO BOX 750260, TOPEKA KS 66699-0260'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.ksrevenue.gov/taxpayment.html
+  descriptions:
+  - Kansas DOR — Electronic Services / Tax Payment vendor list (online payment portal)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.ksrevenue.gov/pdf/ip25.pdf
+  descriptions:
+  - 'Kansas DOR, 2025 Individual Income Tax booklet (ip25.pdf): 2025 Tax Computation Worksheet, page 34 (printing
+    the two-bracket schedule: Married Filing Joint ''$0 - $46,000'' at ''5.2% (.052)'' subtracting $0, ''$46,001
+    and over'' at ''5.58% (.0558)'' subtracting $175; Single/Head of Household/Married Filing Separate ''$0 - $23,000''
+    at 5.2% subtracting $0, ''$23,001 and over'' at 5.58% subtracting $87); 2025 Kansas Tax Table pp.27-33 (first
+    row ''$26 - $50 -> $2'', columns for Single/Head of Household/Married Filing Separate and for Married Filing
+    Joint) with the ''$100,001 and over - use the Tax Computation Worksheet'' rule; Important Information + K-40
+    instructions — Line 4 Kansas Standard Deduction ($3,605 Single / $8,240 Married Filing Joint / $6,180 Head of
+    Household / $4,120 Married Filing Separate) and the ''WORKSHEET - Standard Deduction for People 65 or Older
+    and/or Blind''; Exemptions and Dependents instructions ($18,320 MFJ / $9,160 single-HoH-MFS filing-status allowance,
+    $2,320 per dependent, $2,320 additional for Head of Household, $2,320 per qualified disabled veteran ''for tax
+    year 2025 and all tax years thereafter'', plus new $2,320 exemptions for a child born in the tax year and for
+    a stillbirth); Line 5 exemption allowance; Line 7 taxable income; Line 8 tax-table/worksheet mandate; the QSS-to-Head-of-Household
+    filing status instruction. SECOND PASS (independent document): the 2025 K-40ES estimated-tax voucher worksheet
+    (https://www.ksrevenue.gov/pdf/k-40es25.pdf, Rev. 7-24) prints its own STANDARD DEDUCTION CHART (Single $3,605
+    / MFJ $8,240 / MFS $4,120 / HoH $6,180) and its own TAX COMPUTATION SCHEDULES in exact marginal form — MFJ ''5.2%
+    of line 5'' to $46,000 then ''$2,392 plus 5.58% of excess over $46,000''; Single/HoH/MFS ''5.2% of line 5''
+    to $23,000 then ''$1,196 plus 5.58% of excess over $23,000'' ($2,392 = 5.2% x 46,000 and $1,196 = 5.2% x 23,000
+    exactly) — and the 2025 Form K-40 (k-4025.pdf) prints the three ''X $2,320'' additional-exemption boxes. All
+    passes agree; no 2025 rate, deduction, or allowance change.'
+- id: law-1
+  topic: law_changes
+  url: https://www.ksrevenue.gov/pdf/ip25.pdf
+  descriptions:
+  - '2025 Kansas Individual Income Tax booklet, Important Information — Additional Exemptions: ''An additional personal
+    exemption of $2,320 will be allowed for each child born in this tax year.'' — ''A personal exemption of $2,320
+    will be allowed for the birth of a child in this tax year that does not result in a live birth (known as stillbirth).'''
+  - '2025 Kansas Individual Income Tax booklet, Exemptions and Dependents: ''such individual shall be allowed an
+    additional Kansas exemption of $2,320 for tax year 2025 and all tax years thereafter.'''
+  - 2025 Kansas Individual Income Tax booklet (ip25), Important Information

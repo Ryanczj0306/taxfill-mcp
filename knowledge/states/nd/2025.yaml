@@ -455,3 +455,142 @@ effective_law_changes:
       credit, Line 22 marriage penalty credit worksheet ($81,036/$47,550/$15,750/$312.00), 2025 Tax Table (pp.20-27),
       2025 Tax Rate Schedules (p.28)
     url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+  descriptions:
+  - ND 2025 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions, 28702 12-2025) — Who must file (pp.5-6),
+    Statutory 7-month rule (210 days), treaty statement (p.5), file on or before April 15, 2026, mailing PO Box
+    5621, payee 'ND State Tax Commissioner', Changes Affecting You and Your Income Tax (SB 2282 employer child care
+    credit, OBBBA conformity, SB 2047 military pay withholding beginning 2026), 2025 Tax Table (pp.20-27) and 2025
+    Tax Rate Schedules (p.28)
+  - '2025 North Dakota Individual Income Tax Instructions, Forms ND-EZ and ND-1 — ''2025 Form ND-1 Instructions'',
+    ''Nonresident of North Dakota for part or all of the 2025 tax year'' (p. 11): ''If you were a nonresident of
+    North Dakota for part or all of the 2025 tax year, first complete Form ND-1 through line 19. Then complete Schedule
+    ND-1NR to calculate the amount of your tax.''; and ''Line 20 - Tax'' (p. 14): ''If you were a full-year nonresident
+    or a part-year resident for the tax year, you must complete Schedule ND-1NR to calculate your tax.'''
+  - ND 2025 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions, 28702 12-2025) — Who must file (pp.5-6),
+    Statutory 7-month rule (210 days), treaty statement (p.5), Changes Affecting You and Your Income Tax (SB 2282
+    employer child care credit new for 2025; OBBBA perpetual conformity of the federal-taxable-income starting point;
+    SB 2047 military pay withholding exemption beginning tax year 2026; military retirement benefit exclusion),
+    April 15 2026 due date, PO Box 5621, payee 'ND State Tax Commissioner', Line 20 Tax (tax-table mandate), Line
+    21 other-state credit, Line 22 marriage penalty credit worksheet ($81,036/$47,550/$15,750/$312.00), 2025 Tax
+    Table (pp.20-27), 2025 Tax Rate Schedules (p.28)
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28724-schedule-nd-1nr-2025.pdf
+  descriptions:
+  - '2025 Schedule ND-1NR, Tax Calculation for Nonresidents and Part-Year Residents (SFN 28724 (12-2025), ''Attach
+    to Form ND-1''), ''Who must complete'' (p. 2): ''If you were a full-year nonresident or a part-year resident
+    of North Dakota during the tax year, you must complete this schedule to calculate your tax.'''
+- id: credits-1
+  topic: credits
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+  descriptions:
+  - ND Office of State Tax Commissioner — 2025 Individual Income Tax Booklet, 'Line 22 - Marriage penalty credit'
+    and Marriage Penalty Credit Worksheet (thresholds $81,036 / $47,550; line 5 constant $15,750.00; line 13 maximum
+    credit $312.00)
+  - ND Office of State Tax Commissioner — 2025 Individual Income Tax Booklet, 'Line 21 - Credit for income tax paid
+    to another state' (Schedule ND-1CR)
+  - ND Office of State Tax Commissioner — 2025 Individual Income Tax Booklet, 'New for 2025 — Employer Child Care
+    Contribution Income Tax Credit' (Senate Bill 2282; 50% of the first $1,000 per employee; see Schedule ECC and
+    instructions)
+- id: credits-2
+  topic: credits
+  url: https://www.tax.nd.gov/property-tax-credits/renters-refund
+  descriptions:
+  - ND Office of State Tax Commissioner — Renter's Refund web page (qualifications, $70,000 income limit, 20%-of-rent
+    minus 4%-of-income formula, $600 maximum, application window)
+- id: credits-3
+  topic: credits
+  url: https://www.tax.nd.gov/homestead-property-tax-credit
+  descriptions:
+  - ND Office of State Tax Commissioner — Homestead Property Tax Credit web page (qualifications, $70,000 income
+    limit, 100%/50% taxable-value reduction table, April 1 application)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+  descriptions:
+  - ND 2025 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions) — 'How to assemble your return' / 'Mail
+    to' (Office of State Tax Commissioner, PO Box 5621, Bismarck, ND 58506-5621), payment voucher and check-payee
+    instructions; the 2025 Form ND-1 (SFN 28702, 12-2025) prints the same PO Box 5621 address
+  - ND 2025 Individual Income Tax Booklet — 'File your return on or before April 15, 2026' (Steps to completing
+    your return, step 7; Where to file and extension instructions p.7)
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28702-form-nd-1-2025.pdf
+  descriptions:
+  - 2025 Form ND-1 (SFN 28702, 12-2025) — second-pass verification of line 1a federal AGI (Form 1040/1040-SR line
+    11a), line 1b federal taxable income (Form 1040/1040-SR line 15), additions lines 2-4, subtractions lines 5-17
+    (U.S. obligations, net long-term capital gain exclusion, exempt income of an eligible Native American, Railroad
+    Retirement Board benefits, military pay exclusion, College SAVE deduction, qualified dividend exclusion, military
+    retirement benefit exclusion, Social Security benefit exclusion, Schedule ND-1SA), line 18 North Dakota taxable
+    income ('Subtract line 17 from line 4b. If less than zero, enter 0'), line 19 (page 2 carry), line 20 Tax (Tax
+    Table in instructions), line 22 marriage penalty credit, and the mailing address PO Box 5621, Bismarck, ND 58506-5621
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.tax.nd.gov/sites/www/files/documents/guidelines/individual/income-taxation-of-nonresident-aliens-guideline.pdf
+  descriptions:
+  - 'Guideline: Income Taxation of Nonresident Aliens — ND does not recognize treaties unless they specifically
+    exempt income from state tax; Pro Forma 1040NR disregarding treaty provisions; enter 1040NR line 15 on ND-1
+    line 1b'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.tax.nd.gov/property-tax-credits/renters-refund
+  descriptions:
+  - ND Office of State Tax Commissioner — Renter's Refund web page (65+/disabled, $70,000 income limit, 20% rent
+    minus 4% income formula, $600 maximum, application window)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.tax.nd.gov/homestead-property-tax-credit
+  descriptions:
+  - ND Office of State Tax Commissioner — Homestead Property Tax Credit web page ($70,000 income limit, 100%/50%
+    reduction table, April 1 application)
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.tax.nd.gov/individual-income-tax
+  descriptions:
+  - ND Office of State Tax Commissioner — Individual Income Tax overview page (ND TAP payment portal)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+  descriptions:
+  - '2025 North Dakota Individual Income Tax Booklet (Forms ND-EZ and ND-1 instructions, 28702 12-2025), ND Office
+    of State Tax Commissioner — ''2025 Tax Rate Schedules'' (p.28): Single — $0-$48,475 0.00% of North Dakota taxable
+    income; $48,475-$244,825 $0.00 + 1.95% of amount over $48,475; over $244,825 $3,828.83 + 2.50% of amount over
+    $244,825; Married Filing Jointly and Qualifying Surviving Spouse — $80,975 / $298,075, top constant $4,233.45;
+    Married Filing Separately — $40,475 / $149,025, top constant $2,116.73; Head of Household — $64,950 / $271,450,
+    top constant $4,026.75. The schedule page states ''If your North Dakota taxable income is $100,000 or more,
+    use the tax rate schedule below for your filing status to calculate your tax,'' and the ''Line 20 - Tax'' instruction
+    sends full-year residents to the Tax Table on pp.20-27 otherwise. Second pass: the 2025 Form ND-1 (SFN 28702,
+    12-2025, https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/28702-form-nd-1-2025.pdf)
+    prints line 1b ''Federal taxable income from Form 1040 or 1040-SR, line 15'', line 18 ''North Dakota taxable
+    income. Subtract line 17 from line 4b. If less than zero, enter 0'', line 19 the page-2 carry, and line 20 ''Tax
+    - If full-year resident, enter tax on amount on line 19 from Tax Table in instructions''; the booklet''s own
+    Tax Table rows recompute against these schedules at band midpoints (single $53,450-$53,500 row prints 98 = 1.95%
+    x ($53,475 - $48,475) = 97.50 rounded half up; single $50,100-$50,150 row prints 32 = 1.95% x ($50,125 - $48,475)
+    = 32.175; MFS same $53,450-$53,500 row prints 254 = 1.95% x ($53,475 - $40,475) = 253.50) — both passes agree.'
+- id: law-1
+  topic: law_changes
+  url: https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/2025-individual-income-tax-booklet.pdf
+  descriptions:
+  - ND Office of State Tax Commissioner — 2025 Individual Income Tax Booklet, 'New for 2025 — Employer Child Care
+    Contribution Income Tax Credit' (Senate Bill 2282; 50% of the first $1,000 per employee; see Schedule ECC and
+    instructions)
+  - ND 2025 Individual Income Tax Booklet (Forms ND-EZ/ND-1 instructions, 28702 12-2025) — Who must file (pp.5-6),
+    Statutory 7-month rule (210 days), treaty statement (p.5), Changes Affecting You and Your Income Tax (SB 2282
+    employer child care credit new for 2025; OBBBA perpetual conformity of the federal-taxable-income starting point;
+    SB 2047 military pay withholding exemption beginning tax year 2026; military retirement benefit exclusion),
+    April 15 2026 due date, PO Box 5621, payee 'ND State Tax Commissioner', Line 20 Tax (tax-table mandate), Line
+    21 other-state credit, Line 22 marriage penalty credit worksheet ($81,036/$47,550/$15,750/$312.00), 2025 Tax
+    Table (pp.20-27), 2025 Tax Rate Schedules (p.28)

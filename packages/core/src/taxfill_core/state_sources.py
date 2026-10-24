@@ -10,15 +10,34 @@ Two callers share this one builder:
   registry for the newest year and for any year without a pack, such as a planning year);
 * ``get_sources`` builds the block for an OLDER year from that year's own pack, so a TY2024 question about a state gets
   the TY2024 booklet and not the TY2025 one (Phase K JK27, 2026-10-16; before it every year got the newest pack's URLs).
+
+Phase K JK20 (2026-10-24): a TY2025-and-later pack carries a top-level ``sources`` table (one entry per distinct
+(topic, url), every distinct inline description kept; generated once by scripts/hoist_state_sources.py), and the
+builder reads it when present, so a citation outlives the block that carried it once JK22 drops never-read blocks.
+A pack without the table (TY2023 / TY2024, frozen) is walked as before. Either way a URL cited under one topic with
+several descriptions is ONE registry entry whose ``answers`` joins them (before JK20 the first won and the rest were
+dropped: 89 / 222 / 328 descriptions in the 2023 / 2024 / 2025 packs).
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Iterator
 from typing import Any
 
 from taxfill_core.knowledge import validate_gov_url
 
-__all__ = ["BLOCK_TO_TOPIC", "FALLBACK_TOPIC", "is_gov", "state_block", "walk_citations"]
+__all__ = [
+    "ANSWERS_SEPARATOR",
+    "BLOCK_TO_TOPIC",
+    "FALLBACK_TOPIC",
+    "TOPIC_ID_PREFIX",
+    "hoist_sources",
+    "is_gov",
+    "merge_descriptions",
+    "source_entries",
+    "state_block",
+    "walk_citations",
+]
 
 # Which pack block a citation sits under decides the registry topic it backs.
 BLOCK_TO_TOPIC = {
@@ -37,6 +56,19 @@ BLOCK_TO_TOPIC = {
     "law_changes_checked": "law_changes",
 }
 FALLBACK_TOPIC = "forms_and_instructions"
+# The id prefix of a ``sources`` table entry per registry topic (scripts/hoist_state_sources.py numbers them per topic).
+TOPIC_ID_PREFIX = {
+    "forms_and_instructions": "forms",
+    "tax_rates_and_brackets": "rates",
+    "credits": "credits",
+    "filing_logistics": "logistics",
+    "remote_work_sourcing": "remote",
+    "law_changes": "law",
+}
+# Joins the descriptions of one (topic, url) into the registry entry's ``answers``. It carries no word, so it adds no
+# routing token, and no description contains it (some contain ' | ': JK28's forms.citations entries end with an
+# all_citations description after one), so the get_sources scorer can tell where an entry's first description ends.
+ANSWERS_SEPARATOR = " || "
 
 _IRS_STATE_DIRECTORY = {
     "url": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
@@ -68,6 +100,53 @@ def walk_citations(node: Any, top_key: str | None = None) -> Iterator[tuple[str 
             yield from walk_citations(item, top_key)
 
 
+def hoist_sources(pack: dict) -> list[dict]:
+    """The pack's .gov inline citations as ``sources`` rows: one per distinct (topic, url), in first-seen walk order.
+
+    Each row is ``{topic, url, descriptions}``: every distinct inline ``source`` text (stripped, verbatim) in walk
+    order. Non-government URLs are left out, as the registry always dropped them. A ``sources`` table already in the
+    pack is not walked (its rows carry no ``source`` key), so hoisting is idempotent.
+    """
+    rows: dict[tuple[str, str], dict] = {}
+    for block, cite in walk_citations({k: v for k, v in pack.items() if k != "sources"}):
+        url = cite["url"].strip()
+        if not is_gov(url):
+            continue
+        topic = BLOCK_TO_TOPIC.get(block or "", FALLBACK_TOPIC)
+        row = rows.setdefault((topic, url), {"topic": topic, "url": url, "descriptions": []})
+        text = cite["source"].strip()
+        if text not in row["descriptions"]:
+            row["descriptions"].append(text)
+    return list(rows.values())
+
+
+def source_entries(pack: dict) -> list[dict]:
+    """The rows the registry block is built from: the pack's ``sources`` table when it has one, else the inline walk."""
+    table = pack.get("sources")
+    if isinstance(table, list) and table:
+        return [
+            {"topic": row["topic"], "url": row["url"].strip(), "descriptions": [d.strip() for d in row["descriptions"]]}
+            for row in table
+            if is_gov(row["url"].strip())
+        ]
+    return hoist_sources(pack)
+
+
+def merge_descriptions(descriptions: list[str]) -> str:
+    """One ``answers`` text for a (topic, url) cited with several descriptions: the first first, joined by ' || '.
+
+    A description already contained word for word in the text so far adds nothing and is skipped: the JK28
+    forms.citations entries end (after ' | ') with the all_citations description of the same URL, so without this
+    the merged text would carry that description twice.
+    """
+    merged = ""
+    for text in descriptions:
+        if not text or re.search(rf"(?<!\w){re.escape(text)}(?!\w)", merged):
+            continue
+        merged = f"{merged}{ANSWERS_SEPARATOR}{text}" if merged else text
+    return merged
+
+
 def state_block(st: str, year: int, pack: dict, *, newest: bool) -> dict | None:
     """The registry block ({by_topic, change_channels}) for one state pack, or None when it cites no .gov URL.
 
@@ -86,16 +165,10 @@ def state_block(st: str, year: int, pack: dict, *, newest: bool) -> dict | None:
             f"re-resolve at this URL family and cite)"
         )
     by_topic: dict[str, list] = {}
-    seen: set[tuple[str, str]] = set()
-    for block, cite in walk_citations(pack):
-        url = cite["url"].strip()
-        if not is_gov(url):
-            continue
-        topic = BLOCK_TO_TOPIC.get(block or "", FALLBACK_TOPIC)
-        if (topic, url) in seen:
-            continue
-        seen.add((topic, url))
-        by_topic.setdefault(topic, []).append({"url": url, "answers": cite["source"].strip(), "cadence": cadence})
+    for row in source_entries(pack):
+        by_topic.setdefault(row["topic"], []).append(
+            {"url": row["url"], "answers": merge_descriptions(row["descriptions"]), "cadence": cadence}
+        )
     if not by_topic:
         return None
     primary = pack.get("citation") or {}

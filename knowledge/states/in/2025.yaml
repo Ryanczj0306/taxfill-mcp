@@ -319,3 +319,127 @@ effective_law_changes:
       tax rate is lowered to 3% for tax year 2025 and 2.95% for tax year 2026" (independent live-host
       confirmation of the 3% rate)
     url: https://www.in.gov/dor/files/tax-chapter.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://forms.in.gov/Download.aspx?id=16915
+  descriptions:
+  - Indiana DOR - 2025 IT-40 Full-Year Resident Individual Income Tax Booklet - Line 1 federal AGI start; Schedule
+    1 Add-Backs (no treaty add-back); residency definitions; due date April 15, 2026; mailing addresses; check payee
+    DOR; INTIME; filing requirement/exemption thresholds; rate 3% for tax year 2025
+  - Indiana DOR - 2025 IT-40 Full-Year Resident Individual Income Tax Booklet - Line 1 federal AGI start; Schedule
+    1 Add-Backs (no treaty add-back; zero occurrences of 'treaty' in the booklet); residency definitions; due date
+    April 15, 2026; mailing addresses; check payee DOR; INTIME; filing requirement/exemption thresholds; rounding
+    rule (drop under $0.50, round up $0.50 or more)
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://forms.in.gov/Download.aspx?id=16921
+  descriptions:
+  - '2025 Indiana IT-40PNR Part-Year and Full-Year Nonresident Individual Income Tax Booklet (Indiana DOR SP 258,
+    R28 / 12-25), ''Who Should File?'' — ''Part-Year Residents and Full-Year Nonresidents'' (p. 6): ''If you were
+    a part-year resident and received income while you lived in Indiana, you must file Indiana Form IT-40PNR, Part-Year
+    Resident or Nonresident Individual Income Tax Return.'''
+  - '2025 Indiana IT-40PNR Part-Year and Full-Year Nonresident Individual Income Tax Booklet (Indiana DOR SP 258,
+    R28 / 12-25), ''Who Should File?'' (p. 6): ''If you were a legal resident of another state(s) (exception: see
+    next paragraph) and had income from Indiana (except certain interest, dividends, or retirement income), you
+    must file Form IT-40PNR.'' — and, under ''Full-Year Residents of Kentucky, Michigan, Ohio, Pennsylvania or Wisconsin''
+    (p. 6): ''If you were a full-year resident of Kentucky, Michigan, Ohio, Pennsylvania or Wisconsin, and your
+    only income from Indiana was from wages, salaries, tips or commissions, then you need to file Form IT-40RNR,
+    Indiana Reciprocal Nonresident Individual Income Tax Return.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://forms.in.gov/Download.aspx?id=16919
+  descriptions:
+  - '2025 Form IT-40PNR (State Form 472, R24 / 9-25), Indiana Part-Year or Full-Year Nonresident Individual Income
+    Tax Return — the form itself (page 1: ''Due April 15, 2026'')'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://forms.in.gov/Download.aspx?id=16925
+  descriptions:
+  - '2025 Form IT-40RNR (State Form 44406, R24 / 9-25), Reciprocal Nonresident Indiana Individual Income Tax Return
+    — the form and its instructions (page 1: ''Due April 15, 2026'')'
+- id: credits-1
+  topic: credits
+  url: https://forms.in.gov/Download.aspx?id=16915
+  descriptions:
+  - 2025 IT-40 Full-Year Resident Individual Income Tax Booklet (Schedule 5, Line 6 — Indiana's Earned Income Credit,
+    10% of federal EIC, income ceiling less than $68,650)
+  - 2025 IT-40 Full-Year Resident Individual Income Tax Booklet (Schedule 5, Line 5 — Unified Tax Credit for the
+    Elderly, Tables A and B; income limit less than $10,000)
+  - 2025 IT-40 Full-Year Resident Individual Income Tax Booklet (Schedule 5, Line 7 — Lake County Residential Income
+    Tax Credit, Modified Indiana AGI less than $18,600, maximum $300)
+  - '2025 IT-40 Full-Year Resident Individual Income Tax Booklet (Schedule 5, Line 11 — Adoption Credit; references
+    Income Tax Information Bulletin #111)'
+- id: credits-2
+  topic: credits
+  url: https://www.in.gov/dor/files/ib98.pdf
+  descriptions:
+  - 'Indiana DOR Income Tax Information Bulletin #98, ''Indiana 529 Savings Plan Credit'' (20% of contributions,
+    $1,500/$750 cap), corroborated by the 2025 IT-40 booklet''s Indiana529 Education Savings Plan Credit 837 section'
+- id: logistics-1
+  topic: filing_logistics
+  url: https://forms.in.gov/Download.aspx?id=16915
+  descriptions:
+  - 2025 IT-40 Full-Year Resident Individual Income Tax Booklet — "Where to Mail Your Tax Return" (P.O. Box 7224
+    with payment; P.O. Box 40 for all other filings)
+  - 2025 IT-40 Full-Year Resident Individual Income Tax Booklet — "Your tax return is due April 15, 2026"; extensions
+    (federal Form 4868 or Indiana Form IT-9 by April 15, 2026) extend the state filing time (payment still due April
+    15)
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://forms.in.gov/Download.aspx?id=16914
+  descriptions:
+  - 'Indiana DOR - 2025 Form IT-40 (State Form 154) — Line 1 federal AGI (Form 1040/1040-SR line 11), Line 6 Indiana
+    Exemptions from Schedule 3, Line 8 "State adjusted gross income tax: multiply line 7 by 3% (.03)", Line 9 county
+    tax from Schedule CT-40 (second-pass verification of the 3% rate and structure)'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://forms.in.gov/Download.aspx?id=16936
+  descriptions:
+  - 'Indiana DOR - 2025 Schedule 3: Exemptions (State Form 53997, rev 9-25) — Line 1 $1,000/$2,000 MFJ; Line 2 $1,000
+    per dependent; Line 3 $1,500 additional dependent child; Line 4 $1,000 per 65-or-older/blind box; Line 5 $500
+    low-income 65+; Line 6 $3,000 per adopted child (second-pass verification of every exemption amount)'
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.in.gov/dor/files/tax-chapter.pdf
+  descriptions:
+  - Indiana DOR - 2026 Tax Chapter for the 2025 Filing Year (revised October 2025) — "Individual Income tax rate
+    is lowered to 3% for tax year 2025 and 2.95% for tax year 2026" (independent live-host confirmation of the 3%
+    rate)
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://www.in.gov/dor/files/ib98.pdf
+  descriptions:
+  - 'Indiana DOR - Income Tax Information Bulletin #98, Indiana 529 Savings Plan Credit (20% of contributions, $1,500/$750
+    cap)'
+- id: forms-9
+  topic: forms_and_instructions
+  url: https://intime.dor.in.gov
+  descriptions:
+  - Indiana DOR - INTIME e-services payment portal
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://forms.in.gov/Download.aspx?id=16914
+  descriptions:
+  - 'Indiana DOR — 2025 Form IT-40 (State Form 154) Line 8 "State adjusted gross income tax: multiply line 7 by
+    3% (.03)" (Line 7 = Line 5 minus Line 6 exemptions; Line 1 = federal AGI from Form 1040/1040-SR line 11); 2025
+    Schedule 3: Exemptions (State Form 53997, rev 9-25) Lines 1-6. Second pass: the 2026 IN DOR Tax Chapter for
+    the 2025 Filing Year (www.in.gov, revised Oct 2025) states "Individual Income tax rate is lowered to 3% for
+    tax year 2025 and 2.95% for tax year 2026", and the 2025 IT-40 booklet''s Credit for Taxes Paid to Other States
+    worksheet multiplies by "3% (.03)" — both passes agree.'
+- id: law-1
+  topic: law_changes
+  url: https://www.in.gov/dor/files/tax-chapter.pdf
+  descriptions:
+  - Indiana DOR - 2026 Tax Chapter for the 2025 Filing Year (revised October 2025) — "Individual Income tax rate
+    is lowered to 3% for tax year 2025 and 2.95% for tax year 2026" (independent live-host confirmation of the 3%
+    rate)

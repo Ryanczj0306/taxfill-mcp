@@ -112,6 +112,17 @@ Jurisdiction knowledge ships as data in `knowledge/`. Rules from
   questions it resolves), and `cadence` (when it updates). State sources are generated
   from each state pack's own citations into `knowledge/sources_states.yaml` by
   `scripts/assemble_state_sources.py` (CI fails when that file is stale).
+- **A new state citation goes in two places** (TY2025 and later). Cite it inline on
+  the block it backs, as always, AND add it to the pack's top-level `sources` table:
+  the row for its (registry topic, url) gets the citation's `source` text as one more
+  of its `descriptions`, or a new row `{id, topic, url, descriptions}` when the pair is
+  new. The topic is the one the block maps to (`BLOCK_TO_TOPIC` in
+  `taxfill_core.state_sources`, else `forms_and_instructions`). The registry is built
+  from the table, so a citation outlives a block that is later dropped;
+  `test_state_sources_table.py` fails when the table and the inline citations
+  disagree. TY2023 / TY2024 packs have no table. Then regenerate
+  `knowledge/sources_states.yaml` and check `test_state_source_routes.py`: a longer
+  description can move where `get_sources` routes a query.
 - **Never hardcode numbers that lack final IRS guidance.** When a law is enacted but
   the IRS has not published final caps/phase-outs/form lines, the pack stores the
   *lookup path* (which source answers it), not a guessed number. Agents resolve it

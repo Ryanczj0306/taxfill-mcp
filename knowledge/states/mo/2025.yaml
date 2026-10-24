@@ -450,3 +450,146 @@ effective_law_changes:
       Nonresident Alien instructions Line 1 = 1040NR Line 11a; check payable to Missouri
       Department of Revenue; 2025 Tax Chart p.21)
     url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+  descriptions:
+  - 2025 Form MO-1040 Individual Income Tax Long Form & Instructions, Missouri Department of Revenue (Line 1 = Federal
+    AGI; 'begin your Missouri return with your total federal adjusted gross income'; Form MO-A Part 1 additions
+    and the new Line 18 capital gain subtraction; residency/domicile definitions; nonresident & part-year rules;
+    April 15, 2026 due date; filing requirement thresholds; mailing addresses incl. 2-D barcode boxes; Nonresident
+    Alien instructions Line 1 = 1040NR Line 11a; check payable to Missouri Department of Revenue; 2025 Tax Chart
+    p.21)
+  - '2025 Missouri Form MO-1040 Instructions, ''PART-YEAR RESIDENT'' (p. 5): ''All income earned while living in
+    Missouri is taxable to Missouri. A part-year resident may determine to be taxed as a resident for the entire
+    year by using the Credit for Income Taxes Paid to Other States or Political Subdivisions (Form MO-CR) to claim
+    a credit for taxes paid to another state on the income earned while living in Missouri. Or a part-year resident
+    may use Missouri Income Percentage (Form MO-NRI) to determine their income based on the income earned while
+    living in Missouri.'' — ''LINE 31 AND 32 - PART-YEAR RESIDENT(S)'' (p. 9): ''You may take either the resident
+    credit or the Missouri income percentage. Complete both Forms MO-CR and MO-NRI and use the one that is to your
+    advantage.'''
+  - '2025 Missouri Form MO-1040 Instructions, ''NONRESIDENT'' (p. 4): ''A nonresident is an individual who does
+    not meet the definition of resident. If required to file, nonresidents with income from another state must use
+    the Missouri Income Percentage (Form MO-NRI) to determine income percentages.'' — ''LINE 32 - NONRESIDENT(S)''
+    (p. 9): ''You should determine your Missouri income percentage (Form MO-NRI) if: a. you are a nonresident; and
+    b. you had income from other state(s) or political subdivisions.'''
+  - 2025 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; Form MO-A Part 1 additions
+    Lines 1-6 and the NEW Line 18 capital gain subtraction with total subtractions at Line 19; residency/domicile
+    definitions incl. 183-day statutory-resident and 30-day exception rules; filing requirement thresholds $1,200/$600/standard
+    deduction; April 15, 2026 due date; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions
+    Line 1 = 1040NR Line 11a; rounding rule 'Round $32.50 up to $33.00'; 2025 Tax Chart p.21; Line 12 Federal Tax
+    Percentage chart; Line 14 standard deductions $15,750/$23,625/$31,500 with $2,000/$1,600 additional amounts;
+    Line 15 $1,400 head-of-household/qualifying-widow(er) exemption; Line 42 MO-TC; Line 43 Property Tax Credit;
+    Line 44 WFTC 20%; composite-return rate 4.7%)
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://dor.mo.gov/forms/MO-NRI_2025.pdf
+  descriptions:
+  - '2025 Form MO-NRI, Missouri Income Percentage, ''Part A, Line 2: Part-Year Resident'' (page 3): ''If you were
+    a Missouri part-year resident with Missouri source income and income from another state, you may use Form MO-NRI
+    or Form MO-CR, whichever is to your benefit.'''
+  - '2025 Form MO-NRI, Missouri Income Percentage, ''Part A, Line 1: Nonresidents of Missouri'' (page 3): ''If you
+    are a Missouri nonresident and had Missouri source income, complete Part A, Line 1, Part B, and Part C. Attach
+    a copy of your federal return, Form(s) W-2 and 1099 and this form to your Missouri return.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://dor.mo.gov/forms/MO-CR_2025.pdf
+  descriptions:
+  - '2025 Form MO-CR, Credit for Income Taxes Paid to Other States or Political Subdivisions (page 1): ''Complete
+    this form if you or your spouse have income from another state or political subdivision.'''
+- id: credits-1
+  topic: credits
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+  descriptions:
+  - Missouri Department of Revenue - 2025 Form MO-1040 instruction booklet, Form MO-PTS section (Qualifications
+    A-D; Lines 9-14; $27,200/$30,000 net-household-income limits; $750 rent / $1,100 combined caps) and 2025 Property
+    Tax Credit Chart pp.50-52
+  - Missouri Department of Revenue - 2025 Form MO-1040 instruction booklet, Line 44 Missouri Working Family Tax
+    Credit and Form MO-WFTC
+- id: credits-2
+  topic: credits
+  url: https://dor.mo.gov/tax-credits/fpt.html
+  descriptions:
+  - Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page and 2025 MO-1040 instruction booklet
+    (Form MO-A Part 1 Line 4; Form MO-TC credit code FPT / Form MO-FPT)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+  descriptions:
+  - 2025 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Where to Mail Your Return' (P.O. Box 500
+    refund / P.O. Box 329 balance due; 2-D barcode boxes 3222/3370 and property-tax-credit boxes 3385/3395; also
+    printed on the Form MO-1040 signature page)
+  - 2025 Form MO-1040 Individual Income Tax Long Form & Instructions - 'Calendar year taxpayers must file no later
+    than April 15, 2026'; an automatic extension of time to file is granted until October 15, 2026 with a federal
+    extension (attach Federal Form 4868) or by filing Form MO-60; an extension of time to file does not extend the
+    time to pay (5% addition to tax if the tax is not paid by the original due date); payments must be postmarked
+    by April 15, 2026
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://dor.mo.gov/forms/MO-1040A%20Instructions_2025.pdf
+  descriptions:
+  - 2025 Form MO-1040A Single/Married (Income from One Spouse) Short Form Instructions — independent second pass
+    on the 2025 Tax Chart (identical Tax Rate Chart and Tax Calculation Worksheet, including the $1,313 steps and
+    the 4.7% top rate) and the 2025 standard deduction amounts
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://dor.mo.gov/taxation/individual/additional-resources/non-residents.html
+  descriptions:
+  - Missouri DOR - Nonresidents and Residents with Other State Income (resident/nonresident/part-year definitions;
+    MO-NRI / MO-CR usage with MO-1040)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://dor.mo.gov/tax-credits/fpt.html
+  descriptions:
+  - Missouri DOR - Food Pantry Tax Credit (FPT) program page (50% of donations, $2,500/taxpayer/year, $1,750,000
+    statewide fiscal-year cap, 3-year carryforward, December 31, 2026 sunset)
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://dor.mo.gov/taxation/payment-options/
+  descriptions:
+  - Missouri DOR - Payment Options (electronic payment, check/money order, Form MO-1040V voucher)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+  descriptions:
+  - '2025 Form MO-1040 Individual Income Tax Long Form Instructions, Missouri Department of Revenue — p.21 ''2025
+    Tax Chart'' (Tax Rate Chart, Section A: $0 to $1,313 -> $0; over $1,313 not over $2,626 -> 2.0% of the excess
+    over $1,313; over $2,626 not over $3,939 -> $26 plus 2.5%; over $3,939 not over $5,252 -> $59 plus 3.0%; over
+    $5,252 not over $6,565 -> $98 plus 3.5%; over $6,565 not over $7,878 -> $144 plus 4.0%; over $7,878 not over
+    $9,191 -> $197 plus 4.5%; over $9,191 -> $256 plus 4.7% of the excess over $9,191; ''A separate tax must be
+    computed for you and your spouse''; ''Round to the nearest whole dollar and enter on Form MO-1040, Line 30Y
+    and 30S''); Line 30 - Missouri Tax (''Calculate your tax by using your taxable income from Form MO-1040, Line
+    29Y and 29S, the Tax Rate Chart (page 21, Section A), and Tax Calculation Worksheet (page 21, Section B)'');
+    Line 12 Federal Tax Percentage chart; Line 13 federal income tax deduction caps; Line 14 standard deduction
+    ($15,750/$23,625/$31,500); Line 15 head of household / qualifying widow(er) $1,400. Second pass: the 2025 Form
+    MO-1040A short-form instructions print the IDENTICAL 2025 Tax Rate Chart and Tax Calculation Worksheet (https://dor.mo.gov/forms/MO-1040A%20Instructions_2025.pdf)
+    — both passes agree digit for digit. Third corroboration of the top rate: the booklet''s composite-return note,
+    ''The tax rate for a composite return is 4.7 percent.'''
+- id: law-1
+  topic: law_changes
+  url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
+  descriptions:
+  - 2025 Form MO-1040 Individual Income Tax Long Form & Instructions (Line 1 = Federal AGI; Form MO-A Part 1 additions
+    Lines 1-6 and the NEW Line 18 capital gain subtraction with total subtractions at Line 19; residency/domicile
+    definitions incl. 183-day statutory-resident and 30-day exception rules; filing requirement thresholds $1,200/$600/standard
+    deduction; April 15, 2026 due date; mailing addresses incl. 2-D barcode boxes; Nonresident Alien instructions
+    Line 1 = 1040NR Line 11a; rounding rule 'Round $32.50 up to $33.00'; 2025 Tax Chart p.21; Line 12 Federal Tax
+    Percentage chart; Line 14 standard deductions $15,750/$23,625/$31,500 with $2,000/$1,600 additional amounts;
+    Line 15 $1,400 head-of-household/qualifying-widow(er) exemption; Line 42 MO-TC; Line 43 Property Tax Credit;
+    Line 44 WFTC 20%; composite-return rate 4.7%)
+  - 2025 Form MO-1040 Individual Income Tax Long Form & Instructions, Missouri Department of Revenue (Line 1 = Federal
+    AGI; 'begin your Missouri return with your total federal adjusted gross income'; Form MO-A Part 1 additions
+    and the new Line 18 capital gain subtraction; residency/domicile definitions; nonresident & part-year rules;
+    April 15, 2026 due date; filing requirement thresholds; mailing addresses incl. 2-D barcode boxes; Nonresident
+    Alien instructions Line 1 = 1040NR Line 11a; check payable to Missouri Department of Revenue; 2025 Tax Chart
+    p.21)

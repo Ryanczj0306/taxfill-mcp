@@ -86,11 +86,12 @@ def test_a_one_character_knowledge_edit_fails_naming_the_file(tmp_path, monkeypa
 
 def test_the_snapshot_set_stays_small():
     # ~5.2 MB at JK21 (127 files); ~6.3 MB after JK27, which snapshots get_sources in every year (a state's
-    # registry block became per year) and adds an amended return to the demo manifest. A file over 256 KB, or a
-    # set over 7 MB, means the grid grew by accident.
+    # registry block became per year) and adds an amended return to the demo manifest; ~7.2 MB after JK20, whose
+    # registry entries keep every description of a URL instead of the first. A file over 256 KB, or a set over
+    # 7.5 MB, means the grid grew by accident.
     sizes = {p.name: p.stat().st_size for p in GOLDENS.glob("*.json")}
     assert max(sizes.values()) < 256 * 1024, max(sizes, key=sizes.get)
-    assert sum(sizes.values()) < 7_000_000
+    assert sum(sizes.values()) < 7_500_000
 
 
 # A tool's refusal is output (calc refuses an unsupported grid point with a ValueError naming why), so the harness

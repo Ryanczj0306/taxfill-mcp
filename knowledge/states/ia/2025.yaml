@@ -446,3 +446,151 @@ effective_law_changes:
       Enhanced Deduction for Seniors is added back for the low-income exemption / alternate tax / tax
       reduction; ISave 529 deduction limit $5,800 per beneficiary
     url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/media/4400/download?inline
+  descriptions:
+  - 2025 IA 1040 Iowa Individual Income Tax Return (blank/print version) - Step 4 line 2 Federal taxable income,
+    line 3 Net Iowa modifications (Schedule 1 line 21), line 4 Iowa taxable income (Add lines 2 and 3, 'Do not include
+    lines 1a through 1f'), Step 5 line 5 'Iowa tax. Multiply line 4 by 3.8% or amount from alternate tax calculation',
+    Step 3 exemption credits ($40 personal, $20 per 65+/blind, $40 per dependent), due date April 30 2026, PO Box
+    9187, payee Iowa Department of Revenue
+  - 2025 IA 1040 Iowa Individual Income Tax Return (blank/print version) — Step 2 filing statuses 1-5; Step 3 exemption
+    credits ($40 personal x 1 or 2, $20 per 65+/blind, $40 per dependent); Step 4 line 2 federal taxable income,
+    line 3 net Iowa modifications, line 4 Iowa taxable income ('Add lines 2 and 3. Do not include lines 1a through
+    1f'); Step 5 line 5 'Iowa tax. Multiply line 4 by 3.8% or amount from alternate tax calculation'; due date April
+    30, 2026; PO Box 9187; payee Iowa Department of Revenue
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/who-must-file
+  descriptions:
+  - 'Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, ''Intro 3: Who Must File?'': ''You must file
+    an Iowa return if...'' — ''... you were a resident or part-year resident of Iowa in 2025 and meet any of the
+    following requirements.'' — ''f. You were a nonresident or part-year resident and your Iowa-source net income
+    IA 126, line 27 was $1,000 or more, unless below the income thresholds above.'''
+  - 'Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, ''Intro 3: Who Must File?'': ''Nonresidents,
+    see items f and g.'' — ''f. You were a nonresident or part-year resident and your Iowa-source net income IA
+    126, line 27 was $1,000 or more, unless below the income thresholds above.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/credit-nonpart-year-resident
+  descriptions:
+  - 'Iowa Department of Revenue, 2025 IA 1040 Expanded Instructions, ''Line 13: Credit for Nonresident or Part-Year
+    Resident'': ''A nonresident or part-year resident of Iowa must complete the IA 1040, lines 1 through 12 prior
+    to completing the IA 126. The nonresident or part-year resident then completes a Schedule IA 126.'''
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/media/4385/download?inline
+  descriptions:
+  - '2025 IA 126, Iowa Nonresident and Part-Year Resident Credit Schedule (form 41-126) — the schedule itself (page
+    1: ''Your Residency Status (check one)'')'
+- id: credits-1
+  topic: credits
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
+  descriptions:
+  - Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Iowa Earned Income Tax Credit'
+  - Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Child and Dependent Care Credit or Early Childhood
+    Development Credit'
+  - Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Early Childhood Development Credit'
+  - Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Tuition and Textbook Credit (K-12 Only)'
+  - Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, low-income exemption / What's New (federal
+    senior deduction add-back); box wording from the "Line 04" and "Line 25" pages (Instruction Year 2025); box
+    location from the 2025 IA 1040 page 2 (41-001b 10/14/2025), https://revenue.iowa.gov/media/4400/download?inline
+- id: logistics-1
+  topic: filing_logistics
+  url: https://revenue.iowa.gov/media/4400/download?inline
+  descriptions:
+  - '2025 IA 1040 Iowa Individual Income Tax Return - printed footer: ''This return is due April 30, 2026 ... MAILING
+    ADDRESS: Iowa Income Tax Document Processing, PO BOX 9187, Des Moines IA 50306-9187. Make checks payable to
+    Iowa Department of Revenue'''
+  - '2025 IA 1040 printed footer: ''This return is due April 30, 2026''. Iowa''s individual due date is April 30,
+    NOT the federal April 15.'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-taxable-income
+  descriptions:
+  - '2025 IA 1040 Expanded Instructions, "Line 04: Iowa Taxable Income" — "Check the box only if using low-income
+    exemption, alternate tax, or tax reduction."'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-earned-income-tax-credit
+  descriptions:
+  - '2025 IA 1040 Expanded Instructions, "Line 25: Iowa Earned Income Tax Credit" — a low-income-exemption filer
+    filing only to claim the Iowa EITC should "check the box between Steps 4 and 5"'
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
+  descriptions:
+  - 'Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, Line 05 ''Iowa Tax'' + What''s New: ''Iowa
+    now has a flat tax rate of 3.8%'' (SF 2442 flat tax begins TY2025); the federal Enhanced Deduction for Seniors
+    is added back for the low-income exemption / alternate tax / tax reduction; ISave 529 deduction limit $5,800
+    per beneficiary'
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/media/4386/download?inline
+  descriptions:
+  - 'Iowa Department of Revenue — 2025 IA 1040 Alternate Tax Worksheet (41-145, Rev. 10/17/2025): line 2 threshold
+    $13,500 ($32,000 if you or your spouse was 65 or older on 12/31/2025); line 4 ''Multiply line 3 by 4.3% (.043)'';
+    line 5 ''Multiply Iowa taxable income from IA 1040, line 4 by 3.8% (.038)''; take the SMALLER; single filers
+    use the Iowa Income Tax Reduction Worksheet (41-146) instead'
+- id: forms-9
+  topic: forms_and_instructions
+  url: https://www.legis.iowa.gov/docs/iac/rule/02-22-2023.701.300.17.pdf
+  descriptions:
+  - Iowa Administrative Code 701—300.17(422) Resident determination — resident/permanent place of abode/domicile
+    definitions; resident taxed on all income except items exempted by federal or Iowa law
+- id: forms-10
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/taxes/file-my-taxes/individual-taxes
+  descriptions:
+  - Iowa Department of Revenue - Individual Taxes (filing due date April 30)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://revenue.iowa.gov/media/4400/download?inline
+  descriptions:
+  - '2025 IA 1040 Iowa Individual Income Tax Return, Step 5 line 5: ''Iowa tax. Multiply line 4 by 3.8% or amount
+    from alternate tax calculation''; Step 4 line 4 ''Iowa taxable income. Add lines 2 and 3. Do not include lines
+    1a through 1f'' (line 2 = federal taxable income from federal 1040 line 15; line 3 = net Iowa modifications
+    from IA 1040 Schedule 1 line 21); Step 3 $40/$20/$40 exemption CREDITS. Second pass: 2025 IA 1040 Expanded Instructions,
+    Line 05 ''Iowa Tax'' page ''Iowa now has a flat tax rate of 3.8%'' (SF 2442 flat tax begins TY2025), and the
+    2025 IA 1040 Alternate Tax Worksheet (41-145, Rev. 10/17/2025) line 5 ''Multiply Iowa taxable income from IA
+    1040, line 4 by 3.8% (.038)'' - both passes agree the flat rate is 3.8%. https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new'
+- id: rates-2
+  topic: tax_rates_and_brackets
+  url: https://revenue.iowa.gov/media/4401/download
+  descriptions:
+  - '2025 IA 1040 Iowa Individual Income Tax Return (41-001), page 1 Step 3 "Exemptions": a "Personal Credit: Enter
+    1 (enter 2 if filing status 2 or 4) x $40 ="; b "Enter 1 for each taxpayer 65 or older and/or 1 for each taxpayer
+    who is blind x $20 =" (boxes You are 65 or older, You are blind, Spouse is 65 or older, Spouse is blind); c
+    "Dependents: Enter 1 for each dependent. x $40 ="; d "Total. Add lines a, b and c"; page 2 Step 5 line 8 "Total
+    exemption credit amount from Step 3", line 11 "Total Credits. Add lines 8, 9, and 10.", line 12 "BALANCE. Subtract
+    line 11 from line 7." Second pass: the 2025 IA 1040 Expanded Instructions ("Instruction Year: 2025"), "Intro
+    6: Exemption Credits" (https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/exemption-credits),
+    "Line 08: Total Exemption Credit" and "Line 12: Balance" ("Subtract line 11 from line 7. If less than zero,
+    enter zero."), which print the same amounts.'
+- id: law-1
+  topic: law_changes
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
+  descriptions:
+  - 'Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, Line 05 ''Iowa Tax'' + What''s New: ''Iowa
+    now has a flat tax rate of 3.8%'' (SF 2442 flat tax begins TY2025); the federal Enhanced Deduction for Seniors
+    is added back for the low-income exemption / alternate tax / tax reduction; ISave 529 deduction limit $5,800
+    per beneficiary'
+- id: law-2
+  topic: law_changes
+  url: https://revenue.iowa.gov/media/4386/download?inline
+  descriptions:
+  - 'Iowa Department of Revenue — 2025 IA 1040 Alternate Tax Worksheet (41-145, Rev. 10/17/2025): line 2 threshold
+    $13,500 ($32,000 if you or your spouse was 65 or older on 12/31/2025); line 4 ''Multiply line 3 by 4.3% (.043)'';
+    line 5 ''Multiply Iowa taxable income from IA 1040, line 4 by 3.8% (.038)''; take the SMALLER; single filers
+    use the Iowa Income Tax Reduction Worksheet (41-146) instead'

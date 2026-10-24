@@ -460,3 +460,117 @@ effective_law_changes:
       Line 11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options,
       mailing addresses, May 1 2026 due date
     url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+  descriptions:
+  - 2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — What's New (standard deduction
+    increased to $8,750/$17,500 for Taxable Years 2025 and 2026; refundable Virginia EITC raised to 20%; fixed IRC
+    conformity date of December 31, 2025), Line 1 Federal Adjusted Gross Income, Line 9 filing thresholds, Line
+    11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options, mailing
+    addresses, May 1 2026 due date
+  - 2025 Form 760 Resident Individual Income Tax Instructions - 'Residency Status and Choosing the Right Form to
+    File' (p. 5)
+  - 2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) - PASS 1 for every engine
+    figure. What's New (standard deduction $8,750/$17,500 for TY2025-2026 with the sunset moved to after TY2026;
+    refundable Virginia EITC 15% -> 20%; fixed IRC conformity date of December 31, 2025 replacing suspended rolling
+    conformity, conforming to most of 2025 H.R.1/P.L. 119-21); Reminders (automatic 6-month extension, Form 760IP);
+    Do You Need to File (VAGI $11,950 / $23,900); Form 760 Line Instructions (Line 1 federal AGI, Line 4 age deduction
+    up to $12,000 each, Line 9 VAGI and the zero-tax threshold, Line 11 standard deduction chart, Line 12 exemptions
+    $930 and $800, Line 16 amount of tax); Age 65 and Older Deduction Worksheet; Itemized or Standard Deductions
+    (p. 11); Spouse Tax Adjustment Worksheet (the $259 cap, p. 12); Payment Options (check payee); Schedule ADJ
+    Line Instructions (additions codes with no treaty addback; Credit for Low-Income Individuals / Virginia EITC,
+    2025 Poverty Guideline Table, $300 per exemption, 20% of the federal EITC); TAX RATE SCHEDULE p. 35; List of
+    Localities and Mailing Addresses
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760py-instructions.pdf
+  descriptions:
+  - '2025 Virginia Form 760PY Part-Year Resident Individual Income Tax Instructions (Va. Dept. of Taxation 2614092
+    Rev. 5/2026), ''Which Form to File'' (p. 7): ''Part-Year Residents File Form 760PY'' — ''As a general rule,
+    part-year residents file Form 760PY.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/760py-2025.pdf
+  descriptions:
+  - '2025 Form 760PY, Virginia Part-Year Resident Income Tax Return — the 2-page return itself (page 1: ''Due May
+    1, 2026'')'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf
+  descriptions:
+  - '2025 Virginia Form 763 Nonresident Individual Income Tax Instructions (Va. Dept. of Taxation 2614090 Rev. 5/2026),
+    ''Which Form To File'' (p. 7): ''Nonresidents File Form 763'' — ''Generally, nonresidents with income from Virginia
+    sources must file a Virginia return if their income is at or above the filing threshold.'''
+  - 2025 Virginia Form 763 Nonresident Individual Income Tax Instructions (44 pages) - the independent SECOND-PASS
+    source; prints the identical TAX RATE SCHEDULE (2% to $3,000; $60 + 3%; $120 + 5%; $720 + 5.75% over $17,000)
+    and the same increased standard deduction ($8,750 Filing Status 1 / $17,500 Filing Status 2, with the same TY2025-2026
+    window and post-TY2026 sunset language)
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/763-2025.pdf
+  descriptions:
+  - '2025 Form 763, Virginia Nonresident Income Tax Return — the 2-page return itself (page 1: ''Due May 1, 2026'')'
+- id: credits-1
+  topic: credits
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+  descriptions:
+  - 2025 Form 760 Resident Individual Income Tax Instructions - 'Tax Credit for Low-Income Individuals or Virginia
+    Earned Income Tax Credit' (Schedule ADJ Lines 9-17), including the 2025 Poverty Guideline Table and the Line
+    13 '$300' multiplier
+  - 2025 Form 760 Resident Individual Income Tax Instructions - Schedule ADJ Line 14 instructions ('the total Virginia
+    Earned Income Credit, which is 20% of the federal Earned Income Tax Credit')
+  - 2025 Form 760 Resident Individual Income Tax Instructions - What's New, 'Refundable Virginia Earned Income Tax
+    Credit' (15% -> 20% for Taxable Years 2025 and 2026; nonresidents and part-year residents ineligible)
+  - 2025 Form 760 Resident Individual Income Tax Instructions - 'Credit for Taxes Paid to Another State' and the
+    Schedule OSC Line Instructions (pp. 31-33)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+  descriptions:
+  - '2025 Form 760 Resident Individual Income Tax Instructions, ''List of Localities and Mailing Addresses'' (booklet
+    p. 36 onward) - ''You may mail your income tax return directly to the Department of Taxation at the addresses
+    listed to the right or to your Commissioner of the Revenue'': REFUND RETURNS P.O. Box 1498; TAX DUE RETURNS
+    P.O. Box 760'
+  - 2025 Form 760 Resident Individual Income Tax Instructions - 'your individual income tax return must be postmarked
+    no later than May 1, 2026, to avoid penalties and interest'; Reminders, 'Extension for Filing Income Tax Returns'
+    (automatic 6 months, Form 760IP); 'The due date for filing a calendar year return is May 1, and the automatic
+    extension provisions apply to returns filed by November 1'; the July 1, 2026 out-of-country date
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.tax.virginia.gov/payments
+  descriptions:
+  - Virginia Tax - individual income tax payment options (eForms / Individual Online Services / web payments)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+  descriptions:
+  - '2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — TAX RATE SCHEDULE, p.
+    35: ''Not over $3,000, your tax is 2% of your Virginia taxable income; $3,000-$5,000: $60 + 3%; $5,000-$17,000:
+    $120 + 5%; over $17,000: $720 + 5.75% of excess over $17,000''; What''s New ''Increase in Standard Deduction''
+    and the Line 11 chart (Filing Status 1 $8,750 / Filing Status 2 $17,500 / Filing Status 3 $8,750, for Taxable
+    Years 2025 and 2026, sunsetting after TY2026 to $3,000/$6,000); Line 12 Exemptions (''Multiply the sum of exemptions
+    claimed in the You, Spouse and Dependents boxes by $930'' and ''Multiply the sum of exemptions claimed for 65
+    or over and Blind by $800''); Line 9 VAGI filing threshold; Spouse Tax Adjustment Worksheet ($259 cap). Second
+    pass: the 2025 Form 763 nonresident instructions independently print the identical TAX RATE SCHEDULE and the
+    same $8,750/$17,500 standard deduction chart (https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf)
+    — both passes agree on every bound, rate, printed constant, and deduction amount.'
+- id: law-1
+  topic: law_changes
+  url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-760-instructions.pdf
+  descriptions:
+  - 2025 Form 760 Resident Individual Income Tax Instructions (Virginia Tax, 43 pages) — What's New (standard deduction
+    increased to $8,750/$17,500 for Taxable Years 2025 and 2026; refundable Virginia EITC raised to 20%; fixed IRC
+    conformity date of December 31, 2025), Line 1 Federal Adjusted Gross Income, Line 9 filing thresholds, Line
+    11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options, mailing
+    addresses, May 1 2026 due date

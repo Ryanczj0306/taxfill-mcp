@@ -427,3 +427,111 @@ law_changes_checked:
     source: >-
       2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025 (p.15)
     url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+  descriptions:
+  - 'WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI (p.24),
+    Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status (p.17),
+    due date April 15, 2026 (cover, p.24), mailing addresses (Form IT-140 p.2), Special Nonresident / 183-day PA-VA
+    rule (Schedule A Part II instructions, p.32)'
+  - '2025 West Virginia Personal Income Tax Forms & Instructions (IT-140 booklet, WV Tax Division) — ''Who Must
+    File'' (p. 17): ''You must file a West Virginia income tax return if: ... • You were a resident of West Virginia
+    for a part of the taxable year (Part-Year Resident).''; ''Nonresident/Part-Year Resident'' (p. 18): ''NONRESIDENTS
+    AND PART-YEAR RESIDENTS MUST FIRST COMPLETE LINES 1 THROUGH 7 OF FORM IT-140, THEN COMPLETE SCHEDULE A.''; Form
+    IT-140 instructions (p. 24): ''NONRESIDENT OR PART-YEAR RESIDENT - Enter a check mark in this box if you are
+    filing as a nonresident or part-year resident'''
+  - '2025 West Virginia Personal Income Tax Forms & Instructions (IT-140 booklet, WV Tax Division) — ''Who Must
+    File'' (p. 17): ''• You were not a resident of West Virginia at any time during 2025, but your federal adjusted
+    gross income includes income from West Virginia sources (nonresident).''; ''Special Nonresidents'' (p. 17):
+    ''A resident of Kentucky, Maryland, Ohio, Pennsylvania, or Virginia for the entire taxable year; and • Your
+    only source of West Virginia income was from wages and salaries. • Mark the nonresident special box on the front
+    of the return and complete Part II of Schedule A.''; ''Nonresident/Part-Year Resident'' (p. 18): ''NONRESIDENTS
+    AND PART-YEAR RESIDENTS MUST FIRST COMPLETE LINES 1 THROUGH 7 OF FORM IT-140, THEN COMPLETE SCHEDULE A.'''
+  - 'WV Tax Division - 2025 IT-140 booklet, Form IT-140 (Personal Income Tax Return): line 1 Federal Adjusted Gross
+    Income; refund mail to P.O. Box 1071 Charleston WV 25324-1071; balance due mail to P.O. Box 3694 Charleston
+    WV 25336-3694; electronic payment at mytaxes.wvtax.gov'
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.Schedule-A.2025.pdf
+  descriptions:
+  - 2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income — '(To Be Completed By Nonresidents
+    and Part-Year Residents Only)'; 'PART-YEAR RESIDENTS (Enter period of West Virginia residency MM/DD/YYYY)'
+  - '2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income — ''(To Be Completed By
+    Nonresidents and Part-Year Residents Only)''; Part I line 4: ''Tax (divide line 2 by line 3, round to 4 decimal
+    places and multiply the result by line 1). Enter here and on line 8, Form IT-140'''
+- id: credits-1
+  topic: credits
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+  descriptions:
+  - WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet), Schedule FTC-1 (p.11) and
+    the 2025 Family Tax Credit Tables (p.12)
+  - WV Tax Division - 2025 IT-140 booklet, Schedule HEPTC-1 (Homestead Excess Property Tax Credit)
+  - WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet), Senior Citizens Tax Credit
+    Information (page 34) and the Form SCTC-A instructions (Form IT-140 line 18)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+  descriptions:
+  - 'WV Tax Division - 2025 personal income tax Forms & Instructions (IT-140 booklet): starting point = FAGI (p.24),
+    Schedule M increasing modifications lines 51-58 (no treaty add-back), Who Must File & Residency Status (p.17),
+    due date April 15, 2026 (cover, p.24), mailing addresses (Form IT-140 p.2), Special Nonresident / 183-day PA-VA
+    rule (Schedule A Part II instructions, p.32)'
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.schedule-M.2025.pdf
+  descriptions:
+  - WV Tax Division - 2025 Schedule M (Form IT-140), Modifications to Adjusted Gross Income (increasing modifications,
+    lines 51-58)
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.schedule-A.2025.pdf
+  descriptions:
+  - WV Tax Division - 2025 Schedule A (Form IT-140), Nonresidents/Part-Year Residents Schedule of Income
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://tax.wv.gov/Individuals
+  descriptions:
+  - WV Tax Division - Individuals page (forms portal)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+  descriptions:
+  - 'WV Tax Division — 2025 IT-140 Personal Income Tax Forms and Instructions booklet: TY2025 rate schedules print
+    the REDUCED set (Less than $10,000 -> 2.22% of the taxable income; $222.00 plus 2.96% of excess over $10,000;
+    $666.00 plus 3.33% over $25,000; $1,165.50 plus 4.44% over $40,000; $2,053.50 plus 4.82% over $60,000; Rate
+    Schedule II for married filing separately at exactly half boundaries with constants 111.00/333.00/582.75/1,026.75).
+    ''You can deduct $2,000 for every exemption claimed''; ''$500 if you claim zero exemptions''; cover: ''2025
+    PERSONAL INCOME TAX IS DUE APRIL 15, 2026''.'
+- id: law-1
+  topic: law_changes
+  url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf
+  descriptions:
+  - '2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Rate Schedule I: ''Less than $10,000''
+    — ''2.22% of the taxable income'' (Rate Schedule II the same at half the bounds).'
+  - '2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025: ''For
+    taxable year 2025, when the federal adjusted gross income of a married couple filing jointly exceeds $100,000
+    or $50,000 in the case of a single, head of household, widow(er), or married individual filing a separate return,
+    65% of social benefits received and included in the federal adjusted gross income shall be allowed as a decreasing
+    modification.'''
+  - '2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025 (p.15):
+    ''Widowed spouses may now claim Disabled Veteran’s Property Tax Credit if the deceased disabled veteran claimed
+    claimed the credit in the prior year. Exceptions do apply see page Page 20.'' Disabled Veterans Real Property
+    Tax Credit (p.20): ''The widow(er) of a disabled veteran who previously claimed this credit may be eligible
+    to claim this credit as long as: 1. The widow(er) has not remarried, 2. The qualifying property has not been
+    reclassified, 3. The qualifying property has not been sold. If the amount of property tax timely paid exceeds
+    tax amount, the excess will be refunded.'' Form IT-140 line 21 (p.2): ''WV Property Tax Adjustment Tax Credits
+    (claim each separately below. Enter sum on line 21)'' with box B DISABLED VETERAN REAL PROPERTY TAX; instructions
+    (p.25): ''LINE 21 WV PROPERTY TAX ADJUSTMENT TAX CREDIT. Enter the amount in the appropriate box for the credit
+    being claimed.'''
+  - 2025 West Virginia Personal Income Tax Forms and Instructions (IT-140), Important Information for 2025 (p.15)

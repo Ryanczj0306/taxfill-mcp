@@ -1,7 +1,6 @@
 {
  "_strings": {
   "@@008929b2e8ee": "annual (per tax year; the shipped CA 2023 pack's own citation — for another year re-resolve at this URL family and cite)",
-  "@@18f84d2dbd04": "2023 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2023 California Tax Rate Schedules' (Schedules X/Y/Z), p. 75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Mental Health Services Tax worksheet, p. 16; Form 540 (2023) Side 1-2, lines 7-11 (X $144 / X $446 exemption credits), lines 17-19, 31-32, 61-62",
   "@@19f252dd199f": "Nonrefundable Renter's Credit — Full-year California resident who paid rent at least 6 months in 2023 on a non-tax-exempt principal residence; California AGI within the limit; not given a property-tax exemption; not claimable as someone else's dependent.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@205243ca2fd0": "Credit amounts/limits are not independently verified: Dollar limits below are transcribed from the cited 2023 FTB booklets; the adversarial re-fetch was blocked by ftb.ca.gov (HTTP 403), so confirm the exact 2023 limit at the cited URL before relying on it. (The live FTB pages now display current-year, inflation-adjusted figures.)",
@@ -405,7 +404,7 @@
    "retrieval_hint": "@@56fa8bb6e86a",
    "sources": [
     {
-     "answers": "@@ea789d79a239",
+     "answers": "FTB Publication 1031 (2023), Guidelines for Determining Resident Status — Tax Treaty section (pp. 9-10) || FTB Publication 1031 (2023), Sections G/I/L (residency, income taxable by California, domicile)",
      "cadence": "@@008929b2e8ee",
      "topic": "forms_and_instructions",
      "url": "https://www.ftb.ca.gov/forms/2023/2023-1031-publication.pdf"
@@ -441,7 +440,7 @@
    "retrieval_hint": "@@56fa8bb6e86a",
    "sources": [
     {
-     "answers": "@@18f84d2dbd04",
+     "answers": "2023 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2023 California Tax Rate Schedules' (Schedules X/Y/Z), p. 75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Mental Health Services Tax worksheet, p. 16; Form 540 (2023) Side 1-2, lines 7-11 (X $144 / X $446 exemption credits), lines 17-19, 31-32, 61-62 || 2023 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — the Form 540 printed in it (Side 1 lines 6-9 \"X $144\"; Side 2 line 10 \"X $446\", lines 11 and 31-33), p. 12 \"Line 6 – Can be Claimed as Dependent\" through \"Line 11 – Exemption Amount\", and p. 14 \"Line 32 – Exemption Credits\" with the AGI Limitation Worksheet. Second pass: the standalone 2023 Form 540 (ftb.ca.gov/forms/2023/2023-540.pdf) prints the same amounts and line text; the 2023 Form 540NR (ftb.ca.gov/forms/2023/2023-540nr.pdf) lines 38-40 for the proration note. Each fetched twice on 2026-10-16 with identical sha256.",
      "cadence": "@@008929b2e8ee",
      "topic": "tax_rates_and_brackets",
      "url": "https://www.ftb.ca.gov/forms/2023/2023-540-booklet.pdf"
@@ -1995,7 +1994,7 @@
   "common_result": {
    "base_kind": "federal_agi",
    "citation": {
-    "source": "@@18f84d2dbd04",
+    "source": "2023 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — '2023 California Tax Rate Schedules' (Schedules X/Y/Z), p. 75; 'California Standard Deduction Chart for Most People' and Line 18/Line 19/Line 31 instructions, p. 13; Line 32 Exemption Credits AGI limits, p. 14; Line 62 Mental Health Services Tax worksheet, p. 16; Form 540 (2023) Side 1-2, lines 7-11 (X $144 / X $446 exemption credits), lines 17-19, 31-32, 61-62",
     "url": "https://www.ftb.ca.gov/forms/2023/2023-540-booklet.pdf"
    },
    "rate": null,

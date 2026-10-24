@@ -358,3 +358,116 @@ effective_law_changes:
       line 44 increased standard deduction 34%; line 46 tax = 2.5% (.025); mailing addresses; make check payable to
       Arizona Department of Revenue; AZTaxes.gov; April 15, 2026 due date)
     url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
+  descriptions:
+  - AZ DOR — 2025 Form 140 Resident Personal Income Tax Return Instructions (line 12 = Federal adjusted gross income;
+    additions lines 14-18; exemptions lines 38-41; standard deduction chart $15,750/$31,500/$15,750/$23,625; line
+    44 increased standard deduction 34%; line 46 tax = 2.5% (.025); mailing addresses; make check payable to Arizona
+    Department of Revenue; AZTaxes.gov; April 15, 2026 due date)
+  - AZ DOR — 2025 Form 140 Resident Personal Income Tax Return Instructions (FORMS_INDIVIDUAL_2025_140i) — Do You
+    Have to File thresholds ($15,750/$31,500/$15,750/$23,625), residency/domicile, Who Must Use Form 140, line 12
+    federal AGI starting point, additions lines 14-18 incl. the line 18 Other Additions schedule, subtraction item
+    U (2025 Arizona Families Tax Rebate), exemptions lines 38-41 ($2,100/$1,500/$2,300/$10,000), Your Standard Deduction
+    chart ($15,750/$31,500/$15,750/$23,625), line 44 increased standard deduction 34% (.34) for charitable contributions,
+    line 45 Arizona taxable income, line 46 tax 2.5% (.025), line 49 dependent tax credit, line 50 family income
+    tax credit (Tables I-III, Worksheets I-II), line 56 increased excise tax credit, line 57 property tax credit,
+    payment options and mailing addresses, April 15 2026 due date
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140PYi.pdf
+  descriptions:
+  - '2025 Arizona Form 140PY Part-Year Resident Personal Income Tax Return instructions, ''Determining Residency
+    Status'' (p. 2): ''If you are a part-year resident, you must file Arizona Form 140PY, Part-Year Resident Personal
+    Income Tax Return.'' — and (p. 1): ''If you also have Arizona source income and deductions for the portion of
+    the year you were an Arizona nonresident, file Arizona Form 140PY for the entire taxable year.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140PY_f.pdf
+  descriptions:
+  - '2025 Arizona Form 140PY, Part-Year Resident Personal Income Tax Return — the return itself (page 1: ''Part-Year
+    Resident Personal Income Tax Return'')'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140NRi.pdf
+  descriptions:
+  - '2025 Arizona Form 140NR Nonresident Personal Income Tax Return instructions, ''Determining Residency Status''
+    (p. 2): ''If you are a nonresident (including nonresident aliens), you must file Arizona Form 140NR, Nonresident
+    Personal Income Tax Return.'''
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140NR_f.pdf
+  descriptions:
+  - '2025 Arizona Form 140NR, Nonresident Personal Income Tax Return — the return itself (page 1: ''Nonresident
+    Personal Income Tax Return'')'
+- id: credits-1
+  topic: credits
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
+  descriptions:
+  - Arizona Department of Revenue, 2025 Form 140 Resident Personal Income Tax Return Instructions (Line 49 - Dependent
+    Tax Credit; 2025 Adjusted Dependent Tax Credit worksheets Tables III/IV/V)
+  - Arizona Department of Revenue, 2025 Form 140 Instructions (Line 50 - Family Income Tax Credit, Tables I-III,
+    Worksheets I-II)
+  - Arizona Department of Revenue, 2025 Form 140 Instructions (Line 56 - Increased Excise Tax Credit; Credit for
+    Increased Excise Taxes Worksheet; Pub. 709)
+  - Arizona Department of Revenue, 2025 Form 140 Instructions (Line 57 - Property Tax Credit) and Form 140PTC
+- id: logistics-1
+  topic: filing_logistics
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
+  descriptions:
+  - AZ DOR — 2025 Form 140 Instructions, "Where Should I Mail my return?" (PO Box 52016 with payment / PO Box 52138
+    refund or no payment; the same split applies when filing Form 140 together with Form 140-SBI, after the department
+    applies any overpayment from one return to the other)
+  - AZ DOR — 2025 Form 140 Instructions ("E-file today and pay by April 15, 2026 to avoid penalties and interest";
+    a calendar-year 2025 return is due by midnight April 15, 2026; state extension via Form 204 filed by April 15,
+    2026, or an extension payment at www.AZTaxes.gov)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf
+  descriptions:
+  - 'AZ DOR — 2025 Form 140 (form PDF, ADOR 10413 (25), "AZ Form 140 (2025)"; second-pass verification: line 12
+    "Federal adjusted gross income (from your federal return)", line 38 "Age 65 or over: Multiply the number in
+    box 8 by $2,100", line 39 "Blind: Multiply the number in box 9 by $1,500", line 40 "Multiply the number in box
+    40E by $2,300", line 41 "Qualifying parents and grandparents: Multiply the number in box 11a by $10,000", line
+    42 Arizona adjusted gross income, line 45 Arizona taxable income, line 46 "Tax: Multiply line 45 by 2.5% (.025).
+    Enter the result", page-3 Standard Deduction Increase for Charitable Contributions worksheet line 7C "Multiply
+    line 6C by 34% (.34)", page-5 Other Additions to Arizona Gross Income schedule items A-T)'
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://azdor.gov/forms/individual/form-140-arizona-resident-personal-income-tax-booklet
+  descriptions:
+  - AZ DOR — Form 140 Arizona Resident Personal Income Tax Booklet landing page
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
+  descriptions:
+  - 'AZ DOR — 2025 Form 140 Instructions: Line 46 "Multiply line 45 by 2.5% (.025) and enter the result" (Line 45
+    = Arizona taxable income); Line 12 = federal AGI ("Arizona uses federal adjusted gross income as a starting
+    point to determine Arizona taxable income. Your federal adjusted gross income is your Arizona gross income");
+    "Your Standard Deduction" chart (Line 43) — $15,750 single, $31,500 married filing joint, $15,750 married filing
+    separate, $23,625 head of household (the same figures set the "Do You Have to File?" thresholds); exemptions
+    on lines 38-41 (age 65 or over $2,100; blind $1,500; other exemptions $2,300; qualifying parents and grandparents
+    $10,000); Line 44 increased standard deduction for charitable contributions at 34% (.34); Dependent Tax Credit
+    on Line 49. Second pass: the 2025 Form 140 itself (ADOR 10413 (25), "AZ Form 140 (2025)") prints line 46 "Tax:
+    Multiply line 45 by 2.5% (.025). Enter the result", the line 38-41 multiplications ($2,100/$1,500/$2,300/$10,000),
+    and the page-3 charitable standard-deduction-increase worksheet line 7C "Multiply line 6C by 34% (.34)" — both
+    passes agree.'
+- id: law-1
+  topic: law_changes
+  url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140i.pdf
+  descriptions:
+  - AZ DOR — 2025 Form 140 Resident Personal Income Tax Return Instructions (line 12 = Federal adjusted gross income;
+    additions lines 14-18; exemptions lines 38-41; standard deduction chart $15,750/$31,500/$15,750/$23,625; line
+    44 increased standard deduction 34%; line 46 tax = 2.5% (.025); mailing addresses; make check payable to Arizona
+    Department of Revenue; AZTaxes.gov; April 15, 2026 due date)

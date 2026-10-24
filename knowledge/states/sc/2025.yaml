@@ -283,3 +283,147 @@ law_changes_checked:
   citation:
     source: 2025 SC1040 Individual Income Tax Instructions (August 2025), Before You Begin
     url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
+  descriptions:
+  - 2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue, August 2025) - Line 1 federal taxable income;
+    Additions lines a-e incl. line e foreign area allowances/COLA/US possessions add-back; IRC conformity through
+    12/31/2024; due date April 15, 2026; refund claim deadline April 15, 2029; Line w dependent exemption $4,930
+  - '2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue) — ''Checkboxes'' (p. 2): ''2. If you are
+    a nonresident for the entire year or a part-year resident electing to file as a nonresident, check the appropriate
+    box and attach your Schedule NR to the completed SC1040. Do not submit the Schedule NR separately.'''
+  - 2025 SC1040 Individual Income Tax Instructions (SC Dept. of Revenue, August 2025) - Line 1 federal taxable income;
+    Additions lines a-e incl. line e foreign add-back; IRC conformity through 12/31/2024; due date April 15, 2026;
+    Line w dependent exemption $4,930; Line 11/12 credit computations; Line 6 tax-table/rate-schedule mandate
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/Geninfo_2025.pdf
+  descriptions:
+  - 'Individual Income Tax: General Information and FAQs (SCDOR; the 2025 ''Gen Instr'', for the 2025 return due
+    April 15, 2026) — ''What is my residency status if I moved into or out of South Carolina during the tax year?''
+    (p. 2): ''You are a part-year resident and may consider yourself a full-year resident or nonresident. If you
+    file as a full-year resident, file the SC1040. ... If you file as a nonresident, file the SC1040 with the Schedule
+    NR. ... You may choose the filing method that is most beneficial to you.'''
+  - 'Individual Income Tax: General Information and FAQs (SCDOR; the 2025 ''Gen Instr'', for the 2025 return due
+    April 15, 2026) — ''How should I file if I am a nonresident of South Carolina but work in this state?'' (p.
+    2): ''File the SC1040 with the Schedule NR. You will be taxed only on income earned in South Carolina and will
+    prorate your deductions.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/SchNRInst_2025.pdf
+  descriptions:
+  - '2025 Schedule NR Instructions, Nonresident Schedule (SCDOR, July 2025) — ''Before You Begin'' (p. 3): ''Use
+    the Schedule NR if you are a nonresident of South Carolina or you are filing as a part-year resident.'' — ''Attach
+    the Schedule NR and a copy of your federal return to your SC1040.'''
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/SchNR_2025.pdf
+  descriptions:
+  - '2025 Schedule NR, Nonresident Schedule (SCDOR 3081, Rev. 4/2/25), p. 1: ''Schedule NR is for Nonresidents or
+    Part-year residents. Attach to completed SC1040.'''
+- id: credits-1
+  topic: credits
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040TC_2025.pdf
+  descriptions:
+  - 'SC DOR Form SC1040TC, 2025 TAX CREDITS (Rev. 3/21/25) - credit code 060 ''SC EARNED INCOME TAX CREDIT: For
+    full-year resident individuals who claimed the Earned Income Tax Credit on their federal return. (TC-60)'';
+    and the 2025 SC1040 instructions Line 13 (Other nonrefundable credits, ''Refer to the instructions for the SC1040TC'')'
+- id: credits-2
+  topic: credits
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
+  descriptions:
+  - 'SC DOR 2025 SC1040 Individual Income Tax Instructions, Line 12: Two Wage Earner Credit (''For 2025, the credit
+    is computed at .007 of the lesser of $50,000 or the South Carolina qualified earned income of the spouse with
+    the lower South Carolina qualified earned income for the taxable year'')'
+  - 'SC DOR 2025 SC1040 Individual Income Tax Instructions, Line 11: Child and Dependent Care Credit'
+- id: credits-3
+  topic: credits
+  url: https://dor.sc.gov/sites/dor/files/forms/I319_2025.pdf
+  descriptions:
+  - SC DOR 2025 Form I-319, Tuition Tax Credit (50% of tuition, not to exceed $1,500; independent 4-year tuition
+    limit $12,268 for 2025), and the 2025 SC1040 instructions Line 21 (Tuition Tax Credit via Form I-319)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2025.pdf
+  descriptions:
+  - '2025 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - MAIL TO addresses printed on the signature
+    page: REFUNDS OR ZERO TAX DUE PO Box 101100; BALANCE DUE PO Box 101105'
+- id: logistics-2
+  topic: filing_logistics
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
+  descriptions:
+  - '2025 SC1040 Individual Income Tax Instructions, Before You Begin: ''For tax year 2025, unless you have a valid
+    extension, the due date is April 15, 2026, and the deadline to claim a refund is April 15, 2029.'''
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2025.pdf
+  descriptions:
+  - 2025 SC1040 Individual Income Tax Return form (SC Dept. of Revenue) - line 1 'Enter federal taxable income from
+    your federal form'; line w South Carolina Dependent Exemption; line 6 TAX (see SC1040TT); line 21 Tuition tax
+    credit (attach I-319); MAIL TO addresses
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2025.pdf
+  descriptions:
+  - 2025 South Carolina Individual Income Tax Tables SC1040TT (Revised 6/17/25) - mandatory tax tables below $100,000
+    and the '2025 Tax Rate Schedule for taxable income of $100,000 or more' (multiply line 5 by 6%, subtract $642;
+    worked example $101,000 -> $5,418)
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/SC4972_2025.pdf
+  descriptions:
+  - '2025 SC4972 (Tax on Lump-Sum Distributions, Rev. 6/17/25) - printed ''2025 Tax Computation Schedule for Line
+    19 and Line 22'': $0-$3,560 0% times the amount; $3,560-$17,830 3% times the amount minus $107; $17,830 or more
+    6% times the amount minus $642'
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040TC_2025.pdf
+  descriptions:
+  - SC DOR Form SC1040TC, 2025 TAX CREDITS (Rev. 3/21/25) - nonrefundable credit codes routed to SC1040 line 13,
+    incl. code 060 SC Earned Income Tax Credit (TC-60)
+- id: forms-9
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/I319_2025.pdf
+  descriptions:
+  - SC DOR 2025 Form I-319, Tuition Tax Credit - 50% of tuition up to $1,500; independent 4-year institution tuition
+    limit $12,268 for 2025
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2025.pdf
+  descriptions:
+  - '2025 South Carolina Individual Income Tax Tables SC1040TT (Revised 6/17/25) — the mandatory tax tables for
+    taxable income under $100,000 and the ''2025 Tax Rate Schedule for taxable income of $100,000 or more'' (''1.
+    Multiply the amount on line 5 by 6%; 2. Subtract $642; 3. Enter the difference on line 6'', with the worked
+    example $101,000 -> $5,418); 2025 SC1040 Instructions Line 6 (''If your income subject to tax on line 5 is less
+    than $100,000, use the SC1040TT... If your income subject to tax on line 5 is $100,000 or more, use the tax
+    rate schedule provided in the SC1040TT'') and Line w (dependent exemption $4,930). Second pass (bracket bounds
+    and constants): 2025 SC4972, Rev. 6/17/25, printed ''2025 Tax Computation Schedule for Line 19 and Line 22''
+    — $0 to $3,560: 0% times the amount; $3,560 to $17,830: 3% times the amount minus $107; $17,830 or more: 6%
+    times the amount minus $642 (https://dor.sc.gov/sites/dor/files/forms/SC4972_2025.pdf). TY2025 changes vs 2024:
+    top rate 6.2% -> 6% (the Act 228 of 2022 step-down toward 6%), bounds indexed $3,460/$17,330 -> $3,560/$17,830,
+    constants $104/$659 -> $107/$642, dependent exemption $4,790 -> $4,930.'
+- id: law-1
+  topic: law_changes
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2025.pdf
+  descriptions:
+  - '2025 SC1040TT, South Carolina Tax Tables — Tax Rate Schedule for SC1040 line 5 of $100,000 or more: ''Multiply
+    the amount on line 5 by 6%;'' then ''Subtract $642''.'
+- id: law-2
+  topic: law_changes
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf
+  descriptions:
+  - '2025 SC1040 Individual Income Tax Instructions (August 2025), Before You Begin: ''South Carolina conforms to
+    the Internal Revenue Code as amended through December 31, 2024, except as otherwise provided.'' — ''These instructions
+    reflect the law as of the end of the 2025 South Carolina legislative session.'''
+  - 2025 SC1040 Individual Income Tax Instructions (August 2025), Before You Begin

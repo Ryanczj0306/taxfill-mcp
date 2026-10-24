@@ -18,6 +18,10 @@ no longer exists; the 2024/2025 cohorts were authored by per-state verification 
 directly. The --year/--input parameters (added 2026-08-10, D2b) make future cohorts
 (TY2026+) re-runnable from a preserved input file — commit the input alongside the
 packs or note where it lives.
+
+Phase K JK20 (2026-10-24): a TY2025-and-later pack also carries a top-level ``sources``
+table that the source registry is built from. Run ``python scripts/hoist_state_sources.py
+--year <year>`` after this script (test_state_sources_table.py fails on a pack without one).
 """
 from __future__ import annotations
 
@@ -118,6 +122,8 @@ def main() -> int:
             print(f"  {st}: {e}")
     nonconf = [st for st, d in kb.items() if d["conforms_to_federal_treaties"] is False]
     print(f"treaty NON-conforming (warn NRA filers): {sorted(nonconf)}")
+    if wrote:
+        print(f"next: python scripts/hoist_state_sources.py --year {args.year}  (each pack's `sources` table)")
     return 0
 
 

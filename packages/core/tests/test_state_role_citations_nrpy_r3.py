@@ -33,6 +33,9 @@ each URL per topic. Nebraska's, New Mexico's and Oregon's role citations reuse a
 describe, so their ``forms`` block sits at the end of the pack, after ``all_citations``: placed before it, the role
 quote replaced that description, and "treaty", "check payee" or "proration" found nothing. The tests at the end pin
 both the questions and the ordering rule.
+
+Since Phase K JK20 (2026-10-24) the registry keeps every description of a (topic, url), the first one leading and
+the rest joined after it (test_state_sources_table.py); the paragraph above describes the registry as JK28 found it.
 """
 from __future__ import annotations
 

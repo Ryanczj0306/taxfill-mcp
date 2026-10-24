@@ -1,6 +1,5 @@
 {
  "_strings": {
-  "@@164aab815c66": "2025 Kentucky Form 740-NP Packet Instructions (42A740-NP(P) (10-25)), Instructions for Form 740-NP, p. 7: 'WHO MUST FILE FORM 740-NP—Form 740-NP must be used by full-year nonresidents who had income from Kentucky sources and by part-year residents who had income while a Kentucky resident or from Kentucky sources while a nonresident.' — 'Individuals who established or abandoned Kentucky residency are considered part-year residents.'",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@21da6026e3fb": "Law change NOT modeled by the engine (status final_form_published): IRC REFERENCE DATE ADVANCED to December 31, 2024 for 2025, from December 31, 2023 for 2024 — the live KY DOR Individual Income Tax page states \"Kentucky's individual income tax law is based on the Internal Revenue Code in effect as of December 31, 2024. The tax rate is four (4) percent and allows itemized deductions and certain income reducing deductions as defined in KRS 141.019\". The conformity date governs which federal provisions flow through federal AGI and which are modified on Schedule M (special depreciation/Section 179 differences, federal NOL, the Kentucky excess business loss limitation, etc.) to reach Kentucky adjusted gross income on Form 740 line 9. Resolve via: Live KY DOR Individual Income Tax page (the citation URL) for the December 31, 2024 conformity date, and the 2025 Schedule M (Kentucky Federal Adjusted Gross Income Modifications, https://revenue.ky.gov/Forms/Schedule%20M%20(2025).pdf) for the additions/subtractions that implement it. NOTE the 2025 Form 740 instruction packet — which carried \"What's New\" in prior years — was unretrievable this pass (see `unverified`), so the packet's own statement of the change could not be quoted.",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
@@ -295,7 +294,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC, \"TAX CREDIT SCHEDULE 2025\"), Section C Family Size Tax Credit Table (Tax Year 2025 bands), and 2025 Form 740 lines 5, 20-21",
+     "answers": "Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC, \"TAX CREDIT SCHEDULE 2025\"), Section C Family Size Tax Credit Table (Tax Year 2025 bands), and 2025 Form 740 lines 5, 20-21 || Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC), Section B Personal Tax Credits, and 2025 Form 740 line 17",
      "cadence": "@@aa92ecb461a6",
      "topic": "credits",
      "url": "https://revenue.ky.gov/Forms/Schedule%20ITC%20(2025).pdf"
@@ -381,13 +380,13 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@e43c6444dfc9",
+     "answers": "Kentucky Department of Revenue — 2025 Form 740, Kentucky Individual Income Tax Return, Full-Year Resident (42A740, 10-25) — line 5 federal AGI (federal Form 1040/1040-SR line 11a) with the \"$42,760 or less\" Family Size Tax Credit note, line 9 Kentucky Adjusted Gross Income, line 10 \"Nonitemizers: Enter $3,270 in Columns A and/or B\", line 11 Taxable Income, line 12 \"Tax Computation: Multiply line 11 by 4% (.04) or amount from Schedule J\", lines 20-21 Family Size Tax Credit, line 24 Child and Dependent Care Credit x 20% (.20), page-3 Enclose/Payment block (Check Payable \"Kentucky State Treasurer\", \"KY Income Tax—2025\", Refund or No Payment Frankfort KY 40618-0006 / With Payment Frankfort KY 40619-0008) || Kentucky Department of Revenue — 2025 Form 740, Kentucky Individual Income Tax Return, Full-Year Resident (42A740, 10-25) — filing statuses 1-4, line 5 federal AGI (federal Form 1040/1040-SR line 11a) with the \"$42,760 or less\" Family Size Tax Credit gate, line 6/8 Schedule M additions and subtractions, line 9 Kentucky AGI, line 10 \"Nonitemizers: Enter $3,270 in Columns A and/or B\", line 11 Taxable Income, line 12 \"Tax Computation: Multiply line 11 by 4% (.04) or amount from Schedule J\", line 15 Schedule ITC Section A credits, line 17 Schedule ITC Section B personal tax credits, lines 20-21 Family Size Tax Credit, line 23 Education Tuition Tax Credit (Form 8863-K), line 24 Child and Dependent Care Credit x 20% (.20), line 26 Income Tax Liability, line 27 Kentucky Use Tax, page-3 Enclose/Payment block (payee, \"KY Income Tax—2025\", mailing addresses)",
      "cadence": "@@aa92ecb461a6",
      "topic": "forms_and_instructions",
      "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
     },
     {
-     "answers": "@@164aab815c66",
+     "answers": "2025 Kentucky Form 740-NP Packet Instructions (42A740-NP(P) (10-25)), Instructions for Form 740-NP, p. 7: 'WHO MUST FILE FORM 740-NP—Form 740-NP must be used by full-year nonresidents who had income from Kentucky sources and by part-year residents who had income while a Kentucky resident or from Kentucky sources while a nonresident.' — 'Individuals who established or abandoned Kentucky residency are considered part-year residents.' || 2025 Kentucky Form 740-NP Packet Instructions (42A740-NP(P) (10-25)), Instructions for Form 740-NP, p. 7: 'WHO MUST FILE FORM 740-NP—Form 740-NP must be used by full-year nonresidents who had income from Kentucky sources and by part-year residents who had income while a Kentucky resident or from Kentucky sources while a nonresident.' — 'Reciprocal States' (p. 7): 'Taxpayers who qualify for this exemption and have no other Kentucky taxable income should file Form 740-NP-R, Kentucky Income Tax Return, Nonresident–Reciprocal State, to obtain a refund.'",
      "cadence": "@@aa92ecb461a6",
      "topic": "forms_and_instructions",
      "url": "https://revenue.ky.gov/Forms/740-NP%20Packet%20Instructions%20(2025).pdf"
@@ -629,7 +628,7 @@
        "url": "https://revenue.ky.gov/Forms/740%20(2025).pdf"
       },
       {
-       "source": "@@164aab815c66",
+       "source": "2025 Kentucky Form 740-NP Packet Instructions (42A740-NP(P) (10-25)), Instructions for Form 740-NP, p. 7: 'WHO MUST FILE FORM 740-NP—Form 740-NP must be used by full-year nonresidents who had income from Kentucky sources and by part-year residents who had income while a Kentucky resident or from Kentucky sources while a nonresident.' — 'Individuals who established or abandoned Kentucky residency are considered part-year residents.'",
        "url": "https://revenue.ky.gov/Forms/740-NP%20Packet%20Instructions%20(2025).pdf"
       },
       {

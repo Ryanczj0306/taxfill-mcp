@@ -18,7 +18,6 @@
   "@@76373a6aff81": "Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is DE's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, dependent) to get Form PIT-RES line 32 and line 33.",
   "@@7f62f7022e2d": "Exemption credits applied: Form PIT-RES line 32 = $330; tax after them (line 33) = $1,504. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $330).",
   "@@81d1238df71f": "Credit for Income Taxes Paid to Another State — Delaware residents (or those electing to be taxed as residents) who paid income tax to another state on income earned in that state that is also included in Delaware taxable income. Must attach a signed copy of the income tax return filed with the other state(s). Does not include city wage taxes or county taxes paid directly to the county; the District of Columbia counts as a \"State\" for this credit. Use Form PIT-RSS DE Schedule I if claiming credit for more than one state (list states highest-to-lowest credit).",
-  "@@82b7d0272931": "2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: 'If you were a part-year resident in 2025, give the dates')",
   "@@843db8af5620": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources (the 2025 PIT-RES instructions, with every rate and dollar amount confirmed against the printed 2025 Form PIT-RES itself) and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
   "@@8c830ecdd3ec": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-NON_2025-01_PaperInteractiveIPM.pdf",
   "@@90bcec6fab4c": "Additional Personal Credit (age 60 or over) — Resident taxpayer and/or spouse who were 60 years of age or over on December 31, 2025. Check the appropriate box(es) for Self (Column B) and/or Spouse (Column A) on Line 27b. This is Delaware's main senior-relief credit on the income-tax return (separate senior relief is also provided via the pension exclusion and the Section B exclusion for certain persons 60 or over, which are income exclusions rather than credits).",
@@ -30,7 +29,6 @@
   "@@b6f5c4d16afe": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-NON_Instructions_2025-01.pdf",
   "@@bc706a328ff4": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-SCW_2025-01_PaperInteractiveIPM.pdf",
   "@@d009c3b9f7fc": "Form PIT-NON (Delaware Individual Income Tax Return - Non-Resident; formerly Form 200-02). Part-year residents may file either PIT-RES (electing full-year resident treatment) or PIT-NON (electing non-resident treatment), whichever is more advantageous.",
-  "@@e090a772cde7": "2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), 'Who Must File' (p. 2): '2. Part-Year Residents – must file a Delaware tax return if:' — 'Part-Year Residents may elect to file either a resident or non- resident return. You may wish to prepare both a resident and non-resident return. File only the return which is more advantageous for you.'",
   "@@e7da96f5baec": "Personal Credits (exemption credit) — Resident individuals are allowed a credit for each personal exemption. If you were not required to file a federal return, \"enter $110 for each spouse reporting income plus $110 for each person who could have been listed as a dependent.\" NOT available if you are claimed as a dependent on another person's return. The number of personal credits is verified against the federal return with the IRS.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions",
@@ -305,7 +303,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 34 Earned Income Tax Credit (\"A Resident individual is allowed a refundable credit of 4.5% of the federal earned income credit or a nonrefundable credit of 20% of the federal earned income credit\") and DE Schedule II (PIT-RSS)",
+     "answers": "Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 34 Earned Income Tax Credit (\"A Resident individual is allowed a refundable credit of 4.5% of the federal earned income credit or a nonrefundable credit of 20% of the federal earned income credit\") and DE Schedule II (PIT-RSS) || Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 31 Child Care Credit and Line 31 Worksheet (50% of the federal Form 2441 credit; maximum $3,000); confirmed against the printed 2025 Form PIT-RES Line 31 || Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 27a Personal Credits; printed 2025 Form PIT-RES Line 27a (\"Enter number of exemptions ___ x $110\") || Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 27b Additional Personal Credits and the Persons 60 or Over Checklist (\"You are entitled to an additional personal credit of $110\"); printed 2025 Form PIT-RES Line 27b || Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 28 Tax Imposed by Other States and the Line 28 Worksheet; printed 2025 Form PIT-RES Line 28 (\"TAX IMPOSED BY OTHER STATES (Must attach copy of PIT-RSS and other state return.)\") || Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 29 Volunteer Firefighter Credit (\"one $1,000 credit may be claimed by each spouse\"); printed 2025 Form PIT-RES Line 29",
      "cadence": "@@36d0013e5d5f",
      "topic": "credits",
      "url": "@@f9c149071f3b"
@@ -343,7 +341,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "DE Division of Revenue - 2025 Form PIT-RES Instructions, \"Who Must File\" chart (\"If you are a Full-Year Resident of the State, you must file a tax return for 2025 if, based on your Age/Status, your individual Delaware adjusted gross income (AGI) exceeds the amount shown below\")",
+     "answers": "DE Division of Revenue - 2025 Form PIT-RES Instructions, \"Who Must File\" chart (\"If you are a Full-Year Resident of the State, you must file a tax return for 2025 if, based on your Age/Status, your individual Delaware adjusted gross income (AGI) exceeds the amount shown below\") || DE Division of Revenue - 2025 Form PIT-RES Instructions, Step 5 mailing table: \"If Enclosing Payment w/ Balance Due (from Line 46): State of Delaware, Division of Revenue, P.O. Box 508, Wilmington, DE 19899-508\"; \"If Refund Due (from Line 47): ... P.O. Box 8710, Wilmington, DE 19899-8710\"; \"Zero Due returns or returns without payment: ... P.O. Box 8711, Wilmington, DE 19899-8711\" — the 2025 line numbers equal 2024's and are one higher than 2023's (the 2024 revision inserted Line 16) || DE Division of Revenue - 2025 Form PIT-RES Instructions, Line 46 Net Balance Due (\"Make check payable to: DE Division of Revenue\") and the on-line payment/portal references to tax.delaware.gov || DE Division of Revenue - 2025 Form PIT-RES Instructions, When to File: \"Individual income tax returns are due on or before April 30, 2026 for all taxpayers filing on a calendar year basis.\" Extension: submit Form PIT-EXT with payment of the estimated balance to the Division of Revenue no later than April 30, 2026 to extend the filing date from April 30, 2026 to October 15, 2026 (no extension of time for payment). Delaware's due date is April 30, NOT the federal April 15.",
      "cadence": "@@36d0013e5d5f",
      "topic": "filing_logistics",
      "url": "@@f9c149071f3b"
@@ -381,19 +379,19 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@0318a7ccf5ce",
+     "answers": "DE Division of Revenue - 2025 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must File thresholds (unchanged: under-60 $9,400 single / $15,450 joint), Who is a Resident (domicile any part of year, or abode + more than 183 days), When to File (due 4/30/2026; PIT-EXT extension to 10/15/2026), Section A Additions (federal AGI start; Lines 2-3 only), Line 24 tax table/schedule mandate, mailing addresses (P.O. Box 508 / 8710 / 8711), check payee 'DE Division of Revenue', portal tax.delaware.gov || DE Division of Revenue - 2025 Form PIT-RES Instructions, \"Who is a Resident?\", \"Members of Armed Forces\", \"Military Spouses\" and the Foreign Travelers note || DE Division of Revenue - 2025 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must File thresholds, Who is a Resident (domicile / abode + 183 days), When to File (due 4/30/2026, PIT-EXT to 10/15/2026), Section A Additions, Line 20 standard deduction / Line 21 additional standard deduction / Line 24 tax table-schedule mandate, Lines 27a-34 credit instructions, Line 46 payee, mailing addresses, Rounding Off Dollars",
      "cadence": "@@36d0013e5d5f",
      "topic": "forms_and_instructions",
      "url": "@@f9c149071f3b"
     },
     {
-     "answers": "@@e090a772cde7",
+     "answers": "2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), 'Who Must File' (p. 2): '2. Part-Year Residents – must file a Delaware tax return if:' — 'Part-Year Residents may elect to file either a resident or non- resident return. You may wish to prepare both a resident and non-resident return. File only the return which is more advantageous for you.' || 2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), 'Who Must File' (p. 2): '1. Non-Residents – File a tax return if you have any gross income during the tax year from sources in Delaware.'",
      "cadence": "@@36d0013e5d5f",
      "topic": "forms_and_instructions",
      "url": "@@b6f5c4d16afe"
     },
     {
-     "answers": "@@82b7d0272931",
+     "answers": "2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: 'If you were a part-year resident in 2025, give the dates') || 2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: 'DELAWARE INDIVIDUAL NON-RESIDENT INCOME TAX RETURN')",
      "cadence": "@@36d0013e5d5f",
      "topic": "forms_and_instructions",
      "url": "@@8c830ecdd3ec"
@@ -667,11 +665,11 @@
        "url": "@@f9c149071f3b"
       },
       {
-       "source": "@@e090a772cde7",
+       "source": "2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), 'Who Must File' (p. 2): '2. Part-Year Residents – must file a Delaware tax return if:' — 'Part-Year Residents may elect to file either a resident or non- resident return. You may wish to prepare both a resident and non-resident return. File only the return which is more advantageous for you.'",
        "url": "@@b6f5c4d16afe"
       },
       {
-       "source": "@@82b7d0272931",
+       "source": "2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: 'If you were a part-year resident in 2025, give the dates')",
        "url": "@@8c830ecdd3ec"
       }
      ],

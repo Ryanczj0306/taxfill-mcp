@@ -473,3 +473,146 @@ effective_law_changes:
       2025 (Food Tax Credit increased to $155 per person; receipts up to $250) and Line 43 Food Tax
       Credit / Food Tax Credit Worksheet ($12.92 per qualified month, $155 for a full year)
     url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
+  descriptions:
+  - 2025 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 03-02-2026) — What's New
+    for 2025 (Tax Rate Reduction to 5.3% effective January 1, 2025; IRC conformity as of January 1, 2026; Food Tax
+    Credit increased to $155 per person with a $250 actual-receipts option), Who Must File and the Idaho Resident
+    Filing Requirements chart, residency definitions, Which Form to Use, When to File and Pay (April 15, 2026),
+    Where to File mailing addresses, Line 20 Tax Worksheet ($4,811/$9,622 subtraction amounts, 5.3%), Standard Deduction
+    Worksheet ($15,750/$31,500/$23,625), Line 24 Idaho Child Tax Credit ($205), Line 31 $10 PBF tax, Line 42 Parental
+    Choice Tax Credit, Line 43 Food Tax Credit worksheet, Line 44 maintaining-a-home credit ($100 per person, up
+    to $300)
+  - '2025 Idaho Individual Income Tax Forms and Instructions (Forms 40, 43, 39R, 39NR; EIN00046 03-02-2026), ''Which
+    Form to Use'' (p. 5): ''Use Form 43 if you’re either of these:'' — ''Part-year resident'' — ''Use Form 39NR
+    if you file Form 43 and claim any additions, subtractions, or certain credits.'' — and ''Who Must File'' (p.
+    2): ''Every part-year resident with a total of more than $2,500 gross income from either or both of these:'''
+  - '2025 Idaho Individual Income Tax Forms and Instructions (Forms 40, 43, 39R, 39NR; EIN00046 03-02-2026), ''Which
+    Form to Use'' (p. 5): ''Use Form 43 if you’re either of these:'' — ''Nonresident'' — ''Use Form 39NR if you
+    file Form 43 and claim any additions, subtractions, or certain credits.'' — and ''Who Must File'' (p. 2): ''Every
+    nonresident with more than $2,500 gross income from Idaho sources'''
+  - 2025 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 03-02-2026) — What's New
+    for 2025 (rate 5.3% effective January 1, 2025; IRC conformity January 1, 2026 with bonus depreciation, Idaho
+    NOLs and the Idaho Research Credit as exceptions; Food Tax Credit renamed and increased to $155 per person plus
+    a $250 receipts option), Who Must File / Idaho Resident Filing Requirements chart, residency definitions (domicile
+    + 270-day statutory resident; 445-day nonresident safe harbor), Which Form to Use, When to File and Pay (April
+    15, 2026; extension to October 15, 2026), Where to File, Line 20 Tax Worksheet ($4,811 single/MFS, $9,622 MFJ/HOH/QSS;
+    'Multiply subtotal by 5.3%'; 'If zero or less, enter zero'), Standard Deduction Worksheet ($15,750/$31,500/$23,625;
+    $1,600/$2,000 age-65/blind add-on; dependent-filer $1,350 or earned income + $450), Line 24 Idaho Child Tax
+    Credit ($205), Line 31 PBF $10, Line 42 Parental Choice Tax Credit, Line 43 Food Tax Credit worksheet ($155
+    / $12.92 per month), Line 44 maintaining-a-home credit ($100 per person up to $300), Form 43 line 42 worksheet
+    (identical $4,811/$9,622 and 5.3%)
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00091/EFO00091_03-02-2026.pdf
+  descriptions:
+  - '2025 Idaho Form 43, Part-year Resident and Nonresident Income Tax Return — the return itself (page 1: ''Part-year
+    Resident and Nonresident Income Tax Return'')'
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00087/EFO00087_03-02-2026.pdf
+  descriptions:
+  - '2025 Idaho Form 39NR, Part-year Resident and Nonresident Supplemental Schedule (page 1: ''Part-year Resident
+    and Nonresident Supplemental Schedule'')'
+- id: credits-1
+  topic: credits
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
+  descriptions:
+  - Idaho State Tax Commission, 2025 Form 40 instructions (EIN00046, 03-02-2026), What's New for 2025 (Food Tax
+    Credit increased to $155 per person; receipts up to $250) and Line 43 Food Tax Credit / Food Tax Credit Worksheet
+    ($12.92 per qualified month, $155 for a full year)
+  - Idaho State Tax Commission, 2025 Form 40 instructions (EIN00046, 03-02-2026), Line 24 Idaho Child Tax Credit
+    Worksheet ('Multiply line 1 by $205'), and the printed 2025 Form 40 line 24 'Idaho Child Tax Credit. Calculated
+    amount from worksheet on page 10'
+  - Idaho State Tax Commission, 2025 Form 40 instructions (EIN00046, 03-02-2026), Line 44 Maintaining a Home for
+    a Family Member Age 65 or Older or a Family Member with a Developmental Disability ('You can claim a tax credit
+    of $100 per person (up to $300)')
+  - Idaho State Tax Commission, 2025 Form 40 instructions (EIN00046, 03-02-2026), Line 42 Parental Choice Tax Credit
+    ('If you applied and were approved for the Parental Choice Tax Credit, enter the amount of qualified expenses
+    you incurred during 2025 on line 42. The amount can't exceed the amount you were approved for on the application'),
+    and the printed 2025 Form 40 line 42
+- id: logistics-1
+  topic: filing_logistics
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
+  descriptions:
+  - 2025 Idaho Individual Income Tax instructions (EIN00046, 03-02-2026), Where to File — return and payment PO
+    Box 83784 (83707-3784); return only PO Box 56 (83756-0056); physical-address delivery 11321 W Chinden Blvd,
+    Boise ID 83714
+  - '2025 Idaho Individual Income Tax instructions (EIN00046, 03-02-2026), When to File and Pay: ''File your return
+    and pay any tax due by one of these dates: By April 15, 2026, for the 2025 calendar year''; if you qualify for
+    an extension to file, send the return and pay in full by October 15, 2026; extension payments via Form 51 by
+    April 15, 2026.'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EFO00089/EFO00089_03-02-2026.pdf
+  descriptions:
+  - '2025 Idaho Form 40 (EFO00089, 03-02-2026) — second-pass verification of the form face: the line-16 margin prints
+    the standard deduction amounts ($15,750 single/MFS, $23,625 head of household, $31,500 MFJ/qualifying surviving
+    spouse); line 19 ''Idaho taxable income. Subtract line 18 from line 17. If less than zero, enter zero''; line
+    20 ''Tax from worksheet. See instructions, page 9''; line 24 Idaho Child Tax Credit; line 31 permanent building
+    fund tax preprinted ''10 00''; line 42 Parental Choice Tax Credit; line 43 Food Tax Credit with the donate box'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://tax.idaho.gov/taxes/income-tax/individual-income/online-guide/
+  descriptions:
+  - 'Idaho State Tax Commission — Individual Income Tax online guide (re-fetched live this session), independent
+    confirmation of the shipped rate: ''The income tax rate for 2025 is 5.3% on Idaho taxable income.'''
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://tax.idaho.gov/taxes/income-tax/individual-income/specific-guidance-for-individual-income-tax/specific-guidance-for-individuals-noncitizens/
+  descriptions:
+  - 'Idaho State Tax Commission — Noncitizens guidance (re-fetched live this session): ''Idaho honors all tax treaties
+    recognized by the United States''; ''Gross income amounts exempt by treaty are not included in the gross income
+    filing requirement for Idaho''; ''Idaho conforms to the Internal Revenue Code (IRC), which no longer allows
+    personal exemptions''; worked example using the $2,500 nonresident filing threshold'
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://legislature.idaho.gov/sessioninfo/2025/legislation/h0040/
+  descriptions:
+  - Idaho State Legislature — 2025 House Bill 40 (Sixty-eighth Legislature, First Regular Session), the session
+    law behind the 5.3% rate (individual and business rate reduced from 5.695% to 5.3%, plus military-pension relief)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
+  descriptions:
+  - '2025 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 03-02-2026) — Line 20
+    Tax Worksheet, page 9: ''1. Enter the amount of Idaho taxable income from Form 40, line 19; 2. Enter the amount
+    shown below for your filing status: Single or married filing separately, enter $4,811 — Married filing jointly,
+    head of household, or qualifying surviving spouse, enter $9,622; 3. Subtract line 2 from line 1. Enter the subtotal;
+    4. Multiply subtotal by 5.3%; 5. Idaho tax ... If zero or less, enter zero''; ''What''s New for 2025 — Tax Rate
+    Reduction: Effective January 1, 2025, the individual income tax rate is 5.3%'' (CUT from 2024''s 5.695% by 2025
+    House Bill 40; subtraction amounts re-indexed from $4,673/$9,346); Standard Deduction Worksheet, page 8 ($15,750
+    single/MFS, $31,500 MFJ/QSS, $23,625 HOH — the OBBBA-amended federal 2025 amounts, reachable because Idaho now
+    conforms to the IRC as of January 1, 2026). Second pass: the printed 2025 Form 40 (EFO00089, 03-02-2026) — the
+    line-16 margin prints $15,750/$23,625/$31,500, line 19 reads ''Idaho taxable income. Subtract line 18 from line
+    17. If less than zero, enter zero'', and line 20 reads ''Tax from worksheet. See instructions, page 9''; the
+    live tax.idaho.gov individual-income online guide independently states ''The income tax rate for 2025 is 5.3%
+    on Idaho taxable income''; and the Form 43 line 42 worksheet (booklet p.20) prints the identical $4,811/$9,622
+    amounts and 5.3% — all passes agree.'
+- id: law-1
+  topic: law_changes
+  url: https://tax.idaho.gov/wp-content/uploads/forms/EIN00046/EIN00046_03-02-2026.pdf
+  descriptions:
+  - 2025 Idaho Individual Income Tax instructions, Form 40/43/39R/39NR booklet (EIN00046, 03-02-2026) — What's New
+    for 2025 (Tax Rate Reduction to 5.3% effective January 1, 2025; IRC conformity as of January 1, 2026; Food Tax
+    Credit increased to $155 per person with a $250 actual-receipts option), Who Must File and the Idaho Resident
+    Filing Requirements chart, residency definitions, Which Form to Use, When to File and Pay (April 15, 2026),
+    Where to File mailing addresses, Line 20 Tax Worksheet ($4,811/$9,622 subtraction amounts, 5.3%), Standard Deduction
+    Worksheet ($15,750/$31,500/$23,625), Line 24 Idaho Child Tax Credit ($205), Line 31 $10 PBF tax, Line 42 Parental
+    Choice Tax Credit, Line 43 Food Tax Credit worksheet, Line 44 maintaining-a-home credit ($100 per person, up
+    to $300)
+  - Idaho State Tax Commission, 2025 Form 40 instructions (EIN00046, 03-02-2026), What's New for 2025 (Food Tax
+    Credit increased to $155 per person; receipts up to $250) and Line 43 Food Tax Credit / Food Tax Credit Worksheet
+    ($12.92 per qualified month, $155 for a full year)

@@ -462,3 +462,170 @@ tax:
   - 'No mid-year 2025 rate change: the 3.75/4.75/5.99% structure and the $79,900/$181,650 breakpoints are the final
     figures, printed in the November 2025 ADV 2025-22 advisory and in the Revised 11/2025 instructions that the
     2026 filing season uses.'
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
+  descriptions:
+  - '2025 INSTRUCTIONS FOR FILING RI-1040 (for full year Rhode Island residents filing Form RI-1040), Revised 11/2025
+    — RI Division of Taxation: WHAT''S NEW FOR TAX YEAR 2025 (p. I-1, inflation adjustments + the new RI Schedule
+    HR1 P.L. 119-21 add-backs), Who Must File / Resident & 183-day domicile definitions (p. I-1), Where and When
+    to File (postmarked by Wednesday, April 15, 2026; refund returns to 02908-5806, with-payment returns to 02908-5807),
+    Line 3 Modified Federal AGI, Line 4 standard-deduction list ($10,900 Single / $21,800 Married Joint / $21,800
+    Qualifying Widow(er) / $10,900 Married Separate / $16,350 Head of Household), Line 6 "Exemption Amount: Multiply
+    the number of exemptions in the box by $5,100" with the $254,250 phase-out pointer, Line 7 RI Taxable Income,
+    Line 8 "Rhode Island Income Tax: Enter the RI income tax from the RI Tax Table or Computation Worksheet", RI
+    Schedule EIC Line 40 "The Rhode Island percentage is 16%", RI Schedule I Line 21 "Multiply the amount on line
+    20 by 25%"'
+  - '2025 INSTRUCTIONS FOR FILING RI-1040 (Revised 11/2025, posted 12/2025) — RI Division of Taxation: PASS 1 authority
+    for every figure. WHAT''S NEW FOR TAX YEAR 2025 (p. I-1) listing the inflation adjustments and the new RI Schedule
+    HR1 P.L. 119-21 add-backs; Who Must File and the resident/183-day definitions (p. I-1); Where and When to File
+    (April 15, 2026; 02908-5806 refund / 02908-5807 with payment); Line 3 Modified Federal AGI; Line 4 standard-deduction
+    list $10,900/$21,800/$21,800/$10,900/$16,350 with the $254,250 worksheet pointer; Line 6 exemption "Multiply
+    the number of exemptions in the box by $5,100"; Line 7 RI Taxable Income; Line 8 tax from the RI Tax Table or
+    Computation Worksheet; RI Schedule EIC line 40 (16%); RI Schedule I line 21 (25%); RI Schedule II line 29 and
+    Form RI-1040MU'
+- id: law-1
+  topic: law_changes
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
+  descriptions:
+  - '2025 INSTRUCTIONS FOR FILING RI-1040 (Revised 11/2025) — RI Division of Taxation: WHAT''S NEW FOR TAX YEAR
+    2025 (p. I-1), the new RI Schedule HR1 P.L. 119-21 add-backs (IRC 163(j) business interest, 174A research and
+    experimental amortization, 179(b) depreciation, 181 qualified sound recording production).'
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040NR%20Instructions%20122025.pdf
+  descriptions:
+  - '2025 Instructions for Filing RI-1040NR (for Rhode Island nonresidents or part-year residents filing Form RI-1040NR;
+    Revised 11/2025) — p. I-1: ''These instructions are for the use of non-resident and part-year resident taxpayers
+    only. Full Year resident taxpayers will file their individual income tax returns on Form RI-1040.''; ''WHO MUST
+    FILE A RETURN'': ''Every part-year individual who was a resident for a period of less than 12 months is required
+    to file a Rhode Island return if he or she is required to file a federal return. Part-year residents should
+    complete page 15, Schedule III.''; ''Line 11 – Rhode Island Allocated Income Tax'' (p. I-5): ''If ALL your income
+    is from Rhode Island, check the first box and enter the amount from line 10 on this line. ... If you are a PART-YEAR
+    RESIDENT with income from outside Rhode Island, complete page 15, RI Schedule III and enter the result on this
+    line.'''
+  - '2025 Instructions for Filing RI-1040NR (for Rhode Island nonresidents or part-year residents filing Form RI-1040NR;
+    Revised 11/2025) — p. I-1, ''WHO MUST FILE A RETURN'': ''Every nonresident individual required by the laws of
+    the United States to file a federal income tax return who has income derived from or connected with Rhode Island
+    sources must file a Rhode Island individual income tax return. Nonresidents should complete page 13, Schedule
+    II.''; ''Line 11 – Rhode Island Allocated Income Tax'' (p. I-5): ''If ALL your income is from Rhode Island,
+    check the first box and enter the amount from line 10 on this line. If you are a NONRESIDENT with income from
+    outside Rhode Island, complete page 13, RI Schedule II and enter the result on this line.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040NRWE_w.pdf
+  descriptions:
+  - '2025 Form RI-1040NR, Nonresident Individual Income Tax Return (with RI Schedules W and E) — page 3, ''RI SCHEDULE
+    II AND III - ALLOCATION AND MODIFICATION FOR NONRESIDENTS'': ''Schedule III should be completed by PART-YEAR
+    RESIDENTS with income from outside Rhode Island. RI Schedule III is located on page 15. NONRESIDENTS and PART-YEAR
+    RESIDENTS with all income from Rhode Island sources do not need to complete either schedule II or III.'''
+  - '2025 Form RI-1040NR, Nonresident Individual Income Tax Return (with RI Schedules W and E) — page 3, ''RI SCHEDULE
+    II AND III - ALLOCATION AND MODIFICATION FOR NONRESIDENTS'': ''Schedule II should be completed by NONRESIDENTS
+    with income from outside Rhode Island. RI Schedule II is located on page 13. ... NONRESIDENTS and PART-YEAR
+    RESIDENTS with all income from Rhode Island sources do not need to complete either schedule II or III.'''
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025%20RI-1040NR%20Schedule%20III_w.pdf
+  descriptions:
+  - '2025 RI Schedule III, Part-year Resident Tax Calculation (p. 1): ''THIS SCHEDULE IS ONLY TO BE COMPLETED BY
+    PART-YEAR RESIDENTS. FULL YEAR NONRESIDENTS COMPLETE RI SCHEDULE II. A part-year resident is a person who changed
+    his legal residence by moving into or out of Rhode Island at any time during the year 2025.'''
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025%20RI-1040NR%20Schedule%20II_w.pdf
+  descriptions:
+  - '2025 RI Schedule II, Full Year Nonresident Tax Calculation (p. 1): ''THIS SCHEDULE IS ONLY TO BE COMPLETED
+    BY FULL YEAR NONRESIDENTS. PART-YEAR RESIDENTS COMPLETE RI SCHEDULE III.'''
+- id: credits-1
+  topic: credits
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
+  descriptions:
+  - '2025 INSTRUCTIONS FOR FILING RI-1040 (RI Division of Taxation, Revised 11/2025) - RI Schedule EIC instructions:
+    ''Line 40 - The Rhode Island percentage is 16%.'' and ''Line 41 - Rhode Island Earned Income Credit: Multiply
+    line 39 by line 40. Enter here and on page 1, line 14d.'''
+  - '2025 INSTRUCTIONS FOR FILING RI-1040 (RI Division of Taxation, Revised 11/2025), RI Schedule I: ''Line 20 -
+    Credit for Child and Dependent Care Expenses: Enter the amount from Federal Form 1040 or Federal Form 1040-SR,
+    Schedule 3, line 2''; ''Line 21 - Multiply the amount on line 20 by 25%''; ''Line 22 - Maximum Credit: Enter
+    the amount from line 19 or 21, whichever is less. Enter here and on form RI-1040, page 1, line 9a.'''
+  - 2025 INSTRUCTIONS FOR FILING RI-1040 (RI Division of Taxation, Revised 11/2025), Line 9b and RI Schedule II
+    - Credit for Taxes Paid to Other States (R.I. Gen. Laws section 44-30-18); Form RI-1040MU for more than one
+    state
+- id: credits-2
+  topic: credits
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-11/ADV_2025_22_Inflation_Adjustments.pdf
+  descriptions:
+  - 'RI Division of Taxation ADVISORY ADV 2025-22, "Inflation-adjusted amounts set for Tax Year 2026 / Division
+    also posts changes for certain items involving 2025 Tax Year" (November 3, 2025), p. 4 — "Property tax relief
+    credit - maximum credit amount by tax year": 2024 $675, 2025 $700; and "Property tax relief credit - income
+    ranges by tax year" 2025 column (top band $17,461 - $40,730 at 6%)'
+- id: logistics-1
+  topic: filing_logistics
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
+  descriptions:
+  - '2025 INSTRUCTIONS FOR FILING RI-1040 (Revised 11/2025) — RI Division of Taxation, Where and When to File: returns
+    are considered timely filed if postmarked by Wednesday, April 15, 2026; "If you are claiming a refund, mail
+    your return to: Rhode Island Division of Taxation, One Capitol Hill, Providence, RI 02908 - 5806"; "If you are
+    making a payment, mail your return, payment and Form RI-1040V to: ... Providence, RI 02908 - 5807"'
+  - '2025 INSTRUCTIONS FOR FILING RI-1040 (Revised 11/2025) — RI Division of Taxation, Where and When to File: returns
+    are "considered timely filed if postmarked by Wednesday, April 15, 2026." Form RI-1040H must also be filed on
+    or before April 15, 2026, and an extension to file the RI-1040 does not extend that date. An automatic six-month
+    extension of time to FILE is available (Form RI-4868), but it does not extend the time for PAYMENT of any tax
+    due.'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-11/ADV_2025_22_Inflation_Adjustments.pdf
+  descriptions:
+  - 'RI Division of Taxation ADVISORY ADV 2025-22 (November 3, 2025), "Inflation-adjusted amounts set for Tax Year
+    2026 — Division also posts changes for certain items involving 2025 Tax Year" — PASS 2 authority. Prints BOTH
+    tax years side by side so 2025 and 2026 cannot be confused: "Uniform tax rate schedule for Tax Year 2025" (0-79,900
+    at 3.75%; 79,900-181,650 pay 2,996.25 + 4.75% over 79,900; over 181,650 pay 7,829.38 + 5.99% over 181,650);
+    standard deduction by tax year (2025: Single $10,900, MFJ $21,800, HoH $16,350, MFS $10,900); personal and dependency
+    exemption by tax year (2025: $5,100); phase-out range by tax year (2025: $254,250 to $283,250) with the 2025
+    increment $7,250; social security and pension/annuity modification income limits for 2025; RI-1040H maximum
+    credit 2025 $700 and its 2025 income-range table'
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-10/2025%20Tax%20Rate%20and%20Worksheets_d.pdf
+  descriptions:
+  - '2025 RHODE ISLAND TAX RATE SCHEDULE AND WORKSHEETS — CORROBORATION ONLY, NOT AUTHORITY: the DOR copy is stamped
+    "DRAFT 10/01/2025" on its face. Its "2025 Tax Rate Schedule - FOR ALL FILING STATUS TYPES" and its STANDARD
+    DEDUCTION / EXEMPTION WORKSHEETS (phase-out threshold $254,250, divide-by increment $7,250, 0.8000/ 0.6000/0.4000/0.2000
+    step factors, zero once the excess exceeds $29,000, "Multiply $5,100 by the total number of exemptions") match
+    the two final sources above exactly'
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040WE_w.pdf
+  descriptions:
+  - 2025 Form RI-1040 with RI Schedules W and E (Rhode Island Resident Individual Income Tax Return) — Lines 1-8
+    wording and the RI Schedule E exemption count that Line 6 multiplies
+- id: forms-9
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/forms/individual-tax-forms/personal-income-tax-forms
+  descriptions:
+  - Personal Income Tax Forms — RI Division of Taxation (the forms index the instructions point to for RI Schedule
+    W, RI Schedule EIC and the other 2025 schedules)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
+  descriptions:
+  - '2025 INSTRUCTIONS FOR FILING RI-1040 (RI Division of Taxation, Revised 11/2025) — Line 4 standard deduction
+    list (Single $10,900; Married Joint $21,800; Qualifying Widow(er) $21,800; Married Separate $10,900; Head of
+    Household $16,350), Line 6 "Exemption Amount: Multiply the number of exemptions in the box by $5,100" with the
+    $254,250 phase-out pointer, Line 7 "Rhode Island Taxable Income: Subtract line 6 from line 5", and Line 8 "Rhode
+    Island Income Tax: Enter the RI income tax from the RI Tax Table or Computation Worksheet". INDEPENDENTLY RE-DERIVED
+    (pass 2) from RI Division of Taxation ADVISORY ADV 2025-22 (November 3, 2025), "Uniform tax rate schedule for
+    Tax Year 2025": over $0 but not over $79,900 pay -- plus 3.75% of the amount over $0; over $79,900 but not over
+    $181,650 pay $2,996.25 plus 4.75% of the amount over $79,900; over $181,650 pay $7,829.38 plus 5.99% of the
+    amount over $181,650 — at https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-11/ADV_2025_22_Inflation_Adjustments.pdf,
+    whose by-tax-year tables also confirm the standard deduction, the $5,100 exemption and the $254,250-$283,250
+    phase-out range for 2025 specifically. Both passes agree with zero discrepancies.'

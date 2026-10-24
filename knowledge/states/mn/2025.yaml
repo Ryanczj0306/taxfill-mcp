@@ -468,3 +468,176 @@ effective_law_changes:
       Schedules p.39 ($86,800 mandate); Renter's Credit Tables pp.27-31; April 15, 2026 due date;
       Mail Station 0010; Payment Voucher System
     url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
+  descriptions:
+  - 2025 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted Gross Income (federal
+    Form 1040/1040-SR line 11a, or 1040-NR); What's new for 2025 (standard deduction $14,950/$29,900/$14,950/$22,500,
+    dependent exemption $5,200, advance Child Tax Credit payments for 2026 and reconciliation of the 2025 advance
+    payments, new M1M subtractions); residency rules (domicile + 183-day/abode); due date April 15, 2026; filing-requirement
+    chart; Tax Tables pp.32-38 and Tax Rate Schedules p.39 (mandate at $86,800); payment options; Mail Station 0010
+    mailing address
+  - '2025 Minnesota Form M1 Individual Income Tax Instructions, ''Filing Requirements (cont.)'' — ''Part-Year Residents
+    and Nonresidents'' (p. 7): ''File a Minnesota income tax return if you moved into or out of Minnesota in 2025
+    and your 2025 Minnesota source income is $14,950 or more.'' — ''Complete Schedule M1NR, Nonresidents/Part-Year
+    Residents, to determine income received while a Minnesota resident and income received from Minnesota sources
+    while a nonresident.'' — ''Line 13 —Part-Year Residents and Nonresidents (Schedule M1NR)'' (p. 16): ''Include
+    Schedule M1NR when you file Form M1.'''
+  - '2025 Minnesota Form M1 Individual Income Tax Instructions, ''Filing Requirements for Part-Year Residents and
+    Nonresidents'' (p. 7): ''3. Add step 1 and step 2. If the total is $14,950 or more, you must file a Minnesota
+    income tax return and Schedule M1NR.'' — ''Michigan and North Dakota Residents'' (p. 8): ''Complete Schedule
+    M1M, Income Additions and Subtractions, to file for a refund of withholding if you are a Michigan or North Dakota
+    resident.'''
+  - 2025 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted Gross Income (line
+    11a of federal Form 1040/1040-SR, or 1040-NR); What's new for 2025 (standard deduction $14,950/$29,900/$14,950/$22,500
+    with the $238,950/$119,475 limitation and $1,083,150 80%-reduction thresholds, dependent exemption $5,200 with
+    $358,550/$298,800/$239,050/$179,275 phase-out thresholds, advance Child Tax Credit payments and reconciliation,
+    new M1M subtractions); Filing Requirements chart; residency (domicile + 183-day/abode); Standard Deduction Table
+    for Line 4 and Worksheets A/B; Worksheet for Line 5 — Dependent Exemptions ($5,200); Line 10 Tax From Table;
+    Tax Tables pp.32-38; Tax Rate Schedules p.39 ($86,800 mandate); Renter's Credit Tables pp.27-31; April 15, 2026
+    due date; Mail Station 0010; Payment Voucher System
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1nr-25.pdf
+  descriptions:
+  - '2025 Schedule M1NR, Nonresidents/Part-Year Residents, with its instructions — ''Should I file this schedule?''
+    (instructions, PDF page 3): ''File this schedule with your Form M1 if you meet the minimum filing requirement
+    and in 2025 you were either a: • Full-year nonresident of Minnesota • Part-year resident of Minnesota'' — ''You
+    must include Schedule M1NR when you file your return.'''
+  - '2025 Schedule M1NR, Nonresidents/Part-Year Residents, with its instructions — ''Should I file this schedule?''
+    (instructions, PDF page 3): ''File this schedule with your Form M1 if you meet the minimum filing requirement
+    and in 2025 you were either a: • Full-year nonresident of Minnesota • Part-year resident of Minnesota'' — ''If
+    you were a resident of Michigan or North Dakota for all of 2025, do not complete this schedule if your only
+    Minnesota source income is exempt due to reciprocity (see Fact Sheet 4, Reciprocity, for more information).'''
+- id: credits-1
+  topic: credits
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1cwfc-25.pdf
+  descriptions:
+  - 2025 Schedule M1CWFC, Minnesota Child and Working Family Credits (form + instructions — 'The Working Family
+    Credit is four percent of your first $9,480 of earned income', 2025 maximums $379/$1,379/$2,649/$3,089, $31,950/$37,910
+    phase-out, 12%/9% reduction), MN Department of Revenue
+  - 2025 Schedule M1CWFC, Minnesota Child and Working Family Credits ($1,750 per qualifying child; advance-payment
+    election and reconciliation) and Tax Year 2025 Minnesota Revenue Tax Professional Desk Reference Chart (2025
+    Child Tax Credit phase-out table), MN Department of Revenue
+- id: credits-2
+  topic: credits
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
+  descriptions:
+  - 2025 Minnesota Individual Income Tax Return (M1) Instructions, 'Child and Dependent Care Credit (Schedule M1CD)'
+    — $76,150 / $88,150 2025 AGI limits, MN Department of Revenue
+  - 2025 Minnesota Individual Income Tax Return (M1) Instructions — Line 22 section ('You may qualify for the Renter''s
+    Credit if you were a Minnesota resident, your household income was less than $77,570 ... The maximum credit
+    is $2,720'), Renter's Credit Tables pp.27-31, MN Department of Revenue
+- id: credits-3
+  topic: credits
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1ed-25.pdf
+  descriptions:
+  - 2025 Schedule M1ED, K-12 Education Credit (75% / $1,500-per-child / $75,820 worksheet trigger / $81,820 one-or-two-child
+    AGI limit) and 2025 Form M1 instructions K-12 Education Credit AGI-limit table ($81,820 ... $93,820+$3,000),
+    MN Department of Revenue
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
+  descriptions:
+  - '2025 Minnesota Individual Income Tax Return (M1) Instructions — Filing Instructions (''mail your forms to:
+    Minnesota Department of Revenue, Mail Station 0010, 600 N. Robert St., St. Paul, MN 55146-0010''; Mail Station
+    0015 only for the advance-CTC election) and Payment Options (Payment Voucher System; send voucher and check
+    separately from the return)'
+  - 2025 Minnesota Individual Income Tax Return (M1) Instructions — 'Your 2025 Minnesota income tax return should
+    be electronically filed, postmarked, or dropped off by April 15, 2026. Your tax payment is due in full by April
+    15, 2026, even if you file your return later. ... To avoid a late filing penalty, file your return by October
+    15, 2026.'
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-03/m1-25.pdf
+  descriptions:
+  - 2025 Form M1, Individual Income Tax (the form itself, *251111*) — lines 1-10 structure (line 4 itemized/standard
+    deduction, line 5 exemptions from Schedule M1DQC, line 7 subtractions from line 40 of Schedule M1M and line
+    22 of Schedule M1MB, line 9 Minnesota taxable income 'If zero or less, leave blank', line 10 tax from the table
+    or schedules, line 14a other taxes incl. Schedule NIIT, line 14b repayment of advance Child Tax Credit)
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/press-release/2024-12-16/minnesota-income-tax-brackets-standard-deduction-and-dependent-exemption
+  descriptions:
+  - MN DOR press release, 'Minnesota income tax brackets, standard deduction and dependent exemption amounts for
+    2025' (Dec 16, 2024) — second pass on all four 2025 bracket schedules (indexed +2.886% from tax year 2024, rounded
+    to the nearest $10; married-separate brackets are half the married-joint amounts), the $29,900/$14,950/$14,950/$22,500
+    standard deductions, and the $5,200 dependent exemption
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-01/tax-year-2025-tax-professional-desk-reference-chart-final.pdf
+  descriptions:
+  - Tax Year 2025 Minnesota Revenue Tax Professional Desk Reference Chart — third pass on the 2025 brackets ('2025
+    Minnesota Income Tax Brackets' table), the Minnesota standard deduction row ($14,950/$22,500/$29,900/$14,950
+    vs the separate federal figures), additional MN standard deduction ($2,000 Single/HoH, $1,550 MFJ/MFS), the
+    $5,200 dependent exemption and $0 personal exemption, the $238,950/$119,475 standard-deduction limitation thresholds,
+    and credit income limits (M1ED $81,820; M1CD $88,150; WFC full credit $379)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/minnesota-income-tax-rates-and-brackets
+  descriptions:
+  - MN DOR 'Income Tax Rates and Brackets' web page — fourth pass on the 2025 bracket boundaries for all four filing
+    statuses
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1cwfc-25.pdf
+  descriptions:
+  - 2025 Schedule M1CWFC, Minnesota Child and Working Family Credits (form + instructions) — 4% of first $9,480,
+    maximums $379/$1,379/$2,649/$3,089, $1,750 Child Tax Credit, $31,950/$37,910 phase-out, advance-payment election
+    and reconciliation
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1ed-25.pdf
+  descriptions:
+  - 2025 Schedule M1ED, K-12 Education Credit — 75% of expenses, $1,500 per qualifying child, $75,820 phase-out
+    worksheet trigger, $81,820 AGI limit for one or two children
+- id: forms-9
+  topic: forms_and_instructions
+  url: https://www.revenue.state.mn.us/make-payment
+  descriptions:
+  - Make a Payment — Payment Voucher System and electronic payment options
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
+  descriptions:
+  - '2025 Minnesota Individual Income Tax Return (M1) Instructions, Minnesota Department of Revenue — Tax Rate Schedules,
+    p.39 (Single / Married filing jointly or qualifying widow(er) / Married filing separately / Head of household;
+    ''You must use these schedules if line 9 of Form M1 is $86,800 or more''); 2025 Tax Tables pp.32-38 with mandate
+    ''If line 9 of Form M1 is less than $86,800, you must use the tax table on pages 32 through 38''; Standard Deduction
+    Table for Line 4 ($14,950/$29,900/$14,950/$22,500); Worksheets A & B for Line 4 - Standard Deduction Limitation
+    ($238,950/$119,475 thresholds); Worksheet for Line 5 - Dependent Exemptions ($5,200); Line 10 - Tax From Table;
+    2025 Form M1 lines 1-10. Second pass: MN DOR press release ''Minnesota income tax brackets, standard deduction
+    and dependent exemption amounts for 2025'' (Dec 16, 2024, indexed +2.886% from tax year 2024, https://www.revenue.state.mn.us/press-release/2024-12-16/minnesota-income-tax-brackets-standard-deduction-and-dependent-exemption).
+    THIRD pass: the Tax Year 2025 Minnesota Revenue Tax Professional Desk Reference Chart (https://www.revenue.state.mn.us/sites/default/files/2026-01/tax-year-2025-tax-professional-desk-reference-chart-final.pdf).
+    FOURTH pass: the DOR ''Income Tax Rates and Brackets'' web page (https://www.revenue.state.mn.us/minnesota-income-tax-rates-and-brackets).
+    All four sources agree on every 2025 boundary, rate, standard deduction, and the $5,200 dependent exemption.'
+- id: law-1
+  topic: law_changes
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-07/m1cwfc-25.pdf
+  descriptions:
+  - 2025 Schedule M1CWFC, Minnesota Child and Working Family Credits ($1,750 per qualifying child; advance-payment
+    election and reconciliation) and Tax Year 2025 Minnesota Revenue Tax Professional Desk Reference Chart (2025
+    Child Tax Credit phase-out table), MN Department of Revenue
+- id: law-2
+  topic: law_changes
+  url: https://www.revenue.state.mn.us/sites/default/files/2026-10/m1-inst-25.pdf
+  descriptions:
+  - 2025 Minnesota Individual Income Tax Return (M1) Instructions — Line 1 = Federal Adjusted Gross Income (line
+    11a of federal Form 1040/1040-SR, or 1040-NR); What's new for 2025 (standard deduction $14,950/$29,900/$14,950/$22,500
+    with the $238,950/$119,475 limitation and $1,083,150 80%-reduction thresholds, dependent exemption $5,200 with
+    $358,550/$298,800/$239,050/$179,275 phase-out thresholds, advance Child Tax Credit payments and reconciliation,
+    new M1M subtractions); Filing Requirements chart; residency (domicile + 183-day/abode); Standard Deduction Table
+    for Line 4 and Worksheets A/B; Worksheet for Line 5 — Dependent Exemptions ($5,200); Line 10 Tax From Table;
+    Tax Tables pp.32-38; Tax Rate Schedules p.39 ($86,800 mandate); Renter's Credit Tables pp.27-31; April 15, 2026
+    due date; Mail Station 0010; Payment Voucher System

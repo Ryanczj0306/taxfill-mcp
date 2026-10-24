@@ -559,3 +559,166 @@ law_changes_checked:
       2025 Delaware Resident Individual Income Tax Return Instructions (PIT-RES), with the 2024 and 2025 PIT-RES forms
     url: >-
       https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf
+  descriptions:
+  - 'DE Division of Revenue - 2025 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must File
+    thresholds (unchanged: under-60 $9,400 single / $15,450 joint), Who is a Resident (domicile any part of year,
+    or abode + more than 183 days), When to File (due 4/30/2026; PIT-EXT extension to 10/15/2026), Section A Additions
+    (federal AGI start; Lines 2-3 only), Line 24 tax table/schedule mandate, mailing addresses (P.O. Box 508 / 8710
+    / 8711), check payee ''DE Division of Revenue'', portal tax.delaware.gov'
+  - DE Division of Revenue - 2025 Form PIT-RES Instructions, "Who is a Resident?", "Members of Armed Forces", "Military
+    Spouses" and the Foreign Travelers note
+  - 'DE Division of Revenue - 2025 Individual Income Tax Return RESIDENT (Form PIT-RES) Instructions: Who Must File
+    thresholds, Who is a Resident (domicile / abode + 183 days), When to File (due 4/30/2026, PIT-EXT to 10/15/2026),
+    Section A Additions, Line 20 standard deduction / Line 21 additional standard deduction / Line 24 tax table-schedule
+    mandate, Lines 27a-34 credit instructions, Line 46 payee, mailing addresses, Rounding Off Dollars'
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-NON_Instructions_2025-01.pdf
+  descriptions:
+  - '2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), ''Who
+    Must File'' (p. 2): ''2. Part-Year Residents – must file a Delaware tax return if:'' — ''Part-Year Residents
+    may elect to file either a resident or non- resident return. You may wish to prepare both a resident and non-resident
+    return. File only the return which is more advantageous for you.'''
+  - '2025 Delaware Individual Income Tax Return NON-Resident Instructions (Form PIT-NON, Revised 03/27/26), ''Who
+    Must File'' (p. 2): ''1. Non-Residents – File a tax return if you have any gross income during the tax year
+    from sources in Delaware.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-NON_2025-01_PaperInteractiveIPM.pdf
+  descriptions:
+  - '2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: ''If you
+    were a part-year resident in 2025, give the dates'')'
+  - '2025 Form PIT-NON, Delaware Individual Non-Resident Income Tax Return — the return itself (page 1: ''DELAWARE
+    INDIVIDUAL NON-RESIDENT INCOME TAX RETURN'')'
+- id: credits-1
+  topic: credits
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf
+  descriptions:
+  - Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 34 Earned Income Tax Credit ("A Resident
+    individual is allowed a refundable credit of 4.5% of the federal earned income credit or a nonrefundable credit
+    of 20% of the federal earned income credit") and DE Schedule II (PIT-RSS)
+  - Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 31 Child Care Credit and Line 31 Worksheet
+    (50% of the federal Form 2441 credit; maximum $3,000); confirmed against the printed 2025 Form PIT-RES Line
+    31
+  - Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 27a Personal Credits; printed 2025 Form PIT-RES
+    Line 27a ("Enter number of exemptions ___ x $110")
+  - Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 27b Additional Personal Credits and the Persons
+    60 or Over Checklist ("You are entitled to an additional personal credit of $110"); printed 2025 Form PIT-RES
+    Line 27b
+  - Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 28 Tax Imposed by Other States and the Line
+    28 Worksheet; printed 2025 Form PIT-RES Line 28 ("TAX IMPOSED BY OTHER STATES (Must attach copy of PIT-RSS and
+    other state return.)")
+  - Delaware Division of Revenue, 2025 Form PIT-RES Instructions, Line 29 Volunteer Firefighter Credit ("one $1,000
+    credit may be claimed by each spouse"); printed 2025 Form PIT-RES Line 29
+- id: logistics-1
+  topic: filing_logistics
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf
+  descriptions:
+  - DE Division of Revenue - 2025 Form PIT-RES Instructions, "Who Must File" chart ("If you are a Full-Year Resident
+    of the State, you must file a tax return for 2025 if, based on your Age/Status, your individual Delaware adjusted
+    gross income (AGI) exceeds the amount shown below")
+  - 'DE Division of Revenue - 2025 Form PIT-RES Instructions, Step 5 mailing table: "If Enclosing Payment w/ Balance
+    Due (from Line 46): State of Delaware, Division of Revenue, P.O. Box 508, Wilmington, DE 19899-508"; "If Refund
+    Due (from Line 47): ... P.O. Box 8710, Wilmington, DE 19899-8710"; "Zero Due returns or returns without payment:
+    ... P.O. Box 8711, Wilmington, DE 19899-8711" — the 2025 line numbers equal 2024''s and are one higher than
+    2023''s (the 2024 revision inserted Line 16)'
+  - 'DE Division of Revenue - 2025 Form PIT-RES Instructions, Line 46 Net Balance Due ("Make check payable to: DE
+    Division of Revenue") and the on-line payment/portal references to tax.delaware.gov'
+  - 'DE Division of Revenue - 2025 Form PIT-RES Instructions, When to File: "Individual income tax returns are due
+    on or before April 30, 2026 for all taxpayers filing on a calendar year basis." Extension: submit Form PIT-EXT
+    with payment of the estimated balance to the Division of Revenue no later than April 30, 2026 to extend the
+    filing date from April 30, 2026 to October 15, 2026 (no extension of time for payment). Delaware''s due date
+    is April 30, NOT the federal April 15.'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf
+  descriptions:
+  - '2025 Form PIT-RES (Revision 20260407, paper interactive) — second-pass verification of every line number and
+    printed amount: Section A Line 1 "FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040", Line 2 interest on non-Delaware
+    state/local obligations, Line 3 fiduciary adjustment/oil depletion, Line 12 Delaware AGI, Line 20 standard deduction
+    election ("Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing
+    Status 4 enter $3250 in Column A and in Column B"), Line 21 additional standard deductions (x $2500), Line 22
+    total deductions, Line 23 "TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount",
+    Line 24 "TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE", Line 25 lump-sum tax, Line 26 total tax, Line 27a personal
+    credits (x $110), Line 27b 60-or-over credits (x $110), Line 28 other states, Line 29 volunteer firefighter,
+    Line 31 child care (50% of federal), Line 34 EITC refundable/non-refundable boxes, Line 39 capital gains tax
+    payments (2023: Line 38), Lines 41-47 settle-up'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf
+  descriptions:
+  - 'Delaware 2025 State Income Tax Table & Schedule (TY25_taxtable.pdf) — "2025 STATE INCOME TAX SCHEDULE: If taxable
+    income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over, your tax is: $2,943.50 plus 6.60%
+    (.066) over, for the portion over $60,000" with worked example taxable income $67,751 -> Tax on $60,000 $2,943.50
+    + $511.56 = $3,455.06 (Round to $3,455); table for taxable incomes of less than $60,000 in $50 bands'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://delcode.delaware.gov/title30/c011/sc01/index.html
+  descriptions:
+  - '30 Del. C. sec. 1102(a)(14) (official Delaware Code) — "For taxable years beginning after December 31, 2013,
+    the amount of tax shall be determined as follows: 2.2% of taxable income in excess of $2,000 but not in excess
+    of $5,000; 3.9% ... $5,000-$10,000; 4.8% ... $10,000-$20,000; 5.2% ... $20,000-$25,000; 5.55% ... $25,000-$60,000;
+    and 6.6% of taxable income in excess of $60,000" — statutory second pass on the sub-$60,000 rates, re-fetched
+    live this session and still the operative paragraph for 2025 (paragraph (13), which ended at 6.75%, remains
+    the superseded prior-year rule)'
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://revenue.delaware.gov/personal-income-tax-forms/
+  descriptions:
+  - DE Division of Revenue - Personal Income Tax Forms index (source of the 2025 file URLs, including the 2025 PIT-RES
+    instructions, the 2025 paper-interactive PIT-RES and TY25_taxtable.pdf)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf
+  descriptions:
+  - 'Delaware Division of Revenue, 2025 Delaware Individual Resident Income Tax Return (Form PIT-RES) Instructions
+    (PIT-RES_Instructions_2025-01.pdf) — Line 24 Tax Liability From Tax Rate Table/Schedule: ''If Line 23 is less
+    than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax
+    schedule at the end of the tax table''; Rounding Off Dollars; Who Must File thresholds. Standard deduction and
+    line numbers second-passed on the printed 2025 Form PIT-RES (Revision 20260407): Line 20 ''Filing Statuses 1,
+    3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column
+    A and in Column B''; Line 21 additional standard deductions (x $2500, standard-deduction electors only); Line
+    22 ''TOTAL DEDUCTIONS''; Line 23 ''TAXABLE INCOME - Subtract Line 22 from Line 12, and compute tax on this amount'';
+    Line 24 ''TAX LIABILITY FROM TAX RATE TABLE/SCHEDULE (See instructions)''. Rate schedule: Delaware 2025 State
+    Income Tax Table & Schedule (https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf), last page: ''2025 STATE
+    INCOME TAX SCHEDULE - If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or over,
+    your tax is: $2,943.50 plus 6.60% (.066) over, for the portion over $60,000'' with worked example taxable income
+    $67,751 -> $2,943.50 + $511.56 = $3,455.06 (Round to $3,455). Sub-$60,000 marginal rates: 30 Del. C. sec. 1102(a)(14)
+    (taxable years beginning after December 31, 2013), official Delaware Code at https://delcode.delaware.gov/title30/c011/sc01/index.html,
+    re-fetched live this session — cross-checks exactly against the 2025 table''s band values (e.g. $43,500-$43,550
+    -> $2,029; $16,750-$16,800 -> $586; $2,750-$2,800 -> $17) and the printed $2,943.50 constant. Three sources
+    agree; no 2025 change.'
+- id: rates-2
+  topic: tax_rates_and_brackets
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf
+  descriptions:
+  - '2025 Delaware Form PIT-RES (Revision 20260407), page 2: line 27a "PERSONAL CREDITS Enter number of exemptions
+    x $110", line 27b "CHECK BOXES Spouse 60 or over (Column A) Self 60 or over (Column B) Enter number of boxes
+    checked on Line 27b x $110", line 32 "TOTAL NON-REFUNDABLE CREDITS - Add Line 27a through Line 31", line 33
+    "BALANCE - Subtract Line 32 from Line 26. If Line 32 is greater than Line 26, enter 0." Second pass: the 2025
+    PIT-RES Instructions, p. 8 "Line 27a Personal Credits", p. 9 "Line 27b Additional Personal Credits" and p. 10
+    "Line 32 Total Non-Refundable Credits", which print the same $110 and line text.'
+- id: remote-1
+  topic: remote_work_sourcing
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-SCW_2025-01_PaperInteractiveIPM.pdf
+  descriptions:
+  - 2025 Delaware Schedule W — Apportionment Worksheet (Form PIT-SCW, Revision 20250515), page 1 apportionment instructions
+    + page 2 days-worked-outside-Delaware log.
+- id: law-1
+  topic: law_changes
+  url: https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf
+  descriptions:
+  - 2025 Delaware Resident Individual Income Tax Return Instructions (PIT-RES), with the 2024 and 2025 PIT-RES forms

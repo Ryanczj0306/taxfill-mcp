@@ -3313,6 +3313,50 @@ class ConvenienceRule(BaseModel):
     citation: Citation
 
 
+class StateSourceEntry(BaseModel):
+    """One row of a state pack's ``sources`` table (Phase K JK20, 2026-10-24).
+
+    A distinct (registry topic, url) the pack cites inline, with every distinct inline description of it. The source
+    registry is built from these rows (taxfill_core.state_sources.state_block), so a citation outlives the block that
+    carried it. Generated once by scripts/hoist_state_sources.py; a new citation goes inline AND here.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(
+        pattern=r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+        description="Short stable name, unique in the pack, e.g. 'forms-1' (<topic prefix>-<n>).",
+    )
+    topic: str = Field(description="The registry topic: a BLOCK_TO_TOPIC value or FALLBACK_TOPIC (state_sources).")
+    url: str = Field(description="Official document URL (.gov / state .us only), as the inline citations give it.")
+    descriptions: list[str] = Field(
+        min_length=1,
+        description="Each distinct inline `source` text for this (topic, url), verbatim, first-cited first.",
+    )
+
+    @field_validator("topic")
+    @classmethod
+    def _known_topic(cls, value: str) -> str:
+        from taxfill_core.state_sources import BLOCK_TO_TOPIC, FALLBACK_TOPIC  # state_sources imports this module
+
+        known = sorted(set(BLOCK_TO_TOPIC.values()) | {FALLBACK_TOPIC})
+        if value not in known:
+            raise ValueError(f"sources topic {value!r} is not a registry topic; use one of {known}")
+        return value
+
+    @field_validator("url")
+    @classmethod
+    def _url_is_gov(cls, value: str) -> str:
+        return validate_gov_url(value)
+
+    @field_validator("descriptions")
+    @classmethod
+    def _descriptions_non_empty(cls, value: list[str]) -> list[str]:
+        if any(not text.strip() for text in value):
+            raise ValueError("every sources description must be non-empty: copy the inline citation's `source` text")
+        return value
+
+
 class StateKnowledge(BaseModel):
     """One ``knowledge/states/<st>/<year>.yaml`` — a state's filing knowledge.
 
@@ -3364,6 +3408,26 @@ class StateKnowledge(BaseModel):
         description="The state's convenience-of-the-employer wage-sourcing rule, cited; None = no rule "
         "researched for this state/year (state_scope falls back to the generic verify-at-DOR warning).",
     )
+    sources: list[StateSourceEntry] = Field(
+        default_factory=list,
+        description="Phase K JK20: the pack's citation table, one row per distinct (registry topic, url) of its .gov "
+        "inline citations; the source registry is built from it when present. Empty on TY2023 / TY2024 packs.",
+    )
+
+    @model_validator(mode="after")
+    def _sources_rows_are_unique(self) -> StateKnowledge:
+        seen_ids: set[str] = set()
+        seen_pairs: set[tuple[str, str]] = set()
+        for row in self.sources:
+            if row.id in seen_ids:
+                raise ValueError(f"sources: id {row.id!r} is used twice; give each row its own id")
+            if (row.topic, row.url) in seen_pairs:
+                raise ValueError(
+                    f"sources: ({row.topic}, {row.url}) has two rows; merge their descriptions into one row"
+                )
+            seen_ids.add(row.id)
+            seen_pairs.add((row.topic, row.url))
+        return self
 
     @field_validator("jurisdiction")
     @classmethod

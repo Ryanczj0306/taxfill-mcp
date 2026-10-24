@@ -493,3 +493,137 @@ effective_law_changes:
       Tax Rates (p.12), Schedule I-V and Schedule 2EC instructions, Due Dates, mailing addresses,
       payment instructions, and the 2026/2027 tax tables on p.42
     url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  descriptions:
+  - 2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (2025 legislative changes
+    HB 845 / SB 53 / SB 93 / SB 544, and the notice that HB 337's rate cut and the 20% EITC begin in tax year 2026),
+    2025 Montana Income Tax Rates (p.12), Filing Requirements incl. the thirty-day nonresident worker exclusion,
+    Residency Status and the new Mixed Residency checkbox, North Dakota Reciprocity, Due Dates (April 15, 2026),
+    mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check payable to the Montana Department
+    of Revenue; TransAction Portal https://tap.dor.mt.gov)
+  - '2025 Montana Form 2 Instructions, ''Residency Status'' — ''Part-Year Resident'' (Page 5 of 42): ''Part-year
+    residents must file an income tax return as a part-year resident and use the Schedule II to determine their
+    Montana tax liability. Montana taxes the income that a part-year resident receives while living in Montana plus
+    any income received from Montana sources when not living in Montana.'' — ''Schedule II – Tax on Montana Source
+    Income'' (Page 23 of 42): ''If you are a nonresident, part-year resident, or a mixed residency filer you must
+    use Schedule II to report your Montana source income and determine your Montana tax liability; and attach it
+    to your return.'''
+  - '2025 Montana Form 2 Instructions, ''Nonresident'' (Page 6 of 42): ''You are a nonresident of Montana if you
+    are neither a resident of Montana nor a part-year resident. Generally, Montana taxes a nonresident’s income
+    from all Montana sources.'' — ''Schedule II – Tax on Montana Source Income'' (Page 23 of 42): ''If you are a
+    nonresident, part-year resident, or a mixed residency filer you must use Schedule II to report your Montana
+    source income and determine your Montana tax liability; and attach it to your return.'' — ''North Dakota Reciprocity''
+    (Page 6 of 42): ''If you are a resident of North Dakota, wages you received in 2025 for work performed in Montana
+    are not taxable in Montana.'''
+  - 2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (HB 845 and SB 53 529-plan
+    subtraction to $4,500/$9,000; SB 93 permanent military retirement subtraction; SB 544 Montana NOL transition
+    adjustment; Changes Beginning in Tax Year 2026 — HB 129 volunteer-responder subtraction, HB 337 lower top rate
+    and wider brackets for 2026 with a further cut in 2027, EITC to 20% in 2026; Form Changes — Mixed Residency
+    and Nonresident Military Spouse checkboxes, state income tax deduction moved from line 2 to Schedule I line
+    4 with Worksheet B, lines 1-2 updated for the One Big Beautiful Bill, Transition Schedule discontinued), Filing
+    Requirements, Residency Status, North Dakota Reciprocity, Montana Individual Income Tax Calculation (p.10-12)
+    with the worked Marla example, 2025 Montana Income Tax Rates (p.12), Schedule I-V and Schedule 2EC instructions,
+    Due Dates, mailing addresses, payment instructions, and the 2026/2027 tax tables on p.42
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/Form_2_2025_Schedule_II.pdf
+  descriptions:
+  - 2025 Montana Form 2 Schedule II – Tax on Montana Source Income (2025v3, 12/2025) — the schedule itself, with
+    its 'Part-Year Resident Information' section
+  - 2025 Montana Form 2 Schedule II – Tax on Montana Source Income (2025v3, 12/2025) — the schedule itself
+- id: credits-1
+  topic: credits
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  descriptions:
+  - 2025 Montana Form 2 Instructions, Line 15 - Montana earned income tax credit ('a Montana earned income tax credit
+    (EITC) of 10 percent of the federal EITC'; Worksheet A reduction examples 1-4) and What's New (HB 337 increases
+    the credit to 20% beginning in tax year 2026)
+  - 2025 Montana Form 2 Instructions, Line 16 - Elderly Homeowner/Renter Credit ('a refundable tax credit of up
+    to $1,150'; household income less than $45,000; age 62 or older; at least nine months in Montana, per the Schedule
+    2EC tests on p.38 'You lived in Montana for at least nine months during the tax year.' where the Line 16 summary
+    on p.9 says 'more than nine months'; six months or more as renter/owner/lessee) and the Schedule 2EC instructions,
+    p.40-41 (Net Household Income 'You must first deduct $12,600 from your gross household income', Household Income
+    Reduction Table, Line 29 Credit Multiplier Table); 2025 Form 2, page 10, Schedule 2EC Attestation 'I resided
+    in Montana for a minimum of nine months during 2025', line 19 pre-printed 12,600, line 25 'Multiply line 24
+    by 15% (0.15)', line 28 'Enter the lesser of line 27 or $1,150'
+  - 2025 Montana Form 2 Instructions, Schedule III, Line 15 - Adoption Credit ($7,500 for a child in the Montana
+    foster care system, $5,000 for any other child under 18 or person incapable of self-care)
+  - 2025 Montana Form 2 Instructions, Schedule III Part II - Credit for Income Taxes Paid to Another State or Country
+    (separate ordinary-income and net-long-term-capital-gains computations)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  descriptions:
+  - 2025 Montana Form 2 Instructions, How to File / Paper Filing ('If you do not owe taxes or are expecting a refund,
+    mail your tax return to ... PO Box 6577 ... If you are making a payment with your tax return, mail your tax
+    return and check to ... PO Box 6308') and the assembly order (payment voucher, W-2s/1099s, Form 2 pages 1-2,
+    Montana schedules, copy of the federal return)
+  - 2025 Montana Form 2 Instructions, Due Dates ('File Form 2 and pay the tax due by April 15, 2026. An automatic
+    extension of six months applies for filing your return, but this extension does not apply to payments.')
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf
+  descriptions:
+  - '2025 Montana Individual Income Tax Return Form 2 (the form itself) — second-pass verification: page 1 line
+    1 "Federal adjusted gross income from Form 1040, line 11b", line 2 "Add Form 1040, lines 12e and 13b", line
+    6 "$5,660 subtraction for taxpayers 65 and older ($11,320 if married filing jointly and both are 65 and older)",
+    line 7 Montana taxable income; page 2 Montana Individual Income Tax worksheet with the printed filing-status
+    amounts on line 5 ($21,100 single or married filing separately / $42,200 married filing jointly or qualifying
+    surviving spouse / $31,700 head of household), the 3% (0.03) multiplier on line 8 and 4.1% (0.041) on line 10,
+    the Montana Ordinary Income Tax Table reference on line 12, and the Montana resident tax on line 13; page 1
+    line 15 "Multiply Federal EIC by 10% (0.10)"; page 3 Schedule I Part II line 2 "Total contributions for the
+    year (up to $4,600 per taxpayer)"; page 10 Schedule 2EC line 19 "Your standard exclusion is entered here for
+    you" pre-printed 12,600, line 25 15% (0.15), line 28 "Enter the lesser of line 27 or $1,150"'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://revenue.mt.gov/publications/montana-individual-income-tax-return-form-2
+  descriptions:
+  - Montana DOR — Montana Individual Income Tax Return (Form 2) publication page
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  descriptions:
+  - '2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages), p.12 — ''2025 Montana Income Tax
+    Rates'': Single and Married Filing Separately Ordinary Income Tax Rates — $0 to less than $21,100 tax rate 4.7%
+    Less $0, $21,100 or greater 5.9% Less $253; Married Filing Jointly and Qualifying Surviving Spouse — breakpoint
+    $42,200, 5.9% Less $506; Head of Household — breakpoint $31,700, 5.9% Less $380. The rates apply to Montana
+    ORDINARY income (''taxable income without net long-term capital gains'', which includes qualified dividends);
+    net long-term capital gains are taxed separately at 3% up to the same breakpoint (measured after ordinary income)
+    and 4.1% above. Worked example (instructions p.11, Marla): Montana taxable income $50,000, single, no net long-term
+    capital gains -> ''Her Montana Ordinary Income Tax is $2,697'' — matching marginal bracket math (4.7% x 21,100
+    + 5.9% x 28,900 = 991.70 + 1,705.10 = 2,696.80 -> 2,697) and the printed formula method (5.9% x 50,000 - 253
+    = 2,697.00). Second pass: the 2025 Form 2 itself (https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf)
+    prints the $21,100 / $42,200 / $31,700 filing-status amounts on page 2, line 5, and the 0.03 / 0.041 capital-gains
+    multipliers on lines 8 and 10 — both passes agree. The booklet''s What''s New confirms the 4.7%/5.9% structure
+    is unchanged for 2025 and that HB 337''s lower top rate (5.65%) and wider brackets begin in TAX YEAR 2026.'
+- id: law-1
+  topic: law_changes
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  descriptions:
+  - 2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (HB 845 and SB 53 529-plan
+    subtraction to $4,500/$9,000; SB 93 permanent military retirement subtraction; SB 544 Montana NOL transition
+    adjustment; Changes Beginning in Tax Year 2026 — HB 129 volunteer-responder subtraction, HB 337 lower top rate
+    and wider brackets for 2026 with a further cut in 2027, EITC to 20% in 2026; Form Changes — Mixed Residency
+    and Nonresident Military Spouse checkboxes, state income tax deduction moved from line 2 to Schedule I line
+    4 with Worksheet B, lines 1-2 updated for the One Big Beautiful Bill, Transition Schedule discontinued), Filing
+    Requirements, Residency Status, North Dakota Reciprocity, Montana Individual Income Tax Calculation (p.10-12)
+    with the worked Marla example, 2025 Montana Income Tax Rates (p.12), Schedule I-V and Schedule 2EC instructions,
+    Due Dates, mailing addresses, payment instructions, and the 2026/2027 tax tables on p.42
+  - 2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages) — What's New (2025 legislative changes
+    HB 845 / SB 53 / SB 93 / SB 544, and the notice that HB 337's rate cut and the 20% EITC begin in tax year 2026),
+    2025 Montana Income Tax Rates (p.12), Filing Requirements incl. the thirty-day nonresident worker exclusion,
+    Residency Status and the new Mixed Residency checkbox, North Dakota Reciprocity, Due Dates (April 15, 2026),
+    mailing addresses (PO Box 6577 refund / PO Box 6308 with payment), payment (check payable to the Montana Department
+    of Revenue; TransAction Portal https://tap.dor.mt.gov)

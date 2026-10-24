@@ -375,3 +375,193 @@ effective_law_changes:
       or equal to $25,000 ... No credit is available for veterans with an adjusted gross income equal to or greater
       than $30,000'') and the 2025 Schedule IN-112 form, Part II Lines 8-12'
     url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2025.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+  descriptions:
+  - 'VT Dept of Taxes — 2025 Form IN-111 Instructions (PDF, 20 pages): Line 1 = Federal Adjusted Gross Income; Line
+    4 2025 Vermont Standard Deduction chart; Line 5e personal exemption $5,300; Line 8 tax from the 2025 tax table
+    or rate schedule (3%-of-AGI minimum over $150,000); 2025 Vermont Tax Rate Schedules (p.12) and 2025 Vermont
+    Tax Tables (pp.13-17); due date April 15, 2026; mailing addresses (PO Box 1881 refund/no tax due, PO Box 1779
+    balance due); check payable to Vermont Department of Taxes with 2025 Form IN-116; myVTax'
+  - '2025 Form IN-111 Instructions (Vermont Department of Taxes) — ''Requirement to File a Vermont Income Tax Return''
+    (p. 3 of 20): ''A 2025 Vermont Income Tax Return must be filed by all full-year or part-year Vermont residents
+    or nonresidents if you are required to file a 2025 federal income tax return, AND • You earned or received more
+    than $100 in Vermont income''; ''Line 15'' (p. 7 of 20): ''Income Adjustment. Enter 100% or complete and submit
+    Schedule IN-113 and enter percentage from Line 35.'''
+  - '2025 Form IN-111 Instructions (Vermont Department of Taxes) — ''Requirement to File a Vermont Income Tax Return''
+    (p. 3 of 20): ''A 2025 Vermont Income Tax Return must be filed by all full-year or part-year Vermont residents
+    or nonresidents if you are required to file a 2025 federal income tax return, AND • You earned or received more
+    than $100 in Vermont income, OR • You earned or received gross income of more than $1,000 as a nonresident.'';
+    ''Line 15'' (p. 7 of 20): ''Income Adjustment. Enter 100% or complete and submit Schedule IN-113 and enter percentage
+    from Line 35.'''
+  - 'VT Dept of Taxes — 2025 Form IN-111 Instructions (PDF): Line 1 federal AGI; Line 2 net modifications from Schedule
+    IN-112 Part I Line 19; Line 4 2025 standard-deduction chart (7,650/15,300/7,650/11,450 plus $1,250 per federal
+    standard-deduction box); Line 5e personal exemption $5,300; Line 7 Vermont Taxable Income; Line 8 tax and the
+    3%-of-AGI minimum over $150,000; 2025 Vermont Tax Rate Schedules X/Y-1/Y-2/Z; 2025 Vermont Tax Tables; Lines
+    11-13 charitable-contribution credit (5% of the first $20,000, max $1,000); due date April 15, 2026; mailing
+    addresses; Form IN-116 payment voucher'
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-Instr-2025.pdf
+  descriptions:
+  - '2025 Schedule IN-113 Instructions, Income Adjustment — ''WHO MUST FILE IN-113'' (p. 1 of 2): ''You must file
+    Schedule IN-113 if you are either: • a nonresident or part-year resident and earned or received Vermont income'';
+    ''Part-Year Resident: Part-year residents may, in some cases, be able to adjust Vermont income by both the Vermont
+    percentage of income on Schedule IN-113 and claim a credit for income tax paid to another tax jurisdiction on
+    Schedule IN-117'''
+  - '2025 Schedule IN-113 Instructions, Income Adjustment — ''WHO MUST FILE IN-113'' (p. 1 of 2): ''You must file
+    Schedule IN-113 if you are either: • a nonresident or part-year resident and earned or received Vermont income'';
+    ''Nonresident: Complete both Parts I and II to determine the allocation of Vermont income.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-113-2025.pdf
+  descriptions:
+  - '2025 Schedule IN-113, Vermont Income Adjustment Calculations (p. 1): ''Nonresidents and Part-Year Residents
+    Must Complete Parts I and II'' — ''INCLUDE WITH FORM IN-111'''
+- id: credits-1
+  topic: credits
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-2025.pdf
+  descriptions:
+  - Vermont Department of Taxes - 2025 Schedule IN-112 (form, Rev. 10/25) Part II Line 7 and 2025 Schedule IN-112
+    Instructions, Line 7
+  - Vermont Department of Taxes - 2025 Schedule IN-112 (form, Rev. 10/25) Part II Line 2 ('MULTIPLY Line 1 by 72%
+    (0.72)') and the Tax Credits and Adjustments for Individuals page ('The tax credit amount is 72% of the federal
+    Child and Dependent Care Tax Credit')
+- id: credits-2
+  topic: credits
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2025.pdf
+  descriptions:
+  - Vermont Department of Taxes - 2025 Schedule IN-112 Instructions (Child Tax Credit Table and the $20-per-$1,000
+    phase-down above $125,000 AGI) and the 2025 Schedule IN-112 form, Part II Line 4
+  - Vermont Department of Taxes - 2025 Schedule IN-112 Instructions, Veteran Tax Credit ('signed into law on June
+    25, 2025, as part of Act 71 ... $250 refundable tax credit if their adjusted gross income is less than or equal
+    to $25,000 ... No credit is available for veterans with an adjusted gross income equal to or greater than $30,000')
+    and the 2025 Schedule IN-112 form, Part II Lines 8-12
+- id: credits-3
+  topic: credits
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+  descriptions:
+  - Vermont Department of Taxes - 2025 Form IN-111 Instructions, Renter Credit Claim section (three eligibility
+    requirements; April 15, 2026 due date, late-file to Oct. 15, 2026) and the Renter Credit page
+- id: credits-4
+  topic: credits
+  url: https://tax.vermont.gov/individuals/personal-income-tax/tax-credits
+  descriptions:
+  - Vermont Department of Taxes - Tax Credits and Adjustments for Individuals page ('The Vermont tax credit is 24%
+    of the federal Credit for the Elderly or the Disabled') and the 2025 Form IN-111 Instructions, Line 9 (Schedule
+    IN-119, Part I subtractions include the Credit for the Elderly or the Disabled)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+  descriptions:
+  - 'VT Dept of Taxes — 2025 Form IN-111 Instructions, FILING THE RETURN: ''REFUND OR NO TAX DUE — Mail your return
+    to: Vermont Department of Taxes, PO Box 1881, Montpelier, VT 05601-1881'' / ''BALANCE DUE — Attach your check
+    to the lower left side of the return and mail to: Vermont Department of Taxes, PO Box 1779, Montpelier, VT 05601-1779'''
+  - 'VT Dept of Taxes — 2025 Form IN-111 Instructions, Due Date: ''The 2025 Vermont Income Tax Return must be filed
+    by April 15, 2026.'' An extension (Form IN-151, filable at myVTax) extends the filing deadline to Oct. 15, 2026
+    but does NOT extend the time to pay — late payment penalty and interest accrue after the April due date, and
+    a $50 late-file penalty applies if the return is not filed by the extended Oct. 15, 2026 date.'
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/sites/tax/files/documents/GB-1210-2025.pdf
+  descriptions:
+  - 'VT Dept of Taxes — 2025 GB-1210, Income Tax Withholding Instructions, Tables, and Charts (effective January
+    1, 2025 - expires December 31, 2025): the Vermont Percentage Method Withholding Tables ANNUAL PAYROLLS rows,
+    whose bounds net of the built-in offsets reproduce the 2025 income-tax bracket bounds and whose unrounded cumulative
+    constants (1,654.90 / 6,294.70 / 16,174.70 single; 2,763.75 / 10,482.45 / 18,428.25 married) confirm the rate
+    schedules'' rounded printed VT Base Tax figures'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-2025.pdf
+  descriptions:
+  - VT Dept of Taxes — 2025 Form IN-111, Vermont Income Tax Return (form)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-2025.pdf
+  descriptions:
+  - 'VT Dept of Taxes — 2025 Schedule IN-112, Vermont Tax Adjustments and Credits (form, Rev. 10/25): Part I Line
+    19 net modifications to federal AGI; Part II refundable credits — CDCC 72%, Child Tax Credit $1,000 per child
+    born 2019-2025, EITC 38% (100% of the federal EITC when there are no qualifying children), Veteran Tax Credit
+    $250 phased down $5 per $100 of AGI over $25,000'
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2025.pdf
+  descriptions:
+  - 'VT Dept of Taxes — 2025 Schedule IN-112 Instructions: the Child Tax Credit Table ($1,000 up to $125,000 AGI,
+    down $20 per $1,000, $0 at $174,001+), EITC Line 7 rule, and the Veteran Tax Credit (Act 71 of 2025) description'
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/individuals/personal-income-tax/tax-credits
+  descriptions:
+  - 'VT Dept of Taxes — Tax Credits and Adjustments for Individuals: Elderly or Permanently Disabled Tax Credit
+    24% of the federal credit; Child and Dependent Care Credit 72%; Vermont Veteran Tax Credit (Act 71, signed June
+    25, 2025, $250 refundable, phased out over $25,000-$30,000 AGI); Farm Income Averaging Credit 24%'
+- id: forms-9
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/individuals/who-should-file/resident
+  descriptions:
+  - 'VT Dept of Taxes — Resident (Who Should File): residency definition (domicile or permanent home + 183 days);
+    income starts with federal AGI minus income exempted from state taxation by the laws of the United States; $100
+    filing threshold'
+- id: forms-10
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/individuals/who-should-file/nonresident
+  descriptions:
+  - 'VT Dept of Taxes — Nonresident with Earned Vermont Income (Who Should File): nonresident filing threshold (net
+    income > $100 or gross income > $1,000); Vermont-source income rules'
+- id: forms-11
+  topic: forms_and_instructions
+  url: https://tax.vermont.gov/sites/tax/files/documents/GB-1326.pdf
+  descriptions:
+  - 'VT Dept of Taxes — GB-1326, The Vermont Child Care Contribution (October 2024): ''Act 76 of 2023 creates the
+    Child Care Contribution (CCC) under 32 V.S.A. Chapter 246''; ''there is no cap on self-employment income subject
+    to the CCC''; applies to self-employment income ''for work physically performed in Vermont'''
+- id: forms-12
+  topic: forms_and_instructions
+  url: https://legislature.vermont.gov/statutes/section/32/246/10553
+  descriptions:
+  - 'Vermont Statutes Online — 32 V.S.A. § 10553 (chapter 246, Child Care Contribution): the 0.44% wage / 0.11%
+    self-employment rates, ''Added 2023, No. 76, § 24, eff. July 1, 2024''; (a)(2) the estimated-payment treatment'
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
+  descriptions:
+  - 'VT Dept. of Taxes — 2025 Form IN-111 Instructions, p.12 ''2025 Vermont Tax Rate Schedules'': Schedule X (Single)
+    49,400/119,700/249,700; Schedule Y-1 (Married Filing Jointly; Qualifying Widow(er); Civil Union Filing Jointly)
+    82,500/199,450/304,000; Schedule Y-2 (Married Filing Separately; Civil Union Filing Separately) exactly half
+    Y-1 at 41,250/99,725/152,000; Schedule Z (Head of Household) 66,200/171,000/276,850; rates 3.35/6.60/7.60/8.75%;
+    printed ''VT Base Tax'' constants (X 1,655.00/6,295.00/16,175.00; Y-1 2,764.00/10,482.00/18,428.00; Y-2 1,382.00/5,241.00/9,214.00;
+    Z 2,218.00/9,135.00/17,179.00) are whole-dollar roundings of the exact cumulative sums; p.6 Line 4 ''2025 Vermont
+    Standard Deduction'' chart 7,650/15,300/7,650/11,450 (plus $1,250 per federal standard-deduction box) and Line
+    5e ''Vermont Personal Exemption Deduction. Multiply Line 5d by $5,300''; Line 8 3%-of-federal-AGI minimum when
+    federal AGI exceeds $150,000; ''TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES''; official worked example:
+    VT taxable income $85,000 MFJ -> $2,929. SECOND PASS (independent document): 2025 GB-1210, Income Tax Withholding
+    Instructions, Tables, and Charts, Vermont Percentage Method Withholding Tables, ANNUAL PAYROLLS — Single 3,825/53,225/123,525/253,525
+    with constants 0 / 1,654.90 / 6,294.70 / 16,174.70 and Married 11,475/93,975/210,925/315,475 with constants
+    0 / 2,763.75 / 10,482.45 / 18,428.25; netting the built-in offsets ($3,825 single, $11,475 married) reproduces
+    the Schedule X and Y-1 bounds EXACTLY (53,225-3,825=49,400; 123,525-3,825=119,700; 253,525-3,825=249,700; 93,975-11,475=82,500;
+    210,925-11,475=199,450; 315,475-11,475=304,000) and the unrounded constants equal the exact cumulative bracket
+    sums (https://tax.vermont.gov/sites/tax/files/documents/GB-1210-2025.pdf). TY2025 vs TY2024: rates unchanged;
+    every bound and dollar figure re-indexed (X 47,900/116,000/242,000 -> 49,400/119,700/249,700; Y-1 79,950/193,300/294,600
+    -> 82,500/199,450/304,000; Y-2 39,975/96,650/147,300 -> 41,250/99,725/152,000; Z 64,200/165,700/268,300 -> 66,200/171,000/276,850;
+    SD 7,400/14,850/7,400/11,100 -> 7,650/15,300/7,650/11,450; additional SD box $1,200 -> $1,250; personal exemption
+    $5,100 -> $5,300).'
+- id: law-1
+  topic: law_changes
+  url: https://tax.vermont.gov/sites/tax/files/documents/IN-112-Instr-2025.pdf
+  descriptions:
+  - Vermont Department of Taxes - 2025 Schedule IN-112 Instructions, Veteran Tax Credit ('signed into law on June
+    25, 2025, as part of Act 71 ... $250 refundable tax credit if their adjusted gross income is less than or equal
+    to $25,000 ... No credit is available for veterans with an adjusted gross income equal to or greater than $30,000')
+    and the 2025 Schedule IN-112 form, Part II Lines 8-12

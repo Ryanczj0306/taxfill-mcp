@@ -351,3 +351,136 @@ effective_law_changes:
       Illinois EITC, Schedule M Line 18 medical debt relief subtraction, full date of birth now required
       on Line A)
     url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf
+  descriptions:
+  - 2025 Form IL-1040 Instructions (PDF title "2025 IL-1040 Instructions, Illinois Individual Income Tax"; internal
+    label "IL-1040 Instructions (R-02/25)") — What''s New for 2025 / cover / mailing addresses, due date (April
+    15, 2026), income tax rate ("The Illinois income tax rate is 4.95 percent (.0495)"), exemption allowance ("The
+    personal exemption amount for tax year 2025 is $2,850")
+  - 2025 Form IL-1040 Instructions (PDF title "2025 IL-1040 Instructions"; internal label R-02/25) — cover/mailing
+    addresses, due date (April 15, 2026), income tax rate 4.95%, exemption allowance $2,850, What's New for 2025
+    (personal exemption $2,850, Child Tax Credit increased to 40% of the Illinois EITC, Schedule M Line 18 medical
+    debt relief subtraction, full date of birth now required on Line A)
+  - 2025 IL-1040 Instructions, General Information — Who must file, Who is an Illinois resident (domicile), part-year/nonresident
+    filing, dependent-filer $2,850 threshold
+  - 2025 IL-1040 Instructions, Step-by-Step — Line 1 'Adjusted gross income — Enter the adjusted gross income from
+    your federal return', Line 2 federally tax-exempt income (federal 1040 Line 2a), Line 3 other additions / Schedule
+    M enumeration, Line 10 exemption allowance chart ($2,850/$5,700; +$1,000 per 65-or-older/blind box; $500,000
+    MFJ / $250,000 other AGI phase-out), Line 12 tax
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-nr-instr.pdf
+  descriptions:
+  - '2025 Schedule NR Instructions (IL-1040 Schedule NR Instructions R-12/25, Illinois Department of Revenue), ''What
+    if I was an Illinois resident for part of the tax year?'' (page 1 of 10): ''If you were a resident of Illinois
+    during part of the tax year, you are considered a part-year resident and must complete and file Form IL-1040
+    and Schedule NR if you ■ earned or received income from any source while you were an Illinois resident, ■ earned
+    or received income from Illinois sources while you were not an Illinois resident, or ■ are entitled to receive
+    a refund of Illinois Income Tax.'''
+  - '2025 Schedule NR Instructions (IL-1040 Schedule NR Instructions R-12/25, Illinois Department of Revenue), ''What
+    if I was a nonresident of Illinois for the entire tax year?'' (page 1 of 10): ''If you were a nonresident of
+    Illinois during the entire tax year, you must complete and file Form IL-1040 and Schedule NR if you ● earned
+    enough taxable income from Illinois sources to have a tax liability (i.e., your Illinois base income from Schedule
+    NR is greater than your Illinois exemption allowance on Schedule NR), or ● are entitled to a refund of Illinois
+    Income Tax that was withheld from your pay in error.'''
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-nr.pdf
+  descriptions:
+  - '2025 Schedule NR, Nonresident and Part-Year Resident Computation of Illinois Tax — the 2-page schedule itself
+    (page 1: ''Attach to your Form IL-1040.'')'
+- id: credits-1
+  topic: credits
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-il-e-eic-instr.pdf
+  descriptions:
+  - Illinois Department of Revenue — 2025 Schedule IL-E/EITC (form, Steps 4-5) and 2025 Schedule IL-E/EITC Instructions
+    (R-12/25) — Table 1 federal EITC income limits, $11,950 investment-income cap
+- id: credits-2
+  topic: credits
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-il-e-eic.pdf
+  descriptions:
+  - Illinois Department of Revenue — 2025 Schedule IL-E/EITC (form, Step 5, Line 12 "by 40% (0.4)") and 2025 Form
+    IL-1040 Instructions "What's New for 2025?" (Illinois Child Tax Credit increased to 40 percent of the Illinois
+    EITC)
+- id: credits-3
+  topic: credits
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-icr-instr.pdf
+  descriptions:
+  - Illinois Department of Revenue — 2025 Schedule ICR (form) and 2025 Schedule ICR Instructions (R-12/25)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf
+  descriptions:
+  - 2025 Form IL-1040 Instructions — cover "Mailing your income tax return" (PO BOX 19041 no payment; PO BOX 19027
+    with payment)
+  - 2025 Form IL-1040 Instructions — "The due date for filing your 2025 Form IL-1040 and paying any tax you owe
+    is April 15, 2026"; extended due date to file October 15, 2026
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040.pdf
+  descriptions:
+  - '2025 Form IL-1040 (Individual Income Tax Return, IL-1040 R-12/25) — Step 4 Line 10 exemption lines, Step 5
+    Line 12 "Residents: Multiply Line 11 by 4.95% (.0495)" (second-pass verification of the rate and exemption structure)'
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-exemption-allowance-chart.pdf
+  descriptions:
+  - 2025 Form IL-1040, Line 10a Exemption Allowance Chart — $2,850 single / $5,700 MFJ, +$1,000 65-or-older/blind,
+    $500,000 MFJ / $250,000 other phase-out
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-il-e-eic.pdf
+  descriptions:
+  - 2025 Schedule IL-E/EITC (form) — Step 2 Line 1 dependent exemption 'Multiply the total number of dependents
+    you are claiming by $2,850'; Step 4 Line 7 EITC 20% (0.2); Step 5 Line 12 Child Tax Credit 40% (0.4) of Illinois
+    EITC
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-il-e-eic-instr.pdf
+  descriptions:
+  - 2025 Schedule IL-E/EITC Instructions (R-12/25) — expanded eligibility (ITIN filers, 18-24/65+), Table 1 2025
+    federal EITC income limits ($19,104/$50,434/$57,310/$61,555 single-HoH; $26,214/$57,554/$64,430/$68,675 MFJ),
+    investment income below $11,950, Child Tax Credit qualification (dependent under 12)
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-icr-instr.pdf
+  descriptions:
+  - 2025 Schedule ICR Instructions (R-12/25) — property tax credit 5%, K-12 credit 25% over $250 max $750, Volunteer
+    Emergency Worker Credit $500/$1,000 and IEMA/OHS eligibility, $500,000/$250,000 AGI limits
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf
+  descriptions:
+  - '2025 Form IL-1040 Instructions (PDF title "2025 IL-1040 Instructions") — "The Illinois income tax rate is 4.95
+    percent (.0495)"; "The personal exemption amount for tax year 2025 is $2,850"; Line 10a Exemption Allowance
+    Chart ($2,850 per person, $5,700 MFJ both; +$1,000 each 65-or-older / blind; $500,000 MFJ / $250,000 other AGI
+    phase-out); Line 11 net income. Second pass: the 2025 Form IL-1040 itself (IL-1040 R-12/25) prints Line 12 "Residents:
+    Multiply Line 11 by 4.95% (.0495)", and the 2025 Schedule IL-E/EITC form prints Step 2 Line 1 "Multiply the
+    total number of dependents you are claiming by $2,850" — both passes agree.'
+- id: law-1
+  topic: law_changes
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-schedule-il-e-eic.pdf
+  descriptions:
+  - Illinois Department of Revenue — 2025 Schedule IL-E/EITC (form, Step 5, Line 12 "by 40% (0.4)") and 2025 Form
+    IL-1040 Instructions "What's New for 2025?" (Illinois Child Tax Credit increased to 40 percent of the Illinois
+    EITC)
+- id: law-2
+  topic: law_changes
+  url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf
+  descriptions:
+  - 2025 Form IL-1040 Instructions (PDF title "2025 IL-1040 Instructions"; internal label R-02/25) — cover/mailing
+    addresses, due date (April 15, 2026), income tax rate 4.95%, exemption allowance $2,850, What's New for 2025
+    (personal exemption $2,850, Child Tax Credit increased to 40% of the Illinois EITC, Schedule M Line 18 medical
+    debt relief subtraction, full date of birth now required on Line A)

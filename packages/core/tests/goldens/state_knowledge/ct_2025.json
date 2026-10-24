@@ -17,7 +17,6 @@
   "@@9411cfbaffeb": "2025 Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return (Rev. 12/25) — the return itself (page 1, line 6: 'Income from Connecticut sources from Schedule CT-SI, Line 30')",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@9b4e7cb70169": "annual (per tax year; the newest shipped CT pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
-  "@@a1a72df94b2b": "Connecticut DRS, 'Connecticut Nonresident and Part-Year Resident Income Tax Information', 'Who Must File Form CT-1040NR/PY': 'You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return, if you were a nonresident or part-year resident of Connecticut in 2025 and any of the following is true for the 2025 taxable year:' — 'You were a part-year resident who meets the Gross Income Test or who had a federal alternative minimum tax liability'",
   "@@a64fd1bce23a": "Treaty conformity — CT does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CT. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: CT's resident return (Form CT-1040) starts from federal AGI (Line 1 = \"Federal adjusted gross income from your 2025 federal income tax return\"), so treaty-exempt income is initially excluded. HOWEVER, CT has an EXPLICIT ADD-BACK: the 2025 CT-1040 instructions (Schedule 1 additions, Line 37 \"Other\") and the 2025 CT-1040NR/PY instructions (Schedule 1 additions, \"Other\") both direct, verbatim and unchanged from 2023 and 2024: \"1. Add back any treaty income reported on federal Form 1040NR if a nonresident alien. Enter the words 'treaty income' in the space provided.\" Because CT requires nonresident aliens to add federally treaty-exempt income back into Connecticut adjusted gross income, CT does NOT conform to federal treaty exemptions for affected filers (analogous to California's Schedule CA add-back). Reinforcing this, the DRS Tax-Information page states that nonresident aliens who are domiciled in Connecticut, or who keep a permanent place of abode there and spend more than 183 days in the state, \"are considered Connecticut residents even if federal Form 1040NR is filed for federal income tax purposes.\" Note: the add-back is scoped to nonresident aliens filing federal Form 1040NR; a filer with no treaty income is unaffected, but the statutory rule re-taxes treaty income, so conforms_to_federal_treaties = false.",
   "@@a671f45996ff": "https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-nrpy-instructions_1225.pdf",
   "@@c0e7931c928a": "Credit for Income Taxes Paid to Qualifying Jurisdictions (Schedule 2) — Connecticut residents (and part-year residents) whose income reported on the CT return is also subject to income tax in another qualifying jurisdiction (another U.S. state, a local jurisdiction within another state, or the District of Columbia) where the taxpayer filed a return and paid income tax. Prevents double taxation of the same income. A copy of the other jurisdiction's return must be attached.",
@@ -307,7 +306,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@8c9b898323e2",
+     "answers": "CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 20a Connecticut Earned Income Tax Credit (40% of the federal EIC plus the additional $250 for a taxpayer with at least one federal qualifying child) and Schedule CT-EITC line instructions ($11,950 investment-income limit); confirmed against the DRS \"What's New for 2025\" EITC expansion note || CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 11 / Schedule 3 Property Tax Credit ($300 maximum per return, Connecticut AGI thresholds) and the Property Tax Credit Table on Page 27 || CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Table E Personal Tax Credits (Page 23); Tax Calculation Schedule Lines 8-10 (Page 19); Line 6 Income Tax no-tax floors || CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), Line 7 / Schedule 2 Credit for Income Taxes Paid to Qualifying Jurisdictions || CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), p. 4 Line 20d Historic Homes Rehabilitation Tax Credit and Line 21 Total Payments and Refundable Credits; the 2025 Form CT-1040 face, Lines 20d and 21",
      "cadence": "@@9b4e7cb70169",
      "topic": "credits",
      "url": "@@da88d6df6db2"
@@ -350,7 +349,7 @@
      "url": "https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information"
     },
     {
-     "answers": "@@68b17d6df36e",
+     "answers": "2025 Form CT-1040 (Rev. 12/25), page 4 mailing box: \"For all tax forms with payment: Department of Revenue Services, PO Box 2977, Hartford CT 06104-2977\"; \"For refunds and all other tax forms without payment: Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976\" || 2025 Form CT-1040 (Rev. 12/25), page 4 payment box; 2025 CT-1040 instructions — file and pay electronically using myconneCT || 2025 Form CT-1040 (Rev. 12/25), page 1: \"Due date: April 15, 2026 - Attach a copy of all applicable schedules and forms to this return. Do not use staples.\"",
      "cadence": "@@9b4e7cb70169",
      "topic": "filing_logistics",
      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
@@ -387,19 +386,19 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@46c91757a10e",
+     "answers": "2025 Form CT-1040 Connecticut Resident Income Tax Return (Rev. 12/25) — Line 1 = federal AGI; Line 2 additions from Schedule 1; 'Due date: April 15, 2026'; mailing addresses PO Box 2977 (with payment) / PO Box 2976 (refund or no payment); check payable to Commissioner of Revenue Services with '2025 Form CT-1040' written on it || 2025 Form CT-1040 Connecticut Resident Income Tax Return (Rev. 12/25) — Line 1 federal AGI, Line 5 Connecticut AGI, Line 6 income tax, Schedules 1-4, \"Due date: April 15, 2026\", mailing addresses PO Box 2976/2977, check payable to Commissioner of Revenue Services",
      "cadence": "@@9b4e7cb70169",
      "topic": "forms_and_instructions",
      "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
     },
     {
-     "answers": "CT DRS Resident Income Tax — Tax Information (2025 edition: Who Must File a Connecticut Resident Return, Gross Income Test, residency/domicile and the 183-day statutory-resident rule, Special Information for Nonresident Aliens, What's New for 2025)",
+     "answers": "CT DRS Resident Income Tax — Tax Information (2025 edition: Who Must File a Connecticut Resident Return, Gross Income Test, residency/domicile and the 183-day statutory-resident rule, Special Information for Nonresident Aliens, What's New for 2025) || CT DRS Resident Income Tax — Tax Information (2025 edition: Who Must File, Gross Income Test 2025 dollar thresholds, residency/domicile and the more-than-183-days statutory-resident rule stated for the 2025 taxable year, Special Information for Nonresident Aliens, What's New for 2025 including the EITC expansion)",
      "cadence": "@@9b4e7cb70169",
      "topic": "forms_and_instructions",
      "url": "https://portal.ct.gov/drs/individuals/resident-income-tax/tax-information"
     },
     {
-     "answers": "@@a1a72df94b2b",
+     "answers": "Connecticut DRS, 'Connecticut Nonresident and Part-Year Resident Income Tax Information', 'Who Must File Form CT-1040NR/PY': 'You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return, if you were a nonresident or part-year resident of Connecticut in 2025 and any of the following is true for the 2025 taxable year:' — 'You were a part-year resident who meets the Gross Income Test or who had a federal alternative minimum tax liability' || Connecticut DRS, 'Connecticut Nonresident and Part-Year Resident Income Tax Information', 'Who Must File Form CT-1040NR/PY': 'You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return, if you were a nonresident or part-year resident of Connecticut in 2025 and any of the following is true for the 2025 taxable year:' — 'You were a nonresident with Connecticut-sourced income who meets the Gross Income Test or had a federal alternative minimum tax liability.'",
      "cadence": "@@9b4e7cb70169",
      "topic": "forms_and_instructions",
      "url": "https://portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information"
@@ -627,7 +626,7 @@
        "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf"
       },
       {
-       "source": "@@a1a72df94b2b",
+       "source": "Connecticut DRS, 'Connecticut Nonresident and Part-Year Resident Income Tax Information', 'Who Must File Form CT-1040NR/PY': 'You must file Form CT-1040NR/PY, Connecticut Nonresident and Part-Year Resident Income Tax Return, if you were a nonresident or part-year resident of Connecticut in 2025 and any of the following is true for the 2025 taxable year:' — 'You were a part-year resident who meets the Gross Income Test or who had a federal alternative minimum tax liability'",
        "url": "https://portal.ct.gov/DRS/Individuals/Nonresident-Part-year/Tax-Information"
       },
       {

@@ -581,3 +581,176 @@ effective_law_changes:
       Instruction 26 part-year residents; MARYLAND TAX COMPUTATION WORKSHEET SCHEDULES (17A) on booklet p. 33; Anne
       Arundel County Tax Computation Worksheet Schedule (19D) on booklet p. 44
     url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
+
+# ── sources: this pack's citation table (Phase K JK20, 2026-10-24) ──────────────────────────────────────────────
+# One row per distinct (registry topic, url) of the .gov citations this pack carries inline, in first-seen order;
+# `descriptions` holds each distinct inline `source` text for that pair, verbatim. Generated once by
+# scripts/hoist_state_sources.py. The source registry (taxfill_core.state_sources.state_block, behind
+# knowledge/sources_states.yaml and get_sources) is built from this table, so a citation outlives the block that
+# carries it when JK22 drops never-read blocks. The inline citations stay where they are: their consumers read them.
+# A new citation goes inline AND here (test_state_sources_table.py fails on an inline .gov citation this table
+# lacks, and on a row no inline citation backs).
+sources:
+- id: forms-1
+  topic: forms_and_instructions
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/502.pdf
+  descriptions:
+  - 2025 Maryland Form 502 Resident Income Tax Return (COM/RAD-009, PDF build 2025-11-25) — line 1 'Adjusted gross
+    income from your federal return'; Additions lines 2-6 incl. line 5 'Other additions (Enter code letter(s) from
+    Instruction 12.)'; lines 16-20 (Maryland adjusted gross income, deduction amount, net income, exemption amount,
+    taxable net income); NEW line 20a 'Net capital gain income subject to additional tax from Line 9 of Form 502CG';
+    line 21 'Maryland tax (from Tax Table or Computation Worksheet Schedules I or II)'; line 21a recaptured credit;
+    NEW line 21b 'Additional tax on net capital gain income. Multiply Line 20a by .02'; line 28 local tax
+  - 2025 Maryland Form 502 Resident Income Tax Return (COM/RAD-009, 4 pages, PDF build 2025-11-25) — line 1 federal
+    AGI; lines 16-20 (Maryland AGI, deduction amount, net income, exemption amount, taxable net income); NEW line
+    20a net capital gain income subject to additional tax; line 21 Maryland tax; line 21a recaptured credit; NEW
+    line 21b additional 2% tax on net capital gain income; lines 22-26 credits; line 28 local tax; lines 29-33 local
+    credits
+- id: forms-2
+  topic: forms_and_instructions
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
+  descriptions:
+  - 2025 Maryland State & Local Tax Forms & Instructions (Resident Booklet) - Who Is a Resident?, Instruction 9
+    (Part-year residents) and Instruction 26 (Special instructions for part-year residents)
+  - '2025 Maryland State & Local Tax Forms & Instructions (resident booklet, Form 502), Instruction 1 ''WHO MUST
+    FILE?'' — ''PART-YEAR RESIDENTS'' (p. 1): ''If you began or ended residence in Maryland during the tax year,
+    you must file a Maryland resident income tax return. See Instruction 26.'' — Instruction 26 ''SPECIAL INSTRUCTIONS
+    FOR PART-YEAR RESIDENTS.'' (p. 22): ''a. You must file Form 502.'''
+  - 2025 Maryland State & Local Tax Forms & Instructions (Resident Booklet, 60 pages) - PASS 1 for every engine
+    figure. NEW FOR 2025 page i (BRFA/HB 352 new brackets and rates, increased standard deduction, reduced itemized
+    deductions, new 2% tax on net capital gain income, new Child Tax Credit phase-out; OBBBA decoupling); NEW LOCAL
+    TAX BRACKETS FOR 2025 page ii; Instruction 1 Who Must File plus 2025 MINIMUM FILING LEVELS TABLES 1 and 2; Instruction
+    10 EXEMPTION AMOUNT CHART (10A); Instruction 11 Income (copy federal AGI from federal line 11a); Instruction
+    12 Additions, code letter g treaty addback; Instruction 13 subtractions (incl. the new Legislative Energy Relief
+    Refund subtraction and the $1,200 two-income subtraction); Instruction 14 Itemized Deductions; Instruction 16
+    Figure your Maryland taxable net income (FLAT $3,350/$6,700 standard deduction); Instruction 17 Figure your
+    Maryland tax plus 2025 Tax Rate Schedules I and II; Instruction 18 EIC/poverty/502CR credits plus 2025 POVERTY
+    INCOME GUIDELINES; Instruction 19 2025 LOCAL TAX RATE CHART, LOCAL TAX WORKSHEET (19A), and the Anne Arundel/Frederick
+    graduated brackets; Instruction 21 refundable credits (Worksheets 21A/21C); Instruction 24 mailing/payment;
+    Instruction 26 part-year residents; MARYLAND TAX COMPUTATION WORKSHEET SCHEDULES (17A) on booklet p. 33; Anne
+    Arundel County Tax Computation Worksheet Schedule (19D) on booklet p. 44
+- id: forms-3
+  topic: forms_and_instructions
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/nonresident-booklet.pdf
+  descriptions:
+  - '2025 Maryland Nonresident Tax Forms & Instructions (Form 505), Instruction 1 ''WHAT FORM TO FILE?'' (p. 1):
+    ''Taxpayer who moved into or out of Maryland during the tax year and received income from Maryland sources while
+    you were a nonresident of Maryland.'' — ''Form 505 Nonresident Return and Form 502 Resident Return''; Instruction
+    28 ''PART-YEAR RESIDENTS.'' (p. 15): ''If you moved into or out of Maryland during 2025 AND received taxable
+    Maryland income both while you were a resident and while you were a nonresident AND you are required to file
+    a federal return, you are required to file two returns with the State of Maryland.'' | 2025 Maryland Nonresident
+    Tax Forms and Instructions (Form 505 instructions, 25 pages, PDF build 2026-01-20) — the independent SECOND-PASS
+    source; prints the identical 2025 Tax Rate Schedules I and II (Instruction 19, including the new $500,001/$1,000,001
+    and $600,001/$1,200,001 6.25%/6.50% brackets) and the Form 505NR computation worksheet rows, plus the parallel
+    line 31a/32d net-capital-gain additional tax'
+  - '2025 Maryland Nonresident Tax Forms & Instructions (Form 505), Instruction 1 ''WHAT FORM TO FILE?'' (p. 1):
+    ''Taxpayer whose permanent home (domicile) is a state other than Maryland, you are a nonresident, unless you
+    are a statutory resident.'' — ''Form 505 Nonresident Return''; ''Nonresident of Maryland but received salary,
+    wages or other compensation for personal services performed in any Maryland county or Baltimore City and you
+    lived in a jurisdiction that imposes a local or earnings tax on Maryland residents. NOTE: If you have other
+    income subject to Maryland tax, you must also file Form 505.'' — ''Form 515 Nonresident Local Tax Return'''
+  - 2025 Maryland Nonresident Tax Forms and Instructions (Form 505 instructions, 25 pages, PDF build 2026-01-20)
+    — the independent SECOND-PASS source; prints the identical 2025 Tax Rate Schedules I and II (Instruction 19,
+    including the new $500,001/$1,000,001 and $600,001/$1,200,001 6.25%/6.50% brackets) and the Form 505NR computation
+    worksheet rows, plus the parallel line 31a/32d net-capital-gain additional tax
+- id: forms-4
+  topic: forms_and_instructions
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/505.pdf
+  descriptions:
+  - 2025 Maryland Form 505, Nonresident Income Tax Return (COM/RAD-022 09/25) — the 4-page form itself
+- id: forms-5
+  topic: forms_and_instructions
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/505nr.pdf
+  descriptions:
+  - 2025 Maryland Form 505NR, Nonresident Income Tax Calculation (COM/RAD-318 09/25) — 'ATTACH TO YOUR TAX RETURN'
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/515.pdf
+  descriptions:
+  - '2025 Maryland Form 515, for nonresidents employed in Maryland who reside in jurisdictions that impose a local
+    income or earnings tax on Maryland residents (COM/RAD-023 09/25), with its instructions — Instruction 2 ''WHO
+    MUST FILE?'' (instructions Page 1): ''In general, you are liable for local income tax and must file this return
+    if you are a nonresident of Maryland AND you received salary, wages or other compensation for personal services
+    performed in any county of Maryland or in Baltimore City AND you lived in a jurisdiction that imposes a local
+    income or earnings tax on Maryland residents AND you are required to file a federal return.'''
+- id: credits-1
+  topic: credits
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
+  descriptions:
+  - Comptroller of Maryland - 2025 Resident Booklet (Form 502 Instructions), Instruction 18 and Worksheets 18A /
+    18A.1
+  - Comptroller of Maryland - 2025 Resident Booklet, Instruction 21 (Line 44) and Worksheet 21A
+  - Comptroller of Maryland - 2025 Resident Booklet, Instruction 18 (Line 23) and the 2025 POVERTY INCOME GUIDELINES
+    chart
+  - Comptroller of Maryland - 2025 Resident Booklet, Instruction 21 (Line 45, item 8 MARYLAND CHILD TAX CREDIT)
+    and REFUNDABLE CHILD TAX CREDIT WORKSHEET (21C); NEW FOR 2025 page i (BRFA - House Bill 352 'establishes a new
+    income-based, phase-out formula for the Maryland Child Tax Credit')
+- id: credits-2
+  topic: credits
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/502cr.pdf
+  descriptions:
+  - Comptroller of Maryland - 2025 Form 502CR (Part B, CREDIT FOR CHILD AND DEPENDENT CARE EXPENSES CHART, and Worksheet
+    21B FAGI caps), COM/RAD-012 rev. 10/25
+  - Comptroller of Maryland - 2025 Form 502CR, PART M - SENIOR TAX CREDIT instructions ($1,000 / $1,750)
+- id: logistics-1
+  topic: filing_logistics
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
+  descriptions:
+  - 2025 Resident Booklet, Instruction 24 'MAILING YOUR RETURN' — Payment Processing PO Box 8888 (with payment)
+    and Revenue Administration Division, 110 Carroll Street (without payment; also the private delivery service
+    address). Sending by certified mail does not result in special handling.
+  - 2025 Resident Booklet — 'Your return is due by April 15, 2026' (Filing Information); telephone assistance hours
+    'February 1 - April 15, 2026'; first 2026 estimated payment due on or before April 15, 2026
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/502cr.pdf
+  descriptions:
+  - 2025 Maryland Form 502CR, Income Tax Credits for Individuals, and instructions (COM/RAD-012 rev. 10/25) — Part
+    B CDCC 2025 chart (0.3200 down to 0.0000 at $112,101 individual / $174,301 married), Worksheet 21B refundable-CDCC
+    FAGI caps ($60,900 / $91,400), Part M Senior Tax Credit ($1,000 / $1,750), Part AA credit summary, Part CC refundable
+    credits
+- id: forms-8
+  topic: forms_and_instructions
+  url: https://interactive.marylandtaxes.gov/Individuals/Payment/
+  descriptions:
+  - Maryland Comptroller Individual Bill Pay (online payment portal)
+- id: rates-1
+  topic: tax_rates_and_brackets
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
+  descriptions:
+  - '2025 Maryland State & Local Tax Forms & Instructions (Resident Booklet, Form 502 instructions, 60 pages) —
+    Instruction 17 ''FIGURE YOUR MARYLAND TAX'', 2025 Tax Rate Schedules I and II; MARYLAND TAX COMPUTATION WORKSHEET
+    SCHEDULES (17A), Schedules I and II printed at the end of the 2025 Maryland Tax Table (booklet p. 33); Instruction
+    16 ''FIGURE YOUR MARYLAND TAXABLE NET INCOME'' (the NEW flat $3,350 / $6,700 standard deduction); Instruction
+    10 EXEMPTION AMOUNT CHART (10A); Instruction 19 2025 LOCAL TAX RATE CHART incl. the Anne Arundel and Frederick
+    graduated county brackets and Worksheet 19D; NEW FOR 2025 page i (Budget Reconciliation and Financing Act, House
+    Bill 352). Second pass: the 2025 Nonresident Booklet (https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/nonresident-booklet.pdf)
+    prints the identical 2025 Tax Rate Schedules I and II and the matching Form 505NR worksheet rows, and the 2025
+    Form 502 line 21 names the same two computation sources — all bounds, rates, and printed constants agree across
+    both passes.'
+- id: law-1
+  topic: law_changes
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2025/resident-booklet.pdf
+  descriptions:
+  - 2025 Maryland State & Local Tax Forms & Instructions (Resident Booklet, 60 pages) - PASS 1 for every engine
+    figure. NEW FOR 2025 page i (BRFA/HB 352 new brackets and rates, increased standard deduction, reduced itemized
+    deductions, new 2% tax on net capital gain income, new Child Tax Credit phase-out; OBBBA decoupling); NEW LOCAL
+    TAX BRACKETS FOR 2025 page ii; Instruction 1 Who Must File plus 2025 MINIMUM FILING LEVELS TABLES 1 and 2; Instruction
+    10 EXEMPTION AMOUNT CHART (10A); Instruction 11 Income (copy federal AGI from federal line 11a); Instruction
+    12 Additions, code letter g treaty addback; Instruction 13 subtractions (incl. the new Legislative Energy Relief
+    Refund subtraction and the $1,200 two-income subtraction); Instruction 14 Itemized Deductions; Instruction 16
+    Figure your Maryland taxable net income (FLAT $3,350/$6,700 standard deduction); Instruction 17 Figure your
+    Maryland tax plus 2025 Tax Rate Schedules I and II; Instruction 18 EIC/poverty/502CR credits plus 2025 POVERTY
+    INCOME GUIDELINES; Instruction 19 2025 LOCAL TAX RATE CHART, LOCAL TAX WORKSHEET (19A), and the Anne Arundel/Frederick
+    graduated brackets; Instruction 21 refundable credits (Worksheets 21A/21C); Instruction 24 mailing/payment;
+    Instruction 26 part-year residents; MARYLAND TAX COMPUTATION WORKSHEET SCHEDULES (17A) on booklet p. 33; Anne
+    Arundel County Tax Computation Worksheet Schedule (19D) on booklet p. 44
+- id: law-2
+  topic: law_changes
+  url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2025/502.pdf
+  descriptions:
+  - 2025 Maryland Form 502 Resident Income Tax Return (COM/RAD-009, 4 pages, PDF build 2025-11-25) — line 1 federal
+    AGI; lines 16-20 (Maryland AGI, deduction amount, net income, exemption amount, taxable net income); NEW line
+    20a net capital gain income subject to additional tax; line 21 Maryland tax; line 21a recaptured credit; NEW
+    line 21b additional 2% tax on net capital gain income; lines 22-26 credits; line 28 local tax; lines 29-33 local
+    credits

@@ -18,7 +18,6 @@
   "@@806b1a8793f6": "Child Care / Child Tax Credit — Filers whose Federal AGI is $100,000 or less and who are allowed either the federal credit for child care expenses or the federal child tax credit. Must provide a copy of the federal return and, if applicable, the federal child care credit schedule. If Oklahoma AGI (Form 511 line 7) is less than Federal AGI (line 1), compute on Schedule 511-F (prorated).",
   "@@90b2b07e1a31": "Oklahoma Tax Commission, PO Box 26800, Oklahoma City, OK 73126-0800 (this is the single mailing address for the 2025 Form 511 return itself, whether refund, no-payment, or with payment enclosed)",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
-  "@@a47c3c8ab44b": "2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, 'F Residency Status' (p. 9): 'Part-Year Resident - If a part-year resident, enter the dates of residency in Oklahoma. If filing a joint return, both must be part-year residents.'",
   "@@c3dfafc11ad0": "https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-NR-Pkt.pdf",
   "@@c58c9a6196a6": "Oklahoma Earned Income Credit (EIC) — Resident and part-year resident filers who qualify for the federal Earned Income Credit. The federal EIC is recalculated using the federal EITC eligibility/computation requirements in effect for the 2020 tax year. A copy of the federal return and OTC Form 511-EIC must be provided.",
   "@@d4abf582158e": "Treaty conformity — OK conforms to federal treaty treatment — income exempt from federal tax under a treaty is also excluded from OK income (it flows through the federal starting point; do not add it back on the OK return). (This is about TREATY conformity only — a state can conform on treaties while DECOUPLING from the federal Code for deductions or credits; see any law-change lines below.) State note: Oklahoma's resident return (Form 511) starts at line 1 from \"Federal adjusted gross income (from Federal 1040 or 1040-SR)\" and then applies Schedule 511-A (Oklahoma subtractions) and Schedule 511-B (Oklahoma additions) to arrive at Oklahoma AGI on line 7. The complete Schedule 511-B additions list for 2025 is closed and enumerated (lines 1-9, totalled on line 10 and carried to Form 511 line 6): (1) state and municipal bond interest, (2) out-of-state losses, (3) lump-sum distributions not included in federal AGI, (4) federal net operating loss, (5) recapture of depletion claimed on a lease bonus / add-back of excess federal depletion, (6) recapture of Oklahoma 529 and OklahomaDream 529 contributions, (7) Oklahoma loss distributed by an electing PTE, (8) Oklahoma bonus depreciation add-back, (9) miscellaneous other additions. There is NO add-back of federally treaty-exempt income anywhere in the 2025 resident packet (a full-text search of the packet for \"treaty\"/\"treaties\" returns zero hits). Because OK begins from federal AGI and does not add treaty income back (unlike CA Schedule CA), federally treaty-exempt income already excluded from federal AGI flows through and is NOT re-taxed by Oklahoma. Therefore conforms = true. (Same analysis and result as 2023 and 2024.)",
@@ -296,7 +295,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "Oklahoma Tax Commission, 2025 Oklahoma Resident Individual Income Tax Forms and Instructions (Form 511 packet) - Line 28 instructions and Schedule 511-G",
+     "answers": "Oklahoma Tax Commission, 2025 Oklahoma Resident Individual Income Tax Forms and Instructions (Form 511 packet) - Line 28 instructions and Schedule 511-G || Oklahoma Tax Commission, 2025 Form 511 packet - Line 15 instructions (Child Care/Child Tax Credit) and Schedule 511-F || Oklahoma Tax Commission, 2025 Form 511 packet - Line 25 instructions and the 2025 Form 538-S 'Claim for Credit/Refund of Sales Tax' included in the packet (line 15, exemptions x $40) || Oklahoma Tax Commission, 2025 Form 511 packet - Line 24 instructions ('Credit for Property Tax Relief') || Oklahoma Tax Commission, 2025 Form 511 packet - Line 29 instructions (Parental Choice Tax Credit for Homeschool Expenses; $1,000 maximum in qualified expenses per eligible student per tax year; Form 591-D)",
      "cadence": "@@3ee0e3830aa8",
      "topic": "credits",
      "url": "@@e539bf5780d4"
@@ -333,7 +332,7 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@622648ef5678",
+     "answers": "2025 Form 511 packet, 'When You Are Finished' / Form 511 mailing line (PO Box 26800, OKC 73126-0800; 'If you owe taxes, provide a check or money order payable to Oklahoma Tax Commission. Do not send cash.') || 2025 Form 511 packet - 'Generally, your return must be postmarked by April 15, 2026' and the DUE DATE section: 'Generally, your Oklahoma income tax return is due April 15th, the same day as your federal return. However: If you file your return electronically (through a preparer or the internet), your due date is extended to April 20th. Any payment of taxes due on April 20th must be remitted electronically in order to be considered timely paid.' If the due date falls on a weekend or legal holiday when OTC offices are closed, the return is due the next business day. A valid federal extension automatically extends the Oklahoma due date if no Oklahoma liability is owed (attach a copy); otherwise request an Oklahoma extension on Form 504-I.",
      "cadence": "@@3ee0e3830aa8",
      "topic": "filing_logistics",
      "url": "@@e539bf5780d4"
@@ -370,13 +369,13 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "@@dd584f58f289",
+     "answers": "2025 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission). Source for: Form 511 line 1 = Federal AGI starting point; Schedule 511-B additions list (no treaty add-back); resident/part-year/nonresident domicile definitions; What's New (poll-worker paid-leave exemption on Schedule 511-C line 6; Electric Vehicle Charging Tax Credit added to Form 511-CR); due date April 15, 2026 (April 20 e-file/e-pay); WHO MUST FILE thresholds; mailing to PO Box 26800, OKC 73126-0800; check payable to Oklahoma Tax Commission; OkTAP at oktap.tax.ok.gov. || 2025 Form 511, Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission) — 'Who Must File?' (p. 4), Part-Year Resident: 'Every part-year resident, during the period of residency, has the same filing requirements as a resident. During the period of nonresidency, an Oklahoma return is also required if the Oklahoma part-year resident has gross income from Oklahoma sources of $1,000 or more. Use Form 511-NR.' || 2025 Form 511, Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission) — 'Who Must File?' (p. 4), Nonresident: 'Except as otherwise provided for in the Pass-Through Entity Tax Equity Act of 2019 (68 OS Sec. 2355.1P-1 et seq.), every nonresident with gross income from Oklahoma sources of $1,000 or more is required to file an Oklahoma income tax return. Use Form 511-NR.' || 2025 Form 511 - Oklahoma Resident Individual Income Tax Forms and Instructions packet (Oklahoma Tax Commission): What's New (poll-worker paid-leave exemption, Schedule 511-C line 6; Electric Vehicle Charging Tax Credit added to Form 511-CR); Form 511 lines 1-14a; line 10 standard deduction instructions ($6,350 Single/MFS, $12,700 MFJ/Qualifying Surviving Spouse, $9,350 Head of Household); line 11 exemptions X $1,000; Top of Form Instructions F EXEMPTIONS (Special 65-or-older federal-AGI limits $15,000/$25,000/$12,500/$19,000; Legally Blind; Dependents); 2025 Oklahoma Income Tax Table pp. 27-38 including the 'Tax Computation Worksheet ... $100,000 or more' constants ($4,562 plus 0.0475 Single/Married Filing Separate; $4,373 plus 0.0475 Married Filing Joint/Head of Household/Qualified Widow(er)); Who Must File; Resident Defined; Due Date; mailing address; check payee; Schedules 511-A/511-B/511-C/511-D/511-E/511-F/511-G; Form 538-S",
      "cadence": "@@3ee0e3830aa8",
      "topic": "forms_and_instructions",
      "url": "@@e539bf5780d4"
     },
     {
-     "answers": "@@a47c3c8ab44b",
+     "answers": "2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, 'F Residency Status' (p. 9): 'Part-Year Resident - If a part-year resident, enter the dates of residency in Oklahoma. If filing a joint return, both must be part-year residents.' || 2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, 'F Residency Status' (p. 9): 'Nonresident - If a nonresident the entire year, enter the state of residence. If filing a joint return, both must be nonresidents the entire year.'",
      "cadence": "@@3ee0e3830aa8",
      "topic": "forms_and_instructions",
      "url": "@@c3dfafc11ad0"
@@ -601,7 +600,7 @@
        "url": "@@e539bf5780d4"
       },
       {
-       "source": "@@a47c3c8ab44b",
+       "source": "2025 Oklahoma Individual Income Tax Forms and Instructions for Nonresidents and Part-Year Residents (Form 511-NR packet: the instructions, the Form 511-NR return and the 2025 tax table) — Top of Form Instructions, 'F Residency Status' (p. 9): 'Part-Year Resident - If a part-year resident, enter the dates of residency in Oklahoma. If filing a joint return, both must be part-year residents.'",
        "url": "@@c3dfafc11ad0"
       }
      ],
