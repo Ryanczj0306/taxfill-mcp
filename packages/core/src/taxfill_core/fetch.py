@@ -58,6 +58,8 @@ __all__ = [
     "inspect_unmapped_blank",
     "load_unmapped_blank",
     "seed_blank",
+    "shipped_pack_conflict",
+    "typed_value_count",
     "unmapped_cache_dir",
 ]
 
@@ -510,6 +512,24 @@ _TITLE_SIZE_QUANTILE = 0.63
 _TITLE_SKIP = frozenset(" \t\r\n -‐‑‒–—―­￾\x02")
 
 
+# ── binding readings of ADR-0002's open questions (Phase K JK16, 2026-10-25) ──────────────────────────────────────
+# ADR-0002 is Proposed: each reading below binds until the user answers its open question, and the answer is a change
+# to that one constant or predicate body.
+#
+# ADR-0002 Open question 14 (partly scanned blanks). Binding reading: refusal rule 9 runs on EVERY page, as the
+# ROADMAP says — a blank with any page that draws content but has no visible text layer is refused (measured in the
+# ADR on the 344 distinct cached blanks: NC D-400 2023 and 2024, UT TC-40 2025). False keeps only the form's first
+# page to the rule; a fill then leaves every widget on a text-less page to hand_write, since its anchor is "none".
+REFUSE_PARTLY_SCANNED = True
+
+
+def revision_dated_accepted(revision_year: int, tax_year: int) -> bool:
+    """ADR-0002 Open question 7 (revision-dated forms). Binding reading: a form whose title block prints only a
+    revision date ("Rev. December 2025") is refused for every tax year until the user accepts a revision-match rule;
+    that rule replaces this body (Phase K JK16, 2026-10-25)."""
+    return False
+
+
 class UnmappedBlankRefused(FetchError):
     """The pack-less fetch refused a blank. ``reason`` names the rule; the message says what to do next."""
 
@@ -542,6 +562,8 @@ class UnmappedBlank:
     kind: str  # "acroform", "acroform_xfa_hybrid", or "flat" (no widget: nothing to fill)
     first_page: FirstPageFacts
     pinned: bool = False
+    jurisdiction: str | None = None  # "federal" or "states/<xx>", as fetched (Phase K JK16: rule 1 and rule 6)
+    expected_title: str | None = None  # the printed name the fetch was asked for (rule 1's name match)
 
     def to_dict(self) -> dict:
         out = asdict(self)
@@ -682,6 +704,12 @@ def _widget_pages(reader) -> list[int]:
     return pages
 
 
+def _has_content(page) -> bool:
+    """Whether the page draws anything at all (a text, image, path, shading or form object); an empty page does not
+    count for rule 9 (ADR-0002: an intentionally blank page is not a scanned one)."""
+    return next(iter(page.get_objects(max_depth=1)), None) is not None
+
+
 def _has_visible_text(page) -> bool:
     """Whether the page draws any text that is not invisible (render mode 3: the layer OCR lays over a scan)."""
     import pypdfium2.raw as pdfium_c
@@ -776,6 +804,8 @@ def _printed_year(block: list[tuple[str, float]], *, page: int, tax_year: int, w
     # Phase K JK14 (2026-10-24): a revision date is classified BEFORE any year comparison, so it is refused the same
     # way for every tax_year — before, "Rev. December 2025" passed for 2025 and was refused for 2024.
     revision = _REVISION_RE.search(text[max(0, at - 32):at])
+    if revision and revision_dated_accepted(year, tax_year):  # ADR-0002 Open question 7 (binding: never)
+        return tax_year
     if revision:
         printed = " ".join((revision.group(0) + str(year)).split())
         raise UnmappedBlankRefused(
@@ -812,6 +842,282 @@ def _printed_year(block: list[tuple[str, float]], *, page: int, tax_year: int, w
             f"the year) and fetch that URL; a rotating 'current' URL may already serve another year",
         )
     return year
+
+
+# ── ADR-0002 rule 1: a shipped pack wins (Phase K JK16, 2026-10-25) ───────────────────────────────────────────────
+
+_JURISDICTION_RE = re.compile(r"^(?:federal|states/[a-z]{2})$")
+_IRS_FILE_SUFFIX = re.compile(r"--(?:\d{4}|dft)$")
+_PACK_INDEX: dict[str, tuple[tuple, list[dict]]] = {}
+
+
+def _check_jurisdiction(jurisdiction: str | None) -> str | None:
+    if jurisdiction is not None and (not isinstance(jurisdiction, str) or not _JURISDICTION_RE.match(jurisdiction)):
+        raise ValueError(f"jurisdiction must be 'federal' or 'states/<two-letter code>' (e.g. 'states/sd'), got "
+                         f"{jurisdiction!r}")
+    return jurisdiction
+
+
+def _is_irs(host: str) -> bool:
+    return host == "irs.gov" or host.endswith(".irs.gov")
+
+
+def _irs_file(url: str) -> str | None:
+    """An irs.gov URL's file name without ".pdf" and a "--<year>" or "--dft" suffix ("f1040"); None off irs.gov."""
+    parsed = urllib.parse.urlparse(url)
+    if not _is_irs((parsed.hostname or "").lower()):
+        return None
+    name = urllib.parse.unquote(parsed.path.rsplit("/", 1)[-1]).lower()
+    name = name[:-4] if name.endswith(".pdf") else name
+    return _IRS_FILE_SUFFIX.sub("", name) or None
+
+
+def _postal(jurisdiction: str | None) -> str | None:
+    return jurisdiction.rsplit("/", 1)[-1].lower() if jurisdiction and jurisdiction.startswith("states/") else None
+
+
+def _strip_name_prefixes(key: str, drops: tuple[str, ...]) -> str:
+    """Drop any of ``drops`` from the front of a normalised name, repeatedly, never emptying it."""
+    changed = True
+    while changed:
+        changed = False
+        for drop in drops:
+            if key.startswith(drop) and len(key) > len(drop):
+                key, changed = key[len(drop):], True
+    return key
+
+
+def _form_name_key(name: str | None, jurisdiction: str | None) -> str:
+    """Rule 1's printed-name comparison: rule 7's normalisation (case, spaces, hyphens and line breaks ignored), with a
+    leading "Form" and the jurisdiction's postal code dropped, so "MA Form 1" and "Form 1" match.
+
+    Phase K JK16 (2026-10-25): the name is normalised FIRST and the prefixes are dropped from the normalised string, so
+    "IL-1040", "IL 1040", "IL1040" and "Form IL 1040" all give "1040" (before, a postal code was dropped only as a
+    separate token, so "Form IL-1040" kept it and "IL 1040" did not, and a re-served IL-1040 passed as "IL 1040")."""
+    if not name:
+        return ""
+    postal = _postal(jurisdiction)
+    key = "".join(ch for ch in name.lower() if ch not in _TITLE_SKIP)
+    return _strip_name_prefixes(key, ("form", postal) if postal else ("form",))
+
+
+# The federal main-form names no state form prints bare: a state prefixes or suffixes its code ("IL-1040", "1040ME",
+# "IT 1040"). A title that is one of them is matched against the federal packs whatever jurisdiction is claimed, so
+# a re-served Form 1040 claimed for a state is still the federal pack's form (Phase K JK16, 2026-10-25).
+_FEDERAL_MAIN_FORMS = frozenset({"1040", "1040sr", "1040nr", "1040x"})
+
+
+def _names_jurisdiction(name: str, jurisdiction: str | None) -> bool:
+    """Whether a printed name carries ``jurisdiction``'s postal code at its front (after a leading "Form"): "IL-1040"
+    and "Form IL 1040" name Illinois whatever jurisdiction the caller claimed."""
+    postal = _postal(jurisdiction)
+    key = _strip_name_prefixes("".join(ch for ch in name.lower() if ch not in _TITLE_SKIP), ("form",))
+    return bool(postal) and key.startswith(postal) and len(key) > len(postal)
+
+
+def _url_key(url: str | None) -> tuple[str, str]:
+    """A URL as rule 1 compares it (Phase K JK16, 2026-10-25): host without "www.", path unquoted and lower-cased;
+    scheme, port, query and fragment ignored, so "?v=2", http and a www. alias of a pack's URL still match it."""
+    parsed = urllib.parse.urlparse(str(url or ""))
+    host = (parsed.hostname or "").lower()
+    host = host[4:] if host.startswith("www.") else host
+    return host, urllib.parse.unquote(parsed.path).lower().rstrip("/")
+
+
+def _shipped_packs() -> list[dict]:
+    """Every shipped pack and hand-fill pack: key, kind, jurisdiction, tax_year, form, source_url, pdf_sha256 and
+    source_status, read from the data tree's formpacks/ (cached while no pack file changes)."""
+    import yaml  # noqa: PLC0415
+
+    from taxfill_core.datadir import formpacks_dir  # noqa: PLC0415
+
+    base = formpacks_dir()
+    paths = sorted([*base.glob("*/*/*/pack.yaml"), *base.glob("*/*/*/*/pack.yaml"),
+                    *base.glob("*/*/*/handfill.yaml"), *base.glob("*/*/*/*/handfill.yaml")]) if base.is_dir() else []
+    signature = tuple((str(path), path.stat().st_mtime_ns) for path in paths)
+    cached = _PACK_INDEX.get(str(base))
+    if cached is not None and cached[0] == signature:
+        return cached[1]
+    loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+    out: list[dict] = []
+    for path in paths:
+        try:
+            data = yaml.load(path.read_text(encoding="utf-8"), Loader=loader)  # noqa: S506 — a safe loader
+        except (OSError, yaml.YAMLError):
+            continue
+        if not isinstance(data, dict):
+            continue
+        out.append({
+            "key": path.parent.name, "kind": "hand-fill" if path.name == "handfill.yaml" else "form",
+            "jurisdiction": data.get("jurisdiction"), "tax_year": data.get("tax_year"), "form": data.get("form"),
+            "source_url": data.get("source_url"), "pdf_sha256": str(data.get("pdf_sha256") or "").lower(),
+            "source_status": data.get("source_status", "final"),
+        })
+    _PACK_INDEX[str(base)] = (signature, out)
+    return out
+
+
+def _irs_draft(url: str) -> bool:
+    parsed = urllib.parse.urlparse(url)
+    return _is_irs((parsed.hostname or "").lower()) and parsed.path.lower().startswith("/pub/irs-dft/")
+
+
+def shipped_pack_conflict(
+    source_url: str,
+    *,
+    tax_year: int,
+    jurisdiction: str | None = None,
+    sha256: str | None = None,
+    form_title: str | None = None,
+) -> UnmappedBlankRefused | None:
+    """ADR-0002 rule 1: the refusal when a shipped or hand-fill pack covers this request, else None.
+
+    Matched: an IRS early-release draft URL (irs.gov/pub/irs-dft/, filled only in core rehearsal mode); the
+    ``source_url`` of a pack of the year, in ANY jurisdiction (host without "www.", path, case; scheme and query
+    ignored); for an irs.gov URL, the file name without "--<year>"/"--dft" against a federal pack of the year, whatever
+    jurisdiction was claimed; a ``sha256`` equal to ANY shipped pack's pdf_sha256; and a ``form_title`` whose printed
+    name equals a pack's (rule 7's normalisation, then a leading "Form" and the postal code dropped) — for a pack of the
+    claimed jurisdiction (a federal pack too when none is claimed), and for a state pack of any other jurisdiction when
+    the title itself names that state's postal code ("IL 1040" claimed for states/in is still Illinois's pack), and
+    for a federal pack under any claim when the title is a federal main form's name ("Form 1040", "1040-X") and no pack
+    of the claimed jurisdiction matched first. The
+    refusal names the pack's form key. Enforced at the fetch and again at every later step (load_unmapped_blank), so
+    fetch and fill both refuse. Phase K JK16 (2026-10-25): the URL, file-name and title matches no longer trust the
+    claimed jurisdiction.
+    """
+    if _irs_draft(source_url):
+        return UnmappedBlankRefused(
+            "irs_draft",
+            f"{source_url} is an IRS early-release draft (irs.gov/pub/irs-dft/): a draft is filled only by a pack in "
+            f"core rehearsal mode, never by the pack-less fallback — wait for the final form at irs.gov/pub/irs-pdf/ "
+            f"and use list_forms to see whether its pack is pinned to it",
+        )
+    file_name = _irs_file(source_url)
+    url_key = _url_key(source_url)
+    main_form = None
+    for pack in _shipped_packs():
+        same_year = pack["tax_year"] == tax_year
+        pack_jurisdiction = pack["jurisdiction"]
+        how = None
+        if same_year and pack["source_url"] and _url_key(pack["source_url"]) == url_key:
+            how = "its source_url"
+        elif sha256 is not None and pack["pdf_sha256"] == sha256.lower():
+            how = "the blank's sha256 (the pack's pinned pdf_sha256)"
+        elif (same_year and file_name is not None and pack_jurisdiction == "federal"
+              and _irs_file(str(pack["source_url"] or "")) == file_name):
+            how = f"the IRS file name {file_name!r}"
+        elif (same_year and form_title
+              and (pack_jurisdiction == jurisdiction
+                   or (jurisdiction is None and pack_jurisdiction == "federal")
+                   or _names_jurisdiction(form_title, pack_jurisdiction))
+              and _form_name_key(form_title, pack_jurisdiction)
+              == _form_name_key(str(pack["form"] or ""), pack_jurisdiction)):
+            how = f"the printed form name ({pack['form']!r})"
+        elif (same_year and form_title and pack_jurisdiction == "federal" and main_form is None
+              and _form_name_key(form_title, None) in _FEDERAL_MAIN_FORMS
+              and _form_name_key(form_title, None) == _form_name_key(str(pack["form"] or ""), None)):
+            main_form = (pack, f"the printed form name ({pack['form']!r}), a federal main form's")
+        if how is None:
+            continue
+        return _shipped_pack_refusal(pack, how)
+    # a bare federal main-form title under a state claim, when no pack of the claimed jurisdiction matched first
+    return _shipped_pack_refusal(*main_form) if main_form is not None else None
+
+
+def _shipped_pack_refusal(pack: dict, how: str) -> UnmappedBlankRefused:
+    """Rule 1's refusal naming ``pack`` and how it matched."""
+    where = f"{pack['jurisdiction']} {pack['tax_year']}"
+    if pack["kind"] == "hand-fill":
+        use = (f"call hand_fill_worksheet('{pack['key']}', {pack['tax_year']}, '{pack['jurisdiction']}') for its "
+               f"worksheet")
+    else:
+        use = f"fetch and fill it with form='{pack['key']}' (jurisdiction '{pack['jurisdiction']}')"
+    planning = ""
+    if pack["kind"] == "form" and (pack["source_status"] == "draft" or _planning_only(pack)):
+        planning = (f" That pack refuses {pack['tax_year']} until the finals are pinned (the year is planning-only "
+                    f"or the pack is mapped from a draft), and the fallback does not route around it.")
+    return UnmappedBlankRefused(
+        "shipped_pack",
+        f"a shipped {pack['kind']} pack covers this form: {where} form key '{pack['key']}' ({pack['form']}) matches "
+        f"by {how} — {use}; the pack-less fallback never stands in for a pack, and no PDF was written.{planning}",
+    )
+
+
+def _planning_only(pack: dict) -> bool:
+    from taxfill_core.knowledge import provisional_marker  # noqa: PLC0415
+
+    return provisional_marker(str(pack["jurisdiction"]), int(pack["tax_year"])) is not None
+
+
+# ── ADR-0002 rule 5: a user-supplied blank holds nothing the user typed (Phase K JK16, 2026-10-25) ────────────────
+
+# A text or choice value made only of these is a printed placeholder some official blanks preset ("0", ".", ", ").
+_PLACEHOLDER_ONLY = re.compile(r"^[\s0\W_]*$")
+
+
+def _terminal_fields(reader) -> list:
+    """Every terminal AcroForm field dict (a /T node whose kids carry no /T), walking /Fields down /Kids."""
+    acroform = reader.trailer["/Root"].get("/AcroForm")
+    acroform = acroform.get_object() if acroform is not None else None
+    roots = acroform.get("/Fields") if acroform is not None else None
+    stack = list(roots.get_object()) if roots is not None else []
+    out, seen = [], set()
+    while stack:
+        node = stack.pop().get_object()
+        if id(node) in seen:
+            continue
+        seen.add(id(node))
+        kids = [k.get_object() for k in (node.get("/Kids") or [])]
+        named = [k for k in kids if k.get("/T") is not None]
+        if named:
+            stack.extend(named)
+        elif node.get("/T") is not None:
+            out.append(node)
+    return out
+
+
+def typed_value_count(reader) -> int:
+    """ADR-0002 rule 5: how many fields that are neither ReadOnly nor calculated carry a /V that differs from their
+    /DV — except a text or choice value made only of zeros, spaces and punctuation. A count, never a value."""
+    from taxfill_core.packbuild import FF_READ_ONLY, _chain  # noqa: PLC0415
+    from taxfill_core.unmapped import calculated_reason  # noqa: PLC0415
+
+    count = 0
+    for node in _terminal_fields(reader):
+        chain = _chain(node)
+
+        def inherited(key, chain=chain):
+            return next((n.get(key) for n in chain if n.get(key) is not None), None)
+
+        ft = inherited("/FT")
+        if int(inherited("/Ff") or 0) & FF_READ_ONLY:
+            continue
+        kids = [k.get_object() for k in (node.get("/Kids") or [])]
+        if any(calculated_reason([*chain, kid] if kid is not node else chain) for kid in kids or [node]):
+            continue
+        value, default = inherited("/V"), inherited("/DV")
+        if value is None:
+            continue
+        if ft == "/Btn":
+            if str(value) != str(default if default is not None else "/Off"):
+                count += 1
+            continue
+        text = " ".join(str(v) for v in value) if isinstance(value, list) else str(value)
+        base = (" ".join(str(v) for v in default) if isinstance(default, list) else str(default)) if default else ""
+        if text != base and not _PLACEHOLDER_ONLY.match(text):
+            count += 1
+    return count
+
+
+def _refuse_typed_values(data: bytes, what: str) -> None:
+    typed = typed_value_count(_open_pdf_bytes(data, what))
+    if typed:
+        raise UnmappedBlankRefused(
+            "typed_values",
+            f"{what} already holds {typed} typed value{'s' if typed != 1 else ''} (a field whose value differs from "
+            f"the blank's default) — it is not a blank. Save the form again from the agency's site without typing "
+            f"into it, and pass that file as local_blank",
+        )
 
 
 def inspect_unmapped_blank(
@@ -875,6 +1181,17 @@ def inspect_unmapped_blank(
                 f"on the agency's forms page for a fillable or text version, or fill the printed form by hand",
             )
         block = _title_block(page)
+        if REFUSE_PARTLY_SCANNED:  # ADR-0002 rule 9 on every page (Open question 14), Phase K JK16 (2026-10-25)
+            for number in range(1, len(doc) + 1):
+                other = doc[number - 1]
+                if number != first and _has_content(other) and not _has_visible_text(other):
+                    raise UnmappedBlankRefused(
+                        "scanned",
+                        f"page {number} of {what} draws content but has no text layer (a scanned image, drawn art, "
+                        f"or only an invisible OCR layer): taxfill reads every page's printed text to anchor values, "
+                        f"so a blank with a page it cannot read is refused — look on the agency's forms page for a "
+                        f"fillable or text version, or fill the printed form by hand",
+                    )
     finally:
         doc.close()
     year = _printed_year(block, page=first, tax_year=tax_year, what=what)
@@ -924,6 +1241,7 @@ def fetch_unmapped_blank(
     cache_dir: str | Path | None = None,
     workspace_root: str | Path | None = None,
     timeout: float = 60.0,
+    jurisdiction: str | None = None,
 ) -> UnmappedBlank:
     """Fetch the blank of a form that has no pack, check it, and record it (Phase K JK14).
 
@@ -936,12 +1254,18 @@ def fetch_unmapped_blank(
             that refuses scripts. It passes the same checks, and the year/title check stands in for a pin. It is
             kept under the year's workspace (``workspace_root``), so ``taxfill purge`` removes it.
         cache_dir: the blank cache; downloads go to its ``unmapped/`` namespace, keyed by sha256.
+        jurisdiction: "federal" or "states/<xx>", recorded with the fetch; rule 1 then also matches a shipped pack of
+            that jurisdiction and year by its printed form name (Phase K JK16).
+
+    Refused before anything is stored (Phase K JK16, 2026-10-25): an IRS draft URL and any blank a shipped or hand-fill
+    pack covers (ADR-0002 rule 1, :func:`shipped_pack_conflict`), and a local blank holding a typed value (rule 5).
 
     Always downloads (a URL can be a rotating "current" slot, and the pack cache trusts any file under a URL when no
     digest is given); never reads or writes a pack's cache entry. Raises :class:`UnmappedBlankRefused` (with a
     ``reason`` and a next step), :class:`OfflineFetchError`, or ValueError for a bad ``tax_year``.
     """
     tax_year = _check_tax_year(tax_year)
+    jurisdiction = _check_jurisdiction(jurisdiction)
     if local_blank is not None:
         _check_unmapped_url(url, allow_pinned_only=True)
         path = user_path(local_blank)
@@ -962,6 +1286,9 @@ def fetch_unmapped_blank(
         origin, directory = "local_blank", _local_blank_dir(workspace_root, tax_year)
     else:
         _check_unmapped_url(url, allow_pinned_only=False)
+        conflict = shipped_pack_conflict(url, tax_year=tax_year, jurisdiction=jurisdiction, form_title=expected_title)
+        if conflict is not None:  # rule 1 before any download
+            raise conflict
         what = url
         data = _unmapped_download(url, timeout)
         if b"%PDF" not in data[:1024]:
@@ -971,18 +1298,26 @@ def fetch_unmapped_blank(
                 f"page; open it in a browser, find the form's PDF link, and pass that",
             )
         origin, directory = "download", unmapped_cache_dir(cache_dir)
+    digest = hashlib.sha256(data).hexdigest()
+    conflict = shipped_pack_conflict(url, tax_year=tax_year, jurisdiction=jurisdiction, sha256=digest,
+                                     form_title=expected_title)
+    if conflict is not None:
+        raise conflict
     page_count, kind, first_page = inspect_unmapped_blank(
         data, tax_year=tax_year, expected_title=expected_title, what=what,
     )
-    digest = hashlib.sha256(data).hexdigest()
+    if origin == "local_blank":
+        _refuse_typed_values(data, what)
     fetched_at = _utc_now()
     stored = _store(directory, data, digest, {
         "source_url": url, "sha256": digest, "fetched_at": fetched_at, "origin": origin, "tax_year": tax_year,
-        "expected_title": expected_title, "page_count": page_count, "kind": kind, "first_page": asdict(first_page),
+        "jurisdiction": jurisdiction, "expected_title": expected_title, "page_count": page_count, "kind": kind,
+        "first_page": asdict(first_page),
     })
     return UnmappedBlank(
         path=stored, sha256=digest, fetched_at=fetched_at, source_url=url, origin=origin, tax_year=tax_year,
-        page_count=page_count, kind=kind, first_page=first_page,
+        page_count=page_count, kind=kind, first_page=first_page, jurisdiction=jurisdiction,
+        expected_title=expected_title,
     )
 
 
@@ -994,16 +1329,21 @@ def load_unmapped_blank(
     expected_title: str | None = None,
     cache_dir: str | Path | None = None,
     workspace_root: str | Path | None = None,
+    jurisdiction: str | None = None,
 ) -> UnmappedBlank:
     """A blank the pack-less fetch stored earlier, by its sha256 — re-checked, never trusted (Phase K JK14).
 
     Looks in the cache's ``unmapped/`` namespace, then under the year's workspace (a local blank). The file must
-    still hash to ``sha256``, a ``source_url`` must match one of its records, and the page checks run again for
-    ``tax_year``: a blank stored for one year is refused for another.
+    still hash to ``sha256``, a ``source_url`` (and a ``jurisdiction``) must match one of its records, and the page
+    checks run again for ``tax_year``: a blank stored for one year is refused for another. Phase K JK16 (2026-10-25):
+    rule 1 (a shipped pack wins) runs again against the record's URL and printed name, and a local blank is checked
+    again for typed values (rule 5), so every step after the fetch refuses what the fetch would.
     """
     tax_year = _check_tax_year(tax_year)
+    jurisdiction = _check_jurisdiction(jurisdiction)
     digest = _validate_sha256(sha256)
-    for directory in (unmapped_cache_dir(cache_dir), _local_blank_dir(workspace_root, tax_year)):
+    local_dir = _local_blank_dir(workspace_root, tax_year)
+    for directory in (unmapped_cache_dir(cache_dir), local_dir):
         path = directory / f"{digest}.pdf"
         if path.is_file():
             break
@@ -1027,18 +1367,32 @@ def load_unmapped_blank(
         fetches = []
     if source_url is not None:
         fetches = [f for f in fetches if f.get("source_url") == source_url]
+    if jurisdiction is not None:
+        fetches = [f for f in fetches if f.get("jurisdiction") == jurisdiction]
     if not fetches:
         raise UnmappedBlankRefused(
             "record_mismatch",
             f"{what} has no record of a fetch" + (f" from {source_url}" if source_url else "")
+            + (f" for {jurisdiction}" if jurisdiction else "")
             + " — fetch it again with fetch_unmapped_blank from the form's official URL",
         )
+    last = fetches[-1]
+    title = expected_title if expected_title is not None else last.get("expected_title")
+    for fetch in fetches:  # rule 1, re-checked at every later step (ADR-0002: JK14 fetch, JK16 fill)
+        conflict = shipped_pack_conflict(
+            str(fetch.get("source_url")), tax_year=tax_year, jurisdiction=jurisdiction or fetch.get("jurisdiction"),
+            sha256=digest, form_title=title if title is not None else fetch.get("expected_title"),
+        )
+        if conflict is not None:
+            raise conflict
     page_count, kind, first_page = inspect_unmapped_blank(
         data, tax_year=tax_year, expected_title=expected_title, what=what,
     )
-    last = fetches[-1]
+    if directory == local_dir:
+        _refuse_typed_values(data, what)
     return UnmappedBlank(
         path=path, sha256=digest, fetched_at=str(last.get("fetched_at", "")), source_url=str(last.get("source_url")),
         origin=str(last.get("origin", "download")), tax_year=tax_year, page_count=page_count, kind=kind,
-        first_page=first_page,
+        first_page=first_page, jurisdiction=jurisdiction or last.get("jurisdiction"),
+        expected_title=title,
     )

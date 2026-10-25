@@ -1468,8 +1468,15 @@ def test_jt0a_a_draft_pack_passes_the_golden_test_in_rehearsal_mode(tmp_path: Pa
     result = fill_form(pack, values, blank, filled, rehearsal=True)
     assert result.rehearsal and any(REHEARSAL_STAMP in w for w in result.warnings)
     from pypdf import PdfReader  # noqa: PLC0415
-    annots = [a.get_object() for a in (PdfReader(str(filled)).pages[0].get("/Annots") or [])]
-    assert any(a.get("/Subtype") == "/FreeText" and REHEARSAL_STAMP in str(a.get("/Contents")) for a in annots)
+
+    from taxfill_core.stamp import stamp_check  # noqa: PLC0415
+    # Phase K JK16 (2026-10-25; ADR-0002 Open question 6): the stamp is drawn into every page's content stream, where
+    # it prints (the print-path render shows its ink) — no longer a FreeText annotation that never printed.
+    reader = PdfReader(str(filled))
+    annots = [a.get_object() for page in reader.pages for a in (page.get("/Annots") or [])]
+    assert not [a for a in annots if a.get("/Subtype") == "/FreeText"]
+    check = stamp_check(filled, REHEARSAL_STAMP)
+    assert check["ok"] and len(check["pages"]) == len(reader.pages), check
     report = verify_form(pack, filled, expected=values, rehearsal=True)
     _assert_section_clean(report.assertions, "assertion diff")
     with pytest.raises(ValueError, match="only for a DRAFT pack"):

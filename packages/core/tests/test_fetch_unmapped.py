@@ -41,6 +41,7 @@ from taxfill_core.fetch import (
     fetch_unmapped_blank,
     inspect_unmapped_blank,
     load_unmapped_blank,
+    shipped_pack_conflict,
 )
 
 REPO = Path(__file__).resolve().parents[3]
@@ -450,6 +451,208 @@ def test_tax_year_is_checked():
         fetch_unmapped_blank(URL, tax_year="2025")  # type: ignore[arg-type]
 
 
+# ── Phase K JK16 (2026-10-25): rule 1 (a shipped pack wins), rule 5's typed values, rule 9 on every page ─────────
+
+F1040_2025 = "https://www.irs.gov/pub/irs-prior/f1040--2025.pdf"  # formpacks/federal/2025/f1040's source_url
+
+
+def test_rule_1_refuses_a_shipped_pack_url_before_downloading(opener, cache):
+    fake = opener({F1040_2025: [_form_pdf()]})
+    err = _refused("shipped_pack", fetch_unmapped_blank, F1040_2025, tax_year=2025, cache_dir=cache)
+    assert "form key 'f1040'" in str(err) and "form='f1040'" in str(err) and "no PDF was written" in str(err)
+    assert fake.seen == [] and not (cache / "unmapped").exists()
+
+
+def test_rule_1_matches_an_irs_file_name_and_refuses_irs_drafts(opener, cache):
+    fake = opener({})
+    # the final posted at irs-pdf/ matches the pack pinned at irs-prior/ by file name, though not by URL
+    err = _refused("shipped_pack", fetch_unmapped_blank, "https://www.irs.gov/pub/irs-pdf/f1040.pdf", tax_year=2025,
+                   cache_dir=cache)
+    assert "file name 'f1040'" in str(err)
+    err = _refused("irs_draft", fetch_unmapped_blank, "https://www.irs.gov/pub/irs-dft/f1040--dft.pdf", tax_year=2026,
+                   cache_dir=cache)
+    assert "irs-dft" in str(err) and "rehearsal" in str(err)
+    assert fake.seen == []
+
+
+def test_rule_1_matches_the_printed_form_name_in_the_jurisdiction(opener, cache):
+    url = "https://www.mass.example.gov/forms/form-1.pdf"
+    fake = opener({url: [_form_pdf(title="Form 1")]})
+    # "Form 1" and the pack's "MA Form 1" match once the leading "Form" and the postal code are dropped
+    err = _refused("shipped_pack", fetch_unmapped_blank, url, tax_year=2025, expected_title="Form 1",
+                   jurisdiction="states/ma", cache_dir=cache)
+    assert "'form1'" in str(err) and "printed form name" in str(err) and fake.seen == []
+    # another jurisdiction's form of the same name is not that pack
+    assert fetch_unmapped_blank(url, tax_year=2025, expected_title="Form 1", jurisdiction="states/sd",
+                                cache_dir=cache).jurisdiction == "states/sd"
+    with pytest.raises(ValueError, match="jurisdiction must be"):
+        fetch_unmapped_blank(url, tax_year=2025, jurisdiction="MA", cache_dir=cache)
+
+
+IL_1040_2025 = ("https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/"
+                "il-1040.pdf")  # formpacks/states/il/2025/il1040's source_url; its printed name is "Form IL-1040"
+IL_OTHER = "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2025/individual/il-1040.pdf"
+
+
+@pytest.mark.parametrize("title", ["IL-1040", "IL 1040", "IL1040", "Form IL 1040", "form il-1040", "1040"])
+def test_rule_1_the_printed_name_is_normalised_before_its_prefixes_are_dropped(title):
+    # Phase K JK16 (2026-10-25): "IL 1040" used to keep "1040" while the pack's "Form IL-1040" kept "il1040", so a
+    # byte-different re-serve of the IL-1040 from another URL passed the fetch and was filled
+    err = shipped_pack_conflict(IL_OTHER, tax_year=2025, jurisdiction="states/il", form_title=title)
+    assert err is not None and err.reason == "shipped_pack" and "'il1040'" in str(err) and "printed form name" in str(err)
+
+
+@pytest.mark.parametrize("jurisdiction", ["states/in", "federal", None])
+def test_rule_1_does_not_trust_the_claimed_jurisdiction(jurisdiction):
+    # a title that names Illinois is Illinois's pack whatever jurisdiction was claimed (or none)
+    for title in ("IL-1040", "IL 1040", "Form IL 1040"):
+        err = shipped_pack_conflict(IL_OTHER, tax_year=2025, jurisdiction=jurisdiction, form_title=title)
+        assert err is not None and "'il1040'" in str(err), (title, jurisdiction)
+    # the pack's own URL in any jurisdiction, and with a query, http or a www. alias
+    for url in (IL_1040_2025, IL_1040_2025 + "?v=2", IL_1040_2025.replace("https://tax.", "https://www.tax.")):
+        err = shipped_pack_conflict(url, tax_year=2025, jurisdiction=jurisdiction)
+        assert err is not None and "its source_url" in str(err), (url, jurisdiction)
+    # an irs.gov file name is the federal pack's whatever was claimed
+    err = shipped_pack_conflict("https://www.irs.gov/pub/irs-pdf/f1040.pdf", tax_year=2025, jurisdiction=jurisdiction)
+    assert err is not None and "file name 'f1040'" in str(err)
+
+
+@pytest.mark.parametrize("jurisdiction", ["states/in", "states/sd", "states/ca"])
+@pytest.mark.parametrize("title, key", [("Form 1040", "f1040"), ("1040", "f1040"), ("Form 1040-X", "f1040x"),
+                                        ("1040-NR", "f1040nr")])
+def test_rule_1_a_federal_main_form_title_is_federal_whatever_state_is_claimed(title, key, jurisdiction):
+    # the JK16 re-verify: a byte-different Form 1040 served from another host passed when claimed for a state; a
+    # bare federal main-form name is printed by no state form, so it matches the federal pack under any claim
+    err = shipped_pack_conflict(URL, tax_year=2025, jurisdiction=jurisdiction, form_title=title)
+    assert err is not None and f"form key '{key}'" in str(err) and "printed form name" in str(err)
+
+
+def test_rule_1_the_claimed_jurisdictions_own_pack_is_named_before_the_federal_main_form():
+    # "Form 1040" claimed for Illinois is Illinois's IL-1040 (its name less the postal code), named first
+    err = shipped_pack_conflict(URL, tax_year=2025, jurisdiction="states/il", form_title="Form 1040")
+    assert err is not None and "form key 'il1040'" in str(err)
+
+
+def test_rule_1_a_title_that_names_no_shipped_pack_still_passes():
+    for title, jurisdiction in (("DEMO-1", "states/in"), ("IN DEMO-1", "states/il"), ("Form 1", "states/sd"),
+                                ("IL-1040", "states/il"), ("Form 1040ME", "states/ct"), ("IT 1040", "states/in"),
+                                ("Form 1040-ES (DEMO)", "states/sd")):
+        tax_year = 2019 if title == "IL-1040" else 2025  # no IL pack for 2019: the name match is per year
+        assert shipped_pack_conflict(URL, tax_year=tax_year, jurisdiction=jurisdiction, form_title=title) is None
+
+
+def test_rule_1_wrong_jurisdiction_is_refused_at_the_fetch(opener, cache):
+    fake = opener({IL_OTHER: [_form_pdf(title="IL-1040")]})
+    err = _refused("shipped_pack", fetch_unmapped_blank, IL_OTHER, tax_year=2025, expected_title="IL 1040",
+                   jurisdiction="states/in", cache_dir=cache)
+    assert "'il1040'" in str(err) and fake.seen == [] and not (cache / "unmapped").exists()
+
+
+def test_rule_1_matches_a_pack_digest_and_is_rechecked_when_loaded(opener, cache, tmp_path, monkeypatch):
+    data = _form_pdf()
+    opener({URL: [data]})
+    stored = fetch_unmapped_blank(URL, tax_year=2025, cache_dir=cache)
+    # a pack ships later whose pinned blank is these very bytes: every later step refuses the stored copy
+    root = tmp_path / "data"
+    (root / "knowledge").mkdir(parents=True)
+    pack_dir = root / "formpacks" / "states" / "sd" / "2025" / "demo1"
+    pack_dir.mkdir(parents=True)
+    (pack_dir / "pack.yaml").write_text(
+        f"form: DEMO-1\njurisdiction: states/sd\ntax_year: 2025\nsource_url: https://other.example.gov/d.pdf\n"
+        f"pdf_sha256: {hashlib.sha256(data).hexdigest()}\n", encoding="utf-8")
+    monkeypatch.setenv("TAXFILL_DATA_DIR", str(root))
+    err = _refused("shipped_pack", load_unmapped_blank, stored.sha256, tax_year=2025, cache_dir=cache)
+    assert "'demo1'" in str(err) and "sha256" in str(err)
+    _refused("shipped_pack", fetch_unmapped_blank, URL, tax_year=2025, cache_dir=cache)
+
+
+def _with_values(data: bytes, values: dict, *, read_only: bool = False) -> bytes:
+    from pypdf.generic import NumberObject, TextStringObject
+
+    writer = PdfWriter(clone_from=io.BytesIO(data))
+    for ref in writer._root_object["/AcroForm"]["/Fields"]:
+        node = ref.get_object()
+        if str(node.get("/T")) in values:
+            node[NameObject("/V")] = TextStringObject(values[str(node["/T"])])
+            if read_only:
+                node[NameObject("/Ff")] = NumberObject(1)
+    out = io.BytesIO()
+    writer.write(out)
+    return out.getvalue()
+
+
+def test_rule_5_a_local_blank_holding_a_typed_value_is_refused_with_a_count(tmp_path):
+    root, saved = tmp_path / "ws", tmp_path / "saved.pdf"
+    saved.write_bytes(_with_values(_form_pdf(), {"line1": "Demo Filer"}))
+    err = _refused("typed_values", fetch_unmapped_blank, URL, tax_year=2025, local_blank=saved, workspace_root=root,
+                   cache_dir=tmp_path / "cache")
+    assert "holds 1 typed value" in str(err) and "Demo Filer" not in str(err)
+    assert not root.exists()
+    # placeholders some official blanks preset ("0", ".", ", ") and ReadOnly fields are not typed values
+    for placeholder in ("0", ".", ", ", "0.00"):
+        saved.write_bytes(_with_values(_form_pdf(), {"line1": placeholder}))
+        fetch_unmapped_blank(URL, tax_year=2025, local_blank=saved, workspace_root=root, cache_dir=tmp_path / "c")
+    saved.write_bytes(_with_values(_form_pdf(), {"line1": "Demo Filer"}, read_only=True))
+    fetch_unmapped_blank(URL, tax_year=2025, local_blank=saved, workspace_root=root, cache_dir=tmp_path / "c")
+
+
+def test_rule_5_is_rechecked_when_a_stored_local_blank_is_loaded(tmp_path):
+    root, saved = tmp_path / "ws", tmp_path / "saved.pdf"
+    saved.write_bytes(_form_pdf())
+    blank = fetch_unmapped_blank(URL, tax_year=2025, local_blank=saved, workspace_root=root, cache_dir=tmp_path / "c")
+    typed = _with_values(blank.path.read_bytes(), {"line1": "Demo Filer"})
+    digest = hashlib.sha256(typed).hexdigest()
+    (blank.path.parent / f"{digest}.pdf").write_bytes(typed)
+    (blank.path.parent / f"{digest}.json").write_text(
+        (blank.path.parent / f"{blank.sha256}.json").read_text().replace(blank.sha256, digest))
+    _refused("typed_values", load_unmapped_blank, digest, tax_year=2025, workspace_root=root, cache_dir=tmp_path / "c")
+
+
+def _two_pages(second: str) -> bytes:
+    """The demo form plus a second page that is ``second``: "text", "image" (a scan: an image, no text), "paths"
+    (drawn art, no text), or "empty"."""
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter)
+    c.setFont("Helvetica", 12)
+    c.drawString(72, 750, "Form DEMO-1  Demo Individual Income Tax Return")
+    c.setFont("Helvetica-Bold", 28)
+    c.drawString(420, 720, "2025")
+    c.acroForm.textfield(name="line1", x=220, y=410, width=144, height=18, fieldFlags="")
+    c.showPage()
+    if second == "text":
+        c.setFont("Helvetica", 10)
+        c.drawString(72, 700, "Page 2 instructions")
+    elif second == "image":
+        from PIL import Image
+
+        c.drawInlineImage(Image.new("L", (60, 60), 128), 72, 500, width=300, height=300)
+    elif second == "paths":
+        c.rect(72, 500, 300, 100)
+    c.showPage()
+    c.save()
+    return buf.getvalue()
+
+
+def test_rule_9_refuses_a_blank_with_any_text_less_page(monkeypatch):
+    # ADR-0002 Open question 14's binding reading: every page with content must carry a visible text layer
+    for second in ("image", "paths"):
+        err = _refused("scanned", inspect_unmapped_blank, _two_pages(second), tax_year=2025)
+        assert "page 2" in str(err)
+    for second in ("text", "empty"):
+        assert inspect_unmapped_blank(_two_pages(second), tax_year=2025)[0] == 2
+    # the user's other answer is the one constant: only the form's first page is then held to the rule
+    monkeypatch.setattr(fetch_mod, "REFUSE_PARTLY_SCANNED", False)
+    assert inspect_unmapped_blank(_two_pages("image"), tax_year=2025)[0] == 2
+
+
+def test_q7_revision_dated_forms_stay_refused_through_one_predicate(monkeypatch):
+    revision = _form_pdf(before_year="(Rev. December")
+    _refused("revision_dated", inspect_unmapped_blank, revision, tax_year=2025)
+    assert fetch_mod.revision_dated_accepted(2025, 2025) is False
+    monkeypatch.setattr(fetch_mod, "revision_dated_accepted", lambda revision_year, tax_year: True)
+    assert inspect_unmapped_blank(revision, tax_year=2025)[2].printed_year == 2025
+
+
 # ── real 2025 pack blanks (network-marked: read from the shared cache) ────────────────────────────────────────
 
 
@@ -479,12 +682,21 @@ def test_real_2025_blanks_pass_and_are_refused_for_2024(rel, title):
 
 
 @pytest.mark.network
-def test_a_real_2024_blank_in_the_namespace_is_refused_for_2025(opener, cache):
+def test_a_real_pack_blank_is_refused_by_rule_1_however_it_arrives(opener, cache, tmp_path):
+    # Phase K JK16 (2026-10-25): JK14's "a real 2024 blank in the namespace is refused for 2025" reached the
+    # namespace through fetch_unmapped_blank, which now refuses every shipped pack's blank (ADR-0002 rule 1); the
+    # wrong-year path is held offline by test_a_wrong_year_blank_already_in_the_namespace_is_refused.
     data, url = _pack_bytes("federal/2024/f1040")
-    opener({url: [data]})
-    stored = fetch_unmapped_blank(url, tax_year=2024, expected_title="1040", cache_dir=cache)
-    err = _refused("wrong_year", load_unmapped_blank, stored.sha256, tax_year=2025, source_url=url, cache_dir=cache)
-    assert "is the 2024 form, not 2025" in str(err)
+    fake = opener({url: [data], URL: [data]})
+    err = _refused("shipped_pack", fetch_unmapped_blank, url, tax_year=2024, expected_title="1040", cache_dir=cache)
+    assert "'f1040'" in str(err) and "source_url" in str(err) and fake.seen == []  # refused before any download
+    err = _refused("shipped_pack", fetch_unmapped_blank, URL, tax_year=2024, cache_dir=cache)  # another URL, same bytes
+    assert "sha256" in str(err) and "'f1040'" in str(err)
+    local = tmp_path / "saved.pdf"
+    local.write_bytes(data)
+    _refused("shipped_pack", fetch_unmapped_blank, URL, tax_year=2024, local_blank=local, cache_dir=cache,
+             workspace_root=tmp_path / "ws")
+    assert not (cache / "unmapped").exists()
 
 
 @pytest.mark.network

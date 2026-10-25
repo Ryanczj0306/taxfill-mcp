@@ -330,3 +330,125 @@ def _split_into_hierarchy(writer: PdfWriter, names: set[str]) -> None:
         new_fields.append(ancestor_refs[0])
         acroform[NameObject("/Fields")] = new_fields
         fields_arr = new_fields
+
+
+# ── Phase K JK16 (2026-10-25): synthetic demo returns for the pack-less fill ───────────────────────────────────────
+
+DEMO_BOX_X = 470.0
+
+
+def demo_rows(rows, *, page: int = 1, top: float = 640.0, pitch: float = 24.0):
+    """IRS-style printed rows: a gutter number, a caption, dot leaders, the number again beside an amount box.
+
+    ``rows``: ``(number, caption, field name or None[, field spec overrides])``. Returns ``(texts, fields)`` for
+    :func:`make_acroform_pdf`.
+    """
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+
+    texts, fields = [], []
+    for i, row in enumerate(rows):
+        num, caption, name = row[:3]
+        extra = row[3] if len(row) > 3 else {}
+        y = top - i * pitch
+        texts.append((page, 40, y, num))
+        texts.append((page, 60, y, caption))
+        start = 60 + stringWidth(caption, "Helvetica", 9) + 3
+        end = DEMO_BOX_X - 22
+        texts.append((page, start, y, "." * max(int((end - start) / stringWidth(".", "Helvetica", 9)), 3)))
+        texts.append((page, DEMO_BOX_X - 18, y, num))
+        if name:
+            fields.append({"name": name, "page": page, "x": DEMO_BOX_X, "y": y - 4, "width": 90, "height": 14,
+                           **extra})
+    return texts, fields
+
+
+def make_demo_return(
+    out_path: str | Path,
+    *,
+    form: str = "DEMO-1",
+    year: str = "2025",
+    pages: int = 1,
+    texts: list[tuple] | None = None,
+    fields: list[dict[str, Any]] | None = None,
+    edits: dict[str, dict[str, Any]] | None = None,
+) -> Path:
+    """A synthetic demo return: page 1 prints "Form <form>" and the tax year at title size (the fetch's rule 7), each
+    later page a small running header; ``texts`` and ``fields`` as for :func:`make_acroform_pdf`, then
+    :func:`edit_widgets` applies ``edits``. Demo values only: no person, no real figures."""
+    printed = [(1, 72, 750, f"Form {form}  Demo Individual Income Tax Return", 12), (1, 430, 718, year, 28),
+               *[(p, 72, 760, f"Form {form} ({year})  Page {p}", 8) for p in range(2, pages + 1)], *(texts or [])]
+    path = make_acroform_pdf(out_path, fields or [], texts=printed, draw_labels=False)
+    if edits:
+        edit_widgets(path, edits)
+    return path
+
+
+def _js(script: str) -> DictionaryObject:
+    from pypdf.generic import TextStringObject as _T
+
+    return DictionaryObject({NameObject("/S"): NameObject("/JavaScript"), NameObject("/JS"): _T(script)})
+
+
+def edit_widgets(path: str | Path, edits: dict[str, dict[str, Any]]) -> Path:
+    """Post-pass over a fixture's flat fields, by field name. Each edit may carry:
+
+    - ``aa``: ``{"C": script, "F": script, ...}`` — an /AA dictionary of JavaScript actions (a calculated total is
+      ``{"C": "AFSimple_Calculate(...)"}``; a format-only box ``{"F": "AFNumber_Format(0, 0, 0, 0, '', true);"}``);
+    - ``ff``: bits OR-ed into the field's /Ff (1 ReadOnly, 1 << 16 pushbutton with ``ft: "/Btn"``);
+    - ``f``: the widget's annotation flags /F (2 Hidden, 4 Print, 32 NoView);
+    - ``ft``: replace /FT ("/Sig" for a signature widget, "/Btn" with the pushbutton bit for a pushbutton);
+    - ``options``: a combo-box choice field with these /Opt export values;
+    - ``rect``: replace the widget's /Rect (a page-covering viewer guard);
+    - ``merge``: True on a name given to several flat fields — one field dict with the widgets as /T-less kids.
+    """
+    from pypdf.generic import NumberObject, RectangleObject
+    from pypdf.generic import TextStringObject as _T
+
+    path = Path(path)
+    writer = PdfWriter(clone_from=str(path))
+    acroform = writer._root_object["/AcroForm"].get_object()
+    merged: dict[str, Any] = {}
+    for page in writer.pages:
+        for ref in page.get("/Annots", []):
+            annot = ref.get_object()
+            name = str(annot.get("/T")) if annot.get("/T") is not None else None
+            edit = edits.get(name or "")
+            if not edit:
+                continue
+            if "aa" in edit:
+                annot[NameObject("/AA")] = DictionaryObject(
+                    {NameObject(f"/{k}"): _js(v) for k, v in edit["aa"].items()})
+            if "ff" in edit:
+                annot[NameObject("/Ff")] = NumberObject(int(annot.get("/Ff", 0)) | edit["ff"])
+            if "f" in edit:
+                annot[NameObject("/F")] = NumberObject(edit["f"])
+            if "ft" in edit:
+                annot[NameObject("/FT")] = NameObject(edit["ft"])
+            if "options" in edit:
+                annot[NameObject("/FT")] = NameObject("/Ch")
+                annot[NameObject("/Ff")] = NumberObject(1 << 17)  # combo
+                annot[NameObject("/Opt")] = ArrayObject([_T(o) for o in edit["options"]])
+                annot.pop(NameObject("/MaxLen"), None)
+            if "rect" in edit:
+                annot[NameObject("/Rect")] = RectangleObject(edit["rect"])
+            if edit.get("merge"):
+                parent_ref = merged.get(name)
+                if parent_ref is None:
+                    parent = DictionaryObject({NameObject("/T"): _T(name), NameObject("/Kids"): ArrayObject()})
+                    for key in ("/FT", "/Ff", "/V", "/DA", "/MaxLen", "/AA"):
+                        if key in annot:
+                            parent[NameObject(key)] = annot.raw_get(key)
+                    parent_ref = merged[name] = writer._add_object(parent)
+                    acroform[NameObject("/Fields")] = ArrayObject(
+                        [*(f for f in acroform["/Fields"] if f.get_object() is not annot), parent_ref])
+                else:
+                    acroform[NameObject("/Fields")] = ArrayObject(
+                        [f for f in acroform["/Fields"] if f.get_object() is not annot])
+                for key in ("/T", "/FT", "/Ff", "/V", "/DA", "/MaxLen", "/AA"):
+                    if key in annot:
+                        del annot[key]
+                annot[NameObject("/Parent")] = parent_ref
+                parent_ref.get_object()["/Kids"].append(ref)
+    with path.open("wb") as fh:
+        writer.write(fh)
+    return path

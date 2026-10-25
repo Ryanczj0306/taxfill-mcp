@@ -384,9 +384,15 @@ def _render_money(pf: PackField, value: object) -> tuple[str, str | None]:
     Renders a plain integer string: no commas, no '$', no cents. IRS rule:
     50 cents or more rounds up (away from zero), under 50 cents rounds down.
     """
+    return whole_dollars(value, f"line '{pf.line}'")
+
+
+def whole_dollars(value: object, what: str) -> tuple[str, str | None]:
+    """IRS whole-dollar rounding of ``value``, as :func:`_render_money` applies it; ``what`` names the target in the
+    messages ("line '1a'"). Extracted unchanged so the pack-less fill (Phase K JK16) renders money the same way."""
     if isinstance(value, bool) or not isinstance(value, (int, float, Decimal)):
         raise ValueError(
-            f"line '{pf.line}' is a money field — pass int, float or Decimal "
+            f"{what} is a money field — pass int, float or Decimal "
             f"(got {type(value).__name__}); strip any '$' or ',' and resubmit a plain number"
         )
     try:
@@ -403,13 +409,13 @@ def _render_money(pf: PackField, value: object) -> tuple[str, str | None]:
             rounded = abs(rounded)
     except InvalidOperation:
         raise ValueError(
-            f"line '{pf.line}': {redact(repr(value))} cannot be rendered as a whole-dollar amount — "
+            f"{what}: {redact(repr(value))} cannot be rendered as a whole-dollar amount — "
             f"pass a finite number of dollars (e.g. 1234.56)"
         ) from None
     warning = None
     if rounded != exact:
         warning = (
-            f"line '{pf.line}': rounded {exact} to {rounded} "
+            f"{what}: rounded {exact} to {rounded} "
             f"(IRS whole-dollar rounding: 50 cents or more rounds up)"
         )
     return str(rounded), warning
@@ -1254,6 +1260,9 @@ def _and(names: Sequence[str]) -> str:
 
 
 REHEARSAL_STAMP = "REHEARSAL — DRAFT FORM — NOT FOR FILING"
+# KG5 (Phase K JK16, 2026-10-25): every page of every PDF the pack-less fallback writes carries this stamp, drawn into
+# the content stream (taxfill_core.stamp); no parameter turns it off.
+UNMAPPED_STAMP = "UNMAPPED DRAFT \u2014 NOT FILING-GRADE"
 
 
 def rehearsal_only(pack: FormPack) -> bool:
@@ -1524,14 +1533,13 @@ def fill_form(
     _drop_xfa(writer)
 
     if rehearsal:
-        from pypdf.annotations import FreeText  # noqa: PLC0415
+        # Phase K JK16 (2026-10-25; ADR-0002 Open question 6): the stamp is drawn into each page's content stream,
+        # inside the visible box and clear of every drawable annotation, so it prints and no viewer can delete it.
+        # It was a pypdf FreeText annotation with no Print flag, placed from the MediaBox top. Placed after the P-027
+        # pass, so a viewer guard hidden there does not count as covering it.
+        from taxfill_core.stamp import draw_stamp  # noqa: PLC0415
 
-        for index, page in enumerate(writer.pages):
-            top = float(page.mediabox.top)
-            writer.add_annotation(page_number=index, annotation=FreeText(
-                text=REHEARSAL_STAMP, rect=(36, top - 30, 420, top - 12), font="Helvetica", bold=True,
-                font_size="11pt", font_color="cc0000", border_color=None, background_color=None,
-            ))
+        draw_stamp(writer, blank_pdf, REHEARSAL_STAMP, what=f"{pack.form} {pack.tax_year}")
         warnings.append(f"{REHEARSAL_STAMP}: drafts-first rehearsal of {pack.form} {pack.tax_year} "
                         f"(draft Created {pack.draft_created}).")
 
