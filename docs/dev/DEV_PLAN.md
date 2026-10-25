@@ -133,7 +133,7 @@ mailing:
   verify_url: "https://www.irs.gov/filing/..."
 ```
 
-Blank PDFs (IRS and state DOR) are **downloaded at runtime** from official URLs and checksum-verified — never vendored in the repo.
+Blank PDFs (IRS and state DOR) are **downloaded at runtime** from official URLs and checksum-verified for a form with a pack (a form with no pack has its checksum recorded, not pinned; ADR-0002) — never vendored in the repo.
 
 **Drafts-first (Phase J JT0a).** A pack authored before its year's finals post carries `source_status: draft`,
 `draft_created` (the draft footer's `Created <date>`) and an `irs.gov/pub/irs-dft/` URL; it may exist only in a
@@ -175,7 +175,7 @@ Tax law moves faster than any shipped knowledge pack. Example: the One Big Beaut
 | `residency(profile)` | federal NRA/RA/dual-status per SPT + exempt-individual years, with day-count work shown |
 | `state_scope(profile, year)` | which states to file, role, forms, candidate benefits |
 | `list_forms(jurisdiction?, year?)` / `get_form_map(form, year)` | discover packs; line→field map + relations |
-| `fetch_blank(form, year)` | download official PDF, checksum-verify, return path |
+| `fetch_blank(form, year)` | download official PDF, checksum-verify against its pack (`form="unmapped"`: sha256 recorded, not pinned), return path |
 | `fill_form(form, year, values, out_path)` | deterministic fill; comb/format handling; rejects unknown lines |
 | `verify_form(path, expected?, baseline?)` | assertion diff, relation math, clipping scan, unanswered-required-checkbox audit, regression diff vs baseline |
 | `verify_filing(paths[])` | cross-form identity + inter-form relations across the whole filing (federal + state) |

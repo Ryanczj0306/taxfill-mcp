@@ -4,7 +4,7 @@
 
 ![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange)
 ![CI](https://github.com/Ryanczj0306/taxfill-mcp/actions/workflows/ci.yml/badge.svg)
-![Tests: 15,385 passing](https://img.shields.io/badge/tests-15%2C385%20passing-brightgreen)
+![Tests: 15,487 passing](https://img.shields.io/badge/tests-15%2C487%20passing-brightgreen)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 > [!WARNING]
@@ -23,8 +23,9 @@ The AI interviews and reasons with you; taxfill does the arithmetic, PDF field m
 - **The last mile, done.** A plain-language bottom line, then a personal pay / print / sign / mail checklist.
 - **Private and free.** taxfill runs on your computer and sends nothing about you anywhere: no cloud, no accounts, no
   telemetry. Its only download is blank forms from the tax agencies' own sites (or an exact Internet Archive copy when a state
-  site blocks scripts), checksum-verified. Your AI assistant does see the documents and answers you give it, under its
-  provider's data policy; taxfill masks SSN-shaped values in its own error messages.
+  site blocks scripts), checksum-verified for a form with a pack (a form with no pack has its checksum recorded, not
+  pinned). Your AI assistant does see the documents and answers you give it, under its provider's data policy; taxfill
+  masks SSN-shaped values in its own error messages.
 
 ## Quickstart
 

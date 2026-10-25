@@ -145,7 +145,8 @@ An abbreviated, synthetic walkthrough (a hypothetical filer with demo numbers: a
   anywhere. Your **AI assistant** is a different matter: it reads the documents and answers you give it (a cloud model
   unless you run a local one), under its provider's data policy — decide what to share with it accordingly.
 - **The only internet access** is downloading blank tax forms from the tax agencies' own sites — or, when a state site
-  blocks scripted downloads, an exact Internet Archive copy of that same URL — checksum-verified either way.
+  blocks scripted downloads, an exact Internet Archive copy of that same URL — checksum-verified either way for a form
+  with a pack (a form with no pack has its checksum recorded, not pinned, and no archive copy is used).
 - **No telemetry, no accounts, no uploads.** The tool keeps no logs of its own.
 - **Errors are redacted.** Identifier-shaped content (SSN/ITIN patterns, long digit runs) is masked before any error echoes a value — in the engine's own errors AND the CLI, because tool errors land in your agent's transcript.
 - **Tool results carry absolute local paths.** `fetch_blank`, `fill_form` and the workspace tools return each file's full path, home folder included, because your agent hands it to its own file tools (many accept only absolute paths), so review a transcript before you share it; an error that only mentions a file shows your home folder as `~`, and any path you type may start with `~/`.

@@ -106,9 +106,9 @@ UNMAPPED_VERDICT_LIMITS: list[str] = [
     "compared.",
     "No P-003 required-checkbox audit: an unanswered required box is not found.",
     "No revision pin: the blank is named by its sha256 only, and its revision was not reviewed.",
-    "Form scripts and XFA bindings did not run: calculated boxes and boxes with a custom format script stay blank "
-    "(hand_write), a box with a standard Acrobat format holds its value unformatted, and nothing the form would "
-    "compute was checked.",
+    "Form scripts and XFA bindings did not run: calculated boxes and boxes with a custom format script are not "
+    "written (hand_write) and keep whatever the blank prints there, such as a default 0; a box with a standard "
+    "Acrobat format holds its value unformatted; nothing the form would compute was checked.",
     f"Every value is {VALUE_LABEL}: ok removes no label, and a recompute match changes none.",
     "ok means only that the checks listed in sections passed on this file; the draft is never filing-grade.",
 ]

@@ -17,7 +17,7 @@ A few ground rules up front:
   draft; the human reviews, signs, and files on paper. There is no e-filing, by design.
   Contributions must never weaken this framing.
 - **Privacy is a feature:** 100% local, no telemetry, the only outbound traffic is
-  downloading blank forms from the tax agencies' own sites (or, when a state site blocks scripted downloads, an exact Internet Archive copy of that same URL), checksum-verified either way.
+  downloading blank forms from the tax agencies' own sites (or, when a state site blocks scripted downloads, an exact Internet Archive copy of that same URL), checksum-verified either way for a form with a pack (a form with no pack has its checksum recorded, not pinned).
 - Be kind. Reviews focus on correctness and data quality, not on people.
 
 ## Ways to contribute (ordered by leverage)

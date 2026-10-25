@@ -96,7 +96,23 @@ flat vs graduated is the pack's call and moves by year, so never
 assume and never compute a state tax line yourself. State KNOWLEDGE spans
 2023-2025; state FORM packs cover TY2023 for all 42 jurisdictions, then
 TY2024 for **41** (AL, AR, AZ, CA, CO, CT, DC, DE, GA, HI, IA, ID, IL, IN, KS, KY, LA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NJ, NM, NY, OH, OK, OR, PA, RI, SC, UT, VA, VT, WI, WV) and TY2025 for **42** (AL, AR, AZ, CA, CO, CT, DC, DE, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NJ, NM, NY, OH, OK, OR, PA, RI, SC, UT, VA, VT, WI, WV), so for any other jurisdiction-year a return computes but cannot be
-filled — check `list_forms` for the jurisdiction and year instead of assuming.
+filled from a pack — check `list_forms` for the jurisdiction and year instead of assuming.
+
+**No pack for a form:** say so up front; what you can make is an UNMAPPED DRAFT — NOT
+FILING-GRADE (SKILL.md Recipe U). Every step passes the same `source_url` and `blank_sha256`
+(fetch_blank's `sha256`). `fetch_blank(form="unmapped", source_url=<the agency's
+https .gov PDF>, form_title=...)` → `get_form_map(form="unmapped", ...)` → show its sweep
+page with `render_form`, the user confirms every `low`/`med` field (`confirmed_fields`) →
+`fill_form(form="unmapped", ...)` → `verify_form(form="unmapped", pdf_path=<the draft>, ...)` until `ok` →
+`render_form` every page and check it. Never fill `hand_write` boxes (calculated,
+custom-format, read-only, signature...): the user writes them by hand. Also relay every
+get_form_map `hand_write` entry the form fills itself (calculated, read-only, custom-format), by
+its `printed_line` or else its `label`: any figure the draft prints there (often a `0`) is the blank's
+own default, not a computed figure, and the user works each line out by hand from the form's instructions. Every value stays
+"agent-computed, unverified" (mark lines you computed yourself); never say "done",
+"complete", "ready", "finished", "final" or "all set" before `verify_form` was `ok` for that `output_sha256`; asked "is
+this ready to file?", say no — the draft is never filing-grade; a pack, or copying the
+values by hand onto the official form, is the way to a filing.
 
 **Tools:** intake_checklist, list_document_kinds, extract_document, residency,
 state_scope, estimate_refund, compare_scenarios, list_forms, get_form_map, fetch_blank, fill_form,

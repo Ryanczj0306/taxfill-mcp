@@ -37,6 +37,9 @@ on stderr).
    IRA basis / backdoor Roth / recharacterization: Recipe R).
 5. Review draft only: the user signs and mails paper. No e-file.
 6. Year/benefit not in the shipped packs → `get_sources`, cite .gov, or refuse.
+7. No pack for a form → at most an UNMAPPED DRAFT — NOT FILING-GRADE (below); never
+   filing-grade, never "done", "finished" or "all set" before its
+   `verify_form(form="unmapped")` is `ok`.
 
 ## Flow
 
@@ -136,8 +139,29 @@ flat or graduated is the PACK's call, and the split moves by
 year, so never assume and never do state tax arithmetic yourself. Note the year
 mismatch: state KNOWLEDGE spans 2023-2025, but state FORM packs cover TY2023 for
 all 42 jurisdictions, then TY2024 for **41** (AL, AR, AZ, CA, CO, CT, DC, DE, GA, HI, IA, ID, IL, IN, KS, KY, LA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NJ, NM, NY, OH, OK, OR, PA, RI, SC, UT, VA, VT, WI, WV) and TY2025 for **42** (AL, AR, AZ, CA, CO, CT, DC, DE, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NJ, NM, NY, OH, OK, OR, PA, RI, SC, UT, VA, VT, WI, WV). For any other jurisdiction-year a state
-return computes but cannot be filled. Never assume a year exists: call
-`list_forms` with the jurisdiction and year and read what comes back.
+return computes but no pack fills it: an unmapped draft at most (below). Never assume a year
+exists: call `list_forms` with the jurisdiction and year and read what comes back.
+
+## A form with no pack (`form="unmapped"`)
+
+`list_forms` has no pack for the form → say so up front: what you can make is an
+UNMAPPED DRAFT — NOT FILING-GRADE (SKILL.md Recipe U). Every step passes `year`,
+`jurisdiction` and the same `source_url` and `blank_sha256` (fetch_blank's `sha256`).
+`fetch_blank(form="unmapped",
+source_url=<the form's https PDF on the agency's .gov site, from get_sources or its forms page>,
+form_title=...)` → `get_form_map(form="unmapped", source_url, blank_sha256)` → show its
+sweep page with `render_form` and have the user confirm every `low`/`med` field
+(`confirmed_fields`) → `fill_form(form="unmapped", ...)` → `verify_form(form="unmapped",
+pdf_path=<the draft>, expected=<the written map>)` until `ok` → `render_form` EVERY page and look at it. Never fill
+what comes back in `hand_write` (calculated, custom-format, ReadOnly, signature, unanchored
+boxes...): the user writes those by hand. Also relay every get_form_map `hand_write` entry the
+form fills itself (reason `calculated`, `read_only` or `custom_format_script`), by its
+`printed_line` or else its `label`: any figure the draft prints there (often a `0`) is the blank's
+own default, not a computed figure, and the user works each line out by hand from the form's instructions. Every value is "agent-computed, unverified"; keep
+that label and mark any line you computed yourself. Never say "done", "complete", "ready", "finished",
+"final" or "all set" before `verify_form` returned `ok` for that output's `output_sha256`. Asked "is this ready to
+file?": no — the draft is never filing-grade, `ok` included; a pack, or the user transcribing
+the values by hand onto the official form, is the way to a filing.
 
 ## Tools
 

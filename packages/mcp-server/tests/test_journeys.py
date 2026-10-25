@@ -16,20 +16,29 @@ PATHS. Every step records, as data (``Step.path``), how the tools serve it:
 
   pack     — a shipped pack serves the step: a form pack fills the form, or a knowledge / treaty / DocSpec pack
              computes, scopes or structures the answer, with its citation.
-  fallback — the no-pack unmapped draft of JK16-JK18. It does not exist yet, so no journey records it today.
+  fallback — the no-pack unmapped draft (ADR-0002; JK16-JK18): fetch_blank, get_form_map, fill_form and verify_form
+             with form="unmapped" on the agency's own https .gov blank, render_form on its stamped pages, and what the
+             agent tells the user (tool "agent"). Every fallback output carries grade "unmapped_draft".
   pointer  — nothing fills or computes it: the tools name the official form or source (an https .gov URL) instead.
-  refusal  — the tool refuses with an error that says why (no pack for that form, and which form keys do exist).
+  refusal  — the tool refuses with an error that says why (no pack for that form, and which form keys do exist; or
+             the unmapped path's own refusal, "(form='unmapped') refused: ...").
 
-Journeys 3-5 hold the honest pointer or refusal where nothing fills the form today (Virginia Form 760PY, Ohio SD 100,
-Georgia Form 500X); JK18 upgrades those steps to labeled drafts. Key figures are recomputed through calc (and across
-tools: estimate_refund's ledger against calc's tax and deduction) wherever a figure is arithmetic, never typed.
+Journeys 3-5 keep the honest pointer and pack-key refusals offline (Virginia Form 760PY, Ohio SD 100, Georgia Form
+500X have no pack), and since Phase K JK18 (2026-10-25) their network halves draft those forms through
+form="unmapped": the 760PY and the 500X as labeled, stamped, verified PDF drafts, and the SD 100, whose official blank
+is flat, as the worksheet-only response (no PDF). Key figures are recomputed through calc (and across tools:
+estimate_refund's ledger against calc's tax and deduction) wherever a figure is arithmetic, never typed.
 
 THE GUARD (module level). ``_check_step`` runs on every step as it is recorded: a fallback, pointer or refusal step
 whose output claims filing-grade fails the journey (KG5: unmapped output is never filing-grade). The only grade a
 non-pack output may carry is ``unmapped_draft``; "filing-grade" / "ready to file" may appear only negated ("NOT
-FILING-GRADE"). ``test_no_fallback_pointer_or_refusal_step_claims_filing_grade`` re-checks every recorded step and
-``test_the_guard_catches_a_planted_claim`` holds the guard itself to planted claims. This is the test the fallback
-path will have to pass.
+FILING-GRADE"). A fallback render_form step carries the grade only when every page of the PDF it rendered prints the
+"UNMAPPED DRAFT — NOT FILING-GRADE" stamp (``_stamped_grade``). ``_check_done_order`` runs on the journey so far: an
+unmapped fill's output may not be followed by any "done" step (a step named or saying done / complete / ready, not
+negated, or a filing_summary / file_and_pay step) until a fallback verify_form ok whose ``verified_at`` names that
+same output_sha256 is recorded (Phase K JK18). ``test_no_fallback_pointer_or_refusal_step_claims_filing_grade``
+re-checks every recorded step, and ``test_the_guard_catches_a_planted_claim`` and
+``test_the_done_guard_catches_a_planted_violation`` hold both guards to planted violations.
 
 WHERE EACH STEP RUNS. CI's offline job (``pytest -m "not network"``, .github/workflows/ci.yml) runs every step that
 needs no official blank PDF:
@@ -46,7 +55,9 @@ The fetch_blank / fill_form / verify_form / render_form steps need the official 
 tests (the weekly ``pytest -m network`` job in .github/workflows/freshness.yml): J1 Form 1040 (fill, verify with the
 independent recompute, render page 1), J2 Form 1040-NR + Schedule OI (verify_filing with the recompute) and Form 8843
 (verify_form), J3 Form 540NR, J5 Form 1040-X (2024, with the recompute). With no network and a cold blank cache they
-skip. J4 runs offline only (its IT 1040 pack is held by the Ohio pack's own golden).
+skip. J4's IT 1040 pack is held by the Ohio pack's own golden. The unmapped drafts (J3 Form 760PY, J4 SD 100, J5 Form
+500X) always download live (a blank with no pack is never served from a cache) into a temporary blank cache, and skip
+when the agency's host cannot be reached.
 
 KNOWN DEFECTS the journeys found were held as strict xfails until Phase K JK27 fixed them (2026-10-16): file_and_pay
 priced a Form 1040-X as a Form 1040 and routed a Georgia Form 500X like an original Form 500 (both now follow the
@@ -64,7 +75,7 @@ import importlib.util
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -151,6 +162,8 @@ def _filing_grade_claims(obj: Any, where: str = "$") -> list[str]:
 
 
 _OFFICIAL_URL = re.compile(r"https://[a-z0-9.-]+\.gov(?:/|\b)", re.IGNORECASE)
+# A pack key with no pack, or the unmapped path's own refusal (ADR-0002 rule 6; widened in Phase K JK18, 2026-10-25).
+_REFUSAL_WHY = re.compile(r"\bno (?:form|hand-fill) pack for form\b|\(form='unmapped'\) refused: ")
 
 
 def _check_step(step: Step) -> None:
@@ -159,7 +172,7 @@ def _check_step(step: Step) -> None:
     text = step.output if isinstance(step.output, str) else json.dumps(step.output)
     if step.path == "refusal":
         assert step.error, f"{step.name}: a refusal is a tool error"
-        assert re.search(r"\bno (?:form|hand-fill) pack for form\b", text), f"{step.name}: the refusal must say why"
+        assert _REFUSAL_WHY.search(text), f"{step.name}: the refusal must say why"
     else:
         assert not step.error, f"{step.name}: {text[:400]}"
     if step.path == "pointer":
@@ -172,6 +185,53 @@ def _check_step(step: Step) -> None:
         assert not claims, f"{step.name} ({step.path}) claims filing-grade: {claims}"
     else:  # a step labelled "pack" whose output carries the unmapped grade is a mislabelled fallback
         assert not _carries_unmapped_grade(step.output), f"{step.name}: a pack step carries grade 'unmapped_draft'"
+
+
+# ── the done guard (Phase K JK18, 2026-10-25): no "done" before the unmapped draft's verify_form ok ─────────────
+
+# "finished", "final" and "all set" are done too (Phase K JK18 review, 2026-10-25).
+_DONE_TEXT = re.compile(r"\b(?:done|complete[d]?|ready|finished|final|all\s+set)\b", re.IGNORECASE)
+_DONE_TOOLS = {"filing_summary", "file_and_pay"}  # each treats the return as finished
+
+
+def _says_done(text: str) -> bool:
+    return any(not _NEGATED.search(text[max(0, m.start() - 40):m.start()]) for m in _DONE_TEXT.finditer(text))
+
+
+def _claims_done(step: Step) -> bool:
+    """A step that tells the user the work is done: a filing_summary / file_and_pay step, a step whose name says done /
+    complete / ready / finished / final / all set, or a message to the user (tool "agent") that says so (each not
+    negated just before)."""
+    if step.tool in _DONE_TOOLS or _says_done(step.name):
+        return True
+    return step.tool == "agent" and _says_done(step.output if isinstance(step.output, str) else json.dumps(step.output))
+
+
+def _check_done_order(steps: list[Step]) -> None:
+    """An unmapped fill's output may not be followed by a done step until a fallback verify_form returned ok with a
+    verified_at naming that same output_sha256 (a later fill of another output opens its own wait)."""
+    waiting: dict[str, str] = {}  # output_sha256 -> the fill step's name
+    for step in steps:
+        out = step.output if isinstance(step.output, dict) else {}
+        if step.path == "fallback" and step.tool == "fill_form" and out.get("output_sha256"):
+            waiting[out["output_sha256"]] = step.name
+        elif step.path == "fallback" and step.tool == "verify_form" and out.get("ok") is True:
+            token = out.get("verified_at") or {}
+            if token.get("output_sha256") and token.get("output_sha256") == out.get("output_sha256"):
+                waiting.pop(token["output_sha256"], None)
+        if _claims_done(step):
+            assert not waiting, (
+                f"{step.name}: says done before verify_form(form='unmapped') returned ok for "
+                f"{sorted(waiting.values())} (output_sha256 {sorted(k[:16] for k in waiting)})")
+
+
+def _stamped_grade(pdf_path: str) -> str | None:
+    """A fallback render_form step's grade: "unmapped_draft" only when every page of the PDF it rendered carries the
+    stamp in its content stream and prints it (stamp_check, the check verify_form's stamp section runs)."""
+    from taxfill_core.filler import UNMAPPED_STAMP
+    from taxfill_core.stamp import stamp_check
+
+    return "unmapped_draft" if stamp_check(pdf_path, UNMAPPED_STAMP)["ok"] else None
 
 
 def _carries_unmapped_grade(obj: Any) -> bool:
@@ -202,12 +262,17 @@ class Recorder:
         self.client = client
         self.run = run
 
-    async def call(self, name: str, path: str, tool: str, args: dict) -> Any:
+    async def call(self, name: str, path: str, tool: str, args: dict, *, skip_when: re.Pattern | None = None) -> Any:
+        """Call ``tool`` and record the step; an error whose text matches ``skip_when`` skips the test instead."""
         result = await self.client.call_tool(tool, args)
         if result.isError:
             output = "\n".join(getattr(b, "text", "") for b in result.content)
+            if skip_when is not None and skip_when.search(output):
+                pytest.skip(f"{name}: {output[:300]}")
         elif tool == "render_form":
             output = [{"mimeType": b.mimeType, "bytes": len(b.data)} for b in result.content if isinstance(b, ImageContent)]
+            if path == "fallback":  # a stamped draft or sweep page: the grade the stamp on every page prints
+                output = {"grade": _stamped_grade(args["pdf_path"]), "pages": output}
         else:
             output = _data(result)
         return self.record(name, path, tool, output, error=bool(result.isError))
@@ -216,6 +281,7 @@ class Recorder:
         """Record a step; ``call`` uses it, and a step that reads a part of an earlier call's answer uses it directly."""
         step = Step(name, tool, path, output, error)
         _check_step(step)
+        _check_done_order([*self.run.steps, step])
         self.run.steps.append(step)
         return output
 
@@ -226,7 +292,15 @@ def _run_journey(body) -> JourneyRun:
         async with connect(mcp) as client:
             await body(Recorder(client, run), run.figures)
         return run
-    return asyncio.run(go())
+    try:
+        return asyncio.run(go())
+    except BaseExceptionGroup as group:  # the session's task group wraps the body's one exception: raise it bare,
+        leaves = group.exceptions        # so a pytest.skip inside a journey skips (Phase K JK18 review, 2026-10-25)
+        while len(leaves) == 1 and isinstance(leaves[0], BaseExceptionGroup):
+            leaves = leaves[0].exceptions
+        if len(leaves) == 1:
+            raise leaves[0] from None
+        raise
 
 
 def _comp(estimate: dict) -> dict[str, int]:
@@ -239,6 +313,113 @@ def _need_blank(form: str, year: int, jurisdiction: str = "federal") -> None:
         fetch_pack_blank(load_form_pack(form, year, jurisdiction))
     except OfflineFetchError as exc:
         pytest.skip(f"{jurisdiction} {form} {year}: cache empty and network unreachable: {exc}")
+
+
+# ── the no-pack fallback through the MCP tools (Phase K JK18, 2026-10-25; ADR-0002) ─────────────────────────────
+
+
+def _need_host(url: str) -> None:
+    """Skip cleanly when the agency's host cannot be reached: a blank with no pack is always downloaded live."""
+    import socket
+    from urllib.parse import urlparse
+
+    host = urlparse(url).hostname
+    try:
+        socket.create_connection((host, 443), timeout=15).close()
+    except OSError as exc:
+        pytest.skip(f"{host} unreachable ({exc}): an unmapped blank is never served from a cache")
+
+
+# fetch_blank's unmapped refusal when the host blocked the download (401/403), stayed busy or down (429 / 5xx after
+# the retries) or could not be reached: the weekly network job skips. A 404 is not here: the journey's URL is stale.
+_HOST_REFUSED = re.compile(r"the official host answered HTTP \d{3}|\bHTTP (?:429|5\d\d) \(|\bcould not reach https://")
+
+
+@pytest.fixture
+def unmapped_env(tmp_path, monkeypatch):
+    """A temporary blank cache, so the live unmapped downloads and their sweep pages never touch the shared one."""
+    monkeypatch.setenv("TAXFILL_BLANKS_CACHE", str(tmp_path / "cache"))
+    return tmp_path
+
+
+# The hand_write reasons of a box the form fills itself (its own calculation, a lock or a format script): on a
+# numbered line, its printed figure is the blank's, never a computed one (Phase K JK18 review, 2026-10-25).
+_FORM_FILLS_ITSELF = {"calculated", "read_only", "custom_format_script"}
+
+
+async def _unmapped_draft(j: Recorder, form: str, *, jurisdiction: str, year: int, url: str, title: str,
+                          values: dict, confirm: dict[str, str], out_path: str, money: tuple[str, ...] = (),
+                          provenance: dict[str, str] | None = None) -> dict:
+    """The skill's Recipe U as recorded steps: fetch the agency's blank, map it, show the sweep page, fill with the
+    fields the user confirmed on it, then (a PDF draft) verify_form, render_form every page, and tell the user — a
+    labeled draft, never filing-grade. ``confirm`` maps each low/med field to the words its box must sit beside: the
+    test's stand-in for the user reading the numbered box on the sweep page. Returns the steps' outputs."""
+    where = {"form": "unmapped", "year": year, "jurisdiction": jurisdiction, "source_url": url}
+    fetched = await j.call(f"fetch the official {form} (no pack)", "fallback", "fetch_blank", {**where, "form_title": title},
+                           skip_when=_HOST_REFUSED)
+    assert fetched["source_url"] == url and fetched["pinned"] is False and fetched["origin"] == "download"
+    assert fetched["first_page"]["printed_year"] == year and fetched["first_page"]["title_found"] is True
+    ids = {**where, "blank_sha256": fetched["sha256"]}
+    fmap = await j.call(f"{form}: its fields and the sweep page", "fallback", "get_form_map", ids)
+    assert fmap["blank_sha256"] == fetched["sha256"] and "high" not in {f["confidence"] for f in fmap["fields"]}
+    out: dict = {"fetched": fetched, "map": fmap}
+    if fetched["kind"] != "flat":
+        sweep = await j.call(f"{form}: show the sweep page before any box is confirmed", "fallback", "render_form",
+                             {"pdf_path": fmap["sweep_path"]})
+        assert len(sweep["pages"]) == fetched["page_count"]
+    by = {f["name"]: f for f in fmap["fields"]}
+    for name, words in confirm.items():  # then the user reads each numbered box on the sweep page (Recipe U order)
+        field = by[name]
+        assert field["fillable"] and field["confidence"] in ("low", "med"), (name, field["confidence"])
+        seen = " ".join(filter(None, [field["tooltip"], *(w["anchor"]["label"] for w in field["widgets"])]))
+        assert words.lower() in seen.lower(), (name, seen)
+    filled = await j.call(f"fill {form} (unmapped draft)", "fallback", "fill_form", {
+        **ids, "values": values, "out_path": out_path, "money_fields": list(money) or None,
+        "confirmed_fields": list(confirm) or None, "provenance": provenance})
+    out["filled"] = filled
+    assert set(filled["labels"]) == set(filled["written"] if filled["status"] == "unverified_draft" else values)
+    assert all(label.startswith("agent-computed, unverified") for label in filled["labels"].values())
+    assert filled["limits"][-1] == "this draft is never filing-grade, whatever any check says"
+    if filled["status"] == "worksheet_only":  # a flat blank: no PDF, the worksheet the user copies by hand
+        assert not Path(out_path).exists() and filled["worksheet"]["grade"] == "unmapped_draft"
+        j.record(f"tell the user: the {form} worksheet, to copy by hand", "fallback", "agent", {
+            "grade": "unmapped_draft", "message": (
+                f"taxfill has no pack for {form} and its official blank has no fillable fields, so no PDF was "
+                f"written: copy each worksheet line onto the printed form by hand. Every value is agent-computed "
+                f"and unverified — UNMAPPED DRAFT — NOT FILING-GRADE.")})
+        return out
+    assert filled["status"] == "unverified_draft" and filled["stamp"]["pages"] == list(range(1, fetched["page_count"] + 1))
+    assert set(filled["confirmed"]) == set(confirm) & set(filled["written"])
+    verdict = await j.call(f"verify the {form} draft", "fallback", "verify_form", {
+        **ids, "pdf_path": out_path, "expected": filled["written"]})
+    assert verdict["ok"] is True, {k: s["failures"] for k, s in verdict["sections"].items() if s["failed"]}
+    assert verdict["verified_at"]["output_sha256"] == verdict["output_sha256"] == filled["output_sha256"]
+    assert {v["field"] for v in verdict["unverified_values"]} == set(filled["written"])
+    out["verdict"] = verdict
+    pages = await j.call(f"render every page of the {form} draft", "fallback", "render_form", {"pdf_path": out_path})
+    assert len(pages["pages"]) == fetched["page_count"] and all(p["bytes"] > 1000 for p in pages["pages"])
+    assert pages["grade"] == "unmapped_draft"  # every rendered page carries the stamp (the render step's grade)
+    # What the user writes by hand: fill_form's hand_write holds only the values passed, so the numbered lines the
+    # form fills itself come from get_form_map's hand_write (Phase K JK18 review, 2026-10-25: Georgia's 500X prints
+    # its default 0 on read-only lines 10, 11 and 13 of a verified draft).
+    hand = sorted(h["field"] for h in filled["hand_write"])
+    # every box the form fills itself, whether or not the anchor read its printed line (the review: 7c and 16 were
+    # missed when only boxes with a printed_line were relayed)
+    lines = {h["field"]: h for h in fmap["hand_write"] if h["reason"] in _FORM_FILLS_ITSELF and h["field"] not in hand}
+    out["told"] = {"hand_write": hand, "form_fills_itself": sorted(lines)}
+    named = "; ".join(
+        (f"line {h['printed_line']}" if h["printed_line"] else f"the box labeled {h['label'] or name!r}")
+        + f" on page {h['page']} ({name})" for name, h in sorted(lines.items(), key=lambda kv: (kv[1]["page"], kv[0])))
+    j.record(f"tell the user: the {form} draft is complete, not filing-grade", "fallback", "agent", {
+        "grade": "unmapped_draft", "output_sha256": filled["output_sha256"], "told": out["told"], "message": (
+            f"The {form} draft is complete: verify_form passed its listed checks for this file and every page was "
+            f"rendered with the stamp, for you to review. It is an UNMAPPED DRAFT — NOT FILING-GRADE: every value "
+            f"is agent-computed and unverified, and it is not ready to file. Write these boxes by hand: "
+            f"{', '.join(hand) or 'none'}. The form fills these numbered lines itself and taxfill does not: "
+            f"{named or 'none'}; any figure the draft prints there (such as a 0) is the blank's own default, not a "
+            f"computed figure, so work each line out by hand from the form's instructions. Then copy the reviewed "
+            f"values onto a clean official {form} and check them against its instructions.")})
+    return out
 
 
 def _days(start: date, end: date) -> int:
@@ -700,6 +881,49 @@ def test_journey_3_network_fill_and_verify_the_540nr(tmp_path):
     assert [s.path for s in run.steps] == ["pack"] * 3
 
 
+# Virginia's 2025 Form 760PY, the URL Virginia's state_scope entry cites (knowledge/states/va/2025.yaml); downloaded
+# live 2026-10-25 (three fetches, one sha256, ef6b7bdaee753d04...): a 2-page AcroForm, "2025" and "760PY" on page 1.
+J3_760PY_FIELDS = {  # field -> (value source, the words its box sits beside: tooltip or printed label)
+    "YOUR First Name": ("first", "first name"),
+    "Your Last Name Check if deceased": ("last", "last name"),
+    "Your SSN": ("ssn", "social security number"),
+    "Present Home Address Number and Street or Rural Route": ("street", "home address"),
+    "City": ("city", "city"),
+    "State": ("state", "state"),
+    "Zip Code": ("zip", "zip code"),
+}
+J3_760PY_LINE1 = "Line 1 Your Fed Adj Gross Income"
+
+
+@pytest.mark.network
+def test_journey_3_network_drafts_the_760py_unmapped(unmapped_env):
+    """No pack fills Form 760PY (the refusals above), so the agent says so and drafts it from Virginia's own blank:
+    the residence dates and federal AGI (line 1, Column A) on a stamped, verified, never filing-grade draft."""
+    run3 = _journey_3_run()
+    fig = run3.figures
+    pointer = next(s for s in run3.steps if s.name == "Virginia Form 760PY: where it is").output
+    url = next(c["url"] for c in pointer["citations"] if c["url"].endswith("/2025/760py-2025.pdf"))
+    _need_host(url)
+    p = J3_PERSON
+    values = {name: p[key] for name, (key, _) in J3_760PY_FIELDS.items()}
+    values.update({"You From": "01-01-2025", "You To": f"{J3_MOVED - timedelta(days=1):%m-%d-%Y}",  # mm-dd-yyyy
+                   J3_760PY_LINE1: fig["agi"]})
+    confirm = {name: words for name, (_, words) in J3_760PY_FIELDS.items()}
+    confirm.update({"You From": "start of your residence", "You To": "end of your residence",
+                    J3_760PY_LINE1: "your federal adjusted gross income"})
+    out = str(unmapped_env / "drafts" / "760py_2025_journey3.pdf")
+
+    async def body(j: Recorder, _fig: dict) -> None:
+        got = await _unmapped_draft(j, "Form 760PY", jurisdiction="states/va", year=2025, url=url, title="760PY",
+                                    values=values, confirm=confirm, out_path=out, money=(J3_760PY_LINE1,),
+                                    provenance={name: "from the user" for name in J3_760PY_FIELDS})
+        assert got["filled"]["hand_write"] == [] and got["filled"]["written"][J3_760PY_LINE1] == str(fig["agi"])
+
+    run = _run_journey(body)
+    assert [s.path for s in run.steps] == ["fallback"] * 7
+    _check_done_order(run.steps)
+
+
 # ── Journey 4 — a city-tax filer: an Ohio taxing-school-district resident ──────
 
 J4_PROFILE = {
@@ -761,6 +985,36 @@ def _journey_4_run() -> JourneyRun:
 def test_journey_4_city_tax_filer():
     run = _journey_4_run()
     assert [(s.name, s.path) for s in run.steps] == J4_EXPECTED_PATHS
+
+
+# Ohio's 2025 SD 100 return, from the same 2025 forms folder on Ohio's asset host as the IT 1040 / SD 100 booklet
+# get_sources returns; downloaded live 2026-10-25 (three fetches, one sha256, bed0ccb75c98db61...): 5 pages, no
+# fillable field, page 1 prints "2025 Ohio SD 100".
+J4_SD100 = "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2025/sd100-bundle.pdf"
+
+
+@pytest.mark.network
+def test_journey_4_network_the_sd100_blank_is_flat_so_the_draft_is_a_worksheet(unmapped_env):
+    """No pack fills the SD 100 and its official blank is flat, so the honest outcome is the worksheet-only response:
+    no PDF; lines 1 and 4 (the IT 1040's lines 3 and 4, as the SD 100 prints) to copy by hand, labeled."""
+    sources = next(s for s in _journey_4_run().steps if s.tool == "get_sources").output
+    booklet = next(s["url"] for s in sources["sources"] if s["url"].endswith("/2025/it1040-booklet.pdf"))
+    assert J4_SD100.rsplit("/", 1)[0] == booklet.rsplit("/", 1)[0]
+    _need_host(J4_SD100)
+    out = str(unmapped_env / "drafts" / "sd100_2025_journey4.pdf")
+
+    async def body(j: Recorder, _fig: dict) -> None:
+        got = await _unmapped_draft(j, "SD 100", jurisdiction="states/oh", year=2025, url=J4_SD100, title="SD 100",
+                                    values={"1": J4_OHIO_AGI, "4": J4_EXEMPTION}, confirm={}, out_path=out)
+        assert got["fetched"]["kind"] == "flat" and got["map"]["fields"] == []
+        sheet = got["filled"]
+        assert sheet["status"] == "worksheet_only" and "out_path" not in sheet and not Path(out).exists()
+        assert [(ln["printed_line"], ln["value"]) for ln in sheet["worksheet"]["lines"]] == [
+            ("1", J4_OHIO_AGI), ("4", J4_EXEMPTION)]
+        assert {h["reason"] for h in sheet["hand_write"]} == {"worksheet_only"}
+
+    run = _run_journey(body)
+    assert [s.path for s in run.steps] == ["fallback"] * 4
 
 
 # ── Journey 5 — an amended prior-year return (TY2024 Form 1040-X, Georgia) ─────
@@ -846,7 +1100,7 @@ async def _journey_5(j: Recorder, fig: dict) -> None:
     # pinned by test_journey_5_file_and_pay_routes_the_500x_as_an_amendment below.
     assert ret["mailing_address"] == "PROCESSING CENTER, GEORGIA DEPARTMENT OF REVENUE, PO BOX 740318, ATLANTA, GA 30374-0318"
     assert any("2024-it-511" in c["url"] and c["url"].startswith("https://dor.georgia.gov/") for c in ret["citations"])
-    fig.update(std=std["amount"], taxable_o=taxable_o, taxable_c=taxable_c, tax_o=tax_o["tax"], tax_c=tax_c["tax"],
+    fig.update(agi_c=lc["agi"], std=std["amount"], taxable_o=taxable_o, taxable_c=taxable_c, tax_o=tax_o["tax"], tax_c=tax_c["tax"],
                overpaid_original=overpaid_original, line19=line19, line20=line20, ga_more=ga_more)
 
 
@@ -931,6 +1185,80 @@ def test_journey_5_network_fill_and_verify_the_1040x(tmp_path):
     assert [s.path for s in run.steps] == ["pack"] * 3
 
 
+# Georgia's 2024 Form 500X as a fillable PDF on Georgia DOR's fillable-forms host, the folder the Georgia Form 500
+# pack's source_url names; downloaded live 2026-10-25 (two fetches, one sha256, 8f163dc2ccf96e1a...): 28 pages, page 1
+# prints "Georgia Form 500X" and "2024". (dor.georgia.gov's "blank form printing" 500X is flat.)
+J5_500X = "https://apps.dor.ga.gov/FillableForms/webpdf/examples/2024GA500X.pdf"
+J5_500X_FIELDS = {  # field -> (value source, the words its box sits beside)
+    "TP_LASTNAME": ("last", "last name"),
+    "ADDRESS_L1": ("street", "address"),
+    "CITY": ("city", "city"),
+    "STATE": ("state", "state"),
+    "ZIP5": ("zip", "zip code"),
+}
+
+
+@pytest.mark.network
+def test_journey_5_network_drafts_the_500x_unmapped(unmapped_env):
+    """No pack fills Georgia Form 500X, so the agent drafts it from Georgia's own fillable blank: the corrected
+    federal AGI on line 8 (anchored to its printed line, no confirmation needed) and the confirmed name and address.
+    The first-name box (a calculate script) and the SSN box (a custom format script) come back in hand_write, never
+    filled (KG7)."""
+    fig = _journey_5_run().figures
+    pack_url = load_form_pack("ga500", 2024, "states/ga").source_url
+    assert J5_500X.rsplit("/", 1)[0] == pack_url.rsplit("/", 1)[0]
+    _need_host(J5_500X)
+    p = J5_PERSON
+    values = {"TP_FIRSTNAME": p["first"], "TP_SSN": p["ssn"],
+              **{name: p[key] for name, (key, _) in J5_500X_FIELDS.items()}, "L8": fig["agi_c"]}
+    out = str(unmapped_env / "drafts" / "500x_2024_journey5.pdf")
+
+    async def body(j: Recorder, _fig: dict) -> None:
+        got = await _unmapped_draft(j, "Form 500X", jurisdiction="states/ga", year=2024, url=J5_500X, title="500X",
+                                    values=values, confirm={n: w for n, (_, w) in J5_500X_FIELDS.items()},
+                                    out_path=out, money=("L8",))
+        filled = got["filled"]
+        assert {h["field"]: h["reason"] for h in filled["hand_write"]} == {
+            "TP_FIRSTNAME": "calculated", "TP_SSN": "custom_format_script"}
+        assert filled["written"]["L8"] == str(fig["agi_c"]) and "L8" not in filled["confirmed"]
+        # Lines 10, 11 and 13 are read-only and print the blank's default 0 beside line 8's AGI: the user is told.
+        assert {"L7C", "L10", "L11", "L13", "L16"} <= set(got["told"]["form_fills_itself"]), got["told"]
+        (l8,) = (f for f in got["map"]["fields"] if f["name"] == "L8")
+        assert l8["confidence"] == "anchored (unverified line map)" and l8["widgets"][0]["anchor"]["printed_line"] == "8"
+
+    run = _run_journey(body)
+    assert [s.path for s in run.steps] == ["fallback"] * 7
+    _check_done_order(run.steps)
+
+
+@pytest.mark.parametrize("answer, skips", [
+    (403, True), (429, True), (503, True), ("unreachable", True),  # the host refused or could not be reached: skip
+    (404, False),                                                  # a dead link is the test's own defect: fail
+])
+def test_an_unmapped_journey_skips_when_the_host_refuses_and_fails_on_a_dead_link(tmp_path, monkeypatch, answer, skips):
+    """Phase K JK18 review (2026-10-25): a host that blocks scripted downloads (a 403 bot wall, a 429, a 5xx) skips the
+    weekly network journey the way an unreachable host does; a 404 still fails it, since the journey's URL is stale."""
+    import urllib.error
+
+    from taxfill_core import fetch as fetch_mod
+
+    def answer_with(request, timeout=None):
+        if answer == "unreachable":
+            raise urllib.error.URLError("no route to host")
+        raise urllib.error.HTTPError(request.full_url, answer, "refused", {}, None)
+
+    monkeypatch.setattr(fetch_mod, "_unmapped_open", answer_with)
+    monkeypatch.setattr(fetch_mod, "_sleep", lambda s: None)
+    monkeypatch.setenv("TAXFILL_BLANKS_CACHE", str(tmp_path / "cache"))
+
+    async def body(j: Recorder, _fig: dict) -> None:
+        await _unmapped_draft(j, "DEMO-1", jurisdiction="states/sd", year=2025, title="DEMO-1", values={}, confirm={},
+                              url="https://www.tax.example.gov/forms/2025/demo-1.pdf", out_path=str(tmp_path / "d.pdf"))
+
+    with pytest.raises(pytest.skip.Exception if skips else AssertionError):
+        _run_journey(body)
+
+
 # ── the guard, across every journey ──────────────────────────────────────────
 
 JOURNEYS = {
@@ -947,9 +1275,9 @@ def test_no_fallback_pointer_or_refusal_step_claims_filing_grade(journey):
     steps = JOURNEYS[journey]().steps
     for step in steps:
         _check_step(step)
-    if journey[0] in "345":  # the honest non-pack step is the point of journeys 3-5 today (JK18 upgrades them)
+    _check_done_order(steps)
+    if journey[0] in "345":  # the honest non-pack step (offline; the network halves draft the form: fallback)
         assert {s.path for s in steps} & {"pointer", "refusal", "fallback"}, f"journey {journey} has no non-pack step"
-    assert all(s.path != "fallback" for s in steps)  # JK16-JK18 have not landed: no step may claim the fallback yet
 
 
 @pytest.mark.parametrize("planted", [
@@ -983,6 +1311,108 @@ def test_the_guard_catches_a_planted_claim(planted):
 ])
 def test_the_guard_passes_an_honest_label(honest):
     assert _filing_grade_claims(honest) == []
+
+
+_SHA_A, _SHA_B = "a" * 64, "b" * 64
+_DRAFT = {"grade": "unmapped_draft", "status": "unverified_draft"}
+
+
+def _fill(sha: str) -> Step:
+    return Step("fill the draft", "fill_form", "fallback", {**_DRAFT, "output_sha256": sha}, False)
+
+
+def _verify(sha: str, ok: bool = True, token_sha: str | None = None) -> Step:
+    out = {"grade": "unmapped_draft", "verdict": "UNMAPPED", "ok": ok, "output_sha256": sha}
+    if ok:
+        out["verified_at"] = {"output_sha256": token_sha or sha, "time": "2026-10-25T00:00:00Z"}
+    return Step("verify the draft", "verify_form", "fallback", out, False)
+
+
+def _say(text: str, name: str = "tell the user") -> Step:
+    return Step(name, "agent", "fallback", {"grade": "unmapped_draft", "message": text}, False)
+
+
+@pytest.mark.parametrize("steps", [
+    [_fill(_SHA_A), _say("The draft is complete.")],                                   # no verify at all
+    [_fill(_SHA_A), _say("Done: UNMAPPED DRAFT — NOT FILING-GRADE.")],
+    [_fill(_SHA_A), _say("next: verify", name="draft ready")],                         # the step's name says it
+    [_fill(_SHA_A), _verify(_SHA_A, ok=False), _say("The draft is complete.")],         # verify ran but failed
+    [_fill(_SHA_A), _verify(_SHA_B), _say("The draft is complete.")],                   # another file's ok
+    [_fill(_SHA_A), _verify(_SHA_A, token_sha=_SHA_B), _say("The draft is complete.")],  # a token for another file
+    [_fill(_SHA_A), _verify(_SHA_A), _fill(_SHA_B), _say("All done.")],                 # re-filled after the ok
+    [_fill(_SHA_A), Step("filing summary", "filing_summary", "pack", {"items": []}, False)],
+    [_fill(_SHA_A), Step("file and pay", "file_and_pay", "pack", {"returns": []}, False)],
+    [_fill(_SHA_A), _say("The draft is finished.")],                                   # Phase K JK18 (2026-10-25):
+    [_fill(_SHA_A), _say("Here is the final draft.")],                                 # the other words for done
+    [_fill(_SHA_A), _say("You are all set: print it.")],
+    [_fill(_SHA_A), _say("Print it.", name="all set")],
+])
+def test_the_done_guard_catches_a_planted_violation(steps):
+    with pytest.raises(AssertionError, match="says done before verify_form"):
+        _check_done_order(steps)
+
+
+@pytest.mark.parametrize("steps", [
+    [_fill(_SHA_A), _verify(_SHA_A), _say("The draft is complete; it is not ready to file.")],
+    [_fill(_SHA_A), _say("Not done yet: verify_form runs next."), _say("The draft is not complete until verify_form.")],
+    [_fill(_SHA_A), _verify(_SHA_A), _fill(_SHA_B), _verify(_SHA_B), _say("Both drafts are complete.")],
+    [_fill(_SHA_A), _say("Not finished: verify_form runs next; it is never final.")],
+    [Step("fill the Form 1040", "fill_form", "pack", {"written": {}}, False), _say("The 1040 is complete.")],
+])
+def test_the_done_guard_passes_a_verified_or_unfinished_draft(steps):
+    _check_done_order(steps)
+
+
+def test_the_recorder_runs_the_done_guard_as_each_step_is_recorded():
+    rec = Recorder(None, JourneyRun())
+    rec.record("fill the draft", "fallback", "fill_form", {**_DRAFT, "output_sha256": _SHA_A})
+    with pytest.raises(AssertionError, match="says done before verify_form"):
+        rec.record("tell the user", "fallback", "agent", {"grade": "unmapped_draft", "message": "It is complete."})
+    assert [s.name for s in rec.run.steps] == ["fill the draft"]
+
+
+@pytest.mark.parametrize("text, ok", [
+    ("fill_form (form='unmapped') refused: unknown field name(s) 'x'. No PDF was written. The form's official source: "
+     "https://www.tax.example.gov/f.pdf", True),
+    ("Available form keys for states/va 2025: ['va760'] — no form pack for form 'va760py'", True),
+    ("Something went wrong.", False),
+])
+def test_a_refusal_step_names_why_the_unmapped_refusal_included(text, ok):
+    step = Step("refused", "fill_form", "refusal", text, True)
+    if ok:
+        _check_step(step)
+    else:
+        with pytest.raises(AssertionError, match="must say why"):
+            _check_step(step)
+
+
+def test_a_fallback_render_step_carries_the_grade_only_from_a_stamp_on_every_page(tmp_path):
+    import sys
+
+    from pypdf import PdfReader, PdfWriter
+
+    from taxfill_core.filler import UNMAPPED_STAMP
+    from taxfill_core.stamp import draw_stamp
+
+    core_tests = str(REPO / "packages" / "core" / "tests")
+    if core_tests not in sys.path:
+        sys.path.insert(0, core_tests)
+    from pdf_fixtures import make_demo_return
+
+    plain = make_demo_return(tmp_path / "plain.pdf", form="DEMO-1", pages=2, texts=[(1, 60, 600, "1 Wages")])
+    assert _stamped_grade(str(plain)) is None
+    with pytest.raises(AssertionError, match="unmapped_draft"):
+        _check_step(Step("render", "render_form", "fallback", {"grade": _stamped_grade(str(plain)), "pages": []}, False))
+    writer = PdfWriter(clone_from=str(plain))
+    draw_stamp(writer, plain, UNMAPPED_STAMP)
+    stamped = tmp_path / "stamped.pdf"
+    writer.write(str(stamped))
+    assert _stamped_grade(str(stamped)) == "unmapped_draft"
+    partly = PdfWriter()  # the stamp on page 1 only: no grade
+    partly.add_page(PdfReader(str(stamped)).pages[0])
+    partly.add_page(PdfReader(str(plain)).pages[1])
+    partly.write(str(tmp_path / "partly.pdf"))
+    assert _stamped_grade(str(tmp_path / "partly.pdf")) is None
 
 
 def test_a_pack_step_that_carries_the_unmapped_grade_fails():

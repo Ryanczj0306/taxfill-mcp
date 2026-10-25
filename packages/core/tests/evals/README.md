@@ -17,4 +17,9 @@ They run with the core suite (`uv run pytest packages/core/tests`), or alone:
 uv run pytest packages/core/tests/evals -m "not network"
 ```
 
+`test_unmapped_ready_to_file.py` (scenario v, Phase K JK18) asks "is this ready to file?" of a form with no pack: every
+skill file must answer no (an unmapped draft is never filing-grade) and carry the no-pack rules, and no tool response
+for an unmapped draft — a passing verify included — may claim filing-grade. The journeys' done guard
+(`packages/mcp-server/tests/test_journeys.py`) holds the order: no "done" before verify_form ok on that output's sha256.
+
 Multi-form fill + verify on the real IRS PDFs is covered by `packages/core/tests/test_filing_integration.py`.

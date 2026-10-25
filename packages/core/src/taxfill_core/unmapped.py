@@ -112,8 +112,9 @@ LIMITS: list[str] = [
     "no identity or cross_form checks",
     "no P-003 required-checkbox audit",
     "no revision pin: the blank is named by its sha256 only, and its revision was not reviewed",
-    "form scripts and XFA bindings did not run: calculated boxes and boxes with a custom format script stay blank "
-    "(hand_write); a box with a standard Acrobat format is written as given, unformatted",
+    "form scripts and XFA bindings did not run: calculated boxes and boxes with a custom format script are not "
+    "written (hand_write) and keep whatever the blank prints there, such as a default 0; a box with a standard "
+    "Acrobat format is written as given, unformatted",
     f"every value is {VALUE_LABEL}",
     "this draft is never filing-grade, whatever any check says",
 ]

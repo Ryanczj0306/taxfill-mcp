@@ -47,4 +47,5 @@ taxfill-mcp/
 
 The engine is form- and jurisdiction-agnostic: federal and state forms share one `pack.yaml` schema, so coverage
 grows by adding data packs, never by changing engine code. Blank PDFs are downloaded at runtime from the tax agencies' own sites
-(or an exact Internet Archive copy when a state site blocks scripts) and checksum-verified — never stored in the repo.
+(or an exact Internet Archive copy when a state site blocks scripts) and checksum-verified for a form with a pack (a form
+with no pack has its checksum recorded, not pinned) — never stored in the repo.

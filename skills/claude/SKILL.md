@@ -38,6 +38,12 @@ compute. **You never do tax arithmetic yourself, and you never invent a value.**
 6. **Cite or refuse.** For any year newer than the shipped knowledge packs, or
    any benefit a pack doesn't cover, resolve it via `get_sources` (.gov only),
    cite it, and refuse to fill a line you cannot cite.
+7. **No pack, no filing-grade.** A form with no pack gets at most an
+   UNMAPPED DRAFT — NOT FILING-GRADE (Recipe U): say up front that no pack
+   exists, keep that label in everything you say, and never call the draft
+   "done", "complete", "ready", "finished", "final" or "all set" before
+   `verify_form(form="unmapped")` returned `ok` for that output's
+   `output_sha256`. It is never ready to file.
 
 ## The flow
 
@@ -61,10 +67,10 @@ Show the user which step they're on and that they can stop and resume anytime
 | `state_scope(profile, year)` | which states require a return, role, forms, candidate credits, treaty-conformity warnings |
 | `estimate_refund(profile, year, income)` | early refund/owed RANGE + composition + assumptions (labeled ESTIMATE; a planning year — a provisional pack, today TY2026 — is labeled PROJECTION, see Recipe P). From 2026 the LOW end holds back Schedule 3-A's federal public benefit — the refunded EIC/ACTC/AOTC — when no one on the return is recorded as a U.S. citizen, national or qualified alien (8 U.S.C. 1641, NOT tax residency: an H-1B resident alien is not one); record `identity.qualified_alien_status` (P-023) |
 | `compare_scenarios(year, scenarios, income?, profile?, save_as?, load?, income_updates?)` | run 2+ what-ifs (filing postures / §6013(g) election / revised facts / cross-year) and diff each against the FIRST with two EXACT attributions — a per-slot ledger view and a sequential input walk whose steps telescope to the headline delta. `save_as` persists the set in the workspace; `load` (+`income_updates`) re-runs it after a fact changes — planning is iterative, so prefer re-running a saved set over rebuilding. Cross-year comparisons are labeled PROJECTION and name what the planning year could not price |
-| `list_forms(jurisdiction?, year?)` / `get_form_map(form, year, jurisdiction?)` | discover packs (federal + `states/<xx>`); line→field map + relations |
-| `fetch_blank(form, year, jurisdiction?)` | download the official blank (checksum-verified) |
-| `fill_form(form, year, values, out_path, jurisdiction?)` | deterministic fill; rejects unknown lines + comb/length errors. Write every filled PDF to an ABSOLUTE `out_path` under the year's workspace `drafts/` folder (`~/taxfill-workspace/<year>/drafts/`, or `$TAXFILL_WORKSPACE/<year>/drafts/`) so `taxfill purge <year>` removes it with the rest of the year's data (`~/...` is accepted on every path argument; the result names the absolute path). It builds the page-header mirrors you leave out (a schedule's "Name(s) as shown on ..." and SSN boxes, listed in `mirrored`), and leaves a header too wide for its box BLANK with a "hand-write it in the box after printing" warning; it may narrow a comb widget to its printed separator grid (`combs_aligned`, informational). Read and relay every `warnings` entry |
-| `verify_form(form, year, pdf_path, expected?, independent?, jurisdiction?)` | assertions + relation math + independent recompute (`independent` = line→calc result, e.g. `{"16": 36036}`) + clipping + checkbox audit + page-header mirrors. A SKIPPED check never flips `ok`: read every section's `skipped` list (a guarded relation `... unless <box>` whose box is checked — check that line against the instructions; a mirror header left to hand-write) and relay each to the user before printing |
+| `list_forms(jurisdiction?, year?)` / `get_form_map(form, year, jurisdiction?)` | discover packs (federal + `states/<xx>`); line→field map + relations (with `form="unmapped"`: every field with a pack-blind anchor, `hand_write` and a sweep page — Recipe U) |
+| `fetch_blank(form, year, jurisdiction?)` | download the official blank (checksum-verified for a pack; with `form="unmapped"` its sha256 is recorded, not pinned — Recipe U) |
+| `fill_form(form, year, values, out_path, jurisdiction?)` | (with `form="unmapped"`: a stamped, unverified draft keyed by field name — Recipe U) deterministic fill; rejects unknown lines + comb/length errors. Write every filled PDF to an ABSOLUTE `out_path` under the year's workspace `drafts/` folder (`~/taxfill-workspace/<year>/drafts/`, or `$TAXFILL_WORKSPACE/<year>/drafts/`) so `taxfill purge <year>` removes it with the rest of the year's data (`~/...` is accepted on every path argument; the result names the absolute path). It builds the page-header mirrors you leave out (a schedule's "Name(s) as shown on ..." and SSN boxes, listed in `mirrored`), and leaves a header too wide for its box BLANK with a "hand-write it in the box after printing" warning; it may narrow a comb widget to its printed separator grid (`combs_aligned`, informational). Read and relay every `warnings` entry |
+| `verify_form(form, year, pdf_path, expected?, independent?, jurisdiction?)` | (with `form="unmapped"`: the draft is exactly what the fill wrote, stamped on every page, never filing-grade — Recipe U) assertions + relation math + independent recompute (`independent` = line→calc result, e.g. `{"16": 36036}`) + clipping + checkbox audit + page-header mirrors. A SKIPPED check never flips `ok`: read every section's `skipped` list (a guarded relation `... unless <box>` whose box is checked — check that line against the instructions; a mirror header left to hand-write) and relay each to the user before printing |
 | `verify_filing(items, independent?)` | cross-form identity + inter-form relations across the whole filing (`independent` keyed form_key→{line: calc result}); its failures and `skipped` entries start with the item's form_key |
 | `render_form(pdf_path, pages?)` | page PNGs returned as image content — vision-review every page |
 | `hand_fill_worksheet(form, year, jurisdiction, values?)` | print-and-copy worksheet for the 4 print-only (non-AcroForm) states: **CT, HI, NM, SC** — plus **WV for TY2025** (`it140`, a booklet page). These packs are NOT returned by `list_forms` — if `list_forms("states/ct"\|"states/hi"\|"states/nm"\|"states/sc", …)` (or WV for 2025) comes back empty, that is expected: go straight to `hand_fill_worksheet` (`ct1040` / `n11` / `pit1` / `sc1040` / `it140`). **All of them can also be STAMPED**: their 2023–2025 manifests carry measured overlay coordinates, so `fill_form('ct1040' | 'n11' | 'pit1' | 'sc1040', 2023, values, out, 'states/ct' | 'states/hi' | 'states/nm' | 'states/sc')` stamps every value onto the print blank (`render_mode: "hand_fill_overlay"`), then `verify_form(..., expected=values)` gives the OVERLAY verdict — render every page and read it, and the filer still signs in ink. HI's N-11 is machine-read: its ovals are painted and a loss shades the printed minus box, so pass a loss as a negative number. **Also the FBAR**: FinCEN Form 114 is e-file only through FinCEN's BSA E-Filing System and irs.gov states a PRINTED Form 114 is not accepted, so it has no fillable pack either — `hand_fill_worksheet('fincen114', <year>, 'federal')` gathers the values (and computes the $10,000 aggregate-maximum test) for keying into the BSA system. It is filed with FinCEN, NOT the IRS, and is NOT part of the return envelope. |
@@ -180,8 +186,8 @@ ineligible; 2021 used the ARPA $8,000/$16,000 caps and was refundable with a US 
 > Rev. 12-2026 draft), so ask for the year you are filing rather than reusing a pack across years.
 > Still: never assume — `list_forms(jurisdiction, year)` is
 > the authority, and when a needed pack really is missing, say so up front and
-> fall back to `get_sources` + the official blank; never silently truncate a
-> filing.
+> follow Recipe U (an UNMAPPED DRAFT from the official blank, never filing-grade);
+> never silently truncate a filing.
 
 ### Recipe B — back-file a nonresident return (1040-NR + 8843, e.g. an F-1 student)
 
@@ -314,8 +320,9 @@ serves one FEDERAL filing: `fincen114`, the FBAR — e-file only, no PDF blank.)
 > are **thinner and uneven**: 130 packs, TY2023 for all 42 jurisdictions but
 > then TY2024 for **41** (AL, AR, AZ, CA, CO, CT, DC, DE, GA, HI, IA, ID, IL, IN, KS, KY, LA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NJ, NM, NY, OH, OK, OR, PA, RI, SC, UT, VA, VT, WI, WV) and TY2025 for **42** (AL, AR, AZ, CA, CO, CT, DC, DE, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NJ, NM, NY, OH, OK, OR, PA, RI, SC, UT, VA, VT, WI, WV). For any other jurisdiction-year
 > a 2024 or
-> 2025 return computes but **cannot be filled**: say so plainly and fall back to
-> `get_sources` + the state's own blank. Do not memorize this list — it grows
+> 2025 return computes but **no pack fills it**: say so plainly and follow
+> Recipe U (an UNMAPPED DRAFT from the state's own blank, never filing-grade).
+> Do not memorize this list — it grows
 > tranche by tranche; call `list_forms("states/<xx>", year)` and believe the
 > result.
 
@@ -328,6 +335,52 @@ serves one FEDERAL filing: `fincen114`, the FBAR — e-file only, no PDF blank.)
 Note: California does **not** honor federal tax treaties — a treaty-exempt
 amount federally is still taxable to CA (`state_scope` warns when this
 applies; conforming states get the flows-through note instead).
+
+### Recipe U — a form with no pack (`form="unmapped"`): a labeled draft, never filing-grade
+
+When `list_forms(jurisdiction, year)` has no pack for a form the return needs (and it is not a
+`hand_fill_worksheet` form), **say so up front**: "taxfill has no pack for <form>, so what I can make is an
+UNMAPPED DRAFT — NOT FILING-GRADE: an unverified draft for you to review and copy by hand onto the official
+form." Four tools take `form="unmapped"` ([TOOLS.md](../../docs/TOOLS.md#forms-with-no-pack-formunmapped));
+every response carries `grade: "unmapped_draft"`, `limits` and `next_step`, and every page of every PDF
+written is stamped with that label.
+
+1. **The official blank.** Take the form's https PDF URL on the agency's own .gov site from `get_sources`
+   or the agency's forms page, then `fetch_blank(form="unmapped", year, jurisdiction,
+   source_url=<that URL>, form_title=<its printed name, e.g. "SD 100">)`. It checks the first page for the
+   year and title and returns `sha256` (recorded, not pinned): every later call passes the
+   same `source_url` and `blank_sha256` (that `sha256`). A host that refuses scripted downloads: the user saves the PDF in a browser and you
+   pass it as `local_blank`. A refusal (a shipped pack covers the form, an IRS early-release draft, a
+   non-government host, a revision-dated, XFA-only, scanned or locked blank) means no draft: relay it
+   and its pointer.
+2. **Map, and let the user confirm boxes.** `get_form_map(form="unmapped", ..., source_url,
+   blank_sha256)` returns every field with a pack-blind anchor per box, `hand_write` and `sweep_path`.
+   Show the sweep page with `render_form(sweep_path)` BEFORE you ask the user to confirm any box. A
+   field anchored `low` or `med` is written only when the user confirmed its numbered boxes on that page
+   (`confirmed_fields`); a field anchored `none` is never written.
+3. **Fill.** `fill_form(form="unmapped", ..., values keyed by field name, out_path under drafts/,
+   money_fields, provenance, confirmed_fields)`. Never try to fill what comes back in `hand_write`
+   (calculated, custom-format, ReadOnly, signature, pushbutton, hidden and unanchored boxes, unconfirmed
+   fields): tell the user to write each one by hand on the printed form. That list holds only the values you
+   passed, so also relay every get_form_map `hand_write` entry the form fills itself (reason `calculated`,
+   `read_only` or `custom_format_script`, e.g. Georgia 500X lines 7c, 10, 11, 13 and 16): name each by its
+   `printed_line` when set, else by its `label`; say that any figure the draft prints there (often a `0`)
+   is the blank's own default, not a computed figure, and that the user works each line out by hand from the
+   form's instructions. Every value is labeled
+   "agent-computed, unverified" (`labels`): keep that label whenever you show a value, and also mark any
+   line you computed yourself rather than took from `calc` or a document. A flat blank (`kind: "flat"`)
+   writes no PDF (`status: "worksheet_only"`): the worksheet is what the user copies by hand.
+4. **Verify, then render every page.** `verify_form(form="unmapped", ..., pdf_path,
+   expected=<fill_form's written map>)` until `ok`; `verified_at` names the output's sha256, and any
+   later change to the file voids it. Then `render_form` on EVERY page and look at each one (each value
+   in its box, the stamp on every page).
+5. **Say it straight.** Keep "UNMAPPED DRAFT — NOT FILING-GRADE" in everything you say about it. Never
+   say "done", "complete", "ready", "finished", "final" or "all set" about the draft before
+   `verify_form` returned `ok` for that output's `output_sha256`; even then `ok` means only the listed checks passed (`limits`). Asked "is
+   this ready to file?", say no: an unmapped draft is never filing-grade, `ok` or not. The way to a
+   filing is a pack, or the user transcribing the reviewed values by hand onto a clean official blank and
+   checking them against the form's instructions. `verify_filing` refuses an unmapped item; a
+   `filing_summary` or `file_and_pay` manifest names the form's own number (`500X`), never `"unmapped"`.
 
 ## Prescriptive errors
 
