@@ -240,7 +240,8 @@ changes; it is the single source of truth for the design.
 - Freshness runs WEEKLY (`.github/workflows/freshness.yml`, Mondays, plus on demand): it
   re-fetches the official sources, blanks and addresses, and a red opens a `freshness red`
   issue; known reds wait in `scripts/freshness_quarantine.yaml` with an expiry. `finals.yml`
-  watches for a planning year's final forms: weekly in October and November, daily from mid-December to mid-February.
+  watches for a planning year's final forms, and `check_watches.py` (same workflow) for the named JK8 triggers:
+  weekly in October and November, daily from mid-December to March 15.
 - Every pitfall in `knowledge/pitfalls.yaml` must have a regression test (the gate above).
 - After adding tests, run `uv run python scripts/sync_test_count.py --write` so README and the
   ROADMAP carry the real count.

@@ -1,28 +1,51 @@
-# TY finals watch — Phase J JT0c (scripts/check_finals.py).
+# TY finals watch — Phase J JT0c (scripts/check_finals.py) — and the named watches, Phase K JK8
+# (scripts/check_watches.py).
 #
-# HEADs irs.gov/pub/irs-prior/<form>--<year>.pdf for every draft pack of the newest provisional
-# federal year plus Pub 1040, the Form 1040 instructions and Pub 501, and opens or updates ONE
-# issue labeled `ty<year>-finals: re-pin now` when any final has posted. That issue is JT6's only
-# trigger, so the watch has its OWN workflow: freshness.yml's failures carry other reds, and a
-# signal routed there would be lost among them.
+# check_finals.py HEADs irs.gov/pub/irs-prior/<form>--<year>.pdf for every draft pack of the oldest
+# provisional federal year (the season in progress: a next-year pack started early must not move the
+# watches) plus Pub 1040, the Form 1040 instructions and Pub 501, and opens or updates ONE issue
+# labeled `ty<year>-finals: re-pin now` when any final has posted (JT6's trigger).
 #
-# Cadence: weekly in October–November (drafts still move; finals rarely post), then daily from
-# December 15 to February 15, when the 2025 finals landed (f1040 created 2026-01-02, Pub 1040
-# modified 2026-01-15, i1040gi created 2026-02-25). The odd minute avoids the top-of-hour
-# scheduled-job stampede.
+# check_watches.py (JK8, KG4: every dated tranche has an automated trigger) watches four named targets,
+# each routed to ITS OWN issue so one signal cannot hide another:
+#   drafts   the irs-dft Schedule NEC / OI (Form 1040-NR) drafts re-posted newer than the recorded
+#            2025-05-13 ones -> `ty<year>-nr-drafts: build JT5g` (JT5g's trigger)
+#   revproc  the IRS news release for the next tax year's inflation adjustments (its Rev. Proc.)
+#            -> `ty<year+1>-revproc: record for JT6` (record it; the next year's pack waits for JT6's flip)
+#   revised  a new digest at irs.gov/pub/irs-pdf/<form>.pdf for each non-draft pack of the year
+#            (f1040es, f8316, f843, f8833, fw7) -> `ty<year>-revised: re-pin`
+#   states   each tier-1 state's blank (scripts/tier1_states.yaml): a 200 whose first page prints the
+#            year; a host that refuses scripts (mass.gov, 403) is listed BLIND, never quiet
+#            -> `ty<year>-state-blanks: JS7a` (JS7a's trigger)
+# An issue opened only by BLIND rows is titled "blind ... check by hand"; closing an issue acknowledges it
+# (the same rows do not re-open it; anything new files a fresh one).
+# The two run as separate steps (the second runs even when the first is red), so a red in one cannot
+# stop the other.
+# The watches have their OWN workflow: freshness.yml's failures carry other reds, and a signal routed
+# there would be lost among them.
+#
+# Cadence: weekly in October–November (drafts still move; finals rarely post), December 1 and 8
+# (the Mondays stopped at the last one of November, a two-week hole before the daily cron), then
+# daily from December 15 to March 15. The 2025 finals landed f1040 created 2026-01-02, Pub 1040 modified
+# 2026-01-15, i1040gi created 2026-02-25 — after the old 02-15 stop, so Phase K JK8 (2026-10-24)
+# runs the daily cron to 03-15, when a manual check for i1040gi and the Rev. Proc. is booked
+# (docs/dev/ROADMAP.md calendar, 2027-03-15). The odd minute avoids the top-of-hour scheduled-job
+# stampede.
 
 name: finals-watch
 
 on:
   schedule:
     - cron: "41 10 * 10,11 1"   # Mondays, October and November
+    - cron: "41 10 1,8 12 *"    # December 1 and 8 (JK8): no week without a run before the daily cron
     - cron: "41 10 15-31 12 *"  # daily, December 15-31
     - cron: "41 10 * 1 *"       # daily, January
-    - cron: "41 10 1-15 2 *"    # daily, February 1-15
+    - cron: "41 10 * 2 *"       # daily, February (JK8: was 1-15)
+    - cron: "41 10 1-15 3 *"    # daily, March 1-15 (JK8)
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Print the re-pin list and the issue without filing it"
+        description: "Print every watched target and the issues without filing them"
         type: boolean
         default: true
 
@@ -41,6 +64,7 @@ jobs:
           version: "0.13.0"
           python-version: "3.11"
       - name: Sync workspace
+        id: sync
         run: uv sync
       - name: Watch for the finals
         env:
@@ -48,3 +72,11 @@ jobs:
           GH_REPO: ${{ github.repository }}
           DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
         run: uv run python scripts/check_finals.py $DRY_RUN
+      - name: Watch the named targets (JK8)
+        # Runs even when the finals step is red (a blind finals URL must not silence these), never on a failed sync.
+        if: ${{ !cancelled() && steps.sync.outcome == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: uv run python scripts/check_watches.py $DRY_RUN

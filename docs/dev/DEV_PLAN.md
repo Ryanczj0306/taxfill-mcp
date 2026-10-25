@@ -164,7 +164,7 @@ Tax law moves faster than any shipped knowledge pack. Example: the One Big Beaut
    Each entry: `url`, `answers` (what questions it resolves), `cadence` (when it updates). Coverage rule: **no topic may exist in a knowledge pack or be used by a position decision without a sources.yaml entry backing it.**
 2. **`effective_law_changes`** in `knowledge/<jurisdiction>/<year>.yaml` — enacted-law deltas relevant to that filing year, each with citation and status: `enacted` → `irs_guidance_pending` → `final_form_published`. Numbers without final IRS guidance are **never hardcoded**; the pack stores the lookup path instead.
 3. **Skill freshness protocol (hard rule):** for any tax year newer than the newest shipped knowledge pack, or any benefit the user mentions that the pack doesn't cover, the agent MUST resolve it via `sources.yaml` URLs (web search restricted to .gov first), record the citation in `RECONCILIATION.md`, and refuse to fill any line whose authority it cannot cite. Blogs/Reddit are never authority — at most leads to a .gov citation.
-4. **CI nightly:** re-fetch `sources.yaml` URLs and flag drift (moved pages, new form revisions) — same job that watches mailing addresses and PDF checksums. Known reds sit behind `scripts/freshness_quarantine.yaml` (Phase J JT0c): each row carries an expiry (at most 200 days) and the tranche that fixes it, a quarantined network test is xfail on a fetch failure only, an expired row fails the job, and any red opens or updates a `freshness red` issue. A separate weekly-then-daily job (`scripts/check_finals.py`, `.github/workflows/finals.yml`) watches for the finals of a provisional year's draft packs.
+4. **CI nightly:** re-fetch `sources.yaml` URLs and flag drift (moved pages, new form revisions) — same job that watches mailing addresses and PDF checksums. Known reds sit behind `scripts/freshness_quarantine.yaml` (Phase J JT0c): each row carries an expiry (at most 200 days) and the tranche that fixes it, a quarantined network test is xfail on a fetch failure only, an expired row fails the job, and any red opens or updates a `freshness red` issue. A separate weekly-then-daily job (`scripts/check_finals.py`, `.github/workflows/finals.yml`) watches for the finals of a provisional year's draft packs, and (`scripts/check_watches.py`, Phase K JK8) the named triggers: newer NR drafts, the next year's inflation Rev. Proc., revised non-draft forms, tier-1 state blanks.
 
 ## 8. MCP tool surface
 
@@ -322,7 +322,7 @@ dispatch chain in the MCP server for ops (40 today), `list_forms` / the formpack
   not exist"). Form packs for a planning year fill only in rehearsal mode, stamped as such.
 - **Freshness runs weekly, not nightly (§7, §9, §14, §16).** `.github/workflows/freshness.yml` runs every
   Monday (`cron: "13 9 * * 1"`) plus on demand; `finals.yml` watches for a planning year's finals — weekly in
-  October and November, daily from mid-December to mid-February. Known reds sit in `scripts/freshness_quarantine.yaml` with an expiry.
+  October and November, daily from mid-December to March 15. Known reds sit in `scripts/freshness_quarantine.yaml` with an expiry.
 - **The DocSpec set is `list_document_kinds` (§8).** It carries 29 kinds — the W-2, the 1099 family, the
   1098 family, the 1095s, 1042-S, SSA-1099, 3921/3922, 5498/5498-SA, W-2G, the three Schedule K-1s, the IRA
   custodian statement and (JP3a) the pay stub. The I-94, the I-20 and the IRS wage-and-income transcript were

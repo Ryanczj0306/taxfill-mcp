@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**13,436 tests** — offline 10,806 + live-.gov 2630; derived
+Done and on `main` (**13,459 tests** — offline 10,829 + live-.gov 2630; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -231,7 +231,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 15 | JK20 Hoist citations into `sources` | M | JK0, JS2c (done), JK21 | — | **done 2026-10-24** |
 | 16 | JK22 Drop never-read TY2025 blocks (zero-output) | M | JK20, JK21 | — | **done 2026-10-24** |
 | 17 | JK16 Pack-less fill | L | JK14, JK15 | — | 2026-11-23 |
-| 18 | JK8 Watch coverage | M | JK2, JK9 (state rows) | — | 2026-11-23 |
+| 18 | JK8 Watch coverage | M | JK2, JK9 (state rows) | — | **done 2026-10-24** |
 | 19 | JK9 Tier-1 state triage table | S–M | JK0 | IRS SOI state data | **done 2026-10-24** |
 | 20 | JK10 Label-adjacency guard (base pack + every port) | M | — | — | 2026-11-30 |
 | 21 | JEe Text width vs widget padding | M | JK0 | the user: RI DOB choice | 2026-11-30 |
@@ -338,11 +338,12 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 
 ### K-T — TY2026 readiness (priority 2)
 
-- [ ] **JK8 — Watches as triggers** (M; deps JK2's retry, JK9 for the state rows; latest start 2026-11-23, live before the 12-15 daily cron) (KG4)
-  - Extend the finals cron from 02-15 (finals.yml:21) to **03-15**. The i1040gi precedent is 2026-02-25.
-  - Watch by name: the irs-dft f1040nrn/f1040nro drafts (JT5g's trigger, still dated 2025-05-13 on 2026-10-09); the 2027 inflation Rev. Proc.; the five non-draft 2026 packs (f1040es, f8316, f843, f8833, fw7).
-  - Add a state-blank watch for the JK9 tier-1 list (JS7a's trigger).
-  - **Acceptance:** a dry run lists every new target. A planted 200 opens the issue. The cron covers October to 03-15. A manual check is booked for 2027-03-15.
+- [x] **JK8 — Watches as triggers — DONE 2026-10-24** (M; deps JK2, JK9) (KG4) — the finals cron runs weekly on October-November Mondays, on December 1 and 8 (closing a 15-day hole before the daily run), then daily from December 15 through **March 15** (it stopped on 02-15). scripts/check_watches.py, a second step in .github/workflows/finals.yml, watches four named targets, each with its own issue so one signal cannot hide another:
+  - **JT5g:** the irs-dft f1040nrn / f1040nro drafts fire when a draft newer than the recorded 2025 one posts (its "Created" footer and printed year decide; Last-Modified only when the footer cannot be read, so a re-upload of the 2025 draft stays quiet).
+  - **The TY2027 inflation Rev. Proc.:** read from the IRS newsroom month pages (the release links the Rev. Proc. the day it drops; the IRB prints it weeks later). Its issue says to record the Rev. Proc. for JT6 and not to add knowledge/federal/2027.yaml yet; every watch follows the OLDEST provisional year, so an early 2027 pack cannot silence the TY2026 triggers.
+  - **The five non-draft 2026 packs** (f1040es, f8316, f843, f8833, fw7): fire when irs-pdf's current file no longer matches the pinned digest.
+  - **JS7a, the tier-1 state blanks:** all 18 tier-1 forms from the JK9 table; a candidate fires only on a 200 whose first page prints 2026 (IL's and NJ's rotating slots are read by content; michigan.gov ignores the `?rev=&hash=` query, so MI's derived path is live). A host that refuses scripts (mass.gov's 403), a page that is not a not-found page, or a year that cannot be read is BLIND: it opens the issue under "check by hand", never quiet. A transient failure past JK2's retries exits 1.
+  - Closing an issue acknowledges it: while the watch finds the same rows (a signature in the body; the finals issue's signature is its posted forms) it stays closed, and anything new files a fresh one. The real dry run on 2026-10-24: 34 finals 404; drafts, Rev. Proc. and revised forms quiet; states 17 quiet, MA blind. The manual check stays booked for 2027-03-15 (calendar above). Built, verified (a fail: the Rev. Proc. issue's advice would have moved every watch to TY2027), fixed, re-verified and its minors fixed.
 - [x] **JK9 — Tier-1 state triage table — DONE 2026-10-24** (S–M; deps JK0) — scripts/tier1_states.yaml ranks the 42 income-tax jurisdictions by number of individual returns from IRS SOI Historic Table 2, tax year 2023 (https://www.irs.gov/pub/irs-soi/23in55cmcsv.csv, column N1 at AGI_STUB 0, fetched twice; the newest year on the index page on 2026-10-24). Tier 1 is the top 12, volume only, 62.1% of the returns from income-tax jurisdictions: **CA, NY, PA, IL, OH, NC, GA, MI, NJ, VA, MA, AZ** (the plans' eleven plus AZ; IN, MD and CO follow closely, so 12 is the roadmap's "about 12", not a natural break).
   - Per tier-1 state the table records the resident and NR/PY forms, the NR/PY packs a port can start from, the amend route quoted from each state's 2025 instructions (same form with an indicator: CA, PA, OH, NC, MI, VA, MA; a separate X form: NY IT-201-X / IT-203-X, IL-1040-X, GA 500X, NJ-1040X, AZ 140X), and which line of each 2025 pack maps the amended indicator. test_tier1_states.py holds every claim to the packs' line keys, so a re-map cannot leave the table stale.
   - `scaffold_state_year.py --tier1` filters to the table (it refuses a table whose tier-1 rows are not the top of the ranking); the TY2026 work-list is staged at scripts/worklists/tier1_ty2026_2026-10-24.json (18 forms: 15 answer 404 until the 2026 blanks post, MA 403, IL and NJ carry no year token).

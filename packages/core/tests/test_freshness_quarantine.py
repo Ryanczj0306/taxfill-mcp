@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 import importlib.util
+import json
 import os
 import re
 import subprocess
@@ -278,14 +279,33 @@ def test_check_finals_dry_run_prints_the_repin_list_and_the_issue_and_files_noth
 def test_check_finals_opens_one_issue_then_updates_it_only_when_the_list_changes(capsys):
     fresh = _Runner()
     assert cf.main([], head=_head({"p1040"}), runner=fresh) == 0
-    assert [c[:2] for c in fresh.calls] == [["label", "create"], ["issue", "list"], ["issue", "create"]]
+    # label, the open issue (none), the closed ones (Phase K JK8: an acknowledged issue is not re-opened), create.
+    assert [c[:2] for c in fresh.calls] == [["label", "create"], ["issue", "list"], ["issue", "list"],
+                                            ["issue", "create"]]
     body = fresh.calls[-1][fresh.calls[-1].index("--body") + 1]
+    assert cf.CLOSING_NOTE in body
     same = _Runner(open_issue="12", body=body)
     assert cf.main([], head=_head({"p1040"}), runner=same) == 0
     assert [c[:2] for c in same.calls] == [["label", "create"], ["issue", "list"], ["issue", "view"]]
     grown = _Runner(open_issue="12", body=body)
     assert cf.main([], head=_head({"p1040", "p501"}), runner=grown) == 0
     assert [c[:2] for c in grown.calls][-2:] == [["issue", "edit"], ["issue", "comment"]]
+
+    # Phase K JK8: closed by a person with this same body -> acknowledged, not re-opened; a new posting files anew.
+    def closed_runner(calls: list):
+        def run(cmd, check, capture_output, text):
+            calls.append(cmd[1:])
+            out = json.dumps([{"number": 12, "body": body}]) if cmd[1:3] == ["issue", "list"] and "closed" in cmd \
+                else ""
+            return subprocess.CompletedProcess(cmd, 0, stdout=out)
+        return run
+
+    acked: list = []
+    assert cf.main([], head=_head({"p1040"}), runner=closed_runner(acked)) == 0
+    assert ["issue", "create"] not in [c[:2] for c in acked]
+    new: list = []
+    assert cf.main([], head=_head({"p1040", "p501"}), runner=closed_runner(new)) == 0
+    assert [c[:2] for c in new][-1] == ["issue", "create"]
 
 
 def _head_answers(monkeypatch, script: list) -> tuple[list[str], list[float]]:
@@ -365,3 +385,26 @@ def test_check_finals_nothing_posted_files_nothing_and_a_blind_watch_fails(capsy
     assert runner.calls == [] and "none yet" in capsys.readouterr().out
     assert cf.main([], head=lambda url: 403, runner=runner) == 1
     assert "WATCH BLIND" in capsys.readouterr().out
+
+
+def test_check_finals_a_closed_issue_edited_by_a_person_is_still_acknowledged(capsys):
+    """JK8 re-verify (2026-10-24): a ticked box or a note on the closed issue is not a new finding."""
+    fresh = _Runner()
+    assert cf.main([], head=_head({"p1040"}), runner=fresh) == 0
+    body = fresh.calls[-1][fresh.calls[-1].index("--body") + 1]
+    edited = body.replace("- [ ]", "- [x]") + "\n\nRe-pinned on the release branch."
+
+    def closed_runner(calls: list):
+        def run(cmd, check, capture_output, text):
+            calls.append(cmd[1:])
+            out = json.dumps([{"number": 12, "body": edited}]) if cmd[1:3] == ["issue", "list"] and "closed" in cmd \
+                else ""
+            return subprocess.CompletedProcess(cmd, 0, stdout=out)
+        return run
+
+    acked: list = []
+    assert cf.main([], head=_head({"p1040"}), runner=closed_runner(acked)) == 0
+    assert ["issue", "create"] not in [c[:2] for c in acked]
+    grown: list = []
+    assert cf.main([], head=_head({"p1040", "p501"}), runner=closed_runner(grown)) == 0
+    assert ["issue", "create"] in [c[:2] for c in grown]

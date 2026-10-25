@@ -190,6 +190,10 @@ projection-grade until the final posts.
 The finals are watched by `scripts/check_finals.py` (its own workflow, `.github/workflows/finals.yml`,
 Phase J JT0c): it HEADs `irs.gov/pub/irs-prior/<form>--<year>.pdf` for every draft pack plus Pub 1040,
 the Form 1040 instructions and Pub 501, and opens or updates one `ty<year>-finals: re-pin now` issue.
+The same workflow runs `scripts/check_watches.py` (Phase K JK8), whose named watches each open their own
+issue: a newer irs-dft Schedule NEC / OI (Form 1040-NR) draft (JT5g), the next year's inflation
+Rev. Proc. (read from the IRS newsroom), a revised current revision of a non-draft pack's form, and the
+tier-1 states' blanks (JS7a). It runs weekly in October and November and daily from December 15 to March 15.
 
 **A form whose own final revision is the authority** (Phase J JT0c). The estimated-tax voucher for the
 year in progress is final in that year's January (the 2026 Form 1040-ES, `irs-prior/f1040es--2026.pdf`)
