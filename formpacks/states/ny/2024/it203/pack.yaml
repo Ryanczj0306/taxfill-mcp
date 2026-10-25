@@ -531,47 +531,52 @@ fields:
     field: nys 7 dollars
     type: money
     maxlen: 10
-  - line: 8_taxable_ira_fed           # Taxable amount of IRA distributions
+  # Phase K (2026-10-25): lines 8-12 re-keyed to the rows they sit on. The keys had drifted one row from the
+  # face while the boxes and line numbers were right (8 was named for IRA distributions on the "Other gains or
+  # losses" box, 9 for pensions, 10 for rentals, 11 for line 12's rental real estate, 12 for farm income); a
+  # caller choosing a key by its name would have put IRA income on line 8. The line 9 and 10 boxes are
+  # "Beneficiaries: mark X in box" (named as in IT-201). Found by JK10's label read.
+  - line: 8_other_gains_fed           # Other gains or losses (federal Form 4797)
     field: federal 8 dollars
     type: money
     maxlen: 10
-  - line: 8_taxable_ira_ny
+  - line: 8_other_gains_ny
     field: nys 8 dollars
     type: money
     maxlen: 10
-  - line: 9_lump_sum_box              # line 9 — "mark X in box" if you used the federal lump-sum (Form 4972) method
+  - line: 9_iras_beneficiary          # line 9 — "Beneficiaries: mark X in box" (IRA received as a beneficiary)
     field: line 9 box
     type: checkbox
     on_state: /Yes
-  - line: 9_taxable_pensions_fed      # Taxable amount of pensions/annuities
+  - line: 9_taxable_ira_fed           # Taxable amount of IRA distributions
     field: federal 9 dollars
     type: money
     maxlen: 10
-  - line: 9_taxable_pensions_ny
+  - line: 9_taxable_ira_ny
     field: nys 9 dollars
     type: money
     maxlen: 10
-  - line: 10_rental_partnership_box   # line 10 — "mark X in box"
+  - line: 10_pensions_beneficiary     # line 10 — "Beneficiaries: mark X in box" (pension received as a beneficiary)
     field: line 10 box
     type: checkbox
     on_state: /Yes
-  - line: 10_rental_partnership_fed   # Rental real estate, royalties, partnerships, S corps, trusts, etc.
+  - line: 10_taxable_pensions_fed     # Taxable amount of pensions/annuities
     field: federal 10 dollars
     type: money
     maxlen: 10
-  - line: 10_rental_partnership_ny
+  - line: 10_taxable_pensions_ny
     field: nys 10 dollars
     type: money
     maxlen: 10
-  - line: 11_rental_real_estate_fed   # Rental real estate included in line 10
+  - line: 11_rental_partnership_fed   # Rental real estate, royalties, partnerships, S corps, trusts, etc.
     field: federal 11 dollars
     type: money
     maxlen: 10
-  - line: 11_rental_real_estate_ny
+  - line: 11_rental_partnership_ny
     field: nys 11 dollars
     type: money
     maxlen: 10
-  - line: 12_farm_income_fed          # line 12 — federal amount only (NY column greyed/absent)
+  - line: 12_rental_real_estate_fed   # line 12 — Rental real estate included in line 11 (federal amount only)
     field: federal 12 dollars
     type: money
     maxlen: 10

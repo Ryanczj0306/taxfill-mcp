@@ -40,8 +40,8 @@ shapes:
     pattern: '^0*(?P<n>\d{1,3})(?P<x>[a-z])?_[a-z][a-z0-9_]*$'
     means: >-
       a box of printed line N: its Federal amount column (_fed), its New York State amount column (_ny), or another
-      box of that row (9_lump_sum_box, 45_income_percentage, 68a_amount_refund_direct_deposit)
-    examples: {1_wages_fed: "1", 1_wages_ny: "1", 52a_subtract_52_from_51: "52a", 9_lump_sum_box: "9"}
+      box of that row (9_iras_beneficiary, 45_income_percentage, 68a_amount_refund_direct_deposit)
+    examples: {1_wages_fed: "1", 1_wages_ny: "1", 52a_subtract_52_from_51: "52a", 9_iras_beneficiary: "9"}
 
   - id: nj1040-amount-digit-cells
     packs: [states/nj/2023/nj1040, states/nj/2024/nj1040, states/nj/2025/nj1040]
@@ -262,12 +262,12 @@ shapes:
 
   - id: mt-form2-2023-credit-boxes
     packs: [states/mt/2023/form2]
-    pattern: '^nrcredits\.0*(?P<n>\d{1,3})(?P<x>[a-z])?\.(?:cert(?:_\d)?|ucrn_\d|year|cgr_flag|cgr_account_id)$'
+    pattern: '^nrcredits\.0*(?P<n>\d{1,3})(?P<x>[a-z])?\.(?:cert(?:_\d)?|ucrn_\d|code|cgr_flag|cgr_account_id)$'
     means: >-
       a box of Nonrefundable Credits line N beside its amount columns: a credit certificate number
-      ("nrcredits.8.cert_1", "nrcredits.14.cert"), a UCRN ("nrcredits.13.ucrn_1"), a repealed credit's year
-      ("nrcredits.15a.year") or the CGR account box and flag of line 10
-    examples: {nrcredits.8.cert_1: "8", nrcredits.15a.year: "15a", nrcredits.10.cgr_account_id: "10"}
+      ("nrcredits.8.cert_1", "nrcredits.14.cert"), a UCRN ("nrcredits.13.ucrn_1"), a repealed credit's tax credit code
+      ("nrcredits.15a.code") or the CGR account box and flag of line 10
+    examples: {nrcredits.8.cert_1: "8", nrcredits.15a.code: "15a", nrcredits.10.cgr_account_id: "10"}
 
   - id: mt-form2-schedule-boxes
     packs: [states/mt/2024/form2, states/mt/2025/form2]

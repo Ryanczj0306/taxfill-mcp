@@ -79,6 +79,9 @@
 # format: ssn_digits_only. All numbered dollar boxes are type: money. Decimal
 # sub-boxes for ratio/percentage lines (ratio.18.decimal, othertax.6/8.decimal,
 # ehrc.13/21.decimal) are text with their MaxLen.
+# Exception (2026-10-25): the lines 15a-15c tax credit code boxes are comb
+# widgets whose codes are letters (BBSC, IRAC, ...), so they are text without
+# comb: true, which takes digits only (see the note at nrcredits.15a.code).
 #
 # relations: []  -- all arithmetic on this form is per-COLUMN and every money
 # line is a column-split dotted id (e.g. 9.a / 9.b); the relation grammar's LINE
@@ -2189,10 +2192,14 @@ fields:
   - line: nrcredits.14.b
     field: Nonrefundable Credits Col B Line 14
     type: money
-  - line: nrcredits.15a.year
+  # Phase K (2026-10-25): lines 15a-15c's 4-cell box is the "Tax credit code" (the face prints "15a Tax credit
+  # code"); it was keyed .year and mapped comb: true, which takes digits only, so no real code could be written.
+  # The 2023 Form 2 instructions (p. 49, "Lines 15a-15c ... Report the code and carryforward amount"; sha256
+  # c8a173fae8e15909) list four-letter codes: BBSC, IRAC, GEOT, AESC, AEPC, DCAC, EMPZ, ADPT, MINE. So the line
+  # is text, not comb: true, as 2024/2025 map sched3.13.tax_credit_code. Found by JK10's label read.
+  - line: nrcredits.15a.code  # "Tax credit code" (4 cells; letters)
     field: Nonrefundable Credits Line 15a
     type: text
-    comb: true
     maxlen: 4
   - line: nrcredits.15a.a
     field: Nonrefundable Credits Col A Line 15a
@@ -2200,10 +2207,9 @@ fields:
   - line: nrcredits.15a.b
     field: Nonrefundable Credits Col B Line 15a
     type: money
-  - line: nrcredits.15b.year
+  - line: nrcredits.15b.code  # "Tax credit code" (4 cells; letters)
     field: Nonrefundable Credits Line 15b
     type: text
-    comb: true
     maxlen: 4
   - line: nrcredits.15b.a
     field: Nonrefundable Credits Col A Line 15b
@@ -2211,10 +2217,9 @@ fields:
   - line: nrcredits.15b.b
     field: Nonrefundable Credits Col B Line 15b
     type: money
-  - line: nrcredits.15c.year
+  - line: nrcredits.15c.code  # "Tax credit code" (4 cells; letters)
     field: Nonrefundable Credits Line 15c
     type: text
-    comb: true
     maxlen: 4
   - line: nrcredits.15c.a
     field: Nonrefundable Credits Col A Line 15c
