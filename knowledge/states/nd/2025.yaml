@@ -238,8 +238,7 @@ tax:
     - {over: 271450, but_not_over: null, rate: 0.025}
   base: federal_taxable_income
   tax_line: 'Form ND-1 (2025), page 2, line 20: ''Tax - If full-year resident, enter tax on amount on line 19 from
-    Tax Table in instructions. If full-year nonresident or part-year resident, enter tax from Schedule ND-1NR. All
-    filers: If you have farm income or sold a research credit, see instructions.'' Line 19 is the North Dakota taxable
+    Tax Table in instructions. If full-year nonresident or part-year resident, enter tax from Schedule ND-1NR, line 23. All filers: If you have farm income or sold a research credit, see instructions.'' Line 19 is the North Dakota taxable
     income carried from line 18 (= line 1b federal taxable income + additions lines 2-4 - subtractions lines 5-17,
     floored at 0).'
   exemptions: {}
@@ -273,7 +272,7 @@ tax:
     schedule is titled 'Married Filing Jointly and Qualifying Surviving Spouse' and the Tax Table is footnoted '*If
     a Qualifying surviving spouse, use the Married filing jointly column'; the engine's QSS-to-MFJ mapping is exactly
     correct.
-  - 'Printed ''$X + Y% of amount over $Z'' top-bracket constants reconcile with cumulative bracket sums to within
+  - 'Printed $X + Y% of amount over $Z top-bracket constants reconcile with cumulative bracket sums to within
     half a cent: Single $3,828.83 printed vs exact 1.95% x $196,350 = $3,828.825 (+$0.005); MFJ/QSS $4,233.45 = 1.95%
     x $217,100 exactly; MFS $2,116.73 printed vs exact 1.95% x $108,550 = $2,116.7250 (+$0.005); HoH $4,026.75 = 1.95%
     x $206,500 exactly. Pure marginal bracket math (what this op does) therefore matches the printed schedules to

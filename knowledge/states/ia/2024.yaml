@@ -18,6 +18,12 @@
 # exclusion line 4; new surviving-spouse pension exemption; 529->Roth transfer exemption;
 # ISave 529 deduction limit $5,500/beneficiary); (4) federal income tax refunds received
 # in 2024+ are no longer reported; (5) two checkoffs repealed.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[5]: revenue.iowa.gov/media/4152/download?inline 7257943544f063e3 — the 2024 IA 1040 face does not print 'Enter Dollars and Cents' (the 2023 face does); the rounding quote re-read
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   credits[4].eligibility (a term, not a quote)
 jurisdiction: states/ia
 tax_year: 2024
 income_tax: true
@@ -90,6 +96,10 @@ credits:
     source: Iowa Department of Revenue — 2024 IA 1040 Expanded Instructions (PDF), 'Iowa Earned Income Tax Credit',
       Line 25
     url: https://revenue.iowa.gov/media/4152/download?inline
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 e943ecd562deb6a0...
+  citations:
+  - source: 'Iowa Department of Revenue 2024 IA 1040 (41-001) fillable form: line 31b caption'
+    url: https://revenue.iowa.gov/media/4091/download?inline
 - name: Child and Dependent Care Credit
   type: refundable
   eligibility: Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying child/dependent
@@ -139,7 +149,7 @@ credits:
 - name: Low-Income Exemption (with elevated threshold for filers age 65+)
   type: nonrefundable
   eligibility: This is an exemption from Iowa income tax (not a dollar-amount credit) functioning as Iowa's primary
-    low-income and senior relief on the IA 1040 — Iowa has no separate 'elderly credit' line. A taxpayer is exempt
+    low-income and senior relief on the IA 1040 — Iowa has no separate elderly credit line. A taxpayer is exempt
     from Iowa income tax if Iowa taxable income (IA 1040 line 4, with required add-backs incl. the line 1d standard/itemized
     deduction, line 1e QBI deduction, lump-sum distributions, and the Schedule 1 line 17 NOL carryover) is at or
     below the threshold for their filing status. Senior filers (taxpayer or spouse 65 or older on 12/31/24) qualify
@@ -163,6 +173,10 @@ credits:
       (Step 5), printed pp.10 and 44; box location from the 2024 IA 1040 fillable form (41-001) page 2 (41-001b
       07/29/2024), https://revenue.iowa.gov/media/4090/download?inline
     url: https://revenue.iowa.gov/media/4152/download?inline
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 e943ecd562deb6a0...
+  citations:
+  - source: 'Iowa Department of Revenue 2024 IA 1040 (41-001) fillable form: the Step 5 box caption and Schedule 1 line 17'
+    url: https://revenue.iowa.gov/media/4091/download?inline
 filing_requirement:
   note: A resident or part-year resident must file if Iowa taxable income (IA 1040 line 4, with specified add-backs
     incl. the line 1d standard/itemized deduction capped at the line 2 amount, the line 1e QBI deduction, lump-sum
@@ -305,8 +319,7 @@ tax:
     rounded to the CENT — non-joint $1,470.53 vs exact $1,470.528 (+$0.002), joint $2,941.06 vs exact $2,941.056 (+$0.004);
     the first constants ($273.24 / $546.48) are exact. This op does exact marginal math, so worksheet results can
     exceed it by less than half a cent — immaterial after whole-dollar rounding.'
-  - 'Cents vs whole dollars: the IA 1040 is captioned ''Enter Dollars and Cents'' and the worksheet computes tax to
-    the cent; whole-dollar rounding is OPTIONAL (''To round, drop amounts under 50 cents and increase amounts from
+  - 'Cents vs whole dollars: the worksheet computes tax to the cent; whole-dollar rounding is OPTIONAL (''To round, drop amounts under 50 cents and increase amounts from
     50 to 99 cents to the next dollar'' — a .50 tie rounds UP, matching this op). No tax-table mandate: all filers
     use the 41-026 worksheet or the online IA 1040 Tax Calculator.'
   - 'Exemption CREDITS, not base exemptions (NOT modeled): IA 1040 Step 3 computes personal credits at $40 (enter

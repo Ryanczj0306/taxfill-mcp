@@ -137,13 +137,13 @@ tax:
       but_not_over: null
       rate: 0.123
   base: federal_agi
-  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13: ''Line 31 – Tax. To figure your tax, use one or more of the following
+  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13, Line 31 – Tax: ''To figure your tax, use one or more of the following
     methods and check the matching box(es) on line 31, as applicable: Tax Table – If your taxable income on line 19 is $100,000
     or less, use the tax table beginning on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000,
-    use the tax rate schedule for your filing status on page 75.'' Rate schedule header (booklet p. 74): ''If the amount
-    on Form 540, line 19 is over – / but not over – / Enter on Form 540, line 31 [$X + Y%] of the amount over –''. Line
-    19 = line 17 (California AGI) minus line 18 (larger of California itemized deductions or the California standard deduction);
-    ''Subtract line 18 from line 17. This is your taxable income.'''
+    use the tax rate schedule for your filing status on page 75.'' Rate schedule header (booklet p. 74): ''over – but not
+    over – Enter on Form 540, line 31 [$X + Y%] of the amount over –''. Line 19 = line 17 (California AGI) minus line 18
+    (larger of California itemized deductions or the California standard deduction); ''Subtract line 18 from line 17. This
+    is your taxable income.'''
   exemptions: {}
   standard_deduction:
     single: 5706
@@ -326,8 +326,8 @@ tax:
       the foreign earned income exclusion and the foreign tax credit, and subtracts items like Social Security benefits.
       Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts (FTB Pub.
       737).'
-  - text: 'Printed ''$X + Y% of the amount over $Z'' constants verified against cumulative bracket sums: all 27 constants
-      (9 per schedule) reconcile, largest print-rounding divergence $0.01 (Schedule X''s $30,986.19 / $38,638.27 / $72,219.84
+  - text: 'Printed $X + Y% of the amount over $Z constants verified against cumulative bracket sums: all 27 constants (9
+      per schedule) reconcile, largest print-rounding divergence $0.01 (Schedule X''s $30,986.19 / $38,638.27 / $72,219.84
       half-cent chain) — bracket math and the printed schedules agree.'
   - text: 'Rounding: the booklet''s worked example (p. 75) rounds the schedule result to whole dollars for line 31 — Chris
       and Pat Smith, MFJ, taxable income $125,000: $3,974.82 + 8% x $9,916 = $4,768.10, entered as $4,768 — consistent with

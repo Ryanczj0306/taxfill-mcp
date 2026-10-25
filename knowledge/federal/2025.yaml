@@ -1585,7 +1585,8 @@ form_lines:
     line_source: final
     url: https://www.irs.gov/pub/irs-prior/f1040--2025.pdf
     read: '2026-09-27'
-    printed: 19 hild tax credit or credit for other dependents from Schedule 8812
+    # Phase K JK31 (2026-10-25): `printed` re-read on the face (3d31c226df0d189c..., downloaded twice, identical sha256); the caption had lost its first letter.
+    printed: 19 Child tax credit or credit for other dependents from Schedule 8812
   f1040.eic:
     line: 27a
     line_source: final
@@ -1597,7 +1598,8 @@ form_lines:
     line_source: final
     url: https://www.irs.gov/pub/irs-prior/f1040--2025.pdf
     read: '2026-09-27'
-    printed: 28 child tax credit (ACTC) from Schedule 8812. If you do not want to claim the ACTC, check here
+    # Phase K JK31 (2026-10-25): `printed` re-read on the face (3d31c226df0d189c..., downloaded twice, identical sha256); the caption had lost its first word.
+    printed: 28 Additional child tax credit (ACTC) from Schedule 8812. If you do not want to claim the ACTC, check here
   f1040.sched_1a:
     line: 13b
     line_source: final

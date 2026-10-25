@@ -13,6 +13,10 @@
 # income and reduced one of the two tax rates." The 2023 3.688%/3.75% top tiers are GONE:
 # 2024 has 0% to $26,050, then 2.75% to $100,000, then 3.50% over $100,000. The booklet
 # no longer prints an Income Tax Table at all (2023 had one for income under $115,300).
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   effective_law_changes[1].description: tax.ohio.gov/static/forms/ohio_individual/individual/2024/1040-bundle-original-fi.pdf 123ef74533bb449f — the 2024 Schedule of Adjustments line 8 caption
 jurisdiction: states/oh
 tax_year: 2024
 income_tax: true
@@ -319,8 +323,7 @@ effective_law_changes:
     url: https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/forms/ohio_individual/individual/2024/it1040-booklet.pdf
 - description: >-
     NEW for 2024 (Highlights for Tax Year 2024): the Ohio Homebuyer Plus deduction, with a
-    matching new addition line — the 2024 Schedule of Adjustments additions list carries
-    "Ohio Homebuyer Plus non-eligible withdrawals (new for 2024)" alongside the pre-existing
+    matching new addition line — the 2024 Schedule of Adjustments additions list carries line 8, "Ineligible withdrawals from an Ohio Homebuyer Plus account" (new for 2024), alongside the pre-existing
     add-back lines. It changes Ohio adjusted gross income (IT 1040 line 3 = line 1 federal AGI
     + line 2a additions - line 2b deductions), not the rate schedule, and does not touch
     treaty-exempt income (see treaty_note).

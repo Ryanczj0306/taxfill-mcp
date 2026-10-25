@@ -3,6 +3,11 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   treaty_note (a paraphrase of the quoted 'All foreign income must be reported' sentence)
 jurisdiction: states/al
 tax_year: 2023
 income_tax: true
@@ -17,7 +22,7 @@ treaty_note: 'Alabama does NOT start the return from federal adjusted gross inco
   that exclusion is the IRC sec. 911 foreign EARNED income exclusion, claimed as a separate negative-line credit
   with federal Form 2555 attached. There is NO Alabama line, schedule, or instruction that recognizes or excludes
   income exempt under a U.S. income-TAX TREATY. Given (a) the separate Alabama income build-up rather than a federal-AGI
-  start, and (b) the affirmative ''report all foreign income'' rule with only a sec. 911-style exclusion path, conformity
+  start, and (b) the affirmative report-all-foreign-income rule with only a sec. 911-style exclusion path, conformity
   to federal treaty exemptions is NOT established on any .gov page. Per conservative handling this is set false
   and flagged. See unverified/notes.'
 citation:
@@ -161,6 +166,12 @@ all_citations:
     lesser of 80 percent of the average annual state cost of attendance or the actual cost; Schedule AATC must
     be completed); Section F line F1 refundable portion
   url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf
+# Phase K JK31 (2026-10-25): the tax note and tax_line quote the resident face; downloaded twice, identical sha256 023470e8b831a77a...
+- source: 'Alabama DOR 2023 Form 40 (resident return), page 1 lines 16-17'
+  url: https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23f40.pdf
+# Phase K JK31 (2026-10-25): the note quotes this FAQ's title; downloaded twice, identical sha256 94c70923c3bb0f08...
+- source: 'Alabama DOR FAQ: What is Alabama''s Individual Income Tax Rate?'
+  url: https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/
 unverified:
 - 'TREATY CONFORMITY: No .gov page confirms whether income exempt under a U.S. income-tax TREATY is excluded for
   Alabama purposes. Alabama does not start from federal AGI, and the only foreign-income mechanism the Form 40NR

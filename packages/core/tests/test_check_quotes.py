@@ -5,6 +5,7 @@ the network; the weekly freshness workflow runs the script itself over the real 
 """
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import ssl
@@ -89,7 +90,7 @@ def test_the_report_and_strict_mode_over_a_pack(tmp_path, monkeypatch):
     args = ["--knowledge", str(tmp_path / "knowledge"), "--cache", str(tmp_path / "qc"), "--json", str(tmp_path / "r.json")]
     assert cq.main(args) == 0
     report = json.loads((tmp_path / "r.json").read_text(encoding="utf-8"))
-    assert report["totals"] == {"VERBATIM": 2, "MISMATCH": 1, "UNCHECKED": 0, "spans": 3}
+    assert report["totals"] == {"VERBATIM": 2, "MISMATCH": 1, "CLOSED": 0, "UNCHECKED": 0, "spans": 3}
     [mismatch] = [r for r in report["spans"] if r["status"] == "MISMATCH"]
     assert mismatch["span"] == PARAPHRASE and mismatch["where"] == "tax.notes[1]"
     assert report["by_kind_year"] == {"tax.notes 2025": {"VERBATIM": 2, "MISMATCH": 1}}
@@ -116,7 +117,8 @@ def test_the_report_and_strict_mode_over_a_pack(tmp_path, monkeypatch):
     ("Widow[er] with dependent child", "5 Widow(er) with dependent child"),  # an editorial bracket
     ("What's New for Tax Year 2023", "WHAT'S NEW FOR TAX YEAR 2023"),  # the source is ALL-CAPS
     ("The credit may not exceed $1,500", "of expenses paid. the credit may not exceed $1,500"),  # first letter
-    ("the credit may not exceed $1,500.", "The credit may not exceed $1,500 per person"),  # edge punctuation
+    ("the credit may not exceed $1,500.", "The credit may not exceed $1,500\nPer person"),  # edge punctuation (a
+    # sentence the source goes on with, "... $1,500 per person", is a MISMATCH since JK31: see the sentence-end test)
     ("Multiply Line 5d by $5,100", "MULTIPLY Line 5d by $5,100 (2024 Personal Exemption)"),  # one ALL-CAPS word
     ("married filing jointly", "If your filing status is married fil\ufffeing jointly"),  # pdfium's soft hyphen
     ("Line 3 total", "Line\x023 total"),  # a control character in a PDF text layer
@@ -396,3 +398,169 @@ def test_a_dash_between_digits_is_a_separator_not_a_merge(span, source, verbatim
     """JK23 review (2026-10-24): normalisation keeps a dash between two digits, so figures cannot merge."""
     found = cq.find_span(span, _source(source))
     assert (found is not None and found[0] == "verbatim") is verbatim
+
+
+# ── Phase K JK31 (2026-10-25): shifted text layers, a credit's second source, the false-positive closures ────────
+
+
+def _font_chars(text: str, font: str) -> list[tuple[str, str]]:
+    return [(c, font) for c in text]
+
+
+def test_a_shifted_subset_font_is_decoded_and_other_fonts_are_not():
+    """Arkansas DFA's AR2441 line 10, as pdfium reads it: the subset font numbers each glyph 29 below its letter
+    (U+0003 for a space, U+0011 for '.', U+0013..U+001C for 0..9); the line number and the plain font are as is."""
+    shifted = "0XOWLSO\\\x03OLQH\x03\x1c\x03E\\\x03\x11\x15\x13\x11\x03(QWHU\x03WKLV\x03DPRXQW"
+    chars = (_font_chars("10 ", "ArialMT") + _font_chars(shifted, "MFCFOH+ArialMT")
+             + _font_chars(" RETURN AR2441", "ABCDEF+Arial-Black"))
+    assert cq.unshift_page(chars) == "10 Multiply line 9 by .20. Enter this amount RETURN AR2441"
+    # its ligature and curly-quote codes: "GH\u00bfQHG" defined, "Dependent\u00b6s"
+    assert cq.unshift_page(_font_chars("GH\u00bfQHG\x03\x03\x03", "AAAAAA+F")) == "defined   "
+    # without the control characters a subset font is read as it is (an all-caps heading is not shifted text)
+    assert cq.unshift_page(_font_chars("INCOME TAX RETURN", "AAAAAA+F")) == "INCOME TAX RETURN"
+
+
+def test_an_old_extraction_in_the_quote_cache_is_read_again(tmp_path):
+    cache = _cache(tmp_path, {URL: SOURCE_HTML})
+    cache.get_many([URL])
+    cache.save()
+    row = cache.index[URL]
+    stored = tmp_path / "qcache" / "text" / f"{row['sha256']}.json"
+    data = json.loads(stored.read_text(encoding="utf-8"))
+    assert data["extractor"] == cq.EXTRACTOR
+    del data["extractor"]  # written by the JK23 extractor
+    stored.write_text(json.dumps(data), encoding="utf-8")
+    calls: list[str] = []
+    again = _cache(tmp_path, {URL: SOURCE_HTML}, calls)
+    again.get_many([URL])
+    assert calls == [URL]
+
+
+def test_a_credit_names_its_second_source_in_citations():
+    pack = {
+        "jurisdiction": "states/zz", "tax_year": 2025, "citation": {"source": "s", "url": "https://example.gov/c"},
+        "credits": [{"name": "X", "claimed_on": "Line 20d ('20d. Historic Home Rehabilitation Credit')",
+                     "citation": {"source": "the instructions", "url": URL},
+                     "citations": [{"source": "the form face", "url": OTHER}]}],
+    }
+    [span] = [s for s in cq.collect_state_pack(pack, "zz.yaml") if s.kind == "credits"]
+    assert span.urls == [URL, OTHER] and span.elsewhere == ["https://example.gov/c"]
+
+
+SOURCE_SHA16 = hashlib.sha256(SOURCE_HTML).hexdigest()[:16]
+
+
+@pytest.mark.parametrize("text, status", [
+    ("You may claim a credit for 50% of the expenses.", "MISMATCH"),  # the sentence goes on: "... expenses paid."
+    ("You may claim a credit for 50% of the expenses paid.", "VERBATIM"),
+    ("You may claim a credit for 50% of the expenses", "VERBATIM"),  # no sentence end claimed
+    ("You may claim a credit for 50% of the expenses...", "VERBATIM"),  # an ellipsis says it stops early
+    ("Blind worker transportation services credit.", "VERBATIM"),  # the source's next word starts a sentence
+])
+def test_a_span_that_ends_a_sentence_must_not_drop_the_sources_last_words(tmp_path, text, status):
+    # the JK31 review: "If your total MGI is $41,496 or less, you may qualify." read VERBATIM against "... you may
+    # qualify for Kentucky Family Size Tax Credit."
+    sources = _cache(tmp_path, {URL: SOURCE_HTML}).get_many([URL])
+    assert cq.check_span(_span(text), sources)["status"] == getattr(cq, status)
+
+
+def _closure(**kw):
+    return {"pack": "knowledge/states/zz/2025.yaml", "where": "tax.notes[0]", "span": PARAPHRASE,
+            "reason": "r", "read": "rendered p.1", "closest_sha256": SOURCE_SHA16} | kw
+
+
+def test_a_closure_turns_its_mismatch_closed_and_a_stale_one_is_reported(tmp_path):
+    sources = _cache(tmp_path, {URL: SOURCE_HTML}).get_many([URL])
+    rows = [cq.check_span(_span(PARAPHRASE), sources), cq.check_span(_span(VERBATIM_QUOTE), sources)]
+    stale = cq.apply_closures(rows, [_closure(), _closure(span=VERBATIM_QUOTE),
+                                     _closure(pack="knowledge/states/yy/2025.yaml")])
+    assert [r["status"] for r in rows] == [cq.CLOSED, cq.VERBATIM] and rows[0]["closed_reason"] == "r"
+    # the verbatim span's closure is stale; the other pack's was not checked in this run, so it is not
+    assert [c["span"] for c in stale] == [VERBATIM_QUOTE]
+
+
+def test_strict_fails_on_a_stale_closure_and_passes_a_closed_mismatch(tmp_path, monkeypatch):
+    pack = {"jurisdiction": "states/zz", "tax_year": 2025,
+            "tax": {"notes": [f"Seeded: the instructions allow a '{PARAPHRASE}'."]},
+            "sources": [{"id": "booklet-1", "topic": "forms_and_instructions", "url": URL, "descriptions": ["b"]}]}
+    (tmp_path / "knowledge" / "states" / "zz").mkdir(parents=True)
+    (tmp_path / "knowledge" / "states" / "zz" / "2025.yaml").write_text(yaml.safe_dump(pack), encoding="utf-8")
+    monkeypatch.setattr(cq._fetch, "_download", lambda url, timeout, **kw: SOURCE_HTML)
+    monkeypatch.setenv("TAXFILL_BLANKS_CACHE", str(tmp_path / "blanks"))
+    closed = tmp_path / "closed.yaml"  # outside the repo, a pack is named by its file name ("2025.yaml")
+    args = ["--knowledge", str(tmp_path / "knowledge"), "--cache", str(tmp_path / "qc"), "--closed", str(closed),
+            "--strict"]
+    assert cq.main(args) == 1  # no closure: the MISMATCH fails strict mode
+    closed.write_text(yaml.safe_dump([_closure(pack="2025.yaml")]), encoding="utf-8")
+    assert cq.main(args) == 0  # closed with its reason
+    closed.write_text(yaml.safe_dump([_closure(pack="2025.yaml"), _closure(pack="2025.yaml", where="tax.notes[9]")]),
+                      encoding="utf-8")
+    assert cq.main(args) == 1  # a closure that matches no MISMATCH is stale
+
+
+def test_a_closure_holds_only_while_its_source_is_unchanged(tmp_path):
+    # the JK31 review: a closure keyed to the span alone kept a reissued source's real MISMATCH closed
+    sources = _cache(tmp_path, {URL: SOURCE_HTML}).get_many([URL])
+    for digest in ("0123456789abcdef", "none"):  # another document; or "no close passage" while there is one
+        rows = [cq.check_span(_span(PARAPHRASE), sources)]
+        stale = cq.apply_closures(rows, [_closure(closest_sha256=digest)])
+        assert rows[0]["status"] == cq.MISMATCH and "re-read it" in rows[0]["closure_drift"], digest
+        assert [c["closest_sha256"] for c in stale] == [digest]
+
+
+def test_a_closure_names_its_source_digest(tmp_path):
+    bad = tmp_path / "closed.yaml"
+    for digest in (None, "3ce70e03", "3CE70E0378602D0F", "sha256 3ce70e0378602d0f"):
+        entry = _closure() | ({"closest_sha256": digest} if digest else {})
+        if digest is None:
+            del entry["closest_sha256"]
+        bad.write_text(yaml.safe_dump([entry]), encoding="utf-8")
+        with pytest.raises(ValueError, match="closest_sha256"):
+            cq.load_closures(bad)
+
+
+def test_a_closure_without_its_reason_is_refused(tmp_path):
+    bad = tmp_path / "closed.yaml"
+    bad.write_text(yaml.safe_dump([{"pack": "p", "where": "w", "span": "s"}]), encoding="utf-8")
+    with pytest.raises(ValueError, match="reason"):
+        cq.load_closures(bad)
+
+
+def test_every_committed_closure_still_names_a_quote_its_pack_makes():
+    """Offline half of the self-clearing rule: an edited quote leaves its closure naming nothing, and fails here."""
+    closures = cq.load_closures(cq.DEFAULT_CLOSED)
+    for c in closures:
+        spans = cq.collect(REPO / "knowledge", [REPO / c["pack"]])
+        assert any(s.where == c["where"] and s.text == c["span"] for s in spans), c
+        assert c["reason"].strip() and c["read"].strip(), c
+
+
+def test_an_off_gov_document_link_named_in_a_citation_is_a_candidate():
+    """New Mexico's 2023/2024 PIT-1 files live on the Department's AWS document host (JK27): the citation's url is the
+    .gov page that publishes them and the file link sits in its source text, so the checker reads that link too."""
+    aws = "https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/PublicFiles/x/2024pit-1-ins.pdf"
+    page = "https://www.tax.newmexico.gov/forms-publications/"
+    pack = {
+        "jurisdiction": "states/zz", "tax_year": 2024,
+        "tax": {"notes": ["Line 18: 'R = Rate tables' is entered."],
+                "citation": {"source": f"2024 PIT-1 instructions (file {aws}); see also https://example.gov/b.pdf", "url": page}},
+        "credits": [{"name": "X", "amount": "'The credit is 25% of the Earned Income Credit'",
+                     "citation": {"source": f"2024 PIT-1 instructions; file {aws}", "url": page}}],
+    }
+    assert cq.pack_urls(pack) == [page, aws]  # the .gov link in the text is not added: a .gov document is cited by url
+    spans = {s.kind: s for s in cq.collect_state_pack(pack, "zz.yaml")}
+    assert spans["credits"].urls == [page, aws]
+    assert spans["tax.notes"].urls == [page, aws]
+
+
+def test_a_partly_garbled_layer_confirms_a_clean_span_and_never_concludes_a_mismatch(tmp_path):
+    """DC's D-40 books: some fonts carry no Unicode map ("taÝ Ýear"), others read clean. A span found in the clean
+    fonts is VERBATIM; a span not found stays UNCHECKED (its words may be in the garbled fonts)."""
+    garbled = "Startinß Üith taÝ Ýear 202x, the Ïistrict has estaÞlisheÏ its oÜn stanÏarÏ ÏeÏuction amounts. " * 3
+    page = f"<html><body><p>{garbled}</p><p>Make check or money order payable to: DC Treasurer.</p></body></html>"
+    sources = _cache(tmp_path, {URL: page.encode()}).get_many([URL])
+    assert sources[URL].unreadable.startswith("the text layer is garbled")
+    ok = cq.check_span(_span("Make check or money order payable to: DC Treasurer"), sources)
+    assert ok["status"] == cq.VERBATIM and "partly garbled" in ok["note"]
+    miss = cq.check_span(_span("the District has established its own standard deduction amounts"), sources)
+    assert miss["status"] == cq.UNCHECKED

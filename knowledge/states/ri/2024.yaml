@@ -15,12 +15,17 @@
 # to $77,450/$176,050; the standard deduction, $4,950 exemption, and the $246,450
 # phaseout threshold are all indexed; the RI-1040H circuit-breaker maximum rises to $675
 # with a $39,275 household income limit.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   treaty_note: tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024_1040WE_w.pdf 0e11ff46b02730b0 — the face's line 1
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   credits[1].name (a term, not a quote)
 jurisdiction: states/ri
 tax_year: 2024
 income_tax: true
 conforms_to_federal_treaties: true
-treaty_note: 'The RI-1040 resident return starts from federal adjusted gross income (2024 RI-1040 Line 1: "Federal
-  AGI (Federal Form 1040 or 1040-SR, line 11)"; instructions Line 1: "Enter your federal adjusted gross income
+treaty_note: 'The RI-1040 resident return starts from federal adjusted gross income (2024 RI-1040 Line 1: "Federal AGI from Federal Form 1040 or 1040-SR, line 11"; instructions Line 1: "Enter your federal adjusted gross income
   from Federal Form 1040 or Federal Form 1040-SR, line 11"), and the General Instructions state "the Rhode Island
   income tax is based on your federal adjusted gross income." RI taxable income is built only via the RI Schedule
   M modifications. The 2024 "Modifications Increasing Federal Adjusted Gross Income" on Schedule M are: out-of-state
@@ -76,7 +81,7 @@ credits:
       40 - The Rhode Island percentage is 16%.'' and ''Line 41 - Rhode Island Earned Income Credit: Multiply line
       39 by line 40'', and Line 14d instructions'
     url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024%201040R%20Instructions%20-%20updated%2012092024.pdf
-- name: Property Tax Relief Credit (Form RI-1040H, the RI property-tax "circuit breaker")
+- name: Property Tax Relief Credit (Form RI-1040H, the RI property-tax circuit breaker)
   type: refundable
   eligibility: 'Must answer YES to ALL eligibility questions on Form RI-1040H Part 1: (A) domiciled in Rhode Island
     for all of 2024; (B) lived in a household or rented a dwelling that was subject to property tax in 2024; (C)
@@ -278,7 +283,7 @@ tax:
     $21,150 as MFJ, so the mapping is exact.'
   - 'Tax-table mandate below $100,000: the 2024 RI Tax Table booklet instructs ''if your taxable income is less than
     $100,000 use the Rhode Island Tax Table... If your taxable income is larger than $100,000, use the Rhode Island
-    Tax Computation Worksheet.'' The table uses $50 bands computed at the band midpoint (e.g. taxable income $25,300-$25,350
+    Tax Computation Worksheet located on page T-1.'' The table uses $50 bands computed at the band midpoint (e.g. taxable income $25,300-$25,350
     yields tax $950 = $25,325 x 3.75% rounded), so bracket math may differ by a few dollars within table bands; the
     filed form must use the table below $100,000.'
   - 'Standard-deduction and exemption PHASEOUT is NOT modeled: if RI-1040 Line 3 (modified federal AGI) exceeds $246,450,

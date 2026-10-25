@@ -39,6 +39,7 @@ Closed, with the reason each is NOT a per-person exemption credit (the 2026-10-1
 """
 from __future__ import annotations
 
+import re
 import copy
 import importlib.util
 import json
@@ -266,7 +267,8 @@ def test_each_year_ships_its_own_face_amounts(year, amount, dependent, threshold
     assert "if both are visually impaired, enter 2." in block.credits["blind"].note
     assert "if both are 65 or older," in block.credits["senior"].note
     assert f"by December 31, {year}*" in block.credits["senior"].note
-    assert any("38 CA Exemption Credit Percentage" in n for n in block.notes)  # the 540NR proration warning
+    # the 540NR proration warning (JK31 quotes the printed caption without the line number in 2023/2024)
+    assert any(re.search(r'\b38 "?CA Exemption Credit Percentage', n) for n in block.notes)
     assert f"forms/{year}/{year}-540-booklet.pdf" in block.citation.url
 
 

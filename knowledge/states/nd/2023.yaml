@@ -3,6 +3,12 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   payment.check_payee: tax.nd.gov/sites/www/files/documents/forms/individual/2023-iit/2023-individual-income-tax-booklet.pdf 9b84b3dbddb25581 — the inner quotes now single, so the outer quote spans the sentence
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[4] (a template of the printed rows, not a quote)
 jurisdiction: states/nd
 tax_year: 2023
 income_tax: true
@@ -138,9 +144,7 @@ mailing_addresses:
 payment:
   # Phase K JK5: the 2023 booklet's payment paragraph names "ND State Tax Commissioner" (as Form ND-1 line 36 and the
   # 2024 / 2025 packs do) and carries the memo rule; its assembly checklist writes the payee out in full.
-  check_payee: 'ND State Tax Commissioner (2023 booklet: "Make check or money order payable to “ND State Tax
-    Commissioner,” and write the last four digits of your social security number and “2023 Form ND-1” on your check
-    or money order."; its assembly checklist writes the payee out as “North Dakota Office of State Tax Commissioner”;
+  check_payee: 'ND State Tax Commissioner (2023 booklet: "Make check or money order payable to ''ND State Tax Commissioner,'' and write the last four digits of your social security number and ''2023 Form ND-1'' on your check or money order."; its assembly checklist writes the payee out as “North Dakota Office of State Tax Commissioner”;
     enclose Form ND-1PRV voucher with a paper check/money order)'
   web_pay_url: https://tap.tax.nd.gov/
 deadlines:
@@ -224,7 +228,7 @@ tax:
     The shipped 0%/1.95%/2.5% schedules are the ones printed in the final 2023 booklet (p.28).'
   - 'Tax Table mandate below $100,000: booklet p.15 ''Line 20 - Tax'' instructs full-year residents to ''use the Tax
     Table on page 20 to calculate your tax''; the 2023 Tax Table (pp.20-27, $50 income bands) covers ND taxable income
-    under $100,000 and itself says ''If $100,000 or over — use the Tax Rate Schedules.'' Bracket math may differ from
+    under $100,000 and itself says ''If $100,000 or over — use the Tax Rate Schedules'' Bracket math may differ from
     the table by about a dollar within a band (table values appear to be the schedule evaluated at the band midpoint
     — the booklet''s own example, MFJ $90,375, gives $305, which equals the bracket math rounded); the filed form
     must use the table below $100,000.'
@@ -232,7 +236,7 @@ tax:
     column — the rate schedule is titled 'Married filing jointly and Qualifying widow(er)' and the footnote reads
     'If a Qualifying widow(er), use the Married filing jointly column'; the engine's QSS-to-MFJ mapping is exactly
     correct.
-  - 'Printed ''$X + Y% of excess over $Z'' constants reconcile exactly with cumulative bracket sums (cent-rounded):
+  - 'Printed $X + Y% of excess over $Z constants reconcile exactly with cumulative bracket sums (cent-rounded):
     Single $3,534.38 (exact 3,534.375), MFJ $3,906.83 (exact 3,906.825), MFS $1,953.41 (exact 1,953.4125), HoH $3,716.70
     (exact); no divergence.'
   - 'No state standard deduction and no personal or dependent exemptions: ND starts from federal taxable income (Form

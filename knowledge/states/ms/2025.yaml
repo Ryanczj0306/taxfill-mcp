@@ -5,7 +5,7 @@ income_tax: true
 conforms_to_federal_treaties: false
 treaty_note: 'Mississippi does NOT conform to federal tax treaties and re-taxes treaty-exempt income. Two .gov findings
   establish this. (1) The MS DOR Individual Income Tax FAQ states: "Does Mississippi honor federal income tax exemption
-  treaties between the United States and other foreign countries? No, as a general rule, Mississippi does not follow
+  treaties between the United States and other foreign counties [sic]? No, as a general rule, Mississippi does not follow
   federal income tax exemption treaties. Any income earned on a 1042S should be reported on the Mississippi return
   as taxable income." (2) Unlike most states, MS does NOT start from federal AGI — the 2025 Form 80-105 builds Mississippi
   income from scratch line-by-line (wages through other income; "Total income" line 49) and then applies MS-specific
@@ -103,8 +103,7 @@ mailing_addresses:
       (Department of Revenue, P.O. Box 23058 refund / P.O. Box 23050 all other)
     url: https://www.dor.ms.gov/sites/default/files/tax-forms/individual/80100251%202.pdf
 payment:
-  check_payee: Department of Revenue (2025 Form 80-106 payment voucher — 'Make the check or money order payable to
-    Department of Revenue'; write the identification number on the check/money order).
+  check_payee: Department of Revenue (2025 Form 80-100 instructions, with the Form 80-106 payment voucher — 'make the check or money order payable to the Department of Revenue'; write the identification number on the check/money order).
   web_pay_url: https://tap.dor.ms.gov
 deadlines:
   filing_due_date: '2026-04-15'
@@ -231,7 +230,7 @@ tax:
     dependents the shipped $1,500/dependent overstates the exemption by $750 each - compute on the form.'
   - Head of Family (Mississippi's head-of-household status) REQUIRES at least one dependent living in the home the
     entire year; that required dependent IS counted and DOES receive the $1,500 dependent exemption - pass it in dependents_count.
-  - 'Qualifying surviving spouse mapping: Mississippi''s ''Married - Spouse Died in Tax Year (2025)'' status uses
+  - 'Qualifying surviving spouse mapping: Mississippi''s ''Married – Spouse Died in Tax Year'' status (2025) uses
     the identical $12,000 exemption and $4,600 standard deduction as Married Filing Joint/Combined, so it maps cleanly
     to married_filing_jointly. Mississippi has no multi-year qualifying-surviving-spouse status.'
   - Age 65-or-over and blind additional exemptions ($1,500 per box checked, taxpayer and spouse only, Form 80-105

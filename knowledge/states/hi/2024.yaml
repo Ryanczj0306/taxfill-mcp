@@ -8,6 +8,10 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   effective_law_changes[0].description: files.hawaii.gov/tax/forms/2024/n11ins.pdf 5bcce0f521562524 — the section heading, p.2
 jurisdiction: states/hi
 tax_year: 2024
 income_tax: true
@@ -274,8 +278,7 @@ effective_law_changes:
 - description: >-
     STANDARD DEDUCTION INCREASED BY STATUTE (Act 45, SLH 2024), not by indexation: for 2024 the
     Hawaii standard deduction is $4,400 (Single and Married filing separately), $6,424 (Head of
-    household) and $8,800 (Married filing jointly and Qualifying surviving spouse) — the 2024 N-11
-    "What's New" amounts, verbatim. Because Hawaii's gross-income filing thresholds are the standard
+    household) and $8,800 (Married filing jointly and Qualifying surviving spouse) — the 2024 N-11 "Changes to Note" amounts, verbatim. Because Hawaii's gross-income filing thresholds are the standard
     deduction plus the $1,144 personal exemption, they moved with it (under 65: Single/MFS $5,544,
     HoH $7,568, QSS $9,944, MFJ $11,088). The rate schedules did NOT change for 2024 — the printed
     2024 schedules are digit-identical to 2023, and Act 45's bracket widening begins TY2025.

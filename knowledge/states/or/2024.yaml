@@ -17,13 +17,18 @@
 # to $30,750); exemption credit rose to $249; standard deduction rose to $2,745/$5,495/
 # $4,420; NO kicker on the 2024 return (the surplus credit is claimed in odd tax years —
 # 2023 had 44.28%; the word 'kicker' does not appear in the 2024 booklet).
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   treaty_note: oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf 697d45e372fa352d — no serial comma
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[3] (a template of the printed rows, not a quote)
 jurisdiction: states/or
 tax_year: 2024
 income_tax: true
 conforms_to_federal_treaties: true
 treaty_note: 'Oregon''s resident return (Form OR-40) starts from federal adjusted gross income: 2024 Form OR-40
-  line 7 is "Federal adjusted gross income (AGI). Enter your federal AGI from Form 1040, 1040-SR, or 1040-NR, line
-  11; or Form 1040-X, line 1C." Oregon taxable income is then built by applying additions (Schedule OR-ASC) and
+  line 7 is "Federal adjusted gross income (AGI). Enter your federal AGI from Form 1040, 1040-SR or 1040-NR, line 11; or Form 1040-X, line 1C." Oregon taxable income is then built by applying additions (Schedule OR-ASC) and
   subtractions to that federal AGI. The 2024 OR-40 instruction booklet contains no general addition/add-back of
   federally treaty-exempt income (unlike California''s Schedule CA, or CT/MD/MS). Because federally treaty-exempt
   income is already excluded from federal AGI on the 1040 and there is no Oregon add-back code restoring it, the
@@ -141,6 +146,10 @@ credits:
       second pass — 2024 Form OR-40 line 25 (printed 'multiply your total exemptions on line 6e by $249') and 2024
       Publication OR-ESTIMATE example ('Personal exemption credit ($249 x 5)').
     url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2024.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 28210d1a2aa30f43...
+  citations:
+  - source: 'Oregon DOR 2024 Form OR-40, line 25'
+    url: https://www.oregon.gov/dor/forms/FormsPubs/form-or-40_101-040_2024.pdf
 filing_requirement:
   note: '2024 OR-40 instructions, Table 1 filing thresholds (full-year residents; file if gross income is more
     than the amount for your filing status and number of age-65/blind boxes checked on line 17): Single — 0 boxes
@@ -290,7 +299,7 @@ tax:
     midpoints, so bracket math may differ by a few dollars within a band (booklet Example 1: single, taxable income
     $19,525 — table tax $1,409 vs. pure bracket math $1,409.63 -> $1,410); the filed form must use the table. The
     rate-chart formula applies only at $50,000 or more.'
-  - 'Rounded printed constants: Chart S''s published ''$X plus Y% of excess'' constants are the exact cumulative bracket
+  - 'Rounded printed constants: Chart S''s published $X plus Y% of excess constants are the exact cumulative bracket
     sums rounded DOWN ($204 vs $204.25; $639 vs $639.625; $10,636 vs $10,636.50; the $50,000+ segment prints $4,073
     vs $4,074.00 exact), so pure marginal bracket math (what this op computes) can be up to $1 HIGHER than the printed
     chart formula. Chart J''s constants are rounded UP ($409 vs $408.50; $1,280 vs $1,279.25; $21,274 vs $21,273.00;

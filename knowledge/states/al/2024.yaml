@@ -15,6 +15,11 @@
 # deduction chart, the $1,500/$3,000 personal exemptions, the income-tiered dependent
 # exemption, and the over-$100,000 worksheet constants ($4,958/$4,918) are all
 # unchanged from 2023 — each was re-verified (not assumed) from the 2024 prints.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   treaty_note (a paraphrase of the quoted 'All foreign income must be reported' sentence)
 jurisdiction: states/al
 tax_year: 2024
 income_tax: true
@@ -30,7 +35,7 @@ treaty_note: 'Alabama does NOT start the return from federal adjusted gross inco
   income exclusion,'' and that exclusion is the IRC sec. 911 foreign EARNED income exclusion, claimed as a negative
   entry on line 8 Other Income with federal Form 2555 attached. There is NO Alabama line, schedule, or instruction
   that recognizes or excludes income exempt under a U.S. income-TAX TREATY. Given (a) the separate Alabama income
-  build-up rather than a federal-AGI start, and (b) the affirmative ''report all foreign income'' rule with only a
+  build-up rather than a federal-AGI start, and (b) the affirmative report-all-foreign-income rule with only a
   sec. 911-style exclusion path, conformity to federal treaty exemptions is NOT established on any .gov page. Per
   conservative handling this is set false and flagged. See unverified/notes.'
 citation:

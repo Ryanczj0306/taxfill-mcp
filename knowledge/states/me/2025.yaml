@@ -340,7 +340,7 @@ tax:
     and Surviving Spouses Filing Joint Returns'', and the 2025 tax table''s MFJ column is footnoted ''*This column
     must also be used by a surviving spouse with dependent child.'' QSS also uses the $30,000 standard deduction and
     the MFJ phaseout thresholds.'
-  - 'Printed ''$X plus Y% of excess over $Z'' constants are rounded to whole dollars and do not exactly equal the
+  - 'Printed $X plus Y% of excess over $Z constants are rounded to whole dollars and do not exactly equal the
     cumulative marginal sums: Single/MFS constants $1,554 vs exact $1,554.40 (-$0.40) and $4,028 vs exact $4,028.275
     (-$0.275); HoH constants $2,332 vs exact $2,331.60 (+$0.40) and $6,041 vs exact $6,040.725 (+$0.275); MFJ constants
     $3,109 vs exact $3,108.80 (+$0.20) and $8,057 vs exact $8,056.55 (+$0.45). Pure marginal bracket math (what this
@@ -349,9 +349,7 @@ tax:
     19 taxable income only up to $52,000) and as the standalone 25_tax_tables.pdf (covering $0 through $100,000 in
     $100 bands, three columns). Form 1040ME line 20 authorizes computing tax with EITHER ''the tax table or tax rate
     schedules'', so bracket math is a permitted method; within a $100 band the table (built on band midpoints) may
-    differ from exact bracket math by a few dollars. The two prints also disagree on the very first band: the booklet
-    splits it into ''$0-$50 -> $0'' and ''$50-$100 -> $3'' while the standalone prints a single ''$0-$100 -> $3''
-    row (identical from $100 up).'
+    differ from exact bracket math by a few dollars. The two prints also disagree on the very first band: the booklet splits it into $0-$50 (tax $0) and $50-$100 (tax $3) while the standalone prints a single $0-$100 row (tax $3) (identical from $100 up).'
   - 'SUPERSEDED-TABLES CAUTION (carried forward and re-checked): for 2024, maine.gov hosted a WRONG 24_1040me_tax_tables.pdf
     (printing 2023 boundaries under a ''2024'' heading) alongside a corrected 24_1040me_tax_tables_2.pdf. For 2025
     there is no such duplicate — both 25_1040me_tax_tables.pdf and 25_1040me_tax_tables_2.pdf return HTTP 404, and

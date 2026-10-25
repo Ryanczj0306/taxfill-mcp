@@ -3,6 +3,10 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[1]: revenue.wi.gov/TaxForms2023/2023-Form1-Inst.pdf cf68dafddf88da2f — the 2023 instructions' entry
 jurisdiction: states/wi
 tax_year: 2023
 income_tax: true
@@ -164,6 +168,9 @@ all_citations:
   url: https://www.revenue.wi.gov/Pages/OnlineServices/Pay.aspx
 - source: WI DOR Individual Income Tax - Part-Year and Nonresidents FAQ
   url: https://www.revenue.wi.gov/Pages/FAQS/pcs-npr.aspx
+# Phase K JK31 (2026-10-25): the tax note and tax_line quote the face; downloaded twice, identical sha256 61851bb8671db185...
+- source: 'Wisconsin DOR 2023 Form 1, lines 11-12'
+  url: https://www.revenue.wi.gov/TaxForms2023/2023-Form1f.pdf
 unverified:
 - No WI DOR page was found that explicitly mentions U.S. tax-treaty-exempt income or whether such income is added
   back. Conformity (true) is inferred from the federal-AGI starting point (Form 1 Line 1) plus the absence of any
@@ -222,7 +229,7 @@ tax:
     after December 31, 2022) reduced the first-bracket rate from 3.54% to 3.50% and the second-bracket rate from 4.65%
     to 4.40% (Wisconsin Tax Bulletin 222, July 2023, Item 6). Official 2023 documents printed BEFORE the act — notably
     the 2023 Form 1-ES instructions (D-101A, rev. 1-23) rate schedules — still show 3.54%/4.65% and are superseded;
-    the filing-season 2023 Form 1 instructions (''New for 2023 — Tax Rates Reduced'', Tax Table, and Tax Computation
+    the filing-season 2023 Form 1 instructions (''Tax Rates Reduced – The tax rates for the first and second income brackets were reduced.'', Tax Table, and Tax Computation
     Worksheet) reflect the final rates shipped here.'
   - 'SOURCE ASSEMBLY: the 2023 Form 1 booklet prints no single four-bracket rate schedule. Brackets 1-2 (rates and
     dollar boundaries $13,810/$27,630 single-HOH, $18,420/$36,840 MFJ, $9,210/$18,420 MFS) are from Wisconsin Tax

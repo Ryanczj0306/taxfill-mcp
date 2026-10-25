@@ -1146,7 +1146,9 @@ form_lines:
     line_source: final
     url: https://www.irs.gov/pub/irs-prior/f1040--2021.pdf
     read: '2026-09-27'
-    printed: 19 hild tax credit or credit for other dependents from Schedule 8812
+    # Phase K JK31 (2026-10-25): `printed` re-read on the face (41026e1bab58b13c..., downloaded twice, identical sha256); the 2021 face prints the
+    # Nonrefundable / Refundable captions (the American Rescue Plan year), not the other years' wording.
+    printed: 19 Nonrefundable child tax credit or credit for other dependents from Schedule 8812
   f1040.eic:
     line: 27a
     line_source: final
@@ -1158,7 +1160,9 @@ form_lines:
     line_source: final
     url: https://www.irs.gov/pub/irs-prior/f1040--2021.pdf
     read: '2026-09-27'
-    printed: 28 dditional child tax credit from Schedule 8812
+    # Phase K JK31 (2026-10-25): `printed` re-read on the face (41026e1bab58b13c..., downloaded twice, identical sha256); the 2021 face prints the
+    # Nonrefundable / Refundable captions (the American Rescue Plan year), not the other years' wording.
+    printed: 28 Refundable child tax credit or additional child tax credit from Schedule 8812
   f1040.sched_1a:
     line: null
     line_source: final

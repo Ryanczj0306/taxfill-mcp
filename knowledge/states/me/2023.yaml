@@ -3,6 +3,13 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[14]: maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2023.pdf 084d38b369254ea0 — the title has no comma
+#   tax.notes[4] (quote marks dropped: a template of the printed rows, not a quote)
+#   tax.notes[5] (quote marks dropped: a table row read across its cells, not a quote)
+#   residency.summary: maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_book_gen_instr.pdf 81423a1fc8082743 — the old words were a legal-dictionary definition no cited source prints; the booklet's own definition quoted
 jurisdiction: states/me
 tax_year: 2023
 income_tax: true
@@ -27,8 +34,7 @@ residency:
   summary: Maine taxes individuals based on domicile and a statutory-resident test. A full-year resident is domiciled
     in Maine for the entire year (or is a statutory resident); a statutory/"183-day" resident is an individual who
     maintains a permanent place of abode in Maine and spends 183 or more days of the tax year in Maine, regardless
-    of domicile. Domicile is "the place where a person has his true, fixed, and permanent home and principal establishment,
-    and to which he has, whenever absent, the intention of returning." A part-year resident establishes or abandons
+    of domicile. Domicile is "the place an individual establishes as their permanent home and includes the place to which they intend to return after any period of absence" (the 2023 booklet, What is my Residency Status?). A part-year resident establishes or abandons
     Maine domicile during the year and is taxed on all income while a Maine resident plus Maine-source income while
     a nonresident/safe harbor resident. A nonresident is domiciled outside Maine (and is not a statutory resident)
     and is taxed only on Maine-source income. A "safe harbor resident" is a person who, although domiciled in Maine,
@@ -173,6 +179,12 @@ all_citations:
   url: https://www.maine.gov/revenue/taxes/income-estate-tax/individual-income-tax-1040me
 - source: Maine Revenue Services — Individual Income Tax FAQ
   url: https://www.maine.gov/revenue/faq/individual-income-tax
+# Phase K JK31 (2026-10-25): the tax_line and the tax-table note quote the face; downloaded twice, identical sha256 13d4b15111d39caf...
+- source: 'Maine Revenue Services 2023 Form 1040ME, lines 19-20'
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040_ME_dwnld_ff.pdf
+# Phase K JK31 (2026-10-25): the cross-source note names this document; downloaded twice, identical sha256 084d38b369254ea0...
+- source: 'Maine Revenue Services, State of Maine - Individual Income Tax 2023 Rates'
+  url: https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2023.pdf
 unverified:
 - Whether 'Treasurer, State of Maine' is also the exact wording for estimated-tax/voucher payments (confirmed only
   for the 1040ME balance-due check payee in the booklet) — confirm at the DOR.
@@ -247,7 +259,7 @@ tax:
     and Surviving Spouses Filing Joint Returns'', and the booklet tax table''s MFJ column is footnoted ''*This column
     must also be used by a surviving spouse with dependent child.'' QSS also uses the $27,700 standard deduction and
     the MFJ phaseout thresholds.'
-  - 'Printed ''$X plus Y% of excess over $Z'' constants are rounded to whole dollars and do not exactly equal the
+  - 'Printed $X plus Y% of excess over $Z constants are rounded to whole dollars and do not exactly equal the
     cumulative marginal sums: Single/MFS top-bracket constant $3,686 vs exact $3,685.625 (+$0.375); HoH constants
     $2,132 vs exact $2,131.50 (+$0.50) and $5,531 vs exact $5,530.125 (+$0.875); MFJ constants $2,845 vs exact $2,844.90
     (+$0.10) and $7,371 vs exact $7,370.775 (+$0.225). Pure marginal bracket math (what this op does) can therefore
@@ -255,8 +267,7 @@ tax:
   - 'Tax table: the booklet prints a 2023 MAINE INCOME TAX TABLE for line 19 taxable income under $100,000 in $100
     bands; Form 1040ME line 20 authorizes computing tax with EITHER ''the tax table or tax rate schedules'', so bracket
     math is a permitted method, but within a $100 band the table (built on band midpoints) may differ from exact bracket
-    math by a few dollars. At $100,000 and over the table itself directs the printed amount ''plus 7.15% of excess
-    over 100,000'' (Single/MFS and HoH columns) or the rate schedule (MFJ column).'
+    math by a few dollars. At $100,000 and over the table itself directs the printed amount plus 7.15% of the excess over 100,000 (Single/MFS and HoH columns) or the rate schedule (MFJ column).'
   - 'Standard/itemized deduction PHASEOUT is NOT modeled: if Form 1040ME line 16 (Maine AGI) is more than $91,500
     (single or MFS), $137,300 (HoH), or $183,050 (MFJ/QSS), the Worksheet for Standard/Itemized Deductions reduces
     the line 17 deduction proportionally, reaching $0 once line 16 exceeds the threshold by $75,000 (single/MFS),
@@ -282,7 +293,7 @@ tax:
   - Tax credit recapture (Form 1040ME line 20a) is added after line 20 and is not modeled.
   - 'No mid-year 2023 rate change: rates 5.8% / 6.75% / 7.15% with bracket dollar amounts inflation-adjusted under
     36 M.R.S. § 5403 (published by MRS Sept 15, 2022; 36 M.R.S. § 5111 sub-§§ 1-F, 2-F, 3-F).'
-  - 'Cross-source confirmation: the standalone MRS document ''State of Maine - Individual Income Tax, 2023 Rates''
+  - 'Cross-source confirmation: the standalone MRS document ''State of Maine - Individual Income Tax 2023 Rates''
     prints identical rate schedules, the $4,700 personal exemption, and the standard deduction amounts (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2023.pdf);
     the 2023 tax table file prints the same rate schedules on its final page (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040me_tax_tables.pdf);
     the line 19/20 wording is from the 2023 Form 1040ME (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/23_1040_ME_dwnld_ff.pdf).'

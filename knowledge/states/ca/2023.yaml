@@ -14,6 +14,13 @@
 #     `*_verification` caveat and must be reconfirmed at the cited URL before
 #     a figure is relied on.
 
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.exemption_credits.notes[3]: ftb.ca.gov/forms/2023/2023-540nr.pdf 6b52d0fb454d1533 — the face prints each line number apart from its caption; re-pointed to the Form 540NR face
+#   tax.tax_line: ftb.ca.gov/forms/2023/2023-540-booklet.pdf e2d8ef0ba279abf6 — the column heads as printed (Schedule Y)
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[10] (a template of the schedule's rows, not a quote)
 jurisdiction: states/ca
 tax_year: 2023
 income_tax: true
@@ -164,11 +171,9 @@ tax:
     - {over: 569790, but_not_over: 949649, rate: 0.113}
     - {over: 949649, but_not_over: null, rate: 0.123}
   base: federal_agi
-  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13: ''Line 31 – Tax. To figure your tax, use one or more of the
-    following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning
+  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13, Line 31 – Tax: ''To figure your tax, use one or more of the following methods and check the matching box(es) on line 31, as applicable: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning
     on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule
-    for your filing status on page 75.'' Rate schedule header (p. 75): ''If the amount on Form 540, line 19 is over
-    – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –''. Line 19 = line 17 (California
+    for your filing status on page 75.'' Rate schedule header (p. 75): ''If the amount on Form 540, line 19 is over – But not over – Enter on Form 540, line 31 [$X + Y%] of the amount over –''. Line 19 = line 17 (California
     AGI) minus line 18 (larger of California itemized deductions or California standard deduction); ''If less than
     zero, enter -0-''.'
   exemptions: {}
@@ -285,10 +290,7 @@ tax:
     - 'RDPs: "For purposes of computing limitations based upon AGI, RDPs recalculate their AGI using a federal pro
       forma Form 1040 or Form 1040-SR, or California RDP Adjustments Worksheet (located in FTB Pub. 737)." (booklet p.
       14) — pass that recalculated AGI as federal_agi.'
-    - 'Form 540 lines only. Form 540NR prints the same lines 7-11 and amounts, then prorates the credits: "38 CA
-      Exemption Credit Percentage. Divide line 35 by line 19. If more than 1, enter 1.0000"; "39 CA Prorated Exemption
-      Credits. Multiply line 11 by line 38. If the amount on line 13 is more than $237,035, see instructions"; "40 CA
-      Regular Tax Before Credits. Subtract line 39 from line 37. If less than zero, enter -0-" (2023 Form 540NR). For
+    - 'Form 540 lines only. Form 540NR prints the same lines 7-11 and amounts, then prorates the credits: line 38 "CA Exemption Credit Percentage. Divide line 35 by line 19. If more than 1, enter 1.0000"; line 39 "CA Prorated Exemption Credits. Multiply line 11 by line 38. If the amount on line 13 is more than $237,035, see instructions"; line 40 "CA Regular Tax Before Credits. Subtract line 39 from line 37. If less than zero, enter -0-" (2023 Form 540NR, page 2). For
       a 540NR return use exemption_amount (line 11) and compute lines 38-40 on that form; total and tax_after_credits
       are Form 540''s lines 32 and 33.'
   notes:
@@ -337,10 +339,14 @@ tax:
     notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows
     the foreign earned income exclusion and foreign tax credit, and subtracts items like Social Security benefits.
     Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts.'
-  - 'Printed ''$X + Y% of amount over $Z'' constants verified against cumulative bracket sums: all 27 constants match
+  - 'Printed $X + Y% of amount over $Z constants verified against cumulative bracket sums: all 27 constants match
     to the cent (largest print-rounding divergence $0.006, on Schedule Y''s $72,628.92 and $135,752.98 constants)
     — bracket math and the printed schedule agree.'
   - 'Rounding: the booklet''s worked example (p. 75) rounds the schedule result to whole dollars for line 31 ($5,082.80
     entered as $5,083), consistent with this op''s round-half-up-to-whole-dollars behavior.'
   - '2023 filing-season schedule confirmed final: California had no mid-year 2023 rate change; these are the inflation-indexed
     schedules printed in the final 2023 booklet used for the 2024 filing season.'
+all_citations:
+# Phase K JK31 (2026-10-25): the exemption-credit note quotes the 540NR face; downloaded twice, identical sha256 6b52d0fb454d1533...
+- source: 'FTB 2023 Form 540NR, page 2 lines 38-40'
+  url: https://www.ftb.ca.gov/forms/2023/2023-540nr.pdf

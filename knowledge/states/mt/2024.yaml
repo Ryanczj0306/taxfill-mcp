@@ -18,6 +18,11 @@
 # capital gains get separate 3.0%/4.1% rates (capital gains credit repealed). New $5,500
 # subtraction for 65+ ($11,000 MFJ both 65+). EITC rose 3% -> 10% of federal.
 # Do not carry ANY 2023 tax:-block figures forward.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[4] (a template of the printed rows, not a quote)
 jurisdiction: states/mt
 tax_year: 2024
 income_tax: true
@@ -101,6 +106,10 @@ credits:
 # 9 months of that period" (MCA 15-30-2338(1)(b); its History line's last amendment is "amd. Sec. 5, Ch. 147, L.
 # 2009"). Instructions and Form 2 each downloaded twice on 2026-10-16 with identical sha256 (a31a761150b7b092...,
 # 126be01d436a0b6e...).
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 126be01d436a0b6e...
+  citations:
+  - source: 'Montana DOR 2024 Form 2, page 1 line 15'
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf
 - name: Elderly Homeowner/Renter Credit
   type: refundable
   eligibility: 'Montana taxpayers age 62 or older who lived in Montana for at least nine months during the tax year
@@ -118,6 +127,10 @@ credits:
       age 62+; nine months in Montana; six months owner/renter; household income under $45,000) and Schedule 2EC
       instructions
     url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2024_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 126be01d436a0b6e...
+  citations:
+  - source: 'Montana DOR 2024 Form 2, Schedule 2EC attestation'
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2024_Montana_Individual_Income_Tax_Return_Form_2.pdf
 - name: Montana Adoption Credit
   type: refundable
   eligibility: Montana residents who complete an adoption. Form ADPT and paperwork documenting the adoption (for
@@ -275,7 +288,7 @@ tax:
     mapping is exactly correct. The old Montana statuses 2a/2b/2c (married filing separately on the same form, etc.)
     are gone; MFS is allowed only if the couple filed separate federal returns. MFS uses the single-status schedule
     ($20,500 breakpoint), NOT half of MFJ.'
-  - 'The printed ''multiply by ... Less'' constants are EXACT: $246 = (5.9% - 4.7%) x $20,500, $492 = (5.9% - 4.7%)
+  - 'The printed multiply-by / Less constants are EXACT: $246 = (5.9% - 4.7%) x $20,500, $492 = (5.9% - 4.7%)
     x $41,000, and $369 = (5.9% - 4.7%) x $30,750 to the cent — no rounding divergence between the printed worksheet
     method (5.9% x income - constant) and pure marginal bracket math. The instructions'' own example ($50,000 single
     -> $2,704) matches both methods exactly.'

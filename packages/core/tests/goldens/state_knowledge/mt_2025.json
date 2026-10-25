@@ -16,6 +16,7 @@
   "@@75aefed614cb": "2025 Montana Form 2 Instructions, Due Dates ('File Form 2 and pay the tax due by April 15, 2026. An automatic extension of six months applies for filing your return, but this extension does not apply to payments.')",
   "@@805a19766c29": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, SB 93 made the Montana MILITARY RETIREMENT SUBTRACTION PERMANENT. It is a Schedule I subtraction inside Form 2 line 5. Resolve via: The What's New section and the Schedule I military-retirement subtraction instructions of the 2025 Montana Form 2 instructions (the citation URL).",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
+  "@@971248af04b3": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf",
   "@@a06503879e66": "2025 Montana Form 2 Individual Income Tax Instructions (MT DOR, 42 pages), p.12 — '2025 Montana Income Tax Rates': Single and Married Filing Separately Ordinary Income Tax Rates — $0 to less than $21,100 tax rate 4.7% Less $0, $21,100 or greater 5.9% Less $253; Married Filing Jointly and Qualifying Surviving Spouse — breakpoint $42,200, 5.9% Less $506; Head of Household — breakpoint $31,700, 5.9% Less $380. The rates apply to Montana ORDINARY income ('taxable income without net long-term capital gains', which includes qualified dividends); net long-term capital gains are taxed separately at 3% up to the same breakpoint (measured after ordinary income) and 4.1% above. Worked example (instructions p.11, Marla): Montana taxable income $50,000, single, no net long-term capital gains -> 'Her Montana Ordinary Income Tax is $2,697' — matching marginal bracket math (4.7% x 21,100 + 5.9% x 28,900 = 991.70 + 1,705.10 = 2,696.80 -> 2,697) and the printed formula method (5.9% x 50,000 - 253 = 2,697.00). Second pass: the 2025 Form 2 itself (https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf) prints the $21,100 / $42,200 / $31,700 filing-status amounts on page 2, line 5, and the 0.03 / 0.041 capital-gains multipliers on lines 8 and 10 — both passes agree. The booklet's What's New confirms the 4.7%/5.9% structure is unchanged for 2025 and that HB 337's lower top rate (5.65%) and wider brackets begin in TAX YEAR 2026.",
   "@@b2ef4ff5f6a4": "Credit for Income Taxes Paid to Another State or Country — Full-year or part-year Montana residents who paid income tax to another state or country on income that is also taxed by Montana. Not available if the other state allowed a credit against its own tax for the Montana tax on the same income, or for taxes paid on Montana-source income. Pass-through entity owners may claim their share of qualifying entity-level income taxes (including composite and pass-through entity taxes).",
   "@@c17ec871359f": "Law change NOT modeled by the engine (status final_form_published): Effective for tax year 2025, HB 845 and SB 53 raised the Montana 529-plan subtraction maximum to up to $4,500 ($9,000 joint). It is a Schedule I subtraction inside Form 2 line 5. Resolve via: The What's New section and the Schedule I subtraction instructions of the 2025 Montana Form 2 instructions (the citation URL); the engine subtracts nothing beyond what the supplied line 7 Montana taxable income already reflects.",
@@ -301,6 +302,12 @@
      "cadence": "@@d0b7f306bb75",
      "topic": "credits",
      "url": "@@d7e25c123754"
+    },
+    {
+     "answers": "Montana DOR 2025 Form 2, Schedule 2EC attestation",
+     "cadence": "@@d0b7f306bb75",
+     "topic": "credits",
+     "url": "@@971248af04b3"
     }
    ],
    "topic": "credits",
@@ -386,7 +393,7 @@
      "answers": "2025 Montana Individual Income Tax Return Form 2 (the form itself) — second-pass verification: page 1 line 1 \"Federal adjusted gross income from Form 1040, line 11b\", line 2 \"Add Form 1040, lines 12e and 13b\", line 6 \"$5,660 subtraction for taxpayers 65 and older ($11,320 if married filing jointly and both are 65 and older)\", line 7 Montana taxable income; page 2 Montana Individual Income Tax worksheet with the printed filing-status amounts on line 5 ($21,100 single or married filing separately / $42,200 married filing jointly or qualifying surviving spouse / $31,700 head of household), the 3% (0.03) multiplier on line 8 and 4.1% (0.041) on line 10, the Montana Ordinary Income Tax Table reference on line 12, and the Montana resident tax on line 13; page 1 line 15 \"Multiply Federal EIC by 10% (0.10)\"; page 3 Schedule I Part II line 2 \"Total contributions for the year (up to $4,600 per taxpayer)\"; page 10 Schedule 2EC line 19 \"Your standard exclusion is entered here for you\" pre-printed 12,600, line 25 15% (0.15), line 28 \"Enter the lesser of line 27 or $1,150\"",
      "cadence": "@@d0b7f306bb75",
      "topic": "forms_and_instructions",
-     "url": "https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf"
+     "url": "@@971248af04b3"
     },
     {
      "answers": "Montana DOR — Montana Individual Income Tax Return (Form 2) publication page",

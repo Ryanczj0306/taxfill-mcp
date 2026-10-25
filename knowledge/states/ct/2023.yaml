@@ -3,6 +3,11 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[1] (a template of Table B's rows, not a quote)
 jurisdiction: states/ct
 tax_year: 2023
 income_tax: true
@@ -222,8 +227,7 @@ tax:
     At or above the zero point, Line 3 = CT AGI. Do NOT supply raw federal AGI when CT modifications apply, and do
     NOT subtract the exemption twice.'
   - 'Adjudication note (two-pass): drafted from the 2023 CT-1040 instructions (Rev. 12/23) Tables A-E and independently
-    re-verified against the 2023 CT-1040NR/PY instructions (Rev. 12/23) — identical tables, zero discrepancies. Every
-    printed ''$X plus Y% of the excess over $Z'' constant in Table B equals the EXACT cumulative sum of the prior
+    re-verified against the 2023 CT-1040NR/PY instructions (Rev. 12/23) — identical tables, zero discrepancies. Every printed $X plus Y% of the excess over $Z constant in Table B equals the EXACT cumulative sum of the prior
     brackets (300/2,300/5,050/11,050/14,300/31,550 single-MFS; 600/4,600/10,100/22,100/28,600/63,100 MFJ; 480/3,680/8,080/17,680/22,880/50,480
     HoH), so pure marginal accumulation reproduces Table B to the half-dollar; the only divergence is IRS half-up
     rounding of a trailing $.50 (e.g. the DRS''s own printed examples $33,298 at single $525,000 and $52,228 at HoH

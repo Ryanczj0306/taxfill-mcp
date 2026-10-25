@@ -94,6 +94,10 @@ credits:
   citation:
     source: 'SC DOR 2025 Form I-319, Tuition Tax Credit (50% of tuition, not to exceed $1,500; independent 4-year tuition limit $12,268 for 2025), and the 2025 SC1040 instructions Line 21 (Tuition Tax Credit via Form I-319)'
     url: https://dor.sc.gov/sites/dor/files/forms/I319_2025.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 f1cc1b2edf2143fa...
+  citations:
+  - source: 'SC DOR 2025 SC1040, line 21'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2025.pdf
 mailing_addresses:
   refund_or_no_payment: 'SC1040 Processing Center, PO Box 101100, Columbia, SC 29211-0100 (2025 SC1040, ''REFUNDS OR ZERO TAX DUE'')'
   with_payment: 'Taxable Processing Center, PO Box 101105, Columbia, SC 29211-0105 (2025 SC1040, ''BALANCE DUE'')'
@@ -121,6 +125,9 @@ all_citations:
   url: https://dor.sc.gov/sites/dor/files/forms/SC1040TC_2025.pdf
 - source: 'SC DOR 2025 Form I-319, Tuition Tax Credit - 50% of tuition up to $1,500; independent 4-year institution tuition limit $12,268 for 2025'
   url: https://dor.sc.gov/sites/dor/files/forms/I319_2025.pdf
+# Phase K JK31 (2026-10-25): the check payee quotes the voucher; downloaded twice, identical sha256 04cddba4a174e185...
+- source: 'SC DOR 2025 SC1040-V (payment voucher)'
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040V_2025.pdf
 unverified:
 - 'No 2025 revision of Form TC-60 (SC EITC) was retrievable (TC60_2025.pdf returns the SCDOR error page at both dor.sc.gov/forms-site/Forms/ and dor.sc.gov/sites/dor/files/forms/); the 125% rate is the fully-phased statutory rate under S.C. Code Section 12-6-3632 first effective for tax year 2023, and the 2025 SC1040TC still lists the credit as code 060 routed to SC1040 line 13 — confirm the 2025 TC-60 at dor.sc.gov/forms before claiming.'
 - 'Check payee is given as ''SCDOR'' per the SCDOR General Information and the SC1040-V voucher convention; the 2025 SC1040 form itself only surfaces electronic options (MyDORWAY/ACH) on its face, so confirm the exact payee wording on the 2025 SC1040-V if paying a 2025 balance due by mailed check.'
@@ -179,14 +186,13 @@ tax:
     and pass dependents_count so the op subtracts the shipped $4,930-per-dependent line w amount to reproduce line
     5. South Carolina has NO personal exemption and NO state standard deduction of its own.'
   - 'Adjudication note (two-pass): pass 1 = the 2025 SC1040TT, Revised 6/17/25 (mandatory tables below $100,000 +
-    the printed $100,000-or-more schedule ''6% minus $642'', example $101,000 -> $5,418); pass 2 = the 2025 SC4972''s
+    the printed $100,000-or-more schedule (6% minus $642), example $101,000 -> $5,418); pass 2 = the 2025 SC4972''s
     printed ''2025 Tax Computation Schedule for Line 19 and Line 22'' ($0-$3,560 0%; $3,560-$17,830 3% times the amount
     minus $107; $17,830 or more 6% times the amount minus $642). Both passes agree on every bound and rate, and the
     tables'' own band arithmetic independently pins the bounds (the $3,600-$3,650 row prints $2 = 3% x $3,625 - $107
     rounded; the increment per $100 row switches from $3 to $6 across the $17,830 boundary). NOTE: the SC1040 instruction
     booklet itself prints NO bracket dollar bounds — the SC4972 schedule is the official in-form statement of them.'
-  - 'CRITICAL — SC''s filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation
-    is ''rate x ENTIRE income - constant'', and the printed constants are ROUNDED (2025: $107 vs the exact marginal
+  - 'CRITICAL — SC''s filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation is rate x ENTIRE income - constant, and the printed constants are ROUNDED (2025: $107 vs the exact marginal
     $106.80; $642 vs the exact $641.70 — note the top constant is now rounded AGAINST the taxpayer by 30 cents, the
     reverse of 2024''s $659-vs-$658.36). Pure marginal accumulation (this engine) therefore comes out up to ~$1 LOWER
     than 2024''s relationship above $17,830 and, for 2025, agrees with the SC1040TT''s own printed $100,000-or-more
@@ -328,6 +334,11 @@ sources:
   descriptions:
   - SC DOR 2025 Form I-319, Tuition Tax Credit (50% of tuition, not to exceed $1,500; independent 4-year tuition
     limit $12,268 for 2025), and the 2025 SC1040 instructions Line 21 (Tuition Tax Credit via Form I-319)
+- id: credits-4
+  topic: credits
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2025.pdf
+  descriptions:
+  - 'SC DOR 2025 SC1040, line 21'
 - id: logistics-1
   topic: filing_logistics
   url: https://dor.sc.gov/sites/dor/files/forms/SC1040_2025.pdf
@@ -373,6 +384,11 @@ sources:
   descriptions:
   - SC DOR 2025 Form I-319, Tuition Tax Credit - 50% of tuition up to $1,500; independent 4-year institution tuition
     limit $12,268 for 2025
+- id: forms-10
+  topic: forms_and_instructions
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040V_2025.pdf
+  descriptions:
+  - 'SC DOR 2025 SC1040-V (payment voucher)'
 - id: rates-1
   topic: tax_rates_and_brackets
   url: https://dor.sc.gov/sites/dor/files/forms/SC1040TT_2025.pdf

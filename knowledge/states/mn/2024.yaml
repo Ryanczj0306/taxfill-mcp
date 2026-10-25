@@ -15,13 +15,18 @@
 # investment income (Schedule NIIT, M1 line 14); taxpayers may elect ADVANCE PAYMENTS of
 # the 2025 Child Tax Credit on Schedule M1CWFC; brackets indexed +5.376%; standard
 # deduction $14,575/$29,150/$21,900; dependent exemption $5,050.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   effective_law_changes[0].description: revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf b3994a58156d79d0 — What's New, p.3
+#   treaty_note: revenue.state.mn.us/sites/default/files/2026-01/m1-inst-24.pdf b3994a58156d79d0 — the heading is a run-in head
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[9] (a template of the printed rows, not a quote)
 jurisdiction: states/mn
 tax_year: 2024
 income_tax: true
 conforms_to_federal_treaties: true
-treaty_note: 'Minnesota''s resident return (Form M1) starts from federal adjusted gross income: the 2024 M1 instructions
-  for Line 1 state "Line 1—Federal Adjusted Gross Income. Enter your 2024 federal adjusted gross income from line
-  11 of Form 1040 or 1040-SR, or 1040-NR." Federally treaty-exempt income is already excluded from federal AGI and
+treaty_note: 'Minnesota''s resident return (Form M1) starts from federal adjusted gross income: the 2024 M1 instructions under "Line 1—Federal Adjusted Gross Income" state "Enter your 2024 federal adjusted gross income from line 11 of Form 1040 or 1040-SR, or 1040-NR." Federally treaty-exempt income is already excluded from federal AGI and
   therefore flows through. The Minnesota additions (M1 line 2 = Schedule M1M line 10 and Schedule M1MB line 9) contain
   NO line that adds back income exempt under a U.S. income tax treaty. The only treaty references in the 2024 M1
   instructions are FAVORABLE to the taxpayer (a nonresident alien may claim the standard deduction if allowed by
@@ -310,7 +315,7 @@ tax:
     treaty; a filer claimable as another''s dependent uses the Worksheet for Line 4 - Dependent Standard Deduction
     (greater of $1,300 or earned income + $400, capped at $14,575, plus $1,950/$1,550 age/blind additions) — itemizers
     use Schedule M1SA instead.'
-  - 'Printed rate-schedule constants check: every ''$X +'' constant equals the exact cumulative sum of the prior brackets
+  - 'Printed rate-schedule constants check: every $X + constant equals the exact cumulative sum of the prior brackets
     rounded to the cent (single 1,695.42/6,618.62 vs exact 1,695.415/6,618.615; MFJ 2,478.66/11,842.94 vs exact 2,478.655/11,842.935;
     MFS 1,239.33/5,921.47 vs exact 1,239.3275/5,921.4675; HoH 2,087.04/10,094.04 vs exact 2,087.035/10,094.035), EXCEPT
     the top-bracket constants, which chain the rounded prior constant: single $13,616.90 vs $13,616.89 exact, MFJ
@@ -339,8 +344,7 @@ effective_law_changes:
 - description: >-
     HEADLINE 2024 CHANGE — the RENTER'S CREDIT moved ONTO the income tax return. Beginning
     with rent paid in tax year 2024, renters claim the credit on the NEW Schedule M1RENT
-    filed WITH Form M1 (flowing to Schedule M1REF, then Form M1 line 22): "Renter's Credit
-    ... complete Schedule M1RENT ... Renters should not complete Form M1PR", which now
+    filed WITH Form M1 (flowing to Schedule M1REF, then Form M1 line 22): "renters can claim a credit by completing Schedule M1RENT, Renter's Credit, with their Minnesota Individual Income Tax Return" … "Renters should not complete Form M1PR to claim their Renter's Credit.", which now
     remains only for homeowners' Homestead Credit Refund. For tax year 2023 the same relief
     was claimed on the separate Form M1PR return (renter's property tax refund). CRP
     information must be provided with the return; for 2024 the maximum credit is $2,640 and

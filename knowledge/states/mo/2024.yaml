@@ -10,6 +10,10 @@
 # HEADLINE 2024 CHANGES: top individual rate cut to 4.8% (from 4.95%) with the tax-chart
 # income steps re-indexed to $1,273 increments (2023: $1,207); Working Family Tax Credit
 # doubled to 20% of the federal EIC (2023: 10%).
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   effective_law_changes[0].description: dor.mo.gov/forms/MO-1040%20Instructions_2024.pdf abd3cf20dedc47be — the Tax Chart row, p.26
 jurisdiction: states/mo
 tax_year: 2024
 income_tax: true
@@ -310,8 +314,7 @@ effective_law_changes:
 - description: >-
     Missouri's TOP INDIVIDUAL RATE was cut to 4.8% for tax year 2024, from 4.95% in 2023, and
     the 2024 Tax Chart's income steps were re-indexed to $1,273 increments (2023: $1,207) —
-    breakpoints $1,273 / $2,546 / $3,819 / $5,092 / $6,365 / $7,638 / $8,911, with the top
-    bracket reading "over $8,911 -> $248 + 4.80% of excess over $8,911". Verified against both
+    breakpoints $1,273 / $2,546 / $3,819 / $5,092 / $6,365 / $7,638 / $8,911, with the top bracket reading "Over $8,911" … "$248 plus 4.80% of excess over $8,911". Verified against both
     the 2024 MO-1040 instructions p.26 and the 2024 MO-1040A short-form instructions p.10
     (identical chart). Missouri remains graduated, not flat, with a 0% band up to $1,273.
   status: final_form_published

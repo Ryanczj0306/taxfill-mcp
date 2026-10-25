@@ -3,6 +3,11 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   residency.summary (a term, not a quote)
 jurisdiction: states/mi
 tax_year: 2023
 income_tax: true
@@ -33,7 +38,7 @@ residency:
     Out-of-state students living in Michigan only to attend school are nonresidents. Reciprocal states (IL, IN,
     KY, MN, OH, WI): wages are taxed only by the state of residence. Note: the 2023 instruction booklet states the
     domicile-based rules above but does not state a numeric statutory-resident day-count test, so any day-count
-    "statutory resident" concept is not asserted here.'
+    statutory resident concept is not asserted here.'
 forms:
   resident: MI-1040 (Michigan Individual Income Tax Return)
   part_year_or_nonresident: Schedule NR (Nonresident and Part-Year Resident Schedule), filed together with Form

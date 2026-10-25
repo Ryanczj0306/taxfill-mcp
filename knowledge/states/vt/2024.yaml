@@ -10,13 +10,19 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.tax_line: tax.vermont.gov/sites/tax/files/documents/IN-111-2024.pdf 7a6744b2971749c1 — the parenthesis prints below the entry box
+#   treaty_note: tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf 8f4fa58fd4e98017 — p.6
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[5] (a column label, not a quote)
 jurisdiction: states/vt
 tax_year: 2024
 income_tax: true
 conforms_to_federal_treaties: true
 treaty_note: 'Vermont''s resident return starts from federal adjusted gross income and does NOT add back federally
-  treaty-exempt income; it explicitly SUBTRACTS it. Form IN-111 Line 1 is "Federal Adjusted Gross Income — Enter
-  the amount from your federal Form 1040." The DOR "Resident" page states: "If you are a Vermont resident, your
+  treaty-exempt income; it explicitly SUBTRACTS it. the IN-111 instructions for Line 1 read "Federal Adjusted Gross Income REQUIRED entry. Enter the amount from your federal Form 1040" The DOR "Resident" page states: "If you are a Vermont resident, your
   income starts with federal adjusted gross income minus the following: Income exempted from state taxation by the
   laws of the United States..." Line 2 (Net Modifications to Federal AGI, via Schedule IN-112) contains the standard
   state additions/subtractions with no treaty-income add-back. Because treaty-exempt income is already excluded
@@ -110,6 +116,10 @@ credits:
     source: Vermont Department of Taxes - Renter Credit page and 2024 Form IN-111 Instructions (Renter Credit Claim
       section)
     url: https://tax.vermont.gov/individuals/renter-credit
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 8f4fa58fd4e98017...
+  citations:
+  - source: 'Vermont Department of Taxes 2024 Form IN-111 Instructions (Renter Credit due date)'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2024.pdf
   unverified: true
 - name: Elderly or Permanently Disabled Tax Credit
   type: nonrefundable
@@ -215,7 +225,7 @@ tax:
     - {over: 165700, but_not_over: 268300, rate: 0.076}
     - {over: 268300, but_not_over: null, rate: 0.0875}
   base: federal_agi
-  tax_line: 'Form IN-111, Line 8: "Vermont Income Tax from tax table or tax rate schedule (If Line 1 is greater than
+  tax_line: 'Form IN-111, Line 8: "Vermont Income Tax from tax table or tax rate schedule … (If Line 1 is greater than
     $150,000, see instructions)". Line 7: "Vermont Taxable Income (SUBTRACT Line 6 from Line 3. If less than zero,
     enter -0-)", where Line 6 = Line 4 standard deduction + Line 5e personal exemption deduction.'
   exemptions:
@@ -253,7 +263,7 @@ tax:
     obligations, or 2) tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule.''
     This op computes only (2); when the 3% floor binds (typically large modifications/deductions relative to AGI),
     plain bracket math understates Line 8.'
-  - 'Printed base-tax constants are rounded: the schedules'' ''VT Base Tax'' dollar constants are rounded to whole
+  - 'Printed base-tax constants are rounded: the schedules'' VT Base Tax dollar constants are rounded to whole
     dollars and differ from the exact cumulative bracket sums by up to $0.50 (e.g., Single $1,521.00 printed vs $1,520.90
     exact; MFS $4,820.00 printed vs $4,819.64 exact; HoH $2,038.00 printed vs $2,038.48 exact). Form arithmetic using
     the printed constants can therefore differ by $1 from this op''s exact marginal-bracket math.'

@@ -10,6 +10,12 @@
 # differed. TY2024 headline change: the top rate fell 6.4% -> 6.2% (the Act 228
 # of 2022 annual step-down), the bracket bounds indexed to $3,460/$17,330, and
 # the dependent exemption rose to $4,790.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[2] (a paraphrase of the schedule's steps, not a quote)
+#   tax.notes[3] (a paraphrase, not a quote)
 jurisdiction: states/sc
 tax_year: 2024
 income_tax: true
@@ -165,6 +171,12 @@ all_citations:
   url: https://dor.sc.gov/sites/dor/files/forms/SC4972_2024.pdf
 - source: SCDOR Individual Income Tax page - '0 to a top rate of 6.2% for tax year 2024'; MyDORWAY payment portal
   url: https://dor.sc.gov/iit
+# Phase K JK31 (2026-10-25): the check payee quotes the voucher; downloaded twice, identical sha256 56820c498c8cd4c1...
+- source: 'SC DOR 2024 SC1040-V (payment voucher)'
+  url: https://dor.sc.gov/sites/dor/files/forms/SC1040V_2024.pdf
+# Phase K JK31 (2026-10-25): the residency note quotes the title this booklet refers to; downloaded twice, identical sha256 9cef3645c76a5b67...
+- source: 'SC DOR 2024 Individual Income Tax General Information (Geninfo_2024): residency and domicile, the policy it refers to'
+  url: https://dor.sc.gov/sites/dor/files/forms/Geninfo_2024.pdf
 unverified:
 - The 2024 revision of Form TC-60 (SC EITC) was not retrievable at the documented URLs (TC60_2024.pdf returns the
   site's error page); the 125% rate is the fully-phased statutory rate under S.C. Code Section 12-6-3632 first effective
@@ -229,12 +241,11 @@ tax:
     and pass dependents_count so the op subtracts the shipped $4,790-per-dependent line w amount to reproduce line
     5. South Carolina has NO personal exemption and NO state standard deduction of its own.'
   - 'Adjudication note (two-pass): pass 1 = the 2024 SC1040TT (mandatory tables below $100,000 + the printed $100,000-or-more
-    schedule ''6.2% minus $659''); pass 2 = the 2024 SC4972''s printed ''2024 Tax Computation Schedule'' ($0-$3,460
+    schedule (6.2% minus $659)); pass 2 = the 2024 SC4972''s printed ''2024 Tax Computation Schedule'' ($0-$3,460
     0%; $3,460-$17,330 3% times the amount minus $104; $17,330+ 6.2% times the amount minus $659). Both passes agree
     on every bound and rate. NOTE: the SC1040 instruction booklet itself prints NO bracket dollar bounds — the SC4972
     schedule is the official in-form statement of them.'
-  - 'CRITICAL — SC''s filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation
-    is ''rate x ENTIRE income - constant'', and the printed constants are ROUNDED in the taxpayer''s favor ($104 vs
+  - 'CRITICAL — SC''s filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation is rate x ENTIRE income - constant, and the printed constants are ROUNDED in the taxpayer''s favor ($104 vs
     the exact marginal $103.80; $659 vs the exact $658.36). Pure marginal accumulation (this engine) therefore comes
     out up to ~$1 HIGHER than the filed method above $17,330 — e.g. $101,000 -> engine $5,604 vs the SC1040TT''s own
     printed example $5,603 (6.2% x $101,000 - $659). The filed return must use the SC1040TT table or the $100,000+

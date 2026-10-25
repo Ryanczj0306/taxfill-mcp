@@ -3,6 +3,13 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   residency.summary: tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf 6a0f9e6d6f9077f4 — p.1
+#   treaty_note: tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf 6a0f9e6d6f9077f4 — the instructions' Schedule M heading
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   credits[1].name (a term, not a quote)
 jurisdiction: states/ri
 tax_year: 2023
 income_tax: true
@@ -10,8 +17,7 @@ conforms_to_federal_treaties: true
 treaty_note: 'The RI-1040 resident return starts from federal adjusted gross income (RI-1040 Line 1: "Enter your
   federal adjusted gross income from Federal Form 1040 or Federal Form 1040-SR, line 11"), and the General Instructions
   state "the Rhode Island income tax is based on your federal adjusted gross income." RI taxable income is built
-  only via the RI Schedule M modifications. I reviewed every "Modification Increasing Federal Adjusted Gross Income"
-  on Schedule M (Lines 2a-2k, instructions pages I-8 to I-10): the add-backs are out-of-state municipal bond interest
+  only via the RI Schedule M modifications. I reviewed every one of the "Modifications INCREASING Federal AGI" on Schedule M (Lines 2a-2k, instructions pages I-8 to I-10): the add-backs are out-of-state municipal bond interest
   (2a), RI fiduciary adjustment (2b), recapture of Family Education Account modifications (2c), bonus depreciation
   (2d), recapture of Section 529 modifications (2e), recapture of previously-claimed tax-credit income (2f), pass-through
   entity tax (2h), unemployment compensation not in federal AGI (2i), taxable PPP loan amount (2j), and a reserved
@@ -28,8 +34,7 @@ starts_from: federal AGI (Federal Form 1040/1040-SR, line 11) — RI-1040 Line 1
   via RI Schedule M modifications, RI standard deduction, and RI exemptions
 residency:
   summary: 'Resident = an individual domiciled in Rhode Island, OR an individual who maintains a permanent place
-    of abode in Rhode Island and spends more than 183 days of the year in Rhode Island (statutory resident). Domicile
-    is "the place an individual regards as his or her permanent home - the place to which he or she intends to return
+    of abode in Rhode Island and spends more than 183 days of the year in Rhode Island (statutory resident). Domicile is "a place an individual regards as his or her permanent home - the place to which he or she intends to return
     after a period of absence"; a domicile once established continues until a new fixed and permanent home is acquired
     (changing domicile requires intent to abandon the old, intent to acquire a new one, and actual physical presence
     in the new domicile). Nonresident = any person not within the definition of a resident, who must file if they
@@ -62,7 +67,7 @@ credits:
       39 - The Rhode Island percentage is 15%.'' and ''Line 40 - Rhode Island Earned Income Credit: Multiply line
       38 by line 39. Enter here and on page 1, line 14d.'''
     url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%201040R%20Instructions.pdf
-- name: Property Tax Relief Credit (Form RI-1040H, the RI property-tax "circuit breaker")
+- name: Property Tax Relief Credit (Form RI-1040H, the RI property-tax circuit breaker)
   type: refundable
   eligibility: 'Must answer YES to ALL eligibility questions on Form RI-1040H Part 1: (A) domiciled in Rhode Island
     for all of 2023; (B) lived in a household or rented a dwelling that was subject to property tax in 2023; (C)
@@ -171,6 +176,12 @@ all_citations:
   url: https://tax.ri.gov/online-services/make-payment-online
 - source: 2023 Instructions for Filing RI-1040NR (Nonresident/Part-Year) booklet — RI Division of Taxation
   url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%20NR%20Instructions.pdf
+# Phase K JK31 (2026-10-25): the exemption note and tax_line quote the face; downloaded twice, identical sha256 db8606dabba92f15...
+- source: 'RI Division of Taxation 2023 Form RI-1040 (with Schedules), lines 6-8 and Schedule M'
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023_1040WE_w.pdf
+# Phase K JK31 (2026-10-25): the tax-table note quotes the table header; downloaded twice, identical sha256 a6e26c241aa32157...
+- source: 'RI Division of Taxation 2023 RI Tax Tables (the table header)'
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023%20RI%20Tax%20Tables_Complete.pdf
 unverified:
 - The nonresident/part-year due date and mailing addresses were not separately read from the 2023 RI-1040NR instruction
   booklet; they are assumed identical to the resident return (4/15/2024; refund to 02908-5806, with-payment to 02908-5807).

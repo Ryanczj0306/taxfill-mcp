@@ -3,6 +3,11 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[5]: dfa.arkansas.gov/wp-content/uploads/TaxBrackets_2023.pdf e6b7c8ca14d2173f — the brackets table's column head
+#   tax.notes[7]: dfa.arkansas.gov/wp-content/uploads/TaxBrackets_2023.pdf e6b7c8ca14d2173f — the brackets table's column head
 jurisdiction: states/ar
 tax_year: 2023
 income_tax: true
@@ -236,7 +241,7 @@ tax:
     to calculate Arkansas income tax, the results must match the table exactly'' (2023 Indexed Tax Brackets). Bracket
     math may differ from the table by a few dollars within a $100 band; the filed form must use the table.'
   - CRITICAL — shipped brackets are exact ONLY for net taxable income up to $89,600. From $89,601 to $94,200 the official
-    schedule phases the 4.7% bracket's 'minus adjustment' down from $597.35 to $153.70 in $10-per-$100-band steps
+    schedule phases the 4.7% bracket's 'Minus Adjustment' down from $597.35 to $153.70 in $10-per-$100-band steps
     (the $90,001–$90,200, $90,901–$91,100 and $93,601–$93,800 ranges intentionally span $200 per the Ark. Code Ann.
     26-51-201(d)(1) rounding note), and at $94,201+ the tax is 4.7% x net taxable income - $153.70. The shipped bracket
     math (equivalent to 4.7% x income - $597.35) UNDERSTATES the true tax above $89,600 — by $443.65 once net taxable
@@ -245,7 +250,7 @@ tax:
     excess over $100,000'' (booklet p.31, Rev 10/4/2023) — equals 4.7% x income - $156.00, while the 2023 Indexed
     Tax Brackets constant for $100,001+ is $153.70 (4.7% x $100,000 - $153.70 = $4,546.30): a $2.30 divergence, because
     $4,544 is the midpoint-rounded last table row ($99,901–$100,000). The filed form follows the printed table/formula.'
-  - The published 'minus adjustment' constants equal the cumulative sum of the prior brackets to the cent ($105.98
+  - The published 'Minus Adjustment' constants equal the cumulative sum of the prior brackets to the cent ($105.98
     = 2% x $5,299 exactly; $211.97 exactly; $272.37 vs exact $272.366; $597.35 vs exact $597.353) — no material rounding
     divergence, so the shipped marginal brackets reproduce the official formula to within one cent below $89,601.
   - 'EXEMPTIONS ARE CREDITS IN ARKANSAS — none are shipped: Arkansas has no personal or dependent exemption that reduces

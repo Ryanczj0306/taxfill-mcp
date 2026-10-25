@@ -148,6 +148,10 @@ credits:
     source: 'CT DRS — 2025 Form CT-1040 Instructions (Rev. 12/25), p. 4 Line 20d Historic Homes Rehabilitation Tax Credit
       and Line 21 Total Payments and Refundable Credits; the 2025 Form CT-1040 face, Lines 20d and 21'
     url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf'
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 fadbe2acfd629a61...
+  citations:
+  - source: 'CT DRS 2025 Form CT-1040 (Rev. 12/25), page 2: Line 20d caption ''Historic Home Rehabilitation Credit'''
+    url: https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf
 mailing_addresses:
   refund_or_no_payment: 'Department of Revenue Services, PO Box 2976, Hartford CT 06104-2976 (for refunds and all
     other tax forms without payment)'
@@ -158,9 +162,7 @@ mailing_addresses:
       of Revenue Services, PO Box 2976, Hartford CT 06104-2976"'
     url: 'https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf'
 payment:
-  check_payee: 'Commissioner of Revenue Services (2025 Form CT-1040, page 4 payment box — "Make your check payable
-    to: Commissioner of Revenue Services. To ensure proper posting, write your SSN(s) (optional) and ''2025 Form CT-1040''
-    on your check.")'
+  check_payee: 'Commissioner of Revenue Services (2025 Form CT-1040, page 4 payment box — "Make your check payable to: Commissioner of Revenue Services" / "To ensure proper posting, write your SSN(s) (optional) and ''2025 Form CT-1040'' on your check.")'
   web_pay_url: 'https://portal.ct.gov/DRS-myconneCT'
   citation:
     source: '2025 Form CT-1040 (Rev. 12/25), page 4 payment box; 2025 CT-1040 instructions — file and pay electronically
@@ -281,7 +283,7 @@ tax:
   - 'Adjudication note (two-pass): drafted from the 2025 CT-1040 instructions (Rev. 12/25) Tables A-E and independently
     re-verified against the 2025 CT-1040NR/PY instructions (Rev. 12/25) — Table A (221 numeric tokens), Table C (136)
     and Table D (450) compare as digit-identical multisets, all 28 Table E rows match row-by-row, and all 21 Table
-    B rows match; zero discrepancies. Every printed ''$X plus Y% of the excess over $Z'' constant in Table B equals
+    B rows match; zero discrepancies. Every printed $X plus Y% of the excess over $Z constant in Table B equals
     the EXACT cumulative sum of the prior brackets (200/2,000/4,750/10,750/14,000/31,250 single-MFS; 400/4,000/9,500/21,500/28,000/62,500
     MFJ-QSS; 320/3,200/7,600/17,200/22,400/50,000 HoH), so pure marginal accumulation reproduces Table B to the half-dollar;
     the only divergence is IRS half-up rounding of a trailing $.50, and the DRS''s own printed examples round the
@@ -500,3 +502,9 @@ sources:
     the federal EIC plus the additional $250 for a taxpayer with at least one federal qualifying child) and Schedule
     CT-EITC line instructions ($11,950 investment-income limit); confirmed against the DRS "What's New for 2025"
     EITC expansion note
+# Phase K JK31 (2026-10-25): a citation added inline by JK31 (the quote fix wave).
+- id: credits-2
+  topic: credits
+  url: https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040_1225.pdf
+  descriptions:
+  - 'CT DRS 2025 Form CT-1040 (Rev. 12/25), page 2: Line 20d caption ''Historic Home Rehabilitation Credit'''

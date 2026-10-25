@@ -3,6 +3,7 @@
   "@@03350a57e563": "2025 IA 1040 Iowa Individual Income Tax Return (41-001), page 1 Step 3 \"Exemptions\": a \"Personal Credit: Enter 1 (enter 2 if filing status 2 or 4) x $40 =\"; b \"Enter 1 for each taxpayer 65 or older and/or 1 for each taxpayer who is blind x $20 =\" (boxes You are 65 or older, You are blind, Spouse is 65 or older, Spouse is blind); c \"Dependents: Enter 1 for each dependent. x $40 =\"; d \"Total. Add lines a, b and c\"; page 2 Step 5 line 8 \"Total exemption credit amount from Step 3\", line 11 \"Total Credits. Add lines 8, 9, and 10.\", line 12 \"BALANCE. Subtract line 11 from line 7.\" Second pass: the 2025 IA 1040 Expanded Instructions (\"Instruction Year: 2025\"), \"Intro 6: Exemption Credits\" (https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/exemption-credits), \"Line 08: Total Exemption Credit\" and \"Line 12: Balance\" (\"Subtract line 11 from line 7. If less than zero, enter zero.\"), which print the same amounts.",
   "@@0ff2803c7a5c": "2025 IA 1040 Iowa Individual Income Tax Return - printed footer: 'This return is due April 30, 2026 ... MAILING ADDRESS: Iowa Income Tax Document Processing, PO BOX 9187, Des Moines IA 50306-9187. Make checks payable to Iowa Department of Revenue'",
   "@@115e777b7037": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new",
+  "@@1562ecbf3616": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-earned-income-tax-credit",
   "@@18c24a68c3f2": "Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, Line 05 'Iowa Tax' + What's New: 'Iowa now has a flat tax rate of 3.8%' (SF 2442 flat tax begins TY2025); the federal Enhanced Deduction for Seniors is added back for the low-income exemption / alternate tax / tax reduction; ISave 529 deduction limit $5,800 per beneficiary",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
@@ -18,6 +19,7 @@
   "@@5c69345635f9": "Child and Dependent Care Credit — Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying child/dependent care expenses and qualify for the federal child and dependent care credit. Only one of the Child & Dependent Care Credit OR the Early Childhood Development Credit may be claimed per year.",
   "@@5efc853d28c3": "Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is IA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, senior, blind, dependent) to get IA 1040 line 8 and line 12.",
   "@@63ca6ea405f8": "2025 IA 126, Iowa Nonresident and Part-Year Resident Credit Schedule (form 41-126) — the schedule itself (page 1: 'Your Residency Status (check one)')",
+  "@@70309c51d84c": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-taxable-income",
   "@@747448569338": "Early Childhood Development Credit — Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying early childhood development expenses for a dependent aged three through five. Claimed in lieu of (not in addition to) the Child and Dependent Care Credit.",
   "@@7c48e9d6fe24": "2025 IA 1040 Iowa Individual Income Tax Return, Step 5 line 5: 'Iowa tax. Multiply line 4 by 3.8% or amount from alternate tax calculation'; Step 4 line 4 'Iowa taxable income. Add lines 2 and 3. Do not include lines 1a through 1f' (line 2 = federal taxable income from federal 1040 line 15; line 3 = net Iowa modifications from IA 1040 Schedule 1 line 21); Step 3 $40/$20/$40 exemption CREDITS. Second pass: 2025 IA 1040 Expanded Instructions, Line 05 'Iowa Tax' page 'Iowa now has a flat tax rate of 3.8%' (SF 2442 flat tax begins TY2025), and the 2025 IA 1040 Alternate Tax Worksheet (41-145, Rev. 10/17/2025) line 5 'Multiply Iowa taxable income from IA 1040, line 4 by 3.8% (.038)' - both passes agree the flat rate is 3.8%. https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new",
   "@@8c7e79f0aaec": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/credit-nonpart-year-resident",
@@ -306,6 +308,24 @@
      "cadence": "@@342fefff8f6d",
      "topic": "credits",
      "url": "@@115e777b7037"
+    },
+    {
+     "answers": "Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 25 page (its Line 24 names)",
+     "cadence": "@@342fefff8f6d",
+     "topic": "credits",
+     "url": "@@1562ecbf3616"
+    },
+    {
+     "answers": "Iowa Department of Revenue 2025 IA 1040 (41-001b 10/14/2025), the Step 5 box caption",
+     "cadence": "@@342fefff8f6d",
+     "topic": "credits",
+     "url": "https://revenue.iowa.gov/media/4400/download?inline"
+    },
+    {
+     "answers": "Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 04 page",
+     "cadence": "@@342fefff8f6d",
+     "topic": "credits",
+     "url": "@@70309c51d84c"
     }
    ],
    "topic": "credits",
@@ -403,13 +423,13 @@
      "answers": "2025 IA 1040 Expanded Instructions, \"Line 04: Iowa Taxable Income\" — \"Check the box only if using low-income exemption, alternate tax, or tax reduction.\"",
      "cadence": "@@342fefff8f6d",
      "topic": "forms_and_instructions",
-     "url": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-taxable-income"
+     "url": "@@70309c51d84c"
     },
     {
      "answers": "2025 IA 1040 Expanded Instructions, \"Line 25: Iowa Earned Income Tax Credit\" — a low-income-exemption filer filing only to claim the Iowa EITC should \"check the box between Steps 4 and 5\"",
      "cadence": "@@342fefff8f6d",
      "topic": "forms_and_instructions",
-     "url": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-earned-income-tax-credit"
+     "url": "@@1562ecbf3616"
     },
     {
      "answers": "@@18c24a68c3f2",
@@ -434,6 +454,18 @@
      "cadence": "@@342fefff8f6d",
      "topic": "forms_and_instructions",
      "url": "https://revenue.iowa.gov/taxes/file-my-taxes/individual-taxes"
+    },
+    {
+     "answers": "Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Step 3 page (lines a-d)",
+     "cadence": "@@342fefff8f6d",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/exemption-credits"
+    },
+    {
+     "answers": "Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 08 page",
+     "cadence": "@@342fefff8f6d",
+     "topic": "forms_and_instructions",
+     "url": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/total-exemption-credit"
     }
    ],
    "topic": "forms_and_instructions",

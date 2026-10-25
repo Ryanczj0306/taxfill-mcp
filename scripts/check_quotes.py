@@ -67,8 +67,13 @@ from taxfill_core import fetch as _fetch  # noqa: E402
 
 import freshness_quarantine  # noqa: E402
 
-VERBATIM, MISMATCH, UNCHECKED = "VERBATIM", "MISMATCH", "UNCHECKED"
+VERBATIM, MISMATCH, UNCHECKED, CLOSED = "VERBATIM", "MISMATCH", "UNCHECKED", "CLOSED"
+STATUSES = (VERBATIM, MISMATCH, CLOSED, UNCHECKED)
 DEFAULT_CACHE = REPO / ".cache" / "quotes"
+# Phase K JK31 (2026-10-25): the MISMATCHes closed as the checker's false positives, each with the reason it was
+# re-read and found to be the printed words (see load_closures). Self-clearing: an entry that no longer matches a
+# MISMATCH is reported as stale, and --strict fails on it.
+DEFAULT_CLOSED = REPO / "scripts" / "check_quotes_closed.yaml"
 TIMEOUT = 60.0
 ELLIPSIS_GAP = 4000  # normalised characters an ellipsis may stand for (a form face's caption ... line total)
 BRACKET_GAP = 40  # an editorial [insertion] replaces at most this many normalised characters
@@ -260,6 +265,64 @@ def html_text(data: bytes) -> str:
     return "".join(parser.parts)
 
 
+# Phase K JK31 (2026-10-25): a SHIFTED text layer. Some subset fonts carry no Unicode map and number their glyphs
+# 29 below the character they draw, so the text layer reads "6SHFLDO" for "Special", "0XOWLSO\\" for "Multiply",
+# a control character U+0003 for each space and U+0011 ... U+001C for ". / 0 ... 9" (Arkansas DFA's AR1000F,
+# AR1000NR, AR2441 and AR1000TC, 2023-2025, render-checked). Every letter is ASCII, so the garbled-share test
+# below does not catch it, and a span quoted from such a face was a MISMATCH with no closest passage at all. The
+# fix is per font: a subset font ("ABCDEF+Name") whose characters include these control characters is decoded by
+# +29 (and its ligature and curly-quote codes to theirs); every other font on the page is read as it is.
+SHIFT = 29
+_SHIFT_CONTROL = re.compile(r"[\x03-\x08\x0b\x0c\x0e-\x1f]")
+# the codes these subsets give their ligatures and curly quotes ("GH\u00bfQHG" defined, "RႈFH" office, "Dependent\u00b6s")
+_SHIFT_GLYPHS = {"\u00bf": "fi", "\u1087": "ff", "\u1088": "ffi", "\u00b6": "\u2019", "\u00b3": "\u201c", "\u00b4": "\u201d"}
+_SUBSET_FONT = re.compile(r"^[A-Z]{6}\+")
+EXTRACTOR = 2  # bumped when the text extraction changes, so a quote cache written by an older one is re-read
+
+
+def _font_name(raw, textpage, index: int, buf) -> str:
+    import ctypes
+
+    flags = ctypes.c_int()
+    length = raw.FPDFText_GetFontInfo(textpage, index, buf, len(buf), ctypes.byref(flags))
+    return buf.raw[:max(0, length - 1)].decode("latin-1") if length else ""
+
+
+def unshift_page(chars: list[tuple[str, str]]) -> str:
+    """A page's text from its (character, font name) pairs, a shifted subset font's characters decoded."""
+    seen: Counter[str] = Counter()
+    ctrl: Counter[str] = Counter()
+    for ch, font in chars:
+        seen[font] += 1
+        if _SHIFT_CONTROL.match(ch):
+            ctrl[font] += 1
+    shifted = {f for f in ctrl if _SUBSET_FONT.match(f) and ctrl[f] >= 3 and ctrl[f] / seen[f] >= 0.02}
+    out: list[str] = []
+    for ch, font in chars:
+        if font in shifted:
+            if 3 <= ord(ch) <= 93:
+                ch = chr(ord(ch) + SHIFT)
+            else:
+                ch = _SHIFT_GLYPHS.get(ch, ch)
+        out.append(ch)
+    return "".join(out)
+
+
+def _page_text(textpage) -> str:
+    text = textpage.get_text_range()
+    if not _SHIFT_CONTROL.search(text):
+        return text
+    import ctypes
+
+    import pypdfium2.raw as raw
+
+    buf = ctypes.create_string_buffer(256)
+    count = raw.FPDFText_CountChars(textpage.raw)
+    chars = [(chr(raw.FPDFText_GetUnicode(textpage.raw, i)), _font_name(raw, textpage.raw, i, buf))
+             for i in range(count)]
+    return unshift_page(chars)
+
+
 def pdf_text(data: bytes) -> tuple[str, list[int]]:
     import pypdfium2 as pdfium
 
@@ -270,7 +333,7 @@ def pdf_text(data: bytes) -> tuple[str, list[int]]:
     try:
         for page in doc:
             textpage = page.get_textpage()
-            text = textpage.get_text_range() + "\n"
+            text = _page_text(textpage) + "\n"
             textpage.close()
             page.close()
             pages.append(offset)
@@ -305,7 +368,9 @@ def source_from_bytes(url: str, data: bytes, origin: str) -> Source:
         return Source(url, sha256=digest, kind=kind, origin=origin, unreadable=f"{kind} text extraction failed: {exc}")
     why = unreadable_text(text, kind)
     if why:
-        return Source(url, sha256=digest, kind=kind, origin=origin, unreadable=why)
+        # a garbled layer keeps its text: a span found verbatim in its clean fonts is still verbatim (check_span)
+        keep = text if why.startswith("the text layer is garbled") else ""
+        return Source(url, text=keep, sha256=digest, kind=kind, pages=pages if keep else [], origin=origin, unreadable=why)
     return Source(url, text=text, sha256=digest, kind=kind, pages=pages, origin=origin)
 
 
@@ -378,6 +443,8 @@ class SourceCache:
             stored = json.loads((self.dir / "text" / f"{row['sha256']}.json").read_text(encoding="utf-8"))
         except (OSError, ValueError, KeyError):
             return None
+        if stored.get("extractor", 1) != EXTRACTOR:
+            return None  # an older extraction: read the bytes again
         why = unreadable_text(stored["text"], stored["kind"])
         if why:
             return Source(url, sha256=row["sha256"], kind=stored["kind"], origin="quote cache", unreadable=why)
@@ -389,9 +456,8 @@ class SourceCache:
             return
         (self.dir / "text").mkdir(parents=True, exist_ok=True)
         path = self.dir / "text" / f"{source.sha256}.json"
-        if not path.is_file():
-            path.write_text(json.dumps({"text": source.text, "kind": source.kind, "pages": source.pages}),
-                            encoding="utf-8")
+        path.write_text(json.dumps({"text": source.text, "kind": source.kind, "pages": source.pages,
+                                    "extractor": EXTRACTOR}), encoding="utf-8")
         self.index[source.url] = {"sha256": source.sha256, "read": dt.date.today().isoformat()}
 
     def save(self) -> None:
@@ -521,10 +587,27 @@ def _found_relaxed(span: str, source: Source) -> bool:
     return False
 
 
+# A span that ends a sentence must not stop where the source's sentence goes on: the next word the source prints
+# after the hit starts in lower case (Phase K JK31 review, 2026-10-25: "If your total MGI is $41,496 or less, you may
+# qualify." read VERBATIM against "... you may qualify for Kentucky Family Size Tax Credit."). A span that ends in an
+# ellipsis says it stops early.
+_SENTENCE_END = re.compile(r"[.!?][\"'\u201d\u2019)\]]*\s*$")
+_ELLIPSIS_END = re.compile(r"(?:\.\.\.|\u2026)[\"'\u201d\u2019)\]]*\s*$")
+_NEXT_PRINTED = re.compile(r"[\s\u00a0]*(\S)")
+
+
+def _sentence_goes_on(source: "Source", end: int) -> bool:
+    """Whether the source's next printed character after key position ``end`` continues a sentence (lower case)."""
+    _, _, origin = source.keyed()
+    m = _NEXT_PRINTED.match(source.text, origin[end - 1] + 1)
+    return bool(m) and m.group(1).islower()
+
+
 def find_span(span: str, source: Source) -> tuple[str, int, int] | None:
     """Where ``span`` occurs in ``source``: ('verbatim' | 'case', key start, key end), or None.
 
-    A hit must start and end on a word boundary of the source (see :func:`_joins`).
+    A hit must start and end on a word boundary of the source (see :func:`_joins`), and a span that ends a sentence
+    must not stop where the source's sentence goes on (:func:`_sentence_goes_on`).
     """
     segments = _segments(span)
     if not segments:
@@ -533,6 +616,7 @@ def find_span(span: str, source: Source) -> tuple[str, int, int] | None:
     lowered = [("".join(_lower(c) for c in seg), seg, gap) for seg, gap in segments]
     first_low, first_orig, _ = lowered[0]
     first_char, last_char = segments[0][0][0], segments[-1][0][-1]
+    ends_sentence = bool(_SENTENCE_END.search(span)) and not _ELLIPSIS_END.search(span)
     best: tuple[str, int, int] | None = None
     start = key.find(first_low)
     tries = 0
@@ -548,7 +632,8 @@ def find_span(span: str, source: Source) -> tuple[str, int, int] | None:
                 break
             ok_case = ok_case and _case_ok(orig, nxt, source, False)
             pos = nxt + len(low)
-        if chained and _edges_ok(source, start, pos, first_char, last_char):
+        if (chained and _edges_ok(source, start, pos, first_char, last_char)
+                and not (ends_sentence and _sentence_goes_on(source, pos))):
             if ok_case:
                 return "verbatim", start, pos
             best = best or ("case", start, pos)
@@ -669,6 +754,15 @@ def check_span(span: Span, sources: dict[str, Source]) -> dict:
         (score, passage, page), source = best
         near = {"closest": passage, "similarity": score, "closest_url": source.url, "closest_page": page,
                 "closest_sha256": source.sha256}
+    for source in unread:
+        # Phase K JK31 (2026-10-25): a garbled text layer (DC's D-40 books: some fonts carry no Unicode map) is not
+        # read for a MISMATCH, but a span found verbatim in its clean fonts is printed there.
+        found = find_span(span.text, source) if source.text else None
+        if found and found[0] == "verbatim":
+            _, _, origin = source.keyed()
+            return row | {"status": VERBATIM, "url": source.url, "sha256": source.sha256,
+                          "page": source.page_of(origin[found[1]]),
+                          "note": "found in the readable fonts of a partly garbled text layer"}
     if unread:
         reasons = sorted({f"{s.url}: {s.unreadable}" for s in unread})
         head = (f"not found in the {len(readable)} readable candidate source(s); " if readable else "")
@@ -713,29 +807,63 @@ def _walk_urls(node: object, out: list[str]) -> None:
             _walk_urls(item, out)
 
 
+_LINK = re.compile(r"https?://[^\s'\"()<>]+\.pdf")
+
+
+def _document_links(node: object, out: list[str], key: str | None = None) -> None:
+    """Off-.gov PDF links written into citation ``source`` texts (see :func:`pack_urls`)."""
+    from taxfill_core.state_sources import is_gov
+
+    if isinstance(node, dict):
+        for k, v in node.items():
+            _document_links(v, out, k)
+    elif isinstance(node, list):
+        for v in node:
+            _document_links(v, out, key)
+    elif isinstance(node, str) and key in ("source", "descriptions"):
+        out += [u for u in _LINK.findall(node) if not is_gov(u)]
+
+
 def pack_urls(pack: dict) -> list[str]:
-    """The URLs a pack cites: its ``sources`` table when it has one (JK20), else every inline ``url``."""
+    """The URLs a pack cites: its ``sources`` table when it has one (JK20), else every inline ``url``; then the
+    document links its citation texts name on a host the Citation model rejects.
+
+    Phase K JK31 (2026-10-25): New Mexico's 2023/2024 PIT-1 instructions, rate tables and PIT-RC exist only on the
+    Department's AWS document host (JK27): each citation's ``url`` is the .gov page that publishes them and the file
+    link stays in its ``source`` text. Their words were MISMATCHes against the page; the file is the source."""
     table = pack.get("sources")
     urls: list[str] = []
     if isinstance(table, list) and table:
         urls = [u for row in table if isinstance(row, dict) and (u := _clean_url(row.get("url")))]
     else:
         _walk_urls(pack, urls)
+    _document_links(pack, urls)
     return list(dict.fromkeys(urls))
 
 
-def _own_url(node: object) -> str | None:
-    """A dict's own citation: ``citation.url`` (or a citation list's single url), else its ``url``."""
+def _own_urls(node: object) -> list[str]:
+    """A dict's own citations: ``citation.url`` (or a citation list's single url), else its ``url``; then the url of
+    each entry of its ``citations`` list. Phase K JK31 (2026-10-25): a credit that quotes two documents (its
+    instructions, and the form face that prints the line's caption) names the second in ``citations``, as an
+    ``amended_return`` block already does; before, the face's words were a MISMATCH ("citation" class)."""
     if not isinstance(node, dict):
-        return None
+        return []
+    own: list[str] = []
     cite = node.get("citation")
     if isinstance(cite, dict) and (url := _clean_url(cite.get("url"))):
-        return url
-    if isinstance(cite, list):
+        own.append(url)
+    elif isinstance(cite, list):
         urls = [u for c in cite if isinstance(c, dict) and (u := _clean_url(c.get("url")))]
         if len(set(urls)) == 1:
-            return urls[0]
-    return _clean_url(node.get("url"))
+            own.append(urls[0])
+    if not own and (url := _clean_url(node.get("url"))):
+        own.append(url)
+    more = node.get("citations")
+    if own and isinstance(more, list):
+        own += [u for c in more if isinstance(c, dict) and (u := _clean_url(c.get("url")))]
+    if own:  # and the off-.gov document links its citation texts name (see pack_urls)
+        _document_links({k: node.get(k) for k in ("citation", "citations")}, own)
+    return list(dict.fromkeys(own))
 
 
 # Strings that describe a source rather than state what it says: citation descriptions, the sources table,
@@ -745,11 +873,11 @@ _SKIP_KEYS = {"citation", "citations", "all_citations", "sources", "source", "ur
               "source_topic", "affects", "read", "line_source", "checked"}
 
 
-def _prose(node: object, path: str, own: str | None, out: list[tuple[str, str, str | None]]) -> None:
+def _prose(node: object, path: str, own: list[str], out: list[tuple[str, str, list[str]]]) -> None:
     """Every prose string under ``node`` with its path and its own citation: the url of the dict that holds it
     (directly, or through a list of strings), never one inherited from further up."""
     if isinstance(node, dict):
-        own = _own_url(node)
+        own = _own_urls(node)
         for key, value in node.items():
             if key not in _SKIP_KEYS:
                 _prose(value, f"{path}.{key}" if path else str(key), own, out)
@@ -786,14 +914,16 @@ def _kind(path: str) -> str:
     return "credits" if path.startswith("credits") else "other"
 
 
-def _span(kind: str, rel: str, year: int, path: str, text: str, own: str | None, urls: list[str]) -> Span:
-    """Candidates: a credit's or a v2 quote's own citation alone (the pack's other URLs are searched only to say
-    where a miscited span does appear); any other span's own citation first, then every URL the pack cites."""
+def _span(kind: str, rel: str, year: int, path: str, text: str, own: list[str] | str | None,
+          urls: list[str]) -> Span:
+    """Candidates: a credit's or a v2 quote's own citations alone (the pack's other URLs are searched only to say
+    where a miscited span does appear); any other span's own citations first, then every URL the pack cites."""
+    own = [own] if isinstance(own, str) else list(own or [])
     if kind in ("credits", "v2.quote") and own:
-        return Span(kind, rel, year, path, text, [own], elsewhere=[u for u in urls if u != own])
+        return Span(kind, rel, year, path, text, own, elsewhere=[u for u in urls if u not in own])
     if kind == "v2.quote":
         return Span(kind, rel, year, path, text, [])
-    return Span(kind, rel, year, path, text, list(dict.fromkeys([own, *urls] if own else urls)))
+    return Span(kind, rel, year, path, text, list(dict.fromkeys([*own, *urls])))
 
 
 def collect_state_pack(pack: dict, rel: str) -> list[Span]:
@@ -813,8 +943,8 @@ def collect_state_pack(pack: dict, rel: str) -> list[Span]:
                 continue
             spans += [_span(_kind(path), rel, year, path, span, own, urls) for span in extract_spans(text)]
         return spans
-    prose: list[tuple[str, str, str | None]] = []
-    _prose(pack, "", None, prose)
+    prose: list[tuple[str, str, list[str]]] = []
+    _prose(pack, "", [], prose)
     for path, text, own in prose:
         spans += [_span(_kind(path), rel, year, path, span, own, urls) for span in extract_spans(text)]
     return spans
@@ -856,9 +986,56 @@ def collect(knowledge: Path, packs: list[Path] | None = None) -> list[Span]:
 # ── report ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 
-def build_report(spans: list[Span], cache: SourceCache, workers: int = 8) -> dict:
+def load_closures(path: Path | None) -> list[dict]:
+    """The committed false-positive closures: a list of {pack, where, span, reason, read}, each one MISMATCH the
+    fix tranche re-read at its cited source and found printed there (the text layer is what differs: a sentence
+    split by a page break and the next page's running head, two columns read across, ...). ``span`` is the span
+    exactly as the pack quotes it; ``read`` says how it was read (the rendered page, the digest); ``closest_sha256``
+    is the first 16 hex of the sha256 of the source the checker's closest passage came from ('none': no close
+    passage), and the closure holds only while that source is unchanged."""
+    if path is None or not path.is_file():
+        return []
+    rows = yaml.safe_load(path.read_text(encoding="utf-8")) or []
+    for row in rows:
+        missing = {"pack", "where", "span", "reason", "read", "closest_sha256"} - set(row)
+        if missing:
+            raise ValueError(f"{path.name}: an entry lacks {sorted(missing)}: {row}")
+        if not re.fullmatch(r"[0-9a-f]{16}|none", str(row["closest_sha256"])):
+            raise ValueError(f"{path.name}: closest_sha256 is the first 16 hex of the closest source's sha256, or "
+                             f"'none' when the checker found no close passage: {row}")
+    return rows
+
+
+def _closure_holds(row: dict, closure: dict) -> bool:
+    """Whether the source the MISMATCH's closest passage came from is still the one the closure was re-read against
+    (Phase K JK31 review, 2026-10-25): a closure is bound to that digest, so a reissued source re-opens the span."""
+    got = str(row.get("closest_sha256") or "")[:16]
+    return got == ("" if closure["closest_sha256"] == "none" else closure["closest_sha256"])
+
+
+def apply_closures(rows: list[dict], closures: list[dict]) -> list[dict]:
+    """Mark each MISMATCH a closure names as CLOSED (in place); return the closures that matched no MISMATCH among
+    the packs checked (stale: the quote was edited, the source now reads verbatim, or the source the closure was
+    re-read against changed: its digest no longer matches, and the span stays a MISMATCH)."""
+    checked = {r["pack"] for r in rows}
+    by_key = {(c["pack"], c["where"], c["span"]): c for c in closures}
+    used: set[tuple[str, str, str]] = set()
+    for r in rows:
+        key = (r["pack"], r["where"], r["span"])
+        if r["status"] == MISMATCH and key in by_key and not _closure_holds(r, by_key[key]):
+            r["closure_drift"] = (f"closed against the source {by_key[key]['closest_sha256']}, which now reads "
+                                  f"{str(r.get('closest_sha256') or '')[:16] or 'no close passage'}: re-read it")
+        elif r["status"] == MISMATCH and key in by_key:
+            r["status"] = CLOSED
+            r["closed_reason"] = by_key[key]["reason"]
+            used.add(key)
+    return [c for key, c in by_key.items() if key not in used and c["pack"] in checked]
+
+
+def build_report(spans: list[Span], cache: SourceCache, workers: int = 8, closures: list[dict] | None = None) -> dict:
     sources = cache.get_many(sorted({u for s in spans for u in (*s.urls, *s.elsewhere)}), workers=workers)
     rows = [check_span(s, sources) for s in spans]
+    stale = apply_closures(rows, closures or [])
     totals = Counter(r["status"] for r in rows)
     by = defaultdict(Counter)
     for r in rows:
@@ -866,8 +1043,9 @@ def build_report(spans: list[Span], cache: SourceCache, workers: int = 8) -> dic
     unread = Counter(s.unreadable.split(" (")[0] for s in sources.values() if s.unreadable)
     return {
         "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-        "totals": {k: totals.get(k, 0) for k in (VERBATIM, MISMATCH, UNCHECKED)} | {"spans": len(rows)},
+        "totals": {k: totals.get(k, 0) for k in STATUSES} | {"spans": len(rows)},
         "mismatch_classes": dict(Counter(r["class"] for r in rows if r["status"] == MISMATCH)),
+        "stale_closures": stale,
         "by_kind_year": {k: dict(v) for k, v in sorted(by.items())},
         "sources": {"total": len(sources), "readable": sum(1 for s in sources.values() if not s.unreadable),
                     "unreadable_reasons": dict(unread.most_common()),
@@ -881,13 +1059,14 @@ def summary(report: dict, top: int = 25) -> str:
     t = report["totals"]
     src = report["sources"]
     lines = [f"Quote-verbatim check: {t['spans']} spans -- {t[VERBATIM]} VERBATIM, {t[MISMATCH]} MISMATCH, "
+             f"{t.get(CLOSED, 0)} CLOSED (false positives; reasons in {DEFAULT_CLOSED.name}), "
              f"{t[UNCHECKED]} UNCHECKED",
              f"Sources: {src['total']} URLs, {src['readable']} read; unreadable: "
              + (", ".join(f"{k} x{v}" for k, v in src["unreadable_reasons"].items()) or "none"),
-             "", f"{'kind year':<18} {'VERBATIM':>9} {'MISMATCH':>9} {'UNCHECKED':>10}"]
+             "", f"{'kind year':<18} {'VERBATIM':>9} {'MISMATCH':>9} {'CLOSED':>7} {'UNCHECKED':>10}"]
     for key, counts in report["by_kind_year"].items():
         lines.append(f"{key:<18} {counts.get(VERBATIM, 0):>9} {counts.get(MISMATCH, 0):>9} "
-                     f"{counts.get(UNCHECKED, 0):>10}")
+                     f"{counts.get(CLOSED, 0):>7} {counts.get(UNCHECKED, 0):>10}")
     # wording first (closest first: a near miss is a paraphrase to restore), then citation, punctuation, case
     order = {"wording": 0, "citation": 1, "punctuation": 2, "case": 3}
     mism = sorted((r for r in report["spans"] if r["status"] == MISMATCH),
@@ -901,6 +1080,8 @@ def summary(report: dict, top: int = 25) -> str:
             lines.append(f"  {r['pack']} {r['where']}: '{r['span'][:160]}'")
             lines.append(f"      {r['reason']}; closest ({r.get('similarity', 0):.2f}) "
                          f"{r.get('closest_url', '-')}{page}: '{r.get('closest', '')[:200]}'")
+    for c in report.get("stale_closures") or []:
+        lines.append(f"  STALE closure (matches no MISMATCH; delete it): {c['pack']} {c['where']}: '{c['span'][:120]}'")
     lines += ["", "Classes: wording = the words differ; citation = verbatim in another source the pack cites, not "
               "the one the span names; punctuation / case = found once sentence punctuation / case is ignored.",
               "Report mode: a MISMATCH is re-read at the pack's own cited source in a JK27-style fix tranche "
@@ -923,6 +1104,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--pack", type=Path, action="append", default=[],
                         help="check only this pack file (repeat); default: the whole knowledge tree")
     parser.add_argument("--cache", type=Path, default=DEFAULT_CACHE, help="the url + sha256 text cache")
+    parser.add_argument("--closed", type=Path, default=DEFAULT_CLOSED,
+                        help="the committed false-positive closures (MISMATCH -> CLOSED)")
     parser.add_argument("--json", type=Path, help="write the full JSON report here")
     parser.add_argument("--strict", action="store_true", help="exit 1 on any MISMATCH (JK26: enforcing mode)")
     parser.add_argument("--offline", action="store_true", help="read only the caches; download nothing")
@@ -933,13 +1116,13 @@ def main(argv: list[str] | None = None) -> int:
     spans = collect(args.knowledge, args.pack)
     cache = SourceCache(args.cache, offline=args.offline, refresh=args.refresh,
                         blank_cache=_fetch.default_cache_dir(), quarantined=_quarantined_urls(dt.date.today()))
-    report = build_report(spans, cache, workers=args.workers)
+    report = build_report(spans, cache, workers=args.workers, closures=load_closures(args.closed))
     cache.save()
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
     print(summary(report, args.top))
-    if args.strict and report["totals"][MISMATCH]:
+    if args.strict and (report["totals"][MISMATCH] or report["stale_closures"]):
         return 1
     return 0
 

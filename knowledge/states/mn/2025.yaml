@@ -3,9 +3,7 @@ jurisdiction: states/mn
 tax_year: 2025
 income_tax: true
 conforms_to_federal_treaties: true
-treaty_note: 'Minnesota''s resident return (Form M1) starts from federal adjusted gross income: the 2025 M1 instructions
-  for Line 1 state "Line 1—Federal Adjusted Gross Income. Enter your 2025 federal adjusted gross income from line
-  11a of Form 1040 or 1040-SR, or 1040-NR." Federally treaty-exempt income is already excluded from federal AGI and
+treaty_note: 'Minnesota''s resident return (Form M1) starts from federal adjusted gross income: the 2025 M1 instructions under "Line 1—Federal Adjusted Gross Income" state "Enter your 2025 federal adjusted gross income from line 11a of Form 1040 or 1040-SR, or 1040-NR." Federally treaty-exempt income is already excluded from federal AGI and
   therefore flows through. The Minnesota additions (M1 line 2 = Schedule M1M line 10 and Schedule M1MB line 9) contain
   NO line that adds back income exempt under a U.S. income tax treaty. The only treaty references in the 2025 M1
   instructions are FAVORABLE to the taxpayer (a nonresident alien may claim the standard deduction if allowed by a
@@ -311,7 +309,7 @@ tax:
     annual accounting period; a filer claimable as another''s dependent uses the Worksheet for Line 4 - Dependent
     Standard Deduction (greater of $1,250 or earned income + $350, capped at $14,950, plus $2,000/$1,550 age/blind
     additions) — itemizers use Schedule M1SA instead.'
-  - 'Printed rate-schedule constants check (2025): every ''$X +'' constant equals the exact cumulative sum of the
+  - 'Printed rate-schedule constants check (2025): every $X + constant equals the exact cumulative sum of the
     prior brackets rounded to the cent (single 1,742.50/6,803.06/13,996.80 vs exact 1,742.495/6,803.055/13,996.795;
     MFJ 2,547.67/12,173.75/23,260.31 vs exact 2,547.67/12,173.75/23,260.305; HoH 2,145.35/10,375.39/18,454.61 all
     exact; MFS 1,273.84/6,086.88 vs exact 1,273.835/6,086.875), EXCEPT the MFS top-bracket constant $11,630.16, which

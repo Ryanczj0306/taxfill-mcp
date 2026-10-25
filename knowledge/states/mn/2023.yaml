@@ -3,13 +3,17 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   treaty_note: revenue.state.mn.us/sites/default/files/2025-06/m1-inst-23.pdf 520771ab4ce5d170 — the heading is a run-in head
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[8] (a template of the printed rows, not a quote)
 jurisdiction: states/mn
 tax_year: 2023
 income_tax: true
 conforms_to_federal_treaties: true
-treaty_note: 'Minnesota''s resident return (Form M1) starts from federal adjusted gross income: the 2023 M1 instructions
-  for Line 1 state "Line 1—Federal Adjusted Gross Income. Enter your 2023 federal adjusted gross income from: Line
-  11 of Form 1040 or 1040-SR, or 1040-NR." Federally treaty-exempt income is already excluded from federal AGI and
+treaty_note: 'Minnesota''s resident return (Form M1) starts from federal adjusted gross income: the 2023 M1 instructions under "Line 1—Federal Adjusted Gross Income" state "Enter your 2023 federal adjusted gross income from: Line 11 of Form 1040 or 1040-SR, or 1040-NR". Federally treaty-exempt income is already excluded from federal AGI and
   therefore flows through. The Minnesota additions schedules (Schedule M1M lines 1-9, and Schedule M1MB) contain
   NO line that adds back income exempt under a U.S. income tax treaty. The complete 2023 M1M additions list is:
   out-of-state municipal bond interest (line 1), out-of-state mutual fund tax-exempt dividends (line 2), expenses
@@ -267,7 +271,7 @@ tax:
     tax treaty; a filer claimable as another''s dependent uses the Worksheet for Line 4 - Dependent Standard Deduction
     (greater of $1,200 or earned income + $350, capped at $13,825, plus age/blind additions) — itemizers use Schedule
     M1SA instead.'
-  - 'Printed rate-schedule constants check: every ''$X +'' constant equals the exact cumulative sum of the prior brackets
+  - 'Printed rate-schedule constants check: every $X + constant equals the exact cumulative sum of the prior brackets
     rounded to the cent (divergence at most $0.005), EXCEPT the Head of Household top-bracket constant, printed $17,033.72
     vs $17,033.71 exact cumulative (+$0.01, from chaining the rounded $9,577.00 constant). Maximum divergence from
     pure marginal math: $0.01.'

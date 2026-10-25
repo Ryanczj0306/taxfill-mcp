@@ -77,6 +77,10 @@ credits:
     source: Kentucky Department of Revenue — 2023 Form 740 (42A740) line 24 and 2023 Form 740 instruction packet,
       instructions for line 24
     url: https://revenue.ky.gov/Forms/Form%20740%202023.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 cd3242f0e358d0ba...
+  citations:
+  - source: 'Kentucky DOR 2023 Form 740 instruction packet, line 24 instructions'
+    url: https://revenue.ky.gov/Forms/740%20Packet%20Instructions%202023.pdf
 - name: Personal Tax Credits (age 65+, blind, or Kentucky National Guard)
   type: nonrefundable
   eligibility: Taxpayer (and spouse, if filing jointly or married filing separately on a combined return) who, as

@@ -3,6 +3,13 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.tax_line: tax.ny.gov/forms/html-instructions/2023/it/it201i-2023.htm 45a22e723c97dd44 — the parenthesis the instructions print
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   residency.summary (a term, not a quote)
+#   tax.notes[5] (a template of the printed rows, not a quote)
 jurisdiction: states/ny
 tax_year: 2023
 income_tax: true
@@ -24,7 +31,7 @@ citation:
 starts_from: federal AGI (Form IT-201 builds federal income items on lines 1-16/17/18 and computes federal adjusted
   gross income on line 19, which is the starting point for NY modifications)
 residency:
-  summary: 'You are a NY State resident if (a) your domicile is New York State, OR (b) you are a "statutory resident"
+  summary: 'You are a NY State resident if (a) your domicile is New York State, OR (b) you are a statutory resident
     - you maintain a permanent place of abode in NY for substantially all of the taxable year (a period exceeding
     11 months) AND spend 184 days or more in NY during the year (any part of a day counts as a day). Domicile is
     your permanent home that you intend to return to; you can have only one domicile, while you may have multiple
@@ -156,6 +163,9 @@ all_citations:
   url: https://www.tax.ny.gov/pay/ind/pay-income-tax-online.htm
 - source: Form IT-201-V Payment Voucher for Income Tax Returns - check payee 'New York State Income Tax'
   url: https://www.tax.ny.gov/pdf/current_forms/it/it201v_fill_in.pdf
+# Phase K JK31 (2026-10-25): the tax_line quotes the face; downloaded twice, identical sha256 b0c12743b32fb723...
+- source: 'NY DTF 2023 Form IT-201, page 3 line 39'
+  url: https://www.tax.ny.gov/pdf/2023/inc/it201_2023_fill_in.pdf
 unverified:
 - The check-payee name 'New York State Income Tax' on Form IT-201-V was sourced from tax.ny.gov search-result text;
   the IT-201-V PDF itself returned unparseable binary on direct fetch, so confirm the exact payee wording on the
@@ -222,8 +232,7 @@ tax:
     - {over: 25000000, but_not_over: null, rate: 0.109}
   base: federal_agi
   tax_line: '2023 Form IT-201, page 3: "39 NYS tax on line 38 amount". IT-201-I, Line 39: "Is line 33 (your New York
-    adjusted gross income) $107,650 or less? If Yes, find your New York State tax using the 2023 New York State Tax
-    Table; or if line 38 is $65,000 or more, use the New York State tax rate schedule. Enter the tax due on line 39.
+    adjusted gross income) $107,650 or less? If Yes, find your New York State tax using the 2023 New York State Tax Table (visit www.tax.ny.gov and search: table); or if line 38 is $65,000 or more, use the New York State tax rate schedule. Enter the tax due on line 39.
     If No, see Tax computation - New York adjusted gross income of more than $107,650."'
   exemptions:
     dependent:
@@ -261,7 +270,7 @@ tax:
     1 and 3') — the identical schedule is duplicated for both statuses here, copied, not derived. The MFJ schedule
     is titled 'Married filing jointly and qualifying surviving spouse—filing status 2 and 5', so qualifying surviving
     spouse maps exactly to married_filing_jointly as the engine assumes.
-  - 'The printed ''$X plus Y% of the excess over $Z'' constants in the 2023 schedule are rounded to whole dollars
+  - 'The printed $X plus Y% of the excess over $Z constants in the 2023 schedule are rounded to whole dollars
     and do NOT all equal the exact cumulative sum of prior brackets: max divergence is $0.50 (single $600 printed
     vs $599.50 exact at $13,900) and roughly ±$0.25 elsewhere (e.g., MFJ $976 vs $976.25; single top constants $449,929/$2,509,929
     vs exact +$0.45; HoH $434,163/$2,494,163 vs exact +$0.475). Pure marginal accumulation (what this engine does)

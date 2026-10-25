@@ -9,7 +9,7 @@ treaty_note: 'WV''s resident return (Form IT-140) starts from federal adjusted g
   Federally treaty-exempt income is already excluded from FAGI and flows through. WV''s Schedule M "Modifications
   Increasing Federal Adjusted Gross Income" (lines 51-58) lists ONLY: interest/dividends on federal obligations
   exempt from federal but not state tax; interest/dividends on non-WV state/local bonds; interest on money borrowed
-  to buy WV-exempt bonds; 402(e) lump-sum distributions; "other income deducted from FAGI but subject to state tax"
+  to buy WV-exempt bonds; 402(e) lump-sum distributions; "Other income deducted from federal adjusted gross income but subject to state tax"
   (example given is IRC Section 199 income); and savings-plan/ABLE/Jumpstart withdrawals. There is NO add-back for
   tax-treaty income, foreign/nonresident-alien treaty income, or income excluded under a US tax treaty. Therefore
   treaty-exempt income is NOT re-taxed by WV -> conforms = true.'
@@ -154,6 +154,9 @@ all_citations:
   url: https://tax.wv.gov/Documents/PIT/2025/it140.schedule-A.2025.pdf
 - source: WV Tax Division - Individuals page (forms portal)
   url: https://tax.wv.gov/Individuals
+# Phase K JK31 (2026-10-25): the rate note quotes the statute; downloaded twice, identical sha256 text fc8ed1b47553a1b4...
+- source: 'W. Va. Code §11-21-4i, Rate of tax — Taxable years beginning on and after January 1, 2025'
+  url: https://code.wvlegislature.gov/11-21-4I/
 unverified:
 - 'The 2025 booklet is inconsistent about Schedule M: Form IT-140 line 2 reads "Additions to income (line 61
   of Schedule M)" and line 3 "(line 52 of Schedule M)" (the 2024 numbering), while the 2025 Schedule M itself
@@ -202,9 +205,8 @@ tax:
     - {over: 60000, but_not_over: null, rate: 0.0482}
   base: state_gross_income
   tax_line: 'Form IT-140 line 8: ''Income Tax Due (Check One)'' with method checkboxes ''Tax Table'', ''Rate Schedule'',
-    ''Nonresident/Part-Year Resident Calculation Schedule''. Line 7 feeding it reads ''West Virginia Taxable Income
-    (line 4 minus lines 5 & 6) IF LESS THAN ZERO, ENTER ZERO''. Instructions p.24: ''LINE 8 WEST VIRGINIA INCOME TAX.
-    Check the appropriate box to indicate the method you used to calculate your tax.'''
+    ''Nonresident/Part-year resident calculation schedule''. Line 7 feeding it reads ''West Virginia Taxable Income
+    (line 4 minus lines 5 & 6) IF LESS THAN ZERO, ENTER ZERO''. Instructions p.24: ''LINE 8 WEST VIRGINIA INCOME TAX - Check the appropriate box to indicate the method you used to calculate your tax.'''
   exemptions:
     personal:
       amount: 2000
@@ -452,6 +454,11 @@ sources:
   url: https://tax.wv.gov/Individuals
   descriptions:
   - WV Tax Division - Individuals page (forms portal)
+- id: forms-6
+  topic: forms_and_instructions
+  url: https://code.wvlegislature.gov/11-21-4I/
+  descriptions:
+  - 'W. Va. Code §11-21-4i, Rate of tax — Taxable years beginning on and after January 1, 2025'
 - id: rates-1
   topic: tax_rates_and_brackets
   url: https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf

@@ -76,6 +76,10 @@ credits:
     source: Comptroller of Maryland - 2024 Resident Booklet (Form 502 Instructions), Instruction 18 and Worksheets
       18A / 18A.1, and Instruction 11 Line 1e (printed page 5; investment-income box, $11,600)
     url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 e72500955f3c032c...
+  citations:
+  - source: 'Comptroller of Maryland 2024 Form 502, page 2 line 1e'
+    url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/forms/2024/502.pdf
 - name: Maryland Refundable Earned Income Credit (refundable portion of state EITC)
   type: refundable
   eligibility: Residents whose Maryland earned income credit exceeds their Maryland tax. Available to a married
@@ -169,7 +173,7 @@ mailing_addresses:
     url: https://www.marylandcomptroller.gov/content/dam/mdcomp/tax/instructions/2024/Resident-Booklet.pdf
 payment:
   check_payee: Comptroller of Maryland ('Make checks payable to Comptroller of Maryland. Do not attach Form PV or
-    check/money order to Form 502. Place Form PV with attached check/money order on top of Form 502.')
+    check/money order to Form 502. Place Form PV with attached check/money order on top of Form 502')
   web_pay_url: https://interactive.marylandtaxes.gov/Individuals/Payment/
 deadlines:
   filing_due_date: '2025-04-15'

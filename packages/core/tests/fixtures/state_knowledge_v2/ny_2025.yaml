@@ -188,13 +188,13 @@ tax:
       titled 'Married filing jointly and qualifying surviving spouse—filing status 2 and 5', so qualifying surviving spouse
       maps exactly to married_filing_jointly as the engine assumes, and the 2025 standard deduction table lists qualifying
       surviving spouse at the same $16,050 as a married filing joint return.
-  - text: 'The printed ''$X plus Y% of the excess over $Z'' constants in the 2025 schedule are rounded to whole dollars
-      and do NOT all equal the exact cumulative sum of prior brackets: max divergence is $0.50 (single/MFS $600 printed
-      vs $599.50 exact at $13,900) and roughly plus or minus $0.25 elsewhere (e.g., MFJ $976 vs $976.25 at $23,600 and $8,553
-      vs $8,552.75 at $161,550; single top constants $449,929/$2,509,929 vs exact $449,929.45/$2,509,929.45; HoH $107,651
-      vs $107,650.90 and $434,163/$2,494,163 vs exact $434,163.475/$2,494,163.475) — the identical divergence pattern to
-      the 2024 and 2023 prints. Pure marginal accumulation (what this engine does) can therefore differ from schedule arithmetic
-      by under $1.'
+  - text: 'The printed $X plus Y% of the excess over $Z constants in the 2025 schedule are rounded to whole dollars and
+      do NOT all equal the exact cumulative sum of prior brackets: max divergence is $0.50 (single/MFS $600 printed vs $599.50
+      exact at $13,900) and roughly plus or minus $0.25 elsewhere (e.g., MFJ $976 vs $976.25 at $23,600 and $8,553 vs $8,552.75
+      at $161,550; single top constants $449,929/$2,509,929 vs exact $449,929.45/$2,509,929.45; HoH $107,651 vs $107,650.90
+      and $434,163/$2,494,163 vs exact $434,163.475/$2,494,163.475) — the identical divergence pattern to the 2024 and 2023
+      prints. Pure marginal accumulation (what this engine does) can therefore differ from schedule arithmetic by under
+      $1.'
   - text: 'Standard-deduction gates NOT modeled: a Single filer who CAN be claimed as a dependent on another taxpayer''s
       return (item C = Yes) gets $3,100, not the shipped $8,000 (2025 standard deduction table, first row); married-filing-separately
       spouses must both take the standard deduction unless both choose to itemize on their New York returns; itemizers enter

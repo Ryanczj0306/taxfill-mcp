@@ -3,6 +3,11 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[3] (a template of the printed rows, not a quote)
 jurisdiction: states/or
 tax_year: 2023
 income_tax: true
@@ -242,7 +247,7 @@ tax:
     taxable income (line 19) is less than $50,000 — bracket math may differ by a few dollars within the table''s $100
     bands (booklet Example 1: single, taxable income $19,525 — table tax $1,425 vs. pure bracket math $1,423); the
     filed form must use the table. The rate-chart formula applies only at $50,000 or more.'
-  - 'Rounded printed constants (Chart S): the published ''$X plus Y% of excess'' constants $192, $607, and $10,652
+  - 'Rounded printed constants (Chart S): the published $X plus Y% of excess constants $192, $607, and $10,652
     are the exact cumulative bracket sums $192.375, $607.50, and $10,652.50 rounded DOWN, so pure marginal bracket
     math (what this op computes) can be up to $1 higher than the printed chart formula (e.g., single at $150,000:
     marginal math $13,127.50 -> $13,128 vs. chart $13,127). Chart J''s printed $385 is the exact $384.75 rounded up

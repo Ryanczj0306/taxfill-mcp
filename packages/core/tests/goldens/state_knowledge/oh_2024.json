@@ -21,9 +21,9 @@
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@a2dc6fe6b046": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) - Line 1 federal AGI, Schedule of Adjustments additions/deductions, Who Must File, Ohio Residency, mailing addresses, due date April 15 2025, payment/check payee, 2024 Ohio Income Tax Brackets (p. 18), personal/dependent exemption table (p. 17)",
   "@@ab357a529e3e": "No separate nonresident/part-year return; nonresidents and part-year residents file the same Ohio IT 1040 and check the part-year resident or nonresident box. They compute the Nonresident Credit on form IT NRC (Ohio Nonresident Credit Calculation), which must be included with the IT 1040. (Optional residency status election: form IT NRS, Ohio Nonresident Statement.)",
-  "@@bf0b592ffb65": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 (Highlights for Tax Year 2024): the Ohio Homebuyer Plus deduction, with a matching new addition line — the 2024 Schedule of Adjustments additions list carries \"Ohio Homebuyer Plus non-eligible withdrawals (new for 2024)\" alongside the pre-existing add-back lines. It changes Ohio adjusted gross income (IT 1040 line 3 = line 1 federal AGI + line 2a additions - line 2b deductions), not the rate schedule, and does not touch treaty-exempt income (see treaty_note). Resolve via: 2024 Ohio IT 1040 / SD 100 Instruction Booklet, Schedule of Adjustments additions and deductions pp. 19-26 (the citation URL) for the deduction amount and the non-eligible-withdrawal add-back; this pack ships no Schedule of Adjustments figures and calc.state_tax applies none.",
   "@@d63f950dac92": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) - Highlights for Tax Year 2024 (brackets reduced from three to two, one rate reduced; new Ohio Homebuyer Plus deduction; new Commercial Vehicle Training and Film/Theater Capital Improvements credits), Line 1 federal AGI, exemption table p. 17 ($2,400/$2,150/$1,900 by MAGI), 2024 Ohio Income Tax Brackets p. 18, Schedule of Adjustments additions/deductions pp. 19-26, Who Must File p. 12, Ohio Residency pp. 13-14, mailing addresses p. 3, due date April 15 2025, check payee Ohio Treasurer of State + OUPC",
   "@@d9bf8f4a739d": "Child Care and Dependent Care Credit — Taxpayer whose modified adjusted gross income is less than $40,000 AND who claimed the federal 'credit for child and dependent care expenses' on federal Form 2441.",
+  "@@dfe9061a900b": "Law change NOT modeled by the engine (status final_form_published): NEW for 2024 (Highlights for Tax Year 2024): the Ohio Homebuyer Plus deduction, with a matching new addition line — the 2024 Schedule of Adjustments additions list carries line 8, \"Ineligible withdrawals from an Ohio Homebuyer Plus account\" (new for 2024), alongside the pre-existing add-back lines. It changes Ohio adjusted gross income (IT 1040 line 3 = line 1 federal AGI + line 2a additions - line 2b deductions), not the rate schedule, and does not touch treaty-exempt income (see treaty_note). Resolve via: 2024 Ohio IT 1040 / SD 100 Instruction Booklet, Schedule of Adjustments additions and deductions pp. 19-26 (the citation URL) for the deduction amount and the non-eligible-withdrawal add-back; this pack ships no Schedule of Adjustments figures and calc.state_tax applies none.",
   "@@e0b166bd1b5d": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation; printed version accurate as of November 27, 2024) — p. 18 table '2024 Ohio Income Tax Brackets for Ohio IT 1040' (0.00% of Ohio taxable nonbusiness income up to $26,050; '$360.69 plus 2.75% of the amount in excess of $26,050' for $26,050-$100,000; '$2,394.32 plus 3.50% of the amount in excess of $100,000' over $100,000); p. 17 'Line 8a – Tax on Line 7a' instruction ('Calculate your tax on your Ohio income tax base less business income using the Income Tax Brackets found on page 18... the Department provides a tool to assist you with this calculation at tax.ohio.gov/taxcalculator', R.C. 5747.02(A)(3)) and personal/dependent exemption table ($2,400/$2,150/$1,900 by MAGI). Second pass: form line labels (lines 1-8c) and Schedule of Business Income lines 12-16 (3% business tax, $250,000/$125,000 business income deduction) verified from the 2024 IT 1040 form bundle at https://tax.ohio.gov/static/forms/ohio_individual/individual/2024/1040-bundle-original-fi.pdf — both passes agree.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@f0f5c806e709": "2024 Ohio IT 1040 / SD 100 Instruction Booklet (Ohio Department of Taxation) - Tax Commissioner's cover letter 'The deadline to file both your Ohio and federal tax returns is April 15, 2025. Please note that an extension to file does not extend the deadline for payment'; Line 23 'This amount must be paid by April 15, 2025'",
@@ -540,7 +540,7 @@
      "warnings": [
       "@@4cf945d1e9e4",
       "@@849b86078c18",
-      "@@bf0b592ffb65",
+      "@@dfe9061a900b",
       "@@7e92a301c2f7",
       "Remote-work trap: work performed from TX for an employer sitting in OH. If OH applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to OH and require a NONRESIDENT OH return that the physical footprint alone never shows — and the W-2's Box 15 often already names OH. This OH pack year carries no researched convenience rule: verify OH's nonresident wage-sourcing rule at its DOR before assuming no OH filing."
      ]
@@ -603,7 +603,7 @@
      "warnings": [
       "@@4cf945d1e9e4",
       "@@849b86078c18",
-      "@@bf0b592ffb65",
+      "@@dfe9061a900b",
       "@@7e92a301c2f7"
      ]
     },
@@ -664,7 +664,7 @@
      "state": "OH",
      "warnings": [
       "@@4cf945d1e9e4",
-      "@@bf0b592ffb65",
+      "@@dfe9061a900b",
       "@@7e92a301c2f7"
      ]
     }

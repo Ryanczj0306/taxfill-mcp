@@ -15,6 +15,11 @@
 # and Married filing separately returns." The 2023 graduated schedules, the $2,700/$3,700
 # personal exemptions, the $5,400/$7,100/$3,550 standard deductions, and the $1,300
 # age-65/blind additional deduction are ALL GONE — do not carry 2023 figures forward.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[2]: dor.georgia.gov/document/document/2024-it-511-individual-income-tax-booklet/download 5907211db514b3a5 — the IT-511 Line 5 status list's capitals
+#   treaty_note: dor.georgia.gov/document/document/2024-it-511-individual-income-tax-booklet/download 5907211db514b3a5 — the serial comma
 jurisdiction: states/ga
 tax_year: 2024
 income_tax: true
@@ -25,8 +30,7 @@ treaty_note: 'Georgia conforms. The resident return (Form 500) starts from feder
   limited to: (1) Interest on Non-Georgia Municipal and State Bonds, (2) Lump Sum Distributions, (3) Depreciation,
   (4) Net operating loss carryover deducted on the Federal return, and (5) Other (Specify) — there is NO add-back
   of federally treaty-exempt income (unlike California''s Schedule CA add-back). To the contrary, the 2024 IT-511
-  booklet expressly lists as a SUBTRACTION item: "Income from any fund, program or system which is specifically
-  exempted by Federal law or treaty." Because treaty-exempt income is already excluded from federal AGI and GA neither
+  booklet expressly lists as a SUBTRACTION item: "Income from any fund, program, or system which is specifically exempted by Federal law or treaty." Because treaty-exempt income is already excluded from federal AGI and GA neither
   adds it back nor otherwise re-taxes it (and explicitly recognizes the treaty exemption), it flows through untaxed.'
 citation:
   source: GA Form 500 (2024) blank return - Line 8 'Federal adjusted gross income (From Federal Form 1040)', Line
@@ -234,6 +238,9 @@ amended_return:
       Box 740318 Atlanta, GA 30374-0318"; "Make checks payable to Georgia Department of Revenue"; the
       certified-mail note (read 2026-10-16)'
     url: https://dor.georgia.gov/mailing-address-individualfiduciary-income-tax
+  # Phase K JK31 (2026-10-25): the 2024 note quotes the 2025 booklet's update; downloaded twice, identical sha256 ae43633e68ca4236...
+  - source: 'Georgia DOR 2025 IT-511 booklet, p. 9: the later federal-changes rule the 2024 note compares'
+    url: https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
 all_citations:
 - source: GA 2024 IT-511 Individual Income Tax Instruction Booklet - What's New (5.39% rate effective January 1,
     2024; personal exemptions repealed except the $4,000 dependent exemption; standard deductions $24,000 MFJ /
@@ -310,8 +317,7 @@ tax:
     (repealed); pass dependents_count = Form 500 Line 7c (qualified dependents plus unborn dependents). Do not use
     this op if you itemize deductions, claim a Georgia NOL (Line 15b), or file as a part-year resident/nonresident
     (they omit Lines 9-14 and use Schedule 3, which prorates the deduction) — compute those on the form.'
-  - 'QUALIFYING SURVIVING SPOUSE: Georgia files QSS under filing status D ''Head of Household or Qualifying Surviving
-    Spouse'' with a $12,000 standard deduction (both the 2024 Form 500 Line 5 status list and the IT-511 Line 11 chart,
+  - 'QUALIFYING SURVIVING SPOUSE: Georgia files QSS under filing status D ''Head of household or Qualifying surviving spouse'' with a $12,000 standard deduction (both the 2024 Form 500 Line 5 status list and the IT-511 Line 11 chart,
     which prints ''Qualifying surviving spouse $12,000'') — pass head_of_household to this op, NOT married_filing_jointly.
     The engine''s default QSS->married_filing_jointly mapping would apply MFJ''s $24,000 and UNDERSTATE tax.'
   - 'AGE-65/BLIND ADDITIONAL DEDUCTION GONE: the 2023 $1,300-per-checkbox additional standard deduction (old Form

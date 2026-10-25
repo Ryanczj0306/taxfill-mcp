@@ -8,6 +8,11 @@
 # official document (the 2024 PA-40 form itself, the 2024 PA-40 Schedule DC
 # instructions, the 2024 PA-40 V, or the PA PIT Guide) — resolutions recorded inline
 # where the passes differed.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   treaty_note (a rubric category, not a quote)
 jurisdiction: states/pa
 tax_year: 2024
 income_tax: true
@@ -23,7 +28,7 @@ treaty_note: 'PA does NOT start from federal adjusted gross income. Per the 2024
   compensation from gross PA-source wages rather than inheriting federal AGI, there is NO automatic federal-AGI
   pass-through that would carry a federal tax-treaty exclusion into the state return, and the 2024 PA-40 instructions
   contain zero occurrences of "treaty"/"treaties" (no treaty pass-through mechanism). Under the task rubric this
-  is the "state builds income from scratch (not federal AGI) with no treaty pass-through" case -> conforms_to_federal_treaties
+  is the state-builds-income-from-scratch (not federal AGI), no-treaty-pass-through case -> conforms_to_federal_treaties
   = false. CAVEAT: In administrative practice PA generally does not tax compensation a federal treaty exempts (such
   wages typically are excluded from PA-taxable Box 16 compensation), so the precise treatment of treaty-exempt income
   should be confirmed with the PA DOR; flagged in unverified.'
@@ -231,7 +236,7 @@ convenience_rule:
   summary: >-
     61 Pa. Code § 109.8: "Any allowance claimed for days worked outside of this Commonwealth
     shall be based upon the performance of services which, of necessity, obligate the employe
-    or casual employe to perform out-of-State duties in the service of his employer."
+    or casual employe to perform out-of-State duties in the service of his employer or casual employer."
     Out-of-state days reduce Pennsylvania-source compensation only when the employer's business
     NECESSITY — not the employee's convenience — puts the work out of state.
   trigger: >-

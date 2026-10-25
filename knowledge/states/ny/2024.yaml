@@ -10,6 +10,15 @@
 # passes differed. Improvements over the 2023 pack: the check-payee wording, the
 # IT-216 credit percentages, and the mailing addresses are now confirmed at source
 # (all three were 2023 `unverified` carryovers).
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   credits[0].amount: tax.ny.gov/pdf/2024/inc/it215_2024_fill_in.pdf c72593e2a31e12f4 — the face's line 12 caption
+#   filing_requirement.note: tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm ad3d35f2f4417949 — heading and subheading
+#   tax.tax_line: tax.ny.gov/forms/html-instructions/2024/it/it201i-2024.htm ad3d35f2f4417949 — the parenthesis the instructions print
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   residency.summary (a term, not a quote)
+#   tax.notes[5] (a template of the printed rows, not a quote)
 jurisdiction: states/ny
 tax_year: 2024
 income_tax: true
@@ -32,7 +41,7 @@ citation:
 starts_from: federal AGI (Form IT-201 builds federal income items on lines 1-16/17/18 and computes federal adjusted
   gross income on line 19, which is the starting point for NY modifications)
 residency:
-  summary: 'You are a NY State resident if (a) your domicile is New York State, OR (b) you are a "statutory resident"
+  summary: 'You are a NY State resident if (a) your domicile is New York State, OR (b) you are a statutory resident
     - you maintain a permanent place of abode in NY for substantially all of the taxable year (a period exceeding
     11 months) AND spend 184 days or more in NY during the year (any part of a day counts as a day). Domicile is
     your permanent home that you intend to return to; you can have only one domicile, while you may have multiple
@@ -55,7 +64,7 @@ credits:
     residents get a fully refundable credit; nonresidents nonrefundable; part-year residents partially refundable.
   amount: 30% of the allowable federal earned income credit, reduced by the amount of any household credit claimed
     (the 2024 Form IT-215 prints the rate on line 11, "New York State earned income credit (NYS EIC) rate 30% (.30)",
-    and line 12 is "your New York State EIC before subtracting the amount of household credit allowed").
+    and line 12 is "Tentative NYS EIC (multiply line 10 by line 11; see instructions)"; lines 13-16 subtract the household credit).
   income_limit_2024: Same income/earnings eligibility as the 2024 federal EIC; phases out by family size and earnings
     (the federal 2024 dollar thresholds apply; NY sets no separate dollar limit)
   claimed_on: Form IT-215 (Claim for Earned Income Credit), line 16; amount carried to Form IT-201, line 65
@@ -134,7 +143,7 @@ filing_requirement:
   note: Full-year residents file IT-201 if they must file a federal return, or if they did not have to file federally
     but federal AGI plus New York additions was more than $4,000 ($3,100 if single and claimable as a dependent
     on another taxpayer's federal return), or to claim a refund of NY/NYC/Yonkers withholding, estimated payments,
-    or any refundable or carryover credits (2024 IT-201-I, "New York State full-year residents Who must file?").
+    or any refundable or carryover credits (2024 IT-201-I, "New York State full-year residents" — "Who must file?").
     Part-year residents and nonresidents with NY-source income file IT-203. If one spouse is a full-year resident
     and the other is not, separate NY returns are required (resident files IT-201) unless both elect to file a joint
     IT-201 taxed as full-year residents.
@@ -265,8 +274,7 @@ tax:
     - {over: 25000000, but_not_over: null, rate: 0.109}
   base: federal_agi
   tax_line: '2024 Form IT-201, page 3: "39 NYS tax on line 38 amount". IT-201-I, Line 39: "Is line 33 (your New York
-    adjusted gross income) $107,650 or less? If Yes, find your New York State tax using the 2024 New York State Tax
-    Table; or if line 38 is $65,000 or more, use the New York State tax rate schedule below. Enter the tax due on
+    adjusted gross income) $107,650 or less? If Yes, find your New York State tax using the 2024 New York State Tax Table (visit www.tax.ny.gov and search: table); or if line 38 is $65,000 or more, use the New York State tax rate schedule below. Enter the tax due on
     line 39. If No, see Tax computation - New York adjusted gross income of more than $107,650 below."'
   exemptions:
     dependent:
@@ -306,7 +314,7 @@ tax:
     1 and 3') — the identical schedule is duplicated for both statuses here, copied, not derived. The MFJ schedule
     is titled 'Married filing jointly and qualifying surviving spouse—filing status 2 and 5', so qualifying surviving
     spouse maps exactly to married_filing_jointly as the engine assumes.
-  - 'The printed ''$X plus Y% of the excess over $Z'' constants in the 2024 schedule are rounded to whole dollars
+  - 'The printed $X plus Y% of the excess over $Z constants in the 2024 schedule are rounded to whole dollars
     and do NOT all equal the exact cumulative sum of prior brackets: max divergence is $0.50 (single $600 printed
     vs $599.50 exact at $13,900) and roughly ±$0.25 elsewhere (e.g., MFJ $976 vs $976.25; single top constants $449,929/$2,509,929
     vs exact +$0.45; HoH $434,163/$2,494,163 vs exact +$0.475) — identical to the 2023 print. Pure marginal accumulation

@@ -1077,7 +1077,8 @@ form_lines:
     line_source: final
     url: https://www.irs.gov/pub/irs-prior/f1040--2020.pdf
     read: '2026-09-27'
-    printed: 19 hild tax credit or credit for other dependents
+    # Phase K JK31 (2026-10-25): `printed` re-read on the face (b2c79abc644629eb..., downloaded twice, identical sha256); the caption had lost its first letter.
+    printed: 19 Child tax credit or credit for other dependents
   f1040.eic:
     line: '27'
     line_source: final
@@ -1089,7 +1090,8 @@ form_lines:
     line_source: final
     url: https://www.irs.gov/pub/irs-prior/f1040--2020.pdf
     read: '2026-09-27'
-    printed: 28 dditional child tax credit. Attach Schedule 8812
+    # Phase K JK31 (2026-10-25): `printed` re-read on the face (b2c79abc644629eb..., downloaded twice, identical sha256); the caption had lost its first letter.
+    printed: 28 Additional child tax credit. Attach Schedule 8812
   f1040.sched_1a:
     line: null
     line_source: final

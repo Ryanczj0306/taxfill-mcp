@@ -144,7 +144,11 @@ credits:
       ''Line 40 - The Rhode Island percentage is 16%.'' and ''Line 41 - Rhode Island Earned Income Credit: Multiply
       line 39 by line 40. Enter here and on page 1, line 14d.'''
     url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf
-- name: Property Tax Relief Credit (Form RI-1040H, the RI property-tax "circuit breaker")
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 ac024a0d865fd08c...
+  citations:
+  - source: 'RI Division of Taxation 2025 Form RI-1040 (with Schedule EIC), Schedule EIC line 41'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040WE_w.pdf
+- name: Property Tax Relief Credit (Form RI-1040H, the RI property-tax circuit breaker)
   type: refundable
   eligibility: 'Must answer YES to ALL eligibility questions on Form RI-1040H Part 1: (A) domiciled in Rhode Island
     for all of 2025; (B) lived in a household or rented a dwelling that was subject to property tax in 2025; (C)
@@ -160,6 +164,10 @@ credits:
       tax relief credit - maximum credit amount by tax year": 2024 $675, 2025 $700; and "Property tax relief credit
       - income ranges by tax year" 2025 column (top band $17,461 - $40,730 at 6%)'
     url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-11/ADV_2025_22_Inflation_Adjustments.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 ac024a0d865fd08c...
+  citations:
+  - source: 'RI Division of Taxation 2025 Form RI-1040, page 2 line 14c'
+    url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040WE_w.pdf
 - name: Credit for Child and Dependent Care Expenses (Rhode Island percentage of the allowable federal credit)
   type: nonrefundable
   eligibility: Taxpayers who claimed the federal Credit for Child and Dependent Care Expenses (federal Form 1040/1040-SR,
@@ -244,6 +252,9 @@ all_citations:
 - source: Personal Income Tax Forms — RI Division of Taxation (the forms index the instructions point to for RI
     Schedule W, RI Schedule EIC and the other 2025 schedules)
   url: https://tax.ri.gov/forms/individual-tax-forms/personal-income-tax-forms
+# Phase K JK31 (2026-10-25): the check payee quotes the voucher; downloaded twice, identical sha256 98b4ebba1fe48107...
+- source: 'RI Division of Taxation 2025 Form RI-1040V (payment voucher)'
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025%20RI-1040V_w.pdf
 unverified:
 - The nonresident/part-year due date and mailing addresses were not separately read from the 2025 RI-1040NR
   instruction booklet; they are assumed identical to the resident return (4/15/2026; refund to 02908-5806,
@@ -293,7 +304,7 @@ tax:
     - {over: 181650, but_not_over: null, rate: 0.0599}
   base: federal_agi
   tax_line: 'RI-1040, Line 8: "Rhode Island Income Tax: Enter the RI income tax from the RI Tax Table or Computation
-    Worksheet" (Line 7 "Rhode Island Taxable Income. Subtract line 6 from line 5. If zero or less, enter zero";
+    Worksheet" (Line 7 "Rhode Island Taxable Income: Subtract line 6 from line 5. If zero or less, enter zero";
     Line 5 = Line 3 modified federal AGI minus Line 4 RI standard deduction; Line 6 = number of exemptions x $5,100)'
   exemptions:
     personal:
@@ -476,6 +487,12 @@ sources:
   - 2025 INSTRUCTIONS FOR FILING RI-1040 (RI Division of Taxation, Revised 11/2025), Line 9b and RI Schedule II
     - Credit for Taxes Paid to Other States (R.I. Gen. Laws section 44-30-18); Form RI-1040MU for more than one
     state
+- id: credits-3
+  topic: credits
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040WE_w.pdf
+  descriptions:
+  - 'RI Division of Taxation 2025 Form RI-1040 (with Schedule EIC), Schedule EIC line 41'
+  - 'RI Division of Taxation 2025 Form RI-1040, page 2 line 14c'
 - id: credits-2
   topic: credits
   url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-11/ADV_2025_22_Inflation_Adjustments.pdf
@@ -530,6 +547,11 @@ sources:
   descriptions:
   - Personal Income Tax Forms — RI Division of Taxation (the forms index the instructions point to for RI Schedule
     W, RI Schedule EIC and the other 2025 schedules)
+- id: forms-10
+  topic: forms_and_instructions
+  url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025%20RI-1040V_w.pdf
+  descriptions:
+  - 'RI Division of Taxation 2025 Form RI-1040V (payment voucher)'
 - id: rates-1
   topic: tax_rates_and_brackets
   url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-12/2025%201040R%20Instructions%20122025.pdf

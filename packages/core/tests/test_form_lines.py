@@ -789,6 +789,16 @@ def _designator_follows(face: str, end: int, line: str) -> bool:
     return token == line or bool(split_letter and token.isdigit() and token + split_letter == line)
 
 
+def _on_word_boundary(words: str, face: str) -> bool:
+    """Whether ``words`` occurs on the face starting and ending at word boundaries. Phase K JK31 (2026-10-25): a
+    substring test passed "hild tax credit or credit for other dependents" (the face prints "Child ..."), so the
+    f1040.ctc / f1040.actc captions of 2019-2026 shipped without their first letter. A one-letter first word is a
+    sub-line designator, which a face may print glued to its line number ("25c Other forms" on the 2026 draft)."""
+    left = "" if len(words.split()[0]) == 1 else r"(?<![A-Za-z0-9])"
+    right = r"(?![A-Za-z0-9])" if words[-1:].isalnum() else ""
+    return re.search(left + re.escape(words) + right, face) is not None
+
+
 def _token_after(face: str, end: int) -> str:
     m = _NEXT_TOKEN_RE.match(face, end)
     return m.group(1) if m else "(nothing)"
@@ -815,6 +825,8 @@ def face_quote_problems(entry: FormLineEntry, face_text: str) -> list[str]:
             problems.append(f"printed piece {piece!r} quotes no words to find")
         elif _words(piece, entry.line) not in face:
             problems.append(f"{_words(piece, entry.line)!r} is not on the face")
+        elif not _on_word_boundary(_words(piece, entry.line), face):
+            problems.append(f"{_words(piece, entry.line)!r} is on the face only inside a longer word")
     if entry.line is None:
         return problems
     label = next((p for p in pieces if _labels_the_line(p, entry.line)), None)
@@ -846,6 +858,10 @@ _FACE_EXCERPTS = {
     "https://www.irs.gov/pub/irs-prior/f8959--2019.pdf": (
         "and go to Part V 18 Part V Withholding Reconciliation 19 Medicare tax withheld from Form W-2, box 6."
     ),
+    "https://www.irs.gov/pub/irs-prior/f1040--2022.pdf": (
+        "18 Add lines 16 and 17 18 19 Child tax credit or credit for other dependents from Schedule 8812 19 "
+        "20 Amount from Schedule 3, line 8 20"
+    ),
     "https://www.irs.gov/pub/irs-dft/f1040s1--dft.pdf": (
         "See instructions 8v 8z Other income. List type and amount: 8z 9 Total other income. Add lines 8a "
         "through 8z 9 10 Combine lines 1 through 7 and 9. … (Form 1040) 2026 Created 4/24/26"
@@ -857,6 +873,7 @@ _EXCERPTED = [
     (2020, "f1040nr.treaty_exempt"),
     (2019, "f8959.withholding_part"),
     (2026, "sched1.other_income"),
+    (2022, "f1040.ctc"),
 ]
 
 
@@ -886,6 +903,9 @@ def test_the_face_check_passes_the_real_entry_on_its_face(year: int, key: str):
          "'Part IV Withholding Reconciliation' is not on the face"),
         (2019, "sched1.other_income", {"printed": "8 Other income. List kind and amount"}, "is not on the face"),
         (2026, "sched1.other_income", {"line_source": "draft Created 9/1/26"}, "'Created 9/1/26' is not on the face"),
+        # Phase K JK31: a caption that lost its first letter is inside the face's word, not on the face
+        (2022, "f1040.ctc", {"printed": "19 hild tax credit or credit for other dependents from Schedule 8812"},
+         "is on the face only inside a longer word"),
     ],
 )
 def test_the_face_check_catches_a_renumbered_line_that_kept_its_words(year, key, change, problem):

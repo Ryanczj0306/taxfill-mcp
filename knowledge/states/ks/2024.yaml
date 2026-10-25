@@ -16,6 +16,12 @@
 # PLUS $2,320 per dependent (+$2,320 additional for Head of Household; +$2,250 disabled
 # veteran). The 2023 tax table's $0-tax cliff ($2,500/$5,000) is GONE — the 2024 table
 # starts at $26-$50 -> $2. Do not carry ANY 2023 tax:-block figures forward.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   mailing_addresses.refund_or_no_payment: ksrevenue.gov/pdf/k-4024.pdf f5198ecbbe9f2776 — two printed lines (render-checked); no comma after Revenue
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[6] (a template of the printed rows, not a quote)
 jurisdiction: states/ks
 tax_year: 2024
 income_tax: true
@@ -151,8 +157,7 @@ filing_requirement:
     Return.")'
 mailing_addresses:
   refund_or_no_payment: 'INDIVIDUAL INCOME TAX, KANSAS DEPARTMENT OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260
-    (printed on the 2024 Form K-40 as "Mail to: Kansas Income Tax, Kansas Dept. of Revenue, PO Box 750260, Topeka,
-    KS 66699-0260")'
+    (printed on the 2024 Form K-40 as "Mail to: Kansas Income Tax, Kansas Dept. of Revenue PO Box 750260, Topeka, KS 66699-0260")'
   with_payment: INDIVIDUAL INCOME TAX, KANSAS DEPARTMENT OF REVENUE, PO BOX 750260, TOPEKA, KS 66699-0260 (Kansas
     uses the same PO Box for both refund/no-balance returns and returns with payment; if paying by check/money order,
     enclose Form K-40V payment voucher — the 2024 K-40V directs payment with voucher to KANSAS INCOME TAX, KANSAS
@@ -300,7 +305,7 @@ tax:
     or less; the Tax Computation Worksheet is used only above $100,000. The table uses $50-wide bands (computed at
     band midpoints), so bracket math may differ by a dollar or two within a table band — the filed form must use the
     table.'
-  - 'NO zero-tax cliff for 2024 (change from 2023): the 2024 Kansas Tax Table starts at ''$26 - $50 -> $2'' and the
+  - 'NO zero-tax cliff for 2024 (change from 2023): the 2024 Kansas Tax Table starts at the $26-$50 band (tax $2) and the
     Tax Computation Worksheet brackets start at $0 — the 2023 table''s $0 rows up to $2,500/$5,000 and the cliff they
     created are GONE. Marginal bracket math applies from the first dollar.'
   - 'Rounded worksheet constants (re-derived for 2024): the Tax Computation Worksheet computes tax as 5.58% x the

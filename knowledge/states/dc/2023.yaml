@@ -3,6 +3,10 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[3] (quote marks dropped: a template of the printed rows, not a quote)
 jurisdiction: states/dc
 tax_year: 2023
 income_tax: true
@@ -263,7 +267,7 @@ tax:
     is NOT half of married filing jointly — every status uses the identical schedule.'
   - 'PRINTED CONSTANTS VERIFIED EXACT: $400 = 4% x $10,000; $2,200 = $400 + 6% x $30,000; $3,500 = $2,200 + 6.5% x
     $20,000; $19,650 = $3,500 + 8.5% x $190,000; $42,775 = $19,650 + 9.25% x $250,000; $91,525 = $42,775 + 9.75% x
-    $500,000 — each printed ''$X plus Y% of the excess over $Z'' constant equals the cumulative sum of the prior brackets
+    $500,000 — each printed $X plus Y% of the excess over $Z constant equals the cumulative sum of the prior brackets
     with no rounding divergence.'
   - 'NO PERSONAL OR DEPENDENT EXEMPTIONS: the 2023 Form D-40 computes DC taxable income as Line 16 (DC adjusted gross
     income) minus Line 18 (DC deduction amount) only — ''Line 19 DC taxable income. Subtract Line 18 from Line 16.''

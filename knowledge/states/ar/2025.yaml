@@ -366,7 +366,7 @@ tax:
     - $223.97 = $221.53 -> $222). Bracket math may differ from the table by a few dollars within a band; the filed
     form must use the table.'
   - CRITICAL — shipped brackets are exact ONLY for net taxable income up to $94,700 (2024's boundary was $92,300).
-    From $94,701 to $97,800 the official 2025 schedule phases the 3.9% bracket's 'minus adjustment' down from $419.96
+    From $94,701 to $97,800 the official 2025 schedule phases the 3.9% bracket's 'Minus Adjustment' down from $419.96
     to $99.30 (first step to $399.30 at $94,701, then $10 per $100 band), and at $97,801 and over the tax is 3.9%
     x net taxable income - $89.30. The shipped bracket math (equivalent to 3.9% x income - $419.96) UNDERSTATES the
     true tax above $94,700 — by $330.66 once net taxable income reaches $97,801 — so above $94,700 compute from the
@@ -376,7 +376,7 @@ tax:
     Tax Brackets constant for $97,801+ is $89.30 (3.9% x $100,000 - $89.30 = $3,810.70): a $1.70 divergence, because
     $3,809 is the midpoint-rounded last table row ($99,901-$100,001: $99,951 x .039 - $89.30 = $3,808.789 -> $3,809).
     The filed form follows the printed table/formula.'
-  - 'The published ''minus adjustment'' constants equal the cumulative sum of the prior brackets to within half a
+  - 'The published ''Minus Adjustment'' constants equal the cumulative sum of the prior brackets to within half a
     cent ($111.98 = 2% x $5,599 exactly; $223.97 exactly; $287.97 vs exact $287.966; $419.96 vs exact $419.961) —
     no material rounding divergence, so the shipped marginal brackets reproduce the official formula to within one
     cent below $94,701. The phase-down region was independently checked against the printed table: the $94,901-$95,001
@@ -393,8 +393,7 @@ tax:
     credit, and the $500-per-dependent Developmental Disabilities credit (AR1000TC line 7).'
   - 'Low Income Tax Table (NOT modeled): full-year residents whose total income from all sources is within the limits
     may take tax from the 2025 Low Income Tax Table applied to Line 25 AGI with NO deduction on Line 27 (''CAUTION:
-    If you qualify to use a Low-Income Tax Table, enter zero (0) on line 27, column A. The Standard Deduction is already
-    built into the table.''), which yields LESS tax than the shipped math at low incomes — tax is $0 up to $14,643
+    If you qualify to use a Low-Income Tax Table, enter zero (0) on line 27, column A. (The Standard Deduction is already built into the table.)''), which yields LESS tax than the shipped math at low incomes — tax is $0 up to $14,643
     (single), $20,820 / $24,818 (HoH or Surviving Spouse with 1-or-no / 2-or-more dependents), $24,695 / $29,722 (MFJ
     with 1-or-no / 2-or-more dependents), and the tables are usable up to AGI of $17,500 (single), $25,300 / $29,000
     (HoH/SS), $29,000 / $36,100 (MFJ). Married couples must file Status 2 to qualify; filers using the military-compensation,
@@ -411,9 +410,7 @@ tax:
   - '2025 FORM RENUMBERING (payments side only): Arkansas withholding is now reported on two lines — 39A for W-2/W-2G
     withholding and 39B for 1099-R/1099-PT/AR-K1 withholding. The tax-computation and credit lines this op cites (27,
     28, 29, 34, 35, 36, 37, 38) keep their 2024 numbers.'
-  - 'Round all amounts to the nearest whole dollar on the return (2025 booklet: ''Round all amounts to the nearest
-    dollar. For example, if your Form W-2 shows $10,897.50, round to $10,898. If your Form W-2 shows $10,897.49, round
-    to $10,897.'') — half-up, matching the engine.'
+  - 'Round all amounts to the nearest whole dollar on the return (2025 booklet: ''Round all amounts to the nearest dollar. (For example, if your Form W-2 shows $10,897.50, round to $10,898. If your Form W-2 shows $10,897.49, round to $10,897.)'') — half-up, matching the engine.'
 
 # Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
 # booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an

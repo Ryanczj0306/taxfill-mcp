@@ -88,6 +88,10 @@ credits:
     source: Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC, "TAX CREDIT SCHEDULE 2025"), Section
       C Family Size Tax Credit Table (Tax Year 2025 bands), and 2025 Form 740 lines 5, 20-21
     url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2025).pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 cb68242eb8351dcd...
+  citations:
+  - source: 'Kentucky DOR 2025 Form 740, lines 5 and 21'
+    url: https://revenue.ky.gov/Forms/740%20(2025).pdf
 - name: Child and Dependent Care Credit
   type: nonrefundable
   eligibility: Residents who qualified for and claimed the federal child and dependent care credit on federal Form
@@ -108,6 +112,10 @@ credits:
     source: Kentucky Department of Revenue — 2025 Schedule ITC (42A740-ITC), Section B Personal Tax Credits, and
       2025 Form 740 line 17
     url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2025).pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 cb68242eb8351dcd...
+  citations:
+  - source: 'Kentucky DOR 2025 Form 740, line 17'
+    url: https://revenue.ky.gov/Forms/740%20(2025).pdf
 mailing_addresses:
   refund_or_no_payment: Kentucky Department of Revenue, Frankfort, KY 40618-0006 (Refund or No Payment — printed
     on page 3 of the 2025 Form 740 and on the live DOR page)
@@ -330,7 +338,9 @@ sources:
   topic: credits
   url: https://revenue.ky.gov/Forms/740%20(2025).pdf
   descriptions:
+  - 'Kentucky DOR 2025 Form 740, lines 5 and 21'
   - Kentucky Department of Revenue — 2025 Form 740 (42A740, 10-25), line 24
+  - 'Kentucky DOR 2025 Form 740, line 17'
 - id: logistics-1
   topic: filing_logistics
   url: https://revenue.ky.gov/Forms/740%20(2025).pdf

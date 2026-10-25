@@ -3,6 +3,12 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[4]: revenue.iowa.gov/media/2811/download?inline 0bfe839e640f84ca — the quoted rounding rule was the 2024 booklet's; 2023's is to the cent
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   credits[4].eligibility (a term, not a quote)
 jurisdiction: states/ia
 tax_year: 2023
 income_tax: true
@@ -108,7 +114,7 @@ credits:
 - name: Low-Income Exemption (with elevated threshold for filers age 65+)
   type: nonrefundable
   eligibility: This is an exemption from Iowa income tax (not a dollar-amount credit) functioning as Iowa's primary
-    low-income and senior relief on the IA 1040 — Iowa has no separate 'elderly credit' line. A taxpayer is exempt
+    low-income and senior relief on the IA 1040 — Iowa has no separate elderly credit line. A taxpayer is exempt
     from Iowa income tax if Iowa taxable income (IA 1040 line 4, with required add-backs) is at or below the threshold
     for their filing status. Senior filers (taxpayer or spouse age 65 or older on 12/31/23) qualify under a substantially
     higher threshold.
@@ -126,6 +132,10 @@ credits:
   citation:
     source: Iowa Department of Revenue — 2023 IA 1040 Expanded Instructions (PDF), low-income exemption instructions
     url: https://revenue.iowa.gov/media/2811/download?inline
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 4d8fa80b7e88ee86...
+  citations:
+  - source: 'Iowa Department of Revenue 2023 IA 1040 (41-001), the Step 5 box caption'
+    url: https://revenue.iowa.gov/media/2746/download?inline=
 filing_requirement:
   note: A resident or part-year resident must file if Iowa taxable income (IA 1040 line 4, with specified add-backs
     incl. standard/itemized deduction, QBI deduction, personal exemption, lump-sum distribution, and Iowa NOL carryforward)
@@ -252,8 +262,7 @@ tax:
     the worksheet to the cent (worksheet examples: $25,000 non-joint -> $1,179.80; $50,000 joint -> $2,359.60). This
     op then rounds to whole dollars.'
   - 'Cents vs whole dollars: the IA 1040 is captioned ''Enter Dollars and Cents'' and the worksheet computes tax to
-    the cent; whole-dollar rounding is OPTIONAL (''To round, drop amounts under 50 cents and increase amounts from
-    50 to 99 cents to the next dollar'' — a .50 tie rounds UP, matching this op). No tax-table mandate: Iowa retired
+    the cent; the 2023 Expanded Instructions round to the cent (''A new requirement beginning this year is for all dollar amounts to be rounded to the nearest cent.''; only lines 1 and 2 may be whole dollars: ''You can round to whole dollars on the IA 1040 lines 1 and 2 as allowed for federal purposes''). The whole-dollar rule this op follows (drop amounts under 50 cents, 50 to 99 cents up, so a .50 tie rounds UP) is the 2024 booklet''s, not 2023''s. No tax-table mandate: Iowa retired
     its tax tables with the 2023 redesign; all filers use the 41-026 worksheet or the online IA 1040 Tax Calculator.'
   - 'Exemption CREDITS, not base exemptions (NOT modeled): IA 1040 Step 3 computes personal credits at $40 (enter
     1; 2 if filing status 2 or 4), $20 per 65-or-older or blind condition, and $40 per dependent; the Step 3 total

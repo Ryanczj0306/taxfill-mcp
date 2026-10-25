@@ -109,6 +109,10 @@ credits:
       Schedule 2EC Attestation 'I resided in Montana for a minimum of nine months during 2025', line 19 pre-printed
       12,600, line 25 'Multiply line 24 by 15% (0.15)', line 28 'Enter the lesser of line 27 or $1,150'
     url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 4671aef667749732...
+  citations:
+  - source: 'Montana DOR 2025 Form 2, Schedule 2EC attestation'
+    url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf
 - name: Montana Adoption Credit
   type: refundable
   eligibility: Montana residents who complete an adoption. Form ADPT and paperwork documenting the adoption (for
@@ -472,6 +476,11 @@ sources:
     foster care system, $5,000 for any other child under 18 or person incapable of self-care)
   - 2025 Montana Form 2 Instructions, Schedule III Part II - Credit for Income Taxes Paid to Another State or Country
     (separate ordinary-income and net-long-term-capital-gains computations)
+- id: credits-2
+  topic: credits
+  url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf
+  descriptions:
+  - 'Montana DOR 2025 Form 2, Schedule 2EC attestation'
 - id: logistics-1
   topic: filing_logistics
   url: https://revenue.mt.gov/files/forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf

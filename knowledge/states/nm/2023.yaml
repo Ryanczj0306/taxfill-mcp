@@ -3,6 +3,11 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[2] (a row of the table read as a sentence, not a quote)
 jurisdiction: states/nm
 tax_year: 2023
 income_tax: true
@@ -251,8 +256,7 @@ tax:
     cent.'
   - 'CRITICAL — the filed line 18 value comes from the MANDATED look-up table, which sits a few dollars BELOW statutory
     marginal math: for line 17 of $96,000 or less the TRT table row (in $100 bands, computed at band midpoints) is
-    the filed figure; over $96,000 the TRT continuation schedule CHAINS FROM THE LAST TABLE ROW (''Your Tax is $4,422
-    + 4.9% of excess over $96,000'' single; $4,294 MFJ/HoH; $4,498 MFS) instead of the statutory cumulative ($4,424.50
+    the filed figure; over $96,000 the TRT continuation schedule CHAINS FROM THE LAST TABLE ROW (single: your tax is $4,422 + 4.9% of the excess over $96,000; $4,294 MFJ/HoH; $4,498 MFS) instead of the statutory cumulative ($4,424.50
     / $4,296 / $4,500), so the filed figure runs about $2-$3 below this engine''s statutory bracket math at high incomes
     (TRT top-tier constants $10,008/$15,025/$7,512 vs statutory $10,010.50/$15,027/$7,513.50). The filed form must
     take the table/schedule value — never plain bracket arithmetic (the NM hand-fill pack''s line 18 carries the same

@@ -14,6 +14,11 @@
 # Marriage penalty credit maximum rose to $303 (was $287), thresholds $78,836/$46,275.
 # Still NO state standard deduction and NO personal/dependent exemptions (federal
 # taxable income base).
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[4] (a template of the printed rows, not a quote)
 jurisdiction: states/nd
 tax_year: 2024
 income_tax: true
@@ -250,7 +255,7 @@ tax:
     schedule is titled 'Married filing jointly and Qualifying surviving spouse' and the Tax Table is footnoted '*If
     a Qualifying surviving spouse, use the Married filing jointly column'; the engine's QSS-to-MFJ mapping is exactly
     correct.
-  - 'Printed ''$X + Y% of amount over $Z'' top-bracket constants reconcile with cumulative bracket sums to within
+  - 'Printed $X + Y% of amount over $Z top-bracket constants reconcile with cumulative bracket sums to within
     half a cent: Single $3,725.48 printed vs exact 1.95% x $191,050 = $3,725.475 (+$0.005); MFJ/QSS $4,118.40 = 1.95%
     x $211,200 exactly; MFS $2,059.20 = 1.95% x $105,600 exactly; HoH $3,918.04 printed vs exact 1.95% x $200,925
     = $3,918.0375 (+$0.0025). Pure marginal bracket math (what this op does) therefore matches the printed schedules

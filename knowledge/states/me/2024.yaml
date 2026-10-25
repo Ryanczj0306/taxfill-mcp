@@ -15,6 +15,13 @@
 # standard deduction tracks the FEDERAL 2024 amounts $14,600/$29,200/$21,900; the Dependent
 # Exemption Tax Credit ($300) became REFUNDABLE for Maine residents/part-year residents
 # (L.D. 258; P.L. 2023, c. 412, Pt. ZZZ) and the PTFC 65+ maximums increased.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[17]: maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2024.pdf 6eb65377482d2f66 — the title has no comma
+#   tax.notes[5] (quote marks dropped: a template of the printed rows, not a quote)
+#   tax.notes[6] (quote marks dropped: a table row read across its cells, not a quote)
+#   forms.part_year_or_nonresident (quote marks dropped: the title of a schedule no cited source prints (the 2024 Form 1040ME prints line 21 NONRESIDENT CREDIT))
 jurisdiction: states/me
 tax_year: 2024
 income_tax: true
@@ -54,8 +61,7 @@ residency:
     file Form 1040ME with Schedule NR or NRH.
 forms:
   resident: Form 1040ME (Maine Individual Income Tax Return) — resident return
-  part_year_or_nonresident: Form 1040ME with Schedule NR (Form 1040ME), "Schedule for Calculating the Nonresident
-    Credit"; married taxpayers electing to file as single may use Schedule NRH (Form 1040ME) instead. Used by nonresidents,
+  part_year_or_nonresident: Form 1040ME with Schedule NR (Form 1040ME), the schedule for calculating the nonresident credit; married taxpayers electing to file as single may use Schedule NRH (Form 1040ME) instead. Used by nonresidents,
     part-year residents, and safe harbor residents. (Full-year residents may not file Schedule NR.)
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
   each amount and your eligibility at the cited source before claiming it.
@@ -300,7 +306,7 @@ tax:
     and Surviving Spouses Filing Joint Returns'', and the tax table''s MFJ column is footnoted ''*This column must
     also be used by a surviving spouse with dependent child.'' QSS also uses the $29,200 standard deduction and the
     MFJ phaseout thresholds.'
-  - 'Printed ''$X plus Y% of excess over $Z'' constants are rounded to whole dollars and do not exactly equal the
+  - 'Printed $X plus Y% of excess over $Z constants are rounded to whole dollars and do not exactly equal the
     cumulative marginal sums: Single/MFS constants $1,511 vs exact $1,510.90 (+$0.10) and $3,911 vs exact $3,910.525
     (+$0.475); HoH constants $2,265 vs exact $2,264.90 (+$0.10) and $5,870 vs exact $5,869.40 (+$0.60); MFJ constants
     $3,022 vs exact $3,021.80 (+$0.20) and $7,825 vs exact $7,824.425 (+$0.575). Pure marginal bracket math (what
@@ -308,8 +314,7 @@ tax:
   - 'Tax table: the booklet prints a 2024 MAINE INCOME TAX TABLE for line 19 taxable income under $100,000 in $100
     bands; Form 1040ME line 20 authorizes computing tax with EITHER ''the tax table or tax rate schedules'', so bracket
     math is a permitted method, but within a $100 band the table (built on band midpoints) may differ from exact bracket
-    math by a few dollars. At $100,000 and over the table itself directs the printed amount ''plus 7.15% of excess
-    over 100,000'' ($6,653 Single/MFS, $6,406 HoH) or the rate schedule (MFJ column).'
+    math by a few dollars. At $100,000 and over the table itself directs the printed amount plus 7.15% of the excess over 100,000 ($6,653 Single/MFS, $6,406 HoH) or the rate schedule (MFJ column).'
   - 'SUPERSEDED-TABLES CAUTION: maine.gov hosts TWO 2024 tax-table files — the original 24_1040me_tax_tables.pdf prints
     WRONG (2023-boundary) values and even reprints the 2023 rate schedules ($24,500/$58,050...) under a ''2024 TAX
     RATE SCHEDULES'' heading; the corrected revision 24_1040me_tax_tables_2.pdf matches the booklet and the 2024 Rates
@@ -344,7 +349,7 @@ tax:
     engine''s half-up rounding.'
   - 'No mid-year 2024 rate change: rates 5.8% / 6.75% / 7.15% with bracket dollar amounts inflation-adjusted under
     36 M.R.S. § 5403 (published by MRS Sept 15, 2023; 36 M.R.S. § 5111 sub-§§ 1-F, 2-F, 3-F).'
-  - 'Cross-source confirmation: the standalone MRS document ''State of Maine - Individual Income Tax, 2024 Rates''
+  - 'Cross-source confirmation: the standalone MRS document ''State of Maine - Individual Income Tax 2024 Rates''
     prints identical rate schedules, the $5,000 personal exemption, and the standard deduction amounts (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2024.pdf);
     the corrected 2024 tax table file prints the same rate schedules on its final page (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_1040me_tax_tables_2.pdf);
     the line 18/19/20 wording is from the 2024 Form 1040ME (https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/24_Form%201040ME_ff.pdf).'

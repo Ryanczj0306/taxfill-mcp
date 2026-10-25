@@ -17,8 +17,8 @@
   "@@9a805045eb17": "2024 Kentucky Individual Income Tax Forms — Form 740 Instruction Packet (42A740(PKT)): What's New (standard deduction $3,160; individual income tax rate 4%; Family Size Tax Credit 2024 thresholds; HB 8 IRC reference date December 31, 2023), starting point (\"the individual income tax return begin with federal adjusted gross income\"), Form 740 line 5 Federal AGI, Schedule M additions list, due date April 15 2025, mailing addresses (Refund 40618-0006 / Pay 40619-0008), check payable to Kentucky State Treasurer / Form 740-V",
   "@@a528bcefc4c5": "Personal Tax Credits (age 65+, blind, or Kentucky National Guard) — Taxpayer (and spouse, if filing jointly or married filing separately on a combined return) who, as of 12/31/2024, was age 65 or older, was legally blind, and/or was a member of the Kentucky National Guard. A taxpayer can claim more than one (e.g., 65+ AND blind). No income limit.",
   "@@a620b32956ad": "The shipped KY 2024 pack's primary authority (TY2024). A re-issue of this 2024 document by the state supersedes what the pack shipped — treat its appearance as the staleness signal.",
-  "@@b88acf8e41ea": "Family Size Tax Credit — Resident individuals/families with modified gross income (MGI) at or below 133% of the federal poverty threshold for their family size. Family size is capped at 4 (yourself, spouse if living in same household, and qualifying children). Available even to someone claimed as a dependent on a parent's return (family size 1). To get ANY credit, 2024 MGI must be at or below $20,030 (family of 1), $27,185 (family of 2), $34,341 (family of 3), or $41,496 (family of 4+) — the packet's line 20/21 instructions say \"If your total MGI is $41,496 or less, you may qualify.\"",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
+  "@@f7ae3859e0bf": "Family Size Tax Credit — Resident individuals/families with modified gross income (MGI) at or below 133% of the federal poverty threshold for their family size. Family size is capped at 4 (yourself, spouse if living in same household, and qualifying children). Available even to someone claimed as a dependent on a parent's return (family size 1). To get ANY credit, 2024 MGI must be at or below $20,030 (family of 1), $27,185 (family of 2), $34,341 (family of 3), or $41,496 (family of 4+) — the packet's line 20/21 instructions say \"If your total MGI is $41,496 or less, you may qualify for Kentucky Family Size Tax Credit.\"",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
@@ -295,7 +295,7 @@
      "url": "https://revenue.ky.gov/Forms/Schedule%20ITC%20(2024).pdf"
     },
     {
-     "answers": "Kentucky Department of Revenue — 2024 Form 740 instruction packet (42A740(PKT)), instructions for line 24",
+     "answers": "Kentucky DOR 2024 Form 740 instruction packet, lines 20-21 (Family Size Tax Credit) || Kentucky Department of Revenue — 2024 Form 740 instruction packet (42A740(PKT)), instructions for line 24",
      "cadence": "@@47de165f0b8c",
      "topic": "credits",
      "url": "https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf"
@@ -512,7 +512,7 @@
    "states": [
     {
      "benefits_candidates": [
-      "@@b88acf8e41ea",
+      "@@f7ae3859e0bf",
       "@@44cf3cd04649",
       "@@a528bcefc4c5"
      ],
@@ -567,7 +567,7 @@
    "states": [
     {
      "benefits_candidates": [
-      "@@b88acf8e41ea",
+      "@@f7ae3859e0bf",
       "@@44cf3cd04649",
       "@@a528bcefc4c5"
      ],
@@ -621,7 +621,7 @@
    "states": [
     {
      "benefits_candidates": [
-      "@@b88acf8e41ea",
+      "@@f7ae3859e0bf",
       "@@44cf3cd04649",
       "@@a528bcefc4c5"
      ],

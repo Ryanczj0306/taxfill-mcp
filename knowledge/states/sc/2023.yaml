@@ -3,6 +3,12 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[1] (a paraphrase of the schedule's steps, not a quote)
+#   tax.notes[2] (a paraphrase, not a quote)
 jurisdiction: states/sc
 tax_year: 2023
 income_tax: true
@@ -108,6 +114,10 @@ credits:
   citation:
     source: SC DOR Form I-319, 2023 Tuition Tax Credit (Rev. 4/11/23)
     url: https://dor.sc.gov/forms-site/Forms/I319_2023.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 cf9955362fe8062c...
+  citations:
+  - source: 'SC DOR 2023 SC1040 Instructions (the Tax Payments and Refundable Credits section)'
+    url: https://dor.sc.gov/sites/dor/files/forms/SC1040inst_2023.pdf
 filing_requirement:
   note: 'You must file an SC Individual Income Tax return if you answer YES to any: Resident under 65 - you were
     required to file a federal return that included income taxable by SC (SC residents are taxed on their entire
@@ -153,6 +163,9 @@ all_citations:
   url: https://dor.sc.gov/forms-site/Forms/SchNRinst_2023.pdf
 - source: SCDOR Individual Income Tax FAQs / MyDORWAY payment portal (check payable to SCDOR; portal URL)
   url: https://dor.sc.gov/iit/prepare-you-file/iit-faqs
+# Phase K JK31 (2026-10-25): the adjudication note quotes the SC4972; downloaded twice, identical sha256 12f3d3d0c1f7798a...
+- source: 'SC DOR 2023 SC4972, the 2023 Tax Computation Schedule'
+  url: https://dor.sc.gov/sites/dor/files/forms/SC4972_2023.pdf
 unverified:
 - Exact verbatim definitions of 'resident,' 'part-year resident,' and 'nonresident' as separately labeled terms
   come from the SCDOR General Information and FAQs (functional tests quoted) rather than a single statutory glossary
@@ -211,13 +224,12 @@ tax:
     and pass dependents_count so the op subtracts the shipped $4,610-per-dependent line w amount to reproduce line
     5. South Carolina has NO personal exemption and NO state standard deduction of its own.'
   - 'Adjudication note (two-pass): pass 1 = the 2023 SC1040TT (mandatory tables below $100,000 + the printed $100,000-or-more
-    schedule ''6.4% minus $670''); pass 2 = the 2023 SC4972''s printed ''2023 Tax Computation Schedule'' ($0-$3,330
+    schedule (6.4% minus $670)); pass 2 = the 2023 SC4972''s printed ''2023 Tax Computation Schedule'' ($0-$3,330
     0%; $3,330-$16,680 3% times the amount minus $100; $16,680+ 6.4% times the amount minus $670), corroborated by
     the SC Revenue and Fiscal Affairs Office 2023 report (>$0 0%, >$3,330 3%, >$16,680 6.4%). Both passes agree on
     every bound and rate. NOTE: the SC1040 instruction booklet itself prints NO bracket dollar bounds — the SC4972
     schedule is the official in-form statement of them.'
-  - 'CRITICAL — SC''s filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation
-    is ''rate x ENTIRE income - constant'', and the printed constants are ROUNDED in the taxpayer''s favor ($100 vs
+  - 'CRITICAL — SC''s filed arithmetic is a SUBTRACTION METHOD, not marginal accumulation: the official computation is rate x ENTIRE income - constant, and the printed constants are ROUNDED in the taxpayer''s favor ($100 vs
     the exact marginal $99.90; $670 vs the exact $667.02). Pure marginal accumulation (this engine) therefore comes
     out UP TO $2.98 + rounding HIGHER than the filed method above $16,680 — e.g. $101,000 -> engine $5,797 vs the
     SC1040TT''s own printed example $5,794 (6.4% x $101,000 - $670). The filed return must use the SC1040TT table

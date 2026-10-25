@@ -152,6 +152,9 @@ all_citations:
   url: https://revenue.mt.gov/taxes/individual-income-tax/filing-requirements
 - source: Montana DOR — Montana Individual Income Tax Return (Form 2) publication page
   url: https://revenue.mt.gov/publications/montana-individual-income-tax-return-form-2
+# Phase K JK31 (2026-10-25): the tax note and tax_line quote the face; downloaded twice, identical sha256 13f2a0e05c0fa278...
+- source: 'Montana DOR 2023 Form 2, page 1 lines 17-18 and the page 8 Tax Liability Schedule'
+  url: https://revenue.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/2023_Montana_Individual_Income_Tax_Return_Form_2.pdf
 unverified:
 - No explicit statement found in the 2023 Form 2 instructions that uses the word 'treaty' or directly addresses
   U.S. tax-treaty-exempt income; conformity is inferred (high confidence) from the federal-AGI starting point plus

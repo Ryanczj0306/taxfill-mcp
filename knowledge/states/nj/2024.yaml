@@ -7,6 +7,13 @@
 # instruction booklet, then independently re-derived from the 2024 NJ-1040NR nonresident
 # instruction booklet (which prints the SAME 2024 Tax Rate Schedules) — resolutions
 # recorded inline where the passes differed.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   law_changes_checked.finding (a template of the printed rows, not a quote)
+#   tax.notes[4] (a template of the printed rows, not a quote)
+#   treaty_note (a rubric category, not a quote)
 jurisdiction: states/nj
 tax_year: 2024
 income_tax: true
@@ -19,7 +26,7 @@ treaty_note: 'New Jersey does NOT start from federal AGI. The NJ Gross Income Ta
   imports federal AGI, a federal tax-treaty exemption (which reduces federal box 1 / federal AGI) does NOT automatically
   pass through. The word "treaty" does not appear anywhere in the 2024 NJ-1040 instructions, and NJ''s Gross Income
   Tax Act contains no provision recognizing federal income tax treaties, so federally treaty-exempt wages are generally
-  still taxable for NJ purposes. This puts NJ in the "builds income from scratch, no treaty pass-through" category
+  still taxable for NJ purposes. This puts NJ in the builds-income-from-scratch, no-treaty-pass-through category
   -> conforms_to_federal_treaties = false. (Conservative reading; the precise NJ treatment of a specific treaty
   article should be confirmed at the DOR.)'
 citation:
@@ -287,8 +294,7 @@ tax:
     29) is at or below $10,000 (single; married/CU partner filing separate) or $20,000 (married/CU couple filing joint;
     head of household; qualifying widow(er)/surviving CU partner). NOT modeled — the brackets tax from the first dollar,
     so below-threshold filers would be overstated; file only to recover withholding or refundable credits.'
-  - 'Printed-constant divergence (Table B only), the famous misprint constant: the 70,000-80,000 bracket prints ''multiply
-    by .035, subtract $1,154.50'', but the exact cumulative constant is $1,155.00 — the printed schedule yields $0.50
+  - 'Printed-constant divergence (Table B only), the famous misprint constant: the 70,000-80,000 bracket prints a .035 multiplier and a $1,154.50 subtraction, but the exact cumulative constant is $1,155.00 — the printed schedule yields $0.50
     MORE than exact marginal-bracket math everywhere inside that bracket, and rejoins exactly at $80,000 (the next
     constant, $2,775.00, is exact). Every other printed constant in Tables A and B equals the cumulative sum exactly.
     The same $1,154.50 appears in both the 2024 resident (p.63) and nonresident (p.43) prints, as it has since 2020.'
@@ -326,7 +332,7 @@ law_changes_checked:
   checked: 2026-09-28
   finding: >-
     No law change reaches a 2024 New Jersey resident return. The 2024 NJ-1040 instructions print no What's New section.
-    Their line-by-line headings are identical to 2023's (84 'Line N –' headings, compared by diff), and the credit
+    Their line-by-line headings are identical to 2023's (84 Line N – headings, compared by diff), and the credit
     and exclusion amounts read are unchanged — the Child Tax Credit table still runs '$30,000 or less' to $80,000
     at $1,000 down to $200, as increased for 2023. The Director's letter names only clarifications: 'we have modified
     the 1040 instructions for the 2024 tax year to clarify taxable income vs. nontaxable income' — Difficulty of Care

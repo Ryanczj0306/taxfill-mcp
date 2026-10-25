@@ -14,6 +14,13 @@
 # Improvement over the 2023 pack: the check-payee wording is now confirmed from
 # the 2024 form's own payment box ('Make your check payable to: Commissioner of
 # Revenue Services ... write your SSN(s) (optional) and "2024 Form CT-1040"').
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   credits[0].amount: portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf fad02854c8e39e17 — Schedule CT-EITC Line 9 instruction prints 'federal EIC'
+#   payment.check_payee: portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf 63ef57eba0b79498 — two lines on the face, the first without a period
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[2] (a template of Table B's rows, not a quote)
 jurisdiction: states/ct
 tax_year: 2024
 income_tax: true
@@ -57,8 +64,7 @@ credits:
     Taxpayer (and spouse/qualifying children, if applicable) must have valid Social Security Numbers by the return
     due date, must have earned income from employment or self-employment, and must meet all federal EITC rules.
     Either qualify with a qualifying child, or as a worker without a qualifying child aged 25-64.
-  amount: 40% (.40) of the federal earned income credit allowed on the 2024 federal return ("For the tax year 2024,
-    the CT EITC is 40% (.40) of the federal earned income credit" — 2024 CT-1040 instructions, Schedule CT-EITC).
+  amount: 40% (.40) of the federal earned income credit allowed on the 2024 federal return ("For the tax year 2024, the CT EITC is 40% (.40) of the federal EIC." — 2024 CT-1040 instructions, Schedule CT-EITC).
   income_limit_2024: Mirrors federal EITC income limits; additionally, investment income must be $11,600 or less
     for 2024 ("You cannot claim the CT EITC if your investment income is more than $11,600").
   claimed_on: Schedule CT-EITC (Line 16), carried to Form CT-1040, Line 20a (or Form CT-1040X, Line 20a)
@@ -133,6 +139,10 @@ credits:
     source: 'CT DRS — 2024 Form CT-1040 Instructions (Rev. 01/25), p. 4 Line 20d Historic Homes Rehabilitation Tax Credit
       and Line 21 Total Payments and Refundable Credits; the 2024 Form CT-1040 face, Lines 20d and 21'
     url: https://portal.ct.gov/-/media/drs/forms/2024/income/2024-ct-1040-instructions_1224.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 63ef57eba0b79498...
+  citations:
+  - source: 'CT DRS 2024 Form CT-1040 (Rev. 12/24), page 2: Line 20d caption ''Historic Home Rehabilitation Credit'''
+    url: https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf
 filing_requirement:
   note: 'Connecticut uses a "Gross Income Test." A resident generally must file Form CT-1040 if Connecticut gross
     income exceeds the threshold for their filing status: $12,000 (married filing separately), $15,000 (single),
@@ -151,9 +161,7 @@ mailing_addresses:
       payment: PO Box 2977''; ''For refunds and all other tax forms without payment: PO Box 2976'''
     url: https://portal.ct.gov/-/media/drs/forms/2024/income/ct-1040_1224.pdf
 payment:
-  check_payee: 'Commissioner of Revenue Services (2024 Form CT-1040, page 4 payment box — "Make your check payable
-    to: Commissioner of Revenue Services. To ensure proper posting, write your SSN(s) (optional) and ''2024 Form
-    CT-1040'' on your check.")'
+  check_payee: 'Commissioner of Revenue Services (2024 Form CT-1040, page 4 payment box — "Make your check payable to: Commissioner of Revenue Services" / "To ensure proper posting, write your SSN(s) (optional) and ''2024 Form CT-1040'' on your check.")'
   web_pay_url: https://portal.ct.gov/DRS-myconneCT
 deadlines:
   filing_due_date: '2025-04-15'
@@ -254,8 +262,7 @@ tax:
     Table A on the form. At or above the zero point, Line 3 = CT AGI. Do NOT supply raw federal AGI when CT modifications
     apply, and do NOT subtract the exemption twice.'
   - 'Adjudication note (two-pass): drafted from the 2024 CT-1040 instructions (Rev. 01/25) Tables A-E and independently
-    re-verified against the 2024 CT-1040NR/PY instructions (Rev. 01/25) — identical tables, zero discrepancies. Every
-    printed ''$X plus Y% of the excess over $Z'' constant in Table B equals the EXACT cumulative sum of the prior
+    re-verified against the 2024 CT-1040NR/PY instructions (Rev. 01/25) — identical tables, zero discrepancies. Every printed $X plus Y% of the excess over $Z constant in Table B equals the EXACT cumulative sum of the prior
     brackets (200/2,000/4,750/10,750/14,000/31,250 single-MFS; 400/4,000/9,500/21,500/28,000/62,500 MFJ; 320/3,200/7,600/17,200/22,400/50,000
     HoH), so pure marginal accumulation reproduces Table B to the half-dollar; the only divergence is IRS half-up
     rounding of a trailing $.50 (the DRS''s own printed examples round $2,500 x .045 = $112.50 to $113 at MFJ $22,500

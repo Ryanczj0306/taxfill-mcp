@@ -339,7 +339,7 @@ tax:
   - Married filing separately is printed with the SAME schedule as Single on the 2025 Tax Calculation Schedule (identical
     breakpoints $4,030/$24,120/$38,870 and identical constants $99.14/$804.30/$1,543.28) — copied from the MFS table,
     not derived by halving MFJ.
-  - The schedule's printed '$X + Y% of the excess over $Z' constants are the exact cumulative bracket sums rounded
+  - The schedule's printed $X + Y% of the excess over $Z constants are the exact cumulative bracket sums rounded
     to the nearest cent; maximum divergence from the exact sum is $0.008 (Single/MFS $99.14 vs exact $99.138, $804.30
     vs $804.297, $1,543.28 vs $1,543.272; MFJ $197.78 vs $197.784, $1,609.15 vs $1,609.155, $3,086.10 vs $3,086.103;
     HoH $184.75 vs $184.746, $1,275.66 vs $1,275.654, $2,229.56 vs $2,229.558) — after rounding to whole dollars the

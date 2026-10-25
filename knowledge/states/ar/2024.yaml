@@ -12,6 +12,14 @@
 # the top marginal rate to 3.9% (from 2023's 4.7%), and the whole schedule was re-indexed
 # (0% floor now to $5,499; 3.9% from $25,700; bracket-adjustment phase-down $92,301-$95,500).
 # The 2023 one-time Inflationary Relief Income Tax Credit does NOT exist for 2024.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[11]: dfa.arkansas.gov/wp-content/uploads/2024_AR1000F_and_AR1000NR_Instructions.pdf dcaab308e4c47b37 — the booklet prints the second sentence in parentheses
+#   tax.notes[14]: dfa.arkansas.gov/wp-content/uploads/2024_AR1000F_and_AR1000NR_Instructions.pdf dcaab308e4c47b37 — the example is printed in parentheses
+#   tax.notes[6]: dfa.arkansas.gov/wp-content/uploads/2024_TaxBrackets.pdf a016d75924df4030 — the brackets table's column head
+#   tax.notes[8]: dfa.arkansas.gov/wp-content/uploads/2024_TaxBrackets.pdf a016d75924df4030 — the brackets table's column head
+#   tax.tax_line: dfa.arkansas.gov/wp-content/uploads/2024_AR1000F_and_AR1000NR_Instructions.pdf dcaab308e4c47b37 — LINE 28's instruction prints 'line' in lower case
 jurisdiction: states/ar
 tax_year: 2024
 income_tax: true
@@ -242,8 +250,7 @@ tax:
     - {over: 15599, but_not_over: 25699, rate: 0.034}
     - {over: 25699, but_not_over: null, rate: 0.039}
   base: state_gross_income
-  tax_line: 'AR1000F Line 29: "TAX: (Enter tax from tax table)" — the tax on Line 28 ("Subtract Line 27 from Line
-    25. This is your Net Taxable Income."), per the 2024 AR1000F/AR1000NR Instructions, Tax Computation, Lines 26-29.'
+  tax_line: 'AR1000F Line 29: "TAX: (Enter tax from tax table)" — the tax on Line 28 ("Subtract line 27 from line 25. This is your Net Taxable Income."), per the 2024 AR1000F/AR1000NR Instructions, Tax Computation, Lines 26-29.'
   exemptions: {}
   standard_deduction:
     single: 2410
@@ -281,7 +288,7 @@ tax:
     -> $75,950 x .039 - $409.86 = $2,552.19 -> $2,552; $14,800–$14,900 band -> $14,850 x .030 - $218.97 = $226.53
     -> $227). Bracket math may differ from the table by a few dollars within a band; the filed form must use the table.'
   - CRITICAL — shipped brackets are exact ONLY for net taxable income up to $92,300. From $92,301 to $95,500 the official
-    schedule phases the 3.9% bracket's 'minus adjustment' down from $409.86 to $87.40 in $10-per-$100-band steps (the
+    schedule phases the 3.9% bracket's 'Minus Adjustment' down from $409.86 to $87.40 in $10-per-$100-band steps (the
     $94,301–$94,500 range intentionally spans $200 per the Ark. Code Ann. 26-51-201(d)(1) rounding note), and at $95,501+
     the tax is 3.9% x net taxable income - $87.40. The shipped bracket math (equivalent to 3.9% x income - $409.86)
     UNDERSTATES the true tax above $92,300 — by $322.46 once net taxable income reaches $95,501 — so above $92,300
@@ -291,7 +298,7 @@ tax:
     Tax Brackets constant for $95,501+ is $87.40 (3.9% x $100,000 - $87.40 = $3,812.60): a $1.60 divergence, because
     $3,811 is the midpoint-rounded last table row ($99,901–$100,001: $99,951 x .039 - $87.40 = $3,810.689 -> $3,811).
     The filed form follows the printed table/formula.'
-  - The published 'minus adjustment' constants equal the cumulative sum of the prior brackets to the cent ($109.98
+  - The published 'Minus Adjustment' constants equal the cumulative sum of the prior brackets to the cent ($109.98
     = 2% x $5,499 exactly; $218.97 exactly; $281.37 vs exact $281.366; $409.86 vs exact $409.861) — no material rounding
     divergence, so the shipped marginal brackets reproduce the official formula to within one cent below $92,301.
   - 'EXEMPTIONS ARE CREDITS IN ARKANSAS — none are shipped: Arkansas has no personal or dependent exemption that reduces
@@ -306,8 +313,7 @@ tax:
     Relief Income Tax Credit does NOT exist for 2024.'
   - 'Low Income Tax Table (NOT modeled): full-year residents whose total income from all sources is within the limits
     may take tax from the 2024 Low Income Tax Table applied to Line 25 AGI with NO deduction on Line 27 (''CAUTION:
-    If you qualify to use a Low-Income Tax Table, enter zero (0) on line 27, column A. The Standard Deduction is already
-    built into the table.''), which yields LESS tax than the shipped math at low incomes — tax is $0 up to $14,265
+    If you qualify to use a Low-Income Tax Table, enter zero (0) on line 27, column A. (The Standard Deduction is already built into the table.)''), which yields LESS tax than the shipped math at low incomes — tax is $0 up to $14,265
     (single), $20,282 / $24,176 (HoH or Surviving Spouse with 1-or-no / 2-or-more dependents), $24,057 / $28,953 (MFJ
     with 1-or-no / 2-or-more dependents), and the table is usable up to AGI of $17,000 (single), $24,600 / $28,200
     (HoH/SS), $28,300 / $35,100 (MFJ). Married couples must file Status 2 to qualify; filers claiming the active-duty
@@ -321,8 +327,7 @@ tax:
   - 'Amounts not part of Line 29 bracket math are not modeled: Line 31 lump-sum distribution averaging (Form AR1000TD)
     and Line 32 additional 10%-of-federal tax on early IRA/retirement distributions (federal Form 5329) are ADDED
     to reach Line 33 total tax on the form.'
-  - 'Round all amounts to the nearest whole dollar on the return (booklet: ''Round all amounts to the nearest dollar.
-    For example, if your Form W-2 shows $10,897.50, round to $10,898'') — half-up, matching the engine.'
+  - 'Round all amounts to the nearest whole dollar on the return (booklet: ''Round all amounts to the nearest dollar. (For example, if your Form W-2 shows $10,897.50, round to $10,898. If your Form W-2 shows $10,897.49, round to $10,897.)'') — half-up, matching the engine.'
 
 # Phase J JS2 (2026-09-28): the state law-change sweep. Each entry below was adjudicated from this year's own
 # booklet section named in law_changes_checked, every quoted run re-found in the fetched document; an

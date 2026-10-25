@@ -15,6 +15,13 @@
 # ($2,300/$4,600/$3,400) are UNCHANGED. Scheduled: 4.4% (2025), 4.0% (2026) — do NOT
 # use those for 2024, and do NOT source the 2024 rate from the live DOR FAQ (it already
 # shows the 2025 4.4% rate).
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.notes[13] (quote marks dropped: a template of the printed rows, not a quote)
+#   tax.notes[1]: dor.ms.gov/sites/default/files/tax-forms/individual/80105248.pdf 10a2f6bf680cc196 — the face's full caption
+#   tax.notes[4]: dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf 35d4d7f235cbe22a — two bullets, quoted apart
+#   tax.notes[8]: dor.ms.gov/sites/default/files/tax-forms/individual/80100241.pdf 35d4d7f235cbe22a — the year is not part of the printed status
 jurisdiction: states/ms
 tax_year: 2024
 income_tax: true
@@ -249,7 +256,7 @@ tax:
     (2026). CAUTION: the live DOR FAQ already answers with the 2025 4.4% rate — the 2024 filing-season authority is
     the 2024 Form 80-100 booklet (TAX RATES p.21 + Schedule of Tax Computation).'
   - 'Base guidance: Supply Mississippi adjusted gross income: 2024 Form 80-105 (resident return), page 1, line 13,
-    which is carried from page 2, line 66 ''Mississippi adjusted gross income (line 49 minus line 65)''. Mississippi
+    which is carried from page 2, line 66 ''Mississippi adjusted gross income (line 49 minus line 65; enter on page 1, line 13)''. Mississippi
     does NOT start from federal AGI — the return builds MS income from its own line items (wages line 38 through other
     income line 48, totaled at line 49) minus MS adjustments (lines 50-65). Do NOT supply federal AGI. The pack ships
     the subtractions to get from line 13 to line 16 ''Mississippi taxable income'' for a standard-deduction filer:
@@ -269,9 +276,7 @@ tax:
     per-item exemption (Head of Family''s $8,000 is not $6,000 x any count). The shipped standard_deduction = MS standard
     deduction + MS filing-status exemption: Single $2,300 + $6,000 = $8,300; MFJ $4,600 + $12,000 = $16,600; MFS $2,300
     + $6,000 = $8,300; Head of Family $3,400 + $8,000 = $11,400. No ''personal'' exemption key is shipped, so exemptions_count
-    has no effect. Corroboration: the booklet''s own filing thresholds are exactly these sums — ''Single... gross
-    income in excess of $8,300 plus $1,500 for each dependent; Married... in excess of $16,600 plus $1,500 for each
-    dependent.'' All amounts unchanged from 2023.'
+    has no effect. Corroboration: the booklet''s own filing thresholds are exactly these sums — Single resident taxpayers: ''gross income in excess of $8,300 plus $1,500 for each dependent''; married: ''gross income in excess of $16,600 plus $1,500 for each dependent''. All amounts unchanged from 2023.'
   - 'MARRIED COMBINED RETURN (two-column) math is NOT modeled — can OVERSTATE tax by up to $470 for two-income couples
     in 2024: on a combined return where both spouses have positive taxable income (Form 80-105 columns A and B), the
     Schedule of Tax Computation line 1 gives EACH column its own first $10,000 (or part) at 0%, so up to $20,000 of
@@ -289,7 +294,7 @@ tax:
   - Head of Family (Mississippi's head-of-household status) REQUIRES at least one dependent living in the home the
     entire year; that required dependent is listed on line 6, counted on line 7/9, and DOES receive the $1,500 dependent
     exemption ('$8,000 on line 11 and $1,500 for the required dependent... totals $9,500') — pass it in dependents_count.
-  - 'Qualifying surviving spouse mapping: Mississippi''s ''Married - Spouse Died in Tax Year (2024)'' status uses
+  - 'Qualifying surviving spouse mapping: Mississippi''s ''Married – Spouse Died in Tax Year'' status (2024) uses
     the identical $12,000 exemption and $4,600 standard deduction as Married Filing Joint/Combined, so it maps cleanly
     to married_filing_jointly. Mississippi has no multi-year qualifying-surviving-spouse status.'
   - Age 65-or-over and blind additional exemptions ($1,500 per box checked, taxpayer and spouse only, Form 80-105
@@ -305,7 +310,7 @@ tax:
     17 income tax this pack computes.
   - 'No tax-table mandate: Mississippi has no lookup-table requirement — every filer computes line 17 with the Schedule
     of Tax Computation bracket math, so the pack''s marginal math matches the form exactly. The schedule prints no
-    ''$X + Y% of excess over $Z'' additive constants, so there is no rounded-constant divergence to quantify.'
+    $X + Y% of excess over $Z additive constants, so there is no rounded-constant divergence to quantify.'
   - 'Rounding: the booklet mandates whole-dollar rounding (''All dollar amounts should be rounded to the nearest whole
     dollar (no pennies). Round down to the next lower dollar amounts under $.50 and round up to the next higher dollar
     amounts of $.50 and over'') — identical to the engine''s round-half-up.'

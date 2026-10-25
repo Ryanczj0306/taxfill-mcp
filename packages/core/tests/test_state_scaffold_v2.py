@@ -98,7 +98,8 @@ def test_the_v2_pack_passes_the_quote_checker_offline(demo_pack, tmp_path, monke
     for url, entry in excerpts.items():  # the quote cache's own layout (check_quotes.SourceCache)
         index[url] = {"sha256": entry["sha256"], "read": "2026-10-24"}
         (cache / "text" / f"{entry['sha256']}.json").write_text(
-            json.dumps({"text": entry["excerpt"], "kind": "pdf", "pages": [0]}), encoding="utf-8")
+            json.dumps({"text": entry["excerpt"], "kind": "pdf", "pages": [0], "extractor": cq.EXTRACTOR}),
+            encoding="utf-8")
     (cache / "index.json").write_text(json.dumps(index), encoding="utf-8")
     monkeypatch.setenv("TAXFILL_BLANKS_CACHE", str(tmp_path / "no-blanks"))
 
@@ -111,7 +112,7 @@ def test_the_v2_pack_passes_the_quote_checker_offline(demo_pack, tmp_path, monke
     quotes = [r for r in got["spans"] if r["kind"] == "v2.quote"]
     assert {r["where"] for r in quotes} == {"treaty.note", "base_line.quote", "tax.caveats[0]", "tax.caveats[1]",
                                            "credits.items[0].eligibility"}
-    assert got["totals"] == {"VERBATIM": 5, "MISMATCH": 0, "UNCHECKED": 0, "spans": 5}, got["spans"]
+    assert got["totals"] == {"VERBATIM": 5, "MISMATCH": 0, "CLOSED": 0, "UNCHECKED": 0, "spans": 5}, got["spans"]
     # negative control: the checker really reads the excerpts — one re-worded quote is a MISMATCH
     edited = tmp_path / "edited.yaml"
     edited.write_text(demo_pack.read_text(encoding="utf-8").replace("are not entitled", "are never entitled"),

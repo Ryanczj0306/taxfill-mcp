@@ -60,6 +60,10 @@ credits:
   citation:
     source: Illinois Department of Revenue — 2023 Schedule IL-E/EIC (form) and 2023 Schedule IL-E/EIC Instructions
     url: https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/2023/individual/il-1040-schedule-il-e-eic-instr.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 9025a3dc64901731...
+  citations:
+  - source: 'Illinois Department of Revenue 2023 Schedule IL-E/EIC (form), Step 4 Line 7'
+    url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-il-e-eic.pdf
 - name: Illinois Property Tax Credit
   type: nonrefundable
   eligibility: Illinois residents who, during 2022, owned and lived at a principal residence located in Illinois
@@ -76,6 +80,10 @@ credits:
   citation:
     source: Illinois Department of Revenue — 2023 Schedule ICR (form) and 2023 Schedule ICR Instructions
     url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-icr-instr.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 aa203d16186fe9c1...
+  citations:
+  - source: 'Illinois Department of Revenue 2023 Schedule ICR (form), Section A Line 4g'
+    url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-icr.pdf
 - name: K-12 Education Expense Credit
   type: nonrefundable
   eligibility: Parent or legal guardian of a full-time student who was under age 21 at the close of the school year,
@@ -84,7 +92,7 @@ credits:
     B of Schedule ICR including the K-12 Education Expense Credit Worksheet and attach school receipts.
   amount: '25% of qualified K-12 education expenses paid in excess of the first $250, up to a maximum credit of
     $750 regardless of the number of qualifying students. Schedule ICR Section B: Line 7b excludes the first $250;
-    Line 7d ''Multiply Line 7c by 25% (.25). Compare the result and $750, and enter the lesser amount.'' For separately-filing
+    Line 7d ''Multiply Line 7c by 25% (.25). Compare the result and $750, and enter the lesser amount here.'' For separately-filing
     parents/guardians, combined credit may not exceed $750.'
   income_limit_2023: Not allowed if the taxpayer's adjusted gross income for the taxable year exceeds $500,000 for
     returns with a federal filing status of married filing jointly, or $250,000 for all other returns.
@@ -93,6 +101,10 @@ credits:
   citation:
     source: Illinois Department of Revenue — 2023 Schedule ICR (form) and 2023 Schedule ICR Instructions
     url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-icr-instr.pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 aa203d16186fe9c1...
+  citations:
+  - source: 'Illinois Department of Revenue 2023 Schedule ICR (form), Section B Line 7d'
+    url: https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040-schedule-icr.pdf
 - name: Volunteer Emergency Worker Credit
   type: nonrefundable
   eligibility: 'Created by Public Act 103-0009 for 2023. Available only to a person who received a 2023 Volunteer

@@ -3,6 +3,11 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[10] (a template of the printed rows, not a quote)
 jurisdiction: states/ne
 tax_year: 2023
 income_tax: true
@@ -247,7 +252,7 @@ tax:
     with zero boxes is the same $15,800.'
   - Married filing separately is printed with the SAME schedule as Single on the 2023 Tax Calculation Schedule (identical
     breakpoints $3,700/$22,170/$35,730 and constants) — copied from the MFS table, not derived.
-  - The schedule's printed '$X + Y% of excess over $Z' constants are the exact cumulative bracket sums rounded to
+  - The schedule's printed $X + Y% of excess over $Z constants are the exact cumulative bracket sums rounded to
     the nearest cent; maximum divergence from the exact sum is $0.007 (Single/MFS top constant $1,418.68 vs exact
     $1,418.673; also $739.32 vs $739.317; MFJ $181.79 vs $181.794 and $2,837.30 vs $2,837.301; HoH $1,172.90 vs $1,172.898
     and $2,049.65 vs $2,049.648) — after rounding to whole dollars the results agree.

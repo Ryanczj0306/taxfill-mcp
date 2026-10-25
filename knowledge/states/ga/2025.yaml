@@ -111,9 +111,7 @@ amended_return:
     payment voucher and payment to the address that appears on the return if filing a paper return"; do not
     staple the payment and voucher together (525-TV, Rev. 05/20/25).'
   assemble:
-  - '"Include any supporting documents and new or changed forms and schedules. In the space provided below, tell
-    us why you are filing Form 500X. Mail pages 1-5 and any applicable schedules, forms, and documentation. DO
-    NOT staple pages." (2025 Form 500X)'
+  - '"Include any supporting documents and new or changed forms and schedules. In the space provided below, tell us why you are filing Form 500X." … "Mail pages 1-5 and any applicable schedules, forms, and documentation. DO NOT staple pages." (2025 Form 500X)'
   - 'Line 8, federal adjusted gross income: "If the amount on Line 8 is $40,000 or more, or your gross income is
     less than your W-2s you must include a copy of your Federal Form 1040 Pages 1, 2, and Schedule 1." (2025
     Form 500X)'
@@ -224,8 +222,7 @@ tax:
     pass dependents_count = Form 500 Line 7c (qualified dependents plus unborn dependents). Do not use this op if
     you itemize deductions, claim a Georgia NOL (Line 15b), or file as a part-year resident/nonresident (they omit
     Lines 9-14 and use Schedule 3, which prorates the deduction) — compute those on the form.'
-  - 'QUALIFYING SURVIVING SPOUSE (CRITICAL): Georgia files QSS under filing status D ''Head of Household or Qualifying
-    Surviving Spouse'' with a $12,000 standard deduction (both the 2025 Form 500 Line 5 status list and the IT-511
+  - 'QUALIFYING SURVIVING SPOUSE (CRITICAL): Georgia files QSS under filing status D ''Head of household or Qualifying surviving spouse'' with a $12,000 standard deduction (both the 2025 Form 500 Line 5 status list and the IT-511
     Standard Deductions chart, which prints ''Qualifying surviving spouse $12,000'') — pass head_of_household to this
     op, NOT married_filing_jointly. The engine''s default QSS -> married_filing_jointly mapping would apply MFJ''s
     $24,000 and UNDERSTATE tax.'

@@ -14,6 +14,13 @@
 # $9,800-$12,200 to $9,800-$14,400 (4.75% now starts at $14,400), and the packet's
 # $100,000 worksheet constant fell from $4,395 to $4,373. Single/MFS brackets, all six
 # rates (0.25%-4.75%), and the standard deductions ($6,350/$12,700/$9,350) are unchanged.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   effective_law_changes[2].description: oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2024/511-Pkt-2024.pdf 570f7186c1f03a4c — What's New, p.3
+#   tax.notes[6]: oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2024/511-Pkt-2024.pdf 570f7186c1f03a4c — the asterisk the column head prints
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   effective_law_changes[2].description (a paraphrase, not a quote)
 jurisdiction: states/ok
 tax_year: 2024
 income_tax: true
@@ -288,7 +295,7 @@ tax:
   - 'One schedule covers Single and Married Filing Separately (identical thresholds — 68 O.S. § 2355(C)(1)); a second
     schedule covers Married Filing Jointly, surviving spouse, AND Head of Household (68 O.S. § 2355(C)(2)) — HOH is
     NOT a separate schedule; it is duplicated from MFJ here. The tax table likewise has only two columns: ''Single
-    or married filing separate'' and ''Married filing joint or head of household''.'
+    or married filing separate'' and ''Married* filing joint or head of household''.'
   - 'Qualifying surviving spouse uses the married-filing-jointly column and schedule (2024 tax table footnote: ''This
     column must also be used by a Qualified Surviving Spouse''; the statute includes surviving spouses in the MFJ
     paragraph; the line 10 instructions give QSS the $12,700 standard deduction) — the engine''s QSS -> married_filing_jointly
@@ -367,9 +374,8 @@ effective_law_changes:
       Tax Credit for Homeschool Expenses, Form 591-D)
     url: https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/past-year/2024/511-Pkt-2024.pdf
 - description: >-
-    NEW add-back for 2024: the Oklahoma bonus depreciation add-back, Schedule 511-B line B8 "(new
-    for 2024)" in this pack's enumerated 2024 additions list, with the matching Schedule 511-A
-    line the packet's What's New calls the new "511-A/B bonus depreciation lines". It feeds the
+    NEW add-back for 2024: the Oklahoma bonus depreciation add-back, Schedule 511-B line B8 (new for 2024) in this pack's enumerated 2024 additions list, with the matching Schedule 511-A
+    line the packet's What's New announces ("The Oklahoma Bonus Depreciation Deduction was added to Schedule 511-A." and "The Oklahoma Bonus Depreciation Add-back was added to Schedule 511-B."). It feeds the
     Schedule 511-B additions total behind Oklahoma AGI (Form 511 line 7) and therefore the line 9
     figure calc.state_tax consumes; it does not touch treaty-exempt income (see treaty_note).
   status: final_form_published

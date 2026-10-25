@@ -4,9 +4,7 @@ tax_year: 2025
 income_tax: true
 conforms_to_federal_treaties: true
 treaty_note: 'LA''s resident return (IT-540) starts from Federal Adjusted Gross Income: Line 7 is "FEDERAL ADJUSTED
-  GROSS INCOME" and the 2025 instructions say "Line 7 - Enter the amount of your Federal Adjusted Gross Income (Federal
-  AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11. If your Federal AGI is less than zero, enter
-  0." Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The only
+  GROSS INCOME" and the 2025 instructions say "Line 7 – Enter the amount of your Federal Adjusted Gross Income (Federal AGI). This amount is taken from Federal Form 1040 or 1040-SR, Line 11b. If your Federal AGI is less than zero, enter ''0.''" Federally treaty-exempt income is already excluded from federal AGI and therefore flows through. The only
   "additions" to federal AGI are on Schedule E; there is NO add-back of tax-treaty-exempt income anywhere on the
   IT-540 form, Schedule E, or in the 2025 instructions. Because LA starts from federal AGI and has no treaty addback,
   treaty-exempt income is not re-taxed -> conforms. (Act 11''s 2025 flat-rate reform did not change LA''s federal-AGI
@@ -117,7 +115,7 @@ mailing_addresses:
 payment:
   check_payee: 'Louisiana Department of Revenue (2025 IT-540 instructions: "Make your check or money order payable
     to the Louisiana Department of Revenue. Print the last four digits of your social security number on your check
-    or money order." Do not send cash.)'
+    or money order and attach it to your return." Do not send cash.)'
   web_pay_url: https://www.revenue.louisiana.gov/latap
 deadlines:
   filing_due_date: '2026-05-15'

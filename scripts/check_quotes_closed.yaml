@@ -1,0 +1,115 @@
+# Quote-verbatim checker: the MISMATCHes closed as the checker's false positives (Phase K JK31, 2026-10-25).
+#
+# scripts/check_quotes.py reads this list (--closed) and reports each entry's span as CLOSED, not MISMATCH. Every
+# entry was re-read at its cited source and found printed there exactly as the pack quotes it; what differs is the
+# PDF's text layer (a sentence split by a page break and the next page's running head, columns read across, ...).
+# Self-clearing: an entry that matches no MISMATCH (the quote was edited, or the source now reads verbatim) is
+# reported as stale and fails --strict; test_check_quotes.py fails offline on an entry whose quote is gone.
+#
+# Each entry: pack, where (the span's path in the pack), span (exactly as quoted), reason (why the text layer
+# differs), read (how it was read: the rendered page and the first 16 hex of the PDF's sha256, downloaded twice),
+# closest_sha256 (the first 16 hex of the source the checker's closest passage came from, or 'none'): a reissued
+# source re-opens the span as a MISMATCH and the entry is reported stale (Phase K JK31 review, 2026-10-25).
+- pack: knowledge/states/ga/2023.yaml
+  where: amended_return.timing[1]
+  span: Whenever a Federal audit or other Federal adjustment results in a change in net income for any year, you are required
+    to furnish under separate cover, within 180 days, a schedule reflecting all changes. Please include the schedule when
+    you file form 500X. Additionally, if the changes result in a refund, the refund must be claimed within one year of the
+    date the changes are submitted.
+  reason: 'the sentence runs across a page break: the text layer puts page 10''s running head ''FILING REQUIREMENTS'' between
+    ''within one year of the'' and ''date the changes are submitted'''
+  read: 2023 IT-511 booklet pp. 9-10, sha256 3ce70e0378602d0f... (downloaded twice); the text layer and the closest passage
+    read 2026-10-25
+  closest_sha256: 3ce70e0378602d0f
+- pack: knowledge/states/ks/2024.yaml
+  where: mailing_addresses.refund_or_no_payment
+  span: 'Mail to: Kansas Income Tax, Kansas Dept. of Revenue PO Box 750260, Topeka, KS 66699-0260'
+  reason: 'the face prints the address in two orange lines (render-checked, page 1 foot); its text layer clips glyphs (''il
+    to: ... Revenu / Box 750260'') under an overlaid watermark'
+  read: 2024 Form K-40, sha256 f5198ecbbe9f2776... (downloaded twice), page 1 rendered at 3x 2026-10-25
+  closest_sha256: 354858ab585d0942
+- pack: knowledge/states/ks/2025.yaml
+  where: treaty_note
+  span: Federal adjusted gross income (as reported on your federal income tax return)
+  reason: the face prints the closing parenthesis (render-checked, ip25 page 20 line 1); the text layer lacks it
+  read: 2025 Kansas individual income tax booklet (ip25), sha256 8cbc2ea8d4f877a0... (downloaded twice), page 20 rendered
+    2026-10-25
+  closest_sha256: 8cbc2ea8d4f877a0
+- pack: knowledge/states/ok/2023.yaml
+  where: tax.notes[4]
+  span: For all taxable years beginning on or after January 1, 2022
+  reason: quotes 68 O.S. § 2355 on oscn.net (the Oklahoma State Courts Network), which the note names in its own text; not
+    a .gov host the citation schema takes, so the checker's candidates (the pack's .gov citations) never include it (the archived
+    version in force for 2023, CiteID=494781)
+  read: oscn.net CiteID=494781, sha256 1936cb3d137e0b6b... (downloaded twice, identical), the words found verbatim 2026-10-25
+  closest_sha256: b43e8c810d4a4647
+- pack: knowledge/states/ok/2023.yaml
+  where: tax.notes[5]
+  span: For tax years 2024 and 2025
+  reason: quotes 68 O.S. § 2355 on oscn.net (the Oklahoma State Courts Network), which the note names in its own text; not
+    a .gov host the citation schema takes, so the checker's candidates (the pack's .gov citations) never include it (the current
+    text, CiteID=92565)
+  read: oscn.net CiteID=92565, sha256 1175f5fac9aeb6e4... (downloaded twice, identical), the words found verbatim 2026-10-25
+  closest_sha256: b43e8c810d4a4647
+- pack: knowledge/states/ok/2023.yaml
+  where: tax.notes[5]
+  span: next $4,600.00
+  reason: quotes 68 O.S. § 2355 on oscn.net (the Oklahoma State Courts Network), which the note names in its own text; not
+    a .gov host the citation schema takes, so the checker's candidates (the pack's .gov citations) never include it (the current
+    text, CiteID=92565)
+  read: oscn.net CiteID=92565, sha256 1175f5fac9aeb6e4... (downloaded twice, identical), the words found verbatim 2026-10-25
+  closest_sha256: none
+- pack: knowledge/states/ok/2024.yaml
+  where: tax.notes[0]
+  span: For tax years 2024 and 2025
+  reason: quotes 68 O.S. § 2355 on oscn.net (the Oklahoma State Courts Network), which the note names in its own text; not
+    a .gov host the citation schema takes, so the checker's candidates (the pack's .gov citations) never include it (the current
+    text, CiteID=92565)
+  read: oscn.net CiteID=92565, sha256 1175f5fac9aeb6e4... (downloaded twice, identical), the words found verbatim 2026-10-25
+  closest_sha256: 570f7186c1f03a4c
+- pack: knowledge/states/ok/2024.yaml
+  where: tax.notes[0]
+  span: next $4,600.00
+  reason: quotes 68 O.S. § 2355 on oscn.net (the Oklahoma State Courts Network), which the note names in its own text; not
+    a .gov host the citation schema takes, so the checker's candidates (the pack's .gov citations) never include it (the current
+    text, CiteID=92565)
+  read: oscn.net CiteID=92565, sha256 1175f5fac9aeb6e4... (downloaded twice, identical), the words found verbatim 2026-10-25
+  closest_sha256: none
+- pack: knowledge/states/ok/2024.yaml
+  where: tax.notes[5]
+  span: For tax year 2026 and for subsequent tax years
+  reason: quotes 68 O.S. § 2355 on oscn.net (the Oklahoma State Courts Network), which the note names in its own text; not
+    a .gov host the citation schema takes, so the checker's candidates (the pack's .gov citations) never include it (the current
+    text, CiteID=92565)
+  read: oscn.net CiteID=92565, sha256 1175f5fac9aeb6e4... (downloaded twice, identical), the words found verbatim 2026-10-25
+  closest_sha256: 570f7186c1f03a4c
+- pack: knowledge/states/ok/2024.yaml
+  where: effective_law_changes[0].description
+  span: For tax years 2024 and 2025
+  reason: quotes 68 O.S. § 2355 on oscn.net (the Oklahoma State Courts Network), which the note names in its own text; not
+    a .gov host the citation schema takes, so the checker's candidates (the pack's .gov citations) never include it (the current
+    text, CiteID=92565)
+  read: oscn.net CiteID=92565, sha256 1175f5fac9aeb6e4... (downloaded twice, identical), the words found verbatim 2026-10-25
+  closest_sha256: 570f7186c1f03a4c
+- pack: knowledge/states/ok/2024.yaml
+  where: effective_law_changes[0].description
+  span: next $4,600.00
+  reason: quotes 68 O.S. § 2355 on oscn.net (the Oklahoma State Courts Network), which the note names in its own text; not
+    a .gov host the citation schema takes, so the checker's candidates (the pack's .gov citations) never include it (the current
+    text, CiteID=92565)
+  read: oscn.net CiteID=92565, sha256 1175f5fac9aeb6e4... (downloaded twice, identical), the words found verbatim 2026-10-25
+  closest_sha256: none
+- pack: knowledge/states/or/2024.yaml
+  where: tax.tax_line
+  span: Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.
+  reason: 'the sentence runs across a page break: the text layer puts the page 17 header ''150-101-040-1 (Rev. 12-13-24) 17
+    2024 Form OR-40 Instructions'' between ''less than'' and ''$50,000.'''
+  read: 2024 Form OR-40 Instructions pp. 16-17, sha256 697d45e372fa352d... (downloaded twice), read 2026-10-25
+  closest_sha256: 697d45e372fa352d
+- pack: knowledge/states/or/2025.yaml
+  where: tax.tax_line
+  span: Tax tables. Use the tax tables to find your tax if your taxable income on line 19 is less than $50,000.
+  reason: 'the sentence runs across a page break: the text layer puts the page 17 running header between ''less than'' and
+    ''$50,000.'''
+  read: 2025 Form OR-40 Instructions pp. 16-17, sha256 4ee45bad719499e2... (downloaded twice), read 2026-10-25
+  closest_sha256: 4ee45bad719499e2

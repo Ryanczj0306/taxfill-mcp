@@ -100,6 +100,10 @@ credits:
     source: NCDOR 2025 D-401 Individual Income Tax Instructions (Instructions for Form D-400TC, Part 1) and 2025
       Form D-400 Line 16
     url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 2bf6e0b44e628a05...
+  citations:
+  - source: 'NCDOR 2025 Form D-400, Line 16'
+    url: https://www.ncdor.gov/2025-d-400-web-filled-version/open
 - name: Tax Credit for Rehabilitating Historic Structures (Articles 3D / 3H / 3L)
   type: nonrefundable
   eligibility: Narrow / not broadly applicable to ordinary residents. Available to taxpayers who incur qualified
@@ -334,6 +338,11 @@ sources:
     Line 16
   - NCDOR 2025 D-401 Instructions (Form D-400TC credits; What You Should Send Us — NC-478/NC-Rehab; "What Form Should
     I File?" form list)
+- id: credits-2
+  topic: credits
+  url: https://www.ncdor.gov/2025-d-400-web-filled-version/open
+  descriptions:
+  - 'NCDOR 2025 Form D-400, Line 16'
 - id: logistics-1
   topic: filing_logistics
   url: https://www.ncdor.gov/2025-d-401-individual-income-tax-instructions/open

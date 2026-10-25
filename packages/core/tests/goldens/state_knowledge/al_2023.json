@@ -1,5 +1,6 @@
 {
  "_strings": {
+  "@@0b419cf6fdaa": "Treaty conformity — AL does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by AL. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: Alabama does NOT start the return from federal adjusted gross income. Both the resident Form 40 and the nonresident Form 40NR build Alabama income from their own line items computed under Alabama law (Form 40NR Line 5 'Wages, Salaries, Tips, Etc.' from Schedule W-2; Line 6/8 'Other Income'; separate interest/dividend lines), not by importing a federal AGI figure. Because the federal-AGI-conformity flow-through does not exist here, a treaty exclusion that is already netted out of federal AGI does NOT automatically carry to the Alabama return. The 23f40nrbk.pdf booklet (page 12, Line 8) is explicit on the only foreign-income mechanism it recognizes: 'All foreign income must be reported on your return, in order to receive any foreign income exclusion,' and that exclusion is the IRC sec. 911 foreign EARNED income exclusion, claimed as a separate negative-line credit with federal Form 2555 attached. There is NO Alabama line, schedule, or instruction that recognizes or excludes income exempt under a U.S. income-TAX TREATY. Given (a) the separate Alabama income build-up rather than a federal-AGI start, and (b) the affirmative report-all-foreign-income rule with only a sec. 911-style exclusion path, conformity to federal treaty exemptions is NOT established on any .gov page. Per conservative handling this is set false and flagged. See unverified/notes.",
   "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
   "@@4518b9b4a6d4": "Rural Physician Credit — Licensed physicians who practice and reside in a small or rural Alabama community of fewer than 25,000 residents, with admission privileges to a 'small or rural hospital' that has an emergency room (acute care hospital with fewer than 105 beds, located more than 20 miles from another acute care facility, or receiving Medicare rural reimbursement). Does not apply to physicians who met the requirements on/before May 5, 1993, nor to a physician who previously practiced in such a community unless they return after practicing in a large/urban community for at least three years.",
   "@@4cf945d1e9e4": "Credit amounts/limits are not independently verified: State credits were researched from the cited DOR sources and are not tax advice — confirm each amount and your eligibility at the cited source before claiming it.",
@@ -15,7 +16,6 @@
   "@@adf3d8778164": "Alabama Department of Revenue, 2023 Form 40NR Booklet, What's New For 2023 (p.2): 'Retirement Exemption - Act 2022-294 Effective Jan 1, 2023, exempts the first $6,000 of taxable retirement income for those 65 years of age or older'; the 2023 Form 40 Booklet prints the same text (p.2).",
   "@@aeb2652deff4": "Form 40NR — Alabama Individual Income Tax Return (Nonresidents Only). Part-year residents file the resident Form 40 (reporting only the resident-period income); a person who is part-year resident AND has nonresident-period Alabama-source income files BOTH Form 40 and Form 40NR.",
   "@@c4158fd647aa": "Alabama Adoption Tax Credit — Taxpayers who reside in Alabama and complete an adoption. Two cases: (1) a private adoption in which the adopted child is a resident of Alabama, or a qualified foster child in the permanent legal custody of the Alabama Department of Human Resources; (2) an out-of-state adoption or where the adopted child is not otherwise an Alabama resident. Schedule AAC must be completed.",
-  "@@ce1671ffe97d": "Treaty conformity — AL does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by AL. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: Alabama does NOT start the return from federal adjusted gross income. Both the resident Form 40 and the nonresident Form 40NR build Alabama income from their own line items computed under Alabama law (Form 40NR Line 5 'Wages, Salaries, Tips, Etc.' from Schedule W-2; Line 6/8 'Other Income'; separate interest/dividend lines), not by importing a federal AGI figure. Because the federal-AGI-conformity flow-through does not exist here, a treaty exclusion that is already netted out of federal AGI does NOT automatically carry to the Alabama return. The 23f40nrbk.pdf booklet (page 12, Line 8) is explicit on the only foreign-income mechanism it recognizes: 'All foreign income must be reported on your return, in order to receive any foreign income exclusion,' and that exclusion is the IRC sec. 911 foreign EARNED income exclusion, claimed as a separate negative-line credit with federal Form 2555 attached. There is NO Alabama line, schedule, or instruction that recognizes or excludes income exempt under a U.S. income-TAX TREATY. Given (a) the separate Alabama income build-up rather than a federal-AGI start, and (b) the affirmative 'report all foreign income' rule with only a sec. 911-style exclusion path, conformity to federal treaty exemptions is NOT established on any .gov page. Per conservative handling this is set false and flagged. See unverified/notes.",
   "@@d06f142b5504": "2023 Form 40NR Booklet (Nonresidents) — domicile/residency definitions, Section 1; filing thresholds (p.4); When To File / automatic extension (p.5); Income & line-by-line incl. Line 8 Foreign Income Exclusion / 'all foreign income must be reported' (pp.7-12); Where To File and check payee (pp.10-11)",
   "@@e192a8ff489e": "Credit for Taxes Paid to Another State — Legal residents of Alabama filing Form 40 who have income from sources outside Alabama that is taxed by BOTH Alabama and another U.S. state or territory in the same tax year. (Part-year residents only if the AL and other-state returns cover the same period. No credit for income from a state with no income tax, or where the out-of-state income is fully offset by a corresponding deduction. A separate procedure/Schedule OC Section B applies to foreign-country tax.)",
   "@@eab2ce4c8add": "If any of your income was exempt from federal tax under a treaty: AL does not conform to federal tax treaties, so that income is still taxable to AL — do not carry the federal exclusion onto the state return.",
@@ -448,6 +448,18 @@
      "cadence": "@@a95a8e4caa2e",
      "topic": "forms_and_instructions",
      "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23schocinstr.pdf"
+    },
+    {
+     "answers": "Alabama DOR 2023 Form 40 (resident return), page 1 lines 16-17",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/wp-content/uploads/2024/01/23f40.pdf"
+    },
+    {
+     "answers": "Alabama DOR FAQ: What is Alabama's Individual Income Tax Rate?",
+     "cadence": "@@a95a8e4caa2e",
+     "topic": "forms_and_instructions",
+     "url": "https://www.revenue.alabama.gov/faqs/what-is-alabamas-individual-income-tax-rate/"
     }
    ],
    "topic": "forms_and_instructions",
@@ -603,7 +615,7 @@
      "state": "AL",
      "warnings": [
       "@@4cf945d1e9e4",
-      "@@ce1671ffe97d",
+      "@@0b419cf6fdaa",
       "@@75c411dc6207",
       "@@4f300cb7706e",
       "Remote-work trap: work performed from TX for an employer sitting in AL. If AL applies a convenience-of-the-employer sourcing rule (New York's is the best-known), it can source those wages to AL and require a NONRESIDENT AL return that the physical footprint alone never shows — and the W-2's Box 15 often already names AL. This AL pack year carries no researched convenience rule: verify AL's nonresident wage-sourcing rule at its DOR before assuming no AL filing."
@@ -663,7 +675,7 @@
      "state": "AL",
      "warnings": [
       "@@4cf945d1e9e4",
-      "@@ce1671ffe97d",
+      "@@0b419cf6fdaa",
       "@@75c411dc6207",
       "@@4f300cb7706e"
      ]

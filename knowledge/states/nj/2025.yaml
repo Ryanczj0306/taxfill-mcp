@@ -10,7 +10,7 @@ treaty_note: 'New Jersey does NOT start from federal AGI. The NJ Gross Income Ta
   NOT automatically pass through. The word "treaty" appears ZERO times in the 2025 NJ-1040 instruction booklet (re-counted
   this session across all 70 pages), and NJ''s Gross Income Tax Act contains no provision recognizing federal income
   tax treaties, so federally treaty-exempt wages are generally still taxable for NJ purposes. This puts NJ in the
-  "builds income from scratch, no treaty pass-through" category -> conforms_to_federal_treaties = false. (Conservative
+  builds-income-from-scratch, no-treaty-pass-through category -> conforms_to_federal_treaties = false. (Conservative
   reading; the precise NJ treatment of a specific treaty article should be confirmed at the DOR.)'
 citation:
   source: 2025 NJ-1040 Resident Income Tax Return Instructions (NJ Division of Taxation, 70-page booklet, PDF build
@@ -269,7 +269,7 @@ tax:
     head of household; qualifying widow(er)/surviving CU partner). NOT modeled — the brackets tax from the first dollar,
     so below-threshold filers would be overstated; file only to recover withholding or refundable credits.'
   - 'CRITICAL — printed-constant divergence (Table B only), the famous misprint constant PERSISTS FOR 2025: the $70,000-$80,000
-    bracket prints ''multiply by .035, subtract $1,154.50'', but the exact cumulative constant is $1,155.00 (20,000
+    bracket prints a .035 multiplier and a $1,154.50 subtraction, but the exact cumulative constant is $1,155.00 (20,000
     x .014 = 280.00, plus 30,000 x .0175 = 525.00, plus 20,000 x .0245 = 490.00 = 1,295.00 at $70,000, and .035 x
     70,000 = 2,450.00, so the exact subtraction is 2,450.00 - 1,295.00 = 1,155.00). The printed schedule therefore
     yields $0.50 MORE than exact marginal-bracket math everywhere inside that bracket, and rejoins exactly at $80,000

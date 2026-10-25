@@ -2035,7 +2035,8 @@ form_lines:
     line_source: draft Created 8/19/26
     url: https://www.irs.gov/pub/irs-dft/f1040--dft.pdf
     read: '2026-09-27'
-    printed: 19 hild tax credit or credit for other dependents from Schedule 8812
+    # Phase K JK31 (2026-10-25): `printed` re-read on the face (e044e765ace334c7..., downloaded twice, identical sha256); the caption had lost its first letter.
+    printed: 19 Child tax credit or credit for other dependents from Schedule 8812
   f1040.eic:
     line: 27a
     line_source: draft Created 8/19/26
@@ -2047,7 +2048,8 @@ form_lines:
     line_source: draft Created 8/19/26
     url: https://www.irs.gov/pub/irs-dft/f1040--dft.pdf
     read: '2026-09-27'
-    printed: 28 dditional child tax credit (ACTC) from Schedule 8812
+    # Phase K JK31 (2026-10-25): `printed` re-read on the face (e044e765ace334c7..., downloaded twice, identical sha256); the caption had lost its first letter.
+    printed: 28 Additional child tax credit (ACTC) from Schedule 8812
   f1040.sched_1a:
     line: 13a
     line_source: draft Created 8/19/26

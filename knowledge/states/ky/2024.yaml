@@ -59,7 +59,7 @@ credits:
     qualifying children). Available even to someone claimed as a dependent on a parent's return (family size 1).
     To get ANY credit, 2024 MGI must be at or below $20,030 (family of 1), $27,185 (family of 2), $34,341 (family
     of 3), or $41,496 (family of 4+) — the packet's line 20/21 instructions say "If your total MGI is $41,496 or
-    less, you may qualify."
+    less, you may qualify for Kentucky Family Size Tax Credit."
   amount: Calculated tax (Form 740 line 19) multiplied by a credit percentage from the 2024 Family Size Tax Credit
     Table (Schedule ITC Section C). Percentage is 100% at/below the threshold ($15,060 fam.1 / $20,440 fam.2 / $25,820
     fam.3 / $31,200 fam.4+) and steps down 90/80/70/60/50/40/30/20/10/0% as MGI rises through the table bands, reaching
@@ -73,6 +73,10 @@ credits:
     source: Kentucky Department of Revenue — 2024 Form 740 instruction packet (42A740(PKT)) What's New + lines 20-21,
       and 2024 Schedule ITC (42A740-ITC), Section C Family Size Tax Credit Table (Tax Year 2024 bands)
     url: https://revenue.ky.gov/Forms/Schedule%20ITC%20(2024).pdf
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 49564b8a0060453e...
+  citations:
+  - source: 'Kentucky DOR 2024 Form 740 instruction packet, lines 20-21 (Family Size Tax Credit)'
+    url: https://revenue.ky.gov/Forms/740%20instructions%20packet%20(2024).pdf
 - name: Child and Dependent Care Credit
   type: nonrefundable
   eligibility: Residents who qualified for and claimed the federal child and dependent care credit on federal Form

@@ -101,6 +101,10 @@ credits:
   citation:
     source: 'Vermont Department of Taxes - Tax Credits and Adjustments for Individuals page (''The Vermont tax credit is 24% of the federal Credit for the Elderly or the Disabled'') and the 2025 Form IN-111 Instructions, Line 9 (Schedule IN-119, Part I subtractions include the Credit for the Elderly or the Disabled)'
     url: https://tax.vermont.gov/individuals/personal-income-tax/tax-credits
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 e56ef973b1831973...
+  citations:
+  - source: 'Vermont Department of Taxes 2025 Form IN-111 Instructions, Line 9'
+    url: https://tax.vermont.gov/sites/tax/files/documents/IN-111-Instr-2025.pdf
 mailing_addresses:
   refund_or_no_payment: Vermont Department of Taxes, PO Box 1881, Montpelier, VT 05601-1881
   with_payment: 'Vermont Department of Taxes, PO Box 1779, Montpelier, VT 05601-1779 (attach your check to the lower left side of the return)'
@@ -223,7 +227,7 @@ tax:
     exactly and whose UNROUNDED constants (1,654.90 / 6,294.70 / 16,174.70 and 2,763.75 / 10,482.45 / 18,428.25) equal
     the exact cumulative bracket sums this engine computes. Unlike TY2024, direct https fetches of tax.vermont.gov
     succeeded with a browser User-Agent, so both documents are live official copies rather than Wayback captures.'
-  - 'Printed-constant divergence: the schedules'' ''VT Base Tax'' constants are whole-dollar roundings of the exact
+  - 'Printed-constant divergence: the schedules'' VT Base Tax constants are whole-dollar roundings of the exact
     cumulative sums (Y-1 at 82,500 prints 2,764.00 vs exact 2,763.75; X at 49,400 prints 1,655.00 vs exact 1,654.90;
     Y-2 at 152,000 prints 9,214.00 vs exact 9,214.125; Z at 66,200 prints 2,218.00 vs exact 2,217.70), so form arithmetic
     using the printed constants can differ from this op''s exact marginal math by up to $1. The booklet''s own $85,000
@@ -416,6 +420,7 @@ sources:
   descriptions:
   - Vermont Department of Taxes - 2025 Form IN-111 Instructions, Renter Credit Claim section (three eligibility
     requirements; April 15, 2026 due date, late-file to Oct. 15, 2026) and the Renter Credit page
+  - 'Vermont Department of Taxes 2025 Form IN-111 Instructions, Line 9'
 - id: credits-4
   topic: credits
   url: https://tax.vermont.gov/individuals/personal-income-tax/tax-credits

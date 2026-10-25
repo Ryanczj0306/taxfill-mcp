@@ -10,6 +10,12 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   forms.part_year_or_nonresident: tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf ecc89af2be267c39 — the boxes as the instructions name them
+#   tax.tax_line: tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf ecc89af2be267c39 — the run-in head's dash
+#   treaty_note: tax.wv.gov/Documents/PIT/2024/it140.PersonalIncomeTaxFormsAndInstructions.2024.pdf ecc89af2be267c39 — Schedule M's line, not abbreviated
 jurisdiction: states/wv
 tax_year: 2024
 income_tax: true
@@ -20,7 +26,7 @@ treaty_note: 'WV''s resident return (Form IT-140) starts from federal adjusted g
   Federally treaty-exempt income is already excluded from FAGI and flows through. WV''s Schedule M "Modifications
   Increasing Federal Adjusted Gross Income" (lines 53-60) lists ONLY: interest/dividends on federal obligations
   exempt from federal but not state tax; interest/dividends on non-WV state/local bonds; interest on money borrowed
-  to buy WV-exempt bonds; 402(e) lump-sum distributions; "other income deducted from FAGI but subject to state tax"
+  to buy WV-exempt bonds; 402(e) lump-sum distributions; "Other income deducted from federal adjusted gross income but subject to state tax"
   (example given is IRC Section 199 income); and savings-plan/ABLE/Jumpstart withdrawals. There is NO add-back for
   tax-treaty income, foreign/nonresident-alien treaty income, or income excluded under a US tax treaty. Therefore
   treaty-exempt income is NOT re-taxed by WV -> conforms = true.'
@@ -45,7 +51,7 @@ residency:
     are not required to file.'
 forms:
   resident: Form IT-140 (West Virginia Personal Income Tax Return) - check "Resident" status
-  part_year_or_nonresident: Form IT-140 (check "Filing as Nonresident" or "Filing as Part-Year Resident"), completed
+  part_year_or_nonresident: Form IT-140 (check "Filing as Nonresident" or "Filing as a Part-Year Resident"), completed
     together with Schedule A (Form IT-140), "Nonresidents/Part-Year Residents Schedule of Income." (Nonresident
     composite filers use Form IT-140NRC.)
 credits_verification: State credits were researched from the cited DOR sources and are not tax advice — confirm
@@ -157,6 +163,9 @@ all_citations:
   url: https://tax.wv.gov/Documents/PIT/2024/it140.schedule-A.2024.pdf
 - source: WV Tax Division - Individuals page (forms portal)
   url: https://tax.wv.gov/Individuals
+# Phase K JK31 (2026-10-25): the rate note quotes the statute; downloaded twice, identical sha256 text 44ab40dac501f83a...
+- source: 'W. Va. Code §11-21-4g (rates; retroactivity)'
+  url: https://code.wvlegislature.gov/11-21-4g/
 unverified:
 - Exact mytaxes.wvtax.gov URL path/label for paying personal income tax may change; instructions say visit mytaxes.wvtax.gov
   and click 'Pay Personal Income Tax.' Confirm current portal at the DOR.
@@ -202,9 +211,8 @@ tax:
     - {over: 60000, but_not_over: null, rate: 0.0512}
   base: state_gross_income
   tax_line: 'Form IT-140 line 8: ''Income Tax Due (Check One)'' with method checkboxes ''Tax Table'', ''Rate Schedule'',
-    ''Nonresident/Part-Year Resident Calculation Schedule''. Line 7 feeding it reads ''West Virginia Taxable Income
-    (line 4 minus lines 5 & 6) IF LESS THAN ZERO, ENTER ZERO''. Instructions p.24: ''LINE 8 WEST VIRGINIA INCOME TAX.
-    Check the appropriate box to indicate the method you used to calculate your tax.'''
+    ''Nonresident/Part-year resident calculation schedule''. Line 7 feeding it reads ''West Virginia Taxable Income
+    (line 4 minus lines 5 & 6) IF LESS THAN ZERO, ENTER ZERO''. Instructions p.24: ''LINE 8 WEST VIRGINIA INCOME TAX - Check the appropriate box to indicate the method you used to calculate your tax.'''
   exemptions:
     personal:
       amount: 2000

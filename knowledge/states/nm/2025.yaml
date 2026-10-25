@@ -102,7 +102,7 @@ credits:
 - name: Special Needs Adopted Child Tax Credit
   type: refundable
   eligibility: A taxpayer who files a New Mexico PIT-1, is not a dependent of another taxpayer, adopted a special
-    needs child (certified as a 'difficult to place child' by the NM Children, Youth and Families Department or a
+    needs child (certified as a 'difficult-to-place-child' by the NM Children, Youth and Families Department or a
     licensed child placement agency), and claimed that child as a dependent on the federal return. Attach the
     certificate in the first year claimed for each qualifying child.
   claimed_on: Schedule PIT-RC, New Mexico Rebate and Credit Schedule, line 24 (filed with PIT-1)
@@ -110,6 +110,10 @@ credits:
     source: 2025 PIT-RC Instructions — LINE 24, Special Needs Adopted Child Tax Credit ($1,500 per child; $750 if
       married filing separately), page RC-10, as printed in the Department's 2025 Personal Income Tax Packet
     url: https://www.tax.newmexico.gov/forms-publications/
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 7d578286a047513e...
+  citations:
+  - source: 'NM TRD 2025 PIT-1 Instructions (the PIT-RC line 24 Special Needs Adopted Child Tax Credit)'
+    url: https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf
 mailing_addresses:
   refund_or_no_payment: NM Taxation and Revenue Dept., P.O. Box 25122, Santa Fe, NM 87504-5122 ('Mail refund returns
     and returns without a payment attached to' — 2025 PIT-1 instructions, Where To Mail Paper Returns and Payments)
@@ -297,8 +301,7 @@ tax:
     when it previewed the 2025 table (9,746/14,622/7,310).'
   - 'CRITICAL — the filed line 18 value comes from the MANDATED look-up table, which sits a few dollars BELOW statutory
     marginal math: for line 17 of $100,000 or less the 2025 PIT-TRT table row (in $100 bands, computed at band midpoints)
-    is the filed figure; over $100,000 the TRT continuation schedule CHAINS FROM THE LAST TABLE ROW (''Your Tax is
-    $4,356 + 4.9% of taxable income in excess of $100,000'' single; $4,087 MFJ/HoH; $4,492 MFS; then $9,746/$14,622/$7,310
+    is the filed figure; over $100,000 the TRT continuation schedule CHAINS FROM THE LAST TABLE ROW (single: your tax is $4,356 + 4.9% of taxable income in excess of $100,000; $4,087 MFJ/HoH; $4,492 MFS; then $9,746/$14,622/$7,310
     + 5.9%) instead of the statutory cumulative ($4,358 / $4,089 / $4,494.50; $9,748 / $14,624 / $7,312), so the filed
     figure runs about $2-$3 below this engine''s statutory bracket math at high incomes. The filed form must take
     the table/schedule value — never plain bracket arithmetic (the NM hand-fill pack''s line 18 carries the same mandate).'
@@ -465,6 +468,11 @@ sources:
     ($1400)'), page RC-10, as printed in the Department's 2025 Personal Income Tax Packet
   - 2025 PIT-RC Instructions — LINE 24, Special Needs Adopted Child Tax Credit ($1,500 per child; $750 if married
     filing separately), page RC-10, as printed in the Department's 2025 Personal Income Tax Packet
+- id: credits-2
+  topic: credits
+  url: https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf
+  descriptions:
+  - 'NM TRD 2025 PIT-1 Instructions (the PIT-RC line 24 Special Needs Adopted Child Tax Credit)'
 - id: logistics-1
   topic: filing_logistics
   url: https://realfile.tax.newmexico.gov/2025pit-1-ins.pdf

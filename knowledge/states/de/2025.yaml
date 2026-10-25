@@ -90,7 +90,8 @@ credits:
   type: nonrefundable
   eligibility: 'Resident individuals are allowed a credit for each personal exemption. If you were not required to
     file a federal return, "enter $110 for each spouse reporting income plus $110 for each person who could have been
-    listed as a dependent." NOT available if you are claimed as a dependent on another person''s return. The number
+    listed as a dependent had you been required to file a federal return." NOT available if you are claimed as a
+    dependent on another person''s return. The number
     of personal credits is verified against the federal return with the IRS.'
   claimed_on: 'Form PIT-RES, Line 27a'
   citation:
@@ -332,7 +333,7 @@ tax:
     tax_after_line: '33'
     limited_to_tax_line: '26'
     notes:
-    - 'Line 27a is ONE count on the form ("Enter number of exemptions x $110"): enter personal + dependent there; line
+    - 'Line 27a is ONE count on the form ("Enter number of exemptions" [a box] "x $110"): enter personal + dependent there; line
       27b is the 60-or-over count. Lines 27a and 27b are not totaled on a line of their own: line 32 adds them to
       lines 28-31, and line 33 subtracts line 32 from line 26. Instructions p. 10: "The total of all non-refundable
       credits (Lines 27a through 31) is limited to the amount of your Delaware tax liability on Line 26."'
@@ -361,8 +362,7 @@ tax:
     or subtractions, Line 12 equals federal AGI. The op then subtracts the shipped per-status standard deduction to
     reproduce Line 23 taxable income (Line 23 = Line 12 - Line 22 total deductions).'
   - 'NO income-based exemptions are shipped (exemptions = {}): Delaware''s per-person allowances are TAX CREDITS,
-    not subtractions from income. 2025 Form PIT-RES Line 27a Personal Credits = $110 x the number of exemptions (''Enter
-    number of exemptions ___ x $110''; e.g. MFJ with no dependents = $220), and Line 27b Additional Personal Credits
+    not subtractions from income. 2025 Form PIT-RES Line 27a Personal Credits = $110 x the number of exemptions (''Enter number of exemptions'' [a box] ''x $110''; e.g. MFJ with no dependents = $220), and Line 27b Additional Personal Credits
     = $110 per taxpayer/spouse age 60 or over on December 31, 2025 — both are subtracted from the Line 26 total tax,
     not from income. calc.state_tax applies them past the tax line when exemption_credit_counts is passed
     (tax.exemption_credits, Phase K JK28); exemptions_count and dependents_count must be 0 for this pack. A filer claimed as a dependent on another person''s return gets $0 personal

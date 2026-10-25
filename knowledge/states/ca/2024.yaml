@@ -13,6 +13,13 @@
 #     booklet / standalone 2024 Form 540 PDF (two-pass; unlike the 2023 pack,
 #     the re-fetch was NOT blocked — no 403 caveat carries over).
 
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.exemption_credits.notes[3]: ftb.ca.gov/forms/2024/2024-540nr.pdf 9190db55443829e4 — the face prints each line number apart from its caption; re-pointed to the Form 540NR face
+#   tax.tax_line: ftb.ca.gov/forms/2024/2024-540-booklet.pdf 446372719f6e1ce9 — Schedule X's column heads as printed
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[10] (a template of the schedule's rows, not a quote)
 jurisdiction: states/ca
 tax_year: 2024
 income_tax: true
@@ -138,6 +145,9 @@ all_citations:
   url: https://www.ftb.ca.gov/forms/2024/2024-1031-publication.pdf
 - source: 2024 form FTB 3514 booklet, California Earned Income Tax Credit (CalEITC / YCTC / FYTC details)
   url: https://www.ftb.ca.gov/forms/2024/2024-3514-booklet.html
+# Phase K JK31 (2026-10-25): the exemption-credit note quotes the 540NR face; downloaded twice, identical sha256 9190db55443829e4...
+- source: 'FTB 2024 Form 540NR, page 2 lines 38-40'
+  url: https://www.ftb.ca.gov/forms/2024/2024-540nr.pdf
 unverified:
 - The FTB 3514 booklet was confirmed reachable but its line-level 2024 CalEITC/YCTC computation tables were not
   transcribed; the $31,951 earned-income ceiling comes from the 2024 Form 540 booklet's What's New section. Confirm
@@ -198,11 +208,9 @@ tax:
     - {over: 588593, but_not_over: 980987, rate: 0.113}
     - {over: 980987, but_not_over: null, rate: 0.123}
   base: federal_agi
-  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13: ''Line 31 – Tax. To figure your tax, use one or more of the
-    following methods...: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning
+  tax_line: 'Form 540, line 31 ''Tax''. Booklet p. 13, Line 31 – Tax: ''To figure your tax, use one or more of the following methods and check the matching box(es) on line 31, as applicable: Tax Table – If your taxable income on line 19 is $100,000 or less, use the tax table beginning
     on page 69... Tax Rate Schedules – If your taxable income on line 19 is over $100,000, use the tax rate schedule
-    for your filing status on page 75.'' Rate schedule header (p. 75): ''If the amount on Form 540, line 19 is over
-    – / but not over – / Enter on Form 540, line 31 [$X + Y% ] of the amount over –''. Line 19 = line 17 (California
+    for your filing status on page 75.'' Rate schedule header (p. 75): ''over – but not over – Enter on Form 540, line 31 [$X + Y%] of the amount over –''. Line 19 = line 17 (California
     AGI) minus line 18 (larger of California itemized deductions or California standard deduction); ''Subtract line
     18 from line 17. This is your taxable income. If less than zero, enter -0-''.'
   exemptions: {}
@@ -319,10 +327,7 @@ tax:
     - 'RDPs: "For purposes of computing limitations based upon AGI, RDPs recalculate their AGI using a federal pro
       forma Form 1040 or Form 1040-SR, or California RDP Adjustments Worksheet (located in FTB Pub. 737)." (booklet p.
       14) — pass that recalculated AGI as federal_agi.'
-    - 'Form 540 lines only. Form 540NR prints the same lines 7-11 and amounts, then prorates the credits: "38 CA
-      Exemption Credit Percentage. Divide line 35 by line 19. If more than 1, enter 1.0000"; "39 CA Prorated Exemption
-      Credits. Multiply line 11 by line 38. If the amount on line 13 is more than $244,857, see instructions"; "40 CA
-      Regular Tax Before Credits. Subtract line 39 from line 37. If less than zero, enter -0-" (2024 Form 540NR). For
+    - 'Form 540 lines only. Form 540NR prints the same lines 7-11 and amounts, then prorates the credits: line 38 "CA Exemption Credit Percentage. Divide line 35 by line 19. If more than 1, enter 1.0000"; line 39 "CA Prorated Exemption Credits. Multiply line 11 by line 38. If the amount on line 13 is more than $244,857, see instructions"; line 40 "CA Regular Tax Before Credits. Subtract line 39 from line 37. If less than zero, enter -0-" (2024 Form 540NR, page 2). For
       a 540NR return use exemption_amount (line 11) and compute lines 38-40 on that form; total and tax_after_credits
       are Form 540''s lines 32 and 33.'
   notes:
@@ -372,7 +377,7 @@ tax:
     notably California does NOT conform to federal income tax treaties (treaty-exempt income is added back), disallows
     the foreign earned income exclusion and foreign tax credit, and subtracts items like Social Security benefits.
     Registered domestic partners (RDPs) file using the married/RDP statuses with recalculated federal amounts.'
-  - 'Printed ''$X + Y% of amount over $Z'' constants verified against cumulative bracket sums: all 27 constants match
+  - 'Printed $X + Y% of amount over $Z constants verified against cumulative bracket sums: all 27 constants match
     to the cent (largest print-rounding divergence $0.004, on Schedule X''s $30,083.65 / $37,512.83 / $70,116.38 and
     Schedule Y''s $60,167.30 / $140,232.77 constants) — bracket math and the printed schedule agree.'
   - 'Rounding: the booklet''s worked example (p. 75) rounds the schedule result to whole dollars for line 31 ($4,920.48

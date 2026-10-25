@@ -112,6 +112,10 @@ credits:
     source: Missouri Department of Revenue - Food Pantry Tax Credit (FPT) program page and 2025 MO-1040 instruction
       booklet (Form MO-A Part 1 Line 4; Form MO-TC credit code FPT / Form MO-FPT)
     url: https://dor.mo.gov/tax-credits/fpt.html
+  # Phase K JK31 (2026-10-25): the credit quotes this form face's caption; its citation names the instructions; downloaded twice, identical sha256 99b1d607e1c9c762...
+  citations:
+  - source: 'Missouri DOR 2025 MO-1040 instruction booklet (Form MO-A, Part 1, Line 4)'
+    url: https://dor.mo.gov/forms/MO-1040%20Instructions_2025.pdf
 mailing_addresses:
   refund_or_no_payment: 'Department of Revenue, P.O. Box 500, Jefferson City, MO 65105-0500 (refund or no amount
     due). Note — returns printed from the Department''s 2-D barcode / fill-in auto-calculating forms use different
@@ -336,8 +340,7 @@ effective_law_changes:
     Missouri's TOP INDIVIDUAL RATE was cut AGAIN for tax year 2025, to 4.7% (2024: 4.8%; 2023:
     4.95%), with the 2025 Tax Chart's income steps re-indexed to $1,313 increments (2024:
     $1,273) — breakpoints $1,313 / $2,626 / $3,939 / $5,252 / $6,565 / $7,878 / $9,191 and
-    printed constants $26 / $59 / $98 / $144 / $197 / $256, the top bracket reading "over
-    $9,191 -> $256 plus 4.7% of the excess over $9,191". Verified against both the 2025 MO-1040
+    printed constants $26 / $59 / $98 / $144 / $197 / $256, the top bracket reading "Over $9,191" … "$256 plus 4.7% of the excess over $9,191". Verified against both the 2025 MO-1040
     instructions p.21 and the identical 2025 MO-1040A chart, and corroborated a third time by
     the booklet's composite-return note, "The tax rate for a composite return is 4.7 percent."
     Missouri remains graduated, not flat, with a 0% band up to $1,313.
@@ -453,6 +456,7 @@ sources:
     Tax Credit Chart pp.50-52
   - Missouri Department of Revenue - 2025 Form MO-1040 instruction booklet, Line 44 Missouri Working Family Tax
     Credit and Form MO-WFTC
+  - 'Missouri DOR 2025 MO-1040 instruction booklet (Form MO-A, Part 1, Line 4)'
 - id: credits-2
   topic: credits
   url: https://dor.mo.gov/tax-credits/fpt.html

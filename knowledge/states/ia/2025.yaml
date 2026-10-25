@@ -91,6 +91,10 @@ credits:
     source: Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Child and Dependent Care Credit or Early
       Childhood Development Credit'
     url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 f84cda0f75124ad8...
+  citations:
+  - source: 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 25 page (its Line 24 names)'
+    url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-earned-income-tax-credit
 - name: Early Childhood Development Credit
   type: refundable
   eligibility: Residents with Iowa taxable income (IA 1040 line 4) of less than $90,000 who paid qualifying early
@@ -100,6 +104,10 @@ credits:
   citation:
     source: Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, 'Early Childhood Development Credit'
     url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 f84cda0f75124ad8...
+  citations:
+  - source: 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 25 page (its Line 24 names)'
+    url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-earned-income-tax-credit
 - name: Tuition and Textbook Credit (K-12)
   type: nonrefundable
   eligibility: A parent/taxpayer who claims a dependent attending grades K-12 at an accredited Iowa school (or receiving
@@ -129,6 +137,16 @@ credits:
       senior deduction add-back); box wording from the "Line 04" and "Line 25" pages (Instruction Year 2025); box
       location from the 2025 IA 1040 page 2 (41-001b 10/14/2025), https://revenue.iowa.gov/media/4400/download?inline
     url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/whats-new
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 b3708d094ec05f0e...
+  citations:
+  - source: 'Iowa Department of Revenue 2025 IA 1040 (41-001b 10/14/2025), the Step 5 box caption'
+    url: https://revenue.iowa.gov/media/4400/download?inline
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 f84cda0f75124ad8...
+  - source: 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 25 page'
+    url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-earned-income-tax-credit
+  # Phase K JK31 (2026-10-25): the credit quotes this document; its citation names another; downloaded twice, identical sha256 f9f0a089d11be0ef...
+  - source: 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 04 page'
+    url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-taxable-income
 mailing_addresses:
   refund_or_no_payment: Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187
   with_payment: Iowa Income Tax Document Processing, PO Box 9187, Des Moines IA 50306-9187 (include an IA 1040V Payment
@@ -180,6 +198,12 @@ all_citations:
   url: https://www.legis.iowa.gov/docs/iac/rule/02-22-2023.701.300.17.pdf
 - source: Iowa Department of Revenue - Individual Taxes (filing due date April 30)
   url: https://revenue.iowa.gov/taxes/file-my-taxes/individual-taxes
+# Phase K JK31 (2026-10-25): the exemption-credit notes quote this page; downloaded twice, identical sha256 5e02f5f0bca69fe4...
+- source: 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Step 3 page (lines a-d)'
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/exemption-credits
+# Phase K JK31 (2026-10-25): the exemption-credit notes quote this page; downloaded twice, identical sha256 ca24b31cd0b972df...
+- source: 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 08 page'
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/total-exemption-credit
 unverified:
 - The 2025 IA 126 (nonresident/part-year credit schedule) itself was not fetched; its treatment is summarized from
   the IA 1040 form and expanded instructions.
@@ -448,6 +472,22 @@ sources:
   - Iowa Department of Revenue — 2025 IA 1040 Expanded Instructions, low-income exemption / What's New (federal
     senior deduction add-back); box wording from the "Line 04" and "Line 25" pages (Instruction Year 2025); box
     location from the 2025 IA 1040 page 2 (41-001b 10/14/2025), https://revenue.iowa.gov/media/4400/download?inline
+- id: credits-2
+  topic: credits
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-earned-income-tax-credit
+  descriptions:
+  - 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 25 page (its Line 24 names)'
+  - 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 25 page'
+- id: credits-3
+  topic: credits
+  url: https://revenue.iowa.gov/media/4400/download?inline
+  descriptions:
+  - 'Iowa Department of Revenue 2025 IA 1040 (41-001b 10/14/2025), the Step 5 box caption'
+- id: credits-4
+  topic: credits
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/iowa-taxable-income
+  descriptions:
+  - 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 04 page'
 - id: logistics-1
   topic: filing_logistics
   url: https://revenue.iowa.gov/media/4400/download?inline
@@ -496,6 +536,16 @@ sources:
   url: https://revenue.iowa.gov/taxes/file-my-taxes/individual-taxes
   descriptions:
   - Iowa Department of Revenue - Individual Taxes (filing due date April 30)
+- id: forms-11
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/exemption-credits
+  descriptions:
+  - 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Step 3 page (lines a-d)'
+- id: forms-12
+  topic: forms_and_instructions
+  url: https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/1040-expanded-instructions/total-exemption-credit
+  descriptions:
+  - 'Iowa Department of Revenue 2025 IA 1040 Expanded Instructions, the Line 08 page'
 - id: rates-1
   topic: tax_rates_and_brackets
   url: https://revenue.iowa.gov/media/4400/download?inline

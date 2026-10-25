@@ -155,6 +155,9 @@ all_citations:
   url: https://www.tax.virginia.gov/sites/default/files/vatax-pdf/2025-763-instructions.pdf
 - source: Virginia Tax - individual income tax payment options (eForms / Individual Online Services / web payments)
   url: https://www.tax.virginia.gov/payments
+# Phase K JK31 (2026-10-25): the tax_line quotes the face; downloaded twice, identical sha256 bb271a15f9ad173e...
+- source: 'Virginia Tax 2025 Form 760, Line 16'
+  url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/760-2025.pdf
 unverified:
 - 'The 2025 Form 760 itself (the fillable return PDF) was NOT retrieved this session: the 2024-style URL pattern
   (vatax-pdf/2025-760.pdf) returns 404. Every figure in this pack therefore comes from the two INSTRUCTION booklets
@@ -510,3 +513,9 @@ sources:
     conformity date of December 31, 2025), Line 1 Federal Adjusted Gross Income, Line 9 filing thresholds, Line
     11 standard deduction chart, Line 12 exemptions ($930 / $800), Tax Rate Schedule p. 35, Payment Options, mailing
     addresses, May 1 2026 due date
+# Phase K JK31 (2026-10-25): a citation added inline by JK31 (the quote fix wave).
+- id: forms-7
+  topic: forms_and_instructions
+  url: https://www.tax.virginia.gov/sites/default/files/taxforms/individual-income-tax/2025/760-2025.pdf
+  descriptions:
+  - 'Virginia Tax 2025 Form 760, Line 16'

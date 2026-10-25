@@ -3,6 +3,10 @@
 # conforms_to_federal_treaties: whether federally treaty-exempt income flows through
 # (most states start from federal AGI) or is added back (CA/CT/MD/MS-style). Figures the
 # fetch could not independently confirm are in `unverified` — confirm at the cited source.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+#   tax.tax_line: ksrevenue.gov/pdf/k-4023.pdf a7f14133e87dc0b8 — the face's line 8 caption
 jurisdiction: states/ks
 tax_year: 2023
 income_tax: true
@@ -205,7 +209,7 @@ tax:
     - {over: 15000, but_not_over: 30000, rate: 0.0525}
     - {over: 30000, but_not_over: null, rate: 0.057}
   base: federal_agi
-  tax_line: '2023 Form K-40, Line 8: "Tax (from Tax Tables or Tax Computation Worksheet)". Instructions (booklet p.
+  tax_line: '2023 Form K-40, Line 8: "Tax (from Tax Tables or Tax Computation Schedule)". Instructions (booklet p.
     7): "LINE 8 (Tax): If line 7 is $100,000 or less, use the Tax Tables beginning on page 25 to find the amount of
     your tax. If line 7 is more than $100,000, you will need to use the Tax Computation Worksheet on page 32 to compute
     your tax." Line 7 = Line 3 (KAGI) minus Line 6 (Line 4 standard/itemized deduction + Line 5 exemption allowance);

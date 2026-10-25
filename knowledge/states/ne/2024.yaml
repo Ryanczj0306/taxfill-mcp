@@ -16,6 +16,11 @@
 # standard deduction rises to $8,350 single/MFS, $16,700 MFJ/QSS, $12,250 HoH; (4) Form
 # PTC is now COMMUNITY-COLLEGE-ONLY — LB 34 (2024 special session) moved school district
 # property tax relief onto the property tax statement itself.
+# Phase K JK31 (2026-10-25), the quote fix wave (scripts/check_quotes.py): each quote named below was re-read at
+# its source and corrected to the printed words; every file was downloaded twice with identical sha256 (first 16
+# hex shown, 'text' = an HTML page whose two downloads extract to the same text).
+# Quote marks dropped where the words were a paraphrase, a template or a term, not the source's own:
+#   tax.notes[11] (a template of the printed rows, not a quote)
 jurisdiction: states/ne
 tax_year: 2024
 income_tax: true
@@ -305,7 +310,7 @@ tax:
     with zero boxes is the same $16,700.'
   - Married filing separately is printed with the SAME schedule as Single on the 2024 Tax Calculation Schedule (identical
     breakpoints $3,900/$23,370/$37,670 and constants) — copied from the MFS table, not derived.
-  - The schedule's printed '$X + Y% of excess over $Z' constants are the exact cumulative bracket sums rounded to
+  - The schedule's printed $X + Y% of excess over $Z constants are the exact cumulative bracket sums rounded to
     the nearest cent; maximum divergence from the exact sum is $0.005 (Single/MFS $779.34 vs exact $779.337 and $1,495.77
     vs $1,495.767; MFJ $191.63 vs $191.634, $1,559.48 vs $1,559.481, $2,991.34 vs $2,991.339; HoH $178.84 vs $178.842,
     $1,236.41 vs $1,236.405; the HoH top constant $2,160.75 is exact) — after rounding to whole dollars the results
