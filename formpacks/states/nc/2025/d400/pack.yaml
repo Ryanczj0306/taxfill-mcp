@@ -702,6 +702,8 @@ fields:
   # and the scan models Helvetica at 0.5em (10 x 0.5 x 9 = 45.0pt < 50.99pt
   # -> PASS), which UNDERSTATES monospace Courier. So the cap has to come
   # from the pack; with it, fill_form raises at write time instead.
+  # (Since Phase J JS3c the scan measures Courier at 0.6 em, and since Phase K JEe a value's ink inside the
+  # box's border, so verify now FAILs the 10-character date too; the cap still refuses it at write time.)
   # Deliberately NOT applied to the two sibling signature dates: the same
   # render shows y_d400wf_sigdate2 (54.31pt) printing all 10 characters of
   # "12/31/2025" cleanly, and y_d400wf_sigdate is wider still at 65.05pt, so

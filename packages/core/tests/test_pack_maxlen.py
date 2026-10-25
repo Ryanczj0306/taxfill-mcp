@@ -26,12 +26,16 @@ from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.overlay import text_width
 from taxfill_core.schemas.formpack import load_pack
 from taxfill_core.verify import bound_widget_names, read_text_widgets
+from taxfill_core.textfit import _RSB_COURIER, CUT_TOLERANCE_PT, DEFAULT_FONT_SIZE, ink_extent
 
 FORMPACKS = Path(__file__).resolve().parents[3] / "formpacks"
 PACK_PATHS = sorted(FORMPACKS.glob("**/pack.yaml"))
 
 # (pack, line) -> why the pack budget is tighter than the widget's /MaxLen. The box width and /DA font are the
-# pinned blank's; "fits" is verify's clipping budget, width / (0.5 x font size).
+# pinned blank's; "fits" is what verify's width check holds. Rows written before Phase K JEe (2026-10-24) measured it
+# edge to edge (width / (0.5 x font size), 0.6 for Courier); since JEe the value's ink must end inside the border the
+# viewer draws (1 pt a side), so a budget that filled its box exactly was cut by one glyph (the AL Courier cells, ID
+# preparer.state, MA 43a). test_every_tighter_budget_fits_its_box_by_the_ink_model re-checks every budget.
 TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     **{(f"states/ar/{y}/ar1000f/pack.yaml", "direct_deposit_2.account.17"):
        "the 17th one-character account-number cell (14.6 pt at 9 pt, fits 3); cells 1-16 carry /MaxLen 1, this "
@@ -50,23 +54,23 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     ("states/al/2024/al40/pack.yaml", "SCHOCLINE1PC"):
         "Schedule OC line C1 Department of Education certification number (117.5 pt at Courier 10 fits 19); the widget says 20",
     ("states/al/2024/al40/pack.yaml", "SCHOCLINE2CPL"):
-        "Schedule OC line L2's second address-row cell (54.0 pt at Courier 10 fits 9); the widget says 15",
+        "Schedule OC line L2's second address-row cell (54.0 pt at Courier 10 fits 8 inside its border); the widget says 15",
     ("states/al/2024/al40/pack.yaml", "SCHAATCLN6"):
         "Schedule AATC line 6 date of enrollment (147.8 pt at Courier 10 fits 24); the widget says 30",
     **{("states/al/2024/al40/pack.yaml", k): f"a Schedule AAC Part I / II row cell ({w} pt at Courier 9 fits {n}); the widget says {m}"
        for k, w, n, m in (
            ("SCHAACPRTILN1", 116.7, 21, 30),
-           ("SCHAACPRTILN3", 81.7, 15, 30),
+           ("SCHAACPRTILN3", 81.7, 14, 30),
            ("SCHAACPRTILN4", 118.6, 21, 30),
            ("SCHAACPRTILN5", 149.6, 27, 30),
            ("SCHAACPRTILN6", 180.8, 33, 60),
            ("SCHAACPRTILN7", 116.7, 21, 30),
-           ("SCHAACPRTILN9", 81.7, 15, 30),
+           ("SCHAACPRTILN9", 81.7, 14, 30),
            ("SCHAACPRTILN10", 118.6, 21, 30),
            ("SCHAACPRTILN11", 149.6, 27, 30),
            ("SCHAACPRTILN12", 180.8, 33, 60),
            ("SCHAACPRTILN13", 116.7, 21, 30),
-           ("SCHAACPRTILN15", 81.7, 15, 60),
+           ("SCHAACPRTILN15", 81.7, 14, 60),
            ("SCHAACPRTILN16", 118.6, 21, 30),
            ("SCHAACPRTILN17", 149.6, 27, 30),
            ("SCHAACPRTILN18", 180.8, 33, 60),
@@ -79,17 +83,17 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
            ("SCHAACPRTILN29", 149.6, 27, 30),
            ("SCHAACPRTILN30", 180.8, 33, 60),
            ("SCHAACPRTIILN1", 116.6, 21, 30),
-           ("SCHAACPRTIILN3", 81.7, 15, 30),
+           ("SCHAACPRTIILN3", 81.7, 14, 30),
            ("SCHAACPRTIILN4", 118.6, 21, 30),
            ("SCHAACPRTIILN5", 149.6, 27, 30),
            ("SCHAACPRTIILN6", 180.8, 33, 60),
            ("SCHAACPRTIILN7", 116.6, 21, 30),
-           ("SCHAACPRTIILN9", 81.7, 15, 30),
+           ("SCHAACPRTIILN9", 81.7, 14, 30),
            ("SCHAACPRTIILN10", 118.6, 21, 30),
            ("SCHAACPRTIILN11", 149.6, 27, 30),
            ("SCHAACPRTIILN12", 180.8, 33, 60),
            ("SCHAACPRTIILN13", 116.6, 21, 30),
-           ("SCHAACPRTIILN15", 81.7, 15, 60),
+           ("SCHAACPRTIILN15", 81.7, 14, 60),
            ("SCHAACPRTIILN16", 118.6, 21, 30),
            ("SCHAACPRTIILN17", 149.6, 27, 30),
            ("SCHAACPRTIILN18", 180.8, 33, 60),
@@ -101,13 +105,13 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
            ("SCHAACPRTIILN28", 118.6, 21, 30),
            ("SCHAACPRTIILN29", 149.6, 27, 30),
            ("SCHAACPRTIILN30", 180.8, 33, 60))},
-    **{("states/al/2024/al40/pack.yaml", f"SCHRSILN{i}"): "Schedule RS Part I column I Reason Exempt (111.9 pt at Courier 8 fits 23); the widget says 30"
+    **{("states/al/2024/al40/pack.yaml", f"SCHRSILN{i}"): "Schedule RS Part I column I Reason Exempt (111.9 pt at Courier 8 fits 22 inside its border); the widget says 30"
        for i in range(1, 8)},
     ("states/ar/2023/ar1000nr/pack.yaml", "7b.count"):
         "the 7B dependent count (13.3 pt box, auto-size font); the 7A count box ARNR-49 carries /MaxLen 2, this one "
         "the DOR's 10",
     ("states/ca/2025/form540nr/pack.yaml", "7.count"): "a one-digit exemption count (14.0 pt at Helv 10 fits 2); the widget says 11",
-    ("states/id/2023/form40/pack.yaml", "preparer.state"): "31.5 pt at 10 pt fits 6; the widget says 10",
+    ("states/id/2023/form40/pack.yaml", "preparer.state"): "31.5 pt at Arial 10 fits 4 capitals inside its border; the widget says 10",
     ("states/ks/2023/k40/pack.yaml", "42.school_district_number"): "42 pt at Courier 12 fits 5; the widget says 10",
     ("states/ks/2023/k40/pack.yaml", "43.historic_site_number"): "42 pt at Courier 12 fits 5; the widget says 10",
     ("states/ks/2024/k40/pack.yaml", "42.school_district_number"): "42.0 pt at Courier 12 (7.2 pt a glyph) fits 5; budget 5 as in 2023; the widget says 10",
@@ -116,8 +120,8 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
         "43.3 pt at Courier 12 (7.2 pt a glyph) fits 6 edge to edge with no inset; budget 5 as in 2023; the widget says 10",
     ("states/ks/2025/k40/pack.yaml", "42.historic_site_number"):
         "42.0 pt at Courier 12 fits 5 (the widget is still named '43 Historic Site number'); the widget says 10",
-    ("states/ma/2023/form1/pack.yaml", "43a"): "12.5 pt at 12 pt fits 2; the widget says 10",
-    ("states/ma/2025/form1/pack.yaml", "43a"): "12.5 pt at 12 pt fits 2; the widget says 10 (the same box as 2023)",
+    ("states/ma/2023/form1/pack.yaml", "43a"): "12.5 pt at Helv 12 fits 1 digit inside its border (a count of EIC children); the widget says 10",
+    ("states/ma/2025/form1/pack.yaml", "43a"): "12.5 pt at Helv 12 fits 1 digit inside its border; the widget says 10 (the same box as 2023)",
     ("states/md/2023/md502/pack.yaml", "mailing_state"): "a two-letter state code (19.3 pt at Courier 10 fits 3)",
     ("states/md/2025/md502/pack.yaml", "mailing_state"): "a two-letter state code (17.2 pt at Courier 10 fits 3); the widget says 10",
     ("states/md/2025/md502/pack.yaml", "spouse_middle_initial"): "a middle initial (14.3 pt at Courier 10 fits 2); the widget says 10",
@@ -208,7 +212,7 @@ TIGHTER_THAN_WIDGET: dict[tuple[str, str], str] = {
     ("states/al/2023/al40nr/pack.yaml", "SPOUSEFIRSTNAME"): "the page-1 spouse's first name, 98.6 pt at Courier 12 fits 13; the widget says 20",
     ("states/al/2023/al40nr/pack.yaml", "SPOUSELASTNAME"): "the page-1 spouse's last name, 135.6 pt at Courier 12 fits 18; the widget says 30",
     ("states/al/2023/al40nr/pack.yaml", "SCHOCLINE1PC"): "a Schedule OC (page 7) text box, 117.5 pt at Courier 10 fits 19; the widget says 20",
-    ("states/al/2023/al40nr/pack.yaml", "SCHOCLINE2CPL"): "a Schedule OC (page 9) text box, 54.0 pt at Courier 10 fits 9; the widget says 15",
+    ("states/al/2023/al40nr/pack.yaml", "SCHOCLINE2CPL"): "a Schedule OC (page 9) text box, 54.0 pt at Courier 10 fits 8 inside its border; the widget says 15",
     ("states/al/2023/al40nr/pack.yaml", "SCHAATCLN6"): "a Schedule AATC (page 14) text box, 147.8 pt at Courier 10 fits 24; the widget says 30",
     # the Schedule AAC (page 15) Part I / II adoptee grid (Courier 9, centred): one glyph under verify's budget (two in
     # column C) so the centred text clears the printed bullet at each cell's left edge on the render
@@ -371,6 +375,12 @@ _DATE_SHAPE = re.compile(r"(MM|DD|YY|YYYY)([/-](MM|DD|YY|YYYY)){2}")
 _FACES = {"Helv": "Helvetica", "Arial": "Helvetica"}  # /DA font names drawn with Helvetica's metrics
 
 
+def _font_size(da: str | None) -> float:
+    """The /DA font size (0 = auto-size); a widget with no /DA is measured at 10 pt, as verify does."""
+    match = re.search(r"(\d+(?:\.\d+)?)\s+Tf", da or "")
+    return float(match.group(1)) if match else DEFAULT_FONT_SIZE
+
+
 def _key(pack_path: Path) -> str:
     return str(pack_path.relative_to(FORMPACKS))
 
@@ -418,6 +428,42 @@ def test_every_tighter_budget_row_is_still_tighter(row: tuple[str, str]):
         f"{row}: no longer a tighter budget (pack {field.maxlen}, widget {widget}) — delete the row")
 
 
+@pytest.mark.network
+@pytest.mark.parametrize("row", sorted(TIGHTER_THAN_WIDGET), ids=lambda r: f"{r[0].removesuffix('/pack.yaml')}-{r[1]}")
+def test_every_tighter_budget_fits_its_box_by_the_ink_model(row: tuple[str, str]):
+    """Phase K JEe (2026-10-24): a budget of digits must END inside the box's border, not merely fill its width.
+
+    Before JEe the rows were measured edge to edge, and nine Courier-10 glyphs exactly fill AL Schedule OC's 54.0 pt
+    cell: the render cuts the ninth. Each budget is checked the way verify now checks a value (textfit.ink_extent
+    against the width less the border on each side), on every widget of the line; an auto-size, multiline or comb
+    widget is not measured, as verify does not measure it.
+    """
+    pack_path = FORMPACKS / row[0]
+    pack = load_pack(pack_path)
+    field = next(f for f in pack.fields if f.line == row[1])
+    try:
+        blank = fetch_pack_blank(pack)
+    except OfflineFetchError:
+        pytest.skip(f"{row[0]}: its pinned blank is not cached")
+    name = f"{pack.acroform_root}.{field.field}" if pack.acroform_root else field.field
+    boxes = [w for w in read_text_widgets(blank, bound_names=bound_widget_names(pack)) if w.name == name]
+    assert boxes, f"{row}: no text widget named {name!r} on the blank"
+    for box in boxes:
+        size = _font_size(box.da)
+        if size == 0 or box.multiline or (box.comb and box.max_len is not None) or box.rect_width <= 0:
+            continue
+        # Courier: every glyph advances 0.6 em, so end on the glyph whose ink reaches furthest right (the smallest
+        # bearing in the table) and the budget holds for ANY text. Helvetica: digits — a text budget there is a cap
+        # on typical content, and verify measures the actual value.
+        last = min(_RSB_COURIER, key=_RSB_COURIER.__getitem__) if box.monospace else "0"
+        probe = "0" * (field.maxlen - 1) + last
+        ink = ink_extent(probe, size, courier=bool(box.monospace))
+        room = box.rect_width - 2 * box.inset
+        assert ink <= room + CUT_TOLERANCE_PT, (
+            f"{row}: {field.maxlen} characters ({probe[-1]!r} last) reach {ink:.2f} pt, past the {room:.2f} pt inside the {box.rect_width:.2f} pt "
+            f"box ({box.inset:g} pt border a side) — lower the pack maxlen to what renders whole and update the row")
+
+
 def _measured_id(row: tuple[str, str]) -> str:
     return f"{row[0].removesuffix('/pack.yaml')}-{row[1]}"
 
@@ -456,7 +502,7 @@ def test_measured_budget_without_a_widget_maxlen_is_the_pack_maxlen(row: tuple[s
     assert field is not None, f"{row}: the line is gone — delete the row"
     assert field.maxlen == m.budget, (
         f"{row}: pack maxlen {field.maxlen}, but the box was measured at {m.budget} ({m.why}). A higher budget lets the "
-        f"filler write what the render cuts off, and neither the filler nor verify's 0.5-em scan warns")
+        f"filler write what the render cuts off: the filler checks only the budget, and verify fails it after the fill")
     assert m.face in ("Helvetica", "Courier"), f"{row}: face {m.face!r} — the arithmetic knows Helvetica and Courier"
     inner = m.width - 2.0  # drawn from the 1 pt border inward, clipped 1 pt inside the far edge
     size = m.size or LEGIBLE_PT  # an auto-size box: the smallest size still legible

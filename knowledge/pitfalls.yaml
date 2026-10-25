@@ -2214,3 +2214,41 @@ pitfalls:
       packages/core/tests/test_page_header_mirrors.py, including
       (network) a fill of every declaring pack's real blank with page-1
       identity alone, each mirror built and verified.
+
+  - id: P-035
+    incident: >-
+      A value that filled its box edge to edge passed verify and printed cut.
+      verify's width check passed a value when its advance (characters x 0.5
+      em, 0.6 for Courier) was no wider than the widget rect, but a viewer
+      draws the value inside the box's border, about 1 pt on each side: RI-1040
+      2025's dependent date of birth (eight Courier New 12 digits, 57.6 pt, in
+      a 57.6 pt box) rendered with the right edge of its last digit cut and
+      verify said it fit (found by the JS5 RI-1040 2025 port's fixer,
+      2026-10-02). Eighteen adjudicated pack budgets had been sized the same
+      way, edge to edge (AL Form 40 / 40NR Courier cells, ID Form 40 preparer
+      state, MA Form 1 line 43a).
+    countermeasure: >-
+      One measure for fill_form and verify (taxfill_core.textfit): the room is
+      the widget's width less its border on each side (textfit.widget_inset:
+      /BS /W, else /Border, else 1 pt; measured on renders at 1, 2 and 3 pt
+      borders), and a value fits when its INK stays inside it, laid out by the
+      box's /Q (from the left inset, ending at the right one, or centred): its
+      advance by Helvetica's or Helvetica-Bold's AFM widths, by the box's
+      weight (the wider of the two per glyph when the weight is unknown), or
+      0.6 em in Courier, less the side bearings of its first and last glyphs
+      in that weight as pdfium draws them (textfit.ink_overrun; bearings
+      measured on pdfium's own faces), give or take 0.5 pt. That replaces the
+      0.5-em Helvetica average, which under-measured a digit (0.556 em) by a
+      tenth and a capital by up to half; other faces (Verdana, Calibri) are
+      still measured as Helvetica. Comb boxes with a /MaxLen are not measured
+      by width. The eighteen budgets were lowered by one glyph, MD 502 2023's
+      spouse signature date from 8 to 7, and every TIGHTER_THAN_WIDGET budget
+      is re-checked with the model. RI-1040 sizes its dependent dates of
+      birth, middle initials, suffixes and signature and preparer dates for
+      their glyphs edge to edge; how to render them (a shorter date, a smaller
+      font, or a documented clip) is the user's decision, and until it is
+      recorded a value that passed the old check keeps that verdict, with the
+      measured cut in the check (verify.PENDING_CLIP_DECISIONS). Tests,
+      P-035-tagged, in packages/core/tests/test_textfit_ink.py, including
+      (network) renders of left-, right- and centre-aligned and bold boxes that
+      pin the arithmetic to pdfium.

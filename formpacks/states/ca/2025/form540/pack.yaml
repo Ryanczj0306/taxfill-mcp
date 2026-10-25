@@ -356,7 +356,7 @@ identity_fields:
 # a dashed SSN (11 characters) fits. The name box is 540_form_2001 (no /MaxLen; 125.9-127.0 pt at Helv 10). fill_form
 # measures every mirror it builds against the narrowest widget less 2 pt (taxfill_core.textfit, with Helvetica's AFM
 # widths), so this box holds 123.9 pt: about 18 of the "CAPITAL LETTERS" the booklet asks for, where verify's P-001
-# estimate (0.5 em a character) flags a name only past 25. A name too wide for it is abbreviated as mirror_abbreviations
+# estimate before Phase K JEe (0.5 em a character) flagged a name only past 25. A name too wide for it is abbreviated as mirror_abbreviations
 # below allows, with an informational warning: "A Q WASHINGTON" for "ALEXANDRA Q WASHINGTON" (142.8 pt), else "A
 # WASHINGTON". A name too wide even then is left blank, with a warning to hand-write it after printing. verify expects
 # the same value, and FAILs a header that is cut off or abbreviated although the full name fits. The booklet has no rule

@@ -251,7 +251,7 @@ widget's count. Each such row is listed with the measured box in
 marked, self-clearing). A text line whose widget carries a `/MaxLen` may omit
 `maxlen`, because verify's hard MaxLen check still guards it. A widget with NO
 `/MaxLen` gets the count a probe fill renders whole, read on a high-dpi render
-(verify's 0.5-em scan does not catch a cut last glyph). Probe a numeric box
+(a budget is the filler's refusal, so it is read off the render, not inferred). Probe a numeric box
 (SSN, FEIN, ZIP, apartment number) with digits and a name, initial or code box
 with a cycle of capitals A-Z (an all-caps entry is the widest realistic one);
 a Helvetica date box budgets its date shape ("MM/DD/YY" renders whole where 8
@@ -361,10 +361,16 @@ that covers every placeholder, since initials alone would then pass.
 
 **How a mirror is measured** (`taxfill_core.textfit`, the one measure the filler
 and verify share; Phase K JK28, 2026-10-16). A value fits its box when it is
-within the line's `maxlen` and its advance at the widget's /DA font and size is
-no more than the widget's width less 2 pt: pdfium draws from the 1 pt border
-inward and clips 1 pt inside the far edge, the model the measured rows of
-`packages/core/tests/test_pack_maxlen.py` pin. Helvetica and Arial advance by
+within the line's `maxlen` and its ink at the widget's /DA font and size ends
+inside the widget's width less its border on each side: pdfium draws from inside
+the border (1 pt when the widget declares none, its /BS /W otherwise) and clips
+inside the far one, the model the measured rows of
+`packages/core/tests/test_pack_maxlen.py` pin. The ink is the advance less the
+side bearings of the first and last glyphs, laid out by the box's /Q (from the
+left inset, ending at the right one, or centred, so a centred value overruns on
+both sides), give or take 0.5 pt (Phase K JEe, P-035: a value that filled the
+rect edge to edge printed cut); verify's clipping scan measures every
+single-line value the same way. Helvetica and Arial advance by
 Adobe's Core-14 Helvetica AFM widths (`overlay.text_width`), Courier and Courier
 New by 0.6 em a glyph, and any other face is measured as Helvetica. A field with
 a widget on several pages must fit each one, in practice its narrowest; an

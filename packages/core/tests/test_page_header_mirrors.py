@@ -48,7 +48,7 @@ from taxfill_core.schemas.formpack import (
     parse_mirror_template,
     render_mirror,
 )
-from taxfill_core.textfit import WidgetBox, advance, fit, is_courier, widget_box
+from taxfill_core.textfit import CUT_TOLERANCE_PT, WidgetBox, advance, fit, ink_overrun, is_courier, widget_box
 from taxfill_core.verify import (
     FilingItem,
     TextWidget,
@@ -223,8 +223,8 @@ def test_jk28_malformed_templates_are_refused_at_load(template: str, message: st
 def test_jk28_fit_measures_helvetica_capitals_by_their_afm_widths():
     """The round-2 major: CA's "Your name:" box is 125.9 pt wide at Helv 10, and 22 capitals overrun it."""
     box = widget_box(125.93, "/Helv 10 Tf 0 0 1 rg")
-    assert box == WidgetBox(125.93, 10.0, "Helv", False, False) and box.room == pytest.approx(123.93)
-    assert advance("ALEXANDRA Q WASHINGTON", 10) == text_width("ALEXANDRA Q WASHINGTON", 10)  # overlay's AFM table
+    assert box == WidgetBox(125.93, 10.0, "Helv", False, False, 1.0, 0, False) and box.room == pytest.approx(123.93)
+    assert advance("ALEXANDRA Q WASHINGTON", 10, bold=False) == text_width("ALEXANDRA Q WASHINGTON", 10)  # overlay's AFM
     long = fit("ALEXANDRA Q WASHINGTON", [box])
     assert long == (False, "142.8 pt at Helv 10, wider than the 123.9 pt inside its box: 125.9 pt wide, less 1 pt on "
                            "each side")
@@ -864,21 +864,21 @@ def test_jk28_a_name_no_allowed_value_fits_is_left_blank_to_hand_write(tmp_path:
 def test_jk28_fill_form_measures_the_box_at_its_own_font(tmp_path: Path):
     pack = _pack(mirror_abbreviations=ABBREVIABLE)
     name = _qualified(pack, "page2.name")
-    # Courier 10 is 0.6 em a glyph: 'Pat Q Example' is 78.0 pt, past the 77 pt inside a 79 pt box, where Helvetica 10
-    # (67.2 pt) would fit.
-    courier = _set_da(_blank(pack, tmp_path / "courier.pdf", {"page2.name": 79}), name, "/Cour 10 Tf 0 g",
+    # Courier 10 is 0.6 em a glyph: 'Pat Q Example' is 78.0 pt, its ink past the 76 pt inside a 78 pt box, where
+    # Helvetica 10 (67.2 pt) would fit.
+    courier = _set_da(_blank(pack, tmp_path / "courier.pdf", {"page2.name": 78}), name, "/Cour 10 Tf 0 g",
                       ("Cour", "Courier"))
     result = fill_form(pack, PERSON, courier, tmp_path / "c.pdf")
     assert _on_disk(pack, tmp_path / "c.pdf")["page2.name"] == "P Q Example"
-    assert "(78.0 pt at Cour 10, wider than the 77.0 pt inside its box: 79.0 pt wide" in result.warnings[0]
+    assert "(78.0 pt at Cour 10, wider than the 76.0 pt inside its box: 78.0 pt wide" in result.warnings[0]
     assert _mirror_check(verify_form(pack, tmp_path / "c.pdf"), "page2.name").status == "PASS"
     # A /DA font the blank's /DR does not carry: pypdf draws it in Helvetica and writes /Helvetica into the /DA, so
     # fill_form measures Helvetica (67.2 pt fits) and verify, reading that /DA back, agrees.
-    bare = _set_da(_blank(pack, tmp_path / "bare.pdf", {"page2.name": 79}), name, "/Cour 10 Tf 0 g")
+    bare = _set_da(_blank(pack, tmp_path / "bare.pdf", {"page2.name": 78}), name, "/Cour 10 Tf 0 g")
     result = fill_form(pack, PERSON, bare, tmp_path / "b.pdf")
     assert _on_disk(pack, tmp_path / "b.pdf")["page2.name"] == "Pat Q Example" and result.warnings == []
     check = _mirror_check(verify_form(pack, tmp_path / "b.pdf"), "page2.name")
-    assert check.status == "PASS" and "(67.2 pt at Helvetica 10, within the 77.0 pt inside its box" in check.detail
+    assert check.status == "PASS" and "(67.2 pt at Helvetica 10, within the 76.0 pt inside its box" in check.detail
     # An auto-size box never cuts (the viewer shrinks the text): the full name, however narrow the box.
     auto = _set_da(_blank(pack, tmp_path / "auto.pdf", {"page2.name": 40}), name, "/Helv 0 Tf 0 g")
     result = fill_form(pack, PERSON, auto, tmp_path / "a.pdf")
@@ -960,7 +960,9 @@ def test_jk28_verify_without_widgets_cannot_measure_a_header():
 
 def test_jk28_fill_form_and_verify_agree_on_every_box_width(tmp_path: Path):
     """Whatever the box, verify expects exactly what fill_form wrote: PASS when it wrote a value, SKIPPED when it left
-    the header blank, never FAIL. And fill_form wrote the longest rung that fits, by overlay's own widths."""
+    the header blank, never FAIL. And fill_form wrote the longest rung that fits, by overlay's own widths: since Phase
+    K JEe, a rung fits when its ink (its advance less the last glyph's right side bearing) ends within the box less
+    1 pt a side, give or take textfit.CUT_TOLERANCE_PT."""
     pack = _pack(mirror_abbreviations=ABBREVIABLE)
     ladder = mirror_ladder(NAME_TEMPLATE, PERSON, ABBREVIABLE["page2.name"])
     assert ladder == ["Pat Q Example", "P Q Example", "P Example"]
@@ -970,7 +972,8 @@ def test_jk28_fill_form_and_verify_agree_on_every_box_width(tmp_path: Path):
         fill_form(pack, {**PERSON, "filing_status.single": True},
                   _blank(pack, tmp_path / f"b{width}.pdf", {"page2.name": width}), out)
         written = _on_disk(pack, out)["page2.name"]
-        holds = [rung for rung in ladder if text_width(rung, 12) <= width - 2]
+        box = WidgetBox(float(width), 12.0, "Helv", False, False, 1.0, 0, False)
+        holds = [rung for rung in ladder if ink_overrun(rung, box) <= CUT_TOLERANCE_PT]
         assert written == (holds[0] if holds else ""), width
         assert _mirror_check(verify_form(pack, out), "page2.name").status == ("PASS" if written else "SKIPPED"), width
         seen.add(written)

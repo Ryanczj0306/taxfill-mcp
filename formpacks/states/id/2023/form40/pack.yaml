@@ -527,7 +527,7 @@ fields:
   - line: preparer.state                  # "State"
     field: PreparerState
     type: text
-    maxlen: 6
+    maxlen: 4
   - line: preparer.zip                    # "ZIP Code"
     field: PreparerZIPCode
     type: text

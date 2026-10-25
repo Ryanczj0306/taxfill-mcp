@@ -726,10 +726,10 @@ fields:
     field: "line 42. Amended Return Only. Payments made with original return. Not less than 0. See instructions"
     type: money
     maxlen: 8
-  - line: 43a                              # EIC: number of qualifying children (12.5 pt box; widget /MaxLen 10 clamped to 2)
+  - line: 43a                              # EIC: number of qualifying children (12.5 pt box at Helv 12; widget /MaxLen 10 clamped to 1: a second digit is cut inside the box's 1 pt border, Phase K JEe)
     field: "line 43a. number of qualifying children for earned income credit"
     type: text
-    maxlen: 2
+    maxlen: 1
   - line: 43b                              # EIC: amount from U.S. return
     field: "line 43b. Amount of earned income credit from U.S. return"
     type: money

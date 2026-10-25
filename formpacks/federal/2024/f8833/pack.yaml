@@ -91,7 +91,8 @@
 # a plain `type: text` line with the fact recorded in a comment (sched_1 8z.type,
 # sched_a_nr 7.type, f843 line 8, f8949 column (a)), and this pack does the
 # same. What the author must know: verify.clipping_scan is NOT multiline-aware —
-# it compares len x 0.5 x font_size against the rect WIDTH only — and that was
+# it compared len x 0.5 x font_size against the rect WIDTH only (since Phase J JEa it counts a
+# multiline box's wrapped rows, and since Phase K JEe it measures a value's ink inside the border) — and that was
 # PROVEN on this form, not assumed. Filling f1_4 / f1_5 / f1_9 with realistic
 # values (69 / 91 / 107 characters) produced THREE clipping FAILs from
 # verify_form, while the 300 dpi render of the same PDF shows all three wrapping

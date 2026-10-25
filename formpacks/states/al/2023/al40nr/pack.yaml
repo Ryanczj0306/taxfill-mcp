@@ -78,7 +78,9 @@
 #
 # Maxlen. Every maxlen is the widget's /MaxLen except (a) the boxes held TIGHTER than it and (b) 33
 # boxes with no /MaxLen whose maxlen is measured. (a) 64 Courier boxes are too narrow to print the
-# widget's count (verify's 0.6-em Courier budget, width / (0.6 x font size)): the page-1 first / last
+# widget's count (verify's 0.6-em Courier budget, width / (0.6 x font size); since Phase K JEe, 2026-10-24,
+# less the 1 pt border the viewer draws on each side, so SCHOCLINE2CPL, 54.0 pt at Courier 10, takes 8, not 9:
+# a ninth glyph would end exactly at the box edge and print cut): the page-1 first / last
 # names (FIRSTNAME and SPOUSEFIRSTNAME 98.6 pt at 12 pt fit 13, LASTNAME and SPOUSELASTNAME 135.6 pt fit
 # 18), Schedule OC SCHOCLINE1PC and SCHOCLINE2CPL, Schedule AATC SCHAATCLN6, the 46 text cells of the
 # Schedule AAC Part I / II grids, the KRCC-I Part IV 3b / 3c cells (two per copy) and Schedule RS Part I
@@ -637,7 +639,7 @@ fields:
   - {line: "SCHOCLINE1PL", field: "SCHOCLINE1PL", type: text, maxlen: 30}
   - {line: "SCHOCLINE2APL", field: "SCHOCLINE2APL", type: text, maxlen: 30}
   - {line: "SCHOCLINE2BPL", field: "SCHOCLINE2BPL", type: text, maxlen: 15}
-  - {line: "SCHOCLINE2CPL", field: "SCHOCLINE2CPL", type: text, maxlen: 9}
+  - {line: "SCHOCLINE2CPL", field: "SCHOCLINE2CPL", type: text, maxlen: 8}
   - {line: "SCHOCLINE2DPL", field: "SCHOCLINE2DPL", type: text, maxlen: 15}
   - {line: "SCHOCLINE3PL", field: "SCHOCLINE3PL", type: text, maxlen: 9}
   - {line: "SCHOCFEINPL", field: "SCHOCFEINPL", type: text, maxlen: 12}

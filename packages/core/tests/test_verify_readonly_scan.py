@@ -240,7 +240,7 @@ def test_verify_form_flags_clipping_in_the_read_only_widgets_the_pack_maps(read_
 
     total = by_name[TOTAL]
     assert total.status == "FAIL"
-    assert "exceeds the widget width 30.0pt" in total.detail
+    assert "exceeds the 28.0pt inside the 30.0pt widget" in total.detail  # less 1pt on each side (Phase K JEe)
     assert "ReadOnly widget the pack maps" in total.detail
 
     assert by_name[EDITABLE].status == "PASS"

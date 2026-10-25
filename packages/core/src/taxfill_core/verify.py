@@ -82,16 +82,19 @@ passed to :func:`verify_filing`.
 
 Clipping heuristic (pitfall P-001): the font size is parsed from the
 widget's ``/DA`` default-appearance string (``<size> Tf``); ``0 Tf`` means
-auto-size and is safe. Otherwise the estimated text width is
-``len(value) * 0.5 * font_size`` — 0.5 is the documented average Helvetica
-glyph-width ratio — compared against the widget rectangle width. A widget whose
-/DA font is a Courier face uses 0.6 instead: every Courier glyph is exactly
-600/1000 em, so the estimate is exact rather than an average (Phase J JS3c —
-31 state packs map Courier widgets, and 0.5 under-reported them by a sixth;
-the face is resolved through the AcroForm /DR /BaseFont, falling back to
-Acrobat's Courier aliases /Cour /CoBo /CoOb /CoBO). A missing
+auto-size and is safe. Otherwise the value's advance at that size — each
+glyph's Helvetica AFM width, or exactly 0.6 em a glyph when the /DA font is a
+Courier face (Phase J JS3c: the face is resolved through the AcroForm /DR
+/BaseFont, falling back to Acrobat's Courier aliases /Cour /CoBo /CoOb /CoBO)
+— is compared against the room INSIDE the widget: its width less the border
+the viewer draws on each side, 1 pt when the widget declares none (Phase K
+JEe: renders cut the last glyph of a value that fills the rect edge to edge;
+the measurements are in :mod:`taxfill_core.textfit`, the one measure fill_form
+and verify share). A comb box with a /MaxLen prints a character a cell, so
+only its MaxLen counts. A missing
 ``/DA`` conservatively assumes 10 pt. A multiline widget (``/Ff`` bit 13)
-wraps, so its wrapped lines are counted against the rows its height holds.
+wraps, so its wrapped lines (0.5 em a character, the average Helvetica
+glyph) are counted against the rows its height holds.
 A pack ``maxlen`` binds a scanned widget that has no ``/MaxLen`` of its own
 (Phase J JEa). An empty or whitespace-only value is never a clipping
 candidate, in the widget scan or the pack-maxlen fallback: nothing visible
@@ -187,7 +190,17 @@ from taxfill_core.schemas.formpack import (
     split_relation_guard,
     ssn_dash_cells_text,
 )
-from taxfill_core.textfit import Fit, WidgetBox, widget_box
+from taxfill_core.textfit import (
+    BORDER_PT,
+    CUT_TOLERANCE_PT,
+    Fit,
+    WidgetBox,
+    advance,
+    ink_overrun,
+    is_bold,
+    widget_box,
+    widget_inset,
+)
 from taxfill_core.textfit import fit as box_fit
 
 __all__ = [
@@ -239,6 +252,18 @@ _DA_FONT_RE = re.compile(r"/([^\s/()<>\[\]{}%]+)\s+\d+(?:\.\d+)?\s+Tf")
 _COURIER_ALIASES = frozenset({"Cour", "CoBo", "CoOb", "CoBO"})  # Acrobat's /DR names for the four Courier faces
 _LINE_HEIGHT_RATIO = 1.2  # a wrapped line's height as a multiple of the font size (multiline boxes)
 _MULTILINE_FLAG = 1 << 12  # /Ff bit 13
+_COMB_FLAG = 1 << 24  # /Ff bit 25: with a /MaxLen, one character a cell across the width
+
+
+def _quadding(own: object, default: object) -> int:
+    """A widget's /Q (its own or inherited), else the AcroForm's, else 0; anything but 0, 1 or 2 reads as 0."""
+    for value in (own, default):
+        try:
+            q = int(value)  # type: ignore[call-overload]
+        except (TypeError, ValueError):
+            continue
+        return q if q in (0, 1, 2) else 0
+    return 0
 _DEFAULT_FONT_SIZE = 10.0  # conservative assumption when a widget carries no /DA
 _FONT_SIZE_RE = re.compile(r"(\d+(?:\.\d+)?)\s+Tf")
 
@@ -615,6 +640,35 @@ class TextWidget(BaseModel):
             "write itself (P-007 class 4); unmapped ReadOnly widgets are never collected."
         ),
     )
+    inset: float = Field(
+        default=BORDER_PT,
+        ge=0.0,
+        description=(
+            "Points the viewer gives up on EACH side of the box to its border (textfit.widget_inset: the /BS or "
+            "/Border width, 1 when none is declared). The width test measures against the width less twice this "
+            "(Phase K JEe)."
+        ),
+    )
+    comb: bool = Field(
+        default=False,
+        description="/Ff bit 25 (Comb): with a /MaxLen the viewer prints one character a cell, so width is not measured.",
+    )
+    bold: bool | None = Field(
+        default=None,
+        description=(
+            "The /DA font is a bold face (thinner side bearings, so less of an overrun is absorbed); None: unknown, "
+            "measured with the thinner of both weights (textfit.bearings, Phase K JEe)."
+        ),
+    )
+    quadding: int = Field(
+        default=0,
+        ge=0,
+        le=2,
+        description=(
+            "/Q, the field's (or the AcroForm's) alignment: 0 left, 1 centred, 2 right. A centred value overruns on "
+            "both sides and a right-aligned one on the left (textfit.ink_overrun, Phase K JEe)."
+        ),
+    )
 
 
 class VerifyReport(BaseModel):
@@ -797,6 +851,7 @@ def read_text_widgets(
     reader = PdfReader(str(path))
     acroform = reader.trailer["/Root"].get("/AcroForm")
     default_da = acroform.get_object().get("/DA") if acroform is not None else None
+    default_q = acroform.get_object().get("/Q") if acroform is not None else None
     base_fonts = _dr_base_fonts(acroform.get_object() if acroform is not None else None)
 
     widgets: list[TextWidget] = []
@@ -840,6 +895,10 @@ def read_text_widgets(
                     multiline=flags is not None and bool(int(flags) & _MULTILINE_FLAG),
                     monospace=_da_is_monospace(_pdf_text(da) if da is not None else None, base_fonts),
                     read_only=read_only,
+                    inset=widget_inset(annot),
+                    comb=flags is not None and bool(int(flags) & _COMB_FLAG),
+                    quadding=_quadding(_inherited(annot, "/Q"), default_q),
+                    bold=_da_is_bold(_pdf_text(da) if da is not None else None, base_fonts),
                 )
             )
     return widgets
@@ -1551,6 +1610,13 @@ def _da_is_monospace(da: str | None, base_fonts: Mapping[str, str] | None = None
     return name in _COURIER_ALIASES or "courier" in name.lower()
 
 
+def _da_is_bold(da: str | None, base_fonts: Mapping[str, str] | None = None) -> bool:
+    """Whether a /DA string's font is a bold face (textfit.is_bold, through the /DR /BaseFont); a /DA naming no font
+    gets the viewer's default, regular Helvetica."""
+    match = _DA_FONT_RE.search(da or "")
+    return is_bold(match.group(1), base_fonts) if match is not None else False
+
+
 def _dr_base_fonts(acroform: Mapping | None) -> dict[str, str]:
     """The AcroForm /DR /Font resource names -> /BaseFont (without the slash); empty when absent."""
     try:
@@ -1599,11 +1665,16 @@ def clipping_scan(
 
     1. ``len(value) > /MaxLen`` — hard clipping; the PDF silently drops the
        overflow (invisible in field dumps; this is the P-001 SSN incident);
-    2. width heuristic — ``len(value) * 0.5 * font_size`` vs the widget rect
-       width (``0.6`` for a Courier face — exact, JS3c); ``0 Tf`` auto-size
-       is safe; a missing /DA assumes 10 pt. A
-       MULTILINE widget (``/Ff`` bit 13) wraps, so its lines are counted
-       against the rows its height holds (1.2 x the font size each) instead.
+    2. width — the value's advance at the /DA size (Helvetica's AFM widths, 0.6 em
+       a glyph for a Courier face: :func:`taxfill_core.textfit.advance`) vs the
+       room INSIDE the box: its width less the border the viewer draws on each
+       side (:func:`taxfill_core.textfit.widget_inset`, 1 pt when the widget
+       declares none — Phase K JEe: a value that fills the rect edge to edge
+       renders with its last glyph cut). ``0 Tf`` auto-size is safe; a missing
+       /DA assumes 10 pt; a comb box with a /MaxLen prints one character a cell,
+       so only its MaxLen counts. A MULTILINE widget (``/Ff`` bit 13) wraps, so
+       its lines are counted against the rows its height holds (1.2 x the font
+       size each) instead.
 
     ``bound_names`` (a path source only) is forwarded to
     :func:`read_text_widgets`: pass :func:`bound_widget_names` of the pack so
@@ -1662,13 +1733,30 @@ def clipping_scan(
                 )
             )
             continue
+        if widget.comb and widget.max_len is not None:
+            checks.append(
+                ClippingCheck(
+                    name=widget.name,
+                    status=PASS,
+                    detail=(
+                        f"field '{widget.name}': a comb box ({widget.max_len} cells, one character each) — the "
+                        f"{length}-character value is within its MaxLen, so nothing is cut"
+                    ),
+                )
+            )
+            continue
         monospace = widget.monospace if widget.monospace is not None else _da_is_monospace(widget.da)
         ratio = _MONOSPACE_CHAR_WIDTH_RATIO if monospace else _AVG_CHAR_WIDTH_RATIO
-        metric = "Courier metric" if monospace else "Helvetica heuristic"
-        estimated = length * ratio * font_size
+        metric = "Courier metric" if monospace else "Helvetica metrics"
+        room = widget.rect_width - 2 * widget.inset
+        inside = (
+            f"the {room:.1f}pt inside the {widget.rect_width:.1f}pt widget (less {widget.inset:g}pt on each side, "
+            f"where the viewer draws the border)"
+        )
         if widget.multiline and widget.rect_height > 0:
             # A multiline box wraps: count the lines each paragraph needs against the rows the box height holds
-            # (a row per 1.2 x the font size), instead of one line against the width.
+            # (a row per 1.2 x the font size), instead of one line against the width. The estimate keeps the full
+            # width: its 0.5-em average and word-blind wrap are coarser than the border inset (Phase K JEe).
             per_line = widget.rect_width / (ratio * font_size)
             needed = sum(max(1, math.ceil(len(part) / per_line)) for part in re.split(r"\r\n|\r|\n", widget.value))
             rows = max(1, int(widget.rect_height // (font_size * _LINE_HEIGHT_RATIO)))
@@ -1684,15 +1772,27 @@ def clipping_scan(
                 ),
             ))
             continue
-        if estimated > widget.rect_width:
+        bold = widget.bold if widget.bold is not None else _da_is_bold(widget.da)
+        if not monospace:
+            metric = {True: "Helvetica-Bold metrics", False: "Helvetica metrics"}.get(
+                bold, "Helvetica metrics, the wider weight")
+        estimated = advance(widget.value, font_size, courier=monospace, bold=bold)
+        over = ink_overrun(widget.value, WidgetBox(
+            widget.rect_width, font_size, "", monospace, False, widget.inset, widget.quadding, bold,
+        ))
+        side = {0: "right", 1: "both sides", 2: "left"}[widget.quadding]
+        measure = (
+            f"len {length} x {ratio:g} x {font_size:g}pt {metric}{assumed}" if monospace
+            else f"{length} characters at {font_size:g}pt, {metric}{assumed}"
+        )
+        if over > CUT_TOLERANCE_PT + 1e-6:
             checks.append(
                 ClippingCheck(
                     name=widget.name,
                     status=FAIL,
                     detail=(
-                        f"field '{widget.name}': estimated text width {estimated:.1f}pt (len "
-                        f"{length} x {ratio:g} x {font_size:g}pt {metric}{assumed}) exceeds "
-                        f"the widget width {widget.rect_width:.1f}pt — text may be visually "
+                        f"field '{widget.name}': estimated text width {estimated:.1f}pt ({measure}; its ink "
+                        f"overruns by {over:.1f}pt on the {side}) exceeds {inside} — text may be visually "
                         f"clipped (pitfall P-001); shorten this field's value or switch the "
                         f"field to auto-size, then re-render to confirm" + note
                     ),
@@ -1704,8 +1804,9 @@ def clipping_scan(
                     name=widget.name,
                     status=PASS,
                     detail=(
-                        f"field '{widget.name}': fits — estimated {estimated:.1f}pt within the "
-                        f"{widget.rect_width:.1f}pt widget{assumed}"
+                        f"field '{widget.name}': fits — estimated {estimated:.1f}pt"
+                        + (" (its ink stays inside)" if estimated > room else "")
+                        + f" within {inside}{assumed}"
                     ),
                 )
             )
@@ -1766,6 +1867,65 @@ def _drop_blank_owned(pack: FormPack, widgets: Sequence[TextWidget]) -> tuple[li
     return kept, True
 
 
+# Phase K JEe (2026-10-24): boxes whose rendering is the user's PENDING decision (ROADMAP JEe, KG9). Until it is
+# recorded, a value there keeps the verdict it had before JEe: a value whose advance still fits the widget's rect
+# (cut only by the border inset) passes with the measured facts; anything longer FAILs as it always did.
+# (jurisdiction, form) -> (the pack lines it covers, the note). Recording the decision deletes the row.
+PENDING_CLIP_DECISIONS: dict[tuple[str, str], tuple[re.Pattern[str], str]] = {
+    ("states/ri", "RI-1040"): (
+        re.compile(
+            r"schedule_e\.dependent_\d+\.dob|(?:spouse\.)?name\.(?:middle_initial|suffix)"
+            r"|signature\.(?:taxpayer|spouse)\.date|preparer\.date"
+        ),
+        "PENDING the user's decision (ROADMAP JEe): RI-1040 sizes these boxes for its Courier New 12 glyphs edge to "
+        "edge. The dependent date-of-birth box is 57.6pt, so the 8-digit MMDDYYYY date the form's XFA template asks "
+        "for loses about 0.6pt of its last digit's right edge (7 digits fit whole); the centred middle-initial box "
+        "is 7.2pt, one glyph, so a wide initial such as M or W loses up to 0.9pt each side (I fits whole); the "
+        "suffix box is 21.6pt, three glyphs, so III loses about 0.6pt (JR and SR fit whole); the signature and "
+        "preparer date boxes are 72pt, ten glyphs, so a 10-character date loses about 0.6pt of its last digit "
+        "(01/15/24 fits whole). The choices are a shorter date (MMDDYY), a smaller font (8 digits fit whole in the "
+        "date-of-birth box at 11pt), or a documented clip; until one is recorded a value that fills the box edge to "
+        "edge is written as given and this check does not fail",
+    ),
+}
+_WIDTH_FAIL_PREFIX = "estimated text width"
+
+
+def _fills_its_rect(widget: TextWidget) -> bool:
+    """The value passed the width check as it stood before Phase K JEe (``len x 0.5 x size`` against the rect, 0.6
+    for a Courier face): exactly the verdict a pending decision keeps. Anything that check failed fails now too."""
+    size = _font_size_from_da(widget.da)
+    if size == 0:
+        return True
+    monospace = widget.monospace if widget.monospace is not None else _da_is_monospace(widget.da)
+    ratio = _MONOSPACE_CHAR_WIDTH_RATIO if monospace else _AVG_CHAR_WIDTH_RATIO
+    return len(widget.value) * ratio * (size or _DEFAULT_FONT_SIZE) <= widget.rect_width
+
+
+def _pending_clip_decisions(
+    pack: FormPack, checks: list[ClippingCheck], widgets: Sequence[TextWidget]
+) -> list[ClippingCheck]:
+    """A width FAIL on a box in :data:`PENDING_CLIP_DECISIONS` becomes a PASS carrying the pending decision, but
+    only when the value fills the rect edge to edge or less (:func:`_fills_its_rect`): the cut the decision is about.
+    A longer value, a MaxLen overflow and every other box keep their verdict."""
+    rule = PENDING_CLIP_DECISIONS.get((pack.jurisdiction, pack.form))
+    if rule is None:
+        return checks
+    pattern, note = rule
+    names = {qualified_field_name(pack, pf) for pf in pack.fields if pattern.fullmatch(pf.line)}
+    by_name: dict[str, list[TextWidget]] = {}
+    for widget in widgets:
+        if widget.name in names:
+            by_name.setdefault(widget.name, []).append(widget)
+    covered = {name for name, boxes in by_name.items() if all(_fills_its_rect(box) for box in boxes)}
+    return [
+        check.model_copy(update={"status": PASS, "detail": f"{check.detail} [{note}]"})
+        if check.status == FAIL and check.name in covered and _WIDTH_FAIL_PREFIX in check.detail
+        else check
+        for check in checks
+    ]
+
+
 def _widget_clipping_checks(pack: FormPack, widgets: Sequence[TextWidget]) -> list[ClippingCheck]:
     """:func:`clipping_scan` over a filled PDF's widgets, minus what the blank still owns.
 
@@ -1775,7 +1935,7 @@ def _widget_clipping_checks(pack: FormPack, widgets: Sequence[TextWidget]) -> li
     widget says so, with the command that fixes it.
     """
     scanned, blank_consulted = _drop_blank_owned(pack, widgets)
-    checks = clipping_scan(scanned) + _bound_maxlen_checks(pack, scanned)
+    checks = _pending_clip_decisions(pack, clipping_scan(scanned), scanned) + _bound_maxlen_checks(pack, scanned)
     if blank_consulted:
         return checks
     read_only_names = {widget.name for widget in scanned if widget.read_only}
@@ -2810,7 +2970,10 @@ def mirror_checks(
     boxes: dict[str, list[WidgetBox]] = {}
     for widget in _coerce_widgets(widgets or []):
         boxes.setdefault(widget.name, []).append(
-            widget_box(widget.rect_width, widget.da, courier=widget.monospace, multiline=widget.multiline)
+            widget_box(
+                widget.rect_width, widget.da, courier=widget.monospace, multiline=widget.multiline, inset=widget.inset,
+                quadding=widget.quadding, bold=widget.bold,
+            )
         )
     checks: list[IdentityCheck] = []
     for mirror in mirror_order(pack.mirrors):
@@ -3081,7 +3244,8 @@ def verify_form(
     # through the dump.
     clipping_checks = (
         _widget_clipping_checks(pack, widget_models) if widgets_from_disk
-        else clipping_scan(widget_models) + _bound_maxlen_checks(pack, widget_models)
+        else _pending_clip_decisions(pack, clipping_scan(widget_models), widget_models)
+        + _bound_maxlen_checks(pack, widget_models)
     ) + _pack_maxlen_checks(pack, fields, skip_names=frozenset(w.name for w in widget_models))
     checkbox_checks = checkbox_audit(pack, fields)
     identity_checks = (

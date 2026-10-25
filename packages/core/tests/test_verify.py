@@ -512,8 +512,11 @@ def test_js3c_a_courier_widget_uses_the_exact_0_6_em_metric():
     assert clipping_scan([helv])[0].status == "PASS"
     check = clipping_scan([cour])[0]
     assert check.status == "FAIL" and "86.4pt" in check.detail and "0.6 x 12pt Courier metric" in check.detail
-    # 11 characters (79.2pt) fit, and the multiline row budget uses the same metric (100 / 6 = 16 a row).
-    assert clipping_scan([cour.model_copy(update={"value": "x" * 11})])[0].status == "PASS"
+    # 11 characters advance 79.2pt: that fills the 80pt box edge to edge, and the viewer draws inside a 1pt border
+    # on each side, so the last glyph is cut (Phase K JEe). 10 (72pt) fit. The multiline row budget uses the same
+    # metric (100 / 6 = 16 a row).
+    assert clipping_scan([cour.model_copy(update={"value": "x" * 11})])[0].status == "FAIL"
+    assert clipping_scan([cour.model_copy(update={"value": "x" * 10})])[0].status == "PASS"
     wrapped = TextWidget(name="m", value="x" * 40, da="/Cour 10 Tf 0 g", rect_width=100.0, rect_height=25.0,
                          multiline=True)
     assert clipping_scan([wrapped])[0].status == "FAIL"        # 3 lines of 16 into 2 rows

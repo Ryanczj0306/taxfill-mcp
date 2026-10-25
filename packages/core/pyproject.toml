@@ -8,7 +8,7 @@ readme = "README.md"
 dependencies = [
     "pydantic>=2",
     "pyyaml>=6",
-    "pypdf>=5",
+    "pypdf>=6",  # textfit and overlay read the Core-14 AFM widths (Helvetica-Bold too) from pypdf 6
     "pypdfium2>=4",
 ]
 

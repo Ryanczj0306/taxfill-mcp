@@ -93,7 +93,7 @@ from taxfill_core.schemas.formpack import (
     ssn_dash_cells_text,
 )
 from taxfill_core.schemas.handfill import HandFillPack
-from taxfill_core.textfit import Fit, WidgetBox, widget_box
+from taxfill_core.textfit import Fit, WidgetBox, widget_box, widget_inset
 from taxfill_core.textfit import fit as box_fit
 
 if TYPE_CHECKING:  # pragma: no cover - typing only; the runtime import is local (see fill_form)
@@ -613,6 +613,15 @@ def _set_checkboxes(writer: PdfWriter, updates: dict[str, tuple[str, str]]) -> N
 # Annotation flags (PDF 32000-1 table 165) and field flags (table 226) the P-027 pass reads.
 F_HIDDEN, F_PRINT, F_NOVIEW = 2, 4, 32
 _MULTILINE_FLAG = 1 << 12  # field /Ff bit 13 (Multiline): the viewer wraps the text (page-header mirrors, JK28)
+
+
+def _alignment(q: object) -> int:
+    """A /Q value as 0 (left), 1 (centred) or 2 (right); anything else reads as left (Phase K JEe)."""
+    try:
+        value = int(q)  # type: ignore[call-overload]
+    except (TypeError, ValueError):
+        return 0
+    return value if value in (0, 1, 2) else 0
 _FF_READONLY, _FF_PUSHBUTTON = 1, 1 << 16
 # A widget covering at least this share of its page's VISIBLE area (the CropBox) is a candidate viewer guard.
 GUARD_PAGE_SHARE = 0.85
@@ -1105,6 +1114,7 @@ def _mirror_boxes(writer: PdfWriter, names: Collection[str]) -> dict[str, list[W
     acroform = writer._root_object.get("/AcroForm")
     acroform = acroform.get_object() if acroform is not None else {}
     default_da = acroform.get("/DA")
+    default_q = acroform.get("/Q")
     base_fonts: dict[str, str] = {}
     try:
         fonts = acroform["/DR"].get_object()["/Font"].get_object()
@@ -1145,7 +1155,11 @@ def _mirror_boxes(writer: PdfWriter, names: Collection[str]) -> dict[str, list[W
                 da = da.decode("latin-1")
             flags = inherited(annot, "/Ff")
             multiline = flags is not None and bool(int(flags) & _MULTILINE_FLAG)
-            box = widget_box(width, None if da is None else str(da), base_fonts=base_fonts, multiline=multiline)
+            q = inherited(annot, "/Q")
+            box = widget_box(
+                width, None if da is None else str(da), base_fonts=base_fonts, multiline=multiline,
+                inset=widget_inset(annot), quadding=_alignment(q if q is not None else default_q),
+            )
             if box.font and box.font not in dr_fonts and pypdf_builds is not None and box.font not in pypdf_builds:
                 box = box._replace(font="Helvetica", courier=False)  # what pypdf draws, and names in the /DA
             boxes.setdefault(name, []).append(box)

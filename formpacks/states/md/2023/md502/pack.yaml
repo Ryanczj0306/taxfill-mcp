@@ -696,7 +696,7 @@ fields:
   - line: spouse_signature_date
     field: Text Box 103
     type: text
-    maxlen: 8
+    maxlen: 7                              # 8 Courier New 10 glyphs (48.0 pt) fill the 48.2 pt box edge to edge and the render cuts the last (Phase K JEe); 7 print whole, e.g. 4/15/24
   - line: preparer_name                  # Printed name of the Preparer / or Firm's name
     field: Text Box 102
     type: text

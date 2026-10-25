@@ -122,14 +122,34 @@ def _synthetic_text(pack_field: PackField, index: int) -> str:
         # sized to the comb cell count.
         width = pack_field.maxlen or 9
         return str(999_880_000 + index)[-width:]
+    field = pack_field.field.casefold()
+    leaf = line.rsplit(".", 1)[-1]  # "mailing_address.zip" is a ZIP box whatever its prefix says
     if "suffix" in line:
         base = "JR"
+    elif "middle_initial" in line:
+        base = "PQRSTU"[index % 6]  # one letter: a middle-initial box holds one glyph (Phase K JEe measures its ink)
+    elif line.endswith("_neg"):
+        base = "-"  # OH IT 1040's sign box beside an amount takes the minus sign
+    elif "cents" in line or "(cents)" in field:
+        base = f"{index % 100:02d}"
+    elif re.fullmatch(r"\d{1,3}[a-z]?", line):
+        base = str(10 + index % 90)  # a numbered text line (AZ Form 140's exemption counts): a two-digit count, distinct
     elif "unit_type" in line:
         base = "APT"
     elif "four_letters" in line:
         base = "TEST"
     elif "name" in line:
         base = f"Tess {index}"
+    elif "zip" in leaf or "postal" in leaf:
+        base = str(99500 + index)[:5]  # an address's ZIP box gets a ZIP, not the street (Phase K JEe)
+    elif leaf.startswith("apt") or leaf in ("unit", "unit_no", "suite"):
+        base = str(10 + index % 90)
+    elif leaf == "state":
+        base = ("CA", "NY", "TX", "FL", "WA", "IL")[index % 6]
+    elif "city" in leaf:
+        base = f"Faketown {index}"
+    elif "country" in leaf:
+        base = "Testland"
     elif "street" in line or "address" in line:
         base = f"{100 + index} Synthetic Way"
     elif "city" in line:
@@ -139,9 +159,15 @@ def _synthetic_text(pack_field: PackField, index: int) -> str:
     elif "country" in line:
         base = "Testland"
     elif "date" in line:
-        base = "01/15/2024" if pack_field.maxlen is None or pack_field.maxlen >= 10 else "01/15/24"
+        # sized to the line's budget: 10 characters where it allows them, 8 under a budget of 8 or 9, 7 below that
+        # (MD 502 2023's spouse box holds 7, Phase K JEe); RI-1040's 72 pt date boxes print 10 cut by about 0.6 pt,
+        # which verify reports under the user's pending decision
+        day = 10 + index % 18
+        maxlen = pack_field.maxlen
+        base = f"01/{day}/2024" if maxlen is None or maxlen >= 10 else f"01/{day}/24" if maxlen >= 8 else f"1/{day}/24"
     elif "phone" in line:
-        base = "0000000000"
+        # NE splits the area code from the number; a whole number is ten digits
+        base = f"555{index % 10000:04d}" if line.endswith("number") else f"55501{index % 100000:05d}"
     else:
         base = f"T{index}"
     if pack_field.maxlen is not None and len(base) > pack_field.maxlen:
