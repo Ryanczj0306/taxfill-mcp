@@ -1,0 +1,163 @@
+{
+ "fetch_blank": {
+  "properties": {
+   "form": {
+    "title": "Form",
+    "type": "string"
+   },
+   "jurisdiction": {
+    "default": "federal",
+    "title": "Jurisdiction",
+    "type": "string"
+   },
+   "year": {
+    "title": "Year",
+    "type": "integer"
+   }
+  },
+  "required": [
+   "form",
+   "year"
+  ]
+ },
+ "fill_form": {
+  "properties": {
+   "form": {
+    "title": "Form",
+    "type": "string"
+   },
+   "jurisdiction": {
+    "default": "federal",
+    "title": "Jurisdiction",
+    "type": "string"
+   },
+   "out_path": {
+    "title": "Out Path",
+    "type": "string"
+   },
+   "values": {
+    "additionalProperties": true,
+    "title": "Values",
+    "type": "object"
+   },
+   "year": {
+    "title": "Year",
+    "type": "integer"
+   }
+  },
+  "required": [
+   "form",
+   "year",
+   "values",
+   "out_path"
+  ]
+ },
+ "get_form_map": {
+  "properties": {
+   "form": {
+    "title": "Form",
+    "type": "string"
+   },
+   "jurisdiction": {
+    "default": "federal",
+    "title": "Jurisdiction",
+    "type": "string"
+   },
+   "year": {
+    "title": "Year",
+    "type": "integer"
+   }
+  },
+  "required": [
+   "form",
+   "year"
+  ]
+ },
+ "verify_filing": {
+  "properties": {
+   "independent": {
+    "anyOf": [
+     {
+      "additionalProperties": {
+       "additionalProperties": {
+        "type": "number"
+       },
+       "type": "object"
+      },
+      "type": "object"
+     },
+     {
+      "type": "null"
+     }
+    ],
+    "default": null,
+    "title": "Independent"
+   },
+   "items": {
+    "items": {
+     "additionalProperties": true,
+     "type": "object"
+    },
+    "title": "Items",
+    "type": "array"
+   }
+  },
+  "required": [
+   "items"
+  ]
+ },
+ "verify_form": {
+  "properties": {
+   "expected": {
+    "anyOf": [
+     {
+      "additionalProperties": true,
+      "type": "object"
+     },
+     {
+      "type": "null"
+     }
+    ],
+    "default": null,
+    "title": "Expected"
+   },
+   "form": {
+    "title": "Form",
+    "type": "string"
+   },
+   "independent": {
+    "anyOf": [
+     {
+      "additionalProperties": {
+       "type": "number"
+      },
+      "type": "object"
+     },
+     {
+      "type": "null"
+     }
+    ],
+    "default": null,
+    "title": "Independent"
+   },
+   "jurisdiction": {
+    "default": "federal",
+    "title": "Jurisdiction",
+    "type": "string"
+   },
+   "pdf_path": {
+    "title": "Pdf Path",
+    "type": "string"
+   },
+   "year": {
+    "title": "Year",
+    "type": "integer"
+   }
+  },
+  "required": [
+   "form",
+   "year",
+   "pdf_path"
+  ]
+ }
+}

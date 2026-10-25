@@ -17,10 +17,10 @@ from __future__ import annotations
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 from mcp.server.fastmcp import FastMCP, Image
-from pydantic import ValidationError
+from pydantic import Field, ValidationError
 
 from taxfill_core import (
     additional_medicare_tax as _additional_medicare_tax,
@@ -115,7 +115,12 @@ mcp = FastMCP(
         "list_forms/get_form_map -> fetch_blank -> fill_form -> verify_form/verify_filing "
         "(pass `independent` calc results so the independent recompute runs; loop until ok) -> "
         "render_form (vision-review every page) -> filing_summary (user approves) -> "
-        "file_and_pay -> workspace_reconcile."
+        "file_and_pay -> workspace_reconcile. "
+        "A form with no pack (list_forms has none): tell the user so up front, then fetch_blank -> get_form_map -> "
+        "fill_form -> verify_form with form='unmapped' (source_url from the agency's .gov site, then the "
+        "blank_sha256 fetch_blank returns). The output is an unverified draft, never filing-grade (grade "
+        "unmapped_draft, stamped on every page): keep that label, show get_form_map's sweep page with render_form "
+        "before the user confirms any box, render_form every page, and hand-write the hand_write entries."
     ),
 )
 # FastMCP 1.x takes no version, and the low-level server it wraps then reports the
@@ -221,6 +226,211 @@ def _validation_problems(exc: ValidationError) -> str:
     return "; ".join(problems)
 
 
+# ── the no-pack fallback: form="unmapped" (Phase K JK16b, 2026-10-25; ADR-0002) ─────────────────────────────────
+#
+# fetch_blank, get_form_map, fill_form and verify_form take form="unmapped" (the only switch, routing rule 1): each
+# tests it first and returns from its own unmapped branch before _load_any_pack / _get_form_map runs, so the pack
+# branch keeps its code (scripts/golden_pack_path.py pins its output, the KG8 gate). The branches import the core
+# modules lazily (rule 8). Every new parameter defaults to None and is refused with a pack key (rule 3). Every
+# unmapped response carries grade "unmapped_draft", limits and next_step at its top level (rule 4), and every step
+# after the fetch names the blank by blank_sha256 (rule 5). A refusal is a ValueError that says no PDF was written,
+# names a pointer, and never echoes a value or the data directory's absolute path (rule 6).
+
+UNMAPPED_FORM = "unmapped"
+_SourceUrl = Annotated[str | None, Field(description=(
+    "Only with form='unmapped' (a form with no pack): the form's official https PDF URL on the agency's own .gov "
+    "site. Refused with a pack key."))]
+_BlankSha = Annotated[str | None, Field(description=(
+    "Only with form='unmapped': the sha256 fetch_blank returned for this blank; every step after the fetch names "
+    "the blank by it. Refused with a pack key."))]
+_UNMAPPED_GRADE = "unmapped_draft"
+_FEDERAL_FORMS_PAGE = "https://www.irs.gov/forms-pubs"
+_STATE_AGENCIES_PAGE = "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites"
+_UNSIGNED_TOKEN_LIMIT = (
+    "verified_at is not signed: it names this file's sha256 and the time this verify ran, so it proves nothing on its "
+    "own; keep the verify response itself, and any later change to the file voids it."
+)
+
+
+def _refuse_unmapped_params(tool: str, form: str, **params: Any) -> None:
+    """Routing rule 3: a parameter of the unmapped path is refused with a pack key, never ignored."""
+    given = [name for name, value in params.items() if value is not None]
+    if given:
+        names = ", ".join(given)
+        raise ValueError(
+            f"{tool}: {names} {'is' if len(given) == 1 else 'are'} only for form='unmapped' — '{form}' is a pack "
+            "key, "
+            f"which fills and checks from its own pack; drop {names}, or pass form='unmapped' for a form with no "
+            f"pack. Nothing was fetched, written or verified."
+        )
+
+
+def _unmapped_pointer(source_url: str | None, jurisdiction: str) -> str:
+    """The official place to go next: the form's own https .gov URL when it is one, else the agencies' forms pages."""
+    from urllib.parse import urlparse
+
+    from taxfill_core.knowledge import is_official_gov_host
+
+    parsed = urlparse(source_url or "")
+    if parsed.scheme == "https" and is_official_gov_host((parsed.hostname or "").lower()):
+        return f"The form's official source: {source_url}"
+    if jurisdiction == "federal":
+        return f"Find the form on the IRS forms page: {_FEDERAL_FORMS_PAGE}"
+    return (f"Find the form on the state tax agency's own forms page (the IRS lists every agency: "
+            f"{_STATE_AGENCIES_PAGE})")
+
+
+def _scrub_local_paths(text: str) -> str:
+    """Rule 6 (JK27): no absolute path of the data directory, the blank cache or the workspace in a refusal."""
+    from taxfill_core.datadir import data_root, home_display
+    from taxfill_core.fetch import default_cache_dir
+
+    for path, name in ((default_cache_dir(), "<blank cache>"), (Path(WORKSPACE_ROOT), "<workspace>"),
+                       (data_root(), "<data directory>")):
+        for spelling in sorted({str(path), str(path.resolve()), home_display(path)}, key=len, reverse=True):
+            if spelling and spelling not in (".", "~", "/"):
+                text = text.replace(spelling, name)
+    return text
+
+
+def _unmapped_refusal(tool: str, exc: BaseException, *, source_url: str | None, jurisdiction: str,
+                      wrote: str = "No PDF was written") -> ValueError:
+    """Routing rule 6: a core refusal as the ValueError text an agent reads."""
+    text = _scrub_local_paths(str(exc)).replace("fetch_unmapped_blank", "fetch_blank with form='unmapped'")
+    text = text.rstrip(". ")
+    if "no pdf was written" not in text.lower() or wrote != "No PDF was written":
+        text = f"{text}. {wrote}"
+    return ValueError(f"{tool} (form='unmapped') refused: {text}. {_unmapped_pointer(source_url, jurisdiction)}")
+
+
+def _unmapped_call(tool: str, call, *, source_url: str | None, jurisdiction: str, wrote: str = "No PDF was written"):
+    """Run one unmapped core call; its refusals (UnmappedBlankRefused, UnmappedFillRefused, UnmappedVerifyRefused,
+    StampRefused, a missing local_blank, a bad year or digest) surface as rule 6's ValueError."""
+    from http.client import HTTPException
+
+    from pypdf.errors import PyPdfError
+
+    from taxfill_core.fetch import FetchError
+
+    try:
+        return call()
+    except (FetchError, ValueError, OSError, HTTPException, PyPdfError) as exc:  # a truncated download, a bad PDF too
+        raise _unmapped_refusal(tool, exc, source_url=source_url, jurisdiction=jurisdiction, wrote=wrote) from None
+
+
+def _require(tool: str, jurisdiction: str, pointer_url: str | None, **required: Any) -> None:
+    missing = [name for name, value in required.items() if value is None or value == ""]
+    if missing:
+        raise ValueError(
+            f"{tool} with form='unmapped' needs {', '.join(missing)} — "
+            + ("the form's official https URL and its printed name (e.g. 'SD 100'); "
+               if tool == "fetch_blank" else "the source_url and the blank_sha256 fetch_blank returned; ")
+            + f"nothing was fetched or written. {_unmapped_pointer(pointer_url, jurisdiction)}"
+        )
+
+
+def _graded(response: dict, next_step: str | None = None) -> dict:
+    """Rule 4: grade first, limits and next_step at the top level (the core builds them; this asserts it)."""
+    out = {"grade": _UNMAPPED_GRADE, **{k: v for k, v in response.items() if k != "grade"}}
+    if next_step is not None:
+        out["next_step"] = next_step
+    missing = [k for k in ("limits", "next_step") if k not in out]
+    if missing or response.get("grade") not in (None, _UNMAPPED_GRADE):
+        raise RuntimeError(f"an unmapped response lacks {missing} or carries another grade — a taxfill bug")
+    return out
+
+
+def _unmapped_fetch(year: int, jurisdiction: str, source_url: str | None, form_title: str | None,
+                    local_blank: str | None) -> dict:
+    from taxfill_core.fetch import fetch_unmapped_blank
+    from taxfill_core.unmapped import LIMITS
+
+    _require("fetch_blank", jurisdiction, source_url, source_url=source_url, form_title=form_title)
+    blank = _unmapped_call(
+        "fetch_blank",
+        lambda: fetch_unmapped_blank(source_url, tax_year=year, expected_title=form_title, local_blank=local_blank,
+                                     jurisdiction=jurisdiction, workspace_root=WORKSPACE_ROOT),
+        source_url=source_url, jurisdiction=jurisdiction, wrote="Nothing was stored and no PDF was written")
+    first = blank.first_page
+    return _graded({
+        "path": str(blank.path), "source_url": blank.source_url, "sha256": blank.sha256, "pinned": False,
+        "origin": blank.origin, "fetched_at": blank.fetched_at, "jurisdiction": blank.jurisdiction,
+        "tax_year": blank.tax_year,
+        "first_page": {"page": first.page, "printed_year": first.printed_year, "title_found": first.title_found},
+        "page_count": blank.page_count, "kind": blank.kind, "limits": list(LIMITS),
+    }, next_step=(
+        f"This blank has no pack, so anything filled from it is an unverified draft, never filing-grade. Call "
+        f"get_form_map with form='unmapped', this source_url and blank_sha256='{blank.sha256}' to see its fields, "
+        f"then show the sweep page with render_form before any value is written."
+    ))
+
+
+def _unmapped_describe(year: int, jurisdiction: str, source_url: str | None, blank_sha256: str | None) -> dict:
+    from taxfill_core.fetch import load_unmapped_blank
+    from taxfill_core.unmapped import NEXT_STEP_DESCRIBE, describe_unmapped
+
+    _require("get_form_map", jurisdiction, source_url, source_url=source_url, blank_sha256=blank_sha256)
+
+    def run() -> dict:
+        blank = load_unmapped_blank(blank_sha256, tax_year=year, source_url=source_url, jurisdiction=jurisdiction,
+                                    workspace_root=WORKSPACE_ROOT)
+        return describe_unmapped(blank)
+
+    result = _unmapped_call("get_form_map", run, source_url=source_url, jurisdiction=jurisdiction)
+    return _graded(result, next_step=(
+        f"{NEXT_STEP_DESCRIBE} Then call fill_form with form='unmapped', the same source_url and "
+        f"blank_sha256='{result['blank_sha256']}', values keyed by these field names and confirmed_fields for the "
+        f"boxes the user confirmed."
+    ))
+
+
+def _unmapped_fill(year: int, jurisdiction: str, values: dict[str, Any], out_path: str, source_url: str | None,
+                   blank_sha256: str | None, money_fields: list[str] | None, provenance: dict[str, str] | None,
+                   confirmed_fields: list[str] | None) -> dict:
+    from taxfill_core.unmapped import fill_unmapped
+
+    _require("fill_form", jurisdiction, source_url, source_url=source_url, blank_sha256=blank_sha256)
+    out = user_path(out_path).absolute()
+    result = _unmapped_call(
+        "fill_form",
+        lambda: fill_unmapped(blank_sha256, source_url=source_url, tax_year=year, jurisdiction=jurisdiction,
+                              values=values, out_path=out, money_fields=money_fields, provenance=provenance,
+                              confirmed_fields=confirmed_fields, workspace_root=WORKSPACE_ROOT),
+        source_url=source_url, jurisdiction=jurisdiction)
+    return _graded({**result, "notice": DRAFT_NOTICE})
+
+
+def _unmapped_verify(year: int, jurisdiction: str, pdf_path: str, expected: dict[str, Any] | None,
+                     independent: dict[str, float] | None, source_url: str | None, blank_sha256: str | None,
+                     declared_relations: list[str] | None) -> dict:
+    from taxfill_core.unmapped_verify import verify_unmapped
+
+    _require("verify_form", jurisdiction, source_url, source_url=source_url, blank_sha256=blank_sha256,
+             expected=expected)
+    result = _unmapped_call(
+        "verify_form",
+        lambda: verify_unmapped(pdf_path, blank_sha256=blank_sha256, source_url=source_url, tax_year=year,
+                                jurisdiction=jurisdiction, expected=expected, independent=independent,
+                                declared_relations=declared_relations, workspace_root=WORKSPACE_ROOT),
+        source_url=source_url, jurisdiction=jurisdiction, wrote="Nothing was verified and no PDF was written")
+    limits = list(result["limits"])
+    limits.insert(len(limits) - 1, _UNSIGNED_TOKEN_LIMIT)  # the "never filing-grade" entry stays last
+    return _graded({**result, "limits": limits})
+
+
+def _refuse_unmapped_draft(pdf_path: Any, what: str) -> None:
+    """Rule 15: the pack path never runs its checks on fallback output. Reads only the /Info record (pypdf), never
+    raises on a file it cannot read (the pack path's own error text stands for it)."""
+    from taxfill_core.unmapped_verify import is_unmapped_draft
+
+    if isinstance(pdf_path, (str, Path)) and is_unmapped_draft(pdf_path):
+        raise ValueError(
+            f"{what} is an unmapped draft (its /Info carries the /TaxfillUnmapped record), so a pack's checks never "
+            f"run on it — verify it with verify_form(form='unmapped', source_url=..., blank_sha256=..., expected=the "
+            f"written map fill_form returned). An unmapped draft is never filing-grade. Nothing was verified."
+        )
+
+
 # ── discovery ────────────────────────────────────────────────────────────────
 
 
@@ -235,7 +445,8 @@ def list_forms(jurisdiction: str | None = None, year: int | None = None) -> list
 
 
 @mcp.tool()
-def get_form_map(form: str, year: int, jurisdiction: str = "federal") -> dict:
+def get_form_map(form: str, year: int, jurisdiction: str = "federal", source_url: _SourceUrl = None,
+                 blank_sha256: _BlankSha = None) -> dict:
     """Return one pack's line->field map, relations, and cross-form refs.
 
     `form` is the form KEY (e.g. 'f1040', 'sched_c'). Use list_forms to discover keys.
@@ -244,7 +455,16 @@ def get_form_map(form: str, year: int, jurisdiction: str = "federal") -> dict:
     leave it out (e.g. CA Form 540's Sides 2-6 `name.full`); `mirror_abbreviations` lists, per
     mirror, the placeholders a header may shorten to an initial or leave out when the full name is
     too wide for its box (fill_form does that itself; every other placeholder stays whole).
+
+    NO PACK (form='unmapped', with source_url and blank_sha256 from fetch_blank): every AcroForm field of that blank
+    with its kind, flags, options, whether it may ever be filled, and each box's pack-blind anchor (a printed line and
+    a confidence, never a verified line map), plus `hand_write` (boxes never filled), `sweep_path` (a stamped copy
+    numbering each fillable field's boxes: show it with render_form so the user can confirm boxes) and the grade
+    "unmapped_draft", `limits` and `next_step`.
     """
+    if form == UNMAPPED_FORM:
+        return _unmapped_describe(year, jurisdiction, source_url, blank_sha256)
+    _refuse_unmapped_params("get_form_map", form, source_url=source_url, blank_sha256=blank_sha256)
     return _dump(_get_form_map(form, year, jurisdiction))
 
 
@@ -252,12 +472,35 @@ def get_form_map(form: str, year: int, jurisdiction: str = "federal") -> dict:
 
 
 @mcp.tool()
-def fetch_blank(form: str, year: int, jurisdiction: str = "federal") -> dict:
-    """Download the official blank PDF (checksum-verified) and return its local path.
+def fetch_blank(
+    form: str,
+    year: int,
+    jurisdiction: str = "federal",
+    source_url: _SourceUrl = None,
+    form_title: Annotated[str | None, Field(description=(
+        "Only with form='unmapped': the form's printed name as its first page prints it, e.g. 'SD 100'; the first "
+        "page must print it and the tax year. Refused with a pack key."))] = None,
+    local_blank: Annotated[str | None, Field(description=(
+        "Only with form='unmapped', optional: a PDF the user saved from source_url in a browser (for a host that "
+        "refuses scripts); it passes the same checks and is kept under the year's workspace. Refused with a pack "
+        "key."))] = None,
+) -> dict:
+    """Download the official blank PDF (checksum-verified for a pack) and return its local path.
 
     Also serves the print-only hand-fill packs (CT/HI/NM/SC): their blank is what
     `taxfill locate <blank.pdf> --page N <label>...` reads overlay anchors from.
+
+    NO PACK (form='unmapped', with source_url and form_title; local_blank optional): downloads over https from an
+    official .gov host only (every redirect hop checked), records the bytes' sha256 (not pinned: nothing reviewed
+    them) and checks that the form's first page prints the tax year and form_title. A form a shipped pack covers, an
+    IRS early-release draft, a revision-dated, XFA-only, scanned or locked blank is refused. Returns `sha256` (pass it
+    as blank_sha256 to every later step), `first_page`, `kind`, and the grade "unmapped_draft", `limits` and
+    `next_step`.
     """
+    if form == UNMAPPED_FORM:
+        return _unmapped_fetch(year, jurisdiction, source_url, form_title, local_blank)
+    _refuse_unmapped_params("fetch_blank", form, source_url=source_url, form_title=form_title,
+                            local_blank=local_blank)
     pack = _load_any_pack(form, year, jurisdiction)
     if isinstance(pack, HandFillPack) and pack.efile_only:
         from taxfill_core.overlay import efile_only_refusal
@@ -268,7 +511,25 @@ def fetch_blank(form: str, year: int, jurisdiction: str = "federal") -> dict:
 
 
 @mcp.tool()
-def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, jurisdiction: str = "federal") -> dict:
+def fill_form(
+    form: str,
+    year: int,
+    values: dict[str, Any],
+    out_path: str,
+    jurisdiction: str = "federal",
+    source_url: _SourceUrl = None,
+    blank_sha256: _BlankSha = None,
+    money_fields: Annotated[list[str] | None, Field(description=(
+        "Only with form='unmapped': the field names whose values get IRS whole-dollar rendering (no other field is "
+        "rounded). Refused with a pack key."))] = None,
+    provenance: Annotated[dict[str, str] | None, Field(description=(
+        "Only with form='unmapped': field name -> 'from a document' or 'from the user', recorded beside the label "
+        "'agent-computed, unverified' (it never removes it). Refused with a pack key."))] = None,
+    confirmed_fields: Annotated[list[str] | None, Field(description=(
+        "Only with form='unmapped': the fields whose boxes the user confirmed on the rendered sweep page "
+        "(get_form_map's sweep_path); a field anchored 'low' or 'med' is written only when listed here. Refused "
+        "with a pack key."))] = None,
+) -> dict:
     """Deterministically fill a form. `values` maps line ids (per get_form_map) to values.
 
     Downloads/uses the official blank, writes the filled PDF to out_path ("~/..." works; the
@@ -303,7 +564,21 @@ def fill_form(form: str, year: int, values: dict[str, Any], out_path: str, juris
     must be hand-written), warnings and the full worksheet; verify_form then needs `expected` =
     this same `values`. A hand-fill pack with no coordinates is refused with a pointer to
     hand_fill_worksheet.
+
+    NO PACK (form='unmapped', with source_url and blank_sha256): `values` is keyed by the qualified field names
+    get_form_map returned for that blank. ReadOnly, calculated, signature, pushbutton, viewer-guard and hidden boxes
+    are never written, and a field anchored 'none' (or 'low'/'med' unless in confirmed_fields) is not written either:
+    each comes back in `hand_write` with its reason. An unknown name, a choice not offered, or a /MaxLen or comb
+    violation refuses the whole call. Every page is stamped "UNMAPPED DRAFT — NOT FILING-GRADE" in its content
+    stream (no parameter turns it off), every value is labelled "agent-computed, unverified", and the response
+    carries `status` "unverified_draft", a `worksheet`, the grade "unmapped_draft", `limits` and `next_step`. With no
+    passing anchor benchmark, or for a blank with no fillable field, no PDF is written (`status` "worksheet_only").
     """
+    if form == UNMAPPED_FORM:
+        return _unmapped_fill(year, jurisdiction, values, out_path, source_url, blank_sha256, money_fields,
+                              provenance, confirmed_fields)
+    _refuse_unmapped_params("fill_form", form, source_url=source_url, blank_sha256=blank_sha256,
+                            money_fields=money_fields, provenance=provenance, confirmed_fields=confirmed_fields)
     pack = _load_any_pack(form, year, jurisdiction)
     if isinstance(pack, HandFillPack) and pack.efile_only:
         from taxfill_core.overlay import efile_only_refusal
@@ -341,9 +616,14 @@ def verify_form(
     expected: dict[str, Any] | None = None,
     independent: dict[str, float] | None = None,
     jurisdiction: str = "federal",
+    source_url: _SourceUrl = None,
+    blank_sha256: _BlankSha = None,
+    declared_relations: Annotated[list[str] | None, Field(description=(
+        "Only with form='unmapped': relations over field names that you declare (e.g. 'line3 == line1 + line2'); "
+        "each is checked and labelled 'agent-declared, not of record'. Refused with a pack key."))] = None,
 ) -> dict:
-    """Verify a filled form against its pack: assertions, relation math + independent recompute,
-    clipping scan, required-checkbox audit, and the pitfall registry. Returns ok + failures.
+    """Verify a filled form against its pack (form='unmapped': against its blank): assertions, relation math +
+    independent recompute, clipping scan, required-checkbox audit, and the pitfall registry. Returns ok + failures.
 
     The identity section checks each page-header mirror the pack declares (e.g. CA Form 540's
     Sides 2-6 name and SSN) against what fill_form would write from the form's own lines, measured
@@ -366,8 +646,22 @@ def verify_form(
     from `expected` (REQUIRED here — pass the same `values` you gave fill_form), and each line's
     declared box must hold exactly its stamped value (a blank line's box nothing); `independent`
     runs the same recompute over the worksheet's money lines. Read `limits` — it cannot see printed art.
+
+    NO PACK (form='unmapped', with source_url, blank_sha256 and `expected` = fill_form's `written` map; `independent`
+    keyed by field name): the UNMAPPED verdict. `ok` is true only when every section passes (the draft's record, a
+    round trip of exactly the written fields, nothing else changed from the blank, clipping, flags, the stamp on
+    every page, the anchors and their confirmations, the recompute, declared_relations); then `verified_at` names the
+    file's sha256 and the time (unsigned; any change to the file voids it). Even with `ok` true the draft is never
+    filing-grade: the grade stays "unmapped_draft", every value stays in `unverified_values` with its label, and
+    `limits` says what was not checked. A pack's verify_form and verify_filing refuse an unmapped draft.
     """
+    if form == UNMAPPED_FORM:
+        return _unmapped_verify(year, jurisdiction, pdf_path, expected, independent, source_url, blank_sha256,
+                                declared_relations)
+    _refuse_unmapped_params("verify_form", form, source_url=source_url, blank_sha256=blank_sha256,
+                            declared_relations=declared_relations)
     pack = _load_any_pack(form, year, jurisdiction)
+    _refuse_unmapped_draft(pdf_path, "The PDF at pdf_path")
     if isinstance(pack, HandFillPack):
         if expected is None:
             raise ValueError(
@@ -403,12 +697,23 @@ def verify_filing(items: list[dict], independent: dict[str, dict[str, float]] | 
     per item, under the `overlay` section) instead of the AcroForm checks; the filing is ok only
     when every AcroForm item and every stamped item is. A hand-fill form has no fields to read
     back, so it takes no part in the cross-form identity and cross_form checks (`limits` says so).
+
+    An item whose form is 'unmapped' is refused: an unmapped draft takes no part in a filing's checks — verify it
+    alone with verify_form(form='unmapped', ...). A PDF that is an unmapped draft is refused under any form key.
     """
     filing_items, overlay_items = [], []
     for it in items:
+        if it.get("form") == UNMAPPED_FORM:
+            raise ValueError(
+                f"verify_filing item '{it.get('form_key', it['form'])}' has form 'unmapped': an unmapped draft takes "
+                f"no part in a filing's pack checks or its cross-form identity checks — verify it alone with "
+                f"verify_form(form='unmapped', source_url=..., blank_sha256=..., expected=...) and compare it with "
+                f"the other forms on the rendered pages. It is never filing-grade. Nothing was verified."
+            )
         jurisdiction = it.get("jurisdiction", "federal")
         pack = _load_any_pack(it["form"], it["year"], jurisdiction)
         form_key = it.get("form_key", it["form"])
+        _refuse_unmapped_draft(it.get("pdf_path"), f"verify_filing item '{form_key}' (its pdf_path)")
         if isinstance(pack, HandFillPack):
             if it.get("expected") is None:
                 raise ValueError(

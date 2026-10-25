@@ -44,7 +44,7 @@ from pathlib import Path
 
 from taxfill_core.anchor import LOW, MED, NONE, TIERS, TOP, WidgetAnchor, anchor_widgets
 from taxfill_core.datadir import user_path, write_output
-from taxfill_core.fetch import UnmappedBlank, compute_sha256, load_unmapped_blank
+from taxfill_core.fetch import UnmappedBlank, compute_sha256, load_unmapped_blank, unmapped_cache_dir
 from taxfill_core.packbuild import STANDARD_FORMAT, action_script
 
 __all__ = [
@@ -739,6 +739,13 @@ def fill_unmapped(
     if out_path.resolve() == path.resolve():
         raise UnmappedFillRefused("out_path is the stored blank itself — pass a new file path for the draft, such as "
                                   "~/taxfill-workspace/<year>/drafts/<form>.pdf; nothing was written")
+    # The shared blank cache holds blanks, their records and sweep pages, never a value (ADR-0002 rules 5-6), and
+    # `taxfill purge` does not clear it (Phase K JK16b review, 2026-10-25: out_path = the sweep page wrote the values
+    # there).
+    if out_path.resolve().is_relative_to(unmapped_cache_dir(cache_dir).resolve()):
+        raise UnmappedFillRefused("out_path is inside the shared blank cache, which never holds a value — pass a file "
+                                  "path in your workspace, such as ~/taxfill-workspace/<year>/drafts/<form>.pdf; "
+                                  "nothing was written")
 
     hand_write: list[dict] = []
     text_updates: dict[str, str] = {}

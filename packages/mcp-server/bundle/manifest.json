@@ -45,7 +45,7 @@
     },
     {
       "name": "fetch_blank",
-      "description": "Download the official blank PDF (checksum-verified) and return its local path."
+      "description": "Download the official blank PDF (checksum-verified for a pack) and return its local path."
     },
     {
       "name": "fill_form",
@@ -53,7 +53,7 @@
     },
     {
       "name": "verify_form",
-      "description": "Verify a filled form against its pack: assertions, relation math + independent recompute,"
+      "description": "Verify a filled form against its pack (form='unmapped': against its blank): assertions, relation math +"
     },
     {
       "name": "verify_filing",

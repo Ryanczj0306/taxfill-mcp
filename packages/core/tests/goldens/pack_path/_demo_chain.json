@@ -1,0 +1,568 @@
+{
+ "acroform": {
+  "fetch_blank": {"path": "<cache>/c626b79c188b_demo-golden.pdf", "sha256": "4260727692f3b84e4fd04d7008c2361edf7ff75af26894377d9c15c80719e9d4", "source_url": "https://www.tax.example.gov/forms/2025/demo-golden.pdf"},
+  "fill_form": {
+   "combs_aligned": [],
+   "guards_hidden": [],
+   "mirrored": [],
+   "notice": "This is a review draft, not tax advice — you are the filer: review every number, then sign and mail it yourself. TaxFill prepares returns for paper filing only; it does not e-file.",
+   "out_path": "<out>/demo_golden.pdf",
+   "warnings": ["line '2': rounded 125.5 to 126 (IRS whole-dollar rounding: 50 cents or more rounds up)"],
+   "written": {"demo_check": "/Yes", "line1": "50000", "line2": "126", "line3": "50126", "name": "Riley Example", "p2_name": "Riley Example", "ssn": "123456789"}
+  },
+  "fill_form_bad_relation": {
+   "combs_aligned": [],
+   "guards_hidden": [],
+   "mirrored": [],
+   "notice": "This is a review draft, not tax advice — you are the filer: review every number, then sign and mail it yourself. TaxFill prepares returns for paper filing only; it does not e-file.",
+   "out_path": "<out>/bad_relation.pdf",
+   "warnings": ["line '2': rounded 125.5 to 126 (IRS whole-dollar rounding: 50 cents or more rounds up)"],
+   "written": {"demo_check": "/Yes", "line1": "50000", "line2": "126", "line3": "1", "name": "Riley Example", "p2_name": "Riley Example", "ssn": "123456789"}
+  },
+  "fill_form_comb_violation": {"error": "ValueError: line 'identifying_number': value '[redacted-number]' (10 characters) exceeds comb MaxLen 9 — resubmit digits only"},
+  "fill_form_pdf_values": {"demo_check": "/Yes", "line1": "50000", "line2": "126", "line3": "50126", "name": "Riley Example", "p2_name": "Riley Example", "ssn": "123456789"},
+  "fill_form_unknown_line": {"error": "ValueError: unknown line key(s) ['99'] for form DEMO-G (2025) — valid line ids: ['1', '2', '3', '4', 'identifying_number', 'name', 'name.page2']; fix the key(s) or add the line to the pack"},
+  "get_form_map": {
+   "acroform_root": "",
+   "cross_form": [],
+   "draft_created": null,
+   "form": "DEMO-G",
+   "form_key": "demo_golden",
+   "identity_fields": ["name", "identifying_number"],
+   "jurisdiction": "federal",
+   "lines": [
+    {"field": "name", "group": null, "line": "name", "required": false, "type": "text"},
+    {"field": "ssn", "group": null, "line": "identifying_number", "required": false, "type": "text"},
+    {"field": "line1", "group": null, "line": "1", "required": false, "type": "money"},
+    {"field": "line2", "group": null, "line": "2", "required": false, "type": "money"},
+    {"field": "line3", "group": null, "line": "3", "required": false, "type": "money"},
+    {"field": "demo_check", "group": null, "line": "4", "required": false, "type": "checkbox"},
+    {"field": "p2_name", "group": null, "line": "name.page2", "required": false, "type": "text"}
+   ],
+   "mirror_abbreviations": {},
+   "mirrors": {},
+   "relations": ["3 == 1 + 2"],
+   "source_status": "final",
+   "source_url": "https://www.tax.example.gov/forms/2025/demo-golden.pdf",
+   "tax_year": 2025
+  },
+  "list_forms": [
+   {"draft_created": null, "form": "DEMO-G", "form_key": "demo_golden", "has_cross_form": false, "has_relations": true, "jurisdiction": "federal", "num_fields": 7, "source_status": "final", "source_url": "https://www.tax.example.gov/forms/2025/demo-golden.pdf", "tax_year": 2025}
+  ],
+  "verify_form": {
+   "form_keys": ["DEMO-G"],
+   "ok": true,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"},
+    {"detail": "widget flags: 7 written widget(s) viewable and printable; no page-covering viewer guard left visible", "id": "P-027", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 7,
+     "failed": 0,
+     "failures": []
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   }
+  },
+  "verify_form_bad_relation": {
+   "form_keys": ["DEMO-G"],
+   "ok": false,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"},
+    {"detail": "widget flags: 7 written widget(s) viewable and printable; no page-covering viewer guard left visible", "id": "P-027", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 0,
+     "failed": 0,
+     "failures": [],
+     "note": "not run — pass `independent` ({line: calc result}, e.g. line 16 tax from taxable_income/filing_status/year; keyed per form_key for verify_filing) to enable the independent recompute; without it this report proves internal consistency only"
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 1,
+     "failures": ["relation '3 == 1 + 2' failed: left side = 1, right side = 50126 (difference -50125) — either a line on the right is wrong (recompute any calc-derived line, such as the tax, with calc and refill it) or the left side is (it must equal the right side, 50126); fix it and re-verify"]
+    }
+   }
+  },
+  "verify_form_missing_pdf": {"error": "FileNotFoundError: no PDF at <out>/missing.pdf — pass the filled PDF written by fill_form (check the workspace drafts/ directory) or a blank from fetch_blank"},
+  "verify_form_no_independent": {
+   "form_keys": ["DEMO-G"],
+   "ok": true,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"},
+    {"detail": "widget flags: 7 written widget(s) viewable and printable; no page-covering viewer guard left visible", "id": "P-027", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 0,
+     "failed": 0,
+     "failures": [],
+     "note": "not run — pass `independent` ({line: calc result}, e.g. line 16 tax from taxable_income/filing_status/year; keyed per form_key for verify_filing) to enable the independent recompute; without it this report proves internal consistency only"
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   }
+  },
+  "verify_form_not_a_pdf": {"error": "PdfStreamError: Stream has ended unexpectedly"},
+  "verify_form_wrong_expected": {
+   "form_keys": ["DEMO-G"],
+   "ok": false,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"},
+    {"detail": "widget flags: 7 written widget(s) viewable and printable; no page-covering viewer guard left visible", "id": "P-027", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 7,
+     "failed": 1,
+     "failures": ["line '1': intended '50001' but the PDF carries '50000' (normalized '50000') — refill the line with fill_form and re-verify"]
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 0,
+     "failed": 0,
+     "failures": [],
+     "note": "not run — pass `independent` ({line: calc result}, e.g. line 16 tax from taxable_income/filing_status/year; keyed per form_key for verify_filing) to enable the independent recompute; without it this report proves internal consistency only"
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   }
+  },
+  "verify_form_wrong_independent": {
+   "form_keys": ["DEMO-G"],
+   "ok": false,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"},
+    {"detail": "widget flags: 7 written widget(s) viewable and printable; no page-covering viewer guard left visible", "id": "P-027", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 1,
+     "failed": 1,
+     "failures": ["line '3': filled value 50126 disagrees with the independent recompute 99999 — the filled number must come from calc over the versioned tables (no-LLM-arithmetic rule); rerun calc, refill the line, and re-verify"]
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   }
+  }
+ },
+ "hand_fill": {
+  "bare_fetch_blank": {"path": "<cache>/40b0a9534d70_demo-bare.pdf", "sha256": "5f492eeda1e0fda53e8aee2cf186575ef6fa4e8f379bfb1f54b8b928e4171bbe", "source_url": "https://www.tax.example.gov/forms/2025/demo-bare.pdf"},
+  "bare_fill_form": {"error": "ValueError: 'demo_bare' (states/nm 2025) is a print-only HAND-FILL pack with no overlay coordinates, so fill_form has nothing to stamp — call hand_fill_worksheet('demo_bare', 2025, 'states/nm', values) for the line->value worksheet and hand-write it onto the printed blank (https://www.tax.example.gov/forms/2025/demo-bare.pdf)"},
+  "fetch_blank": {"path": "<cache>/a647fa84d9e4_demo-print.pdf", "sha256": "5f492eeda1e0fda53e8aee2cf186575ef6fa4e8f379bfb1f54b8b928e4171bbe", "source_url": "https://www.tax.example.gov/forms/2025/demo-print.pdf"},
+  "fill_form": {
+   "blank_lines": [],
+   "form": "DEMO-P",
+   "hand_written_lines": [],
+   "instructions": "The stamped PDF is a review draft: render_form every page and vision-check that each stamped value sits in its printed box (verify_form gives the text-layer OVERLAY verdict, which cannot see the printed art). Hand-write every hand_written_lines value onto the printed pages, then sign and date in ink before mailing.",
+   "jurisdiction": "states/nm",
+   "notice": "This is a review draft, not tax advice — you are the filer: review every number, then sign and mail it yourself. TaxFill prepares returns for paper filing only; it does not e-file.",
+   "out_path": "<out>/demo_print.pdf",
+   "page_count": 1,
+   "printing_guidance": [],
+   "render_mode": "hand_fill_overlay",
+   "stamped_lines": [
+    {"align": "left", "font_size": 9.0, "label": "Your name", "line": "1", "page": 1, "source": "entered", "type": "text", "value": "Riley Example", "x": 300.0, "y": 683.0},
+    {"align": "right", "font_size": 9.0, "label": "Wages", "line": "2", "page": 1, "source": "entered", "type": "money", "value": "40,000", "x": 452.478, "y": 653.0},
+    {"align": "right", "font_size": 9.0, "label": "Tax", "line": "3", "page": 1, "source": "entered", "type": "money", "value": "1,200", "x": 457.482, "y": 623.0},
+    {"align": "right", "font_size": 9.0, "label": "Total", "line": "4", "page": 1, "source": "computed", "type": "money", "value": "41,200", "x": 452.478, "y": 593.0}
+   ],
+   "tax_year": 2025,
+   "warnings": [],
+   "worksheet": {
+    "form": "DEMO-P",
+    "instructions": "This form has no fillable fields, so it cannot be filled electronically. Print the blank at print_url and hand-write each value below onto its line. 'computed' values were derived from your confirmed inputs; verify before mailing.",
+    "jurisdiction": "states/nm",
+    "label": "HAND-FILL WORKSHEET",
+    "lines": [
+     {"label": "Your name", "line": "1", "note": null, "source": "entered", "type": "text", "value": "Riley Example"},
+     {"label": "Wages", "line": "2", "note": null, "source": "entered", "type": "money", "value": "40,000"},
+     {"label": "Tax", "line": "3", "note": null, "source": "entered", "type": "money", "value": "1,200"},
+     {"label": "Total", "line": "4", "note": null, "source": "computed", "type": "money", "value": "41,200"}
+    ],
+    "print_url": "https://www.tax.example.gov/forms/2025/demo-print.pdf",
+    "signature_note": null,
+    "tax_year": 2025
+   }
+  },
+  "fill_form_text_layer": ["Form DEMO-P Demo Print-Only Return 2025\r\n1 Your name\r\n2 Wages\r\n3 Tax\r\n4 Total. Add lines 2 and 3\r\nRiley Example\r\n40,000\r\n1,200\r\n41,200"],
+  "get_form_map": {"error": "FileNotFoundError: no form pack for form 'demo_print', states/nm 2025 — looked for formpacks/states/nm/2025/demo_print/pack.yaml. Available form keys for states/nm 2025: none. Use list_forms() to discover packs. NOTE: 'demo_print' DOES ship for states/nm 2025 — as a HAND-FILL pack (<data>/formpacks/states/nm/2025/demo_print/handfill.yaml), which has no AcroForm to map, so it is absent from list_forms by design. Call hand_fill_worksheet('demo_print', 2025, 'states/nm') instead of fill_form."},
+  "verify_form": {
+   "form_keys": ["DEMO-P"],
+   "hand_written_lines": [],
+   "limits": ["Proves that the glyphs drawn in the stamp font (unembedded base-14 Helvetica) inside each line's DECLARED box spell exactly that line's value, and that a blank line's box holds none. It cannot see the printed art, so a value stamped over shading, a pre-printed '00' or a wrong (but plausible) box still passes — render_form + vision review remains mandatory.", "Checks against the PACK's coordinates. Wrong coordinates (the box of a different line) verify clean; only 'taxfill locate' anchoring and the rendered vision check catch them.", "A blank that prints its OWN text in unembedded Helvetica inside a declared box reads as stamped and FAILs (the safe direction) — narrow that box. The CT, HI and SC blanks embed every font they print.", "Lines without coordinates (hand_written_lines) are not on the PDF and are not checked."],
+   "ok": true,
+   "page_count": 1,
+   "sections": {
+    "overlay": {
+     "checked": 4,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   },
+   "verdict": "OVERLAY"
+  },
+  "verify_form_without_expected": {"error": "ValueError: verify_form on the print-only 'demo_print' (states/nm 2025) needs `expected` — the same values dict you passed to fill_form; the worksheet is recomputed from it and each stamped value is checked in the PDF's text layer (there are no AcroForm fields to read back)"},
+  "verify_form_wrong_expected": {
+   "form_keys": ["DEMO-P"],
+   "hand_written_lines": [],
+   "limits": ["Proves that the glyphs drawn in the stamp font (unembedded base-14 Helvetica) inside each line's DECLARED box spell exactly that line's value, and that a blank line's box holds none. It cannot see the printed art, so a value stamped over shading, a pre-printed '00' or a wrong (but plausible) box still passes — render_form + vision review remains mandatory.", "Checks against the PACK's coordinates. Wrong coordinates (the box of a different line) verify clean; only 'taxfill locate' anchoring and the rendered vision check catch them.", "A blank that prints its OWN text in unembedded Helvetica inside a declared box reads as stamped and FAILs (the safe direction) — narrow that box. The CT, HI and SC blanks embed every font they print.", "Lines without coordinates (hand_written_lines) are not on the PDF and are not checked."],
+   "ok": false,
+   "page_count": 1,
+   "sections": {
+    "overlay": {
+     "checked": 4,
+     "failed": 2,
+     "failures": ["line '2': expected exactly '40,001' in its box [300.0, 653.0] w=180 on page 1, found stamped '40,000'; the box holds a DIFFERENT stamped value — the PDF was stamped from other values, or a neighbouring stamp spills into this box; re-run fill_form from these values", "line '4': expected exactly '41,201' in its box [300.0, 593.0] w=180 on page 1, found stamped '41,200'; the box holds a DIFFERENT stamped value — the PDF was stamped from other values, or a neighbouring stamp spills into this box; re-run fill_form from these values"]
+    },
+    "recompute": {
+     "checked": 0,
+     "failed": 0,
+     "failures": [],
+     "note": "not run — pass `independent` ({line: calc result}) to compare the worksheet's computed money lines against the calc engine; without it this verdict proves only that the stamps landed where the pack says"
+    }
+   },
+   "verdict": "OVERLAY"
+  }
+ },
+ "verify_filing": {
+  "acroform": {
+   "form_keys": ["demo_golden"],
+   "ok": true,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "no address identity field declared — add 'mailing_address' to identity_fields in the packs to enable the current-address cross-check", "id": "P-002", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 2,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   }
+  },
+  "acroform_no_independent": {
+   "form_keys": ["demo_golden"],
+   "ok": true,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "no address identity field declared — add 'mailing_address' to identity_fields in the packs to enable the current-address cross-check", "id": "P-002", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 2,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 0,
+     "failed": 0,
+     "failures": [],
+     "note": "not run — pass `independent` ({line: calc result}, e.g. line 16 tax from taxable_income/filing_status/year; keyed per form_key for verify_filing) to enable the independent recompute; without it this report proves internal consistency only"
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   }
+  },
+  "form_key": {
+   "form_keys": ["demo_alias"],
+   "ok": true,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "no address identity field declared — add 'mailing_address' to identity_fields in the packs to enable the current-address cross-check", "id": "P-002", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 2,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 0,
+     "failed": 0,
+     "failures": [],
+     "note": "not run — pass `independent` ({line: calc result}, e.g. line 16 tax from taxable_income/filing_status/year; keyed per form_key for verify_filing) to enable the independent recompute; without it this report proves internal consistency only"
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   }
+  },
+  "missing_pdf": {"error": "FileNotFoundError: no PDF at <out>/missing.pdf — pass the filled PDF written by fill_form (check the workspace drafts/ directory) or a blank from fetch_blank"},
+  "mixed": {
+   "form_keys": ["demo_golden", "demo_print"],
+   "limits": ["Proves that the glyphs drawn in the stamp font (unembedded base-14 Helvetica) inside each line's DECLARED box spell exactly that line's value, and that a blank line's box holds none. It cannot see the printed art, so a value stamped over shading, a pre-printed '00' or a wrong (but plausible) box still passes — render_form + vision review remains mandatory.", "Checks against the PACK's coordinates. Wrong coordinates (the box of a different line) verify clean; only 'taxfill locate' anchoring and the rendered vision check catch them.", "A blank that prints its OWN text in unembedded Helvetica inside a declared box reads as stamped and FAILs (the safe direction) — narrow that box. The CT, HI and SC blanks embed every font they print.", "Lines without coordinates (hand_written_lines) are not on the PDF and are not checked.", "The stamped print-only form(s) ['demo_print'] took no part in the cross-form identity and cross_form checks: a stamped page has no fields to read back — compare their names, SSNs and carried amounts against the other forms on the rendered pages."],
+   "ok": true,
+   "pitfalls": [
+    {"detail": "clipping scan clean: 6 filled text field(s) checked (MaxLen + Helvetica width heuristic; auto-size is safe)", "id": "P-001", "status": "PASS"},
+    {"detail": "no address identity field declared — add 'mailing_address' to identity_fields in the packs to enable the current-address cross-check", "id": "P-002", "status": "PASS"},
+    {"detail": "required-checkbox audit: no required checkboxes declared in this pack", "id": "P-003", "status": "PASS"}
+   ],
+   "sections": {
+    "assertions": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "checkboxes": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "clipping": {
+     "checked": 6,
+     "failed": 0,
+     "failures": []
+    },
+    "cross_form": {
+     "checked": 0,
+     "failed": 0,
+     "failures": []
+    },
+    "identity": {
+     "checked": 2,
+     "failed": 0,
+     "failures": []
+    },
+    "overlay": {
+     "checked": 5,
+     "failed": 0,
+     "failures": []
+    },
+    "recompute": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    },
+    "relations": {
+     "checked": 1,
+     "failed": 0,
+     "failures": []
+    }
+   }
+  },
+  "stray_independent": {"error": "ValueError: independent recompute references unknown form_key(s) ['zz'] — valid keys are this filing's items' form_key values ['demo_golden']"}
+ }
+}
