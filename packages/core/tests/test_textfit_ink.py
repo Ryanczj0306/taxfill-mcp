@@ -15,10 +15,8 @@ says are cut lose ink in pdfium's render, and the ones it says fit do not.
 """
 from __future__ import annotations
 
-import json
 import string
 import sys
-import warnings
 from pathlib import Path
 
 import pytest
@@ -26,8 +24,7 @@ from pdf_fixtures import make_acroform_pdf
 
 from taxfill_core.schemas.formpack import load_pack
 from taxfill_core.textfit import (
-    _LSB_COURIER,
-    _LSB_HELVETICA,
+    _BEARINGS,
     _RSB_COURIER,
     _RSB_HELVETICA,
     BORDER_PT,
@@ -222,9 +219,10 @@ def test_read_text_widgets_reads_the_border_and_the_comb_flag(tmp_path):
 
 
 def test_the_bearing_tables_match_a_fresh_measurement(tmp_path):
-    """Draw every tabled glyph at 200 pt with reportlab (no embedding: pdfium substitutes its own base-14 faces, as for
-    a form's /DA font), render at 2 px/pt, and take advance less ink edge; the table keeps the smaller of the regular
-    and bold face."""
+    """Draw every tabled glyph at 200 pt with reportlab (no embedding: pdfium substitutes a base-14 face, as for a
+    form's /DA font), render at 2 px/pt, and take the blank space either side of its ink. The substitutes differ by
+    platform (macOS draws the system's Helvetica and Courier, CI's Linux runner others), so the tables keep the
+    thinner of the two, and on any platform no glyph may show less blank space than the table credits."""
     import pypdfium2 as pdfium  # noqa: PLC0415
     from reportlab.pdfbase.pdfmetrics import stringWidth  # noqa: PLC0415
     from reportlab.pdfgen import canvas  # noqa: PLC0415
@@ -253,22 +251,14 @@ def test_the_bearing_tables_match_a_fresh_measurement(tmp_path):
     glyphs_of = {"Helvetica": "".join(_RSB_HELVETICA), "Courier": "".join(_RSB_COURIER)}
     measured = {face: bearings(face, glyphs_of[face.split("-")[0]])
                 for face in ("Helvetica", "Helvetica-Bold", "Courier", "Courier-Bold")}
-    if sys.platform != "darwin":
-        # The tables were measured on macOS, where pdfium draws a non-embedded base-14 face with the system's Helvetica
-        # and Courier; other platforms substitute other faces. Report this platform's bearings, so they can be folded
-        # into the tables (Phase K JEe follow-up), and do not hold the macOS figures against them.
-        report = {face: {ch: [round(lr[0], 3), round(lr[1], 3)] for ch, lr in m.items()} for face, m in measured.items()}
-        warnings.warn(f"JEe bearings on {sys.platform}: {json.dumps(report, sort_keys=True)}", stacklevel=1)
-        pytest.xfail(f"the bearing tables are measured on macOS; {sys.platform} substitutes other faces")
-    for lsb, rsb, faces in ((_LSB_HELVETICA, _RSB_HELVETICA, ("Helvetica", "Helvetica-Bold")),
-                            (_LSB_COURIER, _RSB_COURIER, ("Courier", "Courier-Bold"))):
-        glyphs = "".join(rsb)
-        regular, bold = (measured[face] for face in faces)
-        for side, table in ((0, lsb), (1, rsb)):
-            off = {ch: (table[ch], round(min(regular[ch][side], bold[ch][side]), 3)) for ch in glyphs
-                   if abs(table[ch] - min(regular[ch][side], bold[ch][side])) > 0.006}
-            assert not off, f"{faces} {('left', 'right')[side]} bearings: tabled vs measured differ: {off}"
-        assert set(lsb) == set(rsb)
+    # One-sided on every platform: the tables keep the thinner of the macOS and Linux measurements, so no renderer
+    # may draw a glyph with LESS blank space than the table credits (pdfium substitutes different faces per
+    # platform; a renderer with more blank space only makes the measure conservative there).
+    over = {face: {ch: (table[ch], [round(v, 3) for v in measured[face][ch]])
+                   for ch in table if any(t > m + 0.006 for t, m in zip(table[ch], measured[face][ch]))}
+            for face, table in _BEARINGS.items()}
+    over = {face: v for face, v in over.items() if v}
+    assert not over, f"on {sys.platform} these glyphs have less blank space than the table credits: {over}"
     assert set(string.digits + string.ascii_uppercase) <= set(_RSB_HELVETICA) <= set(_RSB_COURIER)
 
 
